@@ -1,0 +1,2156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CompTIA Certification Reference — Cycles, Concepts & Diagrams</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #07090f;
+  --bg2:      #0d1120;
+  --bg3:      #121a2e;
+  --border:   #1e2d4a;
+  --cyan:     #00d4ff;
+  --green:    #00ff99;
+  --amber:    #ffb020;
+  --red:      #ff4d6d;
+  --purple:   #a855f7;
+  --text:     #cdd9f0;
+  --muted:    #5a6e8a;
+  --mono:     'Share Tech Mono', monospace;
+  --sans:     'Outfit', sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.65;
+  min-height:100vh;
+}
+
+/* ---- BACKGROUND GRID ---- */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(0,212,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,.03) 1px, transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;z-index:0;
+}
+
+/* ---- HEADER ---- */
+header{
+  position:relative;
+  background:linear-gradient(135deg,#060a16 0%,#0d1632 50%,#060d1a 100%);
+  border-bottom:1px solid var(--border);
+  padding:36px 40px 28px;
+  z-index:10;
+  overflow:hidden;
+}
+header::after{
+  content:'';
+  position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),var(--green),transparent);
+}
+.header-badge{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:3px;
+  color:var(--cyan);
+  background:rgba(0,212,255,.07);
+  border:1px solid rgba(0,212,255,.2);
+  padding:4px 12px;
+  border-radius:2px;
+  margin-bottom:14px;
+  text-transform:uppercase;
+}
+header h1{
+  font-family:var(--mono);
+  font-size:clamp(18px,3vw,28px);
+  color:#fff;
+  letter-spacing:1px;
+  margin-bottom:8px;
+}
+header h1 span{color:var(--cyan);}
+header p{
+  color:var(--muted);
+  font-size:13px;
+  max-width:600px;
+}
+.cert-chips{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-top:18px;
+}
+.chip{
+  font-family:var(--mono);
+  font-size:10px;
+  padding:4px 10px;
+  border-radius:2px;
+  border:1px solid;
+  cursor:pointer;
+  transition:all .2s;
+  letter-spacing:1px;
+}
+.chip:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.chip.aplus{color:var(--amber);border-color:rgba(255,176,32,.3);background:rgba(255,176,32,.05)}
+.chip.net{color:#38bdf8;border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.05)}
+.chip.sec{color:var(--red);border-color:rgba(255,77,109,.3);background:rgba(255,77,109,.05)}
+.chip.cysa{color:var(--purple);border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.05)}
+.chip.pentest{color:#fb923c;border-color:rgba(251,146,60,.3);background:rgba(251,146,60,.05)}
+.chip.linux{color:var(--green);border-color:rgba(0,255,153,.3);background:rgba(0,255,153,.05)}
+.chip.ai{color:#e879f9;border-color:rgba(232,121,249,.3);background:rgba(232,121,249,.05)}
+.chip.secx{color:var(--cyan);border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.05)}
+.chip.active{background:rgba(0,212,255,.15)!important;border-color:var(--cyan)!important;color:var(--cyan)!important}
+
+/* ---- LAYOUT ---- */
+.container{
+  position:relative;z-index:1;
+  max-width:1200px;
+  margin:0 auto;
+  padding:32px 24px 80px;
+}
+
+/* ---- SECTION HEADERS ---- */
+.cert-section{margin-bottom:12px}
+.cert-section.hidden{display:none}
+
+.cert-header{
+  display:flex;align-items:center;gap:14px;
+  padding:18px 24px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:6px 6px 0 0;
+  cursor:pointer;
+  user-select:none;
+  transition:border-color .2s;
+  position:relative;
+  overflow:hidden;
+}
+.cert-header::before{
+  content:'';
+  position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--accent);
+}
+.cert-header:hover{border-color:var(--accent)}
+.cert-tag{
+  font-family:var(--mono);
+  font-size:11px;
+  padding:3px 9px;
+  border-radius:2px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  color:var(--accent);
+  white-space:nowrap;
+  letter-spacing:1px;
+}
+.cert-title{
+  font-weight:600;
+  font-size:16px;
+  color:#fff;
+  flex:1;
+}
+.cert-meta{
+  font-size:12px;
+  color:var(--muted);
+  display:none;
+}
+@media(min-width:600px){.cert-meta{display:block}}
+.chevron{
+  font-size:18px;
+  color:var(--muted);
+  transition:transform .3s;
+  margin-left:auto;
+}
+.cert-header.open .chevron{transform:rotate(180deg);color:var(--accent)}
+
+.cert-body{
+  display:none;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-top:none;
+  border-radius:0 0 6px 6px;
+  padding:0;
+}
+.cert-body.open{display:block}
+
+/* ---- TOPIC ACCORDION ---- */
+.topic{border-bottom:1px solid var(--border)}
+.topic:last-child{border-bottom:none}
+.topic-header{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 24px;
+  cursor:pointer;
+  background:transparent;
+  transition:background .15s;
+}
+.topic-header:hover{background:rgba(255,255,255,.02)}
+.topic-icon{font-size:18px;width:28px;text-align:center}
+.topic-name{font-weight:500;font-size:14px;color:var(--text);flex:1}
+.topic-badge{
+  font-family:var(--mono);
+  font-size:10px;
+  color:var(--muted);
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  padding:2px 8px;
+  border-radius:2px;
+}
+.topic-chevron{font-size:14px;color:var(--muted);transition:transform .25s}
+.topic-header.open .topic-chevron{transform:rotate(90deg)}
+
+.topic-body{
+  display:none;
+  padding:20px 24px 24px 24px;
+  background:var(--bg3);
+}
+.topic-body.open{display:block}
+
+/* ---- CONCEPT CARD ---- */
+.concept-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:6px;
+  margin-bottom:16px;
+  overflow:hidden;
+}
+.concept-card:last-child{margin-bottom:0}
+.concept-label{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:2px;
+  color:var(--muted);
+  text-transform:uppercase;
+  padding:12px 18px 0;
+}
+.concept-title{
+  font-size:15px;
+  font-weight:600;
+  color:#fff;
+  padding:4px 18px 12px;
+  border-bottom:1px solid var(--border);
+}
+.concept-desc{
+  padding:14px 18px;
+  font-size:13.5px;
+  color:var(--muted);
+  line-height:1.7;
+}
+
+/* ---- DIAGRAMS ---- */
+.diagram-wrap{
+  padding:0 18px 18px;
+}
+.diagram-title{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:2px;
+  color:var(--cyan);
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+/* FLOWCHART */
+.flow{display:flex;flex-direction:column;align-items:center;gap:0}
+.flow-row{display:flex;align-items:center;gap:0;width:100%}
+.flow-step{
+  flex:1;
+  padding:10px 14px;
+  text-align:center;
+  font-size:12px;
+  font-weight:600;
+  border-radius:4px;
+  position:relative;
+}
+.flow-arrow{
+  font-size:18px;
+  color:var(--muted);
+  padding:0 2px;
+}
+.flow-arrow-down{
+  font-size:20px;
+  color:var(--muted);
+  padding:4px 0;
+  align-self:center;
+}
+
+/* OSI / Layer stacks */
+.layer-stack{display:flex;flex-direction:column;gap:3px}
+.layer{
+  display:flex;align-items:center;gap:0;
+  border-radius:3px;overflow:hidden;
+}
+.layer-num{
+  font-family:var(--mono);
+  font-size:11px;
+  width:36px;
+  text-align:center;
+  padding:8px 4px;
+  background:rgba(255,255,255,.06);
+  color:var(--muted);
+  font-weight:700;
+  flex-shrink:0;
+}
+.layer-name{
+  font-size:12px;
+  font-weight:600;
+  padding:8px 14px;
+  flex:1;
+}
+.layer-pdu{
+  font-family:var(--mono);
+  font-size:10px;
+  padding:8px 12px;
+  color:var(--muted);
+  text-align:right;
+  white-space:nowrap;
+}
+.layer-proto{
+  font-size:10px;
+  padding:8px 12px;
+  color:var(--muted);
+  text-align:right;
+  flex:1;
+}
+
+/* PHASE STRIP */
+.phases{display:flex;gap:0;flex-wrap:nowrap;overflow-x:auto}
+.phase{
+  flex:1;
+  min-width:90px;
+  text-align:center;
+  padding:14px 10px;
+  font-size:11px;
+  font-weight:600;
+  position:relative;
+  cursor:default;
+}
+.phase::after{
+  content:'▶';
+  position:absolute;right:-8px;top:50%;transform:translateY(-50%);
+  font-size:12px;color:rgba(255,255,255,.15);
+  z-index:1;
+}
+.phase:last-child::after{display:none}
+
+/* CIRCLE LIFECYCLE */
+.lifecycle{
+  display:flex;flex-wrap:wrap;gap:10px;
+  justify-content:center;padding:10px 0;
+}
+.lc-step{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  width:100px;text-align:center;
+}
+.lc-circle{
+  width:62px;height:62px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+  border:2px solid;
+  position:relative;
+}
+.lc-label{font-size:11px;color:var(--muted);line-height:1.3}
+
+/* TRIAD */
+.triad-wrap{display:flex;justify-content:center;padding:10px 0}
+.triad{position:relative;width:260px;height:230px}
+.triad-tri{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:0;height:0;
+  border-left:130px solid transparent;
+  border-right:130px solid transparent;
+  border-bottom:225px solid rgba(0,212,255,.08);
+}
+.triad-inner{
+  position:absolute;top:30px;left:50%;transform:translateX(-50%);
+  width:0;height:0;
+  border-left:100px solid transparent;
+  border-right:100px solid transparent;
+  border-bottom:173px solid var(--bg2);
+}
+.triad-node{
+  position:absolute;
+  background:var(--bg3);
+  border:2px solid;
+  border-radius:6px;
+  padding:8px 12px;
+  font-size:11px;
+  font-weight:700;
+  text-align:center;
+  transform:translate(-50%,-50%);
+}
+.triad-line{position:absolute;width:2px;background:rgba(0,212,255,.2);transform-origin:top center}
+.triad-center{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-40%);
+  font-family:var(--mono);font-size:10px;
+  color:var(--muted);text-align:center;
+}
+
+/* TREE */
+.tree{font-size:12px;line-height:1.8;font-family:var(--mono)}
+.tree-node{color:#e2e8f0}
+.tree-dir{color:var(--cyan)}
+.tree-desc{color:var(--muted);font-size:11px}
+
+/* PIPELINE */
+.pipeline{display:flex;align-items:center;gap:0;flex-wrap:wrap}
+.pipe-step{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:10px 14px;
+  font-size:11.5px;
+  font-weight:600;
+  white-space:nowrap;
+}
+.pipe-icon{font-size:16px}
+.pipe-arrow{color:var(--muted);font-size:16px;padding:0 4px}
+
+/* ACCESS CONTROL TABLE */
+.ac-table{width:100%;border-collapse:collapse;font-size:12px}
+.ac-table th{
+  background:rgba(0,212,255,.07);
+  color:var(--cyan);
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:1px;
+  padding:8px 12px;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+}
+.ac-table td{
+  padding:8px 12px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  vertical-align:top;
+}
+.ac-table tr:hover td{background:rgba(255,255,255,.02)}
+.ac-table td:first-child{
+  font-weight:600;
+  color:#fff;
+  white-space:nowrap;
+  width:80px;
+}
+
+/* KILL CHAIN */
+.kchain{display:flex;flex-direction:column;gap:6px}
+.kc-row{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;
+  border-radius:4px;
+  border-left:3px solid;
+}
+.kc-num{
+  font-family:var(--mono);
+  font-size:13px;
+  font-weight:700;
+  width:26px;
+  text-align:center;
+  flex-shrink:0;
+}
+.kc-phase{font-size:12px;font-weight:600;width:130px;flex-shrink:0}
+.kc-desc{font-size:11.5px;color:var(--muted);line-height:1.5}
+
+/* TOPOLOGY */
+.topo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.topo-card{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:14px;
+  text-align:center;
+}
+.topo-svg{width:100%;height:90px}
+.topo-name{font-size:12px;font-weight:700;color:#fff;margin-top:8px}
+.topo-desc{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* NIST TABLE */
+.nist-row{
+  display:flex;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:6px;
+}
+.nist-fn{
+  width:120px;flex-shrink:0;
+  padding:10px 14px;
+  font-size:12px;font-weight:700;
+  display:flex;align-items:center;
+}
+.nist-cats{
+  padding:10px 14px;
+  font-size:11.5px;
+  color:var(--muted);
+  border-left:1px solid var(--border);
+}
+
+/* THREAT INTEL */
+.ti-cycle{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:12px;
+  padding:10px 0;
+}
+.ti-step{
+  width:110px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:12px;
+  text-align:center;
+  font-size:11.5px;
+  font-weight:600;
+  position:relative;
+}
+.ti-icon{font-size:20px;margin-bottom:6px}
+
+/* RISK MATRIX */
+.risk-matrix{border-collapse:collapse;width:100%;font-size:11px}
+.risk-matrix th,.risk-matrix td{border:1px solid var(--border);padding:8px;text-align:center}
+.risk-matrix th{font-family:var(--mono);color:var(--muted);font-size:10px;background:rgba(255,255,255,.03)}
+.r-low{background:rgba(0,255,153,.12);color:#00ff99;font-weight:700}
+.r-med{background:rgba(255,176,32,.12);color:#ffb020;font-weight:700}
+.r-high{background:rgba(255,77,109,.12);color:#ff4d6d;font-weight:700}
+.r-crit{background:rgba(168,85,247,.2);color:#a855f7;font-weight:700}
+
+/* AAA */
+.aaa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.aaa-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:6px;
+  padding:14px;text-align:center;
+}
+.aaa-letter{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--cyan)}
+.aaa-word{font-size:12px;font-weight:600;color:#fff;margin:4px 0}
+.aaa-desc{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* BOOT SEQUENCE */
+.boot-seq{display:flex;flex-direction:column;gap:0}
+.boot-step{
+  display:flex;gap:0;
+  border-left:2px solid;
+  margin-left:20px;
+  position:relative;
+}
+.boot-step::before{
+  content:'';
+  position:absolute;left:-6px;top:16px;
+  width:10px;height:10px;border-radius:50%;
+  background:var(--bg);border:2px solid;
+  border-color:inherit;
+}
+.boot-content{
+  padding:10px 0 10px 20px;
+}
+.boot-name{font-size:13px;font-weight:600;color:#fff}
+.boot-detail{font-size:11.5px;color:var(--muted);margin-top:2px}
+.boot-step:last-child{border-left-color:transparent}
+
+/* DORA */
+.dora-seq{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.dora-item{
+  flex:1;min-width:80px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:6px;padding:12px;text-align:center;
+}
+.dora-letter{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--cyan)}
+.dora-word{font-size:12px;font-weight:700;color:#fff;margin:2px 0}
+.dora-desc{font-size:10.5px;color:var(--muted)}
+.dora-arrow{font-size:20px;color:var(--muted)}
+
+/* ML PIPELINE STEPS */
+.ml-flow{display:flex;flex-direction:column;gap:8px}
+.ml-step{
+  display:flex;align-items:center;gap:14px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:4px;padding:12px 16px;
+}
+.ml-num{
+  font-family:var(--mono);font-size:13px;font-weight:700;
+  color:var(--purple);width:28px;flex-shrink:0;
+}
+.ml-name{font-size:13px;font-weight:600;color:#fff;width:170px;flex-shrink:0}
+.ml-desc{font-size:11.5px;color:var(--muted)}
+
+/* PKI */
+.pki-flow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.pki-box{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:4px;padding:10px 14px;
+  font-size:12px;font-weight:600;
+  text-align:center;min-width:100px;
+}
+.pki-arrow{color:var(--muted);font-size:18px}
+
+/* CLOUD MODELS */
+.cloud-stack{display:flex;flex-direction:column;gap:6px}
+.cloud-row{
+  display:flex;gap:6px;
+}
+.cloud-cell{
+  flex:1;text-align:center;padding:8px 10px;
+  border-radius:3px;font-size:11.5px;font-weight:600;
+}
+.cloud-label{
+  width:50px;flex-shrink:0;
+  font-family:var(--mono);font-size:10px;
+  color:var(--muted);
+  display:flex;align-items:center;
+}
+
+/* ZERO TRUST */
+.zt-pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.zt-pill{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:6px;padding:14px 12px;text-align:center;
+}
+.zt-icon{font-size:22px;margin-bottom:6px}
+.zt-name{font-size:12px;font-weight:700;color:#fff}
+.zt-desc{font-size:10.5px;color:var(--muted);margin-top:4px}
+
+/* OWASP */
+.owasp-list{display:flex;flex-direction:column;gap:6px}
+.owasp-item{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:10px 14px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:4px;
+}
+.owasp-rank{
+  font-family:var(--mono);font-size:13px;font-weight:700;
+  color:var(--red);width:30px;flex-shrink:0;
+}
+.owasp-name{font-size:13px;font-weight:600;color:#fff;flex:0 0 220px}
+.owasp-desc{font-size:11.5px;color:var(--muted)}
+
+/* PENTEST PHASES */
+.pt-phases{display:flex;flex-direction:column;gap:0}
+.pt-phase{
+  display:flex;align-items:stretch;
+  border-left:3px solid;
+  margin-left:16px;
+  position:relative;
+}
+.pt-phase::before{
+  content:attr(data-num);
+  position:absolute;left:-20px;top:14px;
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:12px;font-weight:700;
+  background:var(--bg);border:2px solid;
+  color:inherit;border-color:inherit;
+}
+.pt-content{padding:12px 0 20px 24px}
+.pt-pname{font-size:13px;font-weight:700;color:#fff}
+.pt-tasks{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.8}
+
+/* DIAMOND MODEL */
+.diamond-wrap{display:flex;justify-content:center;padding:10px 0}
+.diamond-grid{
+  display:grid;
+  grid-template-areas:"  .  adv  .  " "inf  .  cap" "  .  vic  . ";
+  grid-template-columns:1fr 1fr 1fr;
+  grid-template-rows:1fr 1fr 1fr;
+  gap:6px;
+  width:300px;
+}
+.d-node{
+  padding:12px;border-radius:6px;text-align:center;
+  font-size:12px;font-weight:700;border:2px solid;
+}
+.d-adv{grid-area:adv;color:var(--red);border-color:rgba(255,77,109,.4);background:rgba(255,77,109,.08)}
+.d-inf{grid-area:inf;color:var(--amber);border-color:rgba(255,176,32,.4);background:rgba(255,176,32,.08)}
+.d-cap{grid-area:cap;color:var(--purple);border-color:rgba(168,85,247,.4);background:rgba(168,85,247,.08)}
+.d-vic{grid-area:vic;color:var(--cyan);border-color:rgba(0,212,255,.4);background:rgba(0,212,255,.08)}
+.d-center{
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:9px;color:var(--muted);text-align:center;
+}
+
+/* CRYPTO */
+.crypto-table{width:100%;border-collapse:collapse;font-size:12px}
+.crypto-table th{
+  background:rgba(255,255,255,.04);
+  color:var(--muted);font-family:var(--mono);font-size:10px;
+  padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);
+}
+.crypto-table td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04)}
+.crypto-table td:first-child{color:#fff;font-weight:600}
+
+/* LINUX PERMS */
+.perm-row{
+  display:flex;gap:0;border:1px solid var(--border);
+  border-radius:4px;overflow:hidden;margin-bottom:8px;
+}
+.perm-bit{
+  flex:1;text-align:center;padding:10px 4px;
+  font-family:var(--mono);font-size:12px;
+  border-right:1px solid var(--border);
+}
+.perm-bit:last-child{border-right:none}
+.perm-type{background:rgba(0,212,255,.08);color:var(--cyan)}
+.perm-owner{background:rgba(0,255,153,.06);color:var(--green)}
+.perm-group{background:rgba(168,85,247,.06);color:var(--purple)}
+.perm-other{background:rgba(255,176,32,.06);color:var(--amber)}
+
+/* AI ETHICS */
+.ethics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.ethics-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px;
+}
+.ethics-icon{font-size:20px;margin-bottom:6px}
+.ethics-name{font-size:12px;font-weight:700;color:#fff}
+.ethics-desc{font-size:10.5px;color:var(--muted);margin-top:4px}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  header{padding:24px 16px 20px}
+  .container{padding:20px 12px 60px}
+  .cert-header,.topic-header{padding:14px 16px}
+  .topic-body{padding:14px 14px 18px}
+  .diagram-wrap{padding:0 12px 14px}
+  .concept-desc{padding:10px 12px}
+  .ml-name{width:auto}
+  .owasp-name{flex:0 0 auto}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">CompTIA Reference Guide · 2026 Edition</div>
+  <h1>CompTIA <span>Certification</span> Cycles, Concepts &amp; Diagrams</h1>
+  <p>An interactive drop-down reference covering all major methodologies, frameworks, and visual models tested across core CompTIA certifications.</p>
+  <div class="cert-chips">
+    <div class="chip aplus active" onclick="filterCert('all')">ALL</div>
+    <div class="chip aplus" onclick="filterCert('aplus')">A+</div>
+    <div class="chip net" onclick="filterCert('net')">Network+</div>
+    <div class="chip sec" onclick="filterCert('sec')">Security+</div>
+    <div class="chip cysa" onclick="filterCert('cysa')">CySA+</div>
+    <div class="chip pentest" onclick="filterCert('pentest')">PenTest+</div>
+    <div class="chip linux" onclick="filterCert('linux')">Linux+</div>
+    <div class="chip ai" onclick="filterCert('ai')">AI+</div>
+    <div class="chip secx" onclick="filterCert('secx')">SecurityX</div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════
+     A+ SECTION
+═══════════════════════════════════════════════════ -->
+<div class="cert-section" data-cert="aplus">
+  <div class="cert-header" style="--accent:#ffb020" onclick="toggleCert(this)">
+    <span class="cert-tag" style="color:#ffb020">A+ · Core 1 &amp; Core 2</span>
+    <span class="cert-title">CompTIA A+  — Hardware, Software &amp; Troubleshooting</span>
+    <span class="cert-meta">Exams 220-1101 &amp; 220-1102</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="cert-body">
+
+    <!-- Troubleshooting Methodology -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🔧</span>
+        <span class="topic-name">CompTIA Troubleshooting Methodology</span>
+        <span class="topic-badge">6-STEP CYCLE</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Cycle</div>
+          <div class="concept-title">6-Step CompTIA Troubleshooting Process</div>
+          <div class="concept-desc">The standard methodology tested across all CompTIA certifications. Applies to hardware, software, networking, and security issues. Each step is sequential but the process can loop back to Step 3 if a theory doesn't resolve the issue.</div>
+          <div class="diagram-wrap">
+            <div class="diagram-title">▸ STEP-BY-STEP FLOWCHART</div>
+            <div class="flow">
+              <div class="flow-step" style="background:rgba(255,176,32,.1);border:1px solid rgba(255,176,32,.3);color:#ffb020;border-radius:6px;width:100%">
+                <div style="font-size:11px;opacity:.7;margin-bottom:2px">STEP 1</div>
+                Identify the Problem
+                <div style="font-size:11px;color:#a07040;font-weight:400;margin-top:4px">Gather info · Question user · Review documentation · Check environmental changes</div>
+              </div>
+              <div class="flow-arrow-down">▼</div>
+              <div class="flow-step" style="background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.2);color:#e09030;border-radius:6px;width:100%">
+                <div style="font-size:11px;opacity:.7;margin-bottom:2px">STEP 2</div>
+                Establish a Theory of Probable Cause
+                <div style="font-size:11px;color:#a07040;font-weight:400;margin-top:4px">Question the obvious first · Consider multiple causes · Research if needed</div>
+              </div>
+              <div class="flow-arrow-down">▼</div>
+              <div class="flow-step" style="background:rgba(255,176,32,.06);border:1px solid rgba(255,176,32,.15);color:#c08020;border-radius:6px;width:100%">
+                <div style="font-size:11px;opacity:.7;margin-bottom:2px">STEP 3</div>
+                Test the Theory to Determine the Cause
+                <div style="font-size:11px;color:#806030;font-weight:400;margin-top:4px">Confirm theory → proceed · Theory not confirmed → reestablish theory or escalate</div>
+              </div>
+              <div class="flow-arrow-down">▼</div>
+              <div class="flow-step" style="background:rgba(255,176,32,.05);border:1px solid rgba(255,176,32,.12);color:#b07010;border-radius:6px;width:100%">
+                <div style="font-size:11px;opacity:.7;margin-bottom:2px">STEP 4</div>
+                Establish a Plan of Action and Implement the Solution
+                <div style="font-size:11px;color:#806030;font-weight:400;margin-top:4px">Consider corporate policies · Refer to vendor documentation · Backup before changes</div>
+              </div>
+              <div class="flow-arrow-down">▼</div>
+              <div class="flow-step" style="background:rgba(255,176,32,.04);border:1px solid rgba(255,176,32,.1);color:#908000;border-radius:6px;width:100%">
+                <div style="font-size:11px;opacity:.7;margin-bottom:2px">STEP 5</div>
+                Verify Full System Functionality
+                <div style="font-size:11px;color:#706020;font-weight:400;margin-top:4px">Test the fix · Confirm with user · Implement preventive measures</div>
+              </div>
+              <div class="flow-arrow-down">▼</div>
+              <div class="flow-step" style="background:rgba(0,255,153,.06);border:1px solid rgba(0,255,153,.2);color:#00cc77;border-radius:6px;width:100%">
+                <div style="font-size:11px;opacity:.7;margin-bottom:2px">STEP 6</div>
+                Document Findings, Actions, and Outcomes
+                <div style="font-size:11px;color:#008844;font-weight:400;margin-top:4px">Create knowledge base entry · Inform stakeholders · Close ticket</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PC Boot Process -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">💻</span>
+        <span class="topic-name">PC Boot Process (POST → OS)</span>
+        <span class="topic-badge">BOOT SEQUENCE</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Sequence Diagram</div>
+          <div class="concept-title">Power-On Self-Test &amp; System Initialization</div>
+          <div class="concept-desc">The boot process describes how a computer transitions from powered-off state to a running OS. Understanding POST errors (beep codes, error messages) is critical for A+ hardware troubleshooting.</div>
+          <div class="diagram-wrap">
+            <div class="diagram-title">▸ BOOT SEQUENCE</div>
+            <div class="boot-seq">
+              <div class="boot-step" style="border-color:rgba(255,176,32,.5);color:#ffb020">
+                <div class="boot-content">
+                  <div class="boot-name">1 — Power On / Reset</div>
+                  <div class="boot-detail">CPU initializes · Sets instruction pointer to firmware entry address</div>
+                </div>
+              </div>
+              <div class="boot-step" style="border-color:rgba(255,176,32,.4);color:#e09030">
+                <div class="boot-content">
+                  <div class="boot-name">2 — POST (Power-On Self-Test)</div>
+                  <div class="boot-detail">BIOS/UEFI checks CPU, RAM, GPU, storage controllers · Beep codes signal failures</div>
+                </div>
+              </div>
+              <div class="boot-step" style="border-color:rgba(255,176,32,.3);color:#c07820">
+                <div class="boot-content">
+                  <div class="boot-name">3 — BIOS / UEFI Initialization</div>
+                  <div class="boot-detail">Loads hardware config · Reads CMOS/NVRAM settings · Applies boot device priority</div>
+                </div>
+              </div>
+              <div class="boot-step" style="border-color:rgba(255,176,32,.2);color:#a06010">
+                <div class="boot-content">
+                  <div class="boot-name">4 — MBR / GPT Boot Sector Read</div>
+                  <div class="boot-detail">Reads partition table on boot device · Locates active partition / EFI System Partition</div>
+                </div>
+              </div>
+              <div class="boot-step" style="border-color:rgba(0,212,255,.3);color:var(--cyan)">
+                <div class="boot-content">
+                  <div class="boot-name">5 — Bootloader (GRUB / Windows Boot Manager)</div>
+                  <div class="boot-detail">Loads OS kernel from disk into RAM · May present multi-boot menu</div>
+                </div>
+              </div>
+              <div class="boot-step" style="border-color:rgba(0,255,153,.3);color:var(--green)">
+                <div class="boot-content">
+                  <div class="boot-name">6 — OS Kernel Load</div>
+                  <div class="boot-detail">Kernel decompresses &amp; initializes · Sets up memory management, processes, drivers</div>
+                </div>
+              </div>
+              <div class="boot-step" style="border-color:rgba(0,255,153,.15);color:#00aa66;border-left-color:transparent">
+                <div class="boot-content">
+                  <div class="boot-name">7 — User Space / Login Screen</div>
+                  <div class="boot-detail">Init system (systemd/Winlogon) starts services · Login prompt presented</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OSI & TCP/IP included in A+ -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">📶</span>
+        <span class="topic-name">OSI Model — 7 Layers</span>
+        <span class="topic-badge">FOUNDATIONAL MODEL</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Reference Model</div>
+          <div class="concept-title">Open Systems Interconnection (OSI) Model</div>
+          <div class="concept-desc">A conceptual framework dividing network communication into 7 abstraction layers. Mnemonic: <strong style="color:#ffb020">Please Do Not Throw Sausage Pizza Away</strong> (Physical → Application) or <strong style="color:#00d4ff">All People Seem To Need Data Processing</strong> (Application → Physical).</div>
+          <div class="diagram-wrap">
+            <div class="diagram-title">▸ 7-LAYER STACK WITH PDU &amp; PROTOCOLS</div>
+            <div class="layer-stack">
+              <div class="layer" style="background:rgba(168,85,247,.12)"><div class="layer-num" style="color:#a855f7">7</div><div class="layer-name" style="color:#a855f7">Application</div><div class="layer-pdu">Data</div><div class="layer-proto">HTTP, FTP, DNS, SMTP, SNMP</div></div>
+              <div class="layer" style="background:rgba(168,85,247,.09)"><div class="layer-num" style="color:#c084f5">6</div><div class="layer-name" style="color:#c084f5">Presentation</div><div class="layer-pdu">Data</div><div class="layer-proto">TLS/SSL, JPEG, ASCII, MPEG</div></div>
+              <div class="layer" style="background:rgba(168,85,247,.06)"><div class="layer-num" style="color:#d8a0f7">5</div><div class="layer-name" style="color:#d8a0f7">Session</div><div class="layer-pdu">Data</div><div class="layer-proto">NetBIOS, RPC, SMB</div></div>
+              <div class="layer" style="background:rgba(0,212,255,.1)"><div class="layer-num" style="color:var(--cyan)">4</div><div class="layer-name" style="color:var(--cyan)">Transport</div><div class="layer-pdu">Segment (TCP) / Datagram (UDP)</div><div class="layer-proto">TCP, UDP, SCTP</div></div>
+              <div class="layer" style="background:rgba(0,255,153,.08)"><div class="layer-num" style="color:var(--green)">3</div><div class="layer-name" style="color:var(--green)">Network</div><div class="layer-pdu">Packet</div><div class="layer-proto">IP, ICMP, OSPF, BGP, RIP</div></div>
+              <div class="layer" style="background:rgba(255,176,32,.1)"><div class="layer-num" style="color:var(--amber)">2</div><div class="layer-name" style="color:var(--amber)">Data Link</div><div class="layer-pdu">Frame</div><div class="layer-proto">Ethernet, Wi-Fi (802.11), PPP, ARP</div></div>
+              <div class="layer" style="background:rgba(255,77,109,.1)"><div class="layer-num" style="color:var(--red)">1</div><div class="layer-name" style="color:var(--red)">Physical</div><div class="layer-pdu">Bits</div><div class="layer-proto">Coax, Fiber, UTP, Hubs, Repeaters</div></div>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:16px;flex-wrap:wrap">
+              <div style="font-size:11px;color:var(--muted)">⬆️ <strong style="color:#a855f7">Encapsulation</strong> — Data flows DOWN through layers, each adds a header</div>
+              <div style="font-size:11px;color:var(--muted)">⬇️ <strong style="color:var(--green)">De-encapsulation</strong> — Data flows UP through layers, headers are stripped</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /cert-body -->
+</div><!-- /A+ -->
+
+<!-- ═══════════════════════════════════════════════════
+     NETWORK+ SECTION
+═══════════════════════════════════════════════════ -->
+<div class="cert-section" data-cert="net">
+  <div class="cert-header" style="--accent:#38bdf8" onclick="toggleCert(this)">
+    <span class="cert-tag" style="color:#38bdf8">Network+ · N10-009</span>
+    <span class="cert-title">CompTIA Network+  — Networking Fundamentals</span>
+    <span class="cert-meta">Exam N10-009</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="cert-body">
+
+    <!-- TCP/IP Model -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🌐</span>
+        <span class="topic-name">TCP/IP Model — 4 Layers</span>
+        <span class="topic-badge">REFERENCE MODEL</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Reference Model</div>
+          <div class="concept-title">TCP/IP (DoD) Model vs OSI Mapping</div>
+          <div class="concept-desc">The practical model used on the Internet. Maps to the OSI model but collapses layers 5–7 into Application, layers 1–2 into Network Access.</div>
+          <div class="diagram-wrap">
+            <div class="diagram-title">▸ TCP/IP LAYERS WITH OSI MAPPING</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div>
+                <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:1px">TCP/IP MODEL</div>
+                <div class="layer-stack">
+                  <div class="layer" style="background:rgba(168,85,247,.12)"><div class="layer-name" style="color:#a855f7;padding:10px 14px">Application</div><div class="layer-proto" style="font-size:10px">HTTP,DNS,SMTP,SSH</div></div>
+                  <div class="layer" style="background:rgba(0,212,255,.1)"><div class="layer-name" style="color:var(--cyan);padding:10px 14px">Transport</div><div class="layer-proto" style="font-size:10px">TCP, UDP</div></div>
+                  <div class="layer" style="background:rgba(0,255,153,.08)"><div class="layer-name" style="color:var(--green);padding:10px 14px">Internet</div><div class="layer-proto" style="font-size:10px">IP, ICMP, ARP</div></div>
+                  <div class="layer" style="background:rgba(255,176,32,.1)"><div class="layer-name" style="color:var(--amber);padding:10px 14px">Network Access</div><div class="layer-proto" style="font-size:10px">Ethernet, Wi-Fi</div></div>
+                </div>
+              </div>
+              <div>
+                <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:1px">OSI EQUIVALENT</div>
+                <div class="layer-stack">
+                  <div style="display:flex;flex-direction:column;gap:2px;margin-bottom:3px">
+                    <div class="layer" style="background:rgba(168,85,247,.08)"><div class="layer-name" style="color:#d8a0f7;padding:6px 14px;font-size:11px">7 — Application</div></div>
+                    <div class="layer" style="background:rgba(168,85,247,.06)"><div class="layer-name" style="color:#c084f5;padding:6px 14px;font-size:11px">6 — Presentation</div></div>
+                    <div class="layer" style="background:rgba(168,85,247,.04)"><div class="layer-name" style="color:#b070e0;padding:6px 14px;font-size:11px">5 — Session</div></div>
+                  </div>
+                  <div class="layer" style="background:rgba(0,212,255,.08)"><div class="layer-name" style="color:var(--cyan);padding:10px 14px;font-size:11px">4 — Transport</div></div>
+                  <div class="layer" style="background:rgba(0,255,153,.06)"><div class="layer-name" style="color:var(--green);padding:10px 14px;font-size:11px">3 — Network</div></div>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <div class="layer" style="background:rgba(255,176,32,.08)"><div class="layer-name" style="color:var(--amber);padding:6px 14px;font-size:11px">2 — Data Link</div></div>
+                    <div class="layer" style="background:rgba(255,77,109,.08)"><div class="layer-name" style="color:var(--red);padding:6px 14px;font-size:11px">1 — Physical</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Network Topologies -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🗺️</span>
+        <span class="topic-name">Network Topologies</span>
+        <span class="topic-badge">VISUAL MODELS</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Diagram</div>
+          <div class="concept-title">Physical &amp; Logical Network Topology Types</div>
+          <div class="concept-desc">A network topology defines how devices are arranged and interconnected. Physical topology is the physical layout of cabling; logical topology is how data flows.</div>
+          <div class="diagram-wrap">
+            <div class="diagram-title">▸ TOPOLOGY VISUAL REFERENCE</div>
+            <div class="topo-grid">
+              <div class="topo-card">
+                <svg class="topo-svg" viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg">
+                  <line x1="90" y1="45" x2="30" y2="20" stroke="#38bdf8" stroke-width="1.5" opacity=".6"/>
+                  <line x1="90" y1="45" x2="150" y2="20" stroke="#38bdf8" stroke-width="1.5" opacity=".6"/>
+                  <line x1="90" y1="45" x2="30" y2="70" stroke="#38bdf8" stroke-width="1.5" opacity=".6"/>
+                  <line x1="90" y1="45" x2="150" y2="70" stroke="#38bdf8" stroke-width="1.5" opacity=".6"/>
+                  <line x1="90" y1="45" x2="90" y2="10" stroke="#38bdf8" stroke-width="1.5" opacity=".6"/>
+                  <circle cx="90" cy="45" r="8" fill="#0d1120" stroke="#00d4ff" stroke-width="2"/>
+                  <text x="90" y="49" fill="#00d4ff" font-size="8" text-anchor="middle" font-family="monospace">SW</text>
+                  <circle cx="30" cy="20" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <circle cx="150" cy="20" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <circle cx="30" cy="70" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <circle cx="150" cy="70" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <circle cx="90" cy="10" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                </svg>
+                <div class="topo-name">Star</div>
+                <div class="topo-desc">Central switch/hub. Easy fault isolation. Single point of failure.</div>
+              </div>
+              <div class="topo-card">
+                <svg class="topo-svg" viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg">
+                  <line x1="10" y1="45" x2="170" y2="45" stroke="#38bdf8" stroke-width="2" opacity=".5"/>
+                  <line x1="10" y1="43" x2="10" y2="47" stroke="#38bdf8" stroke-width="2" opacity=".7"/>
+                  <line x1="170" y1="43" x2="170" y2="47" stroke="#38bdf8" stroke-width="2" opacity=".7"/>
+                  <circle cx="45" cy="45" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <circle cx="90" cy="45" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <circle cx="135" cy="45" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <line x1="45" y1="40" x2="45" y2="20" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+                  <line x1="90" y1="40" x2="90" y2="20" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+                  <line x1="135" y1="40" x2="135" y2="20" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+                  <rect x="38" y="12" width="14" height="10" fill="#0d1120" stroke="#38bdf8" stroke-width="1" rx="1"/>
+                  <rect x="83" y="12" width="14" height="10" fill="#0d1120" stroke="#38bdf8" stroke-width="1" rx="1"/>
+                  <rect x="128" y="12" width="14" height="10" fill="#0d1120" stroke="#38bdf8" stroke-width="1" rx="1"/>
+                </svg>
+                <div class="topo-name">Bus</div>
+                <div class="topo-desc">Shared backbone. Simple but collisions &amp; single failure = full outage.</div>
+              </div>
+              <div class="topo-card">
+                <svg class="topo-svg" viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="90" cy="45" r="35" fill="none" stroke="#38bdf8" stroke-width="1.5" opacity=".4"/>
+                  <circle cx="90" cy="10" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <circle cx="120" cy="75" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <circle cx="60" cy="75" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <line x1="93" y1="14" x2="116" y2="71" stroke="#38bdf8" stroke-width="1.5" opacity=".6"/>
+                  <line x1="116" y1="71" x2="64" y2="71" stroke="#38bdf8" stroke-width="1.5" opacity=".6"/>
+                  <line x1="64" y1="71" x2="87" y2="14" stroke="#38bdf8" stroke-width="1.5" opacity=".6"/>
+                  <path d="M 90 10 Q 130 28 120 75" fill="none" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+                </svg>
+                <div class="topo-name">Ring</div>
+                <div class="topo-desc">Token-passing around a ring. One break = failure (unless dual-ring).</div>
+              </div>
+              <div class="topo-card">
+                <svg class="topo-svg" viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg">
+                  <line x1="30" y1="20" x2="90" y2="20" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <line x1="30" y1="20" x2="150" y2="20" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <line x1="30" y1="20" x2="30" y2="70" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <line x1="30" y1="20" x2="90" y2="70" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <line x1="90" y1="20" x2="150" y2="20" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <line x1="90" y1="20" x2="30" y2="70" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <line x1="90" y1="20" x2="90" y2="70" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <line x1="90" y1="20" x2="150" y2="70" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <line x1="150" y1="20" x2="30" y2="70" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <line x1="150" y1="20" x2="90" y2="70" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <line x1="150" y1="20" x2="150" y2="70" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <line x1="30" y1="70" x2="90" y2="70" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <line x1="30" y1="70" x2="150" y2="70" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <line x1="90" y1="70" x2="150" y2="70" stroke="#38bdf8" stroke-width="1" opacity=".5"/>
+                  <circle cx="30" cy="20" r="5" fill="#0d1120" stroke="#00d4ff" stroke-width="2"/>
+                  <circle cx="90" cy="20" r="5" fill="#0d1120" stroke="#00d4ff" stroke-width="2"/>
+                  <circle cx="150" cy="20" r="5" fill="#0d1120" stroke="#00d4ff" stroke-width="2"/>
+                  <circle cx="30" cy="70" r="5" fill="#0d1120" stroke="#00d4ff" stroke-width="2"/>
+                  <circle cx="90" cy="70" r="5" fill="#0d1120" stroke="#00d4ff" stroke-width="2"/>
+                  <circle cx="150" cy="70" r="5" fill="#0d1120" stroke="#00d4ff" stroke-width="2"/>
+                </svg>
+                <div class="topo-name">Full Mesh</div>
+                <div class="topo-desc">Every node connects to every other. Max redundancy. n(n-1)/2 links.</div>
+              </div>
+              <div class="topo-card">
+                <svg class="topo-svg" viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="90" cy="45" r="10" fill="#0d1120" stroke="#00d4ff" stroke-width="2"/>
+                  <text x="90" y="49" fill="#00d4ff" font-size="8" text-anchor="middle" font-family="monospace">HUB</text>
+                  <line x1="90" y1="35" x2="90" y2="15" stroke="#38bdf8" stroke-width="1.5" opacity=".6"/>
+                  <line x1="82" y1="40" x2="40" y2="20" stroke="#38bdf8" stroke-width="1.5" opacity=".6"/>
+                  <line x1="82" y1="50" x2="40" y2="70" stroke="#38bdf8" stroke-width="1.5" opacity=".6"/>
+                  <line x1="98" y1="40" x2="140" y2="20" stroke="#38bdf8" stroke-width="1.5" opacity=".6"/>
+                  <line x1="98" y1="50" x2="140" y2="70" stroke="#38bdf8" stroke-width="1.5" opacity=".6"/>
+                  <circle cx="90" cy="10" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <circle cx="36" cy="18" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <circle cx="36" cy="72" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <circle cx="144" cy="18" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <circle cx="144" cy="72" r="5" fill="#0d1120" stroke="#38bdf8" stroke-width="1.5"/>
+                  <line x1="40" y1="20" x2="40" y2="70" stroke="#555" stroke-width="1" stroke-dasharray="3,2" opacity=".6"/>
+                  <line x1="140" y1="20" x2="140" y2="70" stroke="#555" stroke-width="1" stroke-dasharray="3,2" opacity=".6"/>
+                </svg>
+                <div class="topo-name">Hybrid</div>
+                <div class="topo-desc">Mix of topologies (e.g., star-bus). Used in most enterprise networks.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DHCP DORA -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">📡</span>
+        <span class="topic-name">DHCP Process — DORA</span>
+        <span class="topic-badge">4-STEP SEQUENCE</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Sequence Diagram</div>
+          <div class="concept-title">Dynamic Host Configuration Protocol — DORA Handshake</div>
+          <div class="concept-desc">DHCP automatically assigns IP addresses to clients. DORA describes the 4-message exchange between client and server. All messages use UDP (67/68). DHCP uses broadcast initially since the client has no IP.</div>
+          <div class="diagram-wrap">
+            <div class="diagram-title">▸ DORA SEQUENCE</div>
+            <div class="dora-seq">
+              <div class="dora-item">
+                <div class="dora-letter">D</div>
+                <div class="dora-word">Discover</div>
+                <div class="dora-desc">Client broadcasts to find DHCP servers</div>
+              </div>
+              <div class="dora-arrow">→</div>
+              <div class="dora-item">
+                <div class="dora-letter">O</div>
+                <div class="dora-word">Offer</div>
+                <div class="dora-desc">Server offers available IP address</div>
+              </div>
+              <div class="dora-arrow">→</div>
+              <div class="dora-item">
+                <div class="dora-letter">R</div>
+                <div class="dora-word">Request</div>
+                <div class="dora-desc">Client requests the offered IP</div>
+              </div>
+              <div class="dora-arrow">→</div>
+              <div class="dora-item">
+                <div class="dora-letter">A</div>
+                <div class="dora-word">Acknowledge</div>
+                <div class="dora-desc">Server confirms IP lease to client</div>
+              </div>
+            </div>
+            <div style="margin-top:14px;padding:10px 14px;background:rgba(56,189,248,.05);border:1px solid rgba(56,189,248,.1);border-radius:4px;font-size:11.5px;color:var(--muted)">
+              <strong style="color:#38bdf8">Key Details:</strong> Uses UDP 67 (server) &amp; UDP 68 (client) · Default lease time typically 24h · APIPA fallback: 169.254.x.x · Relay agent (ip helper-address) routes DHCP across subnets
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /Network+ -->
+
+<!-- ═══════════════════════════════════════════════════
+     SECURITY+ SECTION
+═══════════════════════════════════════════════════ -->
+<div class="cert-section" data-cert="sec">
+  <div class="cert-header" style="--accent:#ff4d6d" onclick="toggleCert(this)">
+    <span class="cert-tag" style="color:#ff4d6d">Security+ · SY0-701</span>
+    <span class="cert-title">CompTIA Security+  — Cybersecurity Fundamentals</span>
+    <span class="cert-meta">Exam SY0-701</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="cert-body">
+
+    <!-- CIA Triad -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🔐</span>
+        <span class="topic-name">CIA Triad</span>
+        <span class="topic-badge">CORE MODEL</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Foundational Model</div>
+          <div class="concept-title">Confidentiality · Integrity · Availability</div>
+          <div class="concept-desc">The three pillars of information security. Every security control, policy, and decision maps back to one or more of these properties.</div>
+          <div class="diagram-wrap">
+            <div class="diagram-title">▸ CIA TRIAD</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+              <div style="background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.25);border-radius:6px;padding:16px;text-align:center">
+                <div style="font-size:24px;margin-bottom:8px">🔒</div>
+                <div style="font-size:13px;font-weight:700;color:var(--cyan)">Confidentiality</div>
+                <div style="font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.6">Data only accessible to authorized parties. Controls: encryption, access controls, MFA, classification</div>
+              </div>
+              <div style="background:rgba(0,255,153,.07);border:1px solid rgba(0,255,153,.25);border-radius:6px;padding:16px;text-align:center">
+                <div style="font-size:24px;margin-bottom:8px">✅</div>
+                <div style="font-size:13px;font-weight:700;color:var(--green)">Integrity</div>
+                <div style="font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.6">Data is accurate &amp; unmodified. Controls: hashing, digital signatures, checksums, version control</div>
+              </div>
+              <div style="background:rgba(255,176,32,.07);border:1px solid rgba(255,176,32,.25);border-radius:6px;padding:16px;text-align:center">
+                <div style="font-size:24px;margin-bottom:8px">⚡</div>
+                <div style="font-size:13px;font-weight:700;color:var(--amber)">Availability</div>
+                <div style="font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.6">Systems &amp; data accessible when needed. Controls: redundancy, backups, DDoS mitigation, uptime SLAs</div>
+              </div>
+            </div>
+            <div style="margin-top:10px;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:4px;font-size:11.5px;color:var(--muted)">
+              <strong style="color:#fff">Extended: DAD Triad</strong> (attack perspective) — Disclosure (vs Confidentiality) · Alteration (vs Integrity) · Destruction/Denial (vs Availability)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AAA Framework -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🎫</span>
+        <span class="topic-name">AAA Framework</span>
+        <span class="topic-badge">SECURITY MODEL</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Framework</div>
+          <div class="concept-title">Authentication · Authorization · Accounting</div>
+          <div class="concept-desc">The core framework for controlling access to resources. Implemented via RADIUS, TACACS+, and IAM systems.</div>
+          <div class="diagram-wrap">
+            <div class="aaa-grid">
+              <div class="aaa-card">
+                <div class="aaa-letter">A</div>
+                <div class="aaa-word">Authentication</div>
+                <div class="aaa-desc">WHO are you? Password, MFA, certificates, biometrics, smart cards</div>
+              </div>
+              <div class="aaa-card">
+                <div class="aaa-letter" style="color:var(--green)">A</div>
+                <div class="aaa-word">Authorization</div>
+                <div class="aaa-desc">WHAT can you access? ACLs, roles, policies, permissions after auth</div>
+              </div>
+              <div class="aaa-card">
+                <div class="aaa-letter" style="color:var(--amber)">A</div>
+                <div class="aaa-word">Accounting</div>
+                <div class="aaa-desc">WHAT did you do? Logs, audit trails, session records, SIEM feeds</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Access Control Models -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🗂️</span>
+        <span class="topic-name">Access Control Models</span>
+        <span class="topic-badge">4 MODELS</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Diagram — Comparison Table</div>
+          <div class="concept-title">DAC · MAC · RBAC · ABAC</div>
+          <div class="concept-desc">The four major access control paradigms. Understanding when and why each is used is heavily tested on Security+.</div>
+          <div class="diagram-wrap">
+            <table class="ac-table">
+              <tr><th>Model</th><th>Full Name</th><th>Who Controls Access</th><th>Key Characteristic</th><th>Example</th></tr>
+              <tr><td style="color:var(--cyan)">DAC</td><td>Discretionary</td><td>Data owner</td><td>Owner sets permissions; flexible but less secure</td><td>Windows NTFS file permissions</td></tr>
+              <tr><td style="color:var(--red)">MAC</td><td>Mandatory</td><td>System / admin policy</td><td>Labels &amp; clearances; government/military use</td><td>SELinux, MLS systems</td></tr>
+              <tr><td style="color:var(--green)">RBAC</td><td>Role-Based</td><td>Admin via roles</td><td>Permissions tied to job role, not individual</td><td>Active Directory groups</td></tr>
+              <tr><td style="color:var(--amber)">ABAC</td><td>Attribute-Based</td><td>Policy engine</td><td>Rules use multiple attributes (user, resource, env)</td><td>AWS IAM policies, XACML</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cyber Kill Chain -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">⚔️</span>
+        <span class="topic-name">Cyber Kill Chain (Lockheed Martin)</span>
+        <span class="topic-badge">7-PHASE MODEL</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Attack Framework</div>
+          <div class="concept-title">Adversary Intrusion Phases — Lockheed Martin Kill Chain</div>
+          <div class="concept-desc">Models the 7 sequential stages of a targeted cyberattack. Defenders can break the chain by disrupting any phase. The earlier the disruption, the lower the adversary's ROI.</div>
+          <div class="diagram-wrap">
+            <div class="kchain">
+              <div class="kc-row" style="border-color:rgba(168,85,247,.5);background:rgba(168,85,247,.05)"><div class="kc-num" style="color:#a855f7">01</div><div class="kc-phase">Reconnaissance</div><div class="kc-desc">OSINT, scanning, target profiling. Passive (DNS, WHOIS) and active (port scanning)</div></div>
+              <div class="kc-row" style="border-color:rgba(255,77,109,.5);background:rgba(255,77,109,.05)"><div class="kc-num" style="color:var(--red)">02</div><div class="kc-phase">Weaponization</div><div class="kc-desc">Create exploit payload + delivery mechanism (malware, infected PDF, macro)</div></div>
+              <div class="kc-row" style="border-color:rgba(255,126,20,.5);background:rgba(255,126,20,.05)"><div class="kc-num" style="color:#ff7e14">03</div><div class="kc-phase">Delivery</div><div class="kc-desc">Transmit weapon to target via email, USB, watering hole, web drive-by</div></div>
+              <div class="kc-row" style="border-color:rgba(255,176,32,.5);background:rgba(255,176,32,.05)"><div class="kc-num" style="color:var(--amber)">04</div><div class="kc-phase">Exploitation</div><div class="kc-desc">Trigger exploit on target — CVE exploit, macro execution, social engineering success</div></div>
+              <div class="kc-row" style="border-color:rgba(56,189,248,.5);background:rgba(56,189,248,.05)"><div class="kc-num" style="color:#38bdf8">05</div><div class="kc-phase">Installation</div><div class="kc-desc">Install RAT, backdoor, rootkit for persistent access. Modify registry, cron, services</div></div>
+              <div class="kc-row" style="border-color:rgba(0,212,255,.5);background:rgba(0,212,255,.05)"><div class="kc-num" style="color:var(--cyan)">06</div><div class="kc-phase">C2 / Command &amp; Control</div><div class="kc-desc">Establish covert channel to attacker's C2 server (IRC, HTTP/S, DNS tunneling)</div></div>
+              <div class="kc-row" style="border-color:rgba(0,255,153,.5);background:rgba(0,255,153,.05)"><div class="kc-num" style="color:var(--green)">07</div><div class="kc-phase">Actions on Objectives</div><div class="kc-desc">Exfiltrate data, encrypt for ransom, lateral movement, destroy, espionage</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zero Trust -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🛡️</span>
+        <span class="topic-name">Zero Trust Architecture</span>
+        <span class="topic-badge">ARCHITECTURE MODEL</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Architecture</div>
+          <div class="concept-title">Zero Trust — "Never Trust, Always Verify"</div>
+          <div class="concept-desc">Zero Trust eliminates implicit trust based on network location. Every access request is verified regardless of whether it originates inside or outside the traditional perimeter.</div>
+          <div class="diagram-wrap">
+            <div class="zt-pillars">
+              <div class="zt-pill"><div class="zt-icon">👤</div><div class="zt-name">Identity</div><div class="zt-desc">Verify every user — MFA, conditional access, IdP</div></div>
+              <div class="zt-pill"><div class="zt-icon">💻</div><div class="zt-name">Device</div><div class="zt-desc">Device health &amp; compliance checks, EDR, MDM</div></div>
+              <div class="zt-pill"><div class="zt-icon">🌐</div><div class="zt-name">Network</div><div class="zt-desc">Micro-segmentation, ZTNA, encrypted traffic</div></div>
+              <div class="zt-pill"><div class="zt-icon">🗃️</div><div class="zt-name">Data</div><div class="zt-desc">Classify, label, encrypt at rest &amp; in transit</div></div>
+              <div class="zt-pill"><div class="zt-icon">⚙️</div><div class="zt-name">Workload</div><div class="zt-desc">Secure apps &amp; APIs, container security, scanning</div></div>
+              <div class="zt-pill"><div class="zt-icon">📊</div><div class="zt-name">Visibility</div><div class="zt-desc">SIEM, UEBA, continuous monitoring &amp; analytics</div></div>
+            </div>
+            <div style="margin-top:10px;padding:10px 14px;background:rgba(255,77,109,.05);border:1px solid rgba(255,77,109,.15);border-radius:4px;font-size:11.5px;color:var(--muted)">
+              <strong style="color:var(--red)">Core Principle:</strong> Assume breach · Verify explicitly · Use least privilege access · Inspect and log all traffic
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PKI -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🏛️</span>
+        <span class="topic-name">PKI &amp; Certificate Lifecycle</span>
+        <span class="topic-badge">LIFECYCLE</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Lifecycle Diagram</div>
+          <div class="concept-title">Public Key Infrastructure — Certificate Flow</div>
+          <div class="concept-desc">PKI enables digital trust through certificates signed by trusted Certificate Authorities. Understanding the hierarchy (Root CA → Intermediate CA → End Entity) and lifecycle stages is key.</div>
+          <div class="diagram-wrap">
+            <div class="diagram-title">▸ PKI HIERARCHY &amp; CERTIFICATE LIFECYCLE</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:16px">
+              <div style="background:rgba(255,77,109,.1);border:2px solid rgba(255,77,109,.4);border-radius:6px;padding:10px 24px;font-size:13px;font-weight:700;color:var(--red);text-align:center">Root CA<div style="font-size:10px;font-weight:400;color:var(--muted);margin-top:2px">Self-signed · Offline · Ultimate trust anchor</div></div>
+              <div style="font-size:16px;color:var(--muted)">▼</div>
+              <div style="background:rgba(255,176,32,.08);border:2px solid rgba(255,176,32,.3);border-radius:6px;padding:10px 24px;font-size:13px;font-weight:700;color:var(--amber);text-align:center">Intermediate CA<div style="font-size:10px;font-weight:400;color:var(--muted);margin-top:2px">Signed by Root · May be online · Issues end-entity certs</div></div>
+              <div style="font-size:16px;color:var(--muted)">▼</div>
+              <div style="background:rgba(0,212,255,.07);border:2px solid rgba(0,212,255,.25);border-radius:6px;padding:10px 24px;font-size:13px;font-weight:700;color:var(--cyan);text-align:center">End-Entity Certificate<div style="font-size:10px;font-weight:400;color:var(--muted);margin-top:2px">TLS cert, Code signing cert, S/MIME cert</div></div>
+            </div>
+            <div class="diagram-title">▸ CERTIFICATE LIFECYCLE PHASES</div>
+            <div class="pki-flow">
+              <div class="pki-box" style="border-color:rgba(0,212,255,.3);color:var(--cyan)">📝 Request (CSR)</div>
+              <div class="pki-arrow">→</div>
+              <div class="pki-box" style="border-color:rgba(0,255,153,.3);color:var(--green)">✅ Issuance</div>
+              <div class="pki-arrow">→</div>
+              <div class="pki-box" style="border-color:rgba(255,176,32,.3);color:var(--amber)">📦 Distribution</div>
+              <div class="pki-arrow">→</div>
+              <div class="pki-box" style="border-color:rgba(168,85,247,.3);color:var(--purple)">🔄 Renewal</div>
+              <div class="pki-arrow">→</div>
+              <div class="pki-box" style="border-color:rgba(255,77,109,.3);color:var(--red)">❌ Revocation (CRL/OCSP)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cryptography Reference -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🔑</span>
+        <span class="topic-name">Cryptography — Algorithm Reference</span>
+        <span class="topic-badge">REFERENCE TABLE</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Table</div>
+          <div class="concept-title">Symmetric, Asymmetric, Hashing &amp; Key Exchange</div>
+          <div class="concept-desc">Core cryptographic algorithms, their key sizes, and use cases. Symmetric = same key for encrypt/decrypt. Asymmetric = public key encrypts, private key decrypts.</div>
+          <div class="diagram-wrap">
+            <table class="crypto-table">
+              <tr><th>Algorithm</th><th>Type</th><th>Key/Output Size</th><th>Use Case</th><th>Status</th></tr>
+              <tr><td>AES</td><td>Symmetric block</td><td>128/192/256-bit</td><td>File encryption, TLS bulk data, disk encryption</td><td style="color:var(--green)">✔ Current</td></tr>
+              <tr><td>3DES</td><td>Symmetric block</td><td>168-bit effective</td><td>Legacy banking, some POS systems</td><td style="color:var(--amber)">⚠ Legacy</td></tr>
+              <tr><td>RSA</td><td>Asymmetric</td><td>2048–4096-bit</td><td>Key exchange, digital signatures, TLS handshake</td><td style="color:var(--green)">✔ Current</td></tr>
+              <tr><td>ECC</td><td>Asymmetric</td><td>256-bit (=3072 RSA)</td><td>TLS, mobile, IoT — smaller key, same strength</td><td style="color:var(--green)">✔ Preferred</td></tr>
+              <tr><td>SHA-256 / SHA-3</td><td>Hashing</td><td>256/384/512-bit</td><td>File integrity, password hashing, digital signatures</td><td style="color:var(--green)">✔ Current</td></tr>
+              <tr><td>MD5</td><td>Hashing</td><td>128-bit</td><td>Checksums only (collisions known — NOT security)</td><td style="color:var(--red)">✖ Deprecated</td></tr>
+              <tr><td>Diffie-Hellman</td><td>Key Exchange</td><td>2048+ bit</td><td>Negotiate shared secret over insecure channel</td><td style="color:var(--green)">✔ Current</td></tr>
+              <tr><td>ChaCha20-Poly1305</td><td>Sym. stream + AEAD</td><td>256-bit</td><td>TLS 1.3, mobile encryption (no hardware AES)</td><td style="color:var(--green)">✔ Modern</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cloud Models -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">☁️</span>
+        <span class="topic-name">Cloud Service &amp; Deployment Models</span>
+        <span class="topic-badge">CLOUD MODELS</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Model Diagram</div>
+          <div class="concept-title">IaaS / PaaS / SaaS — Shared Responsibility Model</div>
+          <div class="concept-desc">Cloud service models define what the provider manages vs. what the customer is responsible for. The shared responsibility model is critical for Security+ cloud security questions.</div>
+          <div class="diagram-wrap">
+            <div class="diagram-title">▸ CLOUD SERVICE MODELS — RESPONSIBILITY STACK</div>
+            <div style="margin-bottom:10px">
+              <div style="display:flex;gap:0;margin-bottom:4px">
+                <div style="width:130px;font-size:10px;color:var(--muted);padding:4px 0;font-family:var(--mono)">LAYER</div>
+                <div style="flex:1;text-align:center;font-size:11px;font-weight:700;color:var(--red);padding:4px 0">ON-PREM</div>
+                <div style="flex:1;text-align:center;font-size:11px;font-weight:700;color:var(--amber);padding:4px 0">IaaS</div>
+                <div style="flex:1;text-align:center;font-size:11px;font-weight:700;color:var(--cyan);padding:4px 0">PaaS</div>
+                <div style="flex:1;text-align:center;font-size:11px;font-weight:700;color:var(--green);padding:4px 0">SaaS</div>
+              </div>
+              <!-- stack rows -->
+              <script>
+                var layers = ["Applications","Data","Runtime","Middleware","OS","Virtualization","Servers","Storage","Networking"];
+                var onprem = [1,1,1,1,1,1,1,1,1];
+                var iaas   = [1,1,1,1,1,0,0,0,0];
+                var paas   = [1,1,0,0,0,0,0,0,0];
+                var saas   = [0,0,0,0,0,0,0,0,0];
+                document.addEventListener('DOMContentLoaded',function(){
+                  var container = document.getElementById('cloud-stack-rows');
+                  layers.forEach(function(l,i){
+                    var row = document.createElement('div');
+                    row.style.cssText='display:flex;gap:0;margin-bottom:3px;align-items:stretch';
+                    var label = document.createElement('div');
+                    label.style.cssText='width:130px;font-size:11.5px;color:var(--text);padding:6px 4px 6px 0;flex-shrink:0;font-weight:500';
+                    label.textContent=l;
+                    row.appendChild(label);
+                    [onprem[i],iaas[i],paas[i],saas[i]].forEach(function(v){
+                      var cell = document.createElement('div');
+                      cell.style.cssText='flex:1;text-align:center;padding:6px;font-size:11px;font-weight:600;border-radius:3px;margin:0 2px;'+(v?'background:rgba(255,77,109,.12);color:#ff4d6d':'background:rgba(0,212,255,.08);color:#00d4ff');
+                      cell.textContent=v?'Customer':'Provider';
+                      row.appendChild(cell);
+                    });
+                    container.appendChild(row);
+                  });
+                });
+              </script>
+              <div id="cloud-stack-rows"></div>
+            </div>
+            <div style="margin-top:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+              <div style="font-size:11px;color:var(--muted)"><strong style="color:#38bdf8">Deployment:</strong> Public · Private · Hybrid · Multi-cloud · Community</div>
+              <div style="font-size:11px;color:var(--muted)"><strong style="color:#38bdf8">Other Models:</strong> FaaS (serverless) · XaaS · NaaS · DBaaS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /Security+ -->
+
+<!-- ═══════════════════════════════════════════════════
+     CySA+ SECTION
+═══════════════════════════════════════════════════ -->
+<div class="cert-section" data-cert="cysa">
+  <div class="cert-header" style="--accent:#a855f7" onclick="toggleCert(this)">
+    <span class="cert-tag" style="color:#a855f7">CySA+ · CS0-003</span>
+    <span class="cert-title">CompTIA CySA+  — Cybersecurity Analyst</span>
+    <span class="cert-meta">Exam CS0-003</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="cert-body">
+
+    <!-- Incident Response Lifecycle -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🚨</span>
+        <span class="topic-name">Incident Response Lifecycle (NIST SP 800-61)</span>
+        <span class="topic-badge">4-PHASE CYCLE</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Lifecycle — NIST Framework</div>
+          <div class="concept-title">PICERL vs NIST Incident Response Phases</div>
+          <div class="concept-desc">NIST SP 800-61 defines 4 phases. CompTIA adds a "Lessons Learned" step, often remembered as <strong style="color:#a855f7">PICERL</strong>: Preparation · Identification · Containment · Eradication · Recovery · Lessons Learned.</div>
+          <div class="diagram-wrap">
+            <div class="lifecycle">
+              <div class="lc-step">
+                <div class="lc-circle" style="border-color:#a855f7;color:#a855f7;background:rgba(168,85,247,.08)"><div style="text-align:center;line-height:1.3;font-size:10px">P<br>Prep</div></div>
+                <div class="lc-label">Preparation<br>Policies, tools, team</div>
+              </div>
+              <div style="font-size:20px;color:var(--muted);align-self:center;margin-top:-20px">→</div>
+              <div class="lc-step">
+                <div class="lc-circle" style="border-color:var(--red);color:var(--red);background:rgba(255,77,109,.08)"><div style="text-align:center;line-height:1.3;font-size:10px">I<br>Ident</div></div>
+                <div class="lc-label">Identification<br>Detect &amp; triage</div>
+              </div>
+              <div style="font-size:20px;color:var(--muted);align-self:center;margin-top:-20px">→</div>
+              <div class="lc-step">
+                <div class="lc-circle" style="border-color:var(--amber);color:var(--amber);background:rgba(255,176,32,.08)"><div style="text-align:center;line-height:1.3;font-size:10px">C<br>Cont</div></div>
+                <div class="lc-label">Containment<br>Short &amp; long-term</div>
+              </div>
+              <div style="font-size:20px;color:var(--muted);align-self:center;margin-top:-20px">→</div>
+              <div class="lc-step">
+                <div class="lc-circle" style="border-color:#38bdf8;color:#38bdf8;background:rgba(56,189,248,.08)"><div style="text-align:center;line-height:1.3;font-size:10px">E<br>Erad</div></div>
+                <div class="lc-label">Eradication<br>Remove threat</div>
+              </div>
+              <div style="font-size:20px;color:var(--muted);align-self:center;margin-top:-20px">→</div>
+              <div class="lc-step">
+                <div class="lc-circle" style="border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,.08)"><div style="text-align:center;line-height:1.3;font-size:10px">R<br>Recov</div></div>
+                <div class="lc-label">Recovery<br>Restore &amp; validate</div>
+              </div>
+              <div style="font-size:20px;color:var(--muted);align-self:center;margin-top:-20px">→</div>
+              <div class="lc-step">
+                <div class="lc-circle" style="border-color:var(--green);color:var(--green);background:rgba(0,255,153,.08)"><div style="text-align:center;line-height:1.3;font-size:10px">L<br>Learn</div></div>
+                <div class="lc-label">Lessons<br>Learned</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Threat Intelligence Cycle -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🕵️</span>
+        <span class="topic-name">Threat Intelligence Cycle</span>
+        <span class="topic-badge">6-PHASE CYCLE</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Cycle</div>
+          <div class="concept-title">Intelligence Lifecycle — Direction to Dissemination</div>
+          <div class="concept-desc">The structured process for producing actionable threat intelligence from raw data. Transforms IOCs and TTPs into decisions that improve defensive posture.</div>
+          <div class="diagram-wrap">
+            <div class="ti-cycle">
+              <div class="ti-step"><div class="ti-icon">🎯</div><div>Direction &amp; Planning</div></div>
+              <div style="align-self:center;color:var(--muted);font-size:16px">→</div>
+              <div class="ti-step"><div class="ti-icon">🔍</div><div>Collection</div></div>
+              <div style="align-self:center;color:var(--muted);font-size:16px">→</div>
+              <div class="ti-step"><div class="ti-icon">⚙️</div><div>Processing</div></div>
+              <div style="align-self:center;color:var(--muted);font-size:16px">→</div>
+              <div class="ti-step"><div class="ti-icon">🧠</div><div>Analysis</div></div>
+              <div style="align-self:center;color:var(--muted);font-size:16px">→</div>
+              <div class="ti-step"><div class="ti-icon">📣</div><div>Dissemination</div></div>
+              <div style="align-self:center;color:var(--muted);font-size:16px">→</div>
+              <div class="ti-step"><div class="ti-icon">♻️</div><div>Feedback</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diamond Model -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">💎</span>
+        <span class="topic-name">Diamond Model of Intrusion Analysis</span>
+        <span class="topic-badge">ANALYSIS MODEL</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Analysis Framework</div>
+          <div class="concept-title">Adversary · Infrastructure · Capability · Victim</div>
+          <div class="concept-desc">Developed by Caltagirone, Pendergast &amp; Betz. Every intrusion event has four core features forming a diamond. Meta-features include timestamps, phase, results, and direction. Used to pivot intelligence and understand attacker TTPs.</div>
+          <div class="diagram-wrap">
+            <div class="diamond-wrap">
+              <div class="diamond-grid">
+                <div></div>
+                <div class="d-node d-adv">Adversary<div style="font-size:10px;font-weight:400;margin-top:3px">Who is attacking?<br>Nation-state, criminal, insider</div></div>
+                <div></div>
+                <div class="d-node d-inf">Infrastructure<div style="font-size:10px;font-weight:400;margin-top:3px">C2 servers, IPs<br>domains, proxies</div></div>
+                <div class="d-center">ACTIVITY<br>THREAD</div>
+                <div class="d-node d-cap">Capability<div style="font-size:10px;font-weight:400;margin-top:3px">Malware, exploits<br>TTPs, tools</div></div>
+                <div></div>
+                <div class="d-node d-vic">Victim<div style="font-size:10px;font-weight:400;margin-top:3px">Target — person<br>org, or asset</div></div>
+                <div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vulnerability Management -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🔎</span>
+        <span class="topic-name">Vulnerability Management Lifecycle</span>
+        <span class="topic-badge">6-STEP LIFECYCLE</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Lifecycle</div>
+          <div class="concept-title">Discover → Prioritize → Act → Reassess → Improve</div>
+          <div class="diagram-wrap">
+            <div class="kchain">
+              <div class="kc-row" style="border-color:rgba(0,212,255,.4);background:rgba(0,212,255,.04)"><div class="kc-num" style="color:var(--cyan)">01</div><div class="kc-phase">Asset Discovery</div><div class="kc-desc">Inventory all assets, devices, applications, and data stores. Network scans, CMDB</div></div>
+              <div class="kc-row" style="border-color:rgba(168,85,247,.4);background:rgba(168,85,247,.04)"><div class="kc-num" style="color:#a855f7">02</div><div class="kc-phase">Vulnerability Scan</div><div class="kc-desc">Active scanning (credentialed/non-credentialed) using Nessus, Qualys, OpenVAS</div></div>
+              <div class="kc-row" style="border-color:rgba(255,176,32,.4);background:rgba(255,176,32,.04)"><div class="kc-num" style="color:var(--amber)">03</div><div class="kc-phase">Risk Prioritization</div><div class="kc-desc">CVSS scoring, asset criticality, exploitability (EPSS), business context</div></div>
+              <div class="kc-row" style="border-color:rgba(255,77,109,.4);background:rgba(255,77,109,.04)"><div class="kc-num" style="color:var(--red)">04</div><div class="kc-phase">Remediation</div><div class="kc-desc">Patch, reconfigure, isolate, or accept risk. Track remediation timelines by severity</div></div>
+              <div class="kc-row" style="border-color:rgba(0,255,153,.4);background:rgba(0,255,153,.04)"><div class="kc-num" style="color:var(--green)">05</div><div class="kc-phase">Verification</div><div class="kc-desc">Rescan to confirm remediation. False-positive review. Validate patch deployment</div></div>
+              <div class="kc-row" style="border-color:rgba(56,189,248,.4);background:rgba(56,189,248,.04)"><div class="kc-num" style="color:#38bdf8">06</div><div class="kc-phase">Reporting &amp; Metrics</div><div class="kc-desc">MTTR, risk reduction over time, SLA compliance, executive dashboard reporting</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /CySA+ -->
+
+<!-- ═══════════════════════════════════════════════════
+     PENTEST+ SECTION
+═══════════════════════════════════════════════════ -->
+<div class="cert-section" data-cert="pentest">
+  <div class="cert-header" style="--accent:#fb923c" onclick="toggleCert(this)">
+    <span class="cert-tag" style="color:#fb923c">PenTest+ · PT0-003</span>
+    <span class="cert-title">CompTIA PenTest+  — Penetration Testing</span>
+    <span class="cert-meta">Exam PT0-003</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="cert-body">
+
+    <!-- Pentest Phases -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🎯</span>
+        <span class="topic-name">Penetration Testing Phases</span>
+        <span class="topic-badge">5-PHASE METHODOLOGY</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Methodology</div>
+          <div class="concept-title">Full Pentest Engagement — Planning to Reporting</div>
+          <div class="concept-desc">The standard pentest engagement follows five phases. Rules of Engagement (RoE) and scope are defined in Phase 1; findings and remediation guidance are delivered in Phase 5.</div>
+          <div class="diagram-wrap">
+            <div class="pt-phases">
+              <div class="pt-phase" data-num="1" style="border-color:rgba(251,146,60,.5);color:#fb923c">
+                <div class="pt-content">
+                  <div class="pt-pname">Planning &amp; Scoping</div>
+                  <div class="pt-tasks">Define objectives · Rules of Engagement (RoE) · Target IP ranges / apps · Legal authorization · NDA · Statement of Work (SoW) · Emergency contacts</div>
+                </div>
+              </div>
+              <div class="pt-phase" data-num="2" style="border-color:rgba(168,85,247,.5);color:#a855f7">
+                <div class="pt-content">
+                  <div class="pt-pname">Reconnaissance &amp; OSINT</div>
+                  <div class="pt-tasks">Passive: WHOIS, DNS, Shodan, LinkedIn, certificate transparency · Active: Port scanning (Nmap), banner grabbing, subdomain enumeration, network mapping</div>
+                </div>
+              </div>
+              <div class="pt-phase" data-num="3" style="border-color:rgba(255,77,109,.5);color:var(--red)">
+                <div class="pt-content">
+                  <div class="pt-pname">Scanning &amp; Enumeration</div>
+                  <div class="pt-tasks">Vulnerability scanning · Service versioning · SMB/SNMP/LDAP enumeration · Web app scanning (Burp Suite, Nikto) · Credential spraying · Network mapping</div>
+                </div>
+              </div>
+              <div class="pt-phase" data-num="4" style="border-color:rgba(255,176,32,.5);color:var(--amber)">
+                <div class="pt-content">
+                  <div class="pt-pname">Exploitation &amp; Post-Exploitation</div>
+                  <div class="pt-tasks">Exploit identified vulns (Metasploit, custom) · Privilege escalation · Lateral movement · Persistence (backdoors, scheduled tasks) · Data exfiltration · Pivoting</div>
+                </div>
+              </div>
+              <div class="pt-phase" data-num="5" style="border-color:rgba(0,255,153,.5);color:var(--green);border-left-color:rgba(0,255,153,.5)">
+                <div class="pt-content">
+                  <div class="pt-pname">Reporting &amp; Remediation</div>
+                  <div class="pt-tasks">Executive summary · Technical findings · CVSS scoring · Risk ratings · PoC evidence · Remediation recommendations · Attestation &amp; clean-up · Retesting</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OWASP Top 10 -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🌐</span>
+        <span class="topic-name">OWASP Top 10 Web Vulnerabilities</span>
+        <span class="topic-badge">REFERENCE LIST</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Reference — OWASP 2021</div>
+          <div class="concept-title">Top 10 Web Application Security Risks</div>
+          <div class="diagram-wrap">
+            <div class="owasp-list">
+              <div class="owasp-item"><div class="owasp-rank">A01</div><div class="owasp-name">Broken Access Control</div><div class="owasp-desc">Restrictions on authenticated users not properly enforced; privilege escalation, IDOR</div></div>
+              <div class="owasp-item"><div class="owasp-rank">A02</div><div class="owasp-name">Cryptographic Failures</div><div class="owasp-desc">Weak encryption, cleartext transmission of sensitive data, broken crypto</div></div>
+              <div class="owasp-item"><div class="owasp-rank">A03</div><div class="owasp-name">Injection</div><div class="owasp-desc">SQL, OS command, LDAP injection — untrusted data sent to interpreter</div></div>
+              <div class="owasp-item"><div class="owasp-rank">A04</div><div class="owasp-name">Insecure Design</div><div class="owasp-desc">Missing or ineffective security controls in design phase; threat modeling failures</div></div>
+              <div class="owasp-item"><div class="owasp-rank">A05</div><div class="owasp-name">Security Misconfiguration</div><div class="owasp-desc">Default creds, open cloud storage, verbose error messages, unnecessary features enabled</div></div>
+              <div class="owasp-item"><div class="owasp-rank">A06</div><div class="owasp-name">Vulnerable &amp; Outdated Components</div><div class="owasp-desc">Using components with known CVEs; unpatched libraries, frameworks, OS</div></div>
+              <div class="owasp-item"><div class="owasp-rank">A07</div><div class="owasp-name">ID &amp; Auth Failures</div><div class="owasp-desc">Weak passwords, missing MFA, session fixation, credential stuffing</div></div>
+              <div class="owasp-item"><div class="owasp-rank">A08</div><div class="owasp-name">Software &amp; Data Integrity Failures</div><div class="owasp-desc">Insecure deserialization, CI/CD pipeline attacks, unsigned updates</div></div>
+              <div class="owasp-item"><div class="owasp-rank">A09</div><div class="owasp-name">Logging &amp; Monitoring Failures</div><div class="owasp-desc">Insufficient logging, no alerting on failed logins, logs not protected from tampering</div></div>
+              <div class="owasp-item"><div class="owasp-rank">A10</div><div class="owasp-name">Server-Side Request Forgery</div><div class="owasp-desc">SSRF — server fetches attacker-controlled remote resource, used to reach internal systems</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /PenTest+ -->
+
+<!-- ═══════════════════════════════════════════════════
+     LINUX+ SECTION
+═══════════════════════════════════════════════════ -->
+<div class="cert-section" data-cert="linux">
+  <div class="cert-header" style="--accent:#00ff99" onclick="toggleCert(this)">
+    <span class="cert-tag" style="color:#00ff99">Linux+ · XK0-005</span>
+    <span class="cert-title">CompTIA Linux+  — Linux Administration</span>
+    <span class="cert-meta">Exam XK0-005</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="cert-body">
+
+    <!-- FHS -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🗂️</span>
+        <span class="topic-name">Linux Filesystem Hierarchy Standard (FHS)</span>
+        <span class="topic-badge">DIRECTORY TREE</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Diagram — Directory Tree</div>
+          <div class="concept-title">FHS — Standard Linux Directory Structure</div>
+          <div class="concept-desc">The Filesystem Hierarchy Standard defines the directory structure of Linux/Unix systems. Everything begins at root <code>/</code>. Knowing the purpose of each directory is heavily tested on Linux+.</div>
+          <div class="diagram-wrap">
+            <div class="tree">
+              <div><span class="tree-dir">/</span> <span class="tree-desc">— Root of entire filesystem hierarchy</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">bin/</span> <span class="tree-desc">— Essential user command binaries (ls, cp, mv, grep)</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">sbin/</span> <span class="tree-desc">— System admin binaries (fdisk, iptables, init)</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">etc/</span> <span class="tree-desc">— System-wide configuration files (passwd, fstab, hosts)</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">home/</span> <span class="tree-desc">— User home directories (/home/alice, /home/bob)</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">root/</span> <span class="tree-desc">— Root user's home directory (not inside /home)</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">var/</span> <span class="tree-desc">— Variable data: logs (/var/log), spool, mail, databases</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">tmp/</span> <span class="tree-desc">— Temporary files; cleared on reboot (usually)</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">usr/</span> <span class="tree-desc">— User programs &amp; data (secondary hierarchy)</span></div>
+              <div style="margin-left:32px"><span class="tree-node">├─ </span><span class="tree-dir">usr/bin/</span> <span class="tree-desc">— Non-essential user binaries</span></div>
+              <div style="margin-left:32px"><span class="tree-node">├─ </span><span class="tree-dir">usr/lib/</span> <span class="tree-desc">— Libraries for /usr/bin &amp; /usr/sbin</span></div>
+              <div style="margin-left:32px"><span class="tree-node">└─ </span><span class="tree-dir">usr/share/</span> <span class="tree-desc">— Architecture-independent data (man pages)</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">lib/</span> <span class="tree-desc">— Shared libraries for /bin &amp; /sbin (libc.so, kernel modules)</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">dev/</span> <span class="tree-desc">— Device files (block &amp; character devices: /dev/sda, /dev/null)</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">proc/</span> <span class="tree-desc">— Virtual FS: kernel &amp; process info (/proc/cpuinfo, /proc/meminfo)</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">sys/</span> <span class="tree-desc">— Virtual FS: hardware &amp; kernel device info (sysfs)</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">mnt/</span> <span class="tree-desc">— Temporary mount point for filesystems</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">media/</span> <span class="tree-desc">— Auto-mounted removable media (USB drives, CDs)</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">opt/</span> <span class="tree-desc">— Optional / third-party software packages</span></div>
+              <div style="margin-left:16px"><span class="tree-node">├─ </span><span class="tree-dir">srv/</span> <span class="tree-desc">— Service data (web server files, FTP data)</span></div>
+              <div style="margin-left:16px"><span class="tree-node">└─ </span><span class="tree-dir">boot/</span> <span class="tree-desc">— Boot loader files: kernel (vmlinuz), initrd, GRUB config</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Linux File Permissions -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🔏</span>
+        <span class="topic-name">Linux File Permissions Model</span>
+        <span class="topic-badge">PERMISSIONS MODEL</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Diagram</div>
+          <div class="concept-title">rwxrwxrwx — Permission Bit Structure</div>
+          <div class="concept-desc">Linux permissions control read (r=4), write (w=2), and execute (x=1) for three user classes: Owner, Group, Others. Special bits: SUID (4), SGID (2), Sticky (1).</div>
+          <div class="diagram-wrap">
+            <div class="perm-row">
+              <div class="perm-bit perm-type">Type<div style="font-size:16px;margin-top:4px">-/d/l</div></div>
+              <div class="perm-bit perm-owner">Owner<div style="font-size:13px;font-weight:700;margin-top:4px">r w x</div><div style="font-size:10px;color:var(--muted)">4+2+1</div></div>
+              <div class="perm-bit perm-group">Group<div style="font-size:13px;font-weight:700;margin-top:4px">r w x</div><div style="font-size:10px;color:var(--muted)">4+2+1</div></div>
+              <div class="perm-bit perm-other">Others<div style="font-size:13px;font-weight:700;margin-top:4px">r w x</div><div style="font-size:10px;color:var(--muted)">4+2+1</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:10px">
+              <div style="background:rgba(0,255,153,.05);border:1px solid rgba(0,255,153,.15);border-radius:4px;padding:10px 12px">
+                <div style="font-family:var(--mono);font-size:11px;color:var(--green);margin-bottom:4px">EXAMPLE: -rwxr-xr--</div>
+                <div style="font-size:11px;color:var(--muted)">File · Owner:rwx(7) · Group:r-x(5) · Other:r--(4) → chmod 754</div>
+              </div>
+              <div style="background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.15);border-radius:4px;padding:10px 12px">
+                <div style="font-family:var(--mono);font-size:11px;color:var(--cyan);margin-bottom:4px">SPECIAL BITS</div>
+                <div style="font-size:11px;color:var(--muted)">SUID (4xxx): runs as file owner · SGID (2xxx): runs as group · Sticky (1xxx): /tmp — only owner can delete</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Linux Boot Process -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🚀</span>
+        <span class="topic-name">Linux Boot Process (BIOS/UEFI → systemd)</span>
+        <span class="topic-badge">BOOT SEQUENCE</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Sequence Diagram</div>
+          <div class="concept-title">Full Linux Boot Chain</div>
+          <div class="diagram-wrap">
+            <div class="phases" style="flex-direction:column;gap:0">
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <div class="kc-row" style="border-color:rgba(255,176,32,.4);background:rgba(255,176,32,.04)"><div class="kc-num" style="color:var(--amber)">1</div><div class="kc-phase">BIOS / UEFI</div><div class="kc-desc">Firmware init · POST · Locate bootable device via boot order</div></div>
+                <div class="kc-row" style="border-color:rgba(255,176,32,.3);background:rgba(255,176,32,.03)"><div class="kc-num" style="color:#d09020">2</div><div class="kc-phase">MBR / GPT</div><div class="kc-desc">Read partition table from first sector · Load GRUB stage 1 (MBR) or UEFI (ESP)</div></div>
+                <div class="kc-row" style="border-color:rgba(0,212,255,.4);background:rgba(0,212,255,.04)"><div class="kc-num" style="color:var(--cyan)">3</div><div class="kc-phase">GRUB2</div><div class="kc-desc">Bootloader presents menu · Loads kernel image (vmlinuz) + initramfs into memory</div></div>
+                <div class="kc-row" style="border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.03)"><div class="kc-num" style="color:#00aad0">4</div><div class="kc-phase">Kernel Initialization</div><div class="kc-desc">Decompresses itself · Mounts initramfs as temporary root · Probes hardware · Loads drivers</div></div>
+                <div class="kc-row" style="border-color:rgba(0,255,153,.4);background:rgba(0,255,153,.04)"><div class="kc-num" style="color:var(--green)">5</div><div class="kc-phase">initramfs / initrd</div><div class="kc-desc">Temporary root filesystem in RAM · Provides drivers needed to mount real root filesystem</div></div>
+                <div class="kc-row" style="border-color:rgba(0,255,153,.3);background:rgba(0,255,153,.03)"><div class="kc-num" style="color:#00cc77">6</div><div class="kc-phase">systemd (PID 1)</div><div class="kc-desc">First real process · Reads unit files · Manages targets (runlevels) · Starts services in parallel</div></div>
+                <div class="kc-row" style="border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.03)"><div class="kc-num" style="color:#a855f7">7</div><div class="kc-phase">Login / TTY / GUI</div><div class="kc-desc">getty for console · Display manager (GDM/LightDM) for GUI · User session starts</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /Linux+ -->
+
+<!-- ═══════════════════════════════════════════════════
+     AI+ SECTION
+═══════════════════════════════════════════════════ -->
+<div class="cert-section" data-cert="ai">
+  <div class="cert-header" style="--accent:#e879f9" onclick="toggleCert(this)">
+    <span class="cert-tag" style="color:#e879f9">AI+ · FC0-U71</span>
+    <span class="cert-title">CompTIA AI+  — Artificial Intelligence Fundamentals</span>
+    <span class="cert-meta">Exam FC0-U71</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="cert-body">
+
+    <!-- ML Pipeline -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🤖</span>
+        <span class="topic-name">Machine Learning Pipeline</span>
+        <span class="topic-badge">ML WORKFLOW</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Workflow Diagram</div>
+          <div class="concept-title">End-to-End ML Model Development Pipeline</div>
+          <div class="concept-desc">The complete lifecycle from raw data to deployed model. Each phase produces artifacts consumed by the next. Iterative loops are common — especially between data prep and model training.</div>
+          <div class="diagram-wrap">
+            <div class="ml-flow">
+              <div class="ml-step"><div class="ml-num">01</div><div class="ml-name">Problem Definition</div><div class="ml-desc">Define objectives, success metrics, task type (classification/regression/clustering), KPIs</div></div>
+              <div class="ml-step"><div class="ml-num">02</div><div class="ml-name">Data Collection</div><div class="ml-desc">Gather structured/unstructured data from APIs, databases, scraping, sensors, surveys</div></div>
+              <div class="ml-step"><div class="ml-num">03</div><div class="ml-name">Data Preprocessing</div><div class="ml-desc">Handle missing values, remove duplicates, fix data types, address class imbalance</div></div>
+              <div class="ml-step"><div class="ml-num">04</div><div class="ml-name">EDA &amp; Feature Engineering</div><div class="ml-desc">Exploratory analysis, correlation analysis, normalization, encoding, feature selection</div></div>
+              <div class="ml-step"><div class="ml-num">05</div><div class="ml-name">Model Selection &amp; Training</div><div class="ml-desc">Choose algorithm, split data (train/val/test), train model, tune hyperparameters</div></div>
+              <div class="ml-step"><div class="ml-num">06</div><div class="ml-name">Model Evaluation</div><div class="ml-desc">Accuracy, precision, recall, F1, ROC-AUC, confusion matrix, cross-validation</div></div>
+              <div class="ml-step"><div class="ml-num">07</div><div class="ml-name">Model Deployment</div><div class="ml-desc">Export model (ONNX, pickle, TF SavedModel), serve via REST API, containerize</div></div>
+              <div class="ml-step"><div class="ml-num">08</div><div class="ml-name">Monitoring &amp; Maintenance</div><div class="ml-desc">Detect data drift, model degradation, retrain schedule, A/B testing, feedback loops</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI/ML Model Types -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🧠</span>
+        <span class="topic-name">AI/ML Model Types &amp; Learning Paradigms</span>
+        <span class="topic-badge">MODEL TAXONOMY</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Taxonomy Diagram</div>
+          <div class="concept-title">Supervised · Unsupervised · Reinforcement · Generative</div>
+          <div class="diagram-wrap">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+              <div style="background:rgba(232,121,249,.07);border:1px solid rgba(232,121,249,.25);border-radius:6px;padding:14px">
+                <div style="font-size:12px;font-weight:700;color:#e879f9;margin-bottom:8px">📚 SUPERVISED</div>
+                <div style="font-size:11.5px;color:var(--muted);line-height:1.7">Labeled training data · Input→Output mapping<br><strong style="color:var(--text)">Classification:</strong> SVM, Decision Trees, Neural Nets<br><strong style="color:var(--text)">Regression:</strong> Linear/Logistic Regression, XGBoost</div>
+              </div>
+              <div style="background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.25);border-radius:6px;padding:14px">
+                <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:8px">🔍 UNSUPERVISED</div>
+                <div style="font-size:11.5px;color:var(--muted);line-height:1.7">No labels · Find patterns in data<br><strong style="color:var(--text)">Clustering:</strong> K-Means, DBSCAN, Hierarchical<br><strong style="color:var(--text)">Dimensionality:</strong> PCA, t-SNE, Autoencoders</div>
+              </div>
+              <div style="background:rgba(0,255,153,.07);border:1px solid rgba(0,255,153,.25);border-radius:6px;padding:14px">
+                <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">🎮 REINFORCEMENT</div>
+                <div style="font-size:11.5px;color:var(--muted);line-height:1.7">Agent learns via reward signals<br><strong style="color:var(--text)">Algorithms:</strong> Q-Learning, Policy Gradient, PPO<br><strong style="color:var(--text)">Use cases:</strong> Game AI, robotics, AdTech</div>
+              </div>
+              <div style="background:rgba(255,176,32,.07);border:1px solid rgba(255,176,32,.25);border-radius:6px;padding:14px">
+                <div style="font-size:12px;font-weight:700;color:var(--amber);margin-bottom:8px">✨ GENERATIVE</div>
+                <div style="font-size:11.5px;color:var(--muted);line-height:1.7">Creates new content from learned patterns<br><strong style="color:var(--text)">Models:</strong> LLMs (GPT/Claude), GANs, Diffusion models<br><strong style="color:var(--text)">Output:</strong> Text, images, audio, code</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Ethics Framework -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">⚖️</span>
+        <span class="topic-name">AI Ethics &amp; Responsible AI Framework</span>
+        <span class="topic-badge">ETHICS MODEL</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Framework</div>
+          <div class="concept-title">Responsible AI Pillars — NIST AI RMF</div>
+          <div class="concept-desc">The NIST AI Risk Management Framework (AI RMF) and similar frameworks define principles for trustworthy AI. These are tested on the AI+ exam across design, deployment, and governance contexts.</div>
+          <div class="diagram-wrap">
+            <div class="ethics-grid">
+              <div class="ethics-card"><div class="ethics-icon">⚖️</div><div class="ethics-name">Fairness &amp; Bias</div><div class="ethics-desc">Detect &amp; mitigate bias in training data and model outputs; demographic parity</div></div>
+              <div class="ethics-card"><div class="ethics-icon">🔍</div><div class="ethics-name">Transparency</div><div class="ethics-desc">Explainable AI (XAI), model cards, audit trails; stakeholders understand decisions</div></div>
+              <div class="ethics-card"><div class="ethics-icon">🛡️</div><div class="ethics-name">Safety &amp; Security</div><div class="ethics-desc">Adversarial attacks (prompt injection, poisoning), robustness, fallback mechanisms</div></div>
+              <div class="ethics-card"><div class="ethics-icon">🔒</div><div class="ethics-name">Privacy</div><div class="ethics-desc">Data minimization, differential privacy, GDPR/CCPA compliance, PII handling</div></div>
+              <div class="ethics-card"><div class="ethics-icon">📋</div><div class="ethics-name">Accountability</div><div class="ethics-desc">Human-in-the-loop, governance policies, audit mechanisms, liability frameworks</div></div>
+              <div class="ethics-card"><div class="ethics-icon">🌍</div><div class="ethics-name">Sustainability</div><div class="ethics-desc">Environmental cost of training, energy-efficient architectures, carbon impact</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Neural Network Architecture -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🕸️</span>
+        <span class="topic-name">Neural Network Architecture</span>
+        <span class="topic-badge">ARCHITECTURE MODEL</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Architecture Diagram</div>
+          <div class="concept-title">Feedforward Neural Network — Layers</div>
+          <div class="diagram-wrap">
+            <div style="display:flex;justify-content:space-around;align-items:center;padding:10px 0;gap:10px">
+              <div style="text-align:center">
+                <div style="font-size:11px;color:#e879f9;font-weight:700;margin-bottom:8px;font-family:var(--mono)">INPUT LAYER</div>
+                <div style="display:flex;flex-direction:column;gap:8px;align-items:center">
+                  <div style="width:36px;height:36px;border-radius:50%;background:rgba(232,121,249,.15);border:2px solid rgba(232,121,249,.5);display:flex;align-items:center;justify-content:center;font-size:11px;color:#e879f9">x₁</div>
+                  <div style="width:36px;height:36px;border-radius:50%;background:rgba(232,121,249,.15);border:2px solid rgba(232,121,249,.5);display:flex;align-items:center;justify-content:center;font-size:11px;color:#e879f9">x₂</div>
+                  <div style="width:36px;height:36px;border-radius:50%;background:rgba(232,121,249,.15);border:2px solid rgba(232,121,249,.5);display:flex;align-items:center;justify-content:center;font-size:11px;color:#e879f9">x₃</div>
+                </div>
+                <div style="font-size:10px;color:var(--muted);margin-top:6px">Raw features</div>
+              </div>
+              <div style="color:var(--muted);font-size:20px">⟶</div>
+              <div style="text-align:center">
+                <div style="font-size:11px;color:var(--cyan);font-weight:700;margin-bottom:8px;font-family:var(--mono)">HIDDEN LAYERS</div>
+                <div style="display:flex;gap:16px">
+                  <div style="display:flex;flex-direction:column;gap:6px;align-items:center">
+                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(0,212,255,.12);border:2px solid rgba(0,212,255,.4);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--cyan)">h₁</div>
+                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(0,212,255,.12);border:2px solid rgba(0,212,255,.4);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--cyan)">h₂</div>
+                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(0,212,255,.12);border:2px solid rgba(0,212,255,.4);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--cyan)">h₃</div>
+                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(0,212,255,.12);border:2px solid rgba(0,212,255,.4);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--cyan)">h₄</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;align-items:center">
+                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(0,212,255,.08);border:2px solid rgba(0,212,255,.3);display:flex;align-items:center;justify-content:center;font-size:10px;color:#00a0cc">h₁</div>
+                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(0,212,255,.08);border:2px solid rgba(0,212,255,.3);display:flex;align-items:center;justify-content:center;font-size:10px;color:#00a0cc">h₂</div>
+                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(0,212,255,.08);border:2px solid rgba(0,212,255,.3);display:flex;align-items:center;justify-content:center;font-size:10px;color:#00a0cc">h₃</div>
+                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(0,212,255,.08);border:2px solid rgba(0,212,255,.3);display:flex;align-items:center;justify-content:center;font-size:10px;color:#00a0cc">h₄</div>
+                  </div>
+                </div>
+                <div style="font-size:10px;color:var(--muted);margin-top:6px">Weighted activation</div>
+              </div>
+              <div style="color:var(--muted);font-size:20px">⟶</div>
+              <div style="text-align:center">
+                <div style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:8px;font-family:var(--mono)">OUTPUT LAYER</div>
+                <div style="display:flex;flex-direction:column;gap:8px;align-items:center">
+                  <div style="width:36px;height:36px;border-radius:50%;background:rgba(0,255,153,.12);border:2px solid rgba(0,255,153,.4);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--green)">y₁</div>
+                  <div style="width:36px;height:36px;border-radius:50%;background:rgba(0,255,153,.12);border:2px solid rgba(0,255,153,.4);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--green)">y₂</div>
+                </div>
+                <div style="font-size:10px;color:var(--muted);margin-top:6px">Prediction/class</div>
+              </div>
+            </div>
+            <div style="margin-top:12px;padding:10px 14px;background:rgba(232,121,249,.05);border:1px solid rgba(232,121,249,.15);border-radius:4px;font-size:11.5px;color:var(--muted)">
+              <strong style="color:#e879f9">Activation Functions:</strong> ReLU (most hidden layers) · Sigmoid (binary output) · Softmax (multi-class) · Tanh · GELU (Transformers) &nbsp;|&nbsp; <strong style="color:#e879f9">Training:</strong> Backpropagation + Gradient Descent (SGD/Adam)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /AI+ -->
+
+<!-- ═══════════════════════════════════════════════════
+     SecurityX SECTION
+═══════════════════════════════════════════════════ -->
+<div class="cert-section" data-cert="secx">
+  <div class="cert-header" style="--accent:#00d4ff" onclick="toggleCert(this)">
+    <span class="cert-tag" style="color:#00d4ff">SecurityX · CAS-005</span>
+    <span class="cert-title">CompTIA SecurityX  — Advanced Security Practitioner</span>
+    <span class="cert-meta">Exam CAS-005</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="cert-body">
+
+    <!-- Risk Management Lifecycle -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">⚠️</span>
+        <span class="topic-name">Risk Management Lifecycle</span>
+        <span class="topic-badge">LIFECYCLE</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Lifecycle Diagram</div>
+          <div class="concept-title">Enterprise Risk Management — Identify → Treat → Monitor</div>
+          <div class="concept-desc">Risk management is a continuous cycle. SecurityX tests candidates on enterprise risk frameworks including NIST RMF, ISO 31000, and FAIR (Factor Analysis of Information Risk).</div>
+          <div class="diagram-wrap">
+            <div class="kchain">
+              <div class="kc-row" style="border-color:rgba(0,212,255,.4);background:rgba(0,212,255,.04)"><div class="kc-num" style="color:var(--cyan)">1</div><div class="kc-phase">Identify Risks</div><div class="kc-desc">Asset inventory, threat modeling, vulnerability identification, BIA (Business Impact Analysis)</div></div>
+              <div class="kc-row" style="border-color:rgba(168,85,247,.4);background:rgba(168,85,247,.04)"><div class="kc-num" style="color:#a855f7">2</div><div class="kc-phase">Analyze Risks</div><div class="kc-desc">Qualitative vs Quantitative · ALE = ARO × SLE · Likelihood × Impact matrix</div></div>
+              <div class="kc-row" style="border-color:rgba(255,176,32,.4);background:rgba(255,176,32,.04)"><div class="kc-num" style="color:var(--amber)">3</div><div class="kc-phase">Evaluate &amp; Prioritize</div><div class="kc-desc">Risk register · Risk appetite vs risk tolerance · Residual vs inherent risk · Heat maps</div></div>
+              <div class="kc-row" style="border-color:rgba(255,77,109,.4);background:rgba(255,77,109,.04)"><div class="kc-num" style="color:var(--red)">4</div><div class="kc-phase">Treat Risks (4 T's)</div><div class="kc-desc"><strong>Transfer</strong> (insurance) · <strong>Avoid</strong> (stop activity) · <strong>Mitigate</strong> (controls) · <strong>Accept</strong> (acknowledge risk)</div></div>
+              <div class="kc-row" style="border-color:rgba(0,255,153,.4);background:rgba(0,255,153,.04)"><div class="kc-num" style="color:var(--green)">5</div><div class="kc-phase">Monitor &amp; Review</div><div class="kc-desc">Continuous monitoring · KRI dashboards · Reassess after control changes · Audit findings</div></div>
+            </div>
+            <div style="margin-top:14px">
+              <div class="diagram-title">▸ RISK MATRIX — LIKELIHOOD × IMPACT</div>
+              <table class="risk-matrix">
+                <tr><th></th><th>LOW Impact</th><th>MEDIUM Impact</th><th>HIGH Impact</th><th>CRITICAL Impact</th></tr>
+                <tr><th>HIGH Likelihood</th><td class="r-med">MEDIUM</td><td class="r-high">HIGH</td><td class="r-crit">CRITICAL</td><td class="r-crit">CRITICAL</td></tr>
+                <tr><th>MED Likelihood</th><td class="r-low">LOW</td><td class="r-med">MEDIUM</td><td class="r-high">HIGH</td><td class="r-crit">CRITICAL</td></tr>
+                <tr><th>LOW Likelihood</th><td class="r-low">LOW</td><td class="r-low">LOW</td><td class="r-med">MEDIUM</td><td class="r-high">HIGH</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NIST CSF -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">📐</span>
+        <span class="topic-name">NIST Cybersecurity Framework (CSF 2.0)</span>
+        <span class="topic-badge">FRAMEWORK</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Framework Diagram</div>
+          <div class="concept-title">GOVERN · IDENTIFY · PROTECT · DETECT · RESPOND · RECOVER</div>
+          <div class="concept-desc">NIST CSF 2.0 (released 2024) adds a new "Govern" function to the original 5. This framework is the gold standard for enterprise cybersecurity program structure. SecurityX tests deep understanding of all 6 functions.</div>
+          <div class="diagram-wrap">
+            <div class="nist-row" style="background:rgba(255,176,32,.06)"><div class="nist-fn" style="color:var(--amber)">GV<br>Govern</div><div class="nist-cats">Organizational Context · Risk Management Strategy · Cybersecurity Supply Chain Risk · Policy · Oversight · Roles &amp; Responsibilities</div></div>
+            <div class="nist-row" style="background:rgba(0,212,255,.05)"><div class="nist-fn" style="color:var(--cyan)">ID<br>Identify</div><div class="nist-cats">Asset Management · Business Environment · Risk Assessment · Improvement</div></div>
+            <div class="nist-row" style="background:rgba(0,255,153,.05)"><div class="nist-fn" style="color:var(--green)">PR<br>Protect</div><div class="nist-cats">Identity Management · Awareness Training · Data Security · Platform Security · Technology Infrastructure Resilience</div></div>
+            <div class="nist-row" style="background:rgba(168,85,247,.05)"><div class="nist-fn" style="color:#a855f7">DE<br>Detect</div><div class="nist-cats">Continuous Monitoring · Adverse Event Analysis · Indicators of Compromise (IOCs)</div></div>
+            <div class="nist-row" style="background:rgba(255,77,109,.05)"><div class="nist-fn" style="color:var(--red)">RS<br>Respond</div><div class="nist-cats">Incident Management · Incident Analysis · Incident Response Reporting &amp; Communication · Mitigation · Improvements</div></div>
+            <div class="nist-row" style="background:rgba(56,189,248,.05)"><div class="nist-fn" style="color:#38bdf8">RC<br>Recover</div><div class="nist-cats">Incident Recovery Plan Execution · Incident Recovery Communication · Restoration of Affected Systems</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enterprise Security Architecture -->
+    <div class="topic">
+      <div class="topic-header" onclick="toggleTopic(this)">
+        <span class="topic-icon">🏗️</span>
+        <span class="topic-name">Defense-in-Depth / Layered Security Model</span>
+        <span class="topic-badge">ARCHITECTURE</span>
+        <span class="topic-chevron">▶</span>
+      </div>
+      <div class="topic-body">
+        <div class="concept-card">
+          <div class="concept-label">Architecture Diagram</div>
+          <div class="concept-title">Concentric Security Zones — People → Perimeter → Data</div>
+          <div class="concept-desc">Defense-in-depth layers multiple controls so that if one fails, others remain. SecurityX tests the strategic integration of these layers within enterprise security architectures.</div>
+          <div class="diagram-wrap">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="text-align:center;padding:12px;background:rgba(255,77,109,.12);border:2px solid rgba(255,77,109,.3);border-radius:6px;font-size:12px;font-weight:700;color:var(--red)">🧠 Policies, Procedures &amp; Awareness<div style="font-weight:400;font-size:11px;color:var(--muted);margin-top:3px">Security culture · Training · Governance · Compliance</div></div>
+              <div style="text-align:center;padding:12px;background:rgba(255,126,20,.1);border:2px solid rgba(255,126,20,.25);border-radius:6px;font-size:12px;font-weight:700;color:#ff7e14">🏢 Physical Security<div style="font-weight:400;font-size:11px;color:var(--muted);margin-top:3px">Perimeter fencing · Badges · CCTV · Mantrap · Clean desk</div></div>
+              <div style="text-align:center;padding:12px;background:rgba(255,176,32,.09);border:2px solid rgba(255,176,32,.2);border-radius:6px;font-size:12px;font-weight:700;color:var(--amber)">🌐 Network Perimeter<div style="font-weight:400;font-size:11px;color:var(--muted);margin-top:3px">Firewall · IDS/IPS · WAF · VPN · DMZ · NAC</div></div>
+              <div style="text-align:center;padding:12px;background:rgba(56,189,248,.08);border:2px solid rgba(56,189,248,.2);border-radius:6px;font-size:12px;font-weight:700;color:#38bdf8">🔌 Internal Network<div style="font-weight:400;font-size:11px;color:var(--muted);margin-top:3px">Segmentation · VLANs · 802.1X · Network monitoring · SIEM</div></div>
+              <div style="text-align:center;padding:12px;background:rgba(0,212,255,.07);border:2px solid rgba(0,212,255,.18);border-radius:6px;font-size:12px;font-weight:700;color:var(--cyan)">🖥️ Host / Endpoint<div style="font-weight:400;font-size:11px;color:var(--muted);margin-top:3px">EDR · Hardening · Patching · FDE · Host firewall · Application control</div></div>
+              <div style="text-align:center;padding:12px;background:rgba(168,85,247,.07);border:2px solid rgba(168,85,247,.18);border-radius:6px;font-size:12px;font-weight:700;color:#a855f7">⚙️ Application<div style="font-weight:400;font-size:11px;color:var(--muted);margin-top:3px">SAST/DAST · Secure SDLC · Input validation · WAF · Code signing</div></div>
+              <div style="text-align:center;padding:12px;background:rgba(0,255,153,.07);border:2px solid rgba(0,255,153,.2);border-radius:6px;font-size:12px;font-weight:700;color:var(--green)">🗄️ Data<div style="font-weight:400;font-size:11px;color:var(--muted);margin-top:3px">Encryption at rest &amp; in transit · DLP · Data classification · Rights management (DRM/IRM)</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /SecurityX -->
+
+</div><!-- /container -->
+
+<!-- ═══ FOOTER ═══ -->
+<div style="position:relative;z-index:1;text-align:center;padding:20px;border-top:1px solid var(--border);background:var(--bg2)">
+  <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:2px">
+    COMPTIA REFERENCE GUIDE · 2026 EDITION · A+ · NETWORK+ · SECURITY+ · CYSA+ · PENTEST+ · LINUX+ · AI+ · SECURITYX
+  </div>
+</div>
+
+<script>
+function toggleCert(header){
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  header.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+}
+
+function toggleTopic(header){
+  const body = header.nextElementSibling;
+  header.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+function filterCert(cert){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.cert-section').forEach(s=>{
+    if(cert==='all' || s.dataset.cert===cert){
+      s.classList.remove('hidden');
+    } else {
+      s.classList.add('hidden');
+    }
+  });
+}
+
+// Auto-open all cert bodies on load for discoverability
+window.addEventListener('DOMContentLoaded', function(){
+  // Keep closed by default for clean UX
+  // Render the cloud responsibility table
+  var container = document.getElementById('cloud-stack-rows');
+  if(container){
+    var layers = ["Applications","Data","Runtime","Middleware","OS","Virtualization","Servers","Storage","Networking"];
+    var onprem = [1,1,1,1,1,1,1,1,1];
+    var iaas   = [1,1,1,1,1,0,0,0,0];
+    var paas   = [1,1,0,0,0,0,0,0,0];
+    var saas   = [0,0,0,0,0,0,0,0,0];
+    layers.forEach(function(l,i){
+      var row = document.createElement('div');
+      row.style.cssText='display:flex;gap:0;margin-bottom:3px;align-items:stretch';
+      var label = document.createElement('div');
+      label.style.cssText='width:130px;font-size:11.5px;color:#cdd9f0;padding:6px 4px 6px 0;flex-shrink:0;font-weight:500';
+      label.textContent=l;
+      row.appendChild(label);
+      [[onprem[i],'rgba(255,77,109,.12)','#ff4d6d','rgba(255,77,109,.25)'],
+       [iaas[i],'rgba(255,176,32,.08)','#ffb020','rgba(255,176,32,.2)'],
+       [paas[i],'rgba(0,212,255,.08)','#00d4ff','rgba(0,212,255,.2)'],
+       [saas[i],'rgba(0,255,153,.08)','#00ff99','rgba(0,255,153,.2)']].forEach(function(v){
+        var cell = document.createElement('div');
+        cell.style.cssText='flex:1;text-align:center;padding:5px;font-size:11px;font-weight:600;border-radius:3px;margin:0 2px;background:'+(v[0]?v[1]:'rgba(255,255,255,.03)')+';color:'+(v[0]?v[2]:'#3a4a60')+';border:1px solid '+(v[0]?v[3]:'rgba(255,255,255,.06)');
+        cell.textContent=v[0]?'Customer':'Provider';
+        row.appendChild(cell);
+      });
+      container.appendChild(row);
+    });
+  }
+});
+</script>
+</body>
+</html>
