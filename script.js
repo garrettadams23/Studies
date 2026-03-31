@@ -82,3 +82,16 @@
           container.appendChild(row);
         });
       })();
+
+      // ── Toggle All
+      var allExpanded = false;
+      function toggleAll(btn) {
+        allExpanded = !allExpanded;
+        var headers = document.querySelectorAll(".domain-header, .topic-header");
+        var bodies = document.querySelectorAll(".domain-body, .topic-body");
+
+        headers.forEach((h) => h.classList.toggle("open", allExpanded));
+        bodies.forEach((b) => b.classList.toggle("open", allExpanded));
+
+        btn.textContent = allExpanded ? "↕ COLLAPSE ALL" : "↕ EXPAND ALL";
+      }
