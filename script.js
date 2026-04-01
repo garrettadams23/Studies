@@ -23,6 +23,36 @@
         });
       }
 
+      // ── Theme toggle
+      function toggleTheme(btn) {
+        const doc = document.documentElement;
+        const currentTheme = doc.getAttribute("data-theme");
+        const newTheme = currentTheme === "light" ? "dark" : "light";
+
+        doc.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+
+        updateThemeButton(btn, newTheme);
+      }
+
+      function updateThemeButton(btn, theme) {
+        if (!btn) return;
+        btn.textContent = theme === "light" ? "☾ DARK MODE" : "☀ LIGHT MODE";
+        btn.style.color = theme === "light" ? "var(--purple)" : "var(--amber)";
+        btn.style.borderColor =
+          theme === "light" ? "var(--purple)" : "var(--amber)";
+      }
+
+      // ── Initialize theme
+      (function () {
+        const savedTheme = localStorage.getItem("theme") || "dark";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+        window.addEventListener("DOMContentLoaded", () => {
+          const btn = document.getElementById("theme-toggle-btn");
+          updateThemeButton(btn, savedTheme);
+        });
+      })();
+
       // ── Build cloud responsibility stack
       (function () {
         var container = document.getElementById("cloud-stack");

@@ -1,9 +1,20 @@
-fix the favicon within index.html
+# 📋 Project Development Plan — Tech Reference 2026
 
-Add the @Studying-Tips.png to the right header part where there is still space on the website.
+## 🎨 UI & Visual Enhancements
+- [x] **Favicon Optimization**: Audit and fix favicon pathing and manifest implementation in `index.html` to ensure cross-browser compatibility.
+- [x] **Header Layout**: Reposition `Studying-Tips.png` to the right side of the header to utilize whitespace more effectively.
+- [x] **Theme Engine**: Implement a global toggle to switch between **Light Mode** and **Dark Mode** (CSS Variables + LocalStorage).
 
-add to the JavaScript for es2025 version. I want you to have example of each concepts in JavaScript for each version of JavaScript that had a function to JavaScript.
+## 📚 Technical Content Updates
+- [x] **JavaScript Mastery**: 
+  - [x] Add ES2025 feature set.
+  - [x] Create a chronological concept reference with functional examples for every major version (ES6 through ES2025).
+- [x] **Linux Systems**:
+  - [x] Expand the **Linux File Permissions Model** section to better explain file type indicators (`-` regular, `d` directory, `l` link, `c` character device, `b` block device).
+- [x] **AI & Machine Learning Expansion**:
+  - [x] Integrate specific sections for: **Skills, Sub-agents, MCP Servers, Claude, Openclaw, and Docker**.
+- [x] **Shortcut Reference**:
+  - [x] Add a dedicated domain for productivity shortcuts: **General, Windows, Linux, Excel, Word, and Spotify**.
 
-explain the "Type -/d/l/c/b" better in the "Linux File Permissions Model" section.
-
-Update the @README.md to base it off the the content in this repo
+## 🛠️ Repository Maintenance
+- [x] **README Overhaul**: Completely rewrite `README.md` to align with the current repository contents, architecture, and feature set.
