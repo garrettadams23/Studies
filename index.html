@@ -719,6 +719,108 @@ tracert 8.8.8.8             <span class="com"># Windows equivalent</span>
             </div>
           </div>
 
+          <!-- ═══════════════════════════════════════════════════════════
+               NEW TOPIC: TCPDump Packet Capture Reference
+               Source: TCPDump Cheat Sheet — 241-400pg PDF
+               Domain: Networking
+          ═══════════════════════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">📡</span>
+              <span class="topic-name">TCPDump — Packet Capture Reference</span>
+              <span class="topic-badge">COMPLETE REFERENCE</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Source: TCPDump Cheat Sheet</div>
+                <div class="concept-title">Capture · Filter · Display · Output — Full Command Reference</div>
+                <div class="concept-desc">
+                  TCPDump is the standard CLI packet analyzer on Linux/Unix.
+                  Requires root or CAP_NET_RAW. Use <code style="color:var(--cyan)">which tcpdump</code> to locate.
+                  Write to <code style="color:var(--cyan)">.pcap</code> files to open in Wireshark.
+                </div>
+                <div class="dw">
+                  <div class="code-label">CAPTURE FLAGS</div>
+                  <div class="code-block">
+<span class="fn">tcpdump</span> -i any              <span class="com"># Capture on ALL interfaces (needs root)</span>
+<span class="fn">tcpdump</span> -i eth0             <span class="com"># Capture on specific interface</span>
+<span class="fn">tcpdump</span> -i eth0 -c 100      <span class="com"># Stop after 100 packets</span>
+<span class="fn">tcpdump</span> -i eth0 tcp          <span class="com"># TCP packets only</span>
+<span class="fn">tcpdump</span> -i eth0 udp          <span class="com"># UDP packets only</span>
+<span class="fn">tcpdump</span> -i eth0 icmp         <span class="com"># ICMP only (ping traffic)</span>
+<span class="fn">tcpdump</span> -i eth0 arp          <span class="com"># ARP packets only</span>
+<span class="fn">tcpdump</span> -I eth0              <span class="com"># Monitor mode (Wi-Fi sniffing)</span>
+<span class="fn">tcpdump</span> -r capture.pcap      <span class="com"># Read &amp; analyze saved capture file</span></div>
+
+                  <div class="code-label">FILTER EXPRESSIONS</div>
+                  <div class="code-block">
+<span class="com"># Host filters</span>
+<span class="fn">tcpdump</span> host 192.168.1.1      <span class="com"># Any traffic to/from IP</span>
+<span class="fn">tcpdump</span> src host 10.0.0.5     <span class="com"># Source IP only</span>
+<span class="fn">tcpdump</span> dst host 10.0.0.5     <span class="com"># Destination IP only</span>
+<span class="fn">tcpdump</span> net 192.168.0.0/24    <span class="com"># Entire subnet</span>
+
+<span class="com"># Port filters</span>
+<span class="fn">tcpdump</span> port 443              <span class="com"># Any traffic on port 443</span>
+<span class="fn">tcpdump</span> src port 80           <span class="com"># Source port 80</span>
+<span class="fn">tcpdump</span> portrange 1000-2000   <span class="com"># Port range</span>
+<span class="fn">tcpdump</span> tcp dst port 22       <span class="com"># TCP to port 22 (SSH)</span>
+
+<span class="com"># MAC/Layer 2 filters</span>
+<span class="fn">tcpdump</span> ether host 00:11:22:33:44:55
+<span class="fn">tcpdump</span> ether broadcast       <span class="com"># Ethernet broadcast frames</span>
+
+<span class="com"># Logical operators</span>
+<span class="fn">tcpdump</span> src 10.0.0.1 and port 443           <span class="com"># AND</span>
+<span class="fn">tcpdump</span> dst 10.0.0.1 or src port 22         <span class="com"># OR</span>
+<span class="fn">tcpdump</span> port 80 and not host 192.168.1.5    <span class="com"># NOT</span>
+<span class="fn">tcpdump</span> dst host 10.0.0.1 and greater 128   <span class="com"># Packet &gt; 128 bytes</span></div>
+
+                  <div class="code-label">DISPLAY &amp; OUTPUT FLAGS</div>
+                  <div class="code-block">
+<span class="fn">tcpdump</span> -n                   <span class="com"># Don't resolve IPs to hostnames (faster)</span>
+<span class="fn">tcpdump</span> -nn                  <span class="com"># Also don't resolve port names</span>
+<span class="fn">tcpdump</span> -v                   <span class="com"># Verbose output (TTL, checksum, etc.)</span>
+<span class="fn">tcpdump</span> -vv                  <span class="com"># More verbose</span>
+<span class="fn">tcpdump</span> -A                   <span class="com"># Print payload in ASCII (HTTP inspection)</span>
+<span class="fn">tcpdump</span> -X                   <span class="com"># Print payload in hex + ASCII</span>
+<span class="fn">tcpdump</span> -XX                  <span class="com"># Include link-layer header in hex</span>
+<span class="fn">tcpdump</span> -e                   <span class="com"># Print link-layer header (MAC addresses)</span>
+<span class="fn">tcpdump</span> -q                   <span class="com"># Quick/quiet — shorter output lines</span>
+<span class="fn">tcpdump</span> -t                   <span class="com"># Suppress timestamp</span>
+<span class="fn">tcpdump</span> -tttt                <span class="com"># Full date+time timestamp</span>
+
+<span class="com"># Write/read pcap files</span>
+<span class="fn">tcpdump</span> -i eth0 -w capture.pcap          <span class="com"># Write to file (for Wireshark)</span>
+<span class="fn">tcpdump</span> -i eth0 -U -w capture.pcap       <span class="com"># -U: write packets immediately (no buffer)</span>
+<span class="fn">tcpdump</span> -r capture.pcap port 443         <span class="com"># Read file with filter</span></div>
+
+                  <div class="code-label">PRACTICAL EXAMPLES</div>
+                  <div class="code-block">
+<span class="com"># Capture all HTTP traffic (show payload in ASCII)</span>
+<span class="fn">tcpdump</span> -i eth0 -A port 80
+
+<span class="com"># Capture SSH attempts to this host (no DNS resolution)</span>
+<span class="fn">tcpdump</span> -nn -i eth0 tcp dst port 22
+
+<span class="com"># Capture all traffic EXCEPT SSH (avoid capturing your own session)</span>
+<span class="fn">tcpdump</span> -i eth0 not port 22
+
+<span class="com"># Save 30 large packets to file, no DNS resolution</span>
+<span class="fn">tcpdump</span> -i eth0 -n greater 32 -w out.pcap -c 30
+
+<span class="com"># Pipe remote traffic to local Wireshark in real time</span>
+<span class="fn">ssh</span> user@router <span class="str">"tcpdump -U -s 65535 -w - 'not port 22'"</span> | wireshark -k -i -
+
+<span class="com"># Find all HTTP GET requests (show source IP + URL)</span>
+<span class="fn">tcpdump</span> -i eth0 -A 'tcp port 80 and (tcp[((tcp[12:1] &amp; 0xf0) &gt;&gt; 2):4] = 0x47455420)'</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
         </div><!-- /domain-body net -->
       </div><!-- /domain-section net -->
 
@@ -1880,6 +1982,119 @@ tracert 8.8.8.8             <span class="com"># Windows equivalent</span>
             </div>
           </div>
 
+          <!-- ═══════════════════════════════════════════════════════════
+               NEW TOPIC: Splunk SPL Reference
+               Source: Splunk Cheat Sheet — 241-400pg PDF
+               Domain: Security Operations
+          ═══════════════════════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🔎</span>
+              <span class="topic-name">Splunk — SPL Search Language Reference</span>
+              <span class="topic-badge">SIEM TOOL</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Source: Splunk Cheat Sheet</div>
+                <div class="concept-title">Architecture · SPL Syntax · Search Commands · Filtering · Stats</div>
+                <div class="concept-desc">
+                  Splunk is the leading SIEM/log analysis platform. Core components:
+                  <strong style="color:var(--cyan)">Indexer</strong> (parses &amp; indexes data) ·
+                  <strong style="color:var(--green)">Search Head</strong> (search, visualize, report) ·
+                  <strong style="color:var(--amber)">Forwarder</strong> (ships logs from sources).
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ SPL SYNTAX STRUCTURE</div>
+                  <div class="code-block">
+<span class="com"># Basic search (find keyword in an index)</span>
+<span class="fn">index</span>=cybersecurity hacker
+
+<span class="com"># Pipe (|) chains commands: output of left feeds into right</span>
+<span class="fn">index</span>=* sourcetype=syslog | <span class="fn">search</span> Failed | <span class="fn">head</span> 100
+
+<span class="com"># Field=value filtering (implicit AND between terms)</span>
+<span class="fn">source</span>=<span class="str">"/var/log/auth.log"</span> status=<span class="num">404</span>
+
+<span class="com"># Filter by specific index with multiple conditions</span>
+<span class="fn">index</span>=<span class="str">"customer_feedback"</span> Code=<span class="str">RED</span> host=<span class="str">"myblog"</span></div>
+
+                  <div class="dt">▸ COMMON SEARCH COMMANDS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Command</th><th>Description</th><th>Example</th></tr>
+                    <tr><td style="color:var(--cyan)">search</td><td>Filter results by keyword or field value</td><td><code>| search username=admin</code></td></tr>
+                    <tr><td style="color:var(--cyan)">stats</td><td>Compute statistics grouped by fields</td><td><code>| stats count by src_ip</code></td></tr>
+                    <tr><td style="color:var(--cyan)">table</td><td>Display selected fields as table</td><td><code>| table _time, src, dst, action</code></td></tr>
+                    <tr><td style="color:var(--cyan)">sort</td><td>Sort results by field</td><td><code>| sort -count</code></td></tr>
+                    <tr><td style="color:var(--cyan)">dedup</td><td>Remove duplicate events on field</td><td><code>| dedup src_ip</code></td></tr>
+                    <tr><td style="color:var(--cyan)">head / tail</td><td>Return first/last N results</td><td><code>| head 20</code></td></tr>
+                    <tr><td style="color:var(--cyan)">eval</td><td>Create/transform field with expression</td><td><code>| eval mb=bytes/1024/1024</code></td></tr>
+                    <tr><td style="color:var(--cyan)">rex</td><td>Extract field with regex into new field</td><td><code>| rex field=_raw "From: &lt;(?P&lt;from&gt;.*)&gt;"</code></td></tr>
+                    <tr><td style="color:var(--cyan)">rename</td><td>Rename a field</td><td><code>| rename src_ip AS source</code></td></tr>
+                    <tr><td style="color:var(--cyan)">timechart</td><td>Time-series charting</td><td><code>| timechart count by action</code></td></tr>
+                    <tr><td style="color:var(--cyan)">top / rare</td><td>Most / least common values</td><td><code>| top limit=10 src_ip</code></td></tr>
+                    <tr><td style="color:var(--cyan)">transaction</td><td>Group events into transactions</td><td><code>| transaction session_id</code></td></tr>
+                    <tr><td style="color:var(--cyan)">lookup</td><td>Enrich events from lookup table</td><td><code>| lookup ip_lookup.csv ip OUTPUT country</code></td></tr>
+                  </table>
+                  <div class="dt">▸ SPL FILTERING (search vs regex)</div>
+                  <div class="code-block">
+<span class="com"># search — keyword and field matching</span>
+<span class="fn">index</span>=names | <span class="fn">search</span> Chris
+<span class="fn">index</span>=emails | <span class="fn">search</span> emailAddr=<span class="str">"*@mysite.com"</span>
+
+<span class="com"># regex — match/exclude with regular expression on _raw</span>
+<span class="fn">index</span>=syslogs | <span class="fn">regex</span> _raw!=<span class="str">"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"</span>
+
+<span class="com"># rex — EXTRACT into new named field for further use</span>
+source=<span class="str">"email_dump.txt"</span> | <span class="fn">rex</span> field=_raw <span class="str">"From: &lt;(?P&lt;from&gt;.*)&gt; To: &lt;(?P&lt;to&gt;.*)&gt;"</span>
+
+<span class="com"># key difference: search/regex FILTER events; rex EXTRACTS new fields</span></div>
+
+                  <div class="dt">▸ STATISTICAL &amp; EVAL FUNCTIONS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Function</th><th>Returns</th><th>Use Case</th></tr>
+                    <tr><td style="color:var(--green)">avg(X)</td><td>Average of field X values</td><td>avg(response_time)</td></tr>
+                    <tr><td style="color:var(--green)">count(X)</td><td>Number of occurrences of X</td><td>count(src_ip)</td></tr>
+                    <tr><td style="color:var(--green)">dc(X)</td><td>Distinct count of X</td><td>dc(user)</td></tr>
+                    <tr><td style="color:var(--green)">max(X) / min(X)</td><td>Maximum / minimum value</td><td>max(bytes_in)</td></tr>
+                    <tr><td style="color:var(--green)">sum(X)</td><td>Sum of values</td><td>sum(bytes)</td></tr>
+                    <tr><td style="color:var(--green)">range(X)</td><td>max - min of field X</td><td>range(duration)</td></tr>
+                    <tr><td style="color:var(--green)">stdev(X)</td><td>Sample standard deviation</td><td>Detect anomalies</td></tr>
+                    <tr><td style="color:var(--green)">values(X)</td><td>All distinct values as list</td><td>values(action)</td></tr>
+                    <tr><td style="color:var(--amber)">len(X)</td><td>String length</td><td>eval len=len(uri)</td></tr>
+                    <tr><td style="color:var(--amber)">lower/upper(X)</td><td>Lowercase/uppercase</td><td>eval u=lower(user)</td></tr>
+                    <tr><td style="color:var(--amber)">if(X,Y,Z)</td><td>Conditional: X→Y else Z</td><td>eval r=if(status=200,"OK","Error")</td></tr>
+                    <tr><td style="color:var(--amber)">md5(X)</td><td>MD5 hash of string X</td><td>eval h=md5(filename)</td></tr>
+                  </table>
+                  <div class="dt">▸ PRACTICAL SECURITY QUERIES</div>
+                  <div class="code-block">
+<span class="com"># Failed login attempts in last 24h, grouped by source IP</span>
+<span class="fn">index</span>=security sourcetype=linux_secure <span class="str">"Failed password"</span>
+  | <span class="fn">stats</span> count by src_ip
+  | <span class="fn">sort</span> -count
+  | <span class="fn">head</span> 20
+
+<span class="com"># Top 10 destination IPs by byte volume (potential exfil)</span>
+<span class="fn">index</span>=network
+  | <span class="fn">stats</span> <span class="fn">sum</span>(bytes_out) as total_bytes by dst_ip
+  | <span class="fn">sort</span> -total_bytes
+  | <span class="fn">head</span> 10
+
+<span class="com"># Alert: accounts with 5+ failed logins in 60 seconds</span>
+<span class="fn">index</span>=auth action=failure
+  | <span class="fn">transaction</span> user maxspan=60s
+  | <span class="fn">where</span> eventcount &gt;= 5
+  | <span class="fn">table</span> _time, user, src_ip, eventcount
+
+<span class="com"># Find logs not containing valid IPv4 (malformed entries)</span>
+<span class="fn">index</span>=syslogs
+  | <span class="fn">regex</span> _raw!=<span class="str">"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
         </div><!-- /domain-body ops -->
       </div><!-- /domain-section ops -->
 
@@ -1951,6 +2166,125 @@ tracert 8.8.8.8             <span class="com"># Windows equivalent</span>
               </div>
             </div>
           </div>
+
+          <!-- ═══════════════════════════════════════════════════════════
+               NEW TOPIC: SQLmap SQL Injection Tool Reference
+               Source: SQLmap Cheat Sheet — 241-400pg PDF
+               Domain: Penetration Testing
+          ═══════════════════════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">💉</span>
+              <span class="topic-name">SQLmap — SQL Injection Tool Reference</span>
+              <span class="topic-badge">PENTEST TOOL</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Source: SQLmap Cheat Sheet</div>
+                <div class="concept-title">SQLi Attack Types · Target Options · Detection · Enumeration</div>
+                <div class="concept-desc">
+                  SQLmap automates SQL injection detection and exploitation.
+                  Runs on Python 2.6, 2.7, and 3. Kali Linux: <code style="color:var(--cyan)">sqlmap</code>.
+                  Other: <code style="color:var(--cyan)">python3 sqlmap.py</code>. Always use with written authorization.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ SQL INJECTION ATTACK CATEGORIES</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Category</th><th>Technique</th><th>Description</th></tr>
+                    <tr>
+                      <td style="color:var(--red)" rowspan="4">In-Band</td>
+                      <td>Error-based</td>
+                      <td>DB error messages leak config/structure. Flag: <code>-technique=E</code></td>
+                    </tr>
+                    <tr>
+                      <td>Union-based</td>
+                      <td>UNION keyword appends attacker query to legitimate result. Flag: <code>-technique=U</code></td>
+                    </tr>
+                    <tr>
+                      <td>Stacked queries</td>
+                      <td>Multiple statements joined by <code>;</code> — modifies/reads DB in one call. Flag: <code>-technique=S</code></td>
+                    </tr>
+                    <tr>
+                      <td>Inline queries</td>
+                      <td>Embedded partial SQL in server-side code. Flag: <code>-technique=Q</code></td>
+                    </tr>
+                    <tr>
+                      <td style="color:var(--amber)">Out-of-Band</td>
+                      <td>DNS exfiltration</td>
+                      <td>Results sent via DNS/HTTP to separate channel. Use <code>--dns-domain</code></td>
+                    </tr>
+                    <tr>
+                      <td style="color:var(--cyan)" rowspan="2">Inferential (Blind)</td>
+                      <td>Boolean-based</td>
+                      <td>Tautologies (1=1) change app behavior to infer data. Flag: <code>-technique=B</code></td>
+                    </tr>
+                    <tr>
+                      <td>Time-based</td>
+                      <td>Inject sleep/wait — if delay occurs, DB is vulnerable. Flag: <code>-technique=T</code></td>
+                    </tr>
+                  </table>
+                  <div class="code-label">BASIC USAGE PATTERN</div>
+                  <div class="code-block">
+<span class="com"># Syntax</span>
+sqlmap [target] [options]
+
+<span class="com"># Step 1: Fingerprint the database</span>
+sqlmap -u <span class="str">"http://target.com/page.php?id=1"</span> -f --batch
+
+<span class="com"># Step 2: List all databases</span>
+sqlmap -u <span class="str">"http://target.com/page.php?id=1"</span> --dbs --batch
+
+<span class="com"># Step 3: List tables in specific database</span>
+sqlmap -u <span class="str">"http://target.com/page.php?id=1"</span> -D mydb --tables --batch
+
+<span class="com"># Step 4: Dump specific table columns</span>
+sqlmap -u <span class="str">"http://target.com/page.php?id=1"</span> -D mydb -T users --columns --batch
+
+<span class="com"># Step 5: Dump all data from table</span>
+sqlmap -u <span class="str">"http://target.com/page.php?id=1"</span> -D mydb -T users --dump --batch
+
+<span class="com"># With session cookie (authenticated scan)</span>
+sqlmap -u <span class="str">"http://target.com/page?id=1"</span> \
+  --cookie=<span class="str">"PHPSESSID=abc123; security=low"</span> \
+  --tables --batch</div>
+
+                  <div class="dt">▸ KEY OPTIONS REFERENCE</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Flag</th><th>Purpose</th></tr>
+                    <tr><td style="color:var(--cyan)">-u URL</td><td>Target URL containing vulnerable parameter (e.g., ?id=1)</td></tr>
+                    <tr><td style="color:var(--cyan)">-g DORK</td><td>Google dork — sqlmap will scan matching results</td></tr>
+                    <tr><td style="color:var(--cyan)">-r FILE</td><td>Load HTTP request from Burp Suite save file</td></tr>
+                    <tr><td style="color:var(--cyan)">--batch</td><td>Never prompt — use default answers (scripting)</td></tr>
+                    <tr><td style="color:var(--cyan)">--dbs</td><td>Enumerate all accessible databases</td></tr>
+                    <tr><td style="color:var(--cyan)">--tables</td><td>Enumerate tables in target database</td></tr>
+                    <tr><td style="color:var(--cyan)">--columns</td><td>Enumerate columns in target table</td></tr>
+                    <tr><td style="color:var(--cyan)">--dump</td><td>Dump table data</td></tr>
+                    <tr><td style="color:var(--cyan)">--passwords</td><td>Enumerate &amp; attempt to crack user password hashes</td></tr>
+                    <tr><td style="color:var(--cyan)">-p PARAM</td><td>Specify parameter to test (e.g., -p "id,user-agent")</td></tr>
+                    <tr><td style="color:var(--cyan)">--dbms=mysql</td><td>Force back-end DBMS (mysql/postgresql/mssql/oracle)</td></tr>
+                    <tr><td style="color:var(--cyan)">--proxy=URL</td><td>Route through proxy (Burp: http://127.0.0.1:8080)</td></tr>
+                    <tr><td style="color:var(--cyan)">--tor</td><td>Route through Tor anonymity network</td></tr>
+                    <tr><td style="color:var(--cyan)">--random-agent</td><td>Use random User-Agent header to evade WAF</td></tr>
+                    <tr><td style="color:var(--cyan)">--tamper=SCRIPT</td><td>Apply tamper script to bypass WAF/IPS</td></tr>
+                    <tr><td style="color:var(--cyan)">--technique=BEUSTQ</td><td>SQLi techniques: B=Boolean E=Error U=Union S=Stacked T=Time Q=Inline</td></tr>
+                  </table>
+                  <div class="dt">▸ --LEVEL AND --RISK SETTINGS</div>
+                  <table class="ref-table">
+                    <tr><th>Setting</th><th>Value</th><th>Behaviour</th></tr>
+                    <tr><td style="color:var(--green)">--level</td><td>1 (default)</td><td>GET/POST params only — minimal requests</td></tr>
+                    <tr><td style="color:var(--green)">--level</td><td>2</td><td>Also tests Cookie headers</td></tr>
+                    <tr><td style="color:var(--green)">--level</td><td>3</td><td>Also tests User-Agent and Referer headers</td></tr>
+                    <tr><td style="color:var(--green)">--level</td><td>4–5</td><td>Null values, edge case payloads</td></tr>
+                    <tr><td style="color:var(--amber)">--risk</td><td>1 (default)</td><td>Safe — data unchanged, DB stays operational</td></tr>
+                    <tr><td style="color:var(--amber)">--risk</td><td>2</td><td>Adds heavy time-based tests — may slow DB</td></tr>
+                    <tr><td style="color:var(--red)">--risk</td><td>3</td><td>OR-based tests — <strong>may UPDATE all table rows</strong></td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
 
         </div><!-- /domain-body pentest -->
       </div><!-- /domain-section pentest -->
@@ -2073,6 +2407,233 @@ tracert 8.8.8.8             <span class="com"># Windows equivalent</span>
               </div>
             </div>
           </div>
+
+          <!-- ═══════════════════════════════════════════════════════════
+               NEW TOPIC: SSH Commands Reference
+               Source: SSH Commands Cheat Sheet — 241-400pg PDF
+               Domain: Linux & Systems
+          ═══════════════════════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🔐</span>
+              <span class="topic-name">SSH — Commands, Keys &amp; Tunneling</span>
+              <span class="topic-badge">COMPLETE REFERENCE</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Source: SSH Cheat Sheet</div>
+                <div class="concept-title">SSH · SCP · SFTP · ssh-keygen · Tunneling</div>
+                <div class="concept-desc">
+                  Secure Shell listens on TCP port 22 by default. Uses asymmetric crypto for key
+                  exchange, symmetric for session data. Replaces Telnet/FTP/rsh.
+                  Config files: <code style="color:var(--cyan)">~/.ssh/config</code> (client) ·
+                  <code style="color:var(--cyan)">/etc/ssh/sshd_config</code> (server).
+                </div>
+                <div class="dw">
+                  <div class="code-label">BASIC CONNECTION COMMANDS</div>
+                  <div class="code-block">
+<span class="com"># Connect to remote host</span>
+<span class="fn">ssh</span> user@hostname                    <span class="com"># Default port 22</span>
+<span class="fn">ssh</span> -p 3344 user@hostname            <span class="com"># Custom port</span>
+<span class="fn">ssh</span> -i ~/.ssh/key.pem user@1.2.3.4  <span class="com"># Specific identity file</span>
+<span class="fn">ssh</span> user@host <span class="str">'ls -la /var/log'</span>    <span class="com"># Execute remote command inline</span>
+<span class="fn">ssh</span> user@host bash &lt; script.sh      <span class="com"># Run local script remotely</span>
+
+<span class="com"># Compress traffic (useful on slow links)</span>
+<span class="fn">ssh</span> -C user@hostname
+
+<span class="com"># X11 forwarding (run GUI apps remotely)</span>
+<span class="fn">ssh</span> -X user@hostname                 <span class="com"># Trusted X11 forwarding</span>
+<span class="fn">ssh</span> -Y user@hostname                 <span class="com"># Less secure — full display forward</span></div>
+
+                  <div class="code-label">SSH KEY MANAGEMENT (ssh-keygen)</div>
+                  <div class="code-block">
+<span class="com"># Generate key pair (RSA 4096-bit, labeled with email)</span>
+<span class="fn">ssh-keygen</span> -t rsa -b 4096 -C <span class="str">"you@email.com"</span>
+
+<span class="com"># Generate modern Ed25519 key (preferred — smaller, faster)</span>
+<span class="fn">ssh-keygen</span> -t ed25519 -C <span class="str">"you@email.com"</span>
+
+<span class="com"># Other key management commands</span>
+<span class="fn">ssh-keygen</span> -F hostname           <span class="com"># Check if host is in known_hosts</span>
+<span class="fn">ssh-keygen</span> -R hostname           <span class="com"># Remove host from known_hosts</span>
+<span class="fn">ssh-keygen</span> -y -f private.key     <span class="com"># Derive public key from private key</span>
+<span class="fn">ssh-keygen</span> -p -f ~/.ssh/id_rsa   <span class="com"># Change key passphrase</span>
+<span class="fn">ssh-copy-id</span> user@server          <span class="com"># Install public key to remote host</span>
+
+<span class="com"># Key files reference</span>
+<span class="com">#  ~/.ssh/id_rsa           — private key (protect with chmod 600)</span>
+<span class="com">#  ~/.ssh/id_rsa.pub       — public key (safe to share)</span>
+<span class="com">#  ~/.ssh/known_hosts      — trusted hosts (auto-populated)</span>
+<span class="com">#  ~/.ssh/authorized_keys  — keys permitted to log in here</span></div>
+
+                  <div class="code-label">SCP — SECURE COPY</div>
+                  <div class="code-block">
+<span class="fn">scp</span> user@server:/remote/file.txt ./local/   <span class="com"># Remote → local</span>
+<span class="fn">scp</span> ./local/file.txt user@server:/remote/   <span class="com"># Local → remote</span>
+<span class="fn">scp</span> -r user@server:/folder ./local/         <span class="com"># Recursive (directory)</span>
+<span class="fn">scp</span> -P 8022 user@server:/file ./            <span class="com"># Custom port (-P uppercase)</span>
+<span class="fn">scp</span> -C user@server:/big_file ./             <span class="com"># Enable compression</span>
+<span class="fn">scp</span> user1@host1:/file user2@host2:/dest     <span class="com"># Server-to-server</span></div>
+
+                  <div class="code-label">SSH TUNNELING — PORT FORWARDING</div>
+                  <div class="code-block">
+<span class="com"># LOCAL  (-L): Forward local_port → remote_host:remote_port via SSH server</span>
+<span class="com"># Access internal service on remote network as if it were local</span>
+<span class="fn">ssh</span> -L 8080:internal-db:5432 user@jump-host
+<span class="com"># → localhost:8080 now reaches internal-db port 5432</span>
+
+<span class="com"># REMOTE (-R): Forward remote_port on SSH server → local machine</span>
+<span class="com"># Expose a local service through a remote public server</span>
+<span class="fn">ssh</span> -R 9090:localhost:3000 -N -f user@public-server
+<span class="com"># → public-server:9090 now reaches your local port 3000</span>
+
+<span class="com"># DYNAMIC (-D): Create a SOCKS proxy on local_port</span>
+<span class="com"># Route browser/app traffic through SSH server</span>
+<span class="fn">ssh</span> -D 8888 -q -C -N -f user@remote-host
+<span class="com"># → Set browser SOCKS5 proxy to 127.0.0.1:8888</span>
+
+<span class="com"># PROXY JUMP (-J): Multi-hop through bastion host</span>
+<span class="fn">ssh</span> -J user@bastion user@internal-host
+<span class="fn">ssh</span> -J user@hop1:port1,user@hop2:port2 user@target  <span class="com"># Multi-hop</span>
+
+<span class="com"># Flags used in tunneling</span>
+<span class="com">#  -N  No remote commands — dedicated tunnel only</span>
+<span class="com">#  -f  Fork to background after authentication</span>
+<span class="com">#  -q  Quiet mode — suppress all warnings</span>
+<span class="com">#  -C  Compress tunnel data</span></div>
+
+                  <div class="dt">▸ SSH CONFIG FILE — ~/.ssh/config</div>
+                  <div class="code-block">
+<span class="com"># ~/.ssh/config — per-host connection settings</span>
+<span class="com"># Avoids typing long flags every time</span>
+<span class="kw">Host</span> myserver
+    <span class="kw">HostName</span>     192.168.1.50
+    <span class="kw">User</span>         admin
+    <span class="kw">Port</span>         2222
+    <span class="kw">IdentityFile</span> ~/.ssh/id_ed25519
+    <span class="kw">ForwardAgent</span> yes
+
+<span class="com"># Now connect with just: ssh myserver</span>
+
+<span class="com"># Hardening options in /etc/ssh/sshd_config</span>
+<span class="kw">PermitRootLogin</span>         no       <span class="com"># Never allow root SSH login</span>
+<span class="kw">PasswordAuthentication</span>  no       <span class="com"># Keys only — disable password auth</span>
+<span class="kw">X11Forwarding</span>           no       <span class="com"># Disable unless needed</span>
+<span class="kw">AllowTcpForwarding</span>      no       <span class="com"># Disable unless tunneling required</span>
+<span class="kw">MaxAuthTries</span>            3        <span class="com"># Limit brute-force attempts</span>
+<span class="kw">Port</span>                    2222     <span class="com"># Change from default 22</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════════════════
+               NEW TOPIC: Tmux Terminal Multiplexer
+               Source: Tmux Cheat Sheet — 241-400pg PDF
+               Domain: Linux & Systems
+          ═══════════════════════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🖥️</span>
+              <span class="topic-name">Tmux — Terminal Multiplexer</span>
+              <span class="topic-badge">COMPLETE REFERENCE</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Source: Tmux Cheat Sheet</div>
+                <div class="concept-title">Sessions · Windows · Panes · Copy Mode</div>
+                <div class="concept-desc">
+                  Tmux (Terminal Multiplexer) runs persistent sessions that survive SSH disconnects.
+                  Install: <code style="color:var(--cyan)">sudo apt install tmux</code> (Debian/Ubuntu) ·
+                  <code style="color:var(--cyan)">brew install tmux</code> (macOS).
+                  Prefix key: <strong style="color:var(--amber)">Ctrl+b</strong> (default) — press before every shortcut.
+                </div>
+                <div class="dw">
+                  <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-bottom:14px">
+                    <div class="g-card" style="border-color:rgba(0,212,255,.3)">
+                      <div class="g-name" style="color:var(--cyan)">Session</div>
+                      <div class="g-desc">A persistent collection of pseudo-terminals. Survives disconnect. Multiple windows inside.</div>
+                    </div>
+                    <div class="g-card" style="border-color:rgba(0,255,153,.3)">
+                      <div class="g-name" style="color:var(--green)">Window</div>
+                      <div class="g-desc">A single screen view (like a tab). Can contain multiple panes.</div>
+                    </div>
+                    <div class="g-card" style="border-color:rgba(255,176,32,.3)">
+                      <div class="g-name" style="color:var(--amber)">Pane</div>
+                      <div class="g-desc">A split section of a window. Each runs its own terminal independently.</div>
+                    </div>
+                  </div>
+                  <div class="code-label">SESSION COMMANDS (from CLI)</div>
+                  <div class="code-block">
+<span class="fn">tmux</span>                      <span class="com"># Start new session</span>
+<span class="fn">tmux</span> new -s mysession     <span class="com"># New named session</span>
+<span class="fn">tmux</span> ls                   <span class="com"># List all sessions</span>
+<span class="fn">tmux</span> a                    <span class="com"># Attach to last session</span>
+<span class="fn">tmux</span> a -t mysession       <span class="com"># Attach to named session</span>
+<span class="fn">tmux</span> kill-session -t s0   <span class="com"># Kill named session</span>
+<span class="fn">tmux</span> kill-session -a      <span class="com"># Kill ALL except current</span></div>
+
+                  <div class="dt">▸ KEYBOARD SHORTCUTS (all prefixed with Ctrl+b)</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Keys</th><th>Action</th></tr>
+                    <tr><td colspan="2" style="color:var(--cyan);font-family:var(--mono);font-size:10px;letter-spacing:1px">SESSIONS</td></tr>
+                    <tr><td style="color:var(--cyan)">d</td><td>Detach from session (session keeps running)</td></tr>
+                    <tr><td style="color:var(--cyan)">$</td><td>Rename current session</td></tr>
+                    <tr><td style="color:var(--cyan)">s</td><td>List &amp; switch sessions interactively</td></tr>
+                    <tr><td style="color:var(--cyan)">( / )</td><td>Switch to previous / next session</td></tr>
+                    <tr><td colspan="2" style="color:var(--green);font-family:var(--mono);font-size:10px;letter-spacing:1px">WINDOWS (TABS)</td></tr>
+                    <tr><td style="color:var(--green)">c</td><td>Create new window</td></tr>
+                    <tr><td style="color:var(--green)">,</td><td>Rename current window</td></tr>
+                    <tr><td style="color:var(--green)">&amp;</td><td>Close current window</td></tr>
+                    <tr><td style="color:var(--green)">p / n</td><td>Previous / Next window</td></tr>
+                    <tr><td style="color:var(--green)">w</td><td>List all windows (interactive)</td></tr>
+                    <tr><td style="color:var(--green)">0–9</td><td>Switch to window by number</td></tr>
+                    <tr><td colspan="2" style="color:var(--amber);font-family:var(--mono);font-size:10px;letter-spacing:1px">PANES (SPLITS)</td></tr>
+                    <tr><td style="color:var(--amber)">%</td><td>Split pane vertically (side by side)</td></tr>
+                    <tr><td style="color:var(--amber)">"</td><td>Split pane horizontally (top/bottom)</td></tr>
+                    <tr><td style="color:var(--amber)">Arrow keys</td><td>Switch between panes</td></tr>
+                    <tr><td style="color:var(--amber)">o</td><td>Cycle through panes</td></tr>
+                    <tr><td style="color:var(--amber)">z</td><td>Zoom pane to full screen (toggle)</td></tr>
+                    <tr><td style="color:var(--amber)">!</td><td>Break pane out into new window</td></tr>
+                    <tr><td style="color:var(--amber)">x</td><td>Close current pane</td></tr>
+                    <tr><td style="color:var(--amber)">Space</td><td>Cycle through pane layouts</td></tr>
+                    <tr><td colspan="2" style="color:var(--purple);font-family:var(--mono);font-size:10px;letter-spacing:1px">COPY MODE (vi keys)</td></tr>
+                    <tr><td style="color:var(--purple)">[</td><td>Enter copy mode (scroll, search, select)</td></tr>
+                    <tr><td style="color:var(--purple)">Space</td><td>Begin selection</td></tr>
+                    <tr><td style="color:var(--purple)">Enter</td><td>Copy selection to buffer</td></tr>
+                    <tr><td style="color:var(--purple)">]</td><td>Paste from buffer</td></tr>
+                    <tr><td style="color:var(--purple)">/ or ?</td><td>Search forward / backward in scroll</td></tr>
+                    <tr><td style="color:var(--purple)">q</td><td>Exit copy mode</td></tr>
+                  </table>
+                  <div class="code-label">~/.tmux.conf — USEFUL CUSTOMISATIONS</div>
+                  <div class="code-block">
+<span class="com"># Change prefix key from Ctrl+b to Ctrl+a (screen-style)</span>
+<span class="kw">unbind</span> C-b
+<span class="kw">set -g prefix</span> C-a
+
+<span class="com"># Intuitive pane splits: | for vertical, - for horizontal</span>
+<span class="kw">unbind</span> %
+<span class="kw">bind</span> | split-window -h
+<span class="kw">unbind</span> '"'
+<span class="kw">bind</span> - split-window -v
+
+<span class="com"># Enable vi keys in copy mode</span>
+<span class="kw">setw -g mode-keys</span> vi
+
+<span class="com"># Enable mouse support (click to select panes/windows)</span>
+<span class="kw">set -g mouse</span> on
+
+<span class="com"># Reload config without restarting tmux</span>
+<span class="com"># Run: tmux source-file ~/.tmux.conf</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
 
           <!-- ═══════════════════════════════════════════════════════════
                NEW TOPIC: RAID Levels Reference
@@ -2407,9 +2968,11 @@ tracert 8.8.8.8             <span class="com"># Windows equivalent</span>
                     <tr><td><span class="rx-cls">\w</span></td><td>Word char [a-zA-Z0-9_]</td><td>\w+ → "hello_world"</td></tr>
                     <tr><td><span class="rx-cls">\W</span></td><td>Non-word character</td><td>[^a-zA-Z0-9_]</td></tr>
                     <tr><td><span class="rx-cls">\s</span></td><td>Whitespace (space, tab, newline)</td><td>[ 	
-]</td></tr>
+
+]</td></tr>
                     <tr><td><span class="rx-cls">\S</span></td><td>Non-whitespace</td><td>[^ 	
-]</td></tr>
+
+]</td></tr>
                     <tr><td><span class="rx-cls">[abc]</span></td><td>Character class (a, b, or c)</td><td>[aeiou] matches vowels</td></tr>
                     <tr><td><span class="rx-cls">[^abc]</span></td><td>Negated class (not a, b, or c)</td><td>[^0-9] matches non-digits</td></tr>
                     <tr><td><span class="rx-cls">[a-z]</span></td><td>Range (lowercase a to z)</td><td>[A-Za-z] matches any letter</td></tr>
