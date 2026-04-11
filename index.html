@@ -8474,9 +8474,9 @@
                       </td>
                     </tr>
                     <tr>
-                      <td><span style="color: var(--red)"></span></td>
+                      <td><span style="color: var(--red)">\b</span></td>
                       <td>Word boundary</td>
-                      <td>cat matches "cat" not "catch"</td>
+                      <td>\bcat\b matches "cat" not "catch"</td>
                     </tr>
                     <tr>
                       <td><span style="color: var(--red)">\B</span></td>
@@ -8519,12 +8519,12 @@
                     <tr>
                       <td><span class="rx-cls">\s</span></td>
                       <td>Whitespace (space, tab, newline)</td>
-                      <td>[ ]</td>
+                      <td>[ \t\n\r]</td>
                     </tr>
                     <tr>
                       <td><span class="rx-cls">\S</span></td>
                       <td>Non-whitespace</td>
-                      <td>[^ ]</td>
+                      <td>[^\t\n\r]</td>
                     </tr>
                     <tr>
                       <td><span class="rx-cls">[abc]</span></td>
@@ -8716,68 +8716,6 @@
             </div>
           </div>
 
-          <!-- ── TOPIC: REGEX ────────────────────────────────────────────
-               Full regex reference retained from original index.html.
-               Anchors, character classes, quantifiers, groups, flags, and
-               common patterns (email, IPv4, URL, password, MAC address).
-          ──────────────────────────────────────────────────────────────── -->
-          <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
-              <span class="topic-icon">🔤</span>
-              <span class="topic-name">Regular Expressions (Regex)</span>
-              <span class="topic-badge">PATTERN MATCHING</span>
-              <span class="topic-chev">▶</span>
-            </div>
-            <div class="topic-body">
-              <div class="concept-card">
-                <div class="concept-label">Reference</div>
-                <div class="concept-title">Regex Syntax — Anchors · Classes · Quantifiers · Groups</div>
-                <div class="concept-desc">Regex is used across all platforms — grep/sed/awk on Linux, PowerShell, JavaScript, Python, SQL. Uses PCRE (Perl Compatible) or POSIX syntax depending on engine.</div>
-                <div class="dw">
-                  <div class="dt">▸ ANCHORS &amp; ASSERTIONS</div>
-                  <table class="rx-table" style="margin-bottom:14px"><tr><th>Token</th><th>Meaning</th><th>Example</th></tr>
-                  <tr><td><span style="color:var(--red)">^</span></td><td>Start of string/line</td><td>^Hello matches "Hello world"</td></tr>
-                  <tr><td><span style="color:var(--red)">$</span></td><td>End of string/line</td><td>world$ matches "Hello world"</td></tr>
-                  <tr><td><span style="color:var(--red)">\b</span></td><td>Word boundary</td><td>\bcat\b matches "cat" not "catch"</td></tr>
-                  <tr><td><span style="color:var(--red)">\B</span></td><td>Non-word boundary</td><td>\Bcat\B matches "scatter"</td></tr></table>
-                  <div class="dt">▸ CHARACTER CLASSES</div>
-                  <table class="rx-table" style="margin-bottom:14px"><tr><th>Token</th><th>Meaning</th><th>Equivalent</th></tr>
-                  <tr><td><span class="rx-cls">.</span></td><td>Any char except newline</td><td>c.t → "cat","cot"</td></tr>
-                  <tr><td><span class="rx-cls">\d</span></td><td>Digit [0-9]</td><td>\d{3} → "123"</td></tr>
-                  <tr><td><span class="rx-cls">\w</span></td><td>Word char [a-zA-Z0-9_]</td><td>\w+ → "hello_world"</td></tr>
-                  <tr><td><span class="rx-cls">\s</span></td><td>Whitespace</td><td>[ \t\n\r]</td></tr>
-                  <tr><td><span class="rx-cls">[abc]</span></td><td>Character class</td><td>[aeiou] matches vowels</td></tr>
-                  <tr><td><span class="rx-cls">[^abc]</span></td><td>Negated class</td><td>[^0-9] non-digits</td></tr>
-                  <tr><td><span class="rx-cls">[a-z]</span></td><td>Range</td><td>[A-Za-z] any letter</td></tr></table>
-                  <div class="dt">▸ QUANTIFIERS</div>
-                  <table class="rx-table" style="margin-bottom:14px"><tr><th>Token</th><th>Meaning</th><th>Greedy vs Lazy</th></tr>
-                  <tr><td><span style="color:#a855f7">*</span></td><td>0 or more</td><td>a* greedy; a*? lazy</td></tr>
-                  <tr><td><span style="color:#a855f7">+</span></td><td>1 or more</td><td>a+ greedy; a+? lazy</td></tr>
-                  <tr><td><span style="color:#a855f7">?</span></td><td>0 or 1 (optional)</td><td>colou?r → "color" or "colour"</td></tr>
-                  <tr><td><span style="color:#a855f7">{n,m}</span></td><td>Between n and m</td><td>\d{2,4} → 2–4 digits</td></tr></table>
-                  <div class="dt">▸ GROUPS &amp; ALTERNATION</div>
-                  <table class="rx-table" style="margin-bottom:14px"><tr><th>Token</th><th>Meaning</th><th>Example</th></tr>
-                  <tr><td><span style="color:#fb923c">(abc)</span></td><td>Capture group</td><td>(\d{3})-(\d{4}) captures segments</td></tr>
-                  <tr><td><span style="color:#fb923c">(?:abc)</span></td><td>Non-capture group</td><td>(?:https?|ftp)://</td></tr>
-                  <tr><td><span style="color:#fb923c">|</span></td><td>Alternation (OR)</td><td>cat|dog</td></tr>
-                  <tr><td><span style="color:#fb923c">(?=...)</span></td><td>Positive lookahead</td><td>\d+(?= dollars)</td></tr>
-                  <tr><td><span style="color:#fb923c">(?!...)</span></td><td>Negative lookahead</td><td>\d+(?! dollars)</td></tr></table>
-                  <div class="dt">▸ COMMON PATTERNS</div>
-                  <div class="code-block"><span class="com"># Email</span>
-<span class="rx-anc">^</span><span class="rx-cls">[\w.+\-]</span><span class="rx-q">+</span>@<span class="rx-cls">[\w\-]</span><span class="rx-q">+</span>\.<span class="rx-cls">[\w.\-]</span><span class="rx-q">+</span><span class="rx-anc">$</span>
-
-<span class="com"># IPv4</span>
-<span class="rx-anc">^</span><span class="rx-q">(?:</span><span class="rx-cls">25[0-5]</span>|<span class="rx-cls">2[0-4]\d</span>|<span class="rx-cls">[01]?\d\d?</span><span class="rx-q">)</span>(?:\.<span class="rx-q">(?:</span><span class="rx-cls">25[0-5]</span>|<span class="rx-cls">2[0-4]\d</span>|<span class="rx-cls">[01]?\d\d?</span><span class="rx-q">)</span>)<span class="rx-q">{3}</span><span class="rx-anc">$</span>
-
-<span class="com"># Strong password: 8+ chars, upper, lower, digit, special</span>
-<span class="rx-anc">^</span><span class="rx-g">(?=</span>.*<span class="rx-cls">[A-Z]</span><span class="rx-g">)</span><span class="rx-g">(?=</span>.*<span class="rx-cls">[a-z]</span><span class="rx-g">)</span><span class="rx-g">(?=</span>.*<span class="rx-cls">\d</span><span class="rx-g">)</span><span class="rx-g">(?=</span>.*<span class="rx-cls">[\W_]</span><span class="rx-g">)</span><span class="rx-cls">.{8,}</span><span class="rx-anc">$</span>
-
-<span class="com"># MAC address</span>
-<span class="rx-anc">^</span><span class="rx-g">(</span><span class="rx-cls">[0-9A-Fa-f]{2}</span>:<span class="rx-q">){5}</span><span class="rx-cls">[0-9A-Fa-f]{2}</span><span class="rx-anc">$</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <div class="topic">
             <div class="topic-header" onclick="toggleTopic(this)">
