@@ -27,9 +27,9 @@
  * @param {HTMLElement} h - The .domain-header element that was clicked.
  */
 function toggleDomain(h) {
-  var b = h.nextElementSibling;           // .domain-body immediately follows header
-  var o = b.classList.toggle("open");     // toggle returns new state (true = open)
-  h.classList.toggle("open", o);          // sync header class for chevron rotation
+  var b = h.nextElementSibling; // .domain-body immediately follows header
+  var o = b.classList.toggle("open"); // toggle returns new state (true = open)
+  h.classList.toggle("open", o); // sync header class for chevron rotation
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -43,7 +43,7 @@ function toggleDomain(h) {
  * @param {HTMLElement} h - The .topic-header element that was clicked.
  */
 function toggleTopic(h) {
-  h.classList.toggle("open");               // rotates the ▶ chevron via CSS
+  h.classList.toggle("open"); // rotates the ▶ chevron via CSS
   h.nextElementSibling.classList.toggle("open"); // shows/hides .topic-body
 }
 
@@ -60,16 +60,16 @@ function toggleTopic(h) {
  */
 function filter(domain, chip) {
   // Remove active state from all chips, then mark the clicked one
-  document
-    .querySelectorAll(".chip")
-    .forEach(function(c) { c.classList.remove("active"); });
+  document.querySelectorAll(".chip").forEach(function (c) {
+    c.classList.remove("active");
+  });
   chip.classList.add("active");
 
   // Show/hide domain sections based on their data-domain attribute
-  document.querySelectorAll(".domain-section").forEach(function(s) {
+  document.querySelectorAll(".domain-section").forEach(function (s) {
     s.classList.toggle(
       "hidden",
-      domain !== "all" && s.dataset.domain !== domain
+      domain !== "all" && s.dataset.domain !== domain,
     );
   });
 }
@@ -91,7 +91,7 @@ function toggleTheme(btn) {
   var newTheme = currentTheme === "light" ? "dark" : "light";
 
   doc.setAttribute("data-theme", newTheme);
-  localStorage.setItem("theme", newTheme);  // persist across page loads
+  localStorage.setItem("theme", newTheme); // persist across page loads
 
   updateThemeButton(btn, newTheme);
 }
@@ -108,7 +108,7 @@ function updateThemeButton(btn, theme) {
   btn.textContent = theme === "light" ? "☾ DARK MODE" : "☀ LIGHT MODE";
 
   // Update button accent color to match the active theme palette
-  btn.style.color       = theme === "light" ? "var(--purple)" : "var(--amber)";
+  btn.style.color = theme === "light" ? "var(--purple)" : "var(--amber)";
   btn.style.borderColor = theme === "light" ? "var(--purple)" : "var(--amber)";
 }
 
@@ -122,7 +122,7 @@ function updateThemeButton(btn, theme) {
   document.documentElement.setAttribute("data-theme", savedTheme);
 
   // Wait for DOM so the button element exists before we update it
-  window.addEventListener("DOMContentLoaded", function() {
+  window.addEventListener("DOMContentLoaded", function () {
     var btn = document.getElementById("theme-toggle-btn");
     updateThemeButton(btn, savedTheme);
   });
@@ -135,7 +135,7 @@ function updateThemeButton(btn, theme) {
 // "Provider" responsibility for each cloud model.
 // ─────────────────────────────────────────────────────────────────────────────
 (function buildCloudStack() {
-  window.addEventListener("DOMContentLoaded", function() {
+  window.addEventListener("DOMContentLoaded", function () {
     var container = document.getElementById("cloud-stack");
     if (!container) return;
 
@@ -157,29 +157,30 @@ function updateThemeButton(btn, theme) {
      * 1 = Customer responsibility, 0 = Provider responsibility
      */
     var resp = [
-      [1, 1, 1, 0],  // Applications
-      [1, 1, 1, 0],  // Data          ← SaaS: provider manages app, customer owns data policy
-      [1, 1, 0, 0],  // Runtime
-      [1, 1, 0, 0],  // Middleware
-      [1, 1, 0, 0],  // OS
-      [1, 0, 0, 0],  // Virtualization
-      [1, 0, 0, 0],  // Servers
-      [1, 0, 0, 0],  // Storage
-      [1, 0, 0, 0],  // Networking
+      [1, 1, 1, 0], // Applications
+      [1, 1, 1, 0], // Data          ← SaaS: provider manages app, customer owns data policy
+      [1, 1, 0, 0], // Runtime
+      [1, 1, 0, 0], // Middleware
+      [1, 1, 0, 0], // OS
+      [1, 0, 0, 0], // Virtualization
+      [1, 0, 0, 0], // Servers
+      [1, 0, 0, 0], // Storage
+      [1, 0, 0, 0], // Networking
     ];
 
     // Color pairs: [background, text] per column [OnPrem, IaaS, PaaS, SaaS]
     var colors = [
-      ["rgba(255,77,109,.12)",  "#ff4d6d"],  // On-Prem  — red
-      ["rgba(255,176,32,.09)",  "#ffb020"],  // IaaS     — amber
-      ["rgba(0,212,255,.08)",   "#00d4ff"],  // PaaS     — cyan
-      ["rgba(0,255,153,.08)",   "#00ff99"],  // SaaS     — green
+      ["rgba(255,77,109,.12)", "#ff4d6d"], // On-Prem  — red
+      ["rgba(255,176,32,.09)", "#ffb020"], // IaaS     — amber
+      ["rgba(0,212,255,.08)", "#00d4ff"], // PaaS     — cyan
+      ["rgba(0,255,153,.08)", "#00ff99"], // SaaS     — green
     ];
 
     // Build one row per layer
-    layers.forEach(function(layerName, rowIndex) {
+    layers.forEach(function (layerName, rowIndex) {
       var row = document.createElement("div");
-      row.style.cssText = "display:flex;gap:0;margin-bottom:3px;align-items:stretch";
+      row.style.cssText =
+        "display:flex;gap:0;margin-bottom:3px;align-items:stretch";
 
       // Layer name label column
       var lbl = document.createElement("div");
@@ -190,15 +191,18 @@ function updateThemeButton(btn, theme) {
       row.appendChild(lbl);
 
       // Four model cells (OnPrem → SaaS)
-      resp[rowIndex].forEach(function(isCustomer, colIndex) {
+      resp[rowIndex].forEach(function (isCustomer, colIndex) {
         var cell = document.createElement("div");
         cell.style.cssText =
           "flex:1;text-align:center;padding:5px 3px;font-size:11px;" +
           "font-weight:600;border-radius:3px;margin:0 2px;" +
           (isCustomer
-            ? "background:" + colors[colIndex][0] +
-              ";color:" + colors[colIndex][1] +
-              ";border:1px solid " + colors[colIndex][0]
+            ? "background:" +
+              colors[colIndex][0] +
+              ";color:" +
+              colors[colIndex][1] +
+              ";border:1px solid " +
+              colors[colIndex][0]
             : "background:rgba(255,255,255,.02);color:#3a4a60;" +
               "border:1px solid rgba(255,255,255,.05)");
         cell.textContent = isCustomer ? "Customer" : "Provider";
@@ -228,10 +232,14 @@ function toggleAll(btn) {
 
   // Select all accordion headers and bodies
   var headers = document.querySelectorAll(".domain-header, .topic-header");
-  var bodies  = document.querySelectorAll(".domain-body, .topic-body");
+  var bodies = document.querySelectorAll(".domain-body, .topic-body");
 
-  headers.forEach(function(h) { h.classList.toggle("open", allExpanded); });
-  bodies.forEach(function(b)  { b.classList.toggle("open", allExpanded); });
+  headers.forEach(function (h) {
+    h.classList.toggle("open", allExpanded);
+  });
+  bodies.forEach(function (b) {
+    b.classList.toggle("open", allExpanded);
+  });
 
   // Update button label to reflect next action
   btn.textContent = allExpanded ? "↕ COLLAPSE ALL" : "↕ EXPAND ALL";
