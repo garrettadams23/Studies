@@ -2633,6 +2633,161 @@ sqlmap -u <span class="str">"http://target.com/page?id=1"</span> \
             </div>
           </div>
 
+          <!-- ═══════════════════════════════════════════════════════════
+               NEW TOPIC: Unix / Linux Commands Quick Reference
+               Source: Unix Commands Cheat Sheet — 241-400pg PDF
+               Domain: Linux & Systems
+          ═══════════════════════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">⌨️</span>
+              <span class="topic-name">Unix / Linux Commands — Quick Reference</span>
+              <span class="topic-badge">COMPLETE REFERENCE</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Source: Unix Commands Cheat Sheet</div>
+                <div class="concept-title">I/O Redirection · Pipes · File Management · Text Processing · Processes</div>
+                <div class="concept-desc">
+                  Commands work on any POSIX-compatible shell (bash, zsh, sh, ksh).
+                  Wildcards: <code style="color:var(--cyan)">*</code> (any length) · <code style="color:var(--cyan)">?</code> (single char) ·
+                  <code style="color:var(--cyan)">[abc]</code> (character class).
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ I/O REDIRECTION &amp; PIPES</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Operator</th><th>Description</th><th>Example</th></tr>
+                    <tr><td style="color:var(--cyan)">cmd1 | cmd2</td><td>Pipe: feed stdout of cmd1 to stdin of cmd2</td><td><code>ps aux | grep nginx</code></td></tr>
+                    <tr><td style="color:var(--cyan)">cmd &gt; file</td><td>Redirect stdout to file (overwrites)</td><td><code>echo "hello" &gt; out.txt</code></td></tr>
+                    <tr><td style="color:var(--cyan)">cmd &gt;&gt; file</td><td>Append stdout to file</td><td><code>date &gt;&gt; log.txt</code></td></tr>
+                    <tr><td style="color:var(--cyan)">cmd &lt; file</td><td>Read stdin from file</td><td><code>wc -l &lt; names.txt</code></td></tr>
+                    <tr><td style="color:var(--cyan)">cmd &gt; /dev/null</td><td>Suppress all output (discard stdout)</td><td><code>./script.sh &gt; /dev/null</code></td></tr>
+                    <tr><td style="color:var(--cyan)">cmd 2&gt;&amp;1</td><td>Redirect stderr to stdout (combine streams)</td><td><code>make 2&gt;&amp;1 | tee build.log</code></td></tr>
+                    <tr><td style="color:var(--cyan)">cmd &amp;&amp; cmd2</td><td>Run cmd2 only if cmd1 succeeds (exit 0)</td><td><code>make &amp;&amp; make install</code></td></tr>
+                    <tr><td style="color:var(--cyan)">cmd || cmd2</td><td>Run cmd2 only if cmd1 fails (non-zero exit)</td><td><code>ping host || echo "down"</code></td></tr>
+                    <tr><td style="color:var(--cyan)">cmd &amp;</td><td>Run command in background; returns to shell</td><td><code>./server &amp;</code></td></tr>
+                    <tr><td style="color:var(--cyan)">cmd &lt;&lt; EOF</td><td>Heredoc: inline multi-line stdin until delimiter</td><td><code>wc -l &lt;&lt; EOF ... EOF</code></td></tr>
+                    <tr><td style="color:var(--cyan)">$(cmd)</td><td>Command substitution: use output as argument</td><td><code>echo "today: $(date)"</code></td></tr>
+                  </table>
+
+                  <div class="dt">▸ FILE &amp; DIRECTORY MANAGEMENT</div>
+                  <div class="code-block">
+<span class="com"># Listing and navigation</span>
+<span class="fn">ls</span>                     <span class="com"># List current directory</span>
+<span class="fn">ls</span> -l                  <span class="com"># Long format: perms, owner, size, date</span>
+<span class="fn">ls</span> -a                  <span class="com"># Show hidden files (dot files)</span>
+<span class="fn">ls</span> -lh                 <span class="com"># Human-readable sizes (KB, MB, GB)</span>
+<span class="fn">ls</span> -lt                 <span class="com"># Sort by modified time (newest first)</span>
+<span class="fn">ls</span> -lR                 <span class="com"># Recursive listing</span>
+<span class="fn">cd</span> /path/to/dir        <span class="com"># Change directory</span>
+<span class="fn">cd</span> ..                  <span class="com"># Up one level</span>
+<span class="fn">cd</span> ~                   <span class="com"># Go to home directory</span>
+<span class="fn">cd</span> -                   <span class="com"># Toggle to previous directory</span>
+<span class="fn">pwd</span>                    <span class="com"># Print working directory</span>
+
+<span class="com"># Create, copy, move, delete</span>
+<span class="fn">mkdir</span> -p dir/sub/leaf  <span class="com"># Create directory tree (no error if exists)</span>
+<span class="fn">cp</span> file.txt backup/    <span class="com"># Copy file to directory</span>
+<span class="fn">cp</span> -r src/ dst/        <span class="com"># Recursive copy (directories)</span>
+<span class="fn">cp</span> -p file backup      <span class="com"># Preserve permissions, timestamps</span>
+<span class="fn">mv</span> old.txt new.txt     <span class="com"># Rename file</span>
+<span class="fn">mv</span> file.txt /tmp/      <span class="com"># Move to directory</span>
+<span class="fn">rm</span> file.txt            <span class="com"># Delete file</span>
+<span class="fn">rm</span> -rf dir/            <span class="com"># Delete directory recursively (no prompt)</span>
+<span class="fn">ln</span> -s target link      <span class="com"># Create symbolic link</span>
+<span class="fn">touch</span> file.txt         <span class="com"># Create empty file or update timestamp</span></div>
+
+                  <div class="dt">▸ TEXT VIEWING &amp; SEARCHING</div>
+                  <div class="code-block">
+<span class="com"># View file content</span>
+<span class="fn">cat</span> file.txt           <span class="com"># Print entire file to stdout</span>
+<span class="fn">less</span> file.txt          <span class="com"># Page through file (q to quit)</span>
+<span class="fn">head</span> -20 file.txt      <span class="com"># First 20 lines</span>
+<span class="fn">tail</span> -20 file.txt      <span class="com"># Last 20 lines</span>
+<span class="fn">tail</span> -f /var/log/syslog <span class="com"># Follow live log output</span>
+
+<span class="com"># Search and filter</span>
+<span class="fn">grep</span> <span class="str">"pattern"</span> file.txt             <span class="com"># Search in file</span>
+<span class="fn">grep</span> -r <span class="str">"error"</span> /var/log/           <span class="com"># Recursive search in directory</span>
+<span class="fn">grep</span> -i <span class="str">"warning"</span> file.txt          <span class="com"># Case-insensitive</span>
+<span class="fn">grep</span> -v <span class="str">"debug"</span> file.txt            <span class="com"># Invert match (exclude lines)</span>
+<span class="fn">grep</span> -n <span class="str">"TODO"</span> *.py                 <span class="com"># Show line numbers</span>
+<span class="fn">grep</span> -c <span class="str">"fail"</span> auth.log             <span class="com"># Count matching lines only</span>
+<span class="fn">grep</span> -E <span class="str">"\d{1,3}\.\d{1,3}"</span> log.txt  <span class="com"># Extended regex</span>
+
+<span class="com"># Text manipulation</span>
+<span class="fn">sed</span> <span class="str">'s/old/new/g'</span> file.txt          <span class="com"># Replace all occurrences</span>
+<span class="fn">sed</span> -i <span class="str">'s/foo/bar/g'</span> file.txt       <span class="com"># In-place edit</span>
+<span class="fn">awk</span> <span class="str">'{print $1}'</span> file.txt            <span class="com"># Print first field (whitespace delimited)</span>
+<span class="fn">awk</span> -F: <span class="str">'{print $1,$3}'</span> /etc/passwd  <span class="com"># Colon delimiter, print fields 1 and 3</span>
+<span class="fn">cut</span> -d: -f1 /etc/passwd              <span class="com"># Cut by delimiter, return field 1</span>
+<span class="fn">sort</span> file.txt                        <span class="com"># Sort lines alphabetically</span>
+<span class="fn">sort</span> -rn file.txt                    <span class="com"># Sort numerically, reversed</span>
+<span class="fn">uniq</span> -c file.txt                     <span class="com"># Remove duplicates, prefix with count</span>
+<span class="fn">wc</span> -l file.txt                       <span class="com"># Count lines</span>
+<span class="fn">wc</span> -w file.txt                       <span class="com"># Count words</span>
+<span class="fn">tr</span> <span class="str">'a-z'</span> <span class="str">'A-Z'</span> &lt; file.txt            <span class="com"># Translate chars (lowercase to upper)</span>
+<span class="fn">tee</span> output.txt                       <span class="com"># Write stdin to file AND stdout</span></div>
+
+                  <div class="dt">▸ PROCESS MANAGEMENT</div>
+                  <div class="code-block">
+<span class="fn">ps</span> aux                 <span class="com"># All running processes (detailed)</span>
+<span class="fn">ps</span> aux | <span class="fn">grep</span> nginx    <span class="com"># Filter process list</span>
+<span class="fn">top</span>                    <span class="com"># Interactive process viewer</span>
+<span class="fn">htop</span>                   <span class="com"># Better interactive process viewer</span>
+<span class="fn">kill</span> 1234              <span class="com"># Send SIGTERM to PID 1234 (graceful stop)</span>
+<span class="fn">kill</span> -9 1234           <span class="com"># Send SIGKILL (force kill, unblockable)</span>
+<span class="fn">killall</span> nginx          <span class="com"># Kill all processes named nginx</span>
+<span class="fn">bg</span>                     <span class="com"># Resume suspended job in background</span>
+<span class="fn">fg</span>                     <span class="com"># Bring background job to foreground</span>
+<span class="fn">jobs</span>                   <span class="com"># List background jobs in current shell</span>
+<span class="fn">nohup</span> ./script.sh &amp;   <span class="com"># Run immune to SIGHUP (survives logout)</span>
+<span class="fn">disown</span> %1              <span class="com"># Remove job from shell job table</span>
+<span class="fn">lsof</span> -i :8080          <span class="com"># Show which process uses port 8080</span>
+<span class="fn">strace</span> -p 1234         <span class="com"># Trace system calls of running process</span></div>
+
+                  <div class="dt">▸ DISK, ARCHIVES &amp; MISC</div>
+                  <div class="code-block">
+<span class="com"># Disk usage</span>
+<span class="fn">df</span> -h                  <span class="com"># Disk free space (human readable)</span>
+<span class="fn">du</span> -sh dir/            <span class="com"># Directory total size</span>
+<span class="fn">du</span> -sh * | <span class="fn">sort</span> -rh    <span class="com"># Sort by size (largest first)</span>
+
+<span class="com"># Archives and compression</span>
+<span class="fn">tar</span> -czf archive.tar.gz dir/    <span class="com"># Create gzip-compressed tar</span>
+<span class="fn">tar</span> -xzf archive.tar.gz         <span class="com"># Extract gzip tar</span>
+<span class="fn">tar</span> -cjf archive.tar.bz2 dir/   <span class="com"># Create bzip2-compressed tar</span>
+<span class="fn">tar</span> -tf archive.tar.gz          <span class="com"># List contents without extracting</span>
+<span class="fn">zip</span> -r archive.zip dir/         <span class="com"># Create zip archive recursively</span>
+<span class="fn">unzip</span> archive.zip -d /target    <span class="com"># Extract zip to target directory</span>
+
+<span class="com"># System info</span>
+<span class="fn">uname</span> -a               <span class="com"># Kernel name, version, arch</span>
+<span class="fn">uname</span> -r               <span class="com"># Kernel release version only</span>
+<span class="fn">uptime</span>                 <span class="com"># System uptime + load averages</span>
+<span class="fn">whoami</span>                 <span class="com"># Current username</span>
+<span class="fn">id</span>                     <span class="com"># UID, GID and all group memberships</span>
+<span class="fn">env</span>                    <span class="com"># List all environment variables</span>
+<span class="fn">which</span> python3          <span class="com"># Full path of a command</span>
+<span class="fn">type</span> ls                <span class="com"># Type of command (alias/builtin/file)</span>
+<span class="fn">history</span>                <span class="com"># Command history</span>
+<span class="fn">history | grep ssh</span>     <span class="com"># Search command history</span>
+<span class="fn">man</span> tcpdump            <span class="com"># Manual page for any command</span>
+
+<span class="com"># Finding files</span>
+<span class="fn">find</span> / -name <span class="str">"*.conf"</span> 2&gt;/dev/null   <span class="com"># Find by name (suppress errors)</span>
+<span class="fn">find</span> /home -type f -newer ref.txt   <span class="com"># Files newer than reference</span>
+<span class="fn">find</span> / -perm /4000 2&gt;/dev/null      <span class="com"># Find SUID files (security audit)</span>
+<span class="fn">find</span> / -size +100M 2&gt;/dev/null      <span class="com"># Files larger than 100MB</span>
+<span class="fn">locate</span> nginx.conf                   <span class="com"># Fast find (uses database)</span>
+<span class="fn">updatedb</span>                            <span class="com"># Rebuild locate database</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
 
 
           <!-- ═══════════════════════════════════════════════════════════
