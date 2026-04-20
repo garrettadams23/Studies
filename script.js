@@ -244,3 +244,87 @@ function toggleAll(btn) {
   // Update button label to reflect next action
   btn.textContent = allExpanded ? "↕ COLLAPSE ALL" : "↕ EXPAND ALL";
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SNAP QUOTE — rotates through quotes in the header every 8 seconds
+// ─────────────────────────────────────────────────────────────────────────────
+(function initSnapQuote() {
+  var quotes = [
+    "The obstacle is the way. — Marcus Aurelius",
+    "An unexamined life is not worth living. — Socrates",
+    "Simplicity is the ultimate sophistication. — Leonardo da Vinci",
+    "He who has a why can bear almost any how. — Nietzsche",
+    "The Tao that can be told is not the eternal Tao. — Lao Tzu",
+    "One must imagine Sisyphus happy. — Albert Camus",
+    "We suffer more in imagination than in reality. — Seneca",
+    "Before enlightenment, chop wood, carry water. — Zen proverb",
+    "You have power over your mind, not outside events. — Marcus Aurelius",
+    "The quieter you become, the more you can hear. — Ram Dass",
+    "Amor fati — love your fate. — Nietzsche",
+    "Water is the softest thing, yet it overcomes the hardest. — Lao Tzu",
+    "To know yourself is the beginning of all wisdom. — Aristotle",
+    "Security comes not from having things, but from releasing the need to control. — Epictetus",
+    "In the middle of difficulty lies opportunity. — Albert Einstein",
+    "Do not seek for things to happen the way you want them to. — Epictetus",
+    "Peace comes from within. Do not seek it without. — Buddha",
+    "The present moment always will have been. — Marcus Aurelius"
+  ];
+
+  window.addEventListener("DOMContentLoaded", function () {
+    var el = document.getElementById("sq-text");
+    var box = document.getElementById("snap-quote");
+    if (!el || !box) return;
+
+    var idx = Math.floor(Math.random() * quotes.length);
+
+    function showQuote(i) {
+      box.classList.remove("visible");
+      setTimeout(function () {
+        el.textContent = quotes[i % quotes.length];
+        box.classList.add("visible");
+      }, 600);
+    }
+
+    showQuote(idx);
+    setInterval(function () {
+      idx = (idx + 1) % quotes.length;
+      showQuote(idx);
+    }, 8000);
+  });
+})();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SYNC header buttons with existing toggleTheme / toggleAll state on load
+// ─────────────────────────────────────────────────────────────────────────────
+(function syncHeaderButtons() {
+  window.addEventListener("DOMContentLoaded", function () {
+    // Theme button — mirror saved theme into the new header button
+    var hdrTheme = document.getElementById("hdr-theme-btn");
+    if (hdrTheme) {
+      var t = localStorage.getItem("theme") || "dark";
+      hdrTheme.textContent = t === "light" ? "☾" : "☀";
+    }
+  });
+})();
+
+// Patch toggleTheme to also update the new header button
+var _origToggleTheme = toggleTheme;
+toggleTheme = function (btn) {
+  _origToggleTheme(btn);
+  // keep header icon in sync regardless of which button triggered the call
+  var hdrBtn = document.getElementById("hdr-theme-btn");
+  if (hdrBtn) {
+    var theme = document.documentElement.getAttribute("data-theme");
+    hdrBtn.textContent = theme === "light" ? "☾" : "☀";
+  }
+};
+
+// Patch toggleAll to also update the new header button label
+var _origToggleAll = toggleAll;
+toggleAll = function (btn) {
+  _origToggleAll(btn);
+  var hdrBtn = document.getElementById("hdr-expand-btn");
+  if (hdrBtn) {
+    hdrBtn.title = allExpanded ? "Collapse all" : "Expand all";
+  }
+};
