@@ -328,3 +328,18 @@ toggleAll = function (btn) {
     hdrBtn.title = allExpanded ? "Collapse all" : "Expand all";
   }
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 7. MOBILE TOUCH FEEDBACK
+// Adds .is-tapping class on touchstart for immediate visual response.
+// Works with CSS .chip.is-tapping { transform: scale(0.93); opacity: 0.72; }
+// Uses passive listeners to avoid blocking scroll performance.
+// ─────────────────────────────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".chip").forEach(function (el) {
+    el.addEventListener("touchstart",  function () { this.classList.add("is-tapping");    }, { passive: true });
+    el.addEventListener("touchend",    function () { this.classList.remove("is-tapping"); }, { passive: true });
+    el.addEventListener("touchcancel", function () { this.classList.remove("is-tapping"); }, { passive: true });
+  });
+});
+

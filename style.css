@@ -791,3 +791,43 @@ header p { color: var(--muted); font-size: 13px; max-width: 680px; }
 .ctag-military { color: #f59e0b; border-color: rgba(245,158,11,.3); }
 [data-theme="light"] .chip.c-military { color: #b45309; border-color: rgba(180,83,9,.3); }
 [data-theme="light"] .chip.c-military.active { background: rgba(180,83,9,.1) !important; color: #92400e !important; border-color: #92400e !important; }
+
+/* ══ LIFESTYLE DOMAIN ═══════════════════════════════════════════════════════ */
+.domain-lifestyle { --accent: #4ade80; }
+
+.chip.c-life                       { color: #4ade80; border-color: rgba(74,222,128,.3); }
+.chip.c-life.active,
+.chip.c-life:hover                 { background: rgba(74,222,128,.1); }
+
+[data-theme="light"] .chip.c-life.active {
+  background:  rgba(22,163,74,.1) !important;
+  color:       #15803d             !important;
+  border-color:#15803d             !important;
+}
+
+/* ══ MOBILE TOUCH IMPROVEMENTS ══════════════════════════════════════════════
+   · touch-action:manipulation    — removes 300 ms tap delay
+   · -webkit-tap-highlight-color  — removes iOS default grey flash
+   · .is-tapping                  — immediate CSS feedback before onClick fires
+   · @media(pointer:coarse)       — larger tap targets on touch screens
+═══════════════════════════════════════════════════════════════════════════ */
+.chip,
+.domain-header,
+.topic-header {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.chip.is-tapping {
+  transform: scale(0.93);
+  opacity: 0.72;
+  transition: transform 0.08s, opacity 0.08s;
+}
+
+@media (pointer: coarse) {
+  .chip          { padding: 8px 14px; min-height: 40px; font-size: 11px; }
+  .topic-header  { min-height: 52px; }
+  .domain-header { min-height: 56px; }
+  .filter-bar    { padding: 8px 16px 10px; }
+}
+
