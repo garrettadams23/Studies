@@ -1,0 +1,384 @@
+          <!-- TOPIC: OSI Model -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">📶</span>
+              <span class="topic-name">OSI Model — 7 Layers</span>
+              <span class="topic-badge">NETWORK+</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — OSI / DoD Model</div>
+                <div class="concept-title">Open Systems Interconnection — Layer Functions, PDUs &amp; Protocols</div>
+                <div class="concept-desc">
+                  Mnemonic: <strong style="color:var(--cyan)">Please Do Not Throw Sausage Pizza Away</strong>
+                  (Physical → Data Link → Network → Transport → Session → Presentation → Application).
+                  Attacks and controls map to specific layers.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ LAYER REFERENCE</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>#</th><th>Layer</th><th>PDU</th><th>Key Protocols / Devices</th><th>Function</th></tr>
+                    <tr>
+                      <td style="color:var(--red)">7</td>
+                      <td style="color:var(--red)">Application</td>
+                      <td>Data</td>
+                      <td>HTTP, HTTPS, FTP, SMTP, DNS, SNMP, SSH</td>
+                      <td>User-facing services, application APIs</td>
+                    </tr>
+                    <tr>
+                      <td style="color:var(--amber)">6</td>
+                      <td style="color:var(--amber)">Presentation</td>
+                      <td>Data</td>
+                      <td>TLS/SSL, JPEG, MPEG, ASCII, encryption</td>
+                      <td>Encoding, encryption, compression</td>
+                    </tr>
+                    <tr>
+                      <td style="color:var(--amber)">5</td>
+                      <td style="color:var(--amber)">Session</td>
+                      <td>Data</td>
+                      <td>NetBIOS, RPC, SQL sessions, NFS</td>
+                      <td>Establish, manage, terminate sessions</td>
+                    </tr>
+                    <tr>
+                      <td style="color:var(--green)">4</td>
+                      <td style="color:var(--green)">Transport</td>
+                      <td>Segment (TCP) / Datagram (UDP)</td>
+                      <td>TCP, UDP, TLS (also L5–L7)</td>
+                      <td>End-to-end delivery, flow control, ports</td>
+                    </tr>
+                    <tr>
+                      <td style="color:var(--cyan)">3</td>
+                      <td style="color:var(--cyan)">Network</td>
+                      <td>Packet</td>
+                      <td>IP, ICMP, OSPF, BGP, routers</td>
+                      <td>Logical addressing, routing between networks</td>
+                    </tr>
+                    <tr>
+                      <td style="color:var(--purple)">2</td>
+                      <td style="color:var(--purple)">Data Link</td>
+                      <td>Frame</td>
+                      <td>Ethernet, ARP, MAC, switches, bridges</td>
+                      <td>Physical addressing (MAC), error detection</td>
+                    </tr>
+                    <tr>
+                      <td style="color:var(--muted)">1</td>
+                      <td style="color:var(--muted)">Physical</td>
+                      <td>Bits</td>
+                      <td>CAT5/6, fiber, hubs, repeaters, RJ45</td>
+                      <td>Raw bit transmission over physical medium</td>
+                    </tr>
+                  </table>
+                  <div class="dt">▸ DOD / TCP-IP MODEL MAPPING</div>
+                  <table class="ref-table">
+                    <tr><th>DoD Layer</th><th>OSI Layers</th><th>Protocols</th></tr>
+                    <tr><td style="color:var(--red)">Application</td><td>5, 6, 7</td><td>HTTP, FTP, SMTP, DNS, SNMP, SSH, Telnet</td></tr>
+                    <tr><td style="color:var(--green)">Transport</td><td>4</td><td>TCP, UDP</td></tr>
+                    <tr><td style="color:var(--cyan)">Internet</td><td>3</td><td>IP, ICMP, ARP, OSPF, BGP</td></tr>
+                    <tr><td style="color:var(--muted)">Network Access</td><td>1, 2</td><td>Ethernet, Wi-Fi (802.11), PPP, VLAN</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOPIC: TCP vs UDP + 3-Way Handshake -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🤝</span>
+              <span class="topic-name">TCP vs UDP — Transport Layer</span>
+              <span class="topic-badge">NETWORK+</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — RFC 793 (TCP) · RFC 768 (UDP)</div>
+                <div class="concept-title">Connection Types · 3-Way Handshake · Flags · Use Cases</div>
+                <div class="concept-desc">
+                  <strong style="color:var(--cyan)">TCP</strong> — connection-oriented, reliable, ordered, error-checked.
+                  <strong style="color:var(--green)">UDP</strong> — connectionless, low-overhead, best-effort. Choose based on need for reliability vs speed.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ COMPARISON</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Feature</th><th style="color:var(--cyan)">TCP</th><th style="color:var(--green)">UDP</th></tr>
+                    <tr><td>Connection</td><td>3-way handshake (SYN→SYN-ACK→ACK)</td><td>None — send and forget</td></tr>
+                    <tr><td>Reliability</td><td>ACK, retransmission, ordering</td><td>No guarantees</td></tr>
+                    <tr><td>Speed</td><td>Slower (overhead)</td><td>Faster (low overhead)</td></tr>
+                    <tr><td>Header size</td><td>20–60 bytes</td><td>8 bytes</td></tr>
+                    <tr><td>Flow control</td><td>Yes (sliding window)</td><td>No</td></tr>
+                    <tr><td>Use cases</td><td>HTTP, HTTPS, FTP, SSH, SMTP, databases</td><td>DNS, VoIP, video streaming, DHCP, gaming</td></tr>
+                  </table>
+                  <div class="dt">▸ TCP 3-WAY HANDSHAKE &amp; FLAGS</div>
+                  <div class="code-block">
+<span class="com"># 3-Way Handshake (connection establishment)</span>
+Client → Server   <span class="str">SYN</span>         seq=100
+Server → Client   <span class="str">SYN-ACK</span>     seq=200, ack=101
+Client → Server   <span class="str">ACK</span>         seq=101, ack=201
+<span class="com"># Connection established ──────────────────────────────</span>
+
+<span class="com"># 4-Way Teardown (graceful close)</span>
+Client → Server   <span class="str">FIN</span>
+Server → Client   <span class="str">ACK</span>
+Server → Client   <span class="str">FIN</span>
+Client → Server   <span class="str">ACK</span>    <span class="com"># TIME_WAIT state follows</span>
+
+<span class="com"># TCP Flags (URG ACK PSH RST SYN FIN)</span>
+<span class="str">SYN</span>  - Synchronize (start connection)
+<span class="str">ACK</span>  - Acknowledge
+<span class="str">FIN</span>  - Finish (graceful close)
+<span class="str">RST</span>  - Reset (abrupt close / port closed)
+<span class="str">PSH</span>  - Push (flush buffer immediately)
+<span class="str">URG</span>  - Urgent pointer valid
+<span class="str">ECE</span>  - ECN echo (congestion notification)
+<span class="str">CWR</span>  - Congestion window reduced
+
+<span class="com"># SYN scan (Nmap -sS) — half-open, sends SYN, reads SYN-ACK/RST</span>
+<span class="com"># SYN-ACK = open port;  RST = closed;  no reply = filtered</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOPIC: Common Ports -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🚪</span>
+              <span class="topic-name">Common Ports — Protocol Reference</span>
+              <span class="topic-badge">NETWORK+ · SECURITY+</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Well-Known Ports 0–1023 · Registered 1024–49151</div>
+                <div class="concept-title">TCP/UDP Port Numbers — Services, Protocols &amp; Security Notes</div>
+                <div class="concept-desc">
+                  Well-known ports (0–1023) require root/admin to bind.
+                  Memorize all ports below for CompTIA exams — they appear across A+, Net+, Sec+, CySA+.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ MUST-KNOW PORTS</div>
+                  <table class="ref-table">
+                    <tr><th>Port(s)</th><th>Protocol</th><th>Transport</th><th>Security Notes</th></tr>
+                    <tr><td style="color:var(--cyan)">20 / 21</td><td>FTP (data/control)</td><td>TCP</td><td>Cleartext — use SFTP (22) or FTPS (990)</td></tr>
+                    <tr><td style="color:var(--cyan)">22</td><td>SSH / SFTP / SCP</td><td>TCP</td><td>Encrypted; replaces Telnet (23)</td></tr>
+                    <tr><td style="color:var(--red)">23</td><td>Telnet</td><td>TCP</td><td>Cleartext — avoid; legacy only</td></tr>
+                    <tr><td style="color:var(--cyan)">25</td><td>SMTP (send email)</td><td>TCP</td><td>Cleartext; SMTPS = 465, SMTP+STARTTLS = 587</td></tr>
+                    <tr><td style="color:var(--cyan)">53</td><td>DNS</td><td>UDP (queries) / TCP (zone transfers)</td><td>Zone transfers (TCP 53) must be restricted</td></tr>
+                    <tr><td style="color:var(--cyan)">67 / 68</td><td>DHCP (server/client)</td><td>UDP</td><td>DHCP snooping prevents rogue servers</td></tr>
+                    <tr><td style="color:var(--cyan)">69</td><td>TFTP</td><td>UDP</td><td>No auth, no encryption — internal only</td></tr>
+                    <tr><td style="color:var(--cyan)">80</td><td>HTTP</td><td>TCP</td><td>Cleartext — prefer HTTPS (443)</td></tr>
+                    <tr><td style="color:var(--cyan)">110</td><td>POP3</td><td>TCP</td><td>Email retrieval; POP3S = 995</td></tr>
+                    <tr><td style="color:var(--cyan)">119</td><td>NNTP (Usenet)</td><td>TCP</td><td>Legacy; rarely used</td></tr>
+                    <tr><td style="color:var(--cyan)">123</td><td>NTP</td><td>UDP</td><td>Time sync; NTP amplification DDoS vector</td></tr>
+                    <tr><td style="color:var(--cyan)">135</td><td>RPC / MSRPC</td><td>TCP</td><td>Windows; block at perimeter</td></tr>
+                    <tr><td style="color:var(--cyan)">137–139</td><td>NetBIOS</td><td>TCP/UDP</td><td>Legacy Windows; block externally</td></tr>
+                    <tr><td style="color:var(--cyan)">143</td><td>IMAP</td><td>TCP</td><td>Email; IMAPS = 993</td></tr>
+                    <tr><td style="color:var(--cyan)">161 / 162</td><td>SNMP (poll/trap)</td><td>UDP</td><td>v1/v2 cleartext; use SNMPv3</td></tr>
+                    <tr><td style="color:var(--cyan)">389</td><td>LDAP</td><td>TCP</td><td>Directory; LDAPS = 636</td></tr>
+                    <tr><td style="color:var(--cyan)">443</td><td>HTTPS / TLS</td><td>TCP</td><td>Encrypted HTTP; standard secure web</td></tr>
+                    <tr><td style="color:var(--cyan)">445</td><td>SMB / CIFS</td><td>TCP</td><td>Windows file shares; EternalBlue target</td></tr>
+                    <tr><td style="color:var(--cyan)">465 / 587</td><td>SMTPS / Submission</td><td>TCP</td><td>587 = authenticated submission (preferred)</td></tr>
+                    <tr><td style="color:var(--cyan)">514</td><td>Syslog</td><td>UDP</td><td>UDP — no delivery guarantee; TCP syslog = 6514</td></tr>
+                    <tr><td style="color:var(--cyan)">636</td><td>LDAPS</td><td>TCP</td><td>LDAP over TLS</td></tr>
+                    <tr><td style="color:var(--cyan)">993 / 995</td><td>IMAPS / POP3S</td><td>TCP</td><td>Encrypted email retrieval</td></tr>
+                    <tr><td style="color:var(--cyan)">1433</td><td>MS SQL Server</td><td>TCP</td><td>Block external access; requires auth</td></tr>
+                    <tr><td style="color:var(--cyan)">1521</td><td>Oracle DB</td><td>TCP</td><td>Block external; strong auth required</td></tr>
+                    <tr><td style="color:var(--cyan)">3306</td><td>MySQL / MariaDB</td><td>TCP</td><td>Bind to localhost; use SSL in transit</td></tr>
+                    <tr><td style="color:var(--cyan)">3389</td><td>RDP</td><td>TCP</td><td>Brute-force target; restrict with NLA + MFA</td></tr>
+                    <tr><td style="color:var(--cyan)">5060 / 5061</td><td>SIP (VoIP)</td><td>UDP/TCP</td><td>5061 = TLS-encrypted SIP</td></tr>
+                    <tr><td style="color:var(--cyan)">5432</td><td>PostgreSQL</td><td>TCP</td><td>Bind to localhost; SSL in transit</td></tr>
+                    <tr><td style="color:var(--cyan)">6514</td><td>Syslog TLS</td><td>TCP</td><td>Reliable, encrypted log transport</td></tr>
+                    <tr><td style="color:var(--cyan)">8080 / 8443</td><td>HTTP-alt / HTTPS-alt</td><td>TCP</td><td>Dev/proxy; same risks as 80/443</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOPIC: Subnetting & CIDR -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🔢</span>
+              <span class="topic-name">Subnetting &amp; CIDR</span>
+              <span class="topic-badge">NETWORK+ · A+</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — IPv4 Subnetting &amp; CIDR Notation</div>
+                <div class="concept-title">CIDR Table · Private Ranges · Subnet Math · IPv6 Basics</div>
+                <div class="concept-desc">
+                  CIDR (<strong style="color:var(--cyan)">Classless Inter-Domain Routing</strong>) expresses a subnet as
+                  <code>address/prefix</code> where prefix = number of network bits. Hosts per subnet =
+                  <code>2^(32−prefix) − 2</code> (subtract network + broadcast addresses).
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ CIDR QUICK REFERENCE</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>CIDR</th><th>Subnet Mask</th><th>Hosts</th><th>Subnets from /24</th><th>Common Use</th></tr>
+                    <tr><td style="color:var(--cyan)">/8</td><td>255.0.0.0</td><td>16,777,214</td><td>—</td><td>Class A (10.0.0.0/8)</td></tr>
+                    <tr><td style="color:var(--cyan)">/16</td><td>255.255.0.0</td><td>65,534</td><td>—</td><td>Class B (172.16.0.0/16)</td></tr>
+                    <tr><td style="color:var(--cyan)">/24</td><td>255.255.255.0</td><td>254</td><td>1</td><td>Common LAN segment</td></tr>
+                    <tr><td style="color:var(--cyan)">/25</td><td>255.255.255.128</td><td>126</td><td>2</td><td>Split /24 in half</td></tr>
+                    <tr><td style="color:var(--cyan)">/26</td><td>255.255.255.192</td><td>62</td><td>4</td><td>Smaller segments</td></tr>
+                    <tr><td style="color:var(--cyan)">/27</td><td>255.255.255.224</td><td>30</td><td>8</td><td>Point-to-point + small</td></tr>
+                    <tr><td style="color:var(--cyan)">/28</td><td>255.255.255.240</td><td>14</td><td>16</td><td>Small DMZ</td></tr>
+                    <tr><td style="color:var(--cyan)">/29</td><td>255.255.255.248</td><td>6</td><td>32</td><td>Point-to-point links</td></tr>
+                    <tr><td style="color:var(--cyan)">/30</td><td>255.255.255.252</td><td>2</td><td>64</td><td>WAN point-to-point</td></tr>
+                    <tr><td style="color:var(--cyan)">/31</td><td>255.255.255.254</td><td>2*</td><td>128</td><td>P2P no broadcast (RFC 3021)</td></tr>
+                    <tr><td style="color:var(--cyan)">/32</td><td>255.255.255.255</td><td>1 (host)</td><td>—</td><td>Single host route / loopback</td></tr>
+                  </table>
+                  <div class="dt">▸ PRIVATE &amp; SPECIAL RANGES (RFC 1918 / RFC 5735)</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Range</th><th>CIDR</th><th>Class</th><th>Use</th></tr>
+                    <tr><td style="color:var(--green)">10.0.0.0–10.255.255.255</td><td>/8</td><td>A</td><td>Private (large enterprise)</td></tr>
+                    <tr><td style="color:var(--green)">172.16.0.0–172.31.255.255</td><td>/12</td><td>B</td><td>Private (medium enterprise)</td></tr>
+                    <tr><td style="color:var(--green)">192.168.0.0–192.168.255.255</td><td>/16</td><td>C</td><td>Private (home / small office)</td></tr>
+                    <tr><td style="color:var(--amber)">127.0.0.0–127.255.255.255</td><td>/8</td><td>—</td><td>Loopback (localhost)</td></tr>
+                    <tr><td style="color:var(--amber)">169.254.0.0–169.254.255.255</td><td>/16</td><td>—</td><td>APIPA / link-local (no DHCP)</td></tr>
+                    <tr><td style="color:var(--amber)">100.64.0.0–100.127.255.255</td><td>/10</td><td>—</td><td>Shared address space (ISP NAT)</td></tr>
+                    <tr><td style="color:var(--red)">0.0.0.0</td><td>/32</td><td>—</td><td>Default route / unspecified</td></tr>
+                    <tr><td style="color:var(--red)">255.255.255.255</td><td>/32</td><td>—</td><td>Broadcast (all hosts)</td></tr>
+                  </table>
+                  <div class="dt">▸ SUBNET MATH</div>
+                  <div class="code-block">
+<span class="com"># Given: 192.168.10.200/26 — find network, broadcast, range</span>
+
+Prefix      = /26  → 26 network bits, 6 host bits
+Hosts       = 2^6 − 2 = <span class="num">62</span>
+Block size  = 2^6  = <span class="num">64</span>   (256 − 192 = 64)
+Subnets     = 2^2  = <span class="num">4</span>    (26 − 24 borrowed bits)
+
+<span class="com"># Blocks: .0, .64, .128, .192</span>
+<span class="com"># .200 falls in block .192</span>
+Network     = <span class="str">192.168.10.192</span>
+Broadcast   = <span class="str">192.168.10.255</span>
+Host range  = <span class="str">192.168.10.193 – 192.168.10.254</span>
+
+<span class="com"># Subnet mask from CIDR</span>
+/26 = 11111111.11111111.11111111.<span class="str">11000000</span> = <span class="str">255.255.255.192</span></div>
+                  <div class="dt">▸ IPv6 ESSENTIALS</div>
+                  <table class="ref-table">
+                    <tr><th>Feature</th><th>Detail</th></tr>
+                    <tr><td style="color:var(--cyan)">Address length</td><td>128-bit, written as 8 groups of 4 hex digits: <code>2001:0db8:85a3::8a2e:0370:7334</code></td></tr>
+                    <tr><td style="color:var(--cyan)">Abbreviation</td><td>Leading zeros dropped per group; consecutive zero groups → <code>::</code> (once only)</td></tr>
+                    <tr><td style="color:var(--cyan)">::1</td><td>Loopback (≡ 127.0.0.1)</td></tr>
+                    <tr><td style="color:var(--cyan)">fe80::/10</td><td>Link-local (auto-configured; not routable)</td></tr>
+                    <tr><td style="color:var(--cyan)">fc00::/7</td><td>Unique-local (≡ RFC 1918 private)</td></tr>
+                    <tr><td style="color:var(--cyan)">ff00::/8</td><td>Multicast (replaces IPv4 broadcast)</td></tr>
+                    <tr><td style="color:var(--cyan)">2000::/3</td><td>Global unicast (public internet)</td></tr>
+                    <tr><td style="color:var(--green)">NDP</td><td>Neighbor Discovery Protocol — replaces ARP</td></tr>
+                    <tr><td style="color:var(--green)">SLAAC</td><td>Stateless Address Autoconfiguration — no DHCP needed</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOPIC: Routing Protocols & Network Devices -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🗺️</span>
+              <span class="topic-name">Routing, VLANs &amp; Network Devices</span>
+              <span class="topic-badge">NETWORK+</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Routing Protocols · Switching · Network Hardware</div>
+                <div class="concept-title">Dynamic Routing · VLANs · Spanning Tree · Device Comparison</div>
+                <div class="concept-desc">
+                  <strong style="color:var(--cyan)">Routing</strong> operates at L3 (IP). Routers select paths using
+                  routing tables. Dynamic protocols automate table updates.
+                  <strong style="color:var(--cyan)">VLANs</strong> segment a single physical switch into logical L2 networks.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ ROUTING PROTOCOLS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Protocol</th><th>Type</th><th>Metric</th><th>Scope</th><th>Notes</th></tr>
+                    <tr><td style="color:var(--cyan)">RIP v2</td><td>Distance vector</td><td>Hop count (max 15)</td><td>IGP</td><td>Legacy; slow convergence</td></tr>
+                    <tr><td style="color:var(--cyan)">OSPF</td><td>Link-state</td><td>Cost (bandwidth)</td><td>IGP</td><td>Dijkstra SPF; fast convergence; enterprise standard</td></tr>
+                    <tr><td style="color:var(--cyan)">EIGRP</td><td>Hybrid</td><td>Bandwidth + delay</td><td>IGP</td><td>Cisco proprietary; DUAL algorithm</td></tr>
+                    <tr><td style="color:var(--cyan)">BGP</td><td>Path vector</td><td>AS path, policy</td><td>EGP</td><td>Internet backbone; connects ASes; complex policy</td></tr>
+                    <tr><td style="color:var(--cyan)">IS-IS</td><td>Link-state</td><td>Cost</td><td>IGP</td><td>Used by ISPs; similar to OSPF</td></tr>
+                    <tr><td style="color:var(--green)">Static route</td><td>Manual</td><td>Admin distance 1</td><td>Any</td><td>Predictable; no overhead; no failover</td></tr>
+                  </table>
+                  <div class="dt">▸ VLANS &amp; TRUNKING</div>
+                  <div class="code-block">
+<span class="com"># VLAN — logical L2 segmentation on a switch</span>
+<span class="com"># Access port — carries 1 VLAN (end devices)</span>
+<span class="com"># Trunk port  — carries multiple VLANs (switch-to-switch, switch-to-router)</span>
+<span class="com"># 802.1Q tag  — 4-byte VLAN tag added to Ethernet frame on trunk links</span>
+
+<span class="com"># Common VLAN design</span>
+VLAN 1    = Default (avoid using for production)
+VLAN 10   = Data / Users
+VLAN 20   = Voice (VoIP — QoS priority)
+VLAN 30   = Management (network devices)
+VLAN 40   = DMZ / Guest
+VLAN 99   = Native VLAN (untagged traffic on trunk)
+
+<span class="com"># Inter-VLAN routing: "router-on-a-stick" OR L3 switch SVIs</span>
+<span class="com"># Spanning Tree Protocol (STP 802.1D) — prevents L2 loops</span>
+<span class="com"># RSTP (802.1w) — rapid convergence (&lt;1s vs 30-50s STP)</span></div>
+                  <div class="dt">▸ NETWORK DEVICE COMPARISON</div>
+                  <table class="ref-table">
+                    <tr><th>Device</th><th>OSI Layer</th><th>Function</th><th>Forwards by</th></tr>
+                    <tr><td style="color:var(--cyan)">Hub</td><td>L1</td><td>Repeats signal to all ports — collision domain</td><td>Broadcasts bits</td></tr>
+                    <tr><td style="color:var(--cyan)">Bridge</td><td>L2</td><td>Connects two segments; learns MACs</td><td>MAC address</td></tr>
+                    <tr><td style="color:var(--cyan)">Switch</td><td>L2 (L3 if managed)</td><td>Learns MACs; forwards frames to correct port only</td><td>MAC address</td></tr>
+                    <tr><td style="color:var(--cyan)">Router</td><td>L3</td><td>Routes packets between networks; enforces ACLs</td><td>IP address</td></tr>
+                    <tr><td style="color:var(--cyan)">Firewall</td><td>L3–L7</td><td>Inspects and filters traffic by rule set</td><td>IP/port/state/DPI</td></tr>
+                    <tr><td style="color:var(--cyan)">WAP</td><td>L1–L2</td><td>Wireless access point; bridges Wi-Fi to wired LAN</td><td>MAC / radio</td></tr>
+                    <tr><td style="color:var(--cyan)">Proxy</td><td>L7</td><td>Intermediary for client requests; caching, filtering</td><td>Application data</td></tr>
+                    <tr><td style="color:var(--cyan)">Load Balancer</td><td>L4 / L7</td><td>Distributes traffic across servers</td><td>Port / content</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOPIC: Wireless Standards -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">📡</span>
+              <span class="topic-name">Wireless — 802.11 Standards &amp; Security</span>
+              <span class="topic-badge">NETWORK+ · SECURITY+</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — IEEE 802.11 Family</div>
+                <div class="concept-title">Wi-Fi Standards · Frequency Bands · Authentication · Attack Vectors</div>
+                <div class="concept-desc">
+                  Wi-Fi generations use IEEE 802.11 standards. Frequency band affects range vs speed:
+                  <strong style="color:var(--cyan)">2.4 GHz</strong> = longer range, more interference;
+                  <strong style="color:var(--green)">5 GHz</strong> = shorter range, faster throughput;
+                  <strong style="color:var(--amber)">6 GHz</strong> = Wi-Fi 6E/7, minimal interference.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ 802.11 STANDARD COMPARISON</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Standard</th><th>Wi-Fi Gen</th><th>Max Speed</th><th>Band(s)</th><th>Year</th></tr>
+                    <tr><td style="color:var(--cyan)">802.11b</td><td>Wi-Fi 1</td><td>11 Mbps</td><td>2.4 GHz</td><td>1999</td></tr>
+                    <tr><td style="color:var(--cyan)">802.11a</td><td>Wi-Fi 2</td><td>54 Mbps</td><td>5 GHz</td><td>1999</td></tr>
+                    <tr><td style="color:var(--cyan)">802.11g</td><td>Wi-Fi 3</td><td>54 Mbps</td><td>2.4 GHz</td><td>2003</td></tr>
+                    <tr><td style="color:var(--cyan)">802.11n</td><td>Wi-Fi 4</td><td>600 Mbps</td><td>2.4 / 5 GHz</td><td>2009</td></tr>
+                    <tr><td style="color:var(--cyan)">802.11ac</td><td>Wi-Fi 5</td><td>3.5 Gbps</td><td>5 GHz</td><td>2013</td></tr>
+                    <tr><td style="color:var(--cyan)">802.11ax</td><td>Wi-Fi 6/6E</td><td>9.6 Gbps</td><td>2.4 / 5 / 6 GHz</td><td>2019</td></tr>
+                    <tr><td style="color:var(--cyan)">802.11be</td><td>Wi-Fi 7</td><td>46 Gbps</td><td>2.4 / 5 / 6 GHz</td><td>2024</td></tr>
+                  </table>
+                  <div class="dt">▸ WIRELESS SECURITY PROTOCOLS</div>
+                  <table class="ref-table">
+                    <tr><th>Protocol</th><th>Encryption</th><th>Auth</th><th>Status</th></tr>
+                    <tr><td style="color:var(--red)">WEP</td><td>RC4 (40/104-bit)</td><td>Shared key</td><td>Broken — do not use</td></tr>
+                    <tr><td style="color:var(--amber)">WPA</td><td>TKIP (RC4)</td><td>PSK / 802.1X</td><td>Deprecated</td></tr>
+                    <tr><td style="color:var(--green)">WPA2</td><td>AES-CCMP</td><td>PSK / 802.1X</td><td>Current standard — use AES mode</td></tr>
+                    <tr><td style="color:var(--green)">WPA3</td><td>AES-GCMP-256</td><td>SAE / 802.1X</td><td>Recommended; SAE replaces PSK handshake</td></tr>
+                    <tr><td style="color:var(--cyan)">802.1X</td><td>EAP variants</td><td>RADIUS + certs</td><td>Enterprise auth; required for WPA2/3-Enterprise</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>

@@ -1,0 +1,276 @@
+          <!-- ═══════════════════════════════════════════════
+               TOPIC: PowerShell
+          ═══════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">💙</span>
+              <span class="topic-name">PowerShell — Scripting Reference</span>
+              <span class="topic-badge">WINDOWS / CROSS-PLATFORM</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — PowerShell 7+</div>
+                <div class="concept-title">Cmdlets · Variables · Flow Control · Pipelines · Common Patterns</div>
+                <div class="concept-desc">
+                  PowerShell uses <strong style="color:var(--cyan)">Verb-Noun</strong> cmdlet naming. Everything is an object.
+                  Pipeline passes objects (not text) between commands. Cross-platform: Windows, macOS, Linux (PS7+).
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ VARIABLES &amp; DATA TYPES</div>
+                  <div class="code-block">
+<span class="com"># Variables always start with $</span>
+<span class="var">$name</span>  = <span class="str">"Alice"</span>
+<span class="var">$count</span> = <span class="num">42</span>
+<span class="var">$pi</span>    = <span class="num">3.14</span>
+<span class="var">$flag</span>  = <span class="var">$true</span>          <span class="com"># $true / $false / $null</span>
+
+<span class="com"># Typed declaration</span>
+[<span class="type">int</span>]<span class="var">$n</span>      = <span class="num">10</span>
+[<span class="type">string</span>]<span class="var">$s</span>  = <span class="str">"hello"</span>
+[<span class="type">bool</span>]<span class="var">$b</span>    = <span class="var">$false</span>
+[<span class="type">array</span>]<span class="var">$arr</span> = <span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>
+
+<span class="com"># Arrays</span>
+<span class="var">$fruits</span> = @(<span class="str">"apple"</span>, <span class="str">"banana"</span>, <span class="str">"cherry"</span>)
+<span class="var">$fruits</span>[<span class="num">0</span>]           <span class="com"># → apple</span>
+<span class="var">$fruits</span>.Count        <span class="com"># → 3</span>
+<span class="var">$fruits</span> += <span class="str">"date"</span>    <span class="com"># append</span>
+
+<span class="com"># Hash tables (dictionaries)</span>
+<span class="var">$user</span> = @{ Name = <span class="str">"Bob"</span>; Age = <span class="num">30</span>; Admin = <span class="var">$false</span> }
+<span class="var">$user</span>.Name            <span class="com"># → Bob</span>
+<span class="var">$user</span>[<span class="str">"Age"</span>]          <span class="com"># → 30</span>
+<span class="var">$user</span>.Role = <span class="str">"Dev"</span>   <span class="com"># add key</span></div>
+
+                  <div class="dt">▸ STRING OPERATIONS</div>
+                  <div class="code-block">
+<span class="com"># Interpolation (double quotes only)</span>
+<span class="var">$msg</span> = <span class="str">"Hello, </span><span class="var">$name</span><span class="str">!"</span>
+<span class="var">$msg</span> = <span class="str">"Count is </span><span class="var">$($arr.Count)</span><span class="str"> items"</span>  <span class="com"># expression inside $()</span>
+
+<span class="com"># Here-string (multiline)</span>
+<span class="var">$text</span> = @<span class="str">"
+Line one
+Line two — value is $name
+"</span>@
+
+<span class="com"># Common string methods</span>
+<span class="str">"hello world"</span>.ToUpper()            <span class="com"># HELLO WORLD</span>
+<span class="str">"  trim me  "</span>.Trim()               <span class="com"># "trim me"</span>
+<span class="str">"a,b,c"</span>.Split(<span class="str">","</span>)                <span class="com"># @("a","b","c")</span>
+<span class="str">"hello"</span>.Replace(<span class="str">"l"</span>,<span class="str">"r"</span>)           <span class="com"># herro</span>
+<span class="str">"hello world"</span> -<span class="fn">match</span> <span class="str">"w\w+"</span>       <span class="com"># $true; $Matches[0] = "world"</span>
+<span class="str">"hello"</span> -<span class="fn">like</span> <span class="str">"hel*"</span>               <span class="com"># $true  (wildcard)</span>
+<span class="fn">-join</span> (<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>)                <span class="com"># "abc"</span>
+(<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>) -<span class="fn">join</span> <span class="str">"-"</span>            <span class="com"># "a-b-c"</span></div>
+
+                  <div class="dt">▸ FLOW CONTROL</div>
+                  <div class="code-block">
+<span class="com"># If / elseif / else</span>
+<span class="kw">if</span> (<span class="var">$x</span> -gt <span class="num">10</span>) {
+    <span class="fn">Write-Host</span> <span class="str">"big"</span>
+} <span class="kw">elseif</span> (<span class="var">$x</span> -eq <span class="num">10</span>) {
+    <span class="fn">Write-Host</span> <span class="str">"ten"</span>
+} <span class="kw">else</span> {
+    <span class="fn">Write-Host</span> <span class="str">"small"</span>
+}
+
+<span class="com"># Comparison operators (not symbols)</span>
+<span class="com"># -eq -ne -gt -ge -lt -le  (numbers)</span>
+<span class="com"># -like -notlike -match -notmatch  (strings/regex)</span>
+<span class="com"># -and -or -not  (logical)</span>
+<span class="com"># -contains -in  (arrays)</span>
+
+<span class="com"># Foreach loop</span>
+<span class="kw">foreach</span> (<span class="var">$item</span> <span class="kw">in</span> <span class="var">$fruits</span>) {
+    <span class="fn">Write-Host</span> <span class="var">$item</span>
+}
+
+<span class="com"># For / While</span>
+<span class="kw">for</span> (<span class="var">$i</span>=<span class="num">0</span>; <span class="var">$i</span> -lt <span class="num">5</span>; <span class="var">$i</span>++) { <span class="fn">Write-Host</span> <span class="var">$i</span> }
+<span class="kw">while</span> (<span class="var">$x</span> -gt <span class="num">0</span>) { <span class="var">$x</span>-- }
+
+<span class="com"># Switch</span>
+<span class="kw">switch</span> (<span class="var">$day</span>) {
+    <span class="str">"Mon"</span> { <span class="str">"Start of week"</span> }
+    <span class="str">"Fri"</span> { <span class="str">"End of week"</span>   }
+    <span class="kw">default</span> { <span class="str">"Midweek"</span>     }
+}</div>
+
+                  <div class="dt">▸ FUNCTIONS &amp; PIPELINE</div>
+                  <div class="code-block">
+<span class="com"># Function definition</span>
+<span class="kw">function</span> <span class="fn">Get-Greeting</span> {
+    <span class="kw">param</span>(
+        [<span class="type">string</span>]<span class="var">$Name</span> = <span class="str">"World"</span>,
+        [<span class="type">switch</span>]<span class="var">$Loud</span>
+    )
+    <span class="var">$msg</span> = <span class="str">"Hello, </span><span class="var">$Name</span><span class="str">!"</span>
+    <span class="kw">if</span> (<span class="var">$Loud</span>) { <span class="var">$msg</span>.ToUpper() } <span class="kw">else</span> { <span class="var">$msg</span> }
+}
+<span class="fn">Get-Greeting</span> -Name <span class="str">"Alice"</span> -Loud
+
+<span class="com"># Pipeline — pass objects between cmdlets</span>
+<span class="fn">Get-Process</span> | <span class="fn">Where-Object</span> CPU -gt <span class="num">10</span> | <span class="fn">Sort-Object</span> CPU -Descending | <span class="fn">Select-Object</span> -First <span class="num">5</span>
+<span class="fn">Get-ChildItem</span> <span class="str">"C:\logs"</span> -Filter <span class="str">"*.log"</span> | <span class="fn">ForEach-Object</span> { <span class="fn">Write-Host</span> <span class="var">$_</span>.Name }
+<span class="fn">Get-Content</span> log.txt | <span class="fn">Select-String</span> <span class="str">"ERROR"</span> | <span class="fn">Measure-Object</span> -Line</div>
+
+                  <div class="dt">▸ FILE SYSTEM &amp; SECURITY COMMON CMDLETS</div>
+                  <table class="ref-table">
+                    <tr><th>Cmdlet</th><th>Action</th><th>Alias</th></tr>
+                    <tr><td style="color:var(--cyan)">Get-ChildItem</td><td>List directory contents</td><td>ls, dir, gci</td></tr>
+                    <tr><td style="color:var(--cyan)">Set-Location</td><td>Change directory</td><td>cd, sl</td></tr>
+                    <tr><td style="color:var(--cyan)">Get-Content</td><td>Read file</td><td>cat, type, gc</td></tr>
+                    <tr><td style="color:var(--cyan)">Set-Content</td><td>Write/overwrite file</td><td>sc</td></tr>
+                    <tr><td style="color:var(--cyan)">Add-Content</td><td>Append to file</td><td>ac</td></tr>
+                    <tr><td style="color:var(--cyan)">Copy-Item</td><td>Copy file/directory</td><td>cp, copy</td></tr>
+                    <tr><td style="color:var(--cyan)">Remove-Item</td><td>Delete file/directory</td><td>rm, del</td></tr>
+                    <tr><td style="color:var(--cyan)">Get-Process</td><td>List running processes</td><td>ps, gps</td></tr>
+                    <tr><td style="color:var(--cyan)">Stop-Process</td><td>Kill a process</td><td>kill, spps</td></tr>
+                    <tr><td style="color:var(--cyan)">Get-Service</td><td>List Windows services</td><td>gsv</td></tr>
+                    <tr><td style="color:var(--cyan)">Get-EventLog</td><td>Read Windows event logs</td><td>—</td></tr>
+                    <tr><td style="color:var(--cyan)">Invoke-WebRequest</td><td>HTTP requests</td><td>curl, wget, iwr</td></tr>
+                    <tr><td style="color:var(--cyan)">ConvertTo-Json</td><td>Object → JSON string</td><td>—</td></tr>
+                    <tr><td style="color:var(--cyan)">ConvertFrom-Json</td><td>JSON string → object</td><td>—</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════
+               TOPIC: Bash (Debian/Ubuntu)
+          ═══════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🟢</span>
+              <span class="topic-name">Bash Scripting — Debian / Ubuntu Reference</span>
+              <span class="topic-badge">SHELL SCRIPTING</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Bash 5+</div>
+                <div class="concept-title">Variables · Conditionals · Loops · Functions · Common Patterns</div>
+                <div class="concept-desc">
+                  Bash scripts start with a <strong style="color:var(--cyan)">shebang</strong>:
+                  <code style="color:var(--cyan)">#!/usr/bin/env bash</code>.
+                  Make executable with <code style="color:var(--cyan)">chmod +x script.sh</code>.
+                  Prefer <code style="color:var(--cyan)">[[ ]]</code> over <code>[ ]</code> for tests.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ VARIABLES &amp; QUOTING</div>
+                  <div class="code-block">
+<span class="com"># Assign — no spaces around =</span>
+<span class="var">name</span>=<span class="str">"Alice"</span>
+<span class="var">count</span>=<span class="num">42</span>
+<span class="var">files</span>=(<span class="str">"a.txt"</span> <span class="str">"b.txt"</span> <span class="str">"c.txt"</span>)  <span class="com"># indexed array</span>
+
+<span class="com"># Read variables</span>
+<span class="fn">echo</span> <span class="str">"Hello </span><span class="var">$name</span><span class="str">"</span>          <span class="com"># interpolation in double quotes</span>
+<span class="fn">echo</span> <span class="str">'Literal $name'</span>       <span class="com"># single quotes = no interpolation</span>
+<span class="fn">echo</span> <span class="str">"Count: </span><span class="var">${count}</span><span class="str">"</span>      <span class="com"># braces for clarity/adjacency</span>
+
+<span class="com"># Default values</span>
+<span class="fn">echo</span> <span class="str">"</span><span class="var">${var:-default}</span><span class="str">"</span>    <span class="com"># use default if var unset/empty</span>
+<span class="fn">echo</span> <span class="str">"</span><span class="var">${var:=default}</span><span class="str">"</span>    <span class="com"># assign default if unset</span>
+
+<span class="com"># Special variables</span>
+<span class="var">$0</span>   <span class="com"># script name</span>
+<span class="var">$1</span> <span class="var">$2</span> <span class="com"># positional args</span>
+<span class="var">$@</span>   <span class="com"># all args as separate words</span>
+<span class="var">$#</span>   <span class="com"># number of args</span>
+<span class="var">$?</span>   <span class="com"># exit code of last command</span>
+<span class="var">$$</span>   <span class="com"># PID of current script</span>
+<span class="var">$!</span>   <span class="com"># PID of last background job</span></div>
+
+                  <div class="dt">▸ CONDITIONALS</div>
+                  <div class="code-block">
+<span class="com"># if / elif / else</span>
+<span class="kw">if</span> [[ <span class="var">$x</span> -gt <span class="num">10</span> ]]; <span class="kw">then</span>
+    <span class="fn">echo</span> <span class="str">"big"</span>
+<span class="kw">elif</span> [[ <span class="var">$x</span> -eq <span class="num">10</span> ]]; <span class="kw">then</span>
+    <span class="fn">echo</span> <span class="str">"ten"</span>
+<span class="kw">else</span>
+    <span class="fn">echo</span> <span class="str">"small"</span>
+<span class="kw">fi</span>
+
+<span class="com"># Integer tests: -eq -ne -gt -ge -lt -le</span>
+<span class="com"># String tests:  == != &lt; &gt; -z (empty) -n (not empty)</span>
+<span class="com"># File tests:    -f (file) -d (dir) -e (exists) -r -w -x</span>
+
+<span class="kw">if</span> [[ -f <span class="str">"</span><span class="var">$file</span><span class="str">"</span> && -r <span class="str">"</span><span class="var">$file</span><span class="str">"</span> ]]; <span class="kw">then</span>
+    <span class="fn">echo</span> <span class="str">"readable file"</span>
+<span class="kw">fi</span>
+
+<span class="com"># One-liner shortcuts</span>
+[[ -d <span class="str">"/tmp/work"</span> ]] || <span class="fn">mkdir</span> -p <span class="str">"/tmp/work"</span>   <span class="com"># create if missing</span>
+<span class="fn">command</span> -v git &>/dev/null && <span class="fn">echo</span> <span class="str">"git found"</span>    <span class="com"># check command exists</span></div>
+
+                  <div class="dt">▸ LOOPS</div>
+                  <div class="code-block">
+<span class="com"># for — iterate array</span>
+<span class="kw">for</span> <span class="var">fruit</span> <span class="kw">in</span> apple banana cherry; <span class="kw">do</span>
+    <span class="fn">echo</span> <span class="str">"</span><span class="var">$fruit</span><span class="str">"</span>
+<span class="kw">done</span>
+
+<span class="com"># for — C-style</span>
+<span class="kw">for</span> ((<span class="var">i</span>=<span class="num">0</span>; <span class="var">i</span>&lt;<span class="num">5</span>; <span class="var">i</span>++)); <span class="kw">do</span>
+    <span class="fn">echo</span> <span class="var">$i</span>
+<span class="kw">done</span>
+
+<span class="com"># for — glob / find</span>
+<span class="kw">for</span> <span class="var">f</span> <span class="kw">in</span> /var/log/*.log; <span class="kw">do</span>
+    <span class="fn">echo</span> <span class="str">"Processing: </span><span class="var">$f</span><span class="str">"</span>
+<span class="kw">done</span>
+
+<span class="com"># while</span>
+<span class="kw">while</span> <span class="fn">read</span> -r <span class="var">line</span>; <span class="kw">do</span>
+    <span class="fn">echo</span> <span class="str">"Line: </span><span class="var">$line</span><span class="str">"</span>
+<span class="kw">done</span> < file.txt
+
+<span class="com"># until</span>
+<span class="kw">until</span> [[ <span class="var">$count</span> -ge <span class="num">5</span> ]]; <span class="kw">do</span>
+    (( <span class="var">count</span>++ ))
+<span class="kw">done</span></div>
+
+                  <div class="dt">▸ FUNCTIONS</div>
+                  <div class="code-block">
+<span class="fn">greet</span>() {
+    <span class="kw">local</span> <span class="var">name</span>=<span class="str">"</span><span class="var">$1</span><span class="str">"</span>              <span class="com"># local = scoped to function</span>
+    [[ -z <span class="str">"</span><span class="var">$name</span><span class="str">"</span> ]] && { <span class="fn">echo</span> <span class="str">"Usage: greet &lt;name&gt;"</span> >&2; <span class="kw">return</span> <span class="num">1</span>; }
+    <span class="fn">echo</span> <span class="str">"Hello, </span><span class="var">$name</span><span class="str">!"</span>
+}
+
+<span class="fn">greet</span> <span class="str">"Alice"</span>    <span class="com"># Hello, Alice!</span>
+<span class="fn">greet</span>           <span class="com"># prints usage, returns 1</span>
+
+<span class="com"># Return values via echo + command substitution</span>
+<span class="fn">get_date</span>() { <span class="fn">date</span> +<span class="str">"%Y-%m-%d"</span>; }
+<span class="var">today</span>=$(<span class="fn">get_date</span>)
+<span class="fn">echo</span> <span class="str">"Today: </span><span class="var">$today</span><span class="str">"</span></div>
+
+                  <div class="dt">▸ SCRIPT BEST PRACTICES</div>
+                  <div class="code-block">
+<span class="com">#!/usr/bin/env bash</span>
+<span class="fn">set</span> -euo pipefail    <span class="com"># -e exit on error, -u error on unset var, -o pipefail</span>
+<span class="fn">IFS</span>=<span class="var">$'\n\t'</span>          <span class="com"># safer word splitting</span>
+
+<span class="com"># Trap for cleanup</span>
+<span class="fn">cleanup</span>() { <span class="fn">rm</span> -f /tmp/work.$$; }
+<span class="fn">trap</span> cleanup EXIT INT TERM
+
+<span class="com"># Logging helper</span>
+<span class="fn">log</span>()  { <span class="fn">echo</span> <span class="str">"[INFO]  </span><span class="var">$*</span><span class="str">"</span>; }
+<span class="fn">warn</span>() { <span class="fn">echo</span> <span class="str">"[WARN]  </span><span class="var">$*</span><span class="str">"</span> >&2; }
+<span class="fn">die</span>()  { <span class="fn">echo</span> <span class="str">"[ERROR] </span><span class="var">$*</span><span class="str">"</span> >&2; <span class="kw">exit</span> <span class="num">1</span>; }
+
+<span class="com"># Require dependencies</span>
+<span class="kw">for</span> <span class="var">cmd</span> <span class="kw">in</span> curl jq git; <span class="kw">do</span>
+    <span class="fn">command</span> -v <span class="str">"</span><span class="var">$cmd</span><span class="str">"</span> &>/dev/null || <span class="fn">die</span> <span class="str">"</span><span class="var">$cmd</span><span class="str"> is required"</span>
+<span class="kw">done</span></div>
+                </div>
+              </div>
+            </div>
+          </div>

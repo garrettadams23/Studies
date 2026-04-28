@@ -1,0 +1,258 @@
+          <!-- TOPIC: CIA Triad & Core Concepts -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🛡️</span>
+              <span class="topic-name">CIA Triad &amp; Core Security Concepts</span>
+              <span class="topic-badge">SECURITY+ · SECURITYX</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Foundational Security Principles</div>
+                <div class="concept-title">CIA · AAA · Defense in Depth · Zero Trust · Least Privilege</div>
+                <div class="concept-desc">
+                  The <strong style="color:var(--cyan)">CIA Triad</strong> is the foundation of all information security.
+                  Every control, threat, and countermeasure maps to one or more of its three properties.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ CIA TRIAD</div>
+                  <div class="card-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px">
+                    <div class="g-card" style="border-color:rgba(0,212,255,.3)">
+                      <div class="g-name" style="color:var(--cyan)">Confidentiality</div>
+                      <div class="g-desc">Data is accessible only to authorized parties.<br>
+                        Controls: encryption, access control, MFA, classification<br>
+                        Threats: eavesdropping, data exfiltration, sniffing</div>
+                    </div>
+                    <div class="g-card" style="border-color:rgba(0,255,153,.3)">
+                      <div class="g-name" style="color:var(--green)">Integrity</div>
+                      <div class="g-desc">Data is accurate and unaltered unless authorized.<br>
+                        Controls: hashing (SHA-256), MACs, digital signatures, checksums<br>
+                        Threats: tampering, MITM, injection, corruption</div>
+                    </div>
+                    <div class="g-card" style="border-color:rgba(255,176,32,.3)">
+                      <div class="g-name" style="color:var(--amber)">Availability</div>
+                      <div class="g-desc">Systems and data are accessible when needed.<br>
+                        Controls: redundancy, backups, failover, DDoS mitigation<br>
+                        Threats: DDoS, ransomware, hardware failure, disasters</div>
+                    </div>
+                  </div>
+                  <div class="dt">▸ AAA FRAMEWORK</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Component</th><th>Definition</th><th>Examples</th></tr>
+                    <tr><td style="color:var(--cyan)">Authentication</td><td>Verify identity — prove who you are</td><td>Password, MFA, biometrics, certificates, RADIUS</td></tr>
+                    <tr><td style="color:var(--cyan)">Authorization</td><td>Grant permissions — what you can do</td><td>ACLs, RBAC, ABAC, firewall rules, sudo</td></tr>
+                    <tr><td style="color:var(--cyan)">Accounting</td><td>Track actions — what you did</td><td>Logs, audit trails, SIEM, syslog, session records</td></tr>
+                  </table>
+                  <div class="dt">▸ SECURITY PRINCIPLES</div>
+                  <table class="ref-table">
+                    <tr><th>Principle</th><th>Description</th></tr>
+                    <tr><td style="color:var(--cyan)">Least Privilege</td><td>Grant only the minimum access required for the task; revoke when done</td></tr>
+                    <tr><td style="color:var(--cyan)">Need to Know</td><td>Access to data only when operationally necessary, even if privileged</td></tr>
+                    <tr><td style="color:var(--cyan)">Separation of Duties</td><td>No single person controls a complete critical process end-to-end</td></tr>
+                    <tr><td style="color:var(--cyan)">Defense in Depth</td><td>Layered controls so no single failure causes total compromise</td></tr>
+                    <tr><td style="color:var(--cyan)">Zero Trust</td><td>"Never trust, always verify" — authenticate and authorize every request regardless of network location</td></tr>
+                    <tr><td style="color:var(--cyan)">Fail Secure / Fail Safe</td><td>Fail secure = deny on failure (firewall drops traffic); Fail safe = preserve life/safety (doors unlock on fire)</td></tr>
+                    <tr><td style="color:var(--cyan)">Security by Obscurity</td><td>Alone is NOT a valid control — cannot be the only defense</td></tr>
+                    <tr><td style="color:var(--cyan)">Non-repudiation</td><td>Prevent denial of actions — achieved via digital signatures + audit logs</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOPIC: Authentication & MFA -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🔑</span>
+              <span class="topic-name">Authentication — Factors, Protocols &amp; Identity</span>
+              <span class="topic-badge">SECURITY+ · SECURITYX</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Authentication Methods &amp; Protocols</div>
+                <div class="concept-title">Authentication Factors · MFA · SSO · SAML · OAuth · OIDC</div>
+                <div class="concept-desc">
+                  Strong authentication requires <strong style="color:var(--cyan)">multiple factors from different categories</strong>.
+                  2FA = two factors. MFA = two or more. The factor categories cannot overlap in the same solution.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ AUTHENTICATION FACTORS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Factor</th><th>Category</th><th>Examples</th><th>Weakness</th></tr>
+                    <tr><td style="color:var(--cyan)">Something you know</td><td>Knowledge</td><td>Password, PIN, security question</td><td>Guessable, phishable, reusable</td></tr>
+                    <tr><td style="color:var(--cyan)">Something you have</td><td>Possession</td><td>TOTP token, smart card, hardware key (YubiKey), phone</td><td>Can be stolen/lost</td></tr>
+                    <tr><td style="color:var(--cyan)">Something you are</td><td>Inherence</td><td>Fingerprint, retina, face scan, voice</td><td>Can't revoke; privacy concerns</td></tr>
+                    <tr><td style="color:var(--cyan)">Somewhere you are</td><td>Location</td><td>IP geolocation, GPS, network segment</td><td>VPN/proxy bypass; not always reliable</td></tr>
+                    <tr><td style="color:var(--cyan)">Something you do</td><td>Behavioral</td><td>Typing cadence, gait analysis</td><td>Variable; requires baseline</td></tr>
+                  </table>
+                  <div class="dt">▸ AUTHENTICATION PROTOCOLS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Protocol</th><th>Purpose</th><th>Notes</th></tr>
+                    <tr><td style="color:var(--cyan)">RADIUS</td><td>Remote auth for network access (VPN, Wi-Fi, dial-up)</td><td>UDP 1812/1813; encrypts password only</td></tr>
+                    <tr><td style="color:var(--cyan)">TACACS+</td><td>Cisco AAA for network device admin</td><td>TCP 49; encrypts entire payload; separates A/A/A</td></tr>
+                    <tr><td style="color:var(--cyan)">Kerberos</td><td>Ticket-based SSO for domain (Windows AD)</td><td>UDP/TCP 88; TGT → TGS flow; Golden/Silver ticket attacks</td></tr>
+                    <tr><td style="color:var(--cyan)">LDAP / AD</td><td>Directory service lookup &amp; authentication</td><td>TCP 389 (636 TLS); used by Kerberos and many IdPs</td></tr>
+                    <tr><td style="color:var(--cyan)">SAML 2.0</td><td>Federated SSO via XML assertions</td><td>IdP issues assertions to SP; enterprise SSO standard</td></tr>
+                    <tr><td style="color:var(--cyan)">OAuth 2.0</td><td>Delegated authorization (not authentication)</td><td>"Sign in with Google" grants app access without sharing password</td></tr>
+                    <tr><td style="color:var(--cyan)">OIDC</td><td>Identity layer on top of OAuth 2.0</td><td>Adds ID token (JWT); used for "who are you" + OAuth scopes</td></tr>
+                    <tr><td style="color:var(--cyan)">FIDO2 / WebAuthn</td><td>Passwordless / phishing-resistant MFA</td><td>Passkeys; hardware key; challenge-response; no shared secret</td></tr>
+                    <tr><td style="color:var(--cyan)">PAP</td><td>Password auth (PPP)</td><td>Cleartext — legacy; avoid</td></tr>
+                    <tr><td style="color:var(--cyan)">CHAP / MS-CHAPv2</td><td>Challenge-response (PPP)</td><td>CHAP = MD5 hash; MS-CHAPv2 = Windows VPN legacy</td></tr>
+                  </table>
+                  <div class="dt">▸ ACCESS CONTROL MODELS</div>
+                  <table class="ref-table">
+                    <tr><th>Model</th><th>Abbr</th><th>How it works</th><th>Use case</th></tr>
+                    <tr><td style="color:var(--cyan)">Discretionary</td><td>DAC</td><td>Owner sets permissions on their objects (e.g., file NTFS ACL)</td><td>Desktop OS, file shares</td></tr>
+                    <tr><td style="color:var(--cyan)">Mandatory</td><td>MAC</td><td>System enforces labels (Top Secret, Secret…); users can't override</td><td>Military, government, SELinux</td></tr>
+                    <tr><td style="color:var(--cyan)">Role-Based</td><td>RBAC</td><td>Permissions assigned to roles; users assigned to roles</td><td>Enterprise apps, cloud IAM</td></tr>
+                    <tr><td style="color:var(--cyan)">Attribute-Based</td><td>ABAC</td><td>Policies based on user/resource/environment attributes</td><td>Fine-grained cloud policies (AWS IAM)</td></tr>
+                    <tr><td style="color:var(--cyan)">Rule-Based</td><td>RuBAC</td><td>Access via static rules (firewall ACL, time-of-day rules)</td><td>Firewalls, router ACLs</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOPIC: Cryptography -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🔐</span>
+              <span class="topic-name">Cryptography — Algorithms, PKI &amp; Protocols</span>
+              <span class="topic-badge">SECURITY+ · SECURITYX</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Modern Cryptography</div>
+                <div class="concept-title">Symmetric · Asymmetric · Hashing · PKI · TLS · Common Algorithms</div>
+                <div class="concept-desc">
+                  <strong style="color:var(--cyan)">Symmetric</strong> = same key encrypt/decrypt (fast, shared key problem).
+                  <strong style="color:var(--green)">Asymmetric</strong> = public/private key pair (slow, solves key exchange).
+                  <strong style="color:var(--amber)">Hashing</strong> = one-way digest (integrity, not reversible).
+                  In practice: asymmetric exchanges the symmetric key; symmetric encrypts bulk data.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ SYMMETRIC ALGORITHMS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Algorithm</th><th>Key Size</th><th>Block/Stream</th><th>Status / Notes</th></tr>
+                    <tr><td style="color:var(--red)">DES</td><td>56-bit</td><td>Block (64-bit)</td><td>Broken — do not use</td></tr>
+                    <tr><td style="color:var(--amber)">3DES / TDEA</td><td>112 / 168-bit</td><td>Block (64-bit)</td><td>Deprecated (NIST 2023); legacy only</td></tr>
+                    <tr><td style="color:var(--green)">AES-128</td><td>128-bit</td><td>Block (128-bit)</td><td>Current standard; FIPS 197; fast in hardware</td></tr>
+                    <tr><td style="color:var(--green)">AES-256</td><td>256-bit</td><td>Block (128-bit)</td><td>Recommended; quantum-resistant for near future</td></tr>
+                    <tr><td style="color:var(--cyan)">ChaCha20</td><td>256-bit</td><td>Stream</td><td>TLS 1.3; fast on mobile (no AES-NI)</td></tr>
+                    <tr><td style="color:var(--amber)">RC4</td><td>40–2048-bit</td><td>Stream</td><td>Broken; removed from TLS; avoid</td></tr>
+                    <tr><td style="color:var(--cyan)">Blowfish / Twofish</td><td>up to 448-bit</td><td>Block (64/128-bit)</td><td>Legacy Blowfish; Twofish still acceptable</td></tr>
+                  </table>
+                  <div class="dt">▸ AES MODES OF OPERATION</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Mode</th><th>Properties</th><th>Use</th></tr>
+                    <tr><td style="color:var(--red)">ECB</td><td>Same plaintext = same ciphertext block — patterns visible</td><td>Avoid — textbook only</td></tr>
+                    <tr><td style="color:var(--amber)">CBC</td><td>XOR with previous block; needs IV; sequential</td><td>Legacy TLS; disk encryption with IV</td></tr>
+                    <tr><td style="color:var(--green)">CTR</td><td>Turns block cipher into stream cipher; parallelizable</td><td>File encryption, random-access</td></tr>
+                    <tr><td style="color:var(--green)">GCM</td><td>CTR + GHASH authentication tag = authenticated encryption (AEAD)</td><td>TLS 1.3, IPsec, SSH — preferred</td></tr>
+                    <tr><td style="color:var(--cyan)">CCM</td><td>CTR + CBC-MAC; authenticated encryption</td><td>WPA2/3, 802.11</td></tr>
+                  </table>
+                  <div class="dt">▸ ASYMMETRIC ALGORITHMS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Algorithm</th><th>Key Size</th><th>Purpose</th><th>Notes</th></tr>
+                    <tr><td style="color:var(--green)">RSA</td><td>2048 / 4096-bit</td><td>Encryption, key exchange, signatures</td><td>2048+ required; 4096 for long-term data</td></tr>
+                    <tr><td style="color:var(--green)">ECC</td><td>256 / 384-bit</td><td>Key exchange (ECDH), signatures (ECDSA)</td><td>Smaller keys, faster; P-256 = ≈3072-bit RSA</td></tr>
+                    <tr><td style="color:var(--cyan)">Diffie-Hellman (DH)</td><td>2048+ bit</td><td>Key agreement (no auth)</td><td>Ephemeral DHE = forward secrecy</td></tr>
+                    <tr><td style="color:var(--cyan)">ECDH / ECDHE</td><td>256-bit</td><td>Elliptic curve key agreement</td><td>ECDHE = ephemeral; forward secrecy; TLS 1.3 only</td></tr>
+                    <tr><td style="color:var(--amber)">DSA</td><td>1024–3072-bit</td><td>Digital signatures only</td><td>Replaced by ECDSA; requires good RNG</td></tr>
+                    <tr><td style="color:var(--purple)">PGP / GPG</td><td>RSA/ECC</td><td>Email encryption + signing</td><td>Web of trust model; hybrid (asym key wraps sym key)</td></tr>
+                  </table>
+                  <div class="dt">▸ HASHING ALGORITHMS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Algorithm</th><th>Output Size</th><th>Status</th><th>Notes</th></tr>
+                    <tr><td style="color:var(--red)">MD5</td><td>128-bit</td><td>Broken (collisions)</td><td>Use only for non-security checksums; NOT for passwords</td></tr>
+                    <tr><td style="color:var(--red)">SHA-1</td><td>160-bit</td><td>Broken (SHAttered 2017)</td><td>Deprecated; certificates must not use SHA-1</td></tr>
+                    <tr><td style="color:var(--green)">SHA-256</td><td>256-bit</td><td>Current standard</td><td>SHA-2 family; widely used for certs, integrity</td></tr>
+                    <tr><td style="color:var(--green)">SHA-384 / SHA-512</td><td>384 / 512-bit</td><td>Strong</td><td>SHA-2 family; high-security contexts</td></tr>
+                    <tr><td style="color:var(--cyan)">SHA-3 / SHAKE</td><td>variable</td><td>Strong</td><td>Keccak sponge; independent design from SHA-2</td></tr>
+                    <tr><td style="color:var(--cyan)">BLAKE2 / BLAKE3</td><td>variable</td><td>Strong</td><td>Faster than SHA-256 in software</td></tr>
+                    <tr><td style="color:var(--green)">bcrypt / scrypt / Argon2</td><td>varies</td><td>Recommended for passwords</td><td>Key-stretching; slow by design; Argon2 = PHC winner</td></tr>
+                  </table>
+                  <div class="dt">▸ PKI COMPONENTS</div>
+                  <table class="ref-table">
+                    <tr><th>Component</th><th>Role</th></tr>
+                    <tr><td style="color:var(--cyan)">CA (Certificate Authority)</td><td>Issues and signs digital certificates; root of trust</td></tr>
+                    <tr><td style="color:var(--cyan)">Root CA</td><td>Self-signed; ultimate trust anchor; kept offline</td></tr>
+                    <tr><td style="color:var(--cyan)">Intermediate CA</td><td>Signed by root; issues end-entity certs; online; limits root exposure</td></tr>
+                    <tr><td style="color:var(--cyan)">RA (Registration Authority)</td><td>Handles identity verification before cert issuance</td></tr>
+                    <tr><td style="color:var(--cyan)">CRL</td><td>Certificate Revocation List — periodic; large; pull model</td></tr>
+                    <tr><td style="color:var(--cyan)">OCSP</td><td>Online Certificate Status Protocol — real-time revocation check; push/pull</td></tr>
+                    <tr><td style="color:var(--cyan)">CSR</td><td>Certificate Signing Request — contains public key + identity to send to CA</td></tr>
+                    <tr><td style="color:var(--cyan)">X.509</td><td>Standard format for digital certificates (version, serial, subject, issuer, public key, validity, extensions)</td></tr>
+                    <tr><td style="color:var(--cyan)">Certificate Pinning</td><td>App hardcodes expected cert/key hash; prevents MITM even with rogue CA</td></tr>
+                    <tr><td style="color:var(--cyan)">CT (Cert Transparency)</td><td>Public append-only logs of issued certs; detects misissued certs</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOPIC: Common Threat Types -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">⚠️</span>
+              <span class="topic-name">Common Threat Types &amp; Attack Vectors</span>
+              <span class="topic-badge">SECURITY+ · CYSA+</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Threat Taxonomy</div>
+                <div class="concept-title">Malware Types · Social Engineering · Network Attacks · Web Attacks</div>
+                <div class="concept-desc">
+                  Threats exploit <strong style="color:var(--red)">vulnerabilities</strong> using an
+                  <strong style="color:var(--red)">attack vector</strong>. Risk = Threat × Vulnerability × Impact.
+                  Know the category, not just the name — CompTIA tests on understanding behavior.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ MALWARE TYPES</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Type</th><th>Behavior</th><th>Key Traits</th></tr>
+                    <tr><td style="color:var(--red)">Virus</td><td>Attaches to legit file; spreads when executed</td><td>Requires host file; user action to spread</td></tr>
+                    <tr><td style="color:var(--red)">Worm</td><td>Self-replicates across network without user action</td><td>No host needed; exploits vulnerabilities (e.g., EternalBlue)</td></tr>
+                    <tr><td style="color:var(--red)">Trojan</td><td>Disguised as legit software; delivers payload on execution</td><td>No self-replication; relies on social engineering</td></tr>
+                    <tr><td style="color:var(--red)">Ransomware</td><td>Encrypts victim's files; demands payment for key</td><td>Double extortion = encrypt + exfiltrate</td></tr>
+                    <tr><td style="color:var(--red)">Rootkit</td><td>Hides attacker presence; operates at kernel or firmware level</td><td>Very hard to detect; may survive reinstall (firmware rootkit)</td></tr>
+                    <tr><td style="color:var(--red)">Spyware</td><td>Silently collects data (keystrokes, screenshots, creds)</td><td>Keyloggers are a subtype</td></tr>
+                    <tr><td style="color:var(--red)">Adware</td><td>Displays unwanted ads; may bundle spyware</td><td>Often installed with free software</td></tr>
+                    <tr><td style="color:var(--red)">Botnet / Bot</td><td>Compromised hosts under C2 control</td><td>Used for DDoS, spam, credential stuffing</td></tr>
+                    <tr><td style="color:var(--red)">RAT</td><td>Remote Access Trojan — gives attacker full remote control</td><td>Persistent; often used in targeted attacks</td></tr>
+                    <tr><td style="color:var(--red)">Fileless malware</td><td>Lives in memory / registry; no file on disk</td><td>Evades AV; uses LOLBins (PowerShell, WMI)</td></tr>
+                    <tr><td style="color:var(--amber)">Logic Bomb</td><td>Malicious code triggered by condition (date, event)</td><td>Often insider threat; sleeper payloads</td></tr>
+                    <tr><td style="color:var(--amber)">Backdoor</td><td>Hidden access mechanism left by attacker or developer</td><td>May survive patch; enables persistent access</td></tr>
+                  </table>
+                  <div class="dt">▸ SOCIAL ENGINEERING</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Attack</th><th>Description</th></tr>
+                    <tr><td style="color:var(--amber)">Phishing</td><td>Mass email impersonating trusted entity to steal creds/install malware</td></tr>
+                    <tr><td style="color:var(--amber)">Spear Phishing</td><td>Targeted phishing using OSINT about the victim</td></tr>
+                    <tr><td style="color:var(--amber)">Whaling</td><td>Spear phishing targeting executives (CEO, CFO)</td></tr>
+                    <tr><td style="color:var(--amber)">Vishing</td><td>Voice phishing — phone calls impersonating IT/bank/IRS</td></tr>
+                    <tr><td style="color:var(--amber)">Smishing</td><td>SMS phishing — malicious links via text message</td></tr>
+                    <tr><td style="color:var(--amber)">Pretexting</td><td>Fabricated scenario to manipulate victim into providing info</td></tr>
+                    <tr><td style="color:var(--amber)">Baiting</td><td>Physical media (USB drop) or download lure to deliver malware</td></tr>
+                    <tr><td style="color:var(--amber)">Quid Pro Quo</td><td>Offer of service (fake IT support) in exchange for access/creds</td></tr>
+                    <tr><td style="color:var(--amber)">Tailgating / Piggybacking</td><td>Following authorized person through physical access control</td></tr>
+                  </table>
+                  <div class="dt">▸ NETWORK ATTACKS</div>
+                  <table class="ref-table">
+                    <tr><th>Attack</th><th>Layer</th><th>Description &amp; Defense</th></tr>
+                    <tr><td style="color:var(--red)">DDoS / DoS</td><td>L3–L7</td><td>Flood to exhaust resources; mitigate with rate limiting, scrubbing, CDN</td></tr>
+                    <tr><td style="color:var(--red)">SYN Flood</td><td>L4</td><td>Half-open connections exhaust state table; mitigate with SYN cookies</td></tr>
+                    <tr><td style="color:var(--red)">ARP Spoofing</td><td>L2</td><td>Fake ARP replies to poison cache → MITM; mitigate with dynamic ARP inspection</td></tr>
+                    <tr><td style="color:var(--red)">DNS Spoofing / Poisoning</td><td>L7</td><td>Corrupt DNS cache to redirect traffic; mitigate with DNSSEC</td></tr>
+                    <tr><td style="color:var(--red)">MITM</td><td>L2–L7</td><td>Intercept/alter traffic; mitigate with TLS, cert pinning, MFA</td></tr>
+                    <tr><td style="color:var(--red)">Replay Attack</td><td>L4–L7</td><td>Capture and retransmit valid session; mitigate with timestamps/nonces</td></tr>
+                    <tr><td style="color:var(--red)">Pass-the-Hash</td><td>L7</td><td>Reuse captured NTLM hash without cracking; mitigate with Credential Guard</td></tr>
+                    <tr><td style="color:var(--red)">Kerberoasting</td><td>L7</td><td>Request TGS tickets for SPN accounts; crack offline; mitigate with long service account passwords</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
