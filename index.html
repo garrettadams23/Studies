@@ -9731,6 +9731,963 @@ powershell -EncodedCommand &lt;base64string&gt;
           </div>
 
         </div>
+        
+<!-- patch-ps-bash -->
+          <!-- ═══════════════════════════════════════════════
+               TOPIC: PowerShell
+          ═══════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">💙</span>
+              <span class="topic-name">PowerShell — Scripting Reference</span>
+              <span class="topic-badge">WINDOWS / CROSS-PLATFORM</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — PowerShell 7+</div>
+                <div class="concept-title">Cmdlets · Variables · Flow Control · Pipelines · Common Patterns</div>
+                <div class="concept-desc">
+                  PowerShell uses <strong style="color:var(--cyan)">Verb-Noun</strong> cmdlet naming. Everything is an object.
+                  Pipeline passes objects (not text) between commands. Cross-platform: Windows, macOS, Linux (PS7+).
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ VARIABLES &amp; DATA TYPES</div>
+                  <div class="code-block">
+<span class="com"># Variables always start with $</span>
+<span class="var">$name</span>  = <span class="str">"Alice"</span>
+<span class="var">$count</span> = <span class="num">42</span>
+<span class="var">$pi</span>    = <span class="num">3.14</span>
+<span class="var">$flag</span>  = <span class="var">$true</span>          <span class="com"># $true / $false / $null</span>
+
+<span class="com"># Typed declaration</span>
+[<span class="type">int</span>]<span class="var">$n</span>      = <span class="num">10</span>
+[<span class="type">string</span>]<span class="var">$s</span>  = <span class="str">"hello"</span>
+[<span class="type">bool</span>]<span class="var">$b</span>    = <span class="var">$false</span>
+[<span class="type">array</span>]<span class="var">$arr</span> = <span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>
+
+<span class="com"># Arrays</span>
+<span class="var">$fruits</span> = @(<span class="str">"apple"</span>, <span class="str">"banana"</span>, <span class="str">"cherry"</span>)
+<span class="var">$fruits</span>[<span class="num">0</span>]           <span class="com"># → apple</span>
+<span class="var">$fruits</span>.Count        <span class="com"># → 3</span>
+<span class="var">$fruits</span> += <span class="str">"date"</span>    <span class="com"># append</span>
+
+<span class="com"># Hash tables (dictionaries)</span>
+<span class="var">$user</span> = @{ Name = <span class="str">"Bob"</span>; Age = <span class="num">30</span>; Admin = <span class="var">$false</span> }
+<span class="var">$user</span>.Name            <span class="com"># → Bob</span>
+<span class="var">$user</span>[<span class="str">"Age"</span>]          <span class="com"># → 30</span>
+<span class="var">$user</span>.Role = <span class="str">"Dev"</span>   <span class="com"># add key</span></div>
+
+                  <div class="dt">▸ STRING OPERATIONS</div>
+                  <div class="code-block">
+<span class="com"># Interpolation (double quotes only)</span>
+<span class="var">$msg</span> = <span class="str">"Hello, </span><span class="var">$name</span><span class="str">!"</span>
+<span class="var">$msg</span> = <span class="str">"Count is </span><span class="var">$($arr.Count)</span><span class="str"> items"</span>  <span class="com"># expression inside $()</span>
+
+<span class="com"># Here-string (multiline)</span>
+<span class="var">$text</span> = @<span class="str">"
+Line one
+Line two — value is $name
+"</span>@
+
+<span class="com"># Common string methods</span>
+<span class="str">"hello world"</span>.ToUpper()            <span class="com"># HELLO WORLD</span>
+<span class="str">"  trim me  "</span>.Trim()               <span class="com"># "trim me"</span>
+<span class="str">"a,b,c"</span>.Split(<span class="str">","</span>)                <span class="com"># @("a","b","c")</span>
+<span class="str">"hello"</span>.Replace(<span class="str">"l"</span>,<span class="str">"r"</span>)           <span class="com"># herro</span>
+<span class="str">"hello world"</span> -<span class="fn">match</span> <span class="str">"w\w+"</span>       <span class="com"># $true; $Matches[0] = "world"</span>
+<span class="str">"hello"</span> -<span class="fn">like</span> <span class="str">"hel*"</span>               <span class="com"># $true  (wildcard)</span>
+<span class="fn">-join</span> (<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>)                <span class="com"># "abc"</span>
+(<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>) -<span class="fn">join</span> <span class="str">"-"</span>            <span class="com"># "a-b-c"</span></div>
+
+                  <div class="dt">▸ FLOW CONTROL</div>
+                  <div class="code-block">
+<span class="com"># If / elseif / else</span>
+<span class="kw">if</span> (<span class="var">$x</span> -gt <span class="num">10</span>) {
+    <span class="fn">Write-Host</span> <span class="str">"big"</span>
+} <span class="kw">elseif</span> (<span class="var">$x</span> -eq <span class="num">10</span>) {
+    <span class="fn">Write-Host</span> <span class="str">"ten"</span>
+} <span class="kw">else</span> {
+    <span class="fn">Write-Host</span> <span class="str">"small"</span>
+}
+
+<span class="com"># Comparison operators (not symbols)</span>
+<span class="com"># -eq -ne -gt -ge -lt -le  (numbers)</span>
+<span class="com"># -like -notlike -match -notmatch  (strings/regex)</span>
+<span class="com"># -and -or -not  (logical)</span>
+<span class="com"># -contains -in  (arrays)</span>
+
+<span class="com"># Foreach loop</span>
+<span class="kw">foreach</span> (<span class="var">$item</span> <span class="kw">in</span> <span class="var">$fruits</span>) {
+    <span class="fn">Write-Host</span> <span class="var">$item</span>
+}
+
+<span class="com"># For / While</span>
+<span class="kw">for</span> (<span class="var">$i</span>=<span class="num">0</span>; <span class="var">$i</span> -lt <span class="num">5</span>; <span class="var">$i</span>++) { <span class="fn">Write-Host</span> <span class="var">$i</span> }
+<span class="kw">while</span> (<span class="var">$x</span> -gt <span class="num">0</span>) { <span class="var">$x</span>-- }
+
+<span class="com"># Switch</span>
+<span class="kw">switch</span> (<span class="var">$day</span>) {
+    <span class="str">"Mon"</span> { <span class="str">"Start of week"</span> }
+    <span class="str">"Fri"</span> { <span class="str">"End of week"</span>   }
+    <span class="kw">default</span> { <span class="str">"Midweek"</span>     }
+}</div>
+
+                  <div class="dt">▸ FUNCTIONS &amp; PIPELINE</div>
+                  <div class="code-block">
+<span class="com"># Function definition</span>
+<span class="kw">function</span> <span class="fn">Get-Greeting</span> {
+    <span class="kw">param</span>(
+        [<span class="type">string</span>]<span class="var">$Name</span> = <span class="str">"World"</span>,
+        [<span class="type">switch</span>]<span class="var">$Loud</span>
+    )
+    <span class="var">$msg</span> = <span class="str">"Hello, </span><span class="var">$Name</span><span class="str">!"</span>
+    <span class="kw">if</span> (<span class="var">$Loud</span>) { <span class="var">$msg</span>.ToUpper() } <span class="kw">else</span> { <span class="var">$msg</span> }
+}
+<span class="fn">Get-Greeting</span> -Name <span class="str">"Alice"</span> -Loud
+
+<span class="com"># Pipeline — pass objects between cmdlets</span>
+<span class="fn">Get-Process</span> | <span class="fn">Where-Object</span> CPU -gt <span class="num">10</span> | <span class="fn">Sort-Object</span> CPU -Descending | <span class="fn">Select-Object</span> -First <span class="num">5</span>
+<span class="fn">Get-ChildItem</span> <span class="str">"C:\logs"</span> -Filter <span class="str">"*.log"</span> | <span class="fn">ForEach-Object</span> { <span class="fn">Write-Host</span> <span class="var">$_</span>.Name }
+<span class="fn">Get-Content</span> log.txt | <span class="fn">Select-String</span> <span class="str">"ERROR"</span> | <span class="fn">Measure-Object</span> -Line</div>
+
+                  <div class="dt">▸ FILE SYSTEM &amp; SECURITY COMMON CMDLETS</div>
+                  <table class="ref-table">
+                    <tr><th>Cmdlet</th><th>Action</th><th>Alias</th></tr>
+                    <tr><td style="color:var(--cyan)">Get-ChildItem</td><td>List directory contents</td><td>ls, dir, gci</td></tr>
+                    <tr><td style="color:var(--cyan)">Set-Location</td><td>Change directory</td><td>cd, sl</td></tr>
+                    <tr><td style="color:var(--cyan)">Get-Content</td><td>Read file</td><td>cat, type, gc</td></tr>
+                    <tr><td style="color:var(--cyan)">Set-Content</td><td>Write/overwrite file</td><td>sc</td></tr>
+                    <tr><td style="color:var(--cyan)">Add-Content</td><td>Append to file</td><td>ac</td></tr>
+                    <tr><td style="color:var(--cyan)">Copy-Item</td><td>Copy file/directory</td><td>cp, copy</td></tr>
+                    <tr><td style="color:var(--cyan)">Remove-Item</td><td>Delete file/directory</td><td>rm, del</td></tr>
+                    <tr><td style="color:var(--cyan)">Get-Process</td><td>List running processes</td><td>ps, gps</td></tr>
+                    <tr><td style="color:var(--cyan)">Stop-Process</td><td>Kill a process</td><td>kill, spps</td></tr>
+                    <tr><td style="color:var(--cyan)">Get-Service</td><td>List Windows services</td><td>gsv</td></tr>
+                    <tr><td style="color:var(--cyan)">Get-EventLog</td><td>Read Windows event logs</td><td>—</td></tr>
+                    <tr><td style="color:var(--cyan)">Invoke-WebRequest</td><td>HTTP requests</td><td>curl, wget, iwr</td></tr>
+                    <tr><td style="color:var(--cyan)">ConvertTo-Json</td><td>Object → JSON string</td><td>—</td></tr>
+                    <tr><td style="color:var(--cyan)">ConvertFrom-Json</td><td>JSON string → object</td><td>—</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════
+               TOPIC: Bash (Debian/Ubuntu)
+          ═══════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🟢</span>
+              <span class="topic-name">Bash Scripting — Debian / Ubuntu Reference</span>
+              <span class="topic-badge">SHELL SCRIPTING</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Bash 5+</div>
+                <div class="concept-title">Variables · Conditionals · Loops · Functions · Common Patterns</div>
+                <div class="concept-desc">
+                  Bash scripts start with a <strong style="color:var(--cyan)">shebang</strong>:
+                  <code style="color:var(--cyan)">#!/usr/bin/env bash</code>.
+                  Make executable with <code style="color:var(--cyan)">chmod +x script.sh</code>.
+                  Prefer <code style="color:var(--cyan)">[[ ]]</code> over <code>[ ]</code> for tests.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ VARIABLES &amp; QUOTING</div>
+                  <div class="code-block">
+<span class="com"># Assign — no spaces around =</span>
+<span class="var">name</span>=<span class="str">"Alice"</span>
+<span class="var">count</span>=<span class="num">42</span>
+<span class="var">files</span>=(<span class="str">"a.txt"</span> <span class="str">"b.txt"</span> <span class="str">"c.txt"</span>)  <span class="com"># indexed array</span>
+
+<span class="com"># Read variables</span>
+<span class="fn">echo</span> <span class="str">"Hello </span><span class="var">$name</span><span class="str">"</span>          <span class="com"># interpolation in double quotes</span>
+<span class="fn">echo</span> <span class="str">'Literal $name'</span>       <span class="com"># single quotes = no interpolation</span>
+<span class="fn">echo</span> <span class="str">"Count: </span><span class="var">${count}</span><span class="str">"</span>      <span class="com"># braces for clarity/adjacency</span>
+
+<span class="com"># Default values</span>
+<span class="fn">echo</span> <span class="str">"</span><span class="var">${var:-default}</span><span class="str">"</span>    <span class="com"># use default if var unset/empty</span>
+<span class="fn">echo</span> <span class="str">"</span><span class="var">${var:=default}</span><span class="str">"</span>    <span class="com"># assign default if unset</span>
+
+<span class="com"># Special variables</span>
+<span class="var">$0</span>   <span class="com"># script name</span>
+<span class="var">$1</span> <span class="var">$2</span> <span class="com"># positional args</span>
+<span class="var">$@</span>   <span class="com"># all args as separate words</span>
+<span class="var">$#</span>   <span class="com"># number of args</span>
+<span class="var">$?</span>   <span class="com"># exit code of last command</span>
+<span class="var">$$</span>   <span class="com"># PID of current script</span>
+<span class="var">$!</span>   <span class="com"># PID of last background job</span></div>
+
+                  <div class="dt">▸ CONDITIONALS</div>
+                  <div class="code-block">
+<span class="com"># if / elif / else</span>
+<span class="kw">if</span> [[ <span class="var">$x</span> -gt <span class="num">10</span> ]]; <span class="kw">then</span>
+    <span class="fn">echo</span> <span class="str">"big"</span>
+<span class="kw">elif</span> [[ <span class="var">$x</span> -eq <span class="num">10</span> ]]; <span class="kw">then</span>
+    <span class="fn">echo</span> <span class="str">"ten"</span>
+<span class="kw">else</span>
+    <span class="fn">echo</span> <span class="str">"small"</span>
+<span class="kw">fi</span>
+
+<span class="com"># Integer tests: -eq -ne -gt -ge -lt -le</span>
+<span class="com"># String tests:  == != &lt; &gt; -z (empty) -n (not empty)</span>
+<span class="com"># File tests:    -f (file) -d (dir) -e (exists) -r -w -x</span>
+
+<span class="kw">if</span> [[ -f <span class="str">"</span><span class="var">$file</span><span class="str">"</span> && -r <span class="str">"</span><span class="var">$file</span><span class="str">"</span> ]]; <span class="kw">then</span>
+    <span class="fn">echo</span> <span class="str">"readable file"</span>
+<span class="kw">fi</span>
+
+<span class="com"># One-liner shortcuts</span>
+[[ -d <span class="str">"/tmp/work"</span> ]] || <span class="fn">mkdir</span> -p <span class="str">"/tmp/work"</span>   <span class="com"># create if missing</span>
+<span class="fn">command</span> -v git &>/dev/null && <span class="fn">echo</span> <span class="str">"git found"</span>    <span class="com"># check command exists</span></div>
+
+                  <div class="dt">▸ LOOPS</div>
+                  <div class="code-block">
+<span class="com"># for — iterate array</span>
+<span class="kw">for</span> <span class="var">fruit</span> <span class="kw">in</span> apple banana cherry; <span class="kw">do</span>
+    <span class="fn">echo</span> <span class="str">"</span><span class="var">$fruit</span><span class="str">"</span>
+<span class="kw">done</span>
+
+<span class="com"># for — C-style</span>
+<span class="kw">for</span> ((<span class="var">i</span>=<span class="num">0</span>; <span class="var">i</span>&lt;<span class="num">5</span>; <span class="var">i</span>++)); <span class="kw">do</span>
+    <span class="fn">echo</span> <span class="var">$i</span>
+<span class="kw">done</span>
+
+<span class="com"># for — glob / find</span>
+<span class="kw">for</span> <span class="var">f</span> <span class="kw">in</span> /var/log/*.log; <span class="kw">do</span>
+    <span class="fn">echo</span> <span class="str">"Processing: </span><span class="var">$f</span><span class="str">"</span>
+<span class="kw">done</span>
+
+<span class="com"># while</span>
+<span class="kw">while</span> <span class="fn">read</span> -r <span class="var">line</span>; <span class="kw">do</span>
+    <span class="fn">echo</span> <span class="str">"Line: </span><span class="var">$line</span><span class="str">"</span>
+<span class="kw">done</span> < file.txt
+
+<span class="com"># until</span>
+<span class="kw">until</span> [[ <span class="var">$count</span> -ge <span class="num">5</span> ]]; <span class="kw">do</span>
+    (( <span class="var">count</span>++ ))
+<span class="kw">done</span></div>
+
+                  <div class="dt">▸ FUNCTIONS</div>
+                  <div class="code-block">
+<span class="fn">greet</span>() {
+    <span class="kw">local</span> <span class="var">name</span>=<span class="str">"</span><span class="var">$1</span><span class="str">"</span>              <span class="com"># local = scoped to function</span>
+    [[ -z <span class="str">"</span><span class="var">$name</span><span class="str">"</span> ]] && { <span class="fn">echo</span> <span class="str">"Usage: greet &lt;name&gt;"</span> >&2; <span class="kw">return</span> <span class="num">1</span>; }
+    <span class="fn">echo</span> <span class="str">"Hello, </span><span class="var">$name</span><span class="str">!"</span>
+}
+
+<span class="fn">greet</span> <span class="str">"Alice"</span>    <span class="com"># Hello, Alice!</span>
+<span class="fn">greet</span>           <span class="com"># prints usage, returns 1</span>
+
+<span class="com"># Return values via echo + command substitution</span>
+<span class="fn">get_date</span>() { <span class="fn">date</span> +<span class="str">"%Y-%m-%d"</span>; }
+<span class="var">today</span>=$(<span class="fn">get_date</span>)
+<span class="fn">echo</span> <span class="str">"Today: </span><span class="var">$today</span><span class="str">"</span></div>
+
+                  <div class="dt">▸ SCRIPT BEST PRACTICES</div>
+                  <div class="code-block">
+<span class="com">#!/usr/bin/env bash</span>
+<span class="fn">set</span> -euo pipefail    <span class="com"># -e exit on error, -u error on unset var, -o pipefail</span>
+<span class="fn">IFS</span>=<span class="var">$'\n\t'</span>          <span class="com"># safer word splitting</span>
+
+<span class="com"># Trap for cleanup</span>
+<span class="fn">cleanup</span>() { <span class="fn">rm</span> -f /tmp/work.$$; }
+<span class="fn">trap</span> cleanup EXIT INT TERM
+
+<span class="com"># Logging helper</span>
+<span class="fn">log</span>()  { <span class="fn">echo</span> <span class="str">"[INFO]  </span><span class="var">$*</span><span class="str">"</span>; }
+<span class="fn">warn</span>() { <span class="fn">echo</span> <span class="str">"[WARN]  </span><span class="var">$*</span><span class="str">"</span> >&2; }
+<span class="fn">die</span>()  { <span class="fn">echo</span> <span class="str">"[ERROR] </span><span class="var">$*</span><span class="str">"</span> >&2; <span class="kw">exit</span> <span class="num">1</span>; }
+
+<span class="com"># Require dependencies</span>
+<span class="kw">for</span> <span class="var">cmd</span> <span class="kw">in</span> curl jq git; <span class="kw">do</span>
+    <span class="fn">command</span> -v <span class="str">"</span><span class="var">$cmd</span><span class="str">"</span> &>/dev/null || <span class="fn">die</span> <span class="str">"</span><span class="var">$cmd</span><span class="str"> is required"</span>
+<span class="kw">done</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════
+               TOPIC: HTML
+          ═══════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🏷️</span>
+              <span class="topic-name">HTML — Structure &amp; Semantic Elements</span>
+              <span class="topic-badge">WEB MARKUP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — HTML5</div>
+                <div class="concept-title">Document Structure · Semantic Tags · Forms · Meta · Accessibility</div>
+                <div class="concept-desc">
+                  HTML defines structure, not style. Use <strong style="color:var(--cyan)">semantic elements</strong>
+                  (<code>&lt;main&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;article&gt;</code>) for
+                  accessibility and SEO. Always include <code style="color:var(--cyan)">lang</code>,
+                  <code style="color:var(--cyan)">charset</code>, and <code style="color:var(--cyan)">viewport</code>.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ DOCUMENT BOILERPLATE</div>
+                  <div class="code-block">
+<span class="tag">&lt;!doctype</span> <span class="attr">html</span><span class="tag">&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="val">"en"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="val">"UTF-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val">"viewport"</span> <span class="attr">content</span>=<span class="val">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val">"description"</span> <span class="attr">content</span>=<span class="val">"Page description for SEO"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Page Title<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val">"stylesheet"</span> <span class="attr">href</span>=<span class="val">"style.css"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;header&gt;</span><span class="tag">&lt;nav&gt;</span>...<span class="tag">&lt;/nav&gt;&lt;/header&gt;</span>
+  <span class="tag">&lt;main&gt;</span>
+    <span class="tag">&lt;article&gt;</span>...<span class="tag">&lt;/article&gt;</span>
+    <span class="tag">&lt;aside&gt;</span>...<span class="tag">&lt;/aside&gt;</span>
+  <span class="tag">&lt;/main&gt;</span>
+  <span class="tag">&lt;footer&gt;</span>...<span class="tag">&lt;/footer&gt;</span>
+  <span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="val">"script.js"</span> <span class="attr">defer</span><span class="tag">&gt;&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;&lt;/html&gt;</span></div>
+
+                  <div class="dt">▸ SEMANTIC ELEMENTS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Element</th><th>Purpose</th></tr>
+                    <tr><td style="color:var(--cyan)">&lt;header&gt;</td><td>Site/section header, logo, top nav</td></tr>
+                    <tr><td style="color:var(--cyan)">&lt;nav&gt;</td><td>Primary navigation links</td></tr>
+                    <tr><td style="color:var(--cyan)">&lt;main&gt;</td><td>Primary content — one per page</td></tr>
+                    <tr><td style="color:var(--cyan)">&lt;article&gt;</td><td>Self-contained content (blog post, card)</td></tr>
+                    <tr><td style="color:var(--cyan)">&lt;section&gt;</td><td>Thematic grouping with a heading</td></tr>
+                    <tr><td style="color:var(--cyan)">&lt;aside&gt;</td><td>Supplementary content, sidebar</td></tr>
+                    <tr><td style="color:var(--cyan)">&lt;footer&gt;</td><td>Bottom of page/section, links, copyright</td></tr>
+                    <tr><td style="color:var(--cyan)">&lt;figure&gt; / &lt;figcaption&gt;</td><td>Image + caption pair</td></tr>
+                    <tr><td style="color:var(--cyan)">&lt;details&gt; / &lt;summary&gt;</td><td>Native accordion / disclosure widget</td></tr>
+                    <tr><td style="color:var(--cyan)">&lt;dialog&gt;</td><td>Native modal dialog</td></tr>
+                    <tr><td style="color:var(--cyan)">&lt;time datetime="…"&gt;</td><td>Machine-readable date/time</td></tr>
+                    <tr><td style="color:var(--cyan)">&lt;mark&gt;</td><td>Highlighted/relevant text</td></tr>
+                    <tr><td style="color:var(--cyan)">&lt;abbr title="…"&gt;</td><td>Abbreviation with expansion</td></tr>
+                  </table>
+
+                  <div class="dt">▸ FORMS &amp; INPUTS</div>
+                  <div class="code-block">
+<span class="tag">&lt;form</span> <span class="attr">action</span>=<span class="val">"/submit"</span> <span class="attr">method</span>=<span class="val">"post"</span> <span class="attr">novalidate</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;label</span> <span class="attr">for</span>=<span class="val">"email"</span><span class="tag">&gt;</span>Email<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="val">"email"</span> <span class="attr">id</span>=<span class="val">"email"</span> <span class="attr">name</span>=<span class="val">"email"</span>
+         <span class="attr">placeholder</span>=<span class="val">"you@example.com"</span>
+         <span class="attr">required</span> <span class="attr">autocomplete</span>=<span class="val">"email"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;select</span> <span class="attr">name</span>=<span class="val">"role"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="val">""</span> <span class="attr">disabled</span> <span class="attr">selected</span><span class="tag">&gt;</span>Choose…<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="val">"admin"</span><span class="tag">&gt;</span>Admin<span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;/select&gt;</span>
+
+  <span class="tag">&lt;textarea</span> <span class="attr">name</span>=<span class="val">"notes"</span> <span class="attr">rows</span>=<span class="val">"4"</span> <span class="attr">maxlength</span>=<span class="val">"500"</span><span class="tag">&gt;&lt;/textarea&gt;</span>
+
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="val">"checkbox"</span> <span class="attr">id</span>=<span class="val">"agree"</span> <span class="attr">required</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;label</span> <span class="attr">for</span>=<span class="val">"agree"</span><span class="tag">&gt;</span>I agree<span class="tag">&lt;/label&gt;</span>
+
+  <span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="val">"submit"</span><span class="tag">&gt;</span>Submit<span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;/form&gt;</span>
+
+<span class="com">&lt;!-- Input types: text email password number tel url date
+     range color file search checkbox radio hidden submit --&gt;</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════
+               TOPIC: CSS
+          ═══════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🎨</span>
+              <span class="topic-name">CSS — Selectors, Layout &amp; Variables</span>
+              <span class="topic-badge">WEB STYLING</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — CSS3 / Modern CSS</div>
+                <div class="concept-title">Selectors · Box Model · Flexbox · Grid · Custom Properties</div>
+                <div class="concept-desc">
+                  Cascade order: <strong style="color:var(--red)">!important</strong> &gt; inline &gt; ID &gt; class/pseudo &gt; element.
+                  Specificity: <code>(0,1,0,0)</code> = ID, <code>(0,0,1,0)</code> = class,
+                  <code>(0,0,0,1)</code> = element. Use <strong style="color:var(--cyan)">custom properties</strong>
+                  for theming.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ SELECTORS &amp; SPECIFICITY</div>
+                  <div class="code-block">
+<span class="sel">p</span>               { }  <span class="com">/* element            (0,0,0,1) */</span>
+<span class="sel">.card</span>           { }  <span class="com">/* class              (0,0,1,0) */</span>
+<span class="sel">#hero</span>           { }  <span class="com">/* id                 (0,1,0,0) */</span>
+<span class="sel">a:hover</span>         { }  <span class="com">/* pseudo-class       (0,0,1,1) */</span>
+<span class="sel">p::first-line</span>   { }  <span class="com">/* pseudo-element     (0,0,0,2) */</span>
+<span class="sel">[type="text"]</span>   { }  <span class="com">/* attribute          (0,0,1,0) */</span>
+<span class="sel">.nav &gt; a</span>        { }  <span class="com">/* child combinator */</span>
+<span class="sel">.nav a</span>          { }  <span class="com">/* descendant */</span>
+<span class="sel">h2 + p</span>          { }  <span class="com">/* adjacent sibling */</span>
+<span class="sel">h2 ~ p</span>          { }  <span class="com">/* general sibling */</span>
+<span class="sel">:is(h1,h2,h3)</span>  { }  <span class="com">/* :is() forgiving list */</span>
+<span class="sel">:where(h1,h2)</span>  { }  <span class="com">/* :where() — zero specificity */</span>
+<span class="sel">:not(.hidden)</span>  { }  <span class="com">/* negation */</span>
+<span class="sel">:has(img)</span>       { }  <span class="com">/* parent selector (modern) */</span></div>
+
+                  <div class="dt">▸ CUSTOM PROPERTIES &amp; CALC</div>
+                  <div class="code-block">
+<span class="sel">:root</span> {
+  <span class="prop">--color-primary</span>: <span class="val">#00d4ff</span>;
+  <span class="prop">--spacing-md</span>: <span class="val">1rem</span>;
+  <span class="prop">--radius</span>: <span class="val">6px</span>;
+}
+<span class="sel">.card</span> {
+  <span class="prop">color</span>: <span class="fn">var</span>(<span class="prop">--color-primary</span>);
+  <span class="prop">padding</span>: <span class="fn">var</span>(<span class="prop">--spacing-md</span>);
+  <span class="prop">width</span>: <span class="fn">calc</span>(<span class="val">100% - 2rem</span>);          <span class="com">/* arithmetic */</span>
+  <span class="prop">font-size</span>: <span class="fn">clamp</span>(<span class="val">1rem, 2.5vw, 2rem</span>); <span class="com">/* fluid type */</span>
+}</div>
+
+                  <div class="dt">▸ FLEXBOX</div>
+                  <div class="code-block">
+<span class="sel">.container</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">flex-direction</span>: <span class="val">row</span>;         <span class="com">/* row | column */</span>
+  <span class="prop">flex-wrap</span>: <span class="val">wrap</span>;
+  <span class="prop">justify-content</span>: <span class="val">space-between</span>; <span class="com">/* main axis */</span>
+  <span class="prop">align-items</span>: <span class="val">center</span>;          <span class="com">/* cross axis */</span>
+  <span class="prop">gap</span>: <span class="val">1rem</span>;
+}
+<span class="sel">.item</span> {
+  <span class="prop">flex</span>: <span class="val">1 1 200px</span>;  <span class="com">/* grow shrink basis */</span>
+  <span class="prop">align-self</span>: <span class="val">flex-start</span>;
+  <span class="prop">order</span>: <span class="val">2</span>;
+}</div>
+
+                  <div class="dt">▸ CSS GRID</div>
+                  <div class="code-block">
+<span class="sel">.grid</span> {
+  <span class="prop">display</span>: <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="val">auto-fit, minmax(200px, 1fr)</span>);
+  <span class="prop">grid-template-rows</span>: <span class="val">auto</span>;
+  <span class="prop">gap</span>: <span class="val">1.5rem</span>;
+}
+<span class="sel">.featured</span> {
+  <span class="prop">grid-column</span>: <span class="val">1 / -1</span>;  <span class="com">/* span all columns */</span>
+  <span class="prop">grid-row</span>: <span class="val">1 / 3</span>;
+}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════
+               TOPIC: JavaScript ES2022+
+          ═══════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">⚡</span>
+              <span class="topic-name">JavaScript — ES2022+ Reference</span>
+              <span class="topic-badge">ES2022 · ES2023 · ES2025</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Modern JavaScript</div>
+                <div class="concept-title">Variables · Functions · Async · DOM · Modern Features</div>
+                <div class="concept-desc">
+                  Use <code style="color:var(--cyan)">const</code> by default, <code style="color:var(--cyan)">let</code>
+                  when reassignment is needed, never <code style="color:var(--red)">var</code>.
+                  Modules use <code style="color:var(--cyan)">import/export</code>.
+                  Always <code style="color:var(--cyan)">await</code> inside <code>async</code> functions or use <code>.catch()</code>.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ VARIABLES &amp; DESTRUCTURING</div>
+                  <div class="code-block">
+<span class="kw">const</span> <span class="var">name</span> = <span class="str">"Alice"</span>
+<span class="kw">let</span>   <span class="var">count</span> = <span class="num">0</span>
+
+<span class="com">// Array destructuring</span>
+<span class="kw">const</span> [<span class="var">first</span>, <span class="var">second</span>, ...<span class="var">rest</span>] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
+
+<span class="com">// Object destructuring</span>
+<span class="kw">const</span> { <span class="var">name</span>: <span class="var">n</span>, <span class="var">age</span> = <span class="num">25</span> } = user   <span class="com">// rename + default</span>
+
+<span class="com">// Optional chaining (?.) — ES2020</span>
+<span class="kw">const</span> <span class="var">city</span> = user<span class="oper">?.</span>address<span class="oper">?.</span>city      <span class="com">// no throw if undefined</span>
+<span class="kw">const</span> <span class="var">n</span>    = arr<span class="oper">?.[</span><span class="num">0</span><span class="oper">]</span>                 <span class="com">// optional index</span>
+
+<span class="com">// Nullish coalescing (??) — ES2020</span>
+<span class="kw">const</span> <span class="var">label</span> = value <span class="oper">??</span> <span class="str">"default"</span>    <span class="com">// only falls back on null/undefined</span>
+
+<span class="com">// Logical assignment — ES2021</span>
+<span class="var">a</span> <span class="oper">||=</span> <span class="str">"fallback"</span>  <span class="com">// assign if falsy</span>
+<span class="var">a</span> <span class="oper">&&=</span> transform(<span class="var">a</span>) <span class="com">// assign if truthy</span>
+<span class="var">a</span> <span class="oper">??=</span> <span class="str">"default"</span>   <span class="com">// assign if null/undefined</span></div>
+
+                  <div class="dt">▸ FUNCTIONS &amp; ARROWS</div>
+                  <div class="code-block">
+<span class="com">// Arrow — implicit return when no braces</span>
+<span class="kw">const</span> <span class="fn">double</span> = <span class="var">x</span> => <span class="var">x</span> * <span class="num">2</span>
+<span class="kw">const</span> <span class="fn">add</span>    = (<span class="var">a</span>, <span class="var">b</span>) => <span class="var">a</span> + <span class="var">b</span>
+
+<span class="com">// Default params + rest</span>
+<span class="kw">function</span> <span class="fn">greet</span>(<span class="var">name</span> = <span class="str">"World"</span>, ...<span class="var">extras</span>) {
+  <span class="kw">return</span> <span class="str">`Hello, <span class="var">${name}</span>! Extras: <span class="var">${extras.join(", ")}</span>`</span>
+}
+
+<span class="com">// Spread</span>
+<span class="kw">const</span> <span class="var">merged</span> = { ...<span class="var">defaults</span>, ...<span class="var">overrides</span> }
+<span class="kw">const</span> <span class="var">copy</span>   = [...<span class="var">arr</span>, newItem]
+
+<span class="com">// Async / await — ES2017+</span>
+<span class="kw">async function</span> <span class="fn">fetchUser</span>(<span class="var">id</span>) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> <span class="var">res</span>  = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/api/users/<span class="var">${id}</span>`</span>)
+    <span class="kw">if</span> (!<span class="var">res</span>.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="var">res</span>.status)
+    <span class="kw">return await</span> <span class="var">res</span>.<span class="fn">json</span>()
+  } <span class="kw">catch</span> (<span class="var">e</span>) {
+    <span class="fn">console</span>.error(<span class="str">"Fetch failed:"</span>, <span class="var">e</span>)
+  }
+}</div>
+
+                  <div class="dt">▸ ARRAY &amp; OBJECT METHODS</div>
+                  <div class="code-block">
+<span class="com">// Array — non-mutating</span>
+arr.<span class="fn">map</span>(<span class="var">x</span> => <span class="var">x</span> * <span class="num">2</span>)              <span class="com">// transform each → new array</span>
+arr.<span class="fn">filter</span>(<span class="var">x</span> => <span class="var">x</span> > <span class="num">0</span>)           <span class="com">// keep matching → new array</span>
+arr.<span class="fn">reduce</span>((<span class="var">acc</span>, <span class="var">v</span>) => <span class="var">acc</span> + <span class="var">v</span>, <span class="num">0</span>) <span class="com">// fold to single value</span>
+arr.<span class="fn">find</span>(<span class="var">x</span> => <span class="var">x</span>.<span class="var">id</span> === <span class="var">id</span>)       <span class="com">// first match or undefined</span>
+arr.<span class="fn">findIndex</span>(<span class="var">x</span> => <span class="var">x</span> > <span class="num">5</span>)        <span class="com">// first matching index</span>
+arr.<span class="fn">every</span>(<span class="var">x</span> => <span class="var">x</span> > <span class="num">0</span>)             <span class="com">// all pass?</span>
+arr.<span class="fn">some</span>(<span class="var">x</span>  => <span class="var">x</span> > <span class="num">0</span>)             <span class="com">// any pass?</span>
+arr.<span class="fn">flat</span>(<span class="num">2</span>)                        <span class="com">// flatten 2 levels — ES2019</span>
+arr.<span class="fn">flatMap</span>(<span class="var">x</span> => [<span class="var">x</span>, <span class="var">x</span>*<span class="num">2</span>])       <span class="com">// map then flatten — ES2019</span>
+arr.<span class="fn">at</span>(-<span class="num">1</span>)                         <span class="com">// last element — ES2022</span>
+
+<span class="com">// Object</span>
+<span class="fn">Object</span>.<span class="fn">keys</span>(<span class="var">obj</span>)                   <span class="com">// string[] of own keys</span>
+<span class="fn">Object</span>.<span class="fn">entries</span>(<span class="var">obj</span>)               <span class="com">// [key,value][] pairs</span>
+<span class="fn">Object</span>.<span class="fn">fromEntries</span>(<span class="var">entries</span>)       <span class="com">// reverse of entries — ES2019</span>
+<span class="fn">Object</span>.<span class="fn">assign</span>({}, <span class="var">src</span>)            <span class="com">// shallow clone/merge</span>
+<span class="fn">structuredClone</span>(<span class="var">obj</span>)              <span class="com">// deep clone — ES2022</span></div>
+
+                  <div class="dt">▸ ES2023 – ES2025 HIGHLIGHTS</div>
+                  <div class="code-block">
+<span class="com">// ES2023 — Array methods by copy (non-mutating)</span>
+arr.<span class="fn">toSorted</span>()      <span class="com">// like sort() but returns new array</span>
+arr.<span class="fn">toReversed</span>()    <span class="com">// like reverse() but returns new array</span>
+arr.<span class="fn">with</span>(<span class="num">2</span>, <span class="str">"x"</span>)     <span class="com">// replace index 2, returns new array</span>
+arr.<span class="fn">findLast</span>(<span class="var">fn</span>)    <span class="com">// find from end</span>
+arr.<span class="fn">findLastIndex</span>(<span class="var">fn</span>) <span class="com">// findIndex from end</span>
+
+<span class="com">// ES2024</span>
+<span class="fn">Promise</span>.<span class="fn">withResolvers</span>()  <span class="com">// {promise, resolve, reject} object</span>
+<span class="fn">Object</span>.<span class="fn">groupBy</span>(<span class="var">arr</span>, <span class="var">fn</span>) <span class="com">// group array into object by key</span>
+<span class="fn">Map</span>.<span class="fn">groupBy</span>(<span class="var">arr</span>, <span class="var">fn</span>)   <span class="com">// group into Map</span>
+
+<span class="com">// ES2025 (Stage 4)</span>
+<span class="kw">import</span> source <span class="kw">from</span> <span class="str">"./data.json"</span> <span class="kw">with</span> { type: <span class="str">"json"</span> }  <span class="com">// import assertions</span>
+<span class="kw">const</span> <span class="var">it</span> = <span class="var">iter</span>[<span class="fn">Symbol.iterator</span>]() <span class="com">// explicit iterator protocol</span>
+<span class="fn">RegExp</span>.<span class="fn">escape</span>(<span class="var">str</span>)    <span class="com">// escape special regex chars (Stage 4)</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════
+               TOPIC: JSON / jq
+          ═══════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">📦</span>
+              <span class="topic-name">JSON &amp; jq — Data Format &amp; CLI Processor</span>
+              <span class="topic-badge">DATA FORMAT</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — JSON RFC 8259 &amp; jq 1.7</div>
+                <div class="concept-title">JSON Syntax · Data Types · jq Filters &amp; Transforms</div>
+                <div class="concept-desc">
+                  JSON (JavaScript Object Notation) is the universal API data format.
+                  <strong style="color:var(--cyan)">jq</strong> is the standard CLI tool for parsing and transforming JSON.
+                  Install: <code>sudo apt install jq</code> · <code>brew install jq</code>.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ JSON SYNTAX &amp; TYPES</div>
+                  <div class="code-block">
+{
+  <span class="attr">"string"</span>: <span class="str">"hello world"</span>,
+  <span class="attr">"number"</span>: <span class="num">42</span>,
+  <span class="attr">"float"</span>:  <span class="num">3.14</span>,
+  <span class="attr">"bool"</span>:   <span class="kw">true</span>,
+  <span class="attr">"null"</span>:   <span class="kw">null</span>,
+  <span class="attr">"array"</span>:  [<span class="num">1</span>, <span class="str">"two"</span>, <span class="kw">false</span>, <span class="kw">null</span>],
+  <span class="attr">"object"</span>: {
+    <span class="attr">"nested"</span>: <span class="kw">true</span>,
+    <span class="attr">"count"</span>:  <span class="num">3</span>
+  }
+}
+
+<span class="com">// Rules: keys must be double-quoted strings,</span>
+<span class="com">// trailing commas are NOT allowed,</span>
+<span class="com">// comments are NOT part of JSON spec.</span></div>
+
+                  <div class="dt">▸ JQ FILTERS</div>
+                  <div class="code-block">
+<span class="com"># Identity — pretty-print</span>
+<span class="fn">jq</span> <span class="str">'.'</span> data.json
+
+<span class="com"># Field access</span>
+<span class="fn">jq</span> <span class="str">'.name'</span>               <span class="com"># top-level field</span>
+<span class="fn">jq</span> <span class="str">'.user.email'</span>         <span class="com"># nested field</span>
+<span class="fn">jq</span> <span class="str">'.items[0]'</span>           <span class="com"># first array element</span>
+<span class="fn">jq</span> <span class="str">'.items[-1]'</span>          <span class="com"># last element</span>
+<span class="fn">jq</span> <span class="str">'.items[1:3]'</span>         <span class="com"># slice index 1–2</span>
+<span class="fn">jq</span> <span class="str">'.items[]'</span>            <span class="com"># iterate all elements</span>
+<span class="fn">jq</span> <span class="str">'.items[].name'</span>       <span class="com"># field from each element</span>
+
+<span class="com"># Pipe and transform</span>
+<span class="fn">jq</span> <span class="str">'.users[] | .email'</span>            <span class="com"># extract field from each</span>
+<span class="fn">jq</span> <span class="str">'.[] | select(.active == true)'</span> <span class="com"># filter — keep matching</span>
+<span class="fn">jq</span> <span class="str">'map(.score * 2)'</span>               <span class="com"># transform every element</span>
+<span class="fn">jq</span> <span class="str">'map(select(.age > 18))'</span>        <span class="com"># filter array</span>
+<span class="fn">jq</span> <span class="str">'[.[] | select(.role=="admin")]'</span> <span class="com"># collect into new array</span>
+
+<span class="com"># Construct new shapes</span>
+<span class="fn">jq</span> <span class="str">'{name: .name, email: .email}'</span>  <span class="com"># object construction</span>
+<span class="fn">jq</span> <span class="str">'[.users[] | {id, name}]'</span>       <span class="com"># array of objects</span>
+
+<span class="com"># Aggregation</span>
+<span class="fn">jq</span> <span class="str">'length'</span>                        <span class="com"># count keys or elements</span>
+<span class="fn">jq</span> <span class="str">'[.[] | .price] | add'</span>          <span class="com"># sum all prices</span>
+<span class="fn">jq</span> <span class="str">'[.[] | .score] | max'</span>          <span class="com"># max value</span>
+<span class="fn">jq</span> <span class="str">'group_by(.category)'</span>           <span class="com"># group array by field</span>
+<span class="fn">jq</span> <span class="str">'sort_by(.name)'</span>                <span class="com"># sort by field</span>
+<span class="fn">jq</span> <span class="str">'unique_by(.id)'</span>               <span class="com"># deduplicate by field</span>
+
+<span class="com"># String operations</span>
+<span class="fn">jq</span> <span class="str">'.name | ascii_upcase'</span>          <span class="com"># uppercase</span>
+<span class="fn">jq</span> <span class="str">'.items | join(", ")'</span>           <span class="com"># join array to string</span>
+<span class="fn">jq</span> <span class="str">'"prefix_\(.name)"'</span>            <span class="com"># string interpolation</span>
+
+<span class="com"># Useful flags</span>
+<span class="fn">jq</span> -r <span class="str">'.name'</span>   <span class="com"># -r raw output (no quotes)</span>
+<span class="fn">jq</span> -c <span class="str">'.'</span>       <span class="com"># -c compact (one line)</span>
+<span class="fn">jq</span> -n <span class="str">'{a:1}'</span>   <span class="com"># -n null input (construct without file)</span>
+<span class="fn">jq</span> --arg key val <span class="str">'.name == $key'</span> <span class="com"># pass shell var as jq var</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════
+               TOPIC: SQL
+          ═══════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🗃️</span>
+              <span class="topic-name">SQL — Query Reference</span>
+              <span class="topic-badge">DATABASE LANGUAGE</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — ANSI SQL / MySQL / PostgreSQL</div>
+                <div class="concept-title">DDL · DML · DQL · Joins · Aggregates · Window Functions</div>
+                <div class="concept-desc">
+                  SQL has four main categories:
+                  <strong style="color:var(--cyan)">DDL</strong> (schema) ·
+                  <strong style="color:var(--green)">DML</strong> (data) ·
+                  <strong style="color:var(--amber)">DQL</strong> (query) ·
+                  <strong style="color:var(--purple)">DCL</strong> (permissions).
+                  Execution order: <code>FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT</code>.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ DDL — SCHEMA DEFINITION</div>
+                  <div class="code-block">
+<span class="kw">CREATE TABLE</span> users (
+  id         <span class="type">SERIAL</span>       <span class="kw">PRIMARY KEY</span>,
+  email      <span class="type">VARCHAR(255)</span> <span class="kw">NOT NULL UNIQUE</span>,
+  name       <span class="type">TEXT</span>         <span class="kw">NOT NULL</span>,
+  role       <span class="type">TEXT</span>         <span class="kw">DEFAULT</span> <span class="str">'user'</span>,
+  created_at <span class="type">TIMESTAMPTZ</span>  <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+
+<span class="kw">ALTER TABLE</span> users <span class="kw">ADD COLUMN</span> age <span class="type">INT</span>;
+<span class="kw">ALTER TABLE</span> users <span class="kw">DROP COLUMN</span> age;
+<span class="kw">CREATE INDEX</span> idx_email <span class="kw">ON</span> users(email);
+<span class="kw">DROP TABLE IF EXISTS</span> temp_data;
+<span class="kw">TRUNCATE TABLE</span> logs;                 <span class="com">-- delete all rows, keep structure</span></div>
+
+                  <div class="dt">▸ DML — DATA MANIPULATION</div>
+                  <div class="code-block">
+<span class="com">-- INSERT</span>
+<span class="kw">INSERT INTO</span> users (email, name, role)
+<span class="kw">VALUES</span> (<span class="str">'alice@example.com'</span>, <span class="str">'Alice'</span>, <span class="str">'admin'</span>);
+
+<span class="com">-- INSERT multiple rows</span>
+<span class="kw">INSERT INTO</span> tags (name) <span class="kw">VALUES</span> (<span class="str">'sql'</span>), (<span class="str">'data'</span>), (<span class="str">'query'</span>);
+
+<span class="com">-- UPDATE</span>
+<span class="kw">UPDATE</span> users <span class="kw">SET</span> role = <span class="str">'admin'</span> <span class="kw">WHERE</span> email = <span class="str">'alice@example.com'</span>;
+
+<span class="com">-- DELETE</span>
+<span class="kw">DELETE FROM</span> users <span class="kw">WHERE</span> created_at < <span class="fn">NOW</span>() - <span class="kw">INTERVAL</span> <span class="str">'90 days'</span>;
+
+<span class="com">-- UPSERT (PostgreSQL)</span>
+<span class="kw">INSERT INTO</span> users (email, name) <span class="kw">VALUES</span> (<span class="str">'bob@x.com'</span>, <span class="str">'Bob'</span>)
+<span class="kw">ON CONFLICT</span> (email) <span class="kw">DO UPDATE SET</span> name = <span class="fn">EXCLUDED</span>.name;</div>
+
+                  <div class="dt">▸ DQL — QUERYING</div>
+                  <div class="code-block">
+<span class="com">-- Basic SELECT</span>
+<span class="kw">SELECT</span> id, name, email
+<span class="kw">FROM</span>   users
+<span class="kw">WHERE</span>  role = <span class="str">'admin'</span> <span class="kw">AND</span> created_at > <span class="str">'2024-01-01'</span>
+<span class="kw">ORDER BY</span> name <span class="kw">ASC</span>
+<span class="kw">LIMIT</span>  <span class="num">25</span> <span class="kw">OFFSET</span> <span class="num">0</span>;
+
+<span class="com">-- Pattern matching</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> name <span class="kw">LIKE</span> <span class="str">'A%'</span>;     <span class="com">-- starts with A</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> email ~* <span class="str">'@gmail'</span>;  <span class="com">-- regex (PostgreSQL)</span>
+
+<span class="com">-- Aggregate functions</span>
+<span class="kw">SELECT</span>
+  role,
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total,
+  <span class="fn">AVG</span>(age)  <span class="kw">AS</span> avg_age,
+  <span class="fn">MAX</span>(age)  <span class="kw">AS</span> oldest
+<span class="kw">FROM</span>   users
+<span class="kw">GROUP BY</span> role
+<span class="kw">HAVING</span>   <span class="fn">COUNT</span>(*) > <span class="num">5</span>
+<span class="kw">ORDER BY</span> total <span class="kw">DESC</span>;</div>
+
+                  <div class="dt">▸ JOINS</div>
+                  <div class="code-block">
+<span class="com">-- INNER JOIN — only matching rows</span>
+<span class="kw">SELECT</span> u.name, o.total
+<span class="kw">FROM</span>   users u
+<span class="kw">INNER JOIN</span> orders o <span class="kw">ON</span> o.user_id = u.id;
+
+<span class="com">-- LEFT JOIN — all users, nulls if no order</span>
+<span class="kw">SELECT</span> u.name, <span class="fn">COUNT</span>(o.id) <span class="kw">AS</span> order_count
+<span class="kw">FROM</span>   users u
+<span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> o.user_id = u.id
+<span class="kw">GROUP BY</span> u.name;
+
+<span class="com">-- Subquery</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users
+<span class="kw">WHERE</span> id <span class="kw">IN</span> (<span class="kw">SELECT</span> user_id <span class="kw">FROM</span> orders <span class="kw">WHERE</span> total > <span class="num">100</span>);
+
+<span class="com">-- CTE (Common Table Expression)</span>
+<span class="kw">WITH</span> big_orders <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> user_id, <span class="fn">SUM</span>(total) <span class="kw">AS</span> spent
+  <span class="kw">FROM</span>   orders
+  <span class="kw">GROUP BY</span> user_id
+  <span class="kw">HAVING</span>   <span class="fn">SUM</span>(total) > <span class="num">500</span>
+)
+<span class="kw">SELECT</span> u.name, b.spent
+<span class="kw">FROM</span>   users u <span class="kw">JOIN</span> big_orders b <span class="kw">ON</span> b.user_id = u.id;</div>
+
+                  <div class="dt">▸ WINDOW FUNCTIONS (PostgreSQL)</div>
+                  <div class="code-block">
+<span class="com">-- ROW_NUMBER, RANK, DENSE_RANK</span>
+<span class="kw">SELECT</span>
+  name,
+  score,
+  <span class="fn">RANK</span>()         <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> score <span class="kw">DESC</span>) <span class="kw">AS</span> rank,
+  <span class="fn">ROW_NUMBER</span>()   <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> score <span class="kw">DESC</span>) <span class="kw">AS</span> row_num,
+  <span class="fn">LAG</span>(score, <span class="num">1</span>)  <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> score <span class="kw">DESC</span>) <span class="kw">AS</span> prev_score,
+  <span class="fn">SUM</span>(score)     <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> team)      <span class="kw">AS</span> team_total
+<span class="kw">FROM</span> leaderboard;</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════════════════
+               TOPIC: URL Encoding / Percent Encoding
+               Sources: W3Schools, MDN, Google Maps, Sigma Computing
+               Domain: Scripting & Web
+          ═══════════════════════════════════════════════════════════════ -->
+          <div class="topic">
+            <div class="topic-header" onclick="toggleTopic(this)">
+              <span class="topic-icon">🔗</span>
+              <span class="topic-name">URL Encoding — Percent Encoding Reference</span>
+              <span class="topic-badge">ENCODING REFERENCE</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — W3Schools · MDN · Google · Sigma</div>
+                <div class="concept-title">URL / Percent Encoding — Rules, Characters &amp; Interactive Decoder</div>
+                <div class="concept-desc">
+                  URLs can only contain a safe subset of ASCII characters. Any character outside that set must be
+                  <strong style="color:var(--cyan)">percent-encoded</strong>: replaced with
+                  <code style="color:var(--cyan)">%XX</code> where <code>XX</code> is the two-digit uppercase hex
+                  value of the UTF-8 byte. Also called <em>percent-encoding</em> (RFC 3986).
+                </div>
+                <div class="dw">
+
+                  <!-- ── RULES ── -->
+                  <div class="dt">▸ ENCODING RULES</div>
+                  <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:14px">
+                    <div class="g-card" style="border-color:rgba(0,212,255,.3)">
+                      <div class="g-name" style="color:var(--cyan)">Safe Characters</div>
+                      <div class="g-desc">Never encoded: A–Z a–z 0–9 <code style="color:var(--green)">- _ . ~</code><br>
+                        Also safe in specific URL parts: <code style="color:var(--amber)">! * ' ( )</code></div>
+                    </div>
+                    <div class="g-card" style="border-color:rgba(255,176,32,.3)">
+                      <div class="g-name" style="color:var(--amber)">Reserved Characters</div>
+                      <div class="g-desc">Have special URL meaning — encode when used as <em>data</em>:<br>
+                        <code style="color:var(--red)">: / ? # [ ] @ ! $ &amp; ' ( ) * + , ; =</code></div>
+                    </div>
+                    <div class="g-card" style="border-color:rgba(255,77,109,.3)">
+                      <div class="g-name" style="color:var(--red)">Always Encode</div>
+                      <div class="g-desc">Spaces, Unicode, control chars, and anything outside ASCII printable range
+                        must always be percent-encoded. Space → <code style="color:var(--cyan)">%20</code> (or <code>+</code> in query strings only)</div>
+                    </div>
+                    <div class="g-card" style="border-color:rgba(0,255,153,.3)">
+                      <div class="g-name" style="color:var(--green)">Query String Rule</div>
+                      <div class="g-desc">In <code>application/x-www-form-urlencoded</code> (HTML forms), space becomes
+                        <code style="color:var(--cyan)">+</code>. In all other contexts use <code style="color:var(--cyan)">%20</code>.</div>
+                    </div>
+                  </div>
+
+                  <!-- ── COMMON CHARACTERS ── -->
+                  <div class="dt">▸ COMMON PERCENT-ENCODED CHARACTERS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Character</th><th>Name</th><th>%Encoded</th><th>Context / Notes</th></tr>
+                    <tr><td style="color:var(--cyan)">Space</td><td>Space</td><td>%20 (or +)</td><td>%20 in paths; + valid in query strings only</td></tr>
+                    <tr><td style="color:var(--cyan)">!</td><td>Exclamation</td><td>%21</td><td>Sub-delimiter — encode in path data</td></tr>
+                    <tr><td style="color:var(--cyan)">"</td><td>Double Quote</td><td>%22</td><td>Always encode — not valid in URLs</td></tr>
+                    <tr><td style="color:var(--cyan)">#</td><td>Hash / Pound</td><td>%23</td><td>Fragment delimiter — encode when literal # needed</td></tr>
+                    <tr><td style="color:var(--cyan)">$</td><td>Dollar Sign</td><td>%24</td><td>Reserved sub-delimiter</td></tr>
+                    <tr><td style="color:var(--cyan)">%</td><td>Percent</td><td>%25</td><td>Must encode % itself to avoid ambiguity</td></tr>
+                    <tr><td style="color:var(--cyan)">&amp;</td><td>Ampersand</td><td>%26</td><td>Query param separator — encode in values</td></tr>
+                    <tr><td style="color:var(--cyan)">'</td><td>Single Quote</td><td>%27</td><td>Encode in param values to prevent injection</td></tr>
+                    <tr><td style="color:var(--cyan)">(</td><td>Open Paren</td><td>%28</td><td>Sub-delimiter</td></tr>
+                    <tr><td style="color:var(--cyan)">)</td><td>Close Paren</td><td>%29</td><td>Sub-delimiter</td></tr>
+                    <tr><td style="color:var(--cyan)">*</td><td>Asterisk</td><td>%2A</td><td>Sub-delimiter</td></tr>
+                    <tr><td style="color:var(--cyan)">+</td><td>Plus</td><td>%2B</td><td>Encode in query values; + means space in forms</td></tr>
+                    <tr><td style="color:var(--cyan)">,</td><td>Comma</td><td>%2C</td><td>Sub-delimiter; often safe but encode in values</td></tr>
+                    <tr><td style="color:var(--cyan)">/</td><td>Forward Slash</td><td>%2F</td><td>Path delimiter — encode when literal slash in data</td></tr>
+                    <tr><td style="color:var(--cyan)">:</td><td>Colon</td><td>%3A</td><td>Scheme separator — encode in userinfo/path</td></tr>
+                    <tr><td style="color:var(--cyan)">;</td><td>Semicolon</td><td>%3B</td><td>Path parameter separator</td></tr>
+                    <tr><td style="color:var(--cyan)">&lt;</td><td>Less Than</td><td>%3C</td><td>Always encode — invalid in URLs</td></tr>
+                    <tr><td style="color:var(--cyan)">=</td><td>Equals</td><td>%3D</td><td>Key=value separator — encode in values</td></tr>
+                    <tr><td style="color:var(--cyan)">&gt;</td><td>Greater Than</td><td>%3E</td><td>Always encode — invalid in URLs</td></tr>
+                    <tr><td style="color:var(--cyan)">?</td><td>Question Mark</td><td>%3F</td><td>Query string start — encode in path data</td></tr>
+                    <tr><td style="color:var(--cyan)">@</td><td>At Sign</td><td>%40</td><td>User-info delimiter — encode in path/query</td></tr>
+                    <tr><td style="color:var(--cyan)">[</td><td>Open Bracket</td><td>%5B</td><td>IPv6 address delimiter only; encode elsewhere</td></tr>
+                    <tr><td style="color:var(--cyan)">\</td><td>Backslash</td><td>%5C</td><td>Always encode</td></tr>
+                    <tr><td style="color:var(--cyan)">]</td><td>Close Bracket</td><td>%5D</td><td>IPv6 address delimiter only; encode elsewhere</td></tr>
+                    <tr><td style="color:var(--cyan)">^</td><td>Caret</td><td>%5E</td><td>Always encode</td></tr>
+                    <tr><td style="color:var(--cyan)">`</td><td>Backtick</td><td>%60</td><td>Always encode</td></tr>
+                    <tr><td style="color:var(--cyan)">{</td><td>Open Brace</td><td>%7B</td><td>Always encode</td></tr>
+                    <tr><td style="color:var(--cyan)">|</td><td>Pipe</td><td>%7C</td><td>Always encode</td></tr>
+                    <tr><td style="color:var(--cyan)">}</td><td>Close Brace</td><td>%7D</td><td>Always encode</td></tr>
+                    <tr><td style="color:var(--cyan)">~</td><td>Tilde</td><td>%7E</td><td>Unreserved — safe, no encoding needed</td></tr>
+                  </table>
+
+                  <!-- ── STRUCTURE ── -->
+                  <div class="dt">▸ URL STRUCTURE — WHICH PARTS GET ENCODED</div>
+                  <div class="code-block">
+<span class="com"># Full URL anatomy</span>
+https://user:pass@example.com:8080/path/to/page?key=val&amp;x=1#anchor
+  │      │    │    │           │    │             │           │
+  scheme │    │    host        port path          query       fragment
+         │    │
+         user password  ← encode : and @ when used as data here
+
+<span class="com"># Path segment — encode everything except unreserved + sub-delimiters</span>
+https://example.com/search/<span class="str">hello%20world</span>     <span class="com"># space in path → %20</span>
+https://example.com/file/<span class="str">report%232024</span>.pdf  <span class="com"># literal # → %23</span>
+
+<span class="com"># Query string — key=value pairs, separate with &amp;</span>
+https://example.com/search?q=<span class="str">C%2B%2B</span>&amp;lang=<span class="str">en</span>   <span class="com"># C++ → C%2B%2B</span>
+https://example.com/api?name=<span class="str">John+Doe</span>          <span class="com"># space in form → +</span>
+https://example.com/api?name=<span class="str">John%20Doe</span>        <span class="com"># space in URL  → %20</span>
+
+<span class="com"># Fragment (hash) — not sent to server</span>
+https://example.com/page#<span class="str">section-2</span>             <span class="com"># fragment rarely needs encoding</span></div>
+
+                  <!-- ── JS / PYTHON SNIPPETS ── -->
+                  <div class="dt">▸ ENCODING IN CODE</div>
+                  <div class="code-block">
+<span class="com">## JavaScript</span>
+<span class="fn">encodeURIComponent</span>(<span class="str">"hello world &amp; more"</span>)
+<span class="com"># → "hello%20world%20%26%20more"  (encodes everything except unreserved)</span>
+
+<span class="fn">encodeURI</span>(<span class="str">"https://example.com/path with spaces"</span>)
+<span class="com"># → "https://example.com/path%20with%20spaces"  (preserves URL structure chars)</span>
+
+<span class="fn">decodeURIComponent</span>(<span class="str">"%48%65%6C%6C%6F"</span>)
+<span class="com"># → "Hello"</span>
+
+<span class="com">## Python 3</span>
+<span class="kw">from</span> urllib.parse <span class="kw">import</span> quote, quote_plus, unquote
+
+<span class="fn">quote</span>(<span class="str">"hello world/path"</span>)          <span class="com"># → 'hello%20world/path'   (/ safe by default)</span>
+<span class="fn">quote</span>(<span class="str">"hello world/path"</span>, safe=<span class="str">''</span>) <span class="com"># → 'hello%20world%2Fpath'  (encode / too)</span>
+<span class="fn">quote_plus</span>(<span class="str">"hello world"</span>)           <span class="com"># → 'hello+world'           (form encoding)</span>
+<span class="fn">unquote</span>(<span class="str">'hello%20world'</span>)            <span class="com"># → 'hello world'</span>
+
+<span class="com">## Bash / curl</span>
+<span class="fn">curl</span> --data-urlencode <span class="str">"param=hello world &amp; more"</span> https://example.com
+<span class="fn">python3</span> -c <span class="str">"import urllib.parse; print(urllib.parse.quote('hello world'))"</span></div>
+
+                  <!-- ── GOOGLE MAPS NOTE ── -->
+                  <div class="dt">▸ GOOGLE MAPS / SPECIAL CONTEXTS</div>
+                  <div class="code-block">
+<span class="com"># Google Maps Embed API — address params must be encoded</span>
+https://maps.googleapis.com/maps/api/geocode/json?address=<span class="str">1600+Amphitheatre+Parkway,+Mountain+View,+CA</span>
+
+<span class="com"># Sigma Computing — special chars in URL parameters</span>
+<span class="com"># Pipe | → %7C  (used as multi-value separator)</span>
+<span class="com"># Comma , → %2C  (used in array parameters)</span>
+<span class="com"># Colon : → %3A  (used in filter syntax)</span>
+https://app.sigmacomputing.com/embed?:filter=status%3Aactive%7Cpending
+
+<span class="com"># Double-encoding pitfall — only encode ONCE</span>
+<span class="com"># Wrong:  %2520  (encoded the % of %25, giving %%20)</span>
+<span class="com"># Right:  %20    (encode space once)</span></div>
+
+                  <!-- ── INTERACTIVE DECODER ── -->
+                  <div class="dt">▸ INTERACTIVE URL ENCODER / DECODER</div>
+                  <div id="url-codec-tool" class="url-codec-wrap">
+                    <div class="url-codec-row">
+                      <label class="url-codec-label">INPUT</label>
+                      <textarea id="url-codec-input" class="url-codec-ta" rows="3"
+                        placeholder="Paste a URL or text to encode / decode…"></textarea>
+                    </div>
+                    <div class="url-codec-btns">
+                      <button class="url-codec-btn btn-encode" onclick="urlToolEncode()">⬆ Encode</button>
+                      <button class="url-codec-btn btn-decode" onclick="urlToolDecode()">⬇ Decode</button>
+                      <button class="url-codec-btn btn-copy"   onclick="urlToolCopy()">📋 Copy</button>
+                      <button class="url-codec-btn btn-clear"  onclick="urlToolClear()">✕ Clear</button>
+                      <a href="https://www.urldecoder.org/" target="_blank" rel="noopener"
+                         class="url-codec-btn btn-ext">🔗 Open urldecoder.org ↗</a>
+                    </div>
+                    <div class="url-codec-row">
+                      <label class="url-codec-label">OUTPUT</label>
+                      <textarea id="url-codec-output" class="url-codec-ta url-codec-out" rows="3"
+                        placeholder="Result appears here…" readonly></textarea>
+                    </div>
+                    <div id="url-codec-msg" class="url-codec-msg"></div>
+                  </div>
+
+                </div><!-- /dw -->
+              </div><!-- /concept-card -->
+            </div><!-- /topic-body -->
+          </div><!-- /topic -->
+
+<!-- /patch-ps-bash -->
         <!-- /domain-body script -->
       </div>
       <!-- /domain-section script -->
