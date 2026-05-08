@@ -1,15 +1,13 @@
 /**
- * script.js
- * =========
- * CompTIA & Tech Reference — Interactive UI Logic
- * 2026 Edition
+ * script.js  —  CompTIA & Tech Reference  |  2026 Edition
+ * =========================================================
+ * toggleDomain / toggleTopic / filter / toggleAll
+ * toggleTheme / updateThemeUI
+ * initSnapQuote / initCloudStack / initTouchFeedback
+ * URL codec helpers
  */
 
-// ─────────────────────────────────────────────────────────────────────────────
-// STATE & CONSTANTS
-// ─────────────────────────────────────────────────────────────────────────────
-
-/** @type {boolean} Tracks whether all sections are currently expanded. */
+// ── STATE ──────────────────────────────────────────────────────────────────
 let allExpanded = false;
 
 const QUOTES = [
@@ -33,133 +31,73 @@ const QUOTES = [
   "The present moment always will have been. — Marcus Aurelius"
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 1. CORE UI COMPONENTS (Accordions & Filtering)
-// ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * Toggle a domain section open or closed.
- * @param {HTMLElement} h - The .domain-header element that was clicked.
- */
+// ── ACCORDION ──────────────────────────────────────────────────────────────
 function toggleDomain(h) {
   const b = h.nextElementSibling;
-  const isOpen = b.classList.toggle("open");
-  h.classList.toggle("open", isOpen);
+  const open = b.classList.toggle("open");
+  h.classList.toggle("open", open);
 }
 
-/**
- * Toggle a topic row open or closed.
- * @param {HTMLElement} h - The .topic-header element that was clicked.
- */
 function toggleTopic(h) {
   h.classList.toggle("open");
   h.nextElementSibling.classList.toggle("open");
 }
 
-/**
- * Filter visible domain sections by category.
- * @param {string} domain - Domain key (e.g. "net") or "all".
- * @param {HTMLElement} chip - The clicked .chip element.
- */
+// ── FILTER ─────────────────────────────────────────────────────────────────
 function filter(domain, chip) {
   document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
   chip.classList.add("active");
-
   document.querySelectorAll(".domain-section").forEach(s => {
     s.classList.toggle("hidden", domain !== "all" && s.dataset.domain !== domain);
   });
 }
 
-/**
- * Expand or collapse every domain and topic accordion at once.
- * @param {HTMLElement} btn - The trigger button.
- */
+// ── EXPAND / COLLAPSE ALL ──────────────────────────────────────────────────
 function toggleAll(btn) {
   allExpanded = !allExpanded;
-
-  const headers = document.querySelectorAll(".domain-header, .topic-header");
-  const bodies = document.querySelectorAll(".domain-body, .topic-body");
-
-  headers.forEach(h => h.classList.toggle("open", allExpanded));
-  bodies.forEach(b => b.classList.toggle("open", allExpanded));
-
-  // Sync button labels
-  const mainBtn = document.getElementById("expand-all-btn"); // if exists
-  if (mainBtn) mainBtn.textContent = allExpanded ? "↕ COLLAPSE ALL" : "↕ EXPAND ALL";
-
+  document.querySelectorAll(".domain-header, .topic-header").forEach(h => h.classList.toggle("open", allExpanded));
+  document.querySelectorAll(".domain-body, .topic-body").forEach(b => b.classList.toggle("open", allExpanded));
   const hdrBtn = document.getElementById("hdr-expand-btn");
   if (hdrBtn) hdrBtn.title = allExpanded ? "Collapse all" : "Expand all";
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 2. THEME MANAGEMENT
-// ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * Toggle between dark and light theme.
- * @param {HTMLElement} btn - The trigger button.
- */
-function toggleTheme(btn) {
-  const doc = document.documentElement;
-  const currentTheme = doc.getAttribute("data-theme");
-  const newTheme = currentTheme === "light" ? "dark" : "light";
-
-  doc.setAttribute("data-theme", newTheme);
-  localStorage.setItem("theme", newTheme);
-
-  updateThemeUI(newTheme);
+// ── THEME ──────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const doc  = document.documentElement;
+  const next = doc.getAttribute("data-theme") === "light" ? "dark" : "light";
+  doc.setAttribute("data-theme", next);
+  localStorage.setItem("theme", next);
+  updateThemeUI(next);
 }
 
-/**
- * Update all theme-related UI elements (buttons, icons).
- * @param {string} theme - "light" or "dark".
- */
 function updateThemeUI(theme) {
-  // Update main toggle button if it exists
-  const mainBtn = document.getElementById("theme-toggle-btn");
-  if (mainBtn) {
-    mainBtn.textContent = theme === "light" ? "☾ DARK MODE" : "☀ LIGHT MODE";
-    mainBtn.style.color = theme === "light" ? "var(--purple)" : "var(--amber)";
-    mainBtn.style.borderColor = theme === "light" ? "var(--purple)" : "var(--amber)";
-  }
-
-  // Update header mini-toggle
   const hdrBtn = document.getElementById("hdr-theme-btn");
   if (hdrBtn) hdrBtn.textContent = theme === "light" ? "☾" : "☀";
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 3. INITIALIZATION & DYNAMIC BUILDERS
-// ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * Initialize theme immediately to prevent flash.
- */
-(function() {
-  const savedTheme = localStorage.getItem("theme") || "dark";
-  document.documentElement.setAttribute("data-theme", savedTheme);
+// ── INIT THEME (prevent flash) ─────────────────────────────────────────────
+(function () {
+  const saved = localStorage.getItem("theme") || "dark";
+  document.documentElement.setAttribute("data-theme", saved);
 })();
 
+// ── DOM READY ──────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-  const currentTheme = document.documentElement.getAttribute("data-theme");
-  updateThemeUI(currentTheme);
-
+  updateThemeUI(document.documentElement.getAttribute("data-theme"));
   initSnapQuote();
   initCloudStack();
   initTouchFeedback();
 });
 
-/**
- * Rotate random quotes in the header.
- */
+// ── SNAP QUOTE ─────────────────────────────────────────────────────────────
 function initSnapQuote() {
-  const el = document.getElementById("sq-text");
+  const el  = document.getElementById("sq-text");
   const box = document.getElementById("snap-quote");
   if (!el || !box) return;
 
   let idx = Math.floor(Math.random() * QUOTES.length);
 
-  const showQuote = (i) => {
+  const show = (i) => {
     box.classList.remove("visible");
     setTimeout(() => {
       el.textContent = QUOTES[i % QUOTES.length];
@@ -167,30 +105,25 @@ function initSnapQuote() {
     }, 600);
   };
 
-  showQuote(idx);
-  setInterval(() => showQuote(++idx), 8000);
+  show(idx);
+  setInterval(() => show(++idx), 8000);
 }
 
-/**
- * Build the Cloud Responsibility Matrix (IaaS/PaaS/SaaS).
- */
+// ── CLOUD RESPONSIBILITY MATRIX ────────────────────────────────────────────
 function initCloudStack() {
   const container = document.getElementById("cloud-stack");
   if (!container) return;
 
-  const layers = ["Applications", "Data", "Runtime", "Middleware", "OS", "Virtualization", "Servers", "Storage", "Networking"];
-  const resp = [
-    [1, 1, 1, 0], [1, 1, 1, 0], [1, 1, 0, 0], [1, 1, 0, 0], [1, 1, 0, 0],
-    [1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0]
-  ];
+  const layers = ["Applications","Data","Runtime","Middleware","OS","Virtualization","Servers","Storage","Networking"];
+  const resp   = [[1,1,1,0],[1,1,1,0],[1,1,0,0],[1,1,0,0],[1,1,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0]];
   const colors = [
-    ["rgba(255,77,109,.12)", "#ff4d6d"], // On-Prem
-    ["rgba(255,176,32,.09)", "#ffb020"], // IaaS
-    ["rgba(0,212,255,.08)", "#00d4ff"], // PaaS
-    ["rgba(0,255,153,.08)", "#00ff99"]  // SaaS
+    ["rgba(255,77,109,.12)","#ff4d6d"],
+    ["rgba(255,176,32,.09)","#ffb020"],
+    ["rgba(0,212,255,.08)","#00d4ff"],
+    ["rgba(0,255,153,.08)","#00ff99"]
   ];
 
-  layers.forEach((name, rIdx) => {
+  layers.forEach((name, r) => {
     const row = document.createElement("div");
     row.style.cssText = "display:flex;gap:0;margin-bottom:3px;align-items:stretch";
 
@@ -199,11 +132,12 @@ function initCloudStack() {
     lbl.textContent = name;
     row.appendChild(lbl);
 
-    resp[rIdx].forEach((isCust, cIdx) => {
+    resp[r].forEach((isCust, c) => {
       const cell = document.createElement("div");
       cell.style.cssText = `flex:1;text-align:center;padding:5px 3px;font-size:11px;font-weight:600;border-radius:3px;margin:0 2px;
-        ${isCust ? `background:${colors[cIdx][0]};color:${colors[cIdx][1]};border:1px solid ${colors[cIdx][0]}` :
-        `background:rgba(255,255,255,.02);color:#3a4a60;border:1px solid rgba(255,255,255,.05)`}`;
+        ${isCust
+          ? `background:${colors[c][0]};color:${colors[c][1]};border:1px solid ${colors[c][0]}`
+          : "background:rgba(255,255,255,.02);color:#3a4a60;border:1px solid rgba(255,255,255,.05)"}`;
       cell.textContent = isCust ? "Customer" : "Provider";
       row.appendChild(cell);
     });
@@ -211,65 +145,51 @@ function initCloudStack() {
   });
 }
 
-/**
- * Visual feedback for touch devices.
- */
+// ── TOUCH FEEDBACK ─────────────────────────────────────────────────────────
 function initTouchFeedback() {
-  const interactive = document.querySelectorAll(".chip, .domain-header, .topic-header");
-  const addTap = function() { this.classList.add("is-tapping"); };
-  const remTap = function() { this.classList.remove("is-tapping"); };
-
-  interactive.forEach(el => {
-    el.addEventListener("touchstart", addTap, { passive: true });
-    el.addEventListener("touchend", remTap, { passive: true });
-    el.addEventListener("touchcancel", remTap, { passive: true });
+  document.querySelectorAll(".chip, .domain-header, .topic-header").forEach(el => {
+    el.addEventListener("touchstart",  function() { this.classList.add("is-tapping");    }, { passive: true });
+    el.addEventListener("touchend",    function() { this.classList.remove("is-tapping"); }, { passive: true });
+    el.addEventListener("touchcancel", function() { this.classList.remove("is-tapping"); }, { passive: true });
   });
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 4. UTILITY TOOLS (URL Codec)
-// ─────────────────────────────────────────────────────────────────────────────
-
-const _urlIn = () => document.getElementById("url-codec-input")?.value || "";
-const _urlOut = (v) => { const el = document.getElementById("url-codec-output"); if(el) el.value = v; };
-
-function _urlMsg(txt, color = "var(--muted)") {
+// ── URL CODEC WIDGET ───────────────────────────────────────────────────────
+const _in  = () => document.getElementById("url-codec-input")?.value || "";
+const _out = (v) => { const el = document.getElementById("url-codec-output"); if (el) el.value = v; };
+const _msg = (txt, color = "var(--muted)") => {
   const el = document.getElementById("url-codec-msg");
   if (!el) return;
   el.textContent = txt;
   el.style.color = color;
   clearTimeout(el._t);
   el._t = setTimeout(() => el.textContent = "", 2500);
-}
+};
 
 function urlToolEncode() {
-  const raw = _urlIn();
-  if (!raw) return _urlMsg("⚠ Nothing to encode.", "var(--amber)");
-  try {
-    _urlOut(encodeURIComponent(raw));
-    _urlMsg("✓ Encoded.", "var(--green)");
-  } catch(e) { _urlMsg("✗ Encode error: " + e.message, "var(--red)"); }
+  const raw = _in();
+  if (!raw) return _msg("⚠ Nothing to encode.", "var(--amber)");
+  try { _out(encodeURIComponent(raw)); _msg("✓ Encoded.", "var(--green)"); }
+  catch (e) { _msg("✗ " + e.message, "var(--red)"); }
 }
 
 function urlToolDecode() {
-  const raw = _urlIn();
-  if (!raw) return _urlMsg("⚠ Nothing to decode.", "var(--amber)");
-  try {
-    _urlOut(decodeURIComponent(raw.replace(/\+/g, " ")));
-    _urlMsg("✓ Decoded.", "var(--cyan)");
-  } catch(e) { _urlMsg("✗ Malformed encoding.", "var(--red)"); }
+  const raw = _in();
+  if (!raw) return _msg("⚠ Nothing to decode.", "var(--amber)");
+  try { _out(decodeURIComponent(raw.replace(/\+/g, " "))); _msg("✓ Decoded.", "var(--cyan)"); }
+  catch (e) { _msg("✗ Malformed encoding.", "var(--red)"); }
 }
 
 function urlToolCopy() {
   const el = document.getElementById("url-codec-output");
-  if (!el?.value) return _urlMsg("⚠ Nothing to copy.", "var(--amber)");
-  navigator.clipboard.writeText(el.value).then(() => _urlMsg("✓ Copied.", "var(--green)"));
+  if (!el?.value) return _msg("⚠ Nothing to copy.", "var(--amber)");
+  navigator.clipboard.writeText(el.value).then(() => _msg("✓ Copied.", "var(--green)"));
 }
 
 function urlToolClear() {
   const i = document.getElementById("url-codec-input");
   const o = document.getElementById("url-codec-output");
-  if(i) i.value = "";
-  if(o) o.value = "";
-  _urlMsg("");
+  if (i) i.value = "";
+  if (o) o.value = "";
+  _msg("");
 }
