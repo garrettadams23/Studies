@@ -4106,7 +4106,349 @@
             </div>
           </div>
         </div>
-        <!-- /domain-body sec -->
+        <!-- patch-bundle-1-security-2026 -->
+<!-- ═══════════════════════════════════════════════════
+     TOPIC: Active Directory
+═══════════════════════════════════════════════════ -->
+<div class="topic">
+  <div class="topic-header" onclick="toggleTopic(this)">
+    <span class="topic-icon">🏢</span>
+    <span class="topic-name">Active Directory — Structure, Objects &amp; Attacks</span>
+    <span class="topic-badge">SEC+ · CySA+ · PenTest+</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Microsoft Directory Service</div>
+      <div class="concept-title">AD DS — Authentication, Authorisation &amp; Policy at Enterprise Scale</div>
+      <div class="concept-desc">
+        Active Directory Domain Services (AD DS) is Microsoft's centralised
+        identity and access management system. Nearly every enterprise Windows
+        environment runs it. AD is the #1 target in corporate intrusions —
+        owning AD means owning the network.
+      </div>
+      <div class="dw">
+
+        <div class="dt">▸ STRUCTURE — LOGICAL HIERARCHY</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Object</th><th>Description</th><th>Analogy</th></tr>
+          <tr>
+            <td style="color:var(--cyan)">Forest</td>
+            <td>Top-level security boundary. Contains one or more domains. Shares schema and global catalog.</td>
+            <td>The country</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Domain</td>
+            <td>Core admin unit. Has its own policies, database (NTDS.dit), and DNS namespace (corp.local).</td>
+            <td>The state</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Organisational Unit (OU)</td>
+            <td>Container inside a domain. Groups objects for delegation and GPO application.</td>
+            <td>The department</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Domain Controller (DC)</td>
+            <td>Server running AD DS. Authenticates users, stores NTDS.dit, replicates with other DCs.</td>
+            <td>The HR office</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Global Catalog (GC)</td>
+            <td>Partial replica of ALL objects in the forest. Speeds up cross-domain lookups. Port 3268/3269.</td>
+            <td>The central index</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">NTDS.dit</td>
+            <td>The AD database file on each DC. Contains all objects including password hashes. Primary target.</td>
+            <td>The master HR file</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Trust</td>
+            <td>Allows users in one domain/forest to access resources in another. Can be one- or two-way, transitive or non-transitive.</td>
+            <td>Inter-company agreement</td>
+          </tr>
+        </table>
+
+        <div class="dt">▸ AD OBJECTS — THE THREE PRINCIPALS</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Object Type</th><th>Purpose</th><th>Key Attributes</th></tr>
+          <tr>
+            <td style="color:var(--green)">User Account</td>
+            <td>Represents a person or service. Has SID, SAMAccountName, UPN, password hash.</td>
+            <td>memberOf, lastLogon, pwdLastSet, userAccountControl</td>
+          </tr>
+          <tr>
+            <td style="color:var(--green)">Computer Account</td>
+            <td>Every domain-joined machine. Has its own password (changed every 30 days).</td>
+            <td>dNSHostName, operatingSystem, servicePrincipalName</td>
+          </tr>
+          <tr>
+            <td style="color:var(--green)">Group</td>
+            <td>Collection of principals. Controls access to resources.</td>
+            <td>Domain Local · Global · Universal (scope)</td>
+          </tr>
+          <tr>
+            <td style="color:var(--amber)">Service Account (gMSA)</td>
+            <td>Non-interactive account for services. Has SPN registered. Primary Kerberoasting target.</td>
+            <td>servicePrincipalName, msDS-ManagedPassword</td>
+          </tr>
+          <tr>
+            <td style="color:var(--red)">privileged groups</td>
+            <td>Domain Admins · Enterprise Admins · Schema Admins · Administrators · Backup Operators · Account Operators</td>
+            <td>Membership = full domain or forest control</td>
+          </tr>
+        </table>
+
+        <div class="dt">▸ GROUP POLICY OBJECTS (GPOs)</div>
+        <div class="concept-desc" style="padding:0 0 10px">
+          GPOs are collections of settings pushed to computers/users in an OU.
+          Applied order: <strong style="color:var(--cyan)">Local → Site → Domain → OU</strong>
+          (LSDOU). Later policies override earlier ones.
+          <strong style="color:var(--amber)">Enforced</strong> GPOs cannot be overridden.
+          <strong style="color:var(--green)">Block Inheritance</strong> stops parent GPOs filtering down.
+        </div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>GPO Use Case</th><th>Example Setting</th></tr>
+          <tr><td style="color:var(--cyan)">Password Policy</td><td>Min length 12, complexity required, 90-day expiry</td></tr>
+          <tr><td style="color:var(--cyan)">Account Lockout</td><td>Lock after 5 bad passwords for 30 minutes</td></tr>
+          <tr><td style="color:var(--cyan)">Software Deployment</td><td>Push MSI packages to all machines in an OU</td></tr>
+          <tr><td style="color:var(--cyan)">Script Execution</td><td>Run logon/logoff scripts; restrict PowerShell</td></tr>
+          <tr><td style="color:var(--cyan)">Security Settings</td><td>Disable guest, rename Administrator, firewall rules</td></tr>
+          <tr><td style="color:var(--cyan)">AppLocker / WDAC</td><td>Whitelist which executables are allowed to run</td></tr>
+        </table>
+
+        <div class="dt">▸ AD ENUMERATION (POST-EXPLOITATION)</div>
+        <div class="code-block">
+<span class="com"># PowerShell AD module (requires RSAT or domain-joined machine)</span>
+<span class="fn">Get-ADDomain</span>                                  <span class="com"># domain info</span>
+<span class="fn">Get-ADForest</span>                                  <span class="com"># forest info, trusts</span>
+<span class="fn">Get-ADUser</span> -Filter * -Properties *            <span class="com"># all users</span>
+<span class="fn">Get-ADGroupMember</span> <span class="str">"Domain Admins"</span>           <span class="com"># DA members</span>
+<span class="fn">Get-ADComputer</span> -Filter * -Properties *        <span class="com"># all machines</span>
+<span class="fn">Get-ADObject</span> -Filter {ServicePrincipalName -ne <span class="str">"$null"</span>} <span class="com"># Kerberoastable accounts</span>
+
+<span class="com"># LDAP queries (works without AD module)</span>
+<span class="fn">([adsisearcher]</span><span class="str">"(objectCategory=person)"</span>).<span class="fn">FindAll</span>()
+<span class="fn">([adsisearcher]</span><span class="str">"(objectClass=computer)"</span>).<span class="fn">FindAll</span>()
+
+<span class="com"># BloodHound / SharpHound — graph all AD relationships</span>
+.<span class="fn">\SharpHound.exe</span> -c All                       <span class="com"># collect all data</span>
+<span class="com"># Import ZIP into BloodHound → find shortest path to DA</span>
+
+<span class="com"># PowerView (PowerSploit) — common enumeration</span>
+<span class="fn">Get-NetDomain</span>          <span class="com"># domain info</span>
+<span class="fn">Get-NetDomainController</span> <span class="com"># list DCs</span>
+<span class="fn">Find-LocalAdminAccess</span>  <span class="com"># where do I have local admin?</span>
+<span class="fn">Get-NetGPO</span>             <span class="com"># enumerate GPOs</span>
+        </div>
+
+        <div class="dt">▸ COMMON AD ATTACKS</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Attack</th><th>What happens</th><th>Requires</th><th>Defence</th></tr>
+          <tr>
+            <td style="color:var(--red)">Kerberoasting</td>
+            <td>Request TGS for any SPN-registered account. Crack the RC4-encrypted ticket offline.</td>
+            <td>Any domain user</td>
+            <td>Strong passwords on service accounts; use gMSA; AES-only encryption</td>
+          </tr>
+          <tr>
+            <td style="color:var(--red)">AS-REP Roasting</td>
+            <td>Request AS-REP for accounts with "Do not require Kerberos pre-auth" set. Crack offline.</td>
+            <td>Network access (no creds)</td>
+            <td>Require pre-auth on all accounts; audit UAC flags</td>
+          </tr>
+          <tr>
+            <td style="color:var(--red)">Pass-the-Hash (PtH)</td>
+            <td>Use stolen NTLM hash directly for authentication without cracking it.</td>
+            <td>NTLM hash (from LSASS, SAM, NTDS)</td>
+            <td>Credential Guard; disable NTLM; Protected Users group</td>
+          </tr>
+          <tr>
+            <td style="color:var(--red)">Pass-the-Ticket (PtT)</td>
+            <td>Inject stolen Kerberos TGT/TGS into current session. Impersonate user.</td>
+            <td>Valid Kerberos ticket (from LSASS)</td>
+            <td>Protected Users group; session monitoring</td>
+          </tr>
+          <tr>
+            <td style="color:var(--red)">DCSync</td>
+            <td>Mimic DC replication to pull all password hashes (including krbtgt) from a DC without touching disk.</td>
+            <td>Domain Admin / Replication rights</td>
+            <td>Monitor for DS-Replication-Get-Changes on non-DC accounts</td>
+          </tr>
+          <tr>
+            <td style="color:var(--red)">Golden Ticket</td>
+            <td>Forge a TGT using the krbtgt hash. Valid for 10 years. Persists through password resets.</td>
+            <td>krbtgt hash (from DCSync / NTDS)</td>
+            <td>Reset krbtgt password TWICE; monitor for anomalous TGT lifetimes</td>
+          </tr>
+          <tr>
+            <td style="color:var(--red)">Silver Ticket</td>
+            <td>Forge a TGS for a specific service using that service account's hash. No DC contact needed.</td>
+            <td>Service account hash</td>
+            <td>Monitor for service tickets with no corresponding TGT</td>
+          </tr>
+        </table>
+
+        <div class="dt">▸ AD HARDENING QUICK REFERENCE</div>
+        <table class="ref-table">
+          <tr><th>Control</th><th>What it does</th></tr>
+          <tr><td style="color:var(--green)">Tiered Admin Model</td><td>Tier 0 = DC/AD · Tier 1 = Servers · Tier 2 = Workstations. Admins have separate accounts per tier.</td></tr>
+          <tr><td style="color:var(--green)">Protected Users Group</td><td>Prevents NTLM, DES/RC4 Kerberos, credential caching, delegation for members.</td></tr>
+          <tr><td style="color:var(--green)">Credential Guard</td><td>Uses Hyper-V virtualisation to isolate LSASS. Blocks PtH and credential dumping.</td></tr>
+          <tr><td style="color:var(--green)">LAPS</td><td>Local Administrator Password Solution — randomises local admin passwords per machine.</td></tr>
+          <tr><td style="color:var(--green)">Fine-Grained Password Policy</td><td>Different password policies per group (admins get stricter rules).</td></tr>
+          <tr><td style="color:var(--green)">Audit Policy</td><td>Log account logon, privilege use, DS access, and object changes. Feed into SIEM.</td></tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TOPIC: TLS Handshake
+═══════════════════════════════════════════════════ -->
+<div class="topic">
+  <div class="topic-header" onclick="toggleTopic(this)">
+    <span class="topic-icon">🔒</span>
+    <span class="topic-name">TLS — Handshake, Cipher Suites &amp; Certificate Chain</span>
+    <span class="topic-badge">SEC+ · SECX</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Transport Layer Security</div>
+      <div class="concept-title">How HTTPS Actually Works — Step by Step</div>
+      <div class="concept-desc">
+        TLS (formerly SSL) provides <strong style="color:var(--cyan)">confidentiality</strong>
+        (encryption), <strong style="color:var(--green)">integrity</strong> (MAC),
+        and <strong style="color:var(--amber)">authentication</strong> (certificates)
+        over any transport. Used by HTTPS (443), SMTPS (465), IMAPS (993), and
+        most modern protocols. Current standard: <strong>TLS 1.3</strong> (2018).
+      </div>
+      <div class="dw">
+
+        <div class="dt">▸ TLS 1.2 HANDSHAKE (4 ROUND TRIPS)</div>
+        <div class="kc-row row-cyan">
+          <div class="kc-num text-cyan">1</div>
+          <div class="kc-phase">ClientHello</div>
+          <div class="kc-desc">
+            Client → Server. Sends: TLS version, random number (client_random),
+            list of supported cipher suites, compression methods, extensions
+            (SNI, ALPN, supported curves).
+          </div>
+        </div>
+        <div class="kc-row row-amber">
+          <div class="kc-num text-amber">2</div>
+          <div class="kc-phase">ServerHello + Certificate</div>
+          <div class="kc-desc">
+            Server → Client. Selects cipher suite and TLS version. Sends
+            server_random. Sends its X.509 certificate chain.
+            Optionally sends ServerKeyExchange (for DHE/ECDHE).
+          </div>
+        </div>
+        <div class="kc-row row-green">
+          <div class="kc-num text-green">3</div>
+          <div class="kc-phase">Client Key Exchange</div>
+          <div class="kc-desc">
+            Client validates the certificate chain. Generates pre-master secret.
+            If RSA: encrypts with server's public key. If DHE/ECDHE: sends
+            client DH public value. Both sides derive the master secret and
+            session keys independently.
+          </div>
+        </div>
+        <div class="kc-row row-purple">
+          <div class="kc-num text-purple">4</div>
+          <div class="kc-phase">Finished (both sides)</div>
+          <div class="kc-desc">
+            Both send a Finished message: HMAC of the entire handshake transcript,
+            encrypted with the new session keys. If both verify correctly —
+            encrypted data transfer begins.
+          </div>
+        </div>
+
+        <div class="dt" style="margin-top:14px">▸ TLS 1.3 IMPROVEMENTS (2 ROUND TRIPS → 1)</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Feature</th><th>TLS 1.2</th><th>TLS 1.3</th></tr>
+          <tr><td style="color:var(--cyan)">Handshake RTTs</td><td>2 RTT (full) / 1 RTT (resumption)</td><td>1 RTT (full) / 0 RTT (resumption — risky)</td></tr>
+          <tr><td style="color:var(--cyan)">Key Exchange</td><td>RSA or DHE/ECDHE</td><td>ECDHE only — RSA key exchange removed</td></tr>
+          <tr><td style="color:var(--cyan)">Forward Secrecy</td><td>Optional (only with DHE/ECDHE)</td><td>Mandatory — every session gets unique keys</td></tr>
+          <tr><td style="color:var(--cyan)">Cipher Suites</td><td>Many including weak ones (RC4, 3DES)</td><td>5 strong AEAD suites only</td></tr>
+          <tr><td style="color:var(--cyan)">Encrypted</td><td>Only after Finished</td><td>Server certificate encrypted during handshake</td></tr>
+          <tr><td style="color:var(--cyan)">Removed</td><td>—</td><td>RSA key exchange, static DH, CBC mode ciphers, compression, renegotiation, SHA-1</td></tr>
+        </table>
+
+        <div class="dt">▸ CERTIFICATE CHAIN VALIDATION</div>
+        <div class="code-block">
+<span class="com"># Certificate chain: End-Entity → Intermediate CA → Root CA</span>
+<span class="com">#</span>
+<span class="com">#  Root CA (self-signed, in OS/browser trust store)</span>
+<span class="com">#    └─ Intermediate CA (signed by Root)</span>
+<span class="com">#         └─ Server Certificate (signed by Intermediate)</span>
+<span class="com">#</span>
+<span class="com"># Validation steps:</span>
+<span class="com"># 1. Build chain from server cert to trusted root</span>
+<span class="com"># 2. Verify each signature in chain (cryptographic)</span>
+<span class="com"># 3. Check each cert is not expired (notBefore / notAfter)</span>
+<span class="com"># 4. Check each cert is not revoked (CRL or OCSP)</span>
+<span class="com"># 5. Check server cert CN/SAN matches the hostname (SNI)</span>
+<span class="com"># 6. Check cert has correct Key Usage / Extended Key Usage</span>
+
+<span class="com"># Inspect a certificate from the command line</span>
+<span class="fn">openssl</span> s_client -connect example.com:<span class="num">443</span> -showcerts
+<span class="fn">openssl</span> x509 -in cert.pem -text -noout
+<span class="fn">openssl</span> verify -CAfile chain.pem cert.pem
+
+<span class="com"># Check cipher suite negotiated</span>
+<span class="fn">openssl</span> s_client -connect example.com:<span class="num">443</span> 2>&amp;1 | grep Cipher
+<span class="fn">nmap</span> --script ssl-enum-ciphers -p 443 example.com
+        </div>
+
+        <div class="dt">▸ CIPHER SUITE NOTATION</div>
+        <div class="code-block">
+<span class="com"># TLS 1.2 cipher suite breakdown:</span>
+TLS _ ECDHE _ RSA _ WITH _ AES_256_GCM _ SHA384
+ │      │      │           │                 │
+ │      │      │           │                 └─ MAC / PRF algorithm
+ │      │      │           └─ Bulk encryption (AES-256 in GCM mode = AEAD)
+ │      │      └─ Authentication (whose certificate we verify)
+ │      └─ Key Exchange (ECDHE = elliptic curve Diffie-Hellman ephemeral)
+ └─ Protocol
+
+<span class="com"># TLS 1.3 suite (simpler — key exchange implicit ECDHE)</span>
+TLS_AES_256_GCM_SHA384         <span class="com"># 5 suites total in 1.3</span>
+TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware AES</span>
+        </div>
+
+        <div class="dt">▸ KEY CONCEPTS</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Concept</th><th>Meaning</th></tr>
+          <tr><td style="color:var(--cyan)">Forward Secrecy (PFS)</td><td>Each session uses ephemeral keys. Compromising the private key LATER does not decrypt past sessions. Requires DHE or ECDHE.</td></tr>
+          <tr><td style="color:var(--cyan)">HSTS</td><td>HTTP Strict Transport Security. Browser header telling clients to always use HTTPS for N seconds. Defeats SSL stripping.</td></tr>
+          <tr><td style="color:var(--cyan)">Certificate Pinning</td><td>App hardcodes the expected cert/public key. Defeats MITM even with a trusted rogue CA. Used in mobile apps.</td></tr>
+          <tr><td style="color:var(--cyan)">OCSP Stapling</td><td>Server attaches (staples) a pre-fetched OCSP response to handshake. Faster than client fetching OCSP separately.</td></tr>
+          <tr><td style="color:var(--cyan)">SNI</td><td>Server Name Indication. Client sends hostname in ClientHello so server knows which cert to present. Allows virtual hosting.</td></tr>
+          <tr><td style="color:var(--cyan)">CT (Cert Transparency)</td><td>All public certs must be logged in public append-only logs. Lets anyone detect mis-issuance.</td></tr>
+        </table>
+
+        <div class="dt">▸ COMMON TLS ATTACKS</div>
+        <table class="ref-table">
+          <tr><th>Attack</th><th>Target</th><th>Mechanism</th><th>Fix</th></tr>
+          <tr><td style="color:var(--red)">BEAST</td><td>TLS 1.0 CBC</td><td>IV prediction in CBC mode allows plaintext recovery</td><td>TLS 1.1+ or RC4 (deprecated) — use TLS 1.2+</td></tr>
+          <tr><td style="color:var(--red)">POODLE</td><td>SSLv3 CBC</td><td>Padding oracle on SSLv3</td><td>Disable SSLv3 entirely</td></tr>
+          <tr><td style="color:var(--red)">DROWN</td><td>SSLv2 shared key</td><td>SSLv2 oracle decrypts TLS sessions sharing same key pair</td><td>Disable SSLv2; use separate certs</td></tr>
+          <tr><td style="color:var(--red)">Heartbleed (CVE-2014-0160)</td><td>OpenSSL &lt;1.0.1g</td><td>Buffer over-read in heartbeat extension leaks server memory (keys, sessions)</td><td>Patch OpenSSL; revoke exposed certs</td></tr>
+          <tr><td style="color:var(--red)">CRIME / BREACH</td><td>TLS compression</td><td>Compress-then-encrypt leaks secrets if attacker can inject</td><td>Disable TLS compression; CSRF tokens</td></tr>
+          <tr><td style="color:var(--red)">SSL Stripping</td><td>HTTP redirect</td><td>MITM downgrades HTTPS to HTTP at the redirect</td><td>HSTS; HSTS preloading</td></tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- /domain-body sec -->
       </div>
       <!-- /domain-section sec -->
 
@@ -9025,7 +9367,387 @@
             </div>
           </div>
         </div>
-        <!-- /domain-body linux -->
+        <!-- patch-bundle-2-containers-2026 -->
+<!-- ═══════════════════════════════════════════════════
+     TOPIC: Docker
+═══════════════════════════════════════════════════ -->
+<div class="topic">
+  <div class="topic-header" onclick="toggleTopic(this)">
+    <span class="topic-icon">🐳</span>
+    <span class="topic-name">Docker — Containers, Images &amp; Compose</span>
+    <span class="topic-badge">DEVOPS · LINUX+</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Container Runtime</div>
+      <div class="concept-title">Package Once, Run Anywhere — Container Concepts</div>
+      <div class="concept-desc">
+        Docker packages an application and ALL its dependencies into a
+        <strong style="color:var(--cyan)">container</strong> — a lightweight,
+        isolated process that runs identically everywhere. An
+        <strong style="color:var(--amber)">image</strong> is the read-only
+        blueprint; a <strong style="color:var(--green)">container</strong> is
+        a running instance of an image.
+      </div>
+      <div class="dw">
+
+        <div class="dt">▸ CONTAINER vs VM — KEY DIFFERENCE</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Feature</th><th>Virtual Machine</th><th>Container</th></tr>
+          <tr><td>OS</td><td>Full guest OS per VM (GBs)</td><td>Shares host kernel (MBs)</td></tr>
+          <tr><td>Boot time</td><td>Minutes</td><td>Milliseconds</td></tr>
+          <tr><td>Isolation</td><td>Hardware-level (hypervisor)</td><td>Kernel namespaces + cgroups</td></tr>
+          <tr><td>Portability</td><td>Hypervisor-dependent</td><td>Runs on any Docker host</td></tr>
+          <tr><td>Use case</td><td>Full OS isolation, legacy apps</td><td>Microservices, CI/CD, cloud-native</td></tr>
+          <tr><td style="color:var(--amber)">Security boundary</td><td>Strong (separate kernel)</td><td>Weaker (shared kernel — escape attacks exist)</td></tr>
+        </table>
+
+        <div class="dt">▸ DOCKERFILE — BUILD YOUR IMAGE</div>
+        <div class="code-block">
+<span class="com"># Dockerfile — instructions to build an image layer by layer</span>
+<span class="kw">FROM</span>    python:<span class="num">3.12</span>-slim          <span class="com"># base image (start here)</span>
+<span class="kw">WORKDIR</span> /app                     <span class="com"># set working directory</span>
+<span class="kw">COPY</span>    requirements.txt .        <span class="com"># copy file from host into image</span>
+<span class="kw">RUN</span>     pip install -r requirements.txt  <span class="com"># run command at build time</span>
+<span class="kw">COPY</span>    . .                       <span class="com"># copy rest of source code</span>
+<span class="kw">ENV</span>     PORT=<span class="num">8080</span>                 <span class="com"># set environment variable</span>
+<span class="kw">EXPOSE</span>  <span class="num">8080</span>                      <span class="com"># document which port the app uses</span>
+<span class="kw">USER</span>    nobody                    <span class="com"># !! run as non-root (security)</span>
+<span class="kw">CMD</span>     [<span class="str">"python"</span>, <span class="str">"app.py"</span>]   <span class="com"># default command when container starts</span>
+
+<span class="com"># CMD vs ENTRYPOINT</span>
+<span class="com"># ENTRYPOINT ["python"]     — fixed executable, cannot be overridden easily</span>
+<span class="com"># CMD ["app.py"]            — default args, overridden by: docker run img other.py</span>
+<span class="com"># ARG vs ENV: ARG is build-time only; ENV persists into running container</span>
+        </div>
+
+        <div class="dt">▸ ESSENTIAL DOCKER COMMANDS</div>
+        <div class="code-block">
+<span class="com"># ── Images ─────────────────────────────────────────────────</span>
+<span class="fn">docker</span> build -t myapp:<span class="num">1.0</span> .          <span class="com"># build image from Dockerfile in .</span>
+<span class="fn">docker</span> pull nginx:<span class="num">alpine</span>            <span class="com"># download image from registry</span>
+<span class="fn">docker</span> push myrepo/myapp:<span class="num">1.0</span>        <span class="com"># push to Docker Hub / registry</span>
+<span class="fn">docker</span> images                        <span class="com"># list local images</span>
+<span class="fn">docker</span> rmi myapp:<span class="num">1.0</span>               <span class="com"># delete image</span>
+<span class="fn">docker</span> history myapp:<span class="num">1.0</span>           <span class="com"># show image layers</span>
+
+<span class="com"># ── Containers ─────────────────────────────────────────────</span>
+<span class="fn">docker</span> run -d -p <span class="num">8080</span>:<span class="num">80</span> --name web nginx   <span class="com"># run detached, port-map, named</span>
+<span class="fn">docker</span> run -it ubuntu bash             <span class="com"># interactive terminal</span>
+<span class="fn">docker</span> run --rm alpine echo hello       <span class="com"># auto-remove when done</span>
+<span class="fn">docker</span> ps                              <span class="com"># running containers</span>
+<span class="fn">docker</span> ps -a                           <span class="com"># all containers (inc. stopped)</span>
+<span class="fn">docker</span> stop web                        <span class="com"># graceful stop (SIGTERM)</span>
+<span class="fn">docker</span> kill web                        <span class="com"># immediate stop (SIGKILL)</span>
+<span class="fn">docker</span> rm web                          <span class="com"># remove stopped container</span>
+<span class="fn">docker</span> exec -it web bash               <span class="com"># shell into running container</span>
+<span class="fn">docker</span> logs -f web                     <span class="com"># stream container logs</span>
+<span class="fn">docker</span> inspect web                     <span class="com"># full JSON metadata</span>
+<span class="fn">docker</span> stats                           <span class="com"># live CPU/memory usage</span>
+<span class="fn">docker</span> cp web:/app/config.yml ./       <span class="com"># copy file from container</span>
+
+<span class="com"># ── Volumes & Networks ─────────────────────────────────────</span>
+<span class="fn">docker</span> volume create mydata
+<span class="fn">docker</span> run -v mydata:/data alpine       <span class="com"># named volume (persistent)</span>
+<span class="fn">docker</span> run -v $(<span class="fn">pwd</span>)/data:/data alpine  <span class="com"># bind mount (host path)</span>
+<span class="fn">docker</span> network create mynet
+<span class="fn">docker</span> run --network mynet nginx        <span class="com"># containers on same net can talk</span>
+        </div>
+
+        <div class="dt">▸ DOCKER COMPOSE — MULTI-CONTAINER APPS</div>
+        <div class="code-block">
+<span class="com"># docker-compose.yml — define all services in one file</span>
+version: <span class="str">"3.9"</span>
+services:
+  web:
+    build: .                        <span class="com"># build from local Dockerfile</span>
+    ports:
+      - <span class="str">"8080:80"</span>
+    environment:
+      - DATABASE_URL=postgres://db/<span class="str">mydb</span>
+    depends_on:
+      - db
+    volumes:
+      - ./static:/app/static
+
+  db:
+    image: postgres:<span class="num">16</span>
+    environment:
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+
+<span class="com"># Compose commands</span>
+<span class="fn">docker</span> compose up -d          <span class="com"># start all services in background</span>
+<span class="fn">docker</span> compose down           <span class="com"># stop and remove containers</span>
+<span class="fn">docker</span> compose down -v        <span class="com"># also remove volumes</span>
+<span class="fn">docker</span> compose logs -f web    <span class="com"># follow logs for one service</span>
+<span class="fn">docker</span> compose exec web bash  <span class="com"># shell into service</span>
+<span class="fn">docker</span> compose ps             <span class="com"># status of all services</span>
+        </div>
+
+        <div class="dt">▸ DOCKER SECURITY HARDENING</div>
+        <table class="ref-table">
+          <tr><th>Control</th><th>Command / Setting</th><th>Why</th></tr>
+          <tr><td style="color:var(--red)">Never run as root</td><td>USER nobody in Dockerfile</td><td>Container breakout = root on host if running as root</td></tr>
+          <tr><td style="color:var(--red)">Read-only filesystem</td><td>--read-only flag</td><td>Prevents writing malware or modifying binaries</td></tr>
+          <tr><td style="color:var(--amber)">Drop capabilities</td><td>--cap-drop ALL --cap-add NET_BIND_SERVICE</td><td>Principle of least privilege; limits exploit impact</td></tr>
+          <tr><td style="color:var(--amber)">No privileged mode</td><td>Avoid --privileged</td><td>Privileged = full host access; nearly no isolation</td></tr>
+          <tr><td style="color:var(--green)">Scan images</td><td>docker scout / trivy</td><td>Find CVEs in base image and dependencies before deploy</td></tr>
+          <tr><td style="color:var(--green)">Limit resources</td><td>--memory 512m --cpus 1</td><td>Prevents container consuming all host resources (DoS)</td></tr>
+          <tr><td style="color:var(--green)">Use distroless/slim</td><td>FROM gcr.io/distroless/python3</td><td>Minimal attack surface — no shell, no package manager</td></tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TOPIC: YAML
+═══════════════════════════════════════════════════ -->
+<div class="topic">
+  <div class="topic-header" onclick="toggleTopic(this)">
+    <span class="topic-icon">📄</span>
+    <span class="topic-name">YAML — Config Language Reference</span>
+    <span class="topic-badge">DEVOPS · CONFIG</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">YAML Ain't Markup Language</div>
+      <div class="concept-title">Human-Readable Data Serialisation — Docker, K8s, Ansible, GitHub Actions</div>
+      <div class="concept-desc">
+        YAML is the config language of modern infrastructure. Used by
+        Docker Compose, Kubernetes, GitHub Actions, Ansible, and hundreds
+        of other tools. Whitespace-significant — indentation defines structure.
+        <strong style="color:var(--red)">Tabs are forbidden</strong> — spaces only.
+      </div>
+      <div class="dw">
+
+        <div class="dt">▸ SYNTAX RULES &amp; DATA TYPES</div>
+        <div class="code-block">
+<span class="com"># ── Scalars (single values) ────────────────────────────────</span>
+name:     Alice               <span class="com"># string (no quotes needed)</span>
+age:      <span class="num">30</span>                  <span class="com"># integer</span>
+price:    <span class="num">9.99</span>               <span class="com"># float</span>
+active:   <span class="kw">true</span>               <span class="com"># boolean (true/false/yes/no/on/off)</span>
+nothing:  <span class="kw">null</span>               <span class="com"># null (or ~ or empty)</span>
+quoted:   <span class="str">"must quote: colons, #hashes, special: chars"</span>
+
+<span class="com"># ── Sequences (lists) ──────────────────────────────────────</span>
+fruits:                        <span class="com"># block style (preferred)</span>
+  - apple
+  - banana
+  - cherry
+
+tags: [python, docker, linux]  <span class="com"># flow style (inline)</span>
+
+<span class="com"># ── Mappings (dicts / objects) ─────────────────────────────</span>
+address:                       <span class="com"># block style</span>
+  street: 123 Main St
+  city:   Springfield
+  zip:    <span class="str">"12345"</span>            <span class="com"># quoted to preserve leading zero</span>
+
+point: {{x: 10, y: 20}}          <span class="com"># flow style</span>
+
+<span class="com"># ── Multi-line strings ─────────────────────────────────────</span>
+literal: |                     <span class="com"># | preserves newlines exactly</span>
+  Line one
+  Line two
+  Line three
+
+folded: >                      <span class="com"># > folds newlines into spaces</span>
+  This is a very long sentence
+  that continues here.
+
+<span class="com"># ── Anchors & aliases (DRY — Don't Repeat Yourself) ────────</span>
+defaults: &amp;defaults
+  image: nginx:alpine
+  restart: always
+
+web:
+  &lt;&lt;: *defaults              <span class="com"># merge defaults into this mapping</span>
+  ports: ["80:80"]
+
+api:
+  &lt;&lt;: *defaults              <span class="com"># reuse same defaults</span>
+  ports: ["8080:80"]
+        </div>
+
+        <div class="dt">▸ COMMON GOTCHAS</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Problem</th><th>Cause</th><th>Fix</th></tr>
+          <tr><td style="color:var(--red)">Tabs cause parse error</td><td>YAML forbids tab characters</td><td>Configure editor: indent with 2 spaces</td></tr>
+          <tr><td style="color:var(--red)">yes/no/on/off parsed as bool</td><td>YAML 1.1 treats these as booleans</td><td>Quote them: "yes", "no"</td></tr>
+          <tr><td style="color:var(--red)">Bare strings with special chars fail</td><td>: # [] {} | &gt; @ ` have special meaning</td><td>Wrap value in double quotes</td></tr>
+          <tr><td style="color:var(--amber)">Wrong indentation silently ignored</td><td>Item at wrong indent level joins wrong parent</td><td>Use a YAML linter (yamllint)</td></tr>
+          <tr><td style="color:var(--amber)">0644 becomes 420 (integer)</td><td>Leading zero = octal in YAML</td><td>Quote file permissions: "0644"</td></tr>
+        </table>
+
+        <div class="dt">▸ YAML IN PRACTICE — GitHub Actions Example</div>
+        <div class="code-block">
+<span class="com"># .github/workflows/ci.yml</span>
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: <span class="str">"3.12"</span>
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest --tb=short
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TOPIC: Kubernetes
+═══════════════════════════════════════════════════ -->
+<div class="topic">
+  <div class="topic-header" onclick="toggleTopic(this)">
+    <span class="topic-icon">⚙️</span>
+    <span class="topic-name">Kubernetes — Container Orchestration Reference</span>
+    <span class="topic-badge">DEVOPS · CLOUD</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">K8s — Google Borg → Open Source</div>
+      <div class="concept-title">Deploy, Scale, and Heal Containers Automatically</div>
+      <div class="concept-desc">
+        Kubernetes (K8s) automates deployment, scaling, and management of
+        containerised applications. It clusters multiple machines into one
+        compute pool and decides where each container runs.
+        <strong style="color:var(--cyan)">Control Plane</strong> = the brain.
+        <strong style="color:var(--green)">Worker Nodes</strong> = where workloads run.
+      </div>
+      <div class="dw">
+
+        <div class="dt">▸ CORE OBJECTS</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Object</th><th>What it is</th><th>Analogy</th></tr>
+          <tr><td style="color:var(--cyan)">Pod</td><td>Smallest deployable unit. One or more containers sharing network + storage. Ephemeral — dies and is replaced.</td><td>A single server instance</td></tr>
+          <tr><td style="color:var(--cyan)">Deployment</td><td>Manages a set of identical Pods. Handles rolling updates, rollbacks, desired replica count.</td><td>The process supervisor</td></tr>
+          <tr><td style="color:var(--cyan)">Service</td><td>Stable network endpoint for a set of Pods. Types: ClusterIP (internal), NodePort, LoadBalancer, ExternalName.</td><td>A load balancer</td></tr>
+          <tr><td style="color:var(--cyan)">ConfigMap</td><td>Non-sensitive config data (env vars, config files) injected into Pods.</td><td>An .env file</td></tr>
+          <tr><td style="color:var(--red)">Secret</td><td>Sensitive config (passwords, tokens). Base64-encoded (NOT encrypted by default — use Sealed Secrets or Vault).</td><td>A locked .env file</td></tr>
+          <tr><td style="color:var(--green)">Namespace</td><td>Virtual cluster within a cluster. Logical separation for teams/environments (dev/staging/prod).</td><td>A project folder</td></tr>
+          <tr><td style="color:var(--green)">Ingress</td><td>HTTP/HTTPS routing rules. Maps hostnames and paths to Services. Requires an Ingress Controller (nginx, traefik).</td><td>A reverse proxy</td></tr>
+          <tr><td style="color:var(--amber)">PersistentVolume</td><td>Cluster-level storage resource. PersistentVolumeClaim requests a piece of it.</td><td>A mounted hard drive</td></tr>
+        </table>
+
+        <div class="dt">▸ KUBECTL — ESSENTIAL COMMANDS</div>
+        <div class="code-block">
+<span class="com"># ── Context & cluster ──────────────────────────────────────</span>
+<span class="fn">kubectl</span> config get-contexts           <span class="com"># list clusters you're connected to</span>
+<span class="fn">kubectl</span> config use-context prod       <span class="com"># switch cluster</span>
+<span class="fn">kubectl</span> cluster-info                  <span class="com"># control plane endpoint</span>
+
+<span class="com"># ── Explore resources ──────────────────────────────────────</span>
+<span class="fn">kubectl</span> get pods                       <span class="com"># list Pods in current namespace</span>
+<span class="fn">kubectl</span> get pods -n kube-system        <span class="com"># specify namespace</span>
+<span class="fn">kubectl</span> get pods -A                    <span class="com"># all namespaces</span>
+<span class="fn">kubectl</span> get all                        <span class="com"># pods, services, deployments...</span>
+<span class="fn">kubectl</span> describe pod my-pod            <span class="com"># full details + events</span>
+<span class="fn">kubectl</span> get deployment web -o yaml     <span class="com"># export as YAML</span>
+
+<span class="com"># ── Deploy & manage ────────────────────────────────────────</span>
+<span class="fn">kubectl</span> apply -f deployment.yaml       <span class="com"># create/update from file (preferred)</span>
+<span class="fn">kubectl</span> delete -f deployment.yaml      <span class="com"># remove resources in file</span>
+<span class="fn">kubectl</span> scale deployment web --replicas=5
+<span class="fn">kubectl</span> rollout status deployment/web  <span class="com"># watch rolling update</span>
+<span class="fn">kubectl</span> rollout undo deployment/web    <span class="com"># rollback to previous version</span>
+
+<span class="com"># ── Debug ──────────────────────────────────────────────────</span>
+<span class="fn">kubectl</span> logs my-pod                    <span class="com"># container logs</span>
+<span class="fn">kubectl</span> logs my-pod -f                 <span class="com"># follow / stream logs</span>
+<span class="fn">kubectl</span> exec -it my-pod -- bash        <span class="com"># shell into pod</span>
+<span class="fn">kubectl</span> port-forward pod/my-pod 8080:<span class="num">80</span> <span class="com"># forward port to localhost</span>
+<span class="fn">kubectl</span> top pods                       <span class="com"># CPU/memory usage</span>
+        </div>
+
+        <div class="dt">▸ MINIMAL DEPLOYMENT MANIFEST</div>
+        <div class="code-block">
+<span class="com"># deployment.yaml — the most common K8s resource</span>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: production
+spec:
+  replicas: <span class="num">3</span>
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: myrepo/web:<span class="num">1.0</span>
+          ports:
+            - containerPort: <span class="num">8080</span>
+          env:
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: url
+          resources:
+            requests: {{cpu: <span class="str">"100m"</span>, memory: <span class="str">"128Mi"</span>}}
+            limits:   {{cpu: <span class="str">"500m"</span>, memory: <span class="str">"512Mi"</span>}}
+          readinessProbe:
+            httpGet: {{path: /healthz, port: <span class="num">8080</span>}}
+      securityContext:
+        runAsNonRoot: true
+        readOnlyRootFilesystem: true
+        </div>
+
+        <div class="dt">▸ K8s SECURITY — KEY CONTROLS</div>
+        <table class="ref-table">
+          <tr><th>Control</th><th>What it does</th></tr>
+          <tr><td style="color:var(--red)">RBAC</td><td>Role-Based Access Control. Roles define permissions; RoleBindings attach them to users/serviceaccounts.</td></tr>
+          <tr><td style="color:var(--red)">NetworkPolicy</td><td>Firewall rules between Pods. Default: allow all. Apply deny-all then whitelist what's needed.</td></tr>
+          <tr><td style="color:var(--amber)">PodSecurityContext</td><td>runAsNonRoot, readOnlyRootFilesystem, allowPrivilegeEscalation: false on every container.</td></tr>
+          <tr><td style="color:var(--amber)">Secrets encryption</td><td>Encrypt etcd at rest (EncryptionConfiguration). Use Sealed Secrets or Vault for GitOps workflows.</td></tr>
+          <tr><td style="color:var(--green)">Resource limits</td><td>Always set requests + limits. Prevents resource starvation and limits blast radius.</td></tr>
+          <tr><td style="color:var(--green)">Image scanning</td><td>Scan in CI (trivy, Grype) and at admission (Kyverno, OPA Gatekeeper).</td></tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- /domain-body linux -->
       </div>
       <!-- /domain-section linux -->
 
@@ -14055,7 +14777,769 @@
         <!-- /topic -->
 
         <!-- /patch-ps-bash -->
-        <!-- /domain-body script -->
+        <!-- patch-concepts-2026 -->
+
+<!-- ═══════════════════════════════════════════════════
+     TOPIC: Programming Fundamentals
+═══════════════════════════════════════════════════ -->
+<div class="topic">
+  <div class="topic-header" onclick="toggleTopic(this)">
+    <span class="topic-icon">📐</span>
+    <span class="topic-name">Programming Fundamentals — Concepts & Vocabulary</span>
+    <span class="topic-badge">UNIVERSAL</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Foundation</div>
+      <div class="concept-title">Core Concepts Every Language Shares</div>
+      <div class="concept-desc">
+        Before syntax, every language shares the same underlying ideas. These
+        concepts appear in every section of this reference — understanding them
+        once means understanding every language faster.
+      </div>
+      <div class="dw">
+
+        <div class="dt">▸ VARIABLES — NAMED STORAGE</div>
+        <div class="concept-desc" style="padding:0 0 14px">
+          A <strong style="color:var(--cyan)">variable</strong> is a named
+          location in memory that holds a value. The name is the label; the
+          value is the content; the <strong>type</strong> defines what kind of
+          content is allowed (number, text, true/false…).
+        </div>
+        <div class="code-block">
+<span class="com"># Python — dynamically typed (type is inferred at runtime)</span>
+<span class="var">age</span>    = <span class="num">30</span>          <span class="com"># int — whole number</span>
+<span class="var">price</span>  = <span class="num">9.99</span>        <span class="com"># float — decimal number</span>
+<span class="var">name</span>   = <span class="str">"Alice"</span>    <span class="com"># str — text / string</span>
+<span class="var">active</span> = <span class="kw">True</span>         <span class="com"># bool — True or False only</span>
+<span class="var">data</span>   = <span class="kw">None</span>         <span class="com"># NoneType — the absence of a value</span>
+
+<span class="com">// JavaScript — same idea, explicit declaration keywords</span>
+<span class="kw">const</span>  <span class="var">MAX</span>  = <span class="num">100</span>       <span class="com">// const — cannot be reassigned</span>
+<span class="kw">let</span>    <span class="var">score</span>= <span class="num">0</span>         <span class="com">// let   — block-scoped, can reassign</span>
+<span class="kw">var</span>    <span class="var">old</span>  = <span class="str">"avoid"</span>   <span class="com">// var   — function-scoped, legacy</span>
+        </div>
+
+        <div class="dt">▸ DATA TYPES — THE BUILDING BLOCKS</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Type</th><th>What it stores</th><th>Examples</th><th>Notes</th></tr>
+          <tr><td style="color:var(--cyan)">Integer</td><td>Whole numbers</td><td>0, 42, -7</td><td>No decimal point; exact arithmetic</td></tr>
+          <tr><td style="color:var(--cyan)">Float / Double</td><td>Decimal numbers</td><td>3.14, -0.5</td><td>Approximate; IEEE 754 standard</td></tr>
+          <tr><td style="color:var(--cyan)">String</td><td>Text (sequence of chars)</td><td>"hello", 'world'</td><td>Immutable in most languages</td></tr>
+          <tr><td style="color:var(--cyan)">Boolean</td><td>True or False</td><td>true, false, True, False</td><td>Foundation of all conditions</td></tr>
+          <tr><td style="color:var(--cyan)">Null / None / Nil</td><td>Absence of value</td><td>null, None, nil, undefined</td><td>≠ zero, ≠ empty string</td></tr>
+          <tr><td style="color:var(--cyan)">Array / List</td><td>Ordered collection</td><td>[1, 2, 3], ["a","b"]</td><td>Indexed from 0 in most languages</td></tr>
+          <tr><td style="color:var(--cyan)">Object / Dict / Map</td><td>Key → value pairs</td><td>{"name":"Alice"}</td><td>Fundamental to OOP and JSON</td></tr>
+        </table>
+
+        <div class="dt">▸ OPERATORS</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Category</th><th>Symbols</th><th>What they do</th><th>Example</th></tr>
+          <tr><td style="color:var(--green)">Arithmetic</td><td>+ - * / % **</td><td>Math operations</td><td>10 % 3 → 1 (remainder)</td></tr>
+          <tr><td style="color:var(--green)">Comparison</td><td>== != &lt; &gt; &lt;= &gt;=</td><td>Compare two values → boolean</td><td>5 &gt; 3 → true</td></tr>
+          <tr><td style="color:var(--green)">Logical</td><td>&amp;&amp; || ! (and or not)</td><td>Combine boolean expressions</td><td>true &amp;&amp; false → false</td></tr>
+          <tr><td style="color:var(--green)">Assignment</td><td>= += -= *= /=</td><td>Store a value in a variable</td><td>x += 5 ≡ x = x + 5</td></tr>
+          <tr><td style="color:var(--amber)">== vs ===</td><td colspan="3">JS: == coerces types (1 == "1" → true). === checks type AND value (1 === "1" → false). Use === always.</td></tr>
+        </table>
+
+        <div class="dt">▸ SCOPE — WHERE A VARIABLE EXISTS</div>
+        <div class="code-block">
+<span class="com">// Scope controls VISIBILITY. A variable only exists within its scope.</span>
+
+<span class="var">globalVar</span> = <span class="str">"I exist everywhere"</span>  <span class="com">// global scope</span>
+
+<span class="kw">function</span> <span class="fn">example</span>() {
+  <span class="kw">let</span> <span class="var">localVar</span> = <span class="str">"I only exist inside this function"</span>
+  <span class="fn">console</span>.log(<span class="var">globalVar</span>)  <span class="com">// ✓ can see global</span>
+  <span class="fn">console</span>.log(<span class="var">localVar</span>)   <span class="com">// ✓ can see local</span>
+
+  <span class="kw">if</span> (<span class="kw">true</span>) {
+    <span class="kw">let</span> <span class="var">blockVar</span> = <span class="str">"I only exist inside this if-block"</span>
+  }
+  <span class="com">// console.log(blockVar) ← ✗ ReferenceError: blockVar is not defined</span>
+}
+<span class="com">// console.log(localVar) ← ✗ ReferenceError: localVar is not defined</span>
+
+<span class="com"># Scope rules: inner blocks can see outer; outer CANNOT see inner.</span>
+<span class="com"># Closures: a function that "remembers" variables from its outer scope</span>
+<span class="com"># even after the outer function has returned.</span>
+        </div>
+
+        <div class="dt">▸ CONTROL FLOW — DIRECTING EXECUTION</div>
+        <div class="code-block">
+<span class="com"># Every language has three fundamental flow structures:</span>
+
+<span class="com"># 1. SEQUENCE — code runs top to bottom (default)</span>
+<span class="var">x</span> = <span class="num">5</span>
+<span class="var">y</span> = <span class="var">x</span> * <span class="num">2</span>
+<span class="fn">print</span>(<span class="var">y</span>)  <span class="com"># → 10</span>
+
+<span class="com"># 2. SELECTION — branch based on a condition</span>
+<span class="kw">if</span>   <span class="var">score</span> &gt;= <span class="num">90</span>: <span class="fn">print</span>(<span class="str">"A"</span>)
+<span class="kw">elif</span> <span class="var">score</span> &gt;= <span class="num">70</span>: <span class="fn">print</span>(<span class="str">"B"</span>)
+<span class="kw">else</span>:              <span class="fn">print</span>(<span class="str">"C"</span>)
+
+<span class="com"># 3. ITERATION — repeat until a condition is met</span>
+<span class="kw">for</span>   <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>):        <span class="fn">print</span>(<span class="var">i</span>)     <span class="com"># known count</span>
+<span class="kw">while</span> <span class="var">queue</span> <span class="kw">is not</span> <span class="kw">None</span>: <span class="fn">process</span>()  <span class="com"># unknown count</span>
+
+<span class="com"># break  — exit loop immediately</span>
+<span class="com"># continue — skip to next iteration</span>
+<span class="com"># return — exit a function and optionally send a value back</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TOPIC: Object-Oriented Programming
+═══════════════════════════════════════════════════ -->
+<div class="topic">
+  <div class="topic-header" onclick="toggleTopic(this)">
+    <span class="topic-icon">🧱</span>
+    <span class="topic-name">Object-Oriented Programming — Classes, Objects & the 4 Pillars</span>
+    <span class="topic-badge">OOP</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Paradigm</div>
+      <div class="concept-title">OOP — Modelling the World as Objects</div>
+      <div class="concept-desc">
+        OOP organises code around <strong style="color:var(--cyan)">objects</strong>
+        — bundles of related data (fields / properties) and behaviour
+        (methods / functions). A <strong style="color:var(--amber)">class</strong>
+        is the blueprint; an <strong style="color:var(--green)">object</strong>
+        (instance) is a copy built from that blueprint. Used in Python, Java,
+        C#, C++, JavaScript, Go, Ruby, and most modern languages.
+      </div>
+      <div class="dw">
+
+        <div class="dt">▸ CLASS vs OBJECT — THE KEY DISTINCTION</div>
+        <div class="code-block">
+<span class="com"># CLASS = blueprint. Defined once. Lives in your source file.</span>
+<span class="com"># OBJECT = instance. Created at runtime. Can have thousands.</span>
+
+<span class="com">#            Blueprint (Class)</span>
+<span class="kw">class</span> <span class="type">Dog</span>:
+    <span class="com"># __init__ is the CONSTRUCTOR — runs when object is created</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>, <span class="var">name</span>, <span class="var">breed</span>):
+        <span class="var">self</span>.<span class="var">name</span>  = <span class="var">name</span>   <span class="com"># PROPERTY (instance data)</span>
+        <span class="var">self</span>.<span class="var">breed</span> = <span class="var">breed</span>
+
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="var">self</span>):           <span class="com"># METHOD (behaviour)</span>
+        <span class="kw">return</span> <span class="str">f"{self.name} says Woof!"</span>
+
+<span class="com">#            Objects (Instances)</span>
+<span class="var">dog1</span> = <span class="type">Dog</span>(<span class="str">"Rex"</span>,  <span class="str">"Husky"</span>)  <span class="com"># new Dog object in memory</span>
+<span class="var">dog2</span> = <span class="type">Dog</span>(<span class="str">"Bella"</span>,<span class="str">"Poodle"</span>)  <span class="com"># different object, same class</span>
+
+<span class="fn">print</span>(<span class="var">dog1</span>.<span class="fn">speak</span>())  <span class="com"># → Rex says Woof!</span>
+<span class="fn">print</span>(<span class="var">dog2</span>.<span class="var">name</span>)     <span class="com"># → Bella  (dot notation accesses properties)</span>
+
+<span class="com"># dog1 and dog2 share the CLASS but have INDEPENDENT DATA.</span>
+<span class="com"># Changing dog1.name does NOT affect dog2.name.</span>
+        </div>
+
+        <div class="dt">▸ THE FOUR PILLARS OF OOP</div>
+        <div class="card-grid" style="margin-bottom:14px">
+          <div class="g-card" style="border-color:rgba(0,212,255,.3)">
+            <div class="g-name text-cyan">1. Encapsulation</div>
+            <div class="g-desc">
+              Bundle data + methods together. Hide internal state — only expose
+              a controlled interface (<em>public vs private</em>). Why: protects
+              data from accidental corruption. The object is a black box; you
+              call methods, not raw variables.
+            </div>
+          </div>
+          <div class="g-card" style="border-color:rgba(0,255,153,.3)">
+            <div class="g-name text-green">2. Inheritance</div>
+            <div class="g-desc">
+              A child class inherits properties &amp; methods from a parent
+              class. Child can extend or override them. Why: reuse code without
+              copy-pasting. <code>Cat extends Animal</code> → Cat automatically
+              has all Animal behaviour.
+            </div>
+          </div>
+          <div class="g-card" style="border-color:rgba(255,176,32,.3)">
+            <div class="g-name text-amber">3. Polymorphism</div>
+            <div class="g-desc">
+              "Many forms." The same method name behaves differently depending
+              on the object it's called on. <code>animal.speak()</code> returns
+              "Woof" for Dog, "Meow" for Cat. Why: write one piece of code that
+              works with any subtype.
+            </div>
+          </div>
+          <div class="g-card" style="border-color:rgba(168,85,247,.3)">
+            <div class="g-name text-purple">4. Abstraction</div>
+            <div class="g-desc">
+              Hide complex implementation; expose only what the user needs.
+              You call <code>car.start()</code> without knowing about fuel
+              injectors. Why: reduces cognitive load and prevents misuse of
+              internals.
+            </div>
+          </div>
+        </div>
+
+        <div class="dt">▸ INHERITANCE & METHOD OVERRIDE IN PRACTICE</div>
+        <div class="code-block">
+<span class="kw">class</span> <span class="type">Animal</span>:                         <span class="com"># PARENT / base class</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>, <span class="var">name</span>):
+        <span class="var">self</span>.<span class="var">name</span> = <span class="var">name</span>
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="var">self</span>):
+        <span class="kw">return</span> <span class="str">"..."</span>              <span class="com"># default — generic</span>
+
+<span class="kw">class</span> <span class="type">Dog</span>(<span class="type">Animal</span>):                    <span class="com"># CHILD class — inherits Animal</span>
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="var">self</span>):
+        <span class="kw">return</span> <span class="str">"Woof!"</span>            <span class="com"># OVERRIDE parent method</span>
+
+<span class="kw">class</span> <span class="type">Cat</span>(<span class="type">Animal</span>):
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="var">self</span>):
+        <span class="kw">return</span> <span class="str">"Meow!"</span>
+
+<span class="com"># POLYMORPHISM in action — same loop works on any Animal subtype</span>
+<span class="var">animals</span> = [<span class="type">Dog</span>(<span class="str">"Rex"</span>), <span class="type">Cat</span>(<span class="str">"Luna"</span>), <span class="type">Dog</span>(<span class="str">"Max"</span>)]
+<span class="kw">for</span> <span class="var">a</span> <span class="kw">in</span> <span class="var">animals</span>:
+    <span class="fn">print</span>(<span class="str">f"{a.name}: {a.speak()}"</span>)
+<span class="com"># → Rex: Woof!  |  Luna: Meow!  |  Max: Woof!</span>
+        </div>
+
+        <div class="dt">▸ ENCAPSULATION — PUBLIC vs PRIVATE</div>
+        <div class="code-block">
+<span class="kw">class</span> <span class="type">BankAccount</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>, <span class="var">balance</span>):
+        <span class="var">self</span>.<span class="var">__balance</span> = <span class="var">balance</span>  <span class="com"># __ prefix = PRIVATE (Python convention)</span>
+
+    <span class="kw">def</span> <span class="fn">deposit</span>(<span class="var">self</span>, <span class="var">amount</span>):     <span class="com"># PUBLIC method — safe interface</span>
+        <span class="kw">if</span> <span class="var">amount</span> &gt; <span class="num">0</span>:
+            <span class="var">self</span>.<span class="var">__balance</span> += <span class="var">amount</span>
+
+    <span class="kw">def</span> <span class="fn">get_balance</span>(<span class="var">self</span>):
+        <span class="kw">return</span> <span class="var">self</span>.<span class="var">__balance</span>   <span class="com"># controlled read-only access</span>
+
+<span class="var">acct</span> = <span class="type">BankAccount</span>(<span class="num">1000</span>)
+<span class="com"># acct.__balance = -99999  ← blocked by convention / name mangling</span>
+<span class="var">acct</span>.<span class="fn">deposit</span>(<span class="num">500</span>)            <span class="com"># ✓ safe controlled change</span>
+<span class="fn">print</span>(<span class="var">acct</span>.<span class="fn">get_balance</span>())  <span class="com"># → 1500</span>
+        </div>
+
+        <div class="dt">▸ QUICK COMPARISON ACROSS LANGUAGES</div>
+        <table class="ref-table">
+          <tr><th>Concept</th><th>Python</th><th>JavaScript</th><th>Java / C#</th><th>Go</th></tr>
+          <tr><td style="color:var(--cyan)">Class def</td><td>class Foo:</td><td>class Foo {}</td><td>class Foo {}</td><td>type Foo struct</td></tr>
+          <tr><td style="color:var(--cyan)">Constructor</td><td>__init__</td><td>constructor()</td><td>Foo()</td><td>NewFoo() func</td></tr>
+          <tr><td style="color:var(--cyan)">Instance ref</td><td>self</td><td>this</td><td>this</td><td>receiver (f Foo)</td></tr>
+          <tr><td style="color:var(--cyan)">Inheritance</td><td>class B(A)</td><td>class B extends A</td><td>class B : A</td><td>embedding</td></tr>
+          <tr><td style="color:var(--cyan)">Private field</td><td>__ prefix</td><td># prefix (ES2022)</td><td>private keyword</td><td>lowercase name</td></tr>
+          <tr><td style="color:var(--cyan)">Interface</td><td>ABC / Protocol</td><td>—</td><td>interface keyword</td><td>interface keyword</td></tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TOPIC: Data Structures
+═══════════════════════════════════════════════════ -->
+<div class="topic">
+  <div class="topic-header" onclick="toggleTopic(this)">
+    <span class="topic-icon">📦</span>
+    <span class="topic-name">Data Structures — How Data is Organised in Memory</span>
+    <span class="topic-badge">CS FUNDAMENTALS</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Computer Science</div>
+      <div class="concept-title">Choosing the Right Container for Your Data</div>
+      <div class="concept-desc">
+        A data structure is a way of <strong style="color:var(--cyan)">organising data in memory</strong>
+        so it can be accessed and modified efficiently. Choosing the right one
+        directly impacts speed and memory use. Every language provides these —
+        sometimes built-in, sometimes as library types.
+      </div>
+      <div class="dw">
+
+        <div class="dt">▸ THE CORE EIGHT</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Structure</th><th>What it is</th><th>Access</th><th>Insert/Delete</th><th>Use When</th></tr>
+          <tr>
+            <td style="color:var(--cyan)">Array / List</td>
+            <td>Ordered, indexed, contiguous memory</td><td>O(1) by index</td><td>O(n) middle, O(1) end</td>
+            <td>Order matters; frequent reads by position</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Linked List</td>
+            <td>Nodes each pointing to the next</td><td>O(n)</td><td>O(1) head/tail</td>
+            <td>Frequent insert/delete; no random access needed</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Stack</td>
+            <td>LIFO — Last In, First Out</td><td>O(1) top only</td><td>O(1) push/pop</td>
+            <td>Undo systems, call stacks, DFS traversal</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Queue</td>
+            <td>FIFO — First In, First Out</td><td>O(1) front only</td><td>O(1) enqueue/dequeue</td>
+            <td>Task scheduling, BFS traversal, print spoolers</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Hash Map / Dict</td>
+            <td>Key → Value pairs via hash function</td><td>O(1) avg</td><td>O(1) avg</td>
+            <td>Fast lookup by key; caches, frequency counts</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Set</td>
+            <td>Unordered unique values</td><td>O(1) contains</td><td>O(1) add/remove</td>
+            <td>Deduplication, membership testing, intersections</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Tree</td>
+            <td>Hierarchical parent→child nodes</td><td>O(log n) BST</td><td>O(log n) BST</td>
+            <td>File systems, DOM, databases, sorted data</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Graph</td>
+            <td>Nodes + edges (directed or undirected)</td><td>Varies</td><td>Varies</td>
+            <td>Networks, social graphs, routing, dependencies</td>
+          </tr>
+        </table>
+
+        <div class="dt">▸ STACK vs QUEUE — VISUALISED</div>
+        <div class="code-block">
+<span class="com"># STACK — think of a stack of plates</span>
+<span class="com"># You can only add/remove from the TOP (LIFO)</span>
+<span class="var">stack</span> = []
+<span class="var">stack</span>.<span class="fn">append</span>(<span class="str">"A"</span>)    <span class="com"># push  →  stack: [A]</span>
+<span class="var">stack</span>.<span class="fn">append</span>(<span class="str">"B"</span>)    <span class="com"># push  →  stack: [A, B]</span>
+<span class="var">stack</span>.<span class="fn">append</span>(<span class="str">"C"</span>)    <span class="com"># push  →  stack: [A, B, C]</span>
+<span class="var">stack</span>.<span class="fn">pop</span>()           <span class="com"># pop   →  returns C  (last in, first out)</span>
+
+<span class="com"># QUEUE — think of a supermarket checkout line</span>
+<span class="com"># You add to the BACK and remove from the FRONT (FIFO)</span>
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+<span class="var">q</span> = <span class="fn">deque</span>()
+<span class="var">q</span>.<span class="fn">append</span>(<span class="str">"A"</span>)          <span class="com"># enqueue  →  [A]</span>
+<span class="var">q</span>.<span class="fn">append</span>(<span class="str">"B"</span>)          <span class="com"># enqueue  →  [A, B]</span>
+<span class="var">q</span>.<span class="fn">popleft</span>()            <span class="com"># dequeue  →  returns A  (first in, first out)</span>
+        </div>
+
+        <div class="dt">▸ HASH MAP — WHY O(1) LOOKUP IS MAGIC</div>
+        <div class="code-block">
+<span class="com"># Problem: find if "alice" exists in 1,000,000 names</span>
+<span class="com"># List search: check every item → O(n) — slow</span>
+<span class="com"># Hash map:    compute hash("alice") → jump to bucket → O(1) — instant</span>
+
+<span class="com"># How it works internally:</span>
+<span class="com"># 1. hash("alice") → 2847  (deterministic integer)</span>
+<span class="com"># 2. 2847 % bucket_count → bucket index</span>
+<span class="com"># 3. Look in that bucket only → ~1 comparison</span>
+
+<span class="var">phone_book</span> = {"alice": <span class="str">"555-1234"</span>, <span class="str">"bob"</span>: <span class="str">"555-5678"</span>}
+<span class="fn">print</span>(<span class="var">phone_book</span>[<span class="str">"alice"</span>])  <span class="com"># O(1) — instant regardless of size</span>
+<span class="fn">print</span>(<span class="str">"alice"</span> <span class="kw">in</span> <span class="var">phone_book</span>)  <span class="com"># O(1) membership test</span>
+
+<span class="com"># Collision: two keys hash to same bucket → handled by chaining or probing</span>
+<span class="com"># Worst case O(n) if all keys collide — rare with a good hash function</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TOPIC: Big O Notation
+═══════════════════════════════════════════════════ -->
+<div class="topic">
+  <div class="topic-header" onclick="toggleTopic(this)">
+    <span class="topic-icon">📈</span>
+    <span class="topic-name">Big O Notation — Measuring Algorithm Efficiency</span>
+    <span class="topic-badge">ALGORITHMS</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Complexity Analysis</div>
+      <div class="concept-title">How Fast Does This Slow Down as Data Grows?</div>
+      <div class="concept-desc">
+        Big O describes <strong style="color:var(--cyan)">how runtime (or memory) scales</strong>
+        as input size <em>n</em> grows toward infinity. It ignores constants and
+        lower-order terms — only the dominant growth pattern matters.
+        Used in every technical interview and embedded in every data structure choice.
+      </div>
+      <div class="dw">
+
+        <div class="dt">▸ COMPLEXITY CLASSES — FASTEST TO SLOWEST</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Notation</th><th>Name</th><th>n=10</th><th>n=1 000</th><th>n=1 000 000</th><th>Example</th></tr>
+          <tr>
+            <td style="color:var(--green)">O(1)</td><td style="color:var(--green)">Constant</td>
+            <td>1</td><td>1</td><td>1</td>
+            <td>Hash map lookup, array index</td>
+          </tr>
+          <tr>
+            <td style="color:var(--green)">O(log n)</td><td style="color:var(--green)">Logarithmic</td>
+            <td>3</td><td>10</td><td>20</td>
+            <td>Binary search, balanced BST</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">O(n)</td><td style="color:var(--cyan)">Linear</td>
+            <td>10</td><td>1 000</td><td>1 000 000</td>
+            <td>Linear search, single loop</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">O(n log n)</td><td style="color:var(--cyan)">Linearithmic</td>
+            <td>33</td><td>10 000</td><td>20 000 000</td>
+            <td>Merge sort, heap sort</td>
+          </tr>
+          <tr>
+            <td style="color:var(--amber)">O(n²)</td><td style="color:var(--amber)">Quadratic</td>
+            <td>100</td><td>1 000 000</td><td>10¹²</td>
+            <td>Nested loops, bubble sort</td>
+          </tr>
+          <tr>
+            <td style="color:var(--red)">O(2ⁿ)</td><td style="color:var(--red)">Exponential</td>
+            <td>1 024</td><td>10³⁰⁰</td><td>impossible</td>
+            <td>Recursive Fibonacci (naive), subsets</td>
+          </tr>
+          <tr>
+            <td style="color:var(--red)">O(n!)</td><td style="color:var(--red)">Factorial</td>
+            <td>3 628 800</td><td colspan="2">impossible</td>
+            <td>Travelling salesman (brute force)</td>
+          </tr>
+        </table>
+
+        <div class="dt">▸ HOW TO IDENTIFY BIG O IN CODE</div>
+        <div class="code-block">
+<span class="com"># O(1) — single operation regardless of input size</span>
+<span class="kw">def</span> <span class="fn">first_item</span>(<span class="var">arr</span>): <span class="kw">return</span> <span class="var">arr</span>[<span class="num">0</span>]
+
+<span class="com"># O(n) — one loop over all n items</span>
+<span class="kw">def</span> <span class="fn">find_max</span>(<span class="var">arr</span>):
+    <span class="var">m</span> = <span class="var">arr</span>[<span class="num">0</span>]
+    <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">arr</span>: <span class="com"># ← this loop runs n times</span>
+        <span class="kw">if</span> <span class="var">x</span> &gt; <span class="var">m</span>: <span class="var">m</span> = <span class="var">x</span>
+    <span class="kw">return</span> <span class="var">m</span>
+
+<span class="com"># O(n²) — nested loops (each loops n times)</span>
+<span class="kw">def</span> <span class="fn">bubble_sort</span>(<span class="var">arr</span>):
+    <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(<span class="var">arr</span>)):          <span class="com"># outer: n</span>
+        <span class="kw">for</span> <span class="var">j</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(<span class="var">arr</span>)-<span class="num">1</span>):    <span class="com"># inner: n  → n × n = n²</span>
+            <span class="kw">if</span> <span class="var">arr</span>[<span class="var">j</span>] &gt; <span class="var">arr</span>[<span class="var">j</span>+<span class="num">1</span>]:
+                <span class="var">arr</span>[<span class="var">j</span>], <span class="var">arr</span>[<span class="var">j</span>+<span class="num">1</span>] = <span class="var">arr</span>[<span class="var">j</span>+<span class="num">1</span>], <span class="var">arr</span>[<span class="var">j</span>]
+
+<span class="com"># O(log n) — halves the problem each step (binary search)</span>
+<span class="kw">def</span> <span class="fn">binary_search</span>(<span class="var">arr</span>, <span class="var">target</span>):
+    <span class="var">lo</span>, <span class="var">hi</span> = <span class="num">0</span>, <span class="fn">len</span>(<span class="var">arr</span>) - <span class="num">1</span>
+    <span class="kw">while</span> <span class="var">lo</span> &lt;= <span class="var">hi</span>:
+        <span class="var">mid</span> = (<span class="var">lo</span> + <span class="var">hi</span>) // <span class="num">2</span>
+        <span class="kw">if</span>   <span class="var">arr</span>[<span class="var">mid</span>] == <span class="var">target</span>: <span class="kw">return</span> <span class="var">mid</span>
+        <span class="kw">elif</span> <span class="var">arr</span>[<span class="var">mid</span>] &lt;  <span class="var">target</span>: <span class="var">lo</span> = <span class="var">mid</span> + <span class="num">1</span>  <span class="com"># discard left half</span>
+        <span class="kw">else</span>:                       <span class="var">hi</span> = <span class="var">mid</span> - <span class="num">1</span>  <span class="com"># discard right half</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TOPIC: Design Patterns
+═══════════════════════════════════════════════════ -->
+<div class="topic">
+  <div class="topic-header" onclick="toggleTopic(this)">
+    <span class="topic-icon">🏗️</span>
+    <span class="topic-name">Design Patterns — Reusable Solutions to Common Problems</span>
+    <span class="topic-badge">SOFTWARE DESIGN</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">GoF Patterns · MVC</div>
+      <div class="concept-title">23 Patterns in 3 Categories — The Most Useful 8</div>
+      <div class="concept-desc">
+        Design patterns are <strong style="color:var(--cyan)">named, repeatable solutions</strong>
+        to problems that come up constantly in software. Coined by the "Gang of
+        Four" (GoF) in 1994. They're not code to copy — they're
+        <em>vocabulary</em> for communicating architectural decisions.
+      </div>
+      <div class="dw">
+
+        <div class="dt">▸ THREE CATEGORIES</div>
+        <div class="card-grid-3" style="margin-bottom:14px">
+          <div class="g-card" style="border-color:rgba(0,212,255,.3)">
+            <div class="g-name text-cyan">Creational</div>
+            <div class="g-desc">How objects are <em>created</em>. Decouple creation from usage. Factory, Singleton, Builder, Prototype.</div>
+          </div>
+          <div class="g-card" style="border-color:rgba(0,255,153,.3)">
+            <div class="g-name text-green">Structural</div>
+            <div class="g-desc">How objects are <em>composed</em> into larger structures. Adapter, Decorator, Proxy, Facade, Composite.</div>
+          </div>
+          <div class="g-card" style="border-color:rgba(255,176,32,.3)">
+            <div class="g-name text-amber">Behavioural</div>
+            <div class="g-desc">How objects <em>communicate</em> and share responsibility. Observer, Strategy, Command, Iterator.</div>
+          </div>
+        </div>
+
+        <div class="dt">▸ THE MOST IMPORTANT PATTERNS EXPLAINED</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Pattern</th><th>Category</th><th>Problem it solves</th><th>Real example</th></tr>
+          <tr>
+            <td style="color:var(--cyan)">Singleton</td><td>Creational</td>
+            <td>Ensure only ONE instance of a class exists globally</td>
+            <td>Database connection pool, config object, logger</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Factory</td><td>Creational</td>
+            <td>Create objects without specifying the exact class</td>
+            <td>GUI toolkit (Button → WindowsButton or MacButton based on OS)</td>
+          </tr>
+          <tr>
+            <td style="color:var(--green)">Adapter</td><td>Structural</td>
+            <td>Make incompatible interfaces work together</td>
+            <td>Converting a legacy XML API to JSON for a modern service</td>
+          </tr>
+          <tr>
+            <td style="color:var(--green)">Decorator</td><td>Structural</td>
+            <td>Add behaviour to an object without changing its class</td>
+            <td>Python @decorator, middleware chains in web frameworks</td>
+          </tr>
+          <tr>
+            <td style="color:var(--amber)">Observer</td><td>Behavioural</td>
+            <td>Notify many objects when one object changes state</td>
+            <td>Event listeners in JS, pub/sub systems, React state</td>
+          </tr>
+          <tr>
+            <td style="color:var(--amber)">Strategy</td><td>Behavioural</td>
+            <td>Swap algorithms at runtime without changing the client</td>
+            <td>Sorting: choose QuickSort vs MergeSort based on data size</td>
+          </tr>
+          <tr>
+            <td style="color:var(--purple)">MVC</td><td>Architectural</td>
+            <td>Separate data (Model), UI (View), and logic (Controller)</td>
+            <td>Django, Rails, Angular, most web frameworks</td>
+          </tr>
+          <tr>
+            <td style="color:var(--purple)">Repository</td><td>Architectural</td>
+            <td>Abstract database access behind a clean interface</td>
+            <td>UserRepository.find_by_id() hides the SQL from business logic</td>
+          </tr>
+        </table>
+
+        <div class="dt">▸ OBSERVER PATTERN — THE MOST COMMON IN WEB DEV</div>
+        <div class="code-block">
+<span class="com"># Publisher (subject) holds a list of subscribers</span>
+<span class="com"># When state changes, it notifies ALL subscribers automatically</span>
+
+<span class="kw">class</span> <span class="type">EventEmitter</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>):
+        <span class="var">self</span>.<span class="var">_listeners</span> = {}
+
+    <span class="kw">def</span> <span class="fn">on</span>(<span class="var">self</span>, <span class="var">event</span>, <span class="var">fn</span>):       <span class="com"># SUBSCRIBE</span>
+        <span class="var">self</span>.<span class="var">_listeners</span>.<span class="fn">setdefault</span>(<span class="var">event</span>, []).<span class="fn">append</span>(<span class="var">fn</span>)
+
+    <span class="kw">def</span> <span class="fn">emit</span>(<span class="var">self</span>, <span class="var">event</span>, <span class="var">data</span>):    <span class="com"># PUBLISH — notify all</span>
+        <span class="kw">for</span> <span class="var">fn</span> <span class="kw">in</span> <span class="var">self</span>.<span class="var">_listeners</span>.<span class="fn">get</span>(<span class="var">event</span>, []):
+            <span class="fn">fn</span>(<span class="var">data</span>)
+
+<span class="var">emitter</span> = <span class="type">EventEmitter</span>()
+<span class="var">emitter</span>.<span class="fn">on</span>(<span class="str">"login"</span>, <span class="kw">lambda</span> <span class="var">u</span>: <span class="fn">print</span>(<span class="str">f"Welcome {u}"</span>))
+<span class="var">emitter</span>.<span class="fn">on</span>(<span class="str">"login"</span>, <span class="kw">lambda</span> <span class="var">u</span>: <span class="fn">log_event</span>(<span class="str">f"{u} logged in"</span>))
+<span class="var">emitter</span>.<span class="fn">emit</span>(<span class="str">"login"</span>, <span class="str">"Alice"</span>)  <span class="com"># both listeners fire automatically</span>
+<span class="com"># Same pattern as: btn.addEventListener("click", fn) in JavaScript</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TOPIC: REST & HTTP APIs
+═══════════════════════════════════════════════════ -->
+<div class="topic">
+  <div class="topic-header" onclick="toggleTopic(this)">
+    <span class="topic-icon">🌐</span>
+    <span class="topic-name">REST & HTTP APIs — How the Web Communicates</span>
+    <span class="topic-badge">API DESIGN</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Web Development · Backend</div>
+      <div class="concept-title">HTTP Methods · Status Codes · REST Principles</div>
+      <div class="concept-desc">
+        An <strong style="color:var(--cyan)">API</strong> (Application Programming
+        Interface) is a contract: "call this URL with these inputs and I'll
+        return this output." <strong style="color:var(--amber)">REST</strong>
+        (Representational State Transfer) is the dominant architectural style
+        for web APIs. It uses HTTP as its transport.
+      </div>
+      <div class="dw">
+
+        <div class="dt">▸ HTTP METHODS (VERBS)</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Method</th><th>Action</th><th>Body?</th><th>Idempotent?</th><th>REST usage</th></tr>
+          <tr><td style="color:var(--green)">GET</td><td>Read / retrieve</td><td>No</td><td>Yes</td><td>GET /users → list all users</td></tr>
+          <tr><td style="color:var(--cyan)">POST</td><td>Create new resource</td><td>Yes</td><td>No</td><td>POST /users → create a user</td></tr>
+          <tr><td style="color:var(--amber)">PUT</td><td>Replace entire resource</td><td>Yes</td><td>Yes</td><td>PUT /users/42 → replace user 42</td></tr>
+          <tr><td style="color:var(--amber)">PATCH</td><td>Partial update</td><td>Yes</td><td>No</td><td>PATCH /users/42 → update one field</td></tr>
+          <tr><td style="color:var(--red)">DELETE</td><td>Remove resource</td><td>No</td><td>Yes</td><td>DELETE /users/42 → remove user 42</td></tr>
+          <tr><td style="color:var(--muted)">HEAD</td><td>GET without body</td><td>No</td><td>Yes</td><td>Check if resource exists</td></tr>
+          <tr><td style="color:var(--muted)">OPTIONS</td><td>What methods are allowed?</td><td>No</td><td>Yes</td><td>CORS preflight check</td></tr>
+        </table>
+
+        <div class="dt">▸ HTTP STATUS CODES</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Range</th><th>Meaning</th><th>Key Codes</th></tr>
+          <tr><td style="color:var(--green)">2xx</td><td>Success</td><td>200 OK · 201 Created · 204 No Content</td></tr>
+          <tr><td style="color:var(--cyan)">3xx</td><td>Redirect</td><td>301 Moved Permanently · 302 Found · 304 Not Modified</td></tr>
+          <tr><td style="color:var(--amber)">4xx</td><td>Client error</td><td>400 Bad Request · 401 Unauthorized · 403 Forbidden · 404 Not Found · 429 Too Many Requests</td></tr>
+          <tr><td style="color:var(--red)">5xx</td><td>Server error</td><td>500 Internal Server Error · 502 Bad Gateway · 503 Service Unavailable</td></tr>
+        </table>
+
+        <div class="dt">▸ REST RESOURCE DESIGN CONVENTIONS</div>
+        <div class="code-block">
+<span class="com"># Resources are NOUNS (not verbs). Actions come from HTTP methods.</span>
+
+<span class="com"># ✓ Good REST URLs              ✗ Bad (RPC-style) URLs</span>
+GET    /users                  <span class="com"># vs  GET  /getUsers</span>
+GET    /users/42               <span class="com"># vs  GET  /getUserById?id=42</span>
+POST   /users                  <span class="com"># vs  POST /createUser</span>
+PUT    /users/42               <span class="com"># vs  POST /updateUser/42</span>
+DELETE /users/42               <span class="com"># vs  POST /deleteUser?id=42</span>
+GET    /users/42/orders        <span class="com"># nested: orders belonging to user 42</span>
+GET    /users?role=admin       <span class="com"># query params for filtering</span>
+GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
+
+<span class="com"># A complete REST call in Python</span>
+<span class="kw">import</span> requests
+<span class="var">resp</span> = <span class="fn">requests.get</span>(<span class="str">"https://api.example.com/users/42"</span>,
+                    headers={<span class="str">"Authorization"</span>: <span class="str">"Bearer &lt;token&gt;"</span>})
+<span class="kw">if</span> <span class="var">resp</span>.<span class="var">status_code</span> == <span class="num">200</span>:
+    <span class="var">user</span> = <span class="var">resp</span>.<span class="fn">json</span>()      <span class="com"># parse JSON body into dict</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TOPIC: Git — Version Control
+═══════════════════════════════════════════════════ -->
+<div class="topic">
+  <div class="topic-header" onclick="toggleTopic(this)">
+    <span class="topic-icon">🔀</span>
+    <span class="topic-name">Git — Version Control Reference</span>
+    <span class="topic-badge">DEVOPS · DAILY USE</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Distributed VCS</div>
+      <div class="concept-title">Git — Track, Branch, Merge, and Collaborate</div>
+      <div class="concept-desc">
+        Git is the universal version control system. It tracks
+        <strong style="color:var(--cyan)">every change</strong> to every file
+        in a project, lets multiple people work simultaneously via
+        <strong style="color:var(--amber)">branches</strong>, and merges
+        everything back together. A <strong>repository</strong> (repo) is the
+        folder Git watches. A <strong>commit</strong> is a saved snapshot.
+      </div>
+      <div class="dw">
+
+        <div class="dt">▸ THE THREE AREAS OF GIT</div>
+        <div class="card-grid-3" style="margin-bottom:14px">
+          <div class="g-card" style="border-color:rgba(255,77,109,.3)">
+            <div class="g-name text-red">Working Directory</div>
+            <div class="g-desc">Your actual files on disk. Changes here are <em>untracked</em> until you stage them.</div>
+          </div>
+          <div class="g-card" style="border-color:rgba(255,176,32,.3)">
+            <div class="g-name text-amber">Staging Area (Index)</div>
+            <div class="g-desc"><code>git add</code> moves changes here. A holding zone — you choose exactly what goes into the next commit.</div>
+          </div>
+          <div class="g-card" style="border-color:rgba(0,255,153,.3)">
+            <div class="g-name text-green">Repository (.git)</div>
+            <div class="g-desc"><code>git commit</code> permanently saves the staged snapshot here. The full history lives in this hidden folder.</div>
+          </div>
+        </div>
+
+        <div class="dt">▸ DAILY WORKFLOW COMMANDS</div>
+        <div class="code-block">
+<span class="com"># ── Setup ──────────────────────────────────────────────────</span>
+<span class="fn">git</span> config --global user.name  <span class="str">"Your Name"</span>
+<span class="fn">git</span> config --global user.email <span class="str">"you@example.com"</span>
+<span class="fn">git</span> init                        <span class="com"># create new local repo</span>
+<span class="fn">git</span> clone &lt;url&gt;                 <span class="com"># copy remote repo locally</span>
+
+<span class="com"># ── Core workflow ──────────────────────────────────────────</span>
+<span class="fn">git</span> status                      <span class="com"># what's changed? what's staged?</span>
+<span class="fn">git</span> add file.txt                <span class="com"># stage one file</span>
+<span class="fn">git</span> add .                       <span class="com"># stage ALL changed files</span>
+<span class="fn">git</span> commit -m <span class="str">"feat: add login"</span> <span class="com"># save snapshot with message</span>
+<span class="fn">git</span> push origin main            <span class="com"># upload commits to remote</span>
+<span class="fn">git</span> pull                        <span class="com"># fetch + merge remote changes</span>
+
+<span class="com"># ── Branching ──────────────────────────────────────────────</span>
+<span class="fn">git</span> branch                      <span class="com"># list branches</span>
+<span class="fn">git</span> switch -c feature/login     <span class="com"># create + switch to new branch</span>
+<span class="fn">git</span> switch main                 <span class="com"># go back to main</span>
+<span class="fn">git</span> merge feature/login         <span class="com"># merge branch into current</span>
+<span class="fn">git</span> branch -d feature/login     <span class="com"># delete merged branch</span>
+
+<span class="com"># ── History & inspection ───────────────────────────────────</span>
+<span class="fn">git</span> log --oneline --graph       <span class="com"># visual commit history</span>
+<span class="fn">git</span> diff                        <span class="com"># unstaged changes</span>
+<span class="fn">git</span> diff --staged               <span class="com"># staged vs last commit</span>
+<span class="fn">git</span> show &lt;hash&gt;                 <span class="com"># what changed in that commit</span>
+
+<span class="com"># ── Undo ───────────────────────────────────────────────────</span>
+<span class="fn">git</span> restore file.txt            <span class="com"># discard unstaged changes (safe)</span>
+<span class="fn">git</span> restore --staged file.txt   <span class="com"># unstage a file (safe)</span>
+<span class="fn">git</span> revert &lt;hash&gt;               <span class="com"># undo commit, keep history (safe)</span>
+<span class="fn">git</span> reset --hard &lt;hash&gt;         <span class="com"># ⚠ destroy history to this point</span>
+<span class="fn">git</span> stash                       <span class="com"># temporarily shelve WIP changes</span>
+<span class="fn">git</span> stash pop                   <span class="com"># restore shelved changes</span>
+        </div>
+
+        <div class="dt">▸ BRANCHING STRATEGIES</div>
+        <table class="ref-table">
+          <tr><th>Strategy</th><th>Concept</th><th>Best for</th></tr>
+          <tr>
+            <td style="color:var(--cyan)">Git Flow</td>
+            <td>main + develop + feature/* + release/* + hotfix/*</td>
+            <td>Versioned releases; larger teams</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">GitHub Flow</td>
+            <td>main + short-lived feature branches + PRs</td>
+            <td>Continuous deployment; most teams today</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">Trunk-Based</td>
+            <td>Everyone commits directly to main; tiny short branches</td>
+            <td>High-velocity CI/CD; requires strong test coverage</td>
+          </tr>
+          <tr>
+            <td style="color:var(--amber)">Conventional Commits</td>
+            <td>Structured messages: feat: / fix: / docs: / chore: / refactor:</td>
+            <td>Auto-changelogs, semantic versioning, clarity</td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- /domain-body script -->
       </div>
       <!-- /domain-section script -->
 
@@ -17745,7 +19229,7 @@
       <!-- ══ DOMAIN: LIFESTYLE & PHILOSOPHY ════════════════════════════
            Topics: Wicca · Paganism · Druidism
       ═══════════════════════════════════════════════════════════════════ -->
-      <div class="domain-section domain-lifestyle" data-domain="life">
+      <div class="domain-section domain-lifestyle" data-domain="lifestyle">
         <div class="domain-header" onclick="toggleDomain(this)">
           <span class="domain-icon">🌿</span>
           <span class="domain-title">Lifestyle &amp; Philosophy</span>
