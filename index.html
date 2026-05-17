@@ -11,26 +11,13 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
-    <link
-      rel="icon"
-      type="image/png"
-      href="Img/favicon/favicon-96x96.png"
-      sizes="96x96"
-    />
+    <link rel="icon" type="image/png" href="Img/favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="Img/favicon/favicon.svg" />
     <link rel="shortcut icon" href="Img/favicon/favicon.ico" />
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="Img/favicon/apple-touch-icon.png"
-    />
+    <link rel="apple-touch-icon" sizes="180x180" href="Img/favicon/apple-touch-icon.png" />
     <link rel="manifest" href="Img/favicon/site.webmanifest" />
   </head>
   <body>
-    <!-- ═══════════════════════════════════════════════════════════════════════
-         HEADER
-         Contains: badge label, title, description, study tips image (lg screens)
-    ═══════════════════════════════════════════════════════════════════════════ -->
     <header>
       <div class="header-inner">
         <div class="header-content">
@@ -39,27 +26,11 @@
               CompTIA &amp; Tech Reference · 2026 Edition
             </div>
             <div class="header-controls" id="header-controls">
-              <button
-                class="hdr-btn"
-                id="hdr-theme-btn"
-                onclick="toggleTheme(this)"
-                title="Toggle theme"
-              >
-                ☀
-              </button>
-              <button
-                class="hdr-btn"
-                id="hdr-expand-btn"
-                onclick="toggleAll(this)"
-                title="Expand / collapse all"
-              >
-                ↕
-              </button>
+              <button class="hdr-btn" id="hdr-theme-btn" title="Toggle theme">☀</button>
+              <button class="hdr-btn" id="hdr-expand-btn" title="Expand / collapse all">↕</button>
             </div>
           </div>
-          <h1>
-            Cycles, Concepts <span>&amp; Diagrams</span> — Topic Reference
-          </h1>
+          <h1>Cycles, Concepts <span>&amp; Diagrams</span> — Topic Reference</h1>
           <p>
             Interactive drop-down reference organized by concept domain. Covers
             all major CompTIA certifications plus Regex, PowerShell, Bash, HTML,
@@ -80,87 +51,40 @@
       </div>
     </header>
 
-    <!-- ═══════════════════════════════════════════════════════════════════════
-         FILTER BAR  (sticky, z-index 100)
-         Chips map to data-domain attributes on .domain-section elements.
-         filter() function in script.js handles show/hide logic.
-         toggleTheme() and toggleAll() are utility buttons at the end.
-    ═══════════════════════════════════════════════════════════════════════════ -->
     <div class="filter-bar">
       <div class="filter-inner">
-        <div class="chip c-all active" onclick="filter('all', this)">
-          ◈ ALL DOMAINS
-        </div>
-        <div class="chip c-net" onclick="filter('net', this)">
-          🌐 NETWORKING
-        </div>
-        <div class="chip c-sec" onclick="filter('sec', this)">
-          🔐 SECURITY CORE
-        </div>
-        <div class="chip c-threat" onclick="filter('threat', this)">
-          ⚔️ THREAT &amp; ATTACK
-        </div>
-        <div class="chip c-grc" onclick="filter('grc', this)">
-          ⚖️ GOVERNANCE &amp; RISK
-        </div>
-        <div class="chip c-ops" onclick="filter('ops', this)">
-          🔬 SEC OPERATIONS
-        </div>
-        <div class="chip c-pentest" onclick="filter('pentest', this)">
-          🎯 PENTEST
-        </div>
-        <div class="chip c-linux" onclick="filter('linux', this)">
-          🐧 LINUX &amp; SYSTEMS
-        </div>
-        <div class="chip c-ai" onclick="filter('ai', this)">🤖 AI &amp; ML</div>
-        <div class="chip c-script" onclick="filter('script', this)">
-          💻 SCRIPTING &amp; WEB
-        </div>
-        <div class="chip c-shortcut" onclick="filter('shortcut', this)">
-          ⌨️ SHORTCUTS
-        </div>
-        <div class="chip c-lifestyle" onclick="filter('lifestyle', this)">
-          🧘 LIFESTYLE &amp; PHILOSOPHY
-        </div>
-        <!-- theme + expand moved to header -->
-        <div class="chip c-military" onclick="filter('military', this)">
-          🎖️ MILITARY CODES
-        </div>
+        <div class="chip c-all active"     data-domain="all">◈ ALL DOMAINS</div>
+        <div class="chip c-net"            data-domain="net">🌐 NETWORKING</div>
+        <div class="chip c-sec"            data-domain="sec">🔐 SECURITY CORE</div>
+        <div class="chip c-threat"         data-domain="threat">⚔️ THREAT &amp; ATTACK</div>
+        <div class="chip c-grc"            data-domain="grc">⚖️ GOVERNANCE &amp; RISK</div>
+        <div class="chip c-ops"            data-domain="ops">🔬 SEC OPERATIONS</div>
+        <div class="chip c-pentest"        data-domain="pentest">🎯 PENTEST</div>
+        <div class="chip c-linux"          data-domain="linux">🐧 LINUX &amp; SYSTEMS</div>
+        <div class="chip c-ai"             data-domain="ai">🤖 AI &amp; ML</div>
+        <div class="chip c-script"         data-domain="script">💻 SCRIPTING &amp; WEB</div>
+        <div class="chip c-shortcut"       data-domain="shortcut">⌨️ SHORTCUTS</div>
+        <div class="chip c-lifestyle"      data-domain="lifestyle">🧘 LIFESTYLE &amp; PHILOSOPHY</div>
+        <div class="chip c-military"       data-domain="military">🎖️ MILITARY CODES</div>
       </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════════════════════════
-         MAIN CONTENT CONTAINER
-         Each .domain-section has a data-domain attribute used by filter().
-         Domain sections contain: .domain-header (accordion toggle) +
-         .domain-body (hidden by default, .open class shows it).
-         Topic sections follow the same pattern nested inside domain-body.
-    ═══════════════════════════════════════════════════════════════════════════ -->
-    <div class="container">
-      <!-- ══════════════════════════════════════════════════════════════════════
-           DOMAIN: NETWORKING
-           Certs: A+, Net+
-           Topics: OSI Model, TCP/IP, Topologies, DHCP DORA, Common Ports
-                   + PDF additions: DNS Records, Cabling, NMAP, Routing, Wireless, CLI
-      ══════════════════════════════════════════════════════════════════════════ -->
+    <div class="container" id="domain-container">
       <div class="domain-section domain-net" data-domain="net">
-        <div class="domain-header" onclick="toggleDomain(this)">
+        <div class="domain-header">
           <span class="domain-icon">🌐</span>
           <span class="domain-title">Networking</span>
           <div class="cert-tags">
             <span class="ctag ctag-aplus">A+</span>
             <span class="ctag ctag-netplus">Net+</span>
           </div>
-          <span class="domain-sub"
-            >OSI · TCP/IP · Topologies · DHCP · Ports · DNS · Cabling ·
-            Wireless</span
-          >
+          <span class="domain-sub">OSI · TCP/IP · Topologies · DHCP · Ports · DNS · Cabling · Wireless</span>
           <span class="chevron">▾</span>
         </div>
         <div class="domain-body">
-          <!-- ── TOPIC: OSI MODEL ─────────────────────────────────────── -->
+<!-- ── TOPIC: OSI MODEL ─────────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">📶</span>
               <span class="topic-name">OSI Model — 7 Layers</span>
               <span class="topic-badge">REFERENCE MODEL</span>
@@ -340,7 +264,7 @@
 
           <!-- ── TOPIC: TCP/IP MODEL ──────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🌍</span>
               <span class="topic-name"
                 >TCP/IP Model — 4 Layers vs OSI Mapping</span
@@ -481,7 +405,7 @@
 
           <!-- TOPIC: TCP vs UDP + 3-Way Handshake -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🤝</span>
               <span class="topic-name">TCP vs UDP — Transport Layer</span>
               <span class="topic-badge">NETWORK+</span>
@@ -591,7 +515,7 @@
 
           <!-- ── TOPIC: NETWORK TOPOLOGIES ───────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🗺️</span>
               <span class="topic-name">Network Topologies</span>
               <span class="topic-badge">VISUAL MODELS</span>
@@ -1108,7 +1032,7 @@
 
           <!-- TOPIC: Subnetting & CIDR -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔢</span>
               <span class="topic-name">Subnetting &amp; CIDR</span>
               <span class="topic-badge">NETWORK+ · A+</span>
@@ -1371,7 +1295,7 @@
 
           <!-- TOPIC: Routing Protocols & Network Devices -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🗺️</span>
               <span class="topic-name"
                 >Routing, VLANs &amp; Network Devices</span
@@ -1551,7 +1475,7 @@
 
           <!-- TOPIC: Wireless Standards -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">📡</span>
               <span class="topic-name"
                 >Wireless — 802.11 Standards &amp; Security</span
@@ -1682,7 +1606,7 @@
 
           <!-- ── TOPIC: DHCP DORA ─────────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">📡</span>
               <span class="topic-name">DHCP — DORA Process</span>
               <span class="topic-badge">4-STEP SEQUENCE</span>
@@ -1748,7 +1672,7 @@
 
           <!-- ── TOPIC: COMMON PORTS ──────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔌</span>
               <span class="topic-name">Common Ports — Protocol Reference</span>
               <span class="topic-badge">REFERENCE TABLE</span>
@@ -1967,7 +1891,7 @@
                Source: CEH Cheat Sheet PDF + Net+ Cheat Sheet PDF
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🌐</span>
               <span class="topic-name">DNS Record Types</span>
               <span class="topic-badge">REFERENCE TABLE</span>
@@ -2077,7 +2001,7 @@
                Source: CompTIA A+ + Net+ Cheat Sheet PDFs
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔌</span>
               <span class="topic-name"
                 >Cabling, Connectors &amp; Ethernet Standards</span
@@ -2307,7 +2231,7 @@
                Source: CEH Cheat Sheet PDF
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔭</span>
               <span class="topic-name">NMAP Scan Types Reference</span>
               <span class="topic-badge">PENTEST TOOL</span>
@@ -2450,7 +2374,7 @@
                Source: Net+ Cheat Sheet PDF
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🗺️</span>
               <span class="topic-name"
                 >Routing Protocols &amp; WAN Technologies</span
@@ -2698,7 +2622,7 @@
                Source: Net+ + CEH Cheat Sheet PDFs
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">📶</span>
               <span class="topic-name"
                 >Wireless Networking — 802.11 Standards &amp; Security</span
@@ -2875,7 +2799,7 @@
                Source: Net+ Cheat Sheet PDF
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">⌨️</span>
               <span class="topic-name">Network Device CLI — Show Commands</span>
               <span class="topic-badge">CLI REFERENCE</span>
@@ -2998,7 +2922,7 @@
                Domain: Networking
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">📡</span>
               <span class="topic-name">TCPDump — Packet Capture Reference</span>
               <span class="topic-badge">COMPLETE REFERENCE</span>
@@ -3178,33 +3102,24 @@
           </div>
         </div>
         <!-- /domain-body net -->
+        </div>
       </div>
-      <!-- /domain-section net -->
 
-      <!-- ══════════════════════════════════════════════════════════════════════
-           DOMAIN: SECURITY CORE
-           Certs: Sec+, SecurityX
-           Topics: CIA Triad, AAA, Access Control, PKI, Cryptography, Cloud, Zero Trust
-                   + PDF additions: Password Attacks, Kerberos
-      ══════════════════════════════════════════════════════════════════════════ -->
       <div class="domain-section domain-sec" data-domain="sec">
-        <div class="domain-header" onclick="toggleDomain(this)">
+        <div class="domain-header">
           <span class="domain-icon">🔐</span>
           <span class="domain-title">Security Core Concepts</span>
           <div class="cert-tags">
             <span class="ctag ctag-secplus">Sec+</span>
             <span class="ctag ctag-secx">SecX</span>
           </div>
-          <span class="domain-sub"
-            >CIA Triad · AAA · Access Control · PKI · Crypto · Cloud · Zero
-            Trust · Kerberos</span
-          >
+          <span class="domain-sub">CIA Triad · AAA · Access Control · PKI · Crypto · Cloud · Zero Trust · Kerberos</span>
           <span class="chevron">▾</span>
         </div>
         <div class="domain-body">
-          <!-- ── TOPIC: CIA TRIAD ─────────────────────────────────────── -->
+<!-- ── TOPIC: CIA TRIAD ─────────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔐</span>
               <span class="topic-name">CIA Triad</span>
               <span class="topic-badge">CORE MODEL</span>
@@ -3257,7 +3172,7 @@
 
           <!-- ── TOPIC: AAA ────────────────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🎫</span>
               <span class="topic-name">AAA Framework</span>
               <span class="topic-badge">SECURITY MODEL</span>
@@ -3335,7 +3250,7 @@
 
           <!-- ── TOPIC: ACCESS CONTROL MODELS ───────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🗂️</span>
               <span class="topic-name">Access Control Models</span>
               <span class="topic-badge">COMPARISON TABLE</span>
@@ -3405,7 +3320,7 @@
 
           <!-- ── TOPIC: PKI ─────────────────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🏛️</span>
               <span class="topic-name">PKI &amp; Certificate Lifecycle</span>
               <span class="topic-badge">HIERARCHY + LIFECYCLE</span>
@@ -3567,7 +3482,7 @@
 
           <!-- ── TOPIC: CRYPTOGRAPHY ─────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔑</span>
               <span class="topic-name">Cryptography Algorithm Reference</span>
               <span class="topic-badge">REFERENCE TABLE</span>
@@ -3661,7 +3576,7 @@
 
           <!-- ── TOPIC: CLOUD MODELS ─────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">☁️</span>
               <span class="topic-name"
                 >Cloud Service &amp; Deployment Models</span
@@ -3765,7 +3680,7 @@
 
           <!-- ── TOPIC: ZERO TRUST ────────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🛡️</span>
               <span class="topic-name">Zero Trust Architecture</span>
               <span class="topic-badge">ARCHITECTURE MODEL</span>
@@ -3838,7 +3753,7 @@
                Source: CEH Cheat Sheet PDF
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔓</span>
               <span class="topic-name"
                 >Password &amp; Authentication Attack Types</span
@@ -4001,7 +3916,7 @@
                Source: CEH + CISSP Cheat Sheet PDFs
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🎟️</span>
               <span class="topic-name">Kerberos Authentication Flow</span>
               <span class="topic-badge">4-STEP PROTOCOL</span>
@@ -4111,7 +4026,7 @@
      TOPIC: Active Directory
 ═══════════════════════════════════════════════════ -->
 <div class="topic">
-  <div class="topic-header" onclick="toggleTopic(this)">
+  <div class="topic-header">
     <span class="topic-icon">🏢</span>
     <span class="topic-name">Active Directory — Structure, Objects &amp; Attacks</span>
     <span class="topic-badge">SEC+ · CySA+ · PenTest+</span>
@@ -4309,7 +4224,7 @@
      TOPIC: TLS Handshake
 ═══════════════════════════════════════════════════ -->
 <div class="topic">
-  <div class="topic-header" onclick="toggleTopic(this)">
+  <div class="topic-header">
     <span class="topic-icon">🔒</span>
     <span class="topic-name">TLS — Handshake, Cipher Suites &amp; Certificate Chain</span>
     <span class="topic-badge">SEC+ · SECX</span>
@@ -4449,17 +4364,11 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
 
 
 <!-- /domain-body sec -->
+        </div>
       </div>
-      <!-- /domain-section sec -->
 
-      <!-- ══════════════════════════════════════════════════════════════════════
-           DOMAIN: THREAT & ATTACK FRAMEWORKS
-           Certs: Sec+, CySA+, PenTest+
-           Topics: Kill Chain, MITRE ATT&CK, Diamond Model, Threat Intel Lifecycle
-                   + PDF additions: Social Engineering, Malware Types, DoS/DDoS, Google Hacking
-      ══════════════════════════════════════════════════════════════════════════ -->
       <div class="domain-section domain-threat" data-domain="threat">
-        <div class="domain-header" onclick="toggleDomain(this)">
+        <div class="domain-header">
           <span class="domain-icon">⚔️</span>
           <span class="domain-title">Threat &amp; Attack Frameworks</span>
           <div class="cert-tags">
@@ -4467,16 +4376,13 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
             <span class="ctag ctag-cysa">CySA+</span>
             <span class="ctag ctag-ptplus">PT+</span>
           </div>
-          <span class="domain-sub"
-            >Kill Chain · MITRE ATT&amp;CK · Diamond Model · Threat Intel ·
-            Social Engineering · Malware</span
-          >
+          <span class="domain-sub">Kill Chain · MITRE ATT&amp;CK · Diamond Model · Threat Intel · Social Engineering · Malware</span>
           <span class="chevron">▾</span>
         </div>
         <div class="domain-body">
-          <!-- ── TOPIC: CYBER KILL CHAIN ──────────────────────────────── -->
+<!-- ── TOPIC: CYBER KILL CHAIN ──────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">⚔️</span>
               <span class="topic-name">Cyber Kill Chain — Lockheed Martin</span>
               <span class="topic-badge">7-PHASE MODEL</span>
@@ -4559,7 +4465,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
 
           <!-- ── TOPIC: MITRE ATT&CK ──────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🧩</span>
               <span class="topic-name">MITRE ATT&amp;CK Framework</span>
               <span class="topic-badge">14 TACTICS</span>
@@ -4703,7 +4609,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
 
           <!-- ── TOPIC: DIAMOND MODEL ─────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">💎</span>
               <span class="topic-name"
                 >Diamond Model of Intrusion Analysis</span
@@ -4786,7 +4692,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
 
           <!-- ── TOPIC: THREAT INTEL LIFECYCLE ───────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🕵️</span>
               <span class="topic-name">Threat Intelligence Lifecycle</span>
               <span class="topic-badge">6-PHASE CYCLE</span>
@@ -4938,7 +4844,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Source: CEH + CompTIA A+ Cheat Sheet PDFs
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🎭</span>
               <span class="topic-name">Social Engineering Techniques</span>
               <span class="topic-badge">ATTACK TAXONOMY</span>
@@ -5076,7 +4982,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Source: CompTIA A+ Cheat Sheet PDF
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🦠</span>
               <span class="topic-name">Malware Types Reference</span>
               <span class="topic-badge">TAXONOMY TABLE</span>
@@ -5236,7 +5142,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Source: CEH Cheat Sheet PDF
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">💣</span>
               <span class="topic-name"
                 >DoS / DDoS &amp; Network Attack Types</span
@@ -5400,33 +5306,24 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
           </div>
         </div>
         <!-- /domain-body threat -->
+        </div>
       </div>
-      <!-- /domain-section threat -->
 
-      <!-- ══════════════════════════════════════════════════════════════════════
-           DOMAIN: GOVERNANCE, RISK & COMPLIANCE
-           Certs: Sec+, SecurityX
-           Topics: Risk Lifecycle, NIST CSF 2.0, Risk Matrix, Defense-in-Depth
-                   + PDF additions: Legal Frameworks, CISSP 8 Domains
-      ══════════════════════════════════════════════════════════════════════════ -->
       <div class="domain-section domain-grc" data-domain="grc">
-        <div class="domain-header" onclick="toggleDomain(this)">
+        <div class="domain-header">
           <span class="domain-icon">⚖️</span>
           <span class="domain-title">Governance, Risk &amp; Compliance</span>
           <div class="cert-tags">
             <span class="ctag ctag-secplus">Sec+</span>
             <span class="ctag ctag-secx">SecX</span>
           </div>
-          <span class="domain-sub"
-            >Risk Lifecycle · NIST CSF 2.0 · Risk Matrix · Defense-in-Depth ·
-            Legal Frameworks · CISSP Domains</span
-          >
+          <span class="domain-sub">Risk Lifecycle · NIST CSF 2.0 · Risk Matrix · Defense-in-Depth · Legal Frameworks · CISSP Domains</span>
           <span class="chevron">▾</span>
         </div>
         <div class="domain-body">
-          <!-- ── TOPIC: RISK MANAGEMENT LIFECYCLE ──────────────────── -->
+<!-- ── TOPIC: RISK MANAGEMENT LIFECYCLE ──────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">⚠️</span>
               <span class="topic-name">Risk Management Lifecycle</span>
               <span class="topic-badge">5-STEP CYCLE</span>
@@ -5527,7 +5424,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
 
           <!-- ── TOPIC: NIST CSF 2.0 ──────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">📐</span>
               <span class="topic-name">NIST Cybersecurity Framework 2.0</span>
               <span class="topic-badge">6 FUNCTIONS</span>
@@ -5595,7 +5492,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
 
           <!-- ── TOPIC: DEFENSE-IN-DEPTH ──────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🏗️</span>
               <span class="topic-name"
                 >Defense-in-Depth — Layered Security</span
@@ -5796,7 +5693,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Source: CEH + CISSP Cheat Sheet PDFs
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">📜</span>
               <span class="topic-name"
                 >Legal &amp; Regulatory Framework References</span
@@ -5950,7 +5847,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Source: CISSP Cheat Sheet PDF
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🎓</span>
               <span class="topic-name">CISSP — 8 Domains Overview</span>
               <span class="topic-badge">CBK REFERENCE</span>
@@ -6110,33 +6007,24 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
           </div>
         </div>
         <!-- /domain-body grc -->
+        </div>
       </div>
-      <!-- /domain-section grc -->
 
-      <!-- ══════════════════════════════════════════════════════════════════════
-           DOMAIN: SECURITY OPERATIONS
-           Certs: CySA+, SecurityX
-           Topics: Troubleshooting Methodology, IR Lifecycle, Vuln Management
-                   + PDF additions: BCP/DR Metrics, Digital Forensics
-      ══════════════════════════════════════════════════════════════════════════ -->
       <div class="domain-section domain-ops" data-domain="ops">
-        <div class="domain-header" onclick="toggleDomain(this)">
+        <div class="domain-header">
           <span class="domain-icon">🔬</span>
           <span class="domain-title">Security Operations</span>
           <div class="cert-tags">
             <span class="ctag ctag-cysa">CySA+</span>
             <span class="ctag ctag-secx">SecX</span>
           </div>
-          <span class="domain-sub"
-            >Incident Response · Vulnerability Mgmt · Troubleshooting · BCP/DR ·
-            Digital Forensics</span
-          >
+          <span class="domain-sub">Incident Response · Vulnerability Mgmt · Troubleshooting · BCP/DR · Digital Forensics</span>
           <span class="chevron">▾</span>
         </div>
         <div class="domain-body">
-          <!-- ── TOPIC: TROUBLESHOOTING METHODOLOGY ──────────────── -->
+<!-- ── TOPIC: TROUBLESHOOTING METHODOLOGY ──────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔧</span>
               <span class="topic-name"
                 >CompTIA Troubleshooting Methodology</span
@@ -6258,7 +6146,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
 
           <!-- ── TOPIC: INCIDENT RESPONSE (PICERL) ────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🚨</span>
               <span class="topic-name"
                 >Incident Response Lifecycle — PICERL</span
@@ -6433,7 +6321,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
 
           <!-- ── TOPIC: VULNERABILITY MANAGEMENT ──────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔎</span>
               <span class="topic-name">Vulnerability Management Lifecycle</span>
               <span class="topic-badge">6-STEP LIFECYCLE</span>
@@ -6540,7 +6428,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Source: CISSP + Net+ Cheat Sheet PDFs
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🏢</span>
               <span class="topic-name"
                 >BCP / DR — Key Metrics &amp; Recovery Strategies</span
@@ -6731,7 +6619,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Source: CISSP + Net+ Cheat Sheet PDFs
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔬</span>
               <span class="topic-name">Digital Forensics Process</span>
               <span class="topic-badge">6-PHASE PROCESS</span>
@@ -6900,7 +6788,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Domain: Security Operations
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔎</span>
               <span class="topic-name"
                 >Splunk — SPL Search Language Reference</span
@@ -7197,30 +7085,23 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
           </div>
         </div>
         <!-- /domain-body ops -->
+        </div>
       </div>
-      <!-- /domain-section ops -->
 
-      <!-- ══════════════════════════════════════════════════════════════════════
-           DOMAIN: PENETRATION TESTING
-           Certs: PenTest+
-           Topics: 5-Phase Methodology, OWASP Top 10
-      ══════════════════════════════════════════════════════════════════════════ -->
       <div class="domain-section domain-pentest" data-domain="pentest">
-        <div class="domain-header" onclick="toggleDomain(this)">
+        <div class="domain-header">
           <span class="domain-icon">🎯</span>
           <span class="domain-title">Penetration Testing</span>
           <div class="cert-tags">
             <span class="ctag ctag-ptplus">PT+</span>
           </div>
-          <span class="domain-sub"
-            >5-Phase Methodology · OWASP Top 10 · Engagement Types</span
-          >
+          <span class="domain-sub">5-Phase Methodology · OWASP Top 10 · Engagement Types</span>
           <span class="chevron">▾</span>
         </div>
         <div class="domain-body">
-          <!-- ── TOPIC: PENTEST PHASES ──────────────────────────────── -->
+<!-- ── TOPIC: PENTEST PHASES ──────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🎯</span>
               <span class="topic-name">Penetration Testing Phases</span>
               <span class="topic-badge">5-PHASE METHODOLOGY</span>
@@ -7335,7 +7216,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
 
           <!-- ── TOPIC: OWASP TOP 10 ────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🌐</span>
               <span class="topic-name">OWASP Top 10 (2021)</span>
               <span class="topic-badge">WEB VULNERABILITIES</span>
@@ -7445,7 +7326,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Domain: Penetration Testing
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">💉</span>
               <span class="topic-name"
                 >SQLmap — SQL Injection Tool Reference</span
@@ -7711,33 +7592,24 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
           </div>
         </div>
         <!-- /domain-body pentest -->
+        </div>
       </div>
-      <!-- /domain-section pentest -->
 
-      <!-- ══════════════════════════════════════════════════════════════════════
-           DOMAIN: LINUX & SYSTEMS
-           Certs: Linux+, A+
-           Topics: FHS, File Permissions, Boot Process
-                   + PDF additions: RAID Levels, A+ Hardware (RAM/Storage/Printer)
-      ══════════════════════════════════════════════════════════════════════════ -->
       <div class="domain-section domain-linux" data-domain="linux">
-        <div class="domain-header" onclick="toggleDomain(this)">
+        <div class="domain-header">
           <span class="domain-icon">🐧</span>
           <span class="domain-title">Linux &amp; Systems</span>
           <div class="cert-tags">
             <span class="ctag ctag-linuxplus">Linux+</span>
             <span class="ctag ctag-aplus">A+</span>
           </div>
-          <span class="domain-sub"
-            >FHS · Permissions · Boot Process · Signals · systemd · RAID ·
-            Hardware</span
-          >
+          <span class="domain-sub">FHS · Permissions · Boot Process · Signals · systemd · RAID · Hardware</span>
           <span class="chevron">▾</span>
         </div>
         <div class="domain-body">
-          <!-- ── TOPIC: FHS ──────────────────────────────────────────── -->
+<!-- ── TOPIC: FHS ──────────────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🗂️</span>
               <span class="topic-name">Linux Filesystem Hierarchy (FHS)</span>
               <span class="topic-badge">DIRECTORY TREE</span>
@@ -7901,7 +7773,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
 
           <!-- ── TOPIC: FILE PERMISSIONS ────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔏</span>
               <span class="topic-name">Linux File Permissions Model</span>
               <span class="topic-badge">PERMISSIONS MODEL</span>
@@ -8030,7 +7902,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
 
           <!-- ── TOPIC: LINUX BOOT PROCESS ──────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🚀</span>
               <span class="topic-name"
                 >Linux Boot Process (BIOS/UEFI → systemd)</span
@@ -8164,7 +8036,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Domain: Linux & Systems
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔐</span>
               <span class="topic-name"
                 >SSH — Commands, Keys &amp; Tunneling</span
@@ -8398,7 +8270,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Domain: Linux & Systems
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🖥️</span>
               <span class="topic-name">Tmux — Terminal Multiplexer</span>
               <span class="topic-badge">COMPLETE REFERENCE</span>
@@ -8690,7 +8562,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Domain: Linux & Systems
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">⌨️</span>
               <span class="topic-name"
                 >Unix / Linux Commands — Quick Reference</span
@@ -9041,7 +8913,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Source: CompTIA A+ Cheat Sheet PDF
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">💾</span>
               <span class="topic-name">RAID Levels Reference</span>
               <span class="topic-badge">STORAGE REDUNDANCY</span>
@@ -9159,7 +9031,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
                Source: CompTIA A+ Cheat Sheet PDF
           ═══════════════════════════════════════════════════════════════ -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🖥️</span>
               <span class="topic-name"
                 >CompTIA A+ Hardware Quick Reference</span
@@ -9372,7 +9244,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
      TOPIC: Docker
 ═══════════════════════════════════════════════════ -->
 <div class="topic">
-  <div class="topic-header" onclick="toggleTopic(this)">
+  <div class="topic-header">
     <span class="topic-icon">🐳</span>
     <span class="topic-name">Docker — Containers, Images &amp; Compose</span>
     <span class="topic-badge">DEVOPS · LINUX+</span>
@@ -9511,7 +9383,7 @@ volumes:
      TOPIC: YAML
 ═══════════════════════════════════════════════════ -->
 <div class="topic">
-  <div class="topic-header" onclick="toggleTopic(this)">
+  <div class="topic-header">
     <span class="topic-icon">📄</span>
     <span class="topic-name">YAML — Config Language Reference</span>
     <span class="topic-badge">DEVOPS · CONFIG</span>
@@ -9629,7 +9501,7 @@ jobs:
      TOPIC: Kubernetes
 ═══════════════════════════════════════════════════ -->
 <div class="topic">
-  <div class="topic-header" onclick="toggleTopic(this)">
+  <div class="topic-header">
     <span class="topic-icon">⚙️</span>
     <span class="topic-name">Kubernetes — Container Orchestration Reference</span>
     <span class="topic-badge">DEVOPS · CLOUD</span>
@@ -9748,30 +9620,22 @@ spec:
 
 
 <!-- /domain-body linux -->
+        </div>
       </div>
-      <!-- /domain-section linux -->
 
-      <!-- ══════════════════════════════════════════════════════════════════════
-           DOMAIN: AI & MACHINE LEARNING
-           Certs: AI+
-           Topics: ML Pipeline, ML Learning Paradigms, Agentic AI, AI Ethics
-      ══════════════════════════════════════════════════════════════════════════ -->
       <div class="domain-section domain-ai" data-domain="ai">
-        <div class="domain-header" onclick="toggleDomain(this)">
+        <div class="domain-header">
           <span class="domain-icon">🤖</span>
           <span class="domain-title">AI &amp; Machine Learning</span>
           <div class="cert-tags">
             <span class="ctag ctag-aiplus">AI+</span>
           </div>
-          <span class="domain-sub"
-            >ML Pipeline · Model Types · Neural Nets · AI Ethics · Agentic
-            AI</span
-          >
+          <span class="domain-sub">ML Pipeline · Model Types · Neural Nets · AI Ethics · Agentic AI</span>
           <span class="chevron">▾</span>
         </div>
         <div class="domain-body">
-          <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+<div class="topic">
+            <div class="topic-header">
               <span class="topic-icon">⚙️</span>
               <span class="topic-name">Machine Learning Pipeline</span>
               <span class="topic-badge">8-STAGE WORKFLOW</span>
@@ -9856,7 +9720,7 @@ spec:
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🧠</span>
               <span class="topic-name">ML Learning Paradigms</span>
               <span class="topic-badge">TAXONOMY</span>
@@ -9969,7 +9833,7 @@ spec:
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🤖</span>
               <span class="topic-name">Agentic AI &amp; Orchestration</span>
               <span class="topic-badge">MODERN AGENTS</span>
@@ -10034,7 +9898,7 @@ spec:
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">⚖️</span>
               <span class="topic-name"
                 >AI Ethics &amp; Responsible AI (NIST AI RMF)</span
@@ -10105,37 +9969,28 @@ spec:
           </div>
         </div>
         <!-- /domain-body ai -->
+        </div>
       </div>
-      <!-- /domain-section ai -->
 
-      <!-- ══════════════════════════════════════════════════════════════════════
-           DOMAIN: SCRIPTING & WEB LANGUAGES
-           Certs: Linux+, SecurityX
-           Topics: Regex, PowerShell, Bash, HTML, CSS, JavaScript, JSON, SQL
-           NOTE: Content identical to original — no PDF content added to this domain.
-      ══════════════════════════════════════════════════════════════════════════ -->
       <div class="domain-section domain-script" data-domain="script">
-        <div class="domain-header" onclick="toggleDomain(this)">
+        <div class="domain-header">
           <span class="domain-icon">💻</span>
           <span class="domain-title">Scripting &amp; Web Languages</span>
           <div class="cert-tags">
             <span class="ctag ctag-linuxplus">Linux+</span>
             <span class="ctag ctag-secx">SecX</span>
           </div>
-          <span class="domain-sub"
-            >Regex · PowerShell · Bash · HTML · CSS · JavaScript · JSON ·
-            SQL</span
-          >
+          <span class="domain-sub">Regex · PowerShell · Bash · HTML · CSS · JavaScript · JSON · SQL</span>
           <span class="chevron">▾</span>
         </div>
         <div class="domain-body">
-          <!-- ── TOPIC: REGEX ────────────────────────────────────────────
+<!-- ── TOPIC: REGEX ────────────────────────────────────────────
                Full regex reference retained from original index.html.
                Anchors, character classes, quantifiers, groups, flags, and
                common patterns (email, IPv4, URL, password, MAC address).
           ──────────────────────────────────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔤</span>
               <span class="topic-name">Regular Expressions (Regex)</span>
               <span class="topic-badge">PATTERN MATCHING</span>
@@ -10416,7 +10271,7 @@ spec:
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🌐</span>
               <span class="topic-name">HTML — HyperText Markup Language</span>
               <span class="topic-badge">WEB STRUCTURE</span>
@@ -10751,7 +10606,7 @@ spec:
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🎨</span>
               <span class="topic-name">CSS — Cascading Style Sheets</span>
               <span class="topic-badge">WEB STYLING</span>
@@ -10945,7 +10800,7 @@ spec:
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">⚡</span>
               <span class="topic-name">JavaScript — ES6 through ES2025</span>
               <span class="topic-badge">SCRIPTING LANGUAGE</span>
@@ -11272,7 +11127,7 @@ spec:
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">📋</span>
               <span class="topic-name">JSON — JavaScript Object Notation</span>
               <span class="topic-badge">DATA FORMAT</span>
@@ -11437,7 +11292,7 @@ spec:
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🐍</span>
               <span class="topic-name"
                 >Python — Scripting &amp; Automation</span
@@ -11811,7 +11666,7 @@ spec:
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔷</span>
               <span class="topic-name">PowerShell — Windows Automation</span>
               <span class="topic-badge">SHELL SCRIPTING</span>
@@ -12013,7 +11868,7 @@ spec:
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔶</span>
               <span class="topic-name">Bash — Bourne Again Shell</span>
               <span class="topic-badge">SHELL SCRIPTING</span>
@@ -12212,7 +12067,7 @@ spec:
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🐚</span>
               <span class="topic-name">ZSH — Z Shell</span>
               <span class="topic-badge">INTERACTIVE SHELL</span>
@@ -12404,7 +12259,7 @@ spec:
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🐹</span>
               <span class="topic-name">Go — Systems &amp; Cloud Language</span>
               <span class="topic-badge">COMPILED LANGUAGE</span>
@@ -12742,7 +12597,7 @@ spec:
                TOPIC: PowerShell
           ═══════════════════════════════════════════════ -->
         <div class="topic">
-          <div class="topic-header" onclick="toggleTopic(this)">
+          <div class="topic-header">
             <span class="topic-icon">💙</span>
             <span class="topic-name">PowerShell — Scripting Reference</span>
             <span class="topic-badge">WINDOWS / CROSS-PLATFORM</span>
@@ -13045,7 +12900,7 @@ spec:
                TOPIC: Bash (Debian/Ubuntu)
           ═══════════════════════════════════════════════ -->
         <div class="topic">
-          <div class="topic-header" onclick="toggleTopic(this)">
+          <div class="topic-header">
             <span class="topic-icon">🟢</span>
             <span class="topic-name"
               >Bash Scripting — Debian / Ubuntu Reference</span
@@ -13287,7 +13142,7 @@ spec:
                TOPIC: HTML
           ═══════════════════════════════════════════════ -->
         <div class="topic">
-          <div class="topic-header" onclick="toggleTopic(this)">
+          <div class="topic-header">
             <span class="topic-icon">🏷️</span>
             <span class="topic-name"
               >HTML — Structure &amp; Semantic Elements</span
@@ -13537,7 +13392,7 @@ spec:
                TOPIC: CSS
           ═══════════════════════════════════════════════ -->
         <div class="topic">
-          <div class="topic-header" onclick="toggleTopic(this)">
+          <div class="topic-header">
             <span class="topic-icon">🎨</span>
             <span class="topic-name"
               >CSS — Selectors, Layout &amp; Variables</span
@@ -13672,7 +13527,7 @@ spec:
                TOPIC: JavaScript ES2022+
           ═══════════════════════════════════════════════ -->
         <div class="topic">
-          <div class="topic-header" onclick="toggleTopic(this)">
+          <div class="topic-header">
             <span class="topic-icon">⚡</span>
             <span class="topic-name">JavaScript — ES2022+ Reference</span>
             <span class="topic-badge">ES2022 · ES2023 · ES2025</span>
@@ -13916,7 +13771,7 @@ spec:
                TOPIC: JSON / jq
           ═══════════════════════════════════════════════ -->
         <div class="topic">
-          <div class="topic-header" onclick="toggleTopic(this)">
+          <div class="topic-header">
             <span class="topic-icon">📦</span>
             <span class="topic-name"
               >JSON &amp; jq — Data Format &amp; CLI Processor</span
@@ -14075,7 +13930,7 @@ spec:
                TOPIC: SQL
           ═══════════════════════════════════════════════ -->
         <div class="topic">
-          <div class="topic-header" onclick="toggleTopic(this)">
+          <div class="topic-header">
             <span class="topic-icon">🗃️</span>
             <span class="topic-name">SQL — Query Reference</span>
             <span class="topic-badge">DATABASE LANGUAGE</span>
@@ -14293,7 +14148,7 @@ spec:
                Domain: Scripting & Web
           ═══════════════════════════════════════════════════════════════ -->
         <div class="topic">
-          <div class="topic-header" onclick="toggleTopic(this)">
+          <div class="topic-header">
             <span class="topic-icon">🔗</span>
             <span class="topic-name"
               >URL Encoding — Percent Encoding Reference</span
@@ -14783,7 +14638,7 @@ spec:
      TOPIC: Programming Fundamentals
 ═══════════════════════════════════════════════════ -->
 <div class="topic">
-  <div class="topic-header" onclick="toggleTopic(this)">
+  <div class="topic-header">
     <span class="topic-icon">📐</span>
     <span class="topic-name">Programming Fundamentals — Concepts & Vocabulary</span>
     <span class="topic-badge">UNIVERSAL</span>
@@ -14898,7 +14753,7 @@ spec:
      TOPIC: Object-Oriented Programming
 ═══════════════════════════════════════════════════ -->
 <div class="topic">
-  <div class="topic-header" onclick="toggleTopic(this)">
+  <div class="topic-header">
     <span class="topic-icon">🧱</span>
     <span class="topic-name">Object-Oriented Programming — Classes, Objects & the 4 Pillars</span>
     <span class="topic-badge">OOP</span>
@@ -15046,7 +14901,7 @@ spec:
      TOPIC: Data Structures
 ═══════════════════════════════════════════════════ -->
 <div class="topic">
-  <div class="topic-header" onclick="toggleTopic(this)">
+  <div class="topic-header">
     <span class="topic-icon">📦</span>
     <span class="topic-name">Data Structures — How Data is Organised in Memory</span>
     <span class="topic-badge">CS FUNDAMENTALS</span>
@@ -15156,7 +15011,7 @@ spec:
      TOPIC: Big O Notation
 ═══════════════════════════════════════════════════ -->
 <div class="topic">
-  <div class="topic-header" onclick="toggleTopic(this)">
+  <div class="topic-header">
     <span class="topic-icon">📈</span>
     <span class="topic-name">Big O Notation — Measuring Algorithm Efficiency</span>
     <span class="topic-badge">ALGORITHMS</span>
@@ -15252,7 +15107,7 @@ spec:
      TOPIC: Design Patterns
 ═══════════════════════════════════════════════════ -->
 <div class="topic">
-  <div class="topic-header" onclick="toggleTopic(this)">
+  <div class="topic-header">
     <span class="topic-icon">🏗️</span>
     <span class="topic-name">Design Patterns — Reusable Solutions to Common Problems</span>
     <span class="topic-badge">SOFTWARE DESIGN</span>
@@ -15363,7 +15218,7 @@ spec:
      TOPIC: REST & HTTP APIs
 ═══════════════════════════════════════════════════ -->
 <div class="topic">
-  <div class="topic-header" onclick="toggleTopic(this)">
+  <div class="topic-header">
     <span class="topic-icon">🌐</span>
     <span class="topic-name">REST & HTTP APIs — How the Web Communicates</span>
     <span class="topic-badge">API DESIGN</span>
@@ -15434,7 +15289,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
      TOPIC: Git — Version Control
 ═══════════════════════════════════════════════════ -->
 <div class="topic">
-  <div class="topic-header" onclick="toggleTopic(this)">
+  <div class="topic-header">
     <span class="topic-icon">🔀</span>
     <span class="topic-name">Git — Version Control Reference</span>
     <span class="topic-badge">DEVOPS · DAILY USE</span>
@@ -15540,28 +15395,22 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
 
 <!-- /domain-body script -->
+        </div>
       </div>
-      <!-- /domain-section script -->
 
-      <!-- ══════════════════════════════════════════════════════════════════════
-           DOMAIN: SHORTCUTS & PRODUCTIVITY
-           Topics: Windows, Linux Terminal, Excel, Word, Spotify
-      ══════════════════════════════════════════════════════════════════════════ -->
       <div class="domain-section domain-shortcut" data-domain="shortcut">
-        <div class="domain-header" onclick="toggleDomain(this)">
+        <div class="domain-header">
           <span class="domain-icon">⌨️</span>
           <span class="domain-title">Shortcuts &amp; Productivity</span>
           <div class="cert-tags">
             <span class="ctag ctag-general">GENERAL</span>
           </div>
-          <span class="domain-sub"
-            >Windows · Linux · Excel · Word · Spotify</span
-          >
+          <span class="domain-sub">Windows · Linux · Excel · Word · Spotify · Chrome</span>
           <span class="chevron">▾</span>
         </div>
         <div class="domain-body">
-          <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+<div class="topic">
+            <div class="topic-header">
               <span class="topic-icon">🖥️</span>
               <span class="topic-name">System &amp; General</span>
               <span class="topic-badge">OS CORE</span>
@@ -15638,7 +15487,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">📊</span>
               <span class="topic-name">Microsoft Office (Excel/Word)</span>
               <span class="topic-badge">PRODUCTIVITY</span>
@@ -15709,7 +15558,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
           </div>
 
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🎵</span>
               <span class="topic-name">Spotify &amp; Media</span>
               <span class="topic-badge">ENTERTAINMENT</span>
@@ -15754,7 +15603,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
         <!-- ── TOPIC: DoD ──────────────────────────────────────── -->
         <div class="topic">
-          <div class="topic-header" onclick="toggleTopic(this)">
+          <div class="topic-header">
             <span class="topic-icon">⭐</span>
             <span class="topic-name">DoD — Department of Defense</span>
             <span class="topic-badge">MILITARY REFERENCE</span>
@@ -16392,31 +16241,132 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
         <!-- /dod topic -->
 
         <!-- /domain-body shortcut -->
-      </div>
-      <!-- /domain-section shortcut -->
 
-      <!-- ══════════════════════════════════════════════════════════════════
-           DOMAIN: LIFESTYLE & PHILOSOPHY
-           Topics: Stoicism · Machiavellianism · Psychology · Philosophy
-                   Buddhism · Taoism · Existentialism · Minimalism
-      ══════════════════════════════════════════════════════════════════════ -->
+<!-- ── TOPIC: CHROME SHORTCUTS ──────────────────────────────── -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🌐</span>
+              <span class="topic-name">Google Chrome — Keyboard Shortcuts</span>
+              <span class="topic-badge">WIN · MAC · LINUX</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference — Google Chrome</div>
+                <div class="concept-title">Tabs · Windows · Address Bar · Webpage · Mouse · DevTools</div>
+                <div class="concept-desc">
+                  Shortcuts use <strong style="color:var(--cyan)">Ctrl</strong> on Windows/Linux and
+                  <strong style="color:var(--amber)">⌘</strong> on Mac.
+                  Mac equivalents shown in brackets where they differ.
+                </div>
+                <div class="dw">
+
+                  <div class="dt">▸ TABS &amp; WINDOWS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Action</th><th>Windows / Linux</th><th>Mac</th></tr>
+                    <tr><td>New window</td><td>Ctrl + N</td><td>⌘ + N</td></tr>
+                    <tr><td>New Incognito window</td><td>Ctrl + Shift + N</td><td>⌘ + Shift + N</td></tr>
+                    <tr><td>New tab</td><td>Ctrl + T</td><td>⌘ + T</td></tr>
+                    <tr><td>Reopen last closed tab</td><td>Ctrl + Shift + T</td><td>⌘ + Shift + T</td></tr>
+                    <tr><td>Next tab</td><td>Ctrl + Tab / Ctrl + PgDn</td><td>⌘ + Option + →</td></tr>
+                    <tr><td>Previous tab</td><td>Ctrl + Shift + Tab / Ctrl + PgUp</td><td>⌘ + Option + ←</td></tr>
+                    <tr><td>Jump to tab 1–8</td><td>Ctrl + 1–8</td><td>⌘ + 1–8</td></tr>
+                    <tr><td>Jump to last tab</td><td>Ctrl + 9</td><td>⌘ + 9</td></tr>
+                    <tr><td>Close current tab</td><td>Ctrl + W / Ctrl + F4</td><td>⌘ + W</td></tr>
+                    <tr><td>Close current window</td><td>Ctrl + Shift + W / Alt + F4</td><td>⌘ + Shift + W</td></tr>
+                    <tr><td>Quit Chrome</td><td>Alt + F then X</td><td>⌘ + Q</td></tr>
+                    <tr><td>Full-screen toggle</td><td>F11</td><td>Fn + F</td></tr>
+                    <tr><td>Move tab right / left</td><td>Ctrl + Shift + PgDn / PgUp</td><td>Ctrl + Shift + PgDn / PgUp</td></tr>
+                    <tr><td>Home page (current tab)</td><td>Alt + Home</td><td>—</td></tr>
+                    <tr><td>Back / Forward (history)</td><td>Alt + ← / Alt + →</td><td>⌘ + [ / ⌘ + ]</td></tr>
+                  </table>
+
+                  <div class="dt">▸ CHROME FEATURES</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Action</th><th>Windows / Linux</th><th>Mac</th></tr>
+                    <tr><td>Open Chrome menu</td><td>Alt + F or Alt + E</td><td>—</td></tr>
+                    <tr><td>Bookmarks bar toggle</td><td>Ctrl + Shift + B</td><td>⌘ + Shift + B</td></tr>
+                    <tr><td>Bookmark Manager</td><td>Ctrl + Shift + O</td><td>⌘ + Option + B</td></tr>
+                    <tr><td>History page</td><td>Ctrl + H</td><td>⌘ + Y</td></tr>
+                    <tr><td>Downloads page</td><td>Ctrl + J</td><td>⌘ + Shift + J</td></tr>
+                    <tr><td>Chrome Task Manager</td><td>Shift + Esc</td><td>—</td></tr>
+                    <tr><td>Find on page</td><td>Ctrl + F / F3</td><td>⌘ + F</td></tr>
+                    <tr><td>Next find result</td><td>Ctrl + G</td><td>⌘ + G</td></tr>
+                    <tr><td>Previous find result</td><td>Ctrl + Shift + G</td><td>⌘ + Shift + G</td></tr>
+                    <tr><td>Developer Tools</td><td>Ctrl + Shift + J / F12</td><td>⌘ + Option + I</td></tr>
+                    <tr><td>Clear browsing data</td><td>Ctrl + Shift + Delete</td><td>⌘ + Shift + Delete</td></tr>
+                    <tr><td>Settings</td><td>—</td><td>⌘ + ,</td></tr>
+                    <tr><td>Split view (active tab)</td><td>Shift + Alt + N</td><td>⌘ + Option + N</td></tr>
+                    <tr><td>Caret browsing</td><td>F7</td><td>F7</td></tr>
+                    <tr><td>Skip to web content</td><td>Ctrl + F6</td><td>—</td></tr>
+                  </table>
+
+                  <div class="dt">▸ ADDRESS BAR</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Action</th><th>Windows / Linux</th><th>Mac</th></tr>
+                    <tr><td>Focus address bar</td><td>Ctrl + L / Alt + D / F6</td><td>⌘ + L</td></tr>
+                    <tr><td>Search from anywhere</td><td>Ctrl + K / Ctrl + E</td><td>⌘ + Option + F</td></tr>
+                    <tr><td>Open search in new tab</td><td>Type term + Alt + Enter</td><td>Type term + ⌘ + Return</td></tr>
+                    <tr><td>Add www. and .com, open</td><td>Type name + Ctrl + Enter</td><td>Type name + Ctrl + Return</td></tr>
+                    <tr><td>Open in new window</td><td>Type name + Ctrl + Shift + Enter</td><td>Type name + Ctrl + Shift + Return</td></tr>
+                    <tr><td>Remove address prediction</td><td>↓ highlight + Shift + Delete</td><td>↓ highlight + Shift + Fn + Delete</td></tr>
+                  </table>
+
+                  <div class="dt">▸ WEBPAGE NAVIGATION</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Action</th><th>Windows / Linux</th><th>Mac</th></tr>
+                    <tr><td>Print page</td><td>Ctrl + P</td><td>⌘ + P</td></tr>
+                    <tr><td>Save page</td><td>Ctrl + S</td><td>⌘ + S</td></tr>
+                    <tr><td>Reload page</td><td>F5 / Ctrl + R</td><td>⌘ + R</td></tr>
+                    <tr><td>Hard reload (ignore cache)</td><td>Shift + F5 / Ctrl + Shift + R</td><td>⌘ + Shift + R</td></tr>
+                    <tr><td>Stop loading</td><td>Esc</td><td>Esc</td></tr>
+                    <tr><td>Bookmark current page</td><td>Ctrl + D</td><td>⌘ + D</td></tr>
+                    <tr><td>Bookmark all open tabs</td><td>Ctrl + Shift + D</td><td>⌘ + Shift + D</td></tr>
+                    <tr><td>Zoom in / out</td><td>Ctrl + + / Ctrl + -</td><td>⌘ + + / ⌘ + -</td></tr>
+                    <tr><td>Reset zoom</td><td>Ctrl + 0</td><td>⌘ + 0</td></tr>
+                    <tr><td>Scroll down one screen</td><td>Space / PgDn</td><td>Space</td></tr>
+                    <tr><td>Scroll up one screen</td><td>Shift + Space / PgUp</td><td>Shift + Space</td></tr>
+                    <tr><td>Go to top / bottom</td><td>Home / End</td><td>⌘ + ↑ / ⌘ + ↓</td></tr>
+                    <tr><td>View page source</td><td>Ctrl + U</td><td>⌘ + Option + U</td></tr>
+                    <tr><td>JavaScript console</td><td>Ctrl + Shift + J</td><td>⌘ + Option + J</td></tr>
+                    <tr><td>Delete previous word (field)</td><td>Ctrl + Backspace</td><td>Option + Delete</td></tr>
+                  </table>
+
+                  <div class="dt">▸ MOUSE SHORTCUTS</div>
+                  <table class="ref-table">
+                    <tr><th>Action</th><th>Shortcut</th></tr>
+                    <tr><td style="color:var(--cyan)">Open link in background tab</td><td>Ctrl + Click (⌘ + Click on Mac)</td></tr>
+                    <tr><td style="color:var(--cyan)">Open link &amp; jump to it</td><td>Ctrl + Shift + Click</td></tr>
+                    <tr><td style="color:var(--cyan)">Open link in new window</td><td>Shift + Click</td></tr>
+                    <tr><td style="color:var(--cyan)">Download link target</td><td>Alt + Click (Option + Click on Mac)</td></tr>
+                    <tr><td style="color:var(--cyan)">Drag link to open in tab</td><td>Drag to blank area of tab strip</td></tr>
+                    <tr><td style="color:var(--cyan)">Pop tab into new window</td><td>Drag tab out of tab strip</td></tr>
+                    <tr><td style="color:var(--cyan)">Zoom in / out</td><td>Ctrl + Scroll wheel up / down</td></tr>
+                    <tr><td style="color:var(--cyan)">Scroll horizontally</td><td>Shift + Scroll wheel</td></tr>
+                    <tr><td style="color:var(--cyan)">View browsing history</td><td>Right-click / hold Back or Forward</td></tr>
+                  </table>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="domain-section domain-lifestyle" data-domain="lifestyle">
-        <div class="domain-header" onclick="toggleDomain(this)">
+        <div class="domain-header">
           <span class="domain-icon">🧘</span>
           <span class="domain-title">Lifestyle &amp; Philosophy</span>
           <div class="cert-tags">
             <span class="ctag ctag-lifestyle">LIFE</span>
           </div>
-          <span class="domain-sub"
-            >Stoicism · Machiavellianism · Psychology · Buddhism · Taoism ·
-            Existentialism · Minimalism</span
-          >
+          <span class="domain-sub">Stoicism · Buddhism · Taoism · Existentialism · Minimalism · Wicca · Paganism · Druidism</span>
           <span class="chevron">▾</span>
         </div>
         <div class="domain-body">
-          <!-- ── TOPIC: STOICISM ─────────────────────────────────────── -->
+<!-- ── TOPIC: STOICISM ─────────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🏛️</span>
               <span class="topic-name"
                 >Stoicism — The Art of Rational Endurance</span
@@ -16637,7 +16587,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
           <!-- ── TOPIC: MACHIAVELLIANISM ──────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">♟️</span>
               <span class="topic-name"
                 >Machiavellianism — Power, Realism &amp; Strategy</span
@@ -16808,7 +16758,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
           <!-- ── TOPIC: PSYCHOLOGY ───────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🧠</span>
               <span class="topic-name"
                 >Psychology — Mind, Behavior &amp; Biases</span
@@ -17030,7 +16980,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
           <!-- ── TOPIC: PHILOSOPHY ───────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">📜</span>
               <span class="topic-name">Philosophy — Schools of Thought</span>
               <span class="topic-badge">WESTERN TRADITION</span>
@@ -17192,7 +17142,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
           <!-- ── TOPIC: BUDDHISM ─────────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">☸️</span>
               <span class="topic-name">Buddhism — The Path to Liberation</span>
               <span class="topic-badge">SPIRITUAL PHILOSOPHY</span>
@@ -17380,7 +17330,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
           <!-- ── TOPIC: TAOISM ───────────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">☯️</span>
               <span class="topic-name">Taoism — The Way of Nature</span>
               <span class="topic-badge">CHINESE PHILOSOPHY</span>
@@ -17495,7 +17445,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
           <!-- ── TOPIC: EXISTENTIALISM ───────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🌑</span>
               <span class="topic-name">Existentialism &amp; Absurdism</span>
               <span class="topic-badge">20TH C. PHILOSOPHY</span>
@@ -17615,7 +17565,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
           <!-- ── TOPIC: MINIMALISM & INTENTIONAL LIVING ──────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">⬜</span>
               <span class="topic-name"
                 >Minimalism &amp; Intentional Living</span
@@ -17751,31 +17701,549 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
           </div>
         </div>
         <!-- /domain-body lifestyle -->
+
+<!-- ── TOPIC: WICCA ──────────────────────────────────────── -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🌙</span>
+              <span class="topic-name"
+                >Wicca — Sabbats, Elements &amp; Tools</span
+              >
+              <span class="topic-badge">PRACTICE GUIDE</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Tradition</div>
+                <div class="concept-title">
+                  Wicca — Modern Witchcraft Tradition
+                </div>
+                <div class="concept-desc">
+                  Wicca is a modern Pagan religion codified by Gerald Gardner
+                  (1954) and further shaped by Doreen Valiente. It centres on
+                  reverence for nature, polarity of Goddess and God, seasonal
+                  cycles, and magical practice.
+                  <br /><br />
+                  <strong style="color: var(--cyan)">Wiccan Rede:</strong>
+                  <em>"An it harm none, do what ye will."</em>
+                  &nbsp;·&nbsp;
+                  <strong style="color: var(--amber)">Rule of Three:</strong>
+                  Energy sent returns threefold.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ WHEEL OF THE YEAR — 8 SABBATS</div>
+                  <table class="ref-table" style="margin-bottom: 14px">
+                    <tr>
+                      <th>Sabbat</th>
+                      <th>Approx. Date</th>
+                      <th>Type</th>
+                      <th>Themes</th>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--purple)">Samhain</td>
+                      <td>Oct 31</td>
+                      <td>Cross-quarter</td>
+                      <td>Ancestors, veil thins, Wiccan New Year</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Yule</td>
+                      <td>Dec 20–23</td>
+                      <td>Solstice</td>
+                      <td>Rebirth of the Sun, longest night, hope</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--green)">Imbolc</td>
+                      <td>Feb 1–2</td>
+                      <td>Cross-quarter</td>
+                      <td>Brigid, first light, hearth fire, seeds</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--green)">Ostara</td>
+                      <td>Mar 19–22</td>
+                      <td>Equinox</td>
+                      <td>Spring balance, renewal, eggs &amp; hares</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--red)">Beltane</td>
+                      <td>Apr 30 – May 1</td>
+                      <td>Cross-quarter</td>
+                      <td>Fertility, fire, Maypole, handfasting</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--amber)">Litha</td>
+                      <td>Jun 20–23</td>
+                      <td>Solstice</td>
+                      <td>Midsummer, peak solar power, faeries</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--amber)">Lughnasadh</td>
+                      <td>Aug 1</td>
+                      <td>Cross-quarter</td>
+                      <td>First grain harvest, bread, Lugh the Sun God</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--amber)">Mabon</td>
+                      <td>Sep 21–24</td>
+                      <td>Equinox</td>
+                      <td>Autumn balance, second harvest, gratitude</td>
+                    </tr>
+                  </table>
+                  <div class="dt">▸ THE FIVE ELEMENTS</div>
+                  <table class="ref-table" style="margin-bottom: 14px">
+                    <tr>
+                      <th>Element</th>
+                      <th>Direction</th>
+                      <th>Qualities</th>
+                      <th>Tool</th>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--green)">Earth</td>
+                      <td>North</td>
+                      <td>Stability, body, prosperity, grounding</td>
+                      <td>Pentacle</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Air</td>
+                      <td>East</td>
+                      <td>Mind, communication, new beginnings</td>
+                      <td>Wand / Athame</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--red)">Fire</td>
+                      <td>South</td>
+                      <td>Will, passion, courage, transformation</td>
+                      <td>Wand / Candle</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Water</td>
+                      <td>West</td>
+                      <td>Emotion, intuition, healing, dreams</td>
+                      <td>Chalice</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--purple)">Spirit / Aether</td>
+                      <td>Centre</td>
+                      <td>Consciousness, the divine, akasha</td>
+                      <td>The self</td>
+                    </tr>
+                  </table>
+                  <div class="dt">▸ SACRED TOOLS</div>
+                  <table class="ref-table">
+                    <tr>
+                      <th>Tool</th>
+                      <th>Element / Use</th>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Athame</td>
+                      <td>
+                        Double-edged ritual knife; directs energy; Fire or Air
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Wand</td>
+                      <td>Invocation &amp; direction of energy; Air or Fire</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Chalice</td>
+                      <td>
+                        Water element; the Goddess; used in the Great Rite
+                        (symbolic)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Pentacle</td>
+                      <td>
+                        Earth element; altar tile with five-pointed star;
+                        grounding
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Cauldron</td>
+                      <td>
+                        Transformation &amp; rebirth; the womb of the Goddess
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Besom</td>
+                      <td>
+                        Ritual broom; sweeps negative energy from sacred space
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Book of Shadows</td>
+                      <td>
+                        Personal magical journal; spells, rituals,
+                        correspondences
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /wicca topic -->
+
+          <!-- ── TOPIC: PAGANISM ───────────────────────────────────── -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">☀️</span>
+              <span class="topic-name"
+                >Paganism — Traditions &amp; Core Concepts</span
+              >
+              <span class="topic-badge">OVERVIEW</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Overview</div>
+                <div class="concept-title">
+                  Contemporary Paganism — Nature-Based Spirituality
+                </div>
+                <div class="concept-desc">
+                  Paganism is a broad category of earth-centred, polytheistic,
+                  or animistic spiritual traditions. Common themes: reverence
+                  for nature, cyclical time, pre-Christian deities or
+                  archetypes, and personal spiritual sovereignty. No single holy
+                  text or central authority governs all paths.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ MAJOR PAGAN TRADITIONS</div>
+                  <table class="ref-table" style="margin-bottom: 14px">
+                    <tr>
+                      <th>Tradition</th>
+                      <th>Cultural Roots</th>
+                      <th>Focus</th>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Wicca</td>
+                      <td>20th-c. British</td>
+                      <td>Duotheism (Goddess &amp; God), the Craft, Sabbats</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--green)">Druidry</td>
+                      <td>Celtic revival</td>
+                      <td>
+                        Nature, oak wisdom, three grades (Bard/Ovate/Druid)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--amber)">Asatru / Heathenry</td>
+                      <td>Norse/Germanic</td>
+                      <td>Odin, Thor, the Nine Worlds, wyrd, blót offerings</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--amber)">Hellenism</td>
+                      <td>Ancient Greek</td>
+                      <td>Olympian pantheon, philosophy, polis religion</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--red)">Kemetism</td>
+                      <td>Ancient Egyptian</td>
+                      <td>Ma'at, Osiris, Isis, ritual purity, heka magic</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--purple)">Celticism</td>
+                      <td>Celtic cultures</td>
+                      <td>
+                        Tuatha Dé Danann, sacred sites, seasonal festivals
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--purple)">Reconstructionism</td>
+                      <td>Various</td>
+                      <td>
+                        Scholarly revival of ancient practices; source-driven
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--muted)">Eclectic Paganism</td>
+                      <td>Mixed</td>
+                      <td>Personal synthesis drawn from multiple traditions</td>
+                    </tr>
+                  </table>
+                  <div class="dt">▸ CORE CONCEPTS</div>
+                  <table class="ref-table">
+                    <tr>
+                      <th>Concept</th>
+                      <th>Meaning</th>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Animism</td>
+                      <td>
+                        All things (animals, plants, rivers, stones) have spirit
+                        or consciousness
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Polytheism</td>
+                      <td>
+                        Multiple distinct deities; hard poly = literal gods;
+                        soft poly = archetypes
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Immanence</td>
+                      <td>
+                        The divine is present within nature and the material
+                        world
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Sacred Calendar</td>
+                      <td>
+                        Ritual life aligned with solar (Sabbats) and lunar
+                        (Esbats) cycles
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Esbat</td>
+                      <td>
+                        Full or new moon ritual; traditionally 13 per year;
+                        dedicated to the Goddess
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Syncretic</td>
+                      <td>
+                        Blending elements from multiple traditions; common in
+                        eclectic practice
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /paganism topic -->
+
+          <!-- ── TOPIC: DRUIDISM ──────────────────────────────────── -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🌳</span>
+              <span class="topic-name"
+                >Druidism — Grades, Awen &amp; Sacred Concepts</span
+              >
+              <span class="topic-badge">PRACTICE GUIDE</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Tradition</div>
+                <div class="concept-title">Druidry — Celtic Spiritual Path</div>
+                <div class="concept-desc">
+                  Druidry draws on Celtic heritage, nature mysticism, and Bardic
+                  oral tradition. Modern revival began in the 18th century.
+                  Major orders:
+                  <strong style="color: var(--green)">OBOD</strong>
+                  (Order of Bards, Ovates and Druids, est. 1964) and
+                  <strong style="color: var(--green)">ADF</strong>
+                  (Ár nDraíocht Féin, est. 1983).
+                  <strong style="color: var(--amber)">Awen</strong>
+                  (Welsh: /ˈaʊ.ɛn/) — divine inspiration flowing through all
+                  things; symbolised by three rays of light ☀.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ THREE GRADES</div>
+                  <div class="card-grid-3" style="margin-bottom: 14px">
+                    <div
+                      class="g-card"
+                      style="border-color: rgba(0, 212, 255, 0.3)"
+                    >
+                      <div class="g-icon">🎵</div>
+                      <div class="g-name" style="color: var(--cyan)">Bard</div>
+                      <div class="g-desc">
+                        First grade. Keeper of memory, story, and song. Develops
+                        creative voice, poetry, and the craft of sacred
+                        expression. Studies Celtic mythology &amp; lore.
+                      </div>
+                    </div>
+                    <div
+                      class="g-card"
+                      style="border-color: rgba(0, 255, 153, 0.3)"
+                    >
+                      <div class="g-icon">🌿</div>
+                      <div class="g-name" style="color: var(--green)">
+                        Ovate
+                      </div>
+                      <div class="g-desc">
+                        Second grade. Seer, healer, and naturalist. Works with
+                        divination (Ogham, scrying), herbalism, communion with
+                        ancestors and the spirit world.
+                      </div>
+                    </div>
+                    <div
+                      class="g-card"
+                      style="border-color: rgba(255, 176, 32, 0.3)"
+                    >
+                      <div class="g-icon">🌳</div>
+                      <div class="g-name" style="color: var(--amber)">
+                        Druid
+                      </div>
+                      <div class="g-desc">
+                        Third grade. Philosopher, ritualist, and mediator. Deep
+                        study of cosmology, ceremony, law &amp; ethics. Bridge
+                        between the human and divine.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dt">▸ THREE REALMS (TRIAD OF BEING)</div>
+                  <table class="ref-table" style="margin-bottom: 14px">
+                    <tr>
+                      <th>Realm</th>
+                      <th>Element</th>
+                      <th>Associations</th>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--green)">Land</td>
+                      <td>Earth</td>
+                      <td>Physical world, ancestors, stability, the body</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Sea</td>
+                      <td>Water</td>
+                      <td>
+                        The unconscious, emotion, memory, the cauldron of change
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--amber)">Sky</td>
+                      <td>Air / Fire</td>
+                      <td>
+                        Spirit, inspiration (Awen), cosmos, clarity of mind
+                      </td>
+                    </tr>
+                  </table>
+                  <div class="dt">▸ KEY CONCEPTS &amp; TERMS</div>
+                  <table class="ref-table">
+                    <tr>
+                      <th>Term</th>
+                      <th>Language</th>
+                      <th>Meaning</th>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Awen</td>
+                      <td>Welsh</td>
+                      <td>
+                        Divine inspiration; flowing spirit of creativity
+                        connecting all things
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Nwyfre</td>
+                      <td>Welsh</td>
+                      <td>
+                        Life force / spirit energy; the animating essence within
+                        living things
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Calas</td>
+                      <td>Welsh</td>
+                      <td>
+                        Materiality; the physical substance of the universe;
+                        earth principle
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Ogham</td>
+                      <td>Old Irish</td>
+                      <td>
+                        Ancient Celtic alphabet of 20 letters; each linked to a
+                        tree; used in divination
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Nemeton</td>
+                      <td>Gaulish</td>
+                      <td>
+                        Sacred grove or sanctuary; the Druid's natural temple
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Imbolc</td>
+                      <td>Old Irish</td>
+                      <td>
+                        "In the belly" — spring awakening; sacred to Brighid;
+                        Feb 1
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Beltane</td>
+                      <td>Old Irish</td>
+                      <td>
+                        "Bright fire" — May fertility festival; cattle driven
+                        between bonfires
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Lughnasadh</td>
+                      <td>Old Irish</td>
+                      <td>
+                        Harvest feast of Lugh; grain offerings; games and skills
+                        competitions
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--cyan)">Samhain</td>
+                      <td>Old Irish</td>
+                      <td>
+                        "Summer's end" — feast of the dead; Celtic new year;
+                        veil thins
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /druidism topic -->
+        </div>
+        <!-- /domain-body lifestyle -->
       </div>
       <!-- /domain-section lifestyle -->
+    </div>
+    <!-- /container -->
 
-      <!-- ══════════════════════════════════════════════════════════════════
-           DOMAIN: MILITARY STAFF CODES
-           Topics: Prefix Letters · Functional Numbers · Sub-designators
-                   Branch Comparison · Common Examples
-      ══════════════════════════════════════════════════════════════════════ -->
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════════════════════════════════════════ -->
+    <div
+      style="
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 18px;
+        border-top: 1px solid var(--border);
+        background: var(--bg2);
+      "
+    >
+      <div
+        style="
+          font-family: var(--mono);
+          font-size: 10px;
+          color: var(--muted);
+          letter-spacing: 2px;
+        "
+      >
+        CompTIA &amp; Tech Reference · 2026 Edition · Networking · Security ·
+        Threats · GRC · SOC · PenTest · Linux · AI · Scripting &amp; Web
+        </div>
+      </div>
+
       <div class="domain-section domain-military" data-domain="military">
-        <div class="domain-header" onclick="toggleDomain(this)">
+        <div class="domain-header">
           <span class="domain-icon">🎖️</span>
           <span class="domain-title">Military Staff Codes</span>
           <div class="cert-tags">
             <span class="ctag ctag-military">MIL</span>
           </div>
-          <span class="domain-sub"
-            >J · G · S · N · A · C · M — Functional Numbers 1–9 ·
-            Sub-designators · Branch Comparison</span
-          >
+          <span class="domain-sub">J · G · S · N · A · C · M — Functional Numbers 1–9 · Sub-designators · Branch Comparison</span>
           <span class="chevron">▾</span>
         </div>
         <div class="domain-body">
-          <!-- ── TOPIC: HOW THE SYSTEM WORKS ──────────────────────────── -->
+<!-- ── TOPIC: HOW THE SYSTEM WORKS ──────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">📐</span>
               <span class="topic-name"
                 >How Staff Codes Work — Letter + Number + Sub</span
@@ -18003,7 +18471,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
           <!-- ── TOPIC: PREFIX LETTERS ─────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔤</span>
               <span class="topic-name"
                 >Prefix Letters — J · G · S · N · A · C · M · F</span
@@ -18253,7 +18721,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
           <!-- ── TOPIC: FUNCTIONAL NUMBERS 1–9 ────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔢</span>
               <span class="topic-name"
                 >Functional Numbers 1 through 9 — What Each Number Means</span
@@ -18524,7 +18992,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
           <!-- ── TOPIC: SUB-DESIGNATORS ────────────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">🔭</span>
               <span class="topic-name"
                 >Sub-Designators — The Third Digit (e.g., J63)</span
@@ -18739,7 +19207,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
           <!-- ── TOPIC: BRANCH-BY-BRANCH COMPARISON ───────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">⚖️</span>
               <span class="topic-name"
                 >Branch Comparison — Same Number, Different Context</span
@@ -18928,7 +19396,7 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
 
           <!-- ── TOPIC: QUICK REFERENCE TABLE ─────────────────────────── -->
           <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
+            <div class="topic-header">
               <span class="topic-icon">📋</span>
               <span class="topic-name"
                 >Quick Reference — Full Cross-Matrix</span
@@ -19223,562 +19691,10 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
           </div>
         </div>
         <!-- /domain-body military -->
-      </div>
-      <!-- /domain-section military -->
-
-      <!-- ══ DOMAIN: LIFESTYLE & PHILOSOPHY ════════════════════════════
-           Topics: Wicca · Paganism · Druidism
-      ═══════════════════════════════════════════════════════════════════ -->
-      <div class="domain-section domain-lifestyle" data-domain="lifestyle">
-        <div class="domain-header" onclick="toggleDomain(this)">
-          <span class="domain-icon">🌿</span>
-          <span class="domain-title">Lifestyle &amp; Philosophy</span>
-          <div class="cert-tags">
-            <span class="ctag ctag-general">GENERAL</span>
-          </div>
-          <span class="domain-sub"
-            >Wicca · Paganism · Druidism · Wheel of the Year</span
-          >
-          <span class="chevron">▾</span>
         </div>
-        <div class="domain-body">
-          <!-- ── TOPIC: WICCA ──────────────────────────────────────── -->
-          <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
-              <span class="topic-icon">🌙</span>
-              <span class="topic-name"
-                >Wicca — Sabbats, Elements &amp; Tools</span
-              >
-              <span class="topic-badge">PRACTICE GUIDE</span>
-              <span class="topic-chev">▶</span>
-            </div>
-            <div class="topic-body">
-              <div class="concept-card">
-                <div class="concept-label">Tradition</div>
-                <div class="concept-title">
-                  Wicca — Modern Witchcraft Tradition
-                </div>
-                <div class="concept-desc">
-                  Wicca is a modern Pagan religion codified by Gerald Gardner
-                  (1954) and further shaped by Doreen Valiente. It centres on
-                  reverence for nature, polarity of Goddess and God, seasonal
-                  cycles, and magical practice.
-                  <br /><br />
-                  <strong style="color: var(--cyan)">Wiccan Rede:</strong>
-                  <em>"An it harm none, do what ye will."</em>
-                  &nbsp;·&nbsp;
-                  <strong style="color: var(--amber)">Rule of Three:</strong>
-                  Energy sent returns threefold.
-                </div>
-                <div class="dw">
-                  <div class="dt">▸ WHEEL OF THE YEAR — 8 SABBATS</div>
-                  <table class="ref-table" style="margin-bottom: 14px">
-                    <tr>
-                      <th>Sabbat</th>
-                      <th>Approx. Date</th>
-                      <th>Type</th>
-                      <th>Themes</th>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--purple)">Samhain</td>
-                      <td>Oct 31</td>
-                      <td>Cross-quarter</td>
-                      <td>Ancestors, veil thins, Wiccan New Year</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Yule</td>
-                      <td>Dec 20–23</td>
-                      <td>Solstice</td>
-                      <td>Rebirth of the Sun, longest night, hope</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--green)">Imbolc</td>
-                      <td>Feb 1–2</td>
-                      <td>Cross-quarter</td>
-                      <td>Brigid, first light, hearth fire, seeds</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--green)">Ostara</td>
-                      <td>Mar 19–22</td>
-                      <td>Equinox</td>
-                      <td>Spring balance, renewal, eggs &amp; hares</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--red)">Beltane</td>
-                      <td>Apr 30 – May 1</td>
-                      <td>Cross-quarter</td>
-                      <td>Fertility, fire, Maypole, handfasting</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--amber)">Litha</td>
-                      <td>Jun 20–23</td>
-                      <td>Solstice</td>
-                      <td>Midsummer, peak solar power, faeries</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--amber)">Lughnasadh</td>
-                      <td>Aug 1</td>
-                      <td>Cross-quarter</td>
-                      <td>First grain harvest, bread, Lugh the Sun God</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--amber)">Mabon</td>
-                      <td>Sep 21–24</td>
-                      <td>Equinox</td>
-                      <td>Autumn balance, second harvest, gratitude</td>
-                    </tr>
-                  </table>
-                  <div class="dt">▸ THE FIVE ELEMENTS</div>
-                  <table class="ref-table" style="margin-bottom: 14px">
-                    <tr>
-                      <th>Element</th>
-                      <th>Direction</th>
-                      <th>Qualities</th>
-                      <th>Tool</th>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--green)">Earth</td>
-                      <td>North</td>
-                      <td>Stability, body, prosperity, grounding</td>
-                      <td>Pentacle</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Air</td>
-                      <td>East</td>
-                      <td>Mind, communication, new beginnings</td>
-                      <td>Wand / Athame</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--red)">Fire</td>
-                      <td>South</td>
-                      <td>Will, passion, courage, transformation</td>
-                      <td>Wand / Candle</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Water</td>
-                      <td>West</td>
-                      <td>Emotion, intuition, healing, dreams</td>
-                      <td>Chalice</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--purple)">Spirit / Aether</td>
-                      <td>Centre</td>
-                      <td>Consciousness, the divine, akasha</td>
-                      <td>The self</td>
-                    </tr>
-                  </table>
-                  <div class="dt">▸ SACRED TOOLS</div>
-                  <table class="ref-table">
-                    <tr>
-                      <th>Tool</th>
-                      <th>Element / Use</th>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Athame</td>
-                      <td>
-                        Double-edged ritual knife; directs energy; Fire or Air
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Wand</td>
-                      <td>Invocation &amp; direction of energy; Air or Fire</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Chalice</td>
-                      <td>
-                        Water element; the Goddess; used in the Great Rite
-                        (symbolic)
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Pentacle</td>
-                      <td>
-                        Earth element; altar tile with five-pointed star;
-                        grounding
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Cauldron</td>
-                      <td>
-                        Transformation &amp; rebirth; the womb of the Goddess
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Besom</td>
-                      <td>
-                        Ritual broom; sweeps negative energy from sacred space
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Book of Shadows</td>
-                      <td>
-                        Personal magical journal; spells, rituals,
-                        correspondences
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- /wicca topic -->
-
-          <!-- ── TOPIC: PAGANISM ───────────────────────────────────── -->
-          <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
-              <span class="topic-icon">☀️</span>
-              <span class="topic-name"
-                >Paganism — Traditions &amp; Core Concepts</span
-              >
-              <span class="topic-badge">OVERVIEW</span>
-              <span class="topic-chev">▶</span>
-            </div>
-            <div class="topic-body">
-              <div class="concept-card">
-                <div class="concept-label">Overview</div>
-                <div class="concept-title">
-                  Contemporary Paganism — Nature-Based Spirituality
-                </div>
-                <div class="concept-desc">
-                  Paganism is a broad category of earth-centred, polytheistic,
-                  or animistic spiritual traditions. Common themes: reverence
-                  for nature, cyclical time, pre-Christian deities or
-                  archetypes, and personal spiritual sovereignty. No single holy
-                  text or central authority governs all paths.
-                </div>
-                <div class="dw">
-                  <div class="dt">▸ MAJOR PAGAN TRADITIONS</div>
-                  <table class="ref-table" style="margin-bottom: 14px">
-                    <tr>
-                      <th>Tradition</th>
-                      <th>Cultural Roots</th>
-                      <th>Focus</th>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Wicca</td>
-                      <td>20th-c. British</td>
-                      <td>Duotheism (Goddess &amp; God), the Craft, Sabbats</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--green)">Druidry</td>
-                      <td>Celtic revival</td>
-                      <td>
-                        Nature, oak wisdom, three grades (Bard/Ovate/Druid)
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--amber)">Asatru / Heathenry</td>
-                      <td>Norse/Germanic</td>
-                      <td>Odin, Thor, the Nine Worlds, wyrd, blót offerings</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--amber)">Hellenism</td>
-                      <td>Ancient Greek</td>
-                      <td>Olympian pantheon, philosophy, polis religion</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--red)">Kemetism</td>
-                      <td>Ancient Egyptian</td>
-                      <td>Ma'at, Osiris, Isis, ritual purity, heka magic</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--purple)">Celticism</td>
-                      <td>Celtic cultures</td>
-                      <td>
-                        Tuatha Dé Danann, sacred sites, seasonal festivals
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--purple)">Reconstructionism</td>
-                      <td>Various</td>
-                      <td>
-                        Scholarly revival of ancient practices; source-driven
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--muted)">Eclectic Paganism</td>
-                      <td>Mixed</td>
-                      <td>Personal synthesis drawn from multiple traditions</td>
-                    </tr>
-                  </table>
-                  <div class="dt">▸ CORE CONCEPTS</div>
-                  <table class="ref-table">
-                    <tr>
-                      <th>Concept</th>
-                      <th>Meaning</th>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Animism</td>
-                      <td>
-                        All things (animals, plants, rivers, stones) have spirit
-                        or consciousness
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Polytheism</td>
-                      <td>
-                        Multiple distinct deities; hard poly = literal gods;
-                        soft poly = archetypes
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Immanence</td>
-                      <td>
-                        The divine is present within nature and the material
-                        world
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Sacred Calendar</td>
-                      <td>
-                        Ritual life aligned with solar (Sabbats) and lunar
-                        (Esbats) cycles
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Esbat</td>
-                      <td>
-                        Full or new moon ritual; traditionally 13 per year;
-                        dedicated to the Goddess
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Syncretic</td>
-                      <td>
-                        Blending elements from multiple traditions; common in
-                        eclectic practice
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- /paganism topic -->
-
-          <!-- ── TOPIC: DRUIDISM ──────────────────────────────────── -->
-          <div class="topic">
-            <div class="topic-header" onclick="toggleTopic(this)">
-              <span class="topic-icon">🌳</span>
-              <span class="topic-name"
-                >Druidism — Grades, Awen &amp; Sacred Concepts</span
-              >
-              <span class="topic-badge">PRACTICE GUIDE</span>
-              <span class="topic-chev">▶</span>
-            </div>
-            <div class="topic-body">
-              <div class="concept-card">
-                <div class="concept-label">Tradition</div>
-                <div class="concept-title">Druidry — Celtic Spiritual Path</div>
-                <div class="concept-desc">
-                  Druidry draws on Celtic heritage, nature mysticism, and Bardic
-                  oral tradition. Modern revival began in the 18th century.
-                  Major orders:
-                  <strong style="color: var(--green)">OBOD</strong>
-                  (Order of Bards, Ovates and Druids, est. 1964) and
-                  <strong style="color: var(--green)">ADF</strong>
-                  (Ár nDraíocht Féin, est. 1983).
-                  <strong style="color: var(--amber)">Awen</strong>
-                  (Welsh: /ˈaʊ.ɛn/) — divine inspiration flowing through all
-                  things; symbolised by three rays of light ☀.
-                </div>
-                <div class="dw">
-                  <div class="dt">▸ THREE GRADES</div>
-                  <div class="card-grid-3" style="margin-bottom: 14px">
-                    <div
-                      class="g-card"
-                      style="border-color: rgba(0, 212, 255, 0.3)"
-                    >
-                      <div class="g-icon">🎵</div>
-                      <div class="g-name" style="color: var(--cyan)">Bard</div>
-                      <div class="g-desc">
-                        First grade. Keeper of memory, story, and song. Develops
-                        creative voice, poetry, and the craft of sacred
-                        expression. Studies Celtic mythology &amp; lore.
-                      </div>
-                    </div>
-                    <div
-                      class="g-card"
-                      style="border-color: rgba(0, 255, 153, 0.3)"
-                    >
-                      <div class="g-icon">🌿</div>
-                      <div class="g-name" style="color: var(--green)">
-                        Ovate
-                      </div>
-                      <div class="g-desc">
-                        Second grade. Seer, healer, and naturalist. Works with
-                        divination (Ogham, scrying), herbalism, communion with
-                        ancestors and the spirit world.
-                      </div>
-                    </div>
-                    <div
-                      class="g-card"
-                      style="border-color: rgba(255, 176, 32, 0.3)"
-                    >
-                      <div class="g-icon">🌳</div>
-                      <div class="g-name" style="color: var(--amber)">
-                        Druid
-                      </div>
-                      <div class="g-desc">
-                        Third grade. Philosopher, ritualist, and mediator. Deep
-                        study of cosmology, ceremony, law &amp; ethics. Bridge
-                        between the human and divine.
-                      </div>
-                    </div>
-                  </div>
-                  <div class="dt">▸ THREE REALMS (TRIAD OF BEING)</div>
-                  <table class="ref-table" style="margin-bottom: 14px">
-                    <tr>
-                      <th>Realm</th>
-                      <th>Element</th>
-                      <th>Associations</th>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--green)">Land</td>
-                      <td>Earth</td>
-                      <td>Physical world, ancestors, stability, the body</td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Sea</td>
-                      <td>Water</td>
-                      <td>
-                        The unconscious, emotion, memory, the cauldron of change
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--amber)">Sky</td>
-                      <td>Air / Fire</td>
-                      <td>
-                        Spirit, inspiration (Awen), cosmos, clarity of mind
-                      </td>
-                    </tr>
-                  </table>
-                  <div class="dt">▸ KEY CONCEPTS &amp; TERMS</div>
-                  <table class="ref-table">
-                    <tr>
-                      <th>Term</th>
-                      <th>Language</th>
-                      <th>Meaning</th>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Awen</td>
-                      <td>Welsh</td>
-                      <td>
-                        Divine inspiration; flowing spirit of creativity
-                        connecting all things
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Nwyfre</td>
-                      <td>Welsh</td>
-                      <td>
-                        Life force / spirit energy; the animating essence within
-                        living things
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Calas</td>
-                      <td>Welsh</td>
-                      <td>
-                        Materiality; the physical substance of the universe;
-                        earth principle
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Ogham</td>
-                      <td>Old Irish</td>
-                      <td>
-                        Ancient Celtic alphabet of 20 letters; each linked to a
-                        tree; used in divination
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Nemeton</td>
-                      <td>Gaulish</td>
-                      <td>
-                        Sacred grove or sanctuary; the Druid's natural temple
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Imbolc</td>
-                      <td>Old Irish</td>
-                      <td>
-                        "In the belly" — spring awakening; sacred to Brighid;
-                        Feb 1
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Beltane</td>
-                      <td>Old Irish</td>
-                      <td>
-                        "Bright fire" — May fertility festival; cattle driven
-                        between bonfires
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Lughnasadh</td>
-                      <td>Old Irish</td>
-                      <td>
-                        Harvest feast of Lugh; grain offerings; games and skills
-                        competitions
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="color: var(--cyan)">Samhain</td>
-                      <td>Old Irish</td>
-                      <td>
-                        "Summer's end" — feast of the dead; Celtic new year;
-                        veil thins
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- /druidism topic -->
-        </div>
-        <!-- /domain-body lifestyle -->
-      </div>
-      <!-- /domain-section lifestyle -->
-    </div>
-    <!-- /container -->
-
-    <!-- ═══════════════════════════════════════════════════════════════════════
-         FOOTER
-    ═══════════════════════════════════════════════════════════════════════════ -->
-    <div
-      style="
-        position: relative;
-        z-index: 1;
-        text-align: center;
-        padding: 18px;
-        border-top: 1px solid var(--border);
-        background: var(--bg2);
-      "
-    >
-      <div
-        style="
-          font-family: var(--mono);
-          font-size: 10px;
-          color: var(--muted);
-          letter-spacing: 2px;
-        "
-      >
-        CompTIA &amp; Tech Reference · 2026 Edition · Networking · Security ·
-        Threats · GRC · SOC · PenTest · Linux · AI · Scripting &amp; Web
       </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════════════════════════
-         SCRIPTS
-         script.js contains all interactive logic:
-         - toggleDomain(), toggleTopic() — accordion controls
-         - filter() — domain chip filtering
-         - toggleTheme(), updateThemeButton() — light/dark mode
-         - buildCloudStack() IIFE — cloud responsibility matrix
-         - toggleAll() — expand/collapse all
-    ═══════════════════════════════════════════════════════════════════════════ -->
     <script src="script.js"></script>
   </body>
 </html>

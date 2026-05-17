@@ -53,7 +53,7 @@ function filter(domain, chip) {
 }
 
 // ── EXPAND / COLLAPSE ALL ──────────────────────────────────────────────────
-function toggleAll(btn) {
+function toggleAll() {
   allExpanded = !allExpanded;
   document.querySelectorAll(".domain-header, .topic-header").forEach(h => h.classList.toggle("open", allExpanded));
   document.querySelectorAll(".domain-body, .topic-body").forEach(b => b.classList.toggle("open", allExpanded));
@@ -87,6 +87,24 @@ document.addEventListener("DOMContentLoaded", () => {
   initSnapQuote();
   initCloudStack();
   initTouchFeedback();
+
+  // Filter chips — event delegation on the filter bar
+  document.querySelector(".filter-bar")?.addEventListener("click", e => {
+    const chip = e.target.closest(".chip");
+    if (chip) filter(chip.dataset.domain || "all", chip);
+  });
+
+  // Accordion — event delegation on the container
+  document.getElementById("domain-container")?.addEventListener("click", e => {
+    const dh = e.target.closest(".domain-header");
+    if (dh) { toggleDomain(dh); return; }
+    const th = e.target.closest(".topic-header");
+    if (th) toggleTopic(th);
+  });
+
+  // Header control buttons
+  document.getElementById("hdr-theme-btn")?.addEventListener("click", toggleTheme);
+  document.getElementById("hdr-expand-btn")?.addEventListener("click", toggleAll);
 });
 
 // ── SNAP QUOTE ─────────────────────────────────────────────────────────────
@@ -116,28 +134,19 @@ function initCloudStack() {
 
   const layers = ["Applications","Data","Runtime","Middleware","OS","Virtualization","Servers","Storage","Networking"];
   const resp   = [[1,1,1,0],[1,1,1,0],[1,1,0,0],[1,1,0,0],[1,1,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0]];
-  const colors = [
-    ["rgba(255,77,109,.12)","#ff4d6d"],
-    ["rgba(255,176,32,.09)","#ffb020"],
-    ["rgba(0,212,255,.08)","#00d4ff"],
-    ["rgba(0,255,153,.08)","#00ff99"]
-  ];
 
   layers.forEach((name, r) => {
     const row = document.createElement("div");
-    row.style.cssText = "display:flex;gap:0;margin-bottom:3px;align-items:stretch";
+    row.className = "cloud-row";
 
     const lbl = document.createElement("div");
-    lbl.style.cssText = "width:120px;font-size:11.5px;color:#cdd9f0;padding:5px 4px 5px 0;flex-shrink:0;font-weight:500";
+    lbl.className = "cloud-label";
     lbl.textContent = name;
     row.appendChild(lbl);
 
     resp[r].forEach((isCust, c) => {
       const cell = document.createElement("div");
-      cell.style.cssText = `flex:1;text-align:center;padding:5px 3px;font-size:11px;font-weight:600;border-radius:3px;margin:0 2px;
-        ${isCust
-          ? `background:${colors[c][0]};color:${colors[c][1]};border:1px solid ${colors[c][0]}`
-          : "background:rgba(255,255,255,.02);color:#3a4a60;border:1px solid rgba(255,255,255,.05)"}`;
+      cell.className = `cloud-cell ${isCust ? `cloud-cell-c${c}` : "cloud-cell-provider"}`;
       cell.textContent = isCust ? "Customer" : "Provider";
       row.appendChild(cell);
     });
