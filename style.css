@@ -313,25 +313,96 @@ header p {
   background: rgba(245, 158, 11, 0.1);
 }
 
-/* Header control buttons */
+/* Header control switches — Obsidian mod-dark style */
 .header-controls {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   margin-left: auto;
+  align-items: center;
 }
-.hdr-btn {
-  font-family: var(--mono);
-  font-size: 14px;
-  background: rgba(0, 212, 255, 0.06);
-  border: 1px solid rgba(0, 212, 255, 0.2);
-  color: var(--cyan);
-  padding: 4px 10px;
-  border-radius: 3px;
+.sw-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
   cursor: pointer;
-  transition: all 0.2s;
+  padding: 2px 0;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.hdr-btn:hover {
-  background: rgba(0, 212, 255, 0.14);
+.sw-btn:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+.sw-sun,
+.sw-moon,
+.sw-text {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  transition: color 0.2s;
+  line-height: 1;
+}
+.sw-track {
+  position: relative;
+  width: 38px;
+  height: 20px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  transition: background 0.25s ease, border-color 0.25s ease;
+  box-sizing: border-box;
+}
+.sw-thumb {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition:
+    left 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 0.2s ease;
+  pointer-events: none;
+}
+
+/* ON state (aria-checked="true") */
+.sw-btn[aria-checked="true"] .sw-track {
+  background: rgba(124, 58, 237, 0.18);
+  border-color: rgba(124, 58, 237, 0.55);
+}
+.sw-btn[aria-checked="true"] .sw-thumb {
+  left: calc(100% - 16px);
+  background: #7c3aed;
+}
+.sw-btn[aria-checked="true"] .sw-moon,
+.sw-btn[aria-checked="true"] .sw-text {
+  color: #7c3aed;
+}
+
+/* Light mode overrides */
+[data-theme="light"] .sw-track {
+  background: rgba(0, 0, 0, 0.07);
+  border-color: var(--border);
+}
+[data-theme="light"] .sw-btn[aria-checked="true"] .sw-track {
+  background: rgba(124, 58, 237, 0.12);
+  border-color: rgba(124, 58, 237, 0.45);
+}
+[data-theme="light"] .sw-btn[aria-checked="true"] .sw-moon,
+[data-theme="light"] .sw-btn[aria-checked="true"] .sw-text {
+  color: #7c3aed;
+}
+[data-theme="light"] .sw-thumb {
+  background: var(--muted);
+}
+[data-theme="light"] .sw-btn[aria-checked="true"] .sw-thumb {
+  background: #7c3aed;
 }
 .header-top-row {
   display: flex;
@@ -1622,3 +1693,69 @@ header p {
 .cloud-cell-c1 { background: rgba(255, 176,  32, 0.09); color: #ffb020; border: 1px solid rgba(255, 176,  32, 0.09); }
 .cloud-cell-c2 { background: rgba(  0, 212, 255, 0.08); color: #00d4ff; border: 1px solid rgba(  0, 212, 255, 0.08); }
 .cloud-cell-c3 { background: rgba(  0, 255, 153, 0.08); color: #00ff99; border: 1px solid rgba(  0, 255, 153, 0.08); }
+
+/* mental-disorders-domain */
+
+/* === Mental Disorders Domain === */
+[data-domain="mental-disorders"] .topic-desc {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+[data-domain="mental-disorders"] .concept-desc strong {
+  color: var(--cyan);
+}
+body.light [data-domain="mental-disorders"] .topic-desc { color: #444; }
+body.light [data-domain="mental-disorders"] .concept-title { color: #111; }
+body.light [data-domain="mental-disorders"] .concept-label { color: #fff; }
+
+/* mental-disorders-p2 */
+
+/* === Mental Disorders P2 — Conditions for Further Study label === */
+[data-domain="mental-disorders"] .topic-name span[style] {
+  font-weight: 400;
+}
+
+/* mental-disorders-p3 */
+
+/* ── Disorder Detail Panels (P3) ─────────────────────────── */
+.disorder-expand-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 8px; padding: 3px 9px; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: .04em;
+  background: transparent; border: 1px solid var(--cyan);
+  color: var(--cyan); cursor: pointer; transition: background .15s, color .15s;
+}
+.disorder-expand-btn:hover { background: var(--cyan); color: #000; }
+.disorder-expand-btn.open  { background: var(--cyan); color: #000; }
+.disorder-detail-panel {
+  display: none; margin-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding-top: 8px;
+}
+.disorder-detail-panel.open { display: block; }
+.detail-tabs {
+  display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px;
+}
+.detail-tab {
+  padding: 3px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;
+  border: 1px solid rgba(255,255,255,.18); background: transparent;
+  color: var(--text-muted); cursor: pointer; transition: all .15s;
+}
+.detail-tab:hover  { border-color: var(--cyan); color: var(--cyan); }
+.detail-tab.active { background: var(--cyan); border-color: var(--cyan); color: #000; }
+.detail-content {
+  font-size: 0.78rem; line-height: 1.55; color: var(--text-muted);
+  display: none;
+}
+.detail-content.active { display: block; }
+/* light mode */
+body.light .disorder-expand-btn        { border-color: var(--cyan); color: #0077aa; }
+body.light .disorder-expand-btn:hover,
+body.light .disorder-expand-btn.open   { background: var(--cyan); color: #fff; }
+body.light .detail-tab                 { color: #555; border-color: #bbb; }
+body.light .detail-tab:hover           { color: #0077aa; border-color: #0077aa; }
+body.light .detail-tab.active          { background: var(--cyan); border-color: var(--cyan); color: #fff; }
+body.light .detail-content             { color: #333; }
+body.light .disorder-detail-panel      { border-top-color: rgba(0,0,0,.12); }
