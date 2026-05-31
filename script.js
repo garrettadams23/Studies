@@ -670,3 +670,126 @@ const DISORDER_DATA = {
     card.appendChild(built.panel);
   });
 })();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SEARCH
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Stored original innerHTML for each searchable node (keyed by element). */
+const _originals = new WeakMap();
+
+/** Save original HTML before first search so we can restore highlights. */
+function saveOriginal(el) {
+  if (!_originals.has(el)) _originals.set(el, el.innerHTML);
+}
+
+/** Restore all saved originals (removes highlights). */
+function restoreOriginals() {
+  document.querySelectorAll("[data-search-marked]").forEach(el => {
+    if (_originals.has(el)) el.innerHTML = _originals.get(el);
+    el.removeAttribute("data-search-marked");
+  });
+}
+
+/**
+ * Highlight all occurrences of `term` in el.innerHTML.
+ * Works on text nodes only — avoids mangling tag attributes.
+ */
+function highlightIn(el, term) {
+  saveOriginal(el);
+  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(`(${escaped})`, "gi");
+  el.innerHTML = el.innerHTML.replace(re, '<mark class="sh">$1</mark>');
+  el.setAttribute("data-search-marked", "1");
+}
+
+/**
+ * Main search handler — called on every keystroke.
+ * @param {string} raw - Current value of the search input.
+ */
+function searchContent(raw) {
+  const term = raw.trim();
+  const clearBtn = document.getElementById("search-clear");
+  const countEl  = document.getElementById("search-count");
+
+  // Show/hide clear button
+  if (clearBtn) clearBtn.classList.toggle("visible", term.length > 0);
+
+  // Reset all previous highlights and visibility
+  restoreOriginals();
+  document.querySelectorAll(".topic.search-hidden, .domain-section.search-hidden")
+    .forEach(el => el.classList.remove("search-hidden"));
+
+  if (term.length < 2) {
+    if (countEl) countEl.textContent = "";
+    return;
+  }
+
+  const termLower = term.toLowerCase();
+  let matchCount = 0;
+
+  document.querySelectorAll(".domain-section").forEach(domain => {
+    let domainHasMatch = false;
+
+    domain.querySelectorAll(".topic").forEach(topic => {
+      // Searchable nodes inside each topic
+      const nodes = [
+        ...topic.querySelectorAll(".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, .code-block"),
+      ];
+
+      const topicText = topic.textContent.toLowerCase();
+      const matches   = topicText.includes(termLower);
+
+      if (matches) {
+        domainHasMatch = true;
+        matchCount++;
+
+        // Auto-expand the topic and its parent domain
+        topic.querySelector(".topic-header")?.classList.add("open");
+        topic.querySelector(".topic-body")?.classList.add("open");
+        domain.querySelector(".domain-header")?.classList.add("open");
+        domain.querySelector(".domain-body")?.classList.add("open");
+
+        // Highlight in text-bearing nodes
+        nodes.forEach(n => highlightIn(n, term));
+      } else {
+        topic.classList.add("search-hidden");
+      }
+    });
+
+    if (!domainHasMatch) domain.classList.add("search-hidden");
+  });
+
+  if (countEl) countEl.textContent = matchCount ? `${matchCount} match${matchCount !== 1 ? "es" : ""}` : "no matches";
+}
+
+/** Clear search input and reset view. */
+function clearSearch() {
+  const input = document.getElementById("search-input");
+  if (input) { input.value = ""; input.focus(); }
+  searchContent("");
+}
+
+// ── NOTEPAD SLIDE TAB ────────────────────────────────────────────────────────
+let _notepadMounted = false;
+
+function toggleNotepad() {
+  const panel = document.getElementById('notepad-panel');
+  const tab   = document.getElementById('notepad-tab');
+  const open  = panel.classList.toggle('open');
+  tab.classList.toggle('open', open);
+
+  if (open && !_notepadMounted) {
+    _notepadMounted = true;
+    // Load the JSX component via Babel standalone
+    const script = document.createElement('script');
+    script.type = 'text/babel';
+    script.src  = 'notepad.jsx';
+    script.setAttribute('data-presets', 'react');
+    script.onload = () => {
+      // notepad.jsx must call mountNotepad() or we mount via global
+      if (window.__mountNotepad) window.__mountNotepad();
+    };
+    document.head.appendChild(script);
+  }
+}

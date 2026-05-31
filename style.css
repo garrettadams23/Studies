@@ -1759,3 +1759,108 @@ body.light .detail-tab:hover           { color: #0077aa; border-color: #0077aa; 
 body.light .detail-tab.active          { background: var(--cyan); border-color: var(--cyan); color: #fff; }
 body.light .detail-content             { color: #333; }
 body.light .disorder-detail-panel      { border-top-color: rgba(0,0,0,.12); }
+
+/* === AI-DOMAIN v1 === */
+/* Self-contained table; inherits dark/light automatically via your vars. */
+.ai-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem}
+.ai-table th,.ai-table td{padding:8px 10px;text-align:left;vertical-align:top;border-bottom:1px solid var(--border,#2a2f3a)}
+.ai-table th{color:var(--cyan,#56d4dd);font-weight:600;border-bottom:2px solid var(--cyan,#56d4dd)}
+.ai-table td:first-child{color:var(--amber,#e3b341);font-weight:600;white-space:nowrap}
+.ai-table tbody tr:hover td{background:rgba(127,127,127,.08)}
+
+/* ── SEARCH BAR ─────────────────────────────────────────────────────────── */
+.search-bar {
+  position: sticky; top: 45px; z-index: 99;
+  background: rgba(7, 9, 15, 0.97); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border); padding: 10px 24px;
+}
+[data-theme="light"] .search-bar { background: rgba(240, 244, 248, 0.97); }
+
+.search-inner {
+  display: flex; align-items: center; gap: 10px;
+  max-width: 680px; margin: 0 auto;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 0 12px; transition: border-color 0.2s;
+}
+.search-inner:focus-within { border-color: var(--cyan); }
+
+.search-icon { color: var(--muted); font-size: 18px; flex-shrink: 0; line-height: 1; }
+
+.search-input {
+  flex: 1; background: transparent; border: none; outline: none;
+  font-family: var(--mono); font-size: 13px; color: var(--text);
+  padding: 9px 0; caret-color: var(--cyan);
+}
+.search-input::placeholder { color: var(--muted); }
+
+.search-clear {
+  background: transparent; border: none; color: var(--muted);
+  font-size: 12px; cursor: pointer; padding: 4px 2px;
+  opacity: 0; transition: opacity 0.15s; flex-shrink: 0;
+}
+.search-clear.visible { opacity: 1; }
+.search-clear:hover { color: var(--red); }
+
+.search-count {
+  font-family: var(--mono); font-size: 10px; color: var(--cyan);
+  white-space: nowrap; flex-shrink: 0; min-width: 60px; text-align: right;
+}
+
+/* Highlight matched text */
+mark.sh {
+  background: rgba(0, 212, 255, 0.25); color: inherit;
+  border-radius: 2px; padding: 0 1px;
+}
+[data-theme="light"] mark.sh { background: rgba(0, 150, 200, 0.2); }
+
+/* Dim non-matching topics during search */
+.topic.search-hidden { display: none; }
+.domain-section.search-hidden { display: none; }
+
+@media (max-width: 600px) {
+  .search-bar { top: 40px; padding: 8px 12px; }
+}
+
+/* ── NOTEPAD SLIDE TAB ──────────────────────────────────────────────────── */
+.notepad-tab {
+  position: fixed; right: 0; top: 50%;
+  transform: translateY(-50%) rotate(0deg);
+  z-index: 1100;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-right: none; border-radius: 6px 0 0 6px;
+  padding: 14px 8px; cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+.notepad-tab:hover { background: var(--bg3); border-color: var(--cyan); }
+.notepad-tab.open  { border-color: var(--cyan); background: var(--bg3); }
+
+.notepad-tab-icon  { font-size: 18px; line-height: 1; }
+.notepad-tab-label {
+  font-family: var(--mono); font-size: 9px; color: var(--cyan);
+  letter-spacing: 2px; text-transform: uppercase;
+  writing-mode: vertical-rl; transform: rotate(180deg);
+}
+
+.notepad-panel {
+  position: fixed; top: 0; right: -440px; width: 420px; height: 100vh;
+  background: var(--bg); border-left: 1px solid var(--border);
+  z-index: 1099; overflow-y: auto;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: -8px 0 32px rgba(0,0,0,0.5);
+}
+.notepad-panel.open { right: 0; }
+
+.notepad-loading {
+  display: flex; align-items: center; justify-content: center;
+  height: 100vh; font-family: var(--mono); font-size: 12px;
+  color: var(--muted); letter-spacing: 1px;
+}
+
+/* Shift tab left when panel is open */
+.notepad-tab.open { right: 420px; }
+
+@media (max-width: 600px) {
+  .notepad-panel { width: 100vw; right: -100vw; }
+  .notepad-tab.open { right: 100vw; }
+}
