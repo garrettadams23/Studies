@@ -8209,4 +8209,82 @@ reset_at  = resp.headers.get(<span class="str">"X-RateLimit-Reset"</span>)</div>
     </div>
   </div>
 </div>
+
+<!-- BEGINNER22-SCRIPT v1 -->
+<!-- ── TOPIC: ENCODING & CHARACTER SETS ──────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔤</span>
+    <span class="topic-name">Encoding — Bytes, Text, and Why "It Works on My Machine"</span>
+    <span class="topic-badge">SCRIPT • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">BYTES VS TEXT</div>
+      <div class="concept-title">The Distinction That Trips Up Everyone</div>
+      <div class="concept-desc">Computers store everything as bytes (numbers 0-255). Text is bytes <em>interpreted</em> through an encoding. <code>str</code> is human-readable text; <code>bytes</code> is raw binary. You <strong>encode</strong> text → bytes (to send/store) and <strong>decode</strong> bytes → text (to read). Confusing the two causes the classic <code>UnicodeDecodeError</code> and garbled "mojibake" text.</div>
+      <div class="code-block"><span class="com"># Text (str) ↔ raw bytes</span>
+text = <span class="str">"café"</span>
+data = text.encode(<span class="str">"utf-8"</span>)        <span class="com"># str → bytes: b'caf\xc3\xa9'</span>
+back = data.decode(<span class="str">"utf-8"</span>)        <span class="com"># bytes → str: 'café'</span>
+
+<span class="com"># The golden rule: decode at input, encode at output.</span>
+<span class="com"># Work with str internally; only deal in bytes at the edges</span>
+<span class="com"># (files, network, subprocess).</span>
+
+<span class="com"># Always specify encoding explicitly — don't rely on defaults</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"f.txt"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> f: ...</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">UTF-8 & UNICODE</div>
+      <div class="concept-title">One Encoding to Rule Them All</div>
+      <div class="concept-desc"><strong>Unicode</strong> assigns every character a number ("code point") — covering every language, emoji, and symbol. <strong>UTF-8</strong> is the dominant way to encode those code points as bytes: it's variable-width (1 byte for ASCII, up to 4 for others) and backward-compatible with ASCII. Rule of thumb: <strong>use UTF-8 everywhere</strong>. Legacy encodings (Latin-1, Windows-1252) cause the most "weird character" bugs.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ENCODING SCHEMES</div>
+      <div class="concept-title">Base64, Hex, URL — Different Jobs</div>
+      <div class="concept-desc">These are <em>not</em> encryption — they're reversible representations, no secrecy. They exist to safely move binary data through text-only channels.</div>
+      <table class="ai-table">
+        <thead><tr><th>Scheme</th><th>Purpose</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Base64</td><td>Binary → ASCII text (email attachments, JWTs, data URIs)</td><td><code>SGVsbG8=</code> = "Hello"</td></tr>
+          <tr><td>Hex</td><td>Binary → readable hex (hashes, debugging, MAC addresses)</td><td><code>48656c6c6f</code> = "Hello"</td></tr>
+          <tr><td>URL encoding</td><td>Make text safe in URLs (% escaping)</td><td><code>%20</code> = space, <code>%40</code> = @</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="kw">import</span> base64, urllib.parse
+
+<span class="com"># Base64</span>
+base64.b64encode(<span class="str">b"Hello"</span>)              <span class="com"># b'SGVsbG8='</span>
+base64.b64decode(<span class="str">b"SGVsbG8="</span>)           <span class="com"># b'Hello'</span>
+
+<span class="com"># Hex</span>
+<span class="str">b"Hello"</span>.hex()                       <span class="com"># '48656c6c6f'</span>
+<span class="fn">bytes</span>.fromhex(<span class="str">"48656c6c6f"</span>)            <span class="com"># b'Hello'</span>
+
+<span class="com"># URL encoding</span>
+urllib.parse.quote(<span class="str">"a b@c"</span>)            <span class="com"># 'a%20b%40c'</span>
+urllib.parse.unquote(<span class="str">"a%20b%40c"</span>)       <span class="com"># 'a b@c'</span>
+
+<span class="com"># Command-line equivalents (handy in pentest/CTF)</span>
+<span class="com"># echo -n "Hello" | base64</span>
+<span class="com"># echo "SGVsbG8=" | base64 -d</span>
+<span class="com"># echo -n "Hello" | xxd -p</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">HASHING (NOT ENCODING)</div>
+      <div class="concept-title">One-Way by Design</div>
+      <div class="concept-desc">Don't confuse hashing with encoding/encryption. <strong>Encoding</strong> is reversible (anyone can decode). <strong>Encryption</strong> is reversible with a key. <strong>Hashing</strong> is one-way — you cannot get the input back from the hash. Hashing is for integrity checks and password storage, never for "hiding" data you need to recover.</div>
+      <div class="code-block"><span class="kw">import</span> hashlib
+
+<span class="com"># Integrity check — verify a file wasn't altered</span>
+data = Path(<span class="str">"file.iso"</span>).read_bytes()
+<span class="fn">print</span>(hashlib.sha256(data).hexdigest())
+
+<span class="com"># Command line equivalent</span>
+<span class="com"># sha256sum file.iso</span></div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->

@@ -3879,4 +3879,83 @@ net = ipaddress.ip_network(<span class="str">'192.168.1.0/26'</span>)
     </div>
   </div>
 </div>
+
+<!-- BEGINNER22-NET v1 -->
+<!-- ── TOPIC: DNS DEEP DIVE & SECURITY ───────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🌍</span>
+    <span class="topic-name">DNS Deep Dive — Records, Resolution &amp; Security</span>
+    <span class="topic-badge">NET • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">RECORD TYPES</div>
+      <div class="concept-title">The DNS Records You'll Actually Touch</div>
+      <table class="ai-table">
+        <thead><tr><th>Record</th><th>Maps</th><th>Example / Use</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>Name → IPv4</td><td><code>example.com → 93.184.216.34</code></td></tr>
+          <tr><td>AAAA</td><td>Name → IPv6</td><td><code>example.com → 2606:2800:...</code></td></tr>
+          <tr><td>CNAME</td><td>Name → another name (alias)</td><td><code>www → example.com</code></td></tr>
+          <tr><td>MX</td><td>Mail servers for a domain</td><td>Routes email; has priority values</td></tr>
+          <tr><td>TXT</td><td>Arbitrary text</td><td>SPF, DKIM, domain verification</td></tr>
+          <tr><td>NS</td><td>Authoritative nameservers</td><td>Who's in charge of this zone</td></tr>
+          <tr><td>SOA</td><td>Zone metadata</td><td>Serial, refresh, TTL defaults</td></tr>
+          <tr><td>PTR</td><td>IP → name (reverse DNS)</td><td>Mail server reputation, logging</td></tr>
+          <tr><td>SRV</td><td>Service location (host+port)</td><td>SIP, LDAP, Microsoft AD</td></tr>
+          <tr><td>CAA</td><td>Which CAs may issue certs</td><td>Prevents rogue certificate issuance</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DIG — THE DNS SWISS ARMY KNIFE</div>
+      <div class="concept-title">Query DNS Like a Pro</div>
+      <div class="code-block">dig example.com                  <span class="com"># A record (default)</span>
+dig example.com +short           <span class="com"># just the answer</span>
+dig AAAA example.com             <span class="com"># IPv6</span>
+dig MX example.com               <span class="com"># mail servers</span>
+dig TXT example.com              <span class="com"># SPF/DKIM/verification</span>
+dig NS example.com               <span class="com"># nameservers</span>
+dig +trace example.com           <span class="com"># follow the full resolution path</span>
+dig @8.8.8.8 example.com         <span class="com"># query a specific resolver</span>
+dig -x 93.184.216.34             <span class="com"># reverse lookup (PTR)</span>
+dig example.com ANY              <span class="com"># all records (often restricted)</span>
+
+<span class="com"># Troubleshooting: is it a DNS problem or not?</span>
+<span class="com"># If dig resolves but the app fails → not DNS</span>
+<span class="com"># If dig fails → check resolver (/etc/resolv.conf)</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DNS SECURITY</div>
+      <div class="concept-title">DNS Was Not Built Securely</div>
+      <div class="concept-desc">Classic DNS is unauthenticated and unencrypted — attackers can forge responses (cache poisoning, spoofing) or snoop on your lookups. Several technologies address this:</div>
+      <table class="ai-table">
+        <thead><tr><th>Tech</th><th>Protects</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td>DNSSEC</td><td>Integrity / authenticity</td><td>Cryptographically signs records — detects forgery (doesn't encrypt)</td></tr>
+          <tr><td>DoH (DNS over HTTPS)</td><td>Privacy</td><td>Encrypts queries inside HTTPS (port 443)</td></tr>
+          <tr><td>DoT (DNS over TLS)</td><td>Privacy</td><td>Encrypts DNS in TLS (port 853)</td></tr>
+          <tr><td>DNS filtering</td><td>Blocking</td><td>Resolver blocks malicious/known-bad domains (e.g., Pi-hole, Quad9)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DNS-BASED ATTACKS</div>
+      <div class="concept-title">Why Defenders Watch DNS Closely</div>
+      <table class="ai-table">
+        <thead><tr><th>Attack</th><th>What It Does</th></tr></thead>
+        <tbody>
+          <tr><td>Cache poisoning</td><td>Inject false records so victims go to attacker's site</td></tr>
+          <tr><td>DNS tunneling</td><td>Smuggle data/C2 traffic inside DNS queries (evades firewalls)</td></tr>
+          <tr><td>Domain hijacking</td><td>Take over a domain's registration or nameservers</td></tr>
+          <tr><td>Fast flux</td><td>Rapidly rotate IPs to keep malicious infra alive</td></tr>
+          <tr><td>Typosquatting</td><td>Register lookalike domains (gooogle.com) for phishing</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">DNS logs are gold for threat hunting — unusual domains, high-entropy subdomains (tunneling), and newly-registered domains are strong indicators of compromise.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body net -->

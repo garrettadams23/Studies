@@ -1637,4 +1637,62 @@ ps aux --sort=-%mem | head    <span class="com"># top memory consumers</span></d
     </div>
   </div>
 </div>
+
+<!-- BEGINNER22-OPS v1 -->
+<!-- ── TOPIC: OBSERVABILITY IN PRACTICE ──────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔭</span>
+    <span class="topic-name">Observability — Knowing What Your Systems Are Doing</span>
+    <span class="topic-badge">OPS • Modern</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">MONITORING VS OBSERVABILITY</div>
+      <div class="concept-title">Known Unknowns vs Unknown Unknowns</div>
+      <div class="concept-desc"><strong>Monitoring</strong> answers questions you already know to ask ("is CPU high?"). <strong>Observability</strong> lets you ask <em>new</em> questions about your system's behavior without shipping new code — crucial for debugging novel failures in complex distributed systems. Monitoring tells you something is wrong; observability helps you figure out <em>why</em>.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE THREE PILLARS</div>
+      <div class="concept-title">Metrics, Logs, Traces</div>
+      <table class="ai-table">
+        <thead><tr><th>Pillar</th><th>What It Is</th><th>Answers</th><th>Tools</th></tr></thead>
+        <tbody>
+          <tr><td>Metrics</td><td>Numeric time-series (CPU, req/s, error rate)</td><td>"What is happening?" (trends, alerts)</td><td>Prometheus, Grafana</td></tr>
+          <tr><td>Logs</td><td>Timestamped event records</td><td>"What happened exactly?" (details)</td><td>Loki, ELK, Splunk</td></tr>
+          <tr><td>Traces</td><td>Request's full journey across services</td><td>"Where is the slowness?" (latency per hop)</td><td>Jaeger, Tempo, OpenTelemetry</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE FOUR GOLDEN SIGNALS</div>
+      <div class="concept-title">What to Watch for Any Service (Google SRE)</div>
+      <table class="ai-table">
+        <thead><tr><th>Signal</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Latency</td><td>How long requests take (watch the slow tail: p95, p99)</td></tr>
+          <tr><td>Traffic</td><td>How much demand (requests/sec)</td></tr>
+          <tr><td>Errors</td><td>Rate of failed requests</td></tr>
+          <tr><td>Saturation</td><td>How "full" the system is (the constrained resource)</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>Alert on symptoms, not causes.</strong> Page someone for "users are getting errors" (a symptom they care about), not "CPU is 80%" (which may be totally fine). This keeps alerts meaningful and reduces fatigue.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">GITOPS</div>
+      <div class="concept-title">Git as the Single Source of Truth</div>
+      <div class="concept-desc">GitOps applies software-development practices to operations: the desired state of your infrastructure and apps lives in a Git repo, and an automated agent continuously makes reality match the repo. Want to change production? Open a pull request. This gives you review, audit history, easy rollback (just revert the commit), and no manual <code>kubectl</code> drift.</div>
+      <table class="ai-table">
+        <thead><tr><th>Principle</th><th>Benefit</th></tr></thead>
+        <tbody>
+          <tr><td>Declarative state in Git</td><td>The repo IS the documentation of what's deployed</td></tr>
+          <tr><td>Changes via pull request</td><td>Review + approval + audit trail for every change</td></tr>
+          <tr><td>Automated reconciliation</td><td>Agent (Argo CD, Flux) keeps cluster matching Git</td></tr>
+          <tr><td>Rollback = git revert</td><td>Undo a bad deploy by reverting the commit</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 <!-- /domain-body ops -->

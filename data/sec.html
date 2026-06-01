@@ -1854,4 +1854,75 @@ curl -sD - https://example.com -o /dev/null   <span class="com"># dump headers</
     </div>
   </div>
 </div>
+
+<!-- BEGINNER22-SEC v1 -->
+<!-- ── TOPIC: IDS/IPS & NETWORK DETECTION ────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🚨</span>
+    <span class="topic-name">IDS/IPS &amp; Detection — Catching Attacks on the Wire</span>
+    <span class="topic-badge">SEC • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">IDS VS IPS</div>
+      <div class="concept-title">Detect vs Prevent</div>
+      <div class="concept-desc">An <strong>IDS</strong> (Intrusion Detection System) watches traffic and <em>alerts</em> on suspicious activity — it's a smoke detector. An <strong>IPS</strong> (Intrusion Prevention System) sits inline and can <em>block</em> the traffic — a sprinkler system. The tradeoff: an IPS can stop attacks in real time, but a false positive can block legitimate traffic.</div>
+      <table class="ai-table">
+        <thead><tr><th>Aspect</th><th>IDS</th><th>IPS</th></tr></thead>
+        <tbody>
+          <tr><td>Placement</td><td>Out-of-band (sees a copy of traffic)</td><td>Inline (traffic flows through it)</td></tr>
+          <tr><td>Action</td><td>Alerts only</td><td>Alerts AND blocks/drops</td></tr>
+          <tr><td>Risk of false positive</td><td>Annoying alert</td><td>Blocks real traffic (outage)</td></tr>
+          <tr><td>Tools</td><td>Snort, Suricata, Zeek</td><td>Snort/Suricata (inline mode)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DETECTION METHODS</div>
+      <div class="concept-title">Signature vs Anomaly vs Behavior</div>
+      <table class="ai-table">
+        <thead><tr><th>Method</th><th>How It Works</th><th>Strength / Weakness</th></tr></thead>
+        <tbody>
+          <tr><td>Signature-based</td><td>Match known attack patterns/rules</td><td>+ Accurate for known threats; − misses novel attacks</td></tr>
+          <tr><td>Anomaly-based</td><td>Flag deviations from a learned baseline</td><td>+ Catches unknowns; − more false positives</td></tr>
+          <tr><td>Behavior-based</td><td>Detect malicious sequences of actions</td><td>+ Catches TTPs; − needs tuning</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="com"># A simple Suricata/Snort rule (signature)</span>
+alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
+  content:"UNION SELECT"; nocase; sid:1000001;)
+<span class="com"># Triggers an alert when "UNION SELECT" appears in HTTP traffic</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">FALSE POSITIVES & TUNING</div>
+      <div class="concept-title">The Analyst's Daily Reality</div>
+      <div class="concept-desc">The hardest part of detection isn't getting alerts — it's getting <em>useful</em> alerts. Too many false positives cause "alert fatigue," where analysts start ignoring everything (and miss the real one). Tuning — adjusting rules to your environment, suppressing known-good noise — is a continuous, high-value job. The goal: high signal, low noise.</div>
+      <table class="ai-table">
+        <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>True Positive</td><td>Alert fired, was a real attack ✓</td></tr>
+          <tr><td>False Positive</td><td>Alert fired, was benign (noise)</td></tr>
+          <tr><td>True Negative</td><td>No alert, nothing happened ✓</td></tr>
+          <tr><td>False Negative</td><td>No alert, but there WAS an attack (the scary one)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DECEPTION TECHNOLOGY</div>
+      <div class="concept-title">Honeypots — Let Them Attack a Trap</div>
+      <div class="concept-desc">A <strong>honeypot</strong> is a decoy system designed to be attacked. Since no legitimate user should ever touch it, <em>any</em> interaction is suspicious — making honeypots an extremely low-false-positive detection method. They also reveal attacker tools and techniques. Related: <strong>honeytokens</strong> (fake credentials/files that alert when used) and <strong>honeynets</strong> (whole decoy networks).</div>
+      <table class="ai-table">
+        <thead><tr><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Low-interaction</td><td>Emulates a few services; safe, limited intel</td></tr>
+          <tr><td>High-interaction</td><td>Real systems; rich intel but risky to run</td></tr>
+          <tr><td>Honeytoken</td><td>Fake API key/document/AD account that triggers an alert when touched</td></tr>
+          <tr><td>Canary</td><td>A tripwire (e.g., a file or DNS token) signaling a breach</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 <!-- /domain-body sec -->
