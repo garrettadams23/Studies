@@ -7639,4 +7639,119 @@ servers = {}
     </div>
   </div>
 </div>
+
+<!-- BEGINNER17-SCRIPT v1 -->
+<!-- ── TOPIC: DATES AND TIMES ────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🕐</span>
+    <span class="topic-name">Dates &amp; Times — Trickier Than You Think</span>
+    <span class="topic-badge">SCRIPT • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY TIME IS HARD</div>
+      <div class="concept-title">Time Zones, DST, and Other Nightmares</div>
+      <div class="concept-desc">Date/time handling is famously error-prone: time zones, daylight saving time, leap years, leap seconds, and ambiguous formats. The golden rules: <strong>store and compute in UTC, display in local time</strong>, and <strong>always use timezone-aware datetimes</strong> (never naive ones in production). Logs, certificates, and security events all depend on getting this right.</div>
+      <div class="code-block"><span class="kw">from</span> datetime <span class="kw">import</span> datetime, timezone, timedelta
+
+<span class="com"># Get current time — ALWAYS timezone-aware</span>
+now = datetime.now(timezone.utc)        <span class="com"># aware, in UTC ✓</span>
+bad = datetime.now()                    <span class="com"># naive — avoid in prod ✗</span>
+
+<span class="com"># Format and parse (strftime / strptime)</span>
+now.strftime(<span class="str">"%Y-%m-%d %H:%M:%S"</span>)      <span class="com"># 2026-06-01 14:30:00</span>
+datetime.strptime(<span class="str">"2026-06-01"</span>, <span class="str">"%Y-%m-%d"</span>)
+
+<span class="com"># ISO 8601 — the standard for APIs and logs</span>
+now.isoformat()                         <span class="com"># 2026-06-01T14:30:00+00:00</span>
+datetime.fromisoformat(<span class="str">"2026-06-01T14:30:00+00:00"</span>)
+
+<span class="com"># Arithmetic with timedelta</span>
+yesterday = now - timedelta(days=<span class="num">1</span>)
+deadline = now + timedelta(hours=<span class="num">48</span>)
+elapsed = (end - start).total_seconds()
+
+<span class="com"># Unix timestamps (seconds since 1970-01-01 UTC)</span>
+ts = now.timestamp()                    <span class="com"># 1.78e9</span>
+datetime.fromtimestamp(ts, timezone.utc)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">STRFTIME CHEAT SHEET</div>
+      <div class="concept-title">Format Codes You'll Actually Use</div>
+      <table class="ai-table">
+        <thead><tr><th>Code</th><th>Meaning</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>%Y</code></td><td>4-digit year</td><td>2026</td></tr>
+          <tr><td><code>%m</code></td><td>Month (01-12)</td><td>06</td></tr>
+          <tr><td><code>%d</code></td><td>Day (01-31)</td><td>01</td></tr>
+          <tr><td><code>%H</code></td><td>Hour 24h (00-23)</td><td>14</td></tr>
+          <tr><td><code>%M</code></td><td>Minute</td><td>30</td></tr>
+          <tr><td><code>%S</code></td><td>Second</td><td>00</td></tr>
+          <tr><td><code>%A</code> / <code>%a</code></td><td>Weekday full / abbr</td><td>Monday / Mon</td></tr>
+          <tr><td><code>%B</code> / <code>%b</code></td><td>Month full / abbr</td><td>June / Jun</td></tr>
+          <tr><td><code>%z</code> / <code>%Z</code></td><td>UTC offset / tz name</td><td>+0000 / UTC</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DATA ANALYSIS WITH PANDAS ──────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📊</span>
+    <span class="topic-name">Data Analysis with pandas — Spreadsheets in Code</span>
+    <span class="topic-badge">SCRIPT • Practical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY PANDAS</div>
+      <div class="concept-title">Excel, But Programmable and Unlimited</div>
+      <div class="concept-desc">pandas is the standard Python library for working with tabular data (think spreadsheets/CSVs/database tables). It handles millions of rows, automates repetitive analysis, and integrates with everything. For IT, it's invaluable for analyzing logs, parsing CSV exports, generating reports, and crunching security data. The core object is the <strong>DataFrame</strong> — a table with labeled rows and columns.</div>
+      <div class="code-block"><span class="com"># pip install pandas</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="com"># Load data</span>
+df = pd.read_csv(<span class="str">"firewall_logs.csv"</span>)
+df = pd.read_json(<span class="str">"data.json"</span>)
+df = pd.read_excel(<span class="str">"report.xlsx"</span>)
+
+<span class="com"># Explore (the first thing you always do)</span>
+df.head()              <span class="com"># first 5 rows</span>
+df.shape               <span class="com"># (rows, columns)</span>
+df.columns             <span class="com"># column names</span>
+df.info()              <span class="com"># types and non-null counts</span>
+df.describe()          <span class="com"># summary statistics</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">FILTERING & ANALYSIS</div>
+      <div class="concept-title">Answering Questions About Your Data</div>
+      <div class="code-block"><span class="com"># Select columns</span>
+df[<span class="str">"src_ip"</span>]                       <span class="com"># one column</span>
+df[[<span class="str">"src_ip"</span>, <span class="str">"action"</span>]]           <span class="com"># multiple</span>
+
+<span class="com"># Filter rows (boolean indexing)</span>
+blocked = df[df[<span class="str">"action"</span>] == <span class="str">"DENY"</span>]
+df[(df[<span class="str">"port"</span>] == <span class="num">22</span>) &amp; (df[<span class="str">"action"</span>] == <span class="str">"DENY"</span>)]
+
+<span class="com"># The killer feature: group and count</span>
+<span class="com"># "Which IPs were blocked the most?"</span>
+top_attackers = (df[df[<span class="str">"action"</span>] == <span class="str">"DENY"</span>]
+                 .groupby(<span class="str">"src_ip"</span>)
+                 .size()
+                 .sort_values(ascending=<span class="kw">False</span>)
+                 .head(<span class="num">10</span>))
+<span class="fn">print</span>(top_attackers)
+
+<span class="com"># Value counts — quick frequency table</span>
+df[<span class="str">"action"</span>].value_counts()      <span class="com"># DENY: 5021, ALLOW: 88210</span>
+
+<span class="com"># Export results</span>
+top_attackers.to_csv(<span class="str">"top_attackers.csv"</span>)</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->

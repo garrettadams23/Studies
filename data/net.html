@@ -3712,4 +3712,110 @@ ssh -J bastion.example.com user@internal-host</div>
     </div>
   </div>
 </div>
+
+<!-- BEGINNER17-NET v1 -->
+<!-- ── TOPIC: SUBNETTING ─────────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🧮</span>
+    <span class="topic-name">Subnetting — The Math That Scares Beginners (It Shouldn't)</span>
+    <span class="topic-badge">NET • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS SUBNETTING</div>
+      <div class="concept-title">Dividing a Network Into Smaller Networks</div>
+      <div class="concept-desc">An IP address has two parts: a <strong>network portion</strong> (which network you're on) and a <strong>host portion</strong> (which specific device). Subnetting is the art of deciding where to draw that line — splitting a big address block into smaller, organized chunks. Why? Security (isolate departments), efficiency (reduce broadcast traffic), and organization. It intimidates beginners, but it's just binary math you can learn in an afternoon.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CIDR NOTATION</div>
+      <div class="concept-title">The /24 Explained</div>
+      <div class="concept-desc">An IPv4 address is 32 bits. CIDR (Classless Inter-Domain Routing) notation like <code>192.168.1.0/24</code> means "the first 24 bits are the network portion." The remaining bits (32 − 24 = 8) are for hosts. More network bits = smaller subnet = fewer hosts.</div>
+      <div class="code-block"><span class="com"># 192.168.1.0/24 in binary</span>
+192.168.1.0
+11000000.10101000.00000001.00000000
+└──────── 24 network bits ────────┘└8 host┘
+
+<span class="com"># The /24 tells you the subnet mask</span>
+/24 = 255.255.255.0
+<span class="com"># (24 ones, then 8 zeros)</span>
+11111111.11111111.11111111.00000000</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE KEY FORMULAS</div>
+      <div class="concept-title">Hosts and Subnets — Memorize These</div>
+      <div class="code-block"><span class="com"># Number of usable hosts per subnet</span>
+usable hosts = 2^(host bits) − 2
+<span class="com"># (subtract 2: network address + broadcast address)</span>
+
+<span class="com"># Example: /24 has 8 host bits</span>
+2^8 − 2 = 256 − 2 = 254 usable hosts
+
+<span class="com"># Example: /26 has 6 host bits</span>
+2^6 − 2 = 64 − 2 = 62 usable hosts
+
+<span class="com"># Number of subnets when you "borrow" bits</span>
+subnets = 2^(borrowed bits)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CIDR CHEAT SHEET</div>
+      <div class="concept-title">Common Prefixes at a Glance</div>
+      <table class="ai-table">
+        <thead><tr><th>CIDR</th><th>Subnet Mask</th><th>Host Bits</th><th>Usable Hosts</th><th>Block Size</th></tr></thead>
+        <tbody>
+          <tr><td>/30</td><td>255.255.255.252</td><td>2</td><td>2</td><td>4 (point-to-point links)</td></tr>
+          <tr><td>/29</td><td>255.255.255.248</td><td>3</td><td>6</td><td>8</td></tr>
+          <tr><td>/28</td><td>255.255.255.240</td><td>4</td><td>14</td><td>16</td></tr>
+          <tr><td>/27</td><td>255.255.255.224</td><td>5</td><td>30</td><td>32</td></tr>
+          <tr><td>/26</td><td>255.255.255.192</td><td>6</td><td>62</td><td>64</td></tr>
+          <tr><td>/25</td><td>255.255.255.128</td><td>7</td><td>126</td><td>128</td></tr>
+          <tr><td>/24</td><td>255.255.255.0</td><td>8</td><td>254</td><td>256</td></tr>
+          <tr><td>/23</td><td>255.255.254.0</td><td>9</td><td>510</td><td>512</td></tr>
+          <tr><td>/16</td><td>255.255.0.0</td><td>16</td><td>65,534</td><td>65,536</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">WORKED EXAMPLE</div>
+      <div class="concept-title">Finding Network, Broadcast, and Range</div>
+      <div class="concept-desc">Given an IP and CIDR, here's how to find the key addresses. This is the most common subnetting question on exams and the job.</div>
+      <div class="code-block"><span class="com"># Given: 192.168.1.100/26  — what subnet is it in?</span>
+
+<span class="com"># Step 1: /26 → block size. Host bits = 32-26 = 6. Block = 2^6 = 64</span>
+<span class="com"># Step 2: subnets start at multiples of the block size (64):</span>
+<span class="com">#   192.168.1.0, .64, .128, .192</span>
+<span class="com"># Step 3: .100 falls between .64 and .128 → subnet is .64</span>
+
+Network address:   192.168.1.64    <span class="com"># first address (not usable)</span>
+First usable host: 192.168.1.65
+Last usable host:  192.168.1.126
+Broadcast address: 192.168.1.127   <span class="com"># last address (not usable)</span>
+Next subnet:       192.168.1.128
+
+<span class="com"># Shortcut: "block size" trick — count by 64s. Done.</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">LET THE COMPUTER DO IT</div>
+      <div class="concept-title">Tools That Calculate Subnets For You</div>
+      <div class="code-block"><span class="com"># Linux: ipcalc shows everything</span>
+ipcalc 192.168.1.100/26
+<span class="com"># Address, Netmask, Network, Broadcast, HostMin, HostMax, Hosts/Net</span>
+
+<span class="com"># sipcalc (more detailed)</span>
+sipcalc 10.0.0.0/22
+
+<span class="com"># Python — the ipaddress module is built in</span>
+python3 -c "import ipaddress; n=ipaddress.ip_network('192.168.1.0/26'); \
+print(n.network_address, n.broadcast_address, n.num_addresses)"
+
+<span class="com"># Python interactive — useful for automation</span>
+<span class="kw">import</span> ipaddress
+net = ipaddress.ip_network(<span class="str">'192.168.1.0/26'</span>)
+<span class="fn">print</span>(net.netmask)            <span class="com"># 255.255.255.192</span>
+<span class="fn">print</span>(<span class="fn">list</span>(net.hosts())[<span class="num">0</span>])    <span class="com"># first usable host</span>
+<span class="fn">print</span>(net.num_addresses)      <span class="com"># 64</span></div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body net -->
