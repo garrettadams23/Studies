@@ -1175,4 +1175,136 @@
     </div>
   </div>
 </div>
+
+<!-- BEGINNER32-GRC v1 -->
+<!-- ── TOPIC: NIST CSF & ISO 27001 Intro ─────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    NIST CSF &amp; ISO 27001 – GRC Frameworks Explained
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Frameworks Exist</div>
+      <div class="concept-desc">
+        Security teams face endless possible controls and threats. A
+        <strong>framework</strong> is a structured, vendor-neutral map that
+        helps organisations decide <em>what to do</em> and prove to
+        auditors they are doing it.<br><br>
+        <strong>Two you will encounter everywhere:</strong><br><br>
+        &bull; <em>NIST Cybersecurity Framework (CSF)</em> — a US government
+          framework widely adopted globally. Voluntary; practical. Free.<br>
+        &bull; <em>ISO/IEC 27001</em> — an international standard. Auditable;
+          leads to a formal certification. Costs money to audit.<br><br>
+        <em>"Not my circus, not my monkey"</em> — as a junior analyst you
+        don't own compliance, but you will be asked to evidence controls.
+        Knowing the framework language makes you valuable from day one.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">NIST CSF</div>
+      <div class="concept-title">The Six CSF Functions</div>
+      <div class="concept-desc">
+        NIST CSF 2.0 organises security activities into six <em>Functions</em>.
+        Think of them as the security life-cycle:
+      </div>
+      <div class="code-block">
+<span class="com">Function    Colour  What it means</span>
+GOVERN      Blue    Org-level policies, roles, risk strategy
+IDENTIFY    Yellow  Know your assets, data, risks
+PROTECT     Green   Controls to prevent incidents
+DETECT      Orange  Monitoring to catch incidents
+RESPOND     Red     Contain &amp; handle an incident
+RECOVER     Purple  Restore operations; lessons learned
+
+<span class="com">Each function has Categories → Sub-categories (controls)</span>
+<span class="com">Example controls per function:</span>
+
+IDENTIFY:
+  - Asset inventory (hardware, software, data)
+  - Risk assessment process
+  - Vendor/third-party risk program
+
+PROTECT:
+  - Identity management (MFA, PAM)
+  - Data encryption at rest and in transit
+  - Security awareness training
+  - Patch management
+
+DETECT:
+  - SIEM / log monitoring
+  - Intrusion detection system (IDS)
+  - Anomaly detection
+
+RESPOND:
+  - Incident response plan (IRP)
+  - Communication procedures
+  - Evidence preservation
+
+RECOVER:
+  - Backup &amp; restore procedures
+  - Disaster recovery plan (DRP)
+  - Post-incident review
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">ISO 27001</div>
+      <div class="concept-title">ISO 27001 Structure in Plain English</div>
+      <div class="concept-desc">
+        ISO 27001 requires organisations to build an <strong>Information
+        Security Management System (ISMS)</strong> — a set of documented
+        policies, processes, and controls that are continuously improved.<br><br>
+        <strong>Annex A</strong> lists 93 controls across 4 themes:<br>
+        &bull; Organisational controls (policies, roles, supplier relations).<br>
+        &bull; People controls (screening, training, disciplinary process).<br>
+        &bull; Physical controls (access to buildings, equipment disposal).<br>
+        &bull; Technological controls (access control, encryption, monitoring).<br><br>
+        The audit process:<br>
+        1. <strong>Stage 1</strong> — auditor reviews your documentation.<br>
+        2. <strong>Stage 2</strong> — auditor observes processes &amp; interviews staff.<br>
+        3. <strong>Surveillance</strong> — annual follow-up audits.<br>
+        4. <strong>Recertification</strong> — full audit every 3 years.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        control is implemented just because a policy document says so.
+        Auditors look for <em>evidence</em> (logs, screenshots, tickets).
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Risk Register</div>
+      <div class="concept-title">How to Build a Simple Risk Register</div>
+      <div class="concept-desc">
+        Both frameworks require a <strong>risk register</strong> — a living
+        document that tracks risks, their likelihood, impact, and treatment.
+      </div>
+      <div class="code-block">
+<span class="com">Risk Register (simplified)</span>
+
+ID    Risk                    Likelihood  Impact  Score  Treatment
+R-01  Unpatched VMs exploited High(3)     High(3)   9    Patch within 30 days SLA
+R-02  Phishing → cred theft   High(3)     Med(2)    6    MFA rollout + awareness training
+R-03  Ransomware via RDP      Med(2)      High(3)   6    Disable RDP, use VPN+Bastion
+R-04  Vendor data breach      Low(1)      High(3)   3    Annual vendor security review
+R-05  Physical server theft   Low(1)      Med(2)    2    Cage locks, CCTV, accepted residual
+
+<span class="com">Score = Likelihood × Impact (1–3 scale)</span>
+<span class="com">Treatment options: Mitigate / Transfer (insurance) / Accept / Avoid</span>
+
+<span class="com"># Python: quick risk score calculator</span>
+risks = [
+    (<span class="str">"Unpatched VMs"</span>, <span class="num">3</span>, <span class="num">3</span>),
+    (<span class="str">"Phishing"</span>,      <span class="num">3</span>, <span class="num">2</span>),
+    (<span class="str">"RDP ransomware"</span>, <span class="num">2</span>, <span class="num">3</span>),
+]
+<span class="kw">for</span> name, likelihood, impact <span class="kw">in</span> sorted(risks, key=<span class="kw">lambda</span> x: -x[<span class="num">1</span>]*x[<span class="num">2</span>]):
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"{name:25s}  score={likelihood*impact}"</span>)
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body grc -->

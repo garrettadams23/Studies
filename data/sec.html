@@ -2231,4 +2231,126 @@ grep <span class="str">"Failed password"</span> /var/log/auth.log |   awk <span 
 
   </div>
 </div>
+
+<!-- BEGINNER32-SEC v1 -->
+<!-- ── TOPIC: Malware Analysis Basics ────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Malware Analysis – Static &amp; Dynamic Analysis Fundamentals
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is Malware Analysis?</div>
+      <div class="concept-desc">
+        <strong>Malware analysis</strong> is the process of understanding what
+        a malicious file does. There are two approaches:<br><br>
+        <strong>Static analysis</strong> — examine the file without running it.
+        Look at strings, headers, imports, code structure.<br>
+        <em>Safe but limited</em> — obfuscated malware hides its behaviour.<br><br>
+        <strong>Dynamic analysis</strong> — run the file in an isolated
+        sandbox and observe its behaviour (network calls, file writes,
+        registry changes, process spawning).<br>
+        <em>Reveals behaviour but requires a safe environment.</em><br><br>
+        <strong>The golden rule:</strong> never run malware on a production or
+        host machine. Always use a dedicated, isolated VM (snapshots
+        enabled, no network or host-only network).<br><br>
+        <em>"Not my circus, not my monkey"</em> — reverse engineering packed
+        malware is a specialist skill. For most incidents, initial triage
+        with static analysis + a sandbox is enough to classify the threat.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Static Analysis</div>
+      <div class="concept-title">Triage a Suspicious File Without Running It</div>
+      <div class="concept-desc">
+        These tools work on Linux and give you a lot of information
+        before you ever execute anything.
+      </div>
+      <div class="code-block">
+<span class="com"># 1. Get a hash (share with VirusTotal)</span>
+sha256sum suspicious.exe
+md5sum suspicious.exe
+
+<span class="com"># 2. Identify the file type (never trust the extension)</span>
+file suspicious.exe
+<span class="com"># Output: PE32 executable (GUI) Intel 80386, for MS Windows</span>
+
+<span class="com"># 3. Extract human-readable strings</span>
+strings suspicious.exe | grep -E <span class="str">'(http|cmd|powershell|reg |HKEY)'</span>
+strings -el suspicious.exe   <span class="com"># Unicode strings (wide char)</span>
+
+<span class="com"># 4. Check PE headers (Windows executables)</span>
+<span class="com"># Install: pip install pefile</span>
+python3 - &lt;&lt;<span class="str">'EOF'</span>
+import pefile
+pe = pefile.PE(<span class="str">"suspicious.exe"</span>)
+print(<span class="str">"Imports:"</span>)
+for entry in pe.DIRECTORY_ENTRY_IMPORT:
+    print(<span class="str">" "</span>, entry.dll.decode())
+    for imp in entry.imports:
+        print(<span class="str">"   "</span>, imp.name.decode() if imp.name else hex(imp.ordinal))
+<span class="str">EOF</span>
+
+<span class="com"># 5. Check entropy (high entropy = packed/encrypted = suspicious)</span>
+<span class="com"># Install: pip install pefile</span>
+python3 -c <span class="str">"import pefile; pe=pefile.PE('suspicious.exe'); [print(s.Name,s.get_entropy()) for s in pe.sections]"</span>
+<span class="com"># Entropy &gt; 7.0 in a .text section usually means packer/encryption</span>
+
+<span class="com"># 6. Submit to VirusTotal (no execution, just hash lookup)</span>
+curl -s --request GET   --url <span class="str">"https://www.virustotal.com/api/v3/files/$(sha256sum suspicious.exe | cut -d' ' -f1)"</span>   --header <span class="str">"x-apikey: YOUR_VT_KEY"</span> | python3 -m json.tool | grep -A2 last_analysis_stats
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Dynamic Analysis</div>
+      <div class="concept-title">Sandbox Analysis &amp; Behavioural Indicators</div>
+      <div class="concept-desc">
+        Free online sandboxes: <strong>Any.Run</strong>, <strong>Hybrid
+        Analysis</strong>, <strong>Joe Sandbox</strong>. Upload the file;
+        get a full behavioural report in minutes without running anything
+        locally.<br><br>
+        When reading a sandbox report, look for <strong>Indicators of
+        Compromise (IoCs)</strong>:<br><br>
+        &bull; <em>Network</em>: C2 server IPs/domains, beaconing intervals,
+          unusual ports.<br>
+        &bull; <em>Files</em>: dropped executables, modified startup folders,
+          scheduled tasks created.<br>
+        &bull; <em>Registry</em>: <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code>
+          — persistence mechanism.<br>
+        &bull; <em>Processes</em>: PowerShell spawned by Word/Excel
+          (macro malware), cmd.exe spawned by browser.<br>
+        &bull; <em>MITRE ATT&amp;CK</em>: sandbox reports map behaviours to
+          ATT&amp;CK tactics and techniques.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Response</div>
+      <div class="concept-title">After Malware Is Confirmed — What To Do</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards.</em> When a user opens a phishing
+        attachment:<br><br>
+        1. <strong>Isolate</strong> the machine (pull the network cable or
+           disable NIC via remote management).<br>
+        2. <strong>Preserve</strong> a memory image if possible
+          (<code>winpmem</code> on Windows).<br>
+        3. <strong>Collect IoCs</strong> (hashes, IPs, domains, registry
+          keys) from the malware analysis.<br>
+        4. <strong>Hunt</strong> across the fleet — was the same file
+          opened on other machines? (EDR/SIEM query by hash).<br>
+        5. <strong>Block</strong> IoCs at firewall, DNS, and email gateway.<br>
+        6. <strong>Eradicate &amp; restore</strong> — reimage from known
+          good backup; patch the vulnerability that was exploited.<br>
+        7. <strong>Document &amp; improve</strong> — update playbooks,
+          add detection rules, conduct phishing awareness training.
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body sec -->

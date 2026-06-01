@@ -4405,4 +4405,125 @@ aws ec2 authorize-security-group-ingress   --group-id sg-0xyz   --protocol tcp -
 
   </div>
 </div>
+
+<!-- BEGINNER32-NET v1 -->
+<!-- ── TOPIC: DNS Deep-Dive ───────────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    DNS Deep-Dive – How Domain Names Actually Work
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">The DNS Resolution Walk</div>
+      <div class="concept-desc">
+        When you type <code>www.example.com</code> in a browser, this is what
+        happens before the first byte of the page arrives:<br><br>
+        1. Browser checks its <strong>local cache</strong> — did we look this up
+           recently?<br>
+        2. OS checks <strong>/etc/hosts</strong> (or Windows Hosts file) — manual
+           overrides.<br>
+        3. OS asks the <strong>Recursive Resolver</strong> (usually your router
+           or ISP, or 8.8.8.8/1.1.1.1).<br>
+        4. Resolver asks a <strong>Root Name Server</strong> (.): "Who handles
+           <code>.com</code>?"<br>
+        5. Root refers to the <strong>.com TLD server</strong>: "Ask
+           <code>ns1.example.com</code>."<br>
+        6. Resolver asks <code>ns1.example.com</code>: "What's the IP for
+           <code>www</code>?"<br>
+        7. <strong>Authoritative answer</strong> returned: <code>93.184.216.34</code>.<br>
+        8. Resolver caches the result for the TTL; returns it to your browser.<br><br>
+        Total time: usually 10–100 ms. Cached lookups: &lt;1 ms.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Record Types</div>
+      <div class="concept-title">DNS Record Types You Must Know</div>
+      <div class="concept-desc">
+        DNS stores different information in different record types:
+      </div>
+      <div class="code-block">
+<span class="com">Record  Purpose                        Example</span>
+A       IPv4 address                   www  A  93.184.216.34
+AAAA    IPv6 address                   www  AAAA  2606:2800::1
+CNAME   Alias to another name          blog  CNAME  myapp.netlify.app.
+MX      Mail server (+ priority)       @    MX 10  mail.example.com.
+TXT     Arbitrary text (SPF, DKIM)     @    TXT  "v=spf1 include:..."
+NS      Authoritative name servers     @    NS   ns1.example.com.
+PTR     Reverse lookup (IP → name)     34.216.184.93.in-addr.arpa  PTR  www.example.com.
+SOA     Zone metadata (serial, TTL)    Start of Authority record
+SRV     Service location               _sip._tcp  SRV  10 5 5060 sip.example.com.
+
+<span class="com"># Query DNS with dig</span>
+dig www.example.com A               <span class="com"># IPv4</span>
+dig www.example.com AAAA            <span class="com"># IPv6</span>
+dig example.com MX                  <span class="com"># mail servers</span>
+dig example.com TXT                 <span class="com"># SPF / DKIM / verification tokens</span>
+dig -x <span class="num">93.184.216.34</span>               <span class="com"># reverse lookup (PTR)</span>
+dig @<span class="num">8.8.8.8</span> www.example.com       <span class="com"># use Google's resolver</span>
+dig +trace www.example.com          <span class="com"># walk the full resolution chain</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Security</div>
+      <div class="concept-title">DNS Security – DNSSEC, DoH, DNS Attacks</div>
+      <div class="concept-desc">
+        DNS was designed in the 1980s with no security. Several attacks exploit this:<br><br>
+        <strong>DNS Cache Poisoning</strong> — attacker injects a false record
+        into a resolver's cache so users get sent to the wrong IP.<br>
+        <em>Fix:</em> DNSSEC — cryptographic signatures on DNS records.<br><br>
+        <strong>DNS Hijacking</strong> — malware or rogue ISP changes the
+        resolver you use.<br>
+        <em>Fix:</em> DNS-over-HTTPS (DoH) or DNS-over-TLS (DoT) —
+        encrypts queries so no one can tamper in transit.<br><br>
+        <strong>DNS Tunnelling</strong> — attacker encodes data inside DNS
+        queries to exfiltrate data or establish C2 (bypasses firewalls).<br>
+        <em>Fix:</em> Monitor for unusually long query names, high query
+        volume per host, rare TLDs.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume DNS
+        responses are authentic unless DNSSEC is validated end-to-end.
+      </div>
+      <div class="code-block">
+<span class="com"># Check if a domain has DNSSEC enabled</span>
+dig example.com DNSKEY +short
+dig example.com DS +short
+
+<span class="com"># Test DNS-over-HTTPS (Cloudflare DoH)</span>
+curl -sH <span class="str">"accept: application/dns-json"</span>   <span class="str">"https://cloudflare-dns.com/dns-query?name=example.com&amp;type=A"</span> |   python3 -m json.tool
+
+<span class="com"># Detect suspicious long DNS names (potential tunnelling)</span>
+<span class="com"># In tcpdump: capture DNS on port 53</span>
+sudo tcpdump -i eth0 -w dns.pcap port <span class="num">53</span>
+<span class="com"># Then grep for names longer than 50 chars</span>
+tshark -r dns.pcap -T fields -e dns.qry.name |   awk <span class="str">'length &gt; 50'</span> | sort | uniq -c | sort -rn
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Operations</div>
+      <div class="concept-title">Managing DNS Zones</div>
+      <div class="concept-desc">
+        Whether you use Route 53, Cloudflare, or BIND on-prem, the
+        concepts are the same. Best practices:<br><br>
+        &bull; Set <strong>low TTLs</strong> (e.g. 300 s) before planned
+          changes; restore high TTLs (3600+) after.<br>
+        &bull; Always have <strong>at least two NS servers</strong> in
+          different locations for redundancy.<br>
+        &bull; Use <strong>split-horizon DNS</strong> — internal names
+          resolve to private IPs; external names resolve to public IPs.<br>
+        &bull; Add <strong>SPF, DKIM, DMARC</strong> TXT records for every
+          domain that sends email to prevent spoofing.<br>
+        &bull; <em>You can't make someone make the right choice, yet you
+          can pick up the pieces afterwards</em> — when a TTL-expired
+          stale record sends users to a dead IP, reduce TTL proactively
+          next time.
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body net -->

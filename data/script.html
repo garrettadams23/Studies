@@ -8986,4 +8986,137 @@ try {
 
   </div>
 </div>
+
+<!-- BEGINNER32-SCRIPT v1 -->
+<!-- ── TOPIC: IoT Security Fundamentals ──────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    IoT Security – Securing Connected Devices
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why IoT Is a Security Problem</div>
+      <div class="concept-desc">
+        <strong>IoT (Internet of Things)</strong> devices — cameras, smart
+        TVs, routers, industrial sensors, medical devices — are computers
+        with network access. Unlike PCs, they often:<br><br>
+        &bull; Ship with <strong>default credentials</strong> that users never
+          change.<br>
+        &bull; Run <strong>outdated Linux kernels</strong> with no automatic
+          updates.<br>
+        &bull; Expose <strong>unnecessary services</strong> (Telnet, FTP,
+          unencrypted HTTP) on open ports.<br>
+        &bull; Have <strong>no monitoring</strong> — nobody watches their
+          logs.<br>
+        &bull; Are deployed and <strong>forgotten</strong> for years.<br><br>
+        The Mirai botnet (2016) compromised 600,000+ IoT devices by
+        simply trying default username/password combinations and used them
+        to launch the largest DDoS attack in history at the time.
+        <br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        device is secure because it's "just a camera" or "just a
+        thermostat." Assume it is a fully capable Linux box sitting on
+        your network.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Discovery</div>
+      <div class="concept-title">Finding IoT Devices on Your Network</div>
+      <div class="concept-desc">
+        You cannot protect what you cannot see. These tools enumerate
+        every device on the network:
+      </div>
+      <div class="code-block">
+<span class="com"># Discover all hosts on the LAN (ping sweep)</span>
+nmap -sn <span class="num">192.168.1</span>.0/<span class="num">24</span>
+
+<span class="com"># Identify OS and open ports of every host</span>
+sudo nmap -O -sV <span class="num">192.168.1</span>.0/<span class="num">24</span> -oN lan_scan.txt
+
+<span class="com"># Find devices running Telnet (port 23) — a huge red flag</span>
+nmap -p <span class="num">23</span> --open <span class="num">192.168.1</span>.0/<span class="num">24</span>
+
+<span class="com"># Find devices with default web UIs (port 80/8080)</span>
+nmap -p <span class="num">80,8080,8443</span> --open <span class="num">192.168.1</span>.0/<span class="num">24</span>
+
+<span class="com"># Banner grab — what software version is running?</span>
+nc -zv <span class="num">192.168.1</span>.<span class="num">50</span> <span class="num">80</span>
+curl -I http://<span class="num">192.168.1</span>.<span class="num">50</span>  <span class="com"># look at Server: header</span>
+
+<span class="com"># Search Shodan for devices exposed to the internet</span>
+<span class="com"># (Shodan indexes internet-facing devices — use only for research)</span>
+<span class="com"># Web: shodan.io/search?query=camera+default+password</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Hardening</div>
+      <div class="concept-title">IoT Security Checklist</div>
+      <div class="concept-desc">
+        Apply these controls to every IoT device you manage:
+      </div>
+      <div class="code-block">
+<span class="com">MUST-DO IoT HARDENING CHECKLIST</span>
+<span class="com">───────────────────────────────────────────────────────────</span>
+
+[ ] Change default credentials immediately after provisioning
+[ ] Disable Telnet (port 23); use SSH if CLI access is needed
+[ ] Disable UPnP — it auto-opens firewall holes without your knowledge
+[ ] Segment IoT devices on a separate VLAN
+    (IoT VLAN can reach internet but NOT corporate LAN)
+[ ] Update firmware to the latest version
+[ ] Set up automatic update notifications or a review schedule
+[ ] Disable unused services (FTP, SNMP v1/v2 community string "public")
+[ ] Change SNMP community strings to strong random values
+[ ] Use HTTPS for web management; verify certificate
+[ ] Enable logging and send logs to your SIEM if possible
+[ ] Block inbound internet access to IoT devices at firewall
+[ ] Physically label devices with their VLAN and last audit date
+
+<span class="com"># Create an IoT VLAN rule (iptables — IoT VLAN is 192.168.10.0/24)</span>
+<span class="com"># Allow IoT → internet but block IoT → corporate (192.168.1.0/24)</span>
+sudo iptables -I FORWARD -s <span class="num">192.168.10</span>.0/<span class="num">24</span>   -d <span class="num">192.168.1</span>.0/<span class="num">24</span> -j DROP
+sudo iptables -I FORWARD -s <span class="num">192.168.10</span>.0/<span class="num">24</span>   -d <span class="num">0</span>.0.0.0/<span class="num">0</span> -j ACCEPT
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Firmware Analysis</div>
+      <div class="concept-title">Basic Firmware Triage with Binwalk</div>
+      <div class="concept-desc">
+        Firmware is the operating system of an embedded device. Security
+        researchers extract and analyse firmware images to find hardcoded
+        credentials, old vulnerable software, and backdoors.
+        <em>Only analyse firmware you have permission to test.</em>
+      </div>
+      <div class="code-block">
+<span class="com"># Install binwalk (firmware analysis tool)</span>
+sudo apt install binwalk
+
+<span class="com"># Scan a firmware image for embedded file systems</span>
+binwalk firmware.bin
+
+<span class="com"># Extract all file systems and compressed archives</span>
+binwalk -e firmware.bin
+<span class="com"># Creates _firmware.bin.extracted/</span>
+
+<span class="com"># Search for hardcoded passwords in extracted filesystem</span>
+grep -r <span class="str">"password"</span>  _firmware.bin.extracted/ --include=<span class="str">"*.conf"</span>
+grep -r <span class="str">"passwd"</span>    _firmware.bin.extracted/etc/
+cat _firmware.bin.extracted/etc/shadow  <span class="com"># hashed passwords</span>
+
+<span class="com"># Look for SSL private keys</span>
+find _firmware.bin.extracted/ -name <span class="str">"*.pem"</span> -o -name <span class="str">"*.key"</span>
+
+<span class="com"># Find SUID binaries in the extracted filesystem</span>
+find _firmware.bin.extracted/ -perm -<span class="num">4000</span> <span class="num">2</span>&gt;/dev/null
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body script -->

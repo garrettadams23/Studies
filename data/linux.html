@@ -3699,4 +3699,173 @@ sudo mount -t cifs //fileserver/documents /mnt/docs   -o username=alice,password
 
   </div>
 </div>
+
+<!-- BEGINNER32-LINUX v1 -->
+<!-- ── TOPIC: Advanced Bash Scripting Patterns ────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Intermediate</span>
+    Advanced Bash Scripting – Patterns for Reliable Scripts
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Robustness</div>
+      <div class="concept-title">The Safe-Script Header</div>
+      <div class="concept-desc">
+        Every production bash script should start with these four settings.
+        They turn silent failures into loud, debuggable errors.
+      </div>
+      <div class="code-block">
+#!/usr/bin/env bash
+set -euo pipefail
+
+<span class="com"># set -e  : exit immediately on any command error</span>
+<span class="com"># set -u  : treat unset variables as errors (catches typos)</span>
+<span class="com"># set -o pipefail : pipeline fails if any command in it fails</span>
+<span class="com">#           (without this: cmd1 | cmd2  — cmd1 failure is hidden)</span>
+
+<span class="com"># Add a trap to print the line number that failed</span>
+trap <span class="str">'echo "ERROR: line $LINENO exit code $?"'</span> ERR
+
+<span class="com"># Constant: mark read-only variables</span>
+readonly LOG_DIR=<span class="str">"/var/log/myapp"</span>
+readonly MAX_RETRIES=<span class="num">3</span>
+
+<span class="com"># ─── Example: fail loudly ────────────────────────────────────</span>
+# Without set -u:  echo $UNSET_VAR  → empty string (silent bug)
+# With    set -u:  echo $UNSET_VAR  → "unbound variable" error → exit
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Functions</div>
+      <div class="concept-title">Reusable Functions &amp; Logging</div>
+      <div class="concept-desc">
+        Good scripts have a <code>log</code> function, a <code>die</code>
+        function, and small single-purpose helper functions.
+      </div>
+      <div class="code-block">
+#!/usr/bin/env bash
+set -euo pipefail
+
+<span class="com"># Logging with timestamps and levels</span>
+log()  { echo <span class="str">"[$(date +%T)] INFO  $*"</span>  ; }
+warn() { echo <span class="str">"[$(date +%T)] WARN  $*"</span> &gt;&amp;<span class="num">2</span>; }
+die()  { echo <span class="str">"[$(date +%T)] ERROR $*"</span> &gt;&amp;<span class="num">2</span>; exit <span class="num">1</span>; }
+
+<span class="com"># Check dependencies at script start</span>
+require() {
+    for cmd in <span class="str">"$@"</span>; do
+        command -v <span class="str">"$cmd"</span> &gt;/dev/null <span class="num">2</span>&gt;&amp;<span class="num">1</span> || die <span class="str">"Required: $cmd"</span>
+    done
+}
+require curl jq aws
+
+<span class="com"># Retry a command up to N times with backoff</span>
+retry() {
+    local max=<span class="str">"$1"</span>; shift
+    local delay=<span class="num">2</span>
+    local attempt=<span class="num">1</span>
+    <span class="kw">while</span> ! <span class="str">"$@"</span>; do
+        (( attempt++ ))
+        [[ attempt -gt max ]] &amp;&amp; die <span class="str">"Command failed after $max attempts: $*"</span>
+        warn <span class="str">"Attempt $attempt/$max failed. Retrying in ${delay}s..."</span>
+        sleep <span class="str">"$delay"</span>
+        (( delay *= <span class="num">2</span> ))
+    done
+}
+
+retry <span class="num">3</span> curl -sf https://api.example.com/health
+log <span class="str">"Health check passed"</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Input Handling</div>
+      <div class="concept-title">Argument Parsing &amp; Validation</div>
+      <div class="concept-desc">
+        Scripts that accept arguments need clear usage messages and
+        input validation. Use <code>getopts</code> for short flags or
+        manual <code>case</code> for long options.
+      </div>
+      <div class="code-block">
+#!/usr/bin/env bash
+set -euo pipefail
+die() { echo "ERROR: $*" &gt;&amp;<span class="num">2</span>; exit <span class="num">1</span>; }
+
+usage() {
+    cat &lt;&lt;<span class="str">EOF
+Usage: $0 -e ENV -r REGION [-d]
+  -e  Environment (dev|staging|prod)
+  -r  AWS region  (e.g. us-east-1)
+  -d  Dry-run mode (no changes)
+EOF</span>
+    exit <span class="num">1</span>
+}
+
+ENV=<span class="str">""</span>; REGION=<span class="str">""</span>; DRYRUN=false
+
+while getopts <span class="str">":e:r:dh"</span> opt; do
+    case <span class="str">"$opt"</span> in
+        e) ENV=<span class="str">"$OPTARG"</span>   ;;
+        r) REGION=<span class="str">"$OPTARG"</span> ;;
+        d) DRYRUN=true    ;;
+        h|*) usage        ;;
+    esac
+done
+
+[[ -z <span class="str">"$ENV"</span>    ]] &amp;&amp; die <span class="str">"Environment (-e) is required"</span>
+[[ -z <span class="str">"$REGION"</span> ]] &amp;&amp; die <span class="str">"Region (-r) is required"</span>
+[[ <span class="str">"$ENV"</span> =~ ^(dev|staging|prod)$ ]] || die <span class="str">"Invalid env: $ENV"</span>
+
+echo <span class="str">"Deploying to $ENV / $REGION (dryrun=$DRYRUN)"</span>
+<span class="kw">if</span> [[ <span class="str">"$DRYRUN"</span> == false ]]; then
+    echo <span class="str">"... would deploy here ..."</span>
+fi
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Process Control</div>
+      <div class="concept-title">Background Jobs, Signals &amp; Cleanup</div>
+      <div class="concept-desc">
+        Production scripts often run long background jobs and need to
+        clean up temp files even if they are interrupted.
+      </div>
+      <div class="code-block">
+#!/usr/bin/env bash
+set -euo pipefail
+
+TMPDIR_WORK=$(mktemp -d)
+
+<span class="com"># Cleanup on exit, interrupt, or error</span>
+cleanup() { rm -rf <span class="str">"$TMPDIR_WORK"</span>; echo <span class="str">"Cleaned up $TMPDIR_WORK"</span>; }
+trap cleanup EXIT INT TERM
+
+<span class="com"># Run two jobs in parallel, wait for both</span>
+process_chunk() {
+    local chunk=<span class="str">"$1"</span>
+    echo <span class="str">"Processing $chunk ..."</span>
+    sleep <span class="num">2</span>   <span class="com"># simulate work</span>
+    echo <span class="str">"Done $chunk"</span>
+}
+
+for chunk in A B C; do
+    process_chunk <span class="str">"$chunk"</span> &amp;   <span class="com"># &amp; runs in background</span>
+done
+wait    <span class="com"># wait for all background jobs to finish</span>
+echo <span class="str">"All chunks processed"</span>
+
+<span class="com"># Check exit code of a background job</span>
+my_job &amp;
+job_pid=$!
+wait <span class="str">"$job_pid"
+job_exit=$?
+[[ $job_exit -eq 0 ]]</span> || die <span class="str">"my_job failed (exit $job_exit)"</span>
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body linux -->
