@@ -8831,4 +8831,159 @@ console.print(table)
     </div>
   </div>
 </div>
+
+<!-- BEGINNER30-SCRIPT v1 -->
+<!-- ── TOPIC: PowerShell Scripting Fundamentals ──────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    PowerShell Scripting – Automate Windows &amp; Cross-Platform
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">PowerShell vs Bash – Key Differences</div>
+      <div class="concept-desc">
+        PowerShell looks like a shell but behaves like a programming language.
+        The most important difference: <strong>PowerShell passes objects,
+        Bash passes text.</strong><br><br>
+        <table class="ai-table">
+          <tr><th>Feature</th><th>Bash</th><th>PowerShell</th></tr>
+          <tr><td>Output type</td><td>Plain text</td><td>.NET objects</td></tr>
+          <tr><td>Pipe</td><td><code>grep, awk, cut</code></td><td>property access</td></tr>
+          <tr><td>Error handling</td><td><code>$? / set -e</code></td><td><code>try/catch</code></td></tr>
+          <tr><td>OS</td><td>Linux/macOS</td><td>Windows, Linux, macOS</td></tr>
+          <tr><td>Extension</td><td><code>.sh</code></td><td><code>.ps1</code></td></tr>
+        </table>
+        <br>
+        PowerShell is now open-source and cross-platform (pwsh). For Windows
+        administration it is the <em>standard</em> — learn it even if you
+        primarily work on Linux.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Syntax</div>
+      <div class="concept-title">PowerShell Fundamentals</div>
+      <div class="concept-desc">Variables, loops, conditionals, functions — the building blocks.</div>
+      <div class="code-block">
+<span class="com"># Variables start with $</span>
+$name   = <span class="str">"Alice"</span>
+$age    = <span class="num">30</span>
+$active = $true
+
+<span class="com"># String interpolation (double quotes expand variables)</span>
+Write-Host <span class="str">"Hello, $name! You are $age years old."</span>
+
+<span class="com"># Arrays</span>
+$servers = <span class="str">"srv01"</span>, <span class="str">"srv02"</span>, <span class="str">"srv03"</span>
+$servers[<span class="num">0</span>]          <span class="com"># srv01</span>
+$servers.Count     <span class="com"># 3</span>
+
+<span class="com"># Hash table (dictionary)</span>
+$config = @{
+    Host = <span class="str">"db01"</span>
+    Port = <span class="num">5432</span>
+    DB   = <span class="str">"myapp"</span>
+}
+$config[<span class="str">"Host"</span>]   <span class="com"># db01</span>
+$config.Port     <span class="com"># 5432 — dot notation works too</span>
+
+<span class="com"># For-each loop</span>
+foreach ($server in $servers) {
+    Write-Host <span class="str">"Pinging $server ..."</span>
+    Test-Connection $server -Count <span class="num">1</span> -Quiet
+}
+
+<span class="com"># If / elseif / else</span>
+if ($age -ge <span class="num">18</span>) {
+    Write-Host <span class="str">"Adult"</span>
+} elseif ($age -ge <span class="num">13</span>) {
+    Write-Host <span class="str">"Teen"</span>
+} else {
+    Write-Host <span class="str">"Child"</span>
+}
+
+<span class="com"># Function</span>
+function Get-DiskUsage {
+    param([string]$Path = <span class="str">"C:\"</span>)
+    Get-PSDrive -Name ($Path[<span class="num">0</span>]) | Select Used, Free
+}
+Get-DiskUsage -Path <span class="str">"D:\"</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Object Pipeline</div>
+      <div class="concept-title">Working with Objects in the Pipeline</div>
+      <div class="concept-desc">
+        Because PowerShell passes objects, you can filter and select
+        <em>properties</em> without parsing text. This is PowerShell's
+        superpower.
+      </div>
+      <div class="code-block">
+<span class="com"># Get all running services, filter, sort, format</span>
+Get-Service |
+    Where-Object { $_.Status -eq <span class="str">"Running"</span> } |
+    Sort-Object   DisplayName |
+    Select-Object Name, DisplayName, StartType |
+    Format-Table -AutoSize
+
+<span class="com"># $_ is the current object in the pipeline</span>
+<span class="com"># Where-Object = filter (like grep but for objects)</span>
+<span class="com"># Select-Object = pick columns (like cut but named)</span>
+
+<span class="com"># Find processes using more than 500 MB RAM</span>
+Get-Process |
+    Where-Object { $_.WorkingSet64 -gt <span class="num">500</span>MB } |
+    Select-Object Name, Id,
+      @{N=<span class="str">"RAM_MB"</span>; E={[math]::Round($_.WorkingSet64/<span class="num">1</span>MB)}} |
+    Sort-Object RAM_MB -Descending
+
+<span class="com"># Export to CSV for a report</span>
+Get-EventLog -LogName Security -Newest <span class="num">100</span> |
+    Where-Object { $_.EventID -eq <span class="num">4625</span> } |  <span class="com"># failed logons</span>
+    Select-Object TimeGenerated, Message |
+    Export-Csv -Path failed_logons.csv -NoTypeInformation
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Error Handling</div>
+      <div class="concept-title">try / catch / finally in PowerShell</div>
+      <div class="concept-desc">
+        PowerShell uses <code>try/catch/finally</code> like most modern
+        languages. Use <code>-ErrorAction Stop</code> to make cmdlets throw
+        catchable exceptions (by default many just warn and continue).
+      </div>
+      <div class="code-block">
+<span class="com"># Always use -ErrorAction Stop so errors are catchable</span>
+try {
+    $result = Invoke-WebRequest -Uri <span class="str">"https://api.internal/health"</span> `
+                                -ErrorAction Stop
+    Write-Host <span class="str">"API is UP: $($result.StatusCode)"</span>
+}
+catch [System.Net.WebException] {
+    Write-Warning <span class="str">"Network error: $($_.Exception.Message)"</span>
+}
+catch {
+    Write-Error   <span class="str">"Unexpected error: $($_.Exception.Message)"</span>
+}
+finally {
+    Write-Host <span class="str">"Health check complete."</span>  <span class="com"># always runs</span>
+}
+
+<span class="com"># Log errors to a file</span>
+$ErrorActionPreference = <span class="str">"Stop"</span>
+try {
+    Get-Content <span class="str">"C:\missing_file.txt"</span>
+} catch {
+    $_ | Out-File -Append <span class="str">"C:\Logs\errors.log"</span>
+}
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body script -->

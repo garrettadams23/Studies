@@ -1862,4 +1862,138 @@ grype nginx:latest
     </div>
   </div>
 </div>
+
+<!-- BEGINNER30-OPS v1 -->
+<!-- ── TOPIC: PostgreSQL Admin Basics ────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    PostgreSQL Administration – Database Ops 101
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is a Database Server?</div>
+      <div class="concept-desc">
+        A <strong>database server</strong> stores data in structured tables and
+        answers queries from applications. PostgreSQL (Postgres) is the most
+        popular open-source relational database. As an ops person you are
+        responsible for keeping it <em>running, backed up, and fast</em>.
+        <br><br>
+        <strong>Quick orientation:</strong><br>
+        &bull; <em>Cluster</em> – one running Postgres instance (port 5432).<br>
+        &bull; <em>Database</em> – a namespace inside the cluster.<br>
+        &bull; <em>Schema</em> – a namespace inside a database (default: <code>public</code>).<br>
+        &bull; <em>Table</em> – rows &amp; columns, like a spreadsheet.<br>
+        &bull; <em>Role</em> – a user or group (Postgres uses one object for both).
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Daily Commands</div>
+      <div class="concept-title">psql – The Postgres CLI</div>
+      <div class="concept-desc">
+        <code>psql</code> is the interactive terminal for Postgres.
+        Master these and you can do 80 % of admin tasks.
+      </div>
+      <div class="code-block">
+<span class="com"># Connect as the postgres superuser</span>
+sudo -u postgres psql
+
+<span class="com">-- Inside psql (lines starting with -- are SQL comments)</span>
+<span class="com">-- List all databases</span>
+\l
+
+<span class="com">-- Connect to a specific database</span>
+\c myapp_db
+
+<span class="com">-- List tables in current schema</span>
+\dt
+
+<span class="com">-- Show table structure</span>
+\d users
+
+<span class="com">-- Run a query</span>
+<span class="kw">SELECT</span> id, email <span class="kw">FROM</span> users <span class="kw">LIMIT</span> <span class="num">5</span>;
+
+<span class="com">-- Show currently running queries</span>
+<span class="kw">SELECT</span> pid, now() - query_start <span class="kw">AS</span> duration, query
+<span class="kw">FROM</span>  pg_stat_activity
+<span class="kw">WHERE</span> state = <span class="str">'active'</span>
+<span class="kw">ORDER BY</span> duration <span class="kw">DESC</span>;
+
+<span class="com">-- Kill a stuck query (use pid from above)</span>
+<span class="kw">SELECT</span> pg_terminate_backend(<span class="num">12345</span>);
+
+<span class="com">-- Quit psql</span>
+\q
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Backup &amp; Restore</div>
+      <div class="concept-title">pg_dump and pg_restore</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick up
+        the pieces afterwards</em> — a developer may drop a table by accident.
+        Your job is to have a backup ready so you can restore it.
+      </div>
+      <div class="code-block">
+<span class="com"># Backup a single database to a compressed file</span>
+pg_dump -U postgres -Fc myapp_db &gt; myapp_db_$(date +%F).dump
+
+<span class="com"># Backup all databases (SQL text format)</span>
+pg_dumpall -U postgres &gt; all_databases_$(date +%F).sql
+
+<span class="com"># Restore from a compressed dump</span>
+pg_restore -U postgres -d myapp_db --clean myapp_db_2026-06-01.dump
+
+<span class="com"># Restore from SQL text dump</span>
+psql -U postgres &lt; all_databases_2026-06-01.sql
+
+<span class="com"># Automate nightly backup via cron (runs at 2 AM daily)</span>
+<span class="com"># Add to crontab with: crontab -e</span>
+0 2 * * * pg_dump -U postgres -Fc myapp_db &gt; /backups/myapp_$(date +\%F).dump
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Performance</div>
+      <div class="concept-title">VACUUM, ANALYZE, and Indexes</div>
+      <div class="concept-desc">
+        Postgres uses <em>Multi-Version Concurrency Control (MVCC)</em> —
+        deleted rows are not immediately removed, they become "dead tuples."
+        <code>VACUUM</code> reclaims that space. <code>ANALYZE</code> updates
+        statistics so the query planner makes good choices.
+        <br><br>
+        <strong>Autovacuum</strong> handles this automatically in normal
+        operation — never disable it.
+        <br><br>
+        <strong>Indexes</strong> speed up queries on large tables (like a book's
+        index). Add one when a column appears frequently in <code>WHERE</code>
+        clauses, but don't over-index — every index slows down
+        <code>INSERT</code>/<code>UPDATE</code>.
+      </div>
+      <div class="code-block">
+<span class="com">-- Manual vacuum + analyze (safe to run any time)</span>
+<span class="kw">VACUUM ANALYZE</span> users;
+
+<span class="com">-- Check table bloat (dead tuple ratio)</span>
+<span class="kw">SELECT</span> relname, n_dead_tup, n_live_tup,
+       round(n_dead_tup::numeric / nullif(n_live_tup,<span class="num">0</span>) * <span class="num">100</span>, <span class="num">2</span>) <span class="kw">AS</span> dead_pct
+<span class="kw">FROM</span>  pg_stat_user_tables
+<span class="kw">ORDER BY</span> dead_pct <span class="kw">DESC NULLS LAST</span>;
+
+<span class="com">-- Add an index on the email column</span>
+<span class="kw">CREATE INDEX CONCURRENTLY</span> idx_users_email <span class="kw">ON</span> users(email);
+<span class="com">-- CONCURRENTLY = no table lock, safe on production</span>
+
+<span class="com">-- Explain a query (show execution plan)</span>
+<span class="kw">EXPLAIN ANALYZE SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> email = <span class="str">'alice@example.com'</span>;
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body ops -->

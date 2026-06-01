@@ -4204,4 +4204,116 @@ sudo tcpdump -i eth0 'tcp[tcpflags] &amp; tcp-syn != 0'   <span class="com"># SY
     </div>
   </div>
 </div>
+
+<!-- BEGINNER30-NET v1 -->
+<!-- ── TOPIC: Active Directory & LDAP ────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Active Directory &amp; LDAP – Enterprise Identity 101
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is Active Directory?</div>
+      <div class="concept-desc">
+        Active Directory (AD) is Microsoft's directory service — the central
+        phonebook of every Windows enterprise. It stores <strong>users,
+        computers, groups, and policies</strong> in a tree of
+        <em>Organizational Units (OUs)</em>. When you log in at work, your
+        laptop asks a <em>Domain Controller (DC)</em> to verify your password.
+        <br><br>
+        <strong>Key vocabulary:</strong><br>
+        &bull; <em>Domain</em> – a boundary of administration (e.g. <code>corp.example.com</code>).<br>
+        &bull; <em>Forest</em> – one or more domains that trust each other.<br>
+        &bull; <em>OU</em> – a folder inside AD used to organise objects.<br>
+        &bull; <em>GPO</em> – Group Policy Object; rules pushed to computers/users.<br>
+        &bull; <em>DC</em> – Domain Controller; the server that runs AD.
+        <br><br>
+        <em>"Not my circus, not my monkey"</em> — if you are not the AD admin,
+        do not make changes in AD. Escalate to the team that owns it.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Protocol</div>
+      <div class="concept-title">LDAP – How Applications Talk to AD</div>
+      <div class="concept-desc">
+        <strong>LDAP (Lightweight Directory Access Protocol)</strong> is the
+        language software uses to query AD. Every object has a
+        <em>Distinguished Name (DN)</em> — a path like a file system path:<br>
+        <code>CN=Alice Smith,OU=Finance,DC=corp,DC=example,DC=com</code><br><br>
+        Common LDAP operations:<br>
+        &bull; <strong>Bind</strong> – authenticate (log in) to the directory.<br>
+        &bull; <strong>Search</strong> – find objects matching a filter.<br>
+        &bull; <strong>Add / Modify / Delete</strong> – manage objects (admin only).<br><br>
+        Port 389 = plain LDAP &nbsp;|&nbsp; Port 636 = LDAPS (TLS encrypted — always prefer this).
+      </div>
+      <div class="code-block">
+<span class="com"># Query AD with Python ldap3 (read-only example)</span>
+<span class="kw">from</span> ldap3 <span class="kw">import</span> Server, Connection, ALL, SUBTREE
+
+server = Server(<span class="str">'ldaps://dc01.corp.example.com'</span>, get_info=ALL)
+conn   = Connection(server,
+                    user=<span class="str">'corp\svc_readonly'</span>,
+                    password=<span class="str">'S3cur3P@ss!'</span>,
+                    auto_bind=<span class="kw">True</span>)
+
+<span class="com"># Find all users in the Finance OU</span>
+conn.search(
+    search_base=<span class="str">'OU=Finance,DC=corp,DC=example,DC=com'</span>,
+    search_filter=<span class="str">'(&amp;(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))'</span>,
+    search_scope=SUBTREE,
+    attributes=[<span class="str">'cn'</span>, <span class="str">'mail'</span>, <span class="str">'department'</span>]
+)
+
+<span class="kw">for</span> entry <span class="kw">in</span> conn.entries:
+    <span class="fn">print</span>(entry.cn, entry.mail)
+
+conn.unbind()
+<span class="com"># The filter above: objectClass=user AND NOT disabled (bit 2 of UAC)</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Authentication</div>
+      <div class="concept-title">Kerberos in Plain English</div>
+      <div class="concept-desc">
+        Kerberos is the default authentication protocol for AD domains. Think of
+        it as a <em>theme-park wristband</em> system:<br><br>
+        1. You show your password <strong>once</strong> to the
+           <em>Key Distribution Center (KDC)</em> on the DC.<br>
+        2. The KDC gives you a <strong>Ticket-Granting Ticket (TGT)</strong> —
+           your all-day wristband.<br>
+        3. When you access a resource (file share, web app), you show the TGT
+           to get a <strong>Service Ticket</strong> — a ride ticket for that
+           specific attraction.<br>
+        4. The resource trusts the service ticket without ever seeing your
+           password again.<br><br>
+        <strong>Why this matters for beginners:</strong> you never type your
+        password again during the work day — Single Sign-On (SSO).
+        Kerberos tickets expire (default 10 hours), so you may be prompted
+        again next day.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Best Practice</div>
+      <div class="concept-title">Principle of Least Privilege in AD</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — never assume a user
+        needs more permissions than their job requires. In AD:<br><br>
+        &bull; Give users <strong>standard accounts</strong> for daily work.<br>
+        &bull; Admins use a <strong>separate admin account</strong>
+          (e.g. <code>a-alice</code>) only when elevated tasks are needed.<br>
+        &bull; Service accounts get <strong>only the groups they need</strong>.<br>
+        &bull; Review group memberships quarterly — "account creep" is real.<br><br>
+        The <em>Domain Admins</em> group is the most powerful group in the
+        domain. Its membership list should be tiny and audited constantly.
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body net -->

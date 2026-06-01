@@ -3569,4 +3569,134 @@ lsof | grep deleted        <span class="com"># common cause of "df full but du n
     </div>
   </div>
 </div>
+
+<!-- BEGINNER30-LINUX v1 -->
+<!-- ── TOPIC: NFS & Samba Network Storage ────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    NFS &amp; Samba – Sharing Files Across the Network
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">NFS vs Samba – When to Use Which</div>
+      <div class="concept-desc">
+        Two protocols dominate network file sharing on Linux:<br><br>
+        <strong>NFS (Network File System)</strong><br>
+        &bull; Linux-to-Linux sharing (Unix permissions, UIDs).<br>
+        &bull; Fast and simple; no user login required (host-based trust).<br>
+        &bull; Best for: server-to-server shares, Kubernetes persistent volumes,
+          developer workstations on the same trusted LAN.<br><br>
+        <strong>Samba (SMB/CIFS)</strong><br>
+        &bull; Linux server sharing files to Windows clients (and macOS).<br>
+        &bull; Supports AD authentication — Windows users log in with their
+          domain credentials.<br>
+        &bull; Best for: office file servers, home directories for Windows users.<br><br>
+        <em>"Not my circus, not my monkey"</em> — if Windows clients are
+        complaining about a share, check with the Windows team before touching
+        Samba config; their GPOs may be overriding settings.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">NFS Server</div>
+      <div class="concept-title">Setting Up an NFS Export</div>
+      <div class="concept-desc">
+        The NFS server exposes directories via <code>/etc/exports</code>.
+        Each line names the directory and which clients may mount it.
+      </div>
+      <div class="code-block">
+<span class="com"># Install NFS server (Debian/Ubuntu)</span>
+sudo apt install nfs-kernel-server
+
+<span class="com"># Create a shared directory</span>
+sudo mkdir -p /srv/share
+sudo chown nobody:nogroup /srv/share
+sudo chmod <span class="num">755</span> /srv/share
+
+<span class="com"># Edit /etc/exports</span>
+<span class="com"># Format: /path  client(options)</span>
+<span class="com"># rw = read-write | sync = safe writes | no_subtree_check = faster</span>
+/srv/share  <span class="num">192.168.1</span>.0/<span class="num">24</span>(rw,sync,no_subtree_check)
+
+<span class="com"># Apply changes and restart</span>
+sudo exportfs -ra
+sudo systemctl restart nfs-kernel-server
+
+<span class="com">─────────── NFS CLIENT SIDE ───────────</span>
+<span class="com"># Install NFS client tools</span>
+sudo apt install nfs-common
+
+<span class="com"># Mount the share temporarily</span>
+sudo mount <span class="num">192.168.1</span>.<span class="num">10</span>:/srv/share /mnt/nfs
+
+<span class="com"># Make it persistent (add to /etc/fstab)</span>
+<span class="num">192.168.1</span>.<span class="num">10</span>:/srv/share  /mnt/nfs  nfs  defaults,_netdev  <span class="num">0 0</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Samba Server</div>
+      <div class="concept-title">Setting Up a Samba Share</div>
+      <div class="concept-desc">
+        Samba's configuration lives in <code>/etc/samba/smb.conf</code>.
+        The <code>[global]</code> section sets domain-wide options;
+        each <code>[share-name]</code> section defines one share.
+      </div>
+      <div class="code-block">
+<span class="com"># Install Samba</span>
+sudo apt install samba
+
+<span class="com"># /etc/samba/smb.conf snippet</span>
+[global]
+   workgroup = CORP
+   server string = File Server
+   security = user           <span class="com">; or 'ads' for AD integration</span>
+   map to guest = Bad User   <span class="com">; unauthenticated = read-only guest</span>
+
+[documents]
+   path = /srv/samba/documents
+   browseable = yes
+   read only = no
+   valid users = @finance     <span class="com">; only 'finance' Linux group</span>
+   create mask = <span class="num">0664</span>
+   directory mask = <span class="num">0775</span>
+
+<span class="com"># Create a Samba user (must already be a Linux user)</span>
+sudo smbpasswd -a alice
+
+<span class="com"># Check config for errors</span>
+testparm
+
+<span class="com"># Restart Samba</span>
+sudo systemctl restart smbd nmbd
+
+<span class="com"># Mount from Linux client (CIFS)</span>
+sudo mount -t cifs //fileserver/documents /mnt/docs   -o username=alice,password=secret,uid=$(id -u)
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Common NFS &amp; Samba Gotchas</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — don't assume the
+        firewall allows NFS/SMB traffic. Always verify:<br><br>
+        <strong>NFS troubleshooting:</strong><br>
+        &bull; <code>sudo showmount -e 192.168.1.10</code> — list exports from a server.<br>
+        &bull; NFS needs ports 111 (rpcbind) and 2049 (nfsd) open in the firewall.<br>
+        &bull; UID mismatch = files owned by wrong user; use <code>idmapd</code>
+          or explicit UID mapping.<br><br>
+        <strong>Samba troubleshooting:</strong><br>
+        &bull; <code>smbclient -L //server -U alice</code> — list shares.<br>
+        &bull; <code>sudo smbstatus</code> — show connected clients and locked files.<br>
+        &bull; Check <code>/var/log/samba/log.smbd</code> for auth failures.<br>
+        &bull; SMB needs TCP 445 (and 139 for older clients).
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body linux -->
