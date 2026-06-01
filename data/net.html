@@ -3017,4 +3017,1513 @@
             </div>
           </div>
         
-        <!-- /domain-body net -->
+        <!-- BEGINNER-NET v1 -->
+<div class="topic"><div class="topic-header"><span class="topic-icon">🧒</span><span class="topic-name">Networking for Absolute Beginners</span><span class="topic-badge">Net+ • Start Here</span><span class="topic-chevron">&rsaquo;</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">BIG IDEA</div><div class="concept-title">What Is a Network?</div><div class="concept-desc">A network is just two or more computers that can talk to each other. Your home Wi-Fi is a small network; the Internet is the giant network that connects all the small ones together. If computers are houses, the network is the system of roads between them.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">IP Address = Mailing Address</div><div class="concept-desc">Every device on a network has an IP address (e.g., 192.168.1.10) so data knows where to go — exactly like a street address tells the mail carrier which house. No address, no delivery.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">Packets = Envelopes</div><div class="concept-desc">Big files are chopped into small chunks called packets. Each packet is an envelope with a from-address, a to-address, and a piece of the message. They travel separately and get reassembled at the other end.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">Ports = Apartment Numbers</div><div class="concept-desc">One device (one IP) runs many programs at once. A port number says which program the data is for — like an apartment number after the street address. Web pages use port 80/443, email and other services use their own.</div></div><div class="concept-card"><div class="concept-label">ROLES</div><div class="concept-title">Client vs. Server</div><div class="concept-desc">The client asks (your phone opening a website); the server answers (the computer that stores that website). Most of what you do online is a polite back-and-forth of requests and responses.</div></div><div class="concept-card"><div class="concept-label">HARDWARE</div><div class="concept-title">Router vs. Switch</div><div class="concept-desc">A switch connects devices inside one network (like hallways in a building). A router connects different networks together and finds the path between them (like roads between cities). Your home box is usually both in one.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">DNS = The Phonebook</div><div class="concept-desc">Humans remember names (google.com); computers need numbers (an IP). DNS is the phonebook that looks up the name and returns the number, automatically, every time you click a link.</div></div><table class="ai-table"><thead><tr><th>Beginner Term</th><th>Plain-English Meaning</th></tr></thead><tbody><tr><td>Bandwidth</td><td>How wide the pipe is — how much data fits per second</td></tr><tr><td>Latency</td><td>How long one trip takes — the delay / 'lag'</td></tr><tr><td>LAN</td><td>Local network — your home or office</td></tr><tr><td>WAN</td><td>Wide network — connects distant sites; the Internet is the biggest</td></tr><tr><td>Wi-Fi</td><td>A network with no cables — radio instead of wires</td></tr><tr><td>Firewall</td><td>A guard that decides which traffic is allowed in or out</td></tr></tbody></table></div></div>
+<!-- BEGINNER2-NET v1 -->
+<div class="topic"><div class="topic-header"><span class="topic-icon">🔢</span><span class="topic-name">IP Addresses &amp; Subnets (Gently)</span><span class="topic-badge">Net+ • Start Here</span><span class="topic-chevron">&rsaquo;</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">READ IT</div><div class="concept-title">What an IPv4 Address Looks Like</div><div class="concept-desc">IPv4 is four numbers 0–255 separated by dots, like 192.168.1.50. Each device on a network needs one. We’re slowly running out of them, which is why IPv6 (much longer, with letters) was invented.</div></div><div class="concept-card"><div class="concept-label">TWO WORLDS</div><div class="concept-title">Public vs. Private</div><div class="concept-desc">Private addresses (like 192.168.x.x and 10.x.x.x) are reused inside homes and offices — like apartment numbers that only mean something in your building. Public addresses are unique on the whole Internet, like a full street address.</div></div><div class="concept-card"><div class="concept-label">NEIGHBORHOODS</div><div class="concept-title">What a Subnet Is</div><div class="concept-desc">A subnet groups nearby addresses into one neighborhood so traffic stays local and organized. The subnet mask (e.g., 255.255.255.0) is just the line that says “these addresses are neighbors; everything else is out of town.”</div></div><table class="ai-table"><thead><tr><th>Term</th><th>Plain-English Meaning</th></tr></thead><tbody><tr><td>DHCP</td><td>Hands out IP addresses automatically so you don’t have to</td></tr><tr><td>Default gateway</td><td>The exit door to other networks / the Internet</td></tr><tr><td>Subnet mask</td><td>Marks which part of the address is the neighborhood</td></tr><tr><td>IPv6</td><td>The newer, much larger address system</td></tr><tr><td>NAT</td><td>Lets many private devices share one public address</td></tr></tbody></table></div></div>
+
+<!-- BEGINNER6-NET v1 -->
+<!-- ── TOPIC: HOW DNS WORKS ──────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📖</span>
+    <span class="topic-name">DNS — The Internet's Phone Book</span>
+    <span class="topic-badge">NET • Start Here</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE PROBLEM DNS SOLVES</div>
+      <div class="concept-title">Humans Hate Numbers</div>
+      <div class="concept-desc">Computers talk to each other using IP addresses like <code>142.250.80.46</code>. Humans want to type <code>google.com</code>. DNS (Domain Name System) translates names into numbers — like a phone book that covers the whole internet.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE DNS LOOKUP JOURNEY</div>
+      <div class="concept-title">8 Steps From Name to IP</div>
+      <div class="concept-desc">1. You type <code>google.com</code> in your browser.<br>
+      2. Browser checks its own cache. If found → done.<br>
+      3. OS checks its cache. If found → done.<br>
+      4. OS asks your <strong>recursive resolver</strong> (your ISP or 8.8.8.8).<br>
+      5. Resolver asks a <strong>root nameserver</strong> (13 clusters worldwide) — "who handles .com?"<br>
+      6. Root points to the <strong>.com TLD nameserver</strong> (Verisign).<br>
+      7. TLD server points to <strong>Google's authoritative nameserver</strong>.<br>
+      8. Authoritative server returns the IP. Resolver caches it and gives it to you.</div>
+    </div>
+    <table class="ai-table">
+      <thead><tr><th>DNS Record Type</th><th>Purpose</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>Domain → IPv4 address</td><td>google.com → 142.250.80.46</td></tr>
+        <tr><td>AAAA</td><td>Domain → IPv6 address</td><td>google.com → 2607:f8b0:…</td></tr>
+        <tr><td>CNAME</td><td>Alias → another domain</td><td>www.example.com → example.com</td></tr>
+        <tr><td>MX</td><td>Mail server for domain</td><td>example.com → mail.example.com</td></tr>
+        <tr><td>TXT</td><td>Arbitrary text (SPF, DKIM, verification)</td><td>v=spf1 include:… ~all</td></tr>
+        <tr><td>NS</td><td>Nameservers for domain</td><td>ns1.google.com</td></tr>
+        <tr><td>PTR</td><td>Reverse lookup: IP → domain</td><td>46.80.250.142.in-addr.arpa → google.com</td></tr>
+        <tr><td>SOA</td><td>Start of Authority; zone metadata</td><td>Serial, refresh, retry, expire</td></tr>
+      </tbody>
+    </table>
+    <div class="concept-card">
+      <div class="concept-label">USEFUL DNS TOOLS</div>
+      <div class="concept-title">Dig, nslookup, host</div>
+      <div class="code-block"><span class="com"># Query A record for a domain</span>
+dig google.com A
+
+<span class="com"># Query MX records (mail servers)</span>
+dig google.com MX
+
+<span class="com"># Reverse lookup</span>
+dig -x 142.250.80.46
+
+<span class="com"># Use a specific resolver (8.8.8.8 = Google DNS)</span>
+dig @8.8.8.8 google.com
+
+<span class="com"># Windows equivalent</span>
+nslookup google.com
+nslookup -type=MX google.com</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TTL</div>
+      <div class="concept-title">Time to Live — DNS Caching Timer</div>
+      <div class="concept-desc">Every DNS record has a TTL (Time To Live) in seconds. After TTL expires, resolvers re-query for fresh results. Low TTL = fast changes but more queries. High TTL = slow propagation but less load. When migrating a website, lower the TTL 24 hours before the switch.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DHCP & IP ASSIGNMENT ───────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔢</span>
+    <span class="topic-name">DHCP — How Devices Get Their IP Address</span>
+    <span class="topic-badge">NET • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">DORA PROCESS</div>
+      <div class="concept-title">Discover → Offer → Request → Acknowledge</div>
+      <div class="concept-desc"><strong>Discover</strong> — new device broadcasts "I need an IP!" to 255.255.255.255.<br>
+      <strong>Offer</strong> — DHCP server says "How about 192.168.1.25? Here's a lease offer."<br>
+      <strong>Request</strong> — client says "Yes, I'll take 192.168.1.25" (broadcast, so other servers know).<br>
+      <strong>Acknowledge</strong> — server confirms: "192.168.1.25 is yours for 24 hours. Here's gateway and DNS too."</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">WHAT DHCP HANDS OUT</div>
+      <div class="concept-title">More Than Just an IP</div>
+      <div class="concept-desc">A DHCP lease typically includes:<br>
+      • <strong>IP address</strong> — unique on the local network<br>
+      • <strong>Subnet mask</strong> — defines network boundary (e.g., 255.255.255.0)<br>
+      • <strong>Default gateway</strong> — the router's IP (traffic leaving the network goes here)<br>
+      • <strong>DNS server(s)</strong> — where to resolve names<br>
+      • <strong>Lease duration</strong> — how long before re-requesting</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">STATIC vs DYNAMIC</div>
+      <div class="concept-title">Manual vs Automatic Assignment</div>
+      <div class="concept-desc"><strong>Dynamic</strong> — DHCP assigns from a pool; good for laptops and phones. IP may change on reconnect.<br>
+      <strong>Static</strong> — manually set; never changes. Required for servers, printers, network gear (you don't want DNS records breaking because the server got a new IP).<br>
+      <strong>DHCP Reservation</strong> — best of both worlds: DHCP assigns based on MAC address, so the device always gets the same IP automatically.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TROUBLESHOOTING</div>
+      <div class="concept-title">When DHCP Fails — APIPA</div>
+      <div class="concept-desc">If a device can't reach a DHCP server, Windows auto-assigns an <strong>APIPA</strong> address: <code>169.254.x.x</code>. This is a red flag — the device only has link-local connectivity and cannot reach the internet. Check: cable unplugged? DHCP server down? VLAN misconfigured?</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: WIRELESS NETWORKING BASICS ─────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📡</span>
+    <span class="topic-name">Wi-Fi Basics — 802.11, Bands, and Security</span>
+    <span class="topic-badge">NET • Practical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">802.11 STANDARDS</div>
+      <div class="concept-title">The Evolution of Wi-Fi</div>
+      <div class="concept-desc">The 802.11 family are the IEEE wireless LAN standards. Each letter suffix means a different generation:</div>
+      <table class="ai-table">
+        <thead><tr><th>Standard</th><th>Wi-Fi Name</th><th>Max Speed</th><th>Band</th><th>Year</th></tr></thead>
+        <tbody>
+          <tr><td>802.11b</td><td>—</td><td>11 Mbps</td><td>2.4 GHz</td><td>1999</td></tr>
+          <tr><td>802.11g</td><td>—</td><td>54 Mbps</td><td>2.4 GHz</td><td>2003</td></tr>
+          <tr><td>802.11n</td><td>Wi-Fi 4</td><td>600 Mbps</td><td>2.4/5 GHz</td><td>2009</td></tr>
+          <tr><td>802.11ac</td><td>Wi-Fi 5</td><td>3.5 Gbps</td><td>5 GHz</td><td>2013</td></tr>
+          <tr><td>802.11ax</td><td>Wi-Fi 6/6E</td><td>9.6 Gbps</td><td>2.4/5/6 GHz</td><td>2019</td></tr>
+          <tr><td>802.11be</td><td>Wi-Fi 7</td><td>46 Gbps</td><td>2.4/5/6 GHz</td><td>2024</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">2.4 GHz vs 5 GHz</div>
+      <div class="concept-title">Range vs Speed Trade-off</div>
+      <div class="concept-desc"><strong>2.4 GHz</strong> — longer range, penetrates walls better, more congestion (microwaves, Bluetooth, neighbors all compete), slower. Good for: IoT devices, devices far from router.<br>
+      <strong>5 GHz</strong> — shorter range, struggles through walls, less congested, faster. Good for: laptops and phones close to router, streaming, gaming.<br>
+      <strong>6 GHz (Wi-Fi 6E)</strong> — even faster, very short range, nearly empty spectrum. Best for: dense environments (offices, stadiums).</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">WIRELESS SECURITY</div>
+      <div class="concept-title">WEP → WPA → WPA2 → WPA3</div>
+      <div class="concept-desc"><strong>WEP</strong> — broken in minutes; do not use.<br>
+      <strong>WPA</strong> — better but still has vulnerabilities; phase out.<br>
+      <strong>WPA2-Personal (PSK)</strong> — current standard for home; uses AES-CCMP; strong if you use a long passphrase.<br>
+      <strong>WPA2-Enterprise</strong> — uses RADIUS authentication; each user has their own credentials. Used in corporate environments.<br>
+      <strong>WPA3</strong> — latest; uses SAE (Simultaneous Authentication of Equals) instead of PSK handshake; resistant to offline dictionary attacks.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER8-NET v1 -->
+<!-- ── TOPIC: SWITCHING & VLANs ──────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔀</span>
+    <span class="topic-name">Switching &amp; VLANs — Dividing Your Network Logically</span>
+    <span class="topic-badge">NET • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">SWITCH vs HUB vs ROUTER</div>
+      <div class="concept-title">Three Different Devices, Three Layers</div>
+      <div class="concept-desc"><strong>Hub</strong> — Layer 1; dumb repeater. Sends every frame to every port. Creates collisions. Legacy/obsolete.<br>
+      <strong>Switch</strong> — Layer 2; intelligent. Learns which MAC addresses are on which ports using a MAC address table. Sends frames only to the correct port. Creates collision domains per port.<br>
+      <strong>Router</strong> — Layer 3; connects different networks. Uses IP addresses and routing tables to forward packets between subnets and out to the internet.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">HOW A SWITCH WORKS</div>
+      <div class="concept-title">MAC Address Table Learning</div>
+      <div class="concept-desc">1. Frame arrives with source MAC AA:BB on port 1 → switch records AA:BB → Port 1 in table.<br>
+      2. Destination MAC CC:DD — not in table yet → switch <strong>floods</strong> to all ports except source.<br>
+      3. Device CC:DD responds → its MAC gets recorded.<br>
+      4. Next frame to CC:DD → switch delivers it only to the correct port.<br>
+      This is why switches are efficient — after learning, minimal unnecessary traffic.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">VLANS</div>
+      <div class="concept-title">Virtual LANs — Logical Network Segmentation</div>
+      <div class="concept-desc">A VLAN divides one physical switch into multiple logical networks. Devices in different VLANs cannot communicate directly even if they're plugged into the same switch — they need a router (Layer 3) to cross VLAN boundaries. Benefits:<br>
+      • <strong>Security</strong>: production servers on VLAN 10, guest WiFi on VLAN 99 — guests can't see servers<br>
+      • <strong>Performance</strong>: reduce broadcast domain size<br>
+      • <strong>Organization</strong>: group devices by function, not location</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TRUNK vs ACCESS PORTS</div>
+      <div class="concept-title">Single VLAN vs Multiple VLANs</div>
+      <div class="concept-desc"><strong>Access port</strong> — carries traffic for exactly ONE VLAN. Used for end devices (PCs, printers). Device doesn't know it's on a VLAN.<br>
+      <strong>Trunk port</strong> — carries traffic for MULTIPLE VLANs simultaneously. Used between switches, or switch-to-router. Uses 802.1Q tags to label which VLAN each frame belongs to.</div>
+    </div>
+    <table class="ai-table">
+      <thead><tr><th>Feature</th><th>Access Port</th><th>Trunk Port</th></tr></thead>
+      <tbody>
+        <tr><td>VLANs carried</td><td>One</td><td>Multiple</td></tr>
+        <tr><td>802.1Q tag</td><td>No (stripped)</td><td>Yes (tagged)</td></tr>
+        <tr><td>Connected to</td><td>End devices</td><td>Switches, routers, uplinks</td></tr>
+        <tr><td>Native VLAN</td><td>N/A</td><td>Untagged VLAN (usually VLAN 1)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── TOPIC: ROUTING PROTOCOLS 101 ──────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🗺️</span>
+    <span class="topic-name">Routing Protocols — How Routers Find the Best Path</span>
+    <span class="topic-badge">NET • Intermediate</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">STATIC vs DYNAMIC ROUTING</div>
+      <div class="concept-title">Manual Routes vs Self-Learning</div>
+      <div class="concept-desc"><strong>Static routes</strong> — an admin manually configures each route. Simple, predictable, no overhead. Works for small networks. Fails when the network changes (adding a link, a failure) because you have to manually update every router.<br>
+      <strong>Dynamic routing protocols</strong> — routers talk to each other and automatically discover routes. Self-healing when links fail. Required for large networks.</div>
+    </div>
+    <table class="ai-table">
+      <thead><tr><th>Protocol</th><th>Type</th><th>Algorithm</th><th>Use Case</th></tr></thead>
+      <tbody>
+        <tr><td>RIP</td><td>Distance Vector</td><td>Hop count (max 15)</td><td>Legacy / tiny networks</td></tr>
+        <tr><td>OSPF</td><td>Link State</td><td>Dijkstra (cost)</td><td>Enterprise interior routing</td></tr>
+        <tr><td>EIGRP</td><td>Hybrid (Cisco)</td><td>Bandwidth + delay</td><td>Cisco enterprise networks</td></tr>
+        <tr><td>BGP</td><td>Path Vector</td><td>Policy-based</td><td>Internet backbone; ISP routing</td></tr>
+      </tbody>
+    </table>
+    <div class="concept-card">
+      <div class="concept-label">BGP</div>
+      <div class="concept-title">The Protocol That Runs the Internet</div>
+      <div class="concept-desc">BGP (Border Gateway Protocol) is used between ISPs and large organizations to exchange routing information across the internet. Every major network has an ASN (Autonomous System Number). BGP is policy-driven — companies can influence which paths their traffic takes. A BGP misconfiguration can accidentally route the internet's traffic through your network (BGP hijacking).</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DEFAULT ROUTE</div>
+      <div class="concept-title">The Fallback Route (0.0.0.0/0)</div>
+      <div class="concept-desc">The default route (<code>0.0.0.0/0</code> or <code>::/0</code>) matches ANY destination. It's the "if nothing else matches, send it here" rule — usually pointing to the upstream router or internet gateway. Every end device has a default gateway for this reason.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER9-NET v1 -->
+<!-- ── TOPIC: FIREWALLS — NETWORK'S BOUNCER ──────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🧱</span>
+    <span class="topic-name">Firewalls — The Network's Bouncer</span>
+    <span class="topic-badge">NET • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT A FIREWALL DOES</div>
+      <div class="concept-title">Permit or Deny Based on Rules</div>
+      <div class="concept-desc">A firewall inspects network traffic and decides whether to allow or block it based on rules. Think of it as a bouncer with a list: traffic that matches an allow rule gets in; everything else is dropped or rejected. The implicit deny rule: if nothing matches, deny.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">FIREWALL TYPES</div>
+      <div class="concept-title">Packet Filter → Stateful → NGFW</div>
+      <div class="concept-desc"><strong>Packet filter (L3/L4)</strong> — examines individual packets: source/dest IP, port, protocol. No context (doesn't know if it's a new connection or response). Fast but dumb.<br>
+      <strong>Stateful inspection</strong> — tracks connection state. Knows if a packet is part of an established session. Much smarter — allows response traffic automatically.<br>
+      <strong>NGFW (Next-Gen Firewall)</strong> — adds application awareness (block YouTube regardless of port), IPS, deep packet inspection, user identity, SSL inspection. Most enterprise firewalls today.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">IPTABLES BASICS</div>
+      <div class="concept-title">Linux Built-In Firewall</div>
+      <div class="code-block"><span class="com"># View current rules</span>
+sudo iptables -L -v -n
+
+<span class="com"># Allow established connections (critical — add first)</span>
+sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+<span class="com"># Allow SSH (before blocking everything else!)</span>
+sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+<span class="com"># Allow web traffic</span>
+sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+
+<span class="com"># Drop everything else</span>
+sudo iptables -A INPUT -j DROP
+
+<span class="com"># Modern replacement: nftables / ufw</span>
+sudo ufw enable
+sudo ufw allow 22/tcp
+sudo ufw allow 443/tcp
+sudo ufw status verbose</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DMZ</div>
+      <div class="concept-title">De-Militarized Zone — Public-Facing Servers</div>
+      <div class="concept-desc">A DMZ is a network segment between the internet and your internal network. Public-facing servers (web servers, mail servers) go in the DMZ. If they're compromised, the attacker is in the DMZ — not directly on your internal network. Two firewalls: one between internet and DMZ, another between DMZ and internal. Defense in depth.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LOAD BALANCERS & HIGH AVAILABILITY ─────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">⚖️</span>
+    <span class="topic-name">Load Balancers &amp; High Availability — Never Go Down</span>
+    <span class="topic-badge">NET • Intermediate</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE PROBLEM</div>
+      <div class="concept-title">One Server = Single Point of Failure</div>
+      <div class="concept-desc">If your entire service runs on one server and it crashes, everyone is down. High availability (HA) architectures spread load across multiple servers so that if one fails, others continue serving traffic seamlessly. <strong>HA goal</strong>: no single component failure takes down the service.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">LOAD BALANCER</div>
+      <div class="concept-title">Distributes Traffic Across Backend Servers</div>
+      <div class="concept-desc">A load balancer sits in front of your servers and routes each incoming request to one of the backends. Algorithms:<br>
+      <strong>Round-robin</strong> — server 1, server 2, server 3, server 1… Even distribution.<br>
+      <strong>Least connections</strong> — sends to whichever server has the fewest active connections.<br>
+      <strong>IP hash</strong> — same client IP always goes to the same server (sticky sessions).<br>
+      <strong>Weighted</strong> — big server gets more traffic than small server.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">HEALTH CHECKS</div>
+      <div class="concept-title">Automatically Remove Failing Servers</div>
+      <div class="concept-desc">A load balancer periodically pings each backend (HTTP GET /health, TCP connect, etc.). If a backend fails N consecutive checks, it's removed from the pool. No human intervention needed — traffic automatically shifts to healthy servers. When it recovers, it re-enters the pool.</div>
+    </div>
+    <table class="ai-table">
+      <thead><tr><th>Concept</th><th>Meaning</th><th>Common SLA</th></tr></thead>
+      <tbody>
+        <tr><td>High Availability (HA)</td><td>System stays up despite component failures</td><td>99.9% = 8.7 hrs/yr downtime</td></tr>
+        <tr><td>99.99% ("four nines")</td><td>Enterprise HA target</td><td>52 min/yr downtime</td></tr>
+        <tr><td>99.999% ("five nines")</td><td>Telco/critical systems</td><td>5.25 min/yr downtime</td></tr>
+        <tr><td>RTO</td><td>Recovery Time Objective — max acceptable downtime</td><td>Defined in DR plan</td></tr>
+        <tr><td>RPO</td><td>Recovery Point Objective — max acceptable data loss</td><td>Defined in DR plan</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- BEGINNER10-NET v1 -->
+<!-- ── TOPIC: CLOUD NETWORKING — VPC & CDN ───────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">☁️</span>
+    <span class="topic-name">Cloud Networking — VPC, Subnets &amp; CDNs</span>
+    <span class="topic-badge">NET • Cloud</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">CLOUD MODELS</div>
+      <div class="concept-title">IaaS · PaaS · SaaS</div>
+      <div class="concept-desc"><strong>IaaS (Infrastructure as a Service)</strong> — rent VMs, storage, networking. You manage OS and above. Examples: AWS EC2, Azure VMs, Google Compute Engine. Most control, most responsibility.<br>
+      <strong>PaaS (Platform as a Service)</strong> — deploy your app code; provider manages OS, runtime, scaling. Examples: Heroku, AWS Elastic Beanstalk, Google App Engine.<br>
+      <strong>SaaS (Software as a Service)</strong> — use the finished product. Salesforce, Office 365, Gmail. No infrastructure concern at all.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">VPC</div>
+      <div class="concept-title">Virtual Private Cloud — Your Private Network in the Cloud</div>
+      <div class="concept-desc">A VPC is a logically isolated section of the cloud where you launch resources in a network you define. You control IP ranges, subnets, routing tables, and gateways — just like a physical data center, but virtualized.</div>
+      <table class="ai-table">
+        <thead><tr><th>Component</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>VPC CIDR</td><td>IP range for the entire VPC (e.g., 10.0.0.0/16)</td></tr>
+          <tr><td>Subnet</td><td>Sub-range within VPC; public (internet) or private</td></tr>
+          <tr><td>Internet Gateway</td><td>Allows public subnets to reach the internet</td></tr>
+          <tr><td>NAT Gateway</td><td>Lets private subnets initiate outbound internet; no inbound</td></tr>
+          <tr><td>Route Table</td><td>Defines where traffic goes (0.0.0.0/0 → IGW for public)</td></tr>
+          <tr><td>Security Group</td><td>Stateful firewall at instance level</td></tr>
+          <tr><td>NACL</td><td>Stateless firewall at subnet level</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CDN</div>
+      <div class="concept-title">Content Delivery Network — Cache at the Edge</div>
+      <div class="concept-desc">A CDN stores copies of your static content (images, JS, CSS, videos) at servers (PoPs — Points of Presence) close to users worldwide. When a user in Tokyo requests your image, it comes from a Tokyo edge node, not your origin server in Virginia. Result: dramatically lower latency and reduced origin server load. Examples: Cloudflare, AWS CloudFront, Fastly, Akamai.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SHARED RESPONSIBILITY MODEL</div>
+      <div class="concept-title">Who Is Responsible for What in Cloud?</div>
+      <div class="concept-desc">AWS/Azure/GCP secure <strong>the cloud</strong> (physical hardware, hypervisor, network). You secure <strong>in the cloud</strong> (your VMs, data, IAM config, encryption, application code). Misconfigurations (public S3 buckets, overly permissive security groups, no encryption) are YOUR responsibility, not the cloud provider's. This is the source of most cloud breaches.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER11-NET v1 -->
+<!-- ── TOPIC: NETWORK TROUBLESHOOTING ───────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔍</span>
+    <span class="topic-name">Network Troubleshooting — A Systematic Approach</span>
+    <span class="topic-badge">NET • Practical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">OSI TROUBLESHOOTING</div>
+      <div class="concept-title">Bottom-Up or Top-Down</div>
+      <div class="concept-desc">Two strategies for network problems:<br>
+      <strong>Bottom-up (most common for no-connectivity)</strong>: Physical (cable/light?) → Data Link (ARP, MAC?) → Network (ping, IP?) → Transport (port open?) → Application (service running?).<br>
+      <strong>Top-down</strong>: Start at the application ("the web page is slow") and work down to find where the degradation is.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE DIAGNOSTIC TOOLKIT</div>
+      <div class="concept-title">Commands Every Network Person Uses</div>
+      <div class="code-block"><span class="com"># Layer 1-2: Physical / Link</span>
+ip link show                    <span class="com"># interface status, MAC</span>
+ethtool eth0                    <span class="com"># speed, duplex, link detected</span>
+
+<span class="com"># Layer 3: IP connectivity</span>
+ip addr show                    <span class="com"># IP addresses</span>
+ip route show                   <span class="com"># routing table</span>
+ping 8.8.8.8                    <span class="com"># basic reachability</span>
+ping -c 4 google.com            <span class="com"># DNS + ICMP check</span>
+
+<span class="com"># Path tracing</span>
+traceroute 8.8.8.8              <span class="com"># hops to destination</span>
+mtr google.com                  <span class="com"># live traceroute with packet loss</span>
+
+<span class="com"># Layer 4: Transport / Ports</span>
+ss -tlnp                        <span class="com"># listening TCP ports</span>
+ss -ulnp                        <span class="com"># listening UDP ports</span>
+nc -zv 192.168.1.1 22           <span class="com"># test TCP port connectivity</span>
+telnet 192.168.1.1 80           <span class="com"># old-school port test</span>
+
+<span class="com"># DNS</span>
+dig google.com                  <span class="com"># DNS lookup</span>
+nslookup google.com             <span class="com"># Windows/Linux</span>
+resolvectl query google.com     <span class="com"># systemd-resolved</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PACKET CAPTURE</div>
+      <div class="concept-title">See What's Actually on the Wire</div>
+      <div class="code-block"><span class="com"># Capture on interface eth0</span>
+sudo tcpdump -i eth0
+
+<span class="com"># Capture HTTP traffic</span>
+sudo tcpdump -i eth0 port 80 -w capture.pcap
+
+<span class="com"># Capture DNS queries</span>
+sudo tcpdump -i any port 53 -n
+
+<span class="com"># Show packet contents in ASCII</span>
+sudo tcpdump -i eth0 -A
+
+<span class="com"># Read saved capture</span>
+tcpdump -r capture.pcap</div>
+      <div class="concept-desc">Open <code>.pcap</code> files in Wireshark for graphical analysis. Wireshark's "Follow TCP Stream" shows entire conversations. Filter: <code>http.request</code>, <code>tcp.flags.syn==1</code>, <code>dns</code>, <code>ip.addr==192.168.1.5</code></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">COMMON SYMPTOMS</div>
+      <div class="concept-title">Problem → Most Likely Cause</div>
+      <table class="ai-table">
+        <thead><tr><th>Symptom</th><th>Check First</th></tr></thead>
+        <tbody>
+          <tr><td>No connectivity at all</td><td>IP address assigned? (169.254.x.x = DHCP failed)</td></tr>
+          <tr><td>Can ping IP, not hostname</td><td>DNS — wrong resolver, DHCP giving bad DNS</td></tr>
+          <tr><td>Can ping gateway, not internet</td><td>ISP issue, default route, firewall blocking outbound</td></tr>
+          <tr><td>Intermittent packet loss</td><td>Bad cable, duplex mismatch, overloaded link</td></tr>
+          <tr><td>High latency only to one site</td><td>Routing issue, CDN problem, that site's servers</td></tr>
+          <tr><td>App works internally, not externally</td><td>Firewall port not open, NAT not configured</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER13-NET v1 -->
+<!-- ── TOPIC: IPv6 FUNDAMENTALS ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🌐</span>
+    <span class="topic-name">IPv6 — The Internet's Upgrade</span>
+    <span class="topic-badge">NET • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY IPv6</div>
+      <div class="concept-title">IPv4 Ran Out of Addresses</div>
+      <div class="concept-desc">IPv4 has 4.3 billion addresses. That sounds like a lot — until you realize there are 8 billion people, each with multiple devices, plus billions of IoT gadgets. IPv4 officially ran out in 2011. IPv6 solves this with 340 undecillion addresses (3.4 × 10³⁸) — roughly one address per atom on Earth's surface. You'll encounter IPv6 constantly in modern networks.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ADDRESS FORMAT</div>
+      <div class="concept-title">Reading and Writing IPv6 Addresses</div>
+      <div class="concept-desc">IPv6 addresses are 128 bits written as 8 groups of 4 hex digits separated by colons. Two simplification rules reduce the ugliness.</div>
+      <div class="code-block"><span class="com"># Full form — 8 groups of 4 hex digits</span>
+2001:0db8:0000:0000:0000:ff00:0042:8329
+
+<span class="com"># Rule 1: Drop leading zeros in each group</span>
+2001:db8:0:0:0:ff00:42:8329
+
+<span class="com"># Rule 2: Replace ONE run of consecutive all-zero groups with ::</span>
+2001:db8::ff00:42:8329   <span class="com"># :: replaces :0:0:0:</span>
+
+<span class="com"># Loopback (equivalent to 127.0.0.1)</span>
+::1
+
+<span class="com"># Unspecified address (equivalent to 0.0.0.0)</span>
+::
+
+<span class="com"># IPv6 in URLs — brackets required to avoid port confusion</span>
+http://[2001:db8::1]:8080/path</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ADDRESS TYPES</div>
+      <div class="concept-title">IPv6 Address Categories</div>
+      <table class="ai-table">
+        <thead><tr><th>Type</th><th>Prefix</th><th>Scope</th><th>IPv4 Equivalent</th></tr></thead>
+        <tbody>
+          <tr><td>Global Unicast</td><td><code>2000::/3</code></td><td>Public internet-routable</td><td>Public IP</td></tr>
+          <tr><td>Link-Local</td><td><code>fe80::/10</code></td><td>This link only (not routed)</td><td>169.254.x.x (APIPA)</td></tr>
+          <tr><td>Unique Local</td><td><code>fc00::/7</code></td><td>Private org network</td><td>RFC 1918 (10.x, 172.16.x, 192.168.x)</td></tr>
+          <tr><td>Loopback</td><td><code>::1/128</code></td><td>This device only</td><td>127.0.0.1</td></tr>
+          <tr><td>Multicast</td><td><code>ff00::/8</code></td><td>Group of devices</td><td>224.0.0.0/4</td></tr>
+          <tr><td>Anycast</td><td>From unicast range</td><td>Nearest of a group</td><td>No direct equivalent</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">KEY DIFFERENCES</div>
+      <div class="concept-title">IPv6 vs IPv4 — What Changed</div>
+      <table class="ai-table">
+        <thead><tr><th>Feature</th><th>IPv4</th><th>IPv6</th></tr></thead>
+        <tbody>
+          <tr><td>Address size</td><td>32 bits (~4.3B addresses)</td><td>128 bits (340 undecillion)</td></tr>
+          <tr><td>NAT required?</td><td>Yes (address exhaustion)</td><td>No (enough for all devices)</td></tr>
+          <tr><td>Header size</td><td>Variable (20-60 bytes)</td><td>Fixed (40 bytes) — faster routing</td></tr>
+          <tr><td>Broadcast</td><td>Yes (network noise)</td><td>No — replaced by multicast</td></tr>
+          <tr><td>Auto-configuration</td><td>Needs DHCP</td><td>SLAAC (stateless, no server needed)</td></tr>
+          <tr><td>IPsec</td><td>Optional</td><td>Built into spec</td></tr>
+          <tr><td>Fragmentation</td><td>Routers can fragment</td><td>End hosts only (routers don't)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DUAL-STACK & TRANSITION</div>
+      <div class="concept-title">Running IPv4 and IPv6 Together</div>
+      <div class="concept-desc">Most networks today run <strong>dual-stack</strong> — both IPv4 and IPv6 simultaneously. When a client connects, it prefers IPv6 (via "Happy Eyeballs" algorithm). This lets networks migrate gradually without a hard cutover.</div>
+      <div class="code-block"><span class="com"># Check your IPv6 addresses (Linux)</span>
+ip -6 addr show
+
+<span class="com"># Ping using IPv6</span>
+ping6 ::1                          <span class="com"># loopback</span>
+ping6 -I eth0 fe80::1%eth0         <span class="com"># link-local requires interface</span>
+
+<span class="com"># Traceroute IPv6</span>
+traceroute6 2001:4860:4860::8888   <span class="com"># Google's IPv6 DNS</span>
+
+<span class="com"># Check if site has IPv6 (AAAA record)</span>
+dig AAAA google.com
+nslookup -type=AAAA google.com
+
+<span class="com"># Curl over IPv6</span>
+curl -6 https://ipv6.google.com</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: NETWORK PROTOCOLS DEEP DIVE ─────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔌</span>
+    <span class="topic-name">Common Protocols — What's Actually Happening on the Wire</span>
+    <span class="topic-badge">NET • Reference</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">APPLICATION LAYER PROTOCOLS</div>
+      <div class="concept-title">Protocols You'll Use Every Day</div>
+      <table class="ai-table">
+        <thead><tr><th>Protocol</th><th>Port</th><th>Purpose</th><th>Secure Version</th></tr></thead>
+        <tbody>
+          <tr><td>HTTP</td><td>80/tcp</td><td>Web traffic</td><td>HTTPS (443)</td></tr>
+          <tr><td>HTTPS</td><td>443/tcp</td><td>Encrypted web</td><td>Already secure</td></tr>
+          <tr><td>DNS</td><td>53/udp+tcp</td><td>Name resolution</td><td>DoH (443), DoT (853)</td></tr>
+          <tr><td>SSH</td><td>22/tcp</td><td>Encrypted remote shell</td><td>Already secure</td></tr>
+          <tr><td>FTP</td><td>21/tcp</td><td>File transfer (insecure)</td><td>SFTP (22), FTPS (990)</td></tr>
+          <tr><td>SMTP</td><td>25/tcp</td><td>Send email (server-to-server)</td><td>SMTPS (465/587)</td></tr>
+          <tr><td>IMAP</td><td>143/tcp</td><td>Read email (syncs)</td><td>IMAPS (993)</td></tr>
+          <tr><td>POP3</td><td>110/tcp</td><td>Read email (downloads)</td><td>POP3S (995)</td></tr>
+          <tr><td>SNMP</td><td>161/udp</td><td>Network device management</td><td>SNMPv3</td></tr>
+          <tr><td>NTP</td><td>123/udp</td><td>Time synchronization</td><td>NTPsec</td></tr>
+          <tr><td>RDP</td><td>3389/tcp</td><td>Windows remote desktop</td><td>TLS-wrapped RDP</td></tr>
+          <tr><td>LDAP</td><td>389/tcp</td><td>Directory services (AD)</td><td>LDAPS (636)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TCP VS UDP</div>
+      <div class="concept-title">Choosing the Right Transport Protocol</div>
+      <table class="ai-table">
+        <thead><tr><th>Feature</th><th>TCP</th><th>UDP</th></tr></thead>
+        <tbody>
+          <tr><td>Connection</td><td>Connection-oriented (3-way handshake)</td><td>Connectionless — fire and forget</td></tr>
+          <tr><td>Reliability</td><td>Guaranteed delivery, retransmits lost packets</td><td>No guarantee — packets can be lost</td></tr>
+          <tr><td>Ordering</td><td>Delivers in order</td><td>Out-of-order possible</td></tr>
+          <tr><td>Speed</td><td>Slower (overhead)</td><td>Faster (minimal overhead)</td></tr>
+          <tr><td>Use case</td><td>HTTP, SSH, email, file transfer</td><td>DNS, video streaming, VoIP, gaming</td></tr>
+          <tr><td>Header size</td><td>20+ bytes</td><td>8 bytes</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER15-NET v1 -->
+<!-- ── TOPIC: VPNs AND TUNNELING ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔐</span>
+    <span class="topic-name">VPNs &amp; Tunneling — Secure Connections Over Untrusted Networks</span>
+    <span class="topic-badge">NET • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT A VPN ACTUALLY DOES</div>
+      <div class="concept-title">An Encrypted Tunnel Through a Hostile Network</div>
+      <div class="concept-desc">A VPN (Virtual Private Network) creates an encrypted tunnel between your device and a VPN server. Everything inside the tunnel is encrypted, so even on untrusted networks (coffee shop Wi-Fi), nobody can read your traffic. There are two distinct use cases that people confuse:</div>
+      <table class="ai-table">
+        <thead><tr><th>Type</th><th>Purpose</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Remote Access VPN</strong></td><td>Connect a remote user to a private corporate network</td><td>Working from home, accessing internal apps</td></tr>
+          <tr><td><strong>Site-to-Site VPN</strong></td><td>Connect two networks (offices) over the internet</td><td>Branch office ↔ HQ network</td></tr>
+          <tr><td><strong>Commercial VPN</strong></td><td>Privacy/geo-unblocking for consumers</td><td>NordVPN, hiding traffic from ISP</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">VPN PROTOCOLS</div>
+      <div class="concept-title">How the Tunnel Is Built</div>
+      <table class="ai-table">
+        <thead><tr><th>Protocol</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>WireGuard</td><td>Modern, fast, simple, ~4000 lines of code. Increasingly the default.</td></tr>
+          <tr><td>OpenVPN</td><td>Mature, flexible, widely supported. SSL/TLS-based.</td></tr>
+          <tr><td>IPsec/IKEv2</td><td>Built into most OSes, great for mobile (reconnects fast). Common for site-to-site.</td></tr>
+          <tr><td>L2TP/IPsec</td><td>Older; L2TP provides tunnel, IPsec provides encryption.</td></tr>
+          <tr><td>PPTP</td><td>Obsolete — broken encryption. Never use.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PROXIES VS VPNs</div>
+      <div class="concept-title">Related But Different</div>
+      <table class="ai-table">
+        <thead><tr><th>Feature</th><th>Proxy</th><th>VPN</th></tr></thead>
+        <tbody>
+          <tr><td>Scope</td><td>Per-application (e.g., just the browser)</td><td>Entire device (all traffic)</td></tr>
+          <tr><td>Encryption</td><td>Often none (just relays)</td><td>Always encrypted</td></tr>
+          <tr><td>Layer</td><td>Application layer (L7)</td><td>Network layer (L3)</td></tr>
+          <tr><td>Common use</td><td>Web filtering, caching, hiding origin IP</td><td>Secure remote access, privacy</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">A <strong>forward proxy</strong> sits between users and the internet (corporate web filtering). A <strong>reverse proxy</strong> sits in front of servers (load balancing, TLS termination, hiding backend — e.g., nginx, Cloudflare).</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SSH TUNNELING</div>
+      <div class="concept-title">The Poor Man's VPN</div>
+      <div class="concept-desc">SSH can forward ports through its encrypted connection — a quick way to securely reach services without a full VPN. Essential for accessing internal services through a jump host.</div>
+      <div class="code-block"><span class="com"># Local port forward — reach a remote DB through SSH</span>
+<span class="com"># "Make my localhost:5432 → db.internal:5432 via jumphost"</span>
+ssh -L 5432:db.internal:5432 user@jumphost
+<span class="com"># Now connect to localhost:5432 → actually hits db.internal</span>
+
+<span class="com"># Remote port forward — expose YOUR local service to remote</span>
+ssh -R 8080:localhost:3000 user@remote
+<span class="com"># remote's :8080 → your local :3000</span>
+
+<span class="com"># Dynamic forward — SOCKS proxy (route browser through SSH)</span>
+ssh -D 1080 user@jumphost
+<span class="com"># Set browser SOCKS proxy to localhost:1080</span>
+
+<span class="com"># Jump through a bastion to reach an internal host</span>
+ssh -J bastion.example.com user@internal-host</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ZERO TRUST NETWORK ACCESS</div>
+      <div class="concept-title">The VPN Replacement</div>
+      <div class="concept-desc">Traditional VPNs give you access to the whole network once connected (overly trusting). Zero Trust Network Access (ZTNA) flips this: <em>"never trust, always verify."</em> Every request is authenticated and authorized individually, granting access only to specific applications — not the whole network. Tools like Cloudflare Access, Tailscale, and Zscaler implement this. Increasingly replacing legacy VPNs.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER17-NET v1 -->
+<!-- ── TOPIC: SUBNETTING ─────────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🧮</span>
+    <span class="topic-name">Subnetting — The Math That Scares Beginners (It Shouldn't)</span>
+    <span class="topic-badge">NET • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS SUBNETTING</div>
+      <div class="concept-title">Dividing a Network Into Smaller Networks</div>
+      <div class="concept-desc">An IP address has two parts: a <strong>network portion</strong> (which network you're on) and a <strong>host portion</strong> (which specific device). Subnetting is the art of deciding where to draw that line — splitting a big address block into smaller, organized chunks. Why? Security (isolate departments), efficiency (reduce broadcast traffic), and organization. It intimidates beginners, but it's just binary math you can learn in an afternoon.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CIDR NOTATION</div>
+      <div class="concept-title">The /24 Explained</div>
+      <div class="concept-desc">An IPv4 address is 32 bits. CIDR (Classless Inter-Domain Routing) notation like <code>192.168.1.0/24</code> means "the first 24 bits are the network portion." The remaining bits (32 − 24 = 8) are for hosts. More network bits = smaller subnet = fewer hosts.</div>
+      <div class="code-block"><span class="com"># 192.168.1.0/24 in binary</span>
+192.168.1.0
+11000000.10101000.00000001.00000000
+└──────── 24 network bits ────────┘└8 host┘
+
+<span class="com"># The /24 tells you the subnet mask</span>
+/24 = 255.255.255.0
+<span class="com"># (24 ones, then 8 zeros)</span>
+11111111.11111111.11111111.00000000</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE KEY FORMULAS</div>
+      <div class="concept-title">Hosts and Subnets — Memorize These</div>
+      <div class="code-block"><span class="com"># Number of usable hosts per subnet</span>
+usable hosts = 2^(host bits) − 2
+<span class="com"># (subtract 2: network address + broadcast address)</span>
+
+<span class="com"># Example: /24 has 8 host bits</span>
+2^8 − 2 = 256 − 2 = 254 usable hosts
+
+<span class="com"># Example: /26 has 6 host bits</span>
+2^6 − 2 = 64 − 2 = 62 usable hosts
+
+<span class="com"># Number of subnets when you "borrow" bits</span>
+subnets = 2^(borrowed bits)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CIDR CHEAT SHEET</div>
+      <div class="concept-title">Common Prefixes at a Glance</div>
+      <table class="ai-table">
+        <thead><tr><th>CIDR</th><th>Subnet Mask</th><th>Host Bits</th><th>Usable Hosts</th><th>Block Size</th></tr></thead>
+        <tbody>
+          <tr><td>/30</td><td>255.255.255.252</td><td>2</td><td>2</td><td>4 (point-to-point links)</td></tr>
+          <tr><td>/29</td><td>255.255.255.248</td><td>3</td><td>6</td><td>8</td></tr>
+          <tr><td>/28</td><td>255.255.255.240</td><td>4</td><td>14</td><td>16</td></tr>
+          <tr><td>/27</td><td>255.255.255.224</td><td>5</td><td>30</td><td>32</td></tr>
+          <tr><td>/26</td><td>255.255.255.192</td><td>6</td><td>62</td><td>64</td></tr>
+          <tr><td>/25</td><td>255.255.255.128</td><td>7</td><td>126</td><td>128</td></tr>
+          <tr><td>/24</td><td>255.255.255.0</td><td>8</td><td>254</td><td>256</td></tr>
+          <tr><td>/23</td><td>255.255.254.0</td><td>9</td><td>510</td><td>512</td></tr>
+          <tr><td>/16</td><td>255.255.0.0</td><td>16</td><td>65,534</td><td>65,536</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">WORKED EXAMPLE</div>
+      <div class="concept-title">Finding Network, Broadcast, and Range</div>
+      <div class="concept-desc">Given an IP and CIDR, here's how to find the key addresses. This is the most common subnetting question on exams and the job.</div>
+      <div class="code-block"><span class="com"># Given: 192.168.1.100/26  — what subnet is it in?</span>
+
+<span class="com"># Step 1: /26 → block size. Host bits = 32-26 = 6. Block = 2^6 = 64</span>
+<span class="com"># Step 2: subnets start at multiples of the block size (64):</span>
+<span class="com">#   192.168.1.0, .64, .128, .192</span>
+<span class="com"># Step 3: .100 falls between .64 and .128 → subnet is .64</span>
+
+Network address:   192.168.1.64    <span class="com"># first address (not usable)</span>
+First usable host: 192.168.1.65
+Last usable host:  192.168.1.126
+Broadcast address: 192.168.1.127   <span class="com"># last address (not usable)</span>
+Next subnet:       192.168.1.128
+
+<span class="com"># Shortcut: "block size" trick — count by 64s. Done.</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">LET THE COMPUTER DO IT</div>
+      <div class="concept-title">Tools That Calculate Subnets For You</div>
+      <div class="code-block"><span class="com"># Linux: ipcalc shows everything</span>
+ipcalc 192.168.1.100/26
+<span class="com"># Address, Netmask, Network, Broadcast, HostMin, HostMax, Hosts/Net</span>
+
+<span class="com"># sipcalc (more detailed)</span>
+sipcalc 10.0.0.0/22
+
+<span class="com"># Python — the ipaddress module is built in</span>
+python3 -c "import ipaddress; n=ipaddress.ip_network('192.168.1.0/26'); \
+print(n.network_address, n.broadcast_address, n.num_addresses)"
+
+<span class="com"># Python interactive — useful for automation</span>
+<span class="kw">import</span> ipaddress
+net = ipaddress.ip_network(<span class="str">'192.168.1.0/26'</span>)
+<span class="fn">print</span>(net.netmask)            <span class="com"># 255.255.255.192</span>
+<span class="fn">print</span>(<span class="fn">list</span>(net.hosts())[<span class="num">0</span>])    <span class="com"># first usable host</span>
+<span class="fn">print</span>(net.num_addresses)      <span class="com"># 64</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER19-NET v1 -->
+<!-- ── TOPIC: NETWORK DESIGN & TOPOLOGIES ────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🗺️</span>
+    <span class="topic-name">Network Design — How Networks Are Structured</span>
+    <span class="topic-badge">NET • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">TOPOLOGIES</div>
+      <div class="concept-title">The Shapes Networks Take</div>
+      <table class="ai-table">
+        <thead><tr><th>Topology</th><th>Structure</th><th>Pros / Cons</th></tr></thead>
+        <tbody>
+          <tr><td>Star</td><td>All devices connect to a central switch</td><td>+ Easy to manage; − central point of failure (most common LAN)</td></tr>
+          <tr><td>Mesh</td><td>Devices interconnect (full or partial)</td><td>+ Highly redundant; − expensive, complex (used in WANs, Wi-Fi mesh)</td></tr>
+          <tr><td>Bus</td><td>All on a single backbone cable</td><td>− Obsolete; one break kills all</td></tr>
+          <tr><td>Ring</td><td>Each device connects to two neighbors</td><td>Used in some fiber/MAN setups (with redundant ring)</td></tr>
+          <tr><td>Hybrid</td><td>Combination (e.g., star-of-stars)</td><td>Real-world networks are hybrids</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE THREE-TIER MODEL</div>
+      <div class="concept-title">How Enterprise Networks Are Layered</div>
+      <div class="concept-desc">Classic enterprise network design uses three hierarchical layers. This separation makes networks scalable, manageable, and resilient.</div>
+      <table class="ai-table">
+        <thead><tr><th>Layer</th><th>Role</th><th>Devices</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Access</strong></td><td>Where end devices connect (PCs, phones, APs)</td><td>Access switches, wall ports</td></tr>
+          <tr><td><strong>Distribution</strong></td><td>Aggregates access layer; policy, routing between VLANs</td><td>L3 switches, routers</td></tr>
+          <tr><td><strong>Core</strong></td><td>High-speed backbone; moves traffic fast</td><td>High-capacity core switches/routers</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">In modern data centers, this is often replaced by a <strong>spine-leaf</strong> architecture: every leaf (access) switch connects to every spine switch, giving predictable low latency and easy horizontal scaling — ideal for east-west (server-to-server) traffic.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DESIGNING FOR RESILIENCE</div>
+      <div class="concept-title">No Single Point of Failure</div>
+      <table class="ai-table">
+        <thead><tr><th>Technique</th><th>What It Provides</th></tr></thead>
+        <tbody>
+          <tr><td>Redundant links + STP</td><td>Backup paths; Spanning Tree Protocol prevents loops</td></tr>
+          <tr><td>Link aggregation (LACP)</td><td>Bundle multiple links for bandwidth + failover</td></tr>
+          <tr><td>Redundant gateways (HSRP/VRRP)</td><td>Two routers share a virtual IP; one takes over if the other fails</td></tr>
+          <tr><td>Dual power supplies / UPS</td><td>Survive power failures</td></tr>
+          <tr><td>Multiple ISPs (multihoming)</td><td>Survive an internet provider outage</td></tr>
+          <tr><td>Out-of-band management</td><td>Manage gear even when the production network is down</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">QUALITY OF SERVICE</div>
+      <div class="concept-title">QoS — Not All Traffic Is Equal</div>
+      <div class="concept-desc">When the network is congested, QoS decides what gets priority. A dropped video-call packet is far worse than a delayed email — voice and video are real-time and sensitive to latency/jitter, while file downloads can wait. QoS classifies and prioritizes traffic so critical, time-sensitive flows (VoIP, video conferencing) get served first. Without it, a big backup job could ruin everyone's video calls.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER22-NET v1 -->
+<!-- ── TOPIC: DNS DEEP DIVE & SECURITY ───────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🌍</span>
+    <span class="topic-name">DNS Deep Dive — Records, Resolution &amp; Security</span>
+    <span class="topic-badge">NET • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">RECORD TYPES</div>
+      <div class="concept-title">The DNS Records You'll Actually Touch</div>
+      <table class="ai-table">
+        <thead><tr><th>Record</th><th>Maps</th><th>Example / Use</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>Name → IPv4</td><td><code>example.com → 93.184.216.34</code></td></tr>
+          <tr><td>AAAA</td><td>Name → IPv6</td><td><code>example.com → 2606:2800:...</code></td></tr>
+          <tr><td>CNAME</td><td>Name → another name (alias)</td><td><code>www → example.com</code></td></tr>
+          <tr><td>MX</td><td>Mail servers for a domain</td><td>Routes email; has priority values</td></tr>
+          <tr><td>TXT</td><td>Arbitrary text</td><td>SPF, DKIM, domain verification</td></tr>
+          <tr><td>NS</td><td>Authoritative nameservers</td><td>Who's in charge of this zone</td></tr>
+          <tr><td>SOA</td><td>Zone metadata</td><td>Serial, refresh, TTL defaults</td></tr>
+          <tr><td>PTR</td><td>IP → name (reverse DNS)</td><td>Mail server reputation, logging</td></tr>
+          <tr><td>SRV</td><td>Service location (host+port)</td><td>SIP, LDAP, Microsoft AD</td></tr>
+          <tr><td>CAA</td><td>Which CAs may issue certs</td><td>Prevents rogue certificate issuance</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DIG — THE DNS SWISS ARMY KNIFE</div>
+      <div class="concept-title">Query DNS Like a Pro</div>
+      <div class="code-block">dig example.com                  <span class="com"># A record (default)</span>
+dig example.com +short           <span class="com"># just the answer</span>
+dig AAAA example.com             <span class="com"># IPv6</span>
+dig MX example.com               <span class="com"># mail servers</span>
+dig TXT example.com              <span class="com"># SPF/DKIM/verification</span>
+dig NS example.com               <span class="com"># nameservers</span>
+dig +trace example.com           <span class="com"># follow the full resolution path</span>
+dig @8.8.8.8 example.com         <span class="com"># query a specific resolver</span>
+dig -x 93.184.216.34             <span class="com"># reverse lookup (PTR)</span>
+dig example.com ANY              <span class="com"># all records (often restricted)</span>
+
+<span class="com"># Troubleshooting: is it a DNS problem or not?</span>
+<span class="com"># If dig resolves but the app fails → not DNS</span>
+<span class="com"># If dig fails → check resolver (/etc/resolv.conf)</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DNS SECURITY</div>
+      <div class="concept-title">DNS Was Not Built Securely</div>
+      <div class="concept-desc">Classic DNS is unauthenticated and unencrypted — attackers can forge responses (cache poisoning, spoofing) or snoop on your lookups. Several technologies address this:</div>
+      <table class="ai-table">
+        <thead><tr><th>Tech</th><th>Protects</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td>DNSSEC</td><td>Integrity / authenticity</td><td>Cryptographically signs records — detects forgery (doesn't encrypt)</td></tr>
+          <tr><td>DoH (DNS over HTTPS)</td><td>Privacy</td><td>Encrypts queries inside HTTPS (port 443)</td></tr>
+          <tr><td>DoT (DNS over TLS)</td><td>Privacy</td><td>Encrypts DNS in TLS (port 853)</td></tr>
+          <tr><td>DNS filtering</td><td>Blocking</td><td>Resolver blocks malicious/known-bad domains (e.g., Pi-hole, Quad9)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DNS-BASED ATTACKS</div>
+      <div class="concept-title">Why Defenders Watch DNS Closely</div>
+      <table class="ai-table">
+        <thead><tr><th>Attack</th><th>What It Does</th></tr></thead>
+        <tbody>
+          <tr><td>Cache poisoning</td><td>Inject false records so victims go to attacker's site</td></tr>
+          <tr><td>DNS tunneling</td><td>Smuggle data/C2 traffic inside DNS queries (evades firewalls)</td></tr>
+          <tr><td>Domain hijacking</td><td>Take over a domain's registration or nameservers</td></tr>
+          <tr><td>Fast flux</td><td>Rapidly rotate IPs to keep malicious infra alive</td></tr>
+          <tr><td>Typosquatting</td><td>Register lookalike domains (gooogle.com) for phishing</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">DNS logs are gold for threat hunting — unusual domains, high-entropy subdomains (tunneling), and newly-registered domains are strong indicators of compromise.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER24-NET v1 -->
+<!-- ── TOPIC: NAT & PORT FORWARDING ──────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔀</span>
+    <span class="topic-name">NAT &amp; Port Forwarding — How Private Networks Reach the Internet</span>
+    <span class="topic-badge">NET • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY NAT EXISTS</div>
+      <div class="concept-title">Many Private Devices, One Public IP</div>
+      <div class="concept-desc">There aren't enough IPv4 addresses for every device. NAT (Network Address Translation) lets a whole network of devices with private IPs (192.168.x.x) share a single public IP. Your home router does this: it translates internal addresses to its one public address on the way out, and remembers which internal device each connection belongs to so replies come back correctly.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TYPES OF NAT</div>
+      <div class="concept-title">Static, Dynamic, and PAT</div>
+      <table class="ai-table">
+        <thead><tr><th>Type</th><th>How It Works</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td>Static NAT</td><td>One private IP ↔ one public IP (fixed)</td><td>Exposing a specific internal server</td></tr>
+          <tr><td>Dynamic NAT</td><td>Private IPs map to a pool of public IPs</td><td>Less common; needs many public IPs</td></tr>
+          <tr><td>PAT / NAT overload</td><td>Many private IPs → one public IP, distinguished by port</td><td>The home router model — by far the most common</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>PAT</strong> (Port Address Translation) is what "NAT" almost always means in practice. The router tracks connections by (internal IP:port ↔ public IP:port) so dozens of devices share one address.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PORT FORWARDING</div>
+      <div class="concept-title">Letting the Outside Reach In</div>
+      <div class="concept-desc">By default, NAT blocks unsolicited inbound connections (a nice side-effect: a basic firewall). But sometimes you WANT external access to an internal service — a game server, a web server, SSH to your home lab. Port forwarding tells the router: "traffic arriving on public port X → send to internal host:port Y."</div>
+      <div class="code-block"><span class="com"># Example port-forward rules on a router</span>
+Public :443  → 192.168.1.10:443    <span class="com"># web server</span>
+Public :2222 → 192.168.1.20:22     <span class="com"># SSH to lab box</span>
+
+<span class="com"># ⚠️ Security: every forwarded port is exposed to the internet.</span>
+<span class="com"># Forward only what you must; prefer a VPN for remote access.</span>
+
+<span class="com"># Linux iptables DNAT (what routers do under the hood)</span>
+iptables -t nat -A PREROUTING -p tcp --dport 443 \
+  -j DNAT --to-destination 192.168.1.10:443</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">NAT CHALLENGES</div>
+      <div class="concept-title">Why Some Apps Struggle Behind NAT</div>
+      <table class="ai-table">
+        <thead><tr><th>Issue</th><th>Solution</th></tr></thead>
+        <tbody>
+          <tr><td>Two peers both behind NAT (VoIP, P2P, gaming)</td><td>STUN/TURN/ICE — NAT traversal protocols</td></tr>
+          <tr><td>App needs a stable inbound port</td><td>Port forwarding or UPnP (convenient but risky)</td></tr>
+          <tr><td>Tracking which device did what (logging)</td><td>CGNAT complicates attribution at ISP scale</td></tr>
+          <tr><td>Reaching home services remotely</td><td>VPN, reverse tunnel, or ZTNA (Tailscale/Cloudflare)</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">Note: <strong>IPv6 largely removes the need for NAT</strong> — there are enough addresses for every device to have a public one (with firewalls, not NAT, providing the security boundary).</div>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER25-NET v1 -->
+<!-- ── TOPIC: 802.1X & NETWORK ACCESS CONTROL ────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🚪</span>
+    <span class="topic-name">802.1X &amp; NAC — Who Gets On the Network?</span>
+    <span class="topic-badge">NET • Enterprise</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE PROBLEM</div>
+      <div class="concept-title">An Open Network Port Is an Open Door</div>
+      <div class="concept-desc">In a basic network, anyone who plugs into a wall jack or knows the Wi-Fi password is on the network. In an enterprise, that's a serious risk — an attacker in the lobby, a rogue device, a compromised laptop. 802.1X and NAC enforce <em>authentication before access</em>: prove who/what you are before the network lets you communicate.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">802.1X</div>
+      <div class="concept-title">Port-Based Authentication</div>
+      <div class="concept-desc">802.1X authenticates a device <em>at the port level</em> before granting network access. It involves three roles working together via the EAP protocol.</div>
+      <table class="ai-table">
+        <thead><tr><th>Role</th><th>Who</th><th>Job</th></tr></thead>
+        <tbody>
+          <tr><td>Supplicant</td><td>The device wanting access (laptop)</td><td>Provides credentials/certificate</td></tr>
+          <tr><td>Authenticator</td><td>The switch or wireless AP</td><td>Gatekeeper — blocks traffic until authorized</td></tr>
+          <tr><td>Authentication Server</td><td>RADIUS server</td><td>Verifies credentials, says yes/no</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">Until authentication succeeds, the port only passes authentication traffic — everything else is blocked. Enterprise Wi-Fi (WPA2/3-Enterprise) uses exactly this model, which is why you log in with your <em>own</em> username/password instead of a shared Wi-Fi key.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">NAC</div>
+      <div class="concept-title">Network Access Control — Beyond Just Identity</div>
+      <div class="concept-desc">NAC extends the idea: it doesn't just check <em>who</em> you are, but whether your device is <em>healthy and compliant</em> before allowing full access — and what it's allowed to reach.</div>
+      <table class="ai-table">
+        <thead><tr><th>NAC Capability</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Posture assessment</td><td>Is AV running? OS patched? Disk encrypted?</td></tr>
+          <tr><td>Quarantine / remediation</td><td>Non-compliant device → restricted VLAN to fix itself</td></tr>
+          <tr><td>Role-based access</td><td>Guest → internet only; employee → full; IoT → isolated</td></tr>
+          <tr><td>Dynamic VLAN assignment</td><td>Put devices on the right segment automatically</td></tr>
+          <tr><td>Guest onboarding</td><td>Captive portal, sponsored access</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RADIUS</div>
+      <div class="concept-title">The AAA Workhorse</div>
+      <div class="concept-desc">RADIUS (Remote Authentication Dial-In User Service) is the protocol behind most network authentication. It provides <strong>AAA</strong>: <strong>Authentication</strong> (who are you?), <strong>Authorization</strong> (what may you do?), and <strong>Accounting</strong> (what did you do? — logging/billing). It centralizes credentials so every switch and AP checks against one source (often tied to Active Directory). TACACS+ is a Cisco-oriented alternative more focused on device administration.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER27-NET v1 -->
+<!-- ── TOPIC: HTTP PROTOCOL DEEP DIVE ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🌐</span>
+    <span class="topic-name">HTTP — The Protocol That Runs the Web</span>
+    <span class="topic-badge">NET • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">ANATOMY OF A REQUEST</div>
+      <div class="concept-title">What Actually Goes Over the Wire</div>
+      <div class="code-block"><span class="com"># An HTTP request is plain text (in HTTP/1.1)</span>
+GET /api/users?page=2 HTTP/1.1      <span class="com"># method, path, version</span>
+Host: example.com                    <span class="com"># required header</span>
+User-Agent: curl/8.0
+Accept: application/json
+Authorization: Bearer eyJ...
+                                     <span class="com"># blank line = end of headers</span>
+                                     <span class="com"># (body goes here for POST/PUT)</span>
+
+<span class="com"># The response</span>
+HTTP/1.1 200 OK                      <span class="com"># version, status code, reason</span>
+Content-Type: application/json
+Content-Length: 142
+
+{"users": [...]}                     <span class="com"># body</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">METHODS (VERBS)</div>
+      <div class="concept-title">What You Want to Do</div>
+      <table class="ai-table">
+        <thead><tr><th>Method</th><th>Purpose</th><th>Safe?</th><th>Idempotent?</th></tr></thead>
+        <tbody>
+          <tr><td>GET</td><td>Retrieve data</td><td>Yes (no change)</td><td>Yes</td></tr>
+          <tr><td>POST</td><td>Create / submit</td><td>No</td><td>No (repeats create dups)</td></tr>
+          <tr><td>PUT</td><td>Replace entirely</td><td>No</td><td>Yes</td></tr>
+          <tr><td>PATCH</td><td>Partial update</td><td>No</td><td>Usually no</td></tr>
+          <tr><td>DELETE</td><td>Remove</td><td>No</td><td>Yes</td></tr>
+          <tr><td>HEAD</td><td>Like GET, headers only</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>OPTIONS</td><td>Ask what's allowed (CORS preflight)</td><td>Yes</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>Idempotent</strong> = doing it twice has the same effect as once. Matters for retries: safely retry a PUT/DELETE, but a retried POST might create duplicates.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">STATUS CODES</div>
+      <div class="concept-title">The Server's Answer, by Category</div>
+      <table class="ai-table">
+        <thead><tr><th>Range</th><th>Meaning</th><th>Common Examples</th></tr></thead>
+        <tbody>
+          <tr><td>1xx</td><td>Informational</td><td>100 Continue, 101 Switching Protocols</td></tr>
+          <tr><td>2xx</td><td>Success</td><td>200 OK, 201 Created, 204 No Content</td></tr>
+          <tr><td>3xx</td><td>Redirection</td><td>301 Moved, 304 Not Modified, 307 Temp Redirect</td></tr>
+          <tr><td>4xx</td><td>Client error (YOUR fault)</td><td>400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 429 Too Many Requests</td></tr>
+          <tr><td>5xx</td><td>Server error (THEIR fault)</td><td>500 Internal Error, 502 Bad Gateway, 503 Unavailable, 504 Timeout</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">Quick memory aid: <strong>4xx = you messed up</strong> (bad request, not allowed); <strong>5xx = the server messed up</strong>. 401 = "who are you?" (not authenticated); 403 = "I know who you are, but no" (not authorized).</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">HTTP VERSIONS</div>
+      <div class="concept-title">1.1 → 2 → 3</div>
+      <table class="ai-table">
+        <thead><tr><th>Version</th><th>Key Change</th><th>Benefit</th></tr></thead>
+        <tbody>
+          <tr><td>HTTP/1.1</td><td>Text-based, one request at a time per connection</td><td>Simple; suffers head-of-line blocking</td></tr>
+          <tr><td>HTTP/2</td><td>Binary, multiplexed streams over one connection</td><td>Many parallel requests, header compression — faster</td></tr>
+          <tr><td>HTTP/3</td><td>Runs over QUIC (UDP) instead of TCP</td><td>No TCP head-of-line blocking; faster on lossy/mobile networks</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>Statelessness:</strong> HTTP itself is stateless — each request is independent. "Sessions" are layered on top via cookies/tokens, because the protocol doesn't remember you between requests.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER28-NET v1 -->
+<!-- ── TOPIC: NETWORK MONITORING ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📡</span>
+    <span class="topic-name">Network Monitoring — Seeing What Flows Through</span>
+    <span class="topic-badge">NET • Operations</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY MONITOR</div>
+      <div class="concept-title">You Can't Manage What You Can't See</div>
+      <div class="concept-desc">Network monitoring tells you device health, bandwidth use, errors, and unusual traffic — essential for both operations (is the link saturated? is a switch down?) and security (is data being exfiltrated? is there C2 traffic?). Different techniques answer different questions, from device health to per-flow detail.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SNMP</div>
+      <div class="concept-title">Polling Device Health</div>
+      <div class="concept-desc">SNMP (Simple Network Management Protocol) lets a monitoring system query devices (switches, routers, servers, printers) for metrics — interface status, CPU, temperature, traffic counters. Devices expose values in a hierarchical database (MIB) addressed by OIDs. Tools like Zabbix, LibreNMS, and PRTG poll via SNMP and graph/alert on the results.</div>
+      <table class="ai-table">
+        <thead><tr><th>Version</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>SNMPv1 / v2c</td><td>Uses a plaintext "community string" — insecure; avoid on untrusted networks</td></tr>
+          <tr><td>SNMPv3</td><td>Adds authentication + encryption — use this</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">FLOW DATA</div>
+      <div class="concept-title">NetFlow / IPFIX / sFlow — Who Talked to Whom</div>
+      <div class="concept-desc">Flow data records metadata about conversations (source/dest IP, ports, protocol, bytes) without capturing full packet contents. It answers "who is talking to whom, how much?" — invaluable for capacity planning, billing, and security (spotting exfiltration, scanning, or C2 beaconing) at scale, far more cheaply than full packet capture.</div>
+      <table class="ai-table">
+        <thead><tr><th>Tech</th><th>Origin</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>NetFlow</td><td>Cisco</td><td>The original; widely supported</td></tr>
+          <tr><td>IPFIX</td><td>IETF standard</td><td>Vendor-neutral "NetFlow v10"</td></tr>
+          <tr><td>sFlow</td><td>Multi-vendor</td><td>Packet sampling, lower overhead</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PACKET CAPTURE</div>
+      <div class="concept-title">The Full Truth on the Wire</div>
+      <div class="concept-desc">When you need to see <em>exactly</em> what was sent — debugging an app, analyzing an attack — capture full packets. <code>tcpdump</code> on the CLI, Wireshark for deep GUI analysis. The most detailed (and storage-heavy) option; usually targeted at a specific problem, not always-on.</div>
+      <div class="code-block"><span class="com"># tcpdump basics</span>
+sudo tcpdump -i eth0                       <span class="com"># live capture</span>
+sudo tcpdump -i eth0 port 443              <span class="com"># filter by port</span>
+sudo tcpdump -i eth0 host 10.0.0.5         <span class="com"># filter by host</span>
+sudo tcpdump -i eth0 -w capture.pcap       <span class="com"># save to file</span>
+sudo tcpdump -i eth0 'tcp[tcpflags] &amp; tcp-syn != 0'   <span class="com"># SYN packets</span>
+
+<span class="com"># Then open capture.pcap in Wireshark for deep analysis</span>
+<span class="com"># Wireshark display filters: http, dns, ip.addr==10.0.0.5, tcp.port==22</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER30-NET v1 -->
+<!-- ── TOPIC: Active Directory & LDAP ────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Active Directory &amp; LDAP – Enterprise Identity 101
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is Active Directory?</div>
+      <div class="concept-desc">
+        Active Directory (AD) is Microsoft's directory service — the central
+        phonebook of every Windows enterprise. It stores <strong>users,
+        computers, groups, and policies</strong> in a tree of
+        <em>Organizational Units (OUs)</em>. When you log in at work, your
+        laptop asks a <em>Domain Controller (DC)</em> to verify your password.
+        <br><br>
+        <strong>Key vocabulary:</strong><br>
+        &bull; <em>Domain</em> – a boundary of administration (e.g. <code>corp.example.com</code>).<br>
+        &bull; <em>Forest</em> – one or more domains that trust each other.<br>
+        &bull; <em>OU</em> – a folder inside AD used to organise objects.<br>
+        &bull; <em>GPO</em> – Group Policy Object; rules pushed to computers/users.<br>
+        &bull; <em>DC</em> – Domain Controller; the server that runs AD.
+        <br><br>
+        <em>"Not my circus, not my monkey"</em> — if you are not the AD admin,
+        do not make changes in AD. Escalate to the team that owns it.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Protocol</div>
+      <div class="concept-title">LDAP – How Applications Talk to AD</div>
+      <div class="concept-desc">
+        <strong>LDAP (Lightweight Directory Access Protocol)</strong> is the
+        language software uses to query AD. Every object has a
+        <em>Distinguished Name (DN)</em> — a path like a file system path:<br>
+        <code>CN=Alice Smith,OU=Finance,DC=corp,DC=example,DC=com</code><br><br>
+        Common LDAP operations:<br>
+        &bull; <strong>Bind</strong> – authenticate (log in) to the directory.<br>
+        &bull; <strong>Search</strong> – find objects matching a filter.<br>
+        &bull; <strong>Add / Modify / Delete</strong> – manage objects (admin only).<br><br>
+        Port 389 = plain LDAP &nbsp;|&nbsp; Port 636 = LDAPS (TLS encrypted — always prefer this).
+      </div>
+      <div class="code-block">
+<span class="com"># Query AD with Python ldap3 (read-only example)</span>
+<span class="kw">from</span> ldap3 <span class="kw">import</span> Server, Connection, ALL, SUBTREE
+
+server = Server(<span class="str">'ldaps://dc01.corp.example.com'</span>, get_info=ALL)
+conn   = Connection(server,
+                    user=<span class="str">'corp\svc_readonly'</span>,
+                    password=<span class="str">'S3cur3P@ss!'</span>,
+                    auto_bind=<span class="kw">True</span>)
+
+<span class="com"># Find all users in the Finance OU</span>
+conn.search(
+    search_base=<span class="str">'OU=Finance,DC=corp,DC=example,DC=com'</span>,
+    search_filter=<span class="str">'(&amp;(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))'</span>,
+    search_scope=SUBTREE,
+    attributes=[<span class="str">'cn'</span>, <span class="str">'mail'</span>, <span class="str">'department'</span>]
+)
+
+<span class="kw">for</span> entry <span class="kw">in</span> conn.entries:
+    <span class="fn">print</span>(entry.cn, entry.mail)
+
+conn.unbind()
+<span class="com"># The filter above: objectClass=user AND NOT disabled (bit 2 of UAC)</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Authentication</div>
+      <div class="concept-title">Kerberos in Plain English</div>
+      <div class="concept-desc">
+        Kerberos is the default authentication protocol for AD domains. Think of
+        it as a <em>theme-park wristband</em> system:<br><br>
+        1. You show your password <strong>once</strong> to the
+           <em>Key Distribution Center (KDC)</em> on the DC.<br>
+        2. The KDC gives you a <strong>Ticket-Granting Ticket (TGT)</strong> —
+           your all-day wristband.<br>
+        3. When you access a resource (file share, web app), you show the TGT
+           to get a <strong>Service Ticket</strong> — a ride ticket for that
+           specific attraction.<br>
+        4. The resource trusts the service ticket without ever seeing your
+           password again.<br><br>
+        <strong>Why this matters for beginners:</strong> you never type your
+        password again during the work day — Single Sign-On (SSO).
+        Kerberos tickets expire (default 10 hours), so you may be prompted
+        again next day.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Best Practice</div>
+      <div class="concept-title">Principle of Least Privilege in AD</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — never assume a user
+        needs more permissions than their job requires. In AD:<br><br>
+        &bull; Give users <strong>standard accounts</strong> for daily work.<br>
+        &bull; Admins use a <strong>separate admin account</strong>
+          (e.g. <code>a-alice</code>) only when elevated tasks are needed.<br>
+        &bull; Service accounts get <strong>only the groups they need</strong>.<br>
+        &bull; Review group memberships quarterly — "account creep" is real.<br><br>
+        The <em>Domain Admins</em> group is the most powerful group in the
+        domain. Its membership list should be tiny and audited constantly.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER31-NET v1 -->
+<!-- ── TOPIC: Cloud Networking – VPC Fundamentals ─────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Cloud Networking – VPC, Subnets &amp; Security Groups
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is a VPC?</div>
+      <div class="concept-desc">
+        A <strong>Virtual Private Cloud (VPC)</strong> is your own private
+        network inside a cloud provider (AWS, Azure, GCP). Think of it as
+        renting a section of a data centre and installing your own private
+        network switches — except it's all software.<br><br>
+        <strong>Key building blocks:</strong><br>
+        &bull; <em>VPC</em> – the outer boundary; you choose the IP range
+          (e.g. <code>10.0.0.0/16</code> = ~65 000 addresses).<br>
+        &bull; <em>Subnet</em> – a slice of the VPC in one availability zone.
+          Public subnets reach the internet; private subnets do not.<br>
+        &bull; <em>Internet Gateway (IGW)</em> – the door between your VPC
+          and the public internet.<br>
+        &bull; <em>NAT Gateway</em> – lets private-subnet resources make
+          <em>outbound</em> internet calls without being reachable from
+          outside.<br>
+        &bull; <em>Route Table</em> – rules that decide where packets go
+          (like a router's routing table).<br>
+        &bull; <em>Security Group</em> – a stateful firewall attached to an
+          individual resource (VM, load balancer).
+        <br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        cloud resource is private just because it's in a VPC. Check security
+        groups AND network ACLs; both must permit the traffic.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">AWS Example</div>
+      <div class="concept-title">Building a VPC with AWS CLI</div>
+      <div class="concept-desc">
+        AWS CLI lets you build the entire network from the command line.
+        This is the same thing the console does behind the scenes.
+      </div>
+      <div class="code-block">
+<span class="com"># Create a VPC</span>
+aws ec2 create-vpc --cidr-block <span class="num">10.0.0</span>.0/<span class="num">16</span>   --query Vpc.VpcId --output text
+<span class="com"># Output: vpc-0abc1234def567890</span>
+
+<span class="com"># Create a public subnet (AZ us-east-1a)</span>
+aws ec2 create-subnet   --vpc-id vpc-0abc1234def567890   --cidr-block <span class="num">10.0.1</span>.0/<span class="num">24</span>   --availability-zone us-east-<span class="num">1</span>a
+
+<span class="com"># Create a private subnet</span>
+aws ec2 create-subnet   --vpc-id vpc-0abc1234def567890   --cidr-block <span class="num">10.0.2</span>.0/<span class="num">24</span>   --availability-zone us-east-<span class="num">1</span>a
+
+<span class="com"># Attach an internet gateway</span>
+aws ec2 create-internet-gateway --query InternetGateway.InternetGatewayId
+aws ec2 attach-internet-gateway   --internet-gateway-id igw-0xyz   --vpc-id vpc-0abc1234def567890
+
+<span class="com"># Security group: allow SSH from your IP only</span>
+aws ec2 create-security-group   --group-name web-sg   --description <span class="str">"Web server SG"</span>   --vpc-id vpc-0abc1234def567890
+
+aws ec2 authorize-security-group-ingress   --group-id sg-0xyz   --protocol tcp --port <span class="num">22</span>   --cidr <span class="num">203.0.113.5</span>/<span class="num">32</span>   <span class="com"># your IP only!</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Best Practice</div>
+      <div class="concept-title">The Shared Responsibility Model</div>
+      <div class="concept-desc">
+        Cloud providers operate a <em>Shared Responsibility Model</em>:
+        the provider secures the infrastructure <em>of</em> the cloud;
+        you secure everything <em>in</em> the cloud.<br><br>
+        <strong>AWS/Azure/GCP handles:</strong> Physical data centres,
+        hypervisor security, global network, managed service patches.<br><br>
+        <strong>You handle:</strong> VM OS patches, security group rules,
+        S3 bucket permissions, IAM roles, encryption of your data,
+        application code security.<br><br>
+        <em>"Not my circus, not my monkey"</em> only applies to the provider's
+        layer. Misconfigured S3 buckets, open security groups, and leaked IAM
+        keys are 100 % your responsibility. Most cloud breaches are
+        misconfiguration, not a failure by the provider.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER32-NET v1 -->
+<!-- ── TOPIC: DNS Deep-Dive ───────────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    DNS Deep-Dive – How Domain Names Actually Work
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">The DNS Resolution Walk</div>
+      <div class="concept-desc">
+        When you type <code>www.example.com</code> in a browser, this is what
+        happens before the first byte of the page arrives:<br><br>
+        1. Browser checks its <strong>local cache</strong> — did we look this up
+           recently?<br>
+        2. OS checks <strong>/etc/hosts</strong> (or Windows Hosts file) — manual
+           overrides.<br>
+        3. OS asks the <strong>Recursive Resolver</strong> (usually your router
+           or ISP, or 8.8.8.8/1.1.1.1).<br>
+        4. Resolver asks a <strong>Root Name Server</strong> (.): "Who handles
+           <code>.com</code>?"<br>
+        5. Root refers to the <strong>.com TLD server</strong>: "Ask
+           <code>ns1.example.com</code>."<br>
+        6. Resolver asks <code>ns1.example.com</code>: "What's the IP for
+           <code>www</code>?"<br>
+        7. <strong>Authoritative answer</strong> returned: <code>93.184.216.34</code>.<br>
+        8. Resolver caches the result for the TTL; returns it to your browser.<br><br>
+        Total time: usually 10–100 ms. Cached lookups: &lt;1 ms.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Record Types</div>
+      <div class="concept-title">DNS Record Types You Must Know</div>
+      <div class="concept-desc">
+        DNS stores different information in different record types:
+      </div>
+      <div class="code-block">
+<span class="com">Record  Purpose                        Example</span>
+A       IPv4 address                   www  A  93.184.216.34
+AAAA    IPv6 address                   www  AAAA  2606:2800::1
+CNAME   Alias to another name          blog  CNAME  myapp.netlify.app.
+MX      Mail server (+ priority)       @    MX 10  mail.example.com.
+TXT     Arbitrary text (SPF, DKIM)     @    TXT  "v=spf1 include:..."
+NS      Authoritative name servers     @    NS   ns1.example.com.
+PTR     Reverse lookup (IP → name)     34.216.184.93.in-addr.arpa  PTR  www.example.com.
+SOA     Zone metadata (serial, TTL)    Start of Authority record
+SRV     Service location               _sip._tcp  SRV  10 5 5060 sip.example.com.
+
+<span class="com"># Query DNS with dig</span>
+dig www.example.com A               <span class="com"># IPv4</span>
+dig www.example.com AAAA            <span class="com"># IPv6</span>
+dig example.com MX                  <span class="com"># mail servers</span>
+dig example.com TXT                 <span class="com"># SPF / DKIM / verification tokens</span>
+dig -x <span class="num">93.184.216.34</span>               <span class="com"># reverse lookup (PTR)</span>
+dig @<span class="num">8.8.8.8</span> www.example.com       <span class="com"># use Google's resolver</span>
+dig +trace www.example.com          <span class="com"># walk the full resolution chain</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Security</div>
+      <div class="concept-title">DNS Security – DNSSEC, DoH, DNS Attacks</div>
+      <div class="concept-desc">
+        DNS was designed in the 1980s with no security. Several attacks exploit this:<br><br>
+        <strong>DNS Cache Poisoning</strong> — attacker injects a false record
+        into a resolver's cache so users get sent to the wrong IP.<br>
+        <em>Fix:</em> DNSSEC — cryptographic signatures on DNS records.<br><br>
+        <strong>DNS Hijacking</strong> — malware or rogue ISP changes the
+        resolver you use.<br>
+        <em>Fix:</em> DNS-over-HTTPS (DoH) or DNS-over-TLS (DoT) —
+        encrypts queries so no one can tamper in transit.<br><br>
+        <strong>DNS Tunnelling</strong> — attacker encodes data inside DNS
+        queries to exfiltrate data or establish C2 (bypasses firewalls).<br>
+        <em>Fix:</em> Monitor for unusually long query names, high query
+        volume per host, rare TLDs.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume DNS
+        responses are authentic unless DNSSEC is validated end-to-end.
+      </div>
+      <div class="code-block">
+<span class="com"># Check if a domain has DNSSEC enabled</span>
+dig example.com DNSKEY +short
+dig example.com DS +short
+
+<span class="com"># Test DNS-over-HTTPS (Cloudflare DoH)</span>
+curl -sH <span class="str">"accept: application/dns-json"</span>   <span class="str">"https://cloudflare-dns.com/dns-query?name=example.com&amp;type=A"</span> |   python3 -m json.tool
+
+<span class="com"># Detect suspicious long DNS names (potential tunnelling)</span>
+<span class="com"># In tcpdump: capture DNS on port 53</span>
+sudo tcpdump -i eth0 -w dns.pcap port <span class="num">53</span>
+<span class="com"># Then grep for names longer than 50 chars</span>
+tshark -r dns.pcap -T fields -e dns.qry.name |   awk <span class="str">'length &gt; 50'</span> | sort | uniq -c | sort -rn
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Operations</div>
+      <div class="concept-title">Managing DNS Zones</div>
+      <div class="concept-desc">
+        Whether you use Route 53, Cloudflare, or BIND on-prem, the
+        concepts are the same. Best practices:<br><br>
+        &bull; Set <strong>low TTLs</strong> (e.g. 300 s) before planned
+          changes; restore high TTLs (3600+) after.<br>
+        &bull; Always have <strong>at least two NS servers</strong> in
+          different locations for redundancy.<br>
+        &bull; Use <strong>split-horizon DNS</strong> — internal names
+          resolve to private IPs; external names resolve to public IPs.<br>
+        &bull; Add <strong>SPF, DKIM, DMARC</strong> TXT records for every
+          domain that sends email to prevent spoofing.<br>
+        &bull; <em>You can't make someone make the right choice, yet you
+          can pick up the pieces afterwards</em> — when a TTL-expired
+          stale record sends users to a dead IP, reduce TTL proactively
+          next time.
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- /domain-body net -->
