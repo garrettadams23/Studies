@@ -1148,4 +1148,77 @@
     </div>
   </div>
 </div>
+
+<!-- BEGINNER16-THREAT v1 -->
+<!-- ── TOPIC: DIGITAL FORENSICS BASICS ───────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔬</span>
+    <span class="topic-name">Digital Forensics — Reconstructing What Happened</span>
+    <span class="topic-badge">THREAT • Investigation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS DFIR</div>
+      <div class="concept-title">Digital Forensics &amp; Incident Response</div>
+      <div class="concept-desc">When something bad happens — a breach, insider theft, malware — digital forensics is the discipline of collecting, preserving, and analyzing evidence to answer: what happened, when, how, and who. Forensics must be done carefully because the findings may end up in court, or drive critical business decisions. The cardinal rule: <strong>preserve the original, work on copies.</strong></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ORDER OF VOLATILITY</div>
+      <div class="concept-title">Collect the Most Fragile Evidence First</div>
+      <div class="concept-desc">Some evidence disappears fast (RAM vanishes on shutdown); some persists (disk). When collecting evidence, work from most volatile to least — RFC 3227's order of volatility — or you'll lose the fragile stuff forever.</div>
+      <table class="ai-table">
+        <thead><tr><th>Order</th><th>Source</th><th>Lifetime</th></tr></thead>
+        <tbody>
+          <tr><td>1 (most volatile)</td><td>CPU registers, cache</td><td>Nanoseconds</td></tr>
+          <tr><td>2</td><td>RAM (running processes, network connections, encryption keys)</td><td>Until power off</td></tr>
+          <tr><td>3</td><td>Network state, routing tables, ARP cache</td><td>Seconds to minutes</td></tr>
+          <tr><td>4</td><td>Running processes, temp files</td><td>Until reboot</td></tr>
+          <tr><td>5</td><td>Disk (files, logs, deleted-but-recoverable data)</td><td>Persistent</td></tr>
+          <tr><td>6 (least volatile)</td><td>Backups, archived logs, printouts</td><td>Long-term</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CHAIN OF CUSTODY</div>
+      <div class="concept-title">Proving the Evidence Wasn't Tampered With</div>
+      <div class="concept-desc">Chain of custody is the documented, unbroken trail showing who handled evidence, when, why, and how — from collection to courtroom. If you can't prove the evidence wasn't altered, it's worthless. Two technical pillars support this:</div>
+      <table class="ai-table">
+        <thead><tr><th>Technique</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>Hashing (SHA-256)</td><td>Hash the evidence at collection. Any change = different hash = tampering detected.</td></tr>
+          <tr><td>Write blockers</td><td>Hardware/software that allows reading a drive but prevents any writes to it</td></tr>
+          <tr><td>Forensic imaging</td><td>Bit-for-bit copy (<code>dd</code>, FTK Imager). Analyze the image, never the original.</td></tr>
+          <tr><td>Documentation</td><td>Log every transfer: who, what, when, where, why — signed</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="com"># Create a forensic disk image and hash it (Linux)</span>
+sudo dd if=/dev/sdb of=evidence.img bs=4M status=progress
+
+<span class="com"># Hash BEFORE and AFTER to prove integrity</span>
+sha256sum /dev/sdb        <span class="com"># hash of original</span>
+sha256sum evidence.img    <span class="com"># must match — proves a faithful copy</span>
+
+<span class="com"># Better: use a tool that images AND hashes in one step</span>
+<span class="com"># dc3dd, ewfacquire (E01 format), or FTK Imager</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ARTIFACTS TO EXAMINE</div>
+      <div class="concept-title">Where the Evidence Lives</div>
+      <table class="ai-table">
+        <thead><tr><th>Artifact</th><th>What It Reveals</th></tr></thead>
+        <tbody>
+          <tr><td>Memory dump</td><td>Running malware, decryption keys, network connections, injected code</td></tr>
+          <tr><td>Windows Event Logs</td><td>Logons, process creation, service installs, account changes</td></tr>
+          <tr><td>Registry</td><td>Persistence mechanisms, USB history, recently run programs</td></tr>
+          <tr><td>Browser history/cache</td><td>Downloaded files, visited sites, exfil destinations</td></tr>
+          <tr><td>Prefetch / Shimcache / Amcache</td><td>Evidence of program execution (even if deleted)</td></tr>
+          <tr><td>File system timestamps (MACB)</td><td>Modified, Accessed, Created, Birth — timeline reconstruction</td></tr>
+          <tr><td>Network captures (PCAP)</td><td>C2 traffic, data exfiltration, lateral movement</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 <!-- /domain-body threat -->

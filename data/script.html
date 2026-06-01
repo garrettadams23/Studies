@@ -7472,4 +7472,171 @@ deactivate</div>
     </div>
   </div>
 </div>
+
+<!-- BEGINNER16-SCRIPT v1 -->
+<!-- ── TOPIC: IT AUTOMATION SCRIPTING ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">⚙️</span>
+    <span class="topic-name">IT Automation — Scripting the Boring Stuff Away</span>
+    <span class="topic-badge">SCRIPT • Practical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY AUTOMATE</div>
+      <div class="concept-title">If You Do It Twice, Script It</div>
+      <div class="concept-desc">The single highest-leverage skill in IT is automation. Every repetitive task you script is time given back forever — and scripts don't make typos at 2am. The rule of thumb: if you'll do something more than twice, or if doing it manually is error-prone, automate it. Python is the go-to language because it's readable, batteries-included, and runs everywhere.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RUNNING SYSTEM COMMANDS</div>
+      <div class="concept-title">subprocess — Python Talking to the Shell</div>
+      <div class="concept-desc">The <code>subprocess</code> module runs external commands from Python. Use it to wrap CLI tools, automate system tasks, and glue together programs. Always prefer the list form (not a string) to avoid shell injection.</div>
+      <div class="code-block"><span class="kw">import</span> subprocess
+
+<span class="com"># Run a command, capture output (the modern way)</span>
+result = subprocess.run(
+    [<span class="str">"ls"</span>, <span class="str">"-la"</span>, <span class="str">"/var/log"</span>],
+    capture_output=<span class="kw">True</span>,
+    text=<span class="kw">True</span>,          <span class="com"># decode bytes → str</span>
+    timeout=<span class="num">30</span>,          <span class="com"># don't hang forever</span>
+)
+<span class="fn">print</span>(result.stdout)        <span class="com"># the command's output</span>
+<span class="fn">print</span>(result.returncode)    <span class="com"># 0 = success</span>
+
+<span class="com"># Raise an exception if the command fails</span>
+subprocess.run([<span class="str">"systemctl"</span>, <span class="str">"restart"</span>, <span class="str">"nginx"</span>], check=<span class="kw">True</span>)
+
+<span class="com"># Check a command's exit code without crashing</span>
+result = subprocess.run([<span class="str">"ping"</span>, <span class="str">"-c"</span>, <span class="str">"1"</span>, <span class="str">"8.8.8.8"</span>],
+                        capture_output=<span class="kw">True</span>)
+<span class="kw">if</span> result.returncode == <span class="num">0</span>:
+    <span class="fn">print</span>(<span class="str">"Host is up"</span>)
+
+<span class="com"># DANGER: shell=True allows injection if input is untrusted</span>
+<span class="com"># subprocess.run(f"rm {user_input}", shell=True)  # NEVER do this</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">FILE SYSTEM AUTOMATION</div>
+      <div class="concept-title">Bulk File Operations</div>
+      <div class="code-block"><span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">import</span> shutil, datetime
+
+<span class="com"># Find and clean up old log files (&gt; 30 days)</span>
+log_dir = Path(<span class="str">"/var/log/myapp"</span>)
+cutoff = datetime.datetime.now() - datetime.timedelta(days=<span class="num">30</span>)
+
+<span class="kw">for</span> log <span class="kw">in</span> log_dir.glob(<span class="str">"*.log"</span>):
+    mtime = datetime.datetime.fromtimestamp(log.stat().st_mtime)
+    <span class="kw">if</span> mtime &lt; cutoff:
+        <span class="fn">print</span>(<span class="str">f"Deleting old log: {log.name}"</span>)
+        log.unlink()           <span class="com"># delete the file</span>
+
+<span class="com"># Bulk rename — add date prefix to all PDFs</span>
+today = datetime.date.today().isoformat()
+<span class="kw">for</span> pdf <span class="kw">in</span> Path(<span class="str">"reports"</span>).glob(<span class="str">"*.pdf"</span>):
+    pdf.rename(pdf.parent / <span class="str">f"{today}_{pdf.name}"</span>)
+
+<span class="com"># Copy / move / archive</span>
+shutil.copy(<span class="str">"config.yml"</span>, <span class="str">"config.yml.bak"</span>)
+shutil.move(<span class="str">"old/"</span>, <span class="str">"archive/old/"</span>)
+shutil.make_archive(<span class="str">"backup"</span>, <span class="str">"gztar"</span>, <span class="str">"/data"</span>)  <span class="com"># → backup.tar.gz</span>
+
+<span class="com"># Disk usage check</span>
+total, used, free = shutil.disk_usage(<span class="str">"/"</span>)
+<span class="fn">print</span>(<span class="str">f"Free: {free // (2**30)} GB"</span>)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">A REAL AUTOMATION SCRIPT</div>
+      <div class="concept-title">Putting It Together — A Disk Space Alert</div>
+      <div class="code-block"><span class="com">#!/usr/bin/env python3</span>
+<span class="str">&quot;&quot;&quot;Alert if any mounted disk exceeds 85% usage.&quot;&quot;&quot;</span>
+<span class="kw">import</span> shutil, smtplib, sys
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+
+THRESHOLD = <span class="num">85</span>   <span class="com"># percent</span>
+MOUNTS = [<span class="str">"/"</span>, <span class="str">"/var"</span>, <span class="str">"/home"</span>]
+
+<span class="kw">def</span> <span class="fn">check_disk</span>(path):
+    <span class="kw">if</span> <span class="kw">not</span> Path(path).exists():
+        <span class="kw">return</span> <span class="kw">None</span>
+    total, used, free = shutil.disk_usage(path)
+    percent = (used / total) * <span class="num">100</span>
+    <span class="kw">return</span> percent
+
+<span class="kw">def</span> <span class="fn">main</span>():
+    alerts = []
+    <span class="kw">for</span> mount <span class="kw">in</span> MOUNTS:
+        pct = check_disk(mount)
+        <span class="kw">if</span> pct <span class="kw">and</span> pct &gt; THRESHOLD:
+            alerts.append(<span class="str">f"{mount}: {pct:.1f}% full"</span>)
+
+    <span class="kw">if</span> alerts:
+        <span class="fn">print</span>(<span class="str">"DISK ALERT:"</span>)
+        <span class="kw">for</span> a <span class="kw">in</span> alerts:
+            <span class="fn">print</span>(<span class="str">f"  {a}"</span>)
+        sys.exit(<span class="num">1</span>)   <span class="com"># non-zero = alerting systems notice</span>
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"All disks healthy"</span>)
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    main()
+
+<span class="com"># Schedule it with cron: */15 * * * * /usr/bin/python3 /opt/disk_check.py</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: BUILDING A REST API ────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🌐</span>
+    <span class="topic-name">Building a REST API — From Zero to Running Endpoint</span>
+    <span class="topic-badge">SCRIPT • Practical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">FASTAPI</div>
+      <div class="concept-title">The Modern Way to Build APIs in Python</div>
+      <div class="concept-desc">FastAPI is the most popular modern Python web framework for building APIs. It's fast, gives you automatic interactive docs (Swagger UI), and validates request data automatically using type hints. Perfect for building internal tools, automation endpoints, and microservices.</div>
+      <div class="code-block"><span class="com"># pip install fastapi uvicorn</span>
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, HTTPException
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+
+app = FastAPI()
+
+<span class="com"># Pydantic model — auto-validates incoming JSON</span>
+<span class="kw">class</span> <span class="fn">Server</span>(BaseModel):
+    hostname: str
+    ip: str
+    is_active: bool = <span class="kw">True</span>
+
+<span class="com"># In-memory "database" for the example</span>
+servers = {}
+
+<span class="fn">@app.get</span>(<span class="str">"/"</span>)
+<span class="kw">def</span> <span class="fn">root</span>():
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"ok"</span>}
+
+<span class="fn">@app.get</span>(<span class="str">"/servers"</span>)
+<span class="kw">def</span> <span class="fn">list_servers</span>():
+    <span class="kw">return</span> <span class="fn">list</span>(servers.values())
+
+<span class="fn">@app.get</span>(<span class="str">"/servers/{hostname}"</span>)
+<span class="kw">def</span> <span class="fn">get_server</span>(hostname: str):
+    <span class="kw">if</span> hostname <span class="kw">not</span> <span class="kw">in</span> servers:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">404</span>, detail=<span class="str">"Not found"</span>)
+    <span class="kw">return</span> servers[hostname]
+
+<span class="fn">@app.post</span>(<span class="str">"/servers"</span>)
+<span class="kw">def</span> <span class="fn">create_server</span>(server: Server):
+    servers[server.hostname] = server
+    <span class="kw">return</span> {<span class="str">"created"</span>: server.hostname}
+
+<span class="com"># Run it:  uvicorn main:app --reload</span>
+<span class="com"># Auto docs at: http://localhost:8000/docs</span></div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->

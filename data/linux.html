@@ -2912,4 +2912,110 @@ n         <span class="com"># next search result</span></div>
     </div>
   </div>
 </div>
+
+<!-- BEGINNER16-LINUX v1 -->
+<!-- ── TOPIC: FILE PERMISSIONS DEEP DIVE ─────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔑</span>
+    <span class="topic-name">Linux Permissions — Who Can Do What, In Depth</span>
+    <span class="topic-badge">LINUX • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE PERMISSION MODEL</div>
+      <div class="concept-title">Reading rwxr-xr-- at a Glance</div>
+      <div class="concept-desc">Every Linux file has an owner, a group, and a set of permissions for three categories: user (owner), group, and others. Permissions are read (r), write (w), and execute (x). When you run <code>ls -l</code>, the first 10 characters tell the whole story.</div>
+      <div class="code-block"><span class="com"># ls -l output explained</span>
+-rwxr-xr--  1  alice  devs  2048  Jan 15  script.sh
+^└┬┘└┬┘└┬┘     └─┬─┘  └┬─┘
+│ │  │  │        │     └── group name
+│ │  │  │        └──────── owner name
+│ │  │  └── others: r-- (read only)
+│ │  └───── group:  r-x (read + execute)
+│ └──────── owner:  rwx (read + write + execute)
+└────────── type: - file, d dir, l symlink
+
+<span class="com"># Numeric (octal) — each digit is a sum:  r=4  w=2  x=1</span>
+rwx = 4+2+1 = 7
+r-x = 4+0+1 = 5
+r-- = 4+0+0 = 4
+<span class="com"># So rwxr-xr-- = 754</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CHMOD &amp; CHOWN</div>
+      <div class="concept-title">Changing Permissions and Ownership</div>
+      <div class="code-block"><span class="com"># Numeric (octal) mode — set absolute permissions</span>
+chmod 755 script.sh        <span class="com"># rwxr-xr-x (common for scripts)</span>
+chmod 644 file.txt         <span class="com"># rw-r--r-- (common for files)</span>
+chmod 600 ~/.ssh/id_rsa    <span class="com"># rw------- (private keys MUST be this)</span>
+chmod 700 ~/.ssh           <span class="com"># rwx------ (private dir)</span>
+
+<span class="com"># Symbolic mode — modify relative to current</span>
+chmod u+x script.sh        <span class="com"># add execute for owner</span>
+chmod g-w file.txt         <span class="com"># remove write for group</span>
+chmod o= secret.txt        <span class="com"># remove ALL for others</span>
+chmod a+r public.txt       <span class="com"># add read for all (a = all)</span>
+chmod -R 755 /var/www      <span class="com"># recursive</span>
+
+<span class="com"># Change ownership (usually needs sudo)</span>
+chown alice file.txt           <span class="com"># change owner</span>
+chown alice:devs file.txt      <span class="com"># change owner AND group</span>
+chown -R www-data:www-data /var/www   <span class="com"># recursive</span>
+chgrp devs file.txt            <span class="com"># change group only</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SPECIAL PERMISSION BITS</div>
+      <div class="concept-title">SUID, SGID, and the Sticky Bit</div>
+      <div class="concept-desc">Beyond rwx, there are three special bits that change execution and inheritance behavior. These matter for both administration and security (SUID binaries are a classic privilege-escalation target).</div>
+      <table class="ai-table">
+        <thead><tr><th>Bit</th><th>Octal</th><th>Effect</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>SUID</td><td>4000</td><td>Run file as the FILE's owner, not the runner</td><td><code>passwd</code> runs as root so users can change their own password</td></tr>
+          <tr><td>SGID</td><td>2000</td><td>On file: run as group. On dir: new files inherit the dir's group</td><td>Shared project directories</td></tr>
+          <tr><td>Sticky</td><td>1000</td><td>On dir: only the file owner can delete their files</td><td><code>/tmp</code> — anyone can write, but can't delete others' files</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="com"># Set special bits</span>
+chmod u+s binary       <span class="com"># SUID</span>
+chmod g+s shared_dir   <span class="com"># SGID</span>
+chmod +t /shared       <span class="com"># sticky bit</span>
+
+<span class="com"># SECURITY: hunt for SUID binaries (privilege escalation recon)</span>
+find / -perm -4000 -type f 2&gt;/dev/null</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">UMASK & ACLs</div>
+      <div class="concept-title">Default Permissions and Fine-Grained Control</div>
+      <div class="code-block"><span class="com"># umask — sets DEFAULT permissions for new files</span>
+umask                  <span class="com"># show current (often 022)</span>
+<span class="com"># New files: 666 - umask. New dirs: 777 - umask</span>
+<span class="com"># umask 022 → files 644, dirs 755</span>
+
+<span class="com"># ACLs — go beyond owner/group/other for specific users</span>
+getfacl file.txt                        <span class="com"># view ACLs</span>
+setfacl -m u:bob:rw file.txt            <span class="com"># give bob read+write</span>
+setfacl -m g:contractors:r file.txt     <span class="com"># give a group read</span>
+setfacl -x u:bob file.txt               <span class="com"># remove bob's ACL</span>
+<span class="com"># A "+" after permissions in ls -l means ACLs are present</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">MANDATORY ACCESS CONTROL</div>
+      <div class="concept-title">SELinux and AppArmor</div>
+      <div class="concept-desc">Standard permissions are Discretionary Access Control (DAC) — owners decide. SELinux (Red Hat) and AppArmor (Ubuntu/SUSE) add Mandatory Access Control (MAC): a system-wide policy enforces what processes can do, regardless of file ownership. Even root is constrained. This contains compromised services — a hacked web server can only touch what its policy allows.</div>
+      <div class="code-block"><span class="com"># SELinux (Red Hat family)</span>
+getenforce                  <span class="com"># Enforcing / Permissive / Disabled</span>
+sestatus                    <span class="com"># detailed status</span>
+ls -Z file.txt              <span class="com"># show SELinux context</span>
+setenforce 0                <span class="com"># temporarily permissive (testing)</span>
+<span class="com"># Tip: don't disable SELinux to "fix" an issue — fix the policy</span>
+
+<span class="com"># AppArmor (Ubuntu/Debian/SUSE)</span>
+sudo aa-status              <span class="com"># list profiles and their mode</span>
+sudo aa-complain /path/to/program   <span class="com"># log violations, don't block</span>
+sudo aa-enforce /path/to/program    <span class="com"># enforce the profile</span></div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body linux -->
