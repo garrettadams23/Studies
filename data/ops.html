@@ -1695,4 +1695,76 @@ ps aux --sort=-%mem | head    <span class="com"># top memory consumers</span></d
     </div>
   </div>
 </div>
+
+<!-- BEGINNER25-OPS v1 -->
+<!-- ── TOPIC: CONTAINER SECURITY ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🐳</span>
+    <span class="topic-name">Container Security — Hardening Docker &amp; Images</span>
+    <span class="topic-badge">OPS • Security</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">CONTAINERS AREN'T VMs</div>
+      <div class="concept-title">Shared Kernel = Shared Risk</div>
+      <div class="concept-desc">Containers share the host's kernel (unlike VMs, which each have their own). That makes them lightweight and fast — but it also means a container escape can potentially compromise the host and every other container. Container security is about reducing what a compromised container can reach and do.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">IMAGE SECURITY</div>
+      <div class="concept-title">Start From a Clean, Minimal Base</div>
+      <table class="ai-table">
+        <thead><tr><th>Practice</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Use minimal base images</td><td>Alpine/distroless = smaller attack surface, fewer CVEs</td></tr>
+          <tr><td>Pin image versions (digests)</td><td><code>python:3.12</code> not <code>python:latest</code> — reproducible, no surprise updates</td></tr>
+          <tr><td>Scan images for vulnerabilities</td><td>Trivy, Grype, Clair find known CVEs in layers</td></tr>
+          <tr><td>Don't bake in secrets</td><td>Secrets in image layers persist even if "deleted" later</td></tr>
+          <tr><td>Use trusted sources</td><td>Official images; verify signatures (cosign/Sigstore)</td></tr>
+          <tr><td>Multi-stage builds</td><td>Don't ship build tools/source in the final image</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="com"># Scan an image for known vulnerabilities</span>
+trivy image python:3.12
+grype nginx:latest
+
+<span class="com"># Multi-stage build — final image has only what it needs</span>
+<span class="com"># FROM golang:1.22 AS build</span>
+<span class="com"># ... compile ...</span>
+<span class="com"># FROM gcr.io/distroless/static   # tiny, no shell, no package mgr</span>
+<span class="com"># COPY --from=build /app /app</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RUNTIME HARDENING</div>
+      <div class="concept-title">Limit What a Container Can Do</div>
+      <table class="ai-table">
+        <thead><tr><th>Control</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td>Don't run as root</td><td><code>USER appuser</code> in Dockerfile; <code>--user 1000</code></td></tr>
+          <tr><td>Read-only filesystem</td><td><code>--read-only</code> — malware can't write</td></tr>
+          <tr><td>Drop capabilities</td><td><code>--cap-drop ALL</code> then add only what's needed</td></tr>
+          <tr><td>No new privileges</td><td><code>--security-opt no-new-privileges</code></td></tr>
+          <tr><td>Limit resources</td><td><code>--memory --cpus</code> — contain DoS / runaway</td></tr>
+          <tr><td>Don't mount the Docker socket</td><td><code>/var/run/docker.sock</code> inside = root on host</td></tr>
+          <tr><td>Network segmentation</td><td>Custom networks; don't expose ports you don't need</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE 4 Cs</div>
+      <div class="concept-title">Cloud Native Security Layers</div>
+      <div class="concept-desc">Container security is layered — each layer depends on the one outside it. Weakness in an outer layer undermines all the inner ones.</div>
+      <table class="ai-table">
+        <thead><tr><th>Layer</th><th>Secure By</th></tr></thead>
+        <tbody>
+          <tr><td><strong>C</strong>loud / infrastructure</td><td>Hardened hosts, IAM, network policy</td></tr>
+          <tr><td><strong>C</strong>luster</td><td>RBAC, network policies, admission control</td></tr>
+          <tr><td><strong>C</strong>ontainer</td><td>Minimal images, scanning, no root</td></tr>
+          <tr><td><strong>C</strong>ode</td><td>Secure coding, dependency hygiene, secrets management</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 <!-- /domain-body ops -->

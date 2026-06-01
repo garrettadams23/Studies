@@ -1925,4 +1925,71 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
     </div>
   </div>
 </div>
+
+<!-- BEGINNER25-SEC v1 -->
+<!-- ── TOPIC: CRYPTOGRAPHY FUNDAMENTALS ──────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔐</span>
+    <span class="topic-name">Cryptography Fundamentals — The Building Blocks of Security</span>
+    <span class="topic-badge">SEC • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE THREE GOALS</div>
+      <div class="concept-title">What Crypto Actually Provides</div>
+      <table class="ai-table">
+        <thead><tr><th>Goal</th><th>Means</th><th>Provided By</th></tr></thead>
+        <tbody>
+          <tr><td>Confidentiality</td><td>Only authorized parties can read it</td><td>Encryption</td></tr>
+          <tr><td>Integrity</td><td>Detect if data was altered</td><td>Hashing / MAC</td></tr>
+          <tr><td>Authenticity / Non-repudiation</td><td>Prove who sent it; they can't deny it</td><td>Digital signatures</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">Together with availability, confidentiality and integrity form the <strong>CIA triad</strong> — the foundation of all of information security.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SYMMETRIC VS ASYMMETRIC</div>
+      <div class="concept-title">One Key or Two?</div>
+      <table class="ai-table">
+        <thead><tr><th>Aspect</th><th>Symmetric</th><th>Asymmetric (public-key)</th></tr></thead>
+        <tbody>
+          <tr><td>Keys</td><td>One shared secret key</td><td>Key pair: public + private</td></tr>
+          <tr><td>Speed</td><td>Fast (bulk data)</td><td>Slow (small data only)</td></tr>
+          <tr><td>Problem it has</td><td>How to share the key securely?</td><td>Slow; needs trust in public keys</td></tr>
+          <tr><td>Algorithms</td><td>AES, ChaCha20</td><td>RSA, ECC, Diffie-Hellman</td></tr>
+          <tr><td>Used for</td><td>Encrypting actual data</td><td>Key exchange, signatures</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>The clever combination:</strong> real systems (like HTTPS) use asymmetric crypto to securely <em>exchange a symmetric key</em>, then use fast symmetric crypto for the actual data. Best of both worlds.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">KEY EXCHANGE</div>
+      <div class="concept-title">Diffie-Hellman — Sharing a Secret in Public</div>
+      <div class="concept-desc">How do two parties agree on a secret key over a network an eavesdropper is watching? Diffie-Hellman key exchange lets them derive a shared secret without ever transmitting it — using math (modular exponentiation / elliptic curves) that's easy to compute forward but practically impossible to reverse. The eavesdropper sees the public exchanges but cannot compute the shared secret. This is the magic that makes HTTPS possible.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PKI</div>
+      <div class="concept-title">Public Key Infrastructure — Who Do You Trust?</div>
+      <div class="concept-desc">Public-key crypto has a chicken-and-egg problem: how do you know a public key really belongs to who it claims? PKI solves this with <strong>certificates</strong> — a public key plus identity, vouched for (signed) by a trusted <strong>Certificate Authority (CA)</strong>. Your browser/OS trusts a set of root CAs, forming a "chain of trust."</div>
+      <table class="ai-table">
+        <thead><tr><th>Component</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td>Certificate (X.509)</td><td>Binds a public key to an identity (domain, org)</td></tr>
+          <tr><td>Certificate Authority (CA)</td><td>Trusted issuer that signs certificates</td></tr>
+          <tr><td>Root CA</td><td>Top of the trust chain; pre-installed in OS/browser</td></tr>
+          <tr><td>Intermediate CA</td><td>Signed by root; issues end certs (protects the root)</td></tr>
+          <tr><td>CSR</td><td>Certificate Signing Request — you ask a CA to sign your key</td></tr>
+          <tr><td>CRL / OCSP</td><td>Ways to check if a cert was revoked</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DON'T ROLL YOUR OWN</div>
+      <div class="concept-title">The Cardinal Rule of Crypto</div>
+      <div class="concept-desc">Never invent your own cryptographic algorithm or implementation. Decades of expert scrutiny go into vetted libraries; homemade crypto is almost always broken in subtle ways. Use established, audited libraries (libsodium, the OS's TLS stack, Python's <code>cryptography</code>), use them in their default/recommended modes, and keep them updated. Your job is to use crypto correctly, not to build it.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body sec -->

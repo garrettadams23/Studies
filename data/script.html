@@ -8475,4 +8475,91 @@ s3 = boto3.client(<span class="str">"s3"</span>)
     </div>
   </div>
 </div>
+
+<!-- BEGINNER25-SCRIPT v1 -->
+<!-- ── TOPIC: BIG O & ALGORITHMS ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📈</span>
+    <span class="topic-name">Big O &amp; Algorithms — Will Your Code Survive Real Data?</span>
+    <span class="topic-badge">SCRIPT • CS Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT BIG O MEASURES</div>
+      <div class="concept-title">How Cost Grows as Input Grows</div>
+      <div class="concept-desc">Big O notation describes how an algorithm's time (or memory) scales as the input size (n) grows. It ignores constants and small terms to focus on the <em>growth rate</em>. Why care? Code that works fine on 100 items can hang forever on 10 million. Understanding Big O helps you spot the difference between "fast enough" and "will melt in production."</div>
+      <table class="ai-table">
+        <thead><tr><th>Big O</th><th>Name</th><th>n=10</th><th>n=1,000,000</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>O(1)</td><td>Constant</td><td>1</td><td>1</td><td>Dict/hash lookup, array index</td></tr>
+          <tr><td>O(log n)</td><td>Logarithmic</td><td>~3</td><td>~20</td><td>Binary search</td></tr>
+          <tr><td>O(n)</td><td>Linear</td><td>10</td><td>1,000,000</td><td>Loop through a list once</td></tr>
+          <tr><td>O(n log n)</td><td>Linearithmic</td><td>~33</td><td>~20M</td><td>Good sorting (merge/quick)</td></tr>
+          <tr><td>O(n²)</td><td>Quadratic</td><td>100</td><td>10¹²</td><td>Nested loops (the danger zone)</td></tr>
+          <tr><td>O(2ⁿ)</td><td>Exponential</td><td>1,024</td><td>astronomical</td><td>Brute-force, naive recursion</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE CLASSIC MISTAKE</div>
+      <div class="concept-title">Hidden O(n²) — and the Fix</div>
+      <div class="code-block"><span class="com"># SLOW — O(n²): checking membership in a list inside a loop</span>
+<span class="kw">def</span> <span class="fn">find_dupes_slow</span>(items):
+    dupes = []
+    <span class="kw">for</span> x <span class="kw">in</span> items:
+        <span class="kw">if</span> items.count(x) &gt; <span class="num">1</span>:    <span class="com"># .count scans the WHOLE list each time</span>
+            dupes.append(x)
+    <span class="kw">return</span> dupes
+<span class="com"># 1M items → ~1 trillion operations → hangs forever</span>
+
+<span class="com"># FAST — O(n): use a set/dict for O(1) lookups</span>
+<span class="kw">def</span> <span class="fn">find_dupes_fast</span>(items):
+    seen, dupes = <span class="fn">set</span>(), <span class="fn">set</span>()
+    <span class="kw">for</span> x <span class="kw">in</span> items:
+        <span class="kw">if</span> x <span class="kw">in</span> seen:       <span class="com"># set lookup is O(1)</span>
+            dupes.add(x)
+        seen.add(x)
+    <span class="kw">return</span> dupes
+<span class="com"># 1M items → ~1M operations → instant</span></div>
+      <div class="concept-desc"><strong>The #1 practical lesson:</strong> when you need fast lookups, use a <code>set</code> or <code>dict</code> (hash-based, O(1)) instead of repeatedly scanning a <code>list</code> (O(n)). This single insight fixes a huge fraction of slow code.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DATA STRUCTURE COSTS</div>
+      <div class="concept-title">Pick the Right Tool</div>
+      <table class="ai-table">
+        <thead><tr><th>Structure</th><th>Lookup</th><th>Insert</th><th>Best For</th></tr></thead>
+        <tbody>
+          <tr><td>list (array)</td><td>O(n) search / O(1) index</td><td>O(1) append</td><td>Ordered sequence, iteration</td></tr>
+          <tr><td>dict (hash map)</td><td>O(1)</td><td>O(1)</td><td>Key → value lookups</td></tr>
+          <tr><td>set (hash)</td><td>O(1)</td><td>O(1)</td><td>Membership tests, dedup</td></tr>
+          <tr><td>deque</td><td>O(n)</td><td>O(1) both ends</td><td>Queues, sliding windows</td></tr>
+          <tr><td>heap (priority queue)</td><td>O(1) min</td><td>O(log n)</td><td>"Top N", schedulers</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RECURSION</div>
+      <div class="concept-title">A Function That Calls Itself</div>
+      <div class="concept-desc">Recursion solves a problem by breaking it into smaller versions of itself. Every recursion needs a <strong>base case</strong> (when to stop) — forget it and you get infinite recursion (stack overflow). Great for tree/nested structures; for simple counting, a loop is usually clearer and faster.</div>
+      <div class="code-block"><span class="com"># Walk a nested folder structure (natural fit for recursion)</span>
+<span class="kw">def</span> <span class="fn">total_size</span>(path):
+    <span class="kw">if</span> path.is_file():              <span class="com"># BASE CASE</span>
+        <span class="kw">return</span> path.stat().st_size
+    <span class="kw">return</span> <span class="fn">sum</span>(total_size(child)    <span class="com"># RECURSE into each child</span>
+               <span class="kw">for</span> child <span class="kw">in</span> path.iterdir())
+
+<span class="com"># Binary search — O(log n), a recursive classic</span>
+<span class="kw">def</span> <span class="fn">bsearch</span>(arr, target, lo=<span class="num">0</span>, hi=<span class="kw">None</span>):
+    <span class="kw">if</span> hi <span class="kw">is</span> <span class="kw">None</span>: hi = <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="kw">if</span> lo &gt; hi: <span class="kw">return</span> -<span class="num">1</span>          <span class="com"># BASE CASE: not found</span>
+    mid = (lo + hi) // <span class="num">2</span>
+    <span class="kw">if</span> arr[mid] == target: <span class="kw">return</span> mid
+    <span class="kw">if</span> arr[mid] &lt; target:
+        <span class="kw">return</span> bsearch(arr, target, mid+<span class="num">1</span>, hi)
+    <span class="kw">return</span> bsearch(arr, target, lo, mid-<span class="num">1</span>)</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->

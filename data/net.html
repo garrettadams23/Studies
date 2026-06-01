@@ -4018,4 +4018,56 @@ iptables -t nat -A PREROUTING -p tcp --dport 443 \
     </div>
   </div>
 </div>
+
+<!-- BEGINNER25-NET v1 -->
+<!-- ── TOPIC: 802.1X & NETWORK ACCESS CONTROL ────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🚪</span>
+    <span class="topic-name">802.1X &amp; NAC — Who Gets On the Network?</span>
+    <span class="topic-badge">NET • Enterprise</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE PROBLEM</div>
+      <div class="concept-title">An Open Network Port Is an Open Door</div>
+      <div class="concept-desc">In a basic network, anyone who plugs into a wall jack or knows the Wi-Fi password is on the network. In an enterprise, that's a serious risk — an attacker in the lobby, a rogue device, a compromised laptop. 802.1X and NAC enforce <em>authentication before access</em>: prove who/what you are before the network lets you communicate.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">802.1X</div>
+      <div class="concept-title">Port-Based Authentication</div>
+      <div class="concept-desc">802.1X authenticates a device <em>at the port level</em> before granting network access. It involves three roles working together via the EAP protocol.</div>
+      <table class="ai-table">
+        <thead><tr><th>Role</th><th>Who</th><th>Job</th></tr></thead>
+        <tbody>
+          <tr><td>Supplicant</td><td>The device wanting access (laptop)</td><td>Provides credentials/certificate</td></tr>
+          <tr><td>Authenticator</td><td>The switch or wireless AP</td><td>Gatekeeper — blocks traffic until authorized</td></tr>
+          <tr><td>Authentication Server</td><td>RADIUS server</td><td>Verifies credentials, says yes/no</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">Until authentication succeeds, the port only passes authentication traffic — everything else is blocked. Enterprise Wi-Fi (WPA2/3-Enterprise) uses exactly this model, which is why you log in with your <em>own</em> username/password instead of a shared Wi-Fi key.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">NAC</div>
+      <div class="concept-title">Network Access Control — Beyond Just Identity</div>
+      <div class="concept-desc">NAC extends the idea: it doesn't just check <em>who</em> you are, but whether your device is <em>healthy and compliant</em> before allowing full access — and what it's allowed to reach.</div>
+      <table class="ai-table">
+        <thead><tr><th>NAC Capability</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Posture assessment</td><td>Is AV running? OS patched? Disk encrypted?</td></tr>
+          <tr><td>Quarantine / remediation</td><td>Non-compliant device → restricted VLAN to fix itself</td></tr>
+          <tr><td>Role-based access</td><td>Guest → internet only; employee → full; IoT → isolated</td></tr>
+          <tr><td>Dynamic VLAN assignment</td><td>Put devices on the right segment automatically</td></tr>
+          <tr><td>Guest onboarding</td><td>Captive portal, sponsored access</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RADIUS</div>
+      <div class="concept-title">The AAA Workhorse</div>
+      <div class="concept-desc">RADIUS (Remote Authentication Dial-In User Service) is the protocol behind most network authentication. It provides <strong>AAA</strong>: <strong>Authentication</strong> (who are you?), <strong>Authorization</strong> (what may you do?), and <strong>Accounting</strong> (what did you do? — logging/billing). It centralizes credentials so every switch and AP checks against one source (often tied to Active Directory). TACACS+ is a Cisco-oriented alternative more focused on device administration.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body net -->
