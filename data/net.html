@@ -4147,4 +4147,61 @@ Content-Length: 142
     </div>
   </div>
 </div>
+
+<!-- BEGINNER28-NET v1 -->
+<!-- ── TOPIC: NETWORK MONITORING ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📡</span>
+    <span class="topic-name">Network Monitoring — Seeing What Flows Through</span>
+    <span class="topic-badge">NET • Operations</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY MONITOR</div>
+      <div class="concept-title">You Can't Manage What You Can't See</div>
+      <div class="concept-desc">Network monitoring tells you device health, bandwidth use, errors, and unusual traffic — essential for both operations (is the link saturated? is a switch down?) and security (is data being exfiltrated? is there C2 traffic?). Different techniques answer different questions, from device health to per-flow detail.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SNMP</div>
+      <div class="concept-title">Polling Device Health</div>
+      <div class="concept-desc">SNMP (Simple Network Management Protocol) lets a monitoring system query devices (switches, routers, servers, printers) for metrics — interface status, CPU, temperature, traffic counters. Devices expose values in a hierarchical database (MIB) addressed by OIDs. Tools like Zabbix, LibreNMS, and PRTG poll via SNMP and graph/alert on the results.</div>
+      <table class="ai-table">
+        <thead><tr><th>Version</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>SNMPv1 / v2c</td><td>Uses a plaintext "community string" — insecure; avoid on untrusted networks</td></tr>
+          <tr><td>SNMPv3</td><td>Adds authentication + encryption — use this</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">FLOW DATA</div>
+      <div class="concept-title">NetFlow / IPFIX / sFlow — Who Talked to Whom</div>
+      <div class="concept-desc">Flow data records metadata about conversations (source/dest IP, ports, protocol, bytes) without capturing full packet contents. It answers "who is talking to whom, how much?" — invaluable for capacity planning, billing, and security (spotting exfiltration, scanning, or C2 beaconing) at scale, far more cheaply than full packet capture.</div>
+      <table class="ai-table">
+        <thead><tr><th>Tech</th><th>Origin</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>NetFlow</td><td>Cisco</td><td>The original; widely supported</td></tr>
+          <tr><td>IPFIX</td><td>IETF standard</td><td>Vendor-neutral "NetFlow v10"</td></tr>
+          <tr><td>sFlow</td><td>Multi-vendor</td><td>Packet sampling, lower overhead</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PACKET CAPTURE</div>
+      <div class="concept-title">The Full Truth on the Wire</div>
+      <div class="concept-desc">When you need to see <em>exactly</em> what was sent — debugging an app, analyzing an attack — capture full packets. <code>tcpdump</code> on the CLI, Wireshark for deep GUI analysis. The most detailed (and storage-heavy) option; usually targeted at a specific problem, not always-on.</div>
+      <div class="code-block"><span class="com"># tcpdump basics</span>
+sudo tcpdump -i eth0                       <span class="com"># live capture</span>
+sudo tcpdump -i eth0 port 443              <span class="com"># filter by port</span>
+sudo tcpdump -i eth0 host 10.0.0.5         <span class="com"># filter by host</span>
+sudo tcpdump -i eth0 -w capture.pcap       <span class="com"># save to file</span>
+sudo tcpdump -i eth0 'tcp[tcpflags] &amp; tcp-syn != 0'   <span class="com"># SYN packets</span>
+
+<span class="com"># Then open capture.pcap in Wireshark for deep analysis</span>
+<span class="com"># Wireshark display filters: http, dns, ip.addr==10.0.0.5, tcp.port==22</span></div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body net -->

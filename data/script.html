@@ -8700,4 +8700,71 @@ SECRET = os.environ[<span class="str">"WEBHOOK_SECRET"</span>].encode()
     </div>
   </div>
 </div>
+
+<!-- BEGINNER28-SCRIPT v1 -->
+<!-- ── TOPIC: SERIALIZATION SAFELY ───────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📦</span>
+    <span class="topic-name">Serialization — Saving Objects (Without Opening a Hole)</span>
+    <span class="topic-badge">SCRIPT • Security</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IT IS</div>
+      <div class="concept-title">Turning Objects Into Bytes and Back</div>
+      <div class="concept-desc">Serialization converts in-memory objects into a storable/transmittable format (text or bytes); deserialization reverses it. You do this constantly — saving config, sending API payloads, caching. But <em>how</em> you serialize has big security implications. Some formats can execute code when loaded — a classic, devastating vulnerability.</div>
+      <table class="ai-table">
+        <thead><tr><th>Format</th><th>Use For</th><th>Safe to load untrusted?</th></tr></thead>
+        <tbody>
+          <tr><td>JSON</td><td>APIs, config, data exchange</td><td>✓ Yes (data only)</td></tr>
+          <tr><td>YAML</td><td>Config files</td><td>⚠️ Only with <code>safe_load</code></td></tr>
+          <tr><td>Pickle</td><td>Python-only object caching</td><td>✗ NEVER — can execute code</td></tr>
+          <tr><td>TOML</td><td>Config (pyproject.toml)</td><td>✓ Yes</td></tr>
+          <tr><td>Protobuf/MessagePack</td><td>Fast binary, cross-language</td><td>✓ Yes (schema-based)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE PICKLE TRAP</div>
+      <div class="concept-title">Deserializing Untrusted Data = Remote Code Execution</div>
+      <div class="concept-desc">Python's <code>pickle</code> can reconstruct arbitrary objects — including ones that run code on load. <strong>Never unpickle data from an untrusted source</strong> (uploaded files, network input, caches an attacker can touch). The same danger exists in other languages (Java deserialization, .NET, PHP). It's a top cause of critical CVEs.</div>
+      <div class="code-block"><span class="com"># DANGER — a malicious pickle can run ANY code on load</span>
+<span class="kw">import</span> pickle
+data = pickle.loads(untrusted_bytes)   <span class="com"># ✗ may execute attacker code!</span>
+
+<span class="com"># SAFE alternatives for untrusted data</span>
+<span class="kw">import</span> json, yaml
+obj = json.loads(untrusted_string)        <span class="com"># ✓ data only</span>
+cfg = yaml.safe_load(untrusted_yaml)      <span class="com"># ✓ safe_load, NOT load</span>
+
+<span class="com"># yaml.load() (without SafeLoader) is the dangerous one — avoid</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">FRIENDLY CLI OUTPUT</div>
+      <div class="concept-title">Make Your Tools Pleasant to Use</div>
+      <div class="concept-desc">Good output makes tools far more usable. The <code>rich</code> library adds color, tables, progress bars, and pretty tracebacks with almost no effort; <code>click</code>/<code>typer</code> build polished command-line interfaces.</div>
+      <div class="code-block"><span class="com"># pip install rich</span>
+<span class="kw">from</span> rich.console <span class="kw">import</span> Console
+<span class="kw">from</span> rich.table <span class="kw">import</span> Table
+
+console = Console()
+console.print(<span class="str">"[bold green]✓ Success[/]"</span>)
+console.print(<span class="str">"[bold red]✗ Error[/]"</span>, <span class="str">"disk full"</span>)
+
+<span class="com"># A formatted table in a few lines</span>
+table = Table(title=<span class="str">"Servers"</span>)
+table.add_column(<span class="str">"Host"</span>); table.add_column(<span class="str">"Status"</span>)
+table.add_row(<span class="str">"web1"</span>, <span class="str">"[green]up[/]"</span>)
+table.add_row(<span class="str">"db1"</span>, <span class="str">"[red]down[/]"</span>)
+console.print(table)
+
+<span class="com"># Progress bar for long operations</span>
+<span class="kw">from</span> rich.progress <span class="kw">import</span> track
+<span class="kw">for</span> item <span class="kw">in</span> track(items, description=<span class="str">"Processing..."</span>):
+    process(item)</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->

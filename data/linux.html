@@ -3440,4 +3440,63 @@ log ERROR <span class="str">"Disk full"</span></div>
     </div>
   </div>
 </div>
+
+<!-- BEGINNER28-LINUX v1 -->
+<!-- ── TOPIC: HOW CONTAINERS REALLY WORK ─────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🧬</span>
+    <span class="topic-name">Under the Hood — Namespaces &amp; cgroups</span>
+    <span class="topic-badge">LINUX • Advanced</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE SECRET</div>
+      <div class="concept-title">Containers Are Just Linux Processes</div>
+      <div class="concept-desc">A container isn't a lightweight VM — it's a normal Linux process that's been <em>isolated</em> using two kernel features: <strong>namespaces</strong> (what a process can SEE) and <strong>cgroups</strong> (what a process can USE). Docker just orchestrates these kernel primitives nicely. Understanding this demystifies containers — and explains both their efficiency and their security model (shared kernel = the isolation boundary).</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">NAMESPACES</div>
+      <div class="concept-title">Isolating What a Process Sees</div>
+      <div class="concept-desc">Namespaces give a process its own private view of a system resource — so a container thinks it has its own hostname, network, process tree, etc., while really sharing one kernel.</div>
+      <table class="ai-table">
+        <thead><tr><th>Namespace</th><th>Isolates</th></tr></thead>
+        <tbody>
+          <tr><td>PID</td><td>Process IDs — container sees its own PID 1, not the host's processes</td></tr>
+          <tr><td>NET</td><td>Network interfaces, IPs, routing, ports</td></tr>
+          <tr><td>MNT</td><td>Mount points / filesystem view</td></tr>
+          <tr><td>UTS</td><td>Hostname and domain name</td></tr>
+          <tr><td>IPC</td><td>Inter-process communication (shared memory)</td></tr>
+          <tr><td>USER</td><td>User/group IDs — can be root inside, unprivileged outside</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="com"># See namespaces a process belongs to</span>
+ls -l /proc/$$/ns        <span class="com"># $$ = current shell's PID</span>
+
+<span class="com"># Run a process in a new namespace (the raw primitive)</span>
+sudo unshare --pid --fork --mount-proc bash
+<span class="com"># Inside: ps aux shows almost nothing — isolated PID namespace</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CGROUPS</div>
+      <div class="concept-title">Limiting What a Process Can Use</div>
+      <div class="concept-desc">Control groups (cgroups) limit and account for resource usage — CPU, memory, disk I/O, network. This is how <code>docker run --memory 512m</code> works, and how the kernel prevents one container from starving the others. Hit a memory cgroup limit and the OOM killer terminates the process.</div>
+      <div class="code-block"><span class="com"># Docker resource limits are cgroups under the hood</span>
+docker run --memory 512m --cpus 1.5 myapp
+
+<span class="com"># systemd uses cgroups too — limit a service</span>
+systemctl set-property nginx.service MemoryMax=1G CPUQuota=50%
+
+<span class="com"># Inspect cgroup hierarchy</span>
+systemd-cgls                 <span class="com"># tree of cgroups</span>
+systemd-cgtop                <span class="com"># top-like view of cgroup resource use</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE SECURITY ANGLE</div>
+      <div class="concept-title">Why "Shared Kernel" Matters</div>
+      <div class="concept-desc">Because all containers share the host kernel, a kernel vulnerability or a misconfiguration can allow a <strong>container escape</strong> — breaking isolation to reach the host. This is why container hardening matters (no root, drop capabilities, read-only, seccomp profiles that restrict syscalls) and why high-security workloads sometimes use stronger isolation: <strong>gVisor</strong> (sandboxed kernel), <strong>Kata Containers</strong> (lightweight VMs per container), or just plain VMs. Defense in depth applies even to containers.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body linux -->
