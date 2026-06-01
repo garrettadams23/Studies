@@ -1714,4 +1714,78 @@ cursor.execute(<span class="str">"SELECT * FROM users WHERE name=? AND password=
     </div>
   </div>
 </div>
+
+<!-- BEGINNER19-SEC v1 -->
+<!-- ── TOPIC: SECRETS MANAGEMENT ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🗝️</span>
+    <span class="topic-name">Secrets Management — Stop Hardcoding Passwords</span>
+    <span class="topic-badge">SEC • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE PROBLEM</div>
+      <div class="concept-title">Secrets End Up Everywhere They Shouldn't</div>
+      <div class="concept-desc">Passwords, API keys, database credentials, TLS private keys, tokens — collectively "secrets." The cardinal sin is hardcoding them in source code, where they get committed to Git, copied around, and leaked. GitHub is constantly scanned by attackers for accidentally committed AWS keys (they're exploited within minutes). Secrets management is the discipline of storing, accessing, rotating, and auditing secrets safely.</div>
+      <table class="ai-table">
+        <thead><tr><th>Anti-Pattern</th><th>Do This Instead</th></tr></thead>
+        <tbody>
+          <tr><td>Hardcoded in source: <code>api_key = "sk-abc123"</code></td><td>Environment variable or secrets manager</td></tr>
+          <tr><td>Committed config file with passwords</td><td><code>.gitignore</code> it; use a template + secrets store</td></tr>
+          <tr><td>Secrets in Slack/email/wiki</td><td>A proper vault with access controls</td></tr>
+          <tr><td>Same password reused everywhere</td><td>Unique secrets, rotated regularly</td></tr>
+          <tr><td>Shared admin credentials</td><td>Individual accounts + just-in-time access</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SECRETS MANAGERS</div>
+      <div class="concept-title">Purpose-Built Tools for Secrets</div>
+      <table class="ai-table">
+        <thead><tr><th>Tool</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>HashiCorp Vault</td><td>The gold standard; dynamic secrets, leasing, broad integrations</td></tr>
+          <tr><td>AWS Secrets Manager / Parameter Store</td><td>Native to AWS; auto-rotation</td></tr>
+          <tr><td>Azure Key Vault / GCP Secret Manager</td><td>Cloud-native equivalents</td></tr>
+          <tr><td>1Password / Bitwarden (Secrets)</td><td>Team-friendly, good for smaller orgs</td></tr>
+          <tr><td>Sealed Secrets / SOPS</td><td>Encrypt secrets so they CAN live in Git safely</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">KEY MANAGEMENT</div>
+      <div class="concept-title">The Lifecycle of Cryptographic Keys</div>
+      <div class="concept-desc">Encryption is only as strong as your key management. A perfectly encrypted database is worthless if the key sits in plaintext next to it. Keys have a lifecycle that must be managed.</div>
+      <table class="ai-table">
+        <thead><tr><th>Phase</th><th>What It Involves</th></tr></thead>
+        <tbody>
+          <tr><td>Generation</td><td>Create keys with strong randomness, sufficient length</td></tr>
+          <tr><td>Storage</td><td>Protect keys: HSM (Hardware Security Module) or KMS, never plaintext</td></tr>
+          <tr><td>Distribution</td><td>Get keys to where they're needed securely</td></tr>
+          <tr><td>Rotation</td><td>Replace keys periodically — limits damage if one leaks</td></tr>
+          <tr><td>Revocation</td><td>Invalidate compromised keys immediately</td></tr>
+          <tr><td>Destruction</td><td>Securely delete retired keys</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">A <strong>KMS</strong> (Key Management Service) handles this lifecycle. <strong>Envelope encryption</strong> is the common pattern: a data key encrypts your data, and a master key (in the KMS/HSM) encrypts the data key — so the master key never leaves the secure boundary.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SECRET SCANNING</div>
+      <div class="concept-title">Catch Leaks Before They Ship</div>
+      <div class="code-block"><span class="com"># Scan a repo for committed secrets</span>
+gitleaks detect --source .          <span class="com"># popular open-source scanner</span>
+trufflehog git file://.             <span class="com"># also scans git history</span>
+
+<span class="com"># If you DID commit a secret:</span>
+<span class="com"># 1. ROTATE it immediately (assume it's compromised)</span>
+<span class="com"># 2. Remove from history (git filter-repo / BFG)</span>
+<span class="com"># 3. Add pre-commit hook to prevent recurrence</span>
+
+<span class="com"># Prevent future leaks with a pre-commit hook</span>
+<span class="com"># (gitleaks has a pre-commit integration)</span></div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body sec -->

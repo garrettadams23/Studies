@@ -644,4 +644,60 @@ message = client.messages.create(
     </div>
   </div>
 </div>
+
+<!-- BEGINNER19-AI v1 -->
+<!-- ── TOPIC: EMBEDDINGS & RAG ───────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔎</span>
+    <span class="topic-name">Embeddings &amp; RAG — Giving AI Access to Your Own Data</span>
+    <span class="topic-badge">AI • Modern</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">EMBEDDINGS</div>
+      <div class="concept-title">Turning Meaning Into Numbers</div>
+      <div class="concept-desc">An embedding is a list of numbers (a vector) that represents the <em>meaning</em> of a piece of text. Texts with similar meaning have vectors that are close together in mathematical space — even if they share no words. "How do I reset my password?" and "I forgot my login credentials" would have nearby embeddings. This is the foundation of modern semantic search, recommendations, and RAG.</div>
+      <div class="code-block"><span class="com"># Conceptually — each text becomes a vector of ~1536 numbers</span>
+<span class="str">"cat"</span>      → [<span class="num">0.2</span>, -<span class="num">0.5</span>, <span class="num">0.8</span>, ...]
+<span class="str">"kitten"</span>   → [<span class="num">0.21</span>, -<span class="num">0.48</span>, <span class="num">0.79</span>, ...]   <span class="com"># very close to "cat"</span>
+<span class="str">"airplane"</span> → [-<span class="num">0.9</span>, <span class="num">0.3</span>, -<span class="num">0.1</span>, ...]   <span class="com"># far from "cat"</span>
+
+<span class="com"># Similarity = how close two vectors are (cosine similarity)</span>
+<span class="com"># Close vectors = similar meaning. This is "semantic search".</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">VECTOR DATABASES</div>
+      <div class="concept-title">Storing and Searching Embeddings at Scale</div>
+      <div class="concept-desc">A vector database stores embeddings and can instantly find the "nearest" vectors to a query — semantic search over millions of documents. Unlike a regular database (exact match), it finds things by <em>meaning</em>.</div>
+      <table class="ai-table">
+        <thead><tr><th>Tool</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Pinecone</td><td>Managed, popular, easy to start</td></tr>
+          <tr><td>Weaviate / Qdrant / Milvus</td><td>Open-source, self-hostable</td></tr>
+          <tr><td>Chroma</td><td>Lightweight, great for prototyping locally</td></tr>
+          <tr><td>pgvector</td><td>Vector search inside PostgreSQL — no new database needed</td></tr>
+          <tr><td>FAISS</td><td>Facebook's library; fast in-memory similarity search</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RAG</div>
+      <div class="concept-title">Retrieval-Augmented Generation</div>
+      <div class="concept-desc">LLMs don't know your company's internal docs, and they hallucinate. RAG solves both: before answering, you <em>retrieve</em> relevant documents from your own data and feed them to the LLM as context. The model answers using YOUR facts, with citations. This is how most "chat with your docs" and enterprise AI assistants work — without expensive retraining.</div>
+      <table class="ai-table">
+        <thead><tr><th>Step</th><th>What Happens</th></tr></thead>
+        <tbody>
+          <tr><td>1. Ingest (offline)</td><td>Split docs into chunks, embed each, store in vector DB</td></tr>
+          <tr><td>2. Query</td><td>User asks a question → embed the question</td></tr>
+          <tr><td>3. Retrieve</td><td>Find the most similar chunks in the vector DB</td></tr>
+          <tr><td>4. Augment</td><td>Insert those chunks into the prompt as context</td></tr>
+          <tr><td>5. Generate</td><td>LLM answers using the retrieved context + cites sources</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>Why it matters for IT:</strong> RAG lets you build assistants over your runbooks, security policies, ticket history, or documentation — grounded in real data, drastically reducing hallucinations. It's the most common pattern in production AI applications today.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body ai -->

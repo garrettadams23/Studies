@@ -3818,4 +3818,65 @@ net = ipaddress.ip_network(<span class="str">'192.168.1.0/26'</span>)
     </div>
   </div>
 </div>
+
+<!-- BEGINNER19-NET v1 -->
+<!-- ── TOPIC: NETWORK DESIGN & TOPOLOGIES ────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🗺️</span>
+    <span class="topic-name">Network Design — How Networks Are Structured</span>
+    <span class="topic-badge">NET • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">TOPOLOGIES</div>
+      <div class="concept-title">The Shapes Networks Take</div>
+      <table class="ai-table">
+        <thead><tr><th>Topology</th><th>Structure</th><th>Pros / Cons</th></tr></thead>
+        <tbody>
+          <tr><td>Star</td><td>All devices connect to a central switch</td><td>+ Easy to manage; − central point of failure (most common LAN)</td></tr>
+          <tr><td>Mesh</td><td>Devices interconnect (full or partial)</td><td>+ Highly redundant; − expensive, complex (used in WANs, Wi-Fi mesh)</td></tr>
+          <tr><td>Bus</td><td>All on a single backbone cable</td><td>− Obsolete; one break kills all</td></tr>
+          <tr><td>Ring</td><td>Each device connects to two neighbors</td><td>Used in some fiber/MAN setups (with redundant ring)</td></tr>
+          <tr><td>Hybrid</td><td>Combination (e.g., star-of-stars)</td><td>Real-world networks are hybrids</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE THREE-TIER MODEL</div>
+      <div class="concept-title">How Enterprise Networks Are Layered</div>
+      <div class="concept-desc">Classic enterprise network design uses three hierarchical layers. This separation makes networks scalable, manageable, and resilient.</div>
+      <table class="ai-table">
+        <thead><tr><th>Layer</th><th>Role</th><th>Devices</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Access</strong></td><td>Where end devices connect (PCs, phones, APs)</td><td>Access switches, wall ports</td></tr>
+          <tr><td><strong>Distribution</strong></td><td>Aggregates access layer; policy, routing between VLANs</td><td>L3 switches, routers</td></tr>
+          <tr><td><strong>Core</strong></td><td>High-speed backbone; moves traffic fast</td><td>High-capacity core switches/routers</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">In modern data centers, this is often replaced by a <strong>spine-leaf</strong> architecture: every leaf (access) switch connects to every spine switch, giving predictable low latency and easy horizontal scaling — ideal for east-west (server-to-server) traffic.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DESIGNING FOR RESILIENCE</div>
+      <div class="concept-title">No Single Point of Failure</div>
+      <table class="ai-table">
+        <thead><tr><th>Technique</th><th>What It Provides</th></tr></thead>
+        <tbody>
+          <tr><td>Redundant links + STP</td><td>Backup paths; Spanning Tree Protocol prevents loops</td></tr>
+          <tr><td>Link aggregation (LACP)</td><td>Bundle multiple links for bandwidth + failover</td></tr>
+          <tr><td>Redundant gateways (HSRP/VRRP)</td><td>Two routers share a virtual IP; one takes over if the other fails</td></tr>
+          <tr><td>Dual power supplies / UPS</td><td>Survive power failures</td></tr>
+          <tr><td>Multiple ISPs (multihoming)</td><td>Survive an internet provider outage</td></tr>
+          <tr><td>Out-of-band management</td><td>Manage gear even when the production network is down</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">QUALITY OF SERVICE</div>
+      <div class="concept-title">QoS — Not All Traffic Is Equal</div>
+      <div class="concept-desc">When the network is congested, QoS decides what gets priority. A dropped video-call packet is far worse than a delayed email — voice and video are real-time and sensitive to latency/jitter, while file downloads can wait. QoS classifies and prioritizes traffic so critical, time-sensitive flows (VoIP, video conferencing) get served first. Without it, a big backup job could ruin everyone's video calls.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body net -->

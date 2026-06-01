@@ -7882,4 +7882,142 @@ pre-commit run --all-files    <span class="com"># run manually on whole repo</sp
     </div>
   </div>
 </div>
+
+<!-- BEGINNER19-SCRIPT v1 -->
+<!-- ── TOPIC: CONCURRENCY MODELS ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔀</span>
+    <span class="topic-name">Concurrency — Doing More Than One Thing at Once</span>
+    <span class="topic-badge">SCRIPT • Advanced</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">CONCURRENCY VS PARALLELISM</div>
+      <div class="concept-title">Two Words People Confuse</div>
+      <div class="concept-desc"><strong>Concurrency</strong> is dealing with many things at once (structure) — like a chef juggling several dishes, switching between them. <strong>Parallelism</strong> is doing many things at literally the same instant (execution) — like several chefs each cooking one dish. Concurrency is about structure; parallelism is about simultaneous execution. You can have concurrency on a single core (task switching); you need multiple cores for true parallelism.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE GIL</div>
+      <div class="concept-title">Why Python Threads Don't Speed Up CPU Work</div>
+      <div class="concept-desc">CPython has a Global Interpreter Lock (GIL) — only one thread executes Python bytecode at a time. This means threads <em>don't</em> give you parallel CPU work in Python. But they're still great for I/O-bound work (waiting on network/disk), because the GIL is released during I/O waits. The key question for choosing a tool: <strong>is your task I/O-bound or CPU-bound?</strong></div>
+      <table class="ai-table">
+        <thead><tr><th>Tool</th><th>Best For</th><th>True Parallelism?</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>threading</code></td><td>I/O-bound (network, disk, APIs)</td><td>No (GIL)</td><td>Threads wait on I/O concurrently; cheap</td></tr>
+          <tr><td><code>asyncio</code></td><td>I/O-bound, many concurrent tasks</td><td>No</td><td>Single thread, cooperative; scales to thousands</td></tr>
+          <tr><td><code>multiprocessing</code></td><td>CPU-bound (math, image processing)</td><td>Yes</td><td>Separate processes, each its own GIL/core</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THREADING — I/O BOUND</div>
+      <div class="concept-title">Run Many Network Calls Concurrently</div>
+      <div class="code-block"><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
+<span class="kw">import</span> requests
+
+urls = [<span class="str">"https://api.example.com/a"</span>,
+        <span class="str">"https://api.example.com/b"</span>,
+        <span class="str">"https://api.example.com/c"</span>]
+
+<span class="kw">def</span> <span class="fn">fetch</span>(url):
+    <span class="kw">return</span> requests.get(url).status_code
+
+<span class="com"># 3 requests run concurrently instead of one-by-one</span>
+<span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">5</span>) <span class="kw">as</span> pool:
+    results = <span class="fn">list</span>(pool.map(fetch, urls))
+<span class="fn">print</span>(results)   <span class="com"># much faster than sequential for I/O</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">MULTIPROCESSING — CPU BOUND</div>
+      <div class="concept-title">Use All Your Cores for Heavy Computation</div>
+      <div class="code-block"><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ProcessPoolExecutor
+
+<span class="kw">def</span> <span class="fn">heavy_compute</span>(n):
+    <span class="kw">return</span> <span class="fn">sum</span>(i*i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n))   <span class="com"># CPU-intensive</span>
+
+numbers = [<span class="num">10_000_000</span>] * <span class="num">8</span>
+
+<span class="com"># Each process runs on a separate core — true parallelism</span>
+<span class="kw">with</span> ProcessPoolExecutor() <span class="kw">as</span> pool:
+    results = <span class="fn">list</span>(pool.map(heavy_compute, numbers))
+
+<span class="com"># For CPU work this is ~Ncores faster. Threads would NOT help here.</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RACE CONDITIONS</div>
+      <div class="concept-title">The Classic Concurrency Bug</div>
+      <div class="concept-desc">When multiple threads modify shared data without coordination, you get race conditions — results depend on unpredictable timing. The fix is a <strong>lock</strong> (mutex) that ensures only one thread touches the shared data at a time. Race conditions are notoriously hard to debug because they're intermittent.</div>
+      <div class="code-block"><span class="kw">import</span> threading
+
+counter = <span class="num">0</span>
+lock = threading.Lock()
+
+<span class="kw">def</span> <span class="fn">increment</span>():
+    <span class="kw">global</span> counter
+    <span class="kw">with</span> lock:                <span class="com"># only one thread at a time here</span>
+        counter += <span class="num">1</span>            <span class="com"># this is NOT atomic without the lock</span>
+
+<span class="com"># Without the lock, the final count would be unpredictably wrong</span>
+<span class="com"># because += is read-modify-write (three steps that can interleave)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SOCKET PROGRAMMING ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔌</span>
+    <span class="topic-name">Sockets — Networking from First Principles</span>
+    <span class="topic-badge">SCRIPT • Networking</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS A SOCKET</div>
+      <div class="concept-title">The Endpoint of a Network Connection</div>
+      <div class="concept-desc">A socket is the programming interface for network communication — an endpoint defined by an IP address and a port. Every network app (browsers, servers, SSH) uses sockets under the hood. Understanding raw sockets demystifies how all higher-level networking works, and it's invaluable for network tools, scanners, and security testing.</div>
+      <div class="code-block"><span class="kw">import</span> socket
+
+<span class="com"># ── A simple TCP client ──────────────────────────────────</span>
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  <span class="com"># IPv4, TCP</span>
+s.connect((<span class="str">"example.com"</span>, <span class="num">80</span>))
+s.sendall(<span class="str">b"GET / HTTP/1.0\r\nHost: example.com\r\n\r\n"</span>)
+response = s.recv(<span class="num">4096</span>)
+<span class="fn">print</span>(response.decode())
+s.close()
+
+<span class="com"># ── A port scanner (the basis of nmap) ───────────────────</span>
+<span class="kw">def</span> <span class="fn">scan_port</span>(host, port, timeout=<span class="num">1</span>):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.settimeout(timeout)
+    result = s.connect_ex((host, port))   <span class="com"># 0 = open</span>
+    s.close()
+    <span class="kw">return</span> result == <span class="num">0</span>
+
+<span class="kw">for</span> port <span class="kw">in</span> [<span class="num">22</span>, <span class="num">80</span>, <span class="num">443</span>, <span class="num">3306</span>]:
+    state = <span class="str">"open"</span> <span class="kw">if</span> scan_port(<span class="str">"127.0.0.1"</span>, port) <span class="kw">else</span> <span class="str">"closed"</span>
+    <span class="fn">print</span>(<span class="str">f"Port {port}: {state}"</span>)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">A MINIMAL SERVER</div>
+      <div class="concept-title">Listening for Connections</div>
+      <div class="code-block"><span class="kw">import</span> socket
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, <span class="num">1</span>)
+server.bind((<span class="str">"0.0.0.0"</span>, <span class="num">9999</span>))   <span class="com"># listen on all interfaces, port 9999</span>
+server.listen(<span class="num">5</span>)                  <span class="com"># queue up to 5 pending connections</span>
+<span class="fn">print</span>(<span class="str">"Listening on :9999"</span>)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    conn, addr = server.accept()     <span class="com"># blocks until a client connects</span>
+    <span class="fn">print</span>(<span class="str">f"Connection from {addr}"</span>)
+    data = conn.recv(<span class="num">1024</span>)
+    conn.sendall(<span class="str">b"Hello from server\n"</span>)
+    conn.close()</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->
