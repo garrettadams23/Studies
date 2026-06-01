@@ -3958,4 +3958,64 @@ dig example.com ANY              <span class="com"># all records (often restrict
     </div>
   </div>
 </div>
+
+<!-- BEGINNER24-NET v1 -->
+<!-- ── TOPIC: NAT & PORT FORWARDING ──────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔀</span>
+    <span class="topic-name">NAT &amp; Port Forwarding — How Private Networks Reach the Internet</span>
+    <span class="topic-badge">NET • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY NAT EXISTS</div>
+      <div class="concept-title">Many Private Devices, One Public IP</div>
+      <div class="concept-desc">There aren't enough IPv4 addresses for every device. NAT (Network Address Translation) lets a whole network of devices with private IPs (192.168.x.x) share a single public IP. Your home router does this: it translates internal addresses to its one public address on the way out, and remembers which internal device each connection belongs to so replies come back correctly.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TYPES OF NAT</div>
+      <div class="concept-title">Static, Dynamic, and PAT</div>
+      <table class="ai-table">
+        <thead><tr><th>Type</th><th>How It Works</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td>Static NAT</td><td>One private IP ↔ one public IP (fixed)</td><td>Exposing a specific internal server</td></tr>
+          <tr><td>Dynamic NAT</td><td>Private IPs map to a pool of public IPs</td><td>Less common; needs many public IPs</td></tr>
+          <tr><td>PAT / NAT overload</td><td>Many private IPs → one public IP, distinguished by port</td><td>The home router model — by far the most common</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>PAT</strong> (Port Address Translation) is what "NAT" almost always means in practice. The router tracks connections by (internal IP:port ↔ public IP:port) so dozens of devices share one address.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PORT FORWARDING</div>
+      <div class="concept-title">Letting the Outside Reach In</div>
+      <div class="concept-desc">By default, NAT blocks unsolicited inbound connections (a nice side-effect: a basic firewall). But sometimes you WANT external access to an internal service — a game server, a web server, SSH to your home lab. Port forwarding tells the router: "traffic arriving on public port X → send to internal host:port Y."</div>
+      <div class="code-block"><span class="com"># Example port-forward rules on a router</span>
+Public :443  → 192.168.1.10:443    <span class="com"># web server</span>
+Public :2222 → 192.168.1.20:22     <span class="com"># SSH to lab box</span>
+
+<span class="com"># ⚠️ Security: every forwarded port is exposed to the internet.</span>
+<span class="com"># Forward only what you must; prefer a VPN for remote access.</span>
+
+<span class="com"># Linux iptables DNAT (what routers do under the hood)</span>
+iptables -t nat -A PREROUTING -p tcp --dport 443 \
+  -j DNAT --to-destination 192.168.1.10:443</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">NAT CHALLENGES</div>
+      <div class="concept-title">Why Some Apps Struggle Behind NAT</div>
+      <table class="ai-table">
+        <thead><tr><th>Issue</th><th>Solution</th></tr></thead>
+        <tbody>
+          <tr><td>Two peers both behind NAT (VoIP, P2P, gaming)</td><td>STUN/TURN/ICE — NAT traversal protocols</td></tr>
+          <tr><td>App needs a stable inbound port</td><td>Port forwarding or UPnP (convenient but risky)</td></tr>
+          <tr><td>Tracking which device did what (logging)</td><td>CGNAT complicates attribution at ISP scale</td></tr>
+          <tr><td>Reaching home services remotely</td><td>VPN, reverse tunnel, or ZTNA (Tailscale/Cloudflare)</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">Note: <strong>IPv6 largely removes the need for NAT</strong> — there are enough addresses for every device to have a public one (with firewalls, not NAT, providing the security boundary).</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body net -->

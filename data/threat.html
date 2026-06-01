@@ -1370,4 +1370,72 @@ dig TXT _dmarc.example.com +short</div>
     </div>
   </div>
 </div>
+
+<!-- BEGINNER24-THREAT v1 -->
+<!-- ── TOPIC: OSINT FOR DEFENDERS ────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🛰️</span>
+    <span class="topic-name">OSINT for Defenders — See Yourself as Attackers Do</span>
+    <span class="topic-badge">THREAT • Recon</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS OSINT</div>
+      <div class="concept-title">Open-Source Intelligence</div>
+      <div class="concept-desc">OSINT is intelligence gathered from publicly available sources — no hacking required. Attackers use it to map your organization before striking; <strong>defenders use the same techniques to find their own exposure before attackers do.</strong> Reducing your "attack surface" starts with knowing what's actually out there with your name on it. It's legal, passive, and one of the highest-value defensive exercises.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">WHAT LEAKS OUT</div>
+      <div class="concept-title">Your Public Footprint</div>
+      <table class="ai-table">
+        <thead><tr><th>Exposure</th><th>Where Attackers Find It</th></tr></thead>
+        <tbody>
+          <tr><td>Forgotten internet-facing servers</td><td>Shodan, Censys (search by org/IP range)</td></tr>
+          <tr><td>Subdomains &amp; shadow IT</td><td>crt.sh (cert transparency), subdomain enumeration</td></tr>
+          <tr><td>Employee emails &amp; names</td><td>LinkedIn, Hunter.io, theHarvester</td></tr>
+          <tr><td>Leaked credentials</td><td>HaveIBeenPwned, breach databases</td></tr>
+          <tr><td>Tech stack &amp; versions</td><td>Job postings, BuiltWith, HTTP headers</td></tr>
+          <tr><td>Secrets in code</td><td>Public GitHub repos, gists</td></tr>
+          <tr><td>Sensitive documents</td><td>Google dorks (<code>site: filetype:</code>)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">GOOGLE DORKING</div>
+      <div class="concept-title">Advanced Search Operators</div>
+      <div class="code-block"><span class="com"># Find exposed files on your own domain</span>
+site:example.com filetype:pdf
+site:example.com filetype:xlsx
+site:example.com ext:sql | ext:env | ext:log
+
+<span class="com"># Find login portals / admin pages</span>
+site:example.com inurl:admin | inurl:login
+
+<span class="com"># Find directory listings (often unintended exposure)</span>
+site:example.com intitle:"index of"
+
+<span class="com"># Find exposed config / git</span>
+site:example.com inurl:.git
+
+<span class="com"># Do this against YOUR OWN org to find leaks before attackers</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DEFENSIVE ACTIONS</div>
+      <div class="concept-title">Turning OSINT Into Defense</div>
+      <table class="ai-table">
+        <thead><tr><th>Finding</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Unknown internet-facing host</td><td>Add to inventory, assess, patch or decommission</td></tr>
+          <tr><td>Leaked employee credentials</td><td>Force reset, enable MFA, monitor the account</td></tr>
+          <tr><td>Secrets in a public repo</td><td>Rotate the secret immediately, scrub history</td></tr>
+          <tr><td>Excessive info in job posts</td><td>Generalize tech details in future postings</td></tr>
+          <tr><td>Exposed sensitive document</td><td>Remove it, check access logs, review process</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>Continuous, not one-time:</strong> your attack surface changes constantly as people spin up servers and post online. Many orgs use Attack Surface Management (ASM) tools to monitor this automatically.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body threat -->

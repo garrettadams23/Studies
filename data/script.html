@@ -8401,4 +8401,78 @@ notifier.send(<span class="str">"Deploy complete"</span>)</div>
     </div>
   </div>
 </div>
+
+<!-- BEGINNER24-SCRIPT v1 -->
+<!-- ── TOPIC: CLOUD AUTOMATION WITH PYTHON ───────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">☁️</span>
+    <span class="topic-name">Cloud Automation — Controlling Infrastructure with Code</span>
+    <span class="topic-badge">SCRIPT • Cloud</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">CLOUD SDKs</div>
+      <div class="concept-title">Every Cloud Action Is an API Call</div>
+      <div class="concept-desc">Everything you can click in a cloud console (AWS/Azure/GCP) is really an API call underneath. Cloud SDKs let you make those calls from code — so you can automate provisioning, build self-service tools, generate reports, and respond to events programmatically. <code>boto3</code> is the AWS SDK for Python and the most common starting point.</div>
+      <div class="code-block"><span class="com"># pip install boto3</span>
+<span class="kw">import</span> boto3
+
+<span class="com"># Credentials come from env vars, ~/.aws/credentials, or IAM role</span>
+<span class="com"># NEVER hardcode AWS keys in code</span>
+
+<span class="com"># List all S3 buckets</span>
+s3 = boto3.client(<span class="str">"s3"</span>)
+<span class="kw">for</span> bucket <span class="kw">in</span> s3.list_buckets()[<span class="str">"Buckets"</span>]:
+    <span class="fn">print</span>(bucket[<span class="str">"Name"</span>])
+
+<span class="com"># Upload / download a file</span>
+s3.upload_file(<span class="str">"report.pdf"</span>, <span class="str">"my-bucket"</span>, <span class="str">"reports/report.pdf"</span>)
+s3.download_file(<span class="str">"my-bucket"</span>, <span class="str">"reports/report.pdf"</span>, <span class="str">"local.pdf"</span>)
+
+<span class="com"># List running EC2 instances</span>
+ec2 = boto3.resource(<span class="str">"ec2"</span>)
+<span class="kw">for</span> inst <span class="kw">in</span> ec2.instances.<span class="fn">filter</span>(
+    Filters=[{<span class="str">"Name"</span>: <span class="str">"instance-state-name"</span>, <span class="str">"Values"</span>: [<span class="str">"running"</span>]}]
+):
+    <span class="fn">print</span>(inst.id, inst.instance_type, inst.public_ip_address)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SECURITY-RELEVANT AUTOMATION</div>
+      <div class="concept-title">A Practical Example — Find Public S3 Buckets</div>
+      <div class="concept-desc">Misconfigured public S3 buckets are a classic breach cause. Automation lets you audit at scale — exactly the kind of high-value script a cloud security engineer writes.</div>
+      <div class="code-block"><span class="kw">import</span> boto3
+<span class="kw">from</span> botocore.exceptions <span class="kw">import</span> ClientError
+
+s3 = boto3.client(<span class="str">"s3"</span>)
+
+<span class="kw">for</span> b <span class="kw">in</span> s3.list_buckets()[<span class="str">"Buckets"</span>]:
+    name = b[<span class="str">"Name"</span>]
+    <span class="kw">try</span>:
+        acl = s3.get_bucket_acl(Bucket=name)
+        <span class="kw">for</span> grant <span class="kw">in</span> acl[<span class="str">"Grants"</span>]:
+            grantee = grant.get(<span class="str">"Grantee"</span>, {})
+            <span class="kw">if</span> grantee.get(<span class="str">"URI"</span>, <span class="str">""</span>).endswith(<span class="str">"AllUsers"</span>):
+                <span class="fn">print</span>(<span class="str">f"⚠️  PUBLIC bucket: {name}"</span>)
+    <span class="kw">except</span> ClientError <span class="kw">as</span> e:
+        <span class="fn">print</span>(<span class="str">f"Could not check {name}: {e}"</span>)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SCHEDULING WORK</div>
+      <div class="concept-title">From cron to Task Queues</div>
+      <div class="concept-desc">Automation needs to run on a schedule or in response to events. Options scale with complexity.</div>
+      <table class="ai-table">
+        <thead><tr><th>Approach</th><th>Best For</th></tr></thead>
+        <tbody>
+          <tr><td>cron / systemd timers</td><td>Simple recurring jobs on one machine</td></tr>
+          <tr><td>APScheduler (Python lib)</td><td>Scheduling inside a running Python app</td></tr>
+          <tr><td>Celery + Redis/RabbitMQ</td><td>Distributed background tasks, retries, scale</td></tr>
+          <tr><td>Cloud functions (Lambda)</td><td>Event-driven, serverless, pay-per-run</td></tr>
+          <tr><td>Airflow / Dagster</td><td>Complex data pipelines with dependencies (DAGs)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->
