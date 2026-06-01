@@ -1788,4 +1788,70 @@ trufflehog git file://.             <span class="com"># also scans git history</
     </div>
   </div>
 </div>
+
+<!-- BEGINNER20-SEC v1 -->
+<!-- ── TOPIC: WEB SECURITY HEADERS ───────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🛡️</span>
+    <span class="topic-name">Web Security Headers — Free Defense in a Few Lines</span>
+    <span class="topic-badge">SEC • Practical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE IDEA</div>
+      <div class="concept-title">HTTP Headers That Harden the Browser</div>
+      <div class="concept-desc">Web servers can send special HTTP response headers that instruct the browser to enforce security protections. They're cheap to add and prevent entire classes of attacks (XSS, clickjacking, protocol downgrade). Auditing these is often one of the first things a security review checks.</div>
+      <table class="ai-table">
+        <thead><tr><th>Header</th><th>Protects Against</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Content-Security-Policy</td><td>XSS, data injection</td><td><code>default-src 'self'</code></td></tr>
+          <tr><td>Strict-Transport-Security (HSTS)</td><td>Protocol downgrade, SSL stripping</td><td><code>max-age=31536000; includeSubDomains</code></td></tr>
+          <tr><td>X-Frame-Options</td><td>Clickjacking</td><td><code>DENY</code> (don't allow framing)</td></tr>
+          <tr><td>X-Content-Type-Options</td><td>MIME sniffing attacks</td><td><code>nosniff</code></td></tr>
+          <tr><td>Referrer-Policy</td><td>Leaking URLs to other sites</td><td><code>strict-origin-when-cross-origin</code></td></tr>
+          <tr><td>Permissions-Policy</td><td>Abuse of browser features (camera, mic)</td><td><code>geolocation=(), camera=()</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">COOKIE SECURITY</div>
+      <div class="concept-title">The Flags That Protect Sessions</div>
+      <div class="concept-desc">Session cookies are prime theft targets — steal one and you can impersonate the user. Three flags dramatically reduce the risk.</div>
+      <table class="ai-table">
+        <thead><tr><th>Flag</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td><code>Secure</code></td><td>Cookie only sent over HTTPS (never plaintext HTTP)</td></tr>
+          <tr><td><code>HttpOnly</code></td><td>JavaScript can't read it — defeats cookie theft via XSS</td></tr>
+          <tr><td><code>SameSite=Strict/Lax</code></td><td>Not sent on cross-site requests — defeats CSRF</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="com"># A well-secured session cookie</span>
+Set-Cookie: session=abc123; Secure; HttpOnly; SameSite=Strict; Path=/</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SAME-ORIGIN & CORS</div>
+      <div class="concept-title">The Browser's Core Security Boundary</div>
+      <div class="concept-desc">The <strong>Same-Origin Policy</strong> is the foundation of web security: a page from <code>siteA.com</code> can't read data from <code>siteB.com</code>. "Origin" = scheme + host + port. This stops a malicious site from reading your bank session. <strong>CORS</strong> (Cross-Origin Resource Sharing) is the controlled way to relax this — a server explicitly opts in to allow specific other origins to call it. CORS errors confuse beginners, but they're the browser <em>protecting</em> the user, not a bug.</div>
+      <div class="code-block"><span class="com"># Server allows a specific origin to call its API</span>
+Access-Control-Allow-Origin: https://app.example.com
+Access-Control-Allow-Methods: GET, POST
+Access-Control-Allow-Credentials: true
+
+<span class="com"># Common beginner mistake (insecure!) — allow everything:</span>
+Access-Control-Allow-Origin: *    <span class="com"># OK for public APIs, dangerous with credentials</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TESTING HEADERS</div>
+      <div class="concept-title">Quickly Audit a Site's Headers</div>
+      <div class="code-block"><span class="com"># See response headers with curl</span>
+curl -I https://example.com         <span class="com"># HEAD request, headers only</span>
+curl -sD - https://example.com -o /dev/null   <span class="com"># dump headers</span>
+
+<span class="com"># Online graders: securityheaders.com, Mozilla Observatory</span>
+<span class="com"># Browser DevTools → Network tab → click request → Headers</span></div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body sec -->

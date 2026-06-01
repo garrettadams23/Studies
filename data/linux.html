@@ -3116,4 +3116,88 @@ sudo apt install fail2ban
     </div>
   </div>
 </div>
+
+<!-- BEGINNER20-LINUX v1 -->
+<!-- ── TOPIC: BOOT PROCESS & LOGS ────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🥾</span>
+    <span class="topic-name">Boot Process &amp; Logs — Understanding How Linux Starts and Speaks</span>
+    <span class="topic-badge">LINUX • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE BOOT SEQUENCE</div>
+      <div class="concept-title">From Power Button to Login Prompt</div>
+      <div class="concept-desc">Knowing the boot sequence helps you troubleshoot a system that won't start — you can pinpoint which stage failed. Modern Linux boots in roughly these steps:</div>
+      <table class="ai-table">
+        <thead><tr><th>Stage</th><th>What Happens</th><th>If It Fails</th></tr></thead>
+        <tbody>
+          <tr><td>1. Firmware (BIOS/UEFI)</td><td>Hardware self-test (POST), finds boot device</td><td>No display, beeps — hardware/firmware issue</td></tr>
+          <tr><td>2. Bootloader (GRUB)</td><td>Loads kernel, shows boot menu</td><td>"No bootable device", GRUB rescue prompt</td></tr>
+          <tr><td>3. Kernel</td><td>Initializes hardware, mounts initramfs</td><td>Kernel panic</td></tr>
+          <tr><td>4. init (systemd)</td><td>PID 1; starts all services in dependency order</td><td>Hangs on a service, emergency mode</td></tr>
+          <tr><td>5. Targets/services</td><td>Reaches multi-user or graphical target</td><td>Service failures (check journalctl)</td></tr>
+          <tr><td>6. Login</td><td>getty/display manager presents login</td><td>Can't log in — auth/PAM/disk-full</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">WHERE THE LOGS LIVE</div>
+      <div class="concept-title">Important Log Locations</div>
+      <table class="ai-table">
+        <thead><tr><th>Path</th><th>Contains</th></tr></thead>
+        <tbody>
+          <tr><td><code>/var/log/syslog</code> or <code>/var/log/messages</code></td><td>General system messages</td></tr>
+          <tr><td><code>/var/log/auth.log</code> or <code>/var/log/secure</code></td><td>Authentication, sudo, SSH logins</td></tr>
+          <tr><td><code>/var/log/kern.log</code></td><td>Kernel messages</td></tr>
+          <tr><td><code>/var/log/dmesg</code></td><td>Boot-time hardware messages</td></tr>
+          <tr><td><code>/var/log/nginx/</code>, <code>/var/log/apache2/</code></td><td>Web server access/error logs</td></tr>
+          <tr><td><code>journalctl</code> (systemd journal)</td><td>Unified binary log for everything systemd manages</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">JOURNALCTL</div>
+      <div class="concept-title">Querying the systemd Journal</div>
+      <div class="code-block">journalctl                       <span class="com"># all logs (q to quit)</span>
+journalctl -e                    <span class="com"># jump to end (newest)</span>
+journalctl -f                    <span class="com"># follow live (like tail -f)</span>
+journalctl -u nginx              <span class="com"># logs for one service</span>
+journalctl -u nginx --since "1 hour ago"
+journalctl --since "2024-01-15 09:00" --until "10:00"
+journalctl -p err                <span class="com"># only errors and worse</span>
+journalctl -b                    <span class="com"># since this boot</span>
+journalctl -b -1                 <span class="com"># the PREVIOUS boot (for crash analysis)</span>
+journalctl -k                    <span class="com"># kernel messages (= dmesg)</span>
+journalctl --disk-usage          <span class="com"># how much space logs use</span>
+journalctl --vacuum-time=7d      <span class="com"># delete logs older than 7 days</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">A TROUBLESHOOTING FLOW</div>
+      <div class="concept-title">"The Server Is Acting Weird" — Where to Start</div>
+      <div class="code-block"><span class="com"># 1. Is it up? Can you reach it?</span>
+ping host; ssh host
+
+<span class="com"># 2. What's the overall health?</span>
+uptime              <span class="com"># load average</span>
+free -h             <span class="com"># memory</span>
+df -h               <span class="com"># disk full? (a VERY common cause of weirdness)</span>
+
+<span class="com"># 3. Any failed services?</span>
+systemctl --failed
+
+<span class="com"># 4. What's in the recent logs?</span>
+journalctl -p err -b --no-pager | tail -50
+journalctl -u suspect-service -e
+
+<span class="com"># 5. What's eating resources?</span>
+top                 <span class="com"># or htop</span>
+
+<span class="com"># 6. Recent changes? (the usual culprit)</span>
+journalctl --since "30 min ago" | grep -i -E "error|fail|warn"</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body linux -->

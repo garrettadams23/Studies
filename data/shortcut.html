@@ -1077,6 +1077,83 @@ git log --author="alice"          <span class="com"># commits by author</span></
     </div>
   </div>
 </div>
+
+<!-- BEGINNER20-SHORTCUT v1 -->
+<!-- ── TOPIC: TMUX DEEP DIVE ─────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🪟</span>
+    <span class="topic-name">tmux — Never Lose a Session Again</span>
+    <span class="topic-badge">SHORTCUTS • Productivity</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY TMUX</div>
+      <div class="concept-title">The Persistent, Splittable Terminal</div>
+      <div class="concept-desc">tmux (terminal multiplexer) solves two huge problems: <strong>(1) Persistence</strong> — your session keeps running on the server even if your SSH connection drops or you close your laptop. Reconnect and everything's exactly where you left it. <strong>(2) Layout</strong> — split one terminal into multiple panes and windows. For anyone who works on remote servers, tmux is life-changing. A long-running job no longer dies when your Wi-Fi hiccups.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE PREFIX KEY</div>
+      <div class="concept-title">Everything Starts with Ctrl+b</div>
+      <div class="concept-desc">tmux commands begin with a <strong>prefix</strong> — by default <code>Ctrl+b</code> — then a key. Notation: <code>C-b</code> means Ctrl+b, release, then press the next key. (Many people remap the prefix to <code>Ctrl+a</code> for ergonomics.)</div>
+      <div class="code-block"><span class="com"># Session management (from the shell)</span>
+tmux                       <span class="com"># start a new session</span>
+tmux new -s work           <span class="com"># named session "work"</span>
+tmux ls                    <span class="com"># list sessions</span>
+tmux attach -t work        <span class="com"># reattach to "work"</span>
+tmux kill-session -t work
+
+<span class="com"># THE killer feature: detach and reattach</span>
+<span class="com"># C-b d   → detach (session keeps running on the server)</span>
+<span class="com"># Later: tmux attach   → everything's still there</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PANES & WINDOWS</div>
+      <div class="concept-title">Splitting and Navigating</div>
+      <table class="ai-table">
+        <thead><tr><th>Keys (after C-b)</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><code>%</code></td><td>Split pane vertically (left/right)</td></tr>
+          <tr><td><code>"</code></td><td>Split pane horizontally (top/bottom)</td></tr>
+          <tr><td><code>arrow keys</code></td><td>Move between panes</td></tr>
+          <tr><td><code>o</code></td><td>Cycle to next pane</td></tr>
+          <tr><td><code>z</code></td><td>Zoom pane to fullscreen (toggle)</td></tr>
+          <tr><td><code>x</code></td><td>Close current pane</td></tr>
+          <tr><td><code>c</code></td><td>Create a new window (like a tab)</td></tr>
+          <tr><td><code>n</code> / <code>p</code></td><td>Next / previous window</td></tr>
+          <tr><td><code>0-9</code></td><td>Jump to window by number</td></tr>
+          <tr><td><code>,</code></td><td>Rename current window</td></tr>
+          <tr><td><code>[</code></td><td>Enter scroll/copy mode (q to exit)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CONFIG</div>
+      <div class="concept-title">A Sensible ~/.tmux.conf Starter</div>
+      <div class="code-block"><span class="com"># ~/.tmux.conf</span>
+<span class="com"># Remap prefix to Ctrl+a (easier reach)</span>
+unbind C-b
+set -g prefix C-a
+
+<span class="com"># Start windows/panes at 1, not 0</span>
+set -g base-index 1
+
+<span class="com"># Enable mouse (scroll, click panes, resize)</span>
+set -g mouse on
+
+<span class="com"># More scrollback history</span>
+set -g history-limit 10000
+
+<span class="com"># Easier splits that remember current path</span>
+bind | split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+
+<span class="com"># Reload config without restarting: C-a r</span>
+bind r source-file ~/.tmux.conf \; display "Reloaded!"</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body shortcuts -->
         
 <!-- BEGINNER8-SHORTCUT v1 -->

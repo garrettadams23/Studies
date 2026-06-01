@@ -8020,4 +8020,92 @@ server.listen(<span class="num">5</span>)                  <span class="com"># q
     </div>
   </div>
 </div>
+
+<!-- BEGINNER20-SCRIPT v1 -->
+<!-- ── TOPIC: BUILDING A COMPLETE CLI TOOL ───────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🛠️</span>
+    <span class="topic-name">Building a Real CLI Tool — Putting It All Together</span>
+    <span class="topic-badge">SCRIPT • Capstone</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">FROM SNIPPET TO TOOL</div>
+      <div class="concept-title">What Separates a Script from a Tool</div>
+      <div class="concept-desc">A throwaway script has hardcoded values and prints with <code>print()</code>. A real tool that others can use has: command-line arguments, configuration, proper logging, error handling, and a clear exit code. Here's a complete example that ties together everything — argparse, logging, config, and exit codes — into a tool you'd actually deploy.</div>
+      <div class="code-block"><span class="com">#!/usr/bin/env python3</span>
+<span class="str">&quot;&quot;&quot;logcheck — scan a log file for error patterns and report.&quot;&quot;&quot;</span>
+<span class="kw">import</span> argparse, logging, sys, re
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+
+<span class="com"># ── Logging setup ─────────────────────────────────────────</span>
+log = logging.getLogger(<span class="str">"logcheck"</span>)
+
+<span class="kw">def</span> <span class="fn">setup_logging</span>(verbose: bool):
+    level = logging.DEBUG <span class="kw">if</span> verbose <span class="kw">else</span> logging.INFO
+    logging.basicConfig(
+        level=level,
+        format=<span class="str">"%(asctime)s %(levelname)s %(message)s"</span>,
+    )
+
+<span class="com"># ── Core logic ────────────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">scan</span>(path: Path, pattern: str) -&gt; <span class="fn">int</span>:
+    regex = re.compile(pattern)
+    matches = <span class="num">0</span>
+    <span class="kw">with</span> path.open() <span class="kw">as</span> f:
+        <span class="kw">for</span> num, line <span class="kw">in</span> <span class="fn">enumerate</span>(f, <span class="num">1</span>):
+            <span class="kw">if</span> regex.search(line):
+                matches += <span class="num">1</span>
+                log.debug(<span class="str">"match line %d: %s"</span>, num, line.strip())
+    <span class="kw">return</span> matches
+
+<span class="com"># ── Argument parsing ──────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">main</span>(argv=<span class="kw">None</span>):
+    p = argparse.ArgumentParser(description=<span class="str">"Scan a log for a pattern."</span>)
+    p.add_argument(<span class="str">"logfile"</span>, type=Path, help=<span class="str">"log file to scan"</span>)
+    p.add_argument(<span class="str">"-p"</span>, <span class="str">"--pattern"</span>, default=<span class="str">"ERROR"</span>, help=<span class="str">"regex pattern"</span>)
+    p.add_argument(<span class="str">"-t"</span>, <span class="str">"--threshold"</span>, type=<span class="fn">int</span>, default=<span class="num">0</span>,
+                   help=<span class="str">"exit non-zero if matches exceed this"</span>)
+    p.add_argument(<span class="str">"-v"</span>, <span class="str">"--verbose"</span>, action=<span class="str">"store_true"</span>)
+    args = p.parse_args(argv)
+
+    setup_logging(args.verbose)
+
+    <span class="kw">if</span> <span class="kw">not</span> args.logfile.exists():
+        log.error(<span class="str">"File not found: %s"</span>, args.logfile)
+        <span class="kw">return</span> <span class="num">2</span>                       <span class="com"># exit code 2 = usage/file error</span>
+
+    count = scan(args.logfile, args.pattern)
+    log.info(<span class="str">"Found %d matches for %r"</span>, count, args.pattern)
+
+    <span class="com"># Exit code drives monitoring/automation</span>
+    <span class="kw">if</span> count &gt; args.threshold:
+        log.warning(<span class="str">"Threshold exceeded!"</span>)
+        <span class="kw">return</span> <span class="num">1</span>
+    <span class="kw">return</span> <span class="num">0</span>
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    sys.exit(main())</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">USING IT</div>
+      <div class="concept-title">Why This Design Pays Off</div>
+      <div class="code-block"><span class="com"># Self-documenting — argparse generates --help for free</span>
+./logcheck.py --help
+
+<span class="com"># Flexible without editing code</span>
+./logcheck.py /var/log/app.log
+./logcheck.py /var/log/app.log -p "CRITICAL|FATAL" -t 5 -v
+
+<span class="com"># Exit codes integrate with shell + monitoring</span>
+./logcheck.py app.log -t 10 || echo "ALERT: too many errors!"
+
+<span class="com"># Composes with other tools (the Unix philosophy)</span>
+for f in /var/log/*.log; do ./logcheck.py "$f"; done</div>
+      <div class="concept-desc"><strong>The key lessons:</strong> accept input via arguments (not hardcoding), use <code>logging</code> (not print) so output levels are controllable, return meaningful <strong>exit codes</strong> (0 = success, non-zero = problem) so the tool plays well with shell scripts and monitoring, and guard <code>main()</code> with <code>if __name__ == "__main__"</code> so it's also importable. This is the anatomy of every good CLI tool.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->
