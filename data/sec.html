@@ -1992,4 +1992,63 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
     </div>
   </div>
 </div>
+
+<!-- BEGINNER27-SEC v1 -->
+<!-- ── TOPIC: ZERO TRUST ARCHITECTURE ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🚫</span>
+    <span class="topic-name">Zero Trust — Never Trust, Always Verify</span>
+    <span class="topic-badge">SEC • Architecture</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE PARADIGM SHIFT</div>
+      <div class="concept-title">The Castle-and-Moat Model Is Dead</div>
+      <div class="concept-desc">Old security assumed a trusted "inside" (the corporate network) protected by a perimeter firewall — once you were in, you were trusted. But with cloud, remote work, and mobile, there is no clean inside/outside. And attackers who breach the perimeter get free rein. <strong>Zero Trust</strong> assumes the network is already hostile: trust nothing by default, verify every request explicitly, regardless of where it comes from.</div>
+      <table class="ai-table">
+        <thead><tr><th>Castle-and-Moat (Old)</th><th>Zero Trust (New)</th></tr></thead>
+        <tbody>
+          <tr><td>Trust based on network location</td><td>Trust based on identity + context, verified every time</td></tr>
+          <tr><td>Inside = trusted</td><td>Inside = just as untrusted as outside</td></tr>
+          <tr><td>One breach = lateral free movement</td><td>Each resource separately protected</td></tr>
+          <tr><td>VPN grants broad network access</td><td>Per-app access, continuously re-verified</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CORE PRINCIPLES</div>
+      <div class="concept-title">The Three Tenets</div>
+      <table class="ai-table">
+        <thead><tr><th>Principle</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Verify explicitly</td><td>Always authenticate &amp; authorize based on all available signals (identity, device, location, behavior)</td></tr>
+          <tr><td>Least privilege access</td><td>Give minimal access, just-in-time and just-enough</td></tr>
+          <tr><td>Assume breach</td><td>Act as if attackers are already inside — segment, monitor, limit blast radius</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">BUILDING BLOCKS</div>
+      <div class="concept-title">What Implements Zero Trust</div>
+      <table class="ai-table">
+        <thead><tr><th>Component</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td>Strong identity (IAM + MFA)</td><td>The new perimeter is identity — verify who</td></tr>
+          <tr><td>Device posture</td><td>Is the device managed, patched, healthy?</td></tr>
+          <tr><td>Microsegmentation</td><td>Divide the network into tiny zones — contain lateral movement</td></tr>
+          <tr><td>Policy engine (PEP/PDP)</td><td>Decides allow/deny per request based on context</td></tr>
+          <tr><td>Continuous monitoring</td><td>Re-evaluate trust constantly, not just at login</td></tr>
+          <tr><td>Encryption everywhere</td><td>Protect data in transit even "inside"</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">IN PRACTICE</div>
+      <div class="concept-title">A Real Implementation</div>
+      <div class="concept-desc">Google's <strong>BeyondCorp</strong> is the famous reference implementation — employees access apps without a traditional VPN; every request is authenticated and authorized based on user identity and device trust, whether they're in the office or a coffee shop. Modern tools (Cloudflare Access, Tailscale, Zscaler, Azure AD Conditional Access) bring Zero Trust to organizations of any size. <strong>Note:</strong> Zero Trust is a strategy and journey, not a single product you buy — beware vendors selling "the Zero Trust box."</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body sec -->

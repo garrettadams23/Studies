@@ -8625,4 +8625,79 @@ u = User(name=<span class="str">"Alice"</span>, age=<span class="str">"30"</span
     </div>
   </div>
 </div>
+
+<!-- BEGINNER27-SCRIPT v1 -->
+<!-- ── TOPIC: WEBHOOKS & CHATOPS ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🪝</span>
+    <span class="topic-name">Webhooks &amp; ChatOps — Event-Driven Automation</span>
+    <span class="topic-badge">SCRIPT • Practical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WEBHOOKS</div>
+      <div class="concept-title">"Don't Call Us, We'll Call You"</div>
+      <div class="concept-desc">Polling means repeatedly asking "anything new yet?" — wasteful and slow. A webhook flips it: you give a service a URL, and it sends an HTTP POST to that URL when an event happens (a push, a payment, an alert). It's the backbone of modern integrations — GitHub→CI, Stripe→your app, monitoring→Slack. Your side just needs an endpoint that listens.</div>
+      <div class="code-block"><span class="com"># A minimal webhook RECEIVER (Flask)</span>
+<span class="kw">from</span> flask <span class="kw">import</span> Flask, request, abort
+<span class="kw">import</span> hmac, hashlib, os
+
+app = Flask(__name__)
+SECRET = os.environ[<span class="str">"WEBHOOK_SECRET"</span>].encode()
+
+<span class="fn">@app.post</span>(<span class="str">"/webhook"</span>)
+<span class="kw">def</span> <span class="fn">webhook</span>():
+    <span class="com"># 1. VERIFY the signature — never trust an unverified webhook!</span>
+    sig = request.headers.get(<span class="str">"X-Signature"</span>, <span class="str">""</span>)
+    expected = hmac.new(SECRET, request.data, hashlib.sha256).hexdigest()
+    <span class="kw">if</span> <span class="kw">not</span> hmac.compare_digest(sig, expected):
+        abort(<span class="num">401</span>)
+
+    <span class="com"># 2. Process the event</span>
+    event = request.json
+    <span class="kw">if</span> event[<span class="str">"action"</span>] == <span class="str">"opened"</span>:
+        handle_new_issue(event)
+
+    <span class="com"># 3. Respond FAST (2xx) — do slow work in the background</span>
+    <span class="kw">return</span> <span class="str">""</span>, <span class="num">204</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">WEBHOOK BEST PRACTICES</div>
+      <div class="concept-title">Receiving Webhooks Safely</div>
+      <table class="ai-table">
+        <thead><tr><th>Practice</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Verify the signature</td><td>Anyone can POST to your URL — confirm it's really the sender (HMAC)</td></tr>
+          <tr><td>Respond quickly (2xx)</td><td>Senders time out; do heavy work async (queue it)</td></tr>
+          <tr><td>Be idempotent</td><td>Senders retry — handle duplicate deliveries safely</td></tr>
+          <tr><td>Use HTTPS</td><td>Payloads often contain sensitive data</td></tr>
+          <tr><td>Validate the payload</td><td>It's untrusted input — validate before acting</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SENDING NOTIFICATIONS</div>
+      <div class="concept-title">ChatOps — Pipe Events to Slack/Discord</div>
+      <div class="code-block"><span class="kw">import</span> requests, os
+
+<span class="com"># Slack incoming webhook — post an alert from any script</span>
+<span class="kw">def</span> <span class="fn">notify_slack</span>(text, level=<span class="str">"info"</span>):
+    emoji = {<span class="str">"info"</span>: <span class="str">"ℹ️"</span>, <span class="str">"warn"</span>: <span class="str">"⚠️"</span>, <span class="str">"error"</span>: <span class="str">"🚨"</span>}[level]
+    requests.post(
+        os.environ[<span class="str">"SLACK_WEBHOOK_URL"</span>],
+        json={<span class="str">"text"</span>: <span class="str">f"{emoji} {text}"</span>},
+        timeout=<span class="num">5</span>,
+    )
+
+<span class="com"># Wire it into your monitoring scripts</span>
+<span class="kw">if</span> disk_usage &gt; <span class="num">90</span>:
+    notify_slack(<span class="str">f"Disk at {disk_usage}% on web1"</span>, level=<span class="str">"error"</span>)
+
+<span class="com"># This is "ChatOps" — operations surfaced and run from chat.</span>
+<span class="com"># Alerts, deploy notifications, even running commands via bots.</span></div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->

@@ -4070,4 +4070,81 @@ iptables -t nat -A PREROUTING -p tcp --dport 443 \
     </div>
   </div>
 </div>
+
+<!-- BEGINNER27-NET v1 -->
+<!-- ── TOPIC: HTTP PROTOCOL DEEP DIVE ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🌐</span>
+    <span class="topic-name">HTTP — The Protocol That Runs the Web</span>
+    <span class="topic-badge">NET • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">ANATOMY OF A REQUEST</div>
+      <div class="concept-title">What Actually Goes Over the Wire</div>
+      <div class="code-block"><span class="com"># An HTTP request is plain text (in HTTP/1.1)</span>
+GET /api/users?page=2 HTTP/1.1      <span class="com"># method, path, version</span>
+Host: example.com                    <span class="com"># required header</span>
+User-Agent: curl/8.0
+Accept: application/json
+Authorization: Bearer eyJ...
+                                     <span class="com"># blank line = end of headers</span>
+                                     <span class="com"># (body goes here for POST/PUT)</span>
+
+<span class="com"># The response</span>
+HTTP/1.1 200 OK                      <span class="com"># version, status code, reason</span>
+Content-Type: application/json
+Content-Length: 142
+
+{"users": [...]}                     <span class="com"># body</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">METHODS (VERBS)</div>
+      <div class="concept-title">What You Want to Do</div>
+      <table class="ai-table">
+        <thead><tr><th>Method</th><th>Purpose</th><th>Safe?</th><th>Idempotent?</th></tr></thead>
+        <tbody>
+          <tr><td>GET</td><td>Retrieve data</td><td>Yes (no change)</td><td>Yes</td></tr>
+          <tr><td>POST</td><td>Create / submit</td><td>No</td><td>No (repeats create dups)</td></tr>
+          <tr><td>PUT</td><td>Replace entirely</td><td>No</td><td>Yes</td></tr>
+          <tr><td>PATCH</td><td>Partial update</td><td>No</td><td>Usually no</td></tr>
+          <tr><td>DELETE</td><td>Remove</td><td>No</td><td>Yes</td></tr>
+          <tr><td>HEAD</td><td>Like GET, headers only</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>OPTIONS</td><td>Ask what's allowed (CORS preflight)</td><td>Yes</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>Idempotent</strong> = doing it twice has the same effect as once. Matters for retries: safely retry a PUT/DELETE, but a retried POST might create duplicates.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">STATUS CODES</div>
+      <div class="concept-title">The Server's Answer, by Category</div>
+      <table class="ai-table">
+        <thead><tr><th>Range</th><th>Meaning</th><th>Common Examples</th></tr></thead>
+        <tbody>
+          <tr><td>1xx</td><td>Informational</td><td>100 Continue, 101 Switching Protocols</td></tr>
+          <tr><td>2xx</td><td>Success</td><td>200 OK, 201 Created, 204 No Content</td></tr>
+          <tr><td>3xx</td><td>Redirection</td><td>301 Moved, 304 Not Modified, 307 Temp Redirect</td></tr>
+          <tr><td>4xx</td><td>Client error (YOUR fault)</td><td>400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 429 Too Many Requests</td></tr>
+          <tr><td>5xx</td><td>Server error (THEIR fault)</td><td>500 Internal Error, 502 Bad Gateway, 503 Unavailable, 504 Timeout</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">Quick memory aid: <strong>4xx = you messed up</strong> (bad request, not allowed); <strong>5xx = the server messed up</strong>. 401 = "who are you?" (not authenticated); 403 = "I know who you are, but no" (not authorized).</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">HTTP VERSIONS</div>
+      <div class="concept-title">1.1 → 2 → 3</div>
+      <table class="ai-table">
+        <thead><tr><th>Version</th><th>Key Change</th><th>Benefit</th></tr></thead>
+        <tbody>
+          <tr><td>HTTP/1.1</td><td>Text-based, one request at a time per connection</td><td>Simple; suffers head-of-line blocking</td></tr>
+          <tr><td>HTTP/2</td><td>Binary, multiplexed streams over one connection</td><td>Many parallel requests, header compression — faster</td></tr>
+          <tr><td>HTTP/3</td><td>Runs over QUIC (UDP) instead of TCP</td><td>No TCP head-of-line blocking; faster on lossy/mobile networks</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>Statelessness:</strong> HTTP itself is stateless — each request is independent. "Sessions" are layered on top via cookies/tokens, because the protocol doesn't remember you between requests.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body net -->
