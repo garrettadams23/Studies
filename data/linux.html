@@ -3361,4 +3361,83 @@ ss -tn state established       <span class="com"># active connections</span></di
     </div>
   </div>
 </div>
+
+<!-- BEGINNER26-LINUX v1 -->
+<!-- ── TOPIC: ROBUST BASH SCRIPTING ──────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🐚</span>
+    <span class="topic-name">Robust Bash — Scripts That Don't Silently Destroy Things</span>
+    <span class="topic-badge">LINUX • Advanced</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE UNSAFE DEFAULT</div>
+      <div class="concept-title">Bash Keeps Going After Errors</div>
+      <div class="concept-desc">By default, a bash script continues after a command fails — which can be catastrophic (imagine <code>cd /backup; rm -rf *</code> where the <code>cd</code> silently failed). The first thing every serious bash script should do is enable strict mode. This one line prevents a huge class of disasters.</div>
+      <div class="code-block"><span class="com">#!/usr/bin/env bash</span>
+<span class="kw">set</span> -euo pipefail
+<span class="com"># -e  : exit immediately if any command fails</span>
+<span class="com"># -u  : error on use of undefined variables (catches typos!)</span>
+<span class="com"># -o pipefail : a pipeline fails if ANY part fails (not just the last)</span>
+
+IFS=$'\n\t'   <span class="com"># safer word-splitting (avoid spaces breaking loops)</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">QUOTING & VARIABLES</div>
+      <div class="concept-title">The #1 Source of Bash Bugs</div>
+      <div class="code-block"><span class="com"># ALWAYS quote variable expansions — unquoted breaks on spaces</span>
+file=<span class="str">"my report.txt"</span>
+rm $file              <span class="com"># ✗ tries to rm "my" AND "report.txt"!</span>
+rm <span class="str">"$file"</span>            <span class="com"># ✓ correct</span>
+
+<span class="com"># Default values and required checks</span>
+name=<span class="str">"${1:-world}"</span>      <span class="com"># use $1, or "world" if unset</span>
+: <span class="str">"${API_KEY:?API_KEY must be set}"</span>   <span class="com"># abort if unset</span>
+
+<span class="com"># Command substitution — prefer $() over backticks</span>
+count=$(grep -c ERROR app.log)
+today=$(date +%F)
+
+<span class="com"># Arithmetic</span>
+<span class="kw">if</span> (( count &gt; 10 )); <span class="kw">then</span> <span class="kw">echo</span> <span class="str">"too many"</span>; <span class="kw">fi</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ARRAYS & LOOPS</div>
+      <div class="concept-title">Handling Lists Safely</div>
+      <div class="code-block"><span class="com"># Arrays</span>
+servers=(<span class="str">"web1"</span> <span class="str">"web2"</span> <span class="str">"db1"</span>)
+<span class="kw">echo</span> <span class="str">"${servers[0]}"</span>       <span class="com"># web1</span>
+<span class="kw">echo</span> <span class="str">"${#servers[@]}"</span>      <span class="com"># length: 3</span>
+
+<span class="com"># Loop over array — quote "${arr[@]}" !</span>
+<span class="kw">for</span> s <span class="kw">in</span> <span class="str">"${servers[@]}"</span>; <span class="kw">do</span>
+    <span class="kw">echo</span> <span class="str">"Checking $s"</span>
+<span class="kw">done</span>
+
+<span class="com"># Loop over files SAFELY (handles spaces/newlines)</span>
+<span class="kw">while</span> IFS= <span class="kw">read</span> -r -d <span class="str">''</span> f; <span class="kw">do</span>
+    <span class="kw">echo</span> <span class="str">"Found: $f"</span>
+<span class="kw">done</span> &lt; &lt;(find . -name <span class="str">"*.log"</span> -print0)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CLEANUP & FUNCTIONS</div>
+      <div class="concept-title">Traps and Reusable Code</div>
+      <div class="code-block"><span class="com"># trap — run cleanup on exit (even on error/Ctrl-C)</span>
+tmpdir=$(mktemp -d)
+cleanup() { rm -rf <span class="str">"$tmpdir"</span>; }
+<span class="kw">trap</span> cleanup EXIT       <span class="com"># guaranteed cleanup, no leftover temp files</span>
+
+<span class="com"># Functions with local variables</span>
+log() {
+    <span class="kw">local</span> level=<span class="str">"$1"</span>; <span class="kw">shift</span>
+    <span class="kw">echo</span> <span class="str">"[$(date +%T)] $level: $*"</span> &gt;&amp;2
+}
+log INFO <span class="str">"Starting backup"</span>
+log ERROR <span class="str">"Disk full"</span></div>
+      <div class="concept-desc"><strong>Lint your scripts with <code>shellcheck</code></strong> — it catches quoting bugs, unsafe patterns, and common mistakes automatically. Run it on every script; it will make you a dramatically better bash author.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body linux -->

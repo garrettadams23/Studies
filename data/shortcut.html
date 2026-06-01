@@ -1234,6 +1234,80 @@ find /var -type f -printf '%s %p\n' | sort -rn | head -5 \
     </div>
   </div>
 </div>
+
+<!-- BEGINNER26-SHORTCUT v1 -->
+<!-- ── TOPIC: INTERMEDIATE VIM ───────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">⌨️</span>
+    <span class="topic-name">Intermediate Vim — Editing as a Language</span>
+    <span class="topic-badge">SHORTCUTS • Power User</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE BIG IDEA</div>
+      <div class="concept-title">Vim Is a Language: Verb + Motion</div>
+      <div class="concept-desc">Vim's power isn't memorizing hundreds of commands — it's that commands <em>compose</em> like a language. You combine a <strong>verb</strong> (operator: what to do) with a <strong>motion</strong> (where). Learn a handful of each and you can express thousands of edits. <code>d</code> (delete) + <code>w</code> (word) = <code>dw</code> "delete word." Once it clicks, editing becomes thought-speed.</div>
+      <div class="code-block"><span class="com"># GRAMMAR:  [count] operator motion</span>
+dw      <span class="com"># delete word</span>
+d3w     <span class="com"># delete 3 words</span>
+c$      <span class="com"># change to end of line</span>
+y}      <span class="com"># yank (copy) to next blank line</span>
+&gt;i{     <span class="com"># indent inside { } block</span>
+=G      <span class="com"># auto-indent to end of file</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">OPERATORS (VERBS)</div>
+      <div class="concept-title">What to Do</div>
+      <table class="ai-table">
+        <thead><tr><th>Operator</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><code>d</code></td><td>Delete (cut)</td></tr>
+          <tr><td><code>c</code></td><td>Change (delete + enter insert mode)</td></tr>
+          <tr><td><code>y</code></td><td>Yank (copy)</td></tr>
+          <tr><td><code>&gt;</code> / <code>&lt;</code></td><td>Indent / dedent</td></tr>
+          <tr><td><code>=</code></td><td>Auto-format/indent</td></tr>
+          <tr><td><code>gu</code> / <code>gU</code></td><td>Lowercase / uppercase</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">MOTIONS & TEXT OBJECTS</div>
+      <div class="concept-title">Where to Act</div>
+      <table class="ai-table">
+        <thead><tr><th>Motion</th><th>Moves / Selects</th></tr></thead>
+        <tbody>
+          <tr><td><code>w</code> / <code>b</code> / <code>e</code></td><td>Word forward / back / end</td></tr>
+          <tr><td><code>0</code> / <code>$</code></td><td>Start / end of line</td></tr>
+          <tr><td><code>gg</code> / <code>G</code></td><td>Top / bottom of file</td></tr>
+          <tr><td><code>f{char}</code> / <code>t{char}</code></td><td>Jump to / before next char</td></tr>
+          <tr><td><code>%</code></td><td>Matching bracket</td></tr>
+          <tr><td><code>iw</code> / <code>aw</code></td><td>Text object: inner / a word</td></tr>
+          <tr><td><code>i"</code> / <code>i(</code> / <code>i{</code></td><td>Inside quotes / parens / braces</td></tr>
+          <tr><td><code>it</code> / <code>ip</code></td><td>Inside tag / paragraph</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>Text objects are the superpower:</strong> <code>ci"</code> = "change inside quotes" (deletes text between quotes, drops you in insert mode) — works no matter where your cursor is in the string. <code>di(</code> = delete inside parens. <code>dit</code> = delete inside HTML tag. These feel magical once learned.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">HIGH-VALUE COMMANDS</div>
+      <div class="concept-title">Things That Save Real Time</div>
+      <div class="code-block">.            <span class="com"># REPEAT last change (incredibly powerful)</span>
+ciw          <span class="com"># change inner word, then . to repeat on others</span>
+*            <span class="com"># search for word under cursor</span>
+ggVG         <span class="com"># select entire file (gg, Visual, G)</span>
+:%s/old/new/g    <span class="com"># replace all "old" with "new" in file</span>
+:%s/old/new/gc   <span class="com"># ...with confirmation each time</span>
+u  /  Ctrl-r <span class="com"># undo / redo</span>
+A            <span class="com"># jump to end of line + insert</span>
+o  /  O      <span class="com"># open new line below / above</span>
+&gt;G           <span class="com"># indent from cursor to end of file</span>
+Ctrl-v       <span class="com"># VISUAL BLOCK — edit columns (great for tables)</span></div>
+      <div class="concept-desc"><strong>The <code>.</code> command</strong> repeats your last change — pair it with a motion-based edit and you can fix dozens of spots with single keystrokes. Mastering "edit once, repeat with <code>.</code>" is the hallmark of a fluent Vim user.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body shortcuts -->
         
 <!-- BEGINNER8-SHORTCUT v1 -->

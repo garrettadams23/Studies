@@ -1438,4 +1438,69 @@ site:example.com inurl:.git
     </div>
   </div>
 </div>
+
+<!-- BEGINNER26-THREAT v1 -->
+<!-- ── TOPIC: MALWARE ANALYSIS BASICS ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔬</span>
+    <span class="topic-name">Malware Analysis — Understanding What the Bad Code Does</span>
+    <span class="topic-badge">THREAT • Investigation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">⚠️ SAFETY FIRST</div>
+      <div class="concept-title">Analyze Only in an Isolated Lab</div>
+      <div class="concept-desc">Live malware can spread, exfiltrate, or destroy. Analyze it only in an isolated environment: an air-gapped or snapshot-able VM, no shared folders, no network (or a controlled fake network). Never run a sample on your real machine or corporate network. Take a VM snapshot before, revert after.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">STATIC VS DYNAMIC</div>
+      <div class="concept-title">Two Complementary Approaches</div>
+      <table class="ai-table">
+        <thead><tr><th>Approach</th><th>What It Is</th><th>Risk</th><th>Reveals</th></tr></thead>
+        <tbody>
+          <tr><td>Static analysis</td><td>Examine the file WITHOUT running it</td><td>Low (not executed)</td><td>Strings, imports, structure, indicators</td></tr>
+          <tr><td>Dynamic analysis</td><td>RUN it in a sandbox and observe behavior</td><td>Higher (it executes)</td><td>Actual network calls, file/registry changes, persistence</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">Real analysts use both: static to form hypotheses safely, dynamic to confirm what it actually does. Advanced malware detects sandboxes and hides — so neither alone is complete.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">STATIC ANALYSIS TOOLKIT</div>
+      <div class="concept-title">First Look at a Sample</div>
+      <div class="code-block"><span class="com"># Hash it (identify + look up reputation — never UPLOAD if sensitive)</span>
+sha256sum sample.exe
+<span class="com"># Check the hash on VirusTotal (hash lookup, not file upload)</span>
+
+<span class="com"># Extract readable strings — URLs, IPs, commands often hide here</span>
+strings -n 8 sample.exe | grep -iE "http|\.exe|cmd|powershell"
+
+<span class="com"># File type and metadata</span>
+file sample.exe
+
+<span class="com"># PE analysis (Windows executables) — imports reveal capabilities</span>
+<span class="com"># e.g., imports of WinHTTP = network; CryptEncrypt = ransomware?</span>
+<span class="com"># Tools: PEStudio, pefile (Python), CFF Explorer</span>
+
+<span class="com"># Detect packing/obfuscation (high entropy = likely packed)</span>
+<span class="com"># Tools: DIE (Detect It Easy)</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DYNAMIC ANALYSIS</div>
+      <div class="concept-title">Watch It Misbehave Safely</div>
+      <table class="ai-table">
+        <thead><tr><th>What to Watch</th><th>Tool / Method</th></tr></thead>
+        <tbody>
+          <tr><td>Processes spawned</td><td>Process Monitor / Process Explorer (Windows)</td></tr>
+          <tr><td>File &amp; registry changes</td><td>Procmon, Regshot (before/after diff)</td></tr>
+          <tr><td>Network connections (C2)</td><td>Wireshark, fakedns, INetSim (fake internet)</td></tr>
+          <tr><td>Persistence mechanisms</td><td>Autoruns — what it set to survive reboot</td></tr>
+          <tr><td>Automated sandbox</td><td>Cuckoo, Any.Run, Joe Sandbox — full report</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">The goal is to extract <strong>IOCs</strong> (Indicators of Compromise) — hashes, C2 domains/IPs, file paths, registry keys — that you can then hunt for across your environment to find other infected hosts.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body threat -->

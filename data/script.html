@@ -8562,4 +8562,67 @@ s3 = boto3.client(<span class="str">"s3"</span>)
     </div>
   </div>
 </div>
+
+<!-- BEGINNER26-SCRIPT v1 -->
+<!-- ── TOPIC: DATA VALIDATION ────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">✅</span>
+    <span class="topic-name">Data Validation — Never Trust Input</span>
+    <span class="topic-badge">SCRIPT • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE GOLDEN RULE</div>
+      <div class="concept-title">All Input Is Guilty Until Proven Innocent</div>
+      <div class="concept-desc">Data from users, APIs, files, and networks is untrusted — it may be malformed, malicious, or just wrong. Validating it at the boundary (before it enters your logic) prevents both bugs and security holes (injection, crashes, corrupted data). The principle: <strong>parse, don't just check</strong> — convert raw input into trusted, typed objects at the edge, so the rest of your code can assume the data is clean.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PYDANTIC</div>
+      <div class="concept-title">Validation via Type Hints</div>
+      <div class="concept-desc">Pydantic is the most popular Python validation library (and the engine behind FastAPI). You declare the shape of your data with types; Pydantic validates, coerces, and gives clear errors — turning messy input into trusted objects.</div>
+      <div class="code-block"><span class="com"># pip install pydantic</span>
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, EmailStr, Field, field_validator
+
+<span class="kw">class</span> <span class="fn">User</span>(BaseModel):
+    name: str = Field(min_length=<span class="num">1</span>, max_length=<span class="num">100</span>)
+    age: <span class="fn">int</span> = Field(ge=<span class="num">0</span>, le=<span class="num">150</span>)      <span class="com"># 0 ≤ age ≤ 150</span>
+    email: EmailStr                          <span class="com"># validated email format</span>
+    role: str = <span class="str">"user"</span>                      <span class="com"># default</span>
+
+    <span class="fn">@field_validator</span>(<span class="str">"name"</span>)
+    <span class="fn">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">no_digits</span>(cls, v):
+        <span class="kw">if</span> <span class="fn">any</span>(c.isdigit() <span class="kw">for</span> c <span class="kw">in</span> v):
+            <span class="kw">raise</span> ValueError(<span class="str">"name cannot contain digits"</span>)
+        <span class="kw">return</span> v
+
+<span class="com"># Valid input → trusted object (note: "30" coerced to int 30)</span>
+u = User(name=<span class="str">"Alice"</span>, age=<span class="str">"30"</span>, email=<span class="str">"a@example.com"</span>)
+<span class="fn">print</span>(u.age)            <span class="com"># 30 (an int)</span>
+
+<span class="com"># Invalid input → clear, structured error</span>
+<span class="kw">try</span>:
+    User(name=<span class="str">"Bob3"</span>, age=<span class="num">-5</span>, email=<span class="str">"not-an-email"</span>)
+<span class="kw">except</span> Exception <span class="kw">as</span> e:
+    <span class="fn">print</span>(e)             <span class="com"># lists every validation failure</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">VALIDATION PRINCIPLES</div>
+      <div class="concept-title">Rules That Apply Everywhere</div>
+      <table class="ai-table">
+        <thead><tr><th>Principle</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Allowlist &gt; denylist</td><td>Define what's ALLOWED, not what's banned (you'll always miss a bad case)</td></tr>
+          <tr><td>Validate at the boundary</td><td>Clean data once at entry; trust it internally</td></tr>
+          <tr><td>Fail closed</td><td>If validation fails, reject — don't "best effort" process garbage</td></tr>
+          <tr><td>Validate type, range, format, AND length</td><td>"It's an int" isn't enough — is it in a sane range?</td></tr>
+          <tr><td>Sanitize for the destination</td><td>Escape for SQL/HTML/shell where the data is USED</td></tr>
+          <tr><td>Don't trust client-side validation</td><td>JS checks are UX, not security — always re-validate server-side</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->
