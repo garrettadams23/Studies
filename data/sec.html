@@ -2051,4 +2051,67 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
     </div>
   </div>
 </div>
+
+<!-- BEGINNER29-SEC v1 -->
+<!-- ── TOPIC: THREAT MODELING & SECURE SDLC ──────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🗺️</span>
+    <span class="topic-name">Threat Modeling — Finding Flaws Before You Build Them</span>
+    <span class="topic-badge">SEC • Design</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">SHIFT LEFT</div>
+      <div class="concept-title">The Earlier You Catch It, the Cheaper It Is</div>
+      <div class="concept-desc">A bug found in design costs almost nothing to fix; the same flaw found in production after a breach costs a fortune (and your reputation). "Shift left" means moving security earlier in the development lifecycle — into design and coding — rather than bolting it on at the end. Threat modeling is the design-phase practice of systematically asking "how could this be attacked?" before a line of code is written.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE FOUR QUESTIONS</div>
+      <div class="concept-title">A Simple Threat Modeling Framework</div>
+      <table class="ai-table">
+        <thead><tr><th>Question</th><th>Activity</th></tr></thead>
+        <tbody>
+          <tr><td>1. What are we building?</td><td>Diagram the system, data flows, trust boundaries</td></tr>
+          <tr><td>2. What can go wrong?</td><td>Brainstorm threats (use STRIDE below)</td></tr>
+          <tr><td>3. What are we going to do about it?</td><td>Decide mitigations for each real threat</td></tr>
+          <tr><td>4. Did we do a good job?</td><td>Review and validate the model</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">STRIDE</div>
+      <div class="concept-title">A Checklist of Threat Categories</div>
+      <div class="concept-desc">STRIDE (from Microsoft) is a mnemonic for six categories of threats — run each part of your system through it to find weaknesses. Each threat maps to a security property it violates.</div>
+      <table class="ai-table">
+        <thead><tr><th>Letter</th><th>Threat</th><th>Violates</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td><strong>S</strong></td><td>Spoofing (pretending to be someone)</td><td>Authentication</td><td>Strong auth, MFA</td></tr>
+          <tr><td><strong>T</strong></td><td>Tampering (altering data)</td><td>Integrity</td><td>Hashing, signatures, validation</td></tr>
+          <tr><td><strong>R</strong></td><td>Repudiation (denying an action)</td><td>Non-repudiation</td><td>Logging, audit trails, signatures</td></tr>
+          <tr><td><strong>I</strong></td><td>Information disclosure (leaks)</td><td>Confidentiality</td><td>Encryption, access control</td></tr>
+          <tr><td><strong>D</strong></td><td>Denial of service</td><td>Availability</td><td>Rate limiting, scaling, redundancy</td></tr>
+          <tr><td><strong>E</strong></td><td>Elevation of privilege</td><td>Authorization</td><td>Least privilege, input validation</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SECURE SDLC</div>
+      <div class="concept-title">Security at Every Stage</div>
+      <table class="ai-table">
+        <thead><tr><th>Stage</th><th>Security Activity</th></tr></thead>
+        <tbody>
+          <tr><td>Requirements</td><td>Define security requirements &amp; abuse cases</td></tr>
+          <tr><td>Design</td><td>Threat modeling, secure architecture review</td></tr>
+          <tr><td>Code</td><td>Secure coding standards, SAST, peer review</td></tr>
+          <tr><td>Build/Test</td><td>DAST, dependency scanning (SCA), secrets scanning</td></tr>
+          <tr><td>Deploy</td><td>Hardened configs, IaC scanning, least privilege</td></tr>
+          <tr><td>Operate</td><td>Monitoring, patching, pen testing, bug bounty</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">Embedding these (often called DevSecOps) makes security continuous and shared — "everyone's responsibility" — rather than a gate at the end that slows everyone down.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body sec -->

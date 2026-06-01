@@ -8767,4 +8767,68 @@ console.print(table)
     </div>
   </div>
 </div>
+
+<!-- BEGINNER29-SCRIPT v1 -->
+<!-- ── TOPIC: TESTING STRATEGY ───────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🧪</span>
+    <span class="topic-name">Testing Strategy — Why and How to Test</span>
+    <span class="topic-badge">SCRIPT • Professional</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY TEST</div>
+      <div class="concept-title">Tests Are Your Safety Net for Change</div>
+      <div class="concept-desc">Tests aren't about proving code works once — they're about being able to <em>change</em> code confidently later. Without tests, every change risks silently breaking something elsewhere, so people become afraid to touch the code (it "ossifies"). With a good test suite, you refactor fearlessly: if you break something, a test tells you instantly. Tests are also living documentation of how the code is meant to behave.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE TEST PYRAMID</div>
+      <div class="concept-title">Many Fast Tests, Few Slow Ones</div>
+      <table class="ai-table">
+        <thead><tr><th>Level</th><th>Tests</th><th>Speed</th><th>How Many</th></tr></thead>
+        <tbody>
+          <tr><td>Unit (base)</td><td>One function/class in isolation</td><td>Milliseconds</td><td>Many (the bulk)</td></tr>
+          <tr><td>Integration (middle)</td><td>Components working together (DB, API)</td><td>Slower</td><td>Some</td></tr>
+          <tr><td>End-to-end (top)</td><td>Whole system, like a real user</td><td>Slow, flaky</td><td>Few</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">The shape is a pyramid for a reason: lots of fast, reliable unit tests at the base; fewer slow, brittle E2E tests at the top. The "ice cream cone" anti-pattern (mostly slow E2E tests) makes a suite slow and flaky — painful to run, so people stop running it.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TDD</div>
+      <div class="concept-title">Test-Driven Development — Red, Green, Refactor</div>
+      <div class="concept-desc">TDD flips the usual order: write the test <em>first</em>, watch it fail, then write just enough code to pass. It forces you to clarify what the code should do before writing it, and guarantees test coverage. Not everyone does strict TDD, but the cycle is a valuable tool to know.</div>
+      <div class="code-block"><span class="com"># 1. RED — write a failing test first</span>
+<span class="kw">def</span> <span class="fn">test_celsius_to_fahrenheit</span>():
+    <span class="kw">assert</span> c_to_f(<span class="num">100</span>) == <span class="num">212</span>
+    <span class="kw">assert</span> c_to_f(<span class="num">0</span>) == <span class="num">32</span>
+<span class="com"># Run it → fails (c_to_f doesn't exist yet)</span>
+
+<span class="com"># 2. GREEN — write the minimum to pass</span>
+<span class="kw">def</span> <span class="fn">c_to_f</span>(c):
+    <span class="kw">return</span> c * <span class="num">9</span>/<span class="num">5</span> + <span class="num">32</span>
+<span class="com"># Run it → passes ✓</span>
+
+<span class="com"># 3. REFACTOR — clean up, tests keep you safe</span>
+<span class="com"># (add type hints, edge cases, docstring — re-run tests)</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">WHAT MAKES A GOOD TEST</div>
+      <div class="concept-title">Qualities to Aim For</div>
+      <table class="ai-table">
+        <thead><tr><th>Quality</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Fast</td><td>Runs in milliseconds — so you run them constantly</td></tr>
+          <tr><td>Isolated</td><td>Doesn't depend on other tests or run order</td></tr>
+          <tr><td>Repeatable</td><td>Same result every time (no flakiness, no real network/time)</td></tr>
+          <tr><td>Clear failure</td><td>When it fails, you immediately know what broke</td></tr>
+          <tr><td>Tests behavior, not implementation</td><td>Survives refactoring; tests what, not how</td></tr>
+          <tr><td>Covers edge cases</td><td>Empty, zero, negative, huge, None, unicode</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->

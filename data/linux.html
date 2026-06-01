@@ -3499,4 +3499,74 @@ systemd-cgtop                <span class="com"># top-like view of cgroup resourc
     </div>
   </div>
 </div>
+
+<!-- BEGINNER29-LINUX v1 -->
+<!-- ── TOPIC: PERFORMANCE DEBUGGING ──────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔬</span>
+    <span class="topic-name">Performance Debugging — When You Need to Go Deeper</span>
+    <span class="topic-badge">LINUX • Advanced</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">BEYOND top</div>
+      <div class="concept-title">Tools for "Why Is This Process Doing That?"</div>
+      <div class="concept-desc">When the basic tools (top, free, df) tell you <em>which</em> process is misbehaving but not <em>why</em>, Linux has powerful introspection tools. These let you see exactly what a running process is doing — which system calls it makes, which files it touches, where it's stuck.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">STRACE & LTRACE</div>
+      <div class="concept-title">Watch a Process Talk to the Kernel</div>
+      <div class="concept-desc"><code>strace</code> traces system calls (a process's requests to the kernel — open files, read, write, network). It's invaluable for "why is this hanging?" or "what file is it failing to find?" <code>ltrace</code> does the same for library calls.</div>
+      <div class="code-block"><span class="com"># Trace system calls of a command</span>
+strace ls /tmp
+
+<span class="com"># Attach to a RUNNING process (find why it's stuck)</span>
+sudo strace -p 12345
+
+<span class="com"># Only file-related calls — "what file can't it find?"</span>
+strace -e trace=open,openat,stat myprogram
+
+<span class="com"># Count syscalls + time spent (find the bottleneck)</span>
+strace -c myprogram
+
+<span class="com"># Classic use: a program fails silently → strace reveals</span>
+<span class="com"># ENOENT (missing file) or EACCES (permission denied)</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">LSOF & FUSER</div>
+      <div class="concept-title">Who Has That File/Port Open?</div>
+      <div class="code-block"><span class="com"># What files does a process have open?</span>
+lsof -p 12345
+
+<span class="com"># Which process is using a port? (the classic "port in use")</span>
+sudo lsof -i :8080
+sudo ss -tlnp | grep 8080
+
+<span class="com"># Why can't I unmount this disk? What's using it?</span>
+lsof +D /mnt/data
+fuser -m /mnt/data
+
+<span class="com"># Find deleted-but-still-open files eating disk space</span>
+lsof | grep deleted        <span class="com"># common cause of "df full but du not"</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DEEPER TOOLS</div>
+      <div class="concept-title">When You Need the Heavy Artillery</div>
+      <table class="ai-table">
+        <thead><tr><th>Tool</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td><code>vmstat 1</code></td><td>System-wide CPU/memory/IO/swap, refreshed each second</td></tr>
+          <tr><td><code>iostat -x 1</code></td><td>Per-disk I/O — find the saturated disk (%util)</td></tr>
+          <tr><td><code>perf top</code></td><td>Real-time CPU profiling — which functions burn CPU</td></tr>
+          <tr><td><code>pidstat 1</code></td><td>Per-process resource use over time</td></tr>
+          <tr><td>eBPF tools (bcc/bpftrace)</td><td>Deep, low-overhead kernel observability (modern frontier)</td></tr>
+          <tr><td>Flame graphs</td><td>Visualize where CPU time goes across the call stack</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>Methodology beats tools:</strong> recall the USE method — for each resource check Utilization, Saturation, Errors. Start broad (which resource?), then reach for these tools to drill into the specific process. Don't randomly run tools hoping for an answer.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body linux -->
