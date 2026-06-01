@@ -351,4 +351,225 @@ out = <span class="fn">relu</span>(z)        <span class="com"># activation</spa
 <div class="topic"><div class="topic-header"><span class="topic-icon">🧒</span><span class="topic-name">AI &amp; ML for Beginners</span><span class="topic-badge">AI+ • Start Here</span><span class="topic-chevron">&rsaquo;</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">BIG IDEA</div><div class="concept-title">AI vs. Machine Learning</div><div class="concept-desc">AI is the broad goal: machines doing things that seem smart. Machine learning is the most common way we get there — instead of writing every rule, we show the computer thousands of examples and let it find the pattern, the way a child learns 'dog' from seeing many dogs.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">Training vs. Inference</div><div class="concept-desc">Training is studying for the test (slow, done once, needs lots of examples). Inference is taking the test (fast, done every time you use it). A finished, trained model is like a graduate answering questions from what it learned.</div></div><div class="concept-card"><div class="concept-label">PLAIN</div><div class="concept-title">What Is a 'Model'?</div><div class="concept-desc">A model is the pattern the computer learned, frozen into math. You give it an input (a photo) and it gives a best-guess output (‘cat’). It is confident-sounding but not conscious — it predicts, it doesn't 'know.'</div></div><div class="concept-card"><div class="concept-label">RULE OF THUMB</div><div class="concept-title">Garbage In, Garbage Out</div><div class="concept-desc">A model is only as good as its examples. Biased or messy training data → biased or messy answers. This is why cleaning and choosing data is most of the real work in ML.</div></div><div class="concept-card"><div class="concept-label">HEADS-UP</div><div class="concept-title">Hallucination</div><div class="concept-desc">When an AI doesn't know, it may invent a fluent, confident, wrong answer — called a hallucination. Treat AI output like advice from a fast, well-read intern: useful, but check anything that matters.</div></div><table class="ai-table"><thead><tr><th>Buzzword</th><th>Beginner Translation</th></tr></thead><tbody><tr><td>Prompt</td><td>The instructions/question you give the AI</td></tr><tr><td>Token</td><td>A small chunk of text the model reads/writes</td></tr><tr><td>LLM</td><td>Large Language Model — predicts the next word very well</td></tr><tr><td>Neural network</td><td>Layers of simple math loosely inspired by brain cells</td></tr><tr><td>Bias</td><td>Unfair skew baked in from the data</td></tr></tbody></table></div></div>
 <!-- BEGINNER3-AI v1 -->
 <div class="topic"><div class="topic-header"><span class="topic-icon">🤝</span><span class="topic-name">Using AI Well — Prompting &amp; Responsibility</span><span class="topic-badge">AI+ • Start Here</span><span class="topic-chevron">&rsaquo;</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">BE CLEAR</div><div class="concept-title">Specific Prompts Get Better Answers</div><div class="concept-desc">Vague in, vague out. Tell the AI the role, the goal, the format, and any constraints. ‘Explain DNS to a 10-year-old in 3 sentences’ beats ‘explain DNS’ every time.</div></div><div class="concept-card"><div class="concept-label">SHOW, DON'T JUST TELL</div><div class="concept-title">Give Context &amp; Examples</div><div class="concept-desc">Paste the relevant details and one example of what ‘good’ looks like. The model can’t read your mind or your files — context is the single biggest lever on answer quality. Then iterate: refine and ask again.</div></div><div class="concept-card"><div class="concept-label">TRUST CAREFULLY</div><div class="concept-title">Verify, Don’t Outsource Judgment</div><div class="concept-desc">AI is a fast, confident intern that sometimes makes things up (hallucinates). Use it to draft, brainstorm, and explain — then check anything that matters. You stay responsible for the final answer.</div></div><div class="concept-card"><div class="concept-label">BE SAFE</div><div class="concept-title">Don’t Paste Secrets</div><div class="concept-desc">Never feed passwords, customer data, or company secrets into tools you don’t control — assume it could be stored or seen. Watch for bias too: AI learned from human data and can repeat human prejudices.</div></div><table class="ai-table"><thead><tr><th>Weak Prompt</th><th>Stronger Prompt</th></tr></thead><tbody><tr><td>“fix my code”</td><td>“This Python errors with X; here are 10 lines — what’s wrong?”</td></tr><tr><td>“write about dogs”</td><td>“Write 100 friendly words on crate-training a puppy”</td></tr><tr><td>“is this safe?”</td><td>“List risks in this login function and how to fix each”</td></tr></tbody></table></div></div>
+
+<!-- BEGINNER7-AI v1 -->
+<!-- ── TOPIC: PROMPT ENGINEERING ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">💬</span>
+    <span class="topic-name">Prompt Engineering — Getting Better Answers from AI</span>
+    <span class="topic-badge">AI • Practical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS PROMPT ENGINEERING</div>
+      <div class="concept-title">Communicating Clearly With AI</div>
+      <div class="concept-desc">Prompt engineering is the skill of crafting inputs to AI systems to get the most useful outputs. It's part science (what techniques work) and part communication (being clear about what you actually want). The better you describe your problem, context, and desired output, the better the result.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ANATOMY OF A GOOD PROMPT</div>
+      <div class="concept-title">Role + Context + Task + Format + Constraints</div>
+      <div class="concept-desc"><strong>Role</strong>: "Act as a senior Linux sysadmin…"<br>
+      <strong>Context</strong>: "…working in a small startup with Ubuntu 22.04 servers…"<br>
+      <strong>Task</strong>: "…write a bash script that checks disk usage on all mounts…"<br>
+      <strong>Format</strong>: "…output a commented script followed by a usage example…"<br>
+      <strong>Constraints</strong>: "…avoid dependencies beyond standard tools, no sudo required."</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TECHNIQUES</div>
+      <div class="concept-title">Zero-Shot, Few-Shot, Chain-of-Thought</div>
+      <div class="concept-desc"><strong>Zero-shot</strong> — just ask the question directly. Good for simple tasks.<br>
+      <strong>Few-shot</strong> — provide 2-3 examples of the input-output pattern you want, then give your actual input. Dramatically improves consistency.<br>
+      <strong>Chain-of-thought</strong> — ask the model to "think step by step" or show its reasoning. Dramatically improves accuracy on math, logic, and multi-step problems.<br>
+      <strong>Self-critique</strong> — ask it to review its own output and identify flaws, then improve.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CONTEXT WINDOW</div>
+      <div class="concept-title">The Model's Working Memory</div>
+      <div class="concept-desc">Every AI conversation has a <strong>context window</strong> — the maximum amount of text the model can consider at once (prompt + conversation + output). Older models: ~4K tokens. Modern: 128K-1M+ tokens. When context fills up, the model loses earlier parts of the conversation. For long tasks, periodically summarize earlier context.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">AI LIMITATIONS</div>
+      <div class="concept-title">Hallucinations, Stale Knowledge, Confidence Without Accuracy</div>
+      <div class="concept-desc"><strong>Hallucinations</strong> — AI confidently states false information. Always verify facts, especially URLs, statistics, legal claims, and medical information.<br>
+      <strong>Training cutoff</strong> — the model doesn't know about events after its training data ends. For current events, use a model with web search or check yourself.<br>
+      <strong>Sycophancy</strong> — models tend to agree with users to avoid conflict. Push back with "Are you sure?" or "What are the counterarguments?"<br>
+      <strong>No reasoning</strong> — LLMs predict tokens, they don't "think." They can be spectacularly wrong on logic puzzles while sounding confident.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: AI TOOLS FOR IT PROFESSIONALS ───────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🛠️</span>
+    <span class="topic-name">AI Tools for IT Work — Practical Everyday Use</span>
+    <span class="topic-badge">AI • Practical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">CODING ASSISTANT</div>
+      <div class="concept-title">Writing, Explaining, and Debugging Code</div>
+      <div class="concept-desc">AI coding assistants (GitHub Copilot, Claude, ChatGPT) accelerate development significantly for:<br>
+      • Generating boilerplate (database models, API endpoints, config files)<br>
+      • Explaining unfamiliar code line by line<br>
+      • Debugging — paste your error + code, ask "what's wrong?"<br>
+      • Converting between languages (Python → Bash → PowerShell)<br>
+      • Writing unit tests<br>
+      • Regex pattern generation<br>
+      <strong>Key habit</strong>: read and understand every line before using it. AI-generated code can have security vulnerabilities.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SECURITY USE CASES</div>
+      <div class="concept-title">AI in the SOC</div>
+      <div class="concept-desc">• <strong>Log analysis</strong>: paste a suspicious log entry, ask "what does this indicate?"<br>
+      • <strong>Malware triage</strong>: describe behavior, ask for analysis (never upload actual malware to public AI)<br>
+      • <strong>Report writing</strong>: incident reports, executive summaries, risk assessments<br>
+      • <strong>Query generation</strong>: "write a Splunk query to find PowerShell encoded command execution"<br>
+      • <strong>CTF assistance</strong>: explain encoding/encryption, suggest approaches to challenges<br>
+      • <strong>Phishing analysis</strong>: paste email headers, ask for red flags</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RESPONSIBLE USE</div>
+      <div class="concept-title">What Not to Send to AI</div>
+      <div class="concept-desc">• Never paste customer PII, health records, or financial data into public AI tools<br>
+      • Never paste your organization's confidential/proprietary code<br>
+      • Never share network diagrams, internal IP ranges, or security architecture with public models<br>
+      • Check your company's AI policy before using any AI tool for work tasks<br>
+      Enterprise versions of tools (Azure OpenAI, Claude for Enterprise) don't train on your data — use those for work.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER14-AI v1 -->
+<!-- ── TOPIC: AI ETHICS AND RESPONSIBLE AI ────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">⚖️</span>
+    <span class="topic-name">AI Ethics — The Human Side of Machine Intelligence</span>
+    <span class="topic-badge">AI • Critical Thinking</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY ETHICS MATTERS IN AI</div>
+      <div class="concept-title">AI Amplifies Existing Problems at Scale</div>
+      <div class="concept-desc">A human making biased decisions affects dozens of people. An AI system making biased decisions can affect millions instantly, consistently, and without fatigue. When you build, deploy, or use AI systems in IT, you're making ethical decisions — whether you realize it or not. Understanding these issues makes you a better engineer and a more responsible practitioner.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">BIAS IN AI</div>
+      <div class="concept-title">Garbage In, Garbage Out — At Scale</div>
+      <div class="concept-desc">AI learns patterns from training data. If the data reflects historical biases (and it almost always does), the model learns those biases. The dangerous part: the output looks objective because it's a computer — but it's not.</div>
+      <table class="ai-table">
+        <thead><tr><th>Bias Type</th><th>How It Happens</th><th>Real-World Example</th></tr></thead>
+        <tbody>
+          <tr><td>Historical bias</td><td>Training data reflects past discrimination</td><td>Resume screening AI deprioritizes women's resumes because historical hires were mostly men</td></tr>
+          <tr><td>Sampling bias</td><td>Training data doesn't represent all users</td><td>Facial recognition fails on darker skin tones — trained mostly on lighter skin</td></tr>
+          <tr><td>Measurement bias</td><td>The metric being optimized is flawed</td><td>Recidivism prediction using zip code as a proxy (correlates with race)</td></tr>
+          <tr><td>Feedback loop bias</td><td>Model decisions create future training data</td><td>Predictive policing sends more cops to neighborhood X → more arrests → model says X is more dangerous</td></tr>
+          <tr><td>Confirmation bias</td><td>Model amplifies what it already "believes"</td><td>Recommendation algorithms push more extreme content to keep users engaged</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RESPONSIBLE AI PRINCIPLES</div>
+      <div class="concept-title">The Framework Most Organizations Aim For</div>
+      <table class="ai-table">
+        <thead><tr><th>Principle</th><th>What It Means</th><th>In Practice</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Fairness</strong></td><td>Don't discriminate; treat similarly-situated people similarly</td><td>Audit model outputs across demographic groups</td></tr>
+          <tr><td><strong>Transparency</strong></td><td>Be able to explain how decisions are made</td><td>Log what inputs influenced what outputs; prefer explainable models</td></tr>
+          <tr><td><strong>Accountability</strong></td><td>Someone is responsible for the AI's decisions</td><td>Humans in the loop for high-stakes decisions (hiring, medical, criminal)</td></tr>
+          <tr><td><strong>Privacy</strong></td><td>Respect data rights; use minimal data</td><td>Data minimization; consent; right to erasure</td></tr>
+          <tr><td><strong>Safety</strong></td><td>Don't cause harm</td><td>Red-teaming; adversarial testing; kill switches</td></tr>
+          <tr><td><strong>Reliability</strong></td><td>Behave consistently and predictably</td><td>Monitoring, testing across edge cases, drift detection</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">AI LIMITATIONS FOR IT PROS</div>
+      <div class="concept-title">What LLMs Actually Can't Do</div>
+      <div class="concept-desc">Large language models (like the ones in ChatGPT, Claude, Copilot) are incredibly useful — and have real limitations that affect how you should use them in professional contexts.</div>
+      <table class="ai-table">
+        <thead><tr><th>Limitation</th><th>Why It Happens</th><th>Implication</th></tr></thead>
+        <tbody>
+          <tr><td>Hallucinations</td><td>Generates plausible-sounding text, even when wrong</td><td>Always verify CVEs, commands, and API docs against primary sources</td></tr>
+          <tr><td>Training cutoff</td><td>Knows nothing after its cutoff date</td><td>New vulnerabilities, updated APIs, recent events — check yourself</td></tr>
+          <tr><td>No real-time data</td><td>Can't browse the internet (unless given a tool)</td><td>IP reputation, current threat intel — use specialized tools</td></tr>
+          <tr><td>Context window</td><td>Can only "see" so much text at once</td><td>Loses context in very long conversations; may contradict itself</td></tr>
+          <tr><td>No long-term memory</td><td>Each conversation starts fresh</td><td>Doesn't know what you told it last week</td></tr>
+          <tr><td>Confident when wrong</td><td>Output style doesn't signal uncertainty</td><td>An authoritative-sounding wrong answer is still wrong</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: BUILDING WITH AI APIs ──────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🤖</span>
+    <span class="topic-name">Building with AI APIs — From Prompt to Production</span>
+    <span class="topic-badge">AI • Practical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">LLM API CONCEPTS</div>
+      <div class="concept-title">How AI APIs Work</div>
+      <div class="concept-desc">Most LLM providers (OpenAI, Anthropic, Google, Mistral) expose REST APIs. You send messages, they return completions. The key parameters that control behavior:</div>
+      <table class="ai-table">
+        <thead><tr><th>Parameter</th><th>What It Controls</th><th>Typical Range</th></tr></thead>
+        <tbody>
+          <tr><td><code>model</code></td><td>Which model to use</td><td>"gpt-4o", "claude-opus-4-8", "gemini-pro"</td></tr>
+          <tr><td><code>messages</code></td><td>Conversation history (system, user, assistant roles)</td><td>Array of message objects</td></tr>
+          <tr><td><code>temperature</code></td><td>Randomness: 0 = deterministic, 1 = creative</td><td>0.0 – 1.0 (some allow 2.0)</td></tr>
+          <tr><td><code>max_tokens</code></td><td>Maximum length of the response</td><td>Depends on model context window</td></tr>
+          <tr><td><code>top_p</code></td><td>Nucleus sampling — controls diversity</td><td>0.0 – 1.0 (usually leave at 1)</td></tr>
+          <tr><td><code>stream</code></td><td>Stream tokens as generated (vs. wait for full response)</td><td>true/false</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PYTHON EXAMPLE</div>
+      <div class="concept-title">Calling an LLM API with Python</div>
+      <div class="code-block"><span class="com"># pip install anthropic</span>
+<span class="kw">import</span> anthropic
+
+client = anthropic.Anthropic()  <span class="com"># reads ANTHROPIC_API_KEY env var</span>
+
+<span class="com"># Simple completion</span>
+message = client.messages.create(
+    model=<span class="str">"claude-opus-4-8"</span>,
+    max_tokens=<span class="num">1024</span>,
+    messages=[
+        {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Explain TCP three-way handshake in 3 bullet points"</span>}
+    ]
+)
+<span class="fn">print</span>(message.content[<span class="num">0</span>].text)
+
+<span class="com"># With system prompt</span>
+message = client.messages.create(
+    model=<span class="str">"claude-opus-4-8"</span>,
+    max_tokens=<span class="num">1024</span>,
+    system=<span class="str">"You are a cybersecurity expert. Respond concisely with practical advice."</span>,
+    messages=[
+        {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"What are the top 3 things a new analyst should monitor?"</span>}
+    ]
+)
+
+<span class="com"># Streaming (output token by token)</span>
+<span class="kw">with</span> client.messages.stream(
+    model=<span class="str">"claude-opus-4-8"</span>,
+    max_tokens=<span class="num">1024</span>,
+    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Write a short Python function"</span>}]
+) <span class="kw">as</span> stream:
+    <span class="kw">for</span> text <span class="kw">in</span> stream.text_stream:
+        <span class="fn">print</span>(text, end=<span class="str">""</span>, flush=<span class="kw">True</span>)</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body ai -->

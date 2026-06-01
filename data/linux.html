@@ -2041,4 +2041,875 @@ spec:
 <!-- BEGINNER2-LINUX v1 -->
 <div class="topic"><div class="topic-header"><span class="topic-icon">🧭</span><span class="topic-name">Permissions &amp; Packages for Newcomers</span><span class="topic-badge">Linux+ • Start Here</span><span class="topic-chevron">&rsaquo;</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">WHO CAN DO WHAT</div><div class="concept-title">Read, Write, Execute</div><div class="concept-desc">Every file says what three groups may do with it: the owner, the group, and everyone else. The three powers are read (look), write (change), and execute (run it as a program). ‘rwx’ is just those three letters.</div></div><div class="concept-card"><div class="concept-label">ADMIN MODE</div><div class="concept-title">sudo = “do this as admin”</div><div class="concept-desc">Normal users can’t break the whole system by accident — a safety feature. Putting sudo in front of a command says “I really mean it, run this with admin power.” Use it deliberately; with great power comes great rm -rf.</div><pre class="code-block"><span class='fn'>sudo</span> apt update      <span class='com'># run as administrator</span>
 <span class='fn'>chmod</span> +x script.sh   <span class='com'># make a file runnable</span></pre></div><div class="concept-card"><div class="concept-label">APP STORE FOR THE TERMINAL</div><div class="concept-title">Package Managers</div><div class="concept-desc">You don’t download installers in Linux — a package manager fetches, installs, and updates software from trusted repositories, handling all the pieces it depends on. apt (Debian/Ubuntu), dnf (Fedora), and pacman (Arch) are the common ones.</div></div><table class="ai-table"><thead><tr><th>You Want To…</th><th>Command (Ubuntu/Debian)</th></tr></thead><tbody><tr><td>Refresh the catalog</td><td>sudo apt update</td></tr><tr><td>Install a program</td><td>sudo apt install name</td></tr><tr><td>Update everything</td><td>sudo apt upgrade</td></tr><tr><td>Remove a program</td><td>sudo apt remove name</td></tr><tr><td>Search for one</td><td>apt search keyword</td></tr></tbody></table></div></div>
+
+<!-- BEGINNER6-LINUX v1 -->
+<!-- ── TOPIC: SHELL SCRIPTING BASICS ──────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📜</span>
+    <span class="topic-name">Shell Scripting — Automate Repetitive Work</span>
+    <span class="topic-badge">LINUX • Practical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS A SHELL SCRIPT</div>
+      <div class="concept-title">A File Full of Commands</div>
+      <div class="concept-desc">A shell script is a plain text file with a list of commands that the shell runs in order. Anything you can type at the prompt, you can put in a script. Scripts automate backups, deployments, user creation, log parsing — anything tedious and repeated.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">YOUR FIRST SCRIPT</div>
+      <div class="concept-title">Hello World in Bash</div>
+      <div class="code-block"><span class="com">#!/bin/bash</span>
+<span class="com"># The shebang line tells the OS which interpreter to use</span>
+
+<span class="fn">echo</span> <span class="str">"Hello, World!"</span>
+<span class="fn">echo</span> <span class="str">"Today is $(date)"</span>   <span class="com"># $() runs a command and inserts output</span></div>
+      <div class="concept-desc">Make it executable: <code>chmod +x hello.sh</code><br>
+      Run it: <code>./hello.sh</code></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">VARIABLES & INPUT</div>
+      <div class="concept-title">Storing and Reading Values</div>
+      <div class="code-block"><span class="com">#!/bin/bash</span>
+<span class="com"># Variables (no spaces around =)</span>
+name=<span class="str">"Alice"</span>
+count=<span class="num">5</span>
+
+<span class="fn">echo</span> <span class="str">"Name: $name, Count: $count"</span>
+
+<span class="com"># Read user input</span>
+<span class="fn">read</span> -p <span class="str">"Enter your name: "</span> username
+<span class="fn">echo</span> <span class="str">"Hello, $username!"</span>
+
+<span class="com"># Command-line arguments</span>
+<span class="fn">echo</span> <span class="str">"Script: $0"</span>    <span class="com"># script name</span>
+<span class="fn">echo</span> <span class="str">"Arg 1: $1"</span>    <span class="com"># first argument</span>
+<span class="fn">echo</span> <span class="str">"All args: $@"</span> <span class="com"># all arguments</span>
+<span class="fn">echo</span> <span class="str">"Count: $#"</span>    <span class="com"># number of arguments</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CONDITIONALS & LOOPS</div>
+      <div class="concept-title">If/Else and For in Bash</div>
+      <div class="code-block"><span class="com">#!/bin/bash</span>
+<span class="com"># If statement</span>
+<span class="kw">if</span> [ -f <span class="str">"/etc/passwd"</span> ]; <span class="kw">then</span>
+    <span class="fn">echo</span> <span class="str">"File exists"</span>
+<span class="kw">elif</span> [ -d <span class="str">"/etc/passwd"</span> ]; <span class="kw">then</span>
+    <span class="fn">echo</span> <span class="str">"It's a directory"</span>
+<span class="kw">else</span>
+    <span class="fn">echo</span> <span class="str">"Not found"</span>
+<span class="kw">fi</span>
+
+<span class="com"># For loop over a list</span>
+<span class="kw">for</span> fruit <span class="kw">in</span> apple banana cherry; <span class="kw">do</span>
+    <span class="fn">echo</span> <span class="str">"I like $fruit"</span>
+<span class="kw">done</span>
+
+<span class="com"># For loop over files</span>
+<span class="kw">for</span> file <span class="kw">in</span> /var/log/*.log; <span class="kw">do</span>
+    <span class="fn">echo</span> <span class="str">"Processing: $file"</span>
+<span class="kw">done</span>
+
+<span class="com"># While loop</span>
+i=<span class="num">1</span>
+<span class="kw">while</span> [ $i -le <span class="num">5</span> ]; <span class="kw">do</span>
+    <span class="fn">echo</span> <span class="str">"Count: $i"</span>
+    ((i++))
+<span class="kw">done</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TEST OPERATORS</div>
+      <div class="concept-title">Common [ ] Conditions</div>
+      <table class="ai-table">
+        <thead><tr><th>Test</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>[ -f file ]</td><td>File exists and is a regular file</td></tr>
+          <tr><td>[ -d dir ]</td><td>Directory exists</td></tr>
+          <tr><td>[ -z "$var" ]</td><td>String is empty</td></tr>
+          <tr><td>[ -n "$var" ]</td><td>String is not empty</td></tr>
+          <tr><td>[ "$a" = "$b" ]</td><td>Strings are equal</td></tr>
+          <tr><td>[ $x -eq $y ]</td><td>Numbers are equal</td></tr>
+          <tr><td>[ $x -gt $y ]</td><td>x is greater than y</td></tr>
+          <tr><td>[ $x -lt $y ]</td><td>x is less than y</td></tr>
+          <tr><td>[ ! condition ]</td><td>NOT (negate)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">FUNCTIONS</div>
+      <div class="concept-title">Reusable Blocks in Bash</div>
+      <div class="code-block"><span class="com">#!/bin/bash</span>
+<span class="com"># Define a function</span>
+greet() {
+    local name=<span class="str">"$1"</span>   <span class="com"># local vars don't leak</span>
+    <span class="fn">echo</span> <span class="str">"Hello, $name!"</span>
+}
+
+<span class="com"># Function that returns a value via exit code</span>
+is_root() {
+    [ <span class="str">"$(id -u)"</span> -eq <span class="num">0</span> ]
+}
+
+greet <span class="str">"Alice"</span>
+greet <span class="str">"Bob"</span>
+
+<span class="kw">if</span> is_root; <span class="kw">then</span>
+    <span class="fn">echo</span> <span class="str">"Running as root"</span>
+<span class="kw">fi</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CRON JOBS — SCHEDULED TASKS ──────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">⏰</span>
+    <span class="topic-name">Cron Jobs — Scheduling Tasks in Linux</span>
+    <span class="topic-badge">LINUX • Ops</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS CRON</div>
+      <div class="concept-title">Linux's Built-In Task Scheduler</div>
+      <div class="concept-desc">Cron is a daemon (background service) that runs commands on a schedule. It reads configuration files called <strong>crontabs</strong> that list when and what to run. Use cases: backups, log rotation, report generation, health checks, certificate renewal.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CRONTAB SYNTAX</div>
+      <div class="concept-title">Five Fields + Command</div>
+      <div class="code-block"><span class="com"># Cron format:</span>
+<span class="com"># ┌─── minute (0-59)</span>
+<span class="com"># │ ┌─── hour (0-23)</span>
+<span class="com"># │ │ ┌─── day of month (1-31)</span>
+<span class="com"># │ │ │ ┌─── month (1-12)</span>
+<span class="com"># │ │ │ │ ┌─── day of week (0-7, 0=Sun)</span>
+<span class="com"># │ │ │ │ │</span>
+  * * * * *  command_to_run
+
+<span class="com"># Run backup every day at 2am</span>
+<span class="num">0</span> <span class="num">2</span> * * *  /usr/local/bin/backup.sh
+
+<span class="com"># Run every 15 minutes</span>
+<span class="str">*/15</span> * * * *  /usr/local/bin/check.sh
+
+<span class="com"># Run every Monday at 9am</span>
+<span class="num">0</span> <span class="num">9</span> * * <span class="num">1</span>  /usr/local/bin/weekly-report.sh
+
+<span class="com"># Run 1st of every month at midnight</span>
+<span class="num">0</span> <span class="num">0</span> <span class="num">1</span> * *  /usr/local/bin/monthly-cleanup.sh</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">MANAGING CRONTABS</div>
+      <div class="concept-title">crontab Commands</div>
+      <div class="code-block"><span class="com"># Edit YOUR crontab (opens in default editor)</span>
+crontab -e
+
+<span class="com"># List your cron jobs</span>
+crontab -l
+
+<span class="com"># Remove all your cron jobs (dangerous!)</span>
+crontab -r
+
+<span class="com"># Edit another user's crontab (root only)</span>
+crontab -u username -e
+
+<span class="com"># System-wide cron directory (any executable file runs)</span>
+ls /etc/cron.daily/
+ls /etc/cron.weekly/
+ls /etc/cron.monthly/</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">COMMON GOTCHAS</div>
+      <div class="concept-title">Why Cron Jobs Silently Fail</div>
+      <div class="concept-desc">• Cron uses a <strong>minimal environment</strong> — PATH is different from your login shell. Use absolute paths everywhere (<code>/usr/bin/python3</code> not just <code>python3</code>).<br>
+      • <strong>Redirect output</strong> or you'll never see errors: <code>command &gt;&gt; /var/log/myjob.log 2&gt;&amp;1</code><br>
+      • File permissions — the script must be executable: <code>chmod +x script.sh</code><br>
+      • Use <code>crontab.guru</code> (online) to build and verify expressions before deploying.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: PROCESSES & SIGNALS ────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">⚙️</span>
+    <span class="topic-name">Processes &amp; Signals — Running Programs in Linux</span>
+    <span class="topic-badge">LINUX • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS A PROCESS</div>
+      <div class="concept-title">A Running Program with an ID</div>
+      <div class="concept-desc">When you run a program, the kernel creates a <strong>process</strong> — an isolated execution environment with its own memory, file handles, and <strong>PID (Process ID)</strong>. The first process is <code>init</code> or <code>systemd</code> (PID 1). Every process has a parent.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">VIEWING PROCESSES</div>
+      <div class="concept-title">ps, top, htop</div>
+      <div class="code-block"><span class="com"># Snapshot of all running processes</span>
+ps aux
+
+<span class="com"># Process tree (parent-child relationships)</span>
+pstree
+
+<span class="com"># Find a process by name</span>
+pgrep nginx
+ps aux | grep nginx
+
+<span class="com"># Live process monitor (like Task Manager)</span>
+top
+htop      <span class="com"># nicer version, install with: apt install htop</span>
+
+<span class="com"># See what a process has open</span>
+lsof -p PID</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SIGNALS</div>
+      <div class="concept-title">Talking to Processes</div>
+      <div class="concept-desc">Signals are messages sent to processes. The kernel or another process sends them; the receiving process handles (or ignores) them.</div>
+      <table class="ai-table">
+        <thead><tr><th>Signal</th><th>Number</th><th>Default Action</th><th>Common Use</th></tr></thead>
+        <tbody>
+          <tr><td>SIGTERM</td><td>15</td><td>Terminate</td><td>Polite kill — let process clean up</td></tr>
+          <tr><td>SIGKILL</td><td>9</td><td>Kill immediately</td><td>Force kill — cannot be caught or ignored</td></tr>
+          <tr><td>SIGHUP</td><td>1</td><td>Hang up</td><td>Reload config (nginx, sshd use this)</td></tr>
+          <tr><td>SIGINT</td><td>2</td><td>Interrupt</td><td>What Ctrl+C sends</td></tr>
+          <tr><td>SIGSTOP</td><td>19</td><td>Pause</td><td>What Ctrl+Z sends</td></tr>
+          <tr><td>SIGCONT</td><td>18</td><td>Continue</td><td>Resume a paused process</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="com"># Polite stop (give process time to clean up)</span>
+kill -15 PID
+kill PID      <span class="com"># same — SIGTERM is default</span>
+
+<span class="com"># Force kill (last resort)</span>
+kill -9 PID
+
+<span class="com"># Kill all processes named "python3"</span>
+pkill python3
+
+<span class="com"># Reload nginx config without downtime</span>
+kill -HUP $(pgrep nginx)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">BACKGROUND & FOREGROUND</div>
+      <div class="concept-title">Job Control</div>
+      <div class="code-block"><span class="com"># Run in background from the start</span>
+python3 server.py &amp;
+
+<span class="com"># Ctrl+Z pauses a foreground process</span>
+<span class="com"># bg resumes it in background</span>
+bg %1
+
+<span class="com"># fg brings background job to foreground</span>
+fg %1
+
+<span class="com"># List background jobs</span>
+jobs
+
+<span class="com"># Keep running after logout (nohup)</span>
+nohup python3 server.py &gt; server.log 2&gt;&amp;1 &amp;</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER9-LINUX v1 -->
+<!-- ── TOPIC: SYSTEMD & SERVICE MANAGEMENT ───────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">⚙️</span>
+    <span class="topic-name">systemd — Managing Linux Services</span>
+    <span class="topic-badge">LINUX • Ops</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS SYSTEMD</div>
+      <div class="concept-title">PID 1 — The Init System</div>
+      <div class="concept-desc">systemd is the first process started by the kernel (PID 1) and the parent of all other processes. It manages:<br>
+      • Starting/stopping services (daemons)<br>
+      • Parallel boot for faster startup<br>
+      • Service dependencies and ordering<br>
+      • Logging (journald)<br>
+      • Socket activation, timers (replacement for cron), mounts</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">systemctl COMMANDS</div>
+      <div class="concept-title">Start, Stop, Enable, Status</div>
+      <div class="code-block"><span class="com"># Service status</span>
+systemctl status nginx
+systemctl status ssh
+
+<span class="com"># Start / stop / restart</span>
+sudo systemctl start nginx
+sudo systemctl stop nginx
+sudo systemctl restart nginx
+
+<span class="com"># Reload config without full restart</span>
+sudo systemctl reload nginx
+
+<span class="com"># Enable at boot / disable</span>
+sudo systemctl enable nginx
+sudo systemctl disable nginx
+
+<span class="com"># Enable AND start immediately</span>
+sudo systemctl enable --now nginx
+
+<span class="com"># List all running services</span>
+systemctl list-units --type=service --state=running
+
+<span class="com"># List failed services</span>
+systemctl --failed</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">JOURNALCTL</div>
+      <div class="concept-title">Reading Service Logs</div>
+      <div class="code-block"><span class="com"># All logs (most recent at bottom)</span>
+journalctl
+
+<span class="com"># Logs for a specific service</span>
+journalctl -u nginx
+journalctl -u nginx --since "1 hour ago"
+
+<span class="com"># Follow in real time (like tail -f)</span>
+journalctl -u nginx -f
+
+<span class="com"># Only errors and above</span>
+journalctl -p err
+
+<span class="com"># Since last boot</span>
+journalctl -b
+
+<span class="com"># From a time range</span>
+journalctl --since "2024-01-15 09:00" --until "2024-01-15 10:00"</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">WRITE A UNIT FILE</div>
+      <div class="concept-title">Run Your Script as a Service</div>
+      <div class="code-block"><span class="com"># Create /etc/systemd/system/myapp.service</span>
+[Unit]
+Description=My Python Application
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/myapp
+ExecStart=/usr/bin/python3 /opt/myapp/server.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target</div>
+      <div class="code-block"><span class="com"># Reload systemd, start, enable</span>
+sudo systemctl daemon-reload
+sudo systemctl enable --now myapp</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DISK MANAGEMENT & STORAGE ──────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">💾</span>
+    <span class="topic-name">Disk Management — Partitions, Filesystems &amp; LVM</span>
+    <span class="topic-badge">LINUX • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">CHECK DISK USAGE</div>
+      <div class="concept-title">df and du — Your First Diagnostic</div>
+      <div class="code-block"><span class="com"># Disk space by filesystem</span>
+df -h
+
+<span class="com"># Where is space being used in a directory?</span>
+du -sh /var/log/*          <span class="com"># sizes in human readable</span>
+du -sh /* 2>/dev/null      <span class="com"># top-level dirs</span>
+
+<span class="com"># Find the 10 largest files</span>
+find / -type f -printf '%s %p
+' 2>/dev/null   | sort -rn | head -10
+
+<span class="com"># What files are open (and may not show freed space)</span>
+lsof +L1 | grep deleted</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PARTITIONS</div>
+      <div class="concept-title">Dividing Physical Disks</div>
+      <div class="concept-desc">A partition divides a physical disk into logical sections. Common layout:<br>
+      <code>/boot</code> — kernel and boot files (~500MB)<br>
+      <code>/</code> — root filesystem (everything else)<br>
+      <code>/home</code> — user data (separate so OS reinstall preserves data)<br>
+      <code>swap</code> — overflow memory (RAM extension on disk; slow)<br>
+      Tools: <code>fdisk</code> (MBR), <code>gdisk</code> (GPT), <code>parted</code> (both)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">FILESYSTEMS</div>
+      <div class="concept-title">How Data Is Organized on Disk</div>
+      <table class="ai-table">
+        <thead><tr><th>Filesystem</th><th>OS</th><th>Strengths</th></tr></thead>
+        <tbody>
+          <tr><td>ext4</td><td>Linux</td><td>Default Linux; journaled; stable; 16TB max file</td></tr>
+          <tr><td>xfs</td><td>Linux</td><td>High-performance; great for large files; RHEL default</td></tr>
+          <tr><td>btrfs</td><td>Linux</td><td>Copy-on-write; snapshots; checksums; still maturing</td></tr>
+          <tr><td>NTFS</td><td>Windows</td><td>Windows default; full permissions; mountable on Linux</td></tr>
+          <tr><td>FAT32/exFAT</td><td>Universal</td><td>USB drives; read/write anywhere; no permissions</td></tr>
+          <tr><td>APFS</td><td>macOS</td><td>Apple default; encrypted; snapshot support</td></tr>
+          <tr><td>ZFS</td><td>BSD/Linux</td><td>Enterprise; built-in RAID; checksums; snapshots</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER10-LINUX v1 -->
+<!-- ── TOPIC: DOCKER & CONTAINERS ────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🐳</span>
+    <span class="topic-name">Docker &amp; Containers — Package Once, Run Anywhere</span>
+    <span class="topic-badge">LINUX • Modern Ops</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS A CONTAINER</div>
+      <div class="concept-title">Isolated Process, Not a Full VM</div>
+      <div class="concept-desc">A container packages your app + its dependencies + runtime into one portable unit. It shares the host OS kernel (unlike a VM which has its own). Result: starts in milliseconds, uses far less memory than a VM, runs identically everywhere. "Works on my machine" is solved — because you ship the machine.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CONTAINER vs VM</div>
+      <div class="concept-title">Isolation Trade-offs</div>
+      <table class="ai-table">
+        <thead><tr><th></th><th>Container</th><th>VM</th></tr></thead>
+        <tbody>
+          <tr><td>Startup</td><td>Milliseconds</td><td>Minutes</td></tr>
+          <tr><td>Memory overhead</td><td>MBs</td><td>GBs</td></tr>
+          <tr><td>Isolation</td><td>Process-level (shares kernel)</td><td>Full OS isolation</td></tr>
+          <tr><td>Security</td><td>Lower (kernel shared)</td><td>Higher (separate kernel)</td></tr>
+          <tr><td>Portability</td><td>Very high</td><td>High (but larger images)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">BASIC DOCKER COMMANDS</div>
+      <div class="concept-title">Pull, Run, List, Stop, Remove</div>
+      <div class="code-block"><span class="com"># Pull an image from Docker Hub</span>
+docker pull ubuntu:22.04
+docker pull nginx:latest
+
+<span class="com"># Run a container</span>
+docker run nginx               <span class="com"># foreground</span>
+docker run -d nginx            <span class="com"># detached (background)</span>
+docker run -it ubuntu bash     <span class="com"># interactive terminal</span>
+
+<span class="com"># Port mapping (host:container)</span>
+docker run -d -p 8080:80 nginx   <span class="com"># localhost:8080 → container:80</span>
+
+<span class="com"># List running containers</span>
+docker ps
+docker ps -a   <span class="com"># including stopped</span>
+
+<span class="com"># Logs</span>
+docker logs container_id
+docker logs -f container_id    <span class="com"># follow</span>
+
+<span class="com"># Stop, start, remove</span>
+docker stop container_id
+docker start container_id
+docker rm container_id
+
+<span class="com"># Get a shell in a running container</span>
+docker exec -it container_id bash</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DOCKERFILE</div>
+      <div class="concept-title">Recipe to Build Your Image</div>
+      <div class="code-block"><span class="com"># Dockerfile — simple Python app</span>
+FROM python:3.12-slim           <span class="com"># base image</span>
+
+WORKDIR /app                    <span class="com"># working directory inside container</span>
+
+COPY requirements.txt .         <span class="com"># copy deps first (cache layers)</span>
+RUN pip install -r requirements.txt
+
+COPY . .                        <span class="com"># then copy app code</span>
+
+ENV PORT=8080                   <span class="com"># environment variable</span>
+EXPOSE 8080                     <span class="com"># document port (doesn't publish)</span>
+
+CMD [<span class="str">"python3"</span>, <span class="str">"app.py"</span>]       <span class="com"># default command</span></div>
+      <div class="code-block"><span class="com"># Build the image</span>
+docker build -t myapp:latest .
+
+<span class="com"># Run it</span>
+docker run -d -p 8080:8080 myapp:latest</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DOCKER COMPOSE</div>
+      <div class="concept-title">Multi-Container Applications</div>
+      <div class="code-block"><span class="com"># docker-compose.yml</span>
+version: <span class="str">"3.9"</span>
+services:
+  web:
+    build: .
+    ports:
+      - <span class="str">"8080:8080"</span>
+    environment:
+      - DB_HOST=db
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: myapp
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:</div>
+      <div class="code-block"><span class="com"># Start all services</span>
+docker compose up -d
+
+<span class="com"># Stop all services</span>
+docker compose down
+
+<span class="com"># View logs for all services</span>
+docker compose logs -f</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER12-LINUX v1 -->
+<!-- ── TOPIC: AWK, SED, AND TEXT PROCESSING ─────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">✂️</span>
+    <span class="topic-name">AWK &amp; sed — The Text Processing Powerhouses</span>
+    <span class="topic-badge">LINUX • Power Tools</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">SED</div>
+      <div class="concept-title">Stream Editor — Find and Replace on Steroids</div>
+      <div class="code-block"><span class="com"># Basic substitution (first occurrence per line)</span>
+sed <span class="str">'s/old/new/'</span> file.txt
+
+<span class="com"># Global (all occurrences)</span>
+sed <span class="str">'s/old/new/g'</span> file.txt
+
+<span class="com"># In-place edit (BACKUP FIRST!)</span>
+sed -i <span class="str">'s/localhost/192.168.1.5/g'</span> config.txt
+sed -i.bak <span class="str">'s/localhost/192.168.1.5/g'</span> config.txt  <span class="com"># with .bak backup</span>
+
+<span class="com"># Delete lines matching pattern</span>
+sed <span class="str">'/^#/d'</span> config.txt     <span class="com"># remove comment lines</span>
+sed <span class="str">'/^$/d'</span> file.txt       <span class="com"># remove empty lines</span>
+
+<span class="com"># Print specific line numbers</span>
+sed -n <span class="str">'10,20p'</span> file.txt   <span class="com"># lines 10-20</span>
+
+<span class="com"># Insert text before/after line</span>
+sed <span class="str">'5i\New line above'</span> file.txt   <span class="com"># insert before line 5</span>
+sed <span class="str">'5a\New line below'</span> file.txt   <span class="com"># append after line 5</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">AWK</div>
+      <div class="concept-title">Field-Based Text Processing</div>
+      <div class="concept-desc">AWK processes text line-by-line, splitting each line into fields ($1, $2, ..., $NF = last field). Powerful for structured text like logs and CSV files.</div>
+      <div class="code-block"><span class="com"># Print specific columns from a log</span>
+awk <span class="str">'{print $1, $4}'</span> access.log     <span class="com"># IP and timestamp</span>
+
+<span class="com"># Sum the 5th column</span>
+awk <span class="str">'{sum += $5} END {print "Total:", sum}'</span> data.txt
+
+<span class="com"># Filter: print lines where 3rd field &gt; 1000</span>
+awk <span class="str">'$3 &gt; 1000 {print $0}'</span> data.txt
+
+<span class="com"># Print with custom delimiter</span>
+awk -F<span class="str">':'</span> <span class="str">'{print $1, $6}'</span> /etc/passwd   <span class="com"># username, home dir</span>
+
+<span class="com"># Count unique values in column 1</span>
+awk <span class="str">'{count[$1]++} END {for (k in count) print count[k], k}'</span> log.txt   | sort -rn | head -10
+
+<span class="com"># Process CSV: print name,email from CSV with header</span>
+awk -F<span class="str">','</span> <span class="str">'NR &gt; 1 {print $2, $3}'</span> users.csv</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CUT, SORT, UNIQ</div>
+      <div class="concept-title">The Classic Pipeline Trio</div>
+      <div class="code-block"><span class="com"># cut: extract columns by delimiter</span>
+cut -d<span class="str">':'</span> -f1,3 /etc/passwd      <span class="com"># username and UID</span>
+cut -d<span class="str">','</span> -f1,2 data.csv          <span class="com"># first two CSV columns</span>
+
+<span class="com"># sort: alphabetically or numerically</span>
+sort names.txt                     <span class="com"># A-Z</span>
+sort -r names.txt                  <span class="com"># Z-A</span>
+sort -n numbers.txt                <span class="com"># numeric sort</span>
+sort -t<span class="str">':'</span> -k3 -n /etc/passwd     <span class="com"># sort by 3rd field numerically</span>
+sort -u names.txt                  <span class="com"># sort and remove duplicates</span>
+
+<span class="com"># uniq: collapse adjacent duplicate lines</span>
+sort log.txt | uniq                <span class="com"># must sort first!</span>
+sort log.txt | uniq -c             <span class="com"># count occurrences</span>
+sort log.txt | uniq -d             <span class="com"># only show duplicates</span>
+
+<span class="com"># Classic combo: most common IPs in access log</span>
+awk <span class="str">'{print $1}'</span> access.log | sort | uniq -c | sort -rn | head -20</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: USER & GROUP MANAGEMENT ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">👥</span>
+    <span class="topic-name">User &amp; Group Management — Who Can Do What in Linux</span>
+    <span class="topic-badge">LINUX • Admin</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">USERS & GROUPS</div>
+      <div class="concept-title">The Linux Identity Model</div>
+      <div class="concept-desc">Every file and process has an owner (user) and a group. Permissions are set for: owner, group, and everyone else. UID 0 is root — the superuser with no restrictions. UIDs below 1000 are typically system accounts; 1000+ are human users.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">USER MANAGEMENT COMMANDS</div>
+      <div class="concept-title">Create, Modify, Delete</div>
+      <div class="code-block"><span class="com"># Create user</span>
+sudo useradd -m -s /bin/bash alice     <span class="com"># -m creates home, -s sets shell</span>
+sudo useradd -r -s /usr/sbin/nologin svc  <span class="com"># system account, no login</span>
+
+<span class="com"># Set/change password</span>
+sudo passwd alice
+
+<span class="com"># Modify user</span>
+sudo usermod -aG sudo alice            <span class="com"># add to sudo group</span>
+sudo usermod -s /bin/zsh alice         <span class="com"># change shell</span>
+sudo usermod -L alice                  <span class="com"># lock account</span>
+sudo usermod -U alice                  <span class="com"># unlock account</span>
+
+<span class="com"># Delete user</span>
+sudo userdel alice                     <span class="com"># keep home dir</span>
+sudo userdel -r alice                  <span class="com"># also remove home dir</span>
+
+<span class="com"># View user info</span>
+id alice                               <span class="com"># UID, GID, groups</span>
+groups alice                           <span class="com"># group memberships</span>
+finger alice                           <span class="com"># detailed info (if installed)</span>
+who                                    <span class="com"># who is currently logged in</span>
+last alice                             <span class="com"># login history</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SUDO</div>
+      <div class="concept-title">Controlled Privilege Escalation</div>
+      <div class="concept-desc"><code>sudo</code> lets authorized users run commands as root (or another user) without knowing root's password. The <code>/etc/sudoers</code> file controls who can use sudo and what they can run. Always edit with <code>visudo</code> — it validates syntax before saving (a broken sudoers file locks you out).</div>
+      <div class="code-block"><span class="com"># Common sudoers entries (in /etc/sudoers)</span>
+alice    ALL=(ALL:ALL) ALL             <span class="com"># full sudo</span>
+bob      ALL=(ALL) NOPASSWD: /bin/systemctl restart nginx   <span class="com"># one command only</span>
+%ops     ALL=(ALL:ALL) ALL             <span class="com"># entire group ops</span>
+
+<span class="com"># Check what you can run</span>
+sudo -l
+
+<span class="com"># Run as different user</span>
+sudo -u www-data whoami</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER13-LINUX v1 -->
+<!-- ── TOPIC: PACKAGE MANAGEMENT ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📦</span>
+    <span class="topic-name">Package Management — Installing and Managing Software</span>
+    <span class="topic-badge">LINUX • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE BIG PICTURE</div>
+      <div class="concept-title">How Linux Software Installation Works</div>
+      <div class="concept-desc">Unlike Windows (download .exe, double-click) or Mac (drag to Applications), Linux uses <strong>package managers</strong> — tools that download software from trusted repositories, handle dependencies automatically, and keep everything updated consistently. Different Linux distributions use different package managers.</div>
+      <table class="ai-table">
+        <thead><tr><th>Distro Family</th><th>Examples</th><th>Package Manager</th><th>File Format</th></tr></thead>
+        <tbody>
+          <tr><td>Debian</td><td>Ubuntu, Mint, Kali, Raspberry Pi OS</td><td><code>apt</code></td><td><code>.deb</code></td></tr>
+          <tr><td>Red Hat</td><td>RHEL, CentOS, Fedora, Rocky, AlmaLinux</td><td><code>dnf</code> (old: <code>yum</code>)</td><td><code>.rpm</code></td></tr>
+          <tr><td>Arch</td><td>Arch Linux, Manjaro, EndeavourOS</td><td><code>pacman</code></td><td><code>.pkg.tar.zst</code></td></tr>
+          <tr><td>openSUSE</td><td>openSUSE Leap/Tumbleweed</td><td><code>zypper</code></td><td><code>.rpm</code></td></tr>
+          <tr><td>Universal</td><td>Any distro</td><td><code>snap</code>, <code>flatpak</code>, <code>AppImage</code></td><td>Various</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">APT COMMANDS</div>
+      <div class="concept-title">Debian/Ubuntu Package Manager</div>
+      <div class="concept-desc"><code>apt</code> (Advanced Package Tool) manages software on Debian-based systems. Always run <code>apt update</code> first to refresh the list of available packages before installing.</div>
+      <div class="code-block"><span class="com"># Update package index (does NOT upgrade software)</span>
+sudo apt update
+
+<span class="com"># Upgrade all installed packages</span>
+sudo apt upgrade -y
+
+<span class="com"># Install a package</span>
+sudo apt install nginx
+sudo apt install -y git curl wget tree   <span class="com"># -y skips confirmation</span>
+
+<span class="com"># Remove a package (keep config files)</span>
+sudo apt remove nginx
+
+<span class="com"># Remove package AND its config files</span>
+sudo apt purge nginx
+
+<span class="com"># Remove unused dependencies</span>
+sudo apt autoremove
+
+<span class="com"># Search for a package</span>
+apt search nmap
+apt-cache search "web server"
+
+<span class="com"># Show package info</span>
+apt show nginx
+
+<span class="com"># List installed packages</span>
+apt list --installed
+dpkg -l | grep nginx    <span class="com"># check if specific package installed</span>
+
+<span class="com"># Full system update (one-liner)</span>
+sudo apt update &amp;&amp; sudo apt upgrade -y &amp;&amp; sudo apt autoremove -y</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DNF / YUM COMMANDS</div>
+      <div class="concept-title">Red Hat Family Package Manager</div>
+      <div class="code-block"><span class="com"># dnf is the modern replacement for yum (same concepts)</span>
+sudo dnf update                 <span class="com"># update package index AND upgrade</span>
+sudo dnf install httpd          <span class="com"># install (httpd = nginx equivalent)</span>
+sudo dnf remove httpd           <span class="com"># uninstall</span>
+sudo dnf search nginx
+sudo dnf info nginx
+sudo dnf list installed
+
+<span class="com"># Enable EPEL (Extra Packages for Enterprise Linux)</span>
+sudo dnf install epel-release   <span class="com"># unlocks many extra packages</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SNAP & FLATPAK</div>
+      <div class="concept-title">Universal Package Formats</div>
+      <div class="concept-desc">Snap and Flatpak are universal package formats that bundle all dependencies — they run the same on any Linux distro. Useful for software not in your distro's repos, or for getting the latest version of an app.</div>
+      <div class="code-block"><span class="com"># SNAP (Canonical/Ubuntu's universal packages)</span>
+sudo snap install code --classic   <span class="com"># VS Code</span>
+snap list                          <span class="com"># list installed snaps</span>
+snap find "media player"
+sudo snap refresh code             <span class="com"># update specific snap</span>
+sudo snap remove code
+
+<span class="com"># FLATPAK (community alternative, works on all distros)</span>
+flatpak install flathub com.spotify.Client
+flatpak run com.spotify.Client
+flatpak list
+flatpak update
+
+<span class="com"># APPIMAGE (no install needed — just download and run)</span>
+chmod +x SomeApp.AppImage         <span class="com"># make executable</span>
+./SomeApp.AppImage                <span class="com"># run directly, no installation</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">COMPILING FROM SOURCE</div>
+      <div class="concept-title">When Packages Don't Exist</div>
+      <div class="concept-desc">Sometimes software isn't in any package manager. The classic way is to compile from source code. This requires build tools and is slower, but gives you the exact version you need.</div>
+      <div class="code-block"><span class="com"># Install build essentials first</span>
+sudo apt install build-essential   <span class="com"># Ubuntu/Debian</span>
+sudo dnf groupinstall "Development Tools"  <span class="com"># Red Hat</span>
+
+<span class="com"># Classic build pattern (configure / make / make install)</span>
+wget https://example.com/app-1.0.tar.gz
+tar -xzf app-1.0.tar.gz
+cd app-1.0
+
+./configure                        <span class="com"># checks dependencies, generates Makefile</span>
+./configure --prefix=/usr/local    <span class="com"># custom install location</span>
+make                               <span class="com"># compile (uses all CPU cores with -j4)</span>
+make -j$(nproc)                    <span class="com"># parallel compile — much faster</span>
+sudo make install                  <span class="com"># copy to system</span>
+
+<span class="com"># Clean up</span>
+make clean                         <span class="com"># remove compiled objects</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TEXT EDITORS IN THE TERMINAL ───────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">✏️</span>
+    <span class="topic-name">Terminal Text Editors — Editing Files Without a GUI</span>
+    <span class="topic-badge">LINUX • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">NANO</div>
+      <div class="concept-title">The Beginner-Friendly Editor</div>
+      <div class="concept-desc">Nano is simple and shows keyboard shortcuts at the bottom of the screen. No modes, no memorizing commands — just type. Perfect when you need to quickly edit a config file.</div>
+      <div class="code-block"><span class="com"># Open a file</span>
+nano /etc/hosts
+nano filename.txt
+
+<span class="com"># Essential shortcuts (^ = Ctrl, M = Alt)</span>
+Ctrl+O    <span class="com"># Save (Write Out)</span>
+Ctrl+X    <span class="com"># Exit (prompts to save if modified)</span>
+Ctrl+W    <span class="com"># Search (Where Is)</span>
+Ctrl+\   <span class="com"># Find and replace</span>
+Ctrl+K    <span class="com"># Cut line</span>
+Ctrl+U    <span class="com"># Paste (Un-cut)</span>
+Ctrl+G    <span class="com"># Help</span>
+Alt+U     <span class="com"># Undo</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">VIM SURVIVAL GUIDE</div>
+      <div class="concept-title">Enough Vim to Get Out Alive</div>
+      <div class="concept-desc">Vim is powerful but modal — different keys do different things depending on which mode you're in. Knowing the basics is essential because many servers only have vi/vim available, and some programs (like git commit without EDITOR set) drop you into vim unexpectedly.</div>
+      <div class="code-block"><span class="com"># The famous "how to exit vim" — memorize these first</span>
+:q        <span class="com"># quit (only if no changes)</span>
+:q!       <span class="com"># FORCE quit, discard changes</span>
+:wq       <span class="com"># save and quit</span>
+:x        <span class="com"># save and quit (same as :wq)</span>
+ZZ        <span class="com"># save and quit (in normal mode)</span>
+
+<span class="com"># Modes</span>
+i         <span class="com"># → INSERT mode (type text)</span>
+Esc       <span class="com"># → NORMAL mode (navigate/commands)</span>
+v         <span class="com"># → VISUAL mode (select text)</span>
+:         <span class="com"># → COMMAND mode (run :wq, :set, etc.)</span>
+
+<span class="com"># Navigation (normal mode)</span>
+hjkl      <span class="com"># left/down/up/right (arrow keys also work)</span>
+gg        <span class="com"># go to first line</span>
+G         <span class="com"># go to last line</span>
+:50       <span class="com"># go to line 50</span>
+
+<span class="com"># Essential edits (normal mode)</span>
+dd        <span class="com"># delete current line</span>
+yy        <span class="com"># yank (copy) current line</span>
+p         <span class="com"># paste after cursor</span>
+u         <span class="com"># undo</span>
+/pattern  <span class="com"># search forward</span>
+n         <span class="com"># next search result</span></div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body linux -->

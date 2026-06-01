@@ -1066,4 +1066,434 @@
 <div class="topic"><div class="topic-header"><span class="topic-icon">🚨</span><span class="topic-name">A Day in the SOC</span><span class="topic-badge">CySA+ • Start Here</span><span class="topic-chevron">&rsaquo;</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">THE FLOW</div><div class="concept-title">From Alert to Resolution</div><div class="concept-desc">An analyst’s day is a queue of alerts. For each: triage (is it real and how urgent?), investigate (what actually happened?), respond or escalate, then document so the next person isn’t starting from zero.</div></div><div class="concept-card"><div class="concept-label">TEAMS</div><div class="concept-title">Tier 1, 2, 3</div><div class="concept-desc">Tier 1 triages the flood and handles the routine; Tier 2 digs into the tricky ones; Tier 3 are the specialists and threat hunters. It’s a normal career ladder — most people start at Tier 1 and learn fast.</div></div><div class="concept-card"><div class="concept-label">MEASURE</div><div class="concept-title">Why Speed Matters</div><div class="concept-desc">Two clocks rule the SOC: how fast you notice (detect) and how fast you contain (respond). The longer an attacker has, the more they take — so shaving minutes off those times is the whole point.</div></div><table class="ai-table"><thead><tr><th>Term</th><th>Plain Meaning</th></tr></thead><tbody><tr><td>Triage</td><td>Sort by urgency, like an ER</td></tr><tr><td>Escalate</td><td>Hand a hard one up a tier</td></tr><tr><td>False positive</td><td>An alert that turned out to be nothing</td></tr><tr><td>Handoff</td><td>Briefing the next shift so nothing drops</td></tr><tr><td>MTTR</td><td>Mean time to respond — average cleanup speed</td></tr></tbody></table></div></div>
 <!-- BEGINNER5-OPS v1 -->
 <div class="topic"><div class="topic-header"><span class="topic-icon">🔧</span><span class="topic-name">Troubleshooting Like a Pro</span><span class="topic-badge">A+ • Start Here</span><span class="topic-chevron">&rsaquo;</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">MINDSET</div><div class="concept-title">Calm, Curious, Methodical</div><div class="concept-desc">Good troubleshooting isn’t magic or luck — it’s a repeatable method. Panic and random clicking make things worse; a calm, one-step-at-a-time approach fixes problems and teaches you something each time.</div></div><div class="concept-card"><div class="concept-label">THE METHOD</div><div class="concept-title">CompTIA’s 7 Steps</div><div class="concept-desc">The industry-standard loop: identify the problem, form a theory of the cause, test that theory, make a plan, fix it, verify it’s really solved (and prevention), then document what happened. Skipping ‘document’ is how the same fire gets fought twice.</div></div><div class="concept-card"><div class="concept-label">FIRST QUESTIONS</div><div class="concept-title">Narrow It Down Fast</div><div class="concept-desc">Start by shrinking the search: What changed recently? Does it affect one person or everyone? Can you reproduce it? ‘It worked yesterday’ plus ‘what changed’ solves a surprising share of problems.</div></div><div class="concept-card"><div class="concept-label">CLASSIC WISDOM</div><div class="concept-title">Check the Simple Stuff First</div><div class="concept-desc">Is it plugged in? Is it on the right network? Did you restart it? Seasoned techs aren’t being condescending — the boring, simple cause really is the answer most of the time. Rule it out before chasing the exotic.</div></div><table class="ai-table"><thead><tr><th>Step</th><th>In Plain English</th></tr></thead><tbody><tr><td>1. Identify</td><td>Gather symptoms; what exactly is wrong?</td></tr><tr><td>2. Theory</td><td>Best guess at the cause (simple first)</td></tr><tr><td>3. Test theory</td><td>Prove or disprove the guess</td></tr><tr><td>4. Plan</td><td>Decide the fix and any risk</td></tr><tr><td>5. Implement</td><td>Apply the fix (one change at a time)</td></tr><tr><td>6. Verify</td><td>Confirm it’s solved + prevent recurrence</td></tr><tr><td>7. Document</td><td>Write it down for next time</td></tr></tbody></table></div></div>
+
+<!-- BEGINNER7-OPS v1 -->
+<!-- ── TOPIC: SIEM & LOG ANALYSIS ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📊</span>
+    <span class="topic-name">SIEM &amp; Log Analysis — Finding Signals in the Noise</span>
+    <span class="topic-badge">OPS • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS A SIEM</div>
+      <div class="concept-title">Security Information and Event Management</div>
+      <div class="concept-desc">A SIEM collects log data from across your environment — firewalls, servers, endpoints, cloud, applications — into one place. It correlates events across sources to spot attacks that would be invisible in any single log. Common SIEMs: Splunk, Microsoft Sentinel, IBM QRadar, Elastic/SIEM, LogRhythm.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">LOG SOURCES</div>
+      <div class="concept-title">What Feeds the SIEM</div>
+      <table class="ai-table">
+        <thead><tr><th>Source</th><th>What It Tells You</th></tr></thead>
+        <tbody>
+          <tr><td>Windows Event Logs</td><td>Logins (4624/4625), privilege use, process creation (4688)</td></tr>
+          <tr><td>Syslog (Linux)</td><td>Auth events, sudo usage, service starts/stops</td></tr>
+          <tr><td>Firewall/IDS</td><td>Blocked connections, port scans, policy violations</td></tr>
+          <tr><td>DNS logs</td><td>Domains queried — DGA domains, C2 beaconing</td></tr>
+          <tr><td>Web proxy/WAF</td><td>HTTP requests, blocked URLs, content filtering</td></tr>
+          <tr><td>EDR (Endpoint)</td><td>Process execution, file changes, lateral movement</td></tr>
+          <tr><td>Cloud logs (CloudTrail)</td><td>API calls, resource changes, IAM activity</td></tr>
+          <tr><td>Email gateway</td><td>Spam, phishing, attachment analysis</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">READING LOGS</div>
+      <div class="concept-title">Common Linux Log Analysis Commands</div>
+      <div class="code-block"><span class="com"># View authentication log in real time</span>
+tail -f /var/log/auth.log
+
+<span class="com"># Find failed SSH login attempts</span>
+grep <span class="str">"Failed password"</span> /var/log/auth.log | tail -50
+
+<span class="com"># Count failed logins per IP (top offenders)</span>
+grep <span class="str">"Failed password"</span> /var/log/auth.log   | awk <span class="str">'{print $11}'</span>   | sort | uniq -c | sort -rn | head -20
+
+<span class="com"># Find successful logins after multiple failures (credential stuffing sign)</span>
+grep <span class="str">"Accepted password"</span> /var/log/auth.log
+
+<span class="com"># Search system logs for errors</span>
+journalctl -p err -n 100
+
+<span class="com"># Check who's logged in right now</span>
+who
+w
+last | head -20</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">FALSE POSITIVES</div>
+      <div class="concept-title">Alert Fatigue Is a Real Threat</div>
+      <div class="concept-desc">When a SIEM generates 10,000 alerts per day, analysts tune out. Alert fatigue causes real attacks to be dismissed as noise. Good SOC work involves constantly tuning detection rules — raising thresholds for noisy rules, adding context (business hours, user role, geography), and building baselines for normal behavior.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: INCIDENT RESPONSE PHASES ───────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🚨</span>
+    <span class="topic-name">Incident Response — What to Do When It Goes Wrong</span>
+    <span class="topic-badge">OPS • Critical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">NIST IR PHASES</div>
+      <div class="concept-title">Preparation → Detection → Containment → Eradication → Recovery → Lessons Learned</div>
+      <div class="concept-desc">The NIST SP 800-61 Incident Response lifecycle is the industry standard. Each phase has specific goals and outputs.</div>
+      <table class="ai-table">
+        <thead><tr><th>Phase</th><th>Goal</th><th>Key Actions</th></tr></thead>
+        <tbody>
+          <tr><td>Preparation</td><td>Be ready before incidents happen</td><td>IR plan, playbooks, tools, training, tabletops</td></tr>
+          <tr><td>Detection &amp; Analysis</td><td>Know something happened</td><td>SIEM alerts, IOC analysis, triage, severity scoring</td></tr>
+          <tr><td>Containment</td><td>Stop the bleeding</td><td>Isolate systems, block IPs/hashes, preserve evidence</td></tr>
+          <tr><td>Eradication</td><td>Remove the threat</td><td>Delete malware, patch vulnerability, reset credentials</td></tr>
+          <tr><td>Recovery</td><td>Get back to normal</td><td>Restore from clean backup, monitor for re-infection</td></tr>
+          <tr><td>Post-Incident</td><td>Learn and improve</td><td>Root cause analysis, update playbooks, retrain staff</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CONTAINMENT STRATEGIES</div>
+      <div class="concept-title">Short-Term vs Long-Term</div>
+      <div class="concept-desc"><strong>Short-term</strong>: immediate isolation — unplug network cable, disable account, null-route IP. Buy time without losing evidence.<br>
+      <strong>Long-term</strong>: rebuild system from a known-good image, re-image endpoints, force password resets, revoke compromised certificates.<br>
+      Key decision: <em>preserve evidence vs stop the bleeding</em>. If active data exfiltration is happening, containment wins. If already contained, preserve first.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CHAIN OF CUSTODY</div>
+      <div class="concept-title">Evidence Must Be Unimpeachable</div>
+      <div class="concept-desc">If the incident leads to legal action or law enforcement, digital evidence must be collected and handled correctly. Document: who collected it, when, what state it was in, and how it was stored. Use write blockers for disk imaging. Hash every piece of evidence (MD5 + SHA-256) and verify hashes later. Mishandled evidence gets thrown out.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER11-OPS v1 -->
+<!-- ── TOPIC: BACKUP & DISASTER RECOVERY ─────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">💾</span>
+    <span class="topic-name">Backup &amp; Disaster Recovery — Surviving the Worst Case</span>
+    <span class="topic-badge">OPS • Critical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE 3-2-1 RULE</div>
+      <div class="concept-title">Three Copies, Two Media, One Off-Site</div>
+      <div class="concept-desc"><strong>3</strong> copies of your data (original + 2 backups)<br>
+      <strong>2</strong> different storage types (SSD + external drive, local + cloud)<br>
+      <strong>1</strong> copy off-site (cloud, different building, different region)<br>
+      Why: ransomware encrypts local + network shares. Fire/flood destroys same-room copies. Off-site survives both. Modern extension: 3-2-1-1-0 (add 1 offline/air-gapped copy and 0 errors verified by testing).</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">BACKUP TYPES</div>
+      <div class="concept-title">Full vs Incremental vs Differential</div>
+      <table class="ai-table">
+        <thead><tr><th>Type</th><th>What It Backs Up</th><th>Backup Speed</th><th>Restore Speed</th></tr></thead>
+        <tbody>
+          <tr><td>Full</td><td>Everything</td><td>Slow</td><td>Fast (one file)</td></tr>
+          <tr><td>Incremental</td><td>Changes since last backup of any type</td><td>Fast</td><td>Slow (full + all incrementals)</td></tr>
+          <tr><td>Differential</td><td>Changes since last FULL backup</td><td>Medium</td><td>Medium (full + last differential)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RTO & RPO</div>
+      <div class="concept-title">Recovery Time and Data Loss Objectives</div>
+      <div class="concept-desc"><strong>RTO (Recovery Time Objective)</strong> — how long can the business tolerate being down? An e-commerce site might have an RTO of 1 hour. A hospital might have an RTO of minutes.<br>
+      <strong>RPO (Recovery Point Objective)</strong> — how much data can we afford to lose? If RPO is 4 hours, backups must run at least every 4 hours.<br>
+      These drive backup strategy: low RTO/RPO requires continuous replication and hot standby; high RTO/RPO can use daily backups to tape.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TEST YOUR BACKUPS</div>
+      <div class="concept-title">An Untested Backup Is Not a Backup</div>
+      <div class="concept-desc">Backups regularly fail silently (disk full, permission error, partial write). The only way to know a backup is good is to restore from it in a test environment. Restore tests should be:<br>
+      • Scheduled (quarterly at minimum)<br>
+      • Documented (how long did restore take? any errors?)<br>
+      • Realistic (restore to isolated environment, not production)<br>
+      Many organizations discover their backups are corrupted during an actual disaster — the worst time to find out.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RANSOMWARE RESPONSE</div>
+      <div class="concept-title">When Encryption Happens to You</div>
+      <div class="concept-desc">If ransomware strikes:<br>
+      1. <strong>Isolate</strong> affected systems immediately — disconnect from network<br>
+      2. <strong>Don't pay</strong> if you have clean backups — payment doesn't guarantee decryption<br>
+      3. <strong>Preserve evidence</strong> — image affected systems before wiping<br>
+      4. <strong>Restore from known-good backup</strong> made before infection<br>
+      5. <strong>Find the initial access</strong> before coming back online — if you restore without finding the entry point, you'll be re-infected</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MONITORING & OBSERVABILITY ─────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📡</span>
+    <span class="topic-name">Monitoring &amp; Observability — Know Before Users Complain</span>
+    <span class="topic-badge">OPS • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THREE PILLARS</div>
+      <div class="concept-title">Metrics · Logs · Traces</div>
+      <div class="concept-desc"><strong>Metrics</strong> — numerical measurements over time: CPU %, request rate, error rate, latency percentiles (p50, p95, p99). Great for dashboards and alerting thresholds.<br>
+      <strong>Logs</strong> — event records: what happened, when, and on which system. Needed to understand the WHY behind a metric spike.<br>
+      <strong>Traces</strong> — record the journey of a single request through multiple services. Essential for distributed systems to find which service is causing latency.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">KEY METRICS</div>
+      <div class="concept-title">The Four Golden Signals (Google SRE)</div>
+      <div class="concept-desc"><strong>Latency</strong> — how long does a request take? Track P95/P99 not just average (average hides slow outliers).<br>
+      <strong>Traffic</strong> — how many requests per second? Understand normal baseline so anomalies are visible.<br>
+      <strong>Errors</strong> — what percentage of requests fail? Even 0.1% on 1M req/s is 1000 errors/sec.<br>
+      <strong>Saturation</strong> — how full is your system? CPU, memory, disk, connections — approaching limits causes cascading failures.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ALERTING PHILOSOPHY</div>
+      <div class="concept-title">Alert on Symptoms, Not Causes</div>
+      <div class="concept-desc">Alert when USERS are affected, not when internal metrics are interesting. "Error rate &gt; 1% for 5 minutes" is a user-facing symptom. "CPU &gt; 80%" is a cause that may or may not matter. Too many non-actionable alerts → alert fatigue → real alerts ignored. Every alert should have a runbook: what to check, what to do, who to escalate to.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER12-OPS v1 -->
+<!-- ── TOPIC: CI/CD CONCEPTS ─────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔄</span>
+    <span class="topic-name">CI/CD — Automate the Path From Code to Production</span>
+    <span class="topic-badge">OPS • DevOps</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS CI/CD</div>
+      <div class="concept-title">Continuous Integration / Continuous Delivery</div>
+      <div class="concept-desc"><strong>CI (Continuous Integration)</strong>: every code change is automatically built and tested. Developers merge frequently; the pipeline catches bugs within minutes.<br>
+      <strong>CD (Continuous Delivery)</strong>: every successful build is automatically deployable to production (but a human approves the push).<br>
+      <strong>CD (Continuous Deployment)</strong>: every successful build is automatically pushed to production without human approval. Used by companies doing many deploys per day.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TYPICAL PIPELINE STAGES</div>
+      <div class="concept-title">Code → Test → Build → Deploy</div>
+      <table class="ai-table">
+        <thead><tr><th>Stage</th><th>What Happens</th><th>Tool Examples</th></tr></thead>
+        <tbody>
+          <tr><td>Source</td><td>Code pushed to repo triggers pipeline</td><td>GitHub, GitLab, Bitbucket</td></tr>
+          <tr><td>Lint &amp; Static Analysis</td><td>Code style, type checks, SAST</td><td>flake8, mypy, SonarQube, Semgrep</td></tr>
+          <tr><td>Unit Tests</td><td>Test individual functions</td><td>pytest, JUnit, Jest</td></tr>
+          <tr><td>Integration Tests</td><td>Test components together</td><td>pytest with test DBs, Postman</td></tr>
+          <tr><td>Build / Package</td><td>Compile, build Docker image, package</td><td>Docker, maven, npm build</td></tr>
+          <tr><td>Security Scan</td><td>Dependency vulnerabilities, image scan</td><td>Trivy, Snyk, pip-audit</td></tr>
+          <tr><td>Deploy to Staging</td><td>Deploy to production-like env</td><td>Kubernetes, Terraform, Ansible</td></tr>
+          <tr><td>E2E Tests</td><td>Test full user workflows</td><td>Playwright, Selenium, Cypress</td></tr>
+          <tr><td>Deploy to Production</td><td>Roll out to real users</td><td>k8s rolling update, blue/green</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">GITHUB ACTIONS</div>
+      <div class="concept-title">Basic CI Workflow</div>
+      <div class="code-block"><span class="com"># .github/workflows/ci.yml</span>
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: <span class="str">"3.12"</span>
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run tests
+        run: pytest --cov=src --cov-report=xml
+
+      - name: Security scan
+        run: pip-audit</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DEVSECOPS</div>
+      <div class="concept-title">Security Shifted Left</div>
+      <div class="concept-desc">DevSecOps integrates security checks into every stage of the CI/CD pipeline — not as a gate at the end ("is this ready to ship?") but as automated checks throughout:<br>
+      • <strong>SAST</strong> (Static Application Security Testing) — analyze code for vulnerabilities<br>
+      • <strong>DAST</strong> (Dynamic Application Security Testing) — attack the running app<br>
+      • <strong>SCA</strong> (Software Composition Analysis) — scan dependencies for CVEs<br>
+      • <strong>IaC scanning</strong> — check Terraform/CloudFormation for misconfigurations<br>
+      "Shift left" = catch vulnerabilities when they're cheap to fix (in development), not expensive (in production).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: KUBERNETES FUNDAMENTALS ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">☸️</span>
+    <span class="topic-name">Kubernetes — Container Orchestration at Scale</span>
+    <span class="topic-badge">OPS • Cloud Native</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS KUBERNETES</div>
+      <div class="concept-title">Run, Scale, and Heal Containers Automatically</div>
+      <div class="concept-desc">Kubernetes (k8s) is a container orchestration platform. You tell it "I want 5 replicas of my web container running at all times." k8s does the scheduling (which node to run it on), restarts failed containers, scales up/down based on load, and manages networking between services. Originally from Google; now the de-facto cloud standard.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CORE OBJECTS</div>
+      <div class="concept-title">Pod → Deployment → Service → Ingress</div>
+      <div class="concept-desc"><strong>Pod</strong> — smallest deployable unit; one or more containers sharing a network namespace and storage. Ephemeral — can die and be replaced.<br>
+      <strong>Deployment</strong> — manages N replicas of a Pod; handles rolling updates and rollbacks.<br>
+      <strong>Service</strong> — stable network endpoint that load-balances traffic to pods (pods have dynamic IPs; Services don't change).<br>
+      <strong>Ingress</strong> — HTTP/HTTPS routing: <code>example.com/api → api-service, example.com/ → frontend-service</code>.<br>
+      <strong>ConfigMap / Secret</strong> — inject config and secrets into pods as env vars or files.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">KUBECTL BASICS</div>
+      <div class="concept-title">The k8s CLI</div>
+      <div class="code-block"><span class="com"># See what's running</span>
+kubectl get pods
+kubectl get pods -n kube-system     <span class="com"># in a specific namespace</span>
+kubectl get all                     <span class="com"># pods, services, deployments</span>
+
+<span class="com"># Inspect resources</span>
+kubectl describe pod my-pod-abc123
+kubectl logs my-pod-abc123
+kubectl logs -f my-pod-abc123       <span class="com"># follow</span>
+
+<span class="com"># Get a shell in a running pod</span>
+kubectl exec -it my-pod-abc123 -- bash
+
+<span class="com"># Apply a manifest file</span>
+kubectl apply -f deployment.yaml
+
+<span class="com"># Scale</span>
+kubectl scale deployment myapp --replicas=5
+
+<span class="com"># Rolling update</span>
+kubectl set image deployment/myapp myapp=myimage:v2
+
+<span class="com"># Rollback</span>
+kubectl rollout undo deployment/myapp</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">WHEN TO USE K8S</div>
+      <div class="concept-title">It's Powerful But Complex</div>
+      <div class="concept-desc">Kubernetes adds significant operational complexity. For a small startup with one app: Docker Compose or a single managed service (Heroku, Railway, Fly.io) is simpler and faster to operate. k8s shines when you have: many services, need to scale services independently, have a team to manage it, or require advanced deployment strategies (canary, blue/green). "Kubernetes because it's cool" is not a good reason.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER15-OPS v1 -->
+<!-- ── TOPIC: INFRASTRUCTURE AS CODE ─────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🏗️</span>
+    <span class="topic-name">Infrastructure as Code — Servers You Define in Text Files</span>
+    <span class="topic-badge">OPS • Modern</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE BIG IDEA</div>
+      <div class="concept-title">Stop Clicking, Start Declaring</div>
+      <div class="concept-desc">The old way: log into a server, click through setup wizards, run commands manually, hope you remember what you did. The problem? It's not repeatable, not documented, and "works on my server" becomes a nightmare. Infrastructure as Code (IaC) means defining your servers, networks, and configs in version-controlled text files. Run the file → get identical infrastructure every time. This is the foundation of modern operations.</div>
+      <table class="ai-table">
+        <thead><tr><th>Manual (Old Way)</th><th>IaC (Modern Way)</th></tr></thead>
+        <tbody>
+          <tr><td>Click through cloud console</td><td>Define in code, run once</td></tr>
+          <tr><td>"How did we set this up?" — nobody knows</td><td>The code IS the documentation</td></tr>
+          <tr><td>Snowflake servers (each unique)</td><td>Identical, reproducible environments</td></tr>
+          <tr><td>Disaster recovery = panic</td><td>Disaster recovery = re-run the code</td></tr>
+          <tr><td>No change history</td><td>Git history of every infra change</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DECLARATIVE VS IMPERATIVE</div>
+      <div class="concept-title">Describe the Destination, Not the Route</div>
+      <div class="concept-desc"><strong>Imperative</strong>: list every step ("install nginx, then edit config, then start service"). <strong>Declarative</strong>: describe the desired end state ("nginx should be installed and running"), and the tool figures out how to get there. Declarative is idempotent — running it 100 times produces the same result as running it once. Most modern IaC is declarative.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE TOOL LANDSCAPE</div>
+      <div class="concept-title">Common IaC and Config Management Tools</div>
+      <table class="ai-table">
+        <thead><tr><th>Tool</th><th>Category</th><th>Language</th><th>Best For</th></tr></thead>
+        <tbody>
+          <tr><td>Terraform / OpenTofu</td><td>Provisioning</td><td>HCL (declarative)</td><td>Creating cloud resources (VMs, networks, DBs)</td></tr>
+          <tr><td>Ansible</td><td>Config management</td><td>YAML (declarative)</td><td>Configuring servers, app deployment (agentless)</td></tr>
+          <tr><td>Puppet</td><td>Config management</td><td>Puppet DSL</td><td>Large fleets, enforced desired state (agent)</td></tr>
+          <tr><td>Chef</td><td>Config management</td><td>Ruby</td><td>Complex config (agent-based)</td></tr>
+          <tr><td>CloudFormation</td><td>Provisioning</td><td>YAML/JSON</td><td>AWS-native infrastructure</td></tr>
+          <tr><td>Pulumi</td><td>Provisioning</td><td>Python/TS/Go</td><td>Teams who prefer real programming languages</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ANSIBLE BASICS</div>
+      <div class="concept-title">The Most Beginner-Friendly IaC Tool</div>
+      <div class="concept-desc">Ansible is popular for beginners because it's agentless (just needs SSH), uses readable YAML, and requires nothing installed on target machines. A "playbook" describes the desired state of a set of hosts.</div>
+      <div class="code-block"><span class="com"># inventory.ini — define your hosts</span>
+[webservers]
+web1.example.com
+web2.example.com
+
+[dbservers]
+db1.example.com
+
+<span class="com"># ─────────────────────────────────────────────────────</span>
+<span class="com"># playbook.yml — describe desired state</span>
+- name: Configure web servers
+  hosts: webservers
+  become: yes              <span class="com"># use sudo</span>
+  tasks:
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present     <span class="com"># declarative — "should exist"</span>
+
+    - name: Start and enable nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Deploy config file
+      copy:
+        src: ./nginx.conf
+        dest: /etc/nginx/nginx.conf
+      notify: Restart nginx   <span class="com"># trigger handler if changed</span>
+
+  handlers:
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+<span class="com"># Run it</span>
+ansible-playbook -i inventory.ini playbook.yml</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body ops -->
