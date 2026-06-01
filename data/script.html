@@ -8108,4 +8108,105 @@ for f in /var/log/*.log; do ./logcheck.py "$f"; done</div>
     </div>
   </div>
 </div>
+
+<!-- BEGINNER21-SCRIPT v1 -->
+<!-- ── TOPIC: CONSUMING APIS ROBUSTLY ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔗</span>
+    <span class="topic-name">Consuming APIs Robustly — Beyond requests.get()</span>
+    <span class="topic-badge">SCRIPT • Practical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">API AUTHENTICATION</div>
+      <div class="concept-title">How APIs Verify Who You Are</div>
+      <table class="ai-table">
+        <thead><tr><th>Method</th><th>How It Works</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>API key</td><td>A secret token in a header or query param</td><td><code>Authorization: Bearer sk-...</code></td></tr>
+          <tr><td>Basic auth</td><td>Base64-encoded user:pass (use only over HTTPS)</td><td><code>Authorization: Basic ...</code></td></tr>
+          <tr><td>Bearer / JWT</td><td>A signed token proving identity + claims</td><td><code>Authorization: Bearer eyJ...</code></td></tr>
+          <tr><td>OAuth 2.0</td><td>Token obtained via an auth flow; can expire/refresh</td><td>Delegated access ("Login with Google")</td></tr>
+          <tr><td>HMAC signature</td><td>Sign each request with a shared secret</td><td>AWS API requests</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="kw">import</span> requests, os
+
+<span class="com"># Read the key from env — NEVER hardcode</span>
+api_key = os.environ[<span class="str">"API_KEY"</span>]
+headers = {<span class="str">"Authorization"</span>: <span class="str">f"Bearer {api_key}"</span>}
+
+resp = requests.get(<span class="str">"https://api.example.com/v1/users"</span>,
+                    headers=headers, timeout=<span class="num">10</span>)
+resp.raise_for_status()        <span class="com"># raise on 4xx/5xx</span>
+data = resp.json()</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PAGINATION</div>
+      <div class="concept-title">Getting ALL the Results, Not Just Page 1</div>
+      <div class="concept-desc">APIs return data in pages to avoid huge responses. You must loop until there's no more data. The two common styles are offset/page-based and cursor-based.</div>
+      <div class="code-block"><span class="com"># Cursor/next-link pagination (common in modern APIs)</span>
+<span class="kw">def</span> <span class="fn">get_all_users</span>(session):
+    users = []
+    url = <span class="str">"https://api.example.com/v1/users"</span>
+    <span class="kw">while</span> url:
+        resp = session.get(url, timeout=<span class="num">10</span>)
+        resp.raise_for_status()
+        body = resp.json()
+        users.extend(body[<span class="str">"data"</span>])
+        url = body.get(<span class="str">"next"</span>)      <span class="com"># None when no more pages</span>
+    <span class="kw">return</span> users
+
+<span class="com"># Page-number pagination</span>
+page = <span class="num">1</span>
+<span class="kw">while</span> <span class="kw">True</span>:
+    resp = session.get(url, params={<span class="str">"page"</span>: page, <span class="str">"per_page"</span>: <span class="num">100</span>})
+    items = resp.json()[<span class="str">"items"</span>]
+    <span class="kw">if</span> <span class="kw">not</span> items:
+        <span class="kw">break</span>
+    process(items)
+    page += <span class="num">1</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RETRIES & BACKOFF</div>
+      <div class="concept-title">Networks Fail — Handle It Gracefully</div>
+      <div class="concept-desc">Transient failures (timeouts, 503s, brief network blips) are normal. Robust clients retry with <strong>exponential backoff</strong> — wait longer between each attempt — so they recover automatically without hammering a struggling server.</div>
+      <div class="code-block"><span class="kw">import</span> requests
+<span class="kw">from</span> requests.adapters <span class="kw">import</span> HTTPAdapter
+<span class="kw">from</span> urllib3.util.retry <span class="kw">import</span> Retry
+
+<span class="com"># Build a session that retries automatically</span>
+retry = Retry(
+    total=<span class="num">5</span>,
+    backoff_factor=<span class="num">1</span>,             <span class="com"># waits 1s, 2s, 4s, 8s...</span>
+    status_forcelist=[<span class="num">429</span>, <span class="num">500</span>, <span class="num">502</span>, <span class="num">503</span>, <span class="num">504</span>],
+    allowed_methods=[<span class="str">"GET"</span>, <span class="str">"POST"</span>],
+)
+session = requests.Session()
+adapter = HTTPAdapter(max_retries=retry)
+session.mount(<span class="str">"https://"</span>, adapter)
+
+resp = session.get(<span class="str">"https://api.example.com/data"</span>, timeout=<span class="num">10</span>)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RATE LIMITING</div>
+      <div class="concept-title">Respect the API's Limits (HTTP 429)</div>
+      <div class="concept-desc">APIs cap how many requests you can make. Exceed it and you get <code>429 Too Many Requests</code>, often with a <code>Retry-After</code> header telling you how long to wait. Good clients track rate-limit headers and slow down <em>before</em> getting blocked.</div>
+      <div class="code-block"><span class="kw">import</span> time
+
+resp = session.get(url)
+<span class="kw">if</span> resp.status_code == <span class="num">429</span>:
+    wait = <span class="fn">int</span>(resp.headers.get(<span class="str">"Retry-After"</span>, <span class="num">60</span>))
+    <span class="fn">print</span>(<span class="str">f"Rate limited — sleeping {wait}s"</span>)
+    time.sleep(wait)
+    resp = session.get(url)   <span class="com"># try again</span>
+
+<span class="com"># Many APIs expose remaining quota in headers — watch them</span>
+remaining = resp.headers.get(<span class="str">"X-RateLimit-Remaining"</span>)
+reset_at  = resp.headers.get(<span class="str">"X-RateLimit-Reset"</span>)</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->

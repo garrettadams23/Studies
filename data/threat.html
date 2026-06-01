@@ -1303,4 +1303,71 @@ sha256sum evidence.img    <span class="com"># must match — proves a faithful c
     </div>
   </div>
 </div>
+
+<!-- BEGINNER21-THREAT v1 -->
+<!-- ── TOPIC: EMAIL AUTHENTICATION ───────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📧</span>
+    <span class="topic-name">Email Authentication — SPF, DKIM, DMARC</span>
+    <span class="topic-badge">THREAT • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE PROBLEM</div>
+      <div class="concept-title">Email Was Built With No Identity Checks</div>
+      <div class="concept-desc">The original email protocol (SMTP) lets anyone claim to be anyone — you can trivially forge the "From" address. This is why phishing and spoofing are so easy. Three layered DNS-based standards were bolted on to fix this: SPF, DKIM, and DMARC. Together they let receiving servers verify that an email genuinely came from the domain it claims. Every email/security admin must understand these.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE THREE STANDARDS</div>
+      <div class="concept-title">How They Work Together</div>
+      <table class="ai-table">
+        <thead><tr><th>Standard</th><th>Question It Answers</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td><strong>SPF</strong><br>Sender Policy Framework</td><td>"Is this server allowed to send for this domain?"</td><td>DNS TXT record lists authorized sending IPs</td></tr>
+          <tr><td><strong>DKIM</strong><br>DomainKeys Identified Mail</td><td>"Was this message altered? Is the signature valid?"</td><td>Server signs mail with a private key; public key in DNS verifies it</td></tr>
+          <tr><td><strong>DMARC</strong><br>Domain-based Message Auth</td><td>"What do I do if SPF/DKIM fail?"</td><td>DNS policy: none / quarantine / reject + reporting</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="com"># Example DNS records</span>
+<span class="com"># SPF — only these may send for example.com</span>
+example.com TXT "v=spf1 include:_spf.google.com ip4:203.0.113.5 -all"
+
+<span class="com"># DMARC — reject failures, send reports</span>
+_dmarc.example.com TXT "v=DMARC1; p=reject; rua=mailto:dmarc@example.com"
+
+<span class="com"># Check a domain's records</span>
+dig TXT example.com +short
+dig TXT _dmarc.example.com +short</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DMARC POLICIES</div>
+      <div class="concept-title">From Monitoring to Enforcement</div>
+      <table class="ai-table">
+        <thead><tr><th>Policy (p=)</th><th>Effect</th><th>When to Use</th></tr></thead>
+        <tbody>
+          <tr><td><code>none</code></td><td>Take no action, just report</td><td>Initial monitoring — see who sends as you</td></tr>
+          <tr><td><code>quarantine</code></td><td>Send failures to spam/junk</td><td>After verifying legit senders pass</td></tr>
+          <tr><td><code>reject</code></td><td>Block failing mail outright</td><td>Full enforcement — the goal</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>Best practice:</strong> roll out gradually — start at <code>p=none</code>, read the reports to find all legitimate senders, fix their SPF/DKIM, then tighten to quarantine, then reject. Going straight to reject risks blocking your own legitimate mail.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">BUSINESS EMAIL COMPROMISE</div>
+      <div class="concept-title">BEC — The Most Costly Email Attack</div>
+      <div class="concept-desc">BEC is a sophisticated scam where attackers impersonate executives, vendors, or partners to trick employees into wiring money or sending data. By dollar losses, the FBI ranks it as one of the most damaging cybercrimes — far more than ransomware in some years. It often uses no malware at all — just social engineering and a convincing email.</div>
+      <table class="ai-table">
+        <thead><tr><th>BEC Tactic</th><th>Defense</th></tr></thead>
+        <tbody>
+          <tr><td>"CEO" urgently requests a wire transfer</td><td>Out-of-band verification (call a known number)</td></tr>
+          <tr><td>Vendor sends "updated banking details"</td><td>Verify changes via a previously-known contact</td></tr>
+          <tr><td>Lookalike domain (rn vs m, .co vs .com)</td><td>Scrutinize sender domains; DMARC enforcement</td></tr>
+          <tr><td>Compromised real account (no forgery)</td><td>MFA, anomaly detection, dual approval for payments</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 <!-- /domain-body threat -->
