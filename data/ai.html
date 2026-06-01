@@ -752,4 +752,144 @@ message = client.messages.create(
     </div>
   </div>
 </div>
+
+<!-- BEGINNER31-AI v1 -->
+<!-- ── TOPIC: ML Pipeline – Data to Production ───────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    ML Pipeline – From Raw Data to a Serving Model
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is an ML Pipeline?</div>
+      <div class="concept-desc">
+        A <strong>machine learning pipeline</strong> is the end-to-end process
+        of turning raw data into a model that answers real questions.
+        There are six repeating stages:<br><br>
+        1. <strong>Data collection</strong> — gather labelled examples.<br>
+        2. <strong>Data cleaning</strong> — fix missing values, outliers,
+           encoding errors.<br>
+        3. <strong>Feature engineering</strong> — create input columns the
+           model can use (e.g. convert date to day-of-week).<br>
+        4. <strong>Training</strong> — feed data to an algorithm; it learns
+           patterns.<br>
+        5. <strong>Evaluation</strong> — measure accuracy on held-out test
+           data the model has never seen.<br>
+        6. <strong>Deployment</strong> — serve the model as an API so
+           applications can call it.<br><br>
+        The loop repeats: real-world feedback becomes new training data.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">scikit-learn</div>
+      <div class="concept-title">A Complete Minimal Pipeline in Python</div>
+      <div class="concept-desc">
+        scikit-learn is the most beginner-friendly ML library. This example
+        predicts whether a customer will churn (leave) based on usage data.
+      </div>
+      <div class="code-block">
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.preprocessing  <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.ensemble       <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.metrics        <span class="kw">import</span> classification_report
+
+<span class="com"># 1. Load data</span>
+df = pd.read_csv(<span class="str">"customers.csv"</span>)
+
+<span class="com"># 2. Clean – drop rows with missing values in key columns</span>
+df = df.dropna(subset=[<span class="str">"monthly_spend"</span>, <span class="str">"tenure_months"</span>, <span class="str">"churn"</span>])
+
+<span class="com"># 3. Feature engineering</span>
+X = df[[<span class="str">"monthly_spend"</span>, <span class="str">"tenure_months"</span>, <span class="str">"support_calls"</span>]]
+y = df[<span class="str">"churn"</span>]                     <span class="com"># 1 = churned, 0 = stayed</span>
+
+<span class="com"># 4. Split into train (80 %) and test (20 %)</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>
+)
+
+<span class="com"># 5. Scale features (tree models don't need this but good habit)</span>
+scaler  = StandardScaler()
+X_train = scaler.fit_transform(X_train)   <span class="com"># learn mean/std from train only</span>
+X_test  = scaler.transform(X_test)        <span class="com"># apply same transform to test</span>
+
+<span class="com"># 6. Train</span>
+model = RandomForestClassifier(n_estimators=<span class="num">100</span>, random_state=<span class="num">42</span>)
+model.fit(X_train, y_train)
+
+<span class="com"># 7. Evaluate</span>
+y_pred = model.predict(X_test)
+<span class="fn">print</span>(classification_report(y_test, y_pred))
+<span class="com"># Output: precision, recall, F1-score per class</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Key Metrics</div>
+      <div class="concept-title">Accuracy vs Precision vs Recall</div>
+      <div class="concept-desc">
+        <strong>Accuracy</strong> (correct / total) is misleading when one
+        class is rare. If 99 % of emails are legit, a model that always
+        says "legit" is 99 % accurate — and catches zero spam.<br><br>
+        Use <em>precision</em> and <em>recall</em> for imbalanced problems:<br><br>
+        <table class="ai-table">
+          <tr><th>Metric</th><th>Question</th><th>Formula</th></tr>
+          <tr><td>Precision</td><td>Of positives I predicted, how many are real?</td><td>TP / (TP + FP)</td></tr>
+          <tr><td>Recall</td><td>Of actual positives, how many did I catch?</td><td>TP / (TP + FN)</td></tr>
+          <tr><td>F1-score</td><td>Balance of precision &amp; recall</td><td>2 &times; P&times;R / (P+R)</td></tr>
+        </table>
+        <br>
+        For security anomaly detection, high <em>recall</em> matters most —
+        you'd rather have false alarms than miss a real attack.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Deployment</div>
+      <div class="concept-title">Serving a Model as a REST API</div>
+      <div class="concept-desc">
+        Once a model is trained, save it and wrap it in a tiny web service
+        so other applications can call it.
+      </div>
+      <div class="code-block">
+<span class="kw">import</span> joblib, numpy <span class="kw">as</span> np
+<span class="kw">from</span> flask <span class="kw">import</span> Flask, request, jsonify
+
+<span class="com"># Save model + scaler after training</span>
+joblib.dump(model,  <span class="str">"churn_model.pkl"</span>)
+joblib.dump(scaler, <span class="str">"scaler.pkl"</span>)
+
+<span class="com"># ── In the serving script ──</span>
+app    = Flask(__name__)
+_model  = joblib.load(<span class="str">"churn_model.pkl"</span>)
+_scaler = joblib.load(<span class="str">"scaler.pkl"</span>)
+
+@app.route(<span class="str">"/predict"</span>, methods=[<span class="str">"POST"</span>])
+<span class="kw">def</span> <span class="fn">predict</span>():
+    data   = request.get_json()
+    X      = np.array([[data[<span class="str">"monthly_spend"</span>],
+                        data[<span class="str">"tenure_months"</span>],
+                        data[<span class="str">"support_calls"</span>]]])
+    X_sc   = _scaler.transform(X)
+    label  = <span class="fn">int</span>(_model.predict(X_sc)[<span class="num">0</span>])
+    prob   = <span class="fn">float</span>(_model.predict_proba(X_sc)[<span class="num">0</span>, <span class="num">1</span>])
+    <span class="kw">return</span> jsonify({<span class="str">"churn"</span>: label, <span class="str">"probability"</span>: <span class="fn">round</span>(prob, <span class="num">3</span>)})
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    app.run(port=<span class="num">5000</span>)
+
+<span class="com"># Test it:</span>
+<span class="com"># curl -X POST http://localhost:5000/predict \</span>
+<span class="com">#   -H "Content-Type: application/json" \</span>
+<span class="com">#   -d '{"monthly_spend": 45, "tenure_months": 6, "support_calls": 8}'</span>
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body ai -->

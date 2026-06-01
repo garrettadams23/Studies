@@ -1996,4 +1996,150 @@ psql -U postgres &lt; all_databases_2026-06-01.sql
 
   </div>
 </div>
+
+<!-- BEGINNER31-OPS v1 -->
+<!-- ── TOPIC: Kubernetes for Beginners ───────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Kubernetes – Container Orchestration Fundamentals
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Kubernetes Exists</div>
+      <div class="concept-desc">
+        Docker runs one container on one machine. When you need to run
+        hundreds of containers across dozens of machines, you need an
+        <em>orchestrator</em>. <strong>Kubernetes (K8s)</strong> handles:<br><br>
+        &bull; <strong>Scheduling</strong> — decides which machine runs which
+          container.<br>
+        &bull; <strong>Self-healing</strong> — restarts crashed containers
+          automatically.<br>
+        &bull; <strong>Scaling</strong> — adds/removes container replicas based
+          on load.<br>
+        &bull; <strong>Rolling updates</strong> — deploys new versions with zero
+          downtime.<br>
+        &bull; <strong>Service discovery</strong> — containers find each other
+          by name, not IP.<br><br>
+        <em>"Not my circus, not my monkey"</em> — the control plane (API
+        server, etcd, scheduler) is managed for you on EKS/GKE/AKS. Your
+        job is to manage your workloads, not the cluster control plane.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Key Objects</div>
+      <div class="concept-title">The K8s Object Hierarchy</div>
+      <div class="concept-desc">
+        Everything in Kubernetes is a YAML-defined <em>object</em>:
+        <br><br>
+        <strong>Pod</strong> — the smallest unit; one or more containers
+        that share a network namespace. Pods are ephemeral — don't store
+        state in them.<br><br>
+        <strong>Deployment</strong> — manages a set of identical Pod replicas;
+        handles rolling updates and rollbacks.<br><br>
+        <strong>Service</strong> — a stable network endpoint (IP + DNS name)
+        that load-balances across matching Pods.<br><br>
+        <strong>ConfigMap / Secret</strong> — inject configuration or
+        credentials into Pods without baking them into the image.<br><br>
+        <strong>Namespace</strong> — a virtual cluster inside a cluster; used
+        to separate teams or environments.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">kubectl</div>
+      <div class="concept-title">Essential kubectl Commands</div>
+      <div class="concept-desc">
+        <code>kubectl</code> is the CLI to interact with a Kubernetes cluster.
+        Master these first.
+      </div>
+      <div class="code-block">
+<span class="com"># Show cluster nodes</span>
+kubectl get nodes
+
+<span class="com"># Show all pods in a namespace</span>
+kubectl get pods -n production
+
+<span class="com"># Describe a pod (events, resource usage, errors)</span>
+kubectl describe pod myapp-7d9f8c-xkz9p -n production
+
+<span class="com"># View logs (last 100 lines)</span>
+kubectl logs myapp-7d9f8c-xkz9p -n production --tail=100
+
+<span class="com"># Follow logs in real time (like tail -f)</span>
+kubectl logs -f deployment/myapp -n production
+
+<span class="com"># Exec into a running container (interactive shell)</span>
+kubectl exec -it myapp-7d9f8c-xkz9p -n production -- /bin/sh
+
+<span class="com"># Apply a YAML manifest</span>
+kubectl apply -f deployment.yaml
+
+<span class="com"># Scale a deployment</span>
+kubectl scale deployment myapp --replicas=<span class="num">5</span> -n production
+
+<span class="com"># Roll back to the previous version</span>
+kubectl rollout undo deployment/myapp -n production
+
+<span class="com"># Check rollout status</span>
+kubectl rollout status deployment/myapp -n production
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">YAML Example</div>
+      <div class="concept-title">A Minimal Deployment + Service</div>
+      <div class="concept-desc">
+        This is the smallest production-style Kubernetes manifest —
+        a Deployment (runs the app) and a Service (exposes it):
+      </div>
+      <div class="code-block">
+<span class="com"># deployment.yaml</span>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+  namespace: production
+spec:
+  replicas: <span class="num">3</span>
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: myregistry/myapp:<span class="num">1.2</span>.<span class="num">3</span>
+        ports:
+        - containerPort: <span class="num">8080</span>
+        resources:
+          requests: { cpu: <span class="str">"100m"</span>, memory: <span class="str">"128Mi"</span> }
+          limits:   { cpu: <span class="str">"500m"</span>, memory: <span class="str">"256Mi"</span> }
+        readinessProbe:
+          httpGet:   { path: /healthz, port: <span class="num">8080</span> }
+          initialDelaySeconds: <span class="num">5</span>
+---
+<span class="com"># service.yaml (ClusterIP = internal only)</span>
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+  namespace: production
+spec:
+  selector:
+    app: myapp          <span class="com"># matches pods with label app=myapp</span>
+  ports:
+  - port: <span class="num">80</span>
+    targetPort: <span class="num">8080</span>
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body ops -->

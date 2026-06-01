@@ -4316,4 +4316,93 @@ conn.unbind()
 
   </div>
 </div>
+
+<!-- BEGINNER31-NET v1 -->
+<!-- ── TOPIC: Cloud Networking – VPC Fundamentals ─────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Cloud Networking – VPC, Subnets &amp; Security Groups
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is a VPC?</div>
+      <div class="concept-desc">
+        A <strong>Virtual Private Cloud (VPC)</strong> is your own private
+        network inside a cloud provider (AWS, Azure, GCP). Think of it as
+        renting a section of a data centre and installing your own private
+        network switches — except it's all software.<br><br>
+        <strong>Key building blocks:</strong><br>
+        &bull; <em>VPC</em> – the outer boundary; you choose the IP range
+          (e.g. <code>10.0.0.0/16</code> = ~65 000 addresses).<br>
+        &bull; <em>Subnet</em> – a slice of the VPC in one availability zone.
+          Public subnets reach the internet; private subnets do not.<br>
+        &bull; <em>Internet Gateway (IGW)</em> – the door between your VPC
+          and the public internet.<br>
+        &bull; <em>NAT Gateway</em> – lets private-subnet resources make
+          <em>outbound</em> internet calls without being reachable from
+          outside.<br>
+        &bull; <em>Route Table</em> – rules that decide where packets go
+          (like a router's routing table).<br>
+        &bull; <em>Security Group</em> – a stateful firewall attached to an
+          individual resource (VM, load balancer).
+        <br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        cloud resource is private just because it's in a VPC. Check security
+        groups AND network ACLs; both must permit the traffic.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">AWS Example</div>
+      <div class="concept-title">Building a VPC with AWS CLI</div>
+      <div class="concept-desc">
+        AWS CLI lets you build the entire network from the command line.
+        This is the same thing the console does behind the scenes.
+      </div>
+      <div class="code-block">
+<span class="com"># Create a VPC</span>
+aws ec2 create-vpc --cidr-block <span class="num">10.0.0</span>.0/<span class="num">16</span>   --query Vpc.VpcId --output text
+<span class="com"># Output: vpc-0abc1234def567890</span>
+
+<span class="com"># Create a public subnet (AZ us-east-1a)</span>
+aws ec2 create-subnet   --vpc-id vpc-0abc1234def567890   --cidr-block <span class="num">10.0.1</span>.0/<span class="num">24</span>   --availability-zone us-east-<span class="num">1</span>a
+
+<span class="com"># Create a private subnet</span>
+aws ec2 create-subnet   --vpc-id vpc-0abc1234def567890   --cidr-block <span class="num">10.0.2</span>.0/<span class="num">24</span>   --availability-zone us-east-<span class="num">1</span>a
+
+<span class="com"># Attach an internet gateway</span>
+aws ec2 create-internet-gateway --query InternetGateway.InternetGatewayId
+aws ec2 attach-internet-gateway   --internet-gateway-id igw-0xyz   --vpc-id vpc-0abc1234def567890
+
+<span class="com"># Security group: allow SSH from your IP only</span>
+aws ec2 create-security-group   --group-name web-sg   --description <span class="str">"Web server SG"</span>   --vpc-id vpc-0abc1234def567890
+
+aws ec2 authorize-security-group-ingress   --group-id sg-0xyz   --protocol tcp --port <span class="num">22</span>   --cidr <span class="num">203.0.113.5</span>/<span class="num">32</span>   <span class="com"># your IP only!</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Best Practice</div>
+      <div class="concept-title">The Shared Responsibility Model</div>
+      <div class="concept-desc">
+        Cloud providers operate a <em>Shared Responsibility Model</em>:
+        the provider secures the infrastructure <em>of</em> the cloud;
+        you secure everything <em>in</em> the cloud.<br><br>
+        <strong>AWS/Azure/GCP handles:</strong> Physical data centres,
+        hypervisor security, global network, managed service patches.<br><br>
+        <strong>You handle:</strong> VM OS patches, security group rules,
+        S3 bucket permissions, IAM roles, encryption of your data,
+        application code security.<br><br>
+        <em>"Not my circus, not my monkey"</em> only applies to the provider's
+        layer. Misconfigured S3 buckets, open security groups, and leaked IAM
+        keys are 100 % your responsibility. Most cloud breaches are
+        misconfiguration, not a failure by the provider.
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body net -->

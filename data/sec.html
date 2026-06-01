@@ -2114,4 +2114,121 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
     </div>
   </div>
 </div>
+
+<!-- BEGINNER31-SEC v1 -->
+<!-- ── TOPIC: SIEM & Log Analysis ─────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    SIEM &amp; Log Analysis – Blue Team Fundamentals
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is a SIEM?</div>
+      <div class="concept-desc">
+        A <strong>SIEM (Security Information and Event Management)</strong>
+        system collects logs from every device in your environment, stores
+        them in one place, and helps you search for threats.
+        Think of it as the security camera DVR for your entire network.<br><br>
+        <strong>Common SIEMs:</strong> Splunk, IBM QRadar, Microsoft Sentinel,
+        Elastic SIEM (ELK), Wazuh (open-source).<br><br>
+        <strong>What gets sent to a SIEM:</strong><br>
+        &bull; Windows Event Logs (logins, process creation, PowerShell activity).<br>
+        &bull; Linux syslog / auditd events.<br>
+        &bull; Firewall and router logs (connections, blocks).<br>
+        &bull; DNS query logs (what domains hosts looked up).<br>
+        &bull; Web proxy / email gateway logs.<br>
+        &bull; Cloud trail logs (AWS CloudTrail, Azure Activity Log).<br><br>
+        Logs are useless if you never look at them — the SIEM turns the
+        firehose of logs into searchable, alertable data.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Key Windows Events</div>
+      <div class="concept-title">Windows Event IDs Every Analyst Must Know</div>
+      <div class="concept-desc">
+        Windows Security log event IDs tell a story. Learn these cold:
+      </div>
+      <div class="code-block">
+<span class="com">Event ID  Meaning</span>
+<span class="num">4624</span>      Successful logon
+<span class="num">4625</span>      Failed logon  (watch for bursts = brute force)
+<span class="num">4634</span>      Logon session ended
+<span class="num">4648</span>      Logon using explicit credentials (runas)
+<span class="num">4672</span>      Special privileges assigned (admin logon)
+<span class="num">4688</span>      New process created  (process execution)
+<span class="num">4698</span>      Scheduled task created  (persistence!)
+<span class="num">4720</span>      User account created
+<span class="num">4732</span>      Member added to security-enabled local group
+<span class="num">4768</span>      Kerberos TGT requested  (AD logon start)
+<span class="num">4769</span>      Kerberos service ticket requested
+<span class="num">4776</span>      NTLM credential validation  (legacy auth)
+<span class="num">7045</span>      New service installed  (System log, common malware persistence)
+
+<span class="com"># Query Windows Event Log via PowerShell</span>
+Get-WinEvent -FilterHashtable @{
+    LogName   = <span class="str">'Security'</span>
+    Id        = <span class="num">4625</span>           <span class="com"># failed logons</span>
+    StartTime = (Get-Date).AddHours(-<span class="num">1</span>)
+} | Select TimeCreated, Message | Format-List
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Splunk / ELK</div>
+      <div class="concept-title">Writing SIEM Queries</div>
+      <div class="concept-desc">
+        Every SIEM has a query language. Splunk uses SPL; Elastic uses KQL.
+        Here are equivalent queries to find brute-force attempts:
+      </div>
+      <div class="code-block">
+<span class="com">─── Splunk SPL ──────────────────────────────────────────────</span>
+index=windows EventCode=<span class="num">4625</span>
+| stats count by src_ip, user
+| where count &gt; <span class="num">10</span>
+| sort -count
+| rename count <span class="kw">as</span> failed_attempts
+
+<span class="com">─── Elastic KQL (Kibana) ─────────────────────────────────────</span>
+event.code: <span class="str">"4625"</span> and event.outcome: <span class="str">"failure"</span>
+
+<span class="com">─── Linux: grep for SSH brute force in auth.log ──────────────</span>
+grep <span class="str">"Failed password"</span> /var/log/auth.log |   awk <span class="str">'{print $11}'</span> | sort | uniq -c | sort -rn | head -<span class="num">20</span>
+<span class="com"># Shows top attacking IPs by failed SSH attempts</span>
+
+<span class="com">─── Wazuh rule example (XML) ─────────────────────────────────</span>
+&lt;rule id=<span class="str">"100100"</span> level=<span class="str">"10"</span> frequency=<span class="str">"5"</span> timeframe=<span class="str">"120"</span>&gt;
+  &lt;if_matched_sid&gt;<span class="num">5503</span>&lt;/if_matched_sid&gt;  <span class="com">&lt;!-- SSH failed auth --&gt;</span>
+  &lt;description&gt;SSH brute force attack&lt;/description&gt;
+  &lt;group&gt;authentication_failures&lt;/group&gt;
+&lt;/rule&gt;
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Alert Triage</div>
+      <div class="concept-title">The Analyst's Triage Mindset</div>
+      <div class="concept-desc">
+        When a SIEM alert fires, resist the urge to panic or immediately
+        escalate. Use a structured triage approach:<br><br>
+        1. <strong>Understand the alert</strong> — what behaviour triggered it?<br>
+        2. <strong>Check context</strong> — who is the user/host? Is this
+           behaviour normal for them? (User Entity Behaviour Analytics).<br>
+        3. <strong>Look before &amp; after</strong> — what happened in the 10
+           minutes before and after the alert?<br>
+        4. <strong>Corroborate</strong> — does another log source confirm it?<br>
+        5. <strong>Classify</strong> — True Positive (real threat) /
+           False Positive (benign) / Tuning Required (alert needs refinement).<br><br>
+        <em>You can't make someone make the right choice, yet you can pick up
+        the pieces afterwards</em> — if a developer opens port 22 to the
+        world, the SIEM will catch the resulting attack. Document it,
+        remediate, and use it to educate.
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body sec -->
