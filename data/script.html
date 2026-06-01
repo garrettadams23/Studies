@@ -8287,4 +8287,118 @@ data = Path(<span class="str">"file.iso"</span>).read_bytes()
     </div>
   </div>
 </div>
+
+<!-- BEGINNER23-SCRIPT v1 -->
+<!-- ── TOPIC: SOLID PRINCIPLES ───────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🧱</span>
+    <span class="topic-name">SOLID Principles — Writing Code That Survives Change</span>
+    <span class="topic-badge">SCRIPT • Design</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY DESIGN PRINCIPLES</div>
+      <div class="concept-title">Code Is Read and Changed Far More Than Written</div>
+      <div class="concept-desc">A program is rarely "done" — requirements change, bugs are fixed, features added. SOLID is five principles (coined by Robert C. Martin) for structuring code so it's easier to understand, extend, and change without breaking everything. You don't need to memorize them as dogma, but understanding the ideas dramatically improves your code as you move past beginner scripts.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE FIVE PRINCIPLES</div>
+      <div class="concept-title">S - O - L - I - D</div>
+      <table class="ai-table">
+        <thead><tr><th>Letter</th><th>Principle</th><th>Plain English</th></tr></thead>
+        <tbody>
+          <tr><td><strong>S</strong></td><td>Single Responsibility</td><td>A class/function should do ONE thing. One reason to change.</td></tr>
+          <tr><td><strong>O</strong></td><td>Open/Closed</td><td>Open to extension, closed to modification — add behavior without editing existing code.</td></tr>
+          <tr><td><strong>L</strong></td><td>Liskov Substitution</td><td>A subclass should work anywhere its parent is expected, without surprises.</td></tr>
+          <tr><td><strong>I</strong></td><td>Interface Segregation</td><td>Many small, focused interfaces beat one giant one. Don't force clients to depend on methods they don't use.</td></tr>
+          <tr><td><strong>D</strong></td><td>Dependency Inversion</td><td>Depend on abstractions, not concrete implementations. Inject dependencies.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SRP IN ACTION</div>
+      <div class="concept-title">Single Responsibility — Before &amp; After</div>
+      <div class="code-block"><span class="com"># BAD — one class does everything (hard to test/change)</span>
+<span class="kw">class</span> <span class="fn">Report</span>:
+    <span class="kw">def</span> <span class="fn">fetch_data</span>(self): ...      <span class="com"># talks to DB</span>
+    <span class="kw">def</span> <span class="fn">format_html</span>(self): ...     <span class="com"># formatting</span>
+    <span class="kw">def</span> <span class="fn">send_email</span>(self): ...      <span class="com"># email/network</span>
+<span class="com"># Three reasons to change → fragile</span>
+
+<span class="com"># GOOD — each class has one job</span>
+<span class="kw">class</span> <span class="fn">ReportRepository</span>:     <span class="kw">def</span> <span class="fn">fetch</span>(self): ...
+<span class="kw">class</span> <span class="fn">ReportFormatter</span>:      <span class="kw">def</span> <span class="fn">to_html</span>(self, data): ...
+<span class="kw">class</span> <span class="fn">EmailSender</span>:          <span class="kw">def</span> <span class="fn">send</span>(self, html): ...
+<span class="com"># Each is independently testable and replaceable</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DEPENDENCY INVERSION</div>
+      <div class="concept-title">Inject Dependencies — Don't Hardcode Them</div>
+      <div class="code-block"><span class="com"># BAD — hardcoded dependency, impossible to test without a real DB</span>
+<span class="kw">class</span> <span class="fn">UserService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.db = PostgresDatabase()   <span class="com"># locked to Postgres</span>
+
+<span class="com"># GOOD — depend on an abstraction, pass it in</span>
+<span class="kw">class</span> <span class="fn">UserService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, db):     <span class="com"># inject any DB-like object</span>
+        self.db = db
+<span class="com"># In tests, pass a fake DB. In prod, pass the real one.</span>
+service = UserService(PostgresDatabase())
+test    = UserService(FakeInMemoryDatabase())</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DESIGN PATTERNS ────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📐</span>
+    <span class="topic-name">Design Patterns — Named Solutions to Common Problems</span>
+    <span class="topic-badge">SCRIPT • Design</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT THEY ARE</div>
+      <div class="concept-title">Reusable Vocabulary for Structuring Code</div>
+      <div class="concept-desc">Design patterns are battle-tested, named solutions to recurring design problems. Knowing them gives you a shared vocabulary ("let's use a factory here") and saves you from reinventing structures. Don't force them in — but recognizing when one fits is a sign of growth. Here are the ones beginners meet most often.</div>
+      <table class="ai-table">
+        <thead><tr><th>Pattern</th><th>Solves</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Factory</td><td>Creating objects without specifying exact class</td><td><code>get_parser("json")</code> returns the right parser</td></tr>
+          <tr><td>Singleton</td><td>Exactly one instance shared everywhere</td><td>A single config or connection pool</td></tr>
+          <tr><td>Strategy</td><td>Swap algorithms at runtime</td><td>Pluggable sorting/auth/compression methods</td></tr>
+          <tr><td>Observer</td><td>Notify many objects when state changes</td><td>Event systems, pub/sub, callbacks</td></tr>
+          <tr><td>Decorator</td><td>Add behavior without changing the object</td><td>Python's <code>@decorators</code>, middleware</td></tr>
+          <tr><td>Adapter</td><td>Make incompatible interfaces work together</td><td>Wrapping a third-party API in your interface</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">STRATEGY EXAMPLE</div>
+      <div class="concept-title">Swappable Behavior in Python</div>
+      <div class="code-block"><span class="com"># Strategy: pass behavior as a function/object</span>
+<span class="kw">def</span> <span class="fn">process</span>(data, transform):    <span class="com"># transform is the "strategy"</span>
+    <span class="kw">return</span> [transform(x) <span class="kw">for</span> x <span class="kw">in</span> data]
+
+process([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], <span class="kw">lambda</span> x: x*<span class="num">2</span>)     <span class="com"># [2, 4, 6]</span>
+process([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], <span class="fn">str</span>)              <span class="com"># ['1', '2', '3']</span>
+
+<span class="com"># Factory: centralize object creation</span>
+<span class="kw">def</span> <span class="fn">get_notifier</span>(kind):
+    <span class="kw">return</span> {
+        <span class="str">"email"</span>: EmailNotifier,
+        <span class="str">"slack"</span>: SlackNotifier,
+        <span class="str">"sms"</span>:   SMSNotifier,
+    }[kind]()
+
+notifier = get_notifier(<span class="str">"slack"</span>)   <span class="com"># caller doesn't know the class</span>
+notifier.send(<span class="str">"Deploy complete"</span>)</div>
+      <div class="concept-desc"><strong>A warning:</strong> patterns are tools, not goals. Forcing patterns into simple code ("over-engineering") is as bad as having none. Reach for them when complexity actually demands it.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->

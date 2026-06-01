@@ -3200,4 +3200,82 @@ journalctl --since "30 min ago" | grep -i -E "error|fail|warn"</div>
     </div>
   </div>
 </div>
+
+<!-- BEGINNER23-LINUX v1 -->
+<!-- ── TOPIC: STORAGE MANAGEMENT ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">💾</span>
+    <span class="topic-name">Storage Management — Disks, Partitions, LVM &amp; RAID</span>
+    <span class="topic-badge">LINUX • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE STACK</div>
+      <div class="concept-title">From Physical Disk to Mounted Directory</div>
+      <div class="concept-desc">Linux storage is layered: a physical disk is divided into partitions, each formatted with a filesystem, then mounted onto a directory in the unified tree. Understanding the layers is key to managing storage and troubleshooting "disk full" emergencies.</div>
+      <div class="code-block"><span class="com"># See block devices and their layout</span>
+lsblk                          <span class="com"># tree of disks/partitions/mounts</span>
+lsblk -f                       <span class="com"># include filesystem + UUID</span>
+fdisk -l                       <span class="com"># detailed partition tables</span>
+
+<span class="com"># Disk usage</span>
+df -h                          <span class="com"># free space per filesystem</span>
+df -i                          <span class="com"># inode usage (can fill before space!)</span>
+du -sh /var/*                  <span class="com"># what's eating space in /var</span>
+du -h --max-depth=1 / | sort -h   <span class="com"># biggest dirs</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PARTITION → FORMAT → MOUNT</div>
+      <div class="concept-title">Adding a New Disk</div>
+      <div class="code-block"><span class="com"># 1. Partition the new disk (e.g., /dev/sdb)</span>
+sudo fdisk /dev/sdb            <span class="com"># interactive: n, w (or use parted)</span>
+
+<span class="com"># 2. Create a filesystem</span>
+sudo mkfs.ext4 /dev/sdb1       <span class="com"># or xfs, btrfs</span>
+
+<span class="com"># 3. Mount it</span>
+sudo mkdir /mnt/data
+sudo mount /dev/sdb1 /mnt/data
+
+<span class="com"># 4. Make it permanent — add to /etc/fstab (use UUID!)</span>
+blkid /dev/sdb1                <span class="com"># get the UUID</span>
+<span class="com"># /etc/fstab line:</span>
+<span class="com"># UUID=xxxx-xxxx  /mnt/data  ext4  defaults  0  2</span>
+sudo mount -a                  <span class="com"># test fstab WITHOUT rebooting</span></div>
+      <div class="concept-desc"><strong>Always use UUIDs in fstab</strong>, not <code>/dev/sdb1</code> — device names can change between boots, and a bad fstab can prevent the system from booting. Test with <code>mount -a</code> before rebooting.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">LVM</div>
+      <div class="concept-title">Logical Volume Manager — Flexible Storage</div>
+      <div class="concept-desc">LVM adds a layer of abstraction so you can resize volumes, span disks, and snapshot — without repartitioning. The hierarchy: Physical Volumes (PV) → grouped into a Volume Group (VG) → carved into Logical Volumes (LV) that you format and mount. The killer feature: grow a volume on the fly when you add a disk.</div>
+      <div class="code-block"><span class="com"># PV → VG → LV</span>
+sudo pvcreate /dev/sdb /dev/sdc       <span class="com"># mark disks as PVs</span>
+sudo vgcreate data_vg /dev/sdb /dev/sdc   <span class="com"># pool them into a VG</span>
+sudo lvcreate -L 50G -n data_lv data_vg   <span class="com"># carve a 50G LV</span>
+sudo mkfs.ext4 /dev/data_vg/data_lv
+sudo mount /dev/data_vg/data_lv /mnt/data
+
+<span class="com"># The magic: extend it later (no downtime)</span>
+sudo lvextend -L +20G /dev/data_vg/data_lv
+sudo resize2fs /dev/data_vg/data_lv   <span class="com"># grow the filesystem too</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RAID LEVELS</div>
+      <div class="concept-title">Redundancy and Performance Tradeoffs</div>
+      <div class="concept-desc">RAID combines multiple disks for redundancy, performance, or both. <strong>RAID is not a backup</strong> — it protects against disk failure, not against deletion, corruption, or ransomware.</div>
+      <table class="ai-table">
+        <thead><tr><th>Level</th><th>Min Disks</th><th>Redundancy</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>RAID 0 (stripe)</td><td>2</td><td>None</td><td>Fast, but ANY disk loss = all data lost</td></tr>
+          <tr><td>RAID 1 (mirror)</td><td>2</td><td>1 disk</td><td>Full copy; simple, safe, 50% capacity</td></tr>
+          <tr><td>RAID 5 (parity)</td><td>3</td><td>1 disk</td><td>Good balance; slow rebuilds on big disks</td></tr>
+          <tr><td>RAID 6 (dual parity)</td><td>4</td><td>2 disks</td><td>Survives 2 failures; safer for large arrays</td></tr>
+          <tr><td>RAID 10 (1+0)</td><td>4</td><td>Per mirror</td><td>Fast AND redundant; popular for databases</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 <!-- /domain-body linux -->

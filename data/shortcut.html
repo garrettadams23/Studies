@@ -1154,6 +1154,86 @@ bind r source-file ~/.tmux.conf \; display "Reloaded!"</div>
     </div>
   </div>
 </div>
+
+<!-- BEGINNER23-SHORTCUT v1 -->
+<!-- ── TOPIC: CLI TEXT PROCESSING MASTERY ────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">⚡</span>
+    <span class="topic-name">Text Processing Mastery — Combining the Classic Tools</span>
+    <span class="topic-badge">SHORTCUTS • Power User</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE UNIX PHILOSOPHY</div>
+      <div class="concept-title">Small Tools That Do One Thing, Piped Together</div>
+      <div class="concept-desc">The power of the command line comes from composing small, focused tools with pipes (<code>|</code>). Each tool does one thing well; the pipe feeds one's output into the next. Mastering a handful of these — and how to chain them — lets you answer questions about logs and data in seconds that would take ages in a GUI.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">GREP — FIND LINES</div>
+      <div class="concept-title">Search Text Like a Pro</div>
+      <div class="code-block">grep "ERROR" app.log               <span class="com"># lines containing ERROR</span>
+grep -i "error" app.log            <span class="com"># case-insensitive</span>
+grep -r "TODO" ./src               <span class="com"># recursive through dir</span>
+grep -v "DEBUG" app.log            <span class="com"># INVERT — lines WITHOUT DEBUG</span>
+grep -c "404" access.log           <span class="com"># count matching lines</span>
+grep -n "fail" app.log             <span class="com"># show line numbers</span>
+grep -A3 -B3 "panic" app.log       <span class="com"># 3 lines After + Before context</span>
+grep -E "warn|error|fatal" app.log <span class="com"># regex (extended) OR</span>
+grep -oE "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" log   <span class="com"># extract just IPs</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">FIND — LOCATE FILES</div>
+      <div class="concept-title">Search the Filesystem by Any Attribute</div>
+      <div class="code-block">find . -name "*.log"               <span class="com"># by name pattern</span>
+find / -type f -size +100M         <span class="com"># files over 100MB</span>
+find . -mtime -1                   <span class="com"># modified in last 24h</span>
+find /var/log -mtime +30 -delete   <span class="com"># delete logs older than 30 days</span>
+find . -type f -name "*.sh" -perm -u+x   <span class="com"># executable scripts</span>
+
+<span class="com"># find + exec / xargs — act on results</span>
+find . -name "*.tmp" -exec rm {} \;     <span class="com"># delete each match</span>
+find . -name "*.py" | xargs grep "import os"   <span class="com"># grep in matches</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE CLASSIC PIPELINE</div>
+      <div class="concept-title">cut · sort · uniq · awk — Together</div>
+      <div class="code-block"><span class="com"># "Top 10 IPs hitting my web server" — a legendary one-liner</span>
+cut -d' ' -f1 access.log | sort | uniq -c | sort -rn | head -10
+<span class="com">#   cut field 1 (IP) → sort → count dups → sort by count desc → top 10</span>
+
+<span class="com"># Count HTTP status codes</span>
+awk '{print $9}' access.log | sort | uniq -c | sort -rn
+
+<span class="com"># Sum a column (e.g., total bytes transferred)</span>
+awk '{sum += $10} END {print sum}' access.log
+
+<span class="com"># Unique users who logged in today</span>
+grep "$(date +%Y-%m-%d)" auth.log | grep "session opened" \
+  | awk '{print $NF}' | sort -u
+
+<span class="com"># Find the 5 largest files under /var, human-readable</span>
+find /var -type f -printf '%s %p\n' | sort -rn | head -5 \
+  | awk '{printf "%.1f MB  %s\n", $1/1048576, $2}'</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">MODERN ALTERNATIVES</div>
+      <div class="concept-title">Faster, Friendlier Replacements</div>
+      <table class="ai-table">
+        <thead><tr><th>Classic</th><th>Modern</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>grep</code></td><td><code>ripgrep</code> (rg)</td><td>Much faster, respects .gitignore, nicer output</td></tr>
+          <tr><td><code>find</code></td><td><code>fd</code></td><td>Simpler syntax, fast, sane defaults</td></tr>
+          <tr><td><code>cat</code></td><td><code>bat</code></td><td>Syntax highlighting, line numbers</td></tr>
+          <tr><td><code>ls</code></td><td><code>eza</code> / <code>lsd</code></td><td>Colors, icons, git status</td></tr>
+          <tr><td><code>top</code></td><td><code>htop</code> / <code>btop</code></td><td>Interactive, visual</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc">Learn the classics first — they're on every server, everywhere, forever. The modern tools are great for your own machine but won't be on that random production box at 3am.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body shortcuts -->
         
 <!-- BEGINNER8-SHORTCUT v1 -->
