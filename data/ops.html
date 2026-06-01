@@ -1569,4 +1569,72 @@ ansible-playbook -i inventory.ini playbook.yml</div>
     </div>
   </div>
 </div>
+
+<!-- BEGINNER18-OPS v1 -->
+<!-- ── TOPIC: PERFORMANCE & CAPACITY ─────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📈</span>
+    <span class="topic-name">Performance &amp; Capacity — Finding and Fixing Bottlenecks</span>
+    <span class="topic-badge">OPS • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE FOUR RESOURCES</div>
+      <div class="concept-title">Everything Is CPU, Memory, Disk, or Network</div>
+      <div class="concept-desc">When a system is slow, the bottleneck is almost always one of four resources. The skill is identifying <em>which one</em> — guessing wastes time. Start broad (which resource is saturated?), then drill into the offending process.</div>
+      <table class="ai-table">
+        <thead><tr><th>Resource</th><th>Symptom</th><th>Linux Tool</th></tr></thead>
+        <tbody>
+          <tr><td>CPU</td><td>High load, slow computation</td><td><code>top</code>, <code>htop</code>, <code>mpstat</code>, <code>uptime</code></td></tr>
+          <tr><td>Memory</td><td>Swapping, OOM kills, slowness</td><td><code>free -h</code>, <code>vmstat</code>, <code>top</code></td></tr>
+          <tr><td>Disk I/O</td><td>High iowait, slow reads/writes</td><td><code>iostat</code>, <code>iotop</code>, <code>df</code>, <code>du</code></td></tr>
+          <tr><td>Network</td><td>Latency, packet loss, saturation</td><td><code>iftop</code>, <code>ss</code>, <code>nload</code>, <code>mtr</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">READING THE VITALS</div>
+      <div class="concept-title">Load Average and Resource Commands</div>
+      <div class="code-block"><span class="com"># Load average: 1, 5, 15-minute averages</span>
+uptime
+<span class="com"># load average: 2.50, 1.80, 1.20</span>
+<span class="com"># Rule of thumb: compare to CPU core count.</span>
+<span class="com"># load 2.5 on a 4-core box = fine. On 1 core = overloaded.</span>
+nproc                  <span class="com"># how many cores you have</span>
+
+<span class="com"># Memory — is it actually low, or just cached?</span>
+free -h
+<span class="com"># "available" is the number that matters, not "free"</span>
+<span class="com"># Linux uses spare RAM for cache — that's good, not a problem</span>
+
+<span class="com"># Disk I/O wait — %wa in top means CPU waiting on disk</span>
+iostat -x 2           <span class="com"># %util near 100 = disk saturated</span>
+
+<span class="com"># Find the hungriest processes</span>
+top -o %CPU           <span class="com"># sort by CPU</span>
+top -o %MEM           <span class="com"># sort by memory</span>
+ps aux --sort=-%mem | head    <span class="com"># top memory consumers</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE USE METHOD</div>
+      <div class="concept-title">A Systematic Troubleshooting Framework</div>
+      <div class="concept-desc">Brendan Gregg's USE method: for every resource, check three things. It's a checklist that prevents you from missing the obvious.</div>
+      <table class="ai-table">
+        <thead><tr><th>U-S-E</th><th>Question</th></tr></thead>
+        <tbody>
+          <tr><td><strong>U</strong>tilization</td><td>How busy is the resource? (% time active)</td></tr>
+          <tr><td><strong>S</strong>aturation</td><td>Is there a queue/backlog of work waiting?</td></tr>
+          <tr><td><strong>E</strong>rrors</td><td>Are there error events? (dropped packets, disk errors)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CAPACITY PLANNING</div>
+      <div class="concept-title">Don't Wait Until It's On Fire</div>
+      <div class="concept-desc">Capacity planning means predicting future resource needs based on growth trends, so you scale <em>before</em> you run out. Track utilization over time, identify the trend, and add capacity with lead time. The key metrics: current utilization, growth rate, and headroom (how much buffer before you hit limits). A disk filling at 2%/week with 20% free has ~10 weeks — plan now, not at 99%.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body ops -->

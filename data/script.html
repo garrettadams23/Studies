@@ -7754,4 +7754,132 @@ top_attackers.to_csv(<span class="str">"top_attackers.csv"</span>)</div>
     </div>
   </div>
 </div>
+
+<!-- BEGINNER18-SCRIPT v1 -->
+<!-- ── TOPIC: CODE QUALITY TOOLING ───────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">✨</span>
+    <span class="topic-name">Code Quality Tooling — Let Robots Enforce the Boring Rules</span>
+    <span class="topic-badge">SCRIPT • Professional</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHY IT MATTERS</div>
+      <div class="concept-title">Consistency Beats Cleverness</div>
+      <div class="concept-desc">Professional codebases use automated tools to enforce style, catch bugs, and keep code consistent — so humans don't waste time arguing about formatting in code review. These tools run automatically (locally and in CI), catching issues before they reach production. Setting them up marks the transition from "I write scripts" to "I write professional software."</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE TOOLBOX</div>
+      <div class="concept-title">The Modern Python Quality Stack</div>
+      <table class="ai-table">
+        <thead><tr><th>Tool</th><th>Category</th><th>What It Does</th></tr></thead>
+        <tbody>
+          <tr><td><code>black</code></td><td>Formatter</td><td>Auto-formats code to one consistent style — no debate</td></tr>
+          <tr><td><code>ruff</code></td><td>Linter + formatter</td><td>Ultra-fast (Rust); replaces flake8, isort, and more</td></tr>
+          <tr><td><code>mypy</code></td><td>Type checker</td><td>Catches type errors using your type hints — before runtime</td></tr>
+          <tr><td><code>pytest</code></td><td>Test runner</td><td>Runs your automated tests</td></tr>
+          <tr><td><code>bandit</code></td><td>Security linter</td><td>Flags common security issues (hardcoded secrets, eval)</td></tr>
+          <tr><td><code>pre-commit</code></td><td>Git hook manager</td><td>Runs all the above automatically before each commit</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">USING THEM</div>
+      <div class="concept-title">Run Them From the Command Line</div>
+      <div class="code-block"><span class="com"># Format code automatically</span>
+black .                       <span class="com"># reformat everything</span>
+ruff format .                 <span class="com"># ruff's formatter (black-compatible)</span>
+
+<span class="com"># Lint — find problems</span>
+ruff check .                  <span class="com"># report issues</span>
+ruff check --fix .            <span class="com"># auto-fix what it can</span>
+
+<span class="com"># Type check</span>
+mypy myproject/
+
+<span class="com"># Security scan</span>
+bandit -r myproject/
+
+<span class="com"># Run tests with coverage</span>
+pytest --cov=myproject</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">PRE-COMMIT HOOKS</div>
+      <div class="concept-title">Automate Quality on Every Commit</div>
+      <div class="concept-desc">pre-commit runs your quality tools automatically every time you <code>git commit</code>. If something fails, the commit is blocked until you fix it. This catches problems at the earliest possible moment.</div>
+      <div class="code-block"><span class="com"># .pre-commit-config.yaml</span>
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.0
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.10.0
+    hooks:
+      - id: mypy
+
+<span class="com"># Install once, then it runs on every commit</span>
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files    <span class="com"># run manually on whole repo</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MOCKING IN TESTS ───────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🎭</span>
+    <span class="topic-name">Mocking — Testing Code That Talks to the Outside World</span>
+    <span class="topic-badge">SCRIPT • Testing</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE PROBLEM</div>
+      <div class="concept-title">How Do You Test Code That Calls an API?</div>
+      <div class="concept-desc">Your function calls a real API, queries a database, or reads the system clock. You can't have your tests hitting a real server (slow, flaky, costs money, may not exist in CI). The solution is <strong>mocking</strong>: replacing the real dependency with a fake that you control, so you can test YOUR logic in isolation.</div>
+      <div class="code-block"><span class="kw">from</span> unittest.mock <span class="kw">import</span> patch, MagicMock
+<span class="kw">import</span> requests
+
+<span class="com"># The function under test — calls a real API</span>
+<span class="kw">def</span> <span class="fn">get_user_count</span>():
+    resp = requests.get(<span class="str">"https://api.example.com/users"</span>)
+    <span class="kw">return</span> resp.json()[<span class="str">"count"</span>]
+
+<span class="com"># The test — mock out requests.get so no real call happens</span>
+<span class="fn">@patch</span>(<span class="str">"requests.get"</span>)
+<span class="kw">def</span> <span class="fn">test_get_user_count</span>(mock_get):
+    <span class="com"># Configure the fake response</span>
+    mock_get.return_value.json.return_value = {<span class="str">"count"</span>: <span class="num">42</span>}
+
+    <span class="com"># Call the function — it uses the mock, not the real API</span>
+    result = get_user_count()
+
+    <span class="com"># Assert YOUR logic worked</span>
+    <span class="kw">assert</span> result == <span class="num">42</span>
+    mock_get.assert_called_once_with(<span class="str">"https://api.example.com/users"</span>)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">MOCKING CONCEPTS</div>
+      <div class="concept-title">The Vocabulary of Test Doubles</div>
+      <table class="ai-table">
+        <thead><tr><th>Term</th><th>What It Is</th></tr></thead>
+        <tbody>
+          <tr><td>Mock</td><td>A fake object you configure and inspect (was it called? with what?)</td></tr>
+          <tr><td>Stub</td><td>A fake that returns canned answers, no behavior verification</td></tr>
+          <tr><td>Patch</td><td>Temporarily replace a real object with a mock during a test</td></tr>
+          <tr><td>Fixture</td><td>Reusable test setup (e.g., a fresh DB, sample data)</td></tr>
+          <tr><td>Spy</td><td>Wraps a real object but records how it was called</td></tr>
+          <tr><td>Fake</td><td>A working but simplified implementation (e.g., in-memory DB)</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-desc"><strong>Rule of thumb:</strong> mock at the boundaries (network, disk, time, randomness) — not your own internal logic. Over-mocking makes tests that pass even when the real code is broken.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body script -->

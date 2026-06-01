@@ -1221,4 +1221,86 @@ sha256sum evidence.img    <span class="com"># must match — proves a faithful c
     </div>
   </div>
 </div>
+
+<!-- BEGINNER18-THREAT v1 -->
+<!-- ── TOPIC: RANSOMWARE DEEP DIVE ───────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔒</span>
+    <span class="topic-name">Ransomware — The Defining Threat of the Era</span>
+    <span class="topic-badge">THREAT • Critical</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">HOW IT WORKS</div>
+      <div class="concept-title">The Ransomware Attack Lifecycle</div>
+      <div class="concept-desc">Ransomware encrypts your files and demands payment for the decryption key. But modern ransomware is rarely a single event — it's the final stage of a longer intrusion. Understanding the full lifecycle reveals many points where defenders can intervene before the encryption ever happens.</div>
+      <table class="ai-table">
+        <thead><tr><th>Stage</th><th>What Happens</th><th>Defense Opportunity</th></tr></thead>
+        <tbody>
+          <tr><td>1. Initial access</td><td>Phishing, exposed RDP, exploited VPN/vuln</td><td>MFA, patching, email filtering, awareness</td></tr>
+          <tr><td>2. Establish foothold</td><td>Install backdoor, C2 channel</td><td>EDR detection, egress filtering</td></tr>
+          <tr><td>3. Privilege escalation</td><td>Get domain admin</td><td>Least privilege, tiered admin, patching</td></tr>
+          <tr><td>4. Lateral movement</td><td>Spread across the network</td><td>Network segmentation, monitoring</td></tr>
+          <tr><td>5. Exfiltration</td><td>Steal data for double extortion</td><td>DLP, egress monitoring</td></tr>
+          <tr><td>6. Encryption</td><td>Deploy ransomware everywhere at once</td><td>Immutable backups, EDR behavioral blocking</td></tr>
+          <tr><td>7. Extortion</td><td>Demand payment; threaten to leak data</td><td>IR plan, backups, legal/comms ready</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">MODERN TACTICS</div>
+      <div class="concept-title">Why It Got So Much Worse</div>
+      <table class="ai-table">
+        <thead><tr><th>Tactic</th><th>What It Means</th></tr></thead>
+        <tbody>
+          <tr><td>Double extortion</td><td>Steal data BEFORE encrypting — "pay or we leak it publicly." Backups alone no longer save you.</td></tr>
+          <tr><td>Triple extortion</td><td>Also threaten customers, DDoS, or regulators</td></tr>
+          <tr><td>RaaS (Ransomware-as-a-Service)</td><td>Developers rent ransomware to "affiliates" for a cut — lowers the skill barrier dramatically</td></tr>
+          <tr><td>Big game hunting</td><td>Targeting large orgs for massive payouts rather than spray-and-pray</td></tr>
+          <tr><td>Living off the land</td><td>Using built-in tools (PsExec, PowerShell) to evade detection</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DEFENSE & RESPONSE</div>
+      <div class="concept-title">Should You Pay? (Generally, No)</div>
+      <div class="concept-desc">Authorities (FBI, CISA) discourage paying: it funds crime, marks you as a target, and offers no guarantee of recovery (decryptors are often buggy or incomplete). The best defense is preparation: <strong>immutable, offline backups</strong> (can't be encrypted), tested recovery, network segmentation, MFA everywhere, and a rehearsed incident response plan. The organizations that recover fastest are the ones that prepared before the attack.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: THREAT ACTOR TAXONOMY ──────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🎭</span>
+    <span class="topic-name">Threat Actors — Know Your Adversary</span>
+    <span class="topic-badge">THREAT • Foundation</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHO ATTACKS AND WHY</div>
+      <div class="concept-title">The Threat Actor Spectrum</div>
+      <div class="concept-desc">Different attackers have different motivations, resources, and skill — which shapes how they attack and how you defend. Understanding who might target you (your "threat model") helps prioritize defenses.</div>
+      <table class="ai-table">
+        <thead><tr><th>Actor</th><th>Motivation</th><th>Sophistication</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Script kiddie</td><td>Bragging rights, curiosity</td><td>Low — uses others' tools</td><td>Running downloaded exploits</td></tr>
+          <tr><td>Hacktivist</td><td>Ideology, political message</td><td>Low-medium</td><td>Anonymous, website defacement, DDoS</td></tr>
+          <tr><td>Cybercriminal</td><td>Money</td><td>Medium-high</td><td>Ransomware gangs, banking trojans, fraud</td></tr>
+          <tr><td>Insider threat</td><td>Revenge, money, negligence</td><td>Varies (has legit access)</td><td>Disgruntled employee stealing data</td></tr>
+          <tr><td>Nation-state (APT)</td><td>Espionage, sabotage, strategic</td><td>Very high, well-funded, patient</td><td>Stuxnet, SolarWinds</td></tr>
+          <tr><td>Terrorist / cyberterror</td><td>Fear, disruption</td><td>Varies</td><td>Attacks on critical infrastructure</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">APTs</div>
+      <div class="concept-title">Advanced Persistent Threats</div>
+      <div class="concept-desc">An APT is a sophisticated, well-resourced (usually nation-state) attacker that gains access and stays hidden for a <em>long time</em> — months or years — pursuing strategic goals like espionage. The name breaks down: <strong>Advanced</strong> (custom tools, zero-days), <strong>Persistent</strong> (long-term, patient, re-establishes access), <strong>Threat</strong> (organized, funded, goal-driven). They're given names/numbers by researchers: APT28 (Fancy Bear), APT29 (Cozy Bear), Lazarus Group. Defending against APTs requires assuming breach, deep monitoring, and threat hunting — you won't stop them at the door.</div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body threat -->

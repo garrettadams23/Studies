@@ -3018,4 +3018,102 @@ sudo aa-enforce /path/to/program    <span class="com"># enforce the profile</spa
     </div>
   </div>
 </div>
+
+<!-- BEGINNER18-LINUX v1 -->
+<!-- ── TOPIC: SSH DEEP DIVE & HARDENING ──────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🔑</span>
+    <span class="topic-name">SSH — Secure Remote Access Done Right</span>
+    <span class="topic-badge">LINUX • Essential</span>
+    <span class="topic-chevron">›</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">SSH BASICS</div>
+      <div class="concept-title">The Universal Remote Access Protocol</div>
+      <div class="concept-desc">SSH (Secure Shell) is how you remotely access and manage Linux/Unix servers over an encrypted connection. It's foundational — every sysadmin, DevOps engineer, and security professional lives in SSH. It replaced the old, insecure Telnet (which sent passwords in plaintext).</div>
+      <div class="code-block"><span class="com"># Connect to a server</span>
+ssh alice@server.example.com
+ssh -p 2222 alice@server.com      <span class="com"># custom port</span>
+
+<span class="com"># Run a single command remotely</span>
+ssh alice@server "df -h"
+
+<span class="com"># Copy files over SSH</span>
+scp file.txt alice@server:/tmp/   <span class="com"># local → remote</span>
+scp alice@server:/var/log/app.log .   <span class="com"># remote → local</span>
+rsync -avz ./data/ alice@server:/backup/   <span class="com"># efficient sync</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">KEY-BASED AUTH</div>
+      <div class="concept-title">Stop Using Passwords — Use Keys</div>
+      <div class="concept-desc">SSH key pairs are far more secure than passwords: a private key (kept secret on your machine) and a public key (placed on servers). Authentication happens via cryptography, not a guessable password. This is THE standard for professional server access.</div>
+      <div class="code-block"><span class="com"># Generate a modern key pair (ed25519 preferred)</span>
+ssh-keygen -t ed25519 -C "alice@laptop"
+<span class="com"># Creates ~/.ssh/id_ed25519 (private) and id_ed25519.pub (public)</span>
+
+<span class="com"># Copy your PUBLIC key to a server (enables key login)</span>
+ssh-copy-id alice@server.example.com
+
+<span class="com"># Now you can log in without a password</span>
+ssh alice@server.example.com
+
+<span class="com"># Permissions MUST be strict or SSH refuses the key</span>
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519       <span class="com"># private key</span>
+chmod 644 ~/.ssh/id_ed25519.pub   <span class="com"># public key</span>
+
+<span class="com"># Use ssh-agent so you don't retype the passphrase</span>
+eval $(ssh-agent)
+ssh-add ~/.ssh/id_ed25519</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SSH CONFIG</div>
+      <div class="concept-title">Save Yourself Typing with ~/.ssh/config</div>
+      <div class="code-block"><span class="com"># ~/.ssh/config — define shortcuts and defaults</span>
+Host web
+    HostName web1.example.com
+    User alice
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519
+
+Host bastion
+    HostName jump.example.com
+    User admin
+
+<span class="com"># Reach internal host through the bastion automatically</span>
+Host internal-db
+    HostName 10.0.5.20
+    User dbadmin
+    ProxyJump bastion
+
+<span class="com"># Now just:  ssh web   (instead of the full command)</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">HARDENING SSHD</div>
+      <div class="concept-title">Locking Down the SSH Server</div>
+      <div class="concept-desc">SSH is the #1 target of automated internet attacks — bots constantly try to brute-force it. Hardening <code>/etc/ssh/sshd_config</code> dramatically reduces risk.</div>
+      <table class="ai-table">
+        <thead><tr><th>Setting</th><th>Value</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>PermitRootLogin</code></td><td><code>no</code></td><td>Force use of named accounts + sudo (accountability + harder to brute-force)</td></tr>
+          <tr><td><code>PasswordAuthentication</code></td><td><code>no</code></td><td>Keys only — defeats password brute-forcing entirely</td></tr>
+          <tr><td><code>PubkeyAuthentication</code></td><td><code>yes</code></td><td>Enable key-based auth</td></tr>
+          <tr><td><code>Port</code></td><td><code>2222</code> (non-standard)</td><td>Reduces noise from automated bots (not real security, just quieter)</td></tr>
+          <tr><td><code>AllowUsers</code></td><td><code>alice bob</code></td><td>Whitelist who can SSH in</td></tr>
+          <tr><td><code>MaxAuthTries</code></td><td><code>3</code></td><td>Limit guesses per connection</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="com"># Apply changes safely</span>
+sudo nano /etc/ssh/sshd_config
+sudo sshd -t                      <span class="com"># test config syntax FIRST</span>
+sudo systemctl restart sshd
+
+<span class="com"># Add fail2ban to auto-ban brute-forcers</span>
+sudo apt install fail2ban
+<span class="com"># Bans IPs after repeated failed logins</span></div>
+    </div>
+  </div>
+</div>
 <!-- /domain-body linux -->
