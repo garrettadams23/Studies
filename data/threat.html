@@ -1702,4 +1702,66 @@ osqueryi
 
   </div>
 </div>
+<!-- BEGINNER39-THREAT v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Indicators of Compromise (IOCs) – What to Look For</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">An IOC is a clue, not a verdict</h4>
+      <p class="concept-desc">An Indicator of Compromise is a piece of forensic evidence that <em>suggests</em> a system
+      may have been breached — a suspicious file hash, an unusual outbound connection, a registry key that shouldn't
+      exist. The word "indicator" matters: a single IOC rarely proves an intrusion on its own. It's a thread to pull, and
+      pulling it carefully — rather than jumping straight to "we've been hacked, shut everything down" — is what keeps
+      a real incident from turning into a self-inflicted outage.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Common IOC categories, from easy to spoof to hard to spoof</h4>
+      <table class="ai-table">
+        <tr><th>Category</th><th>Example</th><th>Why it's useful / limited</th></tr>
+        <tr><td>File hashes (MD5/SHA256)</td><td>A known-malware binary's exact fingerprint</td><td>Precise, but trivially defeated by changing one byte of the file</td></tr>
+        <tr><td>IP addresses / domains</td><td>Command-and-control server addresses</td><td>Useful for blocking, but attackers rotate infrastructure constantly</td></tr>
+        <tr><td>File paths / registry keys</td><td><code>C:\Windows\Temp\svch0st.exe</code> (note the zero)</td><td>Reveals attacker tradecraft, but easy to rename next time</td></tr>
+        <tr><td>Behavioral patterns</td><td>"Word spawning PowerShell spawning a reverse shell"</td><td>Hardest to fake — the attacker has to actually do something different to evade it</td></tr>
+      </table>
+      <p class="concept-desc">This is why mature security teams talk about moving "up the Pyramid of Pain" — from
+      easily-changed atomic indicators (hashes, IPs) toward TTPs (tactics, techniques, and procedures) that describe
+      <em>how</em> an attacker operates, which is far more expensive for them to change.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Checking a suspicious file or hash yourself</h4>
+      <pre class="code-block"><span class="com"># Generate a hash for a file you want to check</span>
+sha256sum suspicious_attachment.pdf
+
+<span class="com"># Search running processes for anything spawned from an unusual path</span>
+ps aux | grep -E &quot;/tmp/|/dev/shm/|AppData\\Local\\Temp&quot;
+
+<span class="com"># List recently modified files in sensitive directories — a common
+# sign of tampering or dropped tooling</span>
+find /etc /usr/bin /usr/local/bin -mtime -2 -type f 2>/dev/null
+
+<span class="com"># Check outbound connections for anything talking to unfamiliar hosts</span>
+ss -tunap | grep ESTAB</pre>
+      <p class="concept-desc">Before you act on a hash match from a public threat-intel feed, paste it into a malware
+      analysis service or sandbox to see what others have already learned about it — community context turns a bare
+      indicator into something you can actually act on with confidence.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — except when it is</h4>
+      <p class="concept-desc">If you spot an IOC on a system outside your scope of responsibility, resist the urge to dig
+      in yourself — that's how evidence gets contaminated and chains of custody get broken. Report it through the proper
+      channel to the team that owns it. But on systems that <em>are</em> yours to protect, that same phrase becomes a
+      trap: "probably nothing" is exactly the thought that lets small indicators grow into large incidents. Knowing which
+      circus is yours is half the job.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body threat -->
 <!-- /domain-body threat -->

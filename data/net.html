@@ -4773,4 +4773,84 @@ tshark -r capture.pcap --export-objects http,/tmp/extracted_files/
 
   </div>
 </div>
+<!-- BEGINNER39-NET v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>DNS Deep Dive – How Name Resolution Really Works</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me</h4>
+      <p class="concept-desc">When a website "won't load," don't assume it's the web server. DNS failures look identical
+      to outages from the user's perspective. Walking the resolution chain step by step — instead of guessing — is what
+      separates a five-minute fix from an hour of chasing the wrong problem.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The resolution chain, in order</h4>
+      <p class="concept-desc">When you type <code>example.com</code> into a browser, your computer doesn't magically know
+      where to send the request. It walks a chain of lookups:</p>
+      <table class="ai-table">
+        <tr><th>Step</th><th>What happens</th><th>Where it's checked</th></tr>
+        <tr><td>1. Browser cache</td><td>"Have I looked this up in the last few minutes?"</td><td>Browser memory</td></tr>
+        <tr><td>2. OS cache</td><td>"Does the operating system already know this?"</td><td><code>systemd-resolved</code> / <code>dnsmasq</code> / Windows DNS Client</td></tr>
+        <tr><td>3. Hosts file</td><td>"Is there a manual override?"</td><td><code>/etc/hosts</code> or <code>C:\Windows\System32\drivers\etc\hosts</code></td></tr>
+        <tr><td>4. Recursive resolver</td><td>"Ask my configured DNS server (ISP, 1.1.1.1, 8.8.8.8) to find it"</td><td><code>/etc/resolv.conf</code></td></tr>
+        <tr><td>5. Root → TLD → authoritative</td><td>The resolver walks the DNS hierarchy until it finds the authoritative answer</td><td>Global DNS infrastructure</td></tr>
+      </table>
+      <p class="concept-desc">Most "the website is down" tickets are solved at step 2 or 3 — a stale cache entry or a
+      leftover hosts file edit from testing months ago.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Tracing resolution yourself</h4>
+      <pre class="code-block"><span class="com"># See which resolver your system is configured to use</span>
+cat /etc/resolv.conf
+
+<span class="com"># Look up a name and show the full trip — timing included</span>
+dig example.com
+
+<span class="com"># Trace the entire chain from the root servers down (educational, slower)</span>
+dig +trace example.com
+
+<span class="com"># Ask a *specific* DNS server directly, bypassing your default resolver</span>
+dig @1.1.1.1 example.com
+
+<span class="com"># Check what record types exist — A (IPv4), AAAA (IPv6), MX (mail), TXT, CNAME</span>
+dig example.com MX
+dig example.com TXT
+
+<span class="com"># Reverse lookup: what name does this IP resolve back to?</span>
+dig -x 93.184.216.34</pre>
+      <p class="concept-desc">The <span class="kw">+trace</span> flag is especially good for learning — it shows the
+      actual hierarchy: your resolver asks a root server "who handles .com?", then asks that TLD server "who handles
+      example.com?", then finally asks the authoritative server for the actual IP.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Common pitfall</span>
+      <h4 class="concept-title">"It works on my machine" — DNS cache edition</h4>
+      <p class="concept-desc">A classic scenario: a developer changes a DNS record, tells you "it's updated," and your
+      browser still shows the old site. Both of you are right — the record changed at the authoritative server, but your
+      resolver cached the old answer for its full TTL (time-to-live). Common fixes, in order of how invasive they are:</p>
+      <pre class="code-block"><span class="com"># Flush just your local OS resolver cache (Linux with systemd-resolved)</span>
+sudo resolvectl flush-caches
+
+<span class="com"># macOS</span>
+sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
+
+<span class="com"># Windows (run as administrator)</span>
+ipconfig /flushdns
+
+<span class="com"># Or simply query a different resolver to sanity-check the *real* current value</span>
+dig @8.8.8.8 example.com +short</pre>
+      <p class="concept-desc">If a record was just changed, remember that TTL still applies globally — other people's
+      resolvers around the world will keep serving the cached answer until their TTL expires too. This is why planned DNS
+      cutovers lower the TTL days in advance.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body net -->
 <!-- /domain-body net -->

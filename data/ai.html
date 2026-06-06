@@ -892,4 +892,76 @@ _scaler = joblib.load(<span class="str">"scaler.pkl"</span>)
 
   </div>
 </div>
+<!-- BEGINNER39-AI v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Retrieval-Augmented Generation (RAG) Explained Simply</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Why RAG exists: the "stale textbook" problem</h4>
+      <p class="concept-desc">A language model is trained on a snapshot of text up to some cutoff date. Ask it about your
+      company's internal wiki, last week's incident report, or this morning's product release, and it simply has no idea
+      — that information was never in its training data. RAG solves this by giving the model a way to <em>look things up</em>
+      at the moment you ask, rather than relying purely on what it memorized during training.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The RAG pipeline, step by step</h4>
+      <table class="ai-table">
+        <tr><th>Step</th><th>What happens</th><th>Plain-language analogy</th></tr>
+        <tr><td>1. Chunk</td><td>Break documents into small overlapping pieces (e.g. 500 words)</td><td>Tearing a textbook into index cards</td></tr>
+        <tr><td>2. Embed</td><td>Convert each chunk into a vector of numbers that captures its meaning</td><td>Filing each card by topic, not alphabetically</td></tr>
+        <tr><td>3. Store</td><td>Save the vectors in a vector database (Chroma, Pinecone, pgvector, FAISS)</td><td>The filing cabinet itself</td></tr>
+        <tr><td>4. Retrieve</td><td>When a question comes in, embed it too and find the most similar stored chunks</td><td>Pulling the most relevant index cards</td></tr>
+        <tr><td>5. Augment + Generate</td><td>Stuff those chunks into the prompt alongside the question, then ask the model to answer using them</td><td>Handing the cards to an expert and asking them to summarize</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">A minimal RAG sketch in Python</h4>
+      <pre class="code-block"><span class="com"># pip install chromadb sentence-transformers</span>
+<span class="kw">import</span> chromadb
+<span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+
+embedder = SentenceTransformer(<span class="str">&quot;all-MiniLM-L6-v2&quot;</span>)
+client = chromadb.Client()
+collection = client.create_collection(<span class="str">&quot;helpdesk_docs&quot;</span>)
+
+<span class="com"># Step 1-3: chunk, embed, and store some internal documentation</span>
+docs = [
+    <span class="str">&quot;To reset your VPN password, open the self-service portal and click Reset.&quot;</span>,
+    <span class="str">&quot;The office Wi-Fi SSID is CorpNet-5G; guests should use CorpNet-Guest.&quot;</span>,
+    <span class="str">&quot;Laptop refresh requests go through the asset management ticket queue.&quot;</span>,
+]
+collection.add(
+    documents=docs,
+    embeddings=embedder.encode(docs).tolist(),
+    ids=[<span class="str">f&quot;doc-{i}&quot;</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(docs))],
+)
+
+<span class="com"># Step 4: retrieve the most relevant chunk for a user's question</span>
+question = <span class="str">&quot;How do I get on the wireless network as a visitor?&quot;</span>
+results = collection.query(query_embeddings=embedder.encode([question]).tolist(), n_results=1)
+<span class="fn">print</span>(<span class="str">&quot;Most relevant doc:&quot;</span>, results[<span class="str">&quot;documents&quot;</span>][0][0])
+
+<span class="com"># Step 5: in a real system, you'd now hand that retrieved text + the
+# question to an LLM with a prompt like:
+#   &quot;Using only the context below, answer the user's question...&quot;</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Common pitfall</span>
+      <h4 class="concept-title">RAG doesn't eliminate hallucination — it reduces it</h4>
+      <p class="concept-desc">A model can still misread or misapply the retrieved context, blend it with memorized facts,
+      or confidently answer when retrieval returned nothing useful. <strong>Assume makes an ass out of you and me</strong>
+      applies directly here: never assume a RAG answer is accurate just because it cites a source. Good systems show the
+      retrieved chunks alongside the answer so a human can verify the model actually used them correctly — and instruct
+      the model to say "I don't know" when retrieval comes back empty, rather than filling the gap with a guess.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body ai -->
 <!-- /domain-body ai -->
