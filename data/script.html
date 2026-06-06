@@ -9385,4 +9385,178 @@ m = pattern.search(log_line)
 
   </div>
 </div>
+
+<!-- BEGINNER36-SCRIPT v1 -->
+<!-- ── TOPIC: Git Advanced Workflows ─────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Intermediate</span>
+    Git Advanced Workflows – Beyond add, commit, push
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why "git add, commit, push" Isn't Enough</div>
+      <div class="concept-desc">
+        Most beginners learn the basic Git loop and stop there. But real
+        teams hit situations the basics don't cover: messy commit history,
+        accidental commits to the wrong branch, finding which commit
+        introduced a bug, or recovering "lost" work. These tools turn Git
+        from a save-button into a powerful investigation and cleanup
+        toolkit.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        destructive Git command is safe just because the help text looks
+        simple. <code>reset --hard</code>, <code>push --force</code>, and
+        <code>clean -f</code> can permanently destroy work. Always know
+        your escape hatch before you pull the trigger.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Investigation</div>
+      <div class="concept-title">git bisect — Finding the Commit That Broke Things</div>
+      <div class="concept-desc">
+        When a bug appears and you don't know which of the last 200
+        commits introduced it, <code>git bisect</code> performs an
+        automated binary search through history.
+      </div>
+      <div class="code-block">
+<span class="com"># Start a bisect session</span>
+git bisect start
+
+<span class="com"># Tell git the current commit is broken (bad)</span>
+git bisect bad
+
+<span class="com"># Tell git a known-good commit (e.g. last release tag)</span>
+git bisect good v2.3.0
+
+<span class="com"># Git checks out a commit halfway between good and bad.</span>
+<span class="com"># Test it, then tell git the result:</span>
+git bisect good   <span class="com"># if this commit works</span>
+<span class="com"># or</span>
+git bisect bad    <span class="com"># if this commit is broken</span>
+
+<span class="com"># Repeat — git narrows the range each time (log2(N) steps total)</span>
+<span class="com"># When done, git identifies the exact commit that introduced the bug:</span>
+<span class="com"># "a1b2c3d is the first bad commit"</span>
+
+<span class="com"># Clean up when finished</span>
+git bisect reset
+
+<span class="com"># Automate it entirely with a test script (no manual testing!)</span>
+git bisect start HEAD v2.3.0
+git bisect run pytest tests/test_regression.py
+<span class="com"># git runs the test at each step and decides good/bad automatically</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">History Cleanup</div>
+      <div class="concept-title">Interactive Rebase — Cleaning Up Before You Share</div>
+      <div class="concept-desc">
+        Before opening a pull request, a clean commit history makes
+        review far easier. <code>git rebase -i</code> lets you reorder,
+        combine, edit, or drop commits.
+        <strong>Only rewrite history on branches you haven't shared.</strong>
+      </div>
+      <div class="code-block">
+<span class="com"># Interactively edit the last 5 commits</span>
+git rebase -i HEAD~5
+
+<span class="com"># This opens an editor with lines like:</span>
+pick a1b2c3d Add login form
+pick d4e5f6a Fix typo in login form
+pick 7890abc WIP debugging
+pick bcdef12 Actually fix the bug
+pick 3456789 Remove debug prints
+
+<span class="com"># Change "pick" to control what happens to each commit:</span>
+<span class="com">#   pick   = keep commit as-is</span>
+<span class="com">#   reword = keep changes, edit the commit message</span>
+<span class="com">#   squash = combine with the commit above (keep both messages)</span>
+<span class="com">#   fixup  = combine with commit above (discard this message)</span>
+<span class="com">#   drop   = remove the commit entirely</span>
+
+<span class="com"># Cleaned-up result might look like:</span>
+pick   a1b2c3d Add login form
+fixup  d4e5f6a Fix typo in login form
+drop   7890abc WIP debugging
+fixup  bcdef12 Actually fix the bug
+drop   3456789 Remove debug prints
+
+<span class="com"># Result: one clean commit "Add login form" instead of five messy ones</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Recovery</div>
+      <div class="concept-title">git reflog — Your Undo Button for Almost Anything</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — someone on your team will run
+        <code>git reset --hard</code> on the wrong branch eventually.
+        <code>git reflog</code> is how you save them.<br><br>
+        Git keeps a log of <em>every</em> place HEAD has pointed —
+        commits, resets, rebases, checkouts — for about 90 days, even
+        ones that seem to have "vanished."
+      </div>
+      <div class="code-block">
+<span class="com"># Show every recent HEAD movement (even "lost" commits)</span>
+git reflog
+
+<span class="com"># Output looks like:</span>
+<span class="com"># a1b2c3d HEAD@{0}: reset: moving to HEAD~3</span>
+<span class="com"># d4e5f6a HEAD@{1}: commit: Add payment validation</span>
+<span class="com"># 7890abc HEAD@{2}: commit: Fix currency rounding bug</span>
+<span class="com"># ...</span>
+
+<span class="com"># Recover "lost" commits by checking out the reflog entry</span>
+git checkout HEAD@{1}
+
+<span class="com"># Or restore your branch to before the bad reset</span>
+git reset --hard HEAD@{1}
+
+<span class="com"># Recover a deleted branch entirely</span>
+git reflog | grep <span class="str">"checkout: moving from feature-x"</span>
+git branch feature-x &lt;commit-hash-from-reflog&gt;
+
+<span class="com"># Find "dangling" commits not referenced by any branch</span>
+git fsck --lost-found
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Workflow</div>
+      <div class="concept-title">Stash, Cherry-Pick &amp; Worktrees — Juggling Work</div>
+      <div class="concept-desc">
+        These commands solve the "I need to switch context without
+        losing my work" problem in different ways.
+      </div>
+      <div class="code-block">
+<span class="com"># STASH — temporarily shelve uncommitted changes</span>
+git stash push -m <span class="str">"WIP: refactoring auth module"</span>
+git checkout main           <span class="com"># switch branches with a clean working tree</span>
+<span class="com"># ... fix the urgent bug ...</span>
+git checkout feature-branch
+git stash pop               <span class="com"># bring your work back</span>
+git stash list              <span class="com"># see all stashed changes</span>
+
+<span class="com"># CHERRY-PICK — apply a specific commit from another branch</span>
+git log other-branch --oneline   <span class="com"># find the commit hash you need</span>
+git cherry-pick a1b2c3d          <span class="com"># apply just that one commit here</span>
+<span class="com"># Common use: backporting a critical bugfix to a release branch</span>
+
+<span class="com"># WORKTREES — check out multiple branches simultaneously in</span>
+<span class="com"># separate directories (no stashing needed)</span>
+git worktree add ../hotfix-dir hotfix/critical-bug
+<span class="com"># Now you have two working directories on two branches at once —</span>
+<span class="com"># build/test the hotfix while your main feature work stays untouched</span>
+git worktree list
+git worktree remove ../hotfix-dir
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body script -->

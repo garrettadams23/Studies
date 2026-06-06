@@ -4006,4 +4006,139 @@ sudo lvremove /dev/data_vg/app_data_snap
 
   </div>
 </div>
+
+<!-- BEGINNER36-LINUX v1 -->
+<!-- ── TOPIC: Mail Server Administration ─────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Mail Servers – Postfix, Dovecot &amp; Email Plumbing
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">How Email Actually Travels</div>
+      <div class="concept-desc">
+        Email involves more moving parts than people realise. Three
+        protocols and two server roles cover almost everything:<br><br>
+        &bull; <strong>MTA (Mail Transfer Agent)</strong> — moves mail
+          between servers using <strong>SMTP</strong> (Simple Mail
+          Transfer Protocol, port 25/587). Examples: Postfix, Exim, Sendmail.<br>
+        &bull; <strong>MDA / IMAP-POP server</strong> — stores mail and
+          lets users retrieve it. Examples: Dovecot.<br>
+        &bull; <strong>IMAP</strong> (port 143/993) — keeps mail on the
+          server, syncs across devices (the modern standard).<br>
+        &bull; <strong>POP3</strong> (port 110/995) — downloads mail to
+          one device, often deletes it from the server (legacy).<br><br>
+        <strong>The journey of an email:</strong><br>
+        Your client → your MTA (SMTP) → recipient's MX server (SMTP) →
+        recipient's mailbox store → recipient's client (IMAP/POP3).
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Postfix Setup</div>
+      <div class="concept-title">Basic Postfix Configuration</div>
+      <div class="concept-desc">
+        Postfix is the most widely deployed open-source MTA. Its main
+        config file is <code>/etc/postfix/main.cf</code>.
+      </div>
+      <div class="code-block">
+<span class="com"># Install Postfix (choose "Internet Site" during setup)</span>
+sudo apt install postfix mailutils
+
+<span class="com"># Key settings in /etc/postfix/main.cf</span>
+myhostname = mail.example.com
+mydomain   = example.com
+myorigin   = $mydomain
+inet_interfaces = all
+mydestination = $myhostname, localhost.$mydomain, $mydomain
+
+<span class="com"># Restrict who can relay mail through your server (CRITICAL — </span>
+<span class="com"># an open relay gets you blacklisted within hours)</span>
+smtpd_relay_restrictions =
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_unauth_destination
+
+<span class="com"># Enforce TLS for incoming and outgoing mail</span>
+smtpd_tls_cert_file = /etc/letsencrypt/live/mail.example.com/fullchain.pem
+smtpd_tls_key_file  = /etc/letsencrypt/live/mail.example.com/privkey.pem
+smtpd_tls_security_level = may
+smtp_tls_security_level  = may
+
+<span class="com"># Apply config and restart</span>
+sudo postfix check
+sudo systemctl restart postfix
+
+<span class="com"># Test sending mail from the CLI</span>
+echo <span class="str">"Test body"</span> | mail -s <span class="str">"Test subject"</span> alice@example.com
+
+<span class="com"># Watch the mail log in real time</span>
+sudo tail -f /var/log/mail.log
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Security</div>
+      <div class="concept-title">Don't Become an Open Relay</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        your default mail server config is safe to expose. The single
+        most common rookie mistake is leaving a server as an
+        <strong>open relay</strong> — anyone on the internet can use it
+        to send mail through you.<br><br>
+        Within hours, spammers find it, your server's IP lands on every
+        major blacklist (Spamhaus, SORBS), and legitimate mail from your
+        domain stops being delivered anywhere.<br><br>
+        <strong>Checklist before going live:</strong><br>
+        &bull; Test from an external network — try relaying through your
+          server from outside; it must be rejected.<br>
+        &bull; Require SASL authentication for any relay.<br>
+        &bull; Set up SPF, DKIM, DMARC (covered in the Social Engineering
+          topic) — receivers use these to validate your mail.<br>
+        &bull; Check your IP against blacklists regularly:
+          <code>https://mxtoolbox.com/blacklists.aspx</code>
+      </div>
+      <div class="code-block">
+<span class="com"># Test for open relay from an external host (use mail-tester.com</span>
+<span class="com"># or manually with telnet — should be REJECTED for unauth relay)</span>
+telnet mail.example.com <span class="num">25</span>
+EHLO test.com
+MAIL FROM:&lt;attacker@evil.com&gt;
+RCPT TO:&lt;victim@someoneelse.com&gt;
+<span class="com"># Expected: "554 5.7.1 Relay access denied" — if you get "250 OK"</span>
+<span class="com"># at this stage, YOU ARE AN OPEN RELAY. Fix immediately.</span>
+
+<span class="com"># Check your sending IP reputation</span>
+dig +short mail.example.com
+<span class="com"># Then check at: mxtoolbox.com/blacklists.aspx</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Diagnosing Common Mail Delivery Issues</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — when "my email isn't sending"
+        tickets come in, work through this systematically:<br><br>
+        1. Check the mail queue: <code>postqueue -p</code> — stuck messages
+           reveal delivery problems.<br>
+        2. Read <code>/var/log/mail.log</code> for the message ID — it
+           shows every hop and any errors.<br>
+        3. Verify DNS — does your MX record point to the right server?
+           <code>dig example.com MX</code><br>
+        4. Test authentication — can the user actually log in via
+           IMAP/SMTP with their credentials?<br>
+        5. Check spam folder and recipient's blacklist status — sometimes
+           "not delivered" really means "filtered as spam."<br>
+        6. Use <code>mail-tester.com</code> — sends a test email and
+           grades your entire setup (SPF/DKIM/DMARC/blacklist/content).
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body linux -->

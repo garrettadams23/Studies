@@ -2604,4 +2604,149 @@ dig _dmarc.example.com TXT
 
   </div>
 </div>
+
+<!-- BEGINNER36-SEC v1 -->
+<!-- ── TOPIC: OWASP Top 10 Web App Security ──────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    OWASP Top 10 – The Web Vulnerabilities Everyone Must Know
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is OWASP and Why the Top 10 Matters</div>
+      <div class="concept-desc">
+        <strong>OWASP (Open Worldwide Application Security Project)</strong>
+        publishes the <strong>OWASP Top 10</strong> — a regularly updated
+        list of the most critical web application security risks, based
+        on real-world data from organisations worldwide.<br><br>
+        It's the closest thing the industry has to a "must-know" list for
+        anyone who builds, tests, or defends web applications. Job
+        postings reference it; certifications test on it; bug bounty
+        programs are organised around it.<br><br>
+        <em>"Not my circus, not my monkey"</em> — you don't need to be a
+        developer to understand these. Knowing <em>what</em> each
+        vulnerability is and <em>why</em> it matters makes you valuable
+        in security reviews, incident response, and conversations with
+        engineering teams.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The List</div>
+      <div class="concept-title">OWASP Top 10 (2021 Edition) Explained Simply</div>
+      <div class="concept-desc">
+        Each entry below: what it is, in plain language, with an
+        everyday analogy.
+      </div>
+      <div class="code-block">
+<span class="com">A01: Broken Access Control</span>
+  Users can do things they shouldn't (view others' data, admin pages).
+  Analogy: A hotel keycard that opens every room, not just yours.
+
+<span class="com">A02: Cryptographic Failures</span>
+  Sensitive data stored or transmitted without proper encryption.
+  Analogy: Writing your PIN on the back of your bank card.
+
+<span class="com">A03: Injection (SQL, NoSQL, Command, LDAP)</span>
+  Untrusted input is executed as code/commands by the backend.
+  Analogy: Writing "ignore my rent and give me $1,000,000" on a check
+  — and the bank's system actually processing it as written.
+
+<span class="com">A04: Insecure Design</span>
+  The flaw is in the blueprint, not the code — security wasn't designed in.
+  Analogy: A bank vault with a sturdy door but no walls.
+
+<span class="com">A05: Security Misconfiguration</span>
+  Default passwords, verbose error messages, unnecessary features enabled.
+  Analogy: Leaving the factory-set "admin/admin" login on a new router.
+
+<span class="com">A06: Vulnerable and Outdated Components</span>
+  Using libraries/frameworks with known, unpatched vulnerabilities.
+  Analogy: Driving a car with a known faulty brake recall you never fixed.
+
+<span class="com">A07: Identification and Authentication Failures</span>
+  Weak password rules, no MFA, predictable session tokens.
+  Analogy: A door that locks, but the key is "1234" for every customer.
+
+<span class="com">A08: Software and Data Integrity Failures</span>
+  Trusting code/updates from sources without verifying their integrity.
+  Analogy: Accepting a "replacement" car part from a stranger in a parking lot.
+
+<span class="com">A09: Security Logging and Monitoring Failures</span>
+  Attacks go undetected because no one is watching the logs.
+  Analogy: A security camera that's recording but nobody ever reviews the tape.
+
+<span class="com">A10: Server-Side Request Forgery (SSRF)</span>
+  Attacker tricks the server into making requests on their behalf,
+  often reaching internal systems the attacker couldn't reach directly.
+  Analogy: Convincing the receptionist to walk into the vault and
+  read you what's inside, since you're not allowed in yourself.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Hands-On Example</div>
+      <div class="concept-title">SQL Injection — The Classic A03 Example</div>
+      <div class="concept-desc">
+        This is the canonical example every security professional learns.
+        <em>Only test against systems you own or have authorisation to
+        test (e.g. DVWA, OWASP Juice Shop, your own lab).</em>
+      </div>
+      <div class="code-block">
+<span class="com">─── VULNERABLE CODE (Python/Flask, never do this) ────────────</span>
+username = request.form[<span class="str">'username'</span>]
+password = request.form[<span class="str">'password'</span>]
+query = <span class="fn">f</span><span class="str">"SELECT * FROM users WHERE username='{username}' AND password='{password}'"</span>
+cursor.execute(query)   <span class="com"># string concatenation = injection waiting to happen</span>
+
+<span class="com">─── THE ATTACK ────────────────────────────────────────────────</span>
+<span class="com"># Attacker enters this as the username:</span>
+admin' --
+<span class="com"># Resulting query becomes:</span>
+<span class="com">SELECT * FROM users WHERE username='admin' -- ' AND password='whatever'</span>
+<span class="com"># The "--" comments out the password check entirely. Instant login bypass.</span>
+
+<span class="com">─── THE FIX: parameterised queries (always do this) ──────────</span>
+query = <span class="str">"SELECT * FROM users WHERE username = %s AND password = %s"</span>
+cursor.execute(query, (username, password))
+<span class="com"># The database driver treats username/password as DATA, never as CODE —</span>
+<span class="com"># no matter what characters the attacker includes.</span>
+
+<span class="com"># SQLAlchemy ORM (also safe — handles parameterisation for you)</span>
+user = User.query.filter_by(username=username, password=password).first()
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Defence Mindset</div>
+      <div class="concept-title">"Never Trust User Input" — The Golden Rule</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — and nowhere is
+        this truer than in web development. Every single piece of data
+        that comes from outside your application — form fields, URL
+        parameters, HTTP headers, cookies, file uploads, even data from
+        "trusted" third-party APIs — must be treated as potentially
+        hostile until validated.<br><br>
+        <strong>Defence in depth for web apps:</strong><br>
+        &bull; Validate input on the server (client-side validation is a
+          UX nicety, not a security control — it's trivially bypassed).<br>
+        &bull; Use parameterised queries / ORMs — never string-concatenate
+          SQL.<br>
+        &bull; Encode output based on context (HTML, JS, URL, SQL each
+          need different encoding).<br>
+        &bull; Apply the principle of least privilege to database
+          accounts — your web app's DB user shouldn't be able to
+          <code>DROP TABLE</code>.<br>
+        &bull; Keep dependencies updated — run <code>npm audit</code>,
+          <code>pip-audit</code>, or Dependabot regularly.<br>
+        &bull; Practice on intentionally vulnerable apps: OWASP Juice
+          Shop, DVWA, PortSwigger Web Security Academy (all free, all legal).
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body sec -->
