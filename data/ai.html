@@ -1094,6 +1094,65 @@ stored payment information, formatted as JSON.
   </div>
 </div>
 
+<!-- BEGINNER44-AI v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Fine-Tuning vs. Prompting vs. RAG – Picking the Right Tool</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Three different ways to make an AI behave the way you need</h4>
+      <p class="concept-desc">A common beginner question is "how do I make the model know about <em>my</em> stuff?" — and
+      there are three quite different answers, each suited to a different kind of problem. Picking the wrong one is one
+      of the most expensive mistakes teams make when adopting AI: spending months fine-tuning a model when a well-written
+      prompt would have solved the problem in an afternoon, or vice versa.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Side-by-side comparison</h4>
+      <table class="ai-table">
+        <tr><th>Approach</th><th>What it actually does</th><th>Best for</th><th>Cost / effort</th></tr>
+        <tr><td>Prompting</td><td>Carefully writing your instructions and examples directly into each request</td><td>Quick experiments, well-defined tasks, "explain this in the style of a 5-year-old"</td><td>Lowest — just your time writing and iterating</td></tr>
+        <tr><td>RAG (retrieval-augmented generation)</td><td>Looking up relevant documents at request time and including them in the prompt</td><td>Answering questions about specific, changing, or proprietary documents (your company's wiki, recent tickets)</td><td>Moderate — needs a document pipeline and a vector database, but no model training</td></tr>
+        <tr><td>Fine-tuning</td><td>Further training an existing model on your own examples so its underlying behavior changes</td><td>Teaching a consistent style, format, or specialized skill across thousands of interactions</td><td>Highest — needs quality training data, compute, and ongoing maintenance as the base model updates</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A simple decision guide</h4>
+      <pre class="code-block"><span class="com"># Ask yourself, in order:</span>
+
+<span class="com"># 1. "Can I solve this by just writing better instructions?"</span>
+<span class="kw">if</span> problem_is_about_HOW_the_model_responds:
+    <span class="fn">use</span>(<span class="str">&quot;prompting — try this FIRST, always&quot;</span>)
+
+<span class="com"># 2. "Does the model need to know about specific facts or
+#     documents that change over time or are private to me?"</span>
+<span class="kw">elif</span> problem_is_about_WHAT_the_model_knows <span class="kw">and</span> data_changes_often:
+    <span class="fn">use</span>(<span class="str">&quot;RAG — retrieval keeps the model current without retraining&quot;</span>)
+
+<span class="com"># 3. "Do I need the model to consistently behave a certain way
+#     across thousands of cases, in a way prompting can't reliably achieve?"</span>
+<span class="kw">elif</span> need_consistent_specialized_behavior_at_scale:
+    <span class="fn">use</span>(<span class="str">&quot;fine-tuning — but only after prompting and RAG fall short&quot;</span>)
+
+<span class="com"># Most real problems are solved at step 1 or step 2.
+# Step 3 is rarer than people assume when they first hear about it.</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me</h4>
+      <p class="concept-desc">"We need to fine-tune a model" is a conclusion people often jump to because it <em>sounds</em>
+      like the sophisticated, serious answer — when a focused system prompt and a couple of good examples would have
+      gotten 90% of the way there for a fraction of the cost and complexity. Before committing to the most expensive
+      option, it's worth actually testing whether the cheaper ones fail — rather than assuming they will.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body ai -->
 <!-- /domain-body ai -->
 <!-- /domain-body ai -->
 <!-- /domain-body ai -->

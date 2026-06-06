@@ -9916,5 +9916,77 @@ tags = data.get(<span class="str">&quot;tags&quot;</span>, [])
   </div>
 </div>
 
+<!-- BEGINNER44-SCRIPT v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Regular Expressions – A Survival Guide for IT Tasks</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Regex is "find by pattern" instead of "find by exact text"</h4>
+      <p class="concept-desc">A regular expression is a mini-language for describing patterns in text — instead of
+      searching for the literal string "192.168.1.1", you can search for "anything that looks like an IPv4 address."
+      That shift — from matching exact text to matching <em>shapes</em> of text — is what makes regex so powerful for log
+      analysis, data validation, and bulk text processing. It has a reputation for looking like line noise, but a
+      relatively small set of building blocks covers the vast majority of real IT use cases.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Reference</span>
+      <h4 class="concept-title">The building blocks that cover 80% of cases</h4>
+      <table class="ai-table">
+        <tr><th>Pattern</th><th>Matches</th><th>Example</th></tr>
+        <tr><td><code>\d</code></td><td>Any single digit (0-9)</td><td><code>\d\d\d</code> matches "404", "500", "200"</td></tr>
+        <tr><td><code>\w</code></td><td>Any "word" character — letters, digits, underscore</td><td><code>\w+</code> matches "username_42"</td></tr>
+        <tr><td><code>\s</code></td><td>Any whitespace — space, tab, newline</td><td>Useful for splitting on flexible spacing in logs</td></tr>
+        <tr><td><code>+</code></td><td>"One or more" of the thing before it</td><td><code>\d+</code> matches "5", "404", "1000000"</td></tr>
+        <tr><td><code>*</code></td><td>"Zero or more" of the thing before it</td><td><code>colou*r</code> matches both "color" and "colour"</td></tr>
+        <tr><td><code>.</code></td><td>Any single character (use carefully — very broad!)</td><td><code>error.log</code> would also match "errorXlog"</td></tr>
+        <tr><td><code>()</code></td><td>A "capture group" — pulls out a specific piece of the match</td><td>Grabbing just the IP address out of a full log line</td></tr>
+        <tr><td><code>^</code> / <code>$</code></td><td>Start / end of the line</td><td><code>^ERROR</code> matches lines that *begin* with ERROR</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">A real log-parsing example, built up piece by piece</h4>
+      <pre class="code-block"><span class="kw">import</span> re
+
+log_line = <span class="str">'2026-06-06 03:14:07 ERROR [auth-service] Failed login from 203.0.113.42 for user jdoe'</span>
+
+<span class="com"># Build the pattern in labeled pieces — far more readable than one giant blob</span>
+pattern = (
+    <span class="str">r&quot;(?P&lt;date&gt;\d{4}-\d{2}-\d{2}) &quot;</span>          <span class="com"># 2026-06-06</span>
+    <span class="str">r&quot;(?P&lt;time&gt;\d{2}:\d{2}:\d{2}) &quot;</span>          <span class="com"># 03:14:07</span>
+    <span class="str">r&quot;(?P&lt;level&gt;\w+) &quot;</span>                       <span class="com"># ERROR</span>
+    <span class="str">r&quot;\[(?P&lt;service&gt;[\w-]+)\] &quot;</span>            <span class="com"># [auth-service]</span>
+    <span class="str">r&quot;.*from (?P&lt;ip&gt;\d+\.\d+\.\d+\.\d+) &quot;</span>  <span class="com"># 203.0.113.42</span>
+    <span class="str">r&quot;for user (?P&lt;user&gt;\w+)&quot;</span>                <span class="com"># jdoe</span>
+)
+
+match = re.search(pattern, log_line)
+<span class="kw">if</span> match:
+    <span class="fn">print</span>(<span class="str">f&quot;{match['level']} from {match['ip']} targeting account '{match['user']}'&quot;</span>)
+    <span class="fn">print</span>(<span class="str">f&quot;Service: {match['service']}  at {match['date']} {match['time']}&quot;</span>)
+<span class="com"># Output:
+# ERROR from 203.0.113.42 targeting account 'jdoe'
+# Service: auth-service  at 2026-06-06 03:14:07</span></pre>
+      <p class="concept-desc">Named groups (<code>(?P&lt;name&gt;...)</code>) are the difference between a regex you can
+      read again in six months and one you'll have to rebuild from scratch. They turn "what does group 4 mean again?"
+      into "oh, that's obviously the IP address."</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — test against real, messy data</h4>
+      <p class="concept-desc">A pattern that works perfectly on the three sample lines you wrote it against can fall apart
+      the moment it meets real-world data — an extra space, a different timestamp format, a username with a hyphen you
+      didn't anticipate. Before trusting a regex in a script that runs unattended, run it against a large, genuinely messy
+      sample of real data and actually look at what it *fails* to match — that's usually far more informative than looking
+      at what it successfully matches.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body script -->
 <!-- /domain-body script -->
 <!-- /domain-body script -->
