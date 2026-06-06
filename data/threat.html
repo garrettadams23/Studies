@@ -1903,6 +1903,76 @@ git log -p --all | grep -iE &quot;password|secret|api[_-]?key&quot;</pre>
   </div>
 </div>
 
+<!-- BEGINNER46-THREAT v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Ransomware – How It Spreads, and Why Backups Aren't the Whole Story</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Ransomware in one sentence</h4>
+      <p class="concept-desc">Ransomware is malicious software that encrypts a victim's files (or locks them out of their
+      systems entirely) and demands payment — usually in cryptocurrency — for the key to restore access. Modern
+      ransomware operations have evolved well past "encrypt and demand money": many now also steal data first and
+      threaten to publish it, a tactic called <em>double extortion</em> that defeats the old assumption "we have backups,
+      so we're fine."</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A typical attack chain — and where it can be stopped</h4>
+      <table class="ai-table">
+        <tr><th>Stage</th><th>What happens</th><th>A defense that fits here</th></tr>
+        <tr><td>1. Initial access</td><td>Phishing email, exposed RDP, or a vulnerable internet-facing service</td><td>Email filtering, MFA, patching, closing unnecessary exposed ports</td></tr>
+        <tr><td>2. Spread / escalate</td><td>The attacker moves laterally through the network, gathering higher privileges</td><td>Network segmentation, least-privilege access, monitoring for unusual internal traffic</td></tr>
+        <tr><td>3. Data theft (often skipped by less sophisticated groups)</td><td>Sensitive files are quietly exfiltrated before anything is encrypted</td><td>Data loss prevention, monitoring for unusual outbound transfer volumes</td></tr>
+        <tr><td>4. Detonation</td><td>Files across the network are encrypted, often during off-hours to maximize damage before detection</td><td>Endpoint detection that flags mass file-modification behavior in real time</td></tr>
+        <tr><td>5. Extortion</td><td>A ransom note appears; the attacker may also threaten to leak stolen data</td><td>Incident response plan, legal counsel, law enforcement contact — decided BEFORE this moment, not during it</td></tr>
+      </table>
+      <p class="concept-desc">Notice how much happens <em>before</em> stage 4 — the part most people picture when they
+      hear "ransomware attack." By the time files start encrypting, the attacker has often already been inside the
+      network for days or weeks. That's both bad news (damage may already be done) and good news (there were many earlier
+      chances to catch it).</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Verifying your backups are actually a safety net (not just a checkbox)</h4>
+      <pre class="code-block"><span class="com"># A backup that ransomware can also encrypt or delete isn't a backup —
+# it's just another file the attacker controls. Ask these questions:</span>
+
+<span class="com"># 1. Are backups stored OFFLINE or in a way ransomware can't reach?
+#    (immutable cloud storage, air-gapped tape, write-once media —
+#    NOT just another network drive with the same credentials)</span>
+
+<span class="com"># 2. Have you actually TESTED a full restore recently — not just
+#    confirmed the backup job "completed successfully"?</span>
+<span class="com">#    A backup nobody has ever restored from is a THEORY, not a plan.</span>
+
+<span class="com"># 3. How far back do your retention policies go? If an attacker
+#    was quietly inside for six weeks before detonating, and your
+#    backups only go back two, you may be restoring already-compromised data</span>
+
+<span class="com"># 4. Who has the credentials to delete or modify backups —
+#    and is that access separated from everyday admin accounts?</span></pre>
+      <p class="concept-desc">The 3-2-1 rule is a useful baseline to test your setup against: at least <strong>3</strong>
+      copies of your data, on <strong>2</strong> different types of media, with <strong>1</strong> copy stored offsite
+      (and ideally offline). Many organizations that "had backups" still paid ransoms — because their backups were
+      reachable from the same compromised network as everything else.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — "we have backups" is not a plan</h4>
+      <p class="concept-desc">"We're covered, we have backups" is one of the most common — and most dangerous — assumptions
+      in incident preparedness, precisely because it sounds like due diligence without requiring anyone to verify it
+      actually works. A real plan answers harder questions: how long would a full restore actually take (hours? days?
+      weeks?), what would you tell customers during that gap, and who makes the call about whether to involve law
+      enforcement? Untested assumptions don't reveal themselves until the worst possible moment to discover them.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body threat -->
 <!-- /domain-body threat -->
 <!-- /domain-body threat -->
 <!-- /domain-body threat -->

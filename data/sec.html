@@ -3091,6 +3091,72 @@ ssh-keygen -t ed25519 -f my_key -C &quot;demo key&quot;
   </div>
 </div>
 
+<!-- BEGINNER46-SEC v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Security Headers – The HTTP Response Fields That Quietly Protect You</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A web server can tell your browser how to defend you</h4>
+      <p class="concept-desc">When your browser loads a webpage, the server sends back more than just the page content —
+      it also sends HTTP response headers, a set of instructions about how the browser should treat that content. A
+      handful of these headers exist purely for security: they tell the browser "don't allow this page to be embedded
+      elsewhere," "only ever load this site over HTTPS," or "don't run scripts from sources I haven't explicitly
+      approved." Most users never see them — but their presence (or absence) says a lot about how seriously a site takes
+      security.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The headers worth knowing</h4>
+      <table class="ai-table">
+        <tr><th>Header</th><th>What it does</th><th>What it protects against</th></tr>
+        <tr><td><code>Strict-Transport-Security</code></td><td>Tells the browser "always use HTTPS for this site, never plain HTTP, even if a link points to http://"</td><td>Downgrade attacks that try to trick a browser into an unencrypted connection</td></tr>
+        <tr><td><code>Content-Security-Policy</code></td><td>Whitelists exactly where scripts, styles, and other resources are allowed to load from</td><td>Cross-site scripting (XSS) — even if an attacker injects a script tag, the browser refuses to run it if its source isn't on the approved list</td></tr>
+        <tr><td><code>X-Frame-Options</code></td><td>Controls whether the page can be displayed inside a frame on another site</td><td>Clickjacking — tricking users into clicking something different from what they think they're clicking</td></tr>
+        <tr><td><code>X-Content-Type-Options</code></td><td>Tells the browser "don't try to guess the file type — trust what I told you it is"</td><td>MIME-sniffing attacks that disguise malicious files as harmless ones</td></tr>
+        <tr><td><code>Referrer-Policy</code></td><td>Controls how much of the originating URL gets shared when a user clicks a link to another site</td><td>Accidentally leaking sensitive information (like search queries or internal URLs) to third-party sites</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Checking what headers a site actually sends</h4>
+      <pre class="code-block"><span class="com"># See the raw response headers for any site</span>
+curl -sI https://example.com
+
+<span class="com"># Filter for just the security-relevant ones</span>
+curl -sI https://example.com | grep -iE &quot;strict-transport|content-security|x-frame|x-content-type|referrer-policy&quot;
+
+<span class="com"># A snippet of what a well-configured response might include:
+#
+#   strict-transport-security: max-age=63072000; includeSubDomains
+#   content-security-policy: default-src 'self'; script-src 'self' cdn.example.com
+#   x-frame-options: DENY
+#   x-content-type-options: nosniff
+#   referrer-policy: strict-origin-when-cross-origin</span>
+
+<span class="com"># Or use a free online scanner that grades a site's headers and
+# explains exactly what's missing — useful both for learning AND
+# for getting a quick read on a vendor's security posture</span></pre>
+      <p class="concept-desc">Running this against a few of your own frequently-used sites is a genuinely eye-opening
+      exercise — you'll often find that well-known, security-conscious organizations send a rich set of these headers,
+      while smaller or older sites send almost none.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — except your users' browsers are always your circus</h4>
+      <p class="concept-desc">It's tempting for a small team to think "security headers are for big companies with
+      dedicated security staff" — but a single missing <code>Content-Security-Policy</code> header can be the difference
+      between an XSS bug being a minor annoyance and it being a full account-takeover vector. These headers cost nothing
+      to add, take minutes to configure on most modern web frameworks, and quietly protect every single visitor without
+      requiring them to do anything at all. Few security investments offer that kind of return for that little effort.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body sec -->
 <!-- /domain-body sec -->
 <!-- /domain-body sec -->
 <!-- /domain-body sec -->

@@ -9987,6 +9987,90 @@ match = re.search(pattern, log_line)
   </div>
 </div>
 
+<!-- BEGINNER46-SCRIPT v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Scheduling Scripts the Right Way – Cron, Timers, and Idempotency</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Automation that runs on its own schedule — and why that's harder than it sounds</h4>
+      <p class="concept-desc">Plenty of useful scripts are designed to run on a schedule rather than on demand — nightly
+      backups, hourly report generation, weekly cleanup jobs. Getting a script to "just run at 2 AM" is the easy part.
+      The harder, more important part is making sure that when something goes wrong — the script crashes halfway, runs
+      twice by accident, or runs while a previous run is still going — the result is "annoying log entry" rather than
+      "corrupted data" or "duplicate emails sent to every customer."</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">The classic: cron syntax, decoded</h4>
+      <pre class="code-block"><span class="com"># Cron's five fields, in order:
+#   minute  hour  day-of-month  month  day-of-week</span>
+
+<span class="com"># Run every day at 2:30 AM</span>
+30 2 * * *  /opt/scripts/nightly_backup.sh
+
+<span class="com"># Run every 15 minutes</span>
+*/15 * * * *  /opt/scripts/check_health.sh
+
+<span class="com"># Run at 9 AM, Monday through Friday only</span>
+0 9 * * 1-5  /opt/scripts/send_daily_digest.sh
+
+<span class="com"># Run on the 1st of every month at midnight</span>
+0 0 1 * *   /opt/scripts/monthly_report.sh
+
+<span class="com"># View your current scheduled jobs</span>
+crontab -l
+
+<span class="com"># Edit them (opens your default editor)</span>
+crontab -e</pre>
+      <p class="concept-desc">Many modern Linux systems also offer <span class="kw">systemd timers</span> as an
+      alternative — they integrate with <code>journalctl</code> for logging, can express dependencies on other services,
+      and handle "what if the system was off when this should have run?" more gracefully. Cron remains common and
+      perfectly fine for simple jobs; timers shine once your scheduling needs get more sophisticated.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Idempotency: the property that turns "uh oh" into "no big deal"</h4>
+      <p class="concept-desc">A script is <em>idempotent</em> if running it multiple times produces the same end result as
+      running it once. This single property is what determines whether "the job accidentally ran twice" is a non-event
+      or an incident.</p>
+      <pre class="code-block"><span class="com"># NOT idempotent — running this twice creates two records,
+# sends two emails, charges a customer twice...</span>
+<span class="kw">def</span> <span class="fn">process_daily_signups</span>():
+    new_users = get_signups_since_last_run()
+    <span class="kw">for</span> user <span class="kw">in</span> new_users:
+        send_welcome_email(user)
+        create_billing_record(user)
+
+<span class="com"># IDEMPOTENT — checks what's already been done before doing it again</span>
+<span class="kw">def</span> <span class="fn">process_daily_signups</span>():
+    new_users = get_signups_since_last_run()
+    <span class="kw">for</span> user <span class="kw">in</span> new_users:
+        <span class="kw">if</span> <span class="kw">not</span> already_sent_welcome_email(user):
+            send_welcome_email(user)
+            mark_welcome_email_sent(user)
+        <span class="kw">if</span> <span class="kw">not</span> has_billing_record(user):
+            create_billing_record(user)</pre>
+      <p class="concept-desc">Notice the pattern: instead of just "do the thing," idempotent code asks "has this already
+      been done?" first. That one habit — checking before acting, every time — is what separates scheduled automation
+      you can trust from scheduled automation that occasionally needs a 3 AM apology email to customers.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — assume it WILL run twice someday</h4>
+      <p class="concept-desc">"It only runs once a day, what are the odds it overlaps with itself?" is exactly the kind of
+      assumption that holds up fine for months — until a slow database connection causes one run to take 25 hours, and
+      suddenly two copies are running at once, both modifying the same data. Writing scheduled scripts as though they
+      <em>will</em> eventually run concurrently or get interrupted mid-task — using locks, idempotency checks, and
+      transactional updates — costs a little extra effort upfront and saves an enormous amount of cleanup later.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body script -->
 <!-- /domain-body script -->
 <!-- /domain-body script -->
 <!-- /domain-body script -->

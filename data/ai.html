@@ -1152,6 +1152,74 @@ stored payment information, formatted as JSON.
   </div>
 </div>
 
+<!-- BEGINNER46-AI v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Bias in AI Models – Where It Comes From and Why "Just Remove It" Isn't Simple</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A model learns patterns from its training data — including the unfair ones</h4>
+      <p class="concept-desc">Bias in AI isn't usually the result of a developer deliberately programming prejudice into a
+      system. It emerges because models learn statistical patterns from huge amounts of real-world data — and the real
+      world contains historical inequities, stereotypes, and uneven representation. A model trained on decades of hiring
+      data from an industry that historically favored one group will tend to reproduce that pattern, even though no line
+      of code ever explicitly said to. The bias was already baked into the data long before the model ever saw it.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A few of the ways bias commonly enters a system</h4>
+      <table class="ai-table">
+        <tr><th>Source</th><th>How it happens</th><th>Real-world example</th></tr>
+        <tr><td>Historical data bias</td><td>Past decisions reflected in the training data carry forward old inequities</td><td>A resume-screening tool trained on a company's past hires learns to favor whatever group was historically hired most</td></tr>
+        <tr><td>Representation gaps</td><td>Some groups, languages, or scenarios are underrepresented in the training data</td><td>Facial recognition systems performing measurably worse on faces less common in their training images</td></tr>
+        <tr><td>Labeling bias</td><td>The humans who labeled training examples brought their own assumptions to the task</td><td>Content moderation systems flagging dialects or phrasings associated with certain communities as "more toxic" than equivalent statements in other phrasing</td></tr>
+        <tr><td>Feedback loops</td><td>A biased system's outputs become tomorrow's training data, reinforcing the original pattern</td><td>A recommendation system that shows certain content more often, generating more engagement data that "confirms" it should keep doing so</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">A simple way to probe for bias yourself</h4>
+      <pre class="code-block"><span class="com"># A basic technique: hold the scenario constant, vary ONE detail,
+# and compare the outputs. Differences that correlate with that
+# one detail — rather than with anything actually relevant to
+# the task — are worth investigating further.</span>
+
+prompts = [
+    <span class="str">&quot;Write a short reference letter for Maria, a software engineer
+    with 5 years of experience leading backend infrastructure projects.&quot;</span>,
+
+    <span class="str">&quot;Write a short reference letter for James, a software engineer
+    with 5 years of experience leading backend infrastructure projects.&quot;</span>,
+]
+
+<span class="com"># Identical qualifications, only the name differs. Then ask:
+# - Do the letters differ in tone, confidence, or word choice?
+# - Are the same achievements framed differently?
+# - Would a hiring manager react to these two letters the same way?
+#
+# This exact technique — "audit by controlled comparison" — is a
+# real, recognized method used in fairness research. You don't need
+# special tools to start noticing patterns; you need a controlled
+# comparison and a willingness to look closely at what comes back.</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — "the algorithm said so" isn't an answer</h4>
+      <p class="concept-desc">It's tempting to treat an AI system's output as more "objective" than a human's judgment,
+      precisely because it comes from math rather than a person with visible opinions. That assumption is exactly
+      backwards in this context — the math was trained on human decisions, with all their patterns intact, just rendered
+      less visible. Treating a model's output as automatically neutral is how bias quietly gets <em>more</em> power, not
+      less — hidden behind a interface that looks impartial. Asking "where did this pattern in the data come from, and
+      whose interests did it historically serve?" is not cynicism. It's the same due diligence you'd apply to any other
+      decision-making system that affects real people.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body ai -->
 <!-- /domain-body ai -->
 <!-- /domain-body ai -->
 <!-- /domain-body ai -->

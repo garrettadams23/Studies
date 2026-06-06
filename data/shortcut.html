@@ -1374,6 +1374,85 @@ Ctrl-v       <span class="com"># VISUAL BLOCK — edit columns (great for tables
   </div>
 </div>
 
+<!-- BEGINNER46-SHORTCUT v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Tmux Survival Kit – Never Lose a Terminal Session Again</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The problem tmux solves: "the SSH connection dropped, and I lost everything"</h4>
+      <p class="concept-desc">Tmux (terminal multiplexer) lets you create terminal sessions that keep running even after
+      you disconnect — whether your laptop sleeps, your VPN drops, or you just want to walk away and resume later from a
+      different machine. Without it, a long-running command in an SSH session dies the instant the connection does. With
+      it, you simply reconnect and find everything exactly where you left it, still running.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The mental model: sessions, windows, and panes</h4>
+      <table class="ai-table">
+        <tr><th>Concept</th><th>Think of it as...</th><th>Why it matters</th></tr>
+        <tr><td>Session</td><td>An entire workspace — everything you're doing on this server right now</td><td>You can detach from it and it keeps running; reattach later from anywhere</td></tr>
+        <tr><td>Window</td><td>A tab within that session</td><td>Switch between separate tasks (editing, monitoring logs, running tests) without separate connections</td></tr>
+        <tr><td>Pane</td><td>A split within a window — multiple terminals visible side by side</td><td>Watch logs in one pane while running commands in another, all on one screen</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Reference</span>
+      <h4 class="concept-title">The shortcuts that get you 90% of the way there</h4>
+      <p class="concept-desc">Every tmux command starts with a "prefix" key — by default <code>Ctrl+b</code> — released,
+      then followed by another key. Below, "prefix" means "press Ctrl+b, let go, then press the next key."</p>
+      <table class="ai-table">
+        <tr><th>Shortcut</th><th>What it does</th></tr>
+        <tr><td><code>tmux new -s work</code></td><td>Start a new named session called "work" (naming sessions makes them MUCH easier to find later)</td></tr>
+        <tr><td><code>prefix d</code></td><td>Detach from the current session — it keeps running in the background</td></tr>
+        <tr><td><code>tmux attach -t work</code></td><td>Reattach to that session from anywhere — even a different computer</td></tr>
+        <tr><td><code>tmux ls</code></td><td>List all running sessions — "what do I have going on right now?"</td></tr>
+        <tr><td><code>prefix c</code></td><td>Create a new window (tab) in the current session</td></tr>
+        <tr><td><code>prefix n</code> / <code>prefix p</code></td><td>Move to the next / previous window</td></tr>
+        <tr><td><code>prefix %</code></td><td>Split the current pane vertically (side by side)</td></tr>
+        <tr><td><code>prefix &quot;</code></td><td>Split the current pane horizontally (stacked)</td></tr>
+        <tr><td><code>prefix arrow-key</code></td><td>Move between panes in that direction</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">A realistic first session, start to finish</h4>
+      <pre class="code-block"><span class="com"># 1. SSH into a remote server, then start a named session</span>
+ssh admin@server.example.com
+tmux new -s deploy
+
+<span class="com"># 2. Kick off something long-running — a deployment, a big sync, a build</span>
+./run_deployment.sh
+
+<span class="com"># 3. Your laptop goes to sleep / VPN hiccups / you close the lid.
+#    The deployment KEEPS RUNNING on the server — tmux doesn't care
+#    that your connection dropped.</span>
+
+<span class="com"># 4. Reconnect later (even from a different machine entirely)</span>
+ssh admin@server.example.com
+tmux attach -t deploy
+<span class="com"># ...and there it is, exactly where you left it, still running</span>
+
+<span class="com"># 5. When you're completely done with it</span>
+exit   <span class="com"># closes the window/session from inside</span>
+<span class="com"># or from outside: tmux kill-session -t deploy</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — name your sessions</h4>
+      <p class="concept-desc">"I'll remember which session is which" is a confident assumption at 2 PM and a source of
+      genuine confusion at 2 AM when <code>tmux ls</code> shows four unnamed sessions and you can't recall which one has
+      the thing you actually need. The thirty seconds it costs to type <code>tmux new -s deploy-prod-db-migration</code>
+      instead of <code>tmux new</code> pays for itself the very first time you have more than one session running —
+      which, if you use tmux at all regularly, will be sooner than you think.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body shortcuts -->
 <!-- /domain-body shortcuts -->
 <!-- /domain-body shortcuts -->
         
