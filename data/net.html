@@ -5060,6 +5060,71 @@ app = Flask(__name__)
   </div>
 </div>
 
+<!-- BEGINNER47-NET v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>The TLS Handshake – What Actually Happens Before "https://" Feels Safe</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The padlock icon represents a surprisingly elegant negotiation</h4>
+      <p class="concept-desc">Every time you load an HTTPS site, your browser and the server perform a rapid
+      multi-step negotiation called the <em>TLS handshake</em> — establishing trust and agreeing on encryption,
+      all before a single byte of your actual page content is transmitted. It happens in well under a second,
+      which is part of why it's so easy to never think about. Understanding the broad strokes demystifies a huge
+      portion of "how the secure web works."</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The handshake in (roughly) five steps</h4>
+      <table class="ai-table">
+        <tr><th>Step</th><th>What happens</th></tr>
+        <tr><td>1. Client Hello</td><td>Your browser says hello and lists the encryption methods ("cipher
+        suites") it supports, plus a random number used later in key generation.</td></tr>
+        <tr><td>2. Server Hello + Certificate</td><td>The server picks a cipher suite both sides support and sends
+        back its <em>digital certificate</em> — proof of identity issued by a trusted Certificate Authority (CA).</td></tr>
+        <tr><td>3. Certificate verification</td><td>Your browser checks that the certificate is valid, unexpired,
+        matches the domain you're visiting, and was signed by a CA it trusts. This is the step that turns a
+        green padlock into something meaningful rather than decorative.</td></tr>
+        <tr><td>4. Key exchange</td><td>Both sides use cryptographic math (often Diffie-Hellman) to agree on a
+        shared <em>session key</em> — without ever transmitting that key in a form an eavesdropper could use.</td></tr>
+        <tr><td>5. Secure session begins</td><td>From here on, all traffic is encrypted with the session key using
+        fast symmetric encryption — the certificate-based "slow" cryptography has done its job and steps aside.</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Inspecting a real certificate from the command line</h4>
+      <p class="concept-desc">You don't need special tools to see this in action — <code>openssl</code> can show
+      you exactly what your browser is silently checking on every visit:</p>
+      <pre class="code-block"><span class="com"># Connect and dump the certificate chain for a domain:</span>
+openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 2&gt;/dev/null | openssl x509 -noout -text
+
+<span class="com"># Useful fields to look for in the output:</span>
+<span class="com">#   Issuer:        which Certificate Authority vouched for this site</span>
+<span class="com">#   Subject:       the domain(s) the certificate is valid for</span>
+<span class="com">#   Validity:      the "Not Before" / "Not After" window -- expired
+#                  certificates are a surprisingly common outage cause</span>
+<span class="com">#   Signature Algorithm:  the cryptographic method used to sign it</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Why "the padlock is green" isn't the same as "this site is trustworthy"</h4>
+      <p class="concept-desc">This is a critical distinction that <em>"assume makes an ass out of you and
+      me"</em> captures perfectly. TLS guarantees two specific things: that your connection to the server is
+      encrypted in transit, and that the certificate matches the domain you typed. It guarantees <strong>nothing
+      whatsoever</strong> about whether the organization running that domain is honest, competent, or safe to
+      hand your data to. Attackers can — and routinely do — obtain valid certificates for convincingly-misspelled
+      lookalike domains. The padlock confirms "this connection isn't being eavesdropped on right now." It does
+      not confirm "you should trust what's on the other end of it." Those are two different questions, and
+      conflating them is one of the most common (and most exploited) assumptions on the web.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->

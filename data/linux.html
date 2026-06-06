@@ -4628,6 +4628,79 @@ lsof -p 4821</pre>
   </div>
 </div>
 
+<!-- BEGINNER47-LINUX v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>"The Disk Is Full" – Diagnosing Storage Problems Like a Calm Professional</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The classic 2 AM page: "No space left on device"</h4>
+      <p class="concept-desc">Few alerts feel as urgent as a server running out of disk space — services start
+      failing to write logs, databases stop accepting writes, and everything gets weird in ways that don't
+      immediately look storage-related. The good news: diagnosing <em>where</em> the space went is usually a
+      five-minute job once you know the right three commands and the order to run them in.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Step 1 — confirm it, and find which filesystem is the problem</h4>
+      <p class="concept-desc"><code>df</code> ("disk free") shows you space at the filesystem level — this is
+      where you confirm the emergency is real and identify exactly which mount point is the culprit:</p>
+      <pre class="code-block"><span class="com"># -h = human-readable sizes (GB/MB instead of raw byte counts)</span>
+df -h
+
+<span class="com"># Typical output -- the "Use%" column is what you're scanning for:</span>
+<span class="com"># Filesystem      Size  Used Avail Use% Mounted on</span>
+<span class="com"># /dev/sda1        50G   48G  0.5G  99% /</span>
+<span class="com"># /dev/sdb1       200G   80G  110G  43% /var/log</span>
+<span class="com">#</span>
+<span class="com"># Here, the root filesystem ("/") is the emergency -- 99% full.</span>
+<span class="com"># /var/log on its own disk is fine. Now we know WHERE to dig.</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Step 2 — find which directory is actually eating the space</h4>
+      <p class="concept-desc">Once you know <em>which</em> filesystem is full, <code>du</code> ("disk usage") helps
+      you walk down the directory tree to find the actual offender — usually a runaway log file, an old backup
+      nobody cleaned up, or a temp directory that grew out of control:</p>
+      <pre class="code-block"><span class="com"># Summarize top-level directory sizes, sorted largest first:</span>
+du -h --max-depth=1 / 2&gt;/dev/null | sort -rh | head -10
+
+<span class="com"># Drill into the biggest offender, one level deeper:</span>
+du -h --max-depth=1 /var 2&gt;/dev/null | sort -rh | head -10
+
+<span class="com"># Often the trail leads somewhere very specific, e.g.:</span>
+<span class="com">#   23G   /var/log/myapp/debug.log</span>
+<span class="com">#   -- a log rotation policy was never configured for this app</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Step 3 — understand the "phantom space" trap before you panic further</h4>
+      <p class="concept-desc">Here's a scenario that confuses almost every beginner at least once: you delete a
+      huge file, run <code>df</code> again, and the space <em>still isn't free</em>. This isn't a bug — it's how
+      Unix-like systems handle deletion. If a running process still has the file open, the space isn't released
+      until that process closes it (or restarts). <code>lsof</code> ("list open files") reveals exactly this:</p>
+      <pre class="code-block"><span class="com"># Find processes holding open file handles to deleted files
+# (the "(deleted)" marker is the giveaway):</span>
+lsof +L1 2&gt;/dev/null | grep deleted
+
+<span class="com"># Output might show something like:</span>
+<span class="com"># myapp     2841  root   12w   REG   8,1  19327352  (deleted) /var/log/myapp/debug.log</span>
+<span class="com">#</span>
+<span class="com"># The fix isn't deleting it again -- it's already gone from the
+# directory listing. Restart (or signal) the process holding it open,
+# and the space returns immediately.</span></pre>
+      <p class="concept-desc">This is also a perfect moment to remember <em>"assume makes an ass out of you and
+      me"</em> — assuming a deleted file's space was reclaimed (when it wasn't) has led more than one engineer to
+      delete <em>more</em> files in a panic, sometimes ones that were actually needed. Confirm with <code>lsof</code>
+      before escalating to more drastic measures.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body linux -->
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->
