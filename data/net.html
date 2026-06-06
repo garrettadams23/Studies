@@ -4526,4 +4526,131 @@ tshark -r dns.pcap -T fields -e dns.qry.name |   awk <span class="str">'length &
 
   </div>
 </div>
+
+<!-- BEGINNER33-NET v1 -->
+<!-- ── TOPIC: Wireless Security – 802.11 ─────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Wireless Security – 802.11 Standards &amp; Wi-Fi Hardening
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Wi-Fi Security Evolution: WEP → WPA3</div>
+      <div class="concept-desc">
+        Wi-Fi security has gone through several generations. Knowing the
+        history helps you understand why old protocols are dangerous:<br><br>
+        <table class="ai-table">
+          <tr><th>Protocol</th><th>Year</th><th>Encryption</th><th>Status</th></tr>
+          <tr><td>WEP</td><td>1997</td><td>RC4 (broken)</td><td>Never use</td></tr>
+          <tr><td>WPA (TKIP)</td><td>2003</td><td>RC4 improved</td><td>Avoid</td></tr>
+          <tr><td>WPA2-Personal</td><td>2004</td><td>AES-CCMP</td><td>OK with strong passphrase</td></tr>
+          <tr><td>WPA2-Enterprise</td><td>2004</td><td>AES + 802.1X/RADIUS</td><td>Recommended for orgs</td></tr>
+          <tr><td>WPA3-Personal</td><td>2018</td><td>AES + SAE</td><td>Best for home/small biz</td></tr>
+          <tr><td>WPA3-Enterprise</td><td>2018</td><td>AES-256 + SAE</td><td>Best for enterprise</td></tr>
+        </table>
+        <br>
+        <strong>WPA2-Personal weakness:</strong> offline dictionary attacks
+        against the 4-way handshake. A weak passphrase = cracked in hours.
+        <br><strong>WPA3 fix:</strong> SAE (Simultaneous Authentication of
+        Equals) prevents offline cracking — each authentication is unique.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Enterprise Wi-Fi</div>
+      <div class="concept-title">WPA2-Enterprise with RADIUS</div>
+      <div class="concept-desc">
+        In corporate environments, each user authenticates with their own
+        AD credentials rather than a shared passphrase. This uses
+        <strong>802.1X</strong> and a <strong>RADIUS server</strong>
+        (FreeRADIUS or Windows NPS).<br><br>
+        Benefits:<br>
+        &bull; No shared secret to leak — each user has unique creds.<br>
+        &bull; Revoke a single user's access without changing the Wi-Fi
+          password for everyone.<br>
+        &bull; Full audit trail of who connected when.<br>
+        &bull; Mutual authentication via certificates prevents evil-twin
+          attacks.
+      </div>
+      <div class="code-block">
+<span class="com"># FreeRADIUS quick test (after setup)</span>
+radtest alice Password1 localhost 0 testing123
+<span class="com"># Output: Access-Accept → credentials valid</span>
+<span class="com"># Output: Access-Reject  → bad credentials</span>
+
+<span class="com">── Key 802.1X flow ──────────────────────────────────────────</span>
+Client (Supplicant)  →  AP (Authenticator)  →  RADIUS Server
+       EAP-Request/Identity
+&lt;──────────────────────────────────────────────────────────
+       EAP-Response/Identity (alice@corp.com)
+──────────────────────────────────────────────────────────&gt;
+       RADIUS Access-Request (forwarded)
+                             ──────────────────────────────&gt;
+       RADIUS Access-Accept / Reject
+                             &lt;──────────────────────────────
+       EAP-Success / Failure
+&lt;──────────────────────────────────────────────────────────
+       [4-way handshake to derive per-session keys]
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Attacks</div>
+      <div class="concept-title">Common Wi-Fi Attacks &amp; Defences</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        the Wi-Fi network you're on is the real one. Rogue APs can be
+        set up in minutes.
+      </div>
+      <div class="code-block">
+<span class="com">Attack          Description                          Defence</span>
+Evil Twin       Fake AP with same SSID captures creds  WPA3/EAP-TLS cert auth
+Deauth flood    Force clients to reconnect (DOS)        802.11w Management Frame Protection
+PMKID attack    Capture beacon, crack offline           Long random WPA2 passphrase
+KRACK           Key reinstallation in WPA2 handshake    Patch all clients and APs
+WPS PIN bruteforce 8-digit PIN cracked in hours         Disable WPS entirely
+
+<span class="com"># Check if a Linux NIC supports monitor mode</span>
+iw list | grep -A5 <span class="str">"Supported interface modes"</span>
+<span class="com"># Must show "monitor" mode for wireless analysis tools</span>
+
+<span class="com"># Detect rogue APs on your network (passive scan)</span>
+sudo iwlist wlan0 scanning | grep -E <span class="str">"(ESSID|Address|Encryption)"</span>
+<span class="com"># Compare BSSID (MAC) list against your authorised AP inventory</span>
+
+<span class="com"># Check if WPS is enabled (vulnerable)</span>
+sudo wash -i wlan0 -C   <span class="com"># part of reaver suite; scan for WPS-enabled APs</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Hardening</div>
+      <div class="concept-title">Wi-Fi Network Design Best Practices</div>
+      <div class="concept-desc">
+        &bull; Use <strong>WPA3</strong> where supported; WPA2-Enterprise
+          for corporate devices.<br>
+        &bull; <strong>Separate SSIDs for different trust levels</strong>:
+          Corp, Guest, IoT — each on its own VLAN.<br>
+        &bull; Guest SSID: internet-only; no access to internal resources.<br>
+        &bull; <strong>Disable SSID broadcast</strong> only adds minor
+          friction — determined attackers still find hidden SSIDs. Don't
+          rely on it for security.<br>
+        &bull; Enable <strong>802.11w</strong> (Management Frame Protection)
+          to block deauthentication attacks.<br>
+        &bull; Use a <strong>long, random passphrase</strong> (&gt;20 chars)
+          for WPA2-Personal — mix upper/lower/digit/symbol.<br>
+        &bull; Audit connected clients quarterly; disable MAC addresses
+          that no longer belong to active employees/devices.<br>
+        &bull; <em>You can't make someone make the right choice, yet you
+          can pick up the pieces afterwards</em> — when an employee
+          connects a personal rogue AP, your WIDS (Wireless IDS) catches
+          it; have a process to contain it quickly.
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body net -->

@@ -1563,4 +1563,143 @@ file sample.exe
     </div>
   </div>
 </div>
+
+<!-- BEGINNER33-THREAT v1 -->
+<!-- ── TOPIC: Threat Hunting Methodology ─────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Threat Hunting – Finding What Detection Missed
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is Threat Hunting?</div>
+      <div class="concept-desc">
+        <strong>Threat hunting</strong> is the proactive, hypothesis-driven
+        search for threats that automated detection has missed.
+        A SIEM fires alerts when rules match — but sophisticated attackers
+        live below the alert threshold (low-and-slow attacks, living-off-the-land).<br><br>
+        <strong>Reactive (SIEM)</strong>: Wait for an alert → investigate.<br>
+        <strong>Proactive (Hunting)</strong>: Form a hypothesis → search
+        for evidence → prove or disprove it.<br><br>
+        <em>"Not my circus, not my monkey"</em> — threat hunting is a
+        specialised skill, but junior analysts can learn the mindset: always
+        ask "what would an attacker do that looks normal?"
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Process</div>
+      <div class="concept-title">The Hunt Loop</div>
+      <div class="concept-desc">
+        Every hunt follows the same loop:
+      </div>
+      <div class="code-block">
+<span class="com">1. FORM HYPOTHESIS</span>
+   "Attackers using PowerShell for lateral movement would show
+    powershell.exe spawned by a non-interactive parent process
+    (e.g. wsmprovhost, mmc, svchost) running encoded commands."
+
+<span class="com">2. COLLECT RELEVANT DATA</span>
+   Pull process creation events (Event ID 4688 or Sysmon Event 1)
+   Filter: ParentImage ends with wsmprovhost.exe OR mmc.exe
+           AND CommandLine contains -EncodedCommand OR -Enc
+
+<span class="com">3. ANALYSE</span>
+   Cluster results by user, host, time
+   Look for outliers — rare parents, unusual times, unexpected users
+
+<span class="com">4. INVESTIGATE ANOMALIES</span>
+   Pivot: what did the process do next? (child processes, network, files)
+   Corroborate: does EDR show the same activity?
+
+<span class="com">5. OUTCOME</span>
+   TRUE POSITIVE  → Incident response
+   FALSE POSITIVE → Document; tune detection rules
+   INCONCLUSIVE   → Expand data sources; reformulate hypothesis
+
+<span class="com">6. CREATE DETECTION RULE</span>
+   Turn confirmed attacker behaviour into an automated SIEM rule
+   so the hunt never needs to be repeated manually
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">MITRE ATT&amp;CK</div>
+      <div class="concept-title">Using ATT&amp;CK as a Hunting Framework</div>
+      <div class="concept-desc">
+        <strong>MITRE ATT&amp;CK</strong> is a knowledge base of adversary
+        tactics and techniques based on real-world attacks. It gives
+        hunters a <em>menu of hypotheses</em>:<br><br>
+        &bull; Tactics = <em>why</em> (Initial Access, Execution,
+          Persistence, Lateral Movement, Exfiltration…)<br>
+        &bull; Techniques = <em>how</em> (T1059 – Command and Scripting
+          Interpreter, T1078 – Valid Accounts…)<br>
+        &bull; Sub-techniques = specific implementations<br><br>
+        Workflow:<br>
+        1. Pick a tactic (e.g. Persistence).<br>
+        2. List techniques relevant to your environment.<br>
+        3. Form a hypothesis for each technique.<br>
+        4. Hunt.<br>
+        5. Document coverage on your ATT&amp;CK matrix.
+      </div>
+      <div class="code-block">
+<span class="com"># Splunk hunt: T1053.005 – Scheduled Task/Job (Windows)</span>
+index=windows (EventCode=<span class="num">4698</span> OR EventCode=<span class="num">4702</span>)
+| eval suspicious=if(like(TaskContent,<span class="str">"%powershell%"</span>)
+                  OR like(TaskContent,<span class="str">"%cmd.exe%"</span>)
+                  OR like(TaskContent,<span class="str">"%wscript%"</span>),<span class="str">"YES"</span>,<span class="str">"NO"</span>)
+| where suspicious=<span class="str">"YES"</span>
+| stats count by ComputerName, SubjectUserName, TaskName
+
+<span class="com"># Linux hunt: T1136.001 – Create Local Account</span>
+grep <span class="str">"new user"</span> /var/log/auth.log |   awk <span class="str">'{print $1,$2,$3,$NF}'</span> | sort
+
+<span class="com"># Hunt for DNS tunnelling: unusually long hostnames</span>
+<span class="com"># Splunk SPL:</span>
+index=dns
+| eval qlen=len(query)
+| where qlen &gt; <span class="num">50</span>
+| stats count, values(query) by src_ip
+| sort -count
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Tools</div>
+      <div class="concept-title">Essential Threat Hunting Tools</div>
+      <div class="concept-desc">
+        &bull; <strong>Sysmon</strong> (Windows) — enriches Windows event
+          logs with process GUID, parent-child relationships, network
+          connections, and file hashes. Free from Microsoft Sysinternals.<br>
+        &bull; <strong>Velociraptor</strong> — open-source agent for rapid
+          endpoint forensics and hunting at scale.<br>
+        &bull; <strong>osquery</strong> — SQL interface to OS internals;
+          ask "SELECT name, pid FROM processes WHERE name LIKE '%powershell%'."<br>
+        &bull; <strong>SIGMA</strong> — generic detection rule format that
+          converts to Splunk, Elastic, QRadar queries.
+        Hunters write SIGMA rules to share TTP detection across SIEM
+        platforms.
+      </div>
+      <div class="code-block">
+<span class="com"># osquery – live process inspection (runs on Windows/Linux/macOS)</span>
+osqueryi
+<span class="kw">SELECT</span> name, pid, parent, cmdline
+<span class="kw">FROM</span>  processes
+<span class="kw">WHERE</span> name <span class="kw">LIKE</span> <span class="str">'%powershell%'</span>
+<span class="kw">   OR</span> cmdline <span class="kw">LIKE</span> <span class="str">'%-EncodedCommand%'</span>;
+
+<span class="com"># Find all network connections to suspicious ports</span>
+<span class="kw">SELECT</span> p.name, p.pid, n.local_port, n.remote_address, n.remote_port, n.state
+<span class="kw">FROM</span>  process_open_sockets n
+<span class="kw">JOIN</span>  processes p <span class="kw">ON</span> p.pid = n.pid
+<span class="kw">WHERE</span> n.remote_port <span class="kw">NOT IN</span> (<span class="num">80</span>, <span class="num">443</span>, <span class="num">53</span>, <span class="num">123</span>)
+  <span class="kw">AND</span> n.state = <span class="str">'ESTABLISHED'</span>;
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body threat -->

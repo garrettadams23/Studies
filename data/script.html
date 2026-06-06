@@ -9119,4 +9119,138 @@ find _firmware.bin.extracted/ -perm -<span class="num">4000</span> <span class="
 
   </div>
 </div>
+
+<!-- BEGINNER33-SCRIPT v1 -->
+<!-- ── TOPIC: Python async/await ─────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Intermediate</span>
+    Python Async/Await – Concurrent I/O Without Threads
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Async? The Waiting Problem</div>
+      <div class="concept-desc">
+        A normal Python function blocks while waiting for I/O (network call,
+        file read, database query). If you have 1,000 API calls to make,
+        sequential blocking takes 1,000 × wait time.<br><br>
+        <strong>Async</strong> lets Python do something else while waiting.
+        When an I/O call is in-flight, the event loop switches to another
+        coroutine — so 1,000 API calls can be in-flight simultaneously.<br><br>
+        <strong>Rule of thumb:</strong><br>
+        &bull; Use <code>async/await</code> for I/O-bound work (HTTP calls,
+          DB queries, file I/O).<br>
+        &bull; Use <code>multiprocessing</code> for CPU-bound work
+          (image processing, ML training) — Python's GIL still blocks
+          CPU work in a single process.<br><br>
+        <em>"Not my circus, not my monkey"</em> — don't force async on
+        everything. A simple script with two HTTP calls doesn't need it.
+        Use it when you have many concurrent I/O operations.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Syntax</div>
+      <div class="concept-title">async def, await, and asyncio.run</div>
+      <div class="concept-desc">
+        An <code>async def</code> function is a <em>coroutine</em>. Calling
+        it returns a coroutine object — it doesn't run until you
+        <code>await</code> it or pass it to the event loop.
+      </div>
+      <div class="code-block">
+<span class="kw">import</span> asyncio, time
+
+<span class="kw">async def</span> <span class="fn">fetch_data</span>(url: str) -&gt; str:
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Starting {url}"</span>)
+    <span class="kw">await</span> asyncio.sleep(<span class="num">1</span>)   <span class="com"># simulate network wait</span>
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Done    {url}"</span>)
+    <span class="kw">return</span> <span class="fn">f</span><span class="str">"data from {url}"</span>
+
+<span class="kw">async def</span> <span class="fn">main_sequential</span>():
+    t = time.perf_counter()
+    r1 = <span class="kw">await</span> <span class="fn">fetch_data</span>(<span class="str">"http://api-1"</span>)
+    r2 = <span class="kw">await</span> <span class="fn">fetch_data</span>(<span class="str">"http://api-2"</span>)
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Sequential: {time.perf_counter()-t:.1f}s"</span>)  <span class="com"># ~2 s</span>
+
+<span class="kw">async def</span> <span class="fn">main_concurrent</span>():
+    t = time.perf_counter()
+    r1, r2 = <span class="kw">await</span> asyncio.gather(
+        <span class="fn">fetch_data</span>(<span class="str">"http://api-1"</span>),
+        <span class="fn">fetch_data</span>(<span class="str">"http://api-2"</span>),
+    )
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Concurrent: {time.perf_counter()-t:.1f}s"</span>)  <span class="com"># ~1 s</span>
+
+asyncio.run(<span class="fn">main_sequential</span>())
+asyncio.run(<span class="fn">main_concurrent</span>())
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">HTTP Requests</div>
+      <div class="concept-title">Async HTTP with aiohttp</div>
+      <div class="concept-desc">
+        The <code>requests</code> library is synchronous — it blocks.
+        Use <code>aiohttp</code> for async HTTP. This example fetches
+        100 URLs concurrently instead of one at a time.
+      </div>
+      <div class="code-block">
+<span class="com"># pip install aiohttp</span>
+<span class="kw">import</span> asyncio, aiohttp
+
+URLS = [
+    <span class="str">"https://httpbin.org/delay/1"</span>,
+    <span class="str">"https://httpbin.org/delay/1"</span>,
+    <span class="str">"https://httpbin.org/delay/1"</span>,
+]   <span class="com"># extend to 100+ in real use</span>
+
+<span class="kw">async def</span> <span class="fn">fetch</span>(session: aiohttp.ClientSession, url: str) -&gt; dict:
+    <span class="kw">async with</span> session.get(url) <span class="kw">as</span> resp:
+        data = <span class="kw">await</span> resp.json()
+        <span class="kw">return</span> {<span class="str">"url"</span>: url, <span class="str">"status"</span>: resp.status}
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="kw">async with</span> aiohttp.ClientSession() <span class="kw">as</span> session:
+        tasks   = [<span class="fn">fetch</span>(session, u) <span class="kw">for</span> u <span class="kw">in</span> URLS]
+        results = <span class="kw">await</span> asyncio.gather(*tasks, return_exceptions=<span class="kw">True</span>)
+    <span class="kw">for</span> r <span class="kw">in</span> results:
+        <span class="kw">if</span> isinstance(r, Exception):
+            <span class="fn">print</span>(<span class="str">"Error:"</span>, r)
+        <span class="kw">else</span>:
+            <span class="fn">print</span>(r)
+
+asyncio.run(<span class="fn">main</span>())
+<span class="com"># 3 × 1-second requests complete in ~1 second total</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Rate Limiting</div>
+      <div class="concept-title">Semaphores – Limiting Concurrency</div>
+      <div class="concept-desc">
+        Launching 10,000 coroutines at once can overwhelm an API or
+        exhaust file descriptors. Use a <em>Semaphore</em> to cap
+        concurrent tasks.
+      </div>
+      <div class="code-block">
+<span class="kw">import</span> asyncio, aiohttp
+
+<span class="kw">async def</span> <span class="fn">fetch_with_limit</span>(sem, session, url):
+    <span class="kw">async with</span> sem:            <span class="com"># acquire — blocks if limit reached</span>
+        <span class="kw">async with</span> session.get(url) <span class="kw">as</span> r:
+            <span class="kw">return</span> <span class="kw">await</span> r.text()
+
+<span class="kw">async def</span> <span class="fn">main</span>(urls):
+    sem     = asyncio.Semaphore(<span class="num">10</span>)   <span class="com"># max 10 concurrent requests</span>
+    <span class="kw">async with</span> aiohttp.ClientSession() <span class="kw">as</span> session:
+        tasks = [<span class="fn">fetch_with_limit</span>(sem, session, u) <span class="kw">for</span> u <span class="kw">in</span> urls]
+        <span class="kw">return</span> <span class="kw">await</span> asyncio.gather(*tasks, return_exceptions=<span class="kw">True</span>)
+
+<span class="com"># results = asyncio.run(main(my_url_list))</span>
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body script -->

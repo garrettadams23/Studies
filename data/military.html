@@ -1793,4 +1793,143 @@
     </div>
   </div>
 </div>
+
+<!-- BEGINNER33-MILITARY v1 -->
+<!-- ── TOPIC: OPSEC – Operational Security ───────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    OPSEC – Operational Security in Cyber &amp; Real Life
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is OPSEC?</div>
+      <div class="concept-desc">
+        <strong>OPSEC (Operational Security)</strong> originated in the
+        military but now applies universally to anyone who needs to protect
+        sensitive information or activities from adversaries.<br><br>
+        The core question: <em>"What information, if known by the wrong
+        person, would allow them to harm me, my organisation, or my
+        mission?"</em><br><br>
+        The five-step OPSEC process:<br>
+        1. <strong>Identify critical information</strong> — what do I need
+           to protect? (credentials, plans, personnel, locations).<br>
+        2. <strong>Analyse threats</strong> — who wants this information
+           and why? (criminals, competitors, nation-states, insiders).<br>
+        3. <strong>Analyse vulnerabilities</strong> — where could I
+           accidentally expose this? (social media, email, public logs).<br>
+        4. <strong>Assess risk</strong> — likelihood × impact for each
+           vulnerability.<br>
+        5. <strong>Apply countermeasures</strong> — reduce the vulnerability
+           (encryption, access control, need-to-know, training).<br><br>
+        <em>"Not my circus, not my monkey"</em> — if sensitive information
+        belongs to your organisation, don't share it even with colleagues
+        who don't need it. Need-to-know is a core OPSEC principle.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Digital OPSEC</div>
+      <div class="concept-title">Personal Digital Security Hygiene</div>
+      <div class="concept-desc">
+        Every IT professional is a target. Apply OPSEC to yourself:
+      </div>
+      <div class="code-block">
+<span class="com">PERSONAL OPSEC CHECKLIST</span>
+<span class="com">───────────────────────────────────────────────────────────</span>
+
+CREDENTIALS
+[ ] Use a password manager (Bitwarden, 1Password) — unique passwords everywhere
+[ ] Enable MFA on every account that supports it (TOTP app, not SMS)
+[ ] Never reuse passwords — one breach = one compromised account, not many
+
+COMMUNICATIONS
+[ ] Sensitive work: use encrypted email (ProtonMail) or end-to-end encrypted chat
+[ ] Assume corporate email is monitored and archived
+[ ] Don't discuss sensitive projects on public Slack workspaces / Discord
+
+SOCIAL MEDIA
+[ ] Don't post photos that reveal physical security details (badge readers, screens)
+[ ] Job posting recon: attackers read your LinkedIn to map tech stack
+[ ] Don't announce travel dates publicly — burglars and social engineers note it
+
+DEVICE SECURITY
+[ ] Full-disk encryption on laptops (BitLocker/FileVault/LUKS)
+[ ] Screen lock within 2 minutes of inactivity
+[ ] VPN on untrusted Wi-Fi (coffee shops, hotels, airports)
+[ ] Webcam cover when not in use
+
+WORK HABITS
+[ ] Clear desk policy — sensitive docs face down or locked away
+[ ] Shred documents before disposal; don't put them in recycling
+[ ] Be aware of shoulder surfing in public spaces
+[ ] Verify caller identity before providing information (voice phishing = vishing)
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Org OPSEC</div>
+      <div class="concept-title">Protecting Sensitive Information at Scale</div>
+      <div class="concept-desc">
+        Organisational OPSEC controls applied in enterprise security:<br><br>
+        &bull; <strong>Information classification</strong>: Public / Internal
+          / Confidential / Restricted — policies dictate how each is
+          handled.<br>
+        &bull; <strong>Data Loss Prevention (DLP)</strong>: software that
+          blocks classified files from being emailed externally or uploaded
+          to personal cloud storage.<br>
+        &bull; <strong>Privileged Access Workstations (PAW)</strong>: a
+          dedicated, hardened device used only for admin tasks —
+          never for browsing or email.<br>
+        &bull; <strong>Air-gapped networks</strong>: classified systems
+          with no internet connection; data moves via signed, approved
+          media only.<br>
+        &bull; <strong>Red team deception</strong>: honeytokens — fake
+          credentials or files planted in your system; if accessed, you
+          know an attacker has them.
+      </div>
+      <div class="code-block">
+<span class="com"># Create a honeytoken file (plant it; alert if accessed)</span>
+<span class="com"># On Linux: use inotifywait to alert when the file is read</span>
+touch /home/admin/.aws/credentials_BACKUP_2023
+
+inotifywait -m /home/admin/.aws/credentials_BACKUP_2023 -e access |
+<span class="kw">while</span> read path action file; do
+    echo <span class="str">"HONEYTOKEN ACCESSED: $path$file at $(date)"</span> |         mail -s <span class="str">"ALERT: Honeytoken read"</span> security-team@corp.example.com
+done
+
+<span class="com"># AWS honeytoken: create an IAM key that only fires CloudTrail events</span>
+<span class="com"># Canarytokens.org generates free honeytokens for:</span>
+<span class="com"># AWS keys, Word docs, PDFs, URLs, DNS names</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Mindset</div>
+      <div class="concept-title">"Assume Breach" – The Modern Security Posture</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — but in security,
+        the one assumption you <em>should</em> make is that you have already
+        been breached.<br><br>
+        The <strong>Assume Breach</strong> philosophy:<br>
+        &bull; Design systems as if an attacker already has a foothold —
+          use micro-segmentation, least privilege, and mutual TLS between
+          services.<br>
+        &bull; Invest in <em>detection and response</em> as much as
+          prevention — because prevention eventually fails.<br>
+        &bull; Run red-team exercises to find gaps before real attackers do.<br>
+        &bull; Know your <em>mean time to detect (MTTD)</em> and
+          <em>mean time to respond (MTTR)</em> — measure and improve them
+          continuously.<br><br>
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — an attacker who got in through a
+        phishing email is not your fault; the speed and quality of your
+        response is entirely within your control.
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body military -->
