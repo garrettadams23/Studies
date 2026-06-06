@@ -9253,4 +9253,136 @@ asyncio.run(<span class="fn">main</span>())
 
   </div>
 </div>
+
+<!-- BEGINNER35-SCRIPT v1 -->
+<!-- ── TOPIC: Regular Expressions Deep Dive ──────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Regular Expressions – Pattern Matching That Pays Off Forever
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Learn Regex?</div>
+      <div class="concept-desc">
+        A <strong>regular expression (regex)</strong> is a tiny language for
+        describing patterns in text. It shows up <em>everywhere</em>:
+        log searching (<code>grep</code>), text editors (find/replace),
+        input validation, SIEM queries, firewall rules, programming
+        languages.<br><br>
+        Learn it once, and you can search a million-line log file for
+        "every IP address that tried to log in as root" in seconds —
+        a task that would take hours by hand.<br><br>
+        <em>"Not my circus, not my monkey"</em> — don't write a 200-character
+        regex when a simple string search does the job. Regex is powerful,
+        but overusing it makes code unreadable. Use the simplest tool that
+        solves the problem.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Building Blocks</div>
+      <div class="concept-title">The Regex Cheat Sheet</div>
+      <div class="concept-desc">
+        Master these symbols and you can read 90% of regexes you'll
+        encounter:
+      </div>
+      <div class="code-block">
+<span class="com">Symbol   Meaning                          Example matches</span>
+.        Any single character             a.c   →  abc, a9c, a c
+*        Zero or more of previous         ab*   →  a, ab, abbb
++        One or more of previous          ab+   →  ab, abbb (not "a")
+?        Zero or one (optional)           colou?r → color, colour
+^        Start of line/string             ^Error  → line starting with "Error"
+$        End of line/string               \.com$  → ends with ".com"
+[abc]    Any one of a, b, c               gr[ae]y  → gray, grey
+[^abc]   Anything EXCEPT a, b, c          [^0-9]   → any non-digit
+[a-z]    Range (a through z)              [a-zA-Z0-9_]  → word characters
+{n,m}    Between n and m repeats          \d{3,5}  → 3-5 digits
+\d       Any digit  [0-9]                \d{1,3}\.\d{1,3}  → IP-ish
+\w       Word char [a-zA-Z0-9_]          \w+@\w+   → simple email shape
+\s       Whitespace (space, tab, newline) \s+      → one or more spaces
+( )      Group / capture                 (https?)://  → captures http or https
+|        OR / alternation                cat|dog    → cat OR dog
+\b       Word boundary                   \bcat\b    → "cat" not "category"
+
+<span class="com"># Greedy vs lazy matching — a common gotcha:</span>
+<span class="com"># &lt;.+&gt;     greedy: matches "&lt;b&gt;text&lt;/b&gt;" (too much!)</span>
+<span class="com"># &lt;.+?&gt;    lazy:   matches "&lt;b&gt;" then "&lt;/b&gt;" separately (correct)</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Practical Patterns</div>
+      <div class="concept-title">Real Regexes You'll Actually Use</div>
+      <div class="concept-desc">
+        These are battle-tested patterns for common IT/security tasks:
+      </div>
+      <div class="code-block">
+<span class="com"># IPv4 address (good enough for log filtering, not RFC-perfect)</span>
+\b(?:\d{1,3}\.){3}\d{1,3}\b
+
+<span class="com"># Email address (practical, not 100% RFC compliant — nothing truly is)</span>
+[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}
+
+<span class="com"># US phone number (several common formats)</span>
+\(?\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}
+
+<span class="com"># ISO 8601 date/timestamp (2026-06-06T14:30:00Z)</span>
+\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z?
+
+<span class="com"># Find failed SSH logins and extract the source IP (capture group)</span>
+grep -oP <span class="str">'Failed password .* from \K[\d.]+'</span> /var/log/auth.log
+
+<span class="com"># Validate a strong password (8+ chars, upper, lower, digit, symbol)</span>
+^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$
+<span class="com"># (?=...) is a "lookahead" — checks a condition without consuming characters</span>
+
+<span class="com"># Extract all URLs from a block of text</span>
+https?://[^\s"'&lt;&gt;]+
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Python re module</div>
+      <div class="concept-title">Using Regex in Python</div>
+      <div class="concept-desc">
+        Python's <code>re</code> module is the standard way to apply
+        regex in scripts. <code>re.compile()</code> pre-compiles a pattern
+        for reuse — important when matching against thousands of lines.
+      </div>
+      <div class="code-block">
+<span class="kw">import</span> re
+
+log_line = <span class="str">"2026-06-06 09:14:32 Failed password for root from 203.0.113.7 port 51422"</span>
+
+<span class="com"># search() — find the first match anywhere in the string</span>
+m = re.search(<span class="fn">r</span><span class="str">"from (\d{1,3}(?:\.\d{1,3}){3})"</span>, log_line)
+<span class="kw">if</span> m:
+    <span class="fn">print</span>(<span class="str">"Source IP:"</span>, m.group(<span class="num">1</span>))   <span class="com"># 203.0.113.7</span>
+
+<span class="com"># findall() — get every match in the string as a list</span>
+ips = re.findall(<span class="fn">r</span><span class="str">"\b(?:\d{1,3}\.){3}\d{1,3}\b"</span>, log_line)
+
+<span class="com"># sub() — find and replace (great for redacting sensitive data)</span>
+redacted = re.sub(<span class="fn">r</span><span class="str">"\b\d{3}-\d{2}-\d{4}\b"</span>, <span class="str">"[SSN-REDACTED]"</span>, text)
+
+<span class="com"># Named groups — much more readable than numbered groups</span>
+pattern = re.<span class="fn">compile</span>(
+    <span class="fn">r</span><span class="str">"(?P&lt;date&gt;\d{4}-\d{2}-\d{2}) (?P&lt;time&gt;\d{2}:\d{2}:\d{2}) "</span>
+    <span class="fn">r</span><span class="str">"Failed password for (?P&lt;user&gt;\S+) from (?P&lt;ip&gt;[\d.]+)"</span>
+)
+m = pattern.search(log_line)
+<span class="kw">if</span> m:
+    <span class="fn">print</span>(m.group(<span class="str">"user"</span>), m.group(<span class="str">"ip"</span>))   <span class="com"># root 203.0.113.7</span>
+    <span class="fn">print</span>(m.groupdict())                  <span class="com"># full dict of named captures</span>
+
+<span class="com"># Tip: test regexes interactively at regex101.com before deploying</span>
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body script -->

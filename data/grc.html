@@ -1534,4 +1534,115 @@ CC9          Risk Mitigation       Business continuity; DRP tested; cyber insura
 
   </div>
 </div>
+
+<!-- BEGINNER35-GRC v1 -->
+<!-- ── TOPIC: Business Continuity & Disaster Recovery ────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    BCP &amp; DR – Planning for the Day Everything Goes Wrong
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">BCP vs DR – Two Halves of Resilience</div>
+      <div class="concept-desc">
+        These terms are often confused but answer different questions:<br><br>
+        &bull; <strong>Business Continuity Plan (BCP)</strong> — "How does
+          the <em>business</em> keep operating during a disruption?"
+          (alternate work locations, manual processes, communication trees,
+          supplier failover).<br>
+        &bull; <strong>Disaster Recovery (DR) Plan</strong> — "How do we
+          restore <em>IT systems and data</em> after a disaster?"
+          (backup restoration, failover data centres, system rebuild order).<br><br>
+        DR is a <em>subset</em> of BCP — IT recovery is one piece of
+        keeping the whole business running.<br><br>
+        <em>"Not my circus, not my monkey"</em> — IT often owns DR, but
+        BCP requires every department (HR, finance, legal, facilities).
+        Don't try to write the whole plan alone — coordinate.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Key Metrics</div>
+      <div class="concept-title">RTO and RPO – The Two Numbers That Matter</div>
+      <div class="concept-desc">
+        Every system needs two target numbers, set by the business based
+        on how much pain it can tolerate:
+      </div>
+      <div class="code-block">
+<span class="com">RTO — Recovery Time Objective</span>
+  "How long can this system be DOWN before it seriously hurts the business?"
+  Example: Payment processing RTO = 1 hour
+           Internal wiki RTO       = 24 hours
+
+<span class="com">RPO — Recovery Point Objective</span>
+  "How much DATA can we afford to lose, measured in time?"
+  Example: Customer database RPO = 15 minutes (near-continuous replication)
+           Internal reports RPO  = 24 hours (nightly backup is fine)
+
+<span class="com">─── How RPO drives your backup strategy ─────────────────────</span>
+RPO target      Backup approach required
+&lt; 1 minute      Synchronous replication / multi-region active-active
+15 minutes      Continuous transaction log shipping
+1 hour          Frequent incremental snapshots
+24 hours        Nightly full backup is sufficient
+
+<span class="com">Tighter RTO/RPO = more expensive infrastructure.</span>
+<span class="com">The business — not IT — should decide what's worth the cost.</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Plan Components</div>
+      <div class="concept-title">What Goes Into a DR Plan</div>
+      <div class="concept-desc">
+        A real DR plan is a living document, not a binder that gathers dust.
+        Core sections:<br><br>
+        1. <strong>Asset &amp; dependency inventory</strong> — what systems
+           exist, and what do they depend on? (You can't recover what you
+           don't know about.)<br>
+        2. <strong>Recovery priority order</strong> — which systems come
+           back first? (Usually: identity/auth → network → core databases
+           → applications → reporting/analytics.)<br>
+        3. <strong>Step-by-step recovery procedures</strong> — written so a
+           person who's never done it before could follow them at 3 AM
+           under stress.<br>
+        4. <strong>Contact tree</strong> — who to call, in what order,
+           with backup contacts (people get sick, change numbers).<br>
+        5. <strong>Communication templates</strong> — pre-written
+           customer/employee notifications so no one has to write them
+           during a crisis.<br>
+        6. <strong>Alternate site/vendor details</strong> — DR data centre
+           access, backup ISP contacts, hotel block for displaced staff.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Testing</div>
+      <div class="concept-title">A Plan You've Never Tested Is a Guess</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        your backups work, your failover scripts run, or your contact list
+        is current. Test regularly:<br><br>
+        &bull; <strong>Tabletop exercise</strong> — gather stakeholders,
+          walk through a scenario verbally ("a ransomware attack encrypts
+          our file server at 2 AM Saturday — what do we do?").<br>
+        &bull; <strong>Walkthrough test</strong> — team members physically
+          perform their roles without actually executing changes.<br>
+        &bull; <strong>Simulation test</strong> — recover a system in an
+          isolated environment to verify the actual procedure works.<br>
+        &bull; <strong>Full interruption test</strong> — actually fail over
+          to the DR site (highest confidence, highest risk — schedule
+          carefully).<br><br>
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — when a real disaster strikes and
+        the plan works because you tested it, that's not luck. That's
+        preparation paying off exactly when it matters most.
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body grc -->

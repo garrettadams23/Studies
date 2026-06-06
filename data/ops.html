@@ -2142,4 +2142,143 @@ spec:
 
   </div>
 </div>
+
+<!-- BEGINNER35-OPS v1 -->
+<!-- ── TOPIC: CI/CD Pipeline Fundamentals ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    CI/CD Pipelines – From Commit to Production Automatically
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What CI/CD Actually Means</div>
+      <div class="concept-desc">
+        <strong>Continuous Integration (CI)</strong> — every code change is
+        automatically built and tested the moment it's pushed. Catches bugs
+        within minutes instead of weeks.<br><br>
+        <strong>Continuous Delivery (CD)</strong> — every change that passes
+        CI is automatically packaged and ready to deploy (a human clicks
+        "go").<br><br>
+        <strong>Continuous Deployment</strong> — every change that passes CI
+        is automatically deployed to production with no human in the loop.<br><br>
+        <strong>The pipeline stages (typical order):</strong><br>
+        1. Checkout code → 2. Install dependencies → 3. Lint/static analysis
+        → 4. Unit tests → 5. Build artifact (binary, container image) →
+        6. Integration tests → 7. Security scan → 8. Deploy to staging →
+        9. Smoke tests → 10. Deploy to production.<br><br>
+        <em>"Not my circus, not my monkey"</em> — if your pipeline is red,
+        do not merge more changes on top of it. Fix the pipeline first;
+        a broken main branch blocks everyone.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">GitHub Actions</div>
+      <div class="concept-title">A Real CI/CD Pipeline in YAML</div>
+      <div class="concept-desc">
+        GitHub Actions is one of the most common CI/CD tools — config
+        lives in <code>.github/workflows/*.yml</code> right alongside your
+        code.
+      </div>
+      <div class="code-block">
+<span class="com"># .github/workflows/ci.yml</span>
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: <span class="str">"3.12"</span>
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Run tests with coverage
+        run: pytest --cov=src --cov-report=xml --cov-fail-under=<span class="num">80</span>
+
+      - name: Security scan
+        run: |
+          pip install bandit
+          bandit -r src/ -ll
+
+  build-and-push:
+    needs: test               <span class="com"># only runs if 'test' job passes</span>
+    runs-on: ubuntu-latest
+    if: github.ref == <span class="str">'refs/heads/main'</span>
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build container image
+        run: docker build -t myapp:${{ github.sha }} .
+      - name: Scan image
+        run: trivy image --exit-code 1 --severity CRITICAL myapp:${{ github.sha }}
+      - name: Push to registry
+        run: |
+          echo ${{ secrets.REGISTRY_TOKEN }} | docker login -u user --password-stdin
+          docker push myapp:${{ github.sha }}
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Deployment Strategies</div>
+      <div class="concept-title">How to Ship Without Breaking Things</div>
+      <div class="concept-desc">
+        How you roll out a new version matters as much as the code itself:<br><br>
+        &bull; <strong>Rolling update</strong> — replace instances one at a
+          time; if health checks fail, stop and roll back. Default in
+          Kubernetes.<br>
+        &bull; <strong>Blue-green deployment</strong> — run two identical
+          environments ("blue" = current, "green" = new); switch traffic
+          instantly; instant rollback by switching back.<br>
+        &bull; <strong>Canary release</strong> — send 5% of traffic to the
+          new version, watch metrics, gradually increase to 100% (or roll
+          back if errors spike).<br>
+        &bull; <strong>Feature flags</strong> — deploy code "dark" (disabled),
+          then turn it on for specific users without a new deployment.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        deploy "should be fine" because it worked in staging. Staging never
+        perfectly mirrors production load, data, and integrations.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure Recovery</div>
+      <div class="concept-title">When the Pipeline Ships a Bad Release</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — a teammate's bad commit will reach
+        production eventually. Your safety net matters more than
+        prevention alone.<br><br>
+        <strong>Build these into every pipeline:</strong><br>
+        &bull; <strong>Automated rollback</strong> — if health checks fail
+          post-deploy, automatically revert to the last known-good version.<br>
+        &bull; <strong>Deployment markers</strong> — send an event to your
+          monitoring system on every deploy, so spikes can be correlated
+          instantly: "errors started 90 seconds after deploy #4521."<br>
+        &bull; <strong>Fast rollback path</strong> — rolling back should
+          take seconds, not the same time as a forward deploy.<br>
+        &bull; <strong>Post-incident review</strong> — every bad release
+          gets a blameless writeup: what broke, why CI didn't catch it,
+          what test or gate would have.
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body ops -->

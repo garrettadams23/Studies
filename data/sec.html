@@ -2480,4 +2480,128 @@ docker inspect myapp_container | python3 -c   <span class="str">"import sys,json
 
   </div>
 </div>
+
+<!-- BEGINNER35-SEC v1 -->
+<!-- ── TOPIC: Social Engineering & Phishing Defense ──────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Social Engineering – Defending the Human Layer
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Humans Are the Top Attack Vector</div>
+      <div class="concept-desc">
+        Firewalls and encryption don't stop an attacker who simply
+        <em>asks nicely</em>. <strong>Social engineering</strong> exploits
+        human psychology — trust, urgency, fear, helpfulness, curiosity —
+        to bypass technical controls entirely. Roughly 80%+ of breaches
+        start with some form of human manipulation.<br><br>
+        <strong>The psychological levers attackers pull:</strong><br>
+        &bull; <em>Authority</em> — "This is the CEO; I need this done now."<br>
+        &bull; <em>Urgency</em> — "Your account will be locked in 1 hour."<br>
+        &bull; <em>Fear</em> — "Suspicious activity detected on your account."<br>
+        &bull; <em>Curiosity</em> — "See who viewed your profile" links.<br>
+        &bull; <em>Helpfulness</em> — "I'm locked out, can you let me in?"<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        message is legitimate because it looks official, knows your name,
+        or comes from someone you recognise. Verify through a second channel.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Phishing Types</div>
+      <div class="concept-title">Phishing, Spear Phishing, Vishing, Smishing</div>
+      <div class="concept-desc">
+        Modern phishing comes in many flavours — knowing the names helps
+        you train others and write better detection rules.
+      </div>
+      <div class="code-block">
+<span class="com">Type            Channel       Description</span>
+Phishing        Email         Mass email to many targets, generic content
+Spear phishing  Email         Targeted, personalised — uses real names/projects
+Whaling         Email         Spear phishing aimed at executives (CEO/CFO)
+Vishing         Phone/voice   Caller impersonates IT support, bank, vendor
+Smishing        SMS/text      "Your package couldn't be delivered, click here"
+Quishing        QR code       Malicious QR codes on posters, parking meters, emails
+Pretexting      Any           Attacker invents a scenario to extract info
+                              ("I'm from Acme Audit, I need your employee list")
+Watering hole   Web           Attacker compromises a site the target visits often
+Business Email  Email         Impersonates a vendor/exec to redirect payments
+Compromise (BEC)              ("Update our bank details for the next invoice")
+
+<span class="com"># Quick red-flag checklist for suspicious emails:</span>
+<span class="com"># [ ] Sender domain slightly misspelled (paypa1.com, micros0ft.com)</span>
+<span class="com"># [ ] Generic greeting ("Dear Customer") on a "personal" message</span>
+<span class="com"># [ ] Urgency or threat language ("act now or lose access")</span>
+<span class="com"># [ ] Hover over links — does the URL match the displayed text?</span>
+<span class="com"># [ ] Unexpected attachment (.exe, .zip, .html, macro-enabled .docm)</span>
+<span class="com"># [ ] Request to bypass normal process ("don't tell finance, just wire it")</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Technical Controls</div>
+      <div class="concept-title">Email Authentication: SPF, DKIM, DMARC</div>
+      <div class="concept-desc">
+        These three DNS-based protocols work together to stop attackers
+        from spoofing your domain in phishing emails:<br><br>
+        &bull; <strong>SPF (Sender Policy Framework)</strong> — a DNS TXT
+          record listing which mail servers are allowed to send for your
+          domain.<br>
+        &bull; <strong>DKIM (DomainKeys Identified Mail)</strong> —
+          cryptographically signs outgoing emails so receivers can verify
+          they weren't altered in transit.<br>
+        &bull; <strong>DMARC (Domain-based Message Authentication)</strong>
+          — tells receiving servers what to do when SPF/DKIM checks fail
+          (quarantine, reject) and where to send reports.
+      </div>
+      <div class="code-block">
+<span class="com"># SPF record — only these servers may send as @example.com</span>
+example.com.  TXT  "v=spf1 include:_spf.google.com include:sendgrid.net -all"
+<span class="com"># -all = hard fail anything not listed (strict)</span>
+<span class="com"># ~all = soft fail (mark as suspicious but still deliver)</span>
+
+<span class="com"># DKIM record — public key for verifying signatures</span>
+google._domainkey.example.com.  TXT  "v=DKIM1; k=rsa; p=MIGfMA0GCSq..."
+
+<span class="com"># DMARC record — policy + reporting address</span>
+_dmarc.example.com.  TXT  "v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@example.com; pct=100"
+<span class="com"># p=none       → monitor only (start here)</span>
+<span class="com"># p=quarantine → send failures to spam folder</span>
+<span class="com"># p=reject     → block failures outright (end goal)</span>
+
+<span class="com"># Check your domain's current posture</span>
+dig example.com TXT | grep spf
+dig _dmarc.example.com TXT
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Human Layer</div>
+      <div class="concept-title">Building a Phishing-Resilient Culture</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — and you can also stack the deck so
+        the right choice is the easy choice:<br><br>
+        &bull; Run <strong>regular phishing simulations</strong> — not to
+          punish people who click, but to identify training needs.<br>
+        &bull; Make reporting <strong>one click away</strong> — a
+          "Report Phishing" button in the mail client beats a confusing
+          forward-to-security process.<br>
+        &bull; <strong>Never punish someone for reporting</strong> a real
+          click — punishment teaches people to hide mistakes, which is
+          the worst outcome for security.<br>
+        &bull; Establish a <strong>verbal verification process</strong> for
+          financial requests: "any wire transfer change requires a phone
+          call to a known number — no exceptions, regardless of who's asking."<br>
+        &bull; Celebrate good catches publicly — "Maria caught a spear
+          phishing attempt this week" builds a security-positive culture.
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body sec -->
