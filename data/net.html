@@ -4996,6 +4996,71 @@ ip = ipaddress.ip_address(<span class="str">&quot;192.168.10.40&quot;</span>)
   </div>
 </div>
 
+<!-- BEGINNER45-NET v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Load Balancers Explained – Spreading the Work Around</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A load balancer is a traffic cop for your servers</h4>
+      <p class="concept-desc">A load balancer sits in front of a group of servers and decides which one should handle each
+      incoming request — spreading the work around so no single server gets overwhelmed, and so the service keeps running
+      even if one server fails. From the outside, users see a single address; behind that address, the load balancer
+      quietly routes them to whichever healthy server makes the most sense at that moment.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Common balancing strategies, and when each shines</h4>
+      <table class="ai-table">
+        <tr><th>Strategy</th><th>How it decides</th><th>Good fit when...</th></tr>
+        <tr><td>Round robin</td><td>Cycles through servers in order: 1, 2, 3, 1, 2, 3...</td><td>All servers are roughly equal in capacity and requests are roughly equal in cost</td></tr>
+        <tr><td>Least connections</td><td>Sends the next request to whichever server currently has the fewest active connections</td><td>Requests vary significantly in how long they take to process</td></tr>
+        <tr><td>IP hash</td><td>Routes based on a hash of the client's IP — the same client tends to land on the same server</td><td>You need "session stickiness" without a shared session store</td></tr>
+        <tr><td>Weighted</td><td>Some servers get proportionally more traffic than others, based on assigned weights</td><td>Your servers have meaningfully different capacities (a newer, beefier box vs. an older one)</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The unsung hero: health checks</h4>
+      <p class="concept-desc">A load balancer is only as good as its ability to know which servers are actually healthy.
+      It periodically polls each server — often hitting a dedicated <code>/healthz</code> endpoint — and silently stops
+      sending traffic to any server that fails to respond correctly. This is the mechanism that turns "one server crashed"
+      from a customer-facing outage into a non-event nobody outside the on-call team ever notices.</p>
+      <pre class="code-block"><span class="com"># A minimal health endpoint, the kind a load balancer polls every few seconds</span>
+<span class="kw">from</span> flask <span class="kw">import</span> Flask, jsonify
+app = Flask(__name__)
+
+<span class="kw">@app.route</span>(<span class="str">&quot;/healthz&quot;</span>)
+<span class="kw">def</span> <span class="fn">health_check</span>():
+    checks = {
+        <span class="str">&quot;database&quot;</span>: database_is_reachable(),
+        <span class="str">&quot;cache&quot;</span>: cache_is_reachable(),
+        <span class="str">&quot;disk_space_ok&quot;</span>: get_free_disk_percent() &gt; 10,
+    }
+    healthy = <span class="fn">all</span>(checks.values())
+    status_code = 200 <span class="kw">if</span> healthy <span class="kw">else</span> 503
+    <span class="kw">return</span> jsonify(checks), status_code
+
+<span class="com"># A load balancer that sees repeated 503s here will quietly stop
+# routing traffic to this instance — without a single human noticing,
+# until someone reviews the dashboards and finds the graceful save</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me</h4>
+      <p class="concept-desc">A health check that only verifies "is the web server process running?" can report "healthy"
+      while the actual database connection behind it is completely down — leaving users staring at error pages from a
+      server the load balancer confidently considers fine. A good health check verifies the things that actually matter
+      to the user's experience, not just the easiest thing to check. "The process is running" and "the service actually
+      works" are two different claims — don't let your monitoring assume they're the same.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->

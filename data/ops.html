@@ -2561,6 +2561,75 @@ projected_date = history[-1][0] + timedelta(weeks=weeks_remaining)
   </div>
 </div>
 
+<!-- BEGINNER45-OPS v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Writing a Postmortem People Actually Learn From</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A postmortem is a story about a system, not a trial of a person</h4>
+      <p class="concept-desc">A postmortem (or "post-incident review") is a written analysis of what happened during an
+      outage or incident, why it happened, and what will change as a result. The single most important design decision in
+      any postmortem process is whether it's <em>blameless</em> — focused on "what conditions made this mistake possible
+      and likely?" rather than "who do we blame for this?" Get that one decision right, and people will tell you the truth
+      about what happened. Get it wrong, and every future postmortem will quietly omit the details that actually mattered.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The shape of a postmortem that actually gets read</h4>
+      <table class="ai-table">
+        <tr><th>Section</th><th>What it answers</th><th>Common mistake to avoid</th></tr>
+        <tr><td>Summary</td><td>What happened, in 3-4 sentences a busy executive could read in 20 seconds</td><td>Burying the headline under technical preamble nobody reads first</td></tr>
+        <tr><td>Impact</td><td>Who was affected, for how long, and how badly — with real numbers</td><td>Vague language like "some users experienced issues" instead of "approximately 4,200 users over 38 minutes"</td></tr>
+        <tr><td>Timeline</td><td>What happened, in order, with timestamps — including detection and response</td><td>Starting the timeline at "the fix" instead of at the first sign something was wrong</td></tr>
+        <tr><td>Root cause(s)</td><td>Why it happened — usually more than one contributing factor, not a single villain</td><td>Stopping at "a bad config was deployed" instead of asking "why was it possible to deploy that config unreviewed?"</td></tr>
+        <tr><td>Action items</td><td>Specific, owned, dated changes that reduce the chance of recurrence</td><td>Vague commitments like "we'll be more careful" — that's not an action item, it's a hope</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">The "five whys" — finding the real root cause</h4>
+      <pre class="code-block"><span class="com"># A simple technique for digging past the surface-level explanation.
+# Keep asking "why" until you reach something you can actually fix.</span>
+
+Problem: The payment service was down for 40 minutes.
+
+Why #1: Why was it down?
+   -&gt; The service crashed when it ran out of memory.
+
+Why #2: Why did it run out of memory?
+   -&gt; A new code path loaded an entire customer table into memory at once.
+
+Why #3: Why did that code path do that?
+   -&gt; The developer tested only against a small sample database in staging.
+
+Why #4: Why didn't testing catch this before production?
+   -&gt; Staging databases aren't seeded with production-scale data volumes.
+
+Why #5: Why isn't that part of the standard testing process?
+   -&gt; There's no documented requirement for load-realistic staging data.
+
+<span class="com"># Notice where this ended up: not "the developer made a mistake"
+# (Why #1-3), but "our process doesn't ensure realistic testing
+# conditions" (Why #5) — a SYSTEM problem with a fixable solution,
+# not a PERSON problem with only blame to offer.</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — except blameless culture is everyone's circus</h4>
+      <p class="concept-desc">It's easy to think "writing good postmortems is the SRE team's job" — but a blameless
+      culture is built or destroyed by everyone in the room, in the moment someone says "well, obviously <em>they</em>
+      should have known better." One unkind comment in a review meeting can undo months of careful culture-building, and
+      it teaches everyone present — not just the person being criticized — that honesty here has a cost. Protecting that
+      culture, even in a meeting that isn't "yours," is part of keeping the whole system honest enough to actually improve.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body ops -->
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->

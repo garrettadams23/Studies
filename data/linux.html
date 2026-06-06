@@ -4562,6 +4562,73 @@ chmod -R u=rwX,g=rX,o= /opt/myapp</pre>
   </div>
 </div>
 
+<!-- BEGINNER45-LINUX v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Process Management – Finding and Taming Runaway Processes</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Every running thing is a process — and every process tells a story</h4>
+      <p class="concept-desc">A process is a running instance of a program — and at any moment, a Linux system might have
+      hundreds of them, most quietly doing their job. The skill of process management is being able to quickly answer
+      "what's running, what's it doing, is it behaving normally, and how do I deal with it if it isn't?" — questions that
+      come up constantly in troubleshooting, whether the symptom is "the server feels slow" or "this thing won't quit."</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Seeing what's running, and how it's behaving</h4>
+      <pre class="code-block"><span class="com"># The classic snapshot view — every process, full detail</span>
+ps aux
+
+<span class="com"># Live, auto-refreshing view sorted by resource usage —
+# your first stop when something "feels slow"</span>
+top
+<span class="com"># or, with friendlier output and mouse support:</span>
+htop
+
+<span class="com"># Find processes by name — handy when you know what you're
+# looking for but not its process ID (PID)</span>
+pgrep -fl nginx
+
+<span class="com"># See the full ancestry — what launched what, and in what order
+# (extremely useful for understanding "where did this come from?")</span>
+ps -ef --forest
+
+<span class="com"># Check what files and network connections a specific process has open —
+# great for "why won't this file unmount?" or "what is this PID
+# actually talking to?"</span>
+lsof -p 4821</pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Stopping a process: three signals, three very different outcomes</h4>
+      <table class="ai-table">
+        <tr><th>Signal</th><th>Command</th><th>What it actually means</th></tr>
+        <tr><td>SIGTERM (15)</td><td><code>kill 4821</code></td><td>"Please shut yourself down gracefully" — gives the process a chance to save state, close connections, and clean up</td></tr>
+        <tr><td>SIGKILL (9)</td><td><code>kill -9 4821</code></td><td>"Stop immediately, no negotiation" — the kernel terminates it on the spot; the process gets no chance to clean up anything</td></tr>
+        <tr><td>SIGHUP (1)</td><td><code>kill -1 4821</code></td><td>"Reload your configuration" — many daemons treat this as "re-read your config file without fully restarting"</td></tr>
+      </table>
+      <p class="concept-desc">The escalation order matters: try <span class="kw">SIGTERM</span> first, wait a few seconds,
+      and reach for <span class="kw">SIGKILL</span> only if the process genuinely won't respond. Reaching straight for
+      <code>kill -9</code> out of habit is how database processes end up with corrupted files and temp directories end up
+      full of orphaned lock files — the very cleanup steps SIGTERM would have given the process a chance to perform.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — verify the PID before you kill it</h4>
+      <p class="concept-desc">Process IDs get reused constantly as old processes exit and new ones start — the PID you
+      noted five minutes ago in a different terminal might belong to a completely different program by the time you act
+      on it. Before running <code>kill</code> on a number you wrote down earlier, re-run <code>ps</code> or
+      <code>pgrep</code> to confirm that PID still belongs to what you think it does. The few seconds that takes is far
+      cheaper than explaining why you killed the wrong service.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body linux -->
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->
