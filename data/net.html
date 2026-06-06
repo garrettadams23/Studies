@@ -4927,6 +4927,76 @@ curl https://ifconfig.me</pre>
   </div>
 </div>
 
+<!-- BEGINNER43-NET v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Subnetting Without the Headache – CIDR Notation Made Practical</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A subnet is just "how big is this neighborhood?"</h4>
+      <p class="concept-desc">An IP address tells you a device's location; a subnet mask tells you how many of its
+      neighbors share the same local "neighborhood" — the group of addresses that can talk to each other directly,
+      without going through a router. CIDR notation (<code>/24</code>, <code>/26</code>, etc.) is just a compact way of
+      writing that mask: the number after the slash tells you how many bits are reserved for identifying the network
+      itself, leaving the rest for individual hosts.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The CIDR cheat sheet beginners actually reach for</h4>
+      <table class="ai-table">
+        <tr><th>CIDR</th><th>Subnet mask</th><th>Usable hosts</th><th>Common use</th></tr>
+        <tr><td>/24</td><td>255.255.255.0</td><td>254</td><td>Typical small office or home network</td></tr>
+        <tr><td>/25</td><td>255.255.255.128</td><td>126</td><td>Splitting a /24 in half — two departments, one building</td></tr>
+        <tr><td>/26</td><td>255.255.255.192</td><td>62</td><td>A single floor or smaller team</td></tr>
+        <tr><td>/27</td><td>255.255.255.224</td><td>30</td><td>A small lab, a rack of servers, a point-to-point link group</td></tr>
+        <tr><td>/30</td><td>255.255.255.252</td><td>2</td><td>A direct link between two routers — exactly enough for both ends</td></tr>
+      </table>
+      <p class="concept-desc">Notice the pattern: every step from /24 toward /32 cuts the available addresses roughly in
+      half. "Usable hosts" is two less than the raw count — one address is reserved to identify the network itself, and
+      one is reserved as the broadcast address that reaches every device in that subnet at once.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Let the tools do the arithmetic — verify, don't memorize</h4>
+      <pre class="code-block"><span class="com"># pip install — actually it's built into Python's standard library!</span>
+<span class="kw">import</span> ipaddress
+
+network = ipaddress.ip_network(<span class="str">&quot;192.168.10.0/26&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Network address:   {network.network_address}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Broadcast address: {network.broadcast_address}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Usable hosts:      {network.num_addresses - 2}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;First usable host: {list(network.hosts())[0]}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Last usable host:  {list(network.hosts())[-1]}&quot;</span>)
+
+<span class="com"># Quick check: is this address inside that subnet?</span>
+ip = ipaddress.ip_address(<span class="str">&quot;192.168.10.40&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;{ip} in {network}? {ip in network}&quot;</span>)
+
+<span class="com"># Splitting a network into smaller subnets — handy for planning
+# departmental allocations from a single block you've been given</span>
+<span class="kw">for</span> sub <span class="kw">in</span> network.subnets(new_prefix=28):
+    <span class="fn">print</span>(<span class="str">f&quot;  Sub-block: {sub}&quot;</span>)</pre>
+      <p class="concept-desc">This is the honest secret of subnetting: nobody who works with networks daily does the binary
+      math by hand every time. They've internalized the cheat-sheet patterns for common cases, and they reach for a
+      calculator (or <span class="kw">ipaddress</span>, or <span class="kw">ipcalc</span> on the command line) to double-check
+      anything unusual. Knowing how it works conceptually — and knowing how to verify it — beats memorizing tables you'll
+      forget under pressure.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me</h4>
+      <p class="concept-desc">"That device should be able to reach the server, they're both on the 192.168.x.x range" is a
+      classic trap — two addresses can look similar and still be in completely different subnets, unable to communicate
+      without a router between them. Before troubleshooting further up the stack, verify the actual subnet boundaries
+      with a tool like the one above rather than eyeballing the addresses and assuming they're neighbors.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->

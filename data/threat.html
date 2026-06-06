@@ -1836,6 +1836,74 @@ Day 10  - Attacker begins exporting files from a shared drive
   </div>
 </div>
 
+<!-- BEGINNER43-THREAT v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Open-Source Intelligence (OSINT) – What's Already Public About You</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">OSINT is intelligence gathered from things that are already public</h4>
+      <p class="concept-desc">Open-Source Intelligence means collecting and analyzing information from publicly available
+      sources — social media, company websites, public records, code repositories, even old cached pages — to build a
+      picture of a person or organization. It requires no hacking and breaks no laws on its own; the "open" in the name
+      is the whole point. Understanding OSINT matters for two very different reasons: attackers use it during the
+      reconnaissance phase of an intrusion (recall the Cyber Kill Chain's first stage), and defenders use the exact same
+      techniques to find out what an attacker could learn about their own organization before someone else does.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">What attackers commonly piece together — and from where</h4>
+      <table class="ai-table">
+        <tr><th>Information</th><th>Common public sources</th><th>How it gets used</th></tr>
+        <tr><td>Employee names &amp; roles</td><td>LinkedIn, company "About Us" pages, conference speaker lists</td><td>Crafting believable spear-phishing emails ("Hi, this is Dana from IT...")</td></tr>
+        <tr><td>Technology stack</td><td>Job postings ("must know AWS, Kubernetes, Salesforce"), public code repos</td><td>Targeting known vulnerabilities in the specific tools an org uses</td></tr>
+        <tr><td>Email address format</td><td>Press releases, public filings, "contact us" pages</td><td>Guessing other employees' addresses (firstname.lastname@company.com)</td></tr>
+        <tr><td>Physical &amp; schedule details</td><td>Social media check-ins, out-of-office replies, event listings</td><td>Timing attacks for when key personnel are away or distracted</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on (lab/personal use only)</span>
+      <h4 class="concept-title">Running your own OSINT check on yourself or your org</h4>
+      <pre class="code-block"><span class="com"># See what Google has indexed about a domain — often more than expected</span>
+site:example.com filetype:pdf
+site:example.com &quot;confidential&quot;
+
+<span class="com"># Check what WHOIS records reveal about a domain's registration</span>
+whois example.com | grep -iE &quot;registrant|admin|tech&quot;
+
+<span class="com"># Look up historical versions of a public page — sometimes old,
+# supposedly-removed information is still archived</span>
+<span class="com"># https://web.archive.org/web/*/example.com</span>
+
+<span class="com"># Search for exposed credentials tied to a domain (read-only check —
+# this is the same database breach-notification services use)</span>
+<span class="com"># https://haveibeenpwned.com/DomainSearch (requires domain verification)</span>
+
+<span class="com"># Review what a public GitHub org has accidentally exposed —
+# old commits sometimes contain credentials that were later "removed"
+# but remain in the git history forever</span>
+git log -p --all | grep -iE &quot;password|secret|api[_-]?key&quot;</pre>
+      <p class="concept-desc">That last command is worth sitting with — deleting a sensitive line from the latest commit
+      does <em>not</em> remove it from history. Anyone who clones the repository can still find it with a simple search.
+      This is one of the most common, entirely preventable ways organizations leak credentials.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — except your digital footprint is always yours</h4>
+      <p class="concept-desc">It's easy to assume "I'm not important enough to be a target" — but OSINT-driven attacks
+      rarely target individuals for who they are; they target whoever happens to be reachable and useful as a stepping
+      stone toward something bigger (a company network, a family member, a connected account). Periodically searching
+      your own name, checking what your old social media posts reveal, and reviewing what your employer has published
+      about you isn't paranoia — it's the same "know what's exposed before someone else finds it" thinking that
+      professional security teams apply to entire organizations, just scaled down to one person.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body threat -->
 <!-- /domain-body threat -->
 <!-- /domain-body threat -->
 <!-- /domain-body threat -->

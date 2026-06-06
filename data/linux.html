@@ -4484,5 +4484,84 @@ journalctl -u nginx -f</pre>
   </div>
 </div>
 
+<!-- BEGINNER43-LINUX v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>File Permissions Demystified – rwx, Octal Notation, and chmod</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Reading the permission string, left to right</h4>
+      <p class="concept-desc">Run <code>ls -l</code> and you'll see a string like <code>-rwxr-xr--</code> at the start of
+      each line. It looks cryptic until you break it into four pieces:</p>
+      <table class="ai-table">
+        <tr><th>Position</th><th>Means</th><th>In <code>-rwxr-xr--</code></th></tr>
+        <tr><td>1st character</td><td>File type: <code>-</code> regular file, <code>d</code> directory, <code>l</code> symlink</td><td><code>-</code> (a regular file)</td></tr>
+        <tr><td>Characters 2-4</td><td>Owner's permissions: read, write, execute</td><td><code>rwx</code> — owner can do all three</td></tr>
+        <tr><td>Characters 5-7</td><td>Group's permissions</td><td><code>r-x</code> — group can read and execute, not write</td></tr>
+        <tr><td>Characters 8-10</td><td>Everyone else's permissions</td><td><code>r--</code> — others can only read</td></tr>
+      </table>
+      <p class="concept-desc">For a directory, the meaning of each letter shifts slightly: <span class="kw">r</span> lets
+      you list its contents, <span class="kw">w</span> lets you create/delete files inside it, and <span class="kw">x</span>
+      lets you actually <em>enter</em> it (via <code>cd</code>) or access files inside by full path. A directory with
+      <code>r--</code> but no <code>x</code> is a common source of confusing "permission denied" errors — you can see
+      what's there but can't actually get in.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Octal notation: the same thing, in a faster shorthand</h4>
+      <p class="concept-desc">Each <span class="kw">rwx</span> triplet can be represented as a single digit by adding up
+      values: read = 4, write = 2, execute = 1. So <code>rwx</code> = 4+2+1 = <strong>7</strong>, <code>r-x</code> = 4+0+1 =
+      <strong>5</strong>, and <code>r--</code> = 4+0+0 = <strong>4</strong>. That makes <code>-rwxr-xr--</code> equivalent
+      to the much more typeable <code>754</code> — which is exactly the form you'll see in <span class="kw">chmod</span>
+      commands and deployment scripts everywhere.</p>
+      <table class="ai-table">
+        <tr><th>Octal digit</th><th>Permissions granted</th><th>Common use</th></tr>
+        <tr><td>7</td><td>rwx — read, write, execute</td><td>Scripts and programs you own and run</td></tr>
+        <tr><td>6</td><td>rw- — read and write, no execute</td><td>Regular documents and config files</td></tr>
+        <tr><td>5</td><td>r-x — read and execute, no write</td><td>Shared programs others should run but not modify</td></tr>
+        <tr><td>4</td><td>r-- — read only</td><td>Reference files nobody but the owner should change</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Setting permissions deliberately</h4>
+      <pre class="code-block"><span class="com"># View permissions in detail</span>
+ls -l deploy.sh
+
+<span class="com"># Make a script executable for the owner only — common for personal scripts</span>
+chmod 700 deploy.sh
+<span class="com"># Result: rwx------  (owner: full control, everyone else: nothing)</span>
+
+<span class="com"># Make a shared script runnable by the whole team, editable only by the owner</span>
+chmod 755 deploy.sh
+<span class="com"># Result: rwxr-xr-x  (owner: full, group/others: read+execute)</span>
+
+<span class="com"># Symbolic form — same end result, sometimes clearer to read in scripts</span>
+chmod u=rwx,g=rx,o=rx deploy.sh
+
+<span class="com"># Add execute permission without disturbing existing read/write bits</span>
+chmod +x deploy.sh
+
+<span class="com"># Recursively fix an entire directory tree (use carefully!)</span>
+chmod -R u=rwX,g=rX,o= /opt/myapp</pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">"chmod 777 it" is the duct tape of permissions — and just as ugly under the surface</h4>
+      <p class="concept-desc"><span class="kw">chmod 777</span> grants read, write, and execute to literally everyone — the
+      owner, the group, and every other user on the system. It "fixes" almost any permission error instantly, which is
+      exactly why it spreads through forums and Stack Overflow answers as a quick solution. <strong>Assume makes an ass
+      out of you and me</strong>: assuming "wide open" is harmless because "it's just my home lab" is how a small
+      convenience habit becomes a real vulnerability the day that file matters. Take the extra thirty seconds to figure
+      out the <em>narrowest</em> permission that actually solves the problem — your future self (and anyone auditing the
+      system later) will thank you.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body linux -->
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->
