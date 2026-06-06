@@ -4653,4 +4653,124 @@ sudo wash -i wlan0 -C   <span class="com"># part of reaver suite; scan for WPS-e
 
   </div>
 </div>
+
+<!-- BEGINNER34-NET v1 -->
+<!-- ── TOPIC: Network Packet Analysis ────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Packet Analysis – Reading the Network's Mind with Wireshark
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Capture Packets?</div>
+      <div class="concept-desc">
+        Every problem on a network eventually shows up in the packets —
+        slow apps, failed connections, intrusions, misconfigurations. A
+        <strong>packet capture (pcap)</strong> is ground truth: it shows
+        exactly what was sent and received, byte for byte.<br><br>
+        <strong>Tools:</strong><br>
+        &bull; <code>tcpdump</code> — command-line capture; runs anywhere,
+          even on headless servers.<br>
+        &bull; <strong>Wireshark</strong> — GUI analysis; the gold standard
+          for deep inspection.<br>
+        &bull; <code>tshark</code> — Wireshark's CLI sibling; great for
+          scripting and automation.<br><br>
+        <em>"Not my circus, not my monkey"</em> — capturing traffic on a
+        network you don't own or have authorization for is illegal in most
+        jurisdictions (wiretapping laws). Always get written authorization.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Capture</div>
+      <div class="concept-title">Capturing Traffic with tcpdump</div>
+      <div class="concept-desc">
+        <code>tcpdump</code> uses Berkeley Packet Filter (BPF) syntax to
+        select exactly the traffic you care about — capturing everything
+        creates huge files and noise.
+      </div>
+      <div class="code-block">
+<span class="com"># Capture all traffic on eth0, write to a file (analyse later in Wireshark)</span>
+sudo tcpdump -i eth0 -w capture.pcap
+
+<span class="com"># Capture only HTTP traffic (port 80) with full packet content</span>
+sudo tcpdump -i eth0 -s <span class="num">0</span> -w http.pcap port <span class="num">80</span>
+
+<span class="com"># Capture traffic to/from a specific host</span>
+sudo tcpdump -i eth0 host <span class="num">192.168.1</span>.<span class="num">50</span>
+
+<span class="com"># Capture traffic between two hosts on a specific port</span>
+sudo tcpdump -i eth0 'host 192.168.1.50 and host 192.168.1.10 and port 443'
+
+<span class="com"># Show packets live, with readable ASCII (good for HTTP debugging)</span>
+sudo tcpdump -i eth0 -A port <span class="num">80</span>
+
+<span class="com"># Capture only SYN packets (new connection attempts — good for scan detection)</span>
+sudo tcpdump -i eth0 'tcp[tcpflags] == tcp-syn'
+
+<span class="com"># Rotate captures every 100MB, keep last 10 files (long-running capture)</span>
+sudo tcpdump -i eth0 -w /data/cap.pcap -C <span class="num">100</span> -W <span class="num">10</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Analysis</div>
+      <div class="concept-title">Reading a Capture in Wireshark</div>
+      <div class="concept-desc">
+        Wireshark's <strong>display filter</strong> bar (top of the window)
+        is the most powerful tool — it narrows thousands of packets down
+        to the handful you care about.
+      </div>
+      <div class="code-block">
+<span class="com">─── Useful Wireshark display filters ─────────────────────────</span>
+ip.addr == <span class="num">192.168.1</span>.<span class="num">50</span>             <span class="com"># traffic to/from this host</span>
+tcp.port == <span class="num">443</span>                     <span class="com"># HTTPS traffic</span>
+http.request.method == <span class="str">"POST"</span>       <span class="com"># only POST requests</span>
+http contains <span class="str">"password"</span>             <span class="com"># find plaintext passwords (HTTP only!)</span>
+tcp.flags.syn == <span class="num">1</span> &amp;&amp; tcp.flags.ack == <span class="num">0</span>  <span class="com"># new connections (SYN scan)</span>
+tcp.analysis.retransmission       <span class="com"># packets that had to be resent (perf issue)</span>
+dns.qry.name contains <span class="str">"evil"</span>          <span class="com"># suspicious DNS lookups</span>
+tls.handshake.extensions_server_name == <span class="str">"example.com"</span>  <span class="com"># TLS SNI filter</span>
+
+<span class="com">─── Right-click any packet → Follow → TCP Stream ─────────────</span>
+<span class="com"># Reconstructs the entire conversation as readable text —</span>
+<span class="com"># the single most useful feature for understanding "what happened"</span>
+
+<span class="com">─── Statistics menu ───────────────────────────────────────────</span>
+<span class="com"># Conversations: who talked to whom, how much data</span>
+<span class="com"># Protocol Hierarchy: breakdown of traffic by protocol</span>
+<span class="com"># IO Graph: visualise traffic volume over time (spot spikes)</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">tshark</div>
+      <div class="concept-title">Scripting Analysis with tshark</div>
+      <div class="concept-desc">
+        For repeatable analysis or processing huge captures, script it
+        with <code>tshark</code> instead of clicking through the GUI.
+      </div>
+      <div class="code-block">
+<span class="com"># Extract all unique source/destination IP pairs</span>
+tshark -r capture.pcap -T fields -e ip.src -e ip.dst | sort -u
+
+<span class="com"># Count HTTP requests by destination host</span>
+tshark -r capture.pcap -Y "http.request" -T fields -e http.host |     sort | uniq -c | sort -rn
+
+<span class="com"># Extract all DNS queries (great for spotting C2 domains)</span>
+tshark -r capture.pcap -Y "dns.flags.response == 0"     -T fields -e frame.time -e ip.src -e dns.qry.name
+
+<span class="com"># Find the top talkers by byte volume</span>
+tshark -r capture.pcap -q -z conv,ip | head -<span class="num">20</span>
+
+<span class="com"># Extract files transferred over HTTP (incident response)</span>
+tshark -r capture.pcap --export-objects http,/tmp/extracted_files/
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body net -->

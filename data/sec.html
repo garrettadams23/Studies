@@ -2353,4 +2353,131 @@ curl -s --request GET   --url <span class="str">"https://www.virustotal.com/api/
 
   </div>
 </div>
+
+<!-- BEGINNER34-SEC v1 -->
+<!-- ── TOPIC: Container Security Hardening ───────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Container Security – Hardening Docker &amp; Images
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">The Container Threat Model</div>
+      <div class="concept-desc">
+        Containers share the host's kernel — they are <em>not</em> as
+        isolated as virtual machines. A misconfigured container can:<br><br>
+        &bull; Access the host filesystem (if volumes are mis-mounted).<br>
+        &bull; Escape to the host (kernel exploits, privileged mode).<br>
+        &bull; Run as root inside the container — and root in a container
+          can sometimes mean root on the host.<br>
+        &bull; Pull a malicious base image from a public registry.<br><br>
+        <strong>Defence-in-depth layers for containers:</strong><br>
+        1. Secure the image (what you build).<br>
+        2. Secure the registry (where images are stored).<br>
+        3. Secure the runtime (how containers run).<br>
+        4. Secure the orchestrator (Kubernetes RBAC, network policies).<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        public Docker Hub image is safe just because it has many downloads.
+        Scan it first.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Image Hardening</div>
+      <div class="concept-title">Writing a Secure Dockerfile</div>
+      <div class="concept-desc">
+        Most container vulnerabilities are introduced at build time.
+        Compare an insecure Dockerfile to a hardened one:
+      </div>
+      <div class="code-block">
+<span class="com">─── INSECURE (common beginner mistakes) ──────────────────────</span>
+FROM ubuntu:latest          <span class="com"># 'latest' = unpredictable, large attack surface</span>
+RUN apt-get update &amp;&amp; apt-get install -y python3 curl vim
+COPY . /app
+WORKDIR /app
+CMD ["python3", "app.py"]   <span class="com"># runs as root by default!</span>
+
+<span class="com">─── HARDENED ─────────────────────────────────────────────────</span>
+FROM python:3.<span class="num">12</span>-slim@sha256:abc123...   <span class="com"># pinned digest, minimal base</span>
+
+<span class="com"># Create a non-root user</span>
+RUN groupadd -r appuser &amp;&amp; useradd -r -g appuser appuser
+
+<span class="com"># Install only what's needed; clean up apt cache</span>
+RUN apt-get update &amp;&amp;     apt-get install -y --no-install-recommends curl &amp;&amp;     rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY --chown=appuser:appuser requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY --chown=appuser:appuser . .
+
+USER appuser                <span class="com"># drop root privileges</span>
+EXPOSE <span class="num">8080</span>
+HEALTHCHECK --interval=<span class="num">30</span>s CMD curl -f http://localhost:<span class="num">8080</span>/health || exit <span class="num">1</span>
+CMD ["python3", "app.py"]
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Scanning</div>
+      <div class="concept-title">Scanning Images for Vulnerabilities</div>
+      <div class="concept-desc">
+        Before deploying any image, scan it. Integrate scanning into your
+        CI/CD pipeline so vulnerable images never reach production.
+      </div>
+      <div class="code-block">
+<span class="com"># Trivy — fast, free, open-source vulnerability scanner</span>
+trivy image myapp:<span class="num">1.2</span>.<span class="num">3</span>
+
+<span class="com"># Fail the build if HIGH or CRITICAL vulnerabilities are found</span>
+trivy image --severity HIGH,CRITICAL --exit-code <span class="num">1</span> myapp:<span class="num">1.2</span>.<span class="num">3</span>
+
+<span class="com"># Scan a Dockerfile for misconfigurations (not just the built image)</span>
+trivy config ./Dockerfile
+
+<span class="com"># Scan for secrets accidentally baked into the image</span>
+trivy image --scanners secret myapp:<span class="num">1.2</span>.<span class="num">3</span>
+
+<span class="com"># Docker Scout (built into modern Docker Desktop)</span>
+docker scout cves myapp:<span class="num">1.2</span>.<span class="num">3</span>
+
+<span class="com"># GitHub Actions: scan on every push</span>
+<span class="com"># - uses: aquasecurity/trivy-action@master</span>
+<span class="com">#   with:</span>
+<span class="com">#     image-ref: 'myapp:${{ github.sha }}'</span>
+<span class="com">#     severity: 'CRITICAL,HIGH'</span>
+<span class="com">#     exit-code: '1'</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Runtime Hardening</div>
+      <div class="concept-title">Running Containers Safely</div>
+      <div class="concept-desc">
+        Docker run flags matter as much as the image itself:
+      </div>
+      <div class="code-block">
+<span class="com"># NEVER do this in production:</span>
+docker run --privileged -v /:/host myimage   <span class="com"># full host access!</span>
+
+<span class="com"># Hardened run command:</span>
+docker run   --read-only \                          <span class="com"># filesystem is read-only</span>
+  --tmpfs /tmp \                         <span class="com"># writable tmp, in-memory only</span>
+  --cap-drop=ALL \                       <span class="com"># drop all Linux capabilities</span>
+  --cap-add=NET_BIND_SERVICE \           <span class="com"># add back only what's needed</span>
+  --security-opt=no-new-privileges \     <span class="com"># block privilege escalation</span>
+  --memory=512m --cpus=1 \               <span class="com"># resource limits (DoS protection)</span>
+  --user $(id -u):$(id -g) \             <span class="com"># run as host's non-root user</span>
+  myimage:<span class="num">1.2</span>.<span class="num">3</span>
+
+<span class="com"># Audit running containers for risky configurations</span>
+docker inspect myapp_container | python3 -c   <span class="str">"import sys,json; c=json.load(sys.stdin)[0]; print('Privileged:', c['HostConfig']['Privileged']); print('User:', c['Config']['User'] or 'root (DANGER)')"</span>
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body sec -->
