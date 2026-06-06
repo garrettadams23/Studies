@@ -963,5 +963,74 @@ results = collection.query(query_embeddings=embedder.encode([question]).tolist()
   </div>
 </div>
 
+<!-- BEGINNER40-AI v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Tokens, Context Windows, and Why "Just Paste the Whole Codebase" Doesn't Work</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A model doesn't read words — it reads tokens</h4>
+      <p class="concept-desc">Before a language model can process text, it breaks it into <em>tokens</em> — chunks that are
+      often smaller than a whole word. "Networking" might become "Network" + "ing"; a rare word might be split into three
+      or four pieces; a single emoji can cost several tokens. As a rough rule of thumb in English, <strong>~4 characters ≈
+      1 token</strong>, or roughly 75 words ≈ 100 tokens. This matters because nearly everything about how you interact with
+      a model — cost, speed, and especially how much it can "see" at once — is measured in tokens, not words or characters.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The context window: the model's "working memory"</h4>
+      <p class="concept-desc">A context window is the maximum number of tokens a model can consider at one time — your
+      entire conversation, system instructions, retrieved documents, and the model's own response all have to fit inside
+      it. Once a conversation grows past that limit, the oldest content has to be dropped or summarized to make room for
+      new content. Picture a desk of fixed size: you can pile on more papers, but eventually something falls off the back
+      to make room for what you just placed in front of you.</p>
+      <table class="ai-table">
+        <tr><th>Context size</th><th>Roughly equivalent to</th></tr>
+        <tr><td>4,000 tokens</td><td>About 6 pages of double-spaced text</td></tr>
+        <tr><td>32,000 tokens</td><td>A short novella, or a medium-sized source code file plus its tests</td></tr>
+        <tr><td>200,000 tokens</td><td>A few hundred pages — a small book, or a sizeable chunk of a real codebase</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Common pitfall</span>
+      <h4 class="concept-title">"I'll just paste the whole codebase in" — and three things that go wrong</h4>
+      <ol>
+        <li><strong>It might not fit.</strong> A real production codebase is often millions of tokens — far beyond any
+        context window — so the bulk of it gets silently truncated, and you may not even notice which parts.</li>
+        <li><strong>Signal gets diluted.</strong> Even when it technically fits, burying the three relevant files inside
+        ten thousand irrelevant lines makes it harder — not easier — for the model to find what actually matters to your
+        question. More context isn't free; it's a tradeoff.</li>
+        <li><strong>Cost and latency scale with tokens.</strong> Both the time to get a response and (for paid APIs) the
+        price you pay typically scale with how many tokens you send and receive. A 200,000-token prompt isn't just slower
+        — it can be dramatically more expensive than a focused 2,000-token one that gets the same job done.</li>
+      </ol>
+      <p class="concept-desc">The skilled move isn't "give the model everything" — it's "give the model exactly what it
+      needs to answer this specific question," which is precisely the problem that techniques like RAG (retrieval-augmented
+      generation) and good prompt scoping are designed to solve.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Estimating token counts yourself</h4>
+      <pre class="code-block"><span class="com"># pip install tiktoken</span>
+<span class="kw">import</span> tiktoken
+
+encoder = tiktoken.get_encoding(<span class="str">&quot;cl100k_base&quot;</span>)
+text = <span class="str">&quot;Not my circus, not my monkey — but I'll still help you find the owner.&quot;</span>
+
+tokens = encoder.encode(text)
+<span class="fn">print</span>(<span class="str">f&quot;Characters: {len(text)}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Tokens:     {len(tokens)}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;First few token IDs: {tokens[:5]}&quot;</span>)
+<span class="com"># Try this on a paragraph of your own writing vs. a block of code —
+# notice how code and unusual words tend to use *more* tokens per
+# character than plain English prose.</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body ai -->
 <!-- /domain-body ai -->
 <!-- /domain-body ai -->

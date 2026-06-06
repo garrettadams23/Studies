@@ -2422,4 +2422,73 @@ sudo certbot renew --dry-run
 
   </div>
 </div>
+<!-- BEGINNER40-OPS v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Writing Runbooks That People Actually Follow</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A runbook is a conversation with your future self at 3 AM</h4>
+      <p class="concept-desc">A runbook is a step-by-step procedure for handling a specific operational situation —
+      restarting a stuck service, failing over a database, rotating an expired certificate. The test of a good runbook
+      isn't whether the author understands it; it's whether a half-asleep on-call engineer who has never touched this
+      system can follow it correctly under pressure, at 3 AM, without calling anyone for help.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The anatomy of a runbook that survives contact with reality</h4>
+      <table class="ai-table">
+        <tr><th>Section</th><th>Purpose</th><th>What goes wrong without it</th></tr>
+        <tr><td>Trigger / symptoms</td><td>How do you know this runbook applies right now?</td><td>Engineer wastes 20 minutes confirming they're even looking at the right problem</td></tr>
+        <tr><td>Blast radius / impact</td><td>Who and what is affected if this goes wrong further?</td><td>Nobody escalates because nobody realized how big the problem actually was</td></tr>
+        <tr><td>Preconditions</td><td>What access, tools, or state do you need before starting?</td><td>Engineer gets halfway through and discovers they don't have the right permissions</td></tr>
+        <tr><td>Numbered steps with exact commands</td><td>Remove all guesswork — copy, paste, run</td><td>"Restart the service" becomes a 45-minute detour into "which service, on which host, with which flag?"</td></tr>
+        <tr><td>Verification step</td><td>How do you confirm the fix actually worked?</td><td>Engineer declares victory, closes the ticket, and the issue recurs an hour later</td></tr>
+        <tr><td>Rollback / escalation path</td><td>What do you do if this *doesn't* work?</td><td>Engineer freezes, unsure whether to keep pushing or wake someone up</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">A short runbook excerpt, written the right way</h4>
+      <pre class="code-block"><span class="com"># RUNBOOK: API gateway returning 503s</span>
+
+<span class="com"># TRIGGER: PagerDuty alert "gateway-503-rate-high" fires when error
+# rate > 5% for 5 minutes straight.</span>
+
+<span class="com"># IMPACT: All customer-facing API traffic degraded. Treat as SEV-2.</span>
+
+<span class="com"># STEP 1 — confirm the alert is real, not a monitoring blip</span>
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; https://api.internal.example.com/healthz
+<span class="com"># Expect: 200. If you see 503 here too, this is real — continue.</span>
+
+<span class="com"># STEP 2 — check whether it's one node or all of them</span>
+kubectl get pods -n gateway -o wide
+<span class="com"># Look for pods stuck in CrashLoopBackOff or 0/1 Ready</span>
+
+<span class="com"># STEP 3 — restart only the unhealthy pods (NOT the whole deployment)</span>
+kubectl delete pod &lt;pod-name&gt; -n gateway
+<span class="com"># Kubernetes will reschedule it automatically — this is non-destructive</span>
+
+<span class="com"># VERIFY — error rate back under 1% for 5 consecutive minutes</span>
+watch -n 10 'curl -s https://api.internal.example.com/metrics | grep error_rate'
+
+<span class="com"># IF STILL FAILING after step 3 — STOP. Escalate to #platform-oncall.
+# Do not attempt a full deployment restart without a second engineer present.</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">You can't make someone make the right choice...</h4>
+      <p class="concept-desc"><strong>...yet you can pick up the pieces afterwards.</strong> No matter how clear your
+      runbook is, someone under pressure will eventually skip the verification step, run the command on the wrong host,
+      or improvise instead of escalating. That's not a reason to stop writing good runbooks — it's the reason to also
+      write the recovery procedure for "someone did the wrong thing." The best operational teams plan for both the happy
+      path and the moment a tired human deviates from it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body ops -->
 <!-- /domain-body ops -->

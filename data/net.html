@@ -4852,5 +4852,81 @@ dig @8.8.8.8 example.com +short</pre>
   </div>
 </div>
 
+<!-- BEGINNER40-NET v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>VPNs Explained – Tunnels, Encryption, and What They Don't Do</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A VPN is a private tunnel through a public road</h4>
+      <p class="concept-desc">Imagine the internet as a public highway system — anyone running the right equipment at the
+      right point could, in theory, see which trucks are going where. A VPN (Virtual Private Network) builds an
+      encrypted tunnel through that highway: your traffic still travels over the same public infrastructure, but it's
+      wrapped in a layer that hides its contents from anyone watching the road, and makes it appear to originate from the
+      tunnel's far end rather than your actual location.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Two very different reasons people use VPNs</h4>
+      <table class="ai-table">
+        <tr><th>Use case</th><th>What it actually does</th><th>Common protocols</th></tr>
+        <tr><td>Corporate / remote-access VPN</td><td>Lets an employee's laptop join the company's internal network from anywhere, as if it were plugged in at the office</td><td>WireGuard, OpenVPN, IPsec/IKEv2, Cisco AnyConnect</td></tr>
+        <tr><td>Consumer / privacy VPN</td><td>Routes your traffic through a third-party provider's server so your ISP and local network can't see *what* you're accessing — though the VPN provider now can</td><td>WireGuard, OpenVPN (commercial offerings)</td></tr>
+      </table>
+      <p class="concept-desc">These solve different problems for different threat models. A corporate VPN exists so IT can
+      extend a trusted network boundary to remote workers; a consumer VPN exists to shift *who* has visibility into your
+      traffic — from your ISP to the VPN provider — which is a meaningfully different guarantee than "no one can see what
+      I do online."</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Setting up a minimal WireGuard tunnel (lab environment)</h4>
+      <pre class="code-block"><span class="com"># Install WireGuard (Debian/Ubuntu)</span>
+sudo apt install wireguard
+
+<span class="com"># Generate a public/private keypair for this peer</span>
+wg genkey | tee privatekey | wg pubkey > publickey
+
+<span class="com"># Minimal config: /etc/wireguard/wg0.conf
+# (replace placeholders with real keys and addresses)</span>
+<span class="com">#
+# [Interface]
+# PrivateKey = &lt;this peer's private key&gt;
+# Address = 10.10.0.2/24
+#
+# [Peer]
+# PublicKey = &lt;remote peer's public key&gt;
+# Endpoint = vpn.example.com:51820
+# AllowedIPs = 0.0.0.0/0
+# PersistentKeepalive = 25</span>
+
+<span class="com"># Bring the tunnel up and check its status</span>
+sudo wg-quick up wg0
+sudo wg show
+
+<span class="com"># Confirm your traffic is actually routing through the tunnel</span>
+curl https://ifconfig.me</pre>
+      <p class="concept-desc">The <span class="kw">AllowedIPs = 0.0.0.0/0</span> line is the one to read carefully — it tells
+      the system to route <em>all</em> traffic through the tunnel ("full tunnel"), versus a narrower range that only sends
+      specific destinations through it ("split tunnel"). Getting this wrong is one of the most common VPN
+      misconfigurations: too broad and you may break local network access; too narrow and traffic you meant to protect
+      goes out in the clear.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Common pitfall</span>
+      <h4 class="concept-title">"I'm on a VPN, so I'm anonymous" — assume makes an ass out of you and me</h4>
+      <p class="concept-desc">A VPN hides your traffic's path and contents from your local network and ISP — it does
+      <em>not</em> make you anonymous to the websites you visit. You can still be tracked through cookies, browser
+      fingerprinting, account logins, and the VPN provider itself can see (and in some jurisdictions, may be compelled to
+      log and disclose) your activity. Treat "I'm using a VPN" as one layer of a privacy strategy, not a magic cloak —
+      and always read a provider's actual logging policy rather than assuming "no logs" means what it sounds like.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->
