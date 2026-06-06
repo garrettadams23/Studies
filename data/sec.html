@@ -2971,5 +2971,71 @@ whois suspicious-domain.com | grep -iE &quot;creation date|registrar&quot;</pre>
   </div>
 </div>
 
+<!-- BEGINNER42-SEC v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Encryption Basics – At Rest, In Transit, and Why "It's Encrypted" Isn't Enough</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Encryption answers one question: "who can read this?"</h4>
+      <p class="concept-desc">Encryption transforms readable data ("plaintext") into scrambled data ("ciphertext") using
+      a mathematical algorithm and a key — so that only someone holding the right key can reverse the process and read it.
+      Everything interesting about encryption comes down to two follow-up questions: <em>where</em> is the data when it's
+      protected, and <em>who controls the key</em>?</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">"At rest" vs "in transit" — two different problems</h4>
+      <table class="ai-table">
+        <tr><th>State</th><th>What it protects against</th><th>Common technology</th></tr>
+        <tr><td>In transit</td><td>Someone intercepting data as it travels across a network</td><td>TLS/HTTPS, SSH, VPN tunnels</td></tr>
+        <tr><td>At rest</td><td>Someone gaining access to the storage itself — a stolen laptop, a compromised database, a discarded hard drive</td><td>Full-disk encryption (BitLocker, LUKS, FileVault), database-level encryption, encrypted backups</td></tr>
+      </table>
+      <p class="concept-desc">A system can be excellent at one and weak at the other — HTTPS protects your password on the
+      way to the server, but if that server stores passwords in plaintext, the encryption in transit did nothing to
+      protect you from a database breach. Both layers matter, and they solve different threats.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Symmetric vs asymmetric, in one paragraph each</h4>
+      <p class="concept-desc"><strong>Symmetric encryption</strong> (AES is the modern standard) uses the <em>same</em> key
+      to lock and unlock — fast and efficient, but both parties need a way to share that key securely first. <strong>Asymmetric
+      encryption</strong> (RSA, elliptic-curve) uses a <em>pair</em> of mathematically linked keys: anything encrypted with
+      the public key can only be decrypted with the matching private key. This solves the "how do we share a key safely"
+      problem — you can publish your public key everywhere, and only you can decrypt what people send you with it. In
+      practice, most real systems (like HTTPS) use asymmetric encryption briefly to safely exchange a symmetric key, then
+      switch to fast symmetric encryption for the actual data — getting the security benefits of both.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Seeing encryption in action</h4>
+      <pre class="code-block"><span class="com"># Inspect the TLS certificate a website is presenting (in transit)</span>
+openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 2&gt;/dev/null | openssl x509 -noout -subject -issuer -dates
+
+<span class="com"># Encrypt and decrypt a file symmetrically with a passphrase (at rest, simple demo)</span>
+openssl enc -aes-256-cbc -salt -in report.txt -out report.txt.enc
+openssl enc -aes-256-cbc -d -in report.txt.enc -out report_decrypted.txt
+
+<span class="com"># Generate an asymmetric keypair and use it (the basis of SSH, GPG, and HTTPS certs)</span>
+ssh-keygen -t ed25519 -f my_key -C &quot;demo key&quot;
+<span class="com"># my_key       = private key — never share this, ever
+# my_key.pub   = public key — safe to hand out freely</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">"It's encrypted" is the start of a sentence, not the end of one</h4>
+      <p class="concept-desc"><strong>Assume makes an ass out of you and me</strong>: hearing "the data is encrypted" should
+      prompt follow-up questions, not relief — encrypted with what algorithm, who holds the keys, is it encrypted in
+      transit, at rest, or both, and what happens if the key itself is compromised? A vendor that can answer all four
+      clearly has actually thought it through. A vendor that just repeats "it's encrypted, don't worry" usually hasn't —
+      and that's worth noting before you trust them with something sensitive.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body sec -->
 <!-- /domain-body sec -->
 <!-- /domain-body sec -->

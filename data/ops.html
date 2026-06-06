@@ -2490,5 +2490,77 @@ watch -n 10 'curl -s https://api.internal.example.com/metrics | grep error_rate'
   </div>
 </div>
 
+<!-- BEGINNER42-OPS v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Capacity Planning – Answering "Will We Run Out of Room?" Before You Do</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Capacity planning is forecasting, not firefighting</h4>
+      <p class="concept-desc">Capacity planning is the practice of looking at how a resource — disk space, bandwidth,
+      server load, license seats — is being consumed over time, and projecting forward to answer "when will this become
+      a problem, and what should we do about it before it does?" The opposite approach — waiting for an alert that says
+      "disk 98% full" — turns a planning exercise into a 2 AM emergency. Good capacity planning quietly prevents most of
+      the outages that bad capacity planning causes people to brag about firefighting.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The basic forecasting loop</h4>
+      <table class="ai-table">
+        <tr><th>Step</th><th>What you're doing</th><th>Example question it answers</th></tr>
+        <tr><td>1. Measure current usage</td><td>Establish a baseline — what does "normal" look like today?</td><td>"We're using 620 GB of our 1 TB volume"</td></tr>
+        <tr><td>2. Track the trend over time</td><td>Is usage flat, growing steadily, or growing faster than before?</td><td>"We've added about 15 GB per week for the last two months"</td></tr>
+        <tr><td>3. Project forward</td><td>At the current rate, when do you cross the danger threshold?</td><td>"At 15 GB/week, we hit 900 GB (our alert threshold) in about 19 weeks"</td></tr>
+        <tr><td>4. Plan the intervention</td><td>What needs to happen before that date — and how long does it take to do it?</td><td>"Provisioning additional storage takes 6 weeks of lead time, so we need to start the request now, not in week 18"</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">A simple growth projection in Python</h4>
+      <pre class="code-block"><span class="com"># Given a few historical measurements, estimate when you'll hit a threshold</span>
+<span class="kw">from</span> datetime <span class="kw">import</span> date, timedelta
+
+<span class="com"># (date, usage_in_gb) samples taken weekly</span>
+history = [
+    (date(2026, 5, 4), 590),
+    (date(2026, 5, 11), 605),
+    (date(2026, 5, 18), 622),
+    (date(2026, 5, 25), 636),
+]
+
+<span class="com"># Average weekly growth across the sampled period</span>
+days_elapsed = (history[-1][0] - history[0][0]).days
+total_growth = history[-1][1] - history[0][1]
+weekly_growth = total_growth / (days_elapsed / 7)
+
+threshold_gb = 900
+current_gb = history[-1][1]
+weeks_remaining = (threshold_gb - current_gb) / weekly_growth
+projected_date = history[-1][0] + timedelta(weeks=weeks_remaining)
+
+<span class="fn">print</span>(<span class="str">f&quot;Growing ~{weekly_growth:.1f} GB/week&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Projected to hit {threshold_gb} GB around {projected_date}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;That's roughly {weeks_remaining:.0f} weeks from the last measurement&quot;</span>)</pre>
+      <p class="concept-desc">This is deliberately simple — straight-line ("linear") projection. Real-world usage often
+      grows in bursts (a new product launch, a seasonal spike), so mature capacity planning layers in seasonality and
+      known upcoming events on top of the trend line. But even this basic version turns a vague worry into a concrete
+      date you can act on.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — until the monkey runs out of room</h4>
+      <p class="concept-desc">"That's the database team's disk, not mine" works fine right up until their volume fills up
+      and takes down a service your team depends on. Capacity problems rarely stay neatly inside team boundaries — a full
+      log partition can crash an application server, a maxed-out license pool can block an entire department's work. Part
+      of good capacity planning is simply knowing which shared resources you depend on, even ones you don't directly own,
+      so "not my circus" doesn't quietly become "my outage."</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body ops -->
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->

@@ -9840,4 +9840,81 @@ soup = BeautifulSoup(resp.text, <span class="str">"html.parser"</span>)
 
   </div>
 </div>
+<!-- BEGINNER42-SCRIPT v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Working with APIs and JSON in Python</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">An API is a menu, not a kitchen</h4>
+      <p class="concept-desc">A REST API is a defined set of URLs a service exposes so other programs can ask it
+      questions or tell it to do things — without needing to know how it works internally. Think of it like a restaurant
+      menu: you don't need to understand the kitchen to order "the salmon" — you just need to know what's on the menu,
+      how to ask for it, and what to expect back. The API documentation <em>is</em> the menu.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">JSON: the common language APIs speak</h4>
+      <p class="concept-desc">JSON (JavaScript Object Notation) is a simple text format for structured data — it looks
+      almost exactly like a Python dictionary, which is exactly why Python handles it so naturally.</p>
+      <pre class="code-block">{
+  <span class="str">&quot;name&quot;</span>: <span class="str">&quot;web-prod-03&quot;</span>,
+  <span class="str">&quot;status&quot;</span>: <span class="str">&quot;healthy&quot;</span>,
+  <span class="str">&quot;cpu_percent&quot;</span>: 23.4,
+  <span class="str">&quot;tags&quot;</span>: [<span class="str">&quot;production&quot;</span>, <span class="str">&quot;web&quot;</span>, <span class="str">&quot;us-east&quot;</span>]
+}</pre>
+      <p class="concept-desc">Strings in quotes, numbers bare, lists in brackets, nested objects in braces — once you can
+      read this format fluently, you can read the response from almost any API on the internet.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Calling an API and working with the response</h4>
+      <pre class="code-block"><span class="com"># pip install requests</span>
+<span class="kw">import</span> requests
+
+<span class="com"># GET: ask for information (the most common request type)</span>
+response = requests.get(<span class="str">&quot;https://api.github.com/repos/python/cpython&quot;</span>)
+response.raise_for_status()  <span class="com"># crash loudly on 4xx/5xx instead of silently continuing</span>
+
+data = response.json()  <span class="com"># parses the JSON text into a Python dict automatically</span>
+<span class="fn">print</span>(<span class="str">f&quot;Stars: {data['stargazers_count']:,}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Open issues: {data['open_issues_count']}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Default branch: {data['default_branch']}&quot;</span>)
+
+<span class="com"># POST: send data to create or change something (needs authentication, usually)</span>
+headers = {<span class="str">&quot;Authorization&quot;</span>: <span class="str">f&quot;Bearer {api_token}&quot;</span>, <span class="str">&quot;Content-Type&quot;</span>: <span class="str">&quot;application/json&quot;</span>}
+payload = {<span class="str">&quot;title&quot;</span>: <span class="str">&quot;Disk usage above 90% on web-prod-03&quot;</span>, <span class="str">&quot;priority&quot;</span>: <span class="str">&quot;high&quot;</span>}
+response = requests.post(<span class="str">&quot;https://helpdesk.example.com/api/tickets&quot;</span>, json=payload, headers=headers)
+<span class="fn">print</span>(<span class="str">&quot;Created ticket:&quot;</span>, response.json()[<span class="str">&quot;id&quot;</span>])</pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Common pitfall</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — check before you index</h4>
+      <p class="concept-desc">The single most common API-scripting crash is <code>KeyError</code> — assuming a field
+      exists in the response when it doesn't (maybe that server has no tags, maybe the API changed). Defensive code
+      checks first:</p>
+      <pre class="code-block"><span class="com"># Fragile — explodes if 'tags' is missing from this particular response</span>
+<span class="fn">print</span>(data[<span class="str">&quot;tags&quot;</span>][0])
+
+<span class="com"># Defensive — .get() returns a default instead of raising</span>
+tags = data.get(<span class="str">&quot;tags&quot;</span>, [])
+<span class="kw">if</span> tags:
+    <span class="fn">print</span>(<span class="str">f&quot;First tag: {tags[0]}&quot;</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">&quot;No tags on this resource&quot;</span>)
+
+<span class="com"># Also always check the status code BEFORE trusting the body —
+# a 404 page might still return something that *looks* like JSON</span>
+<span class="kw">if</span> response.status_code == 200:
+    process(response.json())
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">f&quot;Request failed: {response.status_code} — {response.text[:200]}&quot;</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body script -->
 <!-- /domain-body script -->
