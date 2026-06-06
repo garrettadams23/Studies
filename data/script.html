@@ -9707,4 +9707,137 @@ DEVICES = [
 
   </div>
 </div>
+
+<!-- BEGINNER38-SCRIPT v1 -->
+<!-- ── TOPIC: Web Scraping with Python ───────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Web Scraping – Extracting Data from Websites with Python
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Web Scraping Is — and Isn't</div>
+      <div class="concept-desc">
+        <strong>Web scraping</strong> is writing code that downloads web
+        pages and extracts structured data from them — prices, articles,
+        contact info, statistics — instead of copying and pasting by hand.<br><br>
+        <strong>Before you scrape anything:</strong><br>
+        &bull; Check the site's <code>robots.txt</code>
+          (<code>example.com/robots.txt</code>) — it states which parts
+          the site owner permits automated tools to access.<br>
+        &bull; Read the Terms of Service — many sites explicitly prohibit
+          scraping; violating ToS can have legal consequences.<br>
+        &bull; Prefer an official API if one exists — it's faster, more
+          stable, and explicitly sanctioned.<br><br>
+        <em>"Not my circus, not my monkey"</em> — scraping a site against
+        its wishes makes their problem (server load, legal risk) your
+        problem too. When in doubt, ask permission or use the API.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Static Pages</div>
+      <div class="concept-title">Scraping Static HTML with requests + BeautifulSoup</div>
+      <div class="concept-desc">
+        Most simple pages can be scraped with two libraries:
+        <code>requests</code> downloads the page; <code>BeautifulSoup</code>
+        parses the HTML into something you can search.
+      </div>
+      <div class="code-block">
+<span class="com"># pip install requests beautifulsoup4</span>
+<span class="kw">import</span> requests
+<span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
+<span class="kw">import</span> time
+
+HEADERS = {<span class="str">"User-Agent"</span>: <span class="str">"MyResearchBot/1.0 (contact: alice@example.com)"</span>}
+<span class="com"># Identify yourself! Anonymous scrapers get blocked faster, and</span>
+<span class="com"># a contact email lets site owners reach you instead of just banning you.</span>
+
+resp = requests.get(<span class="str">"https://example.com/articles"</span>, headers=HEADERS, timeout=<span class="num">10</span>)
+resp.raise_for_status()              <span class="com"># raises an exception on 4xx/5xx errors</span>
+
+soup = BeautifulSoup(resp.text, <span class="str">"html.parser"</span>)
+
+<span class="com"># Find elements by tag, class, or CSS selector</span>
+<span class="kw">for</span> article <span class="kw">in</span> soup.select(<span class="str">"article.post"</span>):
+    title = article.select_one(<span class="str">"h2.title"</span>)
+    link  = article.select_one(<span class="str">"a"</span>)
+    <span class="kw">if</span> title <span class="kw">and</span> link:
+        <span class="fn">print</span>(title.get_text(strip=<span class="kw">True</span>), <span class="str">"-&gt;"</span>, link[<span class="str">"href"</span>])
+
+    time.sleep(<span class="num">1</span>)   <span class="com"># BE POLITE — don't hammer their server</span>
+
+<span class="com"># Common selector patterns:</span>
+<span class="com"># soup.find("h1")                    -- first &lt;h1&gt; tag</span>
+<span class="com"># soup.find_all("a", class_="link")  -- all &lt;a class="link"&gt; tags</span>
+<span class="com"># soup.select("div#main &gt; p")        -- CSS selector syntax</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Dynamic Pages</div>
+      <div class="concept-title">Scraping JavaScript-Rendered Pages with Playwright</div>
+      <div class="concept-desc">
+        Many modern sites load content with JavaScript <em>after</em> the
+        initial page loads — <code>requests</code> only sees the empty
+        shell. <strong>Playwright</strong> drives a real browser, so it
+        sees the page exactly as a human would.
+      </div>
+      <div class="code-block">
+<span class="com"># pip install playwright &amp;&amp; playwright install chromium</span>
+<span class="kw">from</span> playwright.sync_api <span class="kw">import</span> sync_playwright
+
+<span class="kw">with</span> sync_playwright() <span class="kw">as</span> p:
+    browser = p.chromium.launch(headless=<span class="kw">True</span>)
+    page    = browser.new_page()
+    page.goto(<span class="str">"https://example.com/dashboard"</span>, wait_until=<span class="str">"networkidle"</span>)
+
+    <span class="com"># Wait for a specific element to appear (handles slow-loading content)</span>
+    page.wait_for_selector(<span class="str">".data-table"</span>, timeout=<span class="num">10000</span>)
+
+    <span class="com"># Extract text from rendered elements</span>
+    rows = page.query_selector_all(<span class="str">".data-table tr"</span>)
+    <span class="kw">for</span> row <span class="kw">in</span> rows:
+        cells = row.query_selector_all(<span class="str">"td"</span>)
+        <span class="fn">print</span>([c.inner_text() <span class="kw">for</span> c <span class="kw">in</span> cells])
+
+    <span class="com"># Take a screenshot for debugging — invaluable when scrapers break</span>
+    page.screenshot(path=<span class="str">"debug.png"</span>, full_page=<span class="kw">True</span>)
+
+    browser.close()
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Best Practices</div>
+      <div class="concept-title">Writing Scrapers That Don't Get You Banned</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        a scraper that worked yesterday will work today; sites change
+        their layout, add anti-bot measures, and update their ToS.<br><br>
+        &bull; <strong>Respect rate limits</strong> — add delays
+          (<code>time.sleep()</code>) between requests; consider the
+          <code>Crawl-delay</code> directive in robots.txt.<br>
+        &bull; <strong>Cache responses</strong> — don't re-download pages
+          you already have; save to disk during development.<br>
+        &bull; <strong>Handle failures gracefully</strong> — wrap requests
+          in try/except; sites go down, layouts change, connections drop.<br>
+        &bull; <strong>Use sessions for login-required sites</strong> —
+          <code>requests.Session()</code> persists cookies across requests.<br>
+        &bull; <strong>Monitor for layout changes</strong> — add assertions
+          that fail loudly ("expected 10 columns, found 3 — site layout
+          probably changed") rather than silently returning garbage data.<br><br>
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — when a target site changes its
+        HTML and your scraper starts returning empty results, good
+        logging and alerting mean you find out in minutes, not when
+        someone notices the dashboard is empty three weeks later.
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body script -->

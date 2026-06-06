@@ -2749,4 +2749,161 @@ user = User.query.filter_by(username=username, password=password).first()
 
   </div>
 </div>
+
+<!-- BEGINNER38-SEC v1 -->
+<!-- ── TOPIC: API Security – OAuth2 & JWT ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    API Security – OAuth2, JWT &amp; Token-Based Authentication
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Modern APIs Don't Use Passwords Directly</div>
+      <div class="concept-desc">
+        Imagine giving your house key (password) to every app that needs
+        to check your mailbox. If one app is compromised, your whole
+        house is at risk. <strong>Token-based authentication</strong>
+        solves this: you get a limited, revocable, expiring "guest pass"
+        instead of handing out your master key.<br><br>
+        <strong>The vocabulary you'll see everywhere:</strong><br>
+        &bull; <em>Authentication</em> — "Who are you?" (proving identity).<br>
+        &bull; <em>Authorization</em> — "What are you allowed to do?"
+          (granting permissions).<br>
+        &bull; <em>Token</em> — a piece of data that proves you've already
+          authenticated, so you don't have to send your password every
+          single request.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        "the user is logged in" means "the user is allowed to do this
+        specific action." Authentication and authorization are different
+        checks — confusing them is the root of A01 (Broken Access Control).
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">OAuth2</div>
+      <div class="concept-title">OAuth2 – The "Sign in With Google" Flow</div>
+      <div class="concept-desc">
+        <strong>OAuth2</strong> is the protocol behind every "Sign in
+        with Google/GitHub/Microsoft" button. It lets an app access your
+        data on another service <em>without ever seeing your password</em>
+        for that service.<br><br>
+        <strong>Key roles in OAuth2:</strong><br>
+        &bull; <em>Resource Owner</em> — you, the user.<br>
+        &bull; <em>Client</em> — the app requesting access (e.g. a
+          scheduling tool that wants to read your Google Calendar).<br>
+        &bull; <em>Authorization Server</em> — issues tokens (e.g. Google's
+          login servers).<br>
+        &bull; <em>Resource Server</em> — holds your data and checks
+          tokens (e.g. the Google Calendar API).
+      </div>
+      <div class="code-block">
+<span class="com">─── The Authorization Code Flow (most common, most secure) ────</span>
+
+1. You click "Sign in with Google" on ScheduleApp
+2. ScheduleApp redirects you to Google's login page
+   GET https://accounts.google.com/o/oauth2/auth
+       ?client_id=schedule_app_123
+       &amp;redirect_uri=https://scheduleapp.com/callback
+       &amp;scope=calendar.readonly
+       &amp;response_type=code
+
+3. You log in to GOOGLE directly (ScheduleApp never sees your password)
+4. Google asks: "ScheduleApp wants to read your calendar. Allow?"
+5. You click Allow → Google redirects back with a temporary CODE
+   https://scheduleapp.com/callback?code=4/0AX4XfWh...
+
+6. ScheduleApp's SERVER (not your browser) exchanges the code for tokens
+   POST https://oauth2.googleapis.com/token
+       { client_id, client_secret, code, grant_type: "authorization_code" }
+
+7. Google returns:
+   {
+     "access_token":  "ya29.a0AfH6...",   ← used for API calls, short-lived
+     "refresh_token": "1//0gLGn...",      ← used to get new access tokens
+     "expires_in": 3600
+   }
+
+8. ScheduleApp now calls the Calendar API with the access token —
+   never touching your Google password at any point in this process
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">JWT</div>
+      <div class="concept-title">JWT – JSON Web Tokens Decoded</div>
+      <div class="concept-desc">
+        A <strong>JWT (JSON Web Token)</strong> is a self-contained,
+        signed token — three Base64-encoded parts separated by dots:
+        <code>header.payload.signature</code>. The server can verify it's
+        legitimate without a database lookup, because the signature
+        proves it hasn't been tampered with.
+      </div>
+      <div class="code-block">
+<span class="com"># A JWT looks like this (one long string with two dots):</span>
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGljZSIsInJvbGUiOiJhZG1pbiJ9.SflKxwRJSMeKKF2QT4f...
+
+<span class="com"># Decoded HEADER (algorithm + token type):</span>
+{ <span class="str">"alg"</span>: <span class="str">"HS256"</span>, <span class="str">"typ"</span>: <span class="str">"JWT"</span> }
+
+<span class="com"># Decoded PAYLOAD (claims — the actual data):</span>
+{
+  <span class="str">"sub"</span>:  <span class="str">"alice"</span>,        <span class="com"># subject = who this token is about</span>
+  <span class="str">"role"</span>: <span class="str">"admin"</span>,
+  <span class="str">"iat"</span>:  <span class="num">1717689600</span>,    <span class="com"># issued-at timestamp</span>
+  <span class="str">"exp"</span>:  <span class="num">1717693200</span>     <span class="com"># expiration timestamp — ALWAYS set this!</span>
+}
+
+<span class="com"># SIGNATURE — proves the token wasn't modified</span>
+<span class="com"># HMACSHA256(base64(header) + "." + base64(payload), SECRET_KEY)</span>
+
+<span class="com"># Generate and verify with Python (PyJWT)</span>
+<span class="kw">import</span> jwt, datetime
+
+token = jwt.encode(
+    {<span class="str">"sub"</span>: <span class="str">"alice"</span>, <span class="str">"role"</span>: <span class="str">"admin"</span>,
+     <span class="str">"exp"</span>: datetime.datetime.utcnow() + datetime.timedelta(hours=<span class="num">1</span>)},
+    <span class="str">"your-secret-key"</span>, algorithm=<span class="str">"HS256"</span>
+)
+
+<span class="kw">try</span>:
+    payload = jwt.decode(token, <span class="str">"your-secret-key"</span>, algorithms=[<span class="str">"HS256"</span>])
+    <span class="fn">print</span>(<span class="str">"Valid token for:"</span>, payload[<span class="str">"sub"</span>])
+<span class="kw">except</span> jwt.ExpiredSignatureError:
+    <span class="fn">print</span>(<span class="str">"Token expired — request a new one"</span>)
+<span class="kw">except</span> jwt.InvalidTokenError:
+    <span class="fn">print</span>(<span class="str">"Invalid token — reject the request"</span>)
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Common Mistakes</div>
+      <div class="concept-title">JWT &amp; Token Pitfalls That Cause Breaches</div>
+      <div class="concept-desc">
+        <em>"Not my circus, not my monkey"</em> — but if you're reviewing
+        someone else's API design, these are the red flags worth raising
+        immediately:<br><br>
+        &bull; <strong>"alg: none" attack</strong> — some JWT libraries
+          will accept tokens with no signature if you ask nicely.
+          Always explicitly specify allowed algorithms when verifying.<br>
+        &bull; <strong>Storing JWTs in localStorage</strong> — accessible
+          to any JavaScript on the page (XSS risk). HttpOnly cookies
+          are safer for session tokens.<br>
+        &bull; <strong>No expiration</strong> — a stolen token that never
+          expires is a permanent backdoor. Always set <code>exp</code>,
+          and keep access tokens short-lived (minutes to hours).<br>
+        &bull; <strong>Sensitive data in the payload</strong> — JWT
+          payloads are Base64-encoded, NOT encrypted. Anyone can decode
+          and read them. Never put passwords or secrets in a JWT.<br>
+        &bull; <strong>No revocation strategy</strong> — once issued, a
+          JWT is valid until it expires. Plan for "I need to log this
+          user out everywhere right now" (e.g. short expiry + refresh
+          token blocklist).
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body sec -->

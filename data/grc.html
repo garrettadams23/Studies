@@ -1896,4 +1896,142 @@ Data Portability        A person can request their data in a
 
   </div>
 </div>
+
+<!-- BEGINNER38-GRC v1 -->
+<!-- ── TOPIC: Change Management Process ──────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Change Management – The Process That Prevents Self-Inflicted Outages
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Changes Need a Process At All</div>
+      <div class="concept-desc">
+        Here's an uncomfortable truth backed by years of incident data:
+        <strong>most outages are caused by changes someone made on
+        purpose</strong> — not by mysterious external forces. A
+        <strong>Change Management</strong> process exists to catch the
+        problems with a change <em>before</em> it goes live, not after.<br><br>
+        It is NOT bureaucracy for its own sake (though badly run change
+        processes can feel that way). Done well, it answers four
+        questions before anything happens:<br>
+        1. What exactly is changing?<br>
+        2. Why are we changing it?<br>
+        3. What could go wrong, and how do we know if it does?<br>
+        4. How do we undo it if it goes wrong?<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — "this is a
+        small change, it'll be fine" is the most expensive sentence in IT.
+        Small changes cause some of the largest outages on record.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Change Types</div>
+      <div class="concept-title">Standard, Normal, and Emergency Changes</div>
+      <div class="concept-desc">
+        Mature change processes don't treat every change the same way —
+        that would make trivial changes painfully slow AND make urgent
+        fixes dangerously slow. Three tiers balance speed and safety:
+      </div>
+      <div class="code-block">
+<span class="com">STANDARD CHANGE</span>
+  Definition: Pre-approved, low-risk, repeatable, well-understood
+  Examples:   Routine OS patching on a schedule, adding a DNS record
+              for a new subdomain, rotating a credential per the runbook
+  Process:    Pre-approved template → just execute and log it
+
+<span class="com">NORMAL CHANGE</span>
+  Definition: Has some risk; needs review before approval
+  Examples:   Database schema migration, firewall rule change,
+              new application deployment, infrastructure resize
+  Process:    Submit a Change Request (CR) → Change Advisory Board (CAB)
+              reviews → approved/rejected/needs-more-info → scheduled
+              → executed → reviewed afterward
+
+<span class="com">EMERGENCY CHANGE</span>
+  Definition: Urgent fix needed RIGHT NOW to resolve an active incident
+  Examples:   Blocking an active attacker's IP, rolling back a deploy
+              that's causing an outage, restarting a critical service
+  Process:    Verbal/expedited approval from on-call lead → execute
+              immediately → FULL documentation and review afterward
+              (the paperwork happens AFTER the fire is out, not during)
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Anatomy of a CR</div>
+      <div class="concept-title">What Goes In a Good Change Request</div>
+      <div class="concept-desc">
+        A well-written change request makes the reviewer's job easy and
+        protects you if something goes wrong — it's your evidence that
+        you thought it through.
+      </div>
+      <div class="code-block">
+<span class="com">CHANGE REQUEST: CR-2026-0614</span>
+─────────────────────────────────────────────────────────
+Title:           Upgrade PostgreSQL from 14.x to 16.x on prod-db-01
+Requested by:    Alice Chen          Date: 2026-06-06
+Risk level:      Medium
+Scheduled for:   Saturday 2026-06-13, 02:00-04:00 (lowest traffic window)
+
+WHAT is changing:
+  Major version upgrade of the primary application database
+
+WHY:
+  PostgreSQL 14 reaches end-of-life in 6 months; 16.x brings
+  performance improvements our reporting queries need
+
+HOW (step by step):
+  1. Take a verified full backup (pg_dump) and snapshot
+  2. Stop application writes (maintenance mode)
+  3. Run pg_upgrade following documented runbook RB-114
+  4. Run validation query suite (see attached script)
+  5. Resume application traffic; monitor for 30 minutes
+
+ROLLBACK PLAN:
+  Restore from pre-change snapshot (tested rollback time: ~12 minutes)
+  Rollback decision point: any validation query failure, or >5 min
+  of unexpected errors post-cutover
+
+TESTING DONE:
+  Successfully performed in staging on 2026-05-30 (see CR-2026-0589)
+
+IMPACT IF THIS GOES WRONG:
+  Up to 2 hours of read-only mode for customers; no data loss expected
+  given backup/snapshot strategy
+
+APPROVERS NEEDED:
+  Database team lead, on-call SRE, Engineering manager
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Culture</div>
+      <div class="concept-title">Making Change Management Work, Not Just Exist</div>
+      <div class="concept-desc">
+        <em>"Not my circus, not my monkey"</em> — if your organisation's
+        change process feels like pointless paperwork, that's a sign
+        the process needs fixing, not that the goal is wrong. Healthy
+        change management:<br><br>
+        &bull; <strong>Scales with risk</strong> — a one-line config typo
+          fix shouldn't require the same ceremony as a database migration.<br>
+        &bull; <strong>Makes the safe path the easy path</strong> — if
+          following the process is harder than skipping it, people will
+          skip it (quietly, which is worse).<br>
+        &bull; <strong>Reviews without blame</strong> — when a properly
+          reviewed change still causes an issue, that's a process
+          improvement opportunity, not a personal failure.<br><br>
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — and a good change record is
+        exactly what lets you pick up those pieces fast: you know
+        precisely what changed, when, why, and how to undo it. That
+        turns a 4-hour outage into a 10-minute rollback.
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body grc -->

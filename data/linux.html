@@ -4278,4 +4278,137 @@ sudo corosync-quorumtool
 
   </div>
 </div>
+
+<!-- BEGINNER38-LINUX v1 -->
+<!-- ── TOPIC: Container Internals – cgroups & Namespaces ─────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Intermediate</span>
+    Container Internals – What Docker Is Actually Built From
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Containers Are Not Magic — They're Linux Features</div>
+      <div class="concept-desc">
+        Here's the secret that demystifies Docker: <strong>"containers"
+        aren't a real thing in the Linux kernel.</strong> Docker (and
+        Podman, containerd, etc.) is really just a friendly interface
+        around two much older Linux kernel features:<br><br>
+        &bull; <strong>Namespaces</strong> — make a process think it's
+          alone on the system (its own PIDs, network, filesystem,
+          hostname).<br>
+        &bull; <strong>cgroups (control groups)</strong> — limit and
+          measure how much CPU, memory, and I/O a process (or group of
+          processes) can use.<br><br>
+        Put these two together — a process that can't see anything
+        outside its bubble (namespaces) and can't consume more than its
+        allotted resources (cgroups) — and you have a "container."<br><br>
+        Understanding this helps you debug containers like Linux
+        processes (because that's exactly what they are) and explains
+        why container escapes are possible — they exploit gaps in this
+        kernel-level isolation.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Namespaces</div>
+      <div class="concept-title">The Six Linux Namespace Types</div>
+      <div class="concept-desc">
+        Each namespace type isolates a different slice of what a process
+        can see:
+      </div>
+      <div class="code-block">
+<span class="com">Namespace   What it isolates                     What this means for a container</span>
+PID         Process IDs                          Container's PID 1 looks like the
+                                                  only process on the system
+NET         Network interfaces, routes, ports    Container has its own IP, can't
+                                                  see the host's network traffic
+MNT         Filesystem mount points              Container sees its own root
+                                                  filesystem, not the host's
+UTS         Hostname and domain name             Container can have its own
+                                                  hostname (e.g. "web-7d9f8c")
+IPC         Inter-process communication          Container can't access host's
+            (shared memory, semaphores)           shared memory segments
+USER        User and group IDs                   "root" inside the container can
+                                                  map to an unprivileged host user
+
+<span class="com"># See the namespaces of a running process</span>
+ls -la /proc/$(pgrep -f myapp | head -1)/ns/
+
+<span class="com"># Output looks like:</span>
+<span class="com"># lrwxrwxrwx ... net  -&gt; 'net:[4026532245]'</span>
+<span class="com"># lrwxrwxrwx ... pid  -&gt; 'pid:[4026532248]'</span>
+<span class="com"># lrwxrwxrwx ... uts  -&gt; 'uts:[4026532246]'</span>
+
+<span class="com"># Compare to the host's own namespaces (PID 1)</span>
+ls -la /proc/1/ns/
+<span class="com"># Different numbers = different namespace = isolated</span>
+
+<span class="com"># Run your own minimal "container" with unshare (no Docker needed!)</span>
+sudo unshare --pid --net --mount --uts --fork bash
+hostname my-fake-container       <span class="com"># changes hostname ONLY inside this shell</span>
+ps aux                           <span class="com"># shows almost nothing — your own PID namespace</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">cgroups</div>
+      <div class="concept-title">cgroups – Resource Limits in Action</div>
+      <div class="concept-desc">
+        cgroups are how Docker enforces <code>--memory=512m</code> and
+        <code>--cpus=1</code>. They live in a virtual filesystem you can
+        explore directly.
+      </div>
+      <div class="code-block">
+<span class="com"># Find a container's cgroup (modern systems use cgroup v2)</span>
+docker inspect --format '{{.Id}}' myapp_container
+
+<span class="com"># Explore its resource limits directly in the filesystem</span>
+cd /sys/fs/cgroup/system.slice/docker-&lt;container-id&gt;.scope/
+
+cat memory.max          <span class="com"># memory limit in bytes (or "max" = unlimited)</span>
+cat memory.current      <span class="com"># current memory usage RIGHT NOW</span>
+cat cpu.max             <span class="com"># CPU quota and period</span>
+cat io.stat             <span class="com"># disk I/O statistics</span>
+
+<span class="com"># Watch a container's resource consumption live</span>
+docker stats myapp_container
+
+<span class="com"># Create your own cgroup limit manually (educational — Docker</span>
+<span class="com"># does this automatically, but seeing it raw removes the mystery)</span>
+sudo mkdir /sys/fs/cgroup/my_limited_group
+echo "100000 100000" | sudo tee /sys/fs/cgroup/my_limited_group/cpu.max
+echo $$ | sudo tee /sys/fs/cgroup/my_limited_group/cgroup.procs
+<span class="com"># Now THIS SHELL is limited to 100% of one CPU core</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Why It Matters</div>
+      <div class="concept-title">Using This Knowledge to Debug Real Problems</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — when a container mysteriously
+        gets killed or throttled, knowing the internals turns "it's
+        broken, restart it" into "I found exactly why, here's the fix":<br><br>
+        &bull; <strong>"My container keeps getting OOM-killed"</strong> →
+          Check <code>memory.current</code> vs <code>memory.max</code> —
+          the cgroup is enforcing a limit you set too low.<br>
+        &bull; <strong>"My container is randomly slow"</strong> →
+          Check <code>cpu.max</code> — CPU throttling from cgroup limits
+          looks exactly like random slowness from the inside.<br>
+        &bull; <strong>"Processes inside my container can see host
+          processes"</strong> → The container may be running with
+          <code>--pid=host</code> — a misconfiguration that breaks PID
+          namespace isolation (and is a security risk).<br>
+        &bull; <strong>"I need to debug a container that has no shell"</strong>
+          → Use <code>nsenter</code> to attach to its namespaces directly
+          from the host: <code>nsenter -t &lt;PID&gt; -n -p -m sh</code>
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body linux -->
