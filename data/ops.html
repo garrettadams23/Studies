@@ -2281,4 +2281,145 @@ jobs:
 
   </div>
 </div>
+
+<!-- BEGINNER37-OPS v1 -->
+<!-- ── TOPIC: Web Server TLS Hardening ───────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Web Server Hardening – nginx, Apache &amp; TLS Done Right
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">The Default Config Is Not the Secure Config</div>
+      <div class="concept-desc">
+        Out of the box, web servers prioritise compatibility over
+        security — they'll happily serve old TLS versions, leak version
+        information, and allow risky HTTP methods. Hardening means
+        deliberately tightening these defaults.<br><br>
+        <strong>The five hardening layers:</strong><br>
+        1. <em>TLS configuration</em> — which protocol versions and
+           ciphers are allowed.<br>
+        2. <em>HTTP security headers</em> — instructions to the browser
+           about how to treat your site.<br>
+        3. <em>Information disclosure</em> — hide server version and
+           technology stack from attackers.<br>
+        4. <em>Rate limiting</em> — slow down brute-force and scraping
+           attempts.<br>
+        5. <em>Certificate management</em> — automated renewal so sites
+           never go down from an expired cert (a surprisingly common
+           self-inflicted outage).
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">nginx Hardening</div>
+      <div class="concept-title">A Hardened nginx Server Block</div>
+      <div class="concept-desc">
+        This configuration covers the essentials most security scanners
+        and compliance checks look for.
+      </div>
+      <div class="code-block">
+<span class="com"># /etc/nginx/sites-available/example.com</span>
+server {
+    listen 443 ssl http2;
+    server_name example.com;
+
+    <span class="com"># ── TLS: only modern protocols and strong ciphers ──</span>
+    ssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;          <span class="com"># no SSLv3, TLSv1.0, TLSv1.1</span>
+    ssl_ciphers         HIGH:!aNULL:!MD5:!3DES;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache   shared:SSL:10m;
+
+    <span class="com"># ── Hide version info (reduces fingerprinting) ──</span>
+    server_tokens off;
+
+    <span class="com"># ── Security headers ──</span>
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Content-Security-Policy "default-src 'self'" always;
+
+    <span class="com"># ── Rate limiting (defined in http{} block, applied here) ──</span>
+    limit_req zone=login_limit burst=5 nodelay;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+
+<span class="com"># Redirect all plain HTTP to HTTPS</span>
+server {
+    listen 80;
+    server_name example.com;
+    return 301 https://$host$request_uri;
+}
+
+<span class="com"># In the http{} block — define the rate limit zone:</span>
+<span class="com"># limit_req_zone $binary_remote_addr zone=login_limit:10m rate=5r/m;</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Headers Explained</div>
+      <div class="concept-title">What Each Security Header Actually Does</div>
+      <div class="concept-desc">
+        <table class="ai-table">
+          <tr><th>Header</th><th>What it tells the browser</th></tr>
+          <tr><td>Strict-Transport-Security</td><td>"Always use HTTPS for this site, never fall back to HTTP"</td></tr>
+          <tr><td>X-Frame-Options</td><td>"Don't let other sites embed me in an iframe" (stops clickjacking)</td></tr>
+          <tr><td>X-Content-Type-Options</td><td>"Don't guess file types — trust what I declared" (stops MIME sniffing attacks)</td></tr>
+          <tr><td>Content-Security-Policy</td><td>"Only load scripts/styles/images from these approved sources"</td></tr>
+          <tr><td>Referrer-Policy</td><td>"Don't leak the full URL to other sites when users click links"</td></tr>
+        </table>
+        <br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        adding these headers won't break anything. <code>Content-Security-Policy</code>
+        especially can silently break legitimate site features (third-party
+        widgets, inline scripts). Test in <code>report-only</code> mode first:
+        <code>Content-Security-Policy-Report-Only</code> logs violations
+        without blocking anything.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Verification</div>
+      <div class="concept-title">Testing Your Hardening Actually Worked</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — but you can also <em>verify</em>
+        the choice was made correctly in the first place. Don't trust
+        your config — test it.
+      </div>
+      <div class="code-block">
+<span class="com"># Free online TLS configuration scanner (the industry standard)</span>
+<span class="com"># https://www.ssllabs.com/ssltest/  → grades A+ to F</span>
+
+<span class="com"># Check from the command line with testssl.sh</span>
+docker run --rm -ti drwetter/testssl.sh https://example.com
+
+<span class="com"># Check which protocols/ciphers your server actually offers</span>
+nmap --script ssl-enum-ciphers -p 443 example.com
+
+<span class="com"># Verify security headers are present</span>
+curl -sI https://example.com | grep -iE   '(strict-transport|x-frame|x-content-type|content-security)'
+
+<span class="com"># Check certificate expiration (set up monitoring for this!)</span>
+echo | openssl s_client -servername example.com -connect example.com:443 2&gt;/dev/null   | openssl x509 -noout -dates
+
+<span class="com"># Automated renewal with certbot — verify the timer is active</span>
+sudo systemctl status certbot.timer
+sudo certbot renew --dry-run
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body ops -->

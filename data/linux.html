@@ -4141,4 +4141,141 @@ dig +short mail.example.com
 
   </div>
 </div>
+
+<!-- BEGINNER37-LINUX v1 -->
+<!-- ── TOPIC: High Availability & Clustering ─────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    High Availability – Keeping Services Up When Servers Fail
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What "High Availability" Actually Means</div>
+      <div class="concept-desc">
+        <strong>High Availability (HA)</strong> means a service keeps
+        running even when individual components fail. The goal isn't
+        "never fails" (impossible) — it's "fails without anyone
+        noticing."<br><br>
+        <strong>Availability is usually expressed in "nines":</strong>
+      </div>
+      <div class="code-block">
+<span class="com">Availability   Downtime per year    Downtime per month   Common label</span>
+99%            3.65 days            7.3 hours            "Two nines"
+99.9%          8.77 hours           43.8 minutes         "Three nines"
+99.99%         52.6 minutes         4.4 minutes          "Four nines"
+99.999%        5.26 minutes         26 seconds           "Five nines"
+
+<span class="com"># The jump from 99.9% to 99.99% looks small on paper</span>
+<span class="com"># but represents 10x more engineering effort and cost.</span>
+<span class="com"># Most businesses don't NEED five nines — that's a question</span>
+<span class="com"># for the business, not a default engineering goal.</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Building Blocks</div>
+      <div class="concept-title">The Three Pillars of HA Architecture</div>
+      <div class="concept-desc">
+        &bull; <strong>Redundancy</strong> — more than one of everything
+          that can fail (servers, disks, network paths, power supplies,
+          even data centres). "One is none, two is one."<br><br>
+        &bull; <strong>Load balancing</strong> — distributes traffic
+          across multiple servers; if one fails, traffic routes around
+          it automatically.<br><br>
+        &bull; <strong>Failover</strong> — automatic detection of failure
+          and automatic switch to a standby. The faster and more silent
+          the failover, the higher the availability.<br><br>
+        <em>"Not my circus, not my monkey"</em> — true HA requires
+        cooperation across teams: network (redundant paths), ops
+        (clustering software), and the application itself (must handle
+        being restarted/relocated gracefully). No single team can build
+        HA alone.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">keepalived</div>
+      <div class="concept-title">Floating IPs with keepalived (VRRP)</div>
+      <div class="concept-desc">
+        <code>keepalived</code> implements <strong>VRRP (Virtual Router
+        Redundancy Protocol)</strong> — two or more servers share a
+        "virtual" IP address. If the active server dies, a standby
+        instantly takes over the IP — clients never notice.
+      </div>
+      <div class="code-block">
+<span class="com"># Install on both servers</span>
+sudo apt install keepalived
+
+<span class="com"># /etc/keepalived/keepalived.conf — PRIMARY server</span>
+vrrp_instance VI_1 {
+    state MASTER
+    interface eth0
+    virtual_router_id 51
+    priority 150            <span class="com"># higher number = preferred primary</span>
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass mysecret
+    }
+    virtual_ipaddress {
+        192.168.1.100/24    <span class="com"># the floating/shared IP</span>
+    }
+}
+
+<span class="com"># /etc/keepalived/keepalived.conf — BACKUP server</span>
+<span class="com"># Same config, but: state BACKUP   and   priority 100</span>
+
+<span class="com"># Start and watch the failover live</span>
+sudo systemctl enable --now keepalived
+sudo journalctl -u keepalived -f
+
+<span class="com"># Test it: stop keepalived on the primary, watch the IP migrate</span>
+sudo systemctl stop keepalived
+ip addr show eth0   <span class="com"># run this on the backup — it now owns .100</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Pacemaker/Corosync</div>
+      <div class="concept-title">Cluster Resource Management</div>
+      <div class="concept-desc">
+        For more complex services (databases, file servers), you need a
+        full <strong>cluster resource manager</strong>:
+        <code>Corosync</code> handles cluster membership/messaging;
+        <code>Pacemaker</code> decides what runs where and handles
+        failover logic.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        a cluster is healthy just because the service responds. Check
+        cluster status directly; a "split-brain" scenario (both nodes
+        think they're primary) can silently corrupt data.
+      </div>
+      <div class="code-block">
+<span class="com"># View overall cluster status</span>
+sudo pcs status
+
+<span class="com"># Output shows: which node is active, resource locations, any failures</span>
+<span class="com">Cluster name: web_cluster</span>
+<span class="com">Stack: corosync</span>
+<span class="com">Current DC: node1 (version ...)  - partition with quorum</span>
+<span class="com">2 nodes configured</span>
+<span class="com">2 resource instances configured</span>
+<span class="com">Online: [ node1 node2 ]</span>
+<span class="com">Full list of resources:</span>
+<span class="com">  Floating_IP    (ocf::heartbeat:IPaddr2):  Started node1</span>
+<span class="com">  WebServer      (systemd:nginx):           Started node1</span>
+
+<span class="com"># Manually move a resource to test failover</span>
+sudo pcs resource move WebServer node2
+
+<span class="com"># Check for "quorum" — without it, clusters refuse to act</span>
+<span class="com"># (this is the safety mechanism that PREVENTS split-brain)</span>
+sudo corosync-quorumtool
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body linux -->

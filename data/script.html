@@ -9559,4 +9559,152 @@ git worktree remove ../hotfix-dir
 
   </div>
 </div>
+
+<!-- BEGINNER37-SCRIPT v1 -->
+<!-- ── TOPIC: Network Automation with Python ─────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Intermediate</span>
+    Network Automation – Configuring Switches &amp; Routers with Python
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Automate Network Devices?</div>
+      <div class="concept-desc">
+        Traditionally, network engineers configure switches and routers
+        by hand, one device at a time, over SSH or console — a slow,
+        error-prone, and undocumented process. <strong>Network
+        automation</strong> applies the same scripting discipline you'd
+        use for servers to network gear.<br><br>
+        <strong>Why it matters:</strong><br>
+        &bull; Configure 200 switches identically in minutes instead of
+          weeks.<br>
+        &bull; Eliminate "fat-finger" typos that cause outages.<br>
+        &bull; Generate configs from templates — guaranteed consistency.<br>
+        &bull; Audit configurations across the fleet — find the one
+          switch with a forgotten setting.<br><br>
+        <em>"Not my circus, not my monkey"</em> — network automation
+        touches production infrastructure directly. Always test scripts
+        against lab devices first, and always have a way to reach the
+        device out-of-band if your script locks you out.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Netmiko</div>
+      <div class="concept-title">Connecting to Devices with Netmiko</div>
+      <div class="concept-desc">
+        <strong>Netmiko</strong> is a Python library that wraps SSH
+        connections to network devices, handling the quirks of dozens
+        of vendor CLIs (Cisco, Juniper, Arista, HP, and more) behind a
+        consistent interface.
+      </div>
+      <div class="code-block">
+<span class="com"># pip install netmiko</span>
+<span class="kw">from</span> netmiko <span class="kw">import</span> ConnectHandler
+
+device = {
+    <span class="str">"device_type"</span>: <span class="str">"cisco_ios"</span>,
+    <span class="str">"host"</span>:        <span class="str">"192.168.1.1"</span>,
+    <span class="str">"username"</span>:    <span class="str">"admin"</span>,
+    <span class="str">"password"</span>:    <span class="str">"S3cur3P@ss"</span>,
+    <span class="str">"secret"</span>:      <span class="str">"enable_secret_pw"</span>,   <span class="com"># for privileged mode</span>
+}
+
+<span class="kw">with</span> ConnectHandler(**device) <span class="kw">as</span> conn:
+    conn.enable()                                <span class="com"># enter privileged exec mode</span>
+
+    <span class="com"># Run a read-only command and capture the output</span>
+    output = conn.send_command(<span class="str">"show ip interface brief"</span>)
+    <span class="fn">print</span>(output)
+
+    <span class="com"># Send a set of configuration commands</span>
+    config_commands = [
+        <span class="str">"interface GigabitEthernet0/1"</span>,
+        <span class="str">"description Uplink-to-Core-Switch"</span>,
+        <span class="str">"switchport mode trunk"</span>,
+        <span class="str">"switchport trunk allowed vlan 10,20,30"</span>,
+    ]
+    output = conn.send_config_set(config_commands)
+    <span class="fn">print</span>(output)
+
+    <span class="com"># Save the running config to startup config (don't lose changes on reload)</span>
+    conn.save_config()
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Scaling Up</div>
+      <div class="concept-title">Running Commands Across Many Devices</div>
+      <div class="concept-desc">
+        The real power of automation appears when you apply one script
+        to a fleet of devices — and capture results in a structured way
+        for later analysis.
+      </div>
+      <div class="code-block">
+<span class="kw">from</span> netmiko <span class="kw">import</span> ConnectHandler
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
+<span class="kw">import</span> csv
+
+DEVICES = [
+    {<span class="str">"device_type"</span>: <span class="str">"cisco_ios"</span>, <span class="str">"host"</span>: <span class="str">"192.168.1.1"</span>,  <span class="str">"username"</span>: <span class="str">"admin"</span>, <span class="str">"password"</span>: <span class="str">"pw"</span>},
+    {<span class="str">"device_type"</span>: <span class="str">"cisco_ios"</span>, <span class="str">"host"</span>: <span class="str">"192.168.1.2"</span>,  <span class="str">"username"</span>: <span class="str">"admin"</span>, <span class="str">"password"</span>: <span class="str">"pw"</span>},
+    {<span class="str">"device_type"</span>: <span class="str">"arista_eos"</span>, <span class="str">"host"</span>: <span class="str">"192.168.1.10"</span>, <span class="str">"username"</span>: <span class="str">"admin"</span>, <span class="str">"password"</span>: <span class="str">"pw"</span>},
+]
+
+<span class="kw">def</span> <span class="fn">audit_device</span>(device: dict) -&gt; dict:
+    <span class="kw">try</span>:
+        <span class="kw">with</span> ConnectHandler(**device) <span class="kw">as</span> conn:
+            version = conn.send_command(<span class="str">"show version"</span>)
+            ntp     = conn.send_command(<span class="str">"show ntp status"</span>)
+            <span class="kw">return</span> {
+                <span class="str">"host"</span>: device[<span class="str">"host"</span>],
+                <span class="str">"status"</span>: <span class="str">"OK"</span>,
+                <span class="str">"ntp_synced"</span>: <span class="str">"synchronized"</span> <span class="kw">in</span> ntp.lower(),
+            }
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        <span class="kw">return</span> {<span class="str">"host"</span>: device[<span class="str">"host"</span>], <span class="str">"status"</span>: <span class="fn">f</span><span class="str">"FAILED: {e}"</span>}
+
+<span class="com"># Run audits in parallel — 50 devices in the time of 1</span>
+<span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">10</span>) <span class="kw">as</span> pool:
+    results = <span class="fn">list</span>(pool.map(audit_device, DEVICES))
+
+<span class="com"># Write results to CSV for the team's review</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"network_audit.csv"</span>, <span class="str">"w"</span>, newline=<span class="str">""</span>) <span class="kw">as</span> f:
+    writer = csv.DictWriter(f, fieldnames=[<span class="str">"host"</span>, <span class="str">"status"</span>, <span class="str">"ntp_synced"</span>])
+    writer.writeheader()
+    writer.writerows(results)
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Safety Practices</div>
+      <div class="concept-title">Automating Without Causing an Outage</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — and an
+        automation script that "should be safe" can take down an entire
+        network in seconds. Build in these safeguards:<br><br>
+        &bull; <strong>Dry-run mode</strong> — print what the script
+          <em>would</em> do before letting it actually run.<br>
+        &bull; <strong>Backup before changing</strong> — always pull
+          <code>show running-config</code> and save it before pushing
+          new config.<br>
+        &bull; <strong>Change in small batches</strong> — 5 devices,
+          verify, then 50, not all 500 at once.<br>
+        &bull; <strong>Read-only first</strong> — run audits and reports
+          for weeks before attempting configuration changes.<br>
+        &bull; <strong>Out-of-band access</strong> — confirm you (or
+          someone) has console/serial access in case a script locks
+          everyone out over the network.<br><br>
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — when a script does cause an
+        outage, the saved "before" configs are what let you restore
+        service in minutes instead of hours.
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body script -->
