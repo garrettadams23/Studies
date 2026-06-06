@@ -1763,5 +1763,79 @@ ss -tunap | grep ESTAB</pre>
   </div>
 </div>
 
+<!-- BEGINNER41-THREAT v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>The Cyber Kill Chain – Thinking Like the Attacker, Stage by Stage</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">An attack isn't one event — it's a sequence</h4>
+      <p class="concept-desc">The Cyber Kill Chain (developed by Lockheed Martin) is a model that breaks an intrusion down
+      into a sequence of stages an attacker has to move through, in order, to succeed. Its real value for a defender isn't
+      memorizing the stage names — it's the realization that <em>every stage is a chance to stop the attack</em>. You don't
+      need to catch every intrusion at the front door; catching it at any single stage breaks the whole chain.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The seven stages, and where defenders can intervene</h4>
+      <table class="ai-table">
+        <tr><th>Stage</th><th>What the attacker is doing</th><th>A defense that fits here</th></tr>
+        <tr><td>1. Reconnaissance</td><td>Researching the target — employee names on LinkedIn, exposed services, leaked credentials</td><td>Limiting public information exposure; monitoring for scanning activity</td></tr>
+        <tr><td>2. Weaponization</td><td>Building or obtaining a malicious payload (often off-the-shelf)</td><td>Threat intelligence feeds that flag known tooling and infrastructure</td></tr>
+        <tr><td>3. Delivery</td><td>Getting the payload to the target — phishing email, infected USB, compromised website</td><td>Email filtering, web proxies, user awareness training</td></tr>
+        <tr><td>4. Exploitation</td><td>Triggering the payload — a user opens the attachment, a vulnerable service is hit</td><td>Patch management, application allow-listing, endpoint protection</td></tr>
+        <tr><td>5. Installation</td><td>Establishing persistence — a backdoor, scheduled task, or new service</td><td>EDR tools that flag unusual process trees and new persistence mechanisms</td></tr>
+        <tr><td>6. Command &amp; Control (C2)</td><td>Calling home to an attacker-controlled server for further instructions</td><td>Network monitoring for unusual outbound connections; DNS filtering</td></tr>
+        <tr><td>7. Actions on Objectives</td><td>The actual goal — data theft, ransomware deployment, sabotage</td><td>Data loss prevention, network segmentation, offline backups</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Mapping a real incident to the chain</h4>
+      <pre class="code-block"><span class="com"># A simplified, anonymized incident timeline mapped to kill-chain stages —
+# this is the kind of analysis that goes into a post-incident report</span>
+
+Day 1   - Attacker scrapes employee names from the company website
+          [STAGE 1: Reconnaissance]
+
+Day 3   - Crafted phishing email sent to 40 employees, spoofing IT support
+          [STAGE 3: Delivery — using a generic, purchased phishing kit, STAGE 2]
+
+Day 3   - One employee clicks the link and enters their credentials
+          on a cloned login page
+          [STAGE 4: Exploitation]
+
+Day 4   - Attacker logs in with stolen credentials, installs a
+          scheduled task that re-establishes a connection on reboot
+          [STAGE 5: Installation]
+
+Day 4-9 - Compromised account quietly contacts an external server
+          every few hours; goes unnoticed amid normal traffic
+          [STAGE 6: Command &amp; Control]
+
+Day 10  - Attacker begins exporting files from a shared drive
+          — DLP tooling flags the unusual transfer volume and
+          the SOC cuts off network access within 12 minutes
+          [STAGE 7: Actions on Objectives — INTERRUPTED HERE]</pre>
+      <p class="concept-desc">Notice that the chain was broken at stage 7 — late, but not too late. A faster catch at
+      stage 6 (alerting on the unusual outbound C2 traffic over six days) would have prevented the data exfiltration
+      entirely. Every stage that gets caught earlier shrinks the blast radius of everything that follows.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">You can't make someone make the right choice...</h4>
+      <p class="concept-desc"><strong>...yet you can pick up the pieces afterwards.</strong> No amount of training
+      guarantees that nobody will ever click a phishing link — humans are the part of the chain you can influence but
+      never fully control. That's exactly why mature security programs don't rely on stage 3/4 prevention alone. They
+      build detection and response capability for stages 5 through 7 too — because when, not if, someone clicks, the
+      chain still has several more links where you can catch it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body threat -->
 <!-- /domain-body threat -->
 <!-- /domain-body threat -->

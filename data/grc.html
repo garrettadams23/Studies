@@ -2034,4 +2034,68 @@ APPROVERS NEEDED:
 
   </div>
 </div>
+<!-- BEGINNER41-GRC v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Data Classification – Why "Just Be Careful With Data" Isn't a Policy</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">You can't protect what you haven't labeled</h4>
+      <p class="concept-desc">Data classification is the practice of sorting information into categories based on how
+      sensitive it is and what would happen if it were exposed — then attaching specific handling rules to each category.
+      Without it, every piece of data effectively gets the same treatment, which means either everything is locked down so
+      tightly that nobody can get work done, or — far more commonly — sensitive data ends up handled exactly like the
+      public marketing brochure sitting next to it.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A typical four-tier classification scheme</h4>
+      <table class="ai-table">
+        <tr><th>Tier</th><th>Example data</th><th>Typical handling rule</th></tr>
+        <tr><td>Public</td><td>Marketing materials, published job postings, press releases</td><td>No restrictions — designed to be shared widely</td></tr>
+        <tr><td>Internal</td><td>Org charts, internal wikis, meeting notes, project plans</td><td>Employees only; not for external sharing, but low-risk if briefly exposed</td></tr>
+        <tr><td>Confidential</td><td>Customer contracts, financial forecasts, source code, salary bands</td><td>Need-to-know basis; encryption in transit and at rest; access logged</td></tr>
+        <tr><td>Restricted</td><td>Health records, payment card data, social security numbers, trade secrets</td><td>Strictly limited access; mandatory encryption; often subject to legal/regulatory requirements (HIPAA, PCI-DSS, GDPR)</td></tr>
+      </table>
+      <p class="concept-desc">The exact tier names vary by organization (some use "Secret" / "Top Secret" in government
+      contexts, others use simple "Tier 1/2/3"), but the underlying logic is always the same: more sensitive data earns
+      more restrictive handling, and that handling needs to be written down so people don't have to guess.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">What classification looks like in daily work</h4>
+      <pre class="code-block"><span class="com"># A classification label embedded right in a document header —
+# this single line answers "how careful do I need to be with this file?"
+# before anyone even opens it.</span>
+
+CLASSIFICATION: CONFIDENTIAL — Internal Distribution Only
+Document: Q3 Customer Churn Analysis
+Owner: Data &amp; Analytics Team
+Handling: Do not forward externally. Store only in the
+          approved &quot;Confidential&quot; SharePoint library.
+          Do not paste contents into AI assistants or
+          external collaboration tools.
+Retention: Delete after 3 years per data retention schedule DR-014.
+
+<span class="com"># Some organizations enforce this with technology, not just policy —
+# email systems that auto-detect classification labels and block
+# external sends, DLP (Data Loss Prevention) tools that scan outgoing
+# attachments for SSN/credit-card patterns, etc.</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — except data doesn't respect org charts</h4>
+      <p class="concept-desc">"That's the legal team's data, not mine" is exactly the kind of thinking that lets sensitive
+      information drift into unprotected places — a shared drive, a personal laptop, a chat export. If you handle data you
+      didn't create and aren't sure how it should be classified, the responsible move is to ask the owning team rather
+      than guess. The few minutes it takes to confirm "is this Confidential or just Internal?" is far cheaper than
+      explaining, after the fact, why it ended up somewhere it shouldn't have.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body grc -->
 <!-- /domain-body grc -->

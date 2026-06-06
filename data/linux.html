@@ -4411,4 +4411,78 @@ echo $$ | sudo tee /sys/fs/cgroup/my_limited_group/cgroup.procs
 
   </div>
 </div>
+<!-- BEGINNER41-LINUX v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>systemd Essentials – Services, Units, and Why Things Start at Boot</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">systemd is the "stage manager" of a modern Linux system</h4>
+      <p class="concept-desc">When a Linux machine boots, dozens of things need to happen in roughly the right order —
+      mount filesystems, bring up networking, start the SSH daemon, launch your web server. systemd is the init system
+      (process ID 1) responsible for orchestrating all of that, and for keeping track of every running service afterward.
+      Almost every major distribution (Ubuntu, Debian, RHEL/CentOS/Fedora, Arch) uses it today, which makes it one of the
+      highest-leverage things a beginner can learn — the same handful of commands work nearly everywhere.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Units: the building blocks systemd manages</h4>
+      <table class="ai-table">
+        <tr><th>Unit type</th><th>Manages</th><th>Example</th></tr>
+        <tr><td>.service</td><td>A long-running background process (a daemon)</td><td><code>nginx.service</code>, <code>sshd.service</code></td></tr>
+        <tr><td>.timer</td><td>A scheduled job — systemd's modern alternative to cron</td><td><code>logrotate.timer</code></td></tr>
+        <tr><td>.socket</td><td>A network or IPC socket that can start a service on demand when something connects</td><td><code>docker.socket</code></td></tr>
+        <tr><td>.mount</td><td>A filesystem mount point</td><td><code>home.mount</code></td></tr>
+        <tr><td>.target</td><td>A grouping of other units — a "milestone" the system reaches during boot</td><td><code>multi-user.target</code>, <code>graphical.target</code></td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">The commands you'll reach for constantly</h4>
+      <pre class="code-block"><span class="com"># Check whether a service is running right now</span>
+systemctl status nginx
+
+<span class="com"># Start / stop / restart a service immediately (this run only)</span>
+sudo systemctl start nginx
+sudo systemctl stop nginx
+sudo systemctl restart nginx
+<span class="com"># 'reload' re-reads config without dropping active connections — gentler than restart</span>
+sudo systemctl reload nginx
+
+<span class="com"># Make a service start automatically at every future boot
+# (note: this does NOT start it right now — the two are independent!)</span>
+sudo systemctl enable nginx
+
+<span class="com"># Do both at once — enable AND start immediately</span>
+sudo systemctl enable --now nginx
+
+<span class="com"># See WHY something failed — the most useful troubleshooting command here</span>
+journalctl -u nginx -n 50 --no-pager
+
+<span class="com"># Follow a service's logs live, the way you'd 'tail -f' a log file</span>
+journalctl -u nginx -f</pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Common pitfall</span>
+      <h4 class="concept-title">"I started it, why didn't it survive the reboot?" (and the reverse)</h4>
+      <p class="concept-desc"><span class="kw">enable</span> and <span class="kw">start</span> are two completely independent
+      switches that beginners frequently conflate:</p>
+      <table class="ai-table">
+        <tr><th>Command</th><th>Running right now?</th><th>Will it start on next boot?</th></tr>
+        <tr><td><code>systemctl start foo</code></td><td>Yes</td><td>No — forgotten on reboot unless also enabled</td></tr>
+        <tr><td><code>systemctl enable foo</code></td><td>No — stays stopped until started</td><td>Yes — but won't help you *today*</td></tr>
+        <tr><td><code>systemctl enable --now foo</code></td><td>Yes</td><td>Yes</td></tr>
+      </table>
+      <p class="concept-desc">"I enabled it but it's still not running" and "it was working until the server rebooted" are
+      two of the most common systemd tickets — and both trace back to this exact distinction. <strong>Assume makes an ass
+      out of you and me</strong>: always run <span class="kw">systemctl status</span> to confirm both the current state
+      <em>and</em> whether it's enabled, rather than assuming one implies the other.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body linux -->
 <!-- /domain-body linux -->
