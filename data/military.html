@@ -1793,4 +1793,446 @@
     </div>
   </div>
 </div>
+
+<!-- BEGINNER33-MILITARY v1 -->
+<!-- ── TOPIC: OPSEC – Operational Security ───────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    OPSEC – Operational Security in Cyber &amp; Real Life
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is OPSEC?</div>
+      <div class="concept-desc">
+        <strong>OPSEC (Operational Security)</strong> originated in the
+        military but now applies universally to anyone who needs to protect
+        sensitive information or activities from adversaries.<br><br>
+        The core question: <em>"What information, if known by the wrong
+        person, would allow them to harm me, my organisation, or my
+        mission?"</em><br><br>
+        The five-step OPSEC process:<br>
+        1. <strong>Identify critical information</strong> — what do I need
+           to protect? (credentials, plans, personnel, locations).<br>
+        2. <strong>Analyse threats</strong> — who wants this information
+           and why? (criminals, competitors, nation-states, insiders).<br>
+        3. <strong>Analyse vulnerabilities</strong> — where could I
+           accidentally expose this? (social media, email, public logs).<br>
+        4. <strong>Assess risk</strong> — likelihood × impact for each
+           vulnerability.<br>
+        5. <strong>Apply countermeasures</strong> — reduce the vulnerability
+           (encryption, access control, need-to-know, training).<br><br>
+        <em>"Not my circus, not my monkey"</em> — if sensitive information
+        belongs to your organisation, don't share it even with colleagues
+        who don't need it. Need-to-know is a core OPSEC principle.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Digital OPSEC</div>
+      <div class="concept-title">Personal Digital Security Hygiene</div>
+      <div class="concept-desc">
+        Every IT professional is a target. Apply OPSEC to yourself:
+      </div>
+      <div class="code-block">
+<span class="com">PERSONAL OPSEC CHECKLIST</span>
+<span class="com">───────────────────────────────────────────────────────────</span>
+
+CREDENTIALS
+[ ] Use a password manager (Bitwarden, 1Password) — unique passwords everywhere
+[ ] Enable MFA on every account that supports it (TOTP app, not SMS)
+[ ] Never reuse passwords — one breach = one compromised account, not many
+
+COMMUNICATIONS
+[ ] Sensitive work: use encrypted email (ProtonMail) or end-to-end encrypted chat
+[ ] Assume corporate email is monitored and archived
+[ ] Don't discuss sensitive projects on public Slack workspaces / Discord
+
+SOCIAL MEDIA
+[ ] Don't post photos that reveal physical security details (badge readers, screens)
+[ ] Job posting recon: attackers read your LinkedIn to map tech stack
+[ ] Don't announce travel dates publicly — burglars and social engineers note it
+
+DEVICE SECURITY
+[ ] Full-disk encryption on laptops (BitLocker/FileVault/LUKS)
+[ ] Screen lock within 2 minutes of inactivity
+[ ] VPN on untrusted Wi-Fi (coffee shops, hotels, airports)
+[ ] Webcam cover when not in use
+
+WORK HABITS
+[ ] Clear desk policy — sensitive docs face down or locked away
+[ ] Shred documents before disposal; don't put them in recycling
+[ ] Be aware of shoulder surfing in public spaces
+[ ] Verify caller identity before providing information (voice phishing = vishing)
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Org OPSEC</div>
+      <div class="concept-title">Protecting Sensitive Information at Scale</div>
+      <div class="concept-desc">
+        Organisational OPSEC controls applied in enterprise security:<br><br>
+        &bull; <strong>Information classification</strong>: Public / Internal
+          / Confidential / Restricted — policies dictate how each is
+          handled.<br>
+        &bull; <strong>Data Loss Prevention (DLP)</strong>: software that
+          blocks classified files from being emailed externally or uploaded
+          to personal cloud storage.<br>
+        &bull; <strong>Privileged Access Workstations (PAW)</strong>: a
+          dedicated, hardened device used only for admin tasks —
+          never for browsing or email.<br>
+        &bull; <strong>Air-gapped networks</strong>: classified systems
+          with no internet connection; data moves via signed, approved
+          media only.<br>
+        &bull; <strong>Red team deception</strong>: honeytokens — fake
+          credentials or files planted in your system; if accessed, you
+          know an attacker has them.
+      </div>
+      <div class="code-block">
+<span class="com"># Create a honeytoken file (plant it; alert if accessed)</span>
+<span class="com"># On Linux: use inotifywait to alert when the file is read</span>
+touch /home/admin/.aws/credentials_BACKUP_2023
+
+inotifywait -m /home/admin/.aws/credentials_BACKUP_2023 -e access |
+<span class="kw">while</span> read path action file; do
+    echo <span class="str">"HONEYTOKEN ACCESSED: $path$file at $(date)"</span> |         mail -s <span class="str">"ALERT: Honeytoken read"</span> security-team@corp.example.com
+done
+
+<span class="com"># AWS honeytoken: create an IAM key that only fires CloudTrail events</span>
+<span class="com"># Canarytokens.org generates free honeytokens for:</span>
+<span class="com"># AWS keys, Word docs, PDFs, URLs, DNS names</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Mindset</div>
+      <div class="concept-title">"Assume Breach" – The Modern Security Posture</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — but in security,
+        the one assumption you <em>should</em> make is that you have already
+        been breached.<br><br>
+        The <strong>Assume Breach</strong> philosophy:<br>
+        &bull; Design systems as if an attacker already has a foothold —
+          use micro-segmentation, least privilege, and mutual TLS between
+          services.<br>
+        &bull; Invest in <em>detection and response</em> as much as
+          prevention — because prevention eventually fails.<br>
+        &bull; Run red-team exercises to find gaps before real attackers do.<br>
+        &bull; Know your <em>mean time to detect (MTTD)</em> and
+          <em>mean time to respond (MTTR)</em> — measure and improve them
+          continuously.<br><br>
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — an attacker who got in through a
+        phishing email is not your fault; the speed and quality of your
+        response is entirely within your control.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER35-MILITARY v1 -->
+<!-- ── TOPIC: Leadership Principles for IT Teams ─────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Leadership – Military Principles Applied to IT Teams
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Military Leadership Models Translate</div>
+      <div class="concept-desc">
+        Military leadership doctrine has been refined over centuries under
+        the highest-stakes conditions imaginable — and a surprising amount
+        of it maps directly onto leading an IT team through an outage,
+        a project crunch, or simply day-to-day operations.<br><br>
+        Both environments share key features: high-pressure decisions
+        with incomplete information, the need to coordinate people who
+        can't all see the whole picture, and consequences that compound
+        when communication breaks down.<br><br>
+        You don't need a title to lead — the engineer who keeps a calm
+        head during an outage and gets the team organised is leading,
+        regardless of what the org chart says.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Commander's Intent</div>
+      <div class="concept-title">"Commander's Intent" – Goals Over Scripts</div>
+      <div class="concept-desc">
+        In the military, a leader gives <strong>Commander's Intent</strong>:
+        a clear statement of the <em>end goal and the "why"</em> — not a
+        rigid step-by-step script. This way, when the situation changes
+        (and it always does), subordinates can adapt without waiting for
+        new orders.<br><br>
+        <strong>In IT, this looks like:</strong><br>
+        Bad delegation: "Run these five exact commands in this order."<br>
+        Good delegation: "We need this service back online with zero data
+        loss — here's what I know about the failure. Use your judgment;
+        call me if you hit something I haven't covered."<br><br>
+        Good intent-based delegation does two things: it grows your team's
+        capability, and it means the mission survives even if the leader
+        is unreachable — exactly when it matters most (3 AM incidents).
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">After-Action Review</div>
+      <div class="concept-title">The After-Action Review (AAR) Process</div>
+      <div class="concept-desc">
+        The military's <strong>After-Action Review</strong> is the direct
+        ancestor of the modern "blameless postmortem." Four simple
+        questions, asked after every significant event:
+      </div>
+      <div class="code-block">
+<span class="com">THE AFTER-ACTION REVIEW — FOUR QUESTIONS</span>
+<span class="com">───────────────────────────────────────────────────────</span>
+
+1. WHAT WAS SUPPOSED TO HAPPEN?
+   "The deploy was supposed to complete in 10 minutes with zero downtime."
+
+2. WHAT ACTUALLY HAPPENED?
+   "The deploy took 47 minutes and caused a 12-minute outage."
+
+3. WHY WAS THERE A DIFFERENCE?
+   "The database migration locked a table longer than expected because
+    the table had grown 3x since the migration was last tested."
+
+4. WHAT WILL WE DO DIFFERENTLY NEXT TIME?
+   "Test migrations against a copy of production-sized data.
+    Add a pre-flight check that estimates migration duration.
+    Add an automatic abort if a migration runs longer than 5 minutes."
+
+<span class="com">RULES THAT MAKE IT WORK:</span>
+<span class="com">- No rank in the room — the newest hire's observation counts as much</span>
+<span class="com">  as the senior engineer's</span>
+<span class="com">- Focus on the SYSTEM, not the PERSON ("the process allowed this"</span>
+<span class="com">  not "Dave messed up")</span>
+<span class="com">- Write it down — verbal lessons evaporate; written ones compound</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Mission Mindset</div>
+      <div class="concept-title">Putting It All Together — Leading Through Chaos</div>
+      <div class="concept-desc">
+        These three phrases — central to this entire guide — are
+        themselves leadership principles refined into short, memorable
+        forms (the way good military doctrine often is):<br><br>
+        <strong>"Not my circus, not my monkey"</strong> — a leader protects
+        their team's focus. Shield people from drama and scope creep that
+        doesn't serve the mission; redirect it to whoever owns it.<br><br>
+        <strong>"Assume makes an ass out of you and me"</strong> — a leader
+        verifies before committing resources. "I think the backup ran" is
+        not the same as "I confirmed the backup completed and is restorable."<br><br>
+        <strong>"You can't make someone make the right choice, yet you can
+        pick up the pieces afterwards"</strong> — a leader's real value
+        often shows <em>after</em> something goes wrong: staying calm,
+        organising the recovery, protecting the team from blame spirals,
+        and turning the failure into the team's next strength.<br><br>
+        Master these three, lead with clear intent, and run honest AARs —
+        and you'll out-perform leaders with twice your technical
+        knowledge but none of this foundation.
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- BEGINNER39-MILITARY v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Translating Military Experience into IT Resume Language</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Why this matters</span>
+      <h4 class="concept-title">The translation gap is real — and fixable</h4>
+      <p class="concept-desc">A hiring manager reading "Maintained communications equipment for a forward-deployed unit
+      under field conditions" may not immediately connect that to "can troubleshoot hardware, manage inventory, and keep
+      systems running with no backup support nearby." The skills transfer; the <em>vocabulary</em> doesn't, automatically.
+      Translating your experience into civilian IT language isn't dishonesty or exaggeration — it's making sure the
+      reader understands what you actually did.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Side-by-side: military experience to IT resume language</h4>
+      <table class="ai-table">
+        <tr><th>What you did</th><th>How it translates</th></tr>
+        <tr><td>Stood watch / monitored systems on shift rotations</td><td>"Performed continuous system monitoring and incident triage across rotating shift schedules — directly applicable to SOC/NOC environments"</td></tr>
+        <tr><td>Maintained or repaired communications/radio/radar equipment</td><td>"Diagnosed and resolved hardware faults under time pressure with limited resources — comparable to field/desktop support and infrastructure troubleshooting"</td></tr>
+        <tr><td>Managed property, parts inventory, or supply accountability</td><td>"Tracked and reconciled asset inventories using accountability systems — transferable to IT asset management (ITAM)"</td></tr>
+        <tr><td>Trained junior personnel on procedures or equipment</td><td>"Developed and delivered technical training to incoming team members — translates to documentation and knowledge-transfer responsibilities"</td></tr>
+        <tr><td>Operated under a clearance, handled sensitive information</td><td>"Held [clearance level]; managed sensitive information per strict handling protocols — directly relevant to compliance-driven environments (GRC, government contracting)"</td></tr>
+        <tr><td>Followed and enforced strict procedures / checklists</td><td>"Executed and audited compliance with documented standard operating procedures — maps to change management, runbooks, and audit readiness"</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Lead with impact, not just duties</h4>
+      <p class="concept-desc">Civilian resumes reward quantified outcomes over lists of responsibilities. Compare:</p>
+      <pre class="code-block"><span class="com"># Weak — describes a duty, says nothing about the outcome</span>
+&quot;Responsible for maintaining unit IT equipment.&quot;
+
+<span class="com"># Strong — same underlying experience, framed around impact</span>
+&quot;Maintained 40+ workstations and network devices supporting a 120-person
+unit with zero unplanned downtime over a 12-month deployment, reducing
+average ticket resolution time by replacing ad-hoc fixes with a
+documented troubleshooting checklist.&quot;</pre>
+      <p class="concept-desc">If you don't have exact numbers, reasonable estimates are fine — "approximately," "more
+      than," and "supported a team of roughly X" all read as honest and specific. What recruiters are scanning for is
+      scale and outcome, not decimal-point precision.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — but also, it's now your circus</h4>
+      <p class="concept-desc">Military culture often instills "stay in your lane, don't volunteer for extra work" as
+      survival wisdom — and that instinct can undersell you in interviews. The civilian IT world rewards people who *did*
+      step outside their narrow job description: the radio tech who also fixed everyone's laptop issues, the supply
+      clerk who built a spreadsheet that automated half the unit's paperwork. Those moments where you picked up something
+      that "wasn't your job" are often the most resume-worthy stories you have. Don't bury them out of habit.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER42-MILITARY v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Using the GI Bill and Tuition Assistance for IT Certifications</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Why this matters</span>
+      <h4 class="concept-title">Education benefits are some of the best-kept "secrets" in the military community</h4>
+      <p class="concept-desc">Many service members and veterans leave significant education benefits unused — not from
+      lack of eligibility, but from not knowing the programs exist, assuming the paperwork is too complicated, or
+      believing (often incorrectly) that the benefit only covers traditional four-year degrees. IT certifications are
+      frequently fundable through these same programs, and stacking several certs can be a faster, cheaper path into the
+      field than a full degree program — especially if your goal is to start working sooner rather than later.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The major programs, at a glance</h4>
+      <table class="ai-table">
+        <tr><th>Program</th><th>Who it's generally for</th><th>What it can cover</th></tr>
+        <tr><td>Post-9/11 GI Bill</td><td>Veterans and some active-duty members meeting service requirements</td><td>Tuition, housing allowance (BAH), and — important for this audience — licensing &amp; certification exam reimbursement</td></tr>
+        <tr><td>Tuition Assistance (TA)</td><td>Active-duty service members, by branch program</td><td>Courses and, in some programs, certification training while still serving</td></tr>
+        <tr><td>VR&amp;E (Chapter 31)</td><td>Veterans with a service-connected disability affecting employability</td><td>Training, certification costs, and career counseling support — often more comprehensive than people expect</td></tr>
+        <tr><td>State veteran education benefits</td><td>Varies — many states offer additional programs on top of federal benefits</td><td>Varies by state; worth checking your state's department of veterans affairs directly</td></tr>
+      </table>
+      <p class="concept-desc">Note specifically: the Post-9/11 GI Bill's licensing and certification reimbursement is
+      separate from its tuition coverage and is often overlooked — it can directly fund the exam fee for things like
+      CompTIA Security+, AWS certifications, or Cisco credentials, without needing to be enrolled in a degree program at all.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">A practical first-steps checklist</h4>
+      <pre class="code-block"><span class="com"># 1. Confirm your eligibility and remaining benefit balance
+#    — VA.gov and your installation's education center are the
+#    authoritative sources; don't rely on secondhand information</span>
+
+<span class="com"># 2. Ask SPECIFICALLY about certification/licensing reimbursement
+#    — this is frequently a different process than degree-program
+#    tuition, with its own forms and approval steps</span>
+
+<span class="com"># 3. Confirm the certification you want is on an approved list
+#    — most IT vendor certs (CompTIA, AWS, Microsoft, Cisco) are
+#    commonly approved, but verify with your education office BEFORE
+#    you pay out of pocket and try to get reimbursed after the fact</span>
+
+<span class="com"># 4. Keep every receipt, confirmation email, and exam voucher
+#    — reimbursement claims move much faster with complete
+#    documentation than with "I'm pretty sure I paid for that"</span>
+
+<span class="com"># 5. Talk to your installation's education office or a
+#    Veteran Service Organization (VSO) — they exist specifically
+#    to help you navigate this, and the help is free</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — verify your specific situation</h4>
+      <p class="concept-desc">Benefit rules change, vary by branch, by discharge status, by years of service, and by which
+      specific program you're using — what worked for a friend who left the service three years ago may not apply to you
+      today. Don't assume you're ineligible because of something you heard secondhand, and don't assume a benefit covers
+      something without confirming it in writing first. A 20-minute conversation with an education counselor or VSO
+      representative can save you from either missing out on something you qualified for, or getting an unpleasant
+      reimbursement surprise after the fact.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER44-MILITARY v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Networking Events Without the Awkwardness – A Veteran's Field Guide</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Why this matters</span>
+      <h4 class="concept-title">"Networking" sounds fake until it gets you a job</h4>
+      <p class="concept-desc">Plenty of capable people — veterans especially, coming from a culture that often values
+      humility and "letting your work speak for itself" — find the idea of "networking" deeply uncomfortable, even
+      slightly dishonest-feeling. Reframe it: networking is just having genuine conversations with people who do
+      interesting work, and staying in touch. The job-finding part is a side effect of doing that consistently — not
+      the awkward main event it's often made out to be.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Where IT networking actually happens (most of it isn't fancy galas)</h4>
+      <table class="ai-table">
+        <tr><th>Venue</th><th>What it actually looks like</th><th>Why it works</th></tr>
+        <tr><td>Local user groups / meetups</td><td>A monthly gathering of people who use the same tools (Linux, AWS, cybersecurity) — usually free, usually casual</td><td>Low-pressure, recurring — you become a familiar face over a few months without ever "selling" yourself</td></tr>
+        <tr><td>Veteran-focused tech programs</td><td>Organizations specifically built to connect transitioning service members with IT employers and mentors</td><td>Everyone there already understands your background — no translation needed, no awkward "so, tell me about your service" small talk</td></tr>
+        <tr><td>Online communities</td><td>Subreddits, Discord servers, LinkedIn groups focused on specific certifications or technologies</td><td>Lower social pressure than in-person events — you can build relationships entirely on the strength of your questions and contributions</td></tr>
+        <tr><td>Certification study groups</td><td>People preparing for the same exam, often meeting weekly to quiz each other</td><td>Built-in shared goal — conversation starts itself, friendships form naturally around mutual struggle and progress</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">A simple script for your first conversation (genuinely, not cynically)</h4>
+      <pre class="code-block"><span class="com"># The goal of a first conversation is NOT "get a job out of this person."
+# It's "have one genuine, useful exchange." That's it. Everything
+# else follows from doing that consistently, many times, over months.</span>
+
+<span class="com"># An opener that works because it's true and specific:</span>
+&quot;Hey, I'm transitioning out of [your role] and getting into IT —
+ working through my Security+ right now. What got you started
+ in this field?&quot;
+
+<span class="com"># A good follow-up that shows you're actually listening:</span>
+&quot;That's interesting — how is that different day-to-day from
+ what I'd expect coming from [your background]?&quot;
+
+<span class="com"># The single most useful thing you can do afterward — not
+# during the conversation, but within 48 hours of it:</span>
+&quot;Hey [name], really enjoyed talking about [specific thing they
+ said] — wanted to say thanks for the perspective. I'll let you
+ know how the Security+ exam goes!&quot;
+
+<span class="com"># That last message is the entire "secret" — most people never
+# follow up at all, which means simply doing it puts you ahead
+# of nearly everyone else they met that night.</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — but this circus is worth joining</h4>
+      <p class="concept-desc">It's tempting to think "I'll network once I actually have something impressive to show" —
+      but that backwards thinking keeps a lot of talented people invisible right when visibility would help them most.
+      The people who'll eventually want to help you get hired are the same people you'd be meeting now, while you're
+      still learning. Showing up consistently while you're a beginner — asking good questions, being genuinely curious,
+      following up — builds the exact relationships that turn into opportunities later. You don't need to be impressive
+      yet. You need to be present, and real.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body military -->
+<!-- /domain-body military -->
+<!-- /domain-body military -->
 <!-- /domain-body military -->

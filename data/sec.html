@@ -2353,4 +2353,811 @@ curl -s --request GET   --url <span class="str">"https://www.virustotal.com/api/
 
   </div>
 </div>
+
+<!-- BEGINNER34-SEC v1 -->
+<!-- ── TOPIC: Container Security Hardening ───────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Container Security – Hardening Docker &amp; Images
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">The Container Threat Model</div>
+      <div class="concept-desc">
+        Containers share the host's kernel — they are <em>not</em> as
+        isolated as virtual machines. A misconfigured container can:<br><br>
+        &bull; Access the host filesystem (if volumes are mis-mounted).<br>
+        &bull; Escape to the host (kernel exploits, privileged mode).<br>
+        &bull; Run as root inside the container — and root in a container
+          can sometimes mean root on the host.<br>
+        &bull; Pull a malicious base image from a public registry.<br><br>
+        <strong>Defence-in-depth layers for containers:</strong><br>
+        1. Secure the image (what you build).<br>
+        2. Secure the registry (where images are stored).<br>
+        3. Secure the runtime (how containers run).<br>
+        4. Secure the orchestrator (Kubernetes RBAC, network policies).<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        public Docker Hub image is safe just because it has many downloads.
+        Scan it first.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Image Hardening</div>
+      <div class="concept-title">Writing a Secure Dockerfile</div>
+      <div class="concept-desc">
+        Most container vulnerabilities are introduced at build time.
+        Compare an insecure Dockerfile to a hardened one:
+      </div>
+      <div class="code-block">
+<span class="com">─── INSECURE (common beginner mistakes) ──────────────────────</span>
+FROM ubuntu:latest          <span class="com"># 'latest' = unpredictable, large attack surface</span>
+RUN apt-get update &amp;&amp; apt-get install -y python3 curl vim
+COPY . /app
+WORKDIR /app
+CMD ["python3", "app.py"]   <span class="com"># runs as root by default!</span>
+
+<span class="com">─── HARDENED ─────────────────────────────────────────────────</span>
+FROM python:3.<span class="num">12</span>-slim@sha256:abc123...   <span class="com"># pinned digest, minimal base</span>
+
+<span class="com"># Create a non-root user</span>
+RUN groupadd -r appuser &amp;&amp; useradd -r -g appuser appuser
+
+<span class="com"># Install only what's needed; clean up apt cache</span>
+RUN apt-get update &amp;&amp;     apt-get install -y --no-install-recommends curl &amp;&amp;     rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY --chown=appuser:appuser requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY --chown=appuser:appuser . .
+
+USER appuser                <span class="com"># drop root privileges</span>
+EXPOSE <span class="num">8080</span>
+HEALTHCHECK --interval=<span class="num">30</span>s CMD curl -f http://localhost:<span class="num">8080</span>/health || exit <span class="num">1</span>
+CMD ["python3", "app.py"]
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Scanning</div>
+      <div class="concept-title">Scanning Images for Vulnerabilities</div>
+      <div class="concept-desc">
+        Before deploying any image, scan it. Integrate scanning into your
+        CI/CD pipeline so vulnerable images never reach production.
+      </div>
+      <div class="code-block">
+<span class="com"># Trivy — fast, free, open-source vulnerability scanner</span>
+trivy image myapp:<span class="num">1.2</span>.<span class="num">3</span>
+
+<span class="com"># Fail the build if HIGH or CRITICAL vulnerabilities are found</span>
+trivy image --severity HIGH,CRITICAL --exit-code <span class="num">1</span> myapp:<span class="num">1.2</span>.<span class="num">3</span>
+
+<span class="com"># Scan a Dockerfile for misconfigurations (not just the built image)</span>
+trivy config ./Dockerfile
+
+<span class="com"># Scan for secrets accidentally baked into the image</span>
+trivy image --scanners secret myapp:<span class="num">1.2</span>.<span class="num">3</span>
+
+<span class="com"># Docker Scout (built into modern Docker Desktop)</span>
+docker scout cves myapp:<span class="num">1.2</span>.<span class="num">3</span>
+
+<span class="com"># GitHub Actions: scan on every push</span>
+<span class="com"># - uses: aquasecurity/trivy-action@master</span>
+<span class="com">#   with:</span>
+<span class="com">#     image-ref: 'myapp:${{ github.sha }}'</span>
+<span class="com">#     severity: 'CRITICAL,HIGH'</span>
+<span class="com">#     exit-code: '1'</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Runtime Hardening</div>
+      <div class="concept-title">Running Containers Safely</div>
+      <div class="concept-desc">
+        Docker run flags matter as much as the image itself:
+      </div>
+      <div class="code-block">
+<span class="com"># NEVER do this in production:</span>
+docker run --privileged -v /:/host myimage   <span class="com"># full host access!</span>
+
+<span class="com"># Hardened run command:</span>
+docker run   --read-only \                          <span class="com"># filesystem is read-only</span>
+  --tmpfs /tmp \                         <span class="com"># writable tmp, in-memory only</span>
+  --cap-drop=ALL \                       <span class="com"># drop all Linux capabilities</span>
+  --cap-add=NET_BIND_SERVICE \           <span class="com"># add back only what's needed</span>
+  --security-opt=no-new-privileges \     <span class="com"># block privilege escalation</span>
+  --memory=512m --cpus=1 \               <span class="com"># resource limits (DoS protection)</span>
+  --user $(id -u):$(id -g) \             <span class="com"># run as host's non-root user</span>
+  myimage:<span class="num">1.2</span>.<span class="num">3</span>
+
+<span class="com"># Audit running containers for risky configurations</span>
+docker inspect myapp_container | python3 -c   <span class="str">"import sys,json; c=json.load(sys.stdin)[0]; print('Privileged:', c['HostConfig']['Privileged']); print('User:', c['Config']['User'] or 'root (DANGER)')"</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER35-SEC v1 -->
+<!-- ── TOPIC: Social Engineering & Phishing Defense ──────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Social Engineering – Defending the Human Layer
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Humans Are the Top Attack Vector</div>
+      <div class="concept-desc">
+        Firewalls and encryption don't stop an attacker who simply
+        <em>asks nicely</em>. <strong>Social engineering</strong> exploits
+        human psychology — trust, urgency, fear, helpfulness, curiosity —
+        to bypass technical controls entirely. Roughly 80%+ of breaches
+        start with some form of human manipulation.<br><br>
+        <strong>The psychological levers attackers pull:</strong><br>
+        &bull; <em>Authority</em> — "This is the CEO; I need this done now."<br>
+        &bull; <em>Urgency</em> — "Your account will be locked in 1 hour."<br>
+        &bull; <em>Fear</em> — "Suspicious activity detected on your account."<br>
+        &bull; <em>Curiosity</em> — "See who viewed your profile" links.<br>
+        &bull; <em>Helpfulness</em> — "I'm locked out, can you let me in?"<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        message is legitimate because it looks official, knows your name,
+        or comes from someone you recognise. Verify through a second channel.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Phishing Types</div>
+      <div class="concept-title">Phishing, Spear Phishing, Vishing, Smishing</div>
+      <div class="concept-desc">
+        Modern phishing comes in many flavours — knowing the names helps
+        you train others and write better detection rules.
+      </div>
+      <div class="code-block">
+<span class="com">Type            Channel       Description</span>
+Phishing        Email         Mass email to many targets, generic content
+Spear phishing  Email         Targeted, personalised — uses real names/projects
+Whaling         Email         Spear phishing aimed at executives (CEO/CFO)
+Vishing         Phone/voice   Caller impersonates IT support, bank, vendor
+Smishing        SMS/text      "Your package couldn't be delivered, click here"
+Quishing        QR code       Malicious QR codes on posters, parking meters, emails
+Pretexting      Any           Attacker invents a scenario to extract info
+                              ("I'm from Acme Audit, I need your employee list")
+Watering hole   Web           Attacker compromises a site the target visits often
+Business Email  Email         Impersonates a vendor/exec to redirect payments
+Compromise (BEC)              ("Update our bank details for the next invoice")
+
+<span class="com"># Quick red-flag checklist for suspicious emails:</span>
+<span class="com"># [ ] Sender domain slightly misspelled (paypa1.com, micros0ft.com)</span>
+<span class="com"># [ ] Generic greeting ("Dear Customer") on a "personal" message</span>
+<span class="com"># [ ] Urgency or threat language ("act now or lose access")</span>
+<span class="com"># [ ] Hover over links — does the URL match the displayed text?</span>
+<span class="com"># [ ] Unexpected attachment (.exe, .zip, .html, macro-enabled .docm)</span>
+<span class="com"># [ ] Request to bypass normal process ("don't tell finance, just wire it")</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Technical Controls</div>
+      <div class="concept-title">Email Authentication: SPF, DKIM, DMARC</div>
+      <div class="concept-desc">
+        These three DNS-based protocols work together to stop attackers
+        from spoofing your domain in phishing emails:<br><br>
+        &bull; <strong>SPF (Sender Policy Framework)</strong> — a DNS TXT
+          record listing which mail servers are allowed to send for your
+          domain.<br>
+        &bull; <strong>DKIM (DomainKeys Identified Mail)</strong> —
+          cryptographically signs outgoing emails so receivers can verify
+          they weren't altered in transit.<br>
+        &bull; <strong>DMARC (Domain-based Message Authentication)</strong>
+          — tells receiving servers what to do when SPF/DKIM checks fail
+          (quarantine, reject) and where to send reports.
+      </div>
+      <div class="code-block">
+<span class="com"># SPF record — only these servers may send as @example.com</span>
+example.com.  TXT  "v=spf1 include:_spf.google.com include:sendgrid.net -all"
+<span class="com"># -all = hard fail anything not listed (strict)</span>
+<span class="com"># ~all = soft fail (mark as suspicious but still deliver)</span>
+
+<span class="com"># DKIM record — public key for verifying signatures</span>
+google._domainkey.example.com.  TXT  "v=DKIM1; k=rsa; p=MIGfMA0GCSq..."
+
+<span class="com"># DMARC record — policy + reporting address</span>
+_dmarc.example.com.  TXT  "v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@example.com; pct=100"
+<span class="com"># p=none       → monitor only (start here)</span>
+<span class="com"># p=quarantine → send failures to spam folder</span>
+<span class="com"># p=reject     → block failures outright (end goal)</span>
+
+<span class="com"># Check your domain's current posture</span>
+dig example.com TXT | grep spf
+dig _dmarc.example.com TXT
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Human Layer</div>
+      <div class="concept-title">Building a Phishing-Resilient Culture</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — and you can also stack the deck so
+        the right choice is the easy choice:<br><br>
+        &bull; Run <strong>regular phishing simulations</strong> — not to
+          punish people who click, but to identify training needs.<br>
+        &bull; Make reporting <strong>one click away</strong> — a
+          "Report Phishing" button in the mail client beats a confusing
+          forward-to-security process.<br>
+        &bull; <strong>Never punish someone for reporting</strong> a real
+          click — punishment teaches people to hide mistakes, which is
+          the worst outcome for security.<br>
+        &bull; Establish a <strong>verbal verification process</strong> for
+          financial requests: "any wire transfer change requires a phone
+          call to a known number — no exceptions, regardless of who's asking."<br>
+        &bull; Celebrate good catches publicly — "Maria caught a spear
+          phishing attempt this week" builds a security-positive culture.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER36-SEC v1 -->
+<!-- ── TOPIC: OWASP Top 10 Web App Security ──────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    OWASP Top 10 – The Web Vulnerabilities Everyone Must Know
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is OWASP and Why the Top 10 Matters</div>
+      <div class="concept-desc">
+        <strong>OWASP (Open Worldwide Application Security Project)</strong>
+        publishes the <strong>OWASP Top 10</strong> — a regularly updated
+        list of the most critical web application security risks, based
+        on real-world data from organisations worldwide.<br><br>
+        It's the closest thing the industry has to a "must-know" list for
+        anyone who builds, tests, or defends web applications. Job
+        postings reference it; certifications test on it; bug bounty
+        programs are organised around it.<br><br>
+        <em>"Not my circus, not my monkey"</em> — you don't need to be a
+        developer to understand these. Knowing <em>what</em> each
+        vulnerability is and <em>why</em> it matters makes you valuable
+        in security reviews, incident response, and conversations with
+        engineering teams.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The List</div>
+      <div class="concept-title">OWASP Top 10 (2021 Edition) Explained Simply</div>
+      <div class="concept-desc">
+        Each entry below: what it is, in plain language, with an
+        everyday analogy.
+      </div>
+      <div class="code-block">
+<span class="com">A01: Broken Access Control</span>
+  Users can do things they shouldn't (view others' data, admin pages).
+  Analogy: A hotel keycard that opens every room, not just yours.
+
+<span class="com">A02: Cryptographic Failures</span>
+  Sensitive data stored or transmitted without proper encryption.
+  Analogy: Writing your PIN on the back of your bank card.
+
+<span class="com">A03: Injection (SQL, NoSQL, Command, LDAP)</span>
+  Untrusted input is executed as code/commands by the backend.
+  Analogy: Writing "ignore my rent and give me $1,000,000" on a check
+  — and the bank's system actually processing it as written.
+
+<span class="com">A04: Insecure Design</span>
+  The flaw is in the blueprint, not the code — security wasn't designed in.
+  Analogy: A bank vault with a sturdy door but no walls.
+
+<span class="com">A05: Security Misconfiguration</span>
+  Default passwords, verbose error messages, unnecessary features enabled.
+  Analogy: Leaving the factory-set "admin/admin" login on a new router.
+
+<span class="com">A06: Vulnerable and Outdated Components</span>
+  Using libraries/frameworks with known, unpatched vulnerabilities.
+  Analogy: Driving a car with a known faulty brake recall you never fixed.
+
+<span class="com">A07: Identification and Authentication Failures</span>
+  Weak password rules, no MFA, predictable session tokens.
+  Analogy: A door that locks, but the key is "1234" for every customer.
+
+<span class="com">A08: Software and Data Integrity Failures</span>
+  Trusting code/updates from sources without verifying their integrity.
+  Analogy: Accepting a "replacement" car part from a stranger in a parking lot.
+
+<span class="com">A09: Security Logging and Monitoring Failures</span>
+  Attacks go undetected because no one is watching the logs.
+  Analogy: A security camera that's recording but nobody ever reviews the tape.
+
+<span class="com">A10: Server-Side Request Forgery (SSRF)</span>
+  Attacker tricks the server into making requests on their behalf,
+  often reaching internal systems the attacker couldn't reach directly.
+  Analogy: Convincing the receptionist to walk into the vault and
+  read you what's inside, since you're not allowed in yourself.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Hands-On Example</div>
+      <div class="concept-title">SQL Injection — The Classic A03 Example</div>
+      <div class="concept-desc">
+        This is the canonical example every security professional learns.
+        <em>Only test against systems you own or have authorisation to
+        test (e.g. DVWA, OWASP Juice Shop, your own lab).</em>
+      </div>
+      <div class="code-block">
+<span class="com">─── VULNERABLE CODE (Python/Flask, never do this) ────────────</span>
+username = request.form[<span class="str">'username'</span>]
+password = request.form[<span class="str">'password'</span>]
+query = <span class="fn">f</span><span class="str">"SELECT * FROM users WHERE username='{username}' AND password='{password}'"</span>
+cursor.execute(query)   <span class="com"># string concatenation = injection waiting to happen</span>
+
+<span class="com">─── THE ATTACK ────────────────────────────────────────────────</span>
+<span class="com"># Attacker enters this as the username:</span>
+admin' --
+<span class="com"># Resulting query becomes:</span>
+<span class="com">SELECT * FROM users WHERE username='admin' -- ' AND password='whatever'</span>
+<span class="com"># The "--" comments out the password check entirely. Instant login bypass.</span>
+
+<span class="com">─── THE FIX: parameterised queries (always do this) ──────────</span>
+query = <span class="str">"SELECT * FROM users WHERE username = %s AND password = %s"</span>
+cursor.execute(query, (username, password))
+<span class="com"># The database driver treats username/password as DATA, never as CODE —</span>
+<span class="com"># no matter what characters the attacker includes.</span>
+
+<span class="com"># SQLAlchemy ORM (also safe — handles parameterisation for you)</span>
+user = User.query.filter_by(username=username, password=password).first()
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Defence Mindset</div>
+      <div class="concept-title">"Never Trust User Input" — The Golden Rule</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — and nowhere is
+        this truer than in web development. Every single piece of data
+        that comes from outside your application — form fields, URL
+        parameters, HTTP headers, cookies, file uploads, even data from
+        "trusted" third-party APIs — must be treated as potentially
+        hostile until validated.<br><br>
+        <strong>Defence in depth for web apps:</strong><br>
+        &bull; Validate input on the server (client-side validation is a
+          UX nicety, not a security control — it's trivially bypassed).<br>
+        &bull; Use parameterised queries / ORMs — never string-concatenate
+          SQL.<br>
+        &bull; Encode output based on context (HTML, JS, URL, SQL each
+          need different encoding).<br>
+        &bull; Apply the principle of least privilege to database
+          accounts — your web app's DB user shouldn't be able to
+          <code>DROP TABLE</code>.<br>
+        &bull; Keep dependencies updated — run <code>npm audit</code>,
+          <code>pip-audit</code>, or Dependabot regularly.<br>
+        &bull; Practice on intentionally vulnerable apps: OWASP Juice
+          Shop, DVWA, PortSwigger Web Security Academy (all free, all legal).
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER38-SEC v1 -->
+<!-- ── TOPIC: API Security – OAuth2 & JWT ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    API Security – OAuth2, JWT &amp; Token-Based Authentication
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Modern APIs Don't Use Passwords Directly</div>
+      <div class="concept-desc">
+        Imagine giving your house key (password) to every app that needs
+        to check your mailbox. If one app is compromised, your whole
+        house is at risk. <strong>Token-based authentication</strong>
+        solves this: you get a limited, revocable, expiring "guest pass"
+        instead of handing out your master key.<br><br>
+        <strong>The vocabulary you'll see everywhere:</strong><br>
+        &bull; <em>Authentication</em> — "Who are you?" (proving identity).<br>
+        &bull; <em>Authorization</em> — "What are you allowed to do?"
+          (granting permissions).<br>
+        &bull; <em>Token</em> — a piece of data that proves you've already
+          authenticated, so you don't have to send your password every
+          single request.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        "the user is logged in" means "the user is allowed to do this
+        specific action." Authentication and authorization are different
+        checks — confusing them is the root of A01 (Broken Access Control).
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">OAuth2</div>
+      <div class="concept-title">OAuth2 – The "Sign in With Google" Flow</div>
+      <div class="concept-desc">
+        <strong>OAuth2</strong> is the protocol behind every "Sign in
+        with Google/GitHub/Microsoft" button. It lets an app access your
+        data on another service <em>without ever seeing your password</em>
+        for that service.<br><br>
+        <strong>Key roles in OAuth2:</strong><br>
+        &bull; <em>Resource Owner</em> — you, the user.<br>
+        &bull; <em>Client</em> — the app requesting access (e.g. a
+          scheduling tool that wants to read your Google Calendar).<br>
+        &bull; <em>Authorization Server</em> — issues tokens (e.g. Google's
+          login servers).<br>
+        &bull; <em>Resource Server</em> — holds your data and checks
+          tokens (e.g. the Google Calendar API).
+      </div>
+      <div class="code-block">
+<span class="com">─── The Authorization Code Flow (most common, most secure) ────</span>
+
+1. You click "Sign in with Google" on ScheduleApp
+2. ScheduleApp redirects you to Google's login page
+   GET https://accounts.google.com/o/oauth2/auth
+       ?client_id=schedule_app_123
+       &amp;redirect_uri=https://scheduleapp.com/callback
+       &amp;scope=calendar.readonly
+       &amp;response_type=code
+
+3. You log in to GOOGLE directly (ScheduleApp never sees your password)
+4. Google asks: "ScheduleApp wants to read your calendar. Allow?"
+5. You click Allow → Google redirects back with a temporary CODE
+   https://scheduleapp.com/callback?code=4/0AX4XfWh...
+
+6. ScheduleApp's SERVER (not your browser) exchanges the code for tokens
+   POST https://oauth2.googleapis.com/token
+       { client_id, client_secret, code, grant_type: "authorization_code" }
+
+7. Google returns:
+   {
+     "access_token":  "ya29.a0AfH6...",   ← used for API calls, short-lived
+     "refresh_token": "1//0gLGn...",      ← used to get new access tokens
+     "expires_in": 3600
+   }
+
+8. ScheduleApp now calls the Calendar API with the access token —
+   never touching your Google password at any point in this process
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">JWT</div>
+      <div class="concept-title">JWT – JSON Web Tokens Decoded</div>
+      <div class="concept-desc">
+        A <strong>JWT (JSON Web Token)</strong> is a self-contained,
+        signed token — three Base64-encoded parts separated by dots:
+        <code>header.payload.signature</code>. The server can verify it's
+        legitimate without a database lookup, because the signature
+        proves it hasn't been tampered with.
+      </div>
+      <div class="code-block">
+<span class="com"># A JWT looks like this (one long string with two dots):</span>
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGljZSIsInJvbGUiOiJhZG1pbiJ9.SflKxwRJSMeKKF2QT4f...
+
+<span class="com"># Decoded HEADER (algorithm + token type):</span>
+{ <span class="str">"alg"</span>: <span class="str">"HS256"</span>, <span class="str">"typ"</span>: <span class="str">"JWT"</span> }
+
+<span class="com"># Decoded PAYLOAD (claims — the actual data):</span>
+{
+  <span class="str">"sub"</span>:  <span class="str">"alice"</span>,        <span class="com"># subject = who this token is about</span>
+  <span class="str">"role"</span>: <span class="str">"admin"</span>,
+  <span class="str">"iat"</span>:  <span class="num">1717689600</span>,    <span class="com"># issued-at timestamp</span>
+  <span class="str">"exp"</span>:  <span class="num">1717693200</span>     <span class="com"># expiration timestamp — ALWAYS set this!</span>
+}
+
+<span class="com"># SIGNATURE — proves the token wasn't modified</span>
+<span class="com"># HMACSHA256(base64(header) + "." + base64(payload), SECRET_KEY)</span>
+
+<span class="com"># Generate and verify with Python (PyJWT)</span>
+<span class="kw">import</span> jwt, datetime
+
+token = jwt.encode(
+    {<span class="str">"sub"</span>: <span class="str">"alice"</span>, <span class="str">"role"</span>: <span class="str">"admin"</span>,
+     <span class="str">"exp"</span>: datetime.datetime.utcnow() + datetime.timedelta(hours=<span class="num">1</span>)},
+    <span class="str">"your-secret-key"</span>, algorithm=<span class="str">"HS256"</span>
+)
+
+<span class="kw">try</span>:
+    payload = jwt.decode(token, <span class="str">"your-secret-key"</span>, algorithms=[<span class="str">"HS256"</span>])
+    <span class="fn">print</span>(<span class="str">"Valid token for:"</span>, payload[<span class="str">"sub"</span>])
+<span class="kw">except</span> jwt.ExpiredSignatureError:
+    <span class="fn">print</span>(<span class="str">"Token expired — request a new one"</span>)
+<span class="kw">except</span> jwt.InvalidTokenError:
+    <span class="fn">print</span>(<span class="str">"Invalid token — reject the request"</span>)
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Common Mistakes</div>
+      <div class="concept-title">JWT &amp; Token Pitfalls That Cause Breaches</div>
+      <div class="concept-desc">
+        <em>"Not my circus, not my monkey"</em> — but if you're reviewing
+        someone else's API design, these are the red flags worth raising
+        immediately:<br><br>
+        &bull; <strong>"alg: none" attack</strong> — some JWT libraries
+          will accept tokens with no signature if you ask nicely.
+          Always explicitly specify allowed algorithms when verifying.<br>
+        &bull; <strong>Storing JWTs in localStorage</strong> — accessible
+          to any JavaScript on the page (XSS risk). HttpOnly cookies
+          are safer for session tokens.<br>
+        &bull; <strong>No expiration</strong> — a stolen token that never
+          expires is a permanent backdoor. Always set <code>exp</code>,
+          and keep access tokens short-lived (minutes to hours).<br>
+        &bull; <strong>Sensitive data in the payload</strong> — JWT
+          payloads are Base64-encoded, NOT encrypted. Anyone can decode
+          and read them. Never put passwords or secrets in a JWT.<br>
+        &bull; <strong>No revocation strategy</strong> — once issued, a
+          JWT is valid until it expires. Plan for "I need to log this
+          user out everywhere right now" (e.g. short expiry + refresh
+          token blocklist).
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- BEGINNER40-SEC v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Phishing Beyond Email – Smishing, Vishing, and QR Code Scams</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Phishing isn't just an email problem anymore</h4>
+      <p class="concept-desc">Years of "don't click suspicious email links" training pushed attackers toward channels
+      where users are less guarded — text messages, phone calls, and even printed QR codes. The underlying trick is
+      identical in every case: create urgency, impersonate someone trusted, and get the target to act before they think.
+      Only the delivery method changes.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Know the family of attacks</h4>
+      <table class="ai-table">
+        <tr><th>Term</th><th>Channel</th><th>Typical pretext</th></tr>
+        <tr><td>Phishing</td><td>Email</td><td>"Your account will be suspended — click here to verify"</td></tr>
+        <tr><td>Smishing</td><td>SMS / text message</td><td>"Your package couldn't be delivered — confirm your address" with a shortened link</td></tr>
+        <tr><td>Vishing</td><td>Phone call (often with spoofed caller ID)</td><td>"This is IT support — we detected a virus on your machine, I need your password to fix it"</td></tr>
+        <tr><td>Quishing</td><td>QR codes (on posters, parking meters, restaurant tables)</td><td>A sticker placed over a legitimate QR code, redirecting to a cloned login page</td></tr>
+        <tr><td>Spear phishing</td><td>Any of the above, but personalized</td><td>References your actual manager's name, a real project, or a recent purchase — built from information gathered about you specifically</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Checking a suspicious link or QR code before you tap it</h4>
+      <pre class="code-block"><span class="com"># Never scan a suspicious QR code with an app that auto-opens links.
+# Use a scanner that shows you the destination URL FIRST.</span>
+
+<span class="com"># On a computer, hover (don't click) to preview where a link
+# actually goes — the displayed text and the real destination
+# are often two very different things</span>
+
+<span class="com"># Expand a shortened URL safely before visiting it</span>
+curl -sI https://bit.ly/suspicious-looking-link | grep -i location
+
+<span class="com"># Check a domain's age and registration — brand-new domains
+# pretending to be your bank are an enormous red flag</span>
+whois suspicious-domain.com | grep -iE &quot;creation date|registrar&quot;</pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — verify out-of-band</h4>
+      <p class="concept-desc">If a text message claims to be from your bank, don't tap the link in the message to "check."
+      Open your banking app directly, or call the number printed on the back of your card — never a number provided in
+      the suspicious message itself. This is called <em>out-of-band verification</em>: confirming a claim through a
+      channel the attacker doesn't control. The thirty seconds it costs you is far cheaper than assuming the message is
+      legitimate and being wrong.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">You can't make someone make the right choice...</h4>
+      <p class="concept-desc"><strong>...yet you can pick up the pieces afterwards.</strong> If a coworker admits they
+      tapped a smishing link or gave information over a vishing call, the worst response is blame — that just guarantees
+      the next person stays quiet about it. The right response is the same one you'd want for yourself: help them change
+      the affected credentials, report it so the broader team can be warned, and treat the disclosure itself as the
+      responsible action it actually was.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER42-SEC v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Encryption Basics – At Rest, In Transit, and Why "It's Encrypted" Isn't Enough</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Encryption answers one question: "who can read this?"</h4>
+      <p class="concept-desc">Encryption transforms readable data ("plaintext") into scrambled data ("ciphertext") using
+      a mathematical algorithm and a key — so that only someone holding the right key can reverse the process and read it.
+      Everything interesting about encryption comes down to two follow-up questions: <em>where</em> is the data when it's
+      protected, and <em>who controls the key</em>?</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">"At rest" vs "in transit" — two different problems</h4>
+      <table class="ai-table">
+        <tr><th>State</th><th>What it protects against</th><th>Common technology</th></tr>
+        <tr><td>In transit</td><td>Someone intercepting data as it travels across a network</td><td>TLS/HTTPS, SSH, VPN tunnels</td></tr>
+        <tr><td>At rest</td><td>Someone gaining access to the storage itself — a stolen laptop, a compromised database, a discarded hard drive</td><td>Full-disk encryption (BitLocker, LUKS, FileVault), database-level encryption, encrypted backups</td></tr>
+      </table>
+      <p class="concept-desc">A system can be excellent at one and weak at the other — HTTPS protects your password on the
+      way to the server, but if that server stores passwords in plaintext, the encryption in transit did nothing to
+      protect you from a database breach. Both layers matter, and they solve different threats.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Symmetric vs asymmetric, in one paragraph each</h4>
+      <p class="concept-desc"><strong>Symmetric encryption</strong> (AES is the modern standard) uses the <em>same</em> key
+      to lock and unlock — fast and efficient, but both parties need a way to share that key securely first. <strong>Asymmetric
+      encryption</strong> (RSA, elliptic-curve) uses a <em>pair</em> of mathematically linked keys: anything encrypted with
+      the public key can only be decrypted with the matching private key. This solves the "how do we share a key safely"
+      problem — you can publish your public key everywhere, and only you can decrypt what people send you with it. In
+      practice, most real systems (like HTTPS) use asymmetric encryption briefly to safely exchange a symmetric key, then
+      switch to fast symmetric encryption for the actual data — getting the security benefits of both.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Seeing encryption in action</h4>
+      <pre class="code-block"><span class="com"># Inspect the TLS certificate a website is presenting (in transit)</span>
+openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 2&gt;/dev/null | openssl x509 -noout -subject -issuer -dates
+
+<span class="com"># Encrypt and decrypt a file symmetrically with a passphrase (at rest, simple demo)</span>
+openssl enc -aes-256-cbc -salt -in report.txt -out report.txt.enc
+openssl enc -aes-256-cbc -d -in report.txt.enc -out report_decrypted.txt
+
+<span class="com"># Generate an asymmetric keypair and use it (the basis of SSH, GPG, and HTTPS certs)</span>
+ssh-keygen -t ed25519 -f my_key -C &quot;demo key&quot;
+<span class="com"># my_key       = private key — never share this, ever
+# my_key.pub   = public key — safe to hand out freely</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">"It's encrypted" is the start of a sentence, not the end of one</h4>
+      <p class="concept-desc"><strong>Assume makes an ass out of you and me</strong>: hearing "the data is encrypted" should
+      prompt follow-up questions, not relief — encrypted with what algorithm, who holds the keys, is it encrypted in
+      transit, at rest, or both, and what happens if the key itself is compromised? A vendor that can answer all four
+      clearly has actually thought it through. A vendor that just repeats "it's encrypted, don't worry" usually hasn't —
+      and that's worth noting before you trust them with something sensitive.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER44-SEC v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Zero Trust – "Never Trust, Always Verify" Explained Simply</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The old model: a castle with a moat</h4>
+      <p class="concept-desc">Traditional network security worked like a medieval castle — build strong walls (firewalls)
+      around the perimeter, and trust everything inside them. Once you were "inside the network," you were generally
+      treated as trustworthy by default. This worked reasonably well when "inside the network" meant "physically in the
+      building, on a company-owned computer." It works far less well in a world of remote work, cloud services, personal
+      devices, and contractors — where the very idea of a single, defensible "inside" has mostly dissolved.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Zero Trust flips the assumption</h4>
+      <p class="concept-desc">Zero Trust starts from a different premise: <strong>don't automatically trust anything,
+      whether it's inside or outside the network</strong> — verify every request, every time, based on who's asking, what
+      they're asking for, and the context they're asking from. The name sounds extreme, but the underlying idea is closer
+      to "trust, but continuously re-verify" than "trust no one ever." A useful mental model: instead of one big castle
+      wall, imagine every single room has its own locked door and its own ID check — including rooms you're already inside.</p>
+      <table class="ai-table">
+        <tr><th>Castle-and-moat thinking</th><th>Zero Trust thinking</th></tr>
+        <tr><td>"You're on the VPN, so you must be legitimate"</td><td>"You're on the VPN — now let's also verify your device is patched, your identity via MFA, and that this specific request makes sense for your role"</td></tr>
+        <tr><td>One login grants broad access to "the network"</td><td>Each request to each resource is evaluated on its own merits, continuously</td></tr>
+        <tr><td>Internal traffic is implicitly trusted</td><td>Internal traffic is monitored and verified just like external traffic</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The building blocks you'll hear about</h4>
+      <table class="ai-table">
+        <tr><th>Component</th><th>What it contributes</th></tr>
+        <tr><td>Strong identity verification (MFA)</td><td>Confirms "you are who you say you are" before granting anything</td></tr>
+        <tr><td>Least-privilege access</td><td>You only get access to exactly what your role requires — nothing "just in case"</td></tr>
+        <tr><td>Micro-segmentation</td><td>The network is divided into small zones, so a breach in one area can't freely spread to others</td></tr>
+        <tr><td>Continuous monitoring</td><td>Behavior is watched constantly — a login from a new country at 3 AM is a signal worth checking, even from a "trusted" account</td></tr>
+        <tr><td>Device health checks</td><td>Access can depend on whether the requesting device is patched, encrypted, and free of known malware</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — the philosophy in one phrase</h4>
+      <p class="concept-desc">If you remember nothing else about Zero Trust, remember this: it is, in essence, "assume
+      makes an ass out of you and me," turned into an architecture. Every assumption that something is safe because of
+      *where* it's coming from — "it's an internal IP," "it's a company laptop," "they logged in successfully an hour
+      ago" — is exactly the kind of assumption attackers count on defenders making. Zero Trust simply builds systems that
+      verify instead of assume, by design, every single time.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER46-SEC v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Security Headers – The HTTP Response Fields That Quietly Protect You</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A web server can tell your browser how to defend you</h4>
+      <p class="concept-desc">When your browser loads a webpage, the server sends back more than just the page content —
+      it also sends HTTP response headers, a set of instructions about how the browser should treat that content. A
+      handful of these headers exist purely for security: they tell the browser "don't allow this page to be embedded
+      elsewhere," "only ever load this site over HTTPS," or "don't run scripts from sources I haven't explicitly
+      approved." Most users never see them — but their presence (or absence) says a lot about how seriously a site takes
+      security.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The headers worth knowing</h4>
+      <table class="ai-table">
+        <tr><th>Header</th><th>What it does</th><th>What it protects against</th></tr>
+        <tr><td><code>Strict-Transport-Security</code></td><td>Tells the browser "always use HTTPS for this site, never plain HTTP, even if a link points to http://"</td><td>Downgrade attacks that try to trick a browser into an unencrypted connection</td></tr>
+        <tr><td><code>Content-Security-Policy</code></td><td>Whitelists exactly where scripts, styles, and other resources are allowed to load from</td><td>Cross-site scripting (XSS) — even if an attacker injects a script tag, the browser refuses to run it if its source isn't on the approved list</td></tr>
+        <tr><td><code>X-Frame-Options</code></td><td>Controls whether the page can be displayed inside a frame on another site</td><td>Clickjacking — tricking users into clicking something different from what they think they're clicking</td></tr>
+        <tr><td><code>X-Content-Type-Options</code></td><td>Tells the browser "don't try to guess the file type — trust what I told you it is"</td><td>MIME-sniffing attacks that disguise malicious files as harmless ones</td></tr>
+        <tr><td><code>Referrer-Policy</code></td><td>Controls how much of the originating URL gets shared when a user clicks a link to another site</td><td>Accidentally leaking sensitive information (like search queries or internal URLs) to third-party sites</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Checking what headers a site actually sends</h4>
+      <pre class="code-block"><span class="com"># See the raw response headers for any site</span>
+curl -sI https://example.com
+
+<span class="com"># Filter for just the security-relevant ones</span>
+curl -sI https://example.com | grep -iE &quot;strict-transport|content-security|x-frame|x-content-type|referrer-policy&quot;
+
+<span class="com"># A snippet of what a well-configured response might include:
+#
+#   strict-transport-security: max-age=63072000; includeSubDomains
+#   content-security-policy: default-src 'self'; script-src 'self' cdn.example.com
+#   x-frame-options: DENY
+#   x-content-type-options: nosniff
+#   referrer-policy: strict-origin-when-cross-origin</span>
+
+<span class="com"># Or use a free online scanner that grades a site's headers and
+# explains exactly what's missing — useful both for learning AND
+# for getting a quick read on a vendor's security posture</span></pre>
+      <p class="concept-desc">Running this against a few of your own frequently-used sites is a genuinely eye-opening
+      exercise — you'll often find that well-known, security-conscious organizations send a rich set of these headers,
+      while smaller or older sites send almost none.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — except your users' browsers are always your circus</h4>
+      <p class="concept-desc">It's tempting for a small team to think "security headers are for big companies with
+      dedicated security staff" — but a single missing <code>Content-Security-Policy</code> header can be the difference
+      between an XSS bug being a minor annoyance and it being a full account-takeover vector. These headers cost nothing
+      to add, take minutes to configure on most modern web frameworks, and quietly protect every single visitor without
+      requiring them to do anything at all. Few security investments offer that kind of return for that little effort.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body sec -->
+<!-- /domain-body sec -->
+<!-- /domain-body sec -->
+<!-- /domain-body sec -->
 <!-- /domain-body sec -->

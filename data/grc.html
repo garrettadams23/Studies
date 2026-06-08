@@ -1307,4 +1307,990 @@ risks = [
 
   </div>
 </div>
+
+<!-- BEGINNER33-GRC v1 -->
+<!-- ── TOPIC: SOC 2 Trust Service Criteria ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    SOC 2 – Trust Service Criteria for Cloud Service Providers
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is SOC 2?</div>
+      <div class="concept-desc">
+        <strong>SOC 2 (System and Organisation Controls 2)</strong> is an
+        auditing standard for service providers that store or process
+        customer data. If a customer asks "Is your cloud platform secure?",
+        a SOC 2 Type II report is the answer.<br><br>
+        <strong>Type I</strong> — snapshot: controls are <em>designed</em>
+        correctly at a point in time.<br>
+        <strong>Type II</strong> — over time (6–12 months): controls
+        <em>operated</em> effectively throughout the period. Much more
+        valuable.<br><br>
+        <strong>Five Trust Service Criteria (TSC):</strong><br>
+        &bull; <strong>Security</strong> (CC) — mandatory; the core criteria.<br>
+        &bull; Availability (A) — system is available as promised.<br>
+        &bull; Processing Integrity (PI) — processing is complete, accurate.<br>
+        &bull; Confidentiality (C) — sensitive data is protected.<br>
+        &bull; Privacy (P) — personal information lifecycle is managed.<br><br>
+        Most SaaS companies start with Security + Availability + Confidentiality.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Common Criteria</div>
+      <div class="concept-title">The CC (Common Criteria) Control Families</div>
+      <div class="concept-desc">
+        The Security TSC is organised into <em>Common Criteria</em> (CC)
+        categories. Here is what auditors look for in each:
+      </div>
+      <div class="code-block">
+<span class="com">CC Category  Name                  Example controls auditors check</span>
+CC1          Control Environment   Code of conduct, security policies documented
+CC2          Communication         Security roles communicated; vendor reviews
+CC3          Risk Assessment       Annual risk assessment; risk register
+CC4          Monitoring Activities Vulnerability scans; penetration test results
+CC5          Control Activities    Change management process; access reviews
+CC6          Logical Access        MFA enforced; least privilege; offboarding
+CC7          System Operations     SIEM alerts; incident response tested
+CC8          Change Management     SDLC policy; code review; CI/CD controls
+CC9          Risk Mitigation       Business continuity; DRP tested; cyber insurance
+
+<span class="com"># What "evidence" looks like for CC6 (Logical Access):</span>
+<span class="com"># - Screenshot: MFA enabled for all admin accounts</span>
+<span class="com"># - Export: access review spreadsheet signed by manager</span>
+<span class="com"># - Ticket: off-boarding of departed employee within 24 hours</span>
+<span class="com"># - Policy: Access Control Policy document with effective date</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Preparation</div>
+      <div class="concept-title">Getting Ready for a SOC 2 Audit</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — assume the
+        auditor will ask for evidence of <em>every</em> control. If you
+        can't produce it, the control doesn't exist in their eyes.<br><br>
+        <strong>12-month preparation checklist:</strong><br>
+        &bull; Write &amp; approve all required policies (Security, Access
+          Control, Incident Response, Change Management, Business Continuity).<br>
+        &bull; Implement MFA everywhere — no exceptions for admin accounts.<br>
+        &bull; Run quarterly access reviews and save the results.<br>
+        &bull; Conduct an annual penetration test; remediate High/Critical
+          findings before the audit window.<br>
+        &bull; Set up a vulnerability scanning cadence (weekly automated
+          scans, monthly review).<br>
+        &bull; Use a ticketing system for changes — ad-hoc changes leave
+          no evidence trail.<br>
+        &bull; Document your incident response plan and run a tabletop
+          exercise annually.<br>
+        &bull; Use a GRC tool (Vanta, Drata, Secureframe) to collect and
+          store evidence automatically.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Mindset</div>
+      <div class="concept-title">Compliance vs Security</div>
+      <div class="concept-desc">
+        <em>Compliance is not security</em> — passing a SOC 2 audit proves
+        you had the right controls during the audit window; it does not
+        guarantee you won't be breached.<br><br>
+        Think of compliance as the <em>floor</em>, not the ceiling. A
+        company can tick every SOC 2 box and still have a poor security
+        culture, unpatched systems, or a weak incident response capability.<br><br>
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — compliance frameworks give you the
+        documented process to recover professionally when something goes
+        wrong. The audit trail you built during SOC 2 prep becomes your
+        lifeline when a regulator or customer asks what happened.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER34-GRC v1 -->
+<!-- ── TOPIC: Vendor & Third-Party Risk Management ───────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Vendor Risk Management – Securing the Supply Chain
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Vendor Risk Matters</div>
+      <div class="concept-desc">
+        Modern organisations depend on dozens — sometimes hundreds — of
+        third-party vendors: cloud providers, SaaS tools, payment
+        processors, contractors, MSPs. Every one of them is a potential
+        path into your data.<br><br>
+        <strong>Famous supply-chain incidents:</strong><br>
+        &bull; <em>SolarWinds (2020)</em> — attackers compromised a
+          software update mechanism, infecting 18,000+ organisations
+          including US government agencies.<br>
+        &bull; <em>Target (2013)</em> — attackers entered through an
+          HVAC contractor's stolen credentials, then pivoted to
+          point-of-sale systems.<br>
+        &bull; <em>Kaseya (2021)</em> — ransomware spread through an MSP's
+          remote management software to 1,500+ downstream businesses.<br><br>
+        <em>"Not my circus, not my monkey"</em> doesn't apply here — your
+        vendor's breach becomes <em>your</em> incident the moment your
+        data is involved. Their circus is your circus too.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Process</div>
+      <div class="concept-title">The Vendor Risk Assessment Lifecycle</div>
+      <div class="concept-desc">
+        A mature vendor risk program follows a repeatable lifecycle:
+      </div>
+      <div class="code-block">
+<span class="com">1. TIERING — classify vendors by risk level</span>
+   Tier 1 (Critical): Has access to sensitive data or core systems
+                      → Full security questionnaire + SOC 2 review + annual audit
+   Tier 2 (Moderate): Limited data access, important to operations
+                      → Security questionnaire + annual review
+   Tier 3 (Low):      No data access (e.g. office supplies vendor)
+                      → Basic due diligence only
+
+<span class="com">2. DUE DILIGENCE — before signing a contract</span>
+   - Request SOC 2 Type II report (or ISO 27001 certificate)
+   - Send a security questionnaire (SIG, CAIQ, or custom)
+   - Review their incident history (breach disclosures, news)
+   - Check their sub-processors (do THEY outsource to other vendors?)
+
+<span class="com">3. CONTRACTING — bake security into the agreement</span>
+   - Data Processing Agreement (DPA) — required for personal data (GDPR)
+   - Right-to-audit clause
+   - Breach notification requirements (e.g. "within 72 hours")
+   - Data deletion / return clause at contract end
+   - Liability and indemnification terms
+
+<span class="com">4. ONGOING MONITORING — security doesn't stop at signing</span>
+   - Annual reassessment for Tier 1/2 vendors
+   - Monitor for breach news (set up alerts for vendor names)
+   - Track SOC 2 report renewal dates
+   - Review access logs — is the vendor only touching what they should?
+
+<span class="com">5. OFFBOARDING — when the relationship ends</span>
+   - Revoke all access (accounts, API keys, VPN)
+   - Confirm data deletion in writing
+   - Document the offboarding for audit evidence
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Questionnaires</div>
+      <div class="concept-title">Reading a Security Questionnaire Response</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — don't assume a
+        vendor's marketing claims ("bank-level security!", "military-grade
+        encryption!") mean anything. Demand specifics:<br><br>
+        &bull; "Do you encrypt data at rest?" → Ask: <em>which algorithm,
+          key length, and who manages the keys?</em><br>
+        &bull; "Do you have an incident response plan?" → Ask:
+          <em>when was it last tested, and what's the notification SLA?</em><br>
+        &bull; "Are you SOC 2 compliant?" → Ask: <em>can we see the
+          actual report (Type II, not Type I)?</em><br>
+        &bull; "Do you use sub-processors?" → Ask: <em>list them, and
+          confirm they're held to the same standards.</em><br><br>
+        Standard frameworks for questionnaires: <strong>SIG</strong>
+        (Standardized Information Gathering) and <strong>CAIQ</strong>
+        (Consensus Assessments Initiative Questionnaire from the Cloud
+        Security Alliance) — both save time by giving vendors a
+        consistent format to answer once and reuse.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Incident Scenario</div>
+      <div class="concept-title">When a Vendor Gets Breached</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — your vendor's security failure is
+        not your fault, but your response is your responsibility.<br><br>
+        When you learn a vendor has been breached:<br>
+        1. <strong>Activate your incident response plan</strong> — treat it
+           like an internal incident.<br>
+        2. <strong>Determine exposure</strong> — what data did they have?
+           What systems did they connect to?<br>
+        3. <strong>Rotate credentials</strong> — every API key, password,
+           or certificate shared with that vendor.<br>
+        4. <strong>Review logs</strong> — look for unusual activity from
+           the vendor's IPs/accounts in the breach window.<br>
+        5. <strong>Notify</strong> — your legal/compliance team may need
+           to notify regulators or affected customers.<br>
+        6. <strong>Reassess the relationship</strong> — does this vendor
+           remain acceptable? Document the decision either way.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER35-GRC v1 -->
+<!-- ── TOPIC: Business Continuity & Disaster Recovery ────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    BCP &amp; DR – Planning for the Day Everything Goes Wrong
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">BCP vs DR – Two Halves of Resilience</div>
+      <div class="concept-desc">
+        These terms are often confused but answer different questions:<br><br>
+        &bull; <strong>Business Continuity Plan (BCP)</strong> — "How does
+          the <em>business</em> keep operating during a disruption?"
+          (alternate work locations, manual processes, communication trees,
+          supplier failover).<br>
+        &bull; <strong>Disaster Recovery (DR) Plan</strong> — "How do we
+          restore <em>IT systems and data</em> after a disaster?"
+          (backup restoration, failover data centres, system rebuild order).<br><br>
+        DR is a <em>subset</em> of BCP — IT recovery is one piece of
+        keeping the whole business running.<br><br>
+        <em>"Not my circus, not my monkey"</em> — IT often owns DR, but
+        BCP requires every department (HR, finance, legal, facilities).
+        Don't try to write the whole plan alone — coordinate.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Key Metrics</div>
+      <div class="concept-title">RTO and RPO – The Two Numbers That Matter</div>
+      <div class="concept-desc">
+        Every system needs two target numbers, set by the business based
+        on how much pain it can tolerate:
+      </div>
+      <div class="code-block">
+<span class="com">RTO — Recovery Time Objective</span>
+  "How long can this system be DOWN before it seriously hurts the business?"
+  Example: Payment processing RTO = 1 hour
+           Internal wiki RTO       = 24 hours
+
+<span class="com">RPO — Recovery Point Objective</span>
+  "How much DATA can we afford to lose, measured in time?"
+  Example: Customer database RPO = 15 minutes (near-continuous replication)
+           Internal reports RPO  = 24 hours (nightly backup is fine)
+
+<span class="com">─── How RPO drives your backup strategy ─────────────────────</span>
+RPO target      Backup approach required
+&lt; 1 minute      Synchronous replication / multi-region active-active
+15 minutes      Continuous transaction log shipping
+1 hour          Frequent incremental snapshots
+24 hours        Nightly full backup is sufficient
+
+<span class="com">Tighter RTO/RPO = more expensive infrastructure.</span>
+<span class="com">The business — not IT — should decide what's worth the cost.</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Plan Components</div>
+      <div class="concept-title">What Goes Into a DR Plan</div>
+      <div class="concept-desc">
+        A real DR plan is a living document, not a binder that gathers dust.
+        Core sections:<br><br>
+        1. <strong>Asset &amp; dependency inventory</strong> — what systems
+           exist, and what do they depend on? (You can't recover what you
+           don't know about.)<br>
+        2. <strong>Recovery priority order</strong> — which systems come
+           back first? (Usually: identity/auth → network → core databases
+           → applications → reporting/analytics.)<br>
+        3. <strong>Step-by-step recovery procedures</strong> — written so a
+           person who's never done it before could follow them at 3 AM
+           under stress.<br>
+        4. <strong>Contact tree</strong> — who to call, in what order,
+           with backup contacts (people get sick, change numbers).<br>
+        5. <strong>Communication templates</strong> — pre-written
+           customer/employee notifications so no one has to write them
+           during a crisis.<br>
+        6. <strong>Alternate site/vendor details</strong> — DR data centre
+           access, backup ISP contacts, hotel block for displaced staff.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Testing</div>
+      <div class="concept-title">A Plan You've Never Tested Is a Guess</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        your backups work, your failover scripts run, or your contact list
+        is current. Test regularly:<br><br>
+        &bull; <strong>Tabletop exercise</strong> — gather stakeholders,
+          walk through a scenario verbally ("a ransomware attack encrypts
+          our file server at 2 AM Saturday — what do we do?").<br>
+        &bull; <strong>Walkthrough test</strong> — team members physically
+          perform their roles without actually executing changes.<br>
+        &bull; <strong>Simulation test</strong> — recover a system in an
+          isolated environment to verify the actual procedure works.<br>
+        &bull; <strong>Full interruption test</strong> — actually fail over
+          to the DR site (highest confidence, highest risk — schedule
+          carefully).<br><br>
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — when a real disaster strikes and
+        the plan works because you tested it, that's not luck. That's
+        preparation paying off exactly when it matters most.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER36-GRC v1 -->
+<!-- ── TOPIC: GDPR & CCPA Privacy Law Basics ─────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Privacy Law – GDPR &amp; CCPA for IT Professionals
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why IT People Need to Understand Privacy Law</div>
+      <div class="concept-desc">
+        Privacy regulations turn technical decisions into legal
+        obligations. The engineer who designs a database schema, the
+        admin who configures backup retention, and the analyst who
+        exports a report all make choices that can create — or violate —
+        legal compliance.<br><br>
+        <strong>Two regulations every IT pro should recognise:</strong><br>
+        &bull; <strong>GDPR (General Data Protection Regulation)</strong>
+          — EU law; applies to any organisation processing the personal
+          data of EU residents, regardless of where the company is based.
+          Massive fines: up to €20 million or 4% of global annual revenue.<br>
+        &bull; <strong>CCPA / CPRA (California Consumer Privacy Act)</strong>
+          — California law with similar goals; influences how US companies
+          handle privacy nationwide because it's easier to apply one
+          standard everywhere.<br><br>
+        <em>"Not my circus, not my monkey"</em> — legal interpretation
+        belongs to your privacy/legal team. But you're often the one who
+        has to <em>technically implement</em> their requirements — so
+        speaking their language matters.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Key Concepts</div>
+      <div class="concept-title">GDPR Vocabulary You'll Actually Encounter</div>
+      <div class="concept-desc">
+        These terms appear in privacy policies, vendor contracts, and
+        compliance tickets constantly:
+      </div>
+      <div class="code-block">
+<span class="com">Term                    Meaning</span>
+PII / Personal Data     Any info that can identify a person — name, email,
+                        IP address, device ID, location data, even an
+                        opinion ABOUT a person counts under GDPR
+
+Data Subject            The person the data is about (your customer/user)
+
+Data Controller         The organisation that decides WHY and HOW
+                        data is processed (usually: your company)
+
+Data Processor          An organisation that processes data ON BEHALF
+                        of the controller (e.g. your cloud provider,
+                        your email marketing tool)
+
+Lawful Basis            One of six legal reasons you're allowed to
+                        process personal data (consent, contract,
+                        legal obligation, vital interests, public task,
+                        legitimate interests)
+
+DPA                     Data Processing Agreement — required contract
+                        between controller and processor
+
+DPO                     Data Protection Officer — required role for
+                        organisations doing large-scale data processing
+
+DPIA                    Data Protection Impact Assessment — required
+                        before launching high-risk data processing
+
+Right to be Forgotten   A person can request deletion of their data
+                        ("right to erasure" — Article 17)
+
+Data Portability        A person can request their data in a
+                        machine-readable format to move to another service
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Practical Impact</div>
+      <div class="concept-title">How Privacy Law Shapes Technical Decisions</div>
+      <div class="concept-desc">
+        These regulations aren't abstract — they directly drive
+        engineering and operations requirements:<br><br>
+        &bull; <strong>Data minimisation</strong> — collect only what
+          you need. "We might use it someday" is not a lawful basis.<br>
+        &bull; <strong>Retention limits</strong> — you must be able to
+          say <em>why</em> data is kept for X days/years, and delete it
+          after. "We never delete anything" is a compliance risk, not
+          a feature.<br>
+        &bull; <strong>Right to erasure</strong> — when a user asks to be
+          forgotten, can your systems actually find and delete every
+          copy of their data — including backups, logs, and analytics
+          exports? Most companies discover gaps here the hard way.<br>
+        &bull; <strong>Breach notification</strong> — GDPR requires
+          notifying regulators within <strong>72 hours</strong> of
+          becoming aware of a breach involving personal data. Your
+          incident response plan needs a privacy notification step
+          built in, not bolted on afterward.<br>
+        &bull; <strong>Privacy by Design</strong> — GDPR Article 25
+          requires building privacy protections into systems from the
+          start, not retrofitting them after a complaint.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Real Scenario</div>
+      <div class="concept-title">Handling a "Right to Erasure" Request</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — your legal team will get these
+        requests; you'll be the one who has to fulfil them technically.<br><br>
+        <strong>A realistic erasure-request workflow:</strong><br>
+        1. Verify the requester's identity (don't delete the wrong
+           person's data because someone claimed to be them).<br>
+        2. Map every system that holds this person's data — production
+           DB, data warehouse, email lists, support tickets, backups,
+           analytics, third-party processors.<br>
+        3. Determine if any <em>legal exception</em> applies (e.g. you
+           must keep financial records for tax purposes — document
+           this and inform the requester what's retained and why).<br>
+        4. Execute deletion (or anonymisation, where deletion isn't
+           feasible — e.g. financial records that must be retained but
+           can have personal identifiers stripped).<br>
+        5. Confirm and document — the audit trail proves you complied,
+           and protects you if questioned later.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        "delete the user record" actually erased the person's data. Check
+        every cache, replica, log line, and backup copy.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER37-GRC v1 -->
+<!-- ── TOPIC: Audit Preparation & Evidence Collection ────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Audit Prep – Surviving (and Thriving In) a Compliance Audit
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Auditors Actually Want From You</div>
+      <div class="concept-desc">
+        An audit isn't an attack — it's a structured conversation where
+        someone independent verifies that your controls work as
+        documented. Auditors aren't trying to trick you; they're trying
+        to form an opinion based on <strong>evidence</strong>.<br><br>
+        The golden rule of audits: <strong>"Pics or it didn't happen."</strong>
+        A control that exists only in someone's head, or only as a
+        promise in a policy document, does not exist from an auditor's
+        perspective. If you can't show it, prove it, or export it — it's
+        not auditable.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        the auditor will "just trust" your explanation. Bring the
+        screenshot, the export, the ticket, the signed document.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Evidence Types</div>
+      <div class="concept-title">What "Good Evidence" Looks Like</div>
+      <div class="concept-desc">
+        Every control needs proof in one of these forms — collect them
+        continuously, not the week before the audit:
+      </div>
+      <div class="code-block">
+<span class="com">Control claim                  Acceptable evidence</span>
+─────────────────────────────────────────────────────────────────
+"We enforce MFA"               Screenshot of IdP config showing MFA
+                               required + report of users with MFA enabled
+
+"We patch within 30 days"      Vulnerability scan reports (before/after)
+                               + patch management tickets with timestamps
+
+"We review access quarterly"   Signed access review spreadsheet with
+                               manager approval + date + names removed/changed
+
+"We train staff on security"   Training completion report from your
+                               LMS, with names, dates, and pass rates
+
+"We test our DR plan"          Tabletop exercise notes, attendee list,
+                               action items and their resolution
+
+"We log security events"       SIEM dashboard screenshot + sample alert
+                               + documented response to that alert
+
+"We encrypt data at rest"      Configuration export showing encryption
+                               enabled (e.g. AWS RDS "Encrypted: true")
+
+<span class="com"># PRO TIP: Build an "evidence locker" — a shared drive organized</span>
+<span class="com"># by control ID, updated monthly. Audit week becomes "export the</span>
+<span class="com"># folder" instead of a fire drill.</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The Audit Itself</div>
+      <div class="concept-title">How to Behave During an Audit Interview</div>
+      <div class="concept-desc">
+        You will likely be interviewed as part of an audit. A few rules
+        keep these conversations smooth:<br><br>
+        1. <strong>Answer the question asked — nothing more.</strong>
+           Volunteering extra information often opens new lines of
+           inquiry you weren't prepared for.<br>
+        2. <strong>"I don't know, but I'll find out and follow up"</strong>
+           is a perfectly good answer. Guessing and being wrong is far
+           worse than admitting you need to check.<br>
+        3. <strong>Describe what actually happens</strong>, not what the
+           policy says should happen. If reality and policy differ,
+           that's useful information for everyone — including you.<br>
+        4. <strong>Don't argue with the auditor's framework</strong> —
+           if you disagree with a finding, raise it through your
+           compliance lead, calmly, with evidence.<br><br>
+        <em>"Not my circus, not my monkey"</em> — if a question is about
+        a control your team doesn't own, say so and point to the right
+        owner. Guessing on someone else's behalf creates confusion for
+        everyone, including the auditor.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">After the Audit</div>
+      <div class="concept-title">Handling Findings &amp; Continuous Improvement</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — audits regularly surface gaps no
+        one knew existed. That's not failure; that's the system working.<br><br>
+        <strong>When findings come back:</strong><br>
+        1. Don't panic or get defensive — findings are data, not insults.<br>
+        2. Categorise by severity and assign owners with deadlines.<br>
+        3. Write a <em>remediation plan</em> — what will change, by when,
+           and how you'll prove it's fixed.<br>
+        4. Track remediation like any other project — with a ticket,
+           a deadline, and a verification step.<br>
+        5. Feed lessons back into your evidence-collection process so
+           the same gap doesn't surprise you next year.<br><br>
+        Organisations that treat audits as an annual annoyance stay stuck
+        in the same findings loop. Organisations that treat them as a
+        free, expert-guided risk assessment use them to get measurably
+        better every single year.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER38-GRC v1 -->
+<!-- ── TOPIC: Change Management Process ──────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Change Management – The Process That Prevents Self-Inflicted Outages
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Changes Need a Process At All</div>
+      <div class="concept-desc">
+        Here's an uncomfortable truth backed by years of incident data:
+        <strong>most outages are caused by changes someone made on
+        purpose</strong> — not by mysterious external forces. A
+        <strong>Change Management</strong> process exists to catch the
+        problems with a change <em>before</em> it goes live, not after.<br><br>
+        It is NOT bureaucracy for its own sake (though badly run change
+        processes can feel that way). Done well, it answers four
+        questions before anything happens:<br>
+        1. What exactly is changing?<br>
+        2. Why are we changing it?<br>
+        3. What could go wrong, and how do we know if it does?<br>
+        4. How do we undo it if it goes wrong?<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — "this is a
+        small change, it'll be fine" is the most expensive sentence in IT.
+        Small changes cause some of the largest outages on record.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Change Types</div>
+      <div class="concept-title">Standard, Normal, and Emergency Changes</div>
+      <div class="concept-desc">
+        Mature change processes don't treat every change the same way —
+        that would make trivial changes painfully slow AND make urgent
+        fixes dangerously slow. Three tiers balance speed and safety:
+      </div>
+      <div class="code-block">
+<span class="com">STANDARD CHANGE</span>
+  Definition: Pre-approved, low-risk, repeatable, well-understood
+  Examples:   Routine OS patching on a schedule, adding a DNS record
+              for a new subdomain, rotating a credential per the runbook
+  Process:    Pre-approved template → just execute and log it
+
+<span class="com">NORMAL CHANGE</span>
+  Definition: Has some risk; needs review before approval
+  Examples:   Database schema migration, firewall rule change,
+              new application deployment, infrastructure resize
+  Process:    Submit a Change Request (CR) → Change Advisory Board (CAB)
+              reviews → approved/rejected/needs-more-info → scheduled
+              → executed → reviewed afterward
+
+<span class="com">EMERGENCY CHANGE</span>
+  Definition: Urgent fix needed RIGHT NOW to resolve an active incident
+  Examples:   Blocking an active attacker's IP, rolling back a deploy
+              that's causing an outage, restarting a critical service
+  Process:    Verbal/expedited approval from on-call lead → execute
+              immediately → FULL documentation and review afterward
+              (the paperwork happens AFTER the fire is out, not during)
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Anatomy of a CR</div>
+      <div class="concept-title">What Goes In a Good Change Request</div>
+      <div class="concept-desc">
+        A well-written change request makes the reviewer's job easy and
+        protects you if something goes wrong — it's your evidence that
+        you thought it through.
+      </div>
+      <div class="code-block">
+<span class="com">CHANGE REQUEST: CR-2026-0614</span>
+─────────────────────────────────────────────────────────
+Title:           Upgrade PostgreSQL from 14.x to 16.x on prod-db-01
+Requested by:    Alice Chen          Date: 2026-06-06
+Risk level:      Medium
+Scheduled for:   Saturday 2026-06-13, 02:00-04:00 (lowest traffic window)
+
+WHAT is changing:
+  Major version upgrade of the primary application database
+
+WHY:
+  PostgreSQL 14 reaches end-of-life in 6 months; 16.x brings
+  performance improvements our reporting queries need
+
+HOW (step by step):
+  1. Take a verified full backup (pg_dump) and snapshot
+  2. Stop application writes (maintenance mode)
+  3. Run pg_upgrade following documented runbook RB-114
+  4. Run validation query suite (see attached script)
+  5. Resume application traffic; monitor for 30 minutes
+
+ROLLBACK PLAN:
+  Restore from pre-change snapshot (tested rollback time: ~12 minutes)
+  Rollback decision point: any validation query failure, or >5 min
+  of unexpected errors post-cutover
+
+TESTING DONE:
+  Successfully performed in staging on 2026-05-30 (see CR-2026-0589)
+
+IMPACT IF THIS GOES WRONG:
+  Up to 2 hours of read-only mode for customers; no data loss expected
+  given backup/snapshot strategy
+
+APPROVERS NEEDED:
+  Database team lead, on-call SRE, Engineering manager
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Culture</div>
+      <div class="concept-title">Making Change Management Work, Not Just Exist</div>
+      <div class="concept-desc">
+        <em>"Not my circus, not my monkey"</em> — if your organisation's
+        change process feels like pointless paperwork, that's a sign
+        the process needs fixing, not that the goal is wrong. Healthy
+        change management:<br><br>
+        &bull; <strong>Scales with risk</strong> — a one-line config typo
+          fix shouldn't require the same ceremony as a database migration.<br>
+        &bull; <strong>Makes the safe path the easy path</strong> — if
+          following the process is harder than skipping it, people will
+          skip it (quietly, which is worse).<br>
+        &bull; <strong>Reviews without blame</strong> — when a properly
+          reviewed change still causes an issue, that's a process
+          improvement opportunity, not a personal failure.<br><br>
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — and a good change record is
+        exactly what lets you pick up those pieces fast: you know
+        precisely what changed, when, why, and how to undo it. That
+        turns a 4-hour outage into a 10-minute rollback.
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- BEGINNER41-GRC v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Data Classification – Why "Just Be Careful With Data" Isn't a Policy</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">You can't protect what you haven't labeled</h4>
+      <p class="concept-desc">Data classification is the practice of sorting information into categories based on how
+      sensitive it is and what would happen if it were exposed — then attaching specific handling rules to each category.
+      Without it, every piece of data effectively gets the same treatment, which means either everything is locked down so
+      tightly that nobody can get work done, or — far more commonly — sensitive data ends up handled exactly like the
+      public marketing brochure sitting next to it.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A typical four-tier classification scheme</h4>
+      <table class="ai-table">
+        <tr><th>Tier</th><th>Example data</th><th>Typical handling rule</th></tr>
+        <tr><td>Public</td><td>Marketing materials, published job postings, press releases</td><td>No restrictions — designed to be shared widely</td></tr>
+        <tr><td>Internal</td><td>Org charts, internal wikis, meeting notes, project plans</td><td>Employees only; not for external sharing, but low-risk if briefly exposed</td></tr>
+        <tr><td>Confidential</td><td>Customer contracts, financial forecasts, source code, salary bands</td><td>Need-to-know basis; encryption in transit and at rest; access logged</td></tr>
+        <tr><td>Restricted</td><td>Health records, payment card data, social security numbers, trade secrets</td><td>Strictly limited access; mandatory encryption; often subject to legal/regulatory requirements (HIPAA, PCI-DSS, GDPR)</td></tr>
+      </table>
+      <p class="concept-desc">The exact tier names vary by organization (some use "Secret" / "Top Secret" in government
+      contexts, others use simple "Tier 1/2/3"), but the underlying logic is always the same: more sensitive data earns
+      more restrictive handling, and that handling needs to be written down so people don't have to guess.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">What classification looks like in daily work</h4>
+      <pre class="code-block"><span class="com"># A classification label embedded right in a document header —
+# this single line answers "how careful do I need to be with this file?"
+# before anyone even opens it.</span>
+
+CLASSIFICATION: CONFIDENTIAL — Internal Distribution Only
+Document: Q3 Customer Churn Analysis
+Owner: Data &amp; Analytics Team
+Handling: Do not forward externally. Store only in the
+          approved &quot;Confidential&quot; SharePoint library.
+          Do not paste contents into AI assistants or
+          external collaboration tools.
+Retention: Delete after 3 years per data retention schedule DR-014.
+
+<span class="com"># Some organizations enforce this with technology, not just policy —
+# email systems that auto-detect classification labels and block
+# external sends, DLP (Data Loss Prevention) tools that scan outgoing
+# attachments for SSN/credit-card patterns, etc.</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — except data doesn't respect org charts</h4>
+      <p class="concept-desc">"That's the legal team's data, not mine" is exactly the kind of thinking that lets sensitive
+      information drift into unprotected places — a shared drive, a personal laptop, a chat export. If you handle data you
+      didn't create and aren't sure how it should be classified, the responsible move is to ask the owning team rather
+      than guess. The few minutes it takes to confirm "is this Confidential or just Internal?" is far cheaper than
+      explaining, after the fact, why it ended up somewhere it shouldn't have.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER43-GRC v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Reading a SOC 2 Report Without Falling Asleep</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A SOC 2 report answers one question: "can we trust how this vendor handles our data?"</h4>
+      <p class="concept-desc">SOC 2 (System and Organization Controls 2) is an independent auditor's report on how well a
+      service organization's controls protect customer data. When your company evaluates a new SaaS vendor, "can you send
+      us your SOC 2 report?" is one of the single most useful questions you can ask — it's a third party's documented,
+      evidence-based opinion, rather than the vendor's own marketing claims about how seriously they take security.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The five Trust Services Criteria — and the one that's always included</h4>
+      <table class="ai-table">
+        <tr><th>Criterion</th><th>What it covers</th><th>Always included?</th></tr>
+        <tr><td>Security</td><td>Protection against unauthorized access, both physical and logical</td><td>Yes — the mandatory baseline for every SOC 2 report</td></tr>
+        <tr><td>Availability</td><td>Whether the system is operational and accessible as agreed/committed</td><td>Optional — included if relevant to the service</td></tr>
+        <tr><td>Processing integrity</td><td>Whether the system processes data completely, accurately, and on time</td><td>Optional</td></tr>
+        <tr><td>Confidentiality</td><td>Whether information designated as confidential is protected as promised</td><td>Optional</td></tr>
+        <tr><td>Privacy</td><td>How personal information is collected, used, retained, and disposed of</td><td>Optional</td></tr>
+      </table>
+      <p class="concept-desc">A vendor handling highly sensitive customer data but only reporting on "Security" isn't
+      necessarily hiding something — but it's a perfectly reasonable thing to ask about directly: "why isn't
+      Confidentiality or Privacy included in your scope?"</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Type I vs Type II — a snapshot vs. a track record</h4>
+      <p class="concept-desc">This distinction trips up almost everyone the first time they encounter it, and it matters
+      enormously:</p>
+      <table class="ai-table">
+        <tr><th>Report type</th><th>What it actually verifies</th><th>How much weight to give it</th></tr>
+        <tr><td>Type I</td><td>"As of this one specific date, these controls were designed appropriately"</td><td>A snapshot — tells you the controls exist on paper, but not whether they actually work day to day</td></tr>
+        <tr><td>Type II</td><td>"Over a period of months (often 6-12), these controls were tested and operated effectively"</td><td>Significantly stronger evidence — this is the one most procurement teams actually want to see</td></tr>
+      </table>
+      <p class="concept-desc">A vendor proudly waving a Type I report is, in effect, saying "we wrote down a good plan."
+      A Type II report says "we followed that plan for months, and an independent auditor checked our work." If a vendor
+      only has Type I, a reasonable follow-up is simply: "when do you expect to have a Type II?"</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — read the exceptions section</h4>
+      <p class="concept-desc">The most informative part of a SOC 2 report is often the section listing <em>exceptions</em>
+      — instances where a control didn't operate as intended during the review period. A report with zero exceptions
+      listed isn't necessarily "perfect"; sometimes it means the scope was narrow enough that nothing challenging was
+      tested. A report with a few well-documented exceptions and clear remediation notes can actually be a *more*
+      trustworthy signal — it shows the audit was rigorous enough to find something, and the vendor was transparent
+      enough to disclose it rather than bury it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER45-GRC v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>The Three Lines of Defense – Who's Actually Watching the Risk?</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A model for "who's responsible for managing risk, exactly?"</h4>
+      <p class="concept-desc">In any organization larger than a handful of people, risk management can't be just one
+      team's job — but it also can't be "everyone's job" in a way that means nobody owns it. The Three Lines model is a
+      widely-used way of dividing that responsibility clearly, so that risk gets caught at multiple independent layers
+      rather than relying on any single point of failure (including, notably, relying entirely on people grading their
+      own homework).</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The three lines, and what each one actually does</h4>
+      <table class="ai-table">
+        <tr><th>Line</th><th>Who's in it</th><th>Their job</th><th>Analogy</th></tr>
+        <tr><td>First line</td><td>Operational teams — IT, engineering, customer service, anyone doing the day-to-day work</td><td>Own and manage risk directly, in real time, as part of doing their jobs</td><td>The pilots flying the plane — responsible for safe operation, moment to moment</td></tr>
+        <tr><td>Second line</td><td>Risk management, compliance, security teams</td><td>Set policy, provide expertise, monitor whether the first line is actually managing risk well</td><td>The airline's safety and compliance department — defines standards and checks adherence</td></tr>
+        <tr><td>Third line</td><td>Internal audit</td><td>Independently verify that BOTH the first and second lines are functioning as intended — answers to leadership and the board, not to the teams it reviews</td><td>An independent aviation regulator — checks the airline itself, including its own safety department</td></tr>
+      </table>
+      <p class="concept-desc">The key design principle is independence: the third line doesn't report to the people it's
+      checking on. That's not a vote of distrust in any individual — it's an acknowledgment that even well-intentioned
+      people are bad at objectively grading their own work, especially when their own performance review depends on the answer.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Spotting the three lines in a real scenario</h4>
+      <pre class="code-block"><span class="com"># Scenario: a company is rolling out a new customer database</span>
+
+FIRST LINE  - The engineering team building the system follows
+              secure coding practices, runs their own tests, and
+              flags risks they notice during development.
+              (&quot;We're the ones building it — we manage the
+              day-to-day risk as we go.&quot;)
+
+SECOND LINE - The security team reviews the design before launch,
+              sets the encryption standards the engineers must
+              follow, and runs periodic vulnerability scans
+              after launch.
+              (&quot;We set the rules and check whether engineering
+              is actually following them.&quot;)
+
+THIRD LINE  - Internal audit, reporting directly to the board,
+              independently reviews BOTH the engineering team's
+              practices AND whether the security team's oversight
+              process is actually effective — not just whether
+              a checklist was completed.
+              (&quot;We check whether the checkers are checking
+              the right things, thoroughly, without bias.&quot;)</pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — knowing your line is the whole point</h4>
+      <p class="concept-desc">Confusion about which "line" you're in is a common source of organizational friction —
+      a first-line team that thinks "compliance will catch anything we miss" is quietly creating the exact gap the model
+      was designed to prevent. Understanding which line you sit in — and which lines exist above and beside you — isn't
+      bureaucratic trivia. It's the difference between confidently owning your part of the system and assuming, wrongly,
+      that someone else already has it covered.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER47-GRC v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Vendor Risk Assessments – Why "We Use a Cloud Provider" Isn't a Security Plan</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Your security perimeter includes everyone you trust with your data</h4>
+      <p class="concept-desc">The moment your organization sends data to a third party — a payroll processor, a CRM,
+      a cloud storage vendor, an email marketing tool — that vendor's security posture becomes <em>your</em> risk.
+      A vendor risk assessment is the structured process of asking, before you sign the contract: "If this company
+      gets breached, what happens to us?" It's not paranoia; it's recognizing that <span class="kw">trust is
+      transitive</span> in ways that are easy to forget when a sales demo looks slick.</p>
+      <p class="concept-desc">This mindset matters far beyond the procurement team. <em>"Not my circus, not my
+      monkey"</em> feels tempting when a vendor's outage or breach isn't technically your fault — but if their
+      failure takes down your service or exposes your customers' data, it becomes very much your circus, very
+      quickly. Vendor risk assessments exist precisely so that "their problem" doesn't silently become "our
+      incident" with zero warning.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">What a basic assessment actually looks at</h4>
+      <p class="concept-desc">You don't need a fifty-page questionnaire to start thinking like a risk assessor.
+      A few foundational questions cover most of the ground:</p>
+      <table class="ai-table">
+        <tr><th>Question</th><th>Why it matters</th></tr>
+        <tr><td>What data will they actually touch?</td><td>A vendor that only sees anonymized analytics is a very
+        different risk than one holding customer SSNs or health records.</td></tr>
+        <tr><td>Do they have independent security certifications?</td><td>Reports like SOC 2 or ISO 27001 mean
+        someone outside the company has actually checked their controls — not just taken their word for it.</td></tr>
+        <tr><td>What's their incident history and notification process?</td><td>Every vendor has had something go
+        wrong eventually. What matters is whether they tell you quickly and clearly when it does.</td></tr>
+        <tr><td>Can you get your data back out if you leave?</td><td>"Vendor lock-in" isn't just inconvenient — if
+        exporting your own data is difficult or impossible, that's a risk worth pricing in up front.</td></tr>
+        <tr><td>Who do *they* trust?</td><td>Many vendors rely on their own subcontractors and cloud providers —
+        the chain of trust can run several layers deep.</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Assumptions are where vendor relationships quietly go wrong</h4>
+      <p class="concept-desc"><em>"Assume makes an ass out of you and me"</em> shows up constantly in vendor
+      management. Common assumptions worth never making without verification:</p>
+      <pre class="code-block"><span class="com"># Assumptions that have caused real incidents at real companies:</span>
+
+<span class="com"># "They're a big, well-known company, so they must be secure."</span>
+<span class="com">#   -- Size correlates with budget, not automatically with diligence.</span>
+
+<span class="com"># "Our contract says they'll encrypt our data, so it's encrypted."</span>
+<span class="com">#   -- A clause in a contract is a promise, not a technical control.
+<span class="com">#      Ask HOW, not just whether.</span></span>
+
+<span class="com"># "They passed their assessment last year, so they're still fine."</span>
+<span class="com">#   -- Security postures change. Staff turn over. Infrastructure migrates.
+<span class="com">#      Reassessment on a schedule isn't bureaucracy -- it's hygiene.</span></span>
+
+<span class="com"># "IT/Legal/Procurement already checked this, so I don't need to."</span>
+<span class="com">#   -- Diffusion of responsibility is how gaps get through. If something
+<span class="com">#      seems off, say so -- even if "someone else" supposedly verified it.</span></span></pre>
+      <p class="concept-desc">None of this means treating every vendor like a hostile actor. It means replacing
+      comfortable guesses with quick, specific questions — because the cost of asking is minutes, and the cost of
+      assuming wrong can be measured in headlines.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body grc -->
+<!-- /domain-body grc -->
+<!-- /domain-body grc -->
+<!-- /domain-body grc -->
 <!-- /domain-body grc -->

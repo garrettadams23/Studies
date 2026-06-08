@@ -2142,4 +2142,494 @@ spec:
 
   </div>
 </div>
+
+<!-- BEGINNER35-OPS v1 -->
+<!-- ── TOPIC: CI/CD Pipeline Fundamentals ────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    CI/CD Pipelines – From Commit to Production Automatically
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What CI/CD Actually Means</div>
+      <div class="concept-desc">
+        <strong>Continuous Integration (CI)</strong> — every code change is
+        automatically built and tested the moment it's pushed. Catches bugs
+        within minutes instead of weeks.<br><br>
+        <strong>Continuous Delivery (CD)</strong> — every change that passes
+        CI is automatically packaged and ready to deploy (a human clicks
+        "go").<br><br>
+        <strong>Continuous Deployment</strong> — every change that passes CI
+        is automatically deployed to production with no human in the loop.<br><br>
+        <strong>The pipeline stages (typical order):</strong><br>
+        1. Checkout code → 2. Install dependencies → 3. Lint/static analysis
+        → 4. Unit tests → 5. Build artifact (binary, container image) →
+        6. Integration tests → 7. Security scan → 8. Deploy to staging →
+        9. Smoke tests → 10. Deploy to production.<br><br>
+        <em>"Not my circus, not my monkey"</em> — if your pipeline is red,
+        do not merge more changes on top of it. Fix the pipeline first;
+        a broken main branch blocks everyone.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">GitHub Actions</div>
+      <div class="concept-title">A Real CI/CD Pipeline in YAML</div>
+      <div class="concept-desc">
+        GitHub Actions is one of the most common CI/CD tools — config
+        lives in <code>.github/workflows/*.yml</code> right alongside your
+        code.
+      </div>
+      <div class="code-block">
+<span class="com"># .github/workflows/ci.yml</span>
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: <span class="str">"3.12"</span>
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Run tests with coverage
+        run: pytest --cov=src --cov-report=xml --cov-fail-under=<span class="num">80</span>
+
+      - name: Security scan
+        run: |
+          pip install bandit
+          bandit -r src/ -ll
+
+  build-and-push:
+    needs: test               <span class="com"># only runs if 'test' job passes</span>
+    runs-on: ubuntu-latest
+    if: github.ref == <span class="str">'refs/heads/main'</span>
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build container image
+        run: docker build -t myapp:${{ github.sha }} .
+      - name: Scan image
+        run: trivy image --exit-code 1 --severity CRITICAL myapp:${{ github.sha }}
+      - name: Push to registry
+        run: |
+          echo ${{ secrets.REGISTRY_TOKEN }} | docker login -u user --password-stdin
+          docker push myapp:${{ github.sha }}
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Deployment Strategies</div>
+      <div class="concept-title">How to Ship Without Breaking Things</div>
+      <div class="concept-desc">
+        How you roll out a new version matters as much as the code itself:<br><br>
+        &bull; <strong>Rolling update</strong> — replace instances one at a
+          time; if health checks fail, stop and roll back. Default in
+          Kubernetes.<br>
+        &bull; <strong>Blue-green deployment</strong> — run two identical
+          environments ("blue" = current, "green" = new); switch traffic
+          instantly; instant rollback by switching back.<br>
+        &bull; <strong>Canary release</strong> — send 5% of traffic to the
+          new version, watch metrics, gradually increase to 100% (or roll
+          back if errors spike).<br>
+        &bull; <strong>Feature flags</strong> — deploy code "dark" (disabled),
+          then turn it on for specific users without a new deployment.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        deploy "should be fine" because it worked in staging. Staging never
+        perfectly mirrors production load, data, and integrations.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure Recovery</div>
+      <div class="concept-title">When the Pipeline Ships a Bad Release</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — a teammate's bad commit will reach
+        production eventually. Your safety net matters more than
+        prevention alone.<br><br>
+        <strong>Build these into every pipeline:</strong><br>
+        &bull; <strong>Automated rollback</strong> — if health checks fail
+          post-deploy, automatically revert to the last known-good version.<br>
+        &bull; <strong>Deployment markers</strong> — send an event to your
+          monitoring system on every deploy, so spikes can be correlated
+          instantly: "errors started 90 seconds after deploy #4521."<br>
+        &bull; <strong>Fast rollback path</strong> — rolling back should
+          take seconds, not the same time as a forward deploy.<br>
+        &bull; <strong>Post-incident review</strong> — every bad release
+          gets a blameless writeup: what broke, why CI didn't catch it,
+          what test or gate would have.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER37-OPS v1 -->
+<!-- ── TOPIC: Web Server TLS Hardening ───────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Web Server Hardening – nginx, Apache &amp; TLS Done Right
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">The Default Config Is Not the Secure Config</div>
+      <div class="concept-desc">
+        Out of the box, web servers prioritise compatibility over
+        security — they'll happily serve old TLS versions, leak version
+        information, and allow risky HTTP methods. Hardening means
+        deliberately tightening these defaults.<br><br>
+        <strong>The five hardening layers:</strong><br>
+        1. <em>TLS configuration</em> — which protocol versions and
+           ciphers are allowed.<br>
+        2. <em>HTTP security headers</em> — instructions to the browser
+           about how to treat your site.<br>
+        3. <em>Information disclosure</em> — hide server version and
+           technology stack from attackers.<br>
+        4. <em>Rate limiting</em> — slow down brute-force and scraping
+           attempts.<br>
+        5. <em>Certificate management</em> — automated renewal so sites
+           never go down from an expired cert (a surprisingly common
+           self-inflicted outage).
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">nginx Hardening</div>
+      <div class="concept-title">A Hardened nginx Server Block</div>
+      <div class="concept-desc">
+        This configuration covers the essentials most security scanners
+        and compliance checks look for.
+      </div>
+      <div class="code-block">
+<span class="com"># /etc/nginx/sites-available/example.com</span>
+server {
+    listen 443 ssl http2;
+    server_name example.com;
+
+    <span class="com"># ── TLS: only modern protocols and strong ciphers ──</span>
+    ssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;          <span class="com"># no SSLv3, TLSv1.0, TLSv1.1</span>
+    ssl_ciphers         HIGH:!aNULL:!MD5:!3DES;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache   shared:SSL:10m;
+
+    <span class="com"># ── Hide version info (reduces fingerprinting) ──</span>
+    server_tokens off;
+
+    <span class="com"># ── Security headers ──</span>
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Content-Security-Policy "default-src 'self'" always;
+
+    <span class="com"># ── Rate limiting (defined in http{} block, applied here) ──</span>
+    limit_req zone=login_limit burst=5 nodelay;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+
+<span class="com"># Redirect all plain HTTP to HTTPS</span>
+server {
+    listen 80;
+    server_name example.com;
+    return 301 https://$host$request_uri;
+}
+
+<span class="com"># In the http{} block — define the rate limit zone:</span>
+<span class="com"># limit_req_zone $binary_remote_addr zone=login_limit:10m rate=5r/m;</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Headers Explained</div>
+      <div class="concept-title">What Each Security Header Actually Does</div>
+      <div class="concept-desc">
+        <table class="ai-table">
+          <tr><th>Header</th><th>What it tells the browser</th></tr>
+          <tr><td>Strict-Transport-Security</td><td>"Always use HTTPS for this site, never fall back to HTTP"</td></tr>
+          <tr><td>X-Frame-Options</td><td>"Don't let other sites embed me in an iframe" (stops clickjacking)</td></tr>
+          <tr><td>X-Content-Type-Options</td><td>"Don't guess file types — trust what I declared" (stops MIME sniffing attacks)</td></tr>
+          <tr><td>Content-Security-Policy</td><td>"Only load scripts/styles/images from these approved sources"</td></tr>
+          <tr><td>Referrer-Policy</td><td>"Don't leak the full URL to other sites when users click links"</td></tr>
+        </table>
+        <br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        adding these headers won't break anything. <code>Content-Security-Policy</code>
+        especially can silently break legitimate site features (third-party
+        widgets, inline scripts). Test in <code>report-only</code> mode first:
+        <code>Content-Security-Policy-Report-Only</code> logs violations
+        without blocking anything.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Verification</div>
+      <div class="concept-title">Testing Your Hardening Actually Worked</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — but you can also <em>verify</em>
+        the choice was made correctly in the first place. Don't trust
+        your config — test it.
+      </div>
+      <div class="code-block">
+<span class="com"># Free online TLS configuration scanner (the industry standard)</span>
+<span class="com"># https://www.ssllabs.com/ssltest/  → grades A+ to F</span>
+
+<span class="com"># Check from the command line with testssl.sh</span>
+docker run --rm -ti drwetter/testssl.sh https://example.com
+
+<span class="com"># Check which protocols/ciphers your server actually offers</span>
+nmap --script ssl-enum-ciphers -p 443 example.com
+
+<span class="com"># Verify security headers are present</span>
+curl -sI https://example.com | grep -iE   '(strict-transport|x-frame|x-content-type|content-security)'
+
+<span class="com"># Check certificate expiration (set up monitoring for this!)</span>
+echo | openssl s_client -servername example.com -connect example.com:443 2&gt;/dev/null   | openssl x509 -noout -dates
+
+<span class="com"># Automated renewal with certbot — verify the timer is active</span>
+sudo systemctl status certbot.timer
+sudo certbot renew --dry-run
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- BEGINNER40-OPS v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Writing Runbooks That People Actually Follow</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A runbook is a conversation with your future self at 3 AM</h4>
+      <p class="concept-desc">A runbook is a step-by-step procedure for handling a specific operational situation —
+      restarting a stuck service, failing over a database, rotating an expired certificate. The test of a good runbook
+      isn't whether the author understands it; it's whether a half-asleep on-call engineer who has never touched this
+      system can follow it correctly under pressure, at 3 AM, without calling anyone for help.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The anatomy of a runbook that survives contact with reality</h4>
+      <table class="ai-table">
+        <tr><th>Section</th><th>Purpose</th><th>What goes wrong without it</th></tr>
+        <tr><td>Trigger / symptoms</td><td>How do you know this runbook applies right now?</td><td>Engineer wastes 20 minutes confirming they're even looking at the right problem</td></tr>
+        <tr><td>Blast radius / impact</td><td>Who and what is affected if this goes wrong further?</td><td>Nobody escalates because nobody realized how big the problem actually was</td></tr>
+        <tr><td>Preconditions</td><td>What access, tools, or state do you need before starting?</td><td>Engineer gets halfway through and discovers they don't have the right permissions</td></tr>
+        <tr><td>Numbered steps with exact commands</td><td>Remove all guesswork — copy, paste, run</td><td>"Restart the service" becomes a 45-minute detour into "which service, on which host, with which flag?"</td></tr>
+        <tr><td>Verification step</td><td>How do you confirm the fix actually worked?</td><td>Engineer declares victory, closes the ticket, and the issue recurs an hour later</td></tr>
+        <tr><td>Rollback / escalation path</td><td>What do you do if this *doesn't* work?</td><td>Engineer freezes, unsure whether to keep pushing or wake someone up</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">A short runbook excerpt, written the right way</h4>
+      <pre class="code-block"><span class="com"># RUNBOOK: API gateway returning 503s</span>
+
+<span class="com"># TRIGGER: PagerDuty alert "gateway-503-rate-high" fires when error
+# rate > 5% for 5 minutes straight.</span>
+
+<span class="com"># IMPACT: All customer-facing API traffic degraded. Treat as SEV-2.</span>
+
+<span class="com"># STEP 1 — confirm the alert is real, not a monitoring blip</span>
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; https://api.internal.example.com/healthz
+<span class="com"># Expect: 200. If you see 503 here too, this is real — continue.</span>
+
+<span class="com"># STEP 2 — check whether it's one node or all of them</span>
+kubectl get pods -n gateway -o wide
+<span class="com"># Look for pods stuck in CrashLoopBackOff or 0/1 Ready</span>
+
+<span class="com"># STEP 3 — restart only the unhealthy pods (NOT the whole deployment)</span>
+kubectl delete pod &lt;pod-name&gt; -n gateway
+<span class="com"># Kubernetes will reschedule it automatically — this is non-destructive</span>
+
+<span class="com"># VERIFY — error rate back under 1% for 5 consecutive minutes</span>
+watch -n 10 'curl -s https://api.internal.example.com/metrics | grep error_rate'
+
+<span class="com"># IF STILL FAILING after step 3 — STOP. Escalate to #platform-oncall.
+# Do not attempt a full deployment restart without a second engineer present.</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">You can't make someone make the right choice...</h4>
+      <p class="concept-desc"><strong>...yet you can pick up the pieces afterwards.</strong> No matter how clear your
+      runbook is, someone under pressure will eventually skip the verification step, run the command on the wrong host,
+      or improvise instead of escalating. That's not a reason to stop writing good runbooks — it's the reason to also
+      write the recovery procedure for "someone did the wrong thing." The best operational teams plan for both the happy
+      path and the moment a tired human deviates from it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER42-OPS v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Capacity Planning – Answering "Will We Run Out of Room?" Before You Do</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Capacity planning is forecasting, not firefighting</h4>
+      <p class="concept-desc">Capacity planning is the practice of looking at how a resource — disk space, bandwidth,
+      server load, license seats — is being consumed over time, and projecting forward to answer "when will this become
+      a problem, and what should we do about it before it does?" The opposite approach — waiting for an alert that says
+      "disk 98% full" — turns a planning exercise into a 2 AM emergency. Good capacity planning quietly prevents most of
+      the outages that bad capacity planning causes people to brag about firefighting.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The basic forecasting loop</h4>
+      <table class="ai-table">
+        <tr><th>Step</th><th>What you're doing</th><th>Example question it answers</th></tr>
+        <tr><td>1. Measure current usage</td><td>Establish a baseline — what does "normal" look like today?</td><td>"We're using 620 GB of our 1 TB volume"</td></tr>
+        <tr><td>2. Track the trend over time</td><td>Is usage flat, growing steadily, or growing faster than before?</td><td>"We've added about 15 GB per week for the last two months"</td></tr>
+        <tr><td>3. Project forward</td><td>At the current rate, when do you cross the danger threshold?</td><td>"At 15 GB/week, we hit 900 GB (our alert threshold) in about 19 weeks"</td></tr>
+        <tr><td>4. Plan the intervention</td><td>What needs to happen before that date — and how long does it take to do it?</td><td>"Provisioning additional storage takes 6 weeks of lead time, so we need to start the request now, not in week 18"</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">A simple growth projection in Python</h4>
+      <pre class="code-block"><span class="com"># Given a few historical measurements, estimate when you'll hit a threshold</span>
+<span class="kw">from</span> datetime <span class="kw">import</span> date, timedelta
+
+<span class="com"># (date, usage_in_gb) samples taken weekly</span>
+history = [
+    (date(2026, 5, 4), 590),
+    (date(2026, 5, 11), 605),
+    (date(2026, 5, 18), 622),
+    (date(2026, 5, 25), 636),
+]
+
+<span class="com"># Average weekly growth across the sampled period</span>
+days_elapsed = (history[-1][0] - history[0][0]).days
+total_growth = history[-1][1] - history[0][1]
+weekly_growth = total_growth / (days_elapsed / 7)
+
+threshold_gb = 900
+current_gb = history[-1][1]
+weeks_remaining = (threshold_gb - current_gb) / weekly_growth
+projected_date = history[-1][0] + timedelta(weeks=weeks_remaining)
+
+<span class="fn">print</span>(<span class="str">f&quot;Growing ~{weekly_growth:.1f} GB/week&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Projected to hit {threshold_gb} GB around {projected_date}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;That's roughly {weeks_remaining:.0f} weeks from the last measurement&quot;</span>)</pre>
+      <p class="concept-desc">This is deliberately simple — straight-line ("linear") projection. Real-world usage often
+      grows in bursts (a new product launch, a seasonal spike), so mature capacity planning layers in seasonality and
+      known upcoming events on top of the trend line. But even this basic version turns a vague worry into a concrete
+      date you can act on.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — until the monkey runs out of room</h4>
+      <p class="concept-desc">"That's the database team's disk, not mine" works fine right up until their volume fills up
+      and takes down a service your team depends on. Capacity problems rarely stay neatly inside team boundaries — a full
+      log partition can crash an application server, a maxed-out license pool can block an entire department's work. Part
+      of good capacity planning is simply knowing which shared resources you depend on, even ones you don't directly own,
+      so "not my circus" doesn't quietly become "my outage."</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER45-OPS v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Writing a Postmortem People Actually Learn From</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A postmortem is a story about a system, not a trial of a person</h4>
+      <p class="concept-desc">A postmortem (or "post-incident review") is a written analysis of what happened during an
+      outage or incident, why it happened, and what will change as a result. The single most important design decision in
+      any postmortem process is whether it's <em>blameless</em> — focused on "what conditions made this mistake possible
+      and likely?" rather than "who do we blame for this?" Get that one decision right, and people will tell you the truth
+      about what happened. Get it wrong, and every future postmortem will quietly omit the details that actually mattered.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The shape of a postmortem that actually gets read</h4>
+      <table class="ai-table">
+        <tr><th>Section</th><th>What it answers</th><th>Common mistake to avoid</th></tr>
+        <tr><td>Summary</td><td>What happened, in 3-4 sentences a busy executive could read in 20 seconds</td><td>Burying the headline under technical preamble nobody reads first</td></tr>
+        <tr><td>Impact</td><td>Who was affected, for how long, and how badly — with real numbers</td><td>Vague language like "some users experienced issues" instead of "approximately 4,200 users over 38 minutes"</td></tr>
+        <tr><td>Timeline</td><td>What happened, in order, with timestamps — including detection and response</td><td>Starting the timeline at "the fix" instead of at the first sign something was wrong</td></tr>
+        <tr><td>Root cause(s)</td><td>Why it happened — usually more than one contributing factor, not a single villain</td><td>Stopping at "a bad config was deployed" instead of asking "why was it possible to deploy that config unreviewed?"</td></tr>
+        <tr><td>Action items</td><td>Specific, owned, dated changes that reduce the chance of recurrence</td><td>Vague commitments like "we'll be more careful" — that's not an action item, it's a hope</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">The "five whys" — finding the real root cause</h4>
+      <pre class="code-block"><span class="com"># A simple technique for digging past the surface-level explanation.
+# Keep asking "why" until you reach something you can actually fix.</span>
+
+Problem: The payment service was down for 40 minutes.
+
+Why #1: Why was it down?
+   -&gt; The service crashed when it ran out of memory.
+
+Why #2: Why did it run out of memory?
+   -&gt; A new code path loaded an entire customer table into memory at once.
+
+Why #3: Why did that code path do that?
+   -&gt; The developer tested only against a small sample database in staging.
+
+Why #4: Why didn't testing catch this before production?
+   -&gt; Staging databases aren't seeded with production-scale data volumes.
+
+Why #5: Why isn't that part of the standard testing process?
+   -&gt; There's no documented requirement for load-realistic staging data.
+
+<span class="com"># Notice where this ended up: not "the developer made a mistake"
+# (Why #1-3), but "our process doesn't ensure realistic testing
+# conditions" (Why #5) — a SYSTEM problem with a fixable solution,
+# not a PERSON problem with only blame to offer.</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — except blameless culture is everyone's circus</h4>
+      <p class="concept-desc">It's easy to think "writing good postmortems is the SRE team's job" — but a blameless
+      culture is built or destroyed by everyone in the room, in the moment someone says "well, obviously <em>they</em>
+      should have known better." One unkind comment in a review meeting can undo months of careful culture-building, and
+      it teaches everyone present — not just the person being criticized — that honesty here has a cost. Protecting that
+      culture, even in a meeting that isn't "yours," is part of keeping the whole system honest enough to actually improve.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body ops -->
+<!-- /domain-body ops -->
+<!-- /domain-body ops -->
 <!-- /domain-body ops -->

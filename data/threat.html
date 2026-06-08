@@ -1563,4 +1563,417 @@ file sample.exe
     </div>
   </div>
 </div>
+
+<!-- BEGINNER33-THREAT v1 -->
+<!-- ── TOPIC: Threat Hunting Methodology ─────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Threat Hunting – Finding What Detection Missed
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Is Threat Hunting?</div>
+      <div class="concept-desc">
+        <strong>Threat hunting</strong> is the proactive, hypothesis-driven
+        search for threats that automated detection has missed.
+        A SIEM fires alerts when rules match — but sophisticated attackers
+        live below the alert threshold (low-and-slow attacks, living-off-the-land).<br><br>
+        <strong>Reactive (SIEM)</strong>: Wait for an alert → investigate.<br>
+        <strong>Proactive (Hunting)</strong>: Form a hypothesis → search
+        for evidence → prove or disprove it.<br><br>
+        <em>"Not my circus, not my monkey"</em> — threat hunting is a
+        specialised skill, but junior analysts can learn the mindset: always
+        ask "what would an attacker do that looks normal?"
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Process</div>
+      <div class="concept-title">The Hunt Loop</div>
+      <div class="concept-desc">
+        Every hunt follows the same loop:
+      </div>
+      <div class="code-block">
+<span class="com">1. FORM HYPOTHESIS</span>
+   "Attackers using PowerShell for lateral movement would show
+    powershell.exe spawned by a non-interactive parent process
+    (e.g. wsmprovhost, mmc, svchost) running encoded commands."
+
+<span class="com">2. COLLECT RELEVANT DATA</span>
+   Pull process creation events (Event ID 4688 or Sysmon Event 1)
+   Filter: ParentImage ends with wsmprovhost.exe OR mmc.exe
+           AND CommandLine contains -EncodedCommand OR -Enc
+
+<span class="com">3. ANALYSE</span>
+   Cluster results by user, host, time
+   Look for outliers — rare parents, unusual times, unexpected users
+
+<span class="com">4. INVESTIGATE ANOMALIES</span>
+   Pivot: what did the process do next? (child processes, network, files)
+   Corroborate: does EDR show the same activity?
+
+<span class="com">5. OUTCOME</span>
+   TRUE POSITIVE  → Incident response
+   FALSE POSITIVE → Document; tune detection rules
+   INCONCLUSIVE   → Expand data sources; reformulate hypothesis
+
+<span class="com">6. CREATE DETECTION RULE</span>
+   Turn confirmed attacker behaviour into an automated SIEM rule
+   so the hunt never needs to be repeated manually
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">MITRE ATT&amp;CK</div>
+      <div class="concept-title">Using ATT&amp;CK as a Hunting Framework</div>
+      <div class="concept-desc">
+        <strong>MITRE ATT&amp;CK</strong> is a knowledge base of adversary
+        tactics and techniques based on real-world attacks. It gives
+        hunters a <em>menu of hypotheses</em>:<br><br>
+        &bull; Tactics = <em>why</em> (Initial Access, Execution,
+          Persistence, Lateral Movement, Exfiltration…)<br>
+        &bull; Techniques = <em>how</em> (T1059 – Command and Scripting
+          Interpreter, T1078 – Valid Accounts…)<br>
+        &bull; Sub-techniques = specific implementations<br><br>
+        Workflow:<br>
+        1. Pick a tactic (e.g. Persistence).<br>
+        2. List techniques relevant to your environment.<br>
+        3. Form a hypothesis for each technique.<br>
+        4. Hunt.<br>
+        5. Document coverage on your ATT&amp;CK matrix.
+      </div>
+      <div class="code-block">
+<span class="com"># Splunk hunt: T1053.005 – Scheduled Task/Job (Windows)</span>
+index=windows (EventCode=<span class="num">4698</span> OR EventCode=<span class="num">4702</span>)
+| eval suspicious=if(like(TaskContent,<span class="str">"%powershell%"</span>)
+                  OR like(TaskContent,<span class="str">"%cmd.exe%"</span>)
+                  OR like(TaskContent,<span class="str">"%wscript%"</span>),<span class="str">"YES"</span>,<span class="str">"NO"</span>)
+| where suspicious=<span class="str">"YES"</span>
+| stats count by ComputerName, SubjectUserName, TaskName
+
+<span class="com"># Linux hunt: T1136.001 – Create Local Account</span>
+grep <span class="str">"new user"</span> /var/log/auth.log |   awk <span class="str">'{print $1,$2,$3,$NF}'</span> | sort
+
+<span class="com"># Hunt for DNS tunnelling: unusually long hostnames</span>
+<span class="com"># Splunk SPL:</span>
+index=dns
+| eval qlen=len(query)
+| where qlen &gt; <span class="num">50</span>
+| stats count, values(query) by src_ip
+| sort -count
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Tools</div>
+      <div class="concept-title">Essential Threat Hunting Tools</div>
+      <div class="concept-desc">
+        &bull; <strong>Sysmon</strong> (Windows) — enriches Windows event
+          logs with process GUID, parent-child relationships, network
+          connections, and file hashes. Free from Microsoft Sysinternals.<br>
+        &bull; <strong>Velociraptor</strong> — open-source agent for rapid
+          endpoint forensics and hunting at scale.<br>
+        &bull; <strong>osquery</strong> — SQL interface to OS internals;
+          ask "SELECT name, pid FROM processes WHERE name LIKE '%powershell%'."<br>
+        &bull; <strong>SIGMA</strong> — generic detection rule format that
+          converts to Splunk, Elastic, QRadar queries.
+        Hunters write SIGMA rules to share TTP detection across SIEM
+        platforms.
+      </div>
+      <div class="code-block">
+<span class="com"># osquery – live process inspection (runs on Windows/Linux/macOS)</span>
+osqueryi
+<span class="kw">SELECT</span> name, pid, parent, cmdline
+<span class="kw">FROM</span>  processes
+<span class="kw">WHERE</span> name <span class="kw">LIKE</span> <span class="str">'%powershell%'</span>
+<span class="kw">   OR</span> cmdline <span class="kw">LIKE</span> <span class="str">'%-EncodedCommand%'</span>;
+
+<span class="com"># Find all network connections to suspicious ports</span>
+<span class="kw">SELECT</span> p.name, p.pid, n.local_port, n.remote_address, n.remote_port, n.state
+<span class="kw">FROM</span>  process_open_sockets n
+<span class="kw">JOIN</span>  processes p <span class="kw">ON</span> p.pid = n.pid
+<span class="kw">WHERE</span> n.remote_port <span class="kw">NOT IN</span> (<span class="num">80</span>, <span class="num">443</span>, <span class="num">53</span>, <span class="num">123</span>)
+  <span class="kw">AND</span> n.state = <span class="str">'ESTABLISHED'</span>;
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- BEGINNER39-THREAT v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Indicators of Compromise (IOCs) – What to Look For</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">An IOC is a clue, not a verdict</h4>
+      <p class="concept-desc">An Indicator of Compromise is a piece of forensic evidence that <em>suggests</em> a system
+      may have been breached — a suspicious file hash, an unusual outbound connection, a registry key that shouldn't
+      exist. The word "indicator" matters: a single IOC rarely proves an intrusion on its own. It's a thread to pull, and
+      pulling it carefully — rather than jumping straight to "we've been hacked, shut everything down" — is what keeps
+      a real incident from turning into a self-inflicted outage.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Common IOC categories, from easy to spoof to hard to spoof</h4>
+      <table class="ai-table">
+        <tr><th>Category</th><th>Example</th><th>Why it's useful / limited</th></tr>
+        <tr><td>File hashes (MD5/SHA256)</td><td>A known-malware binary's exact fingerprint</td><td>Precise, but trivially defeated by changing one byte of the file</td></tr>
+        <tr><td>IP addresses / domains</td><td>Command-and-control server addresses</td><td>Useful for blocking, but attackers rotate infrastructure constantly</td></tr>
+        <tr><td>File paths / registry keys</td><td><code>C:\Windows\Temp\svch0st.exe</code> (note the zero)</td><td>Reveals attacker tradecraft, but easy to rename next time</td></tr>
+        <tr><td>Behavioral patterns</td><td>"Word spawning PowerShell spawning a reverse shell"</td><td>Hardest to fake — the attacker has to actually do something different to evade it</td></tr>
+      </table>
+      <p class="concept-desc">This is why mature security teams talk about moving "up the Pyramid of Pain" — from
+      easily-changed atomic indicators (hashes, IPs) toward TTPs (tactics, techniques, and procedures) that describe
+      <em>how</em> an attacker operates, which is far more expensive for them to change.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Checking a suspicious file or hash yourself</h4>
+      <pre class="code-block"><span class="com"># Generate a hash for a file you want to check</span>
+sha256sum suspicious_attachment.pdf
+
+<span class="com"># Search running processes for anything spawned from an unusual path</span>
+ps aux | grep -E &quot;/tmp/|/dev/shm/|AppData\\Local\\Temp&quot;
+
+<span class="com"># List recently modified files in sensitive directories — a common
+# sign of tampering or dropped tooling</span>
+find /etc /usr/bin /usr/local/bin -mtime -2 -type f 2>/dev/null
+
+<span class="com"># Check outbound connections for anything talking to unfamiliar hosts</span>
+ss -tunap | grep ESTAB</pre>
+      <p class="concept-desc">Before you act on a hash match from a public threat-intel feed, paste it into a malware
+      analysis service or sandbox to see what others have already learned about it — community context turns a bare
+      indicator into something you can actually act on with confidence.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — except when it is</h4>
+      <p class="concept-desc">If you spot an IOC on a system outside your scope of responsibility, resist the urge to dig
+      in yourself — that's how evidence gets contaminated and chains of custody get broken. Report it through the proper
+      channel to the team that owns it. But on systems that <em>are</em> yours to protect, that same phrase becomes a
+      trap: "probably nothing" is exactly the thought that lets small indicators grow into large incidents. Knowing which
+      circus is yours is half the job.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER41-THREAT v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>The Cyber Kill Chain – Thinking Like the Attacker, Stage by Stage</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">An attack isn't one event — it's a sequence</h4>
+      <p class="concept-desc">The Cyber Kill Chain (developed by Lockheed Martin) is a model that breaks an intrusion down
+      into a sequence of stages an attacker has to move through, in order, to succeed. Its real value for a defender isn't
+      memorizing the stage names — it's the realization that <em>every stage is a chance to stop the attack</em>. You don't
+      need to catch every intrusion at the front door; catching it at any single stage breaks the whole chain.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The seven stages, and where defenders can intervene</h4>
+      <table class="ai-table">
+        <tr><th>Stage</th><th>What the attacker is doing</th><th>A defense that fits here</th></tr>
+        <tr><td>1. Reconnaissance</td><td>Researching the target — employee names on LinkedIn, exposed services, leaked credentials</td><td>Limiting public information exposure; monitoring for scanning activity</td></tr>
+        <tr><td>2. Weaponization</td><td>Building or obtaining a malicious payload (often off-the-shelf)</td><td>Threat intelligence feeds that flag known tooling and infrastructure</td></tr>
+        <tr><td>3. Delivery</td><td>Getting the payload to the target — phishing email, infected USB, compromised website</td><td>Email filtering, web proxies, user awareness training</td></tr>
+        <tr><td>4. Exploitation</td><td>Triggering the payload — a user opens the attachment, a vulnerable service is hit</td><td>Patch management, application allow-listing, endpoint protection</td></tr>
+        <tr><td>5. Installation</td><td>Establishing persistence — a backdoor, scheduled task, or new service</td><td>EDR tools that flag unusual process trees and new persistence mechanisms</td></tr>
+        <tr><td>6. Command &amp; Control (C2)</td><td>Calling home to an attacker-controlled server for further instructions</td><td>Network monitoring for unusual outbound connections; DNS filtering</td></tr>
+        <tr><td>7. Actions on Objectives</td><td>The actual goal — data theft, ransomware deployment, sabotage</td><td>Data loss prevention, network segmentation, offline backups</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Mapping a real incident to the chain</h4>
+      <pre class="code-block"><span class="com"># A simplified, anonymized incident timeline mapped to kill-chain stages —
+# this is the kind of analysis that goes into a post-incident report</span>
+
+Day 1   - Attacker scrapes employee names from the company website
+          [STAGE 1: Reconnaissance]
+
+Day 3   - Crafted phishing email sent to 40 employees, spoofing IT support
+          [STAGE 3: Delivery — using a generic, purchased phishing kit, STAGE 2]
+
+Day 3   - One employee clicks the link and enters their credentials
+          on a cloned login page
+          [STAGE 4: Exploitation]
+
+Day 4   - Attacker logs in with stolen credentials, installs a
+          scheduled task that re-establishes a connection on reboot
+          [STAGE 5: Installation]
+
+Day 4-9 - Compromised account quietly contacts an external server
+          every few hours; goes unnoticed amid normal traffic
+          [STAGE 6: Command &amp; Control]
+
+Day 10  - Attacker begins exporting files from a shared drive
+          — DLP tooling flags the unusual transfer volume and
+          the SOC cuts off network access within 12 minutes
+          [STAGE 7: Actions on Objectives — INTERRUPTED HERE]</pre>
+      <p class="concept-desc">Notice that the chain was broken at stage 7 — late, but not too late. A faster catch at
+      stage 6 (alerting on the unusual outbound C2 traffic over six days) would have prevented the data exfiltration
+      entirely. Every stage that gets caught earlier shrinks the blast radius of everything that follows.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">You can't make someone make the right choice...</h4>
+      <p class="concept-desc"><strong>...yet you can pick up the pieces afterwards.</strong> No amount of training
+      guarantees that nobody will ever click a phishing link — humans are the part of the chain you can influence but
+      never fully control. That's exactly why mature security programs don't rely on stage 3/4 prevention alone. They
+      build detection and response capability for stages 5 through 7 too — because when, not if, someone clicks, the
+      chain still has several more links where you can catch it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER43-THREAT v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Open-Source Intelligence (OSINT) – What's Already Public About You</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">OSINT is intelligence gathered from things that are already public</h4>
+      <p class="concept-desc">Open-Source Intelligence means collecting and analyzing information from publicly available
+      sources — social media, company websites, public records, code repositories, even old cached pages — to build a
+      picture of a person or organization. It requires no hacking and breaks no laws on its own; the "open" in the name
+      is the whole point. Understanding OSINT matters for two very different reasons: attackers use it during the
+      reconnaissance phase of an intrusion (recall the Cyber Kill Chain's first stage), and defenders use the exact same
+      techniques to find out what an attacker could learn about their own organization before someone else does.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">What attackers commonly piece together — and from where</h4>
+      <table class="ai-table">
+        <tr><th>Information</th><th>Common public sources</th><th>How it gets used</th></tr>
+        <tr><td>Employee names &amp; roles</td><td>LinkedIn, company "About Us" pages, conference speaker lists</td><td>Crafting believable spear-phishing emails ("Hi, this is Dana from IT...")</td></tr>
+        <tr><td>Technology stack</td><td>Job postings ("must know AWS, Kubernetes, Salesforce"), public code repos</td><td>Targeting known vulnerabilities in the specific tools an org uses</td></tr>
+        <tr><td>Email address format</td><td>Press releases, public filings, "contact us" pages</td><td>Guessing other employees' addresses (firstname.lastname@company.com)</td></tr>
+        <tr><td>Physical &amp; schedule details</td><td>Social media check-ins, out-of-office replies, event listings</td><td>Timing attacks for when key personnel are away or distracted</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on (lab/personal use only)</span>
+      <h4 class="concept-title">Running your own OSINT check on yourself or your org</h4>
+      <pre class="code-block"><span class="com"># See what Google has indexed about a domain — often more than expected</span>
+site:example.com filetype:pdf
+site:example.com &quot;confidential&quot;
+
+<span class="com"># Check what WHOIS records reveal about a domain's registration</span>
+whois example.com | grep -iE &quot;registrant|admin|tech&quot;
+
+<span class="com"># Look up historical versions of a public page — sometimes old,
+# supposedly-removed information is still archived</span>
+<span class="com"># https://web.archive.org/web/*/example.com</span>
+
+<span class="com"># Search for exposed credentials tied to a domain (read-only check —
+# this is the same database breach-notification services use)</span>
+<span class="com"># https://haveibeenpwned.com/DomainSearch (requires domain verification)</span>
+
+<span class="com"># Review what a public GitHub org has accidentally exposed —
+# old commits sometimes contain credentials that were later "removed"
+# but remain in the git history forever</span>
+git log -p --all | grep -iE &quot;password|secret|api[_-]?key&quot;</pre>
+      <p class="concept-desc">That last command is worth sitting with — deleting a sensitive line from the latest commit
+      does <em>not</em> remove it from history. Anyone who clones the repository can still find it with a simple search.
+      This is one of the most common, entirely preventable ways organizations leak credentials.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Not my circus, not my monkey — except your digital footprint is always yours</h4>
+      <p class="concept-desc">It's easy to assume "I'm not important enough to be a target" — but OSINT-driven attacks
+      rarely target individuals for who they are; they target whoever happens to be reachable and useful as a stepping
+      stone toward something bigger (a company network, a family member, a connected account). Periodically searching
+      your own name, checking what your old social media posts reveal, and reviewing what your employer has published
+      about you isn't paranoia — it's the same "know what's exposed before someone else finds it" thinking that
+      professional security teams apply to entire organizations, just scaled down to one person.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER46-THREAT v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Ransomware – How It Spreads, and Why Backups Aren't the Whole Story</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Ransomware in one sentence</h4>
+      <p class="concept-desc">Ransomware is malicious software that encrypts a victim's files (or locks them out of their
+      systems entirely) and demands payment — usually in cryptocurrency — for the key to restore access. Modern
+      ransomware operations have evolved well past "encrypt and demand money": many now also steal data first and
+      threaten to publish it, a tactic called <em>double extortion</em> that defeats the old assumption "we have backups,
+      so we're fine."</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A typical attack chain — and where it can be stopped</h4>
+      <table class="ai-table">
+        <tr><th>Stage</th><th>What happens</th><th>A defense that fits here</th></tr>
+        <tr><td>1. Initial access</td><td>Phishing email, exposed RDP, or a vulnerable internet-facing service</td><td>Email filtering, MFA, patching, closing unnecessary exposed ports</td></tr>
+        <tr><td>2. Spread / escalate</td><td>The attacker moves laterally through the network, gathering higher privileges</td><td>Network segmentation, least-privilege access, monitoring for unusual internal traffic</td></tr>
+        <tr><td>3. Data theft (often skipped by less sophisticated groups)</td><td>Sensitive files are quietly exfiltrated before anything is encrypted</td><td>Data loss prevention, monitoring for unusual outbound transfer volumes</td></tr>
+        <tr><td>4. Detonation</td><td>Files across the network are encrypted, often during off-hours to maximize damage before detection</td><td>Endpoint detection that flags mass file-modification behavior in real time</td></tr>
+        <tr><td>5. Extortion</td><td>A ransom note appears; the attacker may also threaten to leak stolen data</td><td>Incident response plan, legal counsel, law enforcement contact — decided BEFORE this moment, not during it</td></tr>
+      </table>
+      <p class="concept-desc">Notice how much happens <em>before</em> stage 4 — the part most people picture when they
+      hear "ransomware attack." By the time files start encrypting, the attacker has often already been inside the
+      network for days or weeks. That's both bad news (damage may already be done) and good news (there were many earlier
+      chances to catch it).</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Verifying your backups are actually a safety net (not just a checkbox)</h4>
+      <pre class="code-block"><span class="com"># A backup that ransomware can also encrypt or delete isn't a backup —
+# it's just another file the attacker controls. Ask these questions:</span>
+
+<span class="com"># 1. Are backups stored OFFLINE or in a way ransomware can't reach?
+#    (immutable cloud storage, air-gapped tape, write-once media —
+#    NOT just another network drive with the same credentials)</span>
+
+<span class="com"># 2. Have you actually TESTED a full restore recently — not just
+#    confirmed the backup job "completed successfully"?</span>
+<span class="com">#    A backup nobody has ever restored from is a THEORY, not a plan.</span>
+
+<span class="com"># 3. How far back do your retention policies go? If an attacker
+#    was quietly inside for six weeks before detonating, and your
+#    backups only go back two, you may be restoring already-compromised data</span>
+
+<span class="com"># 4. Who has the credentials to delete or modify backups —
+#    and is that access separated from everyday admin accounts?</span></pre>
+      <p class="concept-desc">The 3-2-1 rule is a useful baseline to test your setup against: at least <strong>3</strong>
+      copies of your data, on <strong>2</strong> different types of media, with <strong>1</strong> copy stored offsite
+      (and ideally offline). Many organizations that "had backups" still paid ransoms — because their backups were
+      reachable from the same compromised network as everything else.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — "we have backups" is not a plan</h4>
+      <p class="concept-desc">"We're covered, we have backups" is one of the most common — and most dangerous — assumptions
+      in incident preparedness, precisely because it sounds like due diligence without requiring anyone to verify it
+      actually works. A real plan answers harder questions: how long would a full restore actually take (hours? days?
+      weeks?), what would you tell customers during that gap, and who makes the call about whether to involve law
+      enforcement? Untested assumptions don't reveal themselves until the worst possible moment to discover them.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body threat -->
+<!-- /domain-body threat -->
+<!-- /domain-body threat -->
+<!-- /domain-body threat -->
 <!-- /domain-body threat -->

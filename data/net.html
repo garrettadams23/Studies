@@ -4526,4 +4526,607 @@ tshark -r dns.pcap -T fields -e dns.qry.name |   awk <span class="str">'length &
 
   </div>
 </div>
+
+<!-- BEGINNER33-NET v1 -->
+<!-- ── TOPIC: Wireless Security – 802.11 ─────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Wireless Security – 802.11 Standards &amp; Wi-Fi Hardening
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Wi-Fi Security Evolution: WEP → WPA3</div>
+      <div class="concept-desc">
+        Wi-Fi security has gone through several generations. Knowing the
+        history helps you understand why old protocols are dangerous:<br><br>
+        <table class="ai-table">
+          <tr><th>Protocol</th><th>Year</th><th>Encryption</th><th>Status</th></tr>
+          <tr><td>WEP</td><td>1997</td><td>RC4 (broken)</td><td>Never use</td></tr>
+          <tr><td>WPA (TKIP)</td><td>2003</td><td>RC4 improved</td><td>Avoid</td></tr>
+          <tr><td>WPA2-Personal</td><td>2004</td><td>AES-CCMP</td><td>OK with strong passphrase</td></tr>
+          <tr><td>WPA2-Enterprise</td><td>2004</td><td>AES + 802.1X/RADIUS</td><td>Recommended for orgs</td></tr>
+          <tr><td>WPA3-Personal</td><td>2018</td><td>AES + SAE</td><td>Best for home/small biz</td></tr>
+          <tr><td>WPA3-Enterprise</td><td>2018</td><td>AES-256 + SAE</td><td>Best for enterprise</td></tr>
+        </table>
+        <br>
+        <strong>WPA2-Personal weakness:</strong> offline dictionary attacks
+        against the 4-way handshake. A weak passphrase = cracked in hours.
+        <br><strong>WPA3 fix:</strong> SAE (Simultaneous Authentication of
+        Equals) prevents offline cracking — each authentication is unique.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Enterprise Wi-Fi</div>
+      <div class="concept-title">WPA2-Enterprise with RADIUS</div>
+      <div class="concept-desc">
+        In corporate environments, each user authenticates with their own
+        AD credentials rather than a shared passphrase. This uses
+        <strong>802.1X</strong> and a <strong>RADIUS server</strong>
+        (FreeRADIUS or Windows NPS).<br><br>
+        Benefits:<br>
+        &bull; No shared secret to leak — each user has unique creds.<br>
+        &bull; Revoke a single user's access without changing the Wi-Fi
+          password for everyone.<br>
+        &bull; Full audit trail of who connected when.<br>
+        &bull; Mutual authentication via certificates prevents evil-twin
+          attacks.
+      </div>
+      <div class="code-block">
+<span class="com"># FreeRADIUS quick test (after setup)</span>
+radtest alice Password1 localhost 0 testing123
+<span class="com"># Output: Access-Accept → credentials valid</span>
+<span class="com"># Output: Access-Reject  → bad credentials</span>
+
+<span class="com">── Key 802.1X flow ──────────────────────────────────────────</span>
+Client (Supplicant)  →  AP (Authenticator)  →  RADIUS Server
+       EAP-Request/Identity
+&lt;──────────────────────────────────────────────────────────
+       EAP-Response/Identity (alice@corp.com)
+──────────────────────────────────────────────────────────&gt;
+       RADIUS Access-Request (forwarded)
+                             ──────────────────────────────&gt;
+       RADIUS Access-Accept / Reject
+                             &lt;──────────────────────────────
+       EAP-Success / Failure
+&lt;──────────────────────────────────────────────────────────
+       [4-way handshake to derive per-session keys]
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Attacks</div>
+      <div class="concept-title">Common Wi-Fi Attacks &amp; Defences</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        the Wi-Fi network you're on is the real one. Rogue APs can be
+        set up in minutes.
+      </div>
+      <div class="code-block">
+<span class="com">Attack          Description                          Defence</span>
+Evil Twin       Fake AP with same SSID captures creds  WPA3/EAP-TLS cert auth
+Deauth flood    Force clients to reconnect (DOS)        802.11w Management Frame Protection
+PMKID attack    Capture beacon, crack offline           Long random WPA2 passphrase
+KRACK           Key reinstallation in WPA2 handshake    Patch all clients and APs
+WPS PIN bruteforce 8-digit PIN cracked in hours         Disable WPS entirely
+
+<span class="com"># Check if a Linux NIC supports monitor mode</span>
+iw list | grep -A5 <span class="str">"Supported interface modes"</span>
+<span class="com"># Must show "monitor" mode for wireless analysis tools</span>
+
+<span class="com"># Detect rogue APs on your network (passive scan)</span>
+sudo iwlist wlan0 scanning | grep -E <span class="str">"(ESSID|Address|Encryption)"</span>
+<span class="com"># Compare BSSID (MAC) list against your authorised AP inventory</span>
+
+<span class="com"># Check if WPS is enabled (vulnerable)</span>
+sudo wash -i wlan0 -C   <span class="com"># part of reaver suite; scan for WPS-enabled APs</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Hardening</div>
+      <div class="concept-title">Wi-Fi Network Design Best Practices</div>
+      <div class="concept-desc">
+        &bull; Use <strong>WPA3</strong> where supported; WPA2-Enterprise
+          for corporate devices.<br>
+        &bull; <strong>Separate SSIDs for different trust levels</strong>:
+          Corp, Guest, IoT — each on its own VLAN.<br>
+        &bull; Guest SSID: internet-only; no access to internal resources.<br>
+        &bull; <strong>Disable SSID broadcast</strong> only adds minor
+          friction — determined attackers still find hidden SSIDs. Don't
+          rely on it for security.<br>
+        &bull; Enable <strong>802.11w</strong> (Management Frame Protection)
+          to block deauthentication attacks.<br>
+        &bull; Use a <strong>long, random passphrase</strong> (&gt;20 chars)
+          for WPA2-Personal — mix upper/lower/digit/symbol.<br>
+        &bull; Audit connected clients quarterly; disable MAC addresses
+          that no longer belong to active employees/devices.<br>
+        &bull; <em>You can't make someone make the right choice, yet you
+          can pick up the pieces afterwards</em> — when an employee
+          connects a personal rogue AP, your WIDS (Wireless IDS) catches
+          it; have a process to contain it quickly.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER34-NET v1 -->
+<!-- ── TOPIC: Network Packet Analysis ────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Packet Analysis – Reading the Network's Mind with Wireshark
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Capture Packets?</div>
+      <div class="concept-desc">
+        Every problem on a network eventually shows up in the packets —
+        slow apps, failed connections, intrusions, misconfigurations. A
+        <strong>packet capture (pcap)</strong> is ground truth: it shows
+        exactly what was sent and received, byte for byte.<br><br>
+        <strong>Tools:</strong><br>
+        &bull; <code>tcpdump</code> — command-line capture; runs anywhere,
+          even on headless servers.<br>
+        &bull; <strong>Wireshark</strong> — GUI analysis; the gold standard
+          for deep inspection.<br>
+        &bull; <code>tshark</code> — Wireshark's CLI sibling; great for
+          scripting and automation.<br><br>
+        <em>"Not my circus, not my monkey"</em> — capturing traffic on a
+        network you don't own or have authorization for is illegal in most
+        jurisdictions (wiretapping laws). Always get written authorization.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Capture</div>
+      <div class="concept-title">Capturing Traffic with tcpdump</div>
+      <div class="concept-desc">
+        <code>tcpdump</code> uses Berkeley Packet Filter (BPF) syntax to
+        select exactly the traffic you care about — capturing everything
+        creates huge files and noise.
+      </div>
+      <div class="code-block">
+<span class="com"># Capture all traffic on eth0, write to a file (analyse later in Wireshark)</span>
+sudo tcpdump -i eth0 -w capture.pcap
+
+<span class="com"># Capture only HTTP traffic (port 80) with full packet content</span>
+sudo tcpdump -i eth0 -s <span class="num">0</span> -w http.pcap port <span class="num">80</span>
+
+<span class="com"># Capture traffic to/from a specific host</span>
+sudo tcpdump -i eth0 host <span class="num">192.168.1</span>.<span class="num">50</span>
+
+<span class="com"># Capture traffic between two hosts on a specific port</span>
+sudo tcpdump -i eth0 'host 192.168.1.50 and host 192.168.1.10 and port 443'
+
+<span class="com"># Show packets live, with readable ASCII (good for HTTP debugging)</span>
+sudo tcpdump -i eth0 -A port <span class="num">80</span>
+
+<span class="com"># Capture only SYN packets (new connection attempts — good for scan detection)</span>
+sudo tcpdump -i eth0 'tcp[tcpflags] == tcp-syn'
+
+<span class="com"># Rotate captures every 100MB, keep last 10 files (long-running capture)</span>
+sudo tcpdump -i eth0 -w /data/cap.pcap -C <span class="num">100</span> -W <span class="num">10</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Analysis</div>
+      <div class="concept-title">Reading a Capture in Wireshark</div>
+      <div class="concept-desc">
+        Wireshark's <strong>display filter</strong> bar (top of the window)
+        is the most powerful tool — it narrows thousands of packets down
+        to the handful you care about.
+      </div>
+      <div class="code-block">
+<span class="com">─── Useful Wireshark display filters ─────────────────────────</span>
+ip.addr == <span class="num">192.168.1</span>.<span class="num">50</span>             <span class="com"># traffic to/from this host</span>
+tcp.port == <span class="num">443</span>                     <span class="com"># HTTPS traffic</span>
+http.request.method == <span class="str">"POST"</span>       <span class="com"># only POST requests</span>
+http contains <span class="str">"password"</span>             <span class="com"># find plaintext passwords (HTTP only!)</span>
+tcp.flags.syn == <span class="num">1</span> &amp;&amp; tcp.flags.ack == <span class="num">0</span>  <span class="com"># new connections (SYN scan)</span>
+tcp.analysis.retransmission       <span class="com"># packets that had to be resent (perf issue)</span>
+dns.qry.name contains <span class="str">"evil"</span>          <span class="com"># suspicious DNS lookups</span>
+tls.handshake.extensions_server_name == <span class="str">"example.com"</span>  <span class="com"># TLS SNI filter</span>
+
+<span class="com">─── Right-click any packet → Follow → TCP Stream ─────────────</span>
+<span class="com"># Reconstructs the entire conversation as readable text —</span>
+<span class="com"># the single most useful feature for understanding "what happened"</span>
+
+<span class="com">─── Statistics menu ───────────────────────────────────────────</span>
+<span class="com"># Conversations: who talked to whom, how much data</span>
+<span class="com"># Protocol Hierarchy: breakdown of traffic by protocol</span>
+<span class="com"># IO Graph: visualise traffic volume over time (spot spikes)</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">tshark</div>
+      <div class="concept-title">Scripting Analysis with tshark</div>
+      <div class="concept-desc">
+        For repeatable analysis or processing huge captures, script it
+        with <code>tshark</code> instead of clicking through the GUI.
+      </div>
+      <div class="code-block">
+<span class="com"># Extract all unique source/destination IP pairs</span>
+tshark -r capture.pcap -T fields -e ip.src -e ip.dst | sort -u
+
+<span class="com"># Count HTTP requests by destination host</span>
+tshark -r capture.pcap -Y "http.request" -T fields -e http.host |     sort | uniq -c | sort -rn
+
+<span class="com"># Extract all DNS queries (great for spotting C2 domains)</span>
+tshark -r capture.pcap -Y "dns.flags.response == 0"     -T fields -e frame.time -e ip.src -e dns.qry.name
+
+<span class="com"># Find the top talkers by byte volume</span>
+tshark -r capture.pcap -q -z conv,ip | head -<span class="num">20</span>
+
+<span class="com"># Extract files transferred over HTTP (incident response)</span>
+tshark -r capture.pcap --export-objects http,/tmp/extracted_files/
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- BEGINNER39-NET v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>DNS Deep Dive – How Name Resolution Really Works</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me</h4>
+      <p class="concept-desc">When a website "won't load," don't assume it's the web server. DNS failures look identical
+      to outages from the user's perspective. Walking the resolution chain step by step — instead of guessing — is what
+      separates a five-minute fix from an hour of chasing the wrong problem.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The resolution chain, in order</h4>
+      <p class="concept-desc">When you type <code>example.com</code> into a browser, your computer doesn't magically know
+      where to send the request. It walks a chain of lookups:</p>
+      <table class="ai-table">
+        <tr><th>Step</th><th>What happens</th><th>Where it's checked</th></tr>
+        <tr><td>1. Browser cache</td><td>"Have I looked this up in the last few minutes?"</td><td>Browser memory</td></tr>
+        <tr><td>2. OS cache</td><td>"Does the operating system already know this?"</td><td><code>systemd-resolved</code> / <code>dnsmasq</code> / Windows DNS Client</td></tr>
+        <tr><td>3. Hosts file</td><td>"Is there a manual override?"</td><td><code>/etc/hosts</code> or <code>C:\Windows\System32\drivers\etc\hosts</code></td></tr>
+        <tr><td>4. Recursive resolver</td><td>"Ask my configured DNS server (ISP, 1.1.1.1, 8.8.8.8) to find it"</td><td><code>/etc/resolv.conf</code></td></tr>
+        <tr><td>5. Root → TLD → authoritative</td><td>The resolver walks the DNS hierarchy until it finds the authoritative answer</td><td>Global DNS infrastructure</td></tr>
+      </table>
+      <p class="concept-desc">Most "the website is down" tickets are solved at step 2 or 3 — a stale cache entry or a
+      leftover hosts file edit from testing months ago.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Tracing resolution yourself</h4>
+      <pre class="code-block"><span class="com"># See which resolver your system is configured to use</span>
+cat /etc/resolv.conf
+
+<span class="com"># Look up a name and show the full trip — timing included</span>
+dig example.com
+
+<span class="com"># Trace the entire chain from the root servers down (educational, slower)</span>
+dig +trace example.com
+
+<span class="com"># Ask a *specific* DNS server directly, bypassing your default resolver</span>
+dig @1.1.1.1 example.com
+
+<span class="com"># Check what record types exist — A (IPv4), AAAA (IPv6), MX (mail), TXT, CNAME</span>
+dig example.com MX
+dig example.com TXT
+
+<span class="com"># Reverse lookup: what name does this IP resolve back to?</span>
+dig -x 93.184.216.34</pre>
+      <p class="concept-desc">The <span class="kw">+trace</span> flag is especially good for learning — it shows the
+      actual hierarchy: your resolver asks a root server "who handles .com?", then asks that TLD server "who handles
+      example.com?", then finally asks the authoritative server for the actual IP.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Common pitfall</span>
+      <h4 class="concept-title">"It works on my machine" — DNS cache edition</h4>
+      <p class="concept-desc">A classic scenario: a developer changes a DNS record, tells you "it's updated," and your
+      browser still shows the old site. Both of you are right — the record changed at the authoritative server, but your
+      resolver cached the old answer for its full TTL (time-to-live). Common fixes, in order of how invasive they are:</p>
+      <pre class="code-block"><span class="com"># Flush just your local OS resolver cache (Linux with systemd-resolved)</span>
+sudo resolvectl flush-caches
+
+<span class="com"># macOS</span>
+sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
+
+<span class="com"># Windows (run as administrator)</span>
+ipconfig /flushdns
+
+<span class="com"># Or simply query a different resolver to sanity-check the *real* current value</span>
+dig @8.8.8.8 example.com +short</pre>
+      <p class="concept-desc">If a record was just changed, remember that TTL still applies globally — other people's
+      resolvers around the world will keep serving the cached answer until their TTL expires too. This is why planned DNS
+      cutovers lower the TTL days in advance.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER40-NET v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>VPNs Explained – Tunnels, Encryption, and What They Don't Do</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A VPN is a private tunnel through a public road</h4>
+      <p class="concept-desc">Imagine the internet as a public highway system — anyone running the right equipment at the
+      right point could, in theory, see which trucks are going where. A VPN (Virtual Private Network) builds an
+      encrypted tunnel through that highway: your traffic still travels over the same public infrastructure, but it's
+      wrapped in a layer that hides its contents from anyone watching the road, and makes it appear to originate from the
+      tunnel's far end rather than your actual location.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Two very different reasons people use VPNs</h4>
+      <table class="ai-table">
+        <tr><th>Use case</th><th>What it actually does</th><th>Common protocols</th></tr>
+        <tr><td>Corporate / remote-access VPN</td><td>Lets an employee's laptop join the company's internal network from anywhere, as if it were plugged in at the office</td><td>WireGuard, OpenVPN, IPsec/IKEv2, Cisco AnyConnect</td></tr>
+        <tr><td>Consumer / privacy VPN</td><td>Routes your traffic through a third-party provider's server so your ISP and local network can't see *what* you're accessing — though the VPN provider now can</td><td>WireGuard, OpenVPN (commercial offerings)</td></tr>
+      </table>
+      <p class="concept-desc">These solve different problems for different threat models. A corporate VPN exists so IT can
+      extend a trusted network boundary to remote workers; a consumer VPN exists to shift *who* has visibility into your
+      traffic — from your ISP to the VPN provider — which is a meaningfully different guarantee than "no one can see what
+      I do online."</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Setting up a minimal WireGuard tunnel (lab environment)</h4>
+      <pre class="code-block"><span class="com"># Install WireGuard (Debian/Ubuntu)</span>
+sudo apt install wireguard
+
+<span class="com"># Generate a public/private keypair for this peer</span>
+wg genkey | tee privatekey | wg pubkey > publickey
+
+<span class="com"># Minimal config: /etc/wireguard/wg0.conf
+# (replace placeholders with real keys and addresses)</span>
+<span class="com">#
+# [Interface]
+# PrivateKey = &lt;this peer's private key&gt;
+# Address = 10.10.0.2/24
+#
+# [Peer]
+# PublicKey = &lt;remote peer's public key&gt;
+# Endpoint = vpn.example.com:51820
+# AllowedIPs = 0.0.0.0/0
+# PersistentKeepalive = 25</span>
+
+<span class="com"># Bring the tunnel up and check its status</span>
+sudo wg-quick up wg0
+sudo wg show
+
+<span class="com"># Confirm your traffic is actually routing through the tunnel</span>
+curl https://ifconfig.me</pre>
+      <p class="concept-desc">The <span class="kw">AllowedIPs = 0.0.0.0/0</span> line is the one to read carefully — it tells
+      the system to route <em>all</em> traffic through the tunnel ("full tunnel"), versus a narrower range that only sends
+      specific destinations through it ("split tunnel"). Getting this wrong is one of the most common VPN
+      misconfigurations: too broad and you may break local network access; too narrow and traffic you meant to protect
+      goes out in the clear.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Common pitfall</span>
+      <h4 class="concept-title">"I'm on a VPN, so I'm anonymous" — assume makes an ass out of you and me</h4>
+      <p class="concept-desc">A VPN hides your traffic's path and contents from your local network and ISP — it does
+      <em>not</em> make you anonymous to the websites you visit. You can still be tracked through cookies, browser
+      fingerprinting, account logins, and the VPN provider itself can see (and in some jurisdictions, may be compelled to
+      log and disclose) your activity. Treat "I'm using a VPN" as one layer of a privacy strategy, not a magic cloak —
+      and always read a provider's actual logging policy rather than assuming "no logs" means what it sounds like.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER43-NET v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Subnetting Without the Headache – CIDR Notation Made Practical</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A subnet is just "how big is this neighborhood?"</h4>
+      <p class="concept-desc">An IP address tells you a device's location; a subnet mask tells you how many of its
+      neighbors share the same local "neighborhood" — the group of addresses that can talk to each other directly,
+      without going through a router. CIDR notation (<code>/24</code>, <code>/26</code>, etc.) is just a compact way of
+      writing that mask: the number after the slash tells you how many bits are reserved for identifying the network
+      itself, leaving the rest for individual hosts.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The CIDR cheat sheet beginners actually reach for</h4>
+      <table class="ai-table">
+        <tr><th>CIDR</th><th>Subnet mask</th><th>Usable hosts</th><th>Common use</th></tr>
+        <tr><td>/24</td><td>255.255.255.0</td><td>254</td><td>Typical small office or home network</td></tr>
+        <tr><td>/25</td><td>255.255.255.128</td><td>126</td><td>Splitting a /24 in half — two departments, one building</td></tr>
+        <tr><td>/26</td><td>255.255.255.192</td><td>62</td><td>A single floor or smaller team</td></tr>
+        <tr><td>/27</td><td>255.255.255.224</td><td>30</td><td>A small lab, a rack of servers, a point-to-point link group</td></tr>
+        <tr><td>/30</td><td>255.255.255.252</td><td>2</td><td>A direct link between two routers — exactly enough for both ends</td></tr>
+      </table>
+      <p class="concept-desc">Notice the pattern: every step from /24 toward /32 cuts the available addresses roughly in
+      half. "Usable hosts" is two less than the raw count — one address is reserved to identify the network itself, and
+      one is reserved as the broadcast address that reaches every device in that subnet at once.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Let the tools do the arithmetic — verify, don't memorize</h4>
+      <pre class="code-block"><span class="com"># pip install — actually it's built into Python's standard library!</span>
+<span class="kw">import</span> ipaddress
+
+network = ipaddress.ip_network(<span class="str">&quot;192.168.10.0/26&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Network address:   {network.network_address}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Broadcast address: {network.broadcast_address}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Usable hosts:      {network.num_addresses - 2}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;First usable host: {list(network.hosts())[0]}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Last usable host:  {list(network.hosts())[-1]}&quot;</span>)
+
+<span class="com"># Quick check: is this address inside that subnet?</span>
+ip = ipaddress.ip_address(<span class="str">&quot;192.168.10.40&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;{ip} in {network}? {ip in network}&quot;</span>)
+
+<span class="com"># Splitting a network into smaller subnets — handy for planning
+# departmental allocations from a single block you've been given</span>
+<span class="kw">for</span> sub <span class="kw">in</span> network.subnets(new_prefix=28):
+    <span class="fn">print</span>(<span class="str">f&quot;  Sub-block: {sub}&quot;</span>)</pre>
+      <p class="concept-desc">This is the honest secret of subnetting: nobody who works with networks daily does the binary
+      math by hand every time. They've internalized the cheat-sheet patterns for common cases, and they reach for a
+      calculator (or <span class="kw">ipaddress</span>, or <span class="kw">ipcalc</span> on the command line) to double-check
+      anything unusual. Knowing how it works conceptually — and knowing how to verify it — beats memorizing tables you'll
+      forget under pressure.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me</h4>
+      <p class="concept-desc">"That device should be able to reach the server, they're both on the 192.168.x.x range" is a
+      classic trap — two addresses can look similar and still be in completely different subnets, unable to communicate
+      without a router between them. Before troubleshooting further up the stack, verify the actual subnet boundaries
+      with a tool like the one above rather than eyeballing the addresses and assuming they're neighbors.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER45-NET v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Load Balancers Explained – Spreading the Work Around</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">A load balancer is a traffic cop for your servers</h4>
+      <p class="concept-desc">A load balancer sits in front of a group of servers and decides which one should handle each
+      incoming request — spreading the work around so no single server gets overwhelmed, and so the service keeps running
+      even if one server fails. From the outside, users see a single address; behind that address, the load balancer
+      quietly routes them to whichever healthy server makes the most sense at that moment.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Common balancing strategies, and when each shines</h4>
+      <table class="ai-table">
+        <tr><th>Strategy</th><th>How it decides</th><th>Good fit when...</th></tr>
+        <tr><td>Round robin</td><td>Cycles through servers in order: 1, 2, 3, 1, 2, 3...</td><td>All servers are roughly equal in capacity and requests are roughly equal in cost</td></tr>
+        <tr><td>Least connections</td><td>Sends the next request to whichever server currently has the fewest active connections</td><td>Requests vary significantly in how long they take to process</td></tr>
+        <tr><td>IP hash</td><td>Routes based on a hash of the client's IP — the same client tends to land on the same server</td><td>You need "session stickiness" without a shared session store</td></tr>
+        <tr><td>Weighted</td><td>Some servers get proportionally more traffic than others, based on assigned weights</td><td>Your servers have meaningfully different capacities (a newer, beefier box vs. an older one)</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The unsung hero: health checks</h4>
+      <p class="concept-desc">A load balancer is only as good as its ability to know which servers are actually healthy.
+      It periodically polls each server — often hitting a dedicated <code>/healthz</code> endpoint — and silently stops
+      sending traffic to any server that fails to respond correctly. This is the mechanism that turns "one server crashed"
+      from a customer-facing outage into a non-event nobody outside the on-call team ever notices.</p>
+      <pre class="code-block"><span class="com"># A minimal health endpoint, the kind a load balancer polls every few seconds</span>
+<span class="kw">from</span> flask <span class="kw">import</span> Flask, jsonify
+app = Flask(__name__)
+
+<span class="kw">@app.route</span>(<span class="str">&quot;/healthz&quot;</span>)
+<span class="kw">def</span> <span class="fn">health_check</span>():
+    checks = {
+        <span class="str">&quot;database&quot;</span>: database_is_reachable(),
+        <span class="str">&quot;cache&quot;</span>: cache_is_reachable(),
+        <span class="str">&quot;disk_space_ok&quot;</span>: get_free_disk_percent() &gt; 10,
+    }
+    healthy = <span class="fn">all</span>(checks.values())
+    status_code = 200 <span class="kw">if</span> healthy <span class="kw">else</span> 503
+    <span class="kw">return</span> jsonify(checks), status_code
+
+<span class="com"># A load balancer that sees repeated 503s here will quietly stop
+# routing traffic to this instance — without a single human noticing,
+# until someone reviews the dashboards and finds the graceful save</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me</h4>
+      <p class="concept-desc">A health check that only verifies "is the web server process running?" can report "healthy"
+      while the actual database connection behind it is completely down — leaving users staring at error pages from a
+      server the load balancer confidently considers fine. A good health check verifies the things that actually matter
+      to the user's experience, not just the easiest thing to check. "The process is running" and "the service actually
+      works" are two different claims — don't let your monitoring assume they're the same.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER47-NET v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>The TLS Handshake – What Actually Happens Before "https://" Feels Safe</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The padlock icon represents a surprisingly elegant negotiation</h4>
+      <p class="concept-desc">Every time you load an HTTPS site, your browser and the server perform a rapid
+      multi-step negotiation called the <em>TLS handshake</em> — establishing trust and agreeing on encryption,
+      all before a single byte of your actual page content is transmitted. It happens in well under a second,
+      which is part of why it's so easy to never think about. Understanding the broad strokes demystifies a huge
+      portion of "how the secure web works."</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The handshake in (roughly) five steps</h4>
+      <table class="ai-table">
+        <tr><th>Step</th><th>What happens</th></tr>
+        <tr><td>1. Client Hello</td><td>Your browser says hello and lists the encryption methods ("cipher
+        suites") it supports, plus a random number used later in key generation.</td></tr>
+        <tr><td>2. Server Hello + Certificate</td><td>The server picks a cipher suite both sides support and sends
+        back its <em>digital certificate</em> — proof of identity issued by a trusted Certificate Authority (CA).</td></tr>
+        <tr><td>3. Certificate verification</td><td>Your browser checks that the certificate is valid, unexpired,
+        matches the domain you're visiting, and was signed by a CA it trusts. This is the step that turns a
+        green padlock into something meaningful rather than decorative.</td></tr>
+        <tr><td>4. Key exchange</td><td>Both sides use cryptographic math (often Diffie-Hellman) to agree on a
+        shared <em>session key</em> — without ever transmitting that key in a form an eavesdropper could use.</td></tr>
+        <tr><td>5. Secure session begins</td><td>From here on, all traffic is encrypted with the session key using
+        fast symmetric encryption — the certificate-based "slow" cryptography has done its job and steps aside.</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Inspecting a real certificate from the command line</h4>
+      <p class="concept-desc">You don't need special tools to see this in action — <code>openssl</code> can show
+      you exactly what your browser is silently checking on every visit:</p>
+      <pre class="code-block"><span class="com"># Connect and dump the certificate chain for a domain:</span>
+openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 2&gt;/dev/null | openssl x509 -noout -text
+
+<span class="com"># Useful fields to look for in the output:</span>
+<span class="com">#   Issuer:        which Certificate Authority vouched for this site</span>
+<span class="com">#   Subject:       the domain(s) the certificate is valid for</span>
+<span class="com">#   Validity:      the "Not Before" / "Not After" window -- expired
+#                  certificates are a surprisingly common outage cause</span>
+<span class="com">#   Signature Algorithm:  the cryptographic method used to sign it</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Why "the padlock is green" isn't the same as "this site is trustworthy"</h4>
+      <p class="concept-desc">This is a critical distinction that <em>"assume makes an ass out of you and
+      me"</em> captures perfectly. TLS guarantees two specific things: that your connection to the server is
+      encrypted in transit, and that the certificate matches the domain you typed. It guarantees <strong>nothing
+      whatsoever</strong> about whether the organization running that domain is honest, competent, or safe to
+      hand your data to. Attackers can — and routinely do — obtain valid certificates for convincingly-misspelled
+      lookalike domains. The padlock confirms "this connection isn't being eavesdropped on right now." It does
+      not confirm "you should trust what's on the other end of it." Those are two different questions, and
+      conflating them is one of the most common (and most exploited) assumptions on the web.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body net -->
+<!-- /domain-body net -->
+<!-- /domain-body net -->
+<!-- /domain-body net -->
+<!-- /domain-body net -->
 <!-- /domain-body net -->

@@ -3868,4 +3868,840 @@ job_exit=$?
 
   </div>
 </div>
+
+<!-- BEGINNER34-LINUX v1 -->
+<!-- ── TOPIC: LVM & Storage Management ───────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    LVM &amp; Storage – Flexible Disk Management on Linux
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why LVM? The Problem with Fixed Partitions</div>
+      <div class="concept-desc">
+        Traditional partitions are fixed-size — if <code>/var</code> fills
+        up, resizing it usually means backing up data, repartitioning, and
+        restoring. <strong>LVM (Logical Volume Manager)</strong> adds a
+        flexible layer between physical disks and filesystems.<br><br>
+        <strong>The LVM stack (bottom to top):</strong><br>
+        1. <em>Physical Volume (PV)</em> — a disk or partition
+           (e.g. <code>/dev/sdb1</code>).<br>
+        2. <em>Volume Group (VG)</em> — a pool combining one or more PVs.<br>
+        3. <em>Logical Volume (LV)</em> — a "virtual partition" carved
+           from the VG; this is what you format and mount.<br><br>
+        Benefits: resize volumes live, add disks to a VG without downtime,
+        take instant snapshots, and move data between physical disks
+        transparently.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Building Blocks</div>
+      <div class="concept-title">Creating an LVM Setup From Scratch</div>
+      <div class="concept-desc">
+        This walks through turning a raw disk into a mounted, growable
+        filesystem.
+      </div>
+      <div class="code-block">
+<span class="com"># 1. Create a physical volume on a new disk</span>
+sudo pvcreate /dev/sdb
+
+<span class="com"># 2. Create a volume group from one or more PVs</span>
+sudo vgcreate data_vg /dev/sdb
+
+<span class="com"># 3. Create a logical volume (50 GB) inside the VG</span>
+sudo lvcreate -L 50G -n app_data data_vg
+
+<span class="com"># 4. Format it with a filesystem</span>
+sudo mkfs.ext4 /dev/data_vg/app_data
+
+<span class="com"># 5. Mount it</span>
+sudo mkdir -p /data
+sudo mount /dev/data_vg/app_data /data
+
+<span class="com"># 6. Make it persistent — add to /etc/fstab</span>
+echo '/dev/data_vg/app_data  /data  ext4  defaults  0 2' | sudo tee -a /etc/fstab
+
+<span class="com"># Inspect the stack at any layer</span>
+sudo pvdisplay     <span class="com"># physical volumes</span>
+sudo vgdisplay     <span class="com"># volume groups</span>
+sudo lvdisplay     <span class="com"># logical volumes</span>
+lsblk              <span class="com"># visual block-device tree</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Resizing</div>
+      <div class="concept-title">Growing a Volume Without Downtime</div>
+      <div class="concept-desc">
+        This is LVM's superpower — extending storage on a live system,
+        no reboot required. <em>Always shrink with extreme care</em>
+        (and a backup) — growing is safe, shrinking can destroy data.
+      </div>
+      <div class="code-block">
+<span class="com"># Scenario: /data is filling up. Add a new disk and grow it live.</span>
+
+<span class="com"># 1. Add the new disk to the volume group</span>
+sudo pvcreate /dev/sdc
+sudo vgextend data_vg /dev/sdc
+
+<span class="com"># 2. Grow the logical volume by 20 GB</span>
+sudo lvextend -L +20G /dev/data_vg/app_data
+
+<span class="com"># 3. Resize the filesystem to use the new space (ext4 — does this LIVE)</span>
+sudo resize2fs /dev/data_vg/app_data
+
+<span class="com"># For XFS filesystems, use xfs_growfs instead (also live):</span>
+sudo xfs_growfs /data
+
+<span class="com"># Verify the new size</span>
+df -h /data
+
+<span class="com">─── SHRINKING (dangerous — backup first!) ───────────────────</span>
+<span class="com"># ext4 must be unmounted to shrink; XFS cannot be shrunk at all</span>
+sudo umount /data
+sudo e2fsck -f /dev/data_vg/app_data
+sudo resize2fs /dev/data_vg/app_data 30G
+sudo lvreduce -L 30G /dev/data_vg/app_data
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Snapshots</div>
+      <div class="concept-title">LVM Snapshots – Instant Point-in-Time Backups</div>
+      <div class="concept-desc">
+        A <strong>snapshot</strong> freezes the state of a volume at an
+        instant, so you can back it up consistently while the original
+        keeps changing — essential for backing up live databases.<br><br>
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — when someone runs a bad migration
+        against production, an LVM snapshot from five minutes earlier can
+        save the day.
+      </div>
+      <div class="code-block">
+<span class="com"># Create a snapshot before a risky change (10GB reserved for changes)</span>
+sudo lvcreate -L 10G -s -n app_data_snap /dev/data_vg/app_data
+
+<span class="com"># Mount the snapshot read-only to inspect/back it up</span>
+sudo mkdir /mnt/snapshot
+sudo mount -o ro /dev/data_vg/app_data_snap /mnt/snapshot
+<span class="com"># ... run backup tools against /mnt/snapshot ...</span>
+sudo umount /mnt/snapshot
+
+<span class="com"># Roll back to the snapshot if the change went wrong</span>
+sudo umount /data
+sudo lvconvert --merge /dev/data_vg/app_data_snap
+<span class="com"># Volume reverts to the snapshot's state on next activation</span>
+
+<span class="com"># Remove a snapshot once you no longer need it (frees space)</span>
+sudo lvremove /dev/data_vg/app_data_snap
+
+<span class="com"># Note: snapshots are NOT a substitute for off-site backups —</span>
+<span class="com"># they live on the same physical disks as the original data!</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER36-LINUX v1 -->
+<!-- ── TOPIC: Mail Server Administration ─────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    Mail Servers – Postfix, Dovecot &amp; Email Plumbing
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">How Email Actually Travels</div>
+      <div class="concept-desc">
+        Email involves more moving parts than people realise. Three
+        protocols and two server roles cover almost everything:<br><br>
+        &bull; <strong>MTA (Mail Transfer Agent)</strong> — moves mail
+          between servers using <strong>SMTP</strong> (Simple Mail
+          Transfer Protocol, port 25/587). Examples: Postfix, Exim, Sendmail.<br>
+        &bull; <strong>MDA / IMAP-POP server</strong> — stores mail and
+          lets users retrieve it. Examples: Dovecot.<br>
+        &bull; <strong>IMAP</strong> (port 143/993) — keeps mail on the
+          server, syncs across devices (the modern standard).<br>
+        &bull; <strong>POP3</strong> (port 110/995) — downloads mail to
+          one device, often deletes it from the server (legacy).<br><br>
+        <strong>The journey of an email:</strong><br>
+        Your client → your MTA (SMTP) → recipient's MX server (SMTP) →
+        recipient's mailbox store → recipient's client (IMAP/POP3).
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Postfix Setup</div>
+      <div class="concept-title">Basic Postfix Configuration</div>
+      <div class="concept-desc">
+        Postfix is the most widely deployed open-source MTA. Its main
+        config file is <code>/etc/postfix/main.cf</code>.
+      </div>
+      <div class="code-block">
+<span class="com"># Install Postfix (choose "Internet Site" during setup)</span>
+sudo apt install postfix mailutils
+
+<span class="com"># Key settings in /etc/postfix/main.cf</span>
+myhostname = mail.example.com
+mydomain   = example.com
+myorigin   = $mydomain
+inet_interfaces = all
+mydestination = $myhostname, localhost.$mydomain, $mydomain
+
+<span class="com"># Restrict who can relay mail through your server (CRITICAL — </span>
+<span class="com"># an open relay gets you blacklisted within hours)</span>
+smtpd_relay_restrictions =
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_unauth_destination
+
+<span class="com"># Enforce TLS for incoming and outgoing mail</span>
+smtpd_tls_cert_file = /etc/letsencrypt/live/mail.example.com/fullchain.pem
+smtpd_tls_key_file  = /etc/letsencrypt/live/mail.example.com/privkey.pem
+smtpd_tls_security_level = may
+smtp_tls_security_level  = may
+
+<span class="com"># Apply config and restart</span>
+sudo postfix check
+sudo systemctl restart postfix
+
+<span class="com"># Test sending mail from the CLI</span>
+echo <span class="str">"Test body"</span> | mail -s <span class="str">"Test subject"</span> alice@example.com
+
+<span class="com"># Watch the mail log in real time</span>
+sudo tail -f /var/log/mail.log
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Security</div>
+      <div class="concept-title">Don't Become an Open Relay</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        your default mail server config is safe to expose. The single
+        most common rookie mistake is leaving a server as an
+        <strong>open relay</strong> — anyone on the internet can use it
+        to send mail through you.<br><br>
+        Within hours, spammers find it, your server's IP lands on every
+        major blacklist (Spamhaus, SORBS), and legitimate mail from your
+        domain stops being delivered anywhere.<br><br>
+        <strong>Checklist before going live:</strong><br>
+        &bull; Test from an external network — try relaying through your
+          server from outside; it must be rejected.<br>
+        &bull; Require SASL authentication for any relay.<br>
+        &bull; Set up SPF, DKIM, DMARC (covered in the Social Engineering
+          topic) — receivers use these to validate your mail.<br>
+        &bull; Check your IP against blacklists regularly:
+          <code>https://mxtoolbox.com/blacklists.aspx</code>
+      </div>
+      <div class="code-block">
+<span class="com"># Test for open relay from an external host (use mail-tester.com</span>
+<span class="com"># or manually with telnet — should be REJECTED for unauth relay)</span>
+telnet mail.example.com <span class="num">25</span>
+EHLO test.com
+MAIL FROM:&lt;attacker@evil.com&gt;
+RCPT TO:&lt;victim@someoneelse.com&gt;
+<span class="com"># Expected: "554 5.7.1 Relay access denied" — if you get "250 OK"</span>
+<span class="com"># at this stage, YOU ARE AN OPEN RELAY. Fix immediately.</span>
+
+<span class="com"># Check your sending IP reputation</span>
+dig +short mail.example.com
+<span class="com"># Then check at: mxtoolbox.com/blacklists.aspx</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Diagnosing Common Mail Delivery Issues</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — when "my email isn't sending"
+        tickets come in, work through this systematically:<br><br>
+        1. Check the mail queue: <code>postqueue -p</code> — stuck messages
+           reveal delivery problems.<br>
+        2. Read <code>/var/log/mail.log</code> for the message ID — it
+           shows every hop and any errors.<br>
+        3. Verify DNS — does your MX record point to the right server?
+           <code>dig example.com MX</code><br>
+        4. Test authentication — can the user actually log in via
+           IMAP/SMTP with their credentials?<br>
+        5. Check spam folder and recipient's blacklist status — sometimes
+           "not delivered" really means "filtered as spam."<br>
+        6. Use <code>mail-tester.com</code> — sends a test email and
+           grades your entire setup (SPF/DKIM/DMARC/blacklist/content).
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER37-LINUX v1 -->
+<!-- ── TOPIC: High Availability & Clustering ─────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    High Availability – Keeping Services Up When Servers Fail
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What "High Availability" Actually Means</div>
+      <div class="concept-desc">
+        <strong>High Availability (HA)</strong> means a service keeps
+        running even when individual components fail. The goal isn't
+        "never fails" (impossible) — it's "fails without anyone
+        noticing."<br><br>
+        <strong>Availability is usually expressed in "nines":</strong>
+      </div>
+      <div class="code-block">
+<span class="com">Availability   Downtime per year    Downtime per month   Common label</span>
+99%            3.65 days            7.3 hours            "Two nines"
+99.9%          8.77 hours           43.8 minutes         "Three nines"
+99.99%         52.6 minutes         4.4 minutes          "Four nines"
+99.999%        5.26 minutes         26 seconds           "Five nines"
+
+<span class="com"># The jump from 99.9% to 99.99% looks small on paper</span>
+<span class="com"># but represents 10x more engineering effort and cost.</span>
+<span class="com"># Most businesses don't NEED five nines — that's a question</span>
+<span class="com"># for the business, not a default engineering goal.</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Building Blocks</div>
+      <div class="concept-title">The Three Pillars of HA Architecture</div>
+      <div class="concept-desc">
+        &bull; <strong>Redundancy</strong> — more than one of everything
+          that can fail (servers, disks, network paths, power supplies,
+          even data centres). "One is none, two is one."<br><br>
+        &bull; <strong>Load balancing</strong> — distributes traffic
+          across multiple servers; if one fails, traffic routes around
+          it automatically.<br><br>
+        &bull; <strong>Failover</strong> — automatic detection of failure
+          and automatic switch to a standby. The faster and more silent
+          the failover, the higher the availability.<br><br>
+        <em>"Not my circus, not my monkey"</em> — true HA requires
+        cooperation across teams: network (redundant paths), ops
+        (clustering software), and the application itself (must handle
+        being restarted/relocated gracefully). No single team can build
+        HA alone.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">keepalived</div>
+      <div class="concept-title">Floating IPs with keepalived (VRRP)</div>
+      <div class="concept-desc">
+        <code>keepalived</code> implements <strong>VRRP (Virtual Router
+        Redundancy Protocol)</strong> — two or more servers share a
+        "virtual" IP address. If the active server dies, a standby
+        instantly takes over the IP — clients never notice.
+      </div>
+      <div class="code-block">
+<span class="com"># Install on both servers</span>
+sudo apt install keepalived
+
+<span class="com"># /etc/keepalived/keepalived.conf — PRIMARY server</span>
+vrrp_instance VI_1 {
+    state MASTER
+    interface eth0
+    virtual_router_id 51
+    priority 150            <span class="com"># higher number = preferred primary</span>
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass mysecret
+    }
+    virtual_ipaddress {
+        192.168.1.100/24    <span class="com"># the floating/shared IP</span>
+    }
+}
+
+<span class="com"># /etc/keepalived/keepalived.conf — BACKUP server</span>
+<span class="com"># Same config, but: state BACKUP   and   priority 100</span>
+
+<span class="com"># Start and watch the failover live</span>
+sudo systemctl enable --now keepalived
+sudo journalctl -u keepalived -f
+
+<span class="com"># Test it: stop keepalived on the primary, watch the IP migrate</span>
+sudo systemctl stop keepalived
+ip addr show eth0   <span class="com"># run this on the backup — it now owns .100</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Pacemaker/Corosync</div>
+      <div class="concept-title">Cluster Resource Management</div>
+      <div class="concept-desc">
+        For more complex services (databases, file servers), you need a
+        full <strong>cluster resource manager</strong>:
+        <code>Corosync</code> handles cluster membership/messaging;
+        <code>Pacemaker</code> decides what runs where and handles
+        failover logic.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        a cluster is healthy just because the service responds. Check
+        cluster status directly; a "split-brain" scenario (both nodes
+        think they're primary) can silently corrupt data.
+      </div>
+      <div class="code-block">
+<span class="com"># View overall cluster status</span>
+sudo pcs status
+
+<span class="com"># Output shows: which node is active, resource locations, any failures</span>
+<span class="com">Cluster name: web_cluster</span>
+<span class="com">Stack: corosync</span>
+<span class="com">Current DC: node1 (version ...)  - partition with quorum</span>
+<span class="com">2 nodes configured</span>
+<span class="com">2 resource instances configured</span>
+<span class="com">Online: [ node1 node2 ]</span>
+<span class="com">Full list of resources:</span>
+<span class="com">  Floating_IP    (ocf::heartbeat:IPaddr2):  Started node1</span>
+<span class="com">  WebServer      (systemd:nginx):           Started node1</span>
+
+<span class="com"># Manually move a resource to test failover</span>
+sudo pcs resource move WebServer node2
+
+<span class="com"># Check for "quorum" — without it, clusters refuse to act</span>
+<span class="com"># (this is the safety mechanism that PREVENTS split-brain)</span>
+sudo corosync-quorumtool
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER38-LINUX v1 -->
+<!-- ── TOPIC: Container Internals – cgroups & Namespaces ─────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Intermediate</span>
+    Container Internals – What Docker Is Actually Built From
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Containers Are Not Magic — They're Linux Features</div>
+      <div class="concept-desc">
+        Here's the secret that demystifies Docker: <strong>"containers"
+        aren't a real thing in the Linux kernel.</strong> Docker (and
+        Podman, containerd, etc.) is really just a friendly interface
+        around two much older Linux kernel features:<br><br>
+        &bull; <strong>Namespaces</strong> — make a process think it's
+          alone on the system (its own PIDs, network, filesystem,
+          hostname).<br>
+        &bull; <strong>cgroups (control groups)</strong> — limit and
+          measure how much CPU, memory, and I/O a process (or group of
+          processes) can use.<br><br>
+        Put these two together — a process that can't see anything
+        outside its bubble (namespaces) and can't consume more than its
+        allotted resources (cgroups) — and you have a "container."<br><br>
+        Understanding this helps you debug containers like Linux
+        processes (because that's exactly what they are) and explains
+        why container escapes are possible — they exploit gaps in this
+        kernel-level isolation.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Namespaces</div>
+      <div class="concept-title">The Six Linux Namespace Types</div>
+      <div class="concept-desc">
+        Each namespace type isolates a different slice of what a process
+        can see:
+      </div>
+      <div class="code-block">
+<span class="com">Namespace   What it isolates                     What this means for a container</span>
+PID         Process IDs                          Container's PID 1 looks like the
+                                                  only process on the system
+NET         Network interfaces, routes, ports    Container has its own IP, can't
+                                                  see the host's network traffic
+MNT         Filesystem mount points              Container sees its own root
+                                                  filesystem, not the host's
+UTS         Hostname and domain name             Container can have its own
+                                                  hostname (e.g. "web-7d9f8c")
+IPC         Inter-process communication          Container can't access host's
+            (shared memory, semaphores)           shared memory segments
+USER        User and group IDs                   "root" inside the container can
+                                                  map to an unprivileged host user
+
+<span class="com"># See the namespaces of a running process</span>
+ls -la /proc/$(pgrep -f myapp | head -1)/ns/
+
+<span class="com"># Output looks like:</span>
+<span class="com"># lrwxrwxrwx ... net  -&gt; 'net:[4026532245]'</span>
+<span class="com"># lrwxrwxrwx ... pid  -&gt; 'pid:[4026532248]'</span>
+<span class="com"># lrwxrwxrwx ... uts  -&gt; 'uts:[4026532246]'</span>
+
+<span class="com"># Compare to the host's own namespaces (PID 1)</span>
+ls -la /proc/1/ns/
+<span class="com"># Different numbers = different namespace = isolated</span>
+
+<span class="com"># Run your own minimal "container" with unshare (no Docker needed!)</span>
+sudo unshare --pid --net --mount --uts --fork bash
+hostname my-fake-container       <span class="com"># changes hostname ONLY inside this shell</span>
+ps aux                           <span class="com"># shows almost nothing — your own PID namespace</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">cgroups</div>
+      <div class="concept-title">cgroups – Resource Limits in Action</div>
+      <div class="concept-desc">
+        cgroups are how Docker enforces <code>--memory=512m</code> and
+        <code>--cpus=1</code>. They live in a virtual filesystem you can
+        explore directly.
+      </div>
+      <div class="code-block">
+<span class="com"># Find a container's cgroup (modern systems use cgroup v2)</span>
+docker inspect --format '{{.Id}}' myapp_container
+
+<span class="com"># Explore its resource limits directly in the filesystem</span>
+cd /sys/fs/cgroup/system.slice/docker-&lt;container-id&gt;.scope/
+
+cat memory.max          <span class="com"># memory limit in bytes (or "max" = unlimited)</span>
+cat memory.current      <span class="com"># current memory usage RIGHT NOW</span>
+cat cpu.max             <span class="com"># CPU quota and period</span>
+cat io.stat             <span class="com"># disk I/O statistics</span>
+
+<span class="com"># Watch a container's resource consumption live</span>
+docker stats myapp_container
+
+<span class="com"># Create your own cgroup limit manually (educational — Docker</span>
+<span class="com"># does this automatically, but seeing it raw removes the mystery)</span>
+sudo mkdir /sys/fs/cgroup/my_limited_group
+echo "100000 100000" | sudo tee /sys/fs/cgroup/my_limited_group/cpu.max
+echo $$ | sudo tee /sys/fs/cgroup/my_limited_group/cgroup.procs
+<span class="com"># Now THIS SHELL is limited to 100% of one CPU core</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Why It Matters</div>
+      <div class="concept-title">Using This Knowledge to Debug Real Problems</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — when a container mysteriously
+        gets killed or throttled, knowing the internals turns "it's
+        broken, restart it" into "I found exactly why, here's the fix":<br><br>
+        &bull; <strong>"My container keeps getting OOM-killed"</strong> →
+          Check <code>memory.current</code> vs <code>memory.max</code> —
+          the cgroup is enforcing a limit you set too low.<br>
+        &bull; <strong>"My container is randomly slow"</strong> →
+          Check <code>cpu.max</code> — CPU throttling from cgroup limits
+          looks exactly like random slowness from the inside.<br>
+        &bull; <strong>"Processes inside my container can see host
+          processes"</strong> → The container may be running with
+          <code>--pid=host</code> — a misconfiguration that breaks PID
+          namespace isolation (and is a security risk).<br>
+        &bull; <strong>"I need to debug a container that has no shell"</strong>
+          → Use <code>nsenter</code> to attach to its namespaces directly
+          from the host: <code>nsenter -t &lt;PID&gt; -n -p -m sh</code>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- BEGINNER41-LINUX v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>systemd Essentials – Services, Units, and Why Things Start at Boot</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">systemd is the "stage manager" of a modern Linux system</h4>
+      <p class="concept-desc">When a Linux machine boots, dozens of things need to happen in roughly the right order —
+      mount filesystems, bring up networking, start the SSH daemon, launch your web server. systemd is the init system
+      (process ID 1) responsible for orchestrating all of that, and for keeping track of every running service afterward.
+      Almost every major distribution (Ubuntu, Debian, RHEL/CentOS/Fedora, Arch) uses it today, which makes it one of the
+      highest-leverage things a beginner can learn — the same handful of commands work nearly everywhere.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Units: the building blocks systemd manages</h4>
+      <table class="ai-table">
+        <tr><th>Unit type</th><th>Manages</th><th>Example</th></tr>
+        <tr><td>.service</td><td>A long-running background process (a daemon)</td><td><code>nginx.service</code>, <code>sshd.service</code></td></tr>
+        <tr><td>.timer</td><td>A scheduled job — systemd's modern alternative to cron</td><td><code>logrotate.timer</code></td></tr>
+        <tr><td>.socket</td><td>A network or IPC socket that can start a service on demand when something connects</td><td><code>docker.socket</code></td></tr>
+        <tr><td>.mount</td><td>A filesystem mount point</td><td><code>home.mount</code></td></tr>
+        <tr><td>.target</td><td>A grouping of other units — a "milestone" the system reaches during boot</td><td><code>multi-user.target</code>, <code>graphical.target</code></td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">The commands you'll reach for constantly</h4>
+      <pre class="code-block"><span class="com"># Check whether a service is running right now</span>
+systemctl status nginx
+
+<span class="com"># Start / stop / restart a service immediately (this run only)</span>
+sudo systemctl start nginx
+sudo systemctl stop nginx
+sudo systemctl restart nginx
+<span class="com"># 'reload' re-reads config without dropping active connections — gentler than restart</span>
+sudo systemctl reload nginx
+
+<span class="com"># Make a service start automatically at every future boot
+# (note: this does NOT start it right now — the two are independent!)</span>
+sudo systemctl enable nginx
+
+<span class="com"># Do both at once — enable AND start immediately</span>
+sudo systemctl enable --now nginx
+
+<span class="com"># See WHY something failed — the most useful troubleshooting command here</span>
+journalctl -u nginx -n 50 --no-pager
+
+<span class="com"># Follow a service's logs live, the way you'd 'tail -f' a log file</span>
+journalctl -u nginx -f</pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Common pitfall</span>
+      <h4 class="concept-title">"I started it, why didn't it survive the reboot?" (and the reverse)</h4>
+      <p class="concept-desc"><span class="kw">enable</span> and <span class="kw">start</span> are two completely independent
+      switches that beginners frequently conflate:</p>
+      <table class="ai-table">
+        <tr><th>Command</th><th>Running right now?</th><th>Will it start on next boot?</th></tr>
+        <tr><td><code>systemctl start foo</code></td><td>Yes</td><td>No — forgotten on reboot unless also enabled</td></tr>
+        <tr><td><code>systemctl enable foo</code></td><td>No — stays stopped until started</td><td>Yes — but won't help you *today*</td></tr>
+        <tr><td><code>systemctl enable --now foo</code></td><td>Yes</td><td>Yes</td></tr>
+      </table>
+      <p class="concept-desc">"I enabled it but it's still not running" and "it was working until the server rebooted" are
+      two of the most common systemd tickets — and both trace back to this exact distinction. <strong>Assume makes an ass
+      out of you and me</strong>: always run <span class="kw">systemctl status</span> to confirm both the current state
+      <em>and</em> whether it's enabled, rather than assuming one implies the other.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER43-LINUX v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>File Permissions Demystified – rwx, Octal Notation, and chmod</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Reading the permission string, left to right</h4>
+      <p class="concept-desc">Run <code>ls -l</code> and you'll see a string like <code>-rwxr-xr--</code> at the start of
+      each line. It looks cryptic until you break it into four pieces:</p>
+      <table class="ai-table">
+        <tr><th>Position</th><th>Means</th><th>In <code>-rwxr-xr--</code></th></tr>
+        <tr><td>1st character</td><td>File type: <code>-</code> regular file, <code>d</code> directory, <code>l</code> symlink</td><td><code>-</code> (a regular file)</td></tr>
+        <tr><td>Characters 2-4</td><td>Owner's permissions: read, write, execute</td><td><code>rwx</code> — owner can do all three</td></tr>
+        <tr><td>Characters 5-7</td><td>Group's permissions</td><td><code>r-x</code> — group can read and execute, not write</td></tr>
+        <tr><td>Characters 8-10</td><td>Everyone else's permissions</td><td><code>r--</code> — others can only read</td></tr>
+      </table>
+      <p class="concept-desc">For a directory, the meaning of each letter shifts slightly: <span class="kw">r</span> lets
+      you list its contents, <span class="kw">w</span> lets you create/delete files inside it, and <span class="kw">x</span>
+      lets you actually <em>enter</em> it (via <code>cd</code>) or access files inside by full path. A directory with
+      <code>r--</code> but no <code>x</code> is a common source of confusing "permission denied" errors — you can see
+      what's there but can't actually get in.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Octal notation: the same thing, in a faster shorthand</h4>
+      <p class="concept-desc">Each <span class="kw">rwx</span> triplet can be represented as a single digit by adding up
+      values: read = 4, write = 2, execute = 1. So <code>rwx</code> = 4+2+1 = <strong>7</strong>, <code>r-x</code> = 4+0+1 =
+      <strong>5</strong>, and <code>r--</code> = 4+0+0 = <strong>4</strong>. That makes <code>-rwxr-xr--</code> equivalent
+      to the much more typeable <code>754</code> — which is exactly the form you'll see in <span class="kw">chmod</span>
+      commands and deployment scripts everywhere.</p>
+      <table class="ai-table">
+        <tr><th>Octal digit</th><th>Permissions granted</th><th>Common use</th></tr>
+        <tr><td>7</td><td>rwx — read, write, execute</td><td>Scripts and programs you own and run</td></tr>
+        <tr><td>6</td><td>rw- — read and write, no execute</td><td>Regular documents and config files</td></tr>
+        <tr><td>5</td><td>r-x — read and execute, no write</td><td>Shared programs others should run but not modify</td></tr>
+        <tr><td>4</td><td>r-- — read only</td><td>Reference files nobody but the owner should change</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Setting permissions deliberately</h4>
+      <pre class="code-block"><span class="com"># View permissions in detail</span>
+ls -l deploy.sh
+
+<span class="com"># Make a script executable for the owner only — common for personal scripts</span>
+chmod 700 deploy.sh
+<span class="com"># Result: rwx------  (owner: full control, everyone else: nothing)</span>
+
+<span class="com"># Make a shared script runnable by the whole team, editable only by the owner</span>
+chmod 755 deploy.sh
+<span class="com"># Result: rwxr-xr-x  (owner: full, group/others: read+execute)</span>
+
+<span class="com"># Symbolic form — same end result, sometimes clearer to read in scripts</span>
+chmod u=rwx,g=rx,o=rx deploy.sh
+
+<span class="com"># Add execute permission without disturbing existing read/write bits</span>
+chmod +x deploy.sh
+
+<span class="com"># Recursively fix an entire directory tree (use carefully!)</span>
+chmod -R u=rwX,g=rX,o= /opt/myapp</pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">"chmod 777 it" is the duct tape of permissions — and just as ugly under the surface</h4>
+      <p class="concept-desc"><span class="kw">chmod 777</span> grants read, write, and execute to literally everyone — the
+      owner, the group, and every other user on the system. It "fixes" almost any permission error instantly, which is
+      exactly why it spreads through forums and Stack Overflow answers as a quick solution. <strong>Assume makes an ass
+      out of you and me</strong>: assuming "wide open" is harmless because "it's just my home lab" is how a small
+      convenience habit becomes a real vulnerability the day that file matters. Take the extra thirty seconds to figure
+      out the <em>narrowest</em> permission that actually solves the problem — your future self (and anyone auditing the
+      system later) will thank you.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER45-LINUX v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>Process Management – Finding and Taming Runaway Processes</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Every running thing is a process — and every process tells a story</h4>
+      <p class="concept-desc">A process is a running instance of a program — and at any moment, a Linux system might have
+      hundreds of them, most quietly doing their job. The skill of process management is being able to quickly answer
+      "what's running, what's it doing, is it behaving normally, and how do I deal with it if it isn't?" — questions that
+      come up constantly in troubleshooting, whether the symptom is "the server feels slow" or "this thing won't quit."</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Seeing what's running, and how it's behaving</h4>
+      <pre class="code-block"><span class="com"># The classic snapshot view — every process, full detail</span>
+ps aux
+
+<span class="com"># Live, auto-refreshing view sorted by resource usage —
+# your first stop when something "feels slow"</span>
+top
+<span class="com"># or, with friendlier output and mouse support:</span>
+htop
+
+<span class="com"># Find processes by name — handy when you know what you're
+# looking for but not its process ID (PID)</span>
+pgrep -fl nginx
+
+<span class="com"># See the full ancestry — what launched what, and in what order
+# (extremely useful for understanding "where did this come from?")</span>
+ps -ef --forest
+
+<span class="com"># Check what files and network connections a specific process has open —
+# great for "why won't this file unmount?" or "what is this PID
+# actually talking to?"</span>
+lsof -p 4821</pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Stopping a process: three signals, three very different outcomes</h4>
+      <table class="ai-table">
+        <tr><th>Signal</th><th>Command</th><th>What it actually means</th></tr>
+        <tr><td>SIGTERM (15)</td><td><code>kill 4821</code></td><td>"Please shut yourself down gracefully" — gives the process a chance to save state, close connections, and clean up</td></tr>
+        <tr><td>SIGKILL (9)</td><td><code>kill -9 4821</code></td><td>"Stop immediately, no negotiation" — the kernel terminates it on the spot; the process gets no chance to clean up anything</td></tr>
+        <tr><td>SIGHUP (1)</td><td><code>kill -1 4821</code></td><td>"Reload your configuration" — many daemons treat this as "re-read your config file without fully restarting"</td></tr>
+      </table>
+      <p class="concept-desc">The escalation order matters: try <span class="kw">SIGTERM</span> first, wait a few seconds,
+      and reach for <span class="kw">SIGKILL</span> only if the process genuinely won't respond. Reaching straight for
+      <code>kill -9</code> out of habit is how database processes end up with corrupted files and temp directories end up
+      full of orphaned lock files — the very cleanup steps SIGTERM would have given the process a chance to perform.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — verify the PID before you kill it</h4>
+      <p class="concept-desc">Process IDs get reused constantly as old processes exit and new ones start — the PID you
+      noted five minutes ago in a different terminal might belong to a completely different program by the time you act
+      on it. Before running <code>kill</code> on a number you wrote down earlier, re-run <code>ps</code> or
+      <code>pgrep</code> to confirm that PID still belongs to what you think it does. The few seconds that takes is far
+      cheaper than explaining why you killed the wrong service.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER47-LINUX v1 -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <h3>"The Disk Is Full" – Diagnosing Storage Problems Like a Calm Professional</h3>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">The classic 2 AM page: "No space left on device"</h4>
+      <p class="concept-desc">Few alerts feel as urgent as a server running out of disk space — services start
+      failing to write logs, databases stop accepting writes, and everything gets weird in ways that don't
+      immediately look storage-related. The good news: diagnosing <em>where</em> the space went is usually a
+      five-minute job once you know the right three commands and the order to run them in.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Step 1 — confirm it, and find which filesystem is the problem</h4>
+      <p class="concept-desc"><code>df</code> ("disk free") shows you space at the filesystem level — this is
+      where you confirm the emergency is real and identify exactly which mount point is the culprit:</p>
+      <pre class="code-block"><span class="com"># -h = human-readable sizes (GB/MB instead of raw byte counts)</span>
+df -h
+
+<span class="com"># Typical output -- the "Use%" column is what you're scanning for:</span>
+<span class="com"># Filesystem      Size  Used Avail Use% Mounted on</span>
+<span class="com"># /dev/sda1        50G   48G  0.5G  99% /</span>
+<span class="com"># /dev/sdb1       200G   80G  110G  43% /var/log</span>
+<span class="com">#</span>
+<span class="com"># Here, the root filesystem ("/") is the emergency -- 99% full.</span>
+<span class="com"># /var/log on its own disk is fine. Now we know WHERE to dig.</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Step 2 — find which directory is actually eating the space</h4>
+      <p class="concept-desc">Once you know <em>which</em> filesystem is full, <code>du</code> ("disk usage") helps
+      you walk down the directory tree to find the actual offender — usually a runaway log file, an old backup
+      nobody cleaned up, or a temp directory that grew out of control:</p>
+      <pre class="code-block"><span class="com"># Summarize top-level directory sizes, sorted largest first:</span>
+du -h --max-depth=1 / 2&gt;/dev/null | sort -rh | head -10
+
+<span class="com"># Drill into the biggest offender, one level deeper:</span>
+du -h --max-depth=1 /var 2&gt;/dev/null | sort -rh | head -10
+
+<span class="com"># Often the trail leads somewhere very specific, e.g.:</span>
+<span class="com">#   23G   /var/log/myapp/debug.log</span>
+<span class="com">#   -- a log rotation policy was never configured for this app</span></pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Step 3 — understand the "phantom space" trap before you panic further</h4>
+      <p class="concept-desc">Here's a scenario that confuses almost every beginner at least once: you delete a
+      huge file, run <code>df</code> again, and the space <em>still isn't free</em>. This isn't a bug — it's how
+      Unix-like systems handle deletion. If a running process still has the file open, the space isn't released
+      until that process closes it (or restarts). <code>lsof</code> ("list open files") reveals exactly this:</p>
+      <pre class="code-block"><span class="com"># Find processes holding open file handles to deleted files
+# (the "(deleted)" marker is the giveaway):</span>
+lsof +L1 2&gt;/dev/null | grep deleted
+
+<span class="com"># Output might show something like:</span>
+<span class="com"># myapp     2841  root   12w   REG   8,1  19327352  (deleted) /var/log/myapp/debug.log</span>
+<span class="com">#</span>
+<span class="com"># The fix isn't deleting it again -- it's already gone from the
+# directory listing. Restart (or signal) the process holding it open,
+# and the space returns immediately.</span></pre>
+      <p class="concept-desc">This is also a perfect moment to remember <em>"assume makes an ass out of you and
+      me"</em> — assuming a deleted file's space was reclaimed (when it wasn't) has led more than one engineer to
+      delete <em>more</em> files in a panic, sometimes ones that were actually needed. Confirm with <code>lsof</code>
+      before escalating to more drastic measures.</p>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body linux -->
+<!-- /domain-body linux -->
+<!-- /domain-body linux -->
+<!-- /domain-body linux -->
 <!-- /domain-body linux -->
