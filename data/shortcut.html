@@ -1700,3 +1700,282 @@ find . -name <span class="str">"*.tmp"</span> | xargs rm -f</div>
               </div>
             </div>
           </div>
+
+<!-- ── TOPIC: GITHUB / GIT COMMANDS ────────────────────────── -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐙</span>
+              <span class="topic-name">GitHub &amp; Git — Command Reference</span>
+              <span class="topic-badge">DEV · VERSION CONTROL</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Git vs GitHub</div>
+                <div class="concept-desc">
+                  <strong style="color:var(--cyan)">Git</strong> is a distributed version-control system that runs locally — it tracks changes, branches, and history entirely on your machine.
+                  <strong style="color:var(--amber)">GitHub</strong> is a cloud hosting service for Git repositories that adds pull requests, Actions CI/CD, Issues, and collaboration features.
+                  You push <em>local</em> Git commits to a <em>remote</em> GitHub repository.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Core Workflow — Init · Clone · Stage · Commit · Push</div>
+                <div class="dw">
+                  <div class="dt">▸ SETUP &amp; REPO CREATION</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Command</th><th>What It Does</th></tr>
+                    <tr><td><code>git init</code></td><td>Create a new Git repo in the current directory</td></tr>
+                    <tr><td><code>git clone &lt;url&gt;</code></td><td>Download a remote repo and all its history</td></tr>
+                    <tr><td><code>git remote add origin &lt;url&gt;</code></td><td>Link local repo to a remote (usually GitHub)</td></tr>
+                    <tr><td><code>git remote -v</code></td><td>List all configured remotes and their URLs</td></tr>
+                    <tr><td><code>git config --global user.name "Name"</code></td><td>Set your display name for commits globally</td></tr>
+                    <tr><td><code>git config --global user.email "e@x.com"</code></td><td>Set your email for commits globally</td></tr>
+                  </table>
+
+                  <div class="dt">▸ STAGE &amp; COMMIT</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Command</th><th>What It Does</th></tr>
+                    <tr><td><code>git status</code></td><td>Show staged, unstaged, and untracked files</td></tr>
+                    <tr><td><code>git add &lt;file&gt;</code></td><td>Stage a specific file for the next commit</td></tr>
+                    <tr><td><code>git add .</code></td><td>Stage all changed files in current directory</td></tr>
+                    <tr><td><code>git commit -m "message"</code></td><td>Save staged snapshot with a descriptive message</td></tr>
+                    <tr><td><code>git commit --amend</code></td><td>Edit the last commit message or add staged changes to it</td></tr>
+                    <tr><td><code>git diff</code></td><td>Show unstaged changes line by line</td></tr>
+                    <tr><td><code>git diff --staged</code></td><td>Show staged changes that will go into the next commit</td></tr>
+                  </table>
+
+                  <div class="dt">▸ PUSH &amp; PULL</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Command</th><th>What It Does</th></tr>
+                    <tr><td><code>git push -u origin main</code></td><td>Push main branch &amp; set upstream tracking for future pushes</td></tr>
+                    <tr><td><code>git push</code></td><td>Push current branch to its tracked remote branch</td></tr>
+                    <tr><td><code>git pull</code></td><td>Fetch remote changes and merge into current branch</td></tr>
+                    <tr><td><code>git fetch origin</code></td><td>Download remote changes without merging them</td></tr>
+                    <tr><td><code>git push origin --delete &lt;branch&gt;</code></td><td>Delete a branch on the remote</td></tr>
+                  </table>
+
+                  <div class="dt">▸ BRANCHING &amp; MERGING</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Command</th><th>What It Does</th></tr>
+                    <tr><td><code>git branch</code></td><td>List all local branches (* = current)</td></tr>
+                    <tr><td><code>git branch &lt;name&gt;</code></td><td>Create a new branch at current commit</td></tr>
+                    <tr><td><code>git switch &lt;name&gt;</code></td><td>Switch to an existing branch (modern syntax)</td></tr>
+                    <tr><td><code>git switch -c &lt;name&gt;</code></td><td>Create and switch to a new branch in one step</td></tr>
+                    <tr><td><code>git merge &lt;branch&gt;</code></td><td>Merge named branch into current branch</td></tr>
+                    <tr><td><code>git rebase main</code></td><td>Replay current branch commits on top of main (cleaner history)</td></tr>
+                    <tr><td><code>git branch -d &lt;name&gt;</code></td><td>Delete a local branch (safe — fails if unmerged)</td></tr>
+                  </table>
+
+                  <div class="dt">▸ INSPECTION &amp; HISTORY</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Command</th><th>What It Does</th></tr>
+                    <tr><td><code>git log --oneline</code></td><td>Compact one-line-per-commit history</td></tr>
+                    <tr><td><code>git log --oneline --graph</code></td><td>ASCII branch graph alongside commit log</td></tr>
+                    <tr><td><code>git show &lt;commit&gt;</code></td><td>Display diff and metadata for a specific commit</td></tr>
+                    <tr><td><code>git blame &lt;file&gt;</code></td><td>Show who last changed each line of a file</td></tr>
+                    <tr><td><code>git tag v1.0.0</code></td><td>Create a lightweight tag at current commit</td></tr>
+                  </table>
+
+                  <div class="dt">▸ UNDO &amp; RECOVERY</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Command</th><th>What It Does</th></tr>
+                    <tr><td><code>git restore &lt;file&gt;</code></td><td>Discard unstaged changes to a file (permanent)</td></tr>
+                    <tr><td><code>git restore --staged &lt;file&gt;</code></td><td>Unstage a file (keeps changes on disk)</td></tr>
+                    <tr><td><code>git revert &lt;commit&gt;</code></td><td>Create a new commit that undoes a past commit (safe for shared repos)</td></tr>
+                    <tr><td><code>git reset --soft HEAD~1</code></td><td>Undo last commit but keep changes staged</td></tr>
+                    <tr><td><code>git reset --hard HEAD~1</code></td><td>Undo last commit AND discard changes entirely (destructive)</td></tr>
+                    <tr><td><code>git stash</code></td><td>Shelve current changes to a temporary stack</td></tr>
+                    <tr><td><code>git stash pop</code></td><td>Apply most-recent stash and remove it from the stack</td></tr>
+                  </table>
+
+                  <div class="dt">▸ GITHUB CLI (gh)</div>
+                  <table class="ref-table">
+                    <tr><th>Command</th><th>What It Does</th></tr>
+                    <tr><td><code>gh auth login</code></td><td>Authenticate the GitHub CLI with your account</td></tr>
+                    <tr><td><code>gh repo create</code></td><td>Create a new GitHub repo interactively</td></tr>
+                    <tr><td><code>gh repo clone &lt;owner/repo&gt;</code></td><td>Clone a GitHub repo by owner/name shorthand</td></tr>
+                    <tr><td><code>gh pr create</code></td><td>Open a pull request for the current branch</td></tr>
+                    <tr><td><code>gh pr list</code></td><td>List open pull requests in the current repo</td></tr>
+                    <tr><td><code>gh pr merge</code></td><td>Merge the current pull request</td></tr>
+                    <tr><td><code>gh issue create</code></td><td>Create a new issue in the current repo</td></tr>
+                    <tr><td><code>gh issue list</code></td><td>List open issues in the current repo</td></tr>
+                    <tr><td><code>gh run list</code></td><td>List recent GitHub Actions workflow runs</td></tr>
+                    <tr><td><code>gh run view</code></td><td>View details and logs for a workflow run</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+<!-- ── TOPIC: API KEYS &amp; GATEWAYS ────────────────────────────── -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔑</span>
+              <span class="topic-name">API Keys &amp; Gateways — Netlify · GitHub · REST</span>
+              <span class="topic-badge">DEV · WEB · DEPLOY</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">What Is an API Key?</div>
+                <div class="concept-desc">
+                  An <strong style="color:var(--cyan)">API key</strong> is a unique string a server issues to identify and authorize a client.
+                  When you make a request to an external service (weather data, payment processor, AI model), you include the key so the server
+                  knows who you are and what you're allowed to do.
+                  Keys are like passwords for machines — they should never be hard-coded in source code or committed to Git.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">API Key Types &amp; Token Formats</div>
+                <div class="dw">
+                  <div class="dt">▸ KEY &amp; TOKEN TYPES</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Type</th><th>How It Works</th><th>Example Use</th></tr>
+                    <tr><td style="color:var(--cyan)">API Key (static)</td><td>A long random string sent with every request</td><td>OpenWeather, Stripe publishable key</td></tr>
+                    <tr><td style="color:var(--cyan)">Secret Key</td><td>Server-side only — never exposed to browsers</td><td>Stripe secret key, Twilio auth token</td></tr>
+                    <tr><td style="color:var(--cyan)">Bearer Token (OAuth 2.0)</td><td>Short-lived token exchanged after auth flow</td><td>Google APIs, GitHub OAuth Apps</td></tr>
+                    <tr><td style="color:var(--cyan)">Personal Access Token (PAT)</td><td>Long-lived user token with scoped permissions</td><td>GitHub PAT, GitLab personal token</td></tr>
+                    <tr><td style="color:var(--cyan)">JWT (JSON Web Token)</td><td>Self-contained signed payload: header.payload.sig</td><td>Auth0, Firebase, custom auth backends</td></tr>
+                    <tr><td style="color:var(--cyan)">Service Account Key</td><td>JSON credential file for machine-to-machine auth</td><td>Google Cloud service accounts</td></tr>
+                    <tr><td style="color:var(--cyan)">Webhook Secret</td><td>HMAC signature to verify incoming webhook payloads</td><td>GitHub webhooks, Stripe webhooks</td></tr>
+                  </table>
+
+                  <div class="dt">▸ HOW API KEYS ARE SENT</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Method</th><th>Example</th><th>Notes</th></tr>
+                    <tr><td>HTTP Header (preferred)</td><td><code>Authorization: Bearer &lt;token&gt;</code></td><td>Most secure — not in logs or browser history</td></tr>
+                    <tr><td>Custom Header</td><td><code>X-API-Key: &lt;key&gt;</code></td><td>Common with REST APIs (e.g. AWS, Twilio)</td></tr>
+                    <tr><td>Query Parameter</td><td><code>?api_key=&lt;key&gt;</code></td><td>Convenient but appears in server logs — avoid for secrets</td></tr>
+                    <tr><td>Request Body</td><td><code>{ "api_key": "..." }</code></td><td>Used by some legacy APIs; only safe over HTTPS</td></tr>
+                    <tr><td>Basic Auth</td><td><code>Authorization: Basic base64(user:pass)</code></td><td>Username = key, password = secret (e.g. Twilio)</td></tr>
+                  </table>
+
+                  <div class="dt">▸ API GATEWAY PATTERNS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Gateway Type</th><th>Protocol</th><th>Key Trait</th></tr>
+                    <tr><td style="color:var(--green)">REST API</td><td>HTTP/HTTPS</td><td>Stateless; uses GET/POST/PUT/DELETE + JSON responses</td></tr>
+                    <tr><td style="color:var(--green)">GraphQL</td><td>HTTP/HTTPS</td><td>Single endpoint; client specifies exactly what data it needs</td></tr>
+                    <tr><td style="color:var(--green)">WebSocket</td><td>ws:// / wss://</td><td>Persistent two-way connection; used for real-time data</td></tr>
+                    <tr><td style="color:var(--green)">Webhook</td><td>HTTP/HTTPS</td><td>Server pushes data to YOUR URL when an event occurs</td></tr>
+                    <tr><td style="color:var(--green)">gRPC</td><td>HTTP/2</td><td>Binary protocol; used for high-performance microservices</td></tr>
+                    <tr><td style="color:var(--green)">Netlify Functions</td><td>HTTPS</td><td>Serverless endpoints at /.netlify/functions/&lt;name&gt;</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Platform</div>
+                <div class="concept-title">Netlify — Environment Variables &amp; Deploy Keys</div>
+                <div class="concept-desc">
+                  Netlify injects environment variables at build time and into serverless functions. Never hard-code secrets in <code>netlify.toml</code> — store them in the Netlify dashboard under <strong>Site settings → Environment variables</strong>.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ KEY NETLIFY VARIABLES</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Variable</th><th>What It Holds</th></tr>
+                    <tr><td><code>NETLIFY_AUTH_TOKEN</code></td><td>Personal access token for the Netlify CLI and API</td></tr>
+                    <tr><td><code>NETLIFY_SITE_ID</code></td><td>Unique ID of the target site (used by <code>netlify deploy</code>)</td></tr>
+                    <tr><td><code>NODE_VERSION</code></td><td>Node.js version to use during build (e.g. <code>18</code>)</td></tr>
+                    <tr><td><code>CONTEXT</code></td><td>Build context: <code>production</code>, <code>deploy-preview</code>, <code>branch-deploy</code></td></tr>
+                    <tr><td><code>DEPLOY_URL</code></td><td>URL of this specific deploy (injected automatically by Netlify)</td></tr>
+                    <tr><td><code>URL</code></td><td>Primary site URL (e.g. https://mysite.netlify.app)</td></tr>
+                    <tr><td><code>BRANCH</code></td><td>Git branch that triggered this build</td></tr>
+                    <tr><td><code>COMMIT_REF</code></td><td>Full SHA of the Git commit that triggered the build</td></tr>
+                  </table>
+
+                  <div class="dt">▸ NETLIFY CLI COMMANDS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Command</th><th>What It Does</th></tr>
+                    <tr><td><code>netlify login</code></td><td>Authenticate CLI with your Netlify account via browser</td></tr>
+                    <tr><td><code>netlify init</code></td><td>Link current directory to a Netlify site (or create one)</td></tr>
+                    <tr><td><code>netlify dev</code></td><td>Run local dev server that emulates Netlify Functions &amp; redirects</td></tr>
+                    <tr><td><code>netlify build</code></td><td>Run the build command locally (same as the Netlify CI build)</td></tr>
+                    <tr><td><code>netlify deploy</code></td><td>Deploy site to a draft URL for preview</td></tr>
+                    <tr><td><code>netlify deploy --prod</code></td><td>Deploy site to the production URL</td></tr>
+                    <tr><td><code>netlify env:list</code></td><td>List all environment variables for the linked site</td></tr>
+                    <tr><td><code>netlify env:set KEY val</code></td><td>Add or update an environment variable in the Netlify dashboard</td></tr>
+                    <tr><td><code>netlify env:get KEY</code></td><td>Print the value of a single environment variable</td></tr>
+                    <tr><td><code>netlify functions:list</code></td><td>List all serverless functions deployed on the site</td></tr>
+                  </table>
+
+                  <div class="dt">▸ netlify.toml — KEY CONFIG FIELDS</div>
+                  <table class="ref-table">
+                    <tr><th>Field</th><th>Purpose</th><th>Example</th></tr>
+                    <tr><td><code>[build] command</code></td><td>Build command Netlify runs</td><td><code>"npm run build"</code></td></tr>
+                    <tr><td><code>[build] publish</code></td><td>Folder containing built output to deploy</td><td><code>"dist"</code></td></tr>
+                    <tr><td><code>[build] functions</code></td><td>Folder containing serverless function files</td><td><code>"netlify/functions"</code></td></tr>
+                    <tr><td><code>[build.environment]</code></td><td>Non-secret env vars baked into the build</td><td><code>NODE_VERSION = "18"</code></td></tr>
+                    <tr><td><code>[[redirects]]</code></td><td>URL redirect / rewrite rules</td><td><code>from = "/*" to = "/index.html"</code></td></tr>
+                    <tr><td><code>[[headers]]</code></td><td>HTTP response headers to add to matched paths</td><td>CSP, CORS, caching headers</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Platform</div>
+                <div class="concept-title">GitHub — Personal Access Tokens &amp; Actions Secrets</div>
+                <div class="concept-desc">
+                  GitHub uses Personal Access Tokens (PATs) to let scripts, CI pipelines, and tools authenticate as you without needing your password.
+                  GitHub Actions has a built-in <code>GITHUB_TOKEN</code> automatically available in every workflow — no setup needed.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ TOKEN TYPES</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Token</th><th>Scope</th><th>Use Case</th></tr>
+                    <tr><td style="color:var(--amber)">Classic PAT</td><td>Coarse — whole account, broad permission buckets</td><td>Quick scripts, legacy integrations</td></tr>
+                    <tr><td style="color:var(--amber)">Fine-grained PAT</td><td>Specific repos + specific permissions (read/write)</td><td>Preferred for new integrations — least privilege</td></tr>
+                    <tr><td style="color:var(--amber)">GITHUB_TOKEN</td><td>Auto-scoped to current repo during the workflow run</td><td>GitHub Actions — push, comment on PRs, publish packages</td></tr>
+                    <tr><td style="color:var(--amber)">Deploy Key</td><td>SSH key tied to a single repo (read or read/write)</td><td>Server-side deploys, CI systems without a user account</td></tr>
+                    <tr><td style="color:var(--amber)">OAuth App Token</td><td>User grants specific scopes via OAuth flow</td><td>Third-party apps that need to act on behalf of users</td></tr>
+                    <tr><td style="color:var(--amber)">GitHub App Token</td><td>Installation token issued per-repo, short-lived</td><td>Automated bots, CI/CD integrations (preferred for orgs)</td></tr>
+                  </table>
+
+                  <div class="dt">▸ GITHUB ACTIONS SECRETS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>How To</th><th>Steps</th></tr>
+                    <tr><td>Add a secret</td><td>Repo → Settings → Secrets and variables → Actions → New repository secret</td></tr>
+                    <tr><td>Use in workflow</td><td><code>${{ secrets.MY_SECRET }}</code> in any step's <code>env:</code> or command</td></tr>
+                    <tr><td>Org-level secret</td><td>Org → Settings → Secrets → can be shared across multiple repos</td></tr>
+                    <tr><td>Built-in token</td><td><code>${{ secrets.GITHUB_TOKEN }}</code> — always available, no setup needed</td></tr>
+                  </table>
+
+                  <div class="dt">▸ COMMON PAT PERMISSION SCOPES</div>
+                  <table class="ref-table">
+                    <tr><th>Scope</th><th>Grants Access To</th></tr>
+                    <tr><td><code>repo</code></td><td>Full read/write access to private and public repos</td></tr>
+                    <tr><td><code>public_repo</code></td><td>Read/write access to public repos only</td></tr>
+                    <tr><td><code>workflow</code></td><td>Create and update GitHub Actions workflow files</td></tr>
+                    <tr><td><code>read:user</code></td><td>Read your public profile data</td></tr>
+                    <tr><td><code>user:email</code></td><td>Read your verified email addresses</td></tr>
+                    <tr><td><code>packages</code></td><td>Upload/download GitHub Packages</td></tr>
+                    <tr><td><code>delete_repo</code></td><td>Delete repositories (avoid granting unless needed)</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Best Practices</div>
+                <div class="concept-title">Keeping API Keys Secure</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Rule</th><th>Why It Matters</th></tr>
+                    <tr><td style="color:var(--red)">Never commit keys to Git</td><td>Once pushed (even deleted later), keys are in git history forever and can be scraped</td></tr>
+                    <tr><td style="color:var(--green)">Use .env files locally</td><td><code>.env</code> holds secrets for local dev — always add it to <code>.gitignore</code></td></tr>
+                    <tr><td style="color:var(--green)">Use platform secret stores</td><td>Netlify env vars, GitHub Actions secrets, AWS Secrets Manager — not plain config files</td></tr>
+                    <tr><td style="color:var(--green)">Least privilege</td><td>Grant only the minimum permissions the key actually needs — limits blast radius if leaked</td></tr>
+                    <tr><td style="color:var(--green)">Rotate regularly</td><td>Expire and replace tokens on a schedule; immediately rotate any key that may have been exposed</td></tr>
+                    <tr><td style="color:var(--green)">Separate keys per environment</td><td>Dev, staging, and production should each have their own keys so a test leak doesn't hit prod</td></tr>
+                    <tr><td style="color:var(--green)">Use secret scanning</td><td>GitHub scans pushes for known token formats and alerts you (or blocks the push) automatically</td></tr>
+                    <tr><td style="color:var(--amber)">Use HTTPS only</td><td>Sending a key over plain HTTP exposes it to anyone watching the network</td></tr>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+          </div>
