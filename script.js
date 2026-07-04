@@ -210,48 +210,91 @@ function urlToolClear() {
 // SEARCH
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Stored original innerHTML for each searchable node (keyed by element). */
-const _originals = new WeakMap();
+/** Nodes we injected <mark> highlights into during the current search. */
+const _highlighted = new Set();
 
-/** Save original HTML before first search so we can restore highlights. */
-function saveOriginal(el) {
-  if (!_originals.has(el)) _originals.set(el, el.innerHTML);
+/** Lowercased textContent per topic, computed once (content never changes). */
+const _topicTextCache = new WeakMap();
+function topicSearchText(topic) {
+  let t = _topicTextCache.get(topic);
+  if (t === undefined) {
+    t = topic.textContent.toLowerCase();
+    _topicTextCache.set(topic, t);
+  }
+  return t;
 }
 
-/** Restore all saved originals (removes highlights). */
-function restoreOriginals() {
-  document.querySelectorAll("[data-search-marked]").forEach(el => {
-    if (_originals.has(el)) el.innerHTML = _originals.get(el);
-    el.removeAttribute("data-search-marked");
+/** Cached domain sections (built once on first search). */
+let _domainSections = null;
+function domainSections() {
+  if (!_domainSections) _domainSections = [...document.querySelectorAll(".domain-section")];
+  return _domainSections;
+}
+
+/** Remove all <mark class="sh"> wrappers, restoring the original text nodes. */
+function clearHighlights() {
+  _highlighted.forEach(el => {
+    el.querySelectorAll("mark.sh").forEach(m => {
+      m.replaceWith(document.createTextNode(m.textContent));
+    });
+    el.normalize(); // merge adjacent text nodes back together
   });
+  _highlighted.clear();
 }
 
 /**
- * Highlight all occurrences of `term` in el.innerHTML.
- * Works on text nodes only — avoids mangling tag attributes.
+ * Wrap every occurrence of `term` inside `el` in <mark class="sh">.
+ * Walks real text nodes only — never touches tags or attributes, so it
+ * cannot corrupt the markup the way an innerHTML string-replace would.
  */
 function highlightIn(el, term) {
-  saveOriginal(el);
+  const termLower = term.toLowerCase();
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      return node.nodeValue.toLowerCase().includes(termLower)
+        ? NodeFilter.FILTER_ACCEPT
+        : NodeFilter.FILTER_REJECT;
+    },
+  });
+  const targets = [];
+  while (walker.nextNode()) targets.push(walker.currentNode);
+  if (!targets.length) return;
+
   const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const re = new RegExp(`(${escaped})`, "gi");
-  el.innerHTML = el.innerHTML.replace(re, '<mark class="sh">$1</mark>');
-  el.setAttribute("data-search-marked", "1");
+  const re = new RegExp(escaped, "gi");
+  targets.forEach(node => {
+    const text = node.nodeValue;
+    const frag = document.createDocumentFragment();
+    let last = 0, m;
+    re.lastIndex = 0;
+    while ((m = re.exec(text)) !== null) {
+      if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+      const mark = document.createElement("mark");
+      mark.className = "sh";
+      mark.textContent = m[0];
+      frag.appendChild(mark);
+      last = m.index + m[0].length;
+      if (m[0].length === 0) re.lastIndex++; // guard against zero-width matches
+    }
+    if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+  _highlighted.add(el);
 }
 
 /**
- * Main search handler — called on every keystroke.
+ * Immediate search runner. Prefer the debounced onSearchInput() for keystrokes.
  * @param {string} raw - Current value of the search input.
  */
-function searchContent(raw) {
+function runSearch(raw) {
   const term = raw.trim();
   const clearBtn = document.getElementById("search-clear");
   const countEl  = document.getElementById("search-count");
 
-  // Show/hide clear button
   if (clearBtn) clearBtn.classList.toggle("visible", term.length > 0);
 
-  // Reset all previous highlights and visibility
-  restoreOriginals();
+  // Reset previous highlights and visibility
+  clearHighlights();
   document.querySelectorAll(".topic.search-hidden, .domain-section.search-hidden")
     .forEach(el => el.classList.remove("search-hidden"));
 
@@ -263,19 +306,11 @@ function searchContent(raw) {
   const termLower = term.toLowerCase();
   let matchCount = 0;
 
-  document.querySelectorAll(".domain-section").forEach(domain => {
+  domainSections().forEach(domain => {
     let domainHasMatch = false;
 
     domain.querySelectorAll(".topic").forEach(topic => {
-      // Searchable nodes inside each topic
-      const nodes = [
-        ...topic.querySelectorAll(".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, .code-block"),
-      ];
-
-      const topicText = topic.textContent.toLowerCase();
-      const matches   = topicText.includes(termLower);
-
-      if (matches) {
+      if (topicSearchText(topic).includes(termLower)) {
         domainHasMatch = true;
         matchCount++;
 
@@ -285,8 +320,10 @@ function searchContent(raw) {
         domain.querySelector(".domain-header")?.classList.add("open");
         domain.querySelector(".domain-body")?.classList.add("open");
 
-        // Highlight in text-bearing nodes
-        nodes.forEach(n => highlightIn(n, term));
+        // Highlight only the text-bearing nodes of matched topics
+        topic.querySelectorAll(
+          ".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, .code-block"
+        ).forEach(n => highlightIn(n, term));
       } else {
         topic.classList.add("search-hidden");
       }
@@ -298,11 +335,25 @@ function searchContent(raw) {
   if (countEl) countEl.textContent = matchCount ? `${matchCount} match${matchCount !== 1 ? "es" : ""}` : "no matches";
 }
 
-/** Clear search input and reset view. */
+/** Debounced entry point wired to the search box's oninput. */
+let _searchTimer = null;
+function onSearchInput(raw) {
+  // Toggle the clear button immediately for responsiveness
+  const clearBtn = document.getElementById("search-clear");
+  if (clearBtn) clearBtn.classList.toggle("visible", raw.trim().length > 0);
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(() => runSearch(raw), 180);
+}
+
+/** Backwards-compatible alias (older markup may call searchContent). */
+function searchContent(raw) { onSearchInput(raw); }
+
+/** Clear search input and reset view immediately. */
 function clearSearch() {
+  clearTimeout(_searchTimer);
   const input = document.getElementById("search-input");
   if (input) { input.value = ""; input.focus(); }
-  searchContent("");
+  runSearch("");
 }
 
 // ── NOTEPAD SLIDE TAB ────────────────────────────────────────────────────────
