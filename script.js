@@ -357,25 +357,224 @@ function clearSearch() {
 }
 
 // ── NOTEPAD SLIDE TAB ────────────────────────────────────────────────────────
+// Vanilla, dependency-free notepad backed by localStorage. Notes persist in the
+// visitor's own browser and sync live across their open tabs via the `storage`
+// event — no React, no Babel, no CDN, and it works over file://.
+
+const NP_MAX_CHARS  = 500;
+const NP_STORE_KEY  = "shared-notepad-notes";
+const NP_SESSION_KEY = "notepad-session-id";
+const NP_AUTHOR_KEY = "notepad-author";
+
 let _notepadMounted = false;
 
-function toggleNotepad() {
-  const panel = document.getElementById('notepad-panel');
-  const tab   = document.getElementById('notepad-tab');
-  const open  = panel.classList.toggle('open');
-  tab.classList.toggle('open', open);
+function npSessionId() {
+  let id = sessionStorage.getItem(NP_SESSION_KEY);
+  if (!id) {
+    id = Math.random().toString(36).slice(2, 10);
+    sessionStorage.setItem(NP_SESSION_KEY, id);
+  }
+  return id;
+}
 
+function npLoad() {
+  try {
+    const raw = localStorage.getItem(NP_STORE_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  } catch { return []; }
+}
+
+function npSave(notes) {
+  try { localStorage.setItem(NP_STORE_KEY, JSON.stringify(notes)); }
+  catch (e) { console.error("Notepad storage write failed", e); }
+}
+
+function npRelativeTime(ts) {
+  const diff = Math.floor((Date.now() - ts) / 1000);
+  if (diff < 5) return "just now";
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return new Date(ts).toLocaleDateString();
+}
+
+function toggleNotepad() {
+  const panel = document.getElementById("notepad-panel");
+  const tab   = document.getElementById("notepad-tab");
+  const open  = panel.classList.toggle("open");
+  tab.classList.toggle("open", open);
   if (open && !_notepadMounted) {
     _notepadMounted = true;
-    // Load the JSX component via Babel standalone
-    const script = document.createElement('script');
-    script.type = 'text/babel';
-    script.src  = 'notepad.jsx';
-    script.setAttribute('data-presets', 'react');
-    script.onload = () => {
-      // notepad.jsx must call mountNotepad() or we mount via global
-      if (window.__mountNotepad) window.__mountNotepad();
-    };
-    document.head.appendChild(script);
+    mountNotepad(document.getElementById("notepad-root"));
   }
+}
+
+function mountNotepad(root) {
+  const sessionId = npSessionId();
+  let notes = npLoad();
+  let sort = "newest";
+  let filter = "";
+
+  // Build the static skeleton with textContent-safe DOM (no innerHTML of data).
+  root.textContent = "";
+  root.insertAdjacentHTML("beforeend", `
+    <div class="np-wrap">
+      <div class="np-hdr">
+        <span class="np-hdr-icon">📋</span>
+        <div>
+          <div class="np-hdr-title">Notepad</div>
+          <div class="np-hdr-sub">Saved in this browser · synced across your tabs</div>
+        </div>
+      </div>
+      <div class="np-compose">
+        <div class="np-compose-top">
+          <input class="np-name" type="text" placeholder="Your name (optional)" maxlength="30" />
+          <span class="np-char">0/${NP_MAX_CHARS}</span>
+        </div>
+        <textarea class="np-input" rows="3" placeholder="Leave a note for yourself…"></textarea>
+        <div class="np-compose-footer">
+          <span class="np-hint"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> to post</span>
+          <button class="np-post" type="button" disabled>POST NOTE ▶</button>
+        </div>
+      </div>
+      <div class="np-toolbar">
+        <span class="np-count"></span>
+        <input class="np-filter" type="text" placeholder="⌕ filter notes…" />
+        <button class="np-sort active" type="button" data-sort="newest">NEWEST</button>
+        <button class="np-sort" type="button" data-sort="oldest">OLDEST</button>
+      </div>
+      <div class="np-list"></div>
+      <div class="np-toast"></div>
+    </div>
+  `);
+
+  const nameEl   = root.querySelector(".np-name");
+  const charEl   = root.querySelector(".np-char");
+  const inputEl  = root.querySelector(".np-input");
+  const postBtn  = root.querySelector(".np-post");
+  const countEl  = root.querySelector(".np-count");
+  const filterEl = root.querySelector(".np-filter");
+  const listEl   = root.querySelector(".np-list");
+  const toastEl  = root.querySelector(".np-toast");
+  const sortBtns = [...root.querySelectorAll(".np-sort")];
+
+  nameEl.value = localStorage.getItem(NP_AUTHOR_KEY) || "";
+
+  let toastTimer = null;
+  function showToast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2200);
+  }
+
+  function updateCharCount() {
+    const n = inputEl.value.length;
+    charEl.textContent = `${n}/${NP_MAX_CHARS}`;
+    charEl.classList.toggle("over", n > NP_MAX_CHARS);
+    charEl.classList.toggle("warn", n > NP_MAX_CHARS * 0.85 && n <= NP_MAX_CHARS);
+    postBtn.disabled = inputEl.value.trim().length === 0 || n > NP_MAX_CHARS;
+  }
+
+  function renderList() {
+    const q = filter.toLowerCase();
+    const shown = notes
+      .filter(n => !q || n.body.toLowerCase().includes(q) || (n.author || "").toLowerCase().includes(q))
+      .sort((a, b) => sort === "newest" ? b.ts - a.ts : a.ts - b.ts);
+
+    countEl.textContent = `${notes.length} note${notes.length !== 1 ? "s" : ""}`;
+    listEl.textContent = "";
+
+    if (!shown.length) {
+      const empty = document.createElement("div");
+      empty.className = "np-empty";
+      empty.textContent = filter
+        ? "No notes match that filter."
+        : "No notes yet — jot something down.";
+      listEl.appendChild(empty);
+      return;
+    }
+
+    shown.forEach(n => {
+      const own = n.sessionId === sessionId;
+      const card = document.createElement("div");
+      card.className = "np-card" + (own ? " own" : "");
+
+      const meta = document.createElement("div");
+      meta.className = "np-meta";
+      const author = document.createElement("span");
+      author.className = "np-author";
+      author.textContent = n.author || "Anonymous";
+      const time = document.createElement("span");
+      time.className = "np-time";
+      time.textContent = npRelativeTime(n.ts);
+      meta.append(author, time);
+      if (own) {
+        const badge = document.createElement("span");
+        badge.className = "np-badge";
+        badge.textContent = "YOU";
+        const del = document.createElement("button");
+        del.className = "np-del";
+        del.type = "button";
+        del.title = "Delete";
+        del.textContent = "✕";
+        del.addEventListener("click", () => deleteNote(n.id));
+        meta.append(badge, del);
+      }
+
+      const bodyEl = document.createElement("div");
+      bodyEl.className = "np-body";
+      bodyEl.textContent = n.body; // textContent — never interprets note as HTML
+
+      card.append(meta, bodyEl);
+      listEl.appendChild(card);
+    });
+  }
+
+  function postNote() {
+    const body = inputEl.value.trim();
+    const author = nameEl.value.trim() || "Anonymous";
+    if (!body || body.length > NP_MAX_CHARS) return;
+    if (nameEl.value.trim()) localStorage.setItem(NP_AUTHOR_KEY, nameEl.value.trim());
+
+    notes = npLoad(); // re-read so we don't clobber a note from another tab
+    notes.unshift({
+      id: Math.random().toString(36).slice(2),
+      author, body, ts: Date.now(), sessionId,
+    });
+    npSave(notes);
+    inputEl.value = "";
+    updateCharCount();
+    renderList();
+    showToast("✓ note posted");
+  }
+
+  function deleteNote(id) {
+    notes = npLoad().filter(n => n.id !== id);
+    npSave(notes);
+    renderList();
+    showToast("note removed");
+  }
+
+  // Wire events
+  inputEl.addEventListener("input", updateCharCount);
+  inputEl.addEventListener("keydown", e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); postNote(); }
+  });
+  postBtn.addEventListener("click", postNote);
+  filterEl.addEventListener("input", () => { filter = filterEl.value.trim(); renderList(); });
+  sortBtns.forEach(btn => btn.addEventListener("click", () => {
+    sort = btn.dataset.sort;
+    sortBtns.forEach(b => b.classList.toggle("active", b === btn));
+    renderList();
+  }));
+
+  // Live sync across the visitor's own tabs
+  window.addEventListener("storage", e => {
+    if (e.key === NP_STORE_KEY) { notes = npLoad(); renderList(); }
+  });
+
+  updateCharCount();
+  renderList();
 }

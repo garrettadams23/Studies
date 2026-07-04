@@ -1821,3 +1821,127 @@ mark.sh {
   .notepad-panel { width: 100vw; right: -100vw; }
   .notepad-tab.open { right: 100vw; }
 }
+
+/* ── Notepad component (vanilla; scoped under #notepad-root) ──────────────── */
+#notepad-root .np-wrap { padding: 24px 18px 48px; }
+
+#notepad-root .np-hdr {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 22px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+#notepad-root .np-hdr-icon { font-size: 24px; }
+#notepad-root .np-hdr-title {
+  font-family: var(--mono); font-size: 14px; color: var(--cyan);
+  letter-spacing: 2px; text-transform: uppercase;
+}
+#notepad-root .np-hdr-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+#notepad-root .np-compose {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 14px; margin-bottom: 22px;
+  transition: border-color 0.2s;
+}
+#notepad-root .np-compose:focus-within { border-color: var(--cyan); }
+#notepad-root .np-compose-top {
+  display: flex; gap: 10px; margin-bottom: 10px; align-items: center;
+}
+#notepad-root .np-name {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 4px; padding: 6px 10px;
+  font-family: var(--mono); font-size: 12px; color: var(--cyan);
+  width: 160px; outline: none; transition: border-color 0.2s;
+}
+#notepad-root .np-name:focus { border-color: var(--cyan); }
+#notepad-root .np-char {
+  font-family: var(--mono); font-size: 10px; color: var(--muted); margin-left: auto;
+}
+#notepad-root .np-char.warn { color: var(--amber); }
+#notepad-root .np-char.over { color: var(--red); }
+#notepad-root .np-input {
+  width: 100%; background: transparent; border: none; outline: none;
+  font-family: var(--sans); font-size: 14px; color: var(--text);
+  resize: vertical; line-height: 1.6; min-height: 80px;
+}
+#notepad-root .np-input::placeholder,
+#notepad-root .np-name::placeholder,
+#notepad-root .np-filter::placeholder { color: var(--muted); }
+#notepad-root .np-compose-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);
+}
+#notepad-root .np-hint { font-size: 11px; color: var(--muted); }
+#notepad-root .np-hint kbd {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 3px; padding: 1px 5px;
+  font-family: var(--mono); font-size: 10px; color: var(--text);
+}
+#notepad-root .np-post {
+  background: transparent; border: 1px solid var(--cyan); color: var(--cyan);
+  font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+  padding: 7px 18px; border-radius: 3px; cursor: pointer; transition: all 0.2s;
+}
+#notepad-root .np-post:hover:not(:disabled) { background: rgba(0,212,255,0.1); }
+#notepad-root .np-post:disabled { opacity: 0.35; cursor: not-allowed; }
+
+#notepad-root .np-toolbar {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;
+}
+#notepad-root .np-count {
+  font-family: var(--mono); font-size: 11px; color: var(--muted); margin-right: auto;
+}
+#notepad-root .np-filter {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 3px;
+  padding: 4px 10px; font-family: var(--mono); font-size: 11px; color: var(--text);
+  outline: none; width: 150px; transition: border-color 0.2s;
+}
+#notepad-root .np-filter:focus { border-color: var(--cyan); }
+#notepad-root .np-sort {
+  background: transparent; border: 1px solid var(--border); color: var(--muted);
+  font-family: var(--mono); font-size: 10px; letter-spacing: 1px;
+  padding: 4px 12px; border-radius: 2px; cursor: pointer; transition: all 0.15s;
+}
+#notepad-root .np-sort.active { border-color: var(--amber); color: var(--amber); }
+#notepad-root .np-sort:hover:not(.active) { border-color: var(--text); color: var(--text); }
+
+#notepad-root .np-list { display: flex; flex-direction: column; gap: 10px; }
+#notepad-root .np-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-left: 3px solid transparent; border-radius: 6px; padding: 12px 14px;
+  animation: npFadeIn 0.25s ease;
+}
+#notepad-root .np-card.own { border-left-color: var(--cyan); }
+@keyframes npFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+#notepad-root .np-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+#notepad-root .np-author { font-family: var(--mono); font-size: 11px; color: var(--cyan); font-weight: 600; }
+#notepad-root .np-time { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+#notepad-root .np-badge {
+  font-family: var(--mono); font-size: 9px; color: var(--green);
+  border: 1px solid rgba(0,255,153,0.3); padding: 1px 6px; border-radius: 2px; letter-spacing: 1px;
+}
+#notepad-root .np-del {
+  margin-left: auto; background: transparent; border: none; color: var(--muted);
+  font-size: 13px; cursor: pointer; opacity: 0; transition: opacity 0.15s, color 0.15s; padding: 2px 4px;
+}
+#notepad-root .np-card:hover .np-del { opacity: 1; }
+#notepad-root .np-del:hover { color: var(--red); }
+#notepad-root .np-body {
+  font-size: 14px; line-height: 1.65; color: var(--text);
+  white-space: pre-wrap; word-break: break-word;
+}
+#notepad-root .np-empty {
+  text-align: center; padding: 48px 20px;
+  font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: 1px;
+}
+#notepad-root .np-toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--bg2); border: 1px solid var(--border);
+  font-family: var(--mono); font-size: 11px; color: var(--text);
+  padding: 8px 18px; border-radius: 4px; letter-spacing: 1px;
+  pointer-events: none; opacity: 0; transition: opacity 0.3s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 1200;
+}
+#notepad-root .np-toast.show { opacity: 1; }
