@@ -36,11 +36,14 @@ function toggleDomain(h) {
   const b = h.nextElementSibling;
   const open = b.classList.toggle("open");
   h.classList.toggle("open", open);
+  h.setAttribute("aria-expanded", open ? "true" : "false");
 }
 
 function toggleTopic(h) {
-  h.classList.toggle("open");
-  h.nextElementSibling.classList.toggle("open");
+  const open = h.classList.toggle("open");
+  h.nextElementSibling.classList.toggle("open", open);
+  h.setAttribute("aria-expanded", open ? "true" : "false");
+  if (open) updateTopicHash(h.parentElement);
 }
 
 // ── FILTER ─────────────────────────────────────────────────────────────────
@@ -55,7 +58,10 @@ function filter(domain, chip) {
 // ── EXPAND / COLLAPSE ALL ──────────────────────────────────────────────────
 function toggleAll() {
   allExpanded = !allExpanded;
-  document.querySelectorAll(".domain-header, .topic-header").forEach(h => h.classList.toggle("open", allExpanded));
+  document.querySelectorAll(".domain-header, .topic-header").forEach(h => {
+    h.classList.toggle("open", allExpanded);
+    if (h.hasAttribute("aria-expanded")) h.setAttribute("aria-expanded", allExpanded ? "true" : "false");
+  });
   document.querySelectorAll(".domain-body, .topic-body").forEach(b => b.classList.toggle("open", allExpanded));
   const hdrBtn = document.getElementById("hdr-expand-btn");
   if (hdrBtn) {
@@ -98,16 +104,32 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Accordion — event delegation on the container
-  document.getElementById("domain-container")?.addEventListener("click", e => {
+  const container = document.getElementById("domain-container");
+  container?.addEventListener("click", e => {
+    // Per-topic tool buttons take precedence over the toggle
+    const tool = e.target.closest(".topic-review, .topic-permalink");
+    if (tool) { e.stopPropagation(); handleTopicTool(tool); return; }
     const dh = e.target.closest(".domain-header");
     if (dh) { toggleDomain(dh); return; }
     const th = e.target.closest(".topic-header");
     if (th) toggleTopic(th);
   });
 
+  // Accordion — keyboard support (Enter / Space on focused headers)
+  container?.addEventListener("keydown", e => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const header = e.target.closest(".domain-header, .topic-header");
+    if (!header || e.target.closest(".topic-review, .topic-permalink")) return;
+    e.preventDefault();
+    header.classList.contains("domain-header") ? toggleDomain(header) : toggleTopic(header);
+  });
+
   // Header control buttons
   document.getElementById("hdr-theme-btn")?.addEventListener("click", toggleTheme);
   document.getElementById("hdr-expand-btn")?.addEventListener("click", toggleAll);
+
+  initAccessibilityAndTools();
+  initBackToTop();
 });
 
 // ── SNAP QUOTE ─────────────────────────────────────────────────────────────
@@ -164,6 +186,167 @@ function initTouchFeedback() {
     el.addEventListener("touchend",    function() { this.classList.remove("is-tapping"); }, { passive: true });
     el.addEventListener("touchcancel", function() { this.classList.remove("is-tapping"); }, { passive: true });
   });
+}
+
+// ── ACCESSIBILITY, PERMALINKS & PROGRESS ───────────────────────────────────
+const REVIEWED_PREFIX = "reviewed:";
+
+function slugify(s) {
+  return s.toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .trim()
+    .replace(/[\s_]+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 60) || "topic";
+}
+
+/**
+ * One pass over the DOM to make the accordion accessible and add per-topic
+ * permalink + "mark reviewed" tools. Runs once at load.
+ */
+function initAccessibilityAndTools() {
+  // Make every accordion header focusable and announce its state
+  document.querySelectorAll(".domain-header, .topic-header").forEach(h => {
+    h.setAttribute("tabindex", "0");
+    h.setAttribute("role", "button");
+    h.setAttribute("aria-expanded", h.classList.contains("open") ? "true" : "false");
+  });
+
+  const usedIds = new Set();
+  document.querySelectorAll(".domain-section").forEach(domain => {
+    domain.querySelectorAll(".topic").forEach(topic => {
+      const header = topic.querySelector(":scope > .topic-header");
+      if (!header) return;
+      const nameEl = header.querySelector(".topic-name");
+      // Older "Beginner" topics carry the title as a bare text node in the
+      // header (no .topic-name); fall back to the header's own text.
+      const label = (nameEl ? nameEl.textContent : header.textContent).trim();
+
+      // Stable, unique slug id for deep-linking
+      if (!topic.id) {
+        let base = slugify(label), id = base, i = 2;
+        while (usedIds.has(id)) id = `${base}-${i++}`;
+        usedIds.add(id);
+        topic.id = id;
+      }
+
+      // Reflect stored "reviewed" state
+      if (localStorage.getItem(REVIEWED_PREFIX + topic.id) === "1") {
+        topic.classList.add("reviewed");
+      }
+
+      // Inject the tool cluster (reviewed toggle + permalink) once
+      if (!header.querySelector(".topic-tools")) {
+        const tools = document.createElement("span");
+        tools.className = "topic-tools";
+
+        const review = document.createElement("button");
+        review.type = "button";
+        review.className = "topic-review";
+        review.title = "Mark topic as reviewed";
+        review.setAttribute("aria-label", "Mark topic as reviewed");
+        review.textContent = "✓";
+
+        const link = document.createElement("button");
+        link.type = "button";
+        link.className = "topic-permalink";
+        link.title = "Copy link to this topic";
+        link.setAttribute("aria-label", "Copy link to this topic");
+        link.textContent = "🔗";
+
+        tools.append(review, link);
+        // Insert before the chevron so it stays right-aligned
+        const chev = header.querySelector(".topic-chev");
+        chev ? header.insertBefore(tools, chev) : header.appendChild(tools);
+      }
+    });
+    updateDomainProgress(domain);
+  });
+
+  // Deep-link: open + scroll to a topic referenced in the URL hash
+  openHashTarget();
+  window.addEventListener("hashchange", openHashTarget);
+}
+
+function handleTopicTool(btn) {
+  const topic = btn.closest(".topic");
+  if (!topic) return;
+  if (btn.classList.contains("topic-review")) {
+    const on = topic.classList.toggle("reviewed");
+    const key = REVIEWED_PREFIX + topic.id;
+    on ? localStorage.setItem(key, "1") : localStorage.removeItem(key);
+    updateDomainProgress(topic.closest(".domain-section"));
+  } else if (btn.classList.contains("topic-permalink")) {
+    const url = `${location.origin}${location.pathname}#${topic.id}`;
+    const done = () => { btn.classList.add("copied"); setTimeout(() => btn.classList.remove("copied"), 1200); };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(url).then(done).catch(() => { location.hash = topic.id; });
+    } else {
+      location.hash = topic.id; done();
+    }
+  }
+}
+
+/** Update the "n/m reviewed" badge on a domain header. */
+function updateDomainProgress(domain) {
+  if (!domain) return;
+  const header = domain.querySelector(".domain-header");
+  if (!header) return;
+  const topics = domain.querySelectorAll(".topic");
+  const done = domain.querySelectorAll(".topic.reviewed").length;
+  let badge = header.querySelector(".domain-progress");
+  if (!badge) {
+    badge = document.createElement("span");
+    badge.className = "domain-progress";
+    const chev = header.querySelector(".chevron");
+    chev ? header.insertBefore(badge, chev) : header.appendChild(badge);
+  }
+  badge.textContent = `${done}/${topics.length}`;
+  badge.classList.toggle("complete", done === topics.length && topics.length > 0);
+}
+
+/** Reflect the currently-open topic in the URL without a scroll jump. */
+function updateTopicHash(topic) {
+  if (topic?.id) history.replaceState(null, "", `#${topic.id}`);
+}
+
+/** Expand and scroll to the topic named in location.hash, if any. */
+function openHashTarget() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (!id) return;
+  const topic = document.getElementById(id);
+  if (!topic || !topic.classList.contains("topic")) return;
+  const domain = topic.closest(".domain-section");
+  domain?.querySelector(".domain-header")?.classList.add("open");
+  domain?.querySelector(".domain-body")?.classList.add("open");
+  domain?.querySelector(".domain-header")?.setAttribute("aria-expanded", "true");
+  const th = topic.querySelector(".topic-header");
+  th?.classList.add("open");
+  th?.setAttribute("aria-expanded", "true");
+  topic.querySelector(".topic-body")?.classList.add("open");
+  topic.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ── BACK TO TOP ─────────────────────────────────────────────────────────────
+function initBackToTop() {
+  const btn = document.createElement("button");
+  btn.id = "back-to-top";
+  btn.type = "button";
+  btn.title = "Back to top";
+  btn.setAttribute("aria-label", "Back to top");
+  btn.textContent = "↑";
+  btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  document.body.appendChild(btn);
+
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      btn.classList.toggle("visible", window.scrollY > window.innerHeight * 1.5);
+      ticking = false;
+    });
+  }, { passive: true });
 }
 
 // ── URL CODEC WIDGET ───────────────────────────────────────────────────────

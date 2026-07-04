@@ -1945,3 +1945,131 @@ mark.sh {
   box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 1200;
 }
 #notepad-root .np-toast.show { opacity: 1; }
+
+/* ── Accessibility, permalinks, progress, back-to-top (2026 review) ───────── */
+
+/* Keyboard focus ring for the now-focusable accordion headers */
+.domain-header:focus-visible,
+.topic-header:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: -2px;
+}
+
+/* Per-topic tools (mark reviewed + copy permalink) */
+.topic-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.topic-header:hover .topic-tools,
+.topic-header:focus-visible .topic-tools,
+.topic.reviewed .topic-tools { opacity: 1; }
+.topic-review,
+.topic-permalink {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 3px;
+  font-size: 11px;
+  line-height: 1;
+  padding: 3px 6px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.topic-review:hover { color: var(--green); border-color: var(--green); }
+.topic-permalink:hover { color: var(--cyan); border-color: var(--cyan); }
+.topic-permalink.copied { color: var(--green); border-color: var(--green); }
+.topic.reviewed .topic-review {
+  color: #001b10;
+  background: var(--green);
+  border-color: var(--green);
+  opacity: 1;
+}
+.topic.reviewed > .topic-header .topic-name { color: var(--muted); }
+.topic.reviewed > .topic-header .topic-name::after {
+  content: " ✓";
+  color: var(--green);
+  font-size: 11px;
+}
+
+/* Per-domain "n/m reviewed" progress badge */
+.domain-progress {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 2px 8px;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+.domain-progress.complete {
+  color: var(--green);
+  border-color: var(--green);
+}
+
+/* Floating back-to-top button */
+#back-to-top {
+  position: fixed;
+  bottom: 22px;
+  left: 22px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--cyan);
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s, border-color 0.15s;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+  z-index: 1098;
+}
+#back-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+#back-to-top:hover { border-color: var(--cyan); }
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print: light, fully expanded, chrome hidden */
+@media print {
+  header .header-controls,
+  .filter-bar,
+  .search-bar,
+  .notepad-tab,
+  .notepad-panel,
+  #back-to-top,
+  .topic-tools,
+  .topic-chev,
+  .chevron,
+  #snap-quote { display: none !important; }
+
+  :root, [data-theme="dark"], [data-theme="light"] {
+    --bg: #fff; --bg2: #fff; --bg3: #fff;
+    --text: #000; --muted: #444; --border: #bbb;
+  }
+  body { background: #fff !important; color: #000 !important; }
+  .domain-body, .topic-body { display: block !important; }
+  .domain-section { break-inside: avoid; }
+  .note, .concept-card, table { break-inside: avoid; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+}
