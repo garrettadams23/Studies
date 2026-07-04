@@ -1,5 +1,9 @@
 # Improvement Plan — Tech & Life Reference (July 2026 Review)
 
+> **Status: ✅ All items applied** across six commits (Phases 1–6). Verified
+> headless (Chromium): keyboard nav, search, permalinks, progress, notepad,
+> offline fonts — zero network/console errors.
+
 Full repository review covering performance, security, interface/UX, and repo hygiene.
 Each item lists evidence, why it matters, and the fix. Checkboxes track what's been applied.
 
@@ -20,20 +24,20 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
 - **Fix:** Delete the `DISORDER_DATA` blob and its panel-builder IIFE from `script.js`.
   If the mental-disorders domain is wanted later, add it properly as a
   `data/` domain and load the blob lazily from its own file.
-- [ ] Applied
+- [x] Applied
 
 ### 2. Delete duplicate/dead data files
 - **Evidence:** `data/disorder_data.js` and `Patches files/disorder_data.js` are
   byte-identical (135,544 bytes each) and **neither is loaded by anything**
   (no `<script src>` references in `index-shell.html`/`index.html`).
 - **Fix:** Delete both (git history preserves them).
-- [ ] Applied
+- [x] Applied
 
 ### 3. Delete `studies.html` (560 KB)
 - **Evidence:** Old pre-split monolith ("CompTIA & Tech Reference" title, old
   formatting). Nothing references it — not `index.html`, `script.js`, or `README.md`.
 - **Fix:** Delete. It's a stale snapshot that will only drift further from reality.
-- [ ] Applied
+- [x] Applied
 
 ### 4. Fix the `.topic-chevron` styling bug (287 topics affected)
 - **Evidence:** Newer content waves emit `<span class="topic-chevron">›</span>`
@@ -44,7 +48,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
   - a) One-time `sed` across `data/*.html`: `topic-chevron` → `topic-chev`, rebuild; or
   - b) Add `.topic-chevron` as an alias selector next to every `.topic-chev` rule.
   Option (a) is cleaner long-term.
-- [ ] Applied
+- [x] Applied
 
 ### 5. Crush the image weight (~14 MB → well under 1 MB)
 - **Evidence:**
@@ -55,7 +59,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
 - **Fix:** Re-export Studying-Tips as WebP/optimized PNG at display resolution
   (~100–300 KB); regenerate favicon.svg as a true vector (or drop it — the
   96×96 PNG + .ico already cover browsers); `oxipng`/`squoosh` the manifest PNGs.
-- [ ] Applied
+- [x] Applied
 
 ---
 
@@ -68,7 +72,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
   assembling (safe for this markup — but skip lines inside `<pre`…`</pre>` so
   `.code-block` formatting is preserved). Keep `data/*.html` pretty for editing;
   only the built output gets minified.
-- [ ] Applied
+- [x] Applied
 
 ### 7. Debounce + index the search (currently full-DOM scan per keystroke)
 - **Evidence:** `index-shell.html:92` wires `oninput="searchContent(this.value)"`;
@@ -78,7 +82,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
 - **Fix:** (a) debounce 150–250 ms; (b) build a one-time cache
   `Map<topicEl, lowercasedText>` on first search and reuse it; (c) only run
   highlighting on the visible/matched topics (already mostly true).
-- [ ] Applied
+- [x] Applied
 
 ### 8. Fix search-highlight markup corruption
 - **Evidence:** `highlightIn()` (script.js ~695) does
@@ -88,7 +92,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
   `href`) injects `<mark>` inside tags and corrupts the DOM until cleared.
 - **Fix:** Walk actual text nodes (`TreeWalker` with `NodeFilter.SHOW_TEXT`) and
   wrap matches in `<mark>` — never string-replace `innerHTML`.
-- [ ] Applied
+- [x] Applied
 
 ### 9. Replace the runtime React+Babel notepad stack
 - **Evidence:** `index-shell.html:20-22` loads React 18 + ReactDOM + **Babel
@@ -100,7 +104,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
 - **Fix:** Rewrite the notepad as ~100 lines of vanilla JS inside `script.js`,
   delete `notepad.jsx`, and remove all three CDN `<script>` tags. This also
   fixes the file:// breakage and removes the biggest third-party dependency.
-- [ ] Applied
+- [x] Applied
 
 ### 10. Self-host or gracefully degrade Google Fonts
 - **Evidence:** Both `index-shell.html` and `notepad.jsx` pull Share Tech Mono +
@@ -110,7 +114,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
   offline, no tracking), or keep the CDN but add
   `<link rel="preconnect" href="https://fonts.gstatic.com">` and rely on
   `display=swap` (already present).
-- [ ] Applied
+- [x] Applied
 
 ---
 
@@ -123,13 +127,13 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
   (`react@18`). None have Subresource Integrity (SRI) hashes.
 - **Fix:** Item #9 removes all three. If any CDN script is ever kept: pin the
   exact version and add `integrity="sha384-…" crossorigin="anonymous"`.
-- [ ] Applied (superseded by #9)
+- [x] Applied (superseded by #9)
 
 ### 12. `target="_blank"` without `rel="noopener noreferrer"`
 - **Evidence:** 1 occurrence in `data/script.html`. Opened pages get a
   `window.opener` handle (tab-nabbing) — low risk here but free to fix.
 - **Fix:** Add `rel="noopener noreferrer"`; make it a convention for future content.
-- [ ] Applied
+- [x] Applied
 
 ### 13. "Shared" notepad isn't shared — clarify or wire a backend
 - **Evidence:** `notepad.jsx` stores notes in `localStorage`
@@ -139,7 +143,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
 - **Fix:** When rewriting (#9), rename to "Notepad", keep localStorage, and use
   the `storage` event instead of polling. (A real shared backend would need a
   service + auth — out of scope for a static site.)
-- [ ] Applied
+- [x] Applied
 
 ### 14. Secrets check — clean ✅
 - Grep across the repo (including `Patches files/`) found no API keys, tokens,
@@ -158,7 +162,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
 - **Fix:** At load, JS can decorate every header with `tabindex="0"`,
   `role="button"`, and synced `aria-expanded` (no need to touch 400+ topics in
   `data/`), and handle `Enter`/`Space` in a `keydown` delegate.
-- [ ] Applied
+- [x] Applied
 
 ### 16. Per-topic permalinks + deep linking
 - **Evidence:** No way to link someone to a specific topic; the page always
@@ -166,7 +170,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
 - **Fix:** At load, assign stable slug `id`s to each `.topic` (from topic name);
   on header click update `location.hash`; on load, expand + scroll to the
   hash target. Pairs well with a "copy link" icon on each topic header.
-- [ ] Applied
+- [x] Applied
 
 ### 17. Study-progress tracking ("mark as reviewed")
 - **Idea:** This is a study site with hundreds of topics and no sense of
@@ -174,20 +178,20 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
   (`reviewed:{slug}`), plus a per-domain "12/31 reviewed" counter in the domain
   header, would make revision passes far more effective. Cheap to build on top
   of #16's slugs.
-- [ ] Applied
+- [x] Applied
 
 ### 18. Back-to-top button + print stylesheet
 - **Evidence:** The built page is very long; there's no quick way back to the
   filter bar. Printing currently emits dark backgrounds and collapsed bodies.
 - **Fix:** Floating ↑ button (appears after ~2 screens). `@media print`: force
   light theme, expand all bodies, hide header controls/notepad/search.
-- [ ] Applied
+- [x] Applied
 
 ### 19. `prefers-reduced-motion` support
 - **Evidence:** Accordion/theme transitions animate unconditionally.
 - **Fix:** `@media (prefers-reduced-motion: reduce)` block that zeroes
   transition durations and disables animations.
-- [ ] Applied
+- [x] Applied
 
 ### 20. Normalize content-markup conventions for future waves
 - **Evidence:** Generations of patch scripts diverged: `topic-chevron` vs
@@ -199,7 +203,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
   `CONTRIBUTING.md` (or README section) defining the canonical topic skeleton —
   one chevron class, one table class, utility classes over inline styles — so
   future content (human- or AI-authored) stays consistent.
-- [ ] Applied
+- [x] Applied
 
 ---
 
@@ -212,7 +216,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
 - **Fix:** `git mv "Patches files" patches`. Optionally add `patches/README.md`
   noting these are historical (idempotent, already applied — safe to re-run but
   never needed).
-- [ ] Applied
+- [x] Applied
 
 ### 22. Update `README.md` to match reality
 - **Evidence:** README's project-structure block omits `studies.html`,
@@ -222,7 +226,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
 - **Fix:** Refresh the structure block after P1 deletions land; document
   `reconcile_build.py` (recovery tool: syncs a hand-patched `index.html` back
   into `data/*`) and the build workflow (`edit data/ → python3 build.py`).
-- [ ] Applied
+- [x] Applied
 
 ### 23. CI guard: fail if `index.html` is stale
 - **Evidence:** `index.html` is a tracked build artifact; nothing verifies it
@@ -230,7 +234,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
   mode `reconcile_build.py` exists to repair).
 - **Fix:** GitHub Action on push/PR: `python3 build.py && git diff --exit-code
   index.html`. ~15 lines of YAML; catches drift forever.
-- [ ] Applied
+- [x] Applied
 
 ### 24. Repo growth awareness
 - **Evidence:** Every content wave re-commits the full 2.4 MB `index.html`;
@@ -240,7 +244,7 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
   minification in #6 shrinks each future delta, and the P1 deletions
   (`studies.html`, dead data, 14 MB of images) stop the worst bloat. No history
   rewrite needed.
-- [ ] Applied (via #5, #6)
+- [x] Applied (via #5, #6)
 
 ---
 
