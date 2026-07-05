@@ -3156,6 +3156,187 @@ curl -sI https://example.com | grep -iE &quot;strict-transport|content-security|
   </div>
 </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎫</span>
+              <span class="topic-name">OAuth 2.0, OIDC &amp; SAML — Federated Identity</span>
+              <span class="topic-badge">Identity</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Delegated Access vs Proving Who You Are</div>
+                <div class="concept-desc">
+                  These three protocols power "Log in with Google" and every
+                  enterprise single sign-on. The crucial distinction:
+                  <strong class="c-cyan">OAuth 2.0</strong> is
+                  <em>authorization</em> — it lets an app act on your behalf without
+                  seeing your password. <strong class="c-amber">OIDC</strong> adds an
+                  <em>authentication</em> layer on top of OAuth so the app learns
+                  <em>who you are</em>. <strong class="c-green">SAML</strong> does the
+                  same job as OIDC but with XML, and still dominates enterprise SSO.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Comparison</div>
+                <div class="concept-title">Three Protocols at a Glance</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Answers</th><th>Format</th><th>Best For</th></tr>
+                    <tr><td class="c-cyan">OAuth 2.0</td><td>"Can this app do X for me?"</td><td>JSON + tokens</td><td>API access delegation</td></tr>
+                    <tr><td class="c-amber">OIDC</td><td>"Who is this user?"</td><td>JSON + JWT (ID token)</td><td>Modern app / mobile login</td></tr>
+                    <tr><td class="c-green">SAML 2.0</td><td>"Who is this user?"</td><td>XML assertions</td><td>Enterprise SSO (Okta, ADFS)</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Flow</div>
+                <div class="concept-title">Authorization Code Flow (with PKCE)</div>
+                <div class="concept-desc">
+                  The recommended flow for web and mobile apps. PKCE (Proof Key for
+                  Code Exchange) stops an attacker who intercepts the authorization
+                  code from redeeming it.
+                </div>
+                <div class="dw">
+                  <div class="code-label">THE HANDSHAKE</div>
+<pre class="code-block"><span class="com"># 1. App sends user to the authorization server with a hashed secret</span>
+GET https://auth.example.com/authorize
+    ?response_type=<span class="str">code</span>
+    &amp;client_id=<span class="str">app123</span>
+    &amp;redirect_uri=<span class="str">https://app/callback</span>
+    &amp;scope=<span class="str">openid profile email</span>
+    &amp;code_challenge=<span class="str">S256(verifier)</span>
+
+<span class="com"># 2. User logs in + consents → server redirects back with a one-time code</span>
+GET https://app/callback?code=<span class="str">AUTH_CODE</span>
+
+<span class="com"># 3. App exchanges the code (+ original verifier) for tokens — back channel</span>
+POST https://auth.example.com/token
+     grant_type=<span class="str">authorization_code</span>
+     code=<span class="str">AUTH_CODE</span>
+     code_verifier=<span class="str">verifier</span>
+
+<span class="com"># 4. Server returns tokens</span>
+{ <span class="str">"access_token"</span>: <span class="str">"ya29..."</span>,   <span class="com"># call APIs with this</span>
+  <span class="str">"id_token"</span>:     <span class="str">"eyJ..."</span>,      <span class="com"># OIDC: who the user is (JWT)</span>
+  <span class="str">"refresh_token"</span>:<span class="str">"1//0g..."</span> }   <span class="com"># get new access tokens silently</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Tokens &amp; Key Terms</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Term</th><th>Meaning</th></tr>
+                    <tr><td><span class="c-cyan">Access Token</span></td><td>Short-lived bearer credential to call APIs. Treat like a password.</td></tr>
+                    <tr><td><span class="c-cyan">ID Token</span></td><td>OIDC JWT proving identity — contains claims (sub, email, name). Never sent to APIs.</td></tr>
+                    <tr><td><span class="c-cyan">Refresh Token</span></td><td>Long-lived; exchanged for new access tokens without re-login. Store securely.</td></tr>
+                    <tr><td><span class="c-cyan">Scope</span></td><td>The specific permissions requested (e.g. <code>read:email</code>).</td></tr>
+                    <tr><td><span class="c-cyan">IdP</span></td><td>Identity Provider — the system that authenticates the user (Okta, Google, Entra ID).</td></tr>
+                    <tr><td><span class="c-cyan">SP / RP</span></td><td>Service Provider (SAML) / Relying Party (OIDC) — the app trusting the IdP.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Security</div>
+                <div class="concept-title">Where It Goes Wrong</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pitfall</th><th>Defense</th></tr>
+                    <tr><td class="c-red">Implicit flow (tokens in URL)</td><td>Deprecated — use Authorization Code + PKCE instead.</td></tr>
+                    <tr><td class="c-red">Open redirect on redirect_uri</td><td>Exact-match allow-list of redirect URIs; never wildcard.</td></tr>
+                    <tr><td class="c-red">Not validating the JWT signature</td><td>Verify signature, <code>iss</code>, <code>aud</code>, and <code>exp</code> on every ID token.</td></tr>
+                    <tr><td class="c-red">Missing <code>state</code> parameter</td><td>Use <code>state</code> to bind the request and block CSRF on the callback.</td></tr>
+                    <tr><td class="c-red">SAML XML signature wrapping</td><td>Validate the signature covers the whole assertion; use a hardened library.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔑</span>
+              <span class="topic-name">Passkeys &amp; WebAuthn — Killing the Password</span>
+              <span class="topic-badge">Auth</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Why Passkeys Are Phishing-Resistant</div>
+                <div class="concept-desc">
+                  A passkey is a <strong class="c-cyan">public/private key pair</strong>
+                  bound to a specific website. Your device keeps the private key (in a
+                  secure enclave / TPM, unlocked by biometrics or a PIN) and only ever
+                  sends a <em>signature</em> — never a shared secret. Because the key is
+                  tied to the site's real origin, a look-alike phishing domain simply
+                  cannot trigger it. There is nothing to type, reuse, leak in a breach,
+                  or hand to an attacker. This is the FIDO2 standard: WebAuthn (the
+                  browser API) + CTAP (the authenticator protocol).
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">How It Works</div>
+                <div class="concept-title">Registration &amp; Authentication</div>
+                <div class="dw">
+                  <div class="code-label">TWO CEREMONIES</div>
+<pre class="code-block"><span class="com"># ── REGISTRATION (once, per site) ─────────────────────────</span>
+<span class="num">1.</span> Site sends a random <span class="var">challenge</span> + its origin
+<span class="num">2.</span> Device generates a NEW key pair for this site only
+<span class="num">3.</span> Private key stays on device; PUBLIC key is sent to the site
+<span class="num">4.</span> Site stores the public key against your account
+
+<span class="com"># ── AUTHENTICATION (every login) ──────────────────────────</span>
+<span class="num">1.</span> Site sends a fresh random <span class="var">challenge</span>
+<span class="num">2.</span> You unlock the device (Face ID / fingerprint / PIN)
+<span class="num">3.</span> Device SIGNS the challenge with the private key
+<span class="num">4.</span> Site verifies the signature with the stored public key
+
+<span class="com"># The private key and your biometric NEVER leave the device.</span>
+<span class="com"># The server only ever stores a PUBLIC key — useless if breached.</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Comparison</div>
+                <div class="concept-title">Passkeys vs Passwords vs OTP</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Property</th><th>Password</th><th>SMS / TOTP</th><th>Passkey</th></tr>
+                    <tr><td>Phishable</td><td class="c-red">Yes</td><td class="c-amber">Yes (relayed)</td><td class="c-green">No</td></tr>
+                    <tr><td>Reused across sites</td><td class="c-red">Often</td><td>N/A</td><td class="c-green">Never (per-site)</td></tr>
+                    <tr><td>Leaks in a breach</td><td class="c-red">Yes (hashes)</td><td class="c-amber">Seed can</td><td class="c-green">Only public key</td></tr>
+                    <tr><td>User friction</td><td class="c-amber">Type + remember</td><td class="c-amber">Type a code</td><td class="c-green">One tap / glance</td></tr>
+                    <tr><td>Server secret to steal</td><td class="c-red">Yes</td><td class="c-red">Yes</td><td class="c-green">No</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Key Terms &amp; Practical Notes</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Term</th><th>Meaning</th></tr>
+                    <tr><td><span class="c-cyan">FIDO2</span></td><td>The umbrella standard = WebAuthn + CTAP.</td></tr>
+                    <tr><td><span class="c-cyan">WebAuthn</span></td><td>Browser/JS API sites call to create and use passkeys.</td></tr>
+                    <tr><td><span class="c-cyan">Authenticator</span></td><td>What holds the key: phone, laptop (platform) or a security key like YubiKey (roaming).</td></tr>
+                    <tr><td><span class="c-cyan">Synced passkey</span></td><td>Backed up to your Apple/Google/Microsoft account so a lost device isn't lockout.</td></tr>
+                    <tr><td><span class="c-cyan">Device-bound</span></td><td>Never leaves the hardware (e.g. a FIDO security key) — highest assurance.</td></tr>
+                    <tr><td><span class="c-cyan">Attestation</span></td><td>Optional proof of what kind of authenticator was used — matters in high-security orgs.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body sec -->
 <!-- /domain-body sec -->
 <!-- /domain-body sec -->

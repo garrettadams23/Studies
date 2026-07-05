@@ -8077,6 +8077,178 @@ requiring them to do anything at all. Few security investments offer that kind o
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🎫</span>
+<span class="topic-name">OAuth 2.0, OIDC &amp; SAML — Federated Identity</span>
+<span class="topic-badge">Identity</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Delegated Access vs Proving Who You Are</div>
+<div class="concept-desc">
+These three protocols power "Log in with Google" and every
+enterprise single sign-on. The crucial distinction:
+<strong class="c-cyan">OAuth 2.0</strong> is
+<em>authorization</em> — it lets an app act on your behalf without
+seeing your password. <strong class="c-amber">OIDC</strong> adds an
+<em>authentication</em> layer on top of OAuth so the app learns
+<em>who you are</em>. <strong class="c-green">SAML</strong> does the
+same job as OIDC but with XML, and still dominates enterprise SSO.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Comparison</div>
+<div class="concept-title">Three Protocols at a Glance</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>Answers</th><th>Format</th><th>Best For</th></tr>
+<tr><td class="c-cyan">OAuth 2.0</td><td>"Can this app do X for me?"</td><td>JSON + tokens</td><td>API access delegation</td></tr>
+<tr><td class="c-amber">OIDC</td><td>"Who is this user?"</td><td>JSON + JWT (ID token)</td><td>Modern app / mobile login</td></tr>
+<tr><td class="c-green">SAML 2.0</td><td>"Who is this user?"</td><td>XML assertions</td><td>Enterprise SSO (Okta, ADFS)</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Flow</div>
+<div class="concept-title">Authorization Code Flow (with PKCE)</div>
+<div class="concept-desc">
+The recommended flow for web and mobile apps. PKCE (Proof Key for
+Code Exchange) stops an attacker who intercepts the authorization
+code from redeeming it.
+</div>
+<div class="dw">
+<div class="code-label">THE HANDSHAKE</div>
+<pre class="code-block"><span class="com"># 1. App sends user to the authorization server with a hashed secret</span>
+GET https://auth.example.com/authorize
+    ?response_type=<span class="str">code</span>
+    &amp;client_id=<span class="str">app123</span>
+    &amp;redirect_uri=<span class="str">https://app/callback</span>
+    &amp;scope=<span class="str">openid profile email</span>
+    &amp;code_challenge=<span class="str">S256(verifier)</span>
+
+<span class="com"># 2. User logs in + consents → server redirects back with a one-time code</span>
+GET https://app/callback?code=<span class="str">AUTH_CODE</span>
+
+<span class="com"># 3. App exchanges the code (+ original verifier) for tokens — back channel</span>
+POST https://auth.example.com/token
+     grant_type=<span class="str">authorization_code</span>
+     code=<span class="str">AUTH_CODE</span>
+     code_verifier=<span class="str">verifier</span>
+
+<span class="com"># 4. Server returns tokens</span>
+{ <span class="str">"access_token"</span>: <span class="str">"ya29..."</span>,   <span class="com"># call APIs with this</span>
+  <span class="str">"id_token"</span>:     <span class="str">"eyJ..."</span>,      <span class="com"># OIDC: who the user is (JWT)</span>
+  <span class="str">"refresh_token"</span>:<span class="str">"1//0g..."</span> }   <span class="com"># get new access tokens silently</span></pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Tokens &amp; Key Terms</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td><span class="c-cyan">Access Token</span></td><td>Short-lived bearer credential to call APIs. Treat like a password.</td></tr>
+<tr><td><span class="c-cyan">ID Token</span></td><td>OIDC JWT proving identity — contains claims (sub, email, name). Never sent to APIs.</td></tr>
+<tr><td><span class="c-cyan">Refresh Token</span></td><td>Long-lived; exchanged for new access tokens without re-login. Store securely.</td></tr>
+<tr><td><span class="c-cyan">Scope</span></td><td>The specific permissions requested (e.g. <code>read:email</code>).</td></tr>
+<tr><td><span class="c-cyan">IdP</span></td><td>Identity Provider — the system that authenticates the user (Okta, Google, Entra ID).</td></tr>
+<tr><td><span class="c-cyan">SP / RP</span></td><td>Service Provider (SAML) / Relying Party (OIDC) — the app trusting the IdP.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Security</div>
+<div class="concept-title">Where It Goes Wrong</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Pitfall</th><th>Defense</th></tr>
+<tr><td class="c-red">Implicit flow (tokens in URL)</td><td>Deprecated — use Authorization Code + PKCE instead.</td></tr>
+<tr><td class="c-red">Open redirect on redirect_uri</td><td>Exact-match allow-list of redirect URIs; never wildcard.</td></tr>
+<tr><td class="c-red">Not validating the JWT signature</td><td>Verify signature, <code>iss</code>, <code>aud</code>, and <code>exp</code> on every ID token.</td></tr>
+<tr><td class="c-red">Missing <code>state</code> parameter</td><td>Use <code>state</code> to bind the request and block CSRF on the callback.</td></tr>
+<tr><td class="c-red">SAML XML signature wrapping</td><td>Validate the signature covers the whole assertion; use a hardened library.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔑</span>
+<span class="topic-name">Passkeys &amp; WebAuthn — Killing the Password</span>
+<span class="topic-badge">Auth</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Why Passkeys Are Phishing-Resistant</div>
+<div class="concept-desc">
+A passkey is a <strong class="c-cyan">public/private key pair</strong>
+bound to a specific website. Your device keeps the private key (in a
+secure enclave / TPM, unlocked by biometrics or a PIN) and only ever
+sends a <em>signature</em> — never a shared secret. Because the key is
+tied to the site's real origin, a look-alike phishing domain simply
+cannot trigger it. There is nothing to type, reuse, leak in a breach,
+or hand to an attacker. This is the FIDO2 standard: WebAuthn (the
+browser API) + CTAP (the authenticator protocol).
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">How It Works</div>
+<div class="concept-title">Registration &amp; Authentication</div>
+<div class="dw">
+<div class="code-label">TWO CEREMONIES</div>
+<pre class="code-block"><span class="com"># ── REGISTRATION (once, per site) ─────────────────────────</span>
+<span class="num">1.</span> Site sends a random <span class="var">challenge</span> + its origin
+<span class="num">2.</span> Device generates a NEW key pair for this site only
+<span class="num">3.</span> Private key stays on device; PUBLIC key is sent to the site
+<span class="num">4.</span> Site stores the public key against your account
+
+<span class="com"># ── AUTHENTICATION (every login) ──────────────────────────</span>
+<span class="num">1.</span> Site sends a fresh random <span class="var">challenge</span>
+<span class="num">2.</span> You unlock the device (Face ID / fingerprint / PIN)
+<span class="num">3.</span> Device SIGNS the challenge with the private key
+<span class="num">4.</span> Site verifies the signature with the stored public key
+
+<span class="com"># The private key and your biometric NEVER leave the device.</span>
+<span class="com"># The server only ever stores a PUBLIC key — useless if breached.</span></pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Comparison</div>
+<div class="concept-title">Passkeys vs Passwords vs OTP</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Property</th><th>Password</th><th>SMS / TOTP</th><th>Passkey</th></tr>
+<tr><td>Phishable</td><td class="c-red">Yes</td><td class="c-amber">Yes (relayed)</td><td class="c-green">No</td></tr>
+<tr><td>Reused across sites</td><td class="c-red">Often</td><td>N/A</td><td class="c-green">Never (per-site)</td></tr>
+<tr><td>Leaks in a breach</td><td class="c-red">Yes (hashes)</td><td class="c-amber">Seed can</td><td class="c-green">Only public key</td></tr>
+<tr><td>User friction</td><td class="c-amber">Type + remember</td><td class="c-amber">Type a code</td><td class="c-green">One tap / glance</td></tr>
+<tr><td>Server secret to steal</td><td class="c-red">Yes</td><td class="c-red">Yes</td><td class="c-green">No</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Key Terms &amp; Practical Notes</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td><span class="c-cyan">FIDO2</span></td><td>The umbrella standard = WebAuthn + CTAP.</td></tr>
+<tr><td><span class="c-cyan">WebAuthn</span></td><td>Browser/JS API sites call to create and use passkeys.</td></tr>
+<tr><td><span class="c-cyan">Authenticator</span></td><td>What holds the key: phone, laptop (platform) or a security key like YubiKey (roaming).</td></tr>
+<tr><td><span class="c-cyan">Synced passkey</span></td><td>Backed up to your Apple/Google/Microsoft account so a lost device isn't lockout.</td></tr>
+<tr><td><span class="c-cyan">Device-bound</span></td><td>Never leaves the hardware (e.g. a FIDO security key) — highest assurance.</td></tr>
+<tr><td><span class="c-cyan">Attestation</span></td><td>Optional proof of what kind of authenticator was used — matters in high-security orgs.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body sec -->
 <!-- /domain-body sec -->
 <!-- /domain-body sec -->
@@ -21675,6 +21847,115 @@ decision-making system that affects real people.</p>
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔌</span>
+<span class="topic-name">Model Context Protocol (MCP) — USB-C for AI</span>
+<span class="topic-badge">Agentic AI</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">What MCP Solves</div>
+<div class="concept-desc">
+The <strong class="c-cyan">Model Context Protocol</strong> is an open
+standard that lets AI applications connect to external tools and data
+through <em>one</em> common interface — instead of writing a bespoke
+integration for every model × every tool. Think of it as
+<strong class="c-amber">USB-C for AI</strong>: any MCP-speaking client
+(Claude Desktop, an IDE, a custom agent) can plug into any MCP server
+(GitHub, a database, your filesystem) without custom glue code.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Architecture</div>
+<div class="concept-title">Host · Client · Server</div>
+<div class="dw">
+<div class="dt">▸ THE THREE ROLES</div>
+<table class="ref-table" style="margin-bottom:14px">
+<tr><th>Role</th><th>What It Is</th></tr>
+<tr><td class="c-cyan">Host</td><td>The AI app the user interacts with (Claude Desktop, an IDE, an agent). Holds the LLM and spawns clients.</td></tr>
+<tr><td class="c-cyan">Client</td><td>Lives inside the host; keeps a 1:1 connection to a single MCP server and speaks the protocol.</td></tr>
+<tr><td class="c-cyan">Server</td><td>A lightweight program exposing capabilities (tools, data, prompts) for one system — e.g. a GitHub server or a Postgres server.</td></tr>
+</table>
+<div class="concept-desc">
+One host runs many clients, each wired to one server. Servers are
+small and composable: you run several at once (files + GitHub +
+Slack) and the host's model can use all of them together.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Three Server Primitives</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Primitive</th><th>Controlled By</th><th>What It Does</th></tr>
+<tr><td class="c-green">Tools</td><td>Model</td><td>Actions the model can <em>call</em> — search a DB, send a message, run code. Like function calling.</td></tr>
+<tr><td class="c-green">Resources</td><td>Application</td><td>Read-only data the host can load into context — files, records, API responses. Addressed by URI.</td></tr>
+<tr><td class="c-green">Prompts</td><td>User</td><td>Reusable, parameterized templates a user invokes deliberately (e.g. a "/summarize" slash command).</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The distinction is <em>who decides to use it</em>: the model picks
+tools, the app wires up resources, and the user triggers prompts.
+(Clients can also expose <span class="c-cyan">sampling</span> — letting a
+server ask the host's LLM to complete text — and
+<span class="c-cyan">roots</span>/<span class="c-cyan">elicitation</span>
+for scoping and follow-up input.)
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Transport</div>
+<div class="concept-title">How Client and Server Talk</div>
+<div class="dw">
+<table class="ref-table" style="margin-bottom:14px">
+<tr><th>Transport</th><th>Use When</th></tr>
+<tr><td class="c-amber">stdio</td><td>Server runs locally as a subprocess — messages over stdin/stdout. Simplest; great for local tools.</td></tr>
+<tr><td class="c-amber">Streamable HTTP</td><td>Remote servers over HTTP(S), with Server-Sent Events for streaming. Used for hosted/cloud MCP servers.</td></tr>
+</table>
+<div class="concept-desc">
+Underneath, every message is <strong>JSON-RPC 2.0</strong>. The
+connection opens with a <code>initialize</code> handshake where both
+sides announce their capabilities and protocol version.
+</div>
+<div class="dt" style="margin-top:12px">▸ A TOOL CALL, ON THE WIRE (JSON-RPC)</div>
+<pre class="code-block"><span class="com">// Client asks the server to run a tool</span>
+{
+  <span class="str">"jsonrpc"</span>: <span class="str">"2.0"</span>,
+  <span class="str">"id"</span>: <span class="num">7</span>,
+  <span class="str">"method"</span>: <span class="str">"tools/call"</span>,
+  <span class="str">"params"</span>: {
+    <span class="str">"name"</span>: <span class="str">"search_issues"</span>,
+    <span class="str">"arguments"</span>: { <span class="str">"query"</span>: <span class="str">"is:open label:bug"</span> }
+  }
+}
+
+<span class="com">// Server responds with the result</span>
+{
+  <span class="str">"jsonrpc"</span>: <span class="str">"2.0"</span>,
+  <span class="str">"id"</span>: <span class="num">7</span>,
+  <span class="str">"result"</span>: {
+    <span class="str">"content"</span>: [{ <span class="str">"type"</span>: <span class="str">"text"</span>, <span class="str">"text"</span>: <span class="str">"Found 3 open bugs..."</span> }]
+  }
+}</pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Why It Matters</div>
+<div class="concept-title">The Integration Math</div>
+<div class="concept-desc">
+Before MCP, wiring <strong>M</strong> AI apps to <strong>N</strong> tools
+meant up to <strong class="c-red">M × N</strong> custom integrations.
+With MCP, each app implements the protocol once and each tool implements
+it once — <strong class="c-green">M + N</strong>. That is the same shift
+the Language Server Protocol (LSP) brought to code editors, and it's why
+MCP has become the de-facto way to give agents real-world capabilities.
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body ai -->
 <!-- /domain-body ai -->
 <!-- /domain-body ai -->
@@ -31002,6 +31283,444 @@ assumption that holds up fine for months — until a slow database connection ca
 suddenly two copies are running at once, both modifying the same data. Writing scheduled scripts as though they
 <em>will</em> eventually run concurrently or get interrupted mid-task — using locks, idempotency checks, and
 transactional updates — costs a little extra effort upfront and saves an enormous amount of cleanup later.</p>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🐍</span>
+<span class="topic-name">Python — The Everything Language</span>
+<span class="topic-badge">Language</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Why Python Runs the World</div>
+<div class="concept-desc">
+Python is the default language of automation, data science, AI/ML,
+scripting, and glue code. It is dynamically typed, interpreted, and
+reads almost like English — indentation <em>is</em> the syntax, so
+there are no braces. If you learn one language for IT and security
+work, make it this one: nearly every tool (Ansible, scapy, requests,
+pandas, PyTorch) has a Python interface.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Syntax</div>
+<div class="concept-title">Core Syntax &amp; Data Types</div>
+<div class="dw">
+<div class="code-label">THE ESSENTIALS</div>
+<pre class="code-block"><span class="com"># Variables — no type declarations, just assign</span>
+<span class="var">name</span> = <span class="str">"Alice"</span>        <span class="com"># str</span>
+<span class="var">age</span> = <span class="num">30</span>             <span class="com"># int</span>
+<span class="var">pi</span> = <span class="num">3.14159</span>        <span class="com"># float</span>
+<span class="var">active</span> = <span class="kw">True</span>         <span class="com"># bool</span>
+<span class="var">items</span> = <span class="kw">None</span>          <span class="com"># the "no value" sentinel</span>
+
+<span class="com"># f-strings — the modern way to build text</span>
+<span class="fn">print</span>(<span class="str">f"</span><span class="str">{name}</span><span class="str"> is </span><span class="str">{age}</span><span class="str">"</span>)   <span class="com"># Alice is 30</span>
+
+<span class="com"># The four core containers</span>
+<span class="var">nums</span>  = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]              <span class="com"># list  — ordered, mutable</span>
+<span class="var">point</span> = (<span class="num">4</span>, <span class="num">5</span>)                 <span class="com"># tuple — ordered, immutable</span>
+<span class="var">seen</span>  = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}              <span class="com"># set   — unique, unordered</span>
+<span class="var">user</span>  = {<span class="str">"id"</span>: <span class="num">1</span>, <span class="str">"role"</span>: <span class="str">"admin"</span>}  <span class="com"># dict  — key/value</span></pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Syntax</div>
+<div class="concept-title">Control Flow, Functions &amp; Comprehensions</div>
+<div class="dw">
+<div class="code-label">LOGIC &amp; REUSE</div>
+<pre class="code-block"><span class="com"># Indentation defines blocks — 4 spaces, no braces</span>
+<span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">nums</span>:
+    <span class="kw">if</span> <span class="var">n</span> % <span class="num">2</span> == <span class="num">0</span>:
+        <span class="fn">print</span>(<span class="str">f"</span><span class="str">{n}</span><span class="str"> is even"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">f"</span><span class="str">{n}</span><span class="str"> is odd"</span>)
+
+<span class="com"># Functions — default args, type hints (optional but recommended)</span>
+<span class="kw">def</span> <span class="fn">greet</span>(<span class="var">name</span>: <span class="type">str</span>, <span class="var">excited</span>: <span class="type">bool</span> = <span class="kw">False</span>) -&gt; <span class="type">str</span>:
+    <span class="var">msg</span> = <span class="str">f"Hello, </span><span class="str">{name}</span><span class="str">"</span>
+    <span class="kw">return</span> <span class="var">msg</span> + (<span class="str">"!"</span> <span class="kw">if</span> <span class="var">excited</span> <span class="kw">else</span> <span class="str">"."</span>)
+
+<span class="com"># Comprehensions — Python's signature one-liners</span>
+<span class="var">squares</span> = [<span class="var">n</span>*<span class="var">n</span> <span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>)]           <span class="com"># [0,1,4,9,...]</span>
+<span class="var">evens</span>   = [<span class="var">n</span> <span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">nums</span> <span class="kw">if</span> <span class="var">n</span> % <span class="num">2</span> == <span class="num">0</span>]
+<span class="var">lookup</span>  = {<span class="var">u</span>[<span class="str">"id"</span>]: <span class="var">u</span> <span class="kw">for</span> <span class="var">u</span> <span class="kw">in</span> <span class="var">users</span>}          <span class="com"># dict comprehension</span></pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Practical</div>
+<div class="concept-title">Files, Errors &amp; a Real Script</div>
+<div class="dw">
+<div class="code-label">A SCRIPT YOU'D ACTUALLY WRITE</div>
+<pre class="code-block"><span class="kw">import</span> <span class="var">json</span>
+<span class="kw">from</span> <span class="var">pathlib</span> <span class="kw">import</span> <span class="var">Path</span>
+
+<span class="com"># Context manager — file is closed automatically, even on error</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"servers.json"</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="var">servers</span> = <span class="fn">json.load</span>(<span class="var">f</span>)
+
+<span class="kw">for</span> <span class="var">host</span> <span class="kw">in</span> <span class="var">servers</span>:
+    <span class="kw">try</span>:
+        <span class="var">status</span> = <span class="fn">check</span>(<span class="var">host</span>[<span class="str">"ip"</span>])
+    <span class="kw">except</span> <span class="type">ConnectionError</span> <span class="kw">as</span> <span class="var">e</span>:
+        <span class="fn">print</span>(<span class="str">f"</span><span class="str">{host['name']}</span><span class="str"> unreachable: </span><span class="str">{e}</span><span class="str">"</span>)
+        <span class="kw">continue</span>
+    <span class="fn">print</span>(<span class="str">f"</span><span class="str">{host['name']}</span><span class="str">: </span><span class="str">{status}</span><span class="str">"</span>)
+
+<span class="com"># Guard so the file can be imported without running main()</span>
+<span class="kw">if</span> <span class="var">__name__</span> == <span class="str">"__main__"</span>:
+    <span class="fn">main</span>()</pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Toolchain</div>
+<div class="concept-title">Environments, pip &amp; the Standard Library</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Command / Module</th><th>What It Does</th></tr>
+<tr><td><code>python3 -m venv .venv</code></td><td>Create an isolated virtual environment</td></tr>
+<tr><td><code>source .venv/bin/activate</code></td><td>Activate it (deactivate with <code>deactivate</code>)</td></tr>
+<tr><td><code>pip install requests</code></td><td>Install a package from PyPI into the venv</td></tr>
+<tr><td><code>pip freeze &gt; requirements.txt</code></td><td>Pin exact versions for reproducible installs</td></tr>
+<tr><td><code>python3 -m pytest</code></td><td>Run tests (the standard testing tool)</td></tr>
+<tr><td><span class="c-cyan">requests</span></td><td>HTTP for humans — API calls in 2 lines</td></tr>
+<tr><td><span class="c-cyan">json / csv</span></td><td>Parse and write structured data</td></tr>
+<tr><td><span class="c-cyan">pathlib</span></td><td>Modern, OS-agnostic file paths</td></tr>
+<tr><td><span class="c-cyan">subprocess</span></td><td>Run shell commands and capture output</td></tr>
+<tr><td><span class="c-cyan">argparse</span></td><td>Build proper command-line interfaces</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Gotchas</div>
+<div class="concept-title">Traps That Bite Beginners</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Trap</th><th>Why &amp; The Fix</th></tr>
+<tr><td class="c-red">Mutable default args</td><td><code>def f(x=[])</code> reuses the <em>same</em> list across calls. Use <code>x=None</code> then <code>x = x or []</code>.</td></tr>
+<tr><td class="c-red">Copying references</td><td><code>b = a</code> on a list points at the same object. Use <code>a.copy()</code> or <code>list(a)</code>.</td></tr>
+<tr><td class="c-red">Integer vs float division</td><td><code>/</code> always gives a float; use <code>//</code> for integer (floor) division.</td></tr>
+<tr><td class="c-red">Indentation mixing</td><td>Never mix tabs and spaces — Python rejects it. Configure your editor to 4 spaces.</td></tr>
+<tr><td class="c-red">Bare <code>except:</code></td><td>Swallows every error including Ctrl-C. Catch specific exceptions instead.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🟦</span>
+<span class="topic-name">TypeScript — JavaScript That Scales</span>
+<span class="topic-badge">Language</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Why Add Types to JavaScript</div>
+<div class="concept-desc">
+<strong class="c-cyan">TypeScript</strong> is JavaScript with a static
+type system bolted on. You write types; a compiler (<code>tsc</code>)
+checks them and then <em>erases</em> them, emitting plain JavaScript that
+runs anywhere JS runs. The payoff: bugs caught in your editor instead of
+in production, autocomplete that actually knows your data, and code that
+documents itself. It has become the default for any JS codebase past
+"small script" size — React, Node, Deno, and Angular all lean on it.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Syntax</div>
+<div class="concept-title">Types, Interfaces &amp; Functions</div>
+<div class="dw">
+<div class="code-label">THE ESSENTIALS</div>
+<pre class="code-block"><span class="com">// Primitive annotations — usually inferred, write them at boundaries</span>
+<span class="kw">let</span> <span class="var">name</span>: <span class="type">string</span> = <span class="str">"Alice"</span>;
+<span class="kw">let</span> <span class="var">age</span>: <span class="type">number</span> = <span class="num">30</span>;
+<span class="kw">let</span> <span class="var">tags</span>: <span class="type">string</span>[] = [<span class="str">"admin"</span>, <span class="str">"beta"</span>];
+
+<span class="com">// Object shapes — interface (extendable) or type alias</span>
+<span class="kw">interface</span> <span class="type">User</span> {
+  <span class="var">id</span>: <span class="type">number</span>;
+  <span class="var">name</span>: <span class="type">string</span>;
+  <span class="var">email</span>?: <span class="type">string</span>;        <span class="com">// ? = optional</span>
+  <span class="kw">readonly</span> <span class="var">createdAt</span>: <span class="type">Date</span>;  <span class="com">// can't reassign</span>
+}
+
+<span class="com">// Union types — "one of these"</span>
+<span class="kw">type</span> <span class="type">Status</span> = <span class="str">"active"</span> | <span class="str">"suspended"</span> | <span class="str">"deleted"</span>;
+
+<span class="com">// Typed function — params and return</span>
+<span class="kw">function</span> <span class="fn">greet</span>(<span class="var">user</span>: <span class="type">User</span>): <span class="type">string</span> {
+  <span class="kw">return</span> <span class="str">`Hello, </span>${<span class="var">user</span>.<span class="var">name</span>}<span class="str">`</span>;
+}</pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Power Tools</div>
+<div class="concept-title">Generics, Narrowing &amp; Utility Types</div>
+<div class="dw">
+<div class="code-label">WHERE TYPESCRIPT EARNS ITS KEEP</div>
+<pre class="code-block"><span class="com">// Generics — reusable code that keeps its types</span>
+<span class="kw">function</span> <span class="fn">first</span>&lt;<span class="type">T</span>&gt;(<span class="var">arr</span>: <span class="type">T</span>[]): <span class="type">T</span> | <span class="type">undefined</span> {
+  <span class="kw">return</span> <span class="var">arr</span>[<span class="num">0</span>];
+}
+<span class="kw">const</span> <span class="var">n</span> = <span class="fn">first</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]);   <span class="com">// n is number | undefined</span>
+
+<span class="com">// Narrowing — the compiler tracks what a value must be</span>
+<span class="kw">function</span> <span class="fn">len</span>(<span class="var">x</span>: <span class="type">string</span> | <span class="type">string</span>[]): <span class="type">number</span> {
+  <span class="kw">if</span> (<span class="kw">typeof</span> <span class="var">x</span> === <span class="str">"string"</span>) <span class="kw">return</span> <span class="var">x</span>.<span class="var">length</span>;  <span class="com">// x: string here</span>
+  <span class="kw">return</span> <span class="var">x</span>.<span class="var">length</span>;                              <span class="com">// x: string[] here</span>
+}
+
+<span class="com">// Utility types — transform existing types instead of retyping</span>
+<span class="kw">type</span> <span class="type">PartialUser</span> = <span class="type">Partial</span>&lt;<span class="type">User</span>&gt;;   <span class="com">// all fields optional</span>
+<span class="kw">type</span> <span class="type">UserId</span>     = <span class="type">Pick</span>&lt;<span class="type">User</span>, <span class="str">"id"</span>&gt;;   <span class="com">// just { id }</span>
+<span class="kw">type</span> <span class="type">Public</span>     = <span class="type">Omit</span>&lt;<span class="type">User</span>, <span class="str">"email"</span>&gt;; <span class="com">// everything but email</span></pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Key Types &amp; Toolchain</div>
+<div class="dw">
+<div class="dt">▸ TYPES YOU'LL REACH FOR</div>
+<table class="ref-table" style="margin-bottom:14px">
+<tr><th>Type</th><th>Meaning</th></tr>
+<tr><td><code>unknown</code></td><td>Type-safe <code>any</code> — must narrow before use. Prefer over <code>any</code>.</td></tr>
+<tr><td><code>any</code></td><td>Opt out of checking. A code smell — every <code>any</code> is a hole in your safety net.</td></tr>
+<tr><td><code>never</code></td><td>A value that can't exist (exhaustive switches, functions that always throw).</td></tr>
+<tr><td><code>void</code></td><td>Function returns nothing meaningful.</td></tr>
+<tr><td><code>T | null</code></td><td>Explicit nullability — <code>strictNullChecks</code> forces you to handle it.</td></tr>
+<tr><td><code>as const</code></td><td>Freeze a literal to its narrowest type (great for config objects).</td></tr>
+</table>
+<div class="dt">▸ TOOLCHAIN</div>
+<table class="ref-table">
+<tr><th>Command / File</th><th>What It Does</th></tr>
+<tr><td><code>tsc</code></td><td>The TypeScript compiler — type-checks and emits JS</td></tr>
+<tr><td><code>tsc --noEmit</code></td><td>Type-check only (let a bundler handle JS output)</td></tr>
+<tr><td><code>tsconfig.json</code></td><td>Project config — set <code>"strict": true</code> and never look back</td></tr>
+<tr><td><code>tsx</code> / <code>ts-node</code></td><td>Run a <code>.ts</code> file directly without a separate build</td></tr>
+<tr><td><code>@types/*</code></td><td>Community type definitions for untyped npm packages</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Best Practices</div>
+<div class="concept-title">Getting the Most From the Type System</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Do</th><th>Why</th></tr>
+<tr><td class="c-green">Turn on <code>strict</code></td><td>Enables null checks, implicit-any errors, and the checks that catch real bugs.</td></tr>
+<tr><td class="c-green">Let inference work</td><td>Don't annotate what the compiler already knows; type the boundaries (params, exports, API shapes).</td></tr>
+<tr><td class="c-green">Model states as unions</td><td><code>"loading" | "error" | "ready"</code> makes impossible states unrepresentable.</td></tr>
+<tr><td class="c-red">Avoid <code>any</code></td><td>It silently disables checking for everything it touches. Reach for <code>unknown</code> + narrowing.</td></tr>
+<tr><td class="c-amber">Types ≠ runtime validation</td><td>Types vanish at runtime — validate external data (API/JSON) with a library like Zod.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">◈</span>
+<span class="topic-name">GraphQL — Ask For Exactly What You Need</span>
+<span class="topic-badge">API</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">One Endpoint, Precise Queries</div>
+<div class="concept-desc">
+<strong class="c-cyan">GraphQL</strong> is a query language for APIs.
+Instead of many REST endpoints each returning a fixed shape, a GraphQL
+API exposes <em>one</em> endpoint and a typed schema; the client sends a
+query describing exactly the fields it wants, and gets back JSON in that
+exact shape — no more, no less. It solves REST's two classic pains:
+<strong class="c-amber">over-fetching</strong> (getting fields you don't
+need) and <strong class="c-amber">under-fetching</strong> (making 3 calls
+to assemble one screen).
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Example</div>
+<div class="concept-title">A Query and Its Response</div>
+<div class="dw">
+<div class="code-label">CLIENT ASKS FOR SPECIFIC FIELDS</div>
+<pre class="code-block"><span class="com"># Query — one round trip pulls a user AND their recent posts</span>
+<span class="kw">query</span> <span class="fn">GetUser</span>(<span class="var">$id</span>: <span class="type">ID!</span>) {
+  <span class="var">user</span>(<span class="var">id</span>: <span class="var">$id</span>) {
+    <span class="var">name</span>
+    <span class="var">email</span>
+    <span class="var">posts</span>(<span class="var">last</span>: <span class="num">3</span>) {
+      <span class="var">title</span>
+      <span class="var">publishedAt</span>
+    }
+  }
+}</pre>
+<div class="code-label" style="margin-top:12px">SERVER RETURNS THAT EXACT SHAPE</div>
+<pre class="code-block">{
+  <span class="str">"data"</span>: {
+    <span class="str">"user"</span>: {
+      <span class="str">"name"</span>: <span class="str">"Alice"</span>,
+      <span class="str">"email"</span>: <span class="str">"alice@example.com"</span>,
+      <span class="str">"posts"</span>: [
+        { <span class="str">"title"</span>: <span class="str">"Intro to GraphQL"</span>, <span class="str">"publishedAt"</span>: <span class="str">"2026-01-04"</span> }
+      ]
+    }
+  }
+}</pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Three Operation Types &amp; the Schema</div>
+<div class="dw">
+<div class="dt">▸ OPERATIONS</div>
+<table class="ref-table" style="margin-bottom:14px">
+<tr><th>Operation</th><th>Purpose</th><th>REST Analogy</th></tr>
+<tr><td class="c-green">query</td><td>Read data (no side effects)</td><td>GET</td></tr>
+<tr><td class="c-green">mutation</td><td>Create / update / delete</td><td>POST / PUT / DELETE</td></tr>
+<tr><td class="c-green">subscription</td><td>Real-time stream of updates (usually over WebSocket)</td><td>Webhook / SSE</td></tr>
+</table>
+<div class="dt">▸ SCHEMA DEFINITION (SDL)</div>
+<pre class="code-block"><span class="kw">type</span> <span class="type">User</span> {
+  <span class="var">id</span>: <span class="type">ID!</span>          <span class="com"># ! = non-nullable</span>
+  <span class="var">name</span>: <span class="type">String!</span>
+  <span class="var">posts</span>: [<span class="type">Post!</span>]!  <span class="com"># non-null list of non-null Posts</span>
+}
+<span class="kw">type</span> <span class="type">Query</span> {
+  <span class="var">user</span>(<span class="var">id</span>: <span class="type">ID!</span>): <span class="type">User</span>
+}</pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Trade-offs</div>
+<div class="concept-title">GraphQL vs REST — When to Use Which</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Dimension</th><th>REST</th><th>GraphQL</th></tr>
+<tr><td>Fetching</td><td class="c-amber">Fixed shapes; may over/under-fetch</td><td class="c-green">Client picks exact fields</td></tr>
+<tr><td>Endpoints</td><td>Many (one per resource)</td><td>One</td></tr>
+<tr><td>Caching</td><td class="c-green">Easy — HTTP caches by URL</td><td class="c-amber">Harder — one URL, needs client-side cache</td></tr>
+<tr><td>Versioning</td><td>Often <code>/v2/</code> URLs</td><td class="c-green">Evolve the schema; deprecate fields</td></tr>
+<tr><td>Learning curve</td><td class="c-green">Low</td><td class="c-amber">Higher (schema, resolvers, tooling)</td></tr>
+<tr><td>Risk</td><td>N+1 across endpoints</td><td class="c-red">N+1 in resolvers; deep/expensive queries need limits</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong>Rule of thumb:</strong> REST shines for simple, cacheable,
+resource-shaped APIs. GraphQL shines when many clients need many
+different slices of a richly-connected data graph (think a mobile app
+and a web app hitting the same backend).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗄️</span>
+<span class="topic-name">Databases — Relational vs NoSQL, ACID &amp; Indexing</span>
+<span class="topic-badge">Data</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Two Families of Database</div>
+<div class="concept-desc">
+A <strong class="c-cyan">relational (SQL)</strong> database stores data in
+tables with a fixed schema and enforces relationships between them —
+PostgreSQL, MySQL, SQL Server. A <strong class="c-amber">NoSQL</strong>
+database trades some of that rigor for flexibility and horizontal scale,
+and comes in several shapes. The real question isn't "which is better" —
+it's <em>what shape is your data, and what guarantees do you need?</em>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">NoSQL Families</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Type</th><th>Stores</th><th>Examples</th><th>Good For</th></tr>
+<tr><td class="c-green">Document</td><td>JSON-like documents</td><td>MongoDB, Couchbase</td><td>Flexible, nested records</td></tr>
+<tr><td class="c-green">Key-Value</td><td>Simple key → value</td><td>Redis, DynamoDB</td><td>Caching, sessions, speed</td></tr>
+<tr><td class="c-green">Wide-Column</td><td>Rows with dynamic columns</td><td>Cassandra, HBase</td><td>Huge write volume, time-series</td></tr>
+<tr><td class="c-green">Graph</td><td>Nodes &amp; edges</td><td>Neo4j, Neptune</td><td>Relationships (social, fraud)</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Guarantees</div>
+<div class="concept-title">ACID — The Transaction Contract</div>
+<div class="concept-desc">
+A <strong>transaction</strong> groups multiple operations so they succeed
+or fail together. ACID is the promise relational databases make about them:
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Letter</th><th>Guarantee</th></tr>
+<tr><td class="c-cyan">Atomicity</td><td>All operations commit, or none do. No half-finished transfers.</td></tr>
+<tr><td class="c-cyan">Consistency</td><td>Every transaction moves the DB from one valid state to another (constraints hold).</td></tr>
+<tr><td class="c-cyan">Isolation</td><td>Concurrent transactions don't see each other's half-done work.</td></tr>
+<tr><td class="c-cyan">Durability</td><td>Once committed, data survives a crash or power loss.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Many NoSQL systems relax these for scale, offering
+<strong>BASE</strong> instead (Basically Available, Soft state,
+Eventually consistent) — writes propagate over time rather than instantly.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Performance</div>
+<div class="concept-title">Indexing — Why the Right Index Is 1000× Faster</div>
+<div class="concept-desc">
+Without an index, finding a row means a <strong class="c-red">full table
+scan</strong> — reading every row. An index is a sorted lookup structure
+(usually a B-tree) that turns that into a fast search, the way a book's
+index beats flipping every page. The trade: indexes speed up reads but
+slow down writes (every insert updates the index) and use disk.
+</div>
+<div class="dw">
+<div class="code-label">CREATE AN INDEX &amp; CHECK IT'S USED</div>
+<pre class="code-block"><span class="com">-- Slow: full scan of a big table</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> customer_id = <span class="num">42</span>;
+
+<span class="com">-- Add an index on the filtered column</span>
+<span class="kw">CREATE INDEX</span> idx_orders_customer <span class="kw">ON</span> orders(customer_id);
+
+<span class="com">-- EXPLAIN shows the planner's strategy — look for "Index Scan"</span>
+<span class="com">-- instead of "Seq Scan" (Postgres) after adding the index</span>
+<span class="kw">EXPLAIN ANALYZE</span> <span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> customer_id = <span class="num">42</span>;</pre>
+<div class="dt" style="margin-top:12px">▸ INDEXING RULES OF THUMB</div>
+<table class="ref-table">
+<tr><th>Do</th><th>Why</th></tr>
+<tr><td class="c-green">Index columns you filter/join/sort on</td><td>That's where scans hurt</td></tr>
+<tr><td class="c-green">Use a composite index for multi-column filters</td><td>One index can serve <code>WHERE a=? AND b=?</code></td></tr>
+<tr><td class="c-red">Don't index everything</td><td>Each index taxes every write and eats storage</td></tr>
+<tr><td class="c-amber">Read the query plan</td><td><code>EXPLAIN</code> tells you what the DB actually does — measure, don't guess</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Design</div>
+<div class="concept-title">Normalization vs Denormalization</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Approach</th><th>What</th><th>Trade-off</th></tr>
+<tr><td class="c-cyan">Normalize</td><td>Split data so each fact lives in exactly one place (no duplication)</td><td>Clean writes, no update anomalies — but more joins on read</td></tr>
+<tr><td class="c-amber">Denormalize</td><td>Duplicate data to avoid joins</td><td>Faster reads — but you must keep copies in sync</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Relational databases start normalized; you denormalize deliberately for
+read performance. Document databases often start denormalized (embed
+related data) and trade write-side duplication for single-read fetches.
+</div>
+</div>
 </div>
 </div>
 </div>
