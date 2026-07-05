@@ -1219,6 +1219,120 @@ prompts = [
   </div>
 </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔌</span>
+              <span class="topic-name">Model Context Protocol (MCP) — USB-C for AI</span>
+              <span class="topic-badge">Agentic AI</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">What MCP Solves</div>
+                <div class="concept-desc">
+                  The <strong class="c-cyan">Model Context Protocol</strong> is an open
+                  standard that lets AI applications connect to external tools and data
+                  through <em>one</em> common interface — instead of writing a bespoke
+                  integration for every model × every tool. Think of it as
+                  <strong class="c-amber">USB-C for AI</strong>: any MCP-speaking client
+                  (Claude Desktop, an IDE, a custom agent) can plug into any MCP server
+                  (GitHub, a database, your filesystem) without custom glue code.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Architecture</div>
+                <div class="concept-title">Host · Client · Server</div>
+                <div class="dw">
+                  <div class="dt">▸ THE THREE ROLES</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Role</th><th>What It Is</th></tr>
+                    <tr><td class="c-cyan">Host</td><td>The AI app the user interacts with (Claude Desktop, an IDE, an agent). Holds the LLM and spawns clients.</td></tr>
+                    <tr><td class="c-cyan">Client</td><td>Lives inside the host; keeps a 1:1 connection to a single MCP server and speaks the protocol.</td></tr>
+                    <tr><td class="c-cyan">Server</td><td>A lightweight program exposing capabilities (tools, data, prompts) for one system — e.g. a GitHub server or a Postgres server.</td></tr>
+                  </table>
+                  <div class="concept-desc">
+                    One host runs many clients, each wired to one server. Servers are
+                    small and composable: you run several at once (files + GitHub +
+                    Slack) and the host's model can use all of them together.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Three Server Primitives</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Primitive</th><th>Controlled By</th><th>What It Does</th></tr>
+                    <tr><td class="c-green">Tools</td><td>Model</td><td>Actions the model can <em>call</em> — search a DB, send a message, run code. Like function calling.</td></tr>
+                    <tr><td class="c-green">Resources</td><td>Application</td><td>Read-only data the host can load into context — files, records, API responses. Addressed by URI.</td></tr>
+                    <tr><td class="c-green">Prompts</td><td>User</td><td>Reusable, parameterized templates a user invokes deliberately (e.g. a "/summarize" slash command).</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The distinction is <em>who decides to use it</em>: the model picks
+                    tools, the app wires up resources, and the user triggers prompts.
+                    (Clients can also expose <span class="c-cyan">sampling</span> — letting a
+                    server ask the host's LLM to complete text — and
+                    <span class="c-cyan">roots</span>/<span class="c-cyan">elicitation</span>
+                    for scoping and follow-up input.)
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Transport</div>
+                <div class="concept-title">How Client and Server Talk</div>
+                <div class="dw">
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Transport</th><th>Use When</th></tr>
+                    <tr><td class="c-amber">stdio</td><td>Server runs locally as a subprocess — messages over stdin/stdout. Simplest; great for local tools.</td></tr>
+                    <tr><td class="c-amber">Streamable HTTP</td><td>Remote servers over HTTP(S), with Server-Sent Events for streaming. Used for hosted/cloud MCP servers.</td></tr>
+                  </table>
+                  <div class="concept-desc">
+                    Underneath, every message is <strong>JSON-RPC 2.0</strong>. The
+                    connection opens with a <code>initialize</code> handshake where both
+                    sides announce their capabilities and protocol version.
+                  </div>
+                  <div class="dt" style="margin-top:12px">▸ A TOOL CALL, ON THE WIRE (JSON-RPC)</div>
+<pre class="code-block"><span class="com">// Client asks the server to run a tool</span>
+{
+  <span class="str">"jsonrpc"</span>: <span class="str">"2.0"</span>,
+  <span class="str">"id"</span>: <span class="num">7</span>,
+  <span class="str">"method"</span>: <span class="str">"tools/call"</span>,
+  <span class="str">"params"</span>: {
+    <span class="str">"name"</span>: <span class="str">"search_issues"</span>,
+    <span class="str">"arguments"</span>: { <span class="str">"query"</span>: <span class="str">"is:open label:bug"</span> }
+  }
+}
+
+<span class="com">// Server responds with the result</span>
+{
+  <span class="str">"jsonrpc"</span>: <span class="str">"2.0"</span>,
+  <span class="str">"id"</span>: <span class="num">7</span>,
+  <span class="str">"result"</span>: {
+    <span class="str">"content"</span>: [{ <span class="str">"type"</span>: <span class="str">"text"</span>, <span class="str">"text"</span>: <span class="str">"Found 3 open bugs..."</span> }]
+  }
+}</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Why It Matters</div>
+                <div class="concept-title">The Integration Math</div>
+                <div class="concept-desc">
+                  Before MCP, wiring <strong>M</strong> AI apps to <strong>N</strong> tools
+                  meant up to <strong class="c-red">M × N</strong> custom integrations.
+                  With MCP, each app implements the protocol once and each tool implements
+                  it once — <strong class="c-green">M + N</strong>. That is the same shift
+                  the Language Server Protocol (LSP) brought to code editors, and it's why
+                  MCP has become the de-facto way to give agents real-world capabilities.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body ai -->
 <!-- /domain-body ai -->
 <!-- /domain-body ai -->

@@ -10070,6 +10070,137 @@ crontab -e</pre>
   </div>
 </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐍</span>
+              <span class="topic-name">Python — The Everything Language</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Why Python Runs the World</div>
+                <div class="concept-desc">
+                  Python is the default language of automation, data science, AI/ML,
+                  scripting, and glue code. It is dynamically typed, interpreted, and
+                  reads almost like English — indentation <em>is</em> the syntax, so
+                  there are no braces. If you learn one language for IT and security
+                  work, make it this one: nearly every tool (Ansible, scapy, requests,
+                  pandas, PyTorch) has a Python interface.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Syntax</div>
+                <div class="concept-title">Core Syntax &amp; Data Types</div>
+                <div class="dw">
+                  <div class="code-label">THE ESSENTIALS</div>
+<pre class="code-block"><span class="com"># Variables — no type declarations, just assign</span>
+<span class="var">name</span> = <span class="str">"Alice"</span>        <span class="com"># str</span>
+<span class="var">age</span> = <span class="num">30</span>             <span class="com"># int</span>
+<span class="var">pi</span> = <span class="num">3.14159</span>        <span class="com"># float</span>
+<span class="var">active</span> = <span class="kw">True</span>         <span class="com"># bool</span>
+<span class="var">items</span> = <span class="kw">None</span>          <span class="com"># the "no value" sentinel</span>
+
+<span class="com"># f-strings — the modern way to build text</span>
+<span class="fn">print</span>(<span class="str">f"</span><span class="str">{name}</span><span class="str"> is </span><span class="str">{age}</span><span class="str">"</span>)   <span class="com"># Alice is 30</span>
+
+<span class="com"># The four core containers</span>
+<span class="var">nums</span>  = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]              <span class="com"># list  — ordered, mutable</span>
+<span class="var">point</span> = (<span class="num">4</span>, <span class="num">5</span>)                 <span class="com"># tuple — ordered, immutable</span>
+<span class="var">seen</span>  = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}              <span class="com"># set   — unique, unordered</span>
+<span class="var">user</span>  = {<span class="str">"id"</span>: <span class="num">1</span>, <span class="str">"role"</span>: <span class="str">"admin"</span>}  <span class="com"># dict  — key/value</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Syntax</div>
+                <div class="concept-title">Control Flow, Functions &amp; Comprehensions</div>
+                <div class="dw">
+                  <div class="code-label">LOGIC &amp; REUSE</div>
+<pre class="code-block"><span class="com"># Indentation defines blocks — 4 spaces, no braces</span>
+<span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">nums</span>:
+    <span class="kw">if</span> <span class="var">n</span> % <span class="num">2</span> == <span class="num">0</span>:
+        <span class="fn">print</span>(<span class="str">f"</span><span class="str">{n}</span><span class="str"> is even"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">f"</span><span class="str">{n}</span><span class="str"> is odd"</span>)
+
+<span class="com"># Functions — default args, type hints (optional but recommended)</span>
+<span class="kw">def</span> <span class="fn">greet</span>(<span class="var">name</span>: <span class="type">str</span>, <span class="var">excited</span>: <span class="type">bool</span> = <span class="kw">False</span>) -&gt; <span class="type">str</span>:
+    <span class="var">msg</span> = <span class="str">f"Hello, </span><span class="str">{name}</span><span class="str">"</span>
+    <span class="kw">return</span> <span class="var">msg</span> + (<span class="str">"!"</span> <span class="kw">if</span> <span class="var">excited</span> <span class="kw">else</span> <span class="str">"."</span>)
+
+<span class="com"># Comprehensions — Python's signature one-liners</span>
+<span class="var">squares</span> = [<span class="var">n</span>*<span class="var">n</span> <span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>)]           <span class="com"># [0,1,4,9,...]</span>
+<span class="var">evens</span>   = [<span class="var">n</span> <span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">nums</span> <span class="kw">if</span> <span class="var">n</span> % <span class="num">2</span> == <span class="num">0</span>]
+<span class="var">lookup</span>  = {<span class="var">u</span>[<span class="str">"id"</span>]: <span class="var">u</span> <span class="kw">for</span> <span class="var">u</span> <span class="kw">in</span> <span class="var">users</span>}          <span class="com"># dict comprehension</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Practical</div>
+                <div class="concept-title">Files, Errors &amp; a Real Script</div>
+                <div class="dw">
+                  <div class="code-label">A SCRIPT YOU'D ACTUALLY WRITE</div>
+<pre class="code-block"><span class="kw">import</span> <span class="var">json</span>
+<span class="kw">from</span> <span class="var">pathlib</span> <span class="kw">import</span> <span class="var">Path</span>
+
+<span class="com"># Context manager — file is closed automatically, even on error</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"servers.json"</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="var">servers</span> = <span class="fn">json.load</span>(<span class="var">f</span>)
+
+<span class="kw">for</span> <span class="var">host</span> <span class="kw">in</span> <span class="var">servers</span>:
+    <span class="kw">try</span>:
+        <span class="var">status</span> = <span class="fn">check</span>(<span class="var">host</span>[<span class="str">"ip"</span>])
+    <span class="kw">except</span> <span class="type">ConnectionError</span> <span class="kw">as</span> <span class="var">e</span>:
+        <span class="fn">print</span>(<span class="str">f"</span><span class="str">{host['name']}</span><span class="str"> unreachable: </span><span class="str">{e}</span><span class="str">"</span>)
+        <span class="kw">continue</span>
+    <span class="fn">print</span>(<span class="str">f"</span><span class="str">{host['name']}</span><span class="str">: </span><span class="str">{status}</span><span class="str">"</span>)
+
+<span class="com"># Guard so the file can be imported without running main()</span>
+<span class="kw">if</span> <span class="var">__name__</span> == <span class="str">"__main__"</span>:
+    <span class="fn">main</span>()</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Toolchain</div>
+                <div class="concept-title">Environments, pip &amp; the Standard Library</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Command / Module</th><th>What It Does</th></tr>
+                    <tr><td><code>python3 -m venv .venv</code></td><td>Create an isolated virtual environment</td></tr>
+                    <tr><td><code>source .venv/bin/activate</code></td><td>Activate it (deactivate with <code>deactivate</code>)</td></tr>
+                    <tr><td><code>pip install requests</code></td><td>Install a package from PyPI into the venv</td></tr>
+                    <tr><td><code>pip freeze &gt; requirements.txt</code></td><td>Pin exact versions for reproducible installs</td></tr>
+                    <tr><td><code>python3 -m pytest</code></td><td>Run tests (the standard testing tool)</td></tr>
+                    <tr><td><span class="c-cyan">requests</span></td><td>HTTP for humans — API calls in 2 lines</td></tr>
+                    <tr><td><span class="c-cyan">json / csv</span></td><td>Parse and write structured data</td></tr>
+                    <tr><td><span class="c-cyan">pathlib</span></td><td>Modern, OS-agnostic file paths</td></tr>
+                    <tr><td><span class="c-cyan">subprocess</span></td><td>Run shell commands and capture output</td></tr>
+                    <tr><td><span class="c-cyan">argparse</span></td><td>Build proper command-line interfaces</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Gotchas</div>
+                <div class="concept-title">Traps That Bite Beginners</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Trap</th><th>Why &amp; The Fix</th></tr>
+                    <tr><td class="c-red">Mutable default args</td><td><code>def f(x=[])</code> reuses the <em>same</em> list across calls. Use <code>x=None</code> then <code>x = x or []</code>.</td></tr>
+                    <tr><td class="c-red">Copying references</td><td><code>b = a</code> on a list points at the same object. Use <code>a.copy()</code> or <code>list(a)</code>.</td></tr>
+                    <tr><td class="c-red">Integer vs float division</td><td><code>/</code> always gives a float; use <code>//</code> for integer (floor) division.</td></tr>
+                    <tr><td class="c-red">Indentation mixing</td><td>Never mix tabs and spaces — Python rejects it. Configure your editor to 4 spaces.</td></tr>
+                    <tr><td class="c-red">Bare <code>except:</code></td><td>Swallows every error including Ctrl-C. Catch specific exceptions instead.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body script -->
 <!-- /domain-body script -->
 <!-- /domain-body script -->
