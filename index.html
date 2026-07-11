@@ -5188,6 +5188,73 @@ latency-sensitive traffic across an MPLS or SD-WAN link.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚀</span>
+<span class="topic-name">HTTP/2, HTTP/3 &amp; QUIC — Modern Web Transport</span>
+<span class="topic-badge">Networking</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Making the Web Fast, One Protocol at a Time</div>
+<div class="concept-desc">
+HTTP/1.1 (1997) sends one request at a time per connection and in plain
+text — browsers opened 6+ connections per site just to keep up.
+<strong class="c-cyan">HTTP/2</strong> and
+<strong class="c-amber">HTTP/3</strong> keep the same familiar HTTP
+semantics (methods, headers, status codes) but completely rework how bytes
+move on the wire to kill latency. Same API, radically faster transport.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Three Generations</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>HTTP/1.1</th><th>HTTP/2</th><th>HTTP/3</th></tr>
+<tr><td>Transport</td><td>TCP</td><td>TCP</td><td class="c-green">QUIC (over UDP)</td></tr>
+<tr><td>Format</td><td>Text</td><td>Binary</td><td>Binary</td></tr>
+<tr><td>Multiplexing</td><td class="c-red">No (1 at a time)</td><td class="c-green">Yes (many streams)</td><td class="c-green">Yes</td></tr>
+<tr><td>Header compression</td><td>None</td><td>HPACK</td><td>QPACK</td></tr>
+<tr><td>Head-of-line block</td><td class="c-red">Per request</td><td class="c-amber">At TCP layer</td><td class="c-green">Solved</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Key Ideas</div>
+<div class="concept-title">Multiplexing &amp; Head-of-Line Blocking</div>
+<div class="concept-desc">
+<strong class="c-cyan">HTTP/2's</strong> big win is
+<strong>multiplexing</strong>: many requests share one connection as
+independent "streams," so a slow response doesn't block the others at the
+HTTP layer. But they still ride one <strong>TCP</strong> connection — and if
+a single TCP packet is lost, TCP stalls <em>all</em> streams until it's
+retransmitted. That's <strong class="c-red">head-of-line blocking</strong>
+at the transport layer, HTTP/2's remaining weakness.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Leap</div>
+<div class="concept-title">Why HTTP/3 Ditched TCP for QUIC</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>QUIC feature</th><th>Benefit</th></tr>
+<tr><td class="c-green">Runs on UDP</td><td>Streams are independent — one lost packet only stalls its own stream, not all of them.</td></tr>
+<tr><td class="c-green">TLS 1.3 built in</td><td>Encryption isn't optional; the handshake is baked into the transport.</td></tr>
+<tr><td class="c-green">Faster handshakes</td><td>0-RTT / 1-RTT connection setup vs TCP+TLS's multiple round trips.</td></tr>
+<tr><td class="c-green">Connection migration</td><td>A connection ID (not IP:port) means switching Wi-Fi → cellular doesn't drop the connection.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Because QUIC lives in <em>user space</em> (not the OS kernel like TCP), it
+evolves faster. The trade-off: some middleboxes/firewalls throttle or block
+UDP, so clients fall back to HTTP/2 over TCP when needed.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->
@@ -15604,6 +15671,72 @@ bucket left <em>public</em>. Keep buckets private by default, use IAM
 policies for access, and reach for presigned URLs when you need to share a
 single object.
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🎚️</span>
+<span class="topic-name">Deployment Strategies — Blue-Green, Canary &amp; Rolling</span>
+<span class="topic-badge">Reliability</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Shipping New Code Without Taking the Site Down</div>
+<div class="concept-desc">
+The naive deploy — stop the app, swap the code, start it — means downtime
+and a scary all-or-nothing cutover. Modern strategies release new versions
+<strong class="c-cyan">gradually and reversibly</strong>, so you can catch a
+bad release before it reaches everyone and roll back in seconds instead of
+scrambling. The common thread: never bet all your traffic on an unproven
+version at once.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Main Strategies</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Strategy</th><th>How It Works</th></tr>
+<tr><td class="c-cyan">Rolling</td><td>Replace instances a few at a time until all run the new version. No extra capacity needed; rollback is slow (roll the other way).</td></tr>
+<tr><td class="c-cyan">Blue-Green</td><td>Run two full environments. Blue serves live; deploy to idle Green, test it, then flip all traffic. Instant rollback = flip back. Costs 2× capacity during the switch.</td></tr>
+<tr><td class="c-cyan">Canary</td><td>Send a small % of traffic to the new version, watch metrics, then ramp up. Limits blast radius; needs good monitoring.</td></tr>
+<tr><td class="c-cyan">Feature flags</td><td>Ship code dark, then toggle it on for cohorts at runtime — decouples <em>deploy</em> from <em>release</em>.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Trade-offs</div>
+<div class="concept-title">Choosing One</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>If you want…</th><th>Use</th></tr>
+<tr><td>Instant rollback, simple cutover</td><td class="c-green">Blue-Green</td></tr>
+<tr><td>To catch bad releases with real traffic</td><td class="c-green">Canary</td></tr>
+<tr><td>Zero extra infrastructure cost</td><td class="c-green">Rolling</td></tr>
+<tr><td>To release to specific users / A-B test</td><td class="c-green">Feature flags</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+They combine: canary-deploy behind a feature flag on rolling
+infrastructure. Kubernetes and load balancers make traffic-splitting easy,
+which is why these went mainstream.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Prerequisites</div>
+<div class="concept-title">What Makes Safe Deploys Possible</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Requirement</th><th>Why</th></tr>
+<tr><td class="c-amber">Backward-compatible changes</td><td>Old and new versions run at once — the DB schema and APIs must serve both. Use expand-then-contract migrations.</td></tr>
+<tr><td class="c-amber">Health checks</td><td>The orchestrator must know a new instance is actually ready before sending it traffic.</td></tr>
+<tr><td class="c-amber">Good metrics/alerts</td><td>Canary is blind without error-rate and latency dashboards to compare versions.</td></tr>
+<tr><td class="c-amber">Automated rollback</td><td>A deploy that can't auto-revert on failing metrics isn't really safe.</td></tr>
+</table>
 </div>
 </div>
 </div>
@@ -32888,6 +33021,90 @@ the <em>original</em> result instead of doing the work again.
 <tr><th>Method</th><th>Idempotent?</th></tr>
 <tr><td>GET, PUT, DELETE</td><td class="c-green">Yes — same call, same end state</td></tr>
 <tr><td>POST</td><td class="c-red">No — needs an idempotency key to be safe to retry</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⚙️</span>
+<span class="topic-name">gRPC &amp; Protocol Buffers — High-Performance RPC</span>
+<span class="topic-badge">API</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Calling a Remote Function Like a Local One</div>
+<div class="concept-desc">
+<strong class="c-cyan">gRPC</strong> is a framework for
+<strong>Remote Procedure Calls</strong> — you call a method on another
+service as if it were a local function, and gRPC handles the networking. It
+runs over HTTP/2 and serializes data with
+<strong class="c-amber">Protocol Buffers</strong> (protobuf): a compact
+<em>binary</em> format defined by a schema. The result is dramatically
+smaller and faster than JSON over REST — which is why it's the default for
+internal microservice-to-microservice communication.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Example</div>
+<div class="concept-title">Define Once in a .proto File</div>
+<div class="dw">
+<div class="code-label">user.proto — THE CONTRACT</div>
+<pre class="code-block"><span class="kw">syntax</span> = <span class="str">"proto3"</span>;
+
+<span class="com">// A message = a typed record; numbers are field tags (wire IDs)</span>
+<span class="kw">message</span> <span class="type">UserRequest</span> {
+  <span class="type">int32</span> <span class="var">id</span> = <span class="num">1</span>;
+}
+<span class="kw">message</span> <span class="type">User</span> {
+  <span class="type">int32</span>  <span class="var">id</span>    = <span class="num">1</span>;
+  <span class="type">string</span> <span class="var">name</span>  = <span class="num">2</span>;
+  <span class="type">string</span> <span class="var">email</span> = <span class="num">3</span>;
+}
+
+<span class="com">// A service = the callable methods</span>
+<span class="kw">service</span> <span class="type">UserService</span> {
+  <span class="kw">rpc</span> <span class="fn">GetUser</span>(<span class="type">UserRequest</span>) <span class="kw">returns</span> (<span class="type">User</span>);
+}</pre>
+<div class="concept-desc" style="margin-top:8px">
+A compiler (<code>protoc</code>) turns this into typed client + server code
+in your language — both sides share one source of truth, so a mismatched
+field is a compile error, not a 3 a.m. surprise.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Four Call Styles</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Type</th><th>Shape</th><th>Use</th></tr>
+<tr><td class="c-green">Unary</td><td>1 request → 1 response</td><td>Ordinary calls</td></tr>
+<tr><td class="c-green">Server streaming</td><td>1 request → stream of responses</td><td>Live feeds, large results</td></tr>
+<tr><td class="c-green">Client streaming</td><td>Stream of requests → 1 response</td><td>Uploads, telemetry</td></tr>
+<tr><td class="c-green">Bidirectional</td><td>Both stream at once</td><td>Chat, real-time sync</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+Streaming comes free from HTTP/2's multiplexing — a big reason gRPC picked
+it as the transport.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Trade-offs</div>
+<div class="concept-title">gRPC vs REST — Pick the Right Tool</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>gRPC</th><th>REST/JSON</th></tr>
+<tr><td>Payload</td><td class="c-green">Compact binary</td><td>Human-readable text</td></tr>
+<tr><td>Speed</td><td class="c-green">Faster (binary + HTTP/2)</td><td>Slower</td></tr>
+<tr><td>Contract</td><td class="c-green">Strong (.proto schema)</td><td>Looser (OpenAPI optional)</td></tr>
+<tr><td>Browser support</td><td class="c-red">Needs a proxy (gRPC-Web)</td><td class="c-green">Native everywhere</td></tr>
+<tr><td>Debug by hand</td><td class="c-red">Hard (binary)</td><td class="c-green">Easy (curl)</td></tr>
+<tr><td>Best for</td><td>Internal microservices</td><td>Public/browser APIs</td></tr>
 </table>
 </div>
 </div>

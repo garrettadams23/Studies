@@ -5270,6 +5270,77 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🚀</span>
+              <span class="topic-name">HTTP/2, HTTP/3 &amp; QUIC — Modern Web Transport</span>
+              <span class="topic-badge">Networking</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Making the Web Fast, One Protocol at a Time</div>
+                <div class="concept-desc">
+                  HTTP/1.1 (1997) sends one request at a time per connection and in plain
+                  text — browsers opened 6+ connections per site just to keep up.
+                  <strong class="c-cyan">HTTP/2</strong> and
+                  <strong class="c-amber">HTTP/3</strong> keep the same familiar HTTP
+                  semantics (methods, headers, status codes) but completely rework how bytes
+                  move on the wire to kill latency. Same API, radically faster transport.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Three Generations</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>HTTP/1.1</th><th>HTTP/2</th><th>HTTP/3</th></tr>
+                    <tr><td>Transport</td><td>TCP</td><td>TCP</td><td class="c-green">QUIC (over UDP)</td></tr>
+                    <tr><td>Format</td><td>Text</td><td>Binary</td><td>Binary</td></tr>
+                    <tr><td>Multiplexing</td><td class="c-red">No (1 at a time)</td><td class="c-green">Yes (many streams)</td><td class="c-green">Yes</td></tr>
+                    <tr><td>Header compression</td><td>None</td><td>HPACK</td><td>QPACK</td></tr>
+                    <tr><td>Head-of-line block</td><td class="c-red">Per request</td><td class="c-amber">At TCP layer</td><td class="c-green">Solved</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Key Ideas</div>
+                <div class="concept-title">Multiplexing &amp; Head-of-Line Blocking</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">HTTP/2's</strong> big win is
+                  <strong>multiplexing</strong>: many requests share one connection as
+                  independent "streams," so a slow response doesn't block the others at the
+                  HTTP layer. But they still ride one <strong>TCP</strong> connection — and if
+                  a single TCP packet is lost, TCP stalls <em>all</em> streams until it's
+                  retransmitted. That's <strong class="c-red">head-of-line blocking</strong>
+                  at the transport layer, HTTP/2's remaining weakness.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Leap</div>
+                <div class="concept-title">Why HTTP/3 Ditched TCP for QUIC</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>QUIC feature</th><th>Benefit</th></tr>
+                    <tr><td class="c-green">Runs on UDP</td><td>Streams are independent — one lost packet only stalls its own stream, not all of them.</td></tr>
+                    <tr><td class="c-green">TLS 1.3 built in</td><td>Encryption isn't optional; the handshake is baked into the transport.</td></tr>
+                    <tr><td class="c-green">Faster handshakes</td><td>0-RTT / 1-RTT connection setup vs TCP+TLS's multiple round trips.</td></tr>
+                    <tr><td class="c-green">Connection migration</td><td>A connection ID (not IP:port) means switching Wi-Fi → cellular doesn't drop the connection.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Because QUIC lives in <em>user space</em> (not the OS kernel like TCP), it
+                    evolves faster. The trade-off: some middleboxes/firewalls throttle or block
+                    UDP, so clients fall back to HTTP/2 over TCP when needed.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->

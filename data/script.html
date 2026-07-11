@@ -10695,6 +10695,94 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚙️</span>
+              <span class="topic-name">gRPC &amp; Protocol Buffers — High-Performance RPC</span>
+              <span class="topic-badge">API</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Calling a Remote Function Like a Local One</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">gRPC</strong> is a framework for
+                  <strong>Remote Procedure Calls</strong> — you call a method on another
+                  service as if it were a local function, and gRPC handles the networking. It
+                  runs over HTTP/2 and serializes data with
+                  <strong class="c-amber">Protocol Buffers</strong> (protobuf): a compact
+                  <em>binary</em> format defined by a schema. The result is dramatically
+                  smaller and faster than JSON over REST — which is why it's the default for
+                  internal microservice-to-microservice communication.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">Define Once in a .proto File</div>
+                <div class="dw">
+                  <div class="code-label">user.proto — THE CONTRACT</div>
+<pre class="code-block"><span class="kw">syntax</span> = <span class="str">"proto3"</span>;
+
+<span class="com">// A message = a typed record; numbers are field tags (wire IDs)</span>
+<span class="kw">message</span> <span class="type">UserRequest</span> {
+  <span class="type">int32</span> <span class="var">id</span> = <span class="num">1</span>;
+}
+<span class="kw">message</span> <span class="type">User</span> {
+  <span class="type">int32</span>  <span class="var">id</span>    = <span class="num">1</span>;
+  <span class="type">string</span> <span class="var">name</span>  = <span class="num">2</span>;
+  <span class="type">string</span> <span class="var">email</span> = <span class="num">3</span>;
+}
+
+<span class="com">// A service = the callable methods</span>
+<span class="kw">service</span> <span class="type">UserService</span> {
+  <span class="kw">rpc</span> <span class="fn">GetUser</span>(<span class="type">UserRequest</span>) <span class="kw">returns</span> (<span class="type">User</span>);
+}</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    A compiler (<code>protoc</code>) turns this into typed client + server code
+                    in your language — both sides share one source of truth, so a mismatched
+                    field is a compile error, not a 3 a.m. surprise.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Four Call Styles</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Type</th><th>Shape</th><th>Use</th></tr>
+                    <tr><td class="c-green">Unary</td><td>1 request → 1 response</td><td>Ordinary calls</td></tr>
+                    <tr><td class="c-green">Server streaming</td><td>1 request → stream of responses</td><td>Live feeds, large results</td></tr>
+                    <tr><td class="c-green">Client streaming</td><td>Stream of requests → 1 response</td><td>Uploads, telemetry</td></tr>
+                    <tr><td class="c-green">Bidirectional</td><td>Both stream at once</td><td>Chat, real-time sync</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Streaming comes free from HTTP/2's multiplexing — a big reason gRPC picked
+                    it as the transport.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Trade-offs</div>
+                <div class="concept-title">gRPC vs REST — Pick the Right Tool</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>gRPC</th><th>REST/JSON</th></tr>
+                    <tr><td>Payload</td><td class="c-green">Compact binary</td><td>Human-readable text</td></tr>
+                    <tr><td>Speed</td><td class="c-green">Faster (binary + HTTP/2)</td><td>Slower</td></tr>
+                    <tr><td>Contract</td><td class="c-green">Strong (.proto schema)</td><td>Looser (OpenAPI optional)</td></tr>
+                    <tr><td>Browser support</td><td class="c-red">Needs a proxy (gRPC-Web)</td><td class="c-green">Native everywhere</td></tr>
+                    <tr><td>Debug by hand</td><td class="c-red">Hard (binary)</td><td class="c-green">Easy (curl)</td></tr>
+                    <tr><td>Best for</td><td>Internal microservices</td><td>Public/browser APIs</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body script -->
 <!-- /domain-body script -->
 <!-- /domain-body script -->
