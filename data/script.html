@@ -10783,6 +10783,80 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📊</span>
+              <span class="topic-name">OLTP vs OLAP — Transactional vs Analytical Data</span>
+              <span class="topic-badge">Data</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Two Jobs, Two Very Different Databases</div>
+                <div class="concept-desc">
+                  Databases do two fundamentally different kinds of work.
+                  <strong class="c-cyan">OLTP</strong> (Online Transaction Processing) runs the
+                  live application — many small, fast reads and writes: place an order, update a
+                  profile. <strong class="c-amber">OLAP</strong> (Online Analytical Processing)
+                  answers big questions over history: "revenue by region by quarter for three
+                  years." Trying to run heavy analytics on your production OLTP database is a
+                  classic mistake — the giant scan slows down every customer's checkout.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Comparison</div>
+                <div class="concept-title">OLTP vs OLAP Side by Side</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>OLTP</th><th>OLAP</th></tr>
+                    <tr><td>Purpose</td><td>Run the application</td><td>Analyze &amp; report</td></tr>
+                    <tr><td>Queries</td><td>Many small reads/writes</td><td>Few huge aggregations</td></tr>
+                    <tr><td>Touches</td><td>A few rows by key</td><td>Millions of rows, few columns</td></tr>
+                    <tr><td>Optimized for</td><td>Fast writes, low latency</td><td>Fast scans &amp; aggregates</td></tr>
+                    <tr><td>Data</td><td>Current, detailed</td><td>Historical, often aggregated</td></tr>
+                    <tr><td>Examples</td><td>Postgres, MySQL</td><td>BigQuery, Snowflake, Redshift</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Why</div>
+                <div class="concept-title">Row Stores vs Column Stores</div>
+                <div class="concept-desc">
+                  The performance gap comes down to physical layout. OLTP databases are
+                  <strong class="c-cyan">row-oriented</strong> — a whole record sits together, so
+                  reading or writing one order is one fast seek. OLAP databases are
+                  <strong class="c-amber">column-oriented</strong> — each column is stored
+                  together, so summing one column over millions of rows reads only that column
+                  (and compresses beautifully, since a column holds similar values).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Row store</th><th>Column store</th></tr>
+                    <tr><td>Great at</td><td>Fetch/modify whole records</td><td>Aggregate a few columns over many rows</td></tr>
+                    <tr><td>Compression</td><td class="c-amber">Modest</td><td class="c-green">Excellent (like values together)</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">In Practice</div>
+                <div class="concept-title">You Use Both — Connected by a Pipeline</div>
+                <div class="concept-desc">
+                  A typical stack keeps them separate: the app writes to an OLTP database, and a
+                  <strong>data pipeline (ETL/ELT)</strong> periodically copies and reshapes that
+                  data into an OLAP warehouse for analysts and dashboards. This isolates the two
+                  workloads so analytics never slows the live app, and lets each database be
+                  tuned for its job. (A newer category, <strong class="c-cyan">HTAP</strong>,
+                  tries to serve both from one system — handy, but the separated pattern still
+                  dominates.)
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body script -->
 <!-- /domain-body script -->
 <!-- /domain-body script -->

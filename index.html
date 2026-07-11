@@ -12902,6 +12902,74 @@ assuming wrong can be measured in headlines.</p>
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🕵️</span>
+<span class="topic-name">Data Privacy Techniques — Anonymization &amp; Differential Privacy</span>
+<span class="topic-badge">Privacy</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Using Data Without Exposing People</div>
+<div class="concept-desc">
+Organizations want to analyze data; individuals have a right not to be
+identified. Privacy engineering is the set of techniques that let you keep the
+<em>useful signal</em> in data while removing the ability to trace it back to a
+person. The catch: naive approaches fail. Simply deleting names is
+<strong class="c-red">not enough</strong> — attackers re-identify people by
+combining "anonymous" data with outside information.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Techniques, Weakest to Strongest</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Technique</th><th>What It Does</th></tr>
+<tr><td class="c-amber">Pseudonymization</td><td>Replace identifiers with a token/key. Reversible with a lookup table — reduces risk but data is still personal (GDPR still applies).</td></tr>
+<tr><td class="c-amber">Masking / redaction</td><td>Hide part of a value (<code>****-1234</code>). Good for display, not for safe analytics datasets.</td></tr>
+<tr><td class="c-cyan">Generalization</td><td>Coarsen values — exact age → age range, ZIP → region — so many people share each value.</td></tr>
+<tr><td class="c-cyan">Anonymization</td><td>Irreversibly remove identifiability. If truly anonymous, privacy law no longer applies — but it's hard to guarantee.</td></tr>
+<tr><td class="c-green">Differential privacy</td><td>Add calibrated mathematical noise so any one person's presence can't be detected — with a provable guarantee.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Problem</div>
+<div class="concept-title">Re-Identification &amp; k-Anonymity</div>
+<div class="concept-desc">
+Famous studies re-identified "anonymous" people from just
+<strong>ZIP + birthdate + sex</strong>, or picked individuals out of released
+Netflix ratings. The fields that do this — not direct IDs, but combinations
+that narrow to one person — are called <strong class="c-amber">quasi-identifiers</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Model</th><th>Guarantee</th></tr>
+<tr><td class="c-cyan">k-anonymity</td><td>Each record is indistinguishable from at least <em>k−1</em> others on quasi-identifiers (you can't narrow below k people).</td></tr>
+<tr><td class="c-cyan">l-diversity</td><td>Adds that each group has diverse sensitive values (so knowing the group doesn't reveal the secret).</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Modern Answer</div>
+<div class="concept-title">Differential Privacy — Provable Guarantees</div>
+<div class="concept-desc">
+<strong class="c-cyan">Differential privacy</strong> takes a different tack:
+instead of scrubbing records, it adds carefully-tuned random noise to
+<em>results</em>, so the output is nearly identical whether or not any single
+person is in the dataset — meaning no analysis can reveal that person was
+there. A parameter <strong>ε (epsilon)</strong> tunes the trade-off: less
+noise = more accuracy but weaker privacy; more noise = stronger privacy but
+fuzzier answers. Apple, Google, and the US Census use it to publish statistics
+without exposing individuals. It's the strongest guarantee we have — a
+mathematical promise, not just a best effort.
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body grc -->
 <!-- /domain-body grc -->
 <!-- /domain-body grc -->
@@ -16244,6 +16312,70 @@ desired state from Git and reconciles continuously.
 <tr><td class="c-amber">Secrets</td><td>You can't commit plaintext secrets — use Sealed Secrets, SOPS, or an external secrets operator.</td></tr>
 <tr><td class="c-amber">Repo layout</td><td>Common pattern: separate app-code repos from a <em>config</em> repo; a merge to config triggers the deploy.</td></tr>
 <tr><td class="c-amber">Fits declarative best</td><td>GitOps assumes a system that reconciles to a declared state (Kubernetes shines); imperative steps fit less cleanly.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">💰</span>
+<span class="topic-name">FinOps — Cloud Cost Management</span>
+<span class="topic-badge">Cloud</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Cloud Bill Is a Team Sport</div>
+<div class="concept-desc">
+In the data-center era, capacity was a big upfront purchase the finance team
+controlled. In the cloud, <em>any</em> engineer can spin up expensive
+resources in seconds — and the bill is pay-as-you-go and variable.
+<strong class="c-cyan">FinOps</strong> is the practice of bringing financial
+accountability to that model: giving engineers cost visibility, so the people
+who create spend can make informed trade-offs between speed, quality, and
+cost. It's a culture, not just a dashboard.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Framework</div>
+<div class="concept-title">Inform → Optimize → Operate</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Phase</th><th>What You Do</th></tr>
+<tr><td class="c-green">Inform</td><td>Make cost visible &amp; attributable — tag resources, allocate spend to teams/products, show dashboards.</td></tr>
+<tr><td class="c-green">Optimize</td><td>Cut waste — rightsize, delete idle resources, buy commitments, pick cheaper options.</td></tr>
+<tr><td class="c-green">Operate</td><td>Make it continuous — budgets, alerts, and cost as a normal engineering metric.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Where the Savings Are</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Lever</th><th>What It Means</th></tr>
+<tr><td class="c-cyan">Rightsizing</td><td>Match instance size to real usage — most VMs are wildly overprovisioned.</td></tr>
+<tr><td class="c-cyan">Kill idle / zombies</td><td>Unattached disks, idle load balancers, forgotten dev environments burn money 24/7.</td></tr>
+<tr><td class="c-cyan">Commitments</td><td>Reserved Instances / Savings Plans trade a 1–3 yr commitment for ~30–70% off steady workloads.</td></tr>
+<tr><td class="c-cyan">Spot instances</td><td>Spare capacity at up to ~90% off — for fault-tolerant, interruptible jobs.</td></tr>
+<tr><td class="c-cyan">Autoscaling</td><td>Scale to demand (and to zero) instead of provisioning for peak always-on.</td></tr>
+<tr><td class="c-cyan">Storage tiering</td><td>Move cold data to cheaper classes; set lifecycle rules.</td></tr>
+<tr><td class="c-cyan">Egress awareness</td><td>Data transfer <em>out</em> is a sneaky cost — cross-region/cross-cloud traffic adds up.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Practice</div>
+<div class="concept-title">Habits That Keep Costs Sane</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Habit</th><th>Why</th></tr>
+<tr><td class="c-green">Tag everything</td><td>Without tags for team/env/product, you can't attribute spend or find waste.</td></tr>
+<tr><td class="c-green">Budgets &amp; anomaly alerts</td><td>Catch a runaway job or a misconfigured autoscaler before the invoice does.</td></tr>
+<tr><td class="c-green">Unit economics</td><td>Track <em>cost per customer / per request</em>, not just the total — growth should scale efficiently.</td></tr>
+<tr><td class="c-amber">Right time to optimize</td><td>Don't micro-optimize a tiny bill; focus effort where spend is largest.</td></tr>
 </table>
 </div>
 </div>
@@ -33760,6 +33892,76 @@ it as the transport.
 <tr><td>Debug by hand</td><td class="c-red">Hard (binary)</td><td class="c-green">Easy (curl)</td></tr>
 <tr><td>Best for</td><td>Internal microservices</td><td>Public/browser APIs</td></tr>
 </table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📊</span>
+<span class="topic-name">OLTP vs OLAP — Transactional vs Analytical Data</span>
+<span class="topic-badge">Data</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Two Jobs, Two Very Different Databases</div>
+<div class="concept-desc">
+Databases do two fundamentally different kinds of work.
+<strong class="c-cyan">OLTP</strong> (Online Transaction Processing) runs the
+live application — many small, fast reads and writes: place an order, update a
+profile. <strong class="c-amber">OLAP</strong> (Online Analytical Processing)
+answers big questions over history: "revenue by region by quarter for three
+years." Trying to run heavy analytics on your production OLTP database is a
+classic mistake — the giant scan slows down every customer's checkout.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Comparison</div>
+<div class="concept-title">OLTP vs OLAP Side by Side</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>OLTP</th><th>OLAP</th></tr>
+<tr><td>Purpose</td><td>Run the application</td><td>Analyze &amp; report</td></tr>
+<tr><td>Queries</td><td>Many small reads/writes</td><td>Few huge aggregations</td></tr>
+<tr><td>Touches</td><td>A few rows by key</td><td>Millions of rows, few columns</td></tr>
+<tr><td>Optimized for</td><td>Fast writes, low latency</td><td>Fast scans &amp; aggregates</td></tr>
+<tr><td>Data</td><td>Current, detailed</td><td>Historical, often aggregated</td></tr>
+<tr><td>Examples</td><td>Postgres, MySQL</td><td>BigQuery, Snowflake, Redshift</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Why</div>
+<div class="concept-title">Row Stores vs Column Stores</div>
+<div class="concept-desc">
+The performance gap comes down to physical layout. OLTP databases are
+<strong class="c-cyan">row-oriented</strong> — a whole record sits together, so
+reading or writing one order is one fast seek. OLAP databases are
+<strong class="c-amber">column-oriented</strong> — each column is stored
+together, so summing one column over millions of rows reads only that column
+(and compresses beautifully, since a column holds similar values).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>Row store</th><th>Column store</th></tr>
+<tr><td>Great at</td><td>Fetch/modify whole records</td><td>Aggregate a few columns over many rows</td></tr>
+<tr><td>Compression</td><td class="c-amber">Modest</td><td class="c-green">Excellent (like values together)</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">In Practice</div>
+<div class="concept-title">You Use Both — Connected by a Pipeline</div>
+<div class="concept-desc">
+A typical stack keeps them separate: the app writes to an OLTP database, and a
+<strong>data pipeline (ETL/ELT)</strong> periodically copies and reshapes that
+data into an OLAP warehouse for analysts and dashboards. This isolates the two
+workloads so analytics never slows the live app, and lets each database be
+tuned for its job. (A newer category, <strong class="c-cyan">HTAP</strong>,
+tries to serve both from one system — handy, but the separated pattern still
+dominates.)
 </div>
 </div>
 </div>
