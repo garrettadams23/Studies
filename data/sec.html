@@ -3490,6 +3490,77 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🛡️</span>
+              <span class="topic-name">Web Application Firewalls (WAF)</span>
+              <span class="topic-badge">AppSec</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Filter That Understands HTTP</div>
+                <div class="concept-desc">
+                  A network firewall decides which <em>ports</em> and IPs may connect — it can't
+                  see inside a web request. A <strong class="c-cyan">Web Application Firewall</strong>
+                  operates at layer 7: it inspects the actual HTTP request — URL, headers, body,
+                  parameters — and blocks ones that look like attacks (SQL injection, XSS, path
+                  traversal) before they reach your app. It's a shield in front of the
+                  application, not a replacement for writing secure code.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Two Security Models</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Model</th><th>How It Works</th><th>Trade-off</th></tr>
+                    <tr><td class="c-green">Negative (blocklist)</td><td>Block requests matching known-bad patterns/signatures</td><td>Easy to start; misses novel attacks; the common default</td></tr>
+                    <tr><td class="c-green">Positive (allowlist)</td><td>Only permit requests matching known-good shapes</td><td>Very strong; high effort to build &amp; maintain</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Many WAFs ship the <strong>OWASP Core Rule Set (CRS)</strong> — a curated
+                    baseline of negative rules covering the OWASP Top 10 — that you then tune.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Deployment</div>
+                <div class="concept-title">Where a WAF Sits</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Type</th><th>Example</th></tr>
+                    <tr><td class="c-cyan">Cloud / CDN-based</td><td>Cloudflare, AWS WAF, Azure — easiest; scrubs traffic at the edge</td></tr>
+                    <tr><td class="c-cyan">Reverse-proxy module</td><td>ModSecurity on nginx/Apache — self-hosted, full control</td></tr>
+                    <tr><td class="c-cyan">Host-based</td><td>Runs on the app server itself</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Most WAFs also bundle <strong>rate limiting, bot mitigation, and DDoS
+                    protection</strong>, since they're already the choke point all traffic passes
+                    through.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reality Check</div>
+                <div class="concept-title">Tuning &amp; Limits</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Point</th><th>Detail</th></tr>
+                    <tr><td class="c-amber">Start in detect mode</td><td>Run in log-only/monitor first so you see what it <em>would</em> block before it breaks real users.</td></tr>
+                    <tr><td class="c-red">False positives</td><td>Aggressive rules block legitimate requests (a comment containing SQL keywords). Tune per-app.</td></tr>
+                    <tr><td class="c-red">Not a fix for bad code</td><td>A WAF is defense-in-depth — it can be bypassed with clever encoding. Fix the vulnerability too.</td></tr>
+                    <tr><td class="c-amber">Business logic is invisible</td><td>A WAF can't tell that a valid-looking request abuses your workflow (e.g. skipping a payment step).</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body sec -->
 <!-- /domain-body sec -->
 <!-- /domain-body sec -->
