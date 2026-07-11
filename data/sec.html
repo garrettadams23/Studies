@@ -3418,6 +3418,78 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔎</span>
+              <span class="topic-name">SAST, DAST &amp; SCA — Automated Security Testing</span>
+              <span class="topic-badge">AppSec</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Finding Vulnerabilities Before Attackers Do</div>
+                <div class="concept-desc">
+                  Manual pentesting is thorough but slow and periodic. To catch security bugs
+                  continuously — on every commit — teams automate three complementary scans:
+                  <strong class="c-cyan">SAST</strong> reads your source code,
+                  <strong class="c-amber">DAST</strong> attacks your running app, and
+                  <strong class="c-green">SCA</strong> checks your third-party dependencies.
+                  None is complete alone; together they cover code you wrote, behavior at
+                  runtime, and code you borrowed.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Three Scans</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>SAST</th><th>DAST</th><th>SCA</th></tr>
+                    <tr><td>Looks at</td><td>Source code</td><td>Running app</td><td>Dependencies</td></tr>
+                    <tr><td>View</td><td>White-box (inside)</td><td>Black-box (outside)</td><td>Your SBOM</td></tr>
+                    <tr><td>Finds</td><td>Injection, hardcoded secrets, unsafe calls</td><td>Auth flaws, XSS, misconfig, real exploits</td><td>Known CVEs in libraries</td></tr>
+                    <tr><td>Needs it running?</td><td class="c-green">No</td><td class="c-red">Yes</td><td class="c-green">No</td></tr>
+                    <tr><td>Weakness</td><td>False positives; no runtime view</td><td>Misses source-level bugs; needs a live target</td><td>Only known vulns</td></tr>
+                    <tr><td>Tools</td><td>Semgrep, CodeQL, SonarQube</td><td>OWASP ZAP, Burp</td><td>Dependabot, Snyk, Trivy</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Shift Left &amp; Wire Into CI</div>
+                <div class="concept-desc">
+                  The guiding idea is <strong class="c-cyan">"shift left"</strong> — move
+                  security checks earlier in the pipeline, where a bug is minutes to fix
+                  instead of a production incident. Run SAST and SCA on every pull request;
+                  run DAST against a staging deploy. Fail the build on high-severity findings,
+                  warn on the rest.
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="com"># Example CI steps (conceptual)</span>
+- <span class="fn">semgrep</span> ci                     <span class="com"># SAST — scan the diff for code flaws</span>
+- <span class="fn">trivy</span> fs --severity HIGH,CRITICAL .  <span class="com"># SCA — vulnerable deps</span>
+- <span class="fn">gitleaks</span> detect               <span class="com"># catch committed secrets</span>
+- <span class="fn">zap-baseline</span> -t https://staging.app  <span class="com"># DAST — probe running app</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reality Check</div>
+                <div class="concept-title">Tools Don't Replace Judgment</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Watch out for</th><th>Detail</th></tr>
+                    <tr><td class="c-red">Alert fatigue</td><td>Noisy false positives get ignored. Tune rules and triage severity, or the whole program is tuned out.</td></tr>
+                    <tr><td class="c-amber">Coverage gaps</td><td>Scanners find <em>known</em> patterns. Business-logic flaws (e.g. bypassing a checkout step) still need a human.</td></tr>
+                    <tr><td class="c-green">Defense in depth</td><td>Automated scanning complements — not replaces — code review, threat modeling, and periodic pentests.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body sec -->
 <!-- /domain-body sec -->
 <!-- /domain-body sec -->

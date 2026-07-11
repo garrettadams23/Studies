@@ -4873,6 +4873,84 @@ lsof +L1 2&gt;/dev/null | grep deleted
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐝</span>
+              <span class="topic-name">eBPF — Programmable Kernel Observability &amp; Security</span>
+              <span class="topic-badge">Advanced</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Run Your Own Code Inside the Kernel — Safely</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">eBPF</strong> (extended Berkeley Packet Filter) lets
+                  you load small programs into the running Linux kernel that execute when
+                  events fire — a packet arrives, a system call is made, a function is entered.
+                  Historically, changing kernel behavior meant patching the kernel or writing a
+                  risky module. eBPF gives you that power <em>without</em> the risk: a
+                  <strong>verifier</strong> checks each program can't crash or loop forever
+                  before it runs. It's become the foundation of modern Linux observability,
+                  networking, and security tooling.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">How It Works</div>
+                <div class="concept-title">Attach → Verify → Run → Report</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>What Happens</th></tr>
+                    <tr><td class="c-green">Attach</td><td>Hook a program to an event: kprobes (kernel fns), tracepoints, network hooks (XDP/tc), or user-space (uprobes).</td></tr>
+                    <tr><td class="c-green">Verify</td><td>The kernel verifier proves the program is safe — bounded loops, no bad memory access — before loading.</td></tr>
+                    <tr><td class="c-green">Run</td><td>It executes in-kernel at event time, extremely fast (often JIT-compiled to native code).</td></tr>
+                    <tr><td class="c-green">Report</td><td>Results flow to user space via <strong>maps</strong> (shared key/value structures) or ring buffers.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Why It Matters</div>
+                <div class="concept-title">What eBPF Replaced</div>
+                <div class="concept-desc">
+                  The old way to get deep visibility was strapping together <code>strace</code>,
+                  <code>tcpdump</code>, and sampling profilers — each with overhead and blind
+                  spots. eBPF sees everything the kernel sees, with minimal overhead, because
+                  it runs <em>at the source</em> of the event instead of copying data out to
+                  analyze it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Domain</th><th>What eBPF Enables</th></tr>
+                    <tr><td class="c-cyan">Observability</td><td>Trace syscalls, latency, and function calls live (bpftrace, BCC).</td></tr>
+                    <tr><td class="c-cyan">Networking</td><td>Fast packet processing &amp; load balancing at the earliest hook (XDP, Cilium).</td></tr>
+                    <tr><td class="c-cyan">Security</td><td>Runtime detection — flag suspicious syscalls/process behavior (Falco, Tetragon).</td></tr>
+                    <tr><td class="c-cyan">Profiling</td><td>Continuous, low-overhead CPU/off-CPU flame graphs across a fleet.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">A One-Liner With bpftrace</div>
+                <div class="dw">
+<pre class="code-block"><span class="com"># Count every process that opens a file, live — no app changes</span>
+<span class="fn">sudo</span> bpftrace -e <span class="str">'tracepoint:syscalls:sys_enter_openat { @[comm] = count(); }'</span>
+
+<span class="com"># Histogram of read() sizes across the whole system</span>
+<span class="fn">sudo</span> bpftrace -e <span class="str">'tracepoint:syscalls:sys_enter_read { @bytes = hist(args-&gt;count); }'</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Requires a modern kernel (4.x+, richer on 5.x+) and root/capabilities. The
+                    tooling ladder: <strong>bpftrace</strong> (quick one-liners) →
+                    <strong>BCC</strong> (Python tools) → <strong>libbpf</strong> (production
+                    programs).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->

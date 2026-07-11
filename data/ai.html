@@ -1498,6 +1498,82 @@ prompts = [
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔁</span>
+              <span class="topic-name">MLOps — Shipping &amp; Monitoring Models in Production</span>
+              <span class="topic-badge">AI Infra</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Model in a Notebook Isn't a Product</div>
+                <div class="concept-desc">
+                  Training a good model is maybe 10% of the work. <strong class="c-cyan">MLOps</strong>
+                  is DevOps for machine learning — the practices that get a model
+                  <em>reliably</em> from a data scientist's laptop into production and keep it
+                  healthy there. Unlike ordinary software, an ML system depends on
+                  <strong>data</strong> that shifts over time, so it can silently rot even when
+                  the code never changes. MLOps exists to make ML reproducible, deployable, and
+                  monitored.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Lifecycle</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Stage</th><th>What Happens</th></tr>
+                    <tr><td class="c-green">Data &amp; features</td><td>Version datasets; compute features consistently for training and serving (a feature store).</td></tr>
+                    <tr><td class="c-green">Train &amp; track</td><td>Log every run's data, code, params, and metrics so results are reproducible (MLflow, W&amp;B).</td></tr>
+                    <tr><td class="c-green">Registry</td><td>Version trained models with stages (staging → production) like artifacts.</td></tr>
+                    <tr><td class="c-green">Deploy &amp; serve</td><td>Expose the model behind an API (batch or real-time); canary new versions.</td></tr>
+                    <tr><td class="c-green">Monitor</td><td>Watch predictions, latency, and — critically — <em>data drift</em>. Retrain when quality slips.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Hard Part</div>
+                <div class="concept-title">Drift — Why Models Decay</div>
+                <div class="concept-desc">
+                  A model learns patterns from historical data. When the real world changes,
+                  those patterns go stale and accuracy quietly drops — no error, no crash, just
+                  worse predictions.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Type</th><th>What Shifts</th></tr>
+                    <tr><td class="c-amber">Data drift</td><td>The input distribution changes (new user behavior, new products).</td></tr>
+                    <tr><td class="c-amber">Concept drift</td><td>The relationship between inputs and the answer changes (fraud tactics evolve).</td></tr>
+                    <tr><td class="c-red">Training/serving skew</td><td>Features are computed differently in training vs production — a top cause of "great offline, bad live."</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    You catch drift by monitoring input statistics and prediction quality
+                    against a baseline, then trigger a <strong>retrain</strong> — ideally
+                    automated on a schedule or a drift alert.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Principles</div>
+                <div class="concept-title">What Good MLOps Looks Like</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Practice</th><th>Why</th></tr>
+                    <tr><td class="c-green">Reproducibility</td><td>Pin data + code + params so any result can be rebuilt exactly.</td></tr>
+                    <tr><td class="c-green">Automated pipelines</td><td>Retraining and deployment are scripted, not manual notebook runs.</td></tr>
+                    <tr><td class="c-green">Versioning everything</td><td>Data, features, models, and code all get versions — you can roll back a model like code.</td></tr>
+                    <tr><td class="c-green">Continuous monitoring</td><td>Serving metrics + drift detection, because "deployed" isn't "done."</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body ai -->
 <!-- /domain-body ai -->
 <!-- /domain-body ai -->
