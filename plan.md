@@ -291,7 +291,7 @@ already supports (it renders any entry in `data/domains.json` that has a matchin
 `data/{id}.html`).
 
 **Wave 15 — domain scaffolding (prep, ~30 min):**
-- [ ] Add three entries to `data/domains.json`:
+- [x] Add three entries to `data/domains.json`:
   - `redteam` 🔴 "Red Team & Offensive Tooling" — cert tags PT+ / OSCP
   - `blueteam` 🔵 "Blue Team & Defensive Tooling" — cert tags CySA+ / GCIH
   - `cloud`   ☁️ "Cloud Platforms — AWS · GCP · Azure" — cert tags AWS / GCP
@@ -313,13 +313,13 @@ already supports (it renders any entry in `data/domains.json` that has a matchin
 Tool reference cards, grouped by kill-chain stage. ~9 waves, ~50 cards.
 
 **Wave R1 — Recon & OSINT tooling**
-- [ ] Nmap — Deep Dive (scan types, NSE scripts, timing, output formats)
-- [ ] Masscan & RustScan — Internet-scale port discovery
-- [ ] theHarvester & Recon-ng — email/subdomain/host OSINT frameworks
-- [ ] Amass & Subfinder — subdomain enumeration at scale
-- [ ] Shodan & Censys — the search engines for exposed devices (dorks & filters)
-- [ ] Maltego & SpiderFoot — link-analysis / automated OSINT
-- [ ] Google Dorking & GHDB — advanced operators for exposed data
+- [x] Nmap — Deep Dive (scan types, NSE scripts, timing, output formats)
+- [x] Masscan & RustScan — Internet-scale port discovery
+- [x] theHarvester & Recon-ng — email/subdomain/host OSINT frameworks
+- [x] Amass & Subfinder — subdomain enumeration at scale
+- [x] Shodan & Censys — the search engines for exposed devices (dorks & filters)
+- [x] Maltego & SpiderFoot — link-analysis / automated OSINT
+- [x] Google Dorking & GHDB — advanced operators for exposed data
 
 **Wave R2 — Web app attack tooling**
 - [ ] Burp Suite — Proxy, Repeater, Intruder, Scanner workflow
@@ -389,11 +389,11 @@ Tool reference cards, grouped by kill-chain stage. ~9 waves, ~50 cards.
 ~8 waves, ~45 cards. Each pairs where possible with a Red card above.
 
 **Wave B1 — Network security monitoring**
-- [ ] Wireshark — capture, display filters, Follow Stream, analysis
-- [ ] tcpdump — CLI capture & BPF filters (field card, deeper than the net topic)
-- [ ] Zeek (Bro) — network metadata logging & scripting
-- [ ] Suricata & Snort — signature IDS/IPS, rule syntax
-- [ ] Arkime / ntopng — full-packet capture & traffic analytics
+- [x] Wireshark — capture, display filters, Follow Stream, analysis
+- [x] tcpdump — CLI capture & BPF filters (field card, deeper than the net topic)
+- [x] Zeek (Bro) — network metadata logging & scripting
+- [x] Suricata & Snort — signature IDS/IPS, rule syntax
+- [x] Arkime / ntopng — full-packet capture & traffic analytics
 
 **Wave B2 — SIEM & log analytics**
 - [ ] Splunk — SPL query language, indexes, dashboards, alerts
@@ -451,12 +451,12 @@ Tool reference cards, grouped by kill-chain stage. ~9 waves, ~50 cards.
 an explicit "Rosetta stone" card. Azure kept as a lighter bonus set.
 
 **Wave C1 — Cloud foundations & getting started**
-- [ ] Cloud Fundamentals — IaaS/PaaS/SaaS, regions/AZs, shared-responsibility
-- [ ] AWS — Getting Started (account, root vs IAM, console vs CLI, free tier)
-- [ ] AWS CLI & CloudShell — install, configure, profiles, `--query` JMESPath
-- [ ] GCP — Getting Started (org/folder/project hierarchy, billing)
-- [ ] gcloud CLI & Cloud Shell — init, config, `gcloud`/`gsutil`/`bq`
-- [ ] Cloud Service Rosetta Stone — AWS ↔ GCP ↔ Azure equivalents table
+- [x] Cloud Fundamentals — IaaS/PaaS/SaaS, regions/AZs, shared-responsibility
+- [x] AWS — Getting Started (account, root vs IAM, console vs CLI, free tier)
+- [x] AWS CLI & CloudShell — install, configure, profiles, `--query` JMESPath
+- [x] GCP — Getting Started (org/folder/project hierarchy, billing)
+- [x] gcloud CLI & Cloud Shell — init, config, `gcloud`/`gsutil`/`bq`
+- [x] Cloud Service Rosetta Stone — AWS ↔ GCP ↔ Azure equivalents table
 
 **Wave C2 — Identity & access (the #1 cloud risk)**
 - [ ] AWS IAM — users, groups, roles, policies (identity vs resource vs SCP)
@@ -568,3 +568,159 @@ commands), inherits search/permalinks/progress/keyboard-a11y automatically, and
 each wave ends with `python3 build.py` + a headless smoke check + a CI-green
 commit. Red-team cards additionally carry an authorized-use reminder and a paired
 Blue-team detection note.
+
+---
+
+# Content Roadmap — Architecture, Engineering & DevOps (Wave 27+)
+
+> **Added on request:** deeper coverage for **software architecture &
+> engineering roles**, **DevOps/platform engineering**, and a **VS Code**
+> mastery set. Complements — doesn't duplicate — the existing conceptual
+> topics (`Design Patterns`, `Refactoring & Clean Code`, `API Design`, `CI/CD`,
+> `SRE`, `Service Mesh`, `Message Queues`, and the shallow `VS Code` card).
+> ~65 planned topics across 3 tracks / 16 waves.
+
+## Structural decision
+
+- **TRACK E** → new domain **`eng` 🏛️ "Software Engineering & Architecture"**.
+  Distinct from `script` (language-focused) and `ops` (run/operate). Home for
+  system design, architecture styles, engineering craft, and the career/role
+  ladder. Wire it like the domains in Wave 15 (domains.json + chip + `.c-eng` /
+  `.domain-eng` colors + `data/eng.html`).
+- **TRACK F** → **deepen the existing `ops` domain** (it already carries CI/CD,
+  K8s, IaC, GitOps, SRE, Terraform, Chaos, Deployment Strategies — effectively
+  the DevOps/SRE domain). No new domain needed.
+- **TRACK G** → **deepen `shortcut`** (Shortcuts & Productivity; already holds a
+  `VS Code` card). Replace/expand that card with a proper multi-topic set.
+
+---
+
+## TRACK E — Software Architecture & Engineering Craft  (→ `eng`)
+
+6 waves, ~32 cards. Aimed at the architect / senior+ / staff-engineer path.
+
+**Wave E1 — System Design Fundamentals**
+- [x] Scalability 101 — vertical vs horizontal, stateless design, shared-nothing
+- [x] Load Balancing & Sharding — strategies, consistent hashing, hot keys
+- [x] Back-of-the-Envelope — latency numbers every engineer should know, capacity math
+- [x] Designing for Failure — redundancy, graceful degradation, bulkheads, blast radius
+- [x] The System Design Interview — a framework (requirements → estimate → API → data → scale → trade-offs)
+
+**Wave E2 — Architecture Styles**
+- [x] Monolith vs Microservices vs Modular Monolith — honest trade-offs
+- [x] Event-Driven Architecture — deep (choreography vs orchestration; ties to Message Queues)
+- [x] Clean / Hexagonal / Ports & Adapters — keeping business logic independent
+- [x] CQRS & Event Sourcing — read/write split, the append-only log
+- [x] The Twelve-Factor App — the checklist for cloud-native services
+- [ ] Cloud-Native & Serverless architecture patterns
+
+**Wave E3 — Domain Modeling & Design**
+- [ ] Domain-Driven Design (DDD) — bounded contexts, ubiquitous language, aggregates
+- [ ] SOLID Principles — deep card with examples of each
+- [ ] Coupling & Cohesion — Law of Demeter, dependency direction
+- [ ] API-First & Contract-Driven design — OpenAPI, consumer-driven contracts
+- [ ] Schema & data modeling patterns — normalization trade-offs, polyglot persistence
+
+**Wave E4 — Engineering Craft & Quality**
+- [ ] Clean Code & Naming — deep (functions, comments, structure)
+- [ ] Code Review — doing it well (giving + receiving; what to look for)
+- [ ] Testing Strategy — the test pyramid, unit/integration/e2e, TDD & BDD
+- [ ] Technical Debt — recognizing, quantifying, and paying it down deliberately
+- [ ] ADRs & Design Docs — Architecture Decision Records, RFCs, the C4 model
+
+**Wave E5 — Reliability & Distributed Patterns**
+- [ ] Resilience Patterns — circuit breaker, retry + backoff + jitter, timeout, bulkhead
+- [ ] Idempotency & Exactly-Once — deep (ties to API Design + Message Queues)
+- [ ] Distributed Transactions — Saga, Outbox, 2PC and why 2PC is avoided
+- [ ] Backpressure & Flow Control — protecting systems under load
+- [ ] Consistency in practice — read-repair, quorums, tunable consistency (ties to CAP)
+
+**Wave E6 — Engineering Career & Roles**
+- [ ] The Engineering Ladder — junior → mid → senior → staff → principal
+- [ ] Staff+ Archetypes — tech lead, architect, solver, right-hand
+- [ ] Tech Lead vs Engineering Manager — the fork in the road
+- [ ] Estimation & Planning — story points, velocity, why estimates are hard
+- [ ] Influence Without Authority — RFCs, stakeholder comms, driving alignment
+- [ ] Career Ladders & Interviews — leveling, system-design & coding interview prep
+
+---
+
+## TRACK F — DevOps & Platform Engineering  (→ deepen `ops`)
+
+5 waves, ~25 cards. Deepens the tools already present as concept-topics.
+
+**Wave F1 — DevOps Foundations & Culture**
+- [x] What DevOps Actually Is — CALMS, breaking the dev/ops wall, you-build-it-you-run-it
+- [x] The Three Ways — Flow, Feedback, Continual Learning (The Phoenix/DevOps Handbook)
+- [x] DORA Metrics — deploy frequency, lead time, MTTR, change-failure rate
+- [x] Value Stream Mapping — finding the bottleneck in delivery
+- [x] Platform Engineering & the IDP — golden paths, self-service, the internal developer platform
+
+**Wave F2 — CI/CD Pipelines Deep**
+- [ ] Pipeline Design — stages, quality gates, artifacts, promotion between envs
+- [ ] GitHub Actions — workflows, jobs, matrix builds, secrets, reusable/composite actions
+- [ ] Jenkins · GitLab CI · CircleCI — comparison & when to pick which
+- [ ] Branching Strategies — trunk-based vs GitHub Flow vs GitFlow (and why trunk wins at scale)
+- [ ] Progressive Delivery — feature flags + canary + blue-green wired into the pipeline
+
+**Wave F3 — Containers & Kubernetes Deep**
+- [ ] Docker Deep — multi-stage builds, layer caching, image slimming, distroless
+- [ ] Kubernetes Objects — pods, deployments, services, ingress, configmaps/secrets
+- [ ] Helm & Kustomize — packaging and templating manifests
+- [ ] K8s Networking & Storage — CNI, CSI, ingress controllers, persistent volumes
+- [ ] K8s Security — RBAC, network policies, pod security standards, admission control
+
+**Wave F4 — Config, Secrets & Supply Chain**
+- [ ] Configuration Management — Ansible deep (playbooks, roles, inventory), Chef/Puppet/Salt
+- [ ] Secrets Management — HashiCorp Vault, external-secrets, sealed secrets, dynamic creds
+- [ ] Software Supply Chain Security — SBOM, SLSA, Sigstore/cosign, provenance & signing
+- [ ] Policy as Code — OPA/Rego, Kyverno, Conftest guardrails in CI
+- [ ] Artifact & Registry Management — container/package registries, retention, promotion
+
+**Wave F5 — Observability & Operations Deep**
+- [ ] Prometheus & Grafana — metrics model, PromQL, dashboards, Alertmanager
+- [ ] Golden Signals + RED / USE — what to actually measure
+- [ ] SLIs, SLOs & Error Budgets — deep (turning SRE theory into alert thresholds)
+- [ ] Structured Logging & Log Pipelines — correlation IDs, aggregation (ties to SIEM)
+- [ ] On-Call Done Humanely — rotations, escalation, runbooks, blameless postmortems
+
+---
+
+## TRACK G — Developer Environment & VS Code  (→ deepen `shortcut`)
+
+3 waves, ~16 cards. Replaces the single shallow `VS Code` card.
+
+**Wave G1 — VS Code Mastery**
+- [x] VS Code Setup & Settings — settings.json, Settings Sync, Profiles per stack
+- [x] Command Palette & Keybindings — the shortcuts that actually save time
+- [x] Editing Superpowers — multi-cursor, column select, refactor, snippets, regex find/replace
+- [x] Debugging — launch.json, breakpoints (conditional/logpoints), watch, call stack
+- [x] Integrated Terminal, Tasks & the Source Control panel
+- [x] Essential Extensions — per-language + productivity (and how to stay lean)
+
+**Wave G2 — Remote & Containerized Dev**
+- [ ] Remote Development — Remote-SSH, WSL, and how the client/server split works
+- [ ] Dev Containers — devcontainer.json, reproducible per-project toolchains
+- [ ] GitHub Codespaces & cloud dev environments
+- [ ] Live Share — real-time collaborative editing & debugging
+
+**Wave G3 — The Modern Dev Environment**
+- [ ] Dotfiles & Config Management — chezmoi/stow, version-controlled setup
+- [ ] Shell & Terminal Setup — zsh/fish, starship prompt, tmux (ties to existing tmux card)
+- [ ] Runtime & Version Managers — asdf/mise, nvm, pyenv, direnv per-project
+- [ ] AI Pair Programming — Copilot, Cursor, Claude Code — using them well without over-trusting
+
+---
+
+## Suggested execution order (Wave 27+)
+
+| Phase | Waves | Theme | Rough size |
+|-------|-------|-------|-----------|
+| 27 | scaffold `eng` + G1 | new Engineering domain wired; VS Code mastery set | ~7 cards |
+| 28–30 | E1–E3, F1–F2 | system design + architecture styles + domain modeling; DevOps culture + CI/CD | ~28 cards |
+| 31–33 | E4–E6, F3–F4, G2 | craft/quality + reliability + career; containers/K8s + supply chain; remote dev | ~30 cards |
+| 34 | F5, G3 | observability/on-call deep; modern dev environment | ~9 cards |
+
+Conventions unchanged: `CONTRIBUTING.md` skeleton, `python3 build.py` + headless
+smoke check + CI-green commit per wave; each topic inherits search / permalinks /
+progress / keyboard-a11y automatically.

@@ -1,0 +1,421 @@
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🌩️</span>
+              <span class="topic-name">Cloud Fundamentals — Regions, AZs &amp; Shared Responsibility</span>
+              <span class="topic-badge">Foundations</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Mental Model Before the Buttons</div>
+                <div class="concept-desc">
+                  Cloud providers rent computing on demand. You should hold three ideas before
+                  touching a console: the <strong class="c-cyan">service models</strong> (how much
+                  you manage), the <strong class="c-amber">global infrastructure</strong> (where
+                  your stuff physically runs), and the <strong class="c-green">shared
+                  responsibility model</strong> (who secures what).
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ SERVICE MODELS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Model</th><th>You Manage</th><th>Example</th></tr>
+                    <tr><td>IaaS</td><td>OS + runtime + app</td><td>EC2, Compute Engine</td></tr>
+                    <tr><td>PaaS</td><td>Just your app</td><td>App Engine, Elastic Beanstalk</td></tr>
+                    <tr><td>SaaS</td><td>Nothing — just use it</td><td>Gmail, Workspace</td></tr>
+                  </table>
+                  <div class="dt">▸ GLOBAL LAYOUT</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Term</th><th>Meaning</th></tr>
+                    <tr><td class="c-cyan">Region</td><td>A geographic area (us-east-1, europe-west1). Pick for latency, law, cost.</td></tr>
+                    <tr><td class="c-cyan">Availability Zone</td><td>Isolated datacenter(s) in a region. Deploy across ≥2 AZs for HA.</td></tr>
+                    <tr><td class="c-cyan">Edge / PoP</td><td>CDN locations near users (CloudFront, Cloud CDN).</td></tr>
+                  </table>
+                  <div class="concept-desc">
+                    <strong class="c-green">Shared responsibility:</strong> the provider secures the
+                    cloud <em>itself</em> (hardware, hypervisor, physical); <strong>you</strong>
+                    secure what you put <em>in</em> it — IAM, data, patching your VMs, network
+                    config. Most breaches are the customer's side (a public bucket, a wildcard IAM
+                    policy), not the provider's.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🟧</span>
+              <span class="topic-name">AWS — Getting Started</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Account, Identity &amp; First Steps</div>
+                <div class="concept-desc">
+                  Amazon Web Services is the largest cloud, with 200+ services. The
+                  <strong class="c-red">first thing to get right is identity</strong> — mistakes
+                  here cause most incidents and surprise bills.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ DAY-ONE CHECKLIST</div>
+                  <table class="ref-table">
+                    <tr><th>Do</th><th>Why</th></tr>
+                    <tr><td class="c-red">Stop using the root account</td><td>Create an admin IAM user/role; lock root with MFA and don't use it daily.</td></tr>
+                    <tr><td class="c-green">Enable MFA everywhere</td><td>The single biggest account-takeover defense.</td></tr>
+                    <tr><td class="c-green">Set a billing alarm</td><td>Budgets → alert at $X so a runaway resource doesn't run for weeks.</td></tr>
+                    <tr><td class="c-green">Pick a home region</td><td>Everything is regional; resources in us-east-1 aren't visible in eu-west-1.</td></tr>
+                    <tr><td class="c-green">Learn the Free Tier</td><td>t2/t3.micro, 5 GB S3, etc. — practice without cost.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Three ways to drive AWS: the <strong>Console</strong> (web, learn here),
+                    the <strong>CLI</strong> (scripting/repeatability), and
+                    <strong>SDKs/IaC</strong> (Terraform, CloudFormation) for production. Graduate
+                    from console → CLI → IaC as you go.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⌨️</span>
+              <span class="topic-name">AWS CLI &amp; CloudShell</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Driving AWS From the Terminal</div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">aws</span> configure                     <span class="com"># set key, secret, region, output format</span>
+<span class="fn">aws</span> configure --profile work       <span class="com"># named profile for a second account</span>
+<span class="fn">aws</span> sts get-caller-identity        <span class="com"># "who am I?" — confirm creds/role</span>
+
+<span class="fn">aws</span> ec2 describe-instances         <span class="com"># list VMs (JSON)</span>
+<span class="fn">aws</span> s3 ls                          <span class="com"># list buckets</span>
+<span class="fn">aws</span> s3 cp file.txt s3://my-bucket/  <span class="com"># upload</span>
+
+<span class="com"># JMESPath --query trims the noise; --output table for humans</span>
+<span class="fn">aws</span> ec2 describe-instances \
+  --query <span class="str">'Reservations[].Instances[].[InstanceId,State.Name]'</span> \
+  --output table</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-cyan">CloudShell</strong> is a browser terminal with the CLI
+                    pre-authenticated as your console identity — nothing to install. Prefer
+                    <strong class="c-green">IAM roles</strong> over long-lived access keys; on an
+                    EC2 instance the CLI picks up an attached role automatically (no keys on disk).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🟦</span>
+              <span class="topic-name">Google Cloud — Getting Started</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">The Resource Hierarchy Is Everything</div>
+                <div class="concept-desc">
+                  GCP's defining concept is its <strong class="c-cyan">resource hierarchy</strong> —
+                  understand it and the rest falls into place. Policies (IAM, budgets) set high up
+                  are <em>inherited</em> downward.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ HIERARCHY (top → bottom)</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Level</th><th>Purpose</th></tr>
+                    <tr><td class="c-cyan">Organization</td><td>Your whole company (tied to a domain)</td></tr>
+                    <tr><td class="c-cyan">Folders</td><td>Departments / environments (optional grouping)</td></tr>
+                    <tr><td class="c-cyan">Projects</td><td><strong>The core unit</strong> — every resource lives in exactly one project; billing &amp; isolation boundary</td></tr>
+                    <tr><td class="c-cyan">Resources</td><td>VMs, buckets, databases</td></tr>
+                  </table>
+                  <div class="concept-desc">
+                    <strong class="c-green">Day one:</strong> create a project, link a billing
+                    account, enable the APIs you need (services are off by default —
+                    <code>gcloud services enable compute.googleapis.com</code>), set a budget
+                    alert, and use IAM instead of the owner account for daily work. The
+                    <strong>Always Free</strong> tier (e2-micro, 5 GB storage) is generous for
+                    learning.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⌨️</span>
+              <span class="topic-name">gcloud CLI &amp; Cloud Shell</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">The gcloud / gsutil / bq Trio</div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">gcloud</span> init                        <span class="com"># auth + pick project &amp; region</span>
+<span class="fn">gcloud</span> config set project my-proj  <span class="com"># switch active project</span>
+<span class="fn">gcloud</span> auth list                   <span class="com"># which identity am I?</span>
+
+<span class="fn">gcloud</span> compute instances list      <span class="com"># list VMs</span>
+<span class="fn">gcloud</span> compute instances create vm1 --zone=us-central1-a --machine-type=e2-micro
+<span class="fn">gcloud</span> compute ssh vm1 --zone=us-central1-a
+
+<span class="fn">gsutil</span> ls                          <span class="com"># Cloud Storage buckets (like aws s3)</span>
+<span class="fn">gsutil</span> cp file.txt gs://my-bucket/
+<span class="fn">bq</span> query <span class="str">'SELECT 1'</span>                <span class="com"># BigQuery from the CLI</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-cyan">Cloud Shell</strong> (browser terminal) comes with
+                    <code>gcloud</code>, <code>gsutil</code>, <code>bq</code>, <code>kubectl</code>,
+                    Docker, and Terraform pre-installed and authenticated. Note the split:
+                    <code>gcloud</code> for most services, <code>gsutil</code> for storage,
+                    <code>bq</code> for BigQuery.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔄</span>
+              <span class="topic-name">Cloud Rosetta Stone — AWS ↔ GCP ↔ Azure</span>
+              <span class="topic-badge">Reference</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Same Idea, Three Names</div>
+                <div class="concept-desc">
+                  The clouds solve the same problems with different brand names. Learn the concept
+                  once and translate. This table is the fastest way to feel at home in a second
+                  cloud.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>AWS</th><th>GCP</th><th>Azure</th></tr>
+                    <tr><td>Virtual machines</td><td>EC2</td><td>Compute Engine</td><td>Virtual Machines</td></tr>
+                    <tr><td>Object storage</td><td>S3</td><td>Cloud Storage</td><td>Blob Storage</td></tr>
+                    <tr><td>Serverless functions</td><td>Lambda</td><td>Cloud Functions</td><td>Functions</td></tr>
+                    <tr><td>Containers (managed K8s)</td><td>EKS</td><td>GKE</td><td>AKS</td></tr>
+                    <tr><td>Run a container</td><td>Fargate / App Runner</td><td>Cloud Run</td><td>Container Apps</td></tr>
+                    <tr><td>Relational DB</td><td>RDS</td><td>Cloud SQL</td><td>Azure SQL</td></tr>
+                    <tr><td>NoSQL</td><td>DynamoDB</td><td>Firestore / Bigtable</td><td>Cosmos DB</td></tr>
+                    <tr><td>Data warehouse</td><td>Redshift</td><td>BigQuery</td><td>Synapse</td></tr>
+                    <tr><td>Virtual network</td><td>VPC</td><td>VPC</td><td>VNet</td></tr>
+                    <tr><td>Identity</td><td>IAM</td><td>Cloud IAM</td><td>Entra ID + RBAC</td></tr>
+                    <tr><td>Secrets</td><td>Secrets Manager</td><td>Secret Manager</td><td>Key Vault</td></tr>
+                    <tr><td>Managed keys</td><td>KMS</td><td>Cloud KMS</td><td>Key Vault</td></tr>
+                    <tr><td>CDN</td><td>CloudFront</td><td>Cloud CDN</td><td>Front Door / CDN</td></tr>
+                    <tr><td>Infra as Code</td><td>CloudFormation</td><td>Deployment Manager</td><td>ARM / Bicep</td></tr>
+                    <tr><td>Monitoring</td><td>CloudWatch</td><td>Cloud Monitoring</td><td>Monitor</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔑</span>
+              <span class="topic-name">AWS IAM — Users, Roles &amp; Policies</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Who Can Do What, to Which Resources</div>
+                <div class="concept-desc">
+                  IAM is the heart of AWS security — and the <strong class="c-red">#1 source of
+                  breaches</strong> when done sloppily. It answers: which
+                  <strong class="c-cyan">principal</strong> (user/role) can perform which
+                  <strong class="c-cyan">actions</strong> on which <strong class="c-cyan">resources</strong>,
+                  under what <strong class="c-cyan">conditions</strong>. Everything is deny-by-default;
+                  access must be explicitly granted by a policy.
+                </div>
+                <div class="dw">
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Concept</th><th>What</th></tr>
+                    <tr><td class="c-cyan">User</td><td>A long-lived human/app identity (avoid keys where possible)</td></tr>
+                    <tr><td class="c-cyan">Role</td><td>An identity you <em>assume</em> temporarily — the preferred pattern (no stored keys)</td></tr>
+                    <tr><td class="c-cyan">Group</td><td>A bucket of users sharing policies</td></tr>
+                    <tr><td class="c-cyan">Policy</td><td>JSON document granting/denying permissions</td></tr>
+                  </table>
+                  <div class="dt">▸ A POLICY (JSON)</div>
+<pre class="code-block">{
+  <span class="str">"Effect"</span>: <span class="str">"Allow"</span>,
+  <span class="str">"Action"</span>: [<span class="str">"s3:GetObject"</span>],
+  <span class="str">"Resource"</span>: <span class="str">"arn:aws:s3:::my-bucket/*"</span>,
+  <span class="str">"Condition"</span>: { <span class="str">"IpAddress"</span>: { <span class="str">"aws:SourceIp"</span>: <span class="str">"10.0.0.0/8"</span> } }
+}</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">Golden rule:</strong> grant <strong>least privilege</strong>
+                    — start with nothing, add the specific actions needed. Never attach
+                    <code>*:*</code> ("AdministratorAccess") to app roles.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎫</span>
+              <span class="topic-name">AWS IAM Deep — AssumeRole, STS &amp; Boundaries</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Temporary Credentials Done Right</div>
+                <div class="concept-desc">
+                  Long-lived access keys are the thing that leaks. The modern pattern is
+                  <strong class="c-cyan">roles + STS</strong>: you assume a role and get
+                  <strong>temporary credentials</strong> that auto-expire (minutes to hours).
+                  Cross-account access, CI/CD, and EC2/Lambda all use this.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Mechanism</th><th>Use</th></tr>
+                    <tr><td class="c-cyan">sts:AssumeRole</td><td>Swap into a role (incl. cross-account) for short-lived creds</td></tr>
+                    <tr><td class="c-cyan">Trust policy</td><td>On the role — says <em>who</em> is allowed to assume it</td></tr>
+                    <tr><td class="c-cyan">Instance/Task role</td><td>EC2/ECS/Lambda auto-receive creds — no keys on disk</td></tr>
+                    <tr><td class="c-cyan">Permission boundary</td><td>A ceiling on the max perms an identity can ever have</td></tr>
+                    <tr><td class="c-cyan">IAM Identity Center</td><td>SSO for humans → short-lived console/CLI sessions</td></tr>
+                    <tr><td class="c-cyan">OIDC federation</td><td>Let GitHub Actions assume a role with no stored secret</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Policy evaluation:</strong> an explicit
+                    <strong class="c-red">Deny</strong> always wins; otherwise you need an explicit
+                    Allow. Effective permission = intersection of identity policy, resource policy,
+                    permission boundary, and any SCP (org guardrail).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔑</span>
+              <span class="topic-name">GCP IAM — Members, Roles &amp; Hierarchy</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Who (member) Can Do What (role) on Which Resource</div>
+                <div class="concept-desc">
+                  GCP IAM binds a <strong class="c-cyan">member</strong> (user, group, or service
+                  account) to a <strong class="c-cyan">role</strong> (a bundle of permissions) on a
+                  resource. Because of the resource hierarchy, a binding at the
+                  <strong>project</strong> or <strong>folder</strong> level is
+                  <strong class="c-amber">inherited</strong> by everything beneath it — powerful and
+                  easy to over-grant.
+                </div>
+                <div class="dw">
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Role type</th><th>Detail</th></tr>
+                    <tr><td class="c-red">Basic</td><td>Owner/Editor/Viewer — broad, legacy, avoid in prod</td></tr>
+                    <tr><td class="c-green">Predefined</td><td>Fine-grained, service-specific (e.g. <code>roles/storage.objectViewer</code>)</td></tr>
+                    <tr><td class="c-green">Custom</td><td>Your own hand-picked permission set for true least-privilege</td></tr>
+                  </table>
+<pre class="code-block"><span class="fn">gcloud</span> projects add-iam-policy-binding my-proj \
+  --member=<span class="str">"user:alice@example.com"</span> \
+  --role=<span class="str">"roles/storage.objectViewer"</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Prefer <strong class="c-green">predefined/custom</strong> roles over basic ones,
+                    and bind as low in the hierarchy as possible (project &gt; folder &gt; org).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🤖</span>
+              <span class="topic-name">GCP Service Accounts &amp; Workload Identity</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Machine Identity Without Leaking Keys</div>
+                <div class="concept-desc">
+                  A <strong class="c-cyan">service account (SA)</strong> is an identity for an app or
+                  VM rather than a person. The trap is <strong class="c-red">downloaded SA key
+                  files</strong> — long-lived JSON secrets that leak and rarely rotate.
+                  <strong class="c-green">Workload Identity</strong> is the modern answer: it lets
+                  workloads (GKE pods, or external systems like GitHub Actions and even AWS) obtain
+                  short-lived SA credentials automatically, with <em>no key file at all</em>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Approach</th><th>Verdict</th></tr>
+                    <tr><td class="c-red">Downloaded SA key (.json)</td><td>Long-lived secret — avoid; the #1 GCP credential leak</td></tr>
+                    <tr><td class="c-green">Attached SA (on a VM/pod)</td><td>Metadata server issues short-lived tokens automatically</td></tr>
+                    <tr><td class="c-green">Workload Identity Federation</td><td>External identities (GitHub/AWS) assume an SA keylessly</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Rule: if you're storing a <code>.json</code> key, ask whether Workload Identity
+                    can replace it. Usually it can.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚠️</span>
+              <span class="topic-name">Cloud IAM Pitfalls &amp; Privilege Escalation</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Security</div>
+                <div class="concept-title">How Over-Permissive IAM Becomes a Breach</div>
+                <div class="concept-desc">
+                  Most cloud compromises aren't zero-days — they're IAM misconfigurations an
+                  attacker chains into full control. Knowing the traps is how you avoid (and, on a
+                  red team, find) them.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pitfall</th><th>Why It's Dangerous</th></tr>
+                    <tr><td class="c-red">Wildcards (<code>*:*</code>)</td><td>"Just make it work" grants admin — the classic root cause</td></tr>
+                    <tr><td class="c-red">iam:PassRole / actAs</td><td>Lets a low-priv identity hand a powerful role to a service it controls → escalation</td></tr>
+                    <tr><td class="c-red">Overbroad AssumeRole trust</td><td>A role anyone can assume is a role attackers assume</td></tr>
+                    <tr><td class="c-red">Long-lived access keys</td><td>Leak in code/logs/laptops; rarely rotated</td></tr>
+                    <tr><td class="c-red">SSRF → metadata service</td><td>App-layer SSRF steals the instance's role creds (IMDSv2 mitigates on AWS)</td></tr>
+                    <tr><td class="c-red">Public resource policies</td><td>A bucket/queue open to <code>"Principal": "*"</code></td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Defenses:</strong> least privilege, no wildcards, IMDSv2,
+                    short-lived creds, and continuous scanning with CSPM tools (Prowler, ScoutSuite,
+                    Steampipe) that flag these exact patterns.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+<!-- /domain-body cloud -->
