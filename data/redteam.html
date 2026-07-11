@@ -247,4 +247,214 @@
               </div>
             </div>
           </div>
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧪</span>
+              <span class="topic-name">Burp Suite — The Web Pentest Workbench</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Intercept, Modify, Replay</div>
+                <div class="concept-desc">
+                  Burp Suite is the industry-standard web app testing platform. It sits as a proxy
+                  between your browser and the target, letting you inspect and tamper with every
+                  request. <em>Authorized targets only.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Does</th></tr>
+                    <tr><td class="c-cyan">Proxy</td><td>Intercept + edit requests/responses on the fly</td></tr>
+                    <tr><td class="c-cyan">Repeater</td><td>Manually tweak &amp; resend a single request (the core manual-testing loop)</td></tr>
+                    <tr><td class="c-cyan">Intruder</td><td>Automate payloads over positions — fuzzing, brute force, enumeration</td></tr>
+                    <tr><td class="c-cyan">Scanner</td><td>Automated vuln crawl (Pro)</td></tr>
+                    <tr><td class="c-cyan">Decoder / Comparer</td><td>Encode/decode &amp; diff responses</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Typical flow:</strong> browse the app through the proxy
+                    to map it → send an interesting request to Repeater → probe for injection/auth
+                    flaws by hand → automate with Intruder. <strong class="c-amber">Blue-team
+                    note:</strong> app-layer WAF + anomaly detection on parameter tampering and
+                    high request volume from one session.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚡</span>
+              <span class="topic-name">OWASP ZAP — The Open-Source Web Scanner</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Burp's Free Cousin — Great for CI</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">OWASP ZAP</strong> is a free, open-source web proxy/scanner
+                  with much of Burp's core: intercepting proxy, spider, active/passive scanning, and
+                  fuzzing. Its automation-friendliness makes it the go-to for
+                  <strong class="c-green">DAST in CI/CD</strong> — run a baseline scan on every
+                  build against a staging deploy.
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="com"># Baseline (passive) scan — safe for CI, no attacks</span>
+<span class="fn">zap-baseline.py</span> -t https://staging.example.com
+
+<span class="com"># Full active scan (authorized targets only)</span>
+<span class="fn">zap-full-scan.py</span> -t https://staging.example.com</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Blue-team crossover:</strong> because ZAP is a
+                    <em>defensive</em> tool too, wire it into your own pipeline to catch OWASP Top 10
+                    regressions before release.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">💉</span>
+              <span class="topic-name">sqlmap — Automated SQL Injection</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Detect &amp; Exploit SQLi, End to End</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">sqlmap</strong> automates finding and exploiting SQL
+                  injection — from detection through data extraction, and even OS shell where the
+                  DB permits. Powerful and noisy; <em>authorized scope only</em>.
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">sqlmap</span> -u <span class="str">"https://site/item?id=1"</span> --batch    <span class="com"># test a parameter</span>
+<span class="fn">sqlmap</span> -r request.txt --level 3 --risk 2   <span class="com"># from a saved Burp request</span>
+<span class="fn">sqlmap</span> -u <span class="str">"..."</span> --dbs                     <span class="com"># list databases</span>
+<span class="fn">sqlmap</span> -u <span class="str">"..."</span> -D shop -T users --dump    <span class="com"># dump a table</span></pre>
+                  <table class="ref-table" style="margin-top:10px">
+                    <tr><th>Flag</th><th>Meaning</th></tr>
+                    <tr><td><code>--level</code> / <code>--risk</code></td><td>How hard/aggressive to test (1–5 / 1–3)</td></tr>
+                    <tr><td><code>--tamper</code></td><td>Evasion scripts (encode payloads past filters/WAF)</td></tr>
+                    <tr><td><code>--batch</code></td><td>Non-interactive (accept defaults)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> the fix is
+                    <strong class="c-green">parameterized queries</strong>, not a WAF — but a WAF +
+                    DB query logging will scream at sqlmap's payload patterns and error-based probing.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📁</span>
+              <span class="topic-name">ffuf &amp; Gobuster — Content &amp; Parameter Fuzzing</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Finding the Hidden Endpoints</div>
+                <div class="concept-desc">
+                  Web apps hide directories, files, vhosts, and parameters that aren't linked
+                  anywhere. <strong class="c-cyan">ffuf</strong> (fast, Go) and
+                  <strong class="c-cyan">Gobuster</strong> brute-force them from a wordlist —
+                  finding <code>/admin</code>, <code>/backup.zip</code>, or an undocumented API
+                  parameter. <em>Authorized scope only.</em>
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="com"># Directory discovery — FUZZ marks the injection point</span>
+<span class="fn">ffuf</span> -u https://site/FUZZ -w wordlist.txt
+
+<span class="com"># Filter noise by response size / status</span>
+<span class="fn">ffuf</span> -u https://site/FUZZ -w list.txt -fc <span class="num">404</span> -fs <span class="num">0</span>
+
+<span class="com"># Virtual-host discovery</span>
+<span class="fn">ffuf</span> -u https://site -H <span class="str">"Host: FUZZ.site"</span> -w vhosts.txt
+
+<span class="com"># Gobuster equivalent</span>
+<span class="fn">gobuster</span> dir -u https://site -w wordlist.txt</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Blue-team note:</strong> a flood of 404s to random
+                    paths from one source is the signature — rate-limit and alert on it. Common
+                    wordlists come from SecLists.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎯</span>
+              <span class="topic-name">Nuclei — Templated Vulnerability Scanning</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Community-Powered Checks at Scale</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Nuclei</strong> runs thousands of YAML-defined templates
+                  against targets to detect known CVEs, misconfigurations, exposed panels, and
+                  default creds — fast and low-false-positive. Dual-use: attackers find weak spots;
+                  defenders scan their own estate the same way.
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">nuclei</span> -u https://site                    <span class="com"># all default templates</span>
+<span class="fn">nuclei</span> -l hosts.txt -t cves/ -severity critical,high
+<span class="fn">nuclei</span> -u https://site -t exposures/       <span class="com"># exposed configs/keys</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Blue-team note:</strong> run Nuclei against your own
+                    external surface on a schedule — it's one of the fastest ways to catch a
+                    newly-disclosed CVE affecting you before an attacker does.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔬</span>
+              <span class="topic-name">Nikto &amp; WPScan — Server &amp; CMS Scanning</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Quick Wins on Web Servers &amp; WordPress</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Nikto</strong> is a fast (loud) web-server scanner for
+                  known dangerous files, outdated software, and misconfigurations.
+                  <strong class="c-cyan">WPScan</strong> targets WordPress specifically —
+                  enumerating plugins/themes/users and matching them to known vulns (WordPress powers
+                  ~40% of the web, so it's a huge attack surface). <em>Authorized targets only.</em>
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">nikto</span> -h https://site                       <span class="com"># server misconfig sweep</span>
+<span class="fn">wpscan</span> --url https://site --enumerate vp,u   <span class="com"># vuln plugins + users</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Blue-team note:</strong> both are extremely noisy —
+                    trivially caught by IDS/WAF. Defense is patching, removing version banners, and
+                    keeping CMS plugins minimal and current.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body redteam -->
