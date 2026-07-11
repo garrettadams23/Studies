@@ -3337,6 +3337,87 @@ POST https://auth.example.com/token
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🍪</span>
+              <span class="topic-name">Sessions, Cookies &amp; JWT — Managing Web Auth State</span>
+              <span class="topic-badge">Auth</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">HTTP Is Stateless — So How Do You Stay Logged In?</div>
+                <div class="concept-desc">
+                  Every HTTP request is independent; the server doesn't inherently remember
+                  you between clicks. After you log in, the app needs a way to prove "this
+                  request is still Alice" on every subsequent call. There are two dominant
+                  strategies: <strong class="c-cyan">server-side sessions</strong> (the
+                  server remembers) and <strong class="c-amber">stateless tokens / JWT</strong>
+                  (the proof travels with the request). Both usually ride in a
+                  <strong>cookie</strong>.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Comparison</div>
+                <div class="concept-title">Session vs Token</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Server Session</th><th>JWT / Stateless Token</th></tr>
+                    <tr><td>Where state lives</td><td>On the server (DB/Redis)</td><td>Inside the token itself</td></tr>
+                    <tr><td>Cookie holds</td><td>An opaque session ID</td><td>The signed token (or ID for it)</td></tr>
+                    <tr><td>Revoke instantly</td><td class="c-green">Yes — delete the session</td><td class="c-red">Hard — valid until it expires</td></tr>
+                    <tr><td>Scales across servers</td><td class="c-amber">Needs shared store</td><td class="c-green">No lookup needed</td></tr>
+                    <tr><td>Best for</td><td>Classic web apps</td><td>APIs, microservices, mobile</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Anatomy of a JWT</div>
+                <div class="concept-desc">
+                  A JWT is three Base64url parts joined by dots:
+                  <code>header.payload.signature</code>. The signature is what makes it
+                  trustworthy — the server verifies it to know the payload wasn't tampered
+                  with. <strong class="c-red">The payload is only encoded, not encrypted</strong>
+                  — anyone can read it, so never put secrets in it.
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="com"># header.payload.signature (dots between the three parts)</span>
+eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"}</span>
+.eyJzdWIiOiIxMjMiLCJ  <span class="com"># payload → {"sub":"123","exp":1730000000}</span>
+.SflKxwRJSMeKKF2QT4f  <span class="com"># signature → HMAC/RSA over header.payload</span>
+
+<span class="com"># Server verifies: recompute the signature with its secret/key.</span>
+<span class="com"># Match = untampered + issued by us. Then check exp (expiry).</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Security</div>
+                <div class="concept-title">Cookie Flags That Actually Protect You</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Flag</th><th>What It Does</th></tr>
+                    <tr><td class="c-green">HttpOnly</td><td>JavaScript can't read the cookie — blocks token theft via XSS. Essential for auth cookies.</td></tr>
+                    <tr><td class="c-green">Secure</td><td>Cookie sent only over HTTPS — never leaks on plain HTTP.</td></tr>
+                    <tr><td class="c-green">SameSite</td><td><code>Lax</code>/<code>Strict</code> stop the cookie riding along on cross-site requests — the core CSRF defense.</td></tr>
+                    <tr><td class="c-cyan">Max-Age / Expires</td><td>Controls how long the cookie lives; pair with short token expiry.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong>The access + refresh pattern:</strong> issue a short-lived access
+                    token (minutes) plus a long-lived refresh token stored in an
+                    <code>HttpOnly</code> cookie. When the access token expires, the refresh
+                    token silently mints a new one — limiting the damage window if a token
+                    leaks while keeping users logged in.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body sec -->
 <!-- /domain-body sec -->
 <!-- /domain-body sec -->

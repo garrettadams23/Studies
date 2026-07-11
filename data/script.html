@@ -10603,6 +10603,98 @@ crontab -e</pre>
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧩</span>
+              <span class="topic-name">API Design — Versioning, Pagination, Rate Limits &amp; Idempotency</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Contract Others Build On</div>
+                <div class="concept-desc">
+                  Once people depend on your API, its <em>shape</em> is a promise. Good API
+                  design is mostly about the boring-but-critical concerns that keep that
+                  promise as the API grows: not breaking existing clients, returning large
+                  result sets safely, protecting the service from abuse, and behaving
+                  predictably when the network retries. Get these four right and the rest is
+                  detail.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Versioning — Don't Break Existing Clients</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Strategy</th><th>Example</th><th>Notes</th></tr>
+                    <tr><td class="c-cyan">URL path</td><td><code>/v2/users</code></td><td>Most common, visible, easy to route</td></tr>
+                    <tr><td class="c-cyan">Header</td><td><code>Accept: application/vnd.api+json;v=2</code></td><td>Cleaner URLs; harder to test by hand</td></tr>
+                    <tr><td class="c-cyan">Query param</td><td><code>?version=2</code></td><td>Simple but easy to forget</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Rule: an additive change (new optional field) is backward-compatible and
+                    needs no new version. Removing/renaming a field or changing its type is
+                    <strong class="c-red">breaking</strong> — that's when you bump the version
+                    and keep the old one running during a deprecation window.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Pagination &amp; Rate Limiting</div>
+                <div class="dw">
+                  <div class="dt">▸ PAGINATION — NEVER RETURN "ALL"</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Style</th><th>How</th><th>Trade-off</th></tr>
+                    <tr><td class="c-green">Offset/limit</td><td><code>?offset=40&amp;limit=20</code></td><td>Simple; slow &amp; wobbly on big/changing data</td></tr>
+                    <tr><td class="c-green">Cursor/keyset</td><td><code>?after=&lt;id&gt;&amp;limit=20</code></td><td>Fast &amp; stable at scale; can't jump to page N</td></tr>
+                  </table>
+                  <div class="dt">▸ RATE LIMITING — RESPONSE HEADERS</div>
+<pre class="code-block"><span class="com"># Server tells the client its budget</span>
+HTTP/1.1 <span class="num">429</span> Too Many Requests
+<span class="attr">X-RateLimit-Limit</span>: <span class="num">100</span>
+<span class="attr">X-RateLimit-Remaining</span>: <span class="num">0</span>
+<span class="attr">Retry-After</span>: <span class="num">30</span>          <span class="com"># wait 30s before retrying</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Return <code>429</code> when a client exceeds its budget; a well-behaved
+                    client backs off using <code>Retry-After</code>. Common algorithms:
+                    <strong>token bucket</strong> (allows bursts) and
+                    <strong>sliding window</strong> (smooth).
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reliability</div>
+                <div class="concept-title">Idempotency — Safe Retries</div>
+                <div class="concept-desc">
+                  Networks drop responses. If a client retries a payment because it never got
+                  the reply, you must not charge twice. An
+                  <strong class="c-cyan">idempotency key</strong> — a unique ID the client
+                  sends with the request — lets the server recognize a duplicate and return
+                  the <em>original</em> result instead of doing the work again.
+                </div>
+                <div class="dw">
+<pre class="code-block">POST /charges
+<span class="attr">Idempotency-Key</span>: <span class="str">a1b2c3-unique-per-attempt</span>
+
+<span class="com"># First call: process, store result under the key.</span>
+<span class="com"># Retry with the SAME key: return the stored result, don't re-charge.</span></pre>
+                  <div class="dt" style="margin-top:10px">▸ WHICH HTTP METHODS ARE ALREADY IDEMPOTENT?</div>
+                  <table class="ref-table">
+                    <tr><th>Method</th><th>Idempotent?</th></tr>
+                    <tr><td>GET, PUT, DELETE</td><td class="c-green">Yes — same call, same end state</td></tr>
+                    <tr><td>POST</td><td class="c-red">No — needs an idempotency key to be safe to retry</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body script -->
 <!-- /domain-body script -->
 <!-- /domain-body script -->

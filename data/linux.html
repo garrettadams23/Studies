@@ -4700,6 +4700,97 @@ lsof +L1 2&gt;/dev/null | grep deleted
   </div>
 </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧱</span>
+              <span class="topic-name">Linux Firewalls — iptables, nftables &amp; ufw</span>
+              <span class="topic-badge">Hardening</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Kernel Decides What Packets Live or Die</div>
+                <div class="concept-desc">
+                  Every Linux host has a packet filter built into the kernel (Netfilter).
+                  You program it with rules that <strong class="c-green">ACCEPT</strong>,
+                  <strong class="c-red">DROP</strong>, or <strong class="c-amber">REJECT</strong>
+                  packets based on source, destination, port, and protocol. Three tools front
+                  it: <strong class="c-cyan">iptables</strong> (classic), its successor
+                  <strong class="c-cyan">nftables</strong>, and
+                  <strong class="c-cyan">ufw</strong> (a friendly wrapper). The default
+                  posture you want: <em>deny inbound, allow outbound, permit only the ports
+                  you actually serve.</em>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Chains &amp; Policy — The Mental Model</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Chain</th><th>Handles</th></tr>
+                    <tr><td class="c-cyan">INPUT</td><td>Packets destined for <em>this</em> host (protect your services here)</td></tr>
+                    <tr><td class="c-cyan">OUTPUT</td><td>Packets originating from this host</td></tr>
+                    <tr><td class="c-cyan">FORWARD</td><td>Packets routed <em>through</em> this host (routers, NAT, containers)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Rules in a chain are checked <strong>top to bottom</strong>; the first
+                    match wins. If nothing matches, the chain's default
+                    <strong>policy</strong> applies. Set the INPUT policy to
+                    <code>DROP</code> and explicitly allow what you need.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Commands</div>
+                <div class="concept-title">ufw — The Easy Path</div>
+                <div class="dw">
+                  <div class="code-label">SENSIBLE DEFAULTS IN FOUR LINES</div>
+<pre class="code-block"><span class="fn">sudo</span> ufw default deny incoming     <span class="com"># block all inbound by default</span>
+<span class="fn">sudo</span> ufw default allow outgoing    <span class="com"># let the host reach out</span>
+<span class="fn">sudo</span> ufw allow <span class="num">22</span>/tcp             <span class="com"># SSH — do this BEFORE enabling!</span>
+<span class="fn">sudo</span> ufw allow <span class="num">443</span>/tcp            <span class="com"># HTTPS</span>
+<span class="fn">sudo</span> ufw enable                    <span class="com"># turn it on</span>
+<span class="fn">sudo</span> ufw status numbered           <span class="com"># review the ruleset</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Commands</div>
+                <div class="concept-title">iptables &amp; nftables — The Raw Tools</div>
+                <div class="dw">
+                  <div class="code-label">iptables — CLASSIC</div>
+<pre class="code-block"><span class="com"># Allow established replies + SSH, then drop the rest</span>
+<span class="fn">sudo</span> iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+<span class="fn">sudo</span> iptables -A INPUT -p tcp --dport <span class="num">22</span> -j ACCEPT
+<span class="fn">sudo</span> iptables -P INPUT DROP        <span class="com"># set default policy last</span>
+<span class="fn">sudo</span> iptables -L -n -v            <span class="com"># list with packet counts</span></pre>
+                  <div class="code-label" style="margin-top:12px">nftables — MODERN REPLACEMENT</div>
+<pre class="code-block"><span class="fn">sudo</span> nft add table inet filter
+<span class="fn">sudo</span> nft add chain inet filter input { type filter hook input priority <span class="num">0</span>\; policy drop\; }
+<span class="fn">sudo</span> nft add rule inet filter input tcp dport <span class="num">22</span> accept
+<span class="fn">sudo</span> nft list ruleset            <span class="com"># show everything</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Gotchas</div>
+                <div class="concept-title">Don't Lock Yourself Out</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Rule</th><th>Why</th></tr>
+                    <tr><td class="c-red">Allow SSH before default-deny</td><td>Set the DROP policy or run <code>ufw enable</code> without an SSH allow rule and your remote session dies — with no way back in.</td></tr>
+                    <tr><td class="c-green">Allow ESTABLISHED,RELATED</td><td>Without it, replies to your own outbound connections get dropped and everything appears broken.</td></tr>
+                    <tr><td class="c-amber">Rules are not persistent by default</td><td>iptables/nft rules vanish on reboot — save them (<code>netfilter-persistent</code>, <code>nft list ruleset &gt; /etc/nftables.conf</code>) or use ufw, which persists.</td></tr>
+                    <tr><td class="c-amber">Test with a safety net</td><td>Schedule an <code>at</code> job to flush rules in 5 min while you test, so a mistake auto-recovers.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->
