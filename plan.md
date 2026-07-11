@@ -451,12 +451,12 @@ Tool reference cards, grouped by kill-chain stage. ~9 waves, ~50 cards.
 an explicit "Rosetta stone" card. Azure kept as a lighter bonus set.
 
 **Wave C1 — Cloud foundations & getting started**
-- [ ] Cloud Fundamentals — IaaS/PaaS/SaaS, regions/AZs, shared-responsibility
-- [ ] AWS — Getting Started (account, root vs IAM, console vs CLI, free tier)
-- [ ] AWS CLI & CloudShell — install, configure, profiles, `--query` JMESPath
-- [ ] GCP — Getting Started (org/folder/project hierarchy, billing)
-- [ ] gcloud CLI & Cloud Shell — init, config, `gcloud`/`gsutil`/`bq`
-- [ ] Cloud Service Rosetta Stone — AWS ↔ GCP ↔ Azure equivalents table
+- [x] Cloud Fundamentals — IaaS/PaaS/SaaS, regions/AZs, shared-responsibility
+- [x] AWS — Getting Started (account, root vs IAM, console vs CLI, free tier)
+- [x] AWS CLI & CloudShell — install, configure, profiles, `--query` JMESPath
+- [x] GCP — Getting Started (org/folder/project hierarchy, billing)
+- [x] gcloud CLI & Cloud Shell — init, config, `gcloud`/`gsutil`/`bq`
+- [x] Cloud Service Rosetta Stone — AWS ↔ GCP ↔ Azure equivalents table
 
 **Wave C2 — Identity & access (the #1 cloud risk)**
 - [ ] AWS IAM — users, groups, roles, policies (identity vs resource vs SCP)

@@ -1,0 +1,230 @@
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🌩️</span>
+              <span class="topic-name">Cloud Fundamentals — Regions, AZs &amp; Shared Responsibility</span>
+              <span class="topic-badge">Foundations</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Mental Model Before the Buttons</div>
+                <div class="concept-desc">
+                  Cloud providers rent computing on demand. You should hold three ideas before
+                  touching a console: the <strong class="c-cyan">service models</strong> (how much
+                  you manage), the <strong class="c-amber">global infrastructure</strong> (where
+                  your stuff physically runs), and the <strong class="c-green">shared
+                  responsibility model</strong> (who secures what).
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ SERVICE MODELS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Model</th><th>You Manage</th><th>Example</th></tr>
+                    <tr><td>IaaS</td><td>OS + runtime + app</td><td>EC2, Compute Engine</td></tr>
+                    <tr><td>PaaS</td><td>Just your app</td><td>App Engine, Elastic Beanstalk</td></tr>
+                    <tr><td>SaaS</td><td>Nothing — just use it</td><td>Gmail, Workspace</td></tr>
+                  </table>
+                  <div class="dt">▸ GLOBAL LAYOUT</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Term</th><th>Meaning</th></tr>
+                    <tr><td class="c-cyan">Region</td><td>A geographic area (us-east-1, europe-west1). Pick for latency, law, cost.</td></tr>
+                    <tr><td class="c-cyan">Availability Zone</td><td>Isolated datacenter(s) in a region. Deploy across ≥2 AZs for HA.</td></tr>
+                    <tr><td class="c-cyan">Edge / PoP</td><td>CDN locations near users (CloudFront, Cloud CDN).</td></tr>
+                  </table>
+                  <div class="concept-desc">
+                    <strong class="c-green">Shared responsibility:</strong> the provider secures the
+                    cloud <em>itself</em> (hardware, hypervisor, physical); <strong>you</strong>
+                    secure what you put <em>in</em> it — IAM, data, patching your VMs, network
+                    config. Most breaches are the customer's side (a public bucket, a wildcard IAM
+                    policy), not the provider's.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🟧</span>
+              <span class="topic-name">AWS — Getting Started</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Account, Identity &amp; First Steps</div>
+                <div class="concept-desc">
+                  Amazon Web Services is the largest cloud, with 200+ services. The
+                  <strong class="c-red">first thing to get right is identity</strong> — mistakes
+                  here cause most incidents and surprise bills.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ DAY-ONE CHECKLIST</div>
+                  <table class="ref-table">
+                    <tr><th>Do</th><th>Why</th></tr>
+                    <tr><td class="c-red">Stop using the root account</td><td>Create an admin IAM user/role; lock root with MFA and don't use it daily.</td></tr>
+                    <tr><td class="c-green">Enable MFA everywhere</td><td>The single biggest account-takeover defense.</td></tr>
+                    <tr><td class="c-green">Set a billing alarm</td><td>Budgets → alert at $X so a runaway resource doesn't run for weeks.</td></tr>
+                    <tr><td class="c-green">Pick a home region</td><td>Everything is regional; resources in us-east-1 aren't visible in eu-west-1.</td></tr>
+                    <tr><td class="c-green">Learn the Free Tier</td><td>t2/t3.micro, 5 GB S3, etc. — practice without cost.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Three ways to drive AWS: the <strong>Console</strong> (web, learn here),
+                    the <strong>CLI</strong> (scripting/repeatability), and
+                    <strong>SDKs/IaC</strong> (Terraform, CloudFormation) for production. Graduate
+                    from console → CLI → IaC as you go.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⌨️</span>
+              <span class="topic-name">AWS CLI &amp; CloudShell</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Driving AWS From the Terminal</div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">aws</span> configure                     <span class="com"># set key, secret, region, output format</span>
+<span class="fn">aws</span> configure --profile work       <span class="com"># named profile for a second account</span>
+<span class="fn">aws</span> sts get-caller-identity        <span class="com"># "who am I?" — confirm creds/role</span>
+
+<span class="fn">aws</span> ec2 describe-instances         <span class="com"># list VMs (JSON)</span>
+<span class="fn">aws</span> s3 ls                          <span class="com"># list buckets</span>
+<span class="fn">aws</span> s3 cp file.txt s3://my-bucket/  <span class="com"># upload</span>
+
+<span class="com"># JMESPath --query trims the noise; --output table for humans</span>
+<span class="fn">aws</span> ec2 describe-instances \
+  --query <span class="str">'Reservations[].Instances[].[InstanceId,State.Name]'</span> \
+  --output table</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-cyan">CloudShell</strong> is a browser terminal with the CLI
+                    pre-authenticated as your console identity — nothing to install. Prefer
+                    <strong class="c-green">IAM roles</strong> over long-lived access keys; on an
+                    EC2 instance the CLI picks up an attached role automatically (no keys on disk).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🟦</span>
+              <span class="topic-name">Google Cloud — Getting Started</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">The Resource Hierarchy Is Everything</div>
+                <div class="concept-desc">
+                  GCP's defining concept is its <strong class="c-cyan">resource hierarchy</strong> —
+                  understand it and the rest falls into place. Policies (IAM, budgets) set high up
+                  are <em>inherited</em> downward.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ HIERARCHY (top → bottom)</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Level</th><th>Purpose</th></tr>
+                    <tr><td class="c-cyan">Organization</td><td>Your whole company (tied to a domain)</td></tr>
+                    <tr><td class="c-cyan">Folders</td><td>Departments / environments (optional grouping)</td></tr>
+                    <tr><td class="c-cyan">Projects</td><td><strong>The core unit</strong> — every resource lives in exactly one project; billing &amp; isolation boundary</td></tr>
+                    <tr><td class="c-cyan">Resources</td><td>VMs, buckets, databases</td></tr>
+                  </table>
+                  <div class="concept-desc">
+                    <strong class="c-green">Day one:</strong> create a project, link a billing
+                    account, enable the APIs you need (services are off by default —
+                    <code>gcloud services enable compute.googleapis.com</code>), set a budget
+                    alert, and use IAM instead of the owner account for daily work. The
+                    <strong>Always Free</strong> tier (e2-micro, 5 GB storage) is generous for
+                    learning.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⌨️</span>
+              <span class="topic-name">gcloud CLI &amp; Cloud Shell</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">The gcloud / gsutil / bq Trio</div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">gcloud</span> init                        <span class="com"># auth + pick project &amp; region</span>
+<span class="fn">gcloud</span> config set project my-proj  <span class="com"># switch active project</span>
+<span class="fn">gcloud</span> auth list                   <span class="com"># which identity am I?</span>
+
+<span class="fn">gcloud</span> compute instances list      <span class="com"># list VMs</span>
+<span class="fn">gcloud</span> compute instances create vm1 --zone=us-central1-a --machine-type=e2-micro
+<span class="fn">gcloud</span> compute ssh vm1 --zone=us-central1-a
+
+<span class="fn">gsutil</span> ls                          <span class="com"># Cloud Storage buckets (like aws s3)</span>
+<span class="fn">gsutil</span> cp file.txt gs://my-bucket/
+<span class="fn">bq</span> query <span class="str">'SELECT 1'</span>                <span class="com"># BigQuery from the CLI</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-cyan">Cloud Shell</strong> (browser terminal) comes with
+                    <code>gcloud</code>, <code>gsutil</code>, <code>bq</code>, <code>kubectl</code>,
+                    Docker, and Terraform pre-installed and authenticated. Note the split:
+                    <code>gcloud</code> for most services, <code>gsutil</code> for storage,
+                    <code>bq</code> for BigQuery.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔄</span>
+              <span class="topic-name">Cloud Rosetta Stone — AWS ↔ GCP ↔ Azure</span>
+              <span class="topic-badge">Reference</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Same Idea, Three Names</div>
+                <div class="concept-desc">
+                  The clouds solve the same problems with different brand names. Learn the concept
+                  once and translate. This table is the fastest way to feel at home in a second
+                  cloud.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>AWS</th><th>GCP</th><th>Azure</th></tr>
+                    <tr><td>Virtual machines</td><td>EC2</td><td>Compute Engine</td><td>Virtual Machines</td></tr>
+                    <tr><td>Object storage</td><td>S3</td><td>Cloud Storage</td><td>Blob Storage</td></tr>
+                    <tr><td>Serverless functions</td><td>Lambda</td><td>Cloud Functions</td><td>Functions</td></tr>
+                    <tr><td>Containers (managed K8s)</td><td>EKS</td><td>GKE</td><td>AKS</td></tr>
+                    <tr><td>Run a container</td><td>Fargate / App Runner</td><td>Cloud Run</td><td>Container Apps</td></tr>
+                    <tr><td>Relational DB</td><td>RDS</td><td>Cloud SQL</td><td>Azure SQL</td></tr>
+                    <tr><td>NoSQL</td><td>DynamoDB</td><td>Firestore / Bigtable</td><td>Cosmos DB</td></tr>
+                    <tr><td>Data warehouse</td><td>Redshift</td><td>BigQuery</td><td>Synapse</td></tr>
+                    <tr><td>Virtual network</td><td>VPC</td><td>VPC</td><td>VNet</td></tr>
+                    <tr><td>Identity</td><td>IAM</td><td>Cloud IAM</td><td>Entra ID + RBAC</td></tr>
+                    <tr><td>Secrets</td><td>Secrets Manager</td><td>Secret Manager</td><td>Key Vault</td></tr>
+                    <tr><td>Managed keys</td><td>KMS</td><td>Cloud KMS</td><td>Key Vault</td></tr>
+                    <tr><td>CDN</td><td>CloudFront</td><td>Cloud CDN</td><td>Front Door / CDN</td></tr>
+                    <tr><td>Infra as Code</td><td>CloudFormation</td><td>Deployment Manager</td><td>ARM / Bicep</td></tr>
+                    <tr><td>Monitoring</td><td>CloudWatch</td><td>Cloud Monitoring</td><td>Monitor</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+<!-- /domain-body cloud -->
