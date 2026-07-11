@@ -5121,6 +5121,73 @@ a single fat-fingered BGP change at a big provider can make headlines.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚦</span>
+<span class="topic-name">QoS — Quality of Service &amp; Traffic Shaping</span>
+<span class="topic-badge">Networking</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Not All Packets Are Equal</div>
+<div class="concept-desc">
+When a link gets congested, something has to give. Without
+<strong class="c-cyan">Quality of Service</strong>, the network drops
+packets indiscriminately — and a big file download can wreck a video call
+sharing the same pipe. QoS lets you <em>classify</em> traffic and give the
+time-sensitive kinds (voice, video, gaming) priority over the ones that
+don't care about a little delay (backups, email, updates). It manages a
+scarce resource — bandwidth — by policy instead of first-come-first-served.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Four Things QoS Manages</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Metric</th><th>What It Is</th><th>Hurts…</th></tr>
+<tr><td class="c-cyan">Bandwidth</td><td>Throughput available</td><td>Large transfers</td></tr>
+<tr><td class="c-cyan">Latency</td><td>Delay end to end</td><td>Voice, gaming, trading</td></tr>
+<tr><td class="c-cyan">Jitter</td><td>Variation in latency</td><td>Real-time audio/video (choppy calls)</td></tr>
+<tr><td class="c-cyan">Loss</td><td>Packets dropped</td><td>Everything; voice can't retransmit</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Voice/video care most about <strong>jitter and loss</strong>; bulk data
+cares only about eventual <strong>bandwidth</strong>. QoS trades one for
+the other on purpose.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">How It Works</div>
+<div class="concept-title">Classify → Mark → Queue → Shape</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>What Happens</th></tr>
+<tr><td class="c-green">Classification</td><td>Identify traffic by port, app, or existing marking.</td></tr>
+<tr><td class="c-green">Marking</td><td>Stamp a priority in the packet header — <strong>DSCP</strong> (6 bits in the IP header) is the standard. EF = Expedited Forwarding for voice.</td></tr>
+<tr><td class="c-green">Queuing</td><td>High-priority marks go into faster queues; routers service them first.</td></tr>
+<tr><td class="c-green">Shaping vs Policing</td><td><strong>Shaping</strong> buffers excess traffic to smooth it; <strong>policing</strong> just drops it over a limit.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Practical</div>
+<div class="concept-title">Where You Meet QoS</div>
+<div class="concept-desc">
+QoS only helps on links <em>you</em> control — your router, your WAN, an
+enterprise LAN — because markings are honored within an administrative
+domain and often <strong class="c-red">reset at the public internet
+boundary</strong> (the internet is best-effort; your DSCP tags mean nothing
+to your ISP unless you buy an SLA). Classic uses: prioritizing VoIP on an
+office network, keeping a video call smooth on a home router, and guaranteeing
+latency-sensitive traffic across an MPLS or SD-WAN link.
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->
@@ -22738,6 +22805,163 @@ With MCP, each app implements the protocol once and each tool implements
 it once — <strong class="c-green">M + N</strong>. That is the same shift
 the Language Server Protocol (LSP) brought to code editors, and it's why
 MCP has become the de-facto way to give agents real-world capabilities.
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔀</span>
+<span class="topic-name">ETL &amp; Data Pipelines — Moving Data at Scale</span>
+<span class="topic-badge">Data</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Getting Data From Where It Is to Where It's Useful</div>
+<div class="concept-desc">
+Raw data is scattered across app databases, APIs, logs, and files — messy
+and in the wrong shape for analysis. A <strong class="c-cyan">data
+pipeline</strong> moves it, cleans it, and lands it somewhere queryable.
+The classic pattern is <strong class="c-amber">ETL</strong>:
+<strong>Extract</strong> from sources, <strong>Transform</strong> into a
+clean shape, <strong>Load</strong> into a warehouse. It's the plumbing
+behind every dashboard, report, and ML training set.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Three Stages</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Stage</th><th>What Happens</th></tr>
+<tr><td class="c-green">Extract</td><td>Pull from sources — databases, REST APIs, event streams, CSV/JSON files, logs.</td></tr>
+<tr><td class="c-green">Transform</td><td>Clean nulls, dedupe, join, reformat types, aggregate, enrich — make it consistent and analysis-ready.</td></tr>
+<tr><td class="c-green">Load</td><td>Write into the destination — a data warehouse, lake, or database.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">ETL vs ELT</div>
+<div class="concept-title">Transform Before or After Loading?</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>ETL (classic)</th><th>ELT (modern)</th></tr>
+<tr><td>Order</td><td>Transform, then load</td><td>Load raw, then transform in-warehouse</td></tr>
+<tr><td>Transform runs on</td><td>A separate engine</td><td>The warehouse's own compute</td></tr>
+<tr><td>Best when</td><td>Destination is expensive/rigid</td><td>Cloud warehouse compute is cheap &amp; elastic</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Cloud warehouses (BigQuery, Snowflake, Redshift) made
+<strong class="c-cyan">ELT</strong> popular: dump raw data in, then use
+SQL/dbt to transform it where the compute already lives — flexible, since
+you keep the raw source to re-transform later.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Destinations, Orchestration &amp; What Matters</div>
+<div class="dw">
+<div class="dt">▸ WHERE DATA LANDS</div>
+<table class="ref-table" style="margin-bottom:14px">
+<tr><th>Store</th><th>Holds</th></tr>
+<tr><td class="c-cyan">Data Warehouse</td><td>Structured, cleaned data for analytics (Snowflake, BigQuery)</td></tr>
+<tr><td class="c-cyan">Data Lake</td><td>Raw data of any shape, cheaply (S3 + Parquet)</td></tr>
+<tr><td class="c-cyan">Lakehouse</td><td>Lake storage + warehouse features (Databricks, Delta)</td></tr>
+</table>
+<div class="dt">▸ BATCH vs STREAMING</div>
+<table class="ref-table">
+<tr><th>Mode</th><th>When</th></tr>
+<tr><td>Batch</td><td>Run on a schedule (nightly) — orchestrated by Airflow, Dagster, Prefect</td></tr>
+<tr><td>Streaming</td><td>Process events as they arrive (Kafka + Flink/Spark) for near-real-time</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Whatever the tool, three things make or break a pipeline:
+<strong class="c-green">idempotent reruns</strong> (a failed job re-runs
+safely), <strong class="c-green">data quality checks</strong> (catch bad
+data before it poisons dashboards), and <strong class="c-green">lineage</strong>
+(knowing where each number came from).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📐</span>
+<span class="topic-name">Vector Databases — Similarity Search at Scale</span>
+<span class="topic-badge">AI Infra</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Searching by Meaning, Not Keywords</div>
+<div class="concept-desc">
+An embedding model turns text (or an image) into a
+<strong class="c-cyan">vector</strong> — a list of hundreds of numbers that
+positions the item in a "meaning space" where similar things sit close
+together. A <strong class="c-amber">vector database</strong> stores millions
+of these and answers one question fast: <em>"which vectors are nearest to
+this one?"</em> That's how semantic search and RAG find the most relevant
+passages — by geometric closeness, not matching words. This topic is about
+the <em>storage &amp; search</em> side; how embeddings are made lives in the
+Embeddings &amp; RAG topic.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Distance Metrics — "Nearness" Defined</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Metric</th><th>Measures</th><th>Common For</th></tr>
+<tr><td class="c-green">Cosine similarity</td><td>Angle between vectors (ignores magnitude)</td><td>Text embeddings (the usual default)</td></tr>
+<tr><td class="c-green">Dot product</td><td>Angle + magnitude</td><td>When vector length carries meaning</td></tr>
+<tr><td class="c-green">Euclidean (L2)</td><td>Straight-line distance</td><td>Image/spatial embeddings</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Match the metric to how the model was trained — most sentence-embedding
+models expect <strong>cosine</strong>. Using the wrong one quietly
+degrades results.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Why It's Hard</div>
+<div class="concept-title">Exact Search Doesn't Scale — Enter ANN</div>
+<div class="concept-desc">
+Comparing your query to <em>every</em> stored vector (brute force) is
+accurate but far too slow at millions of items. So vector DBs use
+<strong class="c-cyan">Approximate Nearest Neighbor (ANN)</strong> indexes:
+they trade a tiny bit of accuracy for enormous speed by only searching the
+most promising regions.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Index</th><th>Idea</th></tr>
+<tr><td class="c-cyan">HNSW</td><td>A layered "small-world" graph you hop through — fast &amp; accurate; the popular default.</td></tr>
+<tr><td class="c-cyan">IVF</td><td>Cluster vectors, search only the nearest clusters.</td></tr>
+<tr><td class="c-cyan">PQ</td><td>Compress vectors so more fit in RAM (product quantization) — trades accuracy for memory.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The dial is <strong>recall vs latency</strong>: search harder for more
+correct neighbors, or faster for approximate ones.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Practical</div>
+<div class="concept-title">Choosing &amp; Using One</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Point</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Options</td><td>Dedicated (Pinecone, Weaviate, Qdrant, Milvus) or add-ons (pgvector for Postgres, Redis, Elasticsearch).</td></tr>
+<tr><td class="c-cyan">Metadata filtering</td><td>Combine vector search with normal filters ("similar AND from 2026 AND team=infra").</td></tr>
+<tr><td class="c-cyan">Hybrid search</td><td>Blend keyword (BM25) + vector scores — catches exact terms semantics miss.</td></tr>
+<tr><td class="c-amber">Re-embed on model change</td><td>Vectors from different models aren't comparable — switching embedders means rebuilding the index.</td></tr>
+</table>
 </div>
 </div>
 </div>

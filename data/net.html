@@ -5199,6 +5199,77 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🚦</span>
+              <span class="topic-name">QoS — Quality of Service &amp; Traffic Shaping</span>
+              <span class="topic-badge">Networking</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Not All Packets Are Equal</div>
+                <div class="concept-desc">
+                  When a link gets congested, something has to give. Without
+                  <strong class="c-cyan">Quality of Service</strong>, the network drops
+                  packets indiscriminately — and a big file download can wreck a video call
+                  sharing the same pipe. QoS lets you <em>classify</em> traffic and give the
+                  time-sensitive kinds (voice, video, gaming) priority over the ones that
+                  don't care about a little delay (backups, email, updates). It manages a
+                  scarce resource — bandwidth — by policy instead of first-come-first-served.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Four Things QoS Manages</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Metric</th><th>What It Is</th><th>Hurts…</th></tr>
+                    <tr><td class="c-cyan">Bandwidth</td><td>Throughput available</td><td>Large transfers</td></tr>
+                    <tr><td class="c-cyan">Latency</td><td>Delay end to end</td><td>Voice, gaming, trading</td></tr>
+                    <tr><td class="c-cyan">Jitter</td><td>Variation in latency</td><td>Real-time audio/video (choppy calls)</td></tr>
+                    <tr><td class="c-cyan">Loss</td><td>Packets dropped</td><td>Everything; voice can't retransmit</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Voice/video care most about <strong>jitter and loss</strong>; bulk data
+                    cares only about eventual <strong>bandwidth</strong>. QoS trades one for
+                    the other on purpose.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">How It Works</div>
+                <div class="concept-title">Classify → Mark → Queue → Shape</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>What Happens</th></tr>
+                    <tr><td class="c-green">Classification</td><td>Identify traffic by port, app, or existing marking.</td></tr>
+                    <tr><td class="c-green">Marking</td><td>Stamp a priority in the packet header — <strong>DSCP</strong> (6 bits in the IP header) is the standard. EF = Expedited Forwarding for voice.</td></tr>
+                    <tr><td class="c-green">Queuing</td><td>High-priority marks go into faster queues; routers service them first.</td></tr>
+                    <tr><td class="c-green">Shaping vs Policing</td><td><strong>Shaping</strong> buffers excess traffic to smooth it; <strong>policing</strong> just drops it over a limit.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Practical</div>
+                <div class="concept-title">Where You Meet QoS</div>
+                <div class="concept-desc">
+                  QoS only helps on links <em>you</em> control — your router, your WAN, an
+                  enterprise LAN — because markings are honored within an administrative
+                  domain and often <strong class="c-red">reset at the public internet
+                  boundary</strong> (the internet is best-effort; your DSCP tags mean nothing
+                  to your ISP unless you buy an SLA). Classic uses: prioritizing VoIP on an
+                  office network, keeping a video call smooth on a home router, and guaranteeing
+                  latency-sensitive traffic across an MPLS or SD-WAN link.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->
