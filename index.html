@@ -16038,6 +16038,217 @@ guarantees cost round-trips. There's no free lunch in distributed data.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🕸️</span>
+<span class="topic-name">Service Mesh — Istio, Linkerd &amp; the Sidecar Pattern</span>
+<span class="topic-badge">Cloud Native</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Move Networking Concerns Out of Your Code</div>
+<div class="concept-desc">
+When one app becomes 50 microservices, every service needs retries,
+timeouts, TLS, load balancing, and metrics for its calls to the others.
+Building that into each service — in every language — is repetitive and
+inconsistent. A <strong class="c-cyan">service mesh</strong> extracts all of
+it into the infrastructure: a proxy runs alongside each service and handles
+service-to-service traffic, so your application code just makes a plain
+request and the mesh does the hard parts.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Architecture</div>
+<div class="concept-title">Sidecars &amp; the Two Planes</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Piece</th><th>Role</th></tr>
+<tr><td class="c-cyan">Sidecar proxy</td><td>A proxy (often Envoy) deployed next to <em>every</em> service instance. All traffic in/out flows through it — the app is unaware.</td></tr>
+<tr><td class="c-cyan">Data plane</td><td>The collection of all sidecars actually moving the traffic.</td></tr>
+<tr><td class="c-cyan">Control plane</td><td>The brain (e.g. Istio's istiod) that configures every sidecar with routing rules, certs, and policy.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+You change behavior by updating the control plane; it pushes config to the
+sidecars. Newer meshes offer a "sidecar-less" (per-node) mode to cut the
+per-pod overhead.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">What a Mesh Gives You</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Capability</th><th>Detail</th></tr>
+<tr><td class="c-green">mTLS everywhere</td><td>Automatic mutual-TLS encryption + identity between services — zero app changes.</td></tr>
+<tr><td class="c-green">Traffic control</td><td>Canary/blue-green by shifting % of traffic; retries, timeouts, circuit breaking.</td></tr>
+<tr><td class="c-green">Observability</td><td>Uniform metrics, logs, and traces for every call, for free.</td></tr>
+<tr><td class="c-green">Policy</td><td>Who may call whom (authorization), rate limits, fault injection for testing.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Trade-offs</div>
+<div class="concept-title">Do You Actually Need One?</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>Detail</th></tr>
+<tr><td class="c-green">Worth it when</td><td>Many services, multiple languages, strict security/compliance, and you need uniform mTLS + observability.</td></tr>
+<tr><td class="c-red">Overkill when</td><td>A handful of services — the operational complexity and latency/resource overhead outweigh the benefit.</td></tr>
+<tr><td class="c-cyan">Options</td><td>Istio (powerful, complex), Linkerd (lightweight, simpler), Cilium (eBPF-based), Consul.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+A mesh solves the same problems an API gateway does <em>between</em> internal
+services — the gateway is the front door for outside traffic; the mesh is
+the internal road network.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧵</span>
+<span class="topic-name">Distributed Tracing &amp; OpenTelemetry</span>
+<span class="topic-badge">Observability</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Following One Request Across Many Services</div>
+<div class="concept-desc">
+In a microservice system, a single user click might touch a gateway, an auth
+service, three back-ends, and a database. When it's slow, <em>which</em> hop
+is to blame? Logs from each service in isolation can't tell you.
+<strong class="c-cyan">Distributed tracing</strong> stitches the whole
+journey together: it tags the request with an ID that travels with it, so you
+can see the end-to-end path and exactly where the time went.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Traces, Spans &amp; Context</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td class="c-cyan">Trace</td><td>The whole journey of one request, identified by a <code>trace_id</code>.</td></tr>
+<tr><td class="c-cyan">Span</td><td>One unit of work within the trace (an HTTP call, a DB query) — with a start, duration, and metadata.</td></tr>
+<tr><td class="c-cyan">Parent/child</td><td>Spans nest — a service call's span contains the spans of what it triggered.</td></tr>
+<tr><td class="c-cyan">Context propagation</td><td>The <code>trace_id</code> + span info passed between services (via headers like W3C <code>traceparent</code>) so the trace stays connected.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Rendered as a waterfall, a trace shows each span as a bar — one long bar
+instantly reveals the bottleneck.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Three Pillars &amp; Where Tracing Fits</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Pillar</th><th>Answers</th></tr>
+<tr><td class="c-green">Metrics</td><td>"Is something wrong?" — aggregate numbers, cheap, great for alerts.</td></tr>
+<tr><td class="c-green">Logs</td><td>"What happened here?" — detailed events from one component.</td></tr>
+<tr><td class="c-green">Traces</td><td>"Where is it slow / failing?" — the request's path across services.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+You use all three together: a metric alerts you, a trace localizes the slow
+hop, and logs on that span explain why.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Standard</div>
+<div class="concept-title">OpenTelemetry — One SDK to Instrument Them All</div>
+<div class="concept-desc">
+<strong class="c-cyan">OpenTelemetry (OTel)</strong> is the vendor-neutral
+standard for generating traces, metrics, and logs. You instrument your code
+once with the OTel SDK (much of it automatic for popular frameworks), and it
+exports to whatever backend you choose — <strong>Jaeger</strong>,
+<strong>Tempo</strong>, <strong>Zipkin</strong>, or a commercial tool — with
+no code change to switch. That freedom from lock-in is why it won.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Practical note</th><th>Detail</th></tr>
+<tr><td class="c-amber">Sampling</td><td>Tracing everything is expensive at scale — sample a fraction (head or tail sampling) while keeping error traces.</td></tr>
+<tr><td class="c-amber">Collector</td><td>The OTel Collector receives, batches, and routes telemetry so apps don't talk to backends directly.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔃</span>
+<span class="topic-name">GitOps — Git as the Source of Truth for Operations</span>
+<span class="topic-badge">DevOps</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">If It's Not in Git, It Doesn't Exist</div>
+<div class="concept-desc">
+<strong class="c-cyan">GitOps</strong> applies the software workflow you
+already know — pull requests, review, merge, history — to
+<em>infrastructure and deployments</em>. The desired state of your whole
+system lives in a Git repo as declarative config; an automated agent
+continuously makes the real cluster match it. You never <code>kubectl apply</code>
+by hand — you change a file, open a PR, and merging <em>is</em> the deploy.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">How It Works</div>
+<div class="concept-title">Push vs Pull Deployment</div>
+<div class="concept-desc">
+Traditional CI <strong>pushes</strong> changes into the cluster (the pipeline
+has cluster credentials and runs <code>apply</code>). GitOps flips it: an
+agent <em>inside</em> the cluster <strong class="c-amber">pulls</strong> the
+desired state from Git and reconciles continuously.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>What Happens</th></tr>
+<tr><td class="c-green">1. Declare</td><td>Desired state (Kubernetes manifests, Helm, Terraform) is committed to Git.</td></tr>
+<tr><td class="c-green">2. Observe</td><td>An in-cluster agent (Argo CD, Flux) watches the repo.</td></tr>
+<tr><td class="c-green">3. Diff</td><td>It compares Git (desired) against the live cluster (actual).</td></tr>
+<tr><td class="c-green">4. Reconcile</td><td>It applies changes to close the gap — automatically and continuously.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Why Teams Adopt It</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Benefit</th><th>Detail</th></tr>
+<tr><td class="c-green">Git is the audit log</td><td>Every change is a reviewed, attributed, revertible commit. Rollback = <code>git revert</code>.</td></tr>
+<tr><td class="c-green">No config drift</td><td>The agent fixes manual/out-of-band changes automatically — the cluster can't silently diverge.</td></tr>
+<tr><td class="c-green">Better security</td><td>CI no longer needs cluster credentials; the pull agent lives inside and reaches out.</td></tr>
+<tr><td class="c-green">Reproducible</td><td>Rebuild an entire environment from the repo — great for DR and new clusters.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Practical</div>
+<div class="concept-title">Tools &amp; Gotchas</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Point</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Tools</td><td>Argo CD and Flux are the two dominant Kubernetes GitOps agents.</td></tr>
+<tr><td class="c-amber">Secrets</td><td>You can't commit plaintext secrets — use Sealed Secrets, SOPS, or an external secrets operator.</td></tr>
+<tr><td class="c-amber">Repo layout</td><td>Common pattern: separate app-code repos from a <em>config</em> repo; a merge to config triggers the deploy.</td></tr>
+<tr><td class="c-amber">Fits declarative best</td><td>GitOps assumes a system that reconciles to a declared state (Kubernetes shines); imperative steps fit less cleanly.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->
