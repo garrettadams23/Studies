@@ -1333,6 +1333,247 @@ prompts = [
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔀</span>
+              <span class="topic-name">ETL &amp; Data Pipelines — Moving Data at Scale</span>
+              <span class="topic-badge">Data</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Getting Data From Where It Is to Where It's Useful</div>
+                <div class="concept-desc">
+                  Raw data is scattered across app databases, APIs, logs, and files — messy
+                  and in the wrong shape for analysis. A <strong class="c-cyan">data
+                  pipeline</strong> moves it, cleans it, and lands it somewhere queryable.
+                  The classic pattern is <strong class="c-amber">ETL</strong>:
+                  <strong>Extract</strong> from sources, <strong>Transform</strong> into a
+                  clean shape, <strong>Load</strong> into a warehouse. It's the plumbing
+                  behind every dashboard, report, and ML training set.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Three Stages</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Stage</th><th>What Happens</th></tr>
+                    <tr><td class="c-green">Extract</td><td>Pull from sources — databases, REST APIs, event streams, CSV/JSON files, logs.</td></tr>
+                    <tr><td class="c-green">Transform</td><td>Clean nulls, dedupe, join, reformat types, aggregate, enrich — make it consistent and analysis-ready.</td></tr>
+                    <tr><td class="c-green">Load</td><td>Write into the destination — a data warehouse, lake, or database.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">ETL vs ELT</div>
+                <div class="concept-title">Transform Before or After Loading?</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>ETL (classic)</th><th>ELT (modern)</th></tr>
+                    <tr><td>Order</td><td>Transform, then load</td><td>Load raw, then transform in-warehouse</td></tr>
+                    <tr><td>Transform runs on</td><td>A separate engine</td><td>The warehouse's own compute</td></tr>
+                    <tr><td>Best when</td><td>Destination is expensive/rigid</td><td>Cloud warehouse compute is cheap &amp; elastic</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Cloud warehouses (BigQuery, Snowflake, Redshift) made
+                    <strong class="c-cyan">ELT</strong> popular: dump raw data in, then use
+                    SQL/dbt to transform it where the compute already lives — flexible, since
+                    you keep the raw source to re-transform later.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Destinations, Orchestration &amp; What Matters</div>
+                <div class="dw">
+                  <div class="dt">▸ WHERE DATA LANDS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Store</th><th>Holds</th></tr>
+                    <tr><td class="c-cyan">Data Warehouse</td><td>Structured, cleaned data for analytics (Snowflake, BigQuery)</td></tr>
+                    <tr><td class="c-cyan">Data Lake</td><td>Raw data of any shape, cheaply (S3 + Parquet)</td></tr>
+                    <tr><td class="c-cyan">Lakehouse</td><td>Lake storage + warehouse features (Databricks, Delta)</td></tr>
+                  </table>
+                  <div class="dt">▸ BATCH vs STREAMING</div>
+                  <table class="ref-table">
+                    <tr><th>Mode</th><th>When</th></tr>
+                    <tr><td>Batch</td><td>Run on a schedule (nightly) — orchestrated by Airflow, Dagster, Prefect</td></tr>
+                    <tr><td>Streaming</td><td>Process events as they arrive (Kafka + Flink/Spark) for near-real-time</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Whatever the tool, three things make or break a pipeline:
+                    <strong class="c-green">idempotent reruns</strong> (a failed job re-runs
+                    safely), <strong class="c-green">data quality checks</strong> (catch bad
+                    data before it poisons dashboards), and <strong class="c-green">lineage</strong>
+                    (knowing where each number came from).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📐</span>
+              <span class="topic-name">Vector Databases — Similarity Search at Scale</span>
+              <span class="topic-badge">AI Infra</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Searching by Meaning, Not Keywords</div>
+                <div class="concept-desc">
+                  An embedding model turns text (or an image) into a
+                  <strong class="c-cyan">vector</strong> — a list of hundreds of numbers that
+                  positions the item in a "meaning space" where similar things sit close
+                  together. A <strong class="c-amber">vector database</strong> stores millions
+                  of these and answers one question fast: <em>"which vectors are nearest to
+                  this one?"</em> That's how semantic search and RAG find the most relevant
+                  passages — by geometric closeness, not matching words. This topic is about
+                  the <em>storage &amp; search</em> side; how embeddings are made lives in the
+                  Embeddings &amp; RAG topic.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Distance Metrics — "Nearness" Defined</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Metric</th><th>Measures</th><th>Common For</th></tr>
+                    <tr><td class="c-green">Cosine similarity</td><td>Angle between vectors (ignores magnitude)</td><td>Text embeddings (the usual default)</td></tr>
+                    <tr><td class="c-green">Dot product</td><td>Angle + magnitude</td><td>When vector length carries meaning</td></tr>
+                    <tr><td class="c-green">Euclidean (L2)</td><td>Straight-line distance</td><td>Image/spatial embeddings</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Match the metric to how the model was trained — most sentence-embedding
+                    models expect <strong>cosine</strong>. Using the wrong one quietly
+                    degrades results.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Why It's Hard</div>
+                <div class="concept-title">Exact Search Doesn't Scale — Enter ANN</div>
+                <div class="concept-desc">
+                  Comparing your query to <em>every</em> stored vector (brute force) is
+                  accurate but far too slow at millions of items. So vector DBs use
+                  <strong class="c-cyan">Approximate Nearest Neighbor (ANN)</strong> indexes:
+                  they trade a tiny bit of accuracy for enormous speed by only searching the
+                  most promising regions.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Index</th><th>Idea</th></tr>
+                    <tr><td class="c-cyan">HNSW</td><td>A layered "small-world" graph you hop through — fast &amp; accurate; the popular default.</td></tr>
+                    <tr><td class="c-cyan">IVF</td><td>Cluster vectors, search only the nearest clusters.</td></tr>
+                    <tr><td class="c-cyan">PQ</td><td>Compress vectors so more fit in RAM (product quantization) — trades accuracy for memory.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The dial is <strong>recall vs latency</strong>: search harder for more
+                    correct neighbors, or faster for approximate ones.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Practical</div>
+                <div class="concept-title">Choosing &amp; Using One</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Point</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Options</td><td>Dedicated (Pinecone, Weaviate, Qdrant, Milvus) or add-ons (pgvector for Postgres, Redis, Elasticsearch).</td></tr>
+                    <tr><td class="c-cyan">Metadata filtering</td><td>Combine vector search with normal filters ("similar AND from 2026 AND team=infra").</td></tr>
+                    <tr><td class="c-cyan">Hybrid search</td><td>Blend keyword (BM25) + vector scores — catches exact terms semantics miss.</td></tr>
+                    <tr><td class="c-amber">Re-embed on model change</td><td>Vectors from different models aren't comparable — switching embedders means rebuilding the index.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔁</span>
+              <span class="topic-name">MLOps — Shipping &amp; Monitoring Models in Production</span>
+              <span class="topic-badge">AI Infra</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Model in a Notebook Isn't a Product</div>
+                <div class="concept-desc">
+                  Training a good model is maybe 10% of the work. <strong class="c-cyan">MLOps</strong>
+                  is DevOps for machine learning — the practices that get a model
+                  <em>reliably</em> from a data scientist's laptop into production and keep it
+                  healthy there. Unlike ordinary software, an ML system depends on
+                  <strong>data</strong> that shifts over time, so it can silently rot even when
+                  the code never changes. MLOps exists to make ML reproducible, deployable, and
+                  monitored.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Lifecycle</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Stage</th><th>What Happens</th></tr>
+                    <tr><td class="c-green">Data &amp; features</td><td>Version datasets; compute features consistently for training and serving (a feature store).</td></tr>
+                    <tr><td class="c-green">Train &amp; track</td><td>Log every run's data, code, params, and metrics so results are reproducible (MLflow, W&amp;B).</td></tr>
+                    <tr><td class="c-green">Registry</td><td>Version trained models with stages (staging → production) like artifacts.</td></tr>
+                    <tr><td class="c-green">Deploy &amp; serve</td><td>Expose the model behind an API (batch or real-time); canary new versions.</td></tr>
+                    <tr><td class="c-green">Monitor</td><td>Watch predictions, latency, and — critically — <em>data drift</em>. Retrain when quality slips.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Hard Part</div>
+                <div class="concept-title">Drift — Why Models Decay</div>
+                <div class="concept-desc">
+                  A model learns patterns from historical data. When the real world changes,
+                  those patterns go stale and accuracy quietly drops — no error, no crash, just
+                  worse predictions.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Type</th><th>What Shifts</th></tr>
+                    <tr><td class="c-amber">Data drift</td><td>The input distribution changes (new user behavior, new products).</td></tr>
+                    <tr><td class="c-amber">Concept drift</td><td>The relationship between inputs and the answer changes (fraud tactics evolve).</td></tr>
+                    <tr><td class="c-red">Training/serving skew</td><td>Features are computed differently in training vs production — a top cause of "great offline, bad live."</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    You catch drift by monitoring input statistics and prediction quality
+                    against a baseline, then trigger a <strong>retrain</strong> — ideally
+                    automated on a schedule or a drift alert.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Principles</div>
+                <div class="concept-title">What Good MLOps Looks Like</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Practice</th><th>Why</th></tr>
+                    <tr><td class="c-green">Reproducibility</td><td>Pin data + code + params so any result can be rebuilt exactly.</td></tr>
+                    <tr><td class="c-green">Automated pipelines</td><td>Retraining and deployment are scripted, not manual notebook runs.</td></tr>
+                    <tr><td class="c-green">Versioning everything</td><td>Data, features, models, and code all get versions — you can roll back a model like code.</td></tr>
+                    <tr><td class="c-green">Continuous monitoring</td><td>Serving metrics + drift detection, because "deployed" isn't "done."</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body ai -->
 <!-- /domain-body ai -->
 <!-- /domain-body ai -->

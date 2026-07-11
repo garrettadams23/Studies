@@ -5050,6 +5050,363 @@ conflating them is one of the most common (and most exploited) assumptions on th
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗺️</span>
+<span class="topic-name">BGP — How the Internet Routes Between Networks</span>
+<span class="topic-badge">Routing</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Protocol That Glues the Internet Together</div>
+<div class="concept-desc">
+Protocols like OSPF route <em>inside</em> one organization. But the internet
+is ~75,000 independent networks (ISPs, clouds, universities) that must agree
+on how to reach each other. <strong class="c-cyan">BGP — the Border Gateway
+Protocol</strong> — is how they do it. Each network is an
+<strong class="c-amber">Autonomous System (AS)</strong> with a number, and
+BGP is how ASes <em>advertise</em> which IP ranges they can reach and learn
+routes to everywhere else. It's the internet's routing table, assembled by
+agreement rather than central control.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Key Terms</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td class="c-cyan">Autonomous System (AS)</td><td>A network under one administrative control, identified by an ASN (e.g. AS15169 = Google).</td></tr>
+<tr><td class="c-cyan">Prefix</td><td>An advertised IP range, e.g. <code>8.8.8.0/24</code>.</td></tr>
+<tr><td class="c-cyan">Peering</td><td>Two ASes agree to exchange traffic directly (often settlement-free).</td></tr>
+<tr><td class="c-cyan">Transit</td><td>Paying a larger ISP to reach the rest of the internet.</td></tr>
+<tr><td class="c-cyan">AS_PATH</td><td>The list of ASes a route passes through — used to pick paths and prevent loops.</td></tr>
+<tr><td class="c-cyan">eBGP / iBGP</td><td>BGP between different ASes / within one AS.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">How It Chooses</div>
+<div class="concept-title">Path Selection &amp; Why It's Different</div>
+<div class="concept-desc">
+BGP is a <strong>path-vector</strong> protocol: it doesn't pick the route
+with the least latency or fewest hops the way an interior protocol might —
+it picks based on <em>policy</em>. Operators tune attributes to prefer
+cheaper or contractually-preferred paths.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Attribute (in order)</th><th>Effect</th></tr>
+<tr><td class="c-green">Local Preference</td><td>Highest wins — an AS's own preference for outbound paths.</td></tr>
+<tr><td class="c-green">AS_PATH length</td><td>Shorter path preferred (fewer ASes to cross).</td></tr>
+<tr><td class="c-green">MED</td><td>A hint to a neighbor about which entry point to prefer.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Fragility</div>
+<div class="concept-title">When BGP Goes Wrong</div>
+<div class="concept-desc">
+BGP largely runs on trust, which is also its weakness. A
+<strong class="c-red">route hijack</strong> — an AS advertising prefixes it
+doesn't own — can silently reroute or black-hole traffic (it has taken down
+large chunks of the internet, sometimes by accident via a
+<em>route leak</em>, a misconfigured advertisement). Defenses:
+<strong class="c-green">RPKI</strong> (cryptographically validates who may
+originate a prefix) and prefix filtering between peers. This fragility is why
+a single fat-fingered BGP change at a big provider can make headlines.
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚦</span>
+<span class="topic-name">QoS — Quality of Service &amp; Traffic Shaping</span>
+<span class="topic-badge">Networking</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Not All Packets Are Equal</div>
+<div class="concept-desc">
+When a link gets congested, something has to give. Without
+<strong class="c-cyan">Quality of Service</strong>, the network drops
+packets indiscriminately — and a big file download can wreck a video call
+sharing the same pipe. QoS lets you <em>classify</em> traffic and give the
+time-sensitive kinds (voice, video, gaming) priority over the ones that
+don't care about a little delay (backups, email, updates). It manages a
+scarce resource — bandwidth — by policy instead of first-come-first-served.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Four Things QoS Manages</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Metric</th><th>What It Is</th><th>Hurts…</th></tr>
+<tr><td class="c-cyan">Bandwidth</td><td>Throughput available</td><td>Large transfers</td></tr>
+<tr><td class="c-cyan">Latency</td><td>Delay end to end</td><td>Voice, gaming, trading</td></tr>
+<tr><td class="c-cyan">Jitter</td><td>Variation in latency</td><td>Real-time audio/video (choppy calls)</td></tr>
+<tr><td class="c-cyan">Loss</td><td>Packets dropped</td><td>Everything; voice can't retransmit</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Voice/video care most about <strong>jitter and loss</strong>; bulk data
+cares only about eventual <strong>bandwidth</strong>. QoS trades one for
+the other on purpose.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">How It Works</div>
+<div class="concept-title">Classify → Mark → Queue → Shape</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>What Happens</th></tr>
+<tr><td class="c-green">Classification</td><td>Identify traffic by port, app, or existing marking.</td></tr>
+<tr><td class="c-green">Marking</td><td>Stamp a priority in the packet header — <strong>DSCP</strong> (6 bits in the IP header) is the standard. EF = Expedited Forwarding for voice.</td></tr>
+<tr><td class="c-green">Queuing</td><td>High-priority marks go into faster queues; routers service them first.</td></tr>
+<tr><td class="c-green">Shaping vs Policing</td><td><strong>Shaping</strong> buffers excess traffic to smooth it; <strong>policing</strong> just drops it over a limit.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Practical</div>
+<div class="concept-title">Where You Meet QoS</div>
+<div class="concept-desc">
+QoS only helps on links <em>you</em> control — your router, your WAN, an
+enterprise LAN — because markings are honored within an administrative
+domain and often <strong class="c-red">reset at the public internet
+boundary</strong> (the internet is best-effort; your DSCP tags mean nothing
+to your ISP unless you buy an SLA). Classic uses: prioritizing VoIP on an
+office network, keeping a video call smooth on a home router, and guaranteeing
+latency-sensitive traffic across an MPLS or SD-WAN link.
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚀</span>
+<span class="topic-name">HTTP/2, HTTP/3 &amp; QUIC — Modern Web Transport</span>
+<span class="topic-badge">Networking</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Making the Web Fast, One Protocol at a Time</div>
+<div class="concept-desc">
+HTTP/1.1 (1997) sends one request at a time per connection and in plain
+text — browsers opened 6+ connections per site just to keep up.
+<strong class="c-cyan">HTTP/2</strong> and
+<strong class="c-amber">HTTP/3</strong> keep the same familiar HTTP
+semantics (methods, headers, status codes) but completely rework how bytes
+move on the wire to kill latency. Same API, radically faster transport.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Three Generations</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>HTTP/1.1</th><th>HTTP/2</th><th>HTTP/3</th></tr>
+<tr><td>Transport</td><td>TCP</td><td>TCP</td><td class="c-green">QUIC (over UDP)</td></tr>
+<tr><td>Format</td><td>Text</td><td>Binary</td><td>Binary</td></tr>
+<tr><td>Multiplexing</td><td class="c-red">No (1 at a time)</td><td class="c-green">Yes (many streams)</td><td class="c-green">Yes</td></tr>
+<tr><td>Header compression</td><td>None</td><td>HPACK</td><td>QPACK</td></tr>
+<tr><td>Head-of-line block</td><td class="c-red">Per request</td><td class="c-amber">At TCP layer</td><td class="c-green">Solved</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Key Ideas</div>
+<div class="concept-title">Multiplexing &amp; Head-of-Line Blocking</div>
+<div class="concept-desc">
+<strong class="c-cyan">HTTP/2's</strong> big win is
+<strong>multiplexing</strong>: many requests share one connection as
+independent "streams," so a slow response doesn't block the others at the
+HTTP layer. But they still ride one <strong>TCP</strong> connection — and if
+a single TCP packet is lost, TCP stalls <em>all</em> streams until it's
+retransmitted. That's <strong class="c-red">head-of-line blocking</strong>
+at the transport layer, HTTP/2's remaining weakness.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Leap</div>
+<div class="concept-title">Why HTTP/3 Ditched TCP for QUIC</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>QUIC feature</th><th>Benefit</th></tr>
+<tr><td class="c-green">Runs on UDP</td><td>Streams are independent — one lost packet only stalls its own stream, not all of them.</td></tr>
+<tr><td class="c-green">TLS 1.3 built in</td><td>Encryption isn't optional; the handshake is baked into the transport.</td></tr>
+<tr><td class="c-green">Faster handshakes</td><td>0-RTT / 1-RTT connection setup vs TCP+TLS's multiple round trips.</td></tr>
+<tr><td class="c-green">Connection migration</td><td>A connection ID (not IP:port) means switching Wi-Fi → cellular doesn't drop the connection.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Because QUIC lives in <em>user space</em> (not the OS kernel like TCP), it
+evolves faster. The trade-off: some middleboxes/firewalls throttle or block
+UDP, so clients fall back to HTTP/2 over TCP when needed.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🕰️</span>
+<span class="topic-name">NTP &amp; Time Synchronization — Why Clocks Matter</span>
+<span class="topic-badge">Networking</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">A Few Seconds of Drift Breaks Surprising Things</div>
+<div class="concept-desc">
+Every computer has a cheap quartz clock that drifts — seconds per day. On
+one laptop that's harmless; across a fleet it's a disaster. The
+<strong class="c-cyan">Network Time Protocol</strong> keeps machines
+synchronized to within milliseconds of a reference time by measuring the
+round-trip delay to time servers and correcting for it. It's invisible
+infrastructure — until a clock is wrong and logins fail, logs won't
+correlate, and TLS certificates appear "not yet valid."
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Why It Matters</div>
+<div class="concept-title">What Breaks When Clocks Disagree</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>System</th><th>Failure With Bad Time</th></tr>
+<tr><td class="c-red">TLS / certificates</td><td>Certs have valid-from/valid-to windows; a skewed clock rejects good certs (or trusts expired ones).</td></tr>
+<tr><td class="c-red">Kerberos / AD auth</td><td>Tickets are time-stamped; default tolerance is ~5 minutes — beyond that, logins fail.</td></tr>
+<tr><td class="c-red">MFA / TOTP codes</td><td>Time-based one-time codes rotate every 30s; a wrong clock rejects valid codes.</td></tr>
+<tr><td class="c-red">Log correlation</td><td>Investigating an incident across servers is impossible if their timestamps don't line up.</td></tr>
+<tr><td class="c-red">Databases / distributed systems</td><td>Ordering, leases, and conflict resolution can misbehave with clock skew.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Stratum — The Hierarchy of Trust</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Stratum</th><th>Source</th></tr>
+<tr><td class="c-cyan">0</td><td>Reference clock — atomic clock, GPS. Not on the network itself.</td></tr>
+<tr><td class="c-cyan">1</td><td>Servers directly attached to a stratum-0 source.</td></tr>
+<tr><td class="c-cyan">2, 3, …</td><td>Sync from the stratum above; the number grows with distance from the source.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Most machines sync from public pools (<code>pool.ntp.org</code>) or an
+internal server. Best practice: point your fleet at a couple of internal
+NTP servers that themselves sync upstream — consistent time, less external
+dependence.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Commands</div>
+<div class="concept-title">Checking Time Sync (Linux)</div>
+<div class="dw">
+<pre class="code-block"><span class="fn">timedatectl</span>                    <span class="com"># is NTP active &amp; synchronized?</span>
+<span class="fn">timedatectl</span> show-timesync      <span class="com"># current server &amp; poll interval</span>
+<span class="fn">chronyc</span> tracking              <span class="com"># chrony: offset, drift, stratum</span>
+<span class="fn">chronyc</span> sources -v            <span class="com"># which servers, how reachable</span>
+<span class="fn">ntpq</span> -p                       <span class="com"># classic ntpd: peer list &amp; offsets</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+Modern Linux uses <strong>chrony</strong> or
+<strong>systemd-timesyncd</strong>; both slew the clock gradually rather
+than jumping it, so time never runs backward. Always store and compare
+time in <strong class="c-cyan">UTC</strong> — convert to local only for
+display.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚪</span>
+<span class="topic-name">Reverse Proxies — nginx, HAProxy &amp; the Front Door</span>
+<span class="topic-badge">Networking</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">One Front Door for Many Back-End Services</div>
+<div class="concept-desc">
+A <strong class="c-cyan">reverse proxy</strong> sits in front of your
+servers and receives every client request first, then forwards it to the
+right back-end. (A <em>forward</em> proxy sits in front of <em>clients</em>;
+a reverse proxy fronts <em>servers</em> — hence the name.) It's the single
+front door where you centralize TLS, routing, caching, and protection — so
+your application servers can stay simple and private.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">What a Reverse Proxy Does For You</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Job</th><th>What It Means</th></tr>
+<tr><td class="c-green">TLS termination</td><td>Handles HTTPS/certs at the edge; talks plain HTTP to back-ends, so they don't each manage certs.</td></tr>
+<tr><td class="c-green">Load balancing</td><td>Spreads requests across multiple back-end instances.</td></tr>
+<tr><td class="c-green">Routing</td><td>Sends <code>/api</code> to one service and <code>/</code> to another by path or hostname.</td></tr>
+<tr><td class="c-green">Caching &amp; compression</td><td>Serves cached/gzipped responses without hitting the app.</td></tr>
+<tr><td class="c-green">Protection</td><td>Rate limiting, request filtering, hiding back-end topology.</td></tr>
+<tr><td class="c-green">Static files</td><td>Serves assets directly, freeing the app for dynamic work.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Example</div>
+<div class="concept-title">A Minimal nginx Reverse Proxy</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">server</span> {
+    <span class="var">listen</span> <span class="num">443</span> ssl;
+    <span class="var">server_name</span> app.example.com;
+
+    <span class="var">ssl_certificate</span>     /etc/ssl/app.crt;   <span class="com"># TLS ends here</span>
+    <span class="var">ssl_certificate_key</span> /etc/ssl/app.key;
+
+    <span class="kw">location</span> /api/ {
+        <span class="var">proxy_pass</span> http://<span class="num">127.0.0.1</span>:<span class="num">3000</span>;  <span class="com"># forward to the app</span>
+        <span class="var">proxy_set_header</span> Host <span class="var">$host</span>;
+        <span class="var">proxy_set_header</span> X-Real-IP <span class="var">$remote_addr</span>;  <span class="com"># keep client IP</span>
+    }
+
+    <span class="kw">location</span> / {
+        <span class="var">root</span> /var/www/site;             <span class="com"># serve static files</span>
+    }
+}</pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Common Tools</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Strength</th></tr>
+<tr><td class="c-cyan">nginx</td><td>Web server + reverse proxy + static + cache. The default workhorse.</td></tr>
+<tr><td class="c-cyan">HAProxy</td><td>Purpose-built, high-performance TCP/HTTP load balancer with deep health-check &amp; metrics support.</td></tr>
+<tr><td class="c-cyan">Caddy</td><td>Automatic HTTPS (Let's Encrypt out of the box); simplest config.</td></tr>
+<tr><td class="c-cyan">Envoy / Traefik</td><td>Cloud-native, dynamic config; common as Kubernetes ingress and service-mesh proxies.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+The <strong class="c-amber">X-Forwarded-For</strong> /
+<strong class="c-amber">X-Real-IP</strong> headers matter: once a proxy is
+in the path, the back-end sees the <em>proxy's</em> IP unless the proxy
+passes the real client IP along in these headers.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->
@@ -8244,6 +8601,151 @@ browser API) + CTAP (the authenticator protocol).
 <tr><td><span class="c-cyan">Synced passkey</span></td><td>Backed up to your Apple/Google/Microsoft account so a lost device isn't lockout.</td></tr>
 <tr><td><span class="c-cyan">Device-bound</span></td><td>Never leaves the hardware (e.g. a FIDO security key) — highest assurance.</td></tr>
 <tr><td><span class="c-cyan">Attestation</span></td><td>Optional proof of what kind of authenticator was used — matters in high-security orgs.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🍪</span>
+<span class="topic-name">Sessions, Cookies &amp; JWT — Managing Web Auth State</span>
+<span class="topic-badge">Auth</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">HTTP Is Stateless — So How Do You Stay Logged In?</div>
+<div class="concept-desc">
+Every HTTP request is independent; the server doesn't inherently remember
+you between clicks. After you log in, the app needs a way to prove "this
+request is still Alice" on every subsequent call. There are two dominant
+strategies: <strong class="c-cyan">server-side sessions</strong> (the
+server remembers) and <strong class="c-amber">stateless tokens / JWT</strong>
+(the proof travels with the request). Both usually ride in a
+<strong>cookie</strong>.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Comparison</div>
+<div class="concept-title">Session vs Token</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>Server Session</th><th>JWT / Stateless Token</th></tr>
+<tr><td>Where state lives</td><td>On the server (DB/Redis)</td><td>Inside the token itself</td></tr>
+<tr><td>Cookie holds</td><td>An opaque session ID</td><td>The signed token (or ID for it)</td></tr>
+<tr><td>Revoke instantly</td><td class="c-green">Yes — delete the session</td><td class="c-red">Hard — valid until it expires</td></tr>
+<tr><td>Scales across servers</td><td class="c-amber">Needs shared store</td><td class="c-green">No lookup needed</td></tr>
+<tr><td>Best for</td><td>Classic web apps</td><td>APIs, microservices, mobile</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Anatomy of a JWT</div>
+<div class="concept-desc">
+A JWT is three Base64url parts joined by dots:
+<code>header.payload.signature</code>. The signature is what makes it
+trustworthy — the server verifies it to know the payload wasn't tampered
+with. <strong class="c-red">The payload is only encoded, not encrypted</strong>
+— anyone can read it, so never put secrets in it.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># header.payload.signature (dots between the three parts)</span>
+eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"}</span>
+.eyJzdWIiOiIxMjMiLCJ  <span class="com"># payload → {"sub":"123","exp":1730000000}</span>
+.SflKxwRJSMeKKF2QT4f  <span class="com"># signature → HMAC/RSA over header.payload</span>
+
+<span class="com"># Server verifies: recompute the signature with its secret/key.</span>
+<span class="com"># Match = untampered + issued by us. Then check exp (expiry).</span></pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Security</div>
+<div class="concept-title">Cookie Flags That Actually Protect You</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Flag</th><th>What It Does</th></tr>
+<tr><td class="c-green">HttpOnly</td><td>JavaScript can't read the cookie — blocks token theft via XSS. Essential for auth cookies.</td></tr>
+<tr><td class="c-green">Secure</td><td>Cookie sent only over HTTPS — never leaks on plain HTTP.</td></tr>
+<tr><td class="c-green">SameSite</td><td><code>Lax</code>/<code>Strict</code> stop the cookie riding along on cross-site requests — the core CSRF defense.</td></tr>
+<tr><td class="c-cyan">Max-Age / Expires</td><td>Controls how long the cookie lives; pair with short token expiry.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong>The access + refresh pattern:</strong> issue a short-lived access
+token (minutes) plus a long-lived refresh token stored in an
+<code>HttpOnly</code> cookie. When the access token expires, the refresh
+token silently mints a new one — limiting the damage window if a token
+leaks while keeping users logged in.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔎</span>
+<span class="topic-name">SAST, DAST &amp; SCA — Automated Security Testing</span>
+<span class="topic-badge">AppSec</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Finding Vulnerabilities Before Attackers Do</div>
+<div class="concept-desc">
+Manual pentesting is thorough but slow and periodic. To catch security bugs
+continuously — on every commit — teams automate three complementary scans:
+<strong class="c-cyan">SAST</strong> reads your source code,
+<strong class="c-amber">DAST</strong> attacks your running app, and
+<strong class="c-green">SCA</strong> checks your third-party dependencies.
+None is complete alone; together they cover code you wrote, behavior at
+runtime, and code you borrowed.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Three Scans</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>SAST</th><th>DAST</th><th>SCA</th></tr>
+<tr><td>Looks at</td><td>Source code</td><td>Running app</td><td>Dependencies</td></tr>
+<tr><td>View</td><td>White-box (inside)</td><td>Black-box (outside)</td><td>Your SBOM</td></tr>
+<tr><td>Finds</td><td>Injection, hardcoded secrets, unsafe calls</td><td>Auth flaws, XSS, misconfig, real exploits</td><td>Known CVEs in libraries</td></tr>
+<tr><td>Needs it running?</td><td class="c-green">No</td><td class="c-red">Yes</td><td class="c-green">No</td></tr>
+<tr><td>Weakness</td><td>False positives; no runtime view</td><td>Misses source-level bugs; needs a live target</td><td>Only known vulns</td></tr>
+<tr><td>Tools</td><td>Semgrep, CodeQL, SonarQube</td><td>OWASP ZAP, Burp</td><td>Dependabot, Snyk, Trivy</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Practice</div>
+<div class="concept-title">Shift Left &amp; Wire Into CI</div>
+<div class="concept-desc">
+The guiding idea is <strong class="c-cyan">"shift left"</strong> — move
+security checks earlier in the pipeline, where a bug is minutes to fix
+instead of a production incident. Run SAST and SCA on every pull request;
+run DAST against a staging deploy. Fail the build on high-severity findings,
+warn on the rest.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Example CI steps (conceptual)</span>
+- <span class="fn">semgrep</span> ci                     <span class="com"># SAST — scan the diff for code flaws</span>
+- <span class="fn">trivy</span> fs --severity HIGH,CRITICAL .  <span class="com"># SCA — vulnerable deps</span>
+- <span class="fn">gitleaks</span> detect               <span class="com"># catch committed secrets</span>
+- <span class="fn">zap-baseline</span> -t https://staging.app  <span class="com"># DAST — probe running app</span></pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reality Check</div>
+<div class="concept-title">Tools Don't Replace Judgment</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Watch out for</th><th>Detail</th></tr>
+<tr><td class="c-red">Alert fatigue</td><td>Noisy false positives get ignored. Tune rules and triage severity, or the whole program is tuned out.</td></tr>
+<tr><td class="c-amber">Coverage gaps</td><td>Scanners find <em>known</em> patterns. Business-logic flaws (e.g. bypassing a checkout step) still need a human.</td></tr>
+<tr><td class="c-green">Defense in depth</td><td>Automated scanning complements — not replaces — code review, threat modeling, and periodic pentests.</td></tr>
 </table>
 </div>
 </div>
@@ -12400,6 +12902,74 @@ assuming wrong can be measured in headlines.</p>
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🕵️</span>
+<span class="topic-name">Data Privacy Techniques — Anonymization &amp; Differential Privacy</span>
+<span class="topic-badge">Privacy</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Using Data Without Exposing People</div>
+<div class="concept-desc">
+Organizations want to analyze data; individuals have a right not to be
+identified. Privacy engineering is the set of techniques that let you keep the
+<em>useful signal</em> in data while removing the ability to trace it back to a
+person. The catch: naive approaches fail. Simply deleting names is
+<strong class="c-red">not enough</strong> — attackers re-identify people by
+combining "anonymous" data with outside information.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Techniques, Weakest to Strongest</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Technique</th><th>What It Does</th></tr>
+<tr><td class="c-amber">Pseudonymization</td><td>Replace identifiers with a token/key. Reversible with a lookup table — reduces risk but data is still personal (GDPR still applies).</td></tr>
+<tr><td class="c-amber">Masking / redaction</td><td>Hide part of a value (<code>****-1234</code>). Good for display, not for safe analytics datasets.</td></tr>
+<tr><td class="c-cyan">Generalization</td><td>Coarsen values — exact age → age range, ZIP → region — so many people share each value.</td></tr>
+<tr><td class="c-cyan">Anonymization</td><td>Irreversibly remove identifiability. If truly anonymous, privacy law no longer applies — but it's hard to guarantee.</td></tr>
+<tr><td class="c-green">Differential privacy</td><td>Add calibrated mathematical noise so any one person's presence can't be detected — with a provable guarantee.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Problem</div>
+<div class="concept-title">Re-Identification &amp; k-Anonymity</div>
+<div class="concept-desc">
+Famous studies re-identified "anonymous" people from just
+<strong>ZIP + birthdate + sex</strong>, or picked individuals out of released
+Netflix ratings. The fields that do this — not direct IDs, but combinations
+that narrow to one person — are called <strong class="c-amber">quasi-identifiers</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Model</th><th>Guarantee</th></tr>
+<tr><td class="c-cyan">k-anonymity</td><td>Each record is indistinguishable from at least <em>k−1</em> others on quasi-identifiers (you can't narrow below k people).</td></tr>
+<tr><td class="c-cyan">l-diversity</td><td>Adds that each group has diverse sensitive values (so knowing the group doesn't reveal the secret).</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Modern Answer</div>
+<div class="concept-title">Differential Privacy — Provable Guarantees</div>
+<div class="concept-desc">
+<strong class="c-cyan">Differential privacy</strong> takes a different tack:
+instead of scrubbing records, it adds carefully-tuned random noise to
+<em>results</em>, so the output is nearly identical whether or not any single
+person is in the dataset — meaning no analysis can reveal that person was
+there. A parameter <strong>ε (epsilon)</strong> tunes the trade-off: less
+noise = more accuracy but weaker privacy; more noise = stronger privacy but
+fuzzier answers. Apple, Google, and the US Census use it to publish statistics
+without exposing individuals. It's the strongest guarantee we have — a
+mathematical promise, not just a best effort.
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body grc -->
 <!-- /domain-body grc -->
 <!-- /domain-body grc -->
@@ -14916,6 +15486,898 @@ culture is built or destroyed by everyone in the room, in the moment someone say
 should have known better." One unkind comment in a review meeting can undo months of careful culture-building, and
 it teaches everyone present — not just the person being criticized — that honesty here has a cost. Protecting that
 culture, even in a meeting that isn't "yours," is part of keeping the whole system honest enough to actually improve.</p>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌍</span>
+<span class="topic-name">Terraform — Infrastructure as Code in Practice</span>
+<span class="topic-badge">IaC</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Declare Infrastructure, Don't Click It</div>
+<div class="concept-desc">
+<strong class="c-cyan">Terraform</strong> lets you define cloud
+infrastructure — servers, networks, databases, DNS — as text files, then
+creates or changes it to match. You describe the <em>desired end state</em>
+in HCL (HashiCorp Configuration Language); Terraform figures out the steps
+to get there. Because it's declarative and version-controlled, your whole
+environment becomes reviewable, repeatable, and rebuildable — no more
+"click 40 things in the console and pray you remember them next time."
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Example</div>
+<div class="concept-title">A Minimal Configuration</div>
+<div class="dw">
+<div class="code-label">main.tf</div>
+<pre class="code-block"><span class="com"># Which provider (cloud) and version to use</span>
+<span class="kw">terraform</span> {
+  <span class="var">required_providers</span> {
+    <span class="var">aws</span> = { <span class="var">source</span> = <span class="str">"hashicorp/aws"</span>, <span class="var">version</span> = <span class="str">"~> 5.0"</span> }
+  }
+}
+
+<span class="kw">provider</span> <span class="str">"aws"</span> {
+  <span class="var">region</span> = <span class="str">"us-east-1"</span>
+}
+
+<span class="com"># A resource — Terraform will create/manage this</span>
+<span class="kw">resource</span> <span class="str">"aws_instance"</span> <span class="str">"web"</span> {
+  <span class="var">ami</span>           = <span class="str">"ami-0abcd1234"</span>
+  <span class="var">instance_type</span> = <span class="var">var</span>.<span class="var">size</span>          <span class="com"># from a variable</span>
+  <span class="var">tags</span>          = { <span class="var">Name</span> = <span class="str">"web-server"</span> }
+}
+
+<span class="kw">variable</span> <span class="str">"size"</span> { <span class="var">default</span> = <span class="str">"t3.micro"</span> }
+
+<span class="kw">output</span> <span class="str">"public_ip"</span> {
+  <span class="var">value</span> = <span class="var">aws_instance</span>.<span class="var">web</span>.<span class="var">public_ip</span>   <span class="com"># print after apply</span>
+}</pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Core Workflow</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Command</th><th>What It Does</th></tr>
+<tr><td><code>terraform init</code></td><td>Download providers &amp; set up the working dir (run first)</td></tr>
+<tr><td><code>terraform fmt</code></td><td>Auto-format your <code>.tf</code> files</td></tr>
+<tr><td><code>terraform validate</code></td><td>Check the config for syntax/type errors</td></tr>
+<tr><td><code>terraform plan</code></td><td><strong class="c-cyan">Preview</strong> what will change — nothing is applied</td></tr>
+<tr><td><code>terraform apply</code></td><td>Make reality match the config (prompts to confirm)</td></tr>
+<tr><td><code>terraform destroy</code></td><td>Tear down everything this config manages</td></tr>
+<tr><td><code>terraform state list</code></td><td>List the resources Terraform is tracking</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The golden habit: <strong>always read the <code>plan</code> before you
+<code>apply</code></strong>. It shows adds (<span class="c-green">+</span>),
+changes (<span class="c-amber">~</span>), and destroys
+(<span class="c-red">-</span>) so nothing surprises you.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Key Ideas</div>
+<div class="concept-title">State, Plan &amp; Idempotence</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Why It Matters</th></tr>
+<tr><td class="c-cyan">State file</td><td>Terraform records what it created in <code>terraform.tfstate</code>. It's the source of truth for "what exists" — store it remotely (S3, Terraform Cloud) so a team shares one, and lock it to prevent concurrent applies.</td></tr>
+<tr><td class="c-cyan">Desired vs actual</td><td><code>plan</code> diffs your config against state and the real world, then computes the minimal change set.</td></tr>
+<tr><td class="c-cyan">Idempotence</td><td>Running <code>apply</code> twice with no config change does nothing the second time — the end state is what's declared, not a pile of commands.</td></tr>
+<tr><td class="c-cyan">Modules</td><td>Reusable bundles of resources with inputs/outputs — package a "VPC" or "web app" once, use it everywhere.</td></tr>
+<tr><td class="c-red">Never edit state by hand</td><td>Use <code>terraform state</code> subcommands; hand-editing the JSON corrupts tracking.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📬</span>
+<span class="topic-name">Message Queues &amp; Event-Driven Architecture</span>
+<span class="topic-badge">Architecture</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Decouple With a Buffer in the Middle</div>
+<div class="concept-desc">
+When service A calls service B directly, A waits for B and breaks if B is
+down. A <strong class="c-cyan">message queue</strong> puts a durable buffer
+between them: A drops a message and moves on; B picks it up when ready.
+This <strong class="c-amber">decouples</strong> producers from consumers —
+they can scale, fail, and deploy independently. It's the backbone of
+event-driven systems, where components react to things that
+<em>happened</em> rather than calling each other in lockstep.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Queue vs Pub/Sub &amp; Key Terms</div>
+<div class="dw">
+<div class="dt">▸ TWO MESSAGING SHAPES</div>
+<table class="ref-table" style="margin-bottom:14px">
+<tr><th>Pattern</th><th>Delivery</th><th>Example</th></tr>
+<tr><td class="c-green">Queue (point-to-point)</td><td>Each message goes to <em>one</em> consumer in a pool — spreads work</td><td>Task/job processing (RabbitMQ, SQS)</td></tr>
+<tr><td class="c-green">Pub/Sub (topic)</td><td>Each message goes to <em>every</em> subscriber — fan-out</td><td>Event broadcasting (Kafka, SNS, Redis)</td></tr>
+</table>
+<div class="dt">▸ VOCABULARY</div>
+<table class="ref-table">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td class="c-cyan">Producer</td><td>Publishes messages</td></tr>
+<tr><td class="c-cyan">Consumer</td><td>Reads and processes them</td></tr>
+<tr><td class="c-cyan">Broker</td><td>The queue/log system in the middle (Kafka, RabbitMQ)</td></tr>
+<tr><td class="c-cyan">Ack</td><td>Consumer confirms "done" so the broker can drop the message</td></tr>
+<tr><td class="c-cyan">Dead-letter queue</td><td>Where messages go after repeated processing failures</td></tr>
+<tr><td class="c-cyan">Backpressure</td><td>The queue absorbs bursts so a slow consumer isn't overwhelmed</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Delivery</div>
+<div class="concept-title">Guarantees &amp; Idempotence</div>
+<div class="concept-desc">
+Distributed messaging can't cheaply promise "exactly once," so you pick a
+guarantee and design around it:
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Guarantee</th><th>Meaning</th></tr>
+<tr><td class="c-red">At-most-once</td><td>Fast, but a message can be lost. Fine for disposable telemetry.</td></tr>
+<tr><td class="c-green">At-least-once</td><td>Never lost, but may be <em>redelivered</em>. The common default.</td></tr>
+<tr><td class="c-amber">Exactly-once</td><td>Ideal but expensive/limited — usually emulated via dedup.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Because at-least-once means duplicates happen, make consumers
+<strong class="c-cyan">idempotent</strong> — processing the same message
+twice has the same effect as once (e.g. key writes on a unique message
+ID). This is the single most important habit in event-driven systems.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Trade-offs</div>
+<div class="concept-title">What You Gain and Pay</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>Detail</th></tr>
+<tr><td class="c-green">Gain: resilience</td><td>A consumer can crash or deploy; messages wait in the queue.</td></tr>
+<tr><td class="c-green">Gain: elastic scale</td><td>Add consumers to drain a backlog faster; smooth out traffic spikes.</td></tr>
+<tr><td class="c-green">Gain: decoupling</td><td>Producers don't know or care who consumes — add new consumers freely.</td></tr>
+<tr><td class="c-red">Cost: complexity</td><td>Another system to run/monitor; harder to trace a request end-to-end.</td></tr>
+<tr><td class="c-red">Cost: eventual consistency</td><td>Work happens asynchronously — the result isn't ready the instant you publish.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⚡</span>
+<span class="topic-name">Caching Strategies — From App to CDN</span>
+<span class="topic-badge">Performance</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Store the Answer, Skip the Work</div>
+<div class="concept-desc">
+A cache keeps a copy of expensive-to-compute or slow-to-fetch data
+somewhere fast, so repeated requests don't redo the work. Done right, it's
+the single biggest performance lever you have. The catch is the famous one:
+<em>"There are only two hard things in computer science — cache invalidation
+and naming things."</em> A stale cache serves wrong data; the art is
+knowing <strong>when to trust the copy and when to refresh it</strong>.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Where Caches Live (the Layers)</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Layer</th><th>Example</th><th>Caches</th></tr>
+<tr><td class="c-cyan">Browser</td><td>HTTP cache</td><td>Static assets on the user's device</td></tr>
+<tr><td class="c-cyan">CDN / edge</td><td>Cloudflare, CloudFront</td><td>Content served near the user, globally</td></tr>
+<tr><td class="c-cyan">App / in-memory</td><td>Redis, Memcached</td><td>Query results, sessions, computed values</td></tr>
+<tr><td class="c-cyan">Database</td><td>Query &amp; buffer cache</td><td>Hot pages &amp; plans in RAM</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The closer to the user a cache sits, the faster and cheaper the hit — but
+the harder it is to invalidate. Each layer is a trade of speed vs freshness.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Patterns</div>
+<div class="concept-title">Read &amp; Write Strategies</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Pattern</th><th>How It Works</th></tr>
+<tr><td class="c-green">Cache-aside (lazy)</td><td>App checks cache; on a miss, reads the DB and populates the cache. Most common.</td></tr>
+<tr><td class="c-green">Read-through</td><td>The cache itself loads from the DB on a miss — app only talks to the cache.</td></tr>
+<tr><td class="c-green">Write-through</td><td>Writes go to cache <em>and</em> DB together — always fresh, slightly slower writes.</td></tr>
+<tr><td class="c-amber">Write-back</td><td>Write to cache now, flush to DB later — fast, but risks loss on crash.</td></tr>
+</table>
+<div class="dt" style="margin-top:12px">▸ CACHE-ASIDE IN CODE</div>
+<pre class="code-block"><span class="kw">function</span> <span class="fn">getUser</span>(<span class="var">id</span>) {
+  <span class="kw">let</span> <span class="var">u</span> = <span class="var">cache</span>.<span class="fn">get</span>(<span class="str">`user:</span>${<span class="var">id</span>}<span class="str">`</span>);
+  <span class="kw">if</span> (<span class="var">u</span>) <span class="kw">return</span> <span class="var">u</span>;                 <span class="com">// hit</span>
+  <span class="var">u</span> = <span class="var">db</span>.<span class="fn">query</span>(<span class="str">"SELECT ..."</span>, <span class="var">id</span>);  <span class="com">// miss → load</span>
+  <span class="var">cache</span>.<span class="fn">set</span>(<span class="str">`user:</span>${<span class="var">id</span>}<span class="str">`</span>, <span class="var">u</span>, { <span class="var">ttl</span>: <span class="num">300</span> }); <span class="com">// store 5 min</span>
+  <span class="kw">return</span> <span class="var">u</span>;
+}</pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Invalidation</div>
+<div class="concept-title">Keeping Copies Honest</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Technique</th><th>What It Does</th></tr>
+<tr><td class="c-cyan">TTL (expiry)</td><td>Data auto-expires after N seconds. Simple; tolerates brief staleness.</td></tr>
+<tr><td class="c-cyan">Explicit purge</td><td>Delete the key when the source changes. Precise; needs write-path hooks.</td></tr>
+<tr><td class="c-cyan">Versioned keys</td><td>Bake a version/hash into the key (<code>user:42:v3</code>); old keys just age out.</td></tr>
+<tr><td class="c-cyan">Cache-Control headers</td><td>For HTTP/CDN: <code>max-age</code>, <code>no-store</code>, <code>ETag</code> for revalidation.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Watch for the <strong class="c-red">thundering herd / stampede</strong>: when
+a hot key expires, thousands of requests miss at once and hammer the DB.
+Mitigate with a short lock, request coalescing, or staggered TTLs.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🐒</span>
+<span class="topic-name">Chaos Engineering — Breaking Things on Purpose</span>
+<span class="topic-badge">Reliability</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Find the Weakness Before It Finds You</div>
+<div class="concept-desc">
+<strong class="c-cyan">Chaos engineering</strong> is the discipline of
+deliberately injecting failure into a system — killing servers, adding
+network latency, exhausting disk — to discover how it <em>actually</em>
+behaves under stress, rather than how you hope it does. The insight:
+distributed systems fail in ways no one predicted, so you'd rather trigger
+those failures in a controlled experiment (business hours, watching closely)
+than at 3 a.m. during a real outage. Netflix pioneered it with
+<strong class="c-amber">Chaos Monkey</strong>, which randomly kills
+production instances to force teams to build resilience in.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Method</div>
+<div class="concept-title">Running an Experiment</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>What You Do</th></tr>
+<tr><td class="c-cyan">1. Steady state</td><td>Define a measurable "healthy" metric (e.g. checkout success rate &gt; 99%).</td></tr>
+<tr><td class="c-cyan">2. Hypothesis</td><td>"If we kill one payment node, checkout success stays above 99%."</td></tr>
+<tr><td class="c-cyan">3. Blast radius</td><td>Start tiny — one instance, small % of traffic — to limit harm.</td></tr>
+<tr><td class="c-cyan">4. Inject &amp; observe</td><td>Introduce the failure; watch the metric and your alerts.</td></tr>
+<tr><td class="c-cyan">5. Learn &amp; fix</td><td>If the hypothesis breaks, you found a real weakness — fix it, then re-run.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Always have an <strong class="c-red">abort switch</strong> to stop the
+experiment instantly, and never run one you're confident will cause a
+major outage — the goal is learning, not self-inflicted downtime.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Common Failures to Inject</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Failure</th><th>Tests Whether…</th></tr>
+<tr><td class="c-green">Kill an instance</td><td>Load balancing &amp; auto-healing actually replace it</td></tr>
+<tr><td class="c-green">Add network latency</td><td>Timeouts &amp; retries are tuned; slow ≠ down</td></tr>
+<tr><td class="c-green">Drop a dependency</td><td>Circuit breakers &amp; fallbacks kick in (graceful degradation)</td></tr>
+<tr><td class="c-green">Fill the disk / CPU</td><td>Resource limits &amp; alerts fire before a crash</td></tr>
+<tr><td class="c-green">Zone/region outage</td><td>Failover to another region works end-to-end</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Tooling: <strong>Chaos Monkey</strong> / Simian Army, <strong>Gremlin</strong>,
+<strong>LitmusChaos</strong> and <strong>Chaos Mesh</strong> (Kubernetes).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Prerequisites</div>
+<div class="concept-title">Don't Start Here</div>
+<div class="concept-desc">
+Chaos engineering pays off only once you already have solid
+<strong>monitoring and alerting</strong> (or you won't see what breaks) and
+the basics of resilience — retries, timeouts, health checks, redundancy.
+Injecting failure into a system you can't observe just causes an outage with
+no lesson. It's an <em>advanced</em> reliability practice that builds on
+observability and SRE fundamentals, not a starting point.
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">☁️</span>
+<span class="topic-name">Serverless &amp; FaaS — Code Without Managing Servers</span>
+<span class="topic-badge">Cloud</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">There Are Still Servers — You Just Don't Touch Them</div>
+<div class="concept-desc">
+<strong class="c-cyan">Serverless</strong> means you deploy code and the
+cloud runs it on demand — provisioning, scaling, patching, and capacity are
+the provider's problem. The flagship form is
+<strong class="c-amber">Functions as a Service (FaaS)</strong>: you upload a
+single function that runs in response to an <em>event</em> (an HTTP request,
+a file upload, a queue message) and you're billed only for the milliseconds
+it executes. Idle costs nothing. It's the far end of the "managed" spectrum
+beyond containers.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Example</div>
+<div class="concept-title">A Function That Runs on an Event</div>
+<div class="dw">
+<div class="code-label">AN HTTP-TRIGGERED FUNCTION (NODE)</div>
+<pre class="code-block"><span class="com">// The cloud invokes this on each request; no server to run</span>
+<span class="kw">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fn">handler</span>(<span class="var">event</span>) {
+  <span class="kw">const</span> <span class="var">name</span> = <span class="var">event</span>.<span class="var">queryStringParameters</span>?.<span class="var">name</span> ?? <span class="str">"world"</span>;
+  <span class="kw">return</span> {
+    <span class="var">statusCode</span>: <span class="num">200</span>,
+    <span class="var">body</span>: <span class="fn">JSON.stringify</span>({ <span class="var">message</span>: <span class="str">`Hello, </span>${<span class="var">name</span>}<span class="str">`</span> }),
+  };
+}</pre>
+<div class="concept-desc" style="margin-top:8px">
+Deploy it, wire a trigger (API Gateway, a bucket event, a cron schedule),
+and it scales from zero to thousands of concurrent invocations
+automatically — each request gets its own isolated run.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Providers &amp; the Compute Spectrum</div>
+<div class="dw">
+<div class="dt">▸ THE BIG FaaS PLATFORMS</div>
+<table class="ref-table" style="margin-bottom:14px">
+<tr><th>Provider</th><th>Service</th></tr>
+<tr><td>AWS</td><td>Lambda</td></tr>
+<tr><td>Azure</td><td>Functions</td></tr>
+<tr><td>Google Cloud</td><td>Cloud Functions / Cloud Run</td></tr>
+<tr><td>Edge</td><td>Cloudflare Workers, Netlify/Vercel Functions</td></tr>
+</table>
+<div class="dt">▸ HOW MUCH DO YOU MANAGE?</div>
+<table class="ref-table">
+<tr><th>Model</th><th>You Manage</th></tr>
+<tr><td>On-prem</td><td class="c-red">Everything — hardware to app</td></tr>
+<tr><td>IaaS (VMs)</td><td>OS + runtime + app</td></tr>
+<tr><td>Containers</td><td>The image + app</td></tr>
+<tr><td>Serverless / FaaS</td><td class="c-green">Just the code</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Trade-offs</div>
+<div class="concept-title">Where Serverless Shines — and Bites</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>Detail</th></tr>
+<tr><td class="c-green">Scale to zero</td><td>No traffic = no cost. Great for spiky or unpredictable load.</td></tr>
+<tr><td class="c-green">No ops</td><td>No servers to patch or capacity-plan; ship features faster.</td></tr>
+<tr><td class="c-red">Cold starts</td><td>An idle function takes extra time to spin up on the first request — latency-sensitive paths feel it.</td></tr>
+<tr><td class="c-red">Stateless &amp; time-limited</td><td>Functions keep no memory between runs and have a max duration — long jobs and in-memory state don't fit.</td></tr>
+<tr><td class="c-amber">Vendor lock-in</td><td>Triggers and runtimes are provider-specific; portability takes effort.</td></tr>
+<tr><td class="c-amber">Harder local debugging</td><td>The event-driven, managed environment is tricky to reproduce on your laptop.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🪣</span>
+<span class="topic-name">Object Storage — S3 &amp; the Cloud Storage Model</span>
+<span class="topic-badge">Cloud</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">A Different Way to Store Data</div>
+<div class="concept-desc">
+Traditional storage is <strong>files</strong> (a tree of folders) or
+<strong>blocks</strong> (raw disk a filesystem sits on).
+<strong class="c-cyan">Object storage</strong> is a third model: every piece
+of data is an <em>object</em> — the bytes plus metadata plus a unique key —
+living in a flat <strong class="c-amber">bucket</strong>, retrieved over
+HTTP. There are no real folders (the "path" in a key is just a naming
+convention), and you can't edit part of an object — you replace the whole
+thing. Amazon <strong>S3</strong> defined the model; Azure Blob, Google Cloud
+Storage, and MinIO all speak a similar API.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Comparison</div>
+<div class="concept-title">Object vs File vs Block</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>Object</th><th>File</th><th>Block</th></tr>
+<tr><td>Unit</td><td>Object + key</td><td>File in folders</td><td>Raw blocks</td></tr>
+<tr><td>Access</td><td>HTTP API</td><td>NFS/SMB</td><td>Attached disk</td></tr>
+<tr><td>Edit in place</td><td class="c-red">No — replace whole</td><td class="c-green">Yes</td><td class="c-green">Yes</td></tr>
+<tr><td>Scales to</td><td class="c-green">Effectively unlimited</td><td class="c-amber">Limited</td><td class="c-amber">Limited</td></tr>
+<tr><td>Best for</td><td>Media, backups, data lakes, static sites</td><td>Shared docs</td><td>Databases, VMs</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Key Features You'll Use</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Feature</th><th>What It Does</th></tr>
+<tr><td class="c-cyan">Storage classes</td><td>Trade price for access speed: hot (Standard) → cool → cold archive (Glacier). Cheaper to store, pricier/slower to retrieve.</td></tr>
+<tr><td class="c-cyan">Lifecycle rules</td><td>Auto-move objects to colder tiers or delete them after N days.</td></tr>
+<tr><td class="c-cyan">Versioning</td><td>Keep old copies so an overwrite/delete is recoverable.</td></tr>
+<tr><td class="c-cyan">Presigned URLs</td><td>A time-limited link that grants temporary access to one object without exposing credentials.</td></tr>
+<tr><td class="c-cyan">Static website hosting</td><td>Serve a bucket of HTML/JS directly — often fronted by a CDN.</td></tr>
+<tr><td class="c-cyan">Durability</td><td>Providers replicate objects across facilities — S3 advertises 99.999999999% ("11 nines") durability.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Commands</div>
+<div class="concept-title">Working With a Bucket (AWS CLI)</div>
+<div class="dw">
+<pre class="code-block"><span class="fn">aws</span> s3 mb s3://my-bucket                 <span class="com"># make bucket</span>
+<span class="fn">aws</span> s3 cp report.pdf s3://my-bucket/       <span class="com"># upload an object</span>
+<span class="fn">aws</span> s3 ls s3://my-bucket/                  <span class="com"># list objects</span>
+<span class="fn">aws</span> s3 sync ./site s3://my-bucket/         <span class="com"># upload a whole folder</span>
+<span class="fn">aws</span> s3 presign s3://my-bucket/report.pdf   <span class="com"># temp shareable URL</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-red">Security note:</strong> the classic cloud breach is a
+bucket left <em>public</em>. Keep buckets private by default, use IAM
+policies for access, and reach for presigned URLs when you need to share a
+single object.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🎚️</span>
+<span class="topic-name">Deployment Strategies — Blue-Green, Canary &amp; Rolling</span>
+<span class="topic-badge">Reliability</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Shipping New Code Without Taking the Site Down</div>
+<div class="concept-desc">
+The naive deploy — stop the app, swap the code, start it — means downtime
+and a scary all-or-nothing cutover. Modern strategies release new versions
+<strong class="c-cyan">gradually and reversibly</strong>, so you can catch a
+bad release before it reaches everyone and roll back in seconds instead of
+scrambling. The common thread: never bet all your traffic on an unproven
+version at once.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Main Strategies</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Strategy</th><th>How It Works</th></tr>
+<tr><td class="c-cyan">Rolling</td><td>Replace instances a few at a time until all run the new version. No extra capacity needed; rollback is slow (roll the other way).</td></tr>
+<tr><td class="c-cyan">Blue-Green</td><td>Run two full environments. Blue serves live; deploy to idle Green, test it, then flip all traffic. Instant rollback = flip back. Costs 2× capacity during the switch.</td></tr>
+<tr><td class="c-cyan">Canary</td><td>Send a small % of traffic to the new version, watch metrics, then ramp up. Limits blast radius; needs good monitoring.</td></tr>
+<tr><td class="c-cyan">Feature flags</td><td>Ship code dark, then toggle it on for cohorts at runtime — decouples <em>deploy</em> from <em>release</em>.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Trade-offs</div>
+<div class="concept-title">Choosing One</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>If you want…</th><th>Use</th></tr>
+<tr><td>Instant rollback, simple cutover</td><td class="c-green">Blue-Green</td></tr>
+<tr><td>To catch bad releases with real traffic</td><td class="c-green">Canary</td></tr>
+<tr><td>Zero extra infrastructure cost</td><td class="c-green">Rolling</td></tr>
+<tr><td>To release to specific users / A-B test</td><td class="c-green">Feature flags</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+They combine: canary-deploy behind a feature flag on rolling
+infrastructure. Kubernetes and load balancers make traffic-splitting easy,
+which is why these went mainstream.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Prerequisites</div>
+<div class="concept-title">What Makes Safe Deploys Possible</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Requirement</th><th>Why</th></tr>
+<tr><td class="c-amber">Backward-compatible changes</td><td>Old and new versions run at once — the DB schema and APIs must serve both. Use expand-then-contract migrations.</td></tr>
+<tr><td class="c-amber">Health checks</td><td>The orchestrator must know a new instance is actually ready before sending it traffic.</td></tr>
+<tr><td class="c-amber">Good metrics/alerts</td><td>Canary is blind without error-rate and latency dashboards to compare versions.</td></tr>
+<tr><td class="c-amber">Automated rollback</td><td>A deploy that can't auto-revert on failing metrics isn't really safe.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔺</span>
+<span class="topic-name">CAP Theorem &amp; Consistency Models</span>
+<span class="topic-badge">Architecture</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Pick Two — the Fundamental Trade-off</div>
+<div class="concept-desc">
+The <strong class="c-cyan">CAP theorem</strong> says a distributed data
+store can guarantee at most two of three properties:
+<strong>Consistency</strong> (every read sees the latest write),
+<strong>Availability</strong> (every request gets a response), and
+<strong>Partition tolerance</strong> (it keeps working when the network
+splits). Since networks <em>will</em> partition, partition tolerance isn't
+optional in practice — so the real choice, <em>during a partition</em>, is
+<strong class="c-amber">consistency vs availability</strong>.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Three Letters</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Letter</th><th>Guarantee</th></tr>
+<tr><td class="c-cyan">Consistency</td><td>All nodes return the same, most-recent data. A read never sees stale values.</td></tr>
+<tr><td class="c-cyan">Availability</td><td>Every request gets a (non-error) response, even if some nodes are down.</td></tr>
+<tr><td class="c-cyan">Partition tolerance</td><td>The system keeps operating even when nodes can't talk to each other.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Note: CAP's "Consistency" is stricter than ACID's — it means
+<em>linearizability</em> (one up-to-date copy), not "constraints hold."
+Different word, different guarantee.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">In Practice</div>
+<div class="concept-title">CP vs AP — What You Choose During a Split</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>CP (consistency)</th><th>AP (availability)</th></tr>
+<tr><td>During a partition</td><td>Refuse/blocks writes to stay correct</td><td>Keep serving, reconcile later</td></tr>
+<tr><td>Read might be</td><td class="c-green">Always current</td><td class="c-amber">Stale for a moment</td></tr>
+<tr><td>Good for</td><td>Banking, inventory, bookings</td><td>Feeds, carts, social, DNS</td></tr>
+<tr><td>Examples</td><td>etcd, ZooKeeper, HBase</td><td>Cassandra, DynamoDB, Riak</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Most real systems aren't purely one or the other — they tune per-operation
+(a shopping cart is AP; the final checkout is CP).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Beyond CAP</div>
+<div class="concept-title">Consistency Is a Spectrum</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Model</th><th>Promise</th></tr>
+<tr><td class="c-green">Strong / linearizable</td><td>Reads always see the latest write — as if one copy existed.</td></tr>
+<tr><td class="c-amber">Eventual</td><td>Given no new writes, all replicas <em>eventually</em> converge. Cheap &amp; available.</td></tr>
+<tr><td class="c-amber">Read-your-writes</td><td>You always see your own updates (even if others lag).</td></tr>
+<tr><td class="c-amber">Causal</td><td>Related events are seen in order; unrelated ones may not be.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+A related lens, <strong>PACELC</strong>, extends CAP: even when there's no
+partition (<strong>E</strong>lse), you still trade
+<strong>L</strong>atency vs <strong>C</strong>onsistency — stronger
+guarantees cost round-trips. There's no free lunch in distributed data.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🕸️</span>
+<span class="topic-name">Service Mesh — Istio, Linkerd &amp; the Sidecar Pattern</span>
+<span class="topic-badge">Cloud Native</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Move Networking Concerns Out of Your Code</div>
+<div class="concept-desc">
+When one app becomes 50 microservices, every service needs retries,
+timeouts, TLS, load balancing, and metrics for its calls to the others.
+Building that into each service — in every language — is repetitive and
+inconsistent. A <strong class="c-cyan">service mesh</strong> extracts all of
+it into the infrastructure: a proxy runs alongside each service and handles
+service-to-service traffic, so your application code just makes a plain
+request and the mesh does the hard parts.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Architecture</div>
+<div class="concept-title">Sidecars &amp; the Two Planes</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Piece</th><th>Role</th></tr>
+<tr><td class="c-cyan">Sidecar proxy</td><td>A proxy (often Envoy) deployed next to <em>every</em> service instance. All traffic in/out flows through it — the app is unaware.</td></tr>
+<tr><td class="c-cyan">Data plane</td><td>The collection of all sidecars actually moving the traffic.</td></tr>
+<tr><td class="c-cyan">Control plane</td><td>The brain (e.g. Istio's istiod) that configures every sidecar with routing rules, certs, and policy.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+You change behavior by updating the control plane; it pushes config to the
+sidecars. Newer meshes offer a "sidecar-less" (per-node) mode to cut the
+per-pod overhead.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">What a Mesh Gives You</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Capability</th><th>Detail</th></tr>
+<tr><td class="c-green">mTLS everywhere</td><td>Automatic mutual-TLS encryption + identity between services — zero app changes.</td></tr>
+<tr><td class="c-green">Traffic control</td><td>Canary/blue-green by shifting % of traffic; retries, timeouts, circuit breaking.</td></tr>
+<tr><td class="c-green">Observability</td><td>Uniform metrics, logs, and traces for every call, for free.</td></tr>
+<tr><td class="c-green">Policy</td><td>Who may call whom (authorization), rate limits, fault injection for testing.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Trade-offs</div>
+<div class="concept-title">Do You Actually Need One?</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>Detail</th></tr>
+<tr><td class="c-green">Worth it when</td><td>Many services, multiple languages, strict security/compliance, and you need uniform mTLS + observability.</td></tr>
+<tr><td class="c-red">Overkill when</td><td>A handful of services — the operational complexity and latency/resource overhead outweigh the benefit.</td></tr>
+<tr><td class="c-cyan">Options</td><td>Istio (powerful, complex), Linkerd (lightweight, simpler), Cilium (eBPF-based), Consul.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+A mesh solves the same problems an API gateway does <em>between</em> internal
+services — the gateway is the front door for outside traffic; the mesh is
+the internal road network.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧵</span>
+<span class="topic-name">Distributed Tracing &amp; OpenTelemetry</span>
+<span class="topic-badge">Observability</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Following One Request Across Many Services</div>
+<div class="concept-desc">
+In a microservice system, a single user click might touch a gateway, an auth
+service, three back-ends, and a database. When it's slow, <em>which</em> hop
+is to blame? Logs from each service in isolation can't tell you.
+<strong class="c-cyan">Distributed tracing</strong> stitches the whole
+journey together: it tags the request with an ID that travels with it, so you
+can see the end-to-end path and exactly where the time went.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Traces, Spans &amp; Context</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td class="c-cyan">Trace</td><td>The whole journey of one request, identified by a <code>trace_id</code>.</td></tr>
+<tr><td class="c-cyan">Span</td><td>One unit of work within the trace (an HTTP call, a DB query) — with a start, duration, and metadata.</td></tr>
+<tr><td class="c-cyan">Parent/child</td><td>Spans nest — a service call's span contains the spans of what it triggered.</td></tr>
+<tr><td class="c-cyan">Context propagation</td><td>The <code>trace_id</code> + span info passed between services (via headers like W3C <code>traceparent</code>) so the trace stays connected.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Rendered as a waterfall, a trace shows each span as a bar — one long bar
+instantly reveals the bottleneck.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Three Pillars &amp; Where Tracing Fits</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Pillar</th><th>Answers</th></tr>
+<tr><td class="c-green">Metrics</td><td>"Is something wrong?" — aggregate numbers, cheap, great for alerts.</td></tr>
+<tr><td class="c-green">Logs</td><td>"What happened here?" — detailed events from one component.</td></tr>
+<tr><td class="c-green">Traces</td><td>"Where is it slow / failing?" — the request's path across services.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+You use all three together: a metric alerts you, a trace localizes the slow
+hop, and logs on that span explain why.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Standard</div>
+<div class="concept-title">OpenTelemetry — One SDK to Instrument Them All</div>
+<div class="concept-desc">
+<strong class="c-cyan">OpenTelemetry (OTel)</strong> is the vendor-neutral
+standard for generating traces, metrics, and logs. You instrument your code
+once with the OTel SDK (much of it automatic for popular frameworks), and it
+exports to whatever backend you choose — <strong>Jaeger</strong>,
+<strong>Tempo</strong>, <strong>Zipkin</strong>, or a commercial tool — with
+no code change to switch. That freedom from lock-in is why it won.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Practical note</th><th>Detail</th></tr>
+<tr><td class="c-amber">Sampling</td><td>Tracing everything is expensive at scale — sample a fraction (head or tail sampling) while keeping error traces.</td></tr>
+<tr><td class="c-amber">Collector</td><td>The OTel Collector receives, batches, and routes telemetry so apps don't talk to backends directly.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔃</span>
+<span class="topic-name">GitOps — Git as the Source of Truth for Operations</span>
+<span class="topic-badge">DevOps</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">If It's Not in Git, It Doesn't Exist</div>
+<div class="concept-desc">
+<strong class="c-cyan">GitOps</strong> applies the software workflow you
+already know — pull requests, review, merge, history — to
+<em>infrastructure and deployments</em>. The desired state of your whole
+system lives in a Git repo as declarative config; an automated agent
+continuously makes the real cluster match it. You never <code>kubectl apply</code>
+by hand — you change a file, open a PR, and merging <em>is</em> the deploy.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">How It Works</div>
+<div class="concept-title">Push vs Pull Deployment</div>
+<div class="concept-desc">
+Traditional CI <strong>pushes</strong> changes into the cluster (the pipeline
+has cluster credentials and runs <code>apply</code>). GitOps flips it: an
+agent <em>inside</em> the cluster <strong class="c-amber">pulls</strong> the
+desired state from Git and reconciles continuously.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>What Happens</th></tr>
+<tr><td class="c-green">1. Declare</td><td>Desired state (Kubernetes manifests, Helm, Terraform) is committed to Git.</td></tr>
+<tr><td class="c-green">2. Observe</td><td>An in-cluster agent (Argo CD, Flux) watches the repo.</td></tr>
+<tr><td class="c-green">3. Diff</td><td>It compares Git (desired) against the live cluster (actual).</td></tr>
+<tr><td class="c-green">4. Reconcile</td><td>It applies changes to close the gap — automatically and continuously.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Why Teams Adopt It</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Benefit</th><th>Detail</th></tr>
+<tr><td class="c-green">Git is the audit log</td><td>Every change is a reviewed, attributed, revertible commit. Rollback = <code>git revert</code>.</td></tr>
+<tr><td class="c-green">No config drift</td><td>The agent fixes manual/out-of-band changes automatically — the cluster can't silently diverge.</td></tr>
+<tr><td class="c-green">Better security</td><td>CI no longer needs cluster credentials; the pull agent lives inside and reaches out.</td></tr>
+<tr><td class="c-green">Reproducible</td><td>Rebuild an entire environment from the repo — great for DR and new clusters.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Practical</div>
+<div class="concept-title">Tools &amp; Gotchas</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Point</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Tools</td><td>Argo CD and Flux are the two dominant Kubernetes GitOps agents.</td></tr>
+<tr><td class="c-amber">Secrets</td><td>You can't commit plaintext secrets — use Sealed Secrets, SOPS, or an external secrets operator.</td></tr>
+<tr><td class="c-amber">Repo layout</td><td>Common pattern: separate app-code repos from a <em>config</em> repo; a merge to config triggers the deploy.</td></tr>
+<tr><td class="c-amber">Fits declarative best</td><td>GitOps assumes a system that reconciles to a declared state (Kubernetes shines); imperative steps fit less cleanly.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">💰</span>
+<span class="topic-name">FinOps — Cloud Cost Management</span>
+<span class="topic-badge">Cloud</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Cloud Bill Is a Team Sport</div>
+<div class="concept-desc">
+In the data-center era, capacity was a big upfront purchase the finance team
+controlled. In the cloud, <em>any</em> engineer can spin up expensive
+resources in seconds — and the bill is pay-as-you-go and variable.
+<strong class="c-cyan">FinOps</strong> is the practice of bringing financial
+accountability to that model: giving engineers cost visibility, so the people
+who create spend can make informed trade-offs between speed, quality, and
+cost. It's a culture, not just a dashboard.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Framework</div>
+<div class="concept-title">Inform → Optimize → Operate</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Phase</th><th>What You Do</th></tr>
+<tr><td class="c-green">Inform</td><td>Make cost visible &amp; attributable — tag resources, allocate spend to teams/products, show dashboards.</td></tr>
+<tr><td class="c-green">Optimize</td><td>Cut waste — rightsize, delete idle resources, buy commitments, pick cheaper options.</td></tr>
+<tr><td class="c-green">Operate</td><td>Make it continuous — budgets, alerts, and cost as a normal engineering metric.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Where the Savings Are</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Lever</th><th>What It Means</th></tr>
+<tr><td class="c-cyan">Rightsizing</td><td>Match instance size to real usage — most VMs are wildly overprovisioned.</td></tr>
+<tr><td class="c-cyan">Kill idle / zombies</td><td>Unattached disks, idle load balancers, forgotten dev environments burn money 24/7.</td></tr>
+<tr><td class="c-cyan">Commitments</td><td>Reserved Instances / Savings Plans trade a 1–3 yr commitment for ~30–70% off steady workloads.</td></tr>
+<tr><td class="c-cyan">Spot instances</td><td>Spare capacity at up to ~90% off — for fault-tolerant, interruptible jobs.</td></tr>
+<tr><td class="c-cyan">Autoscaling</td><td>Scale to demand (and to zero) instead of provisioning for peak always-on.</td></tr>
+<tr><td class="c-cyan">Storage tiering</td><td>Move cold data to cheaper classes; set lifecycle rules.</td></tr>
+<tr><td class="c-cyan">Egress awareness</td><td>Data transfer <em>out</em> is a sneaky cost — cross-region/cross-cloud traffic adds up.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Practice</div>
+<div class="concept-title">Habits That Keep Costs Sane</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Habit</th><th>Why</th></tr>
+<tr><td class="c-green">Tag everything</td><td>Without tags for team/env/product, you can't attribute spend or find waste.</td></tr>
+<tr><td class="c-green">Budgets &amp; anomaly alerts</td><td>Catch a runaway job or a misconfigured autoscaler before the invoice does.</td></tr>
+<tr><td class="c-green">Unit economics</td><td>Track <em>cost per customer / per request</em>, not just the total — growth should scale efficiently.</td></tr>
+<tr><td class="c-amber">Right time to optimize</td><td>Don't micro-optimize a tiny bill; focus effort where spend is largest.</td></tr>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -20648,6 +22110,244 @@ before escalating to more drastic measures.</p>
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧱</span>
+<span class="topic-name">Linux Firewalls — iptables, nftables &amp; ufw</span>
+<span class="topic-badge">Hardening</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Kernel Decides What Packets Live or Die</div>
+<div class="concept-desc">
+Every Linux host has a packet filter built into the kernel (Netfilter).
+You program it with rules that <strong class="c-green">ACCEPT</strong>,
+<strong class="c-red">DROP</strong>, or <strong class="c-amber">REJECT</strong>
+packets based on source, destination, port, and protocol. Three tools front
+it: <strong class="c-cyan">iptables</strong> (classic), its successor
+<strong class="c-cyan">nftables</strong>, and
+<strong class="c-cyan">ufw</strong> (a friendly wrapper). The default
+posture you want: <em>deny inbound, allow outbound, permit only the ports
+you actually serve.</em>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Chains &amp; Policy — The Mental Model</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Chain</th><th>Handles</th></tr>
+<tr><td class="c-cyan">INPUT</td><td>Packets destined for <em>this</em> host (protect your services here)</td></tr>
+<tr><td class="c-cyan">OUTPUT</td><td>Packets originating from this host</td></tr>
+<tr><td class="c-cyan">FORWARD</td><td>Packets routed <em>through</em> this host (routers, NAT, containers)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Rules in a chain are checked <strong>top to bottom</strong>; the first
+match wins. If nothing matches, the chain's default
+<strong>policy</strong> applies. Set the INPUT policy to
+<code>DROP</code> and explicitly allow what you need.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Commands</div>
+<div class="concept-title">ufw — The Easy Path</div>
+<div class="dw">
+<div class="code-label">SENSIBLE DEFAULTS IN FOUR LINES</div>
+<pre class="code-block"><span class="fn">sudo</span> ufw default deny incoming     <span class="com"># block all inbound by default</span>
+<span class="fn">sudo</span> ufw default allow outgoing    <span class="com"># let the host reach out</span>
+<span class="fn">sudo</span> ufw allow <span class="num">22</span>/tcp             <span class="com"># SSH — do this BEFORE enabling!</span>
+<span class="fn">sudo</span> ufw allow <span class="num">443</span>/tcp            <span class="com"># HTTPS</span>
+<span class="fn">sudo</span> ufw enable                    <span class="com"># turn it on</span>
+<span class="fn">sudo</span> ufw status numbered           <span class="com"># review the ruleset</span></pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Commands</div>
+<div class="concept-title">iptables &amp; nftables — The Raw Tools</div>
+<div class="dw">
+<div class="code-label">iptables — CLASSIC</div>
+<pre class="code-block"><span class="com"># Allow established replies + SSH, then drop the rest</span>
+<span class="fn">sudo</span> iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+<span class="fn">sudo</span> iptables -A INPUT -p tcp --dport <span class="num">22</span> -j ACCEPT
+<span class="fn">sudo</span> iptables -P INPUT DROP        <span class="com"># set default policy last</span>
+<span class="fn">sudo</span> iptables -L -n -v            <span class="com"># list with packet counts</span></pre>
+<div class="code-label" style="margin-top:12px">nftables — MODERN REPLACEMENT</div>
+<pre class="code-block"><span class="fn">sudo</span> nft add table inet filter
+<span class="fn">sudo</span> nft add chain inet filter input { type filter hook input priority <span class="num">0</span>\; policy drop\; }
+<span class="fn">sudo</span> nft add rule inet filter input tcp dport <span class="num">22</span> accept
+<span class="fn">sudo</span> nft list ruleset            <span class="com"># show everything</span></pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Gotchas</div>
+<div class="concept-title">Don't Lock Yourself Out</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Rule</th><th>Why</th></tr>
+<tr><td class="c-red">Allow SSH before default-deny</td><td>Set the DROP policy or run <code>ufw enable</code> without an SSH allow rule and your remote session dies — with no way back in.</td></tr>
+<tr><td class="c-green">Allow ESTABLISHED,RELATED</td><td>Without it, replies to your own outbound connections get dropped and everything appears broken.</td></tr>
+<tr><td class="c-amber">Rules are not persistent by default</td><td>iptables/nft rules vanish on reboot — save them (<code>netfilter-persistent</code>, <code>nft list ruleset &gt; /etc/nftables.conf</code>) or use ufw, which persists.</td></tr>
+<tr><td class="c-amber">Test with a safety net</td><td>Schedule an <code>at</code> job to flush rules in 5 min while you test, so a mistake auto-recovers.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🛂</span>
+<span class="topic-name">SELinux &amp; AppArmor — Mandatory Access Control</span>
+<span class="topic-badge">Hardening</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">A Second Lock Even Root Can't Pick</div>
+<div class="concept-desc">
+Normal Linux permissions are <strong class="c-amber">discretionary</strong>
+(DAC): the file's owner decides who gets access, and root can do anything.
+<strong class="c-cyan">Mandatory Access Control</strong> (MAC) adds a second
+layer the kernel enforces from a central policy — <em>even against root</em>.
+So if a web server is compromised, MAC can still stop it from reading
+<code>/etc/shadow</code> or opening a network port it was never meant to.
+It confines each program to exactly what it legitimately needs.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Comparison</div>
+<div class="concept-title">SELinux vs AppArmor</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>SELinux</th><th>AppArmor</th></tr>
+<tr><td>Confines by</td><td>Security <em>labels</em> on every file/process</td><td>File <em>paths</em> in a profile</td></tr>
+<tr><td>Default on</td><td>RHEL, Fedora, CentOS</td><td>Ubuntu, Debian, SUSE</td></tr>
+<tr><td>Power</td><td class="c-green">Very fine-grained</td><td class="c-amber">Simpler, path-based</td></tr>
+<tr><td>Learning curve</td><td class="c-red">Steep</td><td class="c-green">Gentle</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Both solve the same problem — least privilege enforced by the kernel —
+just with different models. You typically use whichever ships with your
+distro rather than swapping.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Commands</div>
+<div class="concept-title">SELinux — Modes &amp; Troubleshooting</div>
+<div class="dw">
+<pre class="code-block"><span class="fn">getenforce</span>                  <span class="com"># Enforcing | Permissive | Disabled</span>
+<span class="fn">sudo</span> setenforce <span class="num">0</span>            <span class="com"># temporarily → Permissive (logs, doesn't block)</span>
+<span class="fn">ls</span> -Z /var/www/html         <span class="com"># -Z shows the security context (label)</span>
+<span class="fn">ps</span> -eZ | grep httpd         <span class="com"># process labels</span>
+
+<span class="com"># The #1 gotcha: wrong file label. Restore the default context:</span>
+<span class="fn">sudo</span> restorecon -Rv /var/www/html
+
+<span class="com"># See WHY something was denied (AVC denials):</span>
+<span class="fn">sudo</span> ausearch -m avc -ts recent
+<span class="fn">sudo</span> sealert -a /var/log/audit/audit.log   <span class="com"># human-readable advice</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Permissive</strong> is your friend: switch to it,
+reproduce the problem, read the denials, fix the policy/labels — then go
+back to <strong class="c-green">Enforcing</strong>. Don't just disable it.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Commands</div>
+<div class="concept-title">AppArmor — Profiles &amp; Complain Mode</div>
+<div class="dw">
+<pre class="code-block"><span class="fn">sudo</span> aa-status                <span class="com"># which profiles are loaded &amp; enforcing</span>
+<span class="fn">sudo</span> aa-complain /etc/apparmor.d/usr.sbin.nginx  <span class="com"># log-only mode</span>
+<span class="fn">sudo</span> aa-enforce /etc/apparmor.d/usr.sbin.nginx  <span class="com"># back to blocking</span>
+<span class="fn">sudo</span> aa-logprof             <span class="com"># interactively build a profile from logs</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+AppArmor's <strong>complain mode</strong> is the analog of SELinux
+permissive — it logs what a profile <em>would</em> block so you can
+tune it before enforcing.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🐝</span>
+<span class="topic-name">eBPF — Programmable Kernel Observability &amp; Security</span>
+<span class="topic-badge">Advanced</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Run Your Own Code Inside the Kernel — Safely</div>
+<div class="concept-desc">
+<strong class="c-cyan">eBPF</strong> (extended Berkeley Packet Filter) lets
+you load small programs into the running Linux kernel that execute when
+events fire — a packet arrives, a system call is made, a function is entered.
+Historically, changing kernel behavior meant patching the kernel or writing a
+risky module. eBPF gives you that power <em>without</em> the risk: a
+<strong>verifier</strong> checks each program can't crash or loop forever
+before it runs. It's become the foundation of modern Linux observability,
+networking, and security tooling.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">How It Works</div>
+<div class="concept-title">Attach → Verify → Run → Report</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>What Happens</th></tr>
+<tr><td class="c-green">Attach</td><td>Hook a program to an event: kprobes (kernel fns), tracepoints, network hooks (XDP/tc), or user-space (uprobes).</td></tr>
+<tr><td class="c-green">Verify</td><td>The kernel verifier proves the program is safe — bounded loops, no bad memory access — before loading.</td></tr>
+<tr><td class="c-green">Run</td><td>It executes in-kernel at event time, extremely fast (often JIT-compiled to native code).</td></tr>
+<tr><td class="c-green">Report</td><td>Results flow to user space via <strong>maps</strong> (shared key/value structures) or ring buffers.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Why It Matters</div>
+<div class="concept-title">What eBPF Replaced</div>
+<div class="concept-desc">
+The old way to get deep visibility was strapping together <code>strace</code>,
+<code>tcpdump</code>, and sampling profilers — each with overhead and blind
+spots. eBPF sees everything the kernel sees, with minimal overhead, because
+it runs <em>at the source</em> of the event instead of copying data out to
+analyze it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Domain</th><th>What eBPF Enables</th></tr>
+<tr><td class="c-cyan">Observability</td><td>Trace syscalls, latency, and function calls live (bpftrace, BCC).</td></tr>
+<tr><td class="c-cyan">Networking</td><td>Fast packet processing &amp; load balancing at the earliest hook (XDP, Cilium).</td></tr>
+<tr><td class="c-cyan">Security</td><td>Runtime detection — flag suspicious syscalls/process behavior (Falco, Tetragon).</td></tr>
+<tr><td class="c-cyan">Profiling</td><td>Continuous, low-overhead CPU/off-CPU flame graphs across a fleet.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Example</div>
+<div class="concept-title">A One-Liner With bpftrace</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Count every process that opens a file, live — no app changes</span>
+<span class="fn">sudo</span> bpftrace -e <span class="str">'tracepoint:syscalls:sys_enter_openat { @[comm] = count(); }'</span>
+
+<span class="com"># Histogram of read() sizes across the whole system</span>
+<span class="fn">sudo</span> bpftrace -e <span class="str">'tracepoint:syscalls:sys_enter_read { @bytes = hist(args-&gt;count); }'</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+Requires a modern kernel (4.x+, richer on 5.x+) and root/capabilities. The
+tooling ladder: <strong>bpftrace</strong> (quick one-liners) →
+<strong>BCC</strong> (Python tools) → <strong>libbpf</strong> (production
+programs).
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->
@@ -21952,6 +23652,235 @@ With MCP, each app implements the protocol once and each tool implements
 it once — <strong class="c-green">M + N</strong>. That is the same shift
 the Language Server Protocol (LSP) brought to code editors, and it's why
 MCP has become the de-facto way to give agents real-world capabilities.
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔀</span>
+<span class="topic-name">ETL &amp; Data Pipelines — Moving Data at Scale</span>
+<span class="topic-badge">Data</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Getting Data From Where It Is to Where It's Useful</div>
+<div class="concept-desc">
+Raw data is scattered across app databases, APIs, logs, and files — messy
+and in the wrong shape for analysis. A <strong class="c-cyan">data
+pipeline</strong> moves it, cleans it, and lands it somewhere queryable.
+The classic pattern is <strong class="c-amber">ETL</strong>:
+<strong>Extract</strong> from sources, <strong>Transform</strong> into a
+clean shape, <strong>Load</strong> into a warehouse. It's the plumbing
+behind every dashboard, report, and ML training set.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Three Stages</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Stage</th><th>What Happens</th></tr>
+<tr><td class="c-green">Extract</td><td>Pull from sources — databases, REST APIs, event streams, CSV/JSON files, logs.</td></tr>
+<tr><td class="c-green">Transform</td><td>Clean nulls, dedupe, join, reformat types, aggregate, enrich — make it consistent and analysis-ready.</td></tr>
+<tr><td class="c-green">Load</td><td>Write into the destination — a data warehouse, lake, or database.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">ETL vs ELT</div>
+<div class="concept-title">Transform Before or After Loading?</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>ETL (classic)</th><th>ELT (modern)</th></tr>
+<tr><td>Order</td><td>Transform, then load</td><td>Load raw, then transform in-warehouse</td></tr>
+<tr><td>Transform runs on</td><td>A separate engine</td><td>The warehouse's own compute</td></tr>
+<tr><td>Best when</td><td>Destination is expensive/rigid</td><td>Cloud warehouse compute is cheap &amp; elastic</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Cloud warehouses (BigQuery, Snowflake, Redshift) made
+<strong class="c-cyan">ELT</strong> popular: dump raw data in, then use
+SQL/dbt to transform it where the compute already lives — flexible, since
+you keep the raw source to re-transform later.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Destinations, Orchestration &amp; What Matters</div>
+<div class="dw">
+<div class="dt">▸ WHERE DATA LANDS</div>
+<table class="ref-table" style="margin-bottom:14px">
+<tr><th>Store</th><th>Holds</th></tr>
+<tr><td class="c-cyan">Data Warehouse</td><td>Structured, cleaned data for analytics (Snowflake, BigQuery)</td></tr>
+<tr><td class="c-cyan">Data Lake</td><td>Raw data of any shape, cheaply (S3 + Parquet)</td></tr>
+<tr><td class="c-cyan">Lakehouse</td><td>Lake storage + warehouse features (Databricks, Delta)</td></tr>
+</table>
+<div class="dt">▸ BATCH vs STREAMING</div>
+<table class="ref-table">
+<tr><th>Mode</th><th>When</th></tr>
+<tr><td>Batch</td><td>Run on a schedule (nightly) — orchestrated by Airflow, Dagster, Prefect</td></tr>
+<tr><td>Streaming</td><td>Process events as they arrive (Kafka + Flink/Spark) for near-real-time</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Whatever the tool, three things make or break a pipeline:
+<strong class="c-green">idempotent reruns</strong> (a failed job re-runs
+safely), <strong class="c-green">data quality checks</strong> (catch bad
+data before it poisons dashboards), and <strong class="c-green">lineage</strong>
+(knowing where each number came from).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📐</span>
+<span class="topic-name">Vector Databases — Similarity Search at Scale</span>
+<span class="topic-badge">AI Infra</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Searching by Meaning, Not Keywords</div>
+<div class="concept-desc">
+An embedding model turns text (or an image) into a
+<strong class="c-cyan">vector</strong> — a list of hundreds of numbers that
+positions the item in a "meaning space" where similar things sit close
+together. A <strong class="c-amber">vector database</strong> stores millions
+of these and answers one question fast: <em>"which vectors are nearest to
+this one?"</em> That's how semantic search and RAG find the most relevant
+passages — by geometric closeness, not matching words. This topic is about
+the <em>storage &amp; search</em> side; how embeddings are made lives in the
+Embeddings &amp; RAG topic.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Distance Metrics — "Nearness" Defined</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Metric</th><th>Measures</th><th>Common For</th></tr>
+<tr><td class="c-green">Cosine similarity</td><td>Angle between vectors (ignores magnitude)</td><td>Text embeddings (the usual default)</td></tr>
+<tr><td class="c-green">Dot product</td><td>Angle + magnitude</td><td>When vector length carries meaning</td></tr>
+<tr><td class="c-green">Euclidean (L2)</td><td>Straight-line distance</td><td>Image/spatial embeddings</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Match the metric to how the model was trained — most sentence-embedding
+models expect <strong>cosine</strong>. Using the wrong one quietly
+degrades results.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Why It's Hard</div>
+<div class="concept-title">Exact Search Doesn't Scale — Enter ANN</div>
+<div class="concept-desc">
+Comparing your query to <em>every</em> stored vector (brute force) is
+accurate but far too slow at millions of items. So vector DBs use
+<strong class="c-cyan">Approximate Nearest Neighbor (ANN)</strong> indexes:
+they trade a tiny bit of accuracy for enormous speed by only searching the
+most promising regions.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Index</th><th>Idea</th></tr>
+<tr><td class="c-cyan">HNSW</td><td>A layered "small-world" graph you hop through — fast &amp; accurate; the popular default.</td></tr>
+<tr><td class="c-cyan">IVF</td><td>Cluster vectors, search only the nearest clusters.</td></tr>
+<tr><td class="c-cyan">PQ</td><td>Compress vectors so more fit in RAM (product quantization) — trades accuracy for memory.</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The dial is <strong>recall vs latency</strong>: search harder for more
+correct neighbors, or faster for approximate ones.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Practical</div>
+<div class="concept-title">Choosing &amp; Using One</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Point</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Options</td><td>Dedicated (Pinecone, Weaviate, Qdrant, Milvus) or add-ons (pgvector for Postgres, Redis, Elasticsearch).</td></tr>
+<tr><td class="c-cyan">Metadata filtering</td><td>Combine vector search with normal filters ("similar AND from 2026 AND team=infra").</td></tr>
+<tr><td class="c-cyan">Hybrid search</td><td>Blend keyword (BM25) + vector scores — catches exact terms semantics miss.</td></tr>
+<tr><td class="c-amber">Re-embed on model change</td><td>Vectors from different models aren't comparable — switching embedders means rebuilding the index.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔁</span>
+<span class="topic-name">MLOps — Shipping &amp; Monitoring Models in Production</span>
+<span class="topic-badge">AI Infra</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">A Model in a Notebook Isn't a Product</div>
+<div class="concept-desc">
+Training a good model is maybe 10% of the work. <strong class="c-cyan">MLOps</strong>
+is DevOps for machine learning — the practices that get a model
+<em>reliably</em> from a data scientist's laptop into production and keep it
+healthy there. Unlike ordinary software, an ML system depends on
+<strong>data</strong> that shifts over time, so it can silently rot even when
+the code never changes. MLOps exists to make ML reproducible, deployable, and
+monitored.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Lifecycle</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Stage</th><th>What Happens</th></tr>
+<tr><td class="c-green">Data &amp; features</td><td>Version datasets; compute features consistently for training and serving (a feature store).</td></tr>
+<tr><td class="c-green">Train &amp; track</td><td>Log every run's data, code, params, and metrics so results are reproducible (MLflow, W&amp;B).</td></tr>
+<tr><td class="c-green">Registry</td><td>Version trained models with stages (staging → production) like artifacts.</td></tr>
+<tr><td class="c-green">Deploy &amp; serve</td><td>Expose the model behind an API (batch or real-time); canary new versions.</td></tr>
+<tr><td class="c-green">Monitor</td><td>Watch predictions, latency, and — critically — <em>data drift</em>. Retrain when quality slips.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Hard Part</div>
+<div class="concept-title">Drift — Why Models Decay</div>
+<div class="concept-desc">
+A model learns patterns from historical data. When the real world changes,
+those patterns go stale and accuracy quietly drops — no error, no crash, just
+worse predictions.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Type</th><th>What Shifts</th></tr>
+<tr><td class="c-amber">Data drift</td><td>The input distribution changes (new user behavior, new products).</td></tr>
+<tr><td class="c-amber">Concept drift</td><td>The relationship between inputs and the answer changes (fraud tactics evolve).</td></tr>
+<tr><td class="c-red">Training/serving skew</td><td>Features are computed differently in training vs production — a top cause of "great offline, bad live."</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+You catch drift by monitoring input statistics and prediction quality
+against a baseline, then trigger a <strong>retrain</strong> — ideally
+automated on a schedule or a drift alert.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Principles</div>
+<div class="concept-title">What Good MLOps Looks Like</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Practice</th><th>Why</th></tr>
+<tr><td class="c-green">Reproducibility</td><td>Pin data + code + params so any result can be rebuilt exactly.</td></tr>
+<tr><td class="c-green">Automated pipelines</td><td>Retraining and deployment are scripted, not manual notebook runs.</td></tr>
+<tr><td class="c-green">Versioning everything</td><td>Data, features, models, and code all get versions — you can roll back a model like code.</td></tr>
+<tr><td class="c-green">Continuous monitoring</td><td>Serving metrics + drift detection, because "deployed" isn't "done."</td></tr>
+</table>
 </div>
 </div>
 </div>
@@ -31720,6 +33649,319 @@ Relational databases start normalized; you denormalize deliberately for
 read performance. Document databases often start denormalized (embed
 related data) and trade write-side duplication for single-read fetches.
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔴</span>
+<span class="topic-name">WebSockets &amp; SSE — Real-Time on the Web</span>
+<span class="topic-badge">Web</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Push, Don't Poll</div>
+<div class="concept-desc">
+Plain HTTP is request/response: the client asks, the server answers, the
+connection closes. That's terrible for live data — chat, notifications,
+dashboards, multiplayer — where the <em>server</em> needs to speak first.
+The old workaround was <strong class="c-red">polling</strong> (ask "any
+news?" every few seconds — wasteful and laggy).
+<strong class="c-cyan">WebSockets</strong> and
+<strong class="c-amber">Server-Sent Events</strong> keep a connection open
+so the server can push the instant something happens.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Three Ways to Get Live Data</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Technique</th><th>Direction</th><th>Best For</th></tr>
+<tr><td class="c-red">Polling</td><td>Client pulls repeatedly</td><td>Simple, infrequent updates; last resort</td></tr>
+<tr><td class="c-amber">SSE (EventSource)</td><td>Server → client, one-way</td><td>Feeds, notifications, live logs, progress</td></tr>
+<tr><td class="c-cyan">WebSocket</td><td>Full-duplex, both ways</td><td>Chat, games, collaborative editing, trading</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Reach for <strong>SSE</strong> when only the server needs to push (it's
+just HTTP, auto-reconnects, and is dead simple). Reach for
+<strong>WebSockets</strong> when the client must send too, in real time.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Example</div>
+<div class="concept-title">WebSocket &amp; SSE Clients</div>
+<div class="dw">
+<div class="code-label">WEBSOCKET — TWO-WAY</div>
+<pre class="code-block"><span class="kw">const</span> <span class="var">ws</span> = <span class="kw">new</span> <span class="fn">WebSocket</span>(<span class="str">"wss://example.com/chat"</span>);
+
+<span class="var">ws</span>.<span class="var">onopen</span>  = () =&gt; <span class="var">ws</span>.<span class="fn">send</span>(<span class="fn">JSON.stringify</span>({ <span class="var">join</span>: <span class="str">"room-7"</span> }));
+<span class="var">ws</span>.<span class="var">onmessage</span> = (<span class="var">e</span>) =&gt; <span class="fn">render</span>(<span class="fn">JSON.parse</span>(<span class="var">e</span>.<span class="var">data</span>));
+<span class="var">ws</span>.<span class="var">onclose</span> = () =&gt; <span class="fn">scheduleReconnect</span>();   <span class="com">// you handle reconnect</span></pre>
+<div class="code-label" style="margin-top:12px">SSE — SERVER-TO-CLIENT (AUTO-RECONNECTS)</div>
+<pre class="code-block"><span class="kw">const</span> <span class="var">es</span> = <span class="kw">new</span> <span class="fn">EventSource</span>(<span class="str">"/api/updates"</span>);
+<span class="var">es</span>.<span class="var">onmessage</span> = (<span class="var">e</span>) =&gt; <span class="fn">append</span>(<span class="var">e</span>.<span class="var">data</span>);
+<span class="var">es</span>.<span class="fn">addEventListener</span>(<span class="str">"price"</span>, (<span class="var">e</span>) =&gt; <span class="fn">updateTicker</span>(<span class="var">e</span>.<span class="var">data</span>));</pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Practical</div>
+<div class="concept-title">Gotchas in Production</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Issue</th><th>What To Know</th></tr>
+<tr><td class="c-amber">Use <code>wss://</code></td><td>The encrypted (TLS) scheme — like HTTPS for sockets. Never ship plain <code>ws://</code>.</td></tr>
+<tr><td class="c-amber">Reconnection</td><td>WebSockets don't auto-reconnect — implement backoff. SSE reconnects for you and can resume via <code>Last-Event-ID</code>.</td></tr>
+<tr><td class="c-amber">Heartbeats</td><td>Send periodic pings so proxies/load balancers don't kill an idle connection.</td></tr>
+<tr><td class="c-amber">Scaling</td><td>Open connections are stateful — many servers need a shared pub/sub layer (e.g. Redis) to broadcast across nodes.</td></tr>
+<tr><td class="c-amber">Auth</td><td>Browsers can't set custom headers on a WebSocket handshake — pass a token via a cookie or a short-lived ticket in the URL.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧩</span>
+<span class="topic-name">API Design — Versioning, Pagination, Rate Limits &amp; Idempotency</span>
+<span class="topic-badge">Web</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Contract Others Build On</div>
+<div class="concept-desc">
+Once people depend on your API, its <em>shape</em> is a promise. Good API
+design is mostly about the boring-but-critical concerns that keep that
+promise as the API grows: not breaking existing clients, returning large
+result sets safely, protecting the service from abuse, and behaving
+predictably when the network retries. Get these four right and the rest is
+detail.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Versioning — Don't Break Existing Clients</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Strategy</th><th>Example</th><th>Notes</th></tr>
+<tr><td class="c-cyan">URL path</td><td><code>/v2/users</code></td><td>Most common, visible, easy to route</td></tr>
+<tr><td class="c-cyan">Header</td><td><code>Accept: application/vnd.api+json;v=2</code></td><td>Cleaner URLs; harder to test by hand</td></tr>
+<tr><td class="c-cyan">Query param</td><td><code>?version=2</code></td><td>Simple but easy to forget</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Rule: an additive change (new optional field) is backward-compatible and
+needs no new version. Removing/renaming a field or changing its type is
+<strong class="c-red">breaking</strong> — that's when you bump the version
+and keep the old one running during a deprecation window.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Pagination &amp; Rate Limiting</div>
+<div class="dw">
+<div class="dt">▸ PAGINATION — NEVER RETURN "ALL"</div>
+<table class="ref-table" style="margin-bottom:14px">
+<tr><th>Style</th><th>How</th><th>Trade-off</th></tr>
+<tr><td class="c-green">Offset/limit</td><td><code>?offset=40&amp;limit=20</code></td><td>Simple; slow &amp; wobbly on big/changing data</td></tr>
+<tr><td class="c-green">Cursor/keyset</td><td><code>?after=&lt;id&gt;&amp;limit=20</code></td><td>Fast &amp; stable at scale; can't jump to page N</td></tr>
+</table>
+<div class="dt">▸ RATE LIMITING — RESPONSE HEADERS</div>
+<pre class="code-block"><span class="com"># Server tells the client its budget</span>
+HTTP/1.1 <span class="num">429</span> Too Many Requests
+<span class="attr">X-RateLimit-Limit</span>: <span class="num">100</span>
+<span class="attr">X-RateLimit-Remaining</span>: <span class="num">0</span>
+<span class="attr">Retry-After</span>: <span class="num">30</span>          <span class="com"># wait 30s before retrying</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+Return <code>429</code> when a client exceeds its budget; a well-behaved
+client backs off using <code>Retry-After</code>. Common algorithms:
+<strong>token bucket</strong> (allows bursts) and
+<strong>sliding window</strong> (smooth).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reliability</div>
+<div class="concept-title">Idempotency — Safe Retries</div>
+<div class="concept-desc">
+Networks drop responses. If a client retries a payment because it never got
+the reply, you must not charge twice. An
+<strong class="c-cyan">idempotency key</strong> — a unique ID the client
+sends with the request — lets the server recognize a duplicate and return
+the <em>original</em> result instead of doing the work again.
+</div>
+<div class="dw">
+<pre class="code-block">POST /charges
+<span class="attr">Idempotency-Key</span>: <span class="str">a1b2c3-unique-per-attempt</span>
+
+<span class="com"># First call: process, store result under the key.</span>
+<span class="com"># Retry with the SAME key: return the stored result, don't re-charge.</span></pre>
+<div class="dt" style="margin-top:10px">▸ WHICH HTTP METHODS ARE ALREADY IDEMPOTENT?</div>
+<table class="ref-table">
+<tr><th>Method</th><th>Idempotent?</th></tr>
+<tr><td>GET, PUT, DELETE</td><td class="c-green">Yes — same call, same end state</td></tr>
+<tr><td>POST</td><td class="c-red">No — needs an idempotency key to be safe to retry</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⚙️</span>
+<span class="topic-name">gRPC &amp; Protocol Buffers — High-Performance RPC</span>
+<span class="topic-badge">API</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Calling a Remote Function Like a Local One</div>
+<div class="concept-desc">
+<strong class="c-cyan">gRPC</strong> is a framework for
+<strong>Remote Procedure Calls</strong> — you call a method on another
+service as if it were a local function, and gRPC handles the networking. It
+runs over HTTP/2 and serializes data with
+<strong class="c-amber">Protocol Buffers</strong> (protobuf): a compact
+<em>binary</em> format defined by a schema. The result is dramatically
+smaller and faster than JSON over REST — which is why it's the default for
+internal microservice-to-microservice communication.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Example</div>
+<div class="concept-title">Define Once in a .proto File</div>
+<div class="dw">
+<div class="code-label">user.proto — THE CONTRACT</div>
+<pre class="code-block"><span class="kw">syntax</span> = <span class="str">"proto3"</span>;
+
+<span class="com">// A message = a typed record; numbers are field tags (wire IDs)</span>
+<span class="kw">message</span> <span class="type">UserRequest</span> {
+  <span class="type">int32</span> <span class="var">id</span> = <span class="num">1</span>;
+}
+<span class="kw">message</span> <span class="type">User</span> {
+  <span class="type">int32</span>  <span class="var">id</span>    = <span class="num">1</span>;
+  <span class="type">string</span> <span class="var">name</span>  = <span class="num">2</span>;
+  <span class="type">string</span> <span class="var">email</span> = <span class="num">3</span>;
+}
+
+<span class="com">// A service = the callable methods</span>
+<span class="kw">service</span> <span class="type">UserService</span> {
+  <span class="kw">rpc</span> <span class="fn">GetUser</span>(<span class="type">UserRequest</span>) <span class="kw">returns</span> (<span class="type">User</span>);
+}</pre>
+<div class="concept-desc" style="margin-top:8px">
+A compiler (<code>protoc</code>) turns this into typed client + server code
+in your language — both sides share one source of truth, so a mismatched
+field is a compile error, not a 3 a.m. surprise.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Four Call Styles</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Type</th><th>Shape</th><th>Use</th></tr>
+<tr><td class="c-green">Unary</td><td>1 request → 1 response</td><td>Ordinary calls</td></tr>
+<tr><td class="c-green">Server streaming</td><td>1 request → stream of responses</td><td>Live feeds, large results</td></tr>
+<tr><td class="c-green">Client streaming</td><td>Stream of requests → 1 response</td><td>Uploads, telemetry</td></tr>
+<tr><td class="c-green">Bidirectional</td><td>Both stream at once</td><td>Chat, real-time sync</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+Streaming comes free from HTTP/2's multiplexing — a big reason gRPC picked
+it as the transport.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Trade-offs</div>
+<div class="concept-title">gRPC vs REST — Pick the Right Tool</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>gRPC</th><th>REST/JSON</th></tr>
+<tr><td>Payload</td><td class="c-green">Compact binary</td><td>Human-readable text</td></tr>
+<tr><td>Speed</td><td class="c-green">Faster (binary + HTTP/2)</td><td>Slower</td></tr>
+<tr><td>Contract</td><td class="c-green">Strong (.proto schema)</td><td>Looser (OpenAPI optional)</td></tr>
+<tr><td>Browser support</td><td class="c-red">Needs a proxy (gRPC-Web)</td><td class="c-green">Native everywhere</td></tr>
+<tr><td>Debug by hand</td><td class="c-red">Hard (binary)</td><td class="c-green">Easy (curl)</td></tr>
+<tr><td>Best for</td><td>Internal microservices</td><td>Public/browser APIs</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📊</span>
+<span class="topic-name">OLTP vs OLAP — Transactional vs Analytical Data</span>
+<span class="topic-badge">Data</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Two Jobs, Two Very Different Databases</div>
+<div class="concept-desc">
+Databases do two fundamentally different kinds of work.
+<strong class="c-cyan">OLTP</strong> (Online Transaction Processing) runs the
+live application — many small, fast reads and writes: place an order, update a
+profile. <strong class="c-amber">OLAP</strong> (Online Analytical Processing)
+answers big questions over history: "revenue by region by quarter for three
+years." Trying to run heavy analytics on your production OLTP database is a
+classic mistake — the giant scan slows down every customer's checkout.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Comparison</div>
+<div class="concept-title">OLTP vs OLAP Side by Side</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>OLTP</th><th>OLAP</th></tr>
+<tr><td>Purpose</td><td>Run the application</td><td>Analyze &amp; report</td></tr>
+<tr><td>Queries</td><td>Many small reads/writes</td><td>Few huge aggregations</td></tr>
+<tr><td>Touches</td><td>A few rows by key</td><td>Millions of rows, few columns</td></tr>
+<tr><td>Optimized for</td><td>Fast writes, low latency</td><td>Fast scans &amp; aggregates</td></tr>
+<tr><td>Data</td><td>Current, detailed</td><td>Historical, often aggregated</td></tr>
+<tr><td>Examples</td><td>Postgres, MySQL</td><td>BigQuery, Snowflake, Redshift</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Why</div>
+<div class="concept-title">Row Stores vs Column Stores</div>
+<div class="concept-desc">
+The performance gap comes down to physical layout. OLTP databases are
+<strong class="c-cyan">row-oriented</strong> — a whole record sits together, so
+reading or writing one order is one fast seek. OLAP databases are
+<strong class="c-amber">column-oriented</strong> — each column is stored
+together, so summing one column over millions of rows reads only that column
+(and compresses beautifully, since a column holds similar values).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>Row store</th><th>Column store</th></tr>
+<tr><td>Great at</td><td>Fetch/modify whole records</td><td>Aggregate a few columns over many rows</td></tr>
+<tr><td>Compression</td><td class="c-amber">Modest</td><td class="c-green">Excellent (like values together)</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">In Practice</div>
+<div class="concept-title">You Use Both — Connected by a Pipeline</div>
+<div class="concept-desc">
+A typical stack keeps them separate: the app writes to an OLTP database, and a
+<strong>data pipeline (ETL/ELT)</strong> periodically copies and reshapes that
+data into an OLAP warehouse for analysts and dashboards. This isolates the two
+workloads so analytics never slows the live app, and lets each database be
+tuned for its job. (A newer category, <strong class="c-cyan">HTAP</strong>,
+tries to serve both from one system — handy, but the separated pattern still
+dominates.)
 </div>
 </div>
 </div>

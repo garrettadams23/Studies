@@ -4700,6 +4700,257 @@ lsof +L1 2&gt;/dev/null | grep deleted
   </div>
 </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧱</span>
+              <span class="topic-name">Linux Firewalls — iptables, nftables &amp; ufw</span>
+              <span class="topic-badge">Hardening</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Kernel Decides What Packets Live or Die</div>
+                <div class="concept-desc">
+                  Every Linux host has a packet filter built into the kernel (Netfilter).
+                  You program it with rules that <strong class="c-green">ACCEPT</strong>,
+                  <strong class="c-red">DROP</strong>, or <strong class="c-amber">REJECT</strong>
+                  packets based on source, destination, port, and protocol. Three tools front
+                  it: <strong class="c-cyan">iptables</strong> (classic), its successor
+                  <strong class="c-cyan">nftables</strong>, and
+                  <strong class="c-cyan">ufw</strong> (a friendly wrapper). The default
+                  posture you want: <em>deny inbound, allow outbound, permit only the ports
+                  you actually serve.</em>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Chains &amp; Policy — The Mental Model</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Chain</th><th>Handles</th></tr>
+                    <tr><td class="c-cyan">INPUT</td><td>Packets destined for <em>this</em> host (protect your services here)</td></tr>
+                    <tr><td class="c-cyan">OUTPUT</td><td>Packets originating from this host</td></tr>
+                    <tr><td class="c-cyan">FORWARD</td><td>Packets routed <em>through</em> this host (routers, NAT, containers)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Rules in a chain are checked <strong>top to bottom</strong>; the first
+                    match wins. If nothing matches, the chain's default
+                    <strong>policy</strong> applies. Set the INPUT policy to
+                    <code>DROP</code> and explicitly allow what you need.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Commands</div>
+                <div class="concept-title">ufw — The Easy Path</div>
+                <div class="dw">
+                  <div class="code-label">SENSIBLE DEFAULTS IN FOUR LINES</div>
+<pre class="code-block"><span class="fn">sudo</span> ufw default deny incoming     <span class="com"># block all inbound by default</span>
+<span class="fn">sudo</span> ufw default allow outgoing    <span class="com"># let the host reach out</span>
+<span class="fn">sudo</span> ufw allow <span class="num">22</span>/tcp             <span class="com"># SSH — do this BEFORE enabling!</span>
+<span class="fn">sudo</span> ufw allow <span class="num">443</span>/tcp            <span class="com"># HTTPS</span>
+<span class="fn">sudo</span> ufw enable                    <span class="com"># turn it on</span>
+<span class="fn">sudo</span> ufw status numbered           <span class="com"># review the ruleset</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Commands</div>
+                <div class="concept-title">iptables &amp; nftables — The Raw Tools</div>
+                <div class="dw">
+                  <div class="code-label">iptables — CLASSIC</div>
+<pre class="code-block"><span class="com"># Allow established replies + SSH, then drop the rest</span>
+<span class="fn">sudo</span> iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+<span class="fn">sudo</span> iptables -A INPUT -p tcp --dport <span class="num">22</span> -j ACCEPT
+<span class="fn">sudo</span> iptables -P INPUT DROP        <span class="com"># set default policy last</span>
+<span class="fn">sudo</span> iptables -L -n -v            <span class="com"># list with packet counts</span></pre>
+                  <div class="code-label" style="margin-top:12px">nftables — MODERN REPLACEMENT</div>
+<pre class="code-block"><span class="fn">sudo</span> nft add table inet filter
+<span class="fn">sudo</span> nft add chain inet filter input { type filter hook input priority <span class="num">0</span>\; policy drop\; }
+<span class="fn">sudo</span> nft add rule inet filter input tcp dport <span class="num">22</span> accept
+<span class="fn">sudo</span> nft list ruleset            <span class="com"># show everything</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Gotchas</div>
+                <div class="concept-title">Don't Lock Yourself Out</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Rule</th><th>Why</th></tr>
+                    <tr><td class="c-red">Allow SSH before default-deny</td><td>Set the DROP policy or run <code>ufw enable</code> without an SSH allow rule and your remote session dies — with no way back in.</td></tr>
+                    <tr><td class="c-green">Allow ESTABLISHED,RELATED</td><td>Without it, replies to your own outbound connections get dropped and everything appears broken.</td></tr>
+                    <tr><td class="c-amber">Rules are not persistent by default</td><td>iptables/nft rules vanish on reboot — save them (<code>netfilter-persistent</code>, <code>nft list ruleset &gt; /etc/nftables.conf</code>) or use ufw, which persists.</td></tr>
+                    <tr><td class="c-amber">Test with a safety net</td><td>Schedule an <code>at</code> job to flush rules in 5 min while you test, so a mistake auto-recovers.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🛂</span>
+              <span class="topic-name">SELinux &amp; AppArmor — Mandatory Access Control</span>
+              <span class="topic-badge">Hardening</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Second Lock Even Root Can't Pick</div>
+                <div class="concept-desc">
+                  Normal Linux permissions are <strong class="c-amber">discretionary</strong>
+                  (DAC): the file's owner decides who gets access, and root can do anything.
+                  <strong class="c-cyan">Mandatory Access Control</strong> (MAC) adds a second
+                  layer the kernel enforces from a central policy — <em>even against root</em>.
+                  So if a web server is compromised, MAC can still stop it from reading
+                  <code>/etc/shadow</code> or opening a network port it was never meant to.
+                  It confines each program to exactly what it legitimately needs.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Comparison</div>
+                <div class="concept-title">SELinux vs AppArmor</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>SELinux</th><th>AppArmor</th></tr>
+                    <tr><td>Confines by</td><td>Security <em>labels</em> on every file/process</td><td>File <em>paths</em> in a profile</td></tr>
+                    <tr><td>Default on</td><td>RHEL, Fedora, CentOS</td><td>Ubuntu, Debian, SUSE</td></tr>
+                    <tr><td>Power</td><td class="c-green">Very fine-grained</td><td class="c-amber">Simpler, path-based</td></tr>
+                    <tr><td>Learning curve</td><td class="c-red">Steep</td><td class="c-green">Gentle</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Both solve the same problem — least privilege enforced by the kernel —
+                    just with different models. You typically use whichever ships with your
+                    distro rather than swapping.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Commands</div>
+                <div class="concept-title">SELinux — Modes &amp; Troubleshooting</div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">getenforce</span>                  <span class="com"># Enforcing | Permissive | Disabled</span>
+<span class="fn">sudo</span> setenforce <span class="num">0</span>            <span class="com"># temporarily → Permissive (logs, doesn't block)</span>
+<span class="fn">ls</span> -Z /var/www/html         <span class="com"># -Z shows the security context (label)</span>
+<span class="fn">ps</span> -eZ | grep httpd         <span class="com"># process labels</span>
+
+<span class="com"># The #1 gotcha: wrong file label. Restore the default context:</span>
+<span class="fn">sudo</span> restorecon -Rv /var/www/html
+
+<span class="com"># See WHY something was denied (AVC denials):</span>
+<span class="fn">sudo</span> ausearch -m avc -ts recent
+<span class="fn">sudo</span> sealert -a /var/log/audit/audit.log   <span class="com"># human-readable advice</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Permissive</strong> is your friend: switch to it,
+                    reproduce the problem, read the denials, fix the policy/labels — then go
+                    back to <strong class="c-green">Enforcing</strong>. Don't just disable it.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Commands</div>
+                <div class="concept-title">AppArmor — Profiles &amp; Complain Mode</div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">sudo</span> aa-status                <span class="com"># which profiles are loaded &amp; enforcing</span>
+<span class="fn">sudo</span> aa-complain /etc/apparmor.d/usr.sbin.nginx  <span class="com"># log-only mode</span>
+<span class="fn">sudo</span> aa-enforce /etc/apparmor.d/usr.sbin.nginx  <span class="com"># back to blocking</span>
+<span class="fn">sudo</span> aa-logprof             <span class="com"># interactively build a profile from logs</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    AppArmor's <strong>complain mode</strong> is the analog of SELinux
+                    permissive — it logs what a profile <em>would</em> block so you can
+                    tune it before enforcing.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐝</span>
+              <span class="topic-name">eBPF — Programmable Kernel Observability &amp; Security</span>
+              <span class="topic-badge">Advanced</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Run Your Own Code Inside the Kernel — Safely</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">eBPF</strong> (extended Berkeley Packet Filter) lets
+                  you load small programs into the running Linux kernel that execute when
+                  events fire — a packet arrives, a system call is made, a function is entered.
+                  Historically, changing kernel behavior meant patching the kernel or writing a
+                  risky module. eBPF gives you that power <em>without</em> the risk: a
+                  <strong>verifier</strong> checks each program can't crash or loop forever
+                  before it runs. It's become the foundation of modern Linux observability,
+                  networking, and security tooling.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">How It Works</div>
+                <div class="concept-title">Attach → Verify → Run → Report</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>What Happens</th></tr>
+                    <tr><td class="c-green">Attach</td><td>Hook a program to an event: kprobes (kernel fns), tracepoints, network hooks (XDP/tc), or user-space (uprobes).</td></tr>
+                    <tr><td class="c-green">Verify</td><td>The kernel verifier proves the program is safe — bounded loops, no bad memory access — before loading.</td></tr>
+                    <tr><td class="c-green">Run</td><td>It executes in-kernel at event time, extremely fast (often JIT-compiled to native code).</td></tr>
+                    <tr><td class="c-green">Report</td><td>Results flow to user space via <strong>maps</strong> (shared key/value structures) or ring buffers.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Why It Matters</div>
+                <div class="concept-title">What eBPF Replaced</div>
+                <div class="concept-desc">
+                  The old way to get deep visibility was strapping together <code>strace</code>,
+                  <code>tcpdump</code>, and sampling profilers — each with overhead and blind
+                  spots. eBPF sees everything the kernel sees, with minimal overhead, because
+                  it runs <em>at the source</em> of the event instead of copying data out to
+                  analyze it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Domain</th><th>What eBPF Enables</th></tr>
+                    <tr><td class="c-cyan">Observability</td><td>Trace syscalls, latency, and function calls live (bpftrace, BCC).</td></tr>
+                    <tr><td class="c-cyan">Networking</td><td>Fast packet processing &amp; load balancing at the earliest hook (XDP, Cilium).</td></tr>
+                    <tr><td class="c-cyan">Security</td><td>Runtime detection — flag suspicious syscalls/process behavior (Falco, Tetragon).</td></tr>
+                    <tr><td class="c-cyan">Profiling</td><td>Continuous, low-overhead CPU/off-CPU flame graphs across a fleet.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">A One-Liner With bpftrace</div>
+                <div class="dw">
+<pre class="code-block"><span class="com"># Count every process that opens a file, live — no app changes</span>
+<span class="fn">sudo</span> bpftrace -e <span class="str">'tracepoint:syscalls:sys_enter_openat { @[comm] = count(); }'</span>
+
+<span class="com"># Histogram of read() sizes across the whole system</span>
+<span class="fn">sudo</span> bpftrace -e <span class="str">'tracepoint:syscalls:sys_enter_read { @bytes = hist(args-&gt;count); }'</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Requires a modern kernel (4.x+, richer on 5.x+) and root/capabilities. The
+                    tooling ladder: <strong>bpftrace</strong> (quick one-liners) →
+                    <strong>BCC</strong> (Python tools) → <strong>libbpf</strong> (production
+                    programs).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->

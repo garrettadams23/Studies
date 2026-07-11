@@ -10528,6 +10528,335 @@ crontab -e</pre>
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔴</span>
+              <span class="topic-name">WebSockets &amp; SSE — Real-Time on the Web</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Push, Don't Poll</div>
+                <div class="concept-desc">
+                  Plain HTTP is request/response: the client asks, the server answers, the
+                  connection closes. That's terrible for live data — chat, notifications,
+                  dashboards, multiplayer — where the <em>server</em> needs to speak first.
+                  The old workaround was <strong class="c-red">polling</strong> (ask "any
+                  news?" every few seconds — wasteful and laggy).
+                  <strong class="c-cyan">WebSockets</strong> and
+                  <strong class="c-amber">Server-Sent Events</strong> keep a connection open
+                  so the server can push the instant something happens.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Three Ways to Get Live Data</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>Direction</th><th>Best For</th></tr>
+                    <tr><td class="c-red">Polling</td><td>Client pulls repeatedly</td><td>Simple, infrequent updates; last resort</td></tr>
+                    <tr><td class="c-amber">SSE (EventSource)</td><td>Server → client, one-way</td><td>Feeds, notifications, live logs, progress</td></tr>
+                    <tr><td class="c-cyan">WebSocket</td><td>Full-duplex, both ways</td><td>Chat, games, collaborative editing, trading</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Reach for <strong>SSE</strong> when only the server needs to push (it's
+                    just HTTP, auto-reconnects, and is dead simple). Reach for
+                    <strong>WebSockets</strong> when the client must send too, in real time.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">WebSocket &amp; SSE Clients</div>
+                <div class="dw">
+                  <div class="code-label">WEBSOCKET — TWO-WAY</div>
+<pre class="code-block"><span class="kw">const</span> <span class="var">ws</span> = <span class="kw">new</span> <span class="fn">WebSocket</span>(<span class="str">"wss://example.com/chat"</span>);
+
+<span class="var">ws</span>.<span class="var">onopen</span>  = () =&gt; <span class="var">ws</span>.<span class="fn">send</span>(<span class="fn">JSON.stringify</span>({ <span class="var">join</span>: <span class="str">"room-7"</span> }));
+<span class="var">ws</span>.<span class="var">onmessage</span> = (<span class="var">e</span>) =&gt; <span class="fn">render</span>(<span class="fn">JSON.parse</span>(<span class="var">e</span>.<span class="var">data</span>));
+<span class="var">ws</span>.<span class="var">onclose</span> = () =&gt; <span class="fn">scheduleReconnect</span>();   <span class="com">// you handle reconnect</span></pre>
+                  <div class="code-label" style="margin-top:12px">SSE — SERVER-TO-CLIENT (AUTO-RECONNECTS)</div>
+<pre class="code-block"><span class="kw">const</span> <span class="var">es</span> = <span class="kw">new</span> <span class="fn">EventSource</span>(<span class="str">"/api/updates"</span>);
+<span class="var">es</span>.<span class="var">onmessage</span> = (<span class="var">e</span>) =&gt; <span class="fn">append</span>(<span class="var">e</span>.<span class="var">data</span>);
+<span class="var">es</span>.<span class="fn">addEventListener</span>(<span class="str">"price"</span>, (<span class="var">e</span>) =&gt; <span class="fn">updateTicker</span>(<span class="var">e</span>.<span class="var">data</span>));</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Practical</div>
+                <div class="concept-title">Gotchas in Production</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Issue</th><th>What To Know</th></tr>
+                    <tr><td class="c-amber">Use <code>wss://</code></td><td>The encrypted (TLS) scheme — like HTTPS for sockets. Never ship plain <code>ws://</code>.</td></tr>
+                    <tr><td class="c-amber">Reconnection</td><td>WebSockets don't auto-reconnect — implement backoff. SSE reconnects for you and can resume via <code>Last-Event-ID</code>.</td></tr>
+                    <tr><td class="c-amber">Heartbeats</td><td>Send periodic pings so proxies/load balancers don't kill an idle connection.</td></tr>
+                    <tr><td class="c-amber">Scaling</td><td>Open connections are stateful — many servers need a shared pub/sub layer (e.g. Redis) to broadcast across nodes.</td></tr>
+                    <tr><td class="c-amber">Auth</td><td>Browsers can't set custom headers on a WebSocket handshake — pass a token via a cookie or a short-lived ticket in the URL.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧩</span>
+              <span class="topic-name">API Design — Versioning, Pagination, Rate Limits &amp; Idempotency</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Contract Others Build On</div>
+                <div class="concept-desc">
+                  Once people depend on your API, its <em>shape</em> is a promise. Good API
+                  design is mostly about the boring-but-critical concerns that keep that
+                  promise as the API grows: not breaking existing clients, returning large
+                  result sets safely, protecting the service from abuse, and behaving
+                  predictably when the network retries. Get these four right and the rest is
+                  detail.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Versioning — Don't Break Existing Clients</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Strategy</th><th>Example</th><th>Notes</th></tr>
+                    <tr><td class="c-cyan">URL path</td><td><code>/v2/users</code></td><td>Most common, visible, easy to route</td></tr>
+                    <tr><td class="c-cyan">Header</td><td><code>Accept: application/vnd.api+json;v=2</code></td><td>Cleaner URLs; harder to test by hand</td></tr>
+                    <tr><td class="c-cyan">Query param</td><td><code>?version=2</code></td><td>Simple but easy to forget</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Rule: an additive change (new optional field) is backward-compatible and
+                    needs no new version. Removing/renaming a field or changing its type is
+                    <strong class="c-red">breaking</strong> — that's when you bump the version
+                    and keep the old one running during a deprecation window.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Pagination &amp; Rate Limiting</div>
+                <div class="dw">
+                  <div class="dt">▸ PAGINATION — NEVER RETURN "ALL"</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Style</th><th>How</th><th>Trade-off</th></tr>
+                    <tr><td class="c-green">Offset/limit</td><td><code>?offset=40&amp;limit=20</code></td><td>Simple; slow &amp; wobbly on big/changing data</td></tr>
+                    <tr><td class="c-green">Cursor/keyset</td><td><code>?after=&lt;id&gt;&amp;limit=20</code></td><td>Fast &amp; stable at scale; can't jump to page N</td></tr>
+                  </table>
+                  <div class="dt">▸ RATE LIMITING — RESPONSE HEADERS</div>
+<pre class="code-block"><span class="com"># Server tells the client its budget</span>
+HTTP/1.1 <span class="num">429</span> Too Many Requests
+<span class="attr">X-RateLimit-Limit</span>: <span class="num">100</span>
+<span class="attr">X-RateLimit-Remaining</span>: <span class="num">0</span>
+<span class="attr">Retry-After</span>: <span class="num">30</span>          <span class="com"># wait 30s before retrying</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Return <code>429</code> when a client exceeds its budget; a well-behaved
+                    client backs off using <code>Retry-After</code>. Common algorithms:
+                    <strong>token bucket</strong> (allows bursts) and
+                    <strong>sliding window</strong> (smooth).
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reliability</div>
+                <div class="concept-title">Idempotency — Safe Retries</div>
+                <div class="concept-desc">
+                  Networks drop responses. If a client retries a payment because it never got
+                  the reply, you must not charge twice. An
+                  <strong class="c-cyan">idempotency key</strong> — a unique ID the client
+                  sends with the request — lets the server recognize a duplicate and return
+                  the <em>original</em> result instead of doing the work again.
+                </div>
+                <div class="dw">
+<pre class="code-block">POST /charges
+<span class="attr">Idempotency-Key</span>: <span class="str">a1b2c3-unique-per-attempt</span>
+
+<span class="com"># First call: process, store result under the key.</span>
+<span class="com"># Retry with the SAME key: return the stored result, don't re-charge.</span></pre>
+                  <div class="dt" style="margin-top:10px">▸ WHICH HTTP METHODS ARE ALREADY IDEMPOTENT?</div>
+                  <table class="ref-table">
+                    <tr><th>Method</th><th>Idempotent?</th></tr>
+                    <tr><td>GET, PUT, DELETE</td><td class="c-green">Yes — same call, same end state</td></tr>
+                    <tr><td>POST</td><td class="c-red">No — needs an idempotency key to be safe to retry</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚙️</span>
+              <span class="topic-name">gRPC &amp; Protocol Buffers — High-Performance RPC</span>
+              <span class="topic-badge">API</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Calling a Remote Function Like a Local One</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">gRPC</strong> is a framework for
+                  <strong>Remote Procedure Calls</strong> — you call a method on another
+                  service as if it were a local function, and gRPC handles the networking. It
+                  runs over HTTP/2 and serializes data with
+                  <strong class="c-amber">Protocol Buffers</strong> (protobuf): a compact
+                  <em>binary</em> format defined by a schema. The result is dramatically
+                  smaller and faster than JSON over REST — which is why it's the default for
+                  internal microservice-to-microservice communication.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">Define Once in a .proto File</div>
+                <div class="dw">
+                  <div class="code-label">user.proto — THE CONTRACT</div>
+<pre class="code-block"><span class="kw">syntax</span> = <span class="str">"proto3"</span>;
+
+<span class="com">// A message = a typed record; numbers are field tags (wire IDs)</span>
+<span class="kw">message</span> <span class="type">UserRequest</span> {
+  <span class="type">int32</span> <span class="var">id</span> = <span class="num">1</span>;
+}
+<span class="kw">message</span> <span class="type">User</span> {
+  <span class="type">int32</span>  <span class="var">id</span>    = <span class="num">1</span>;
+  <span class="type">string</span> <span class="var">name</span>  = <span class="num">2</span>;
+  <span class="type">string</span> <span class="var">email</span> = <span class="num">3</span>;
+}
+
+<span class="com">// A service = the callable methods</span>
+<span class="kw">service</span> <span class="type">UserService</span> {
+  <span class="kw">rpc</span> <span class="fn">GetUser</span>(<span class="type">UserRequest</span>) <span class="kw">returns</span> (<span class="type">User</span>);
+}</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    A compiler (<code>protoc</code>) turns this into typed client + server code
+                    in your language — both sides share one source of truth, so a mismatched
+                    field is a compile error, not a 3 a.m. surprise.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Four Call Styles</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Type</th><th>Shape</th><th>Use</th></tr>
+                    <tr><td class="c-green">Unary</td><td>1 request → 1 response</td><td>Ordinary calls</td></tr>
+                    <tr><td class="c-green">Server streaming</td><td>1 request → stream of responses</td><td>Live feeds, large results</td></tr>
+                    <tr><td class="c-green">Client streaming</td><td>Stream of requests → 1 response</td><td>Uploads, telemetry</td></tr>
+                    <tr><td class="c-green">Bidirectional</td><td>Both stream at once</td><td>Chat, real-time sync</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Streaming comes free from HTTP/2's multiplexing — a big reason gRPC picked
+                    it as the transport.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Trade-offs</div>
+                <div class="concept-title">gRPC vs REST — Pick the Right Tool</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>gRPC</th><th>REST/JSON</th></tr>
+                    <tr><td>Payload</td><td class="c-green">Compact binary</td><td>Human-readable text</td></tr>
+                    <tr><td>Speed</td><td class="c-green">Faster (binary + HTTP/2)</td><td>Slower</td></tr>
+                    <tr><td>Contract</td><td class="c-green">Strong (.proto schema)</td><td>Looser (OpenAPI optional)</td></tr>
+                    <tr><td>Browser support</td><td class="c-red">Needs a proxy (gRPC-Web)</td><td class="c-green">Native everywhere</td></tr>
+                    <tr><td>Debug by hand</td><td class="c-red">Hard (binary)</td><td class="c-green">Easy (curl)</td></tr>
+                    <tr><td>Best for</td><td>Internal microservices</td><td>Public/browser APIs</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📊</span>
+              <span class="topic-name">OLTP vs OLAP — Transactional vs Analytical Data</span>
+              <span class="topic-badge">Data</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Two Jobs, Two Very Different Databases</div>
+                <div class="concept-desc">
+                  Databases do two fundamentally different kinds of work.
+                  <strong class="c-cyan">OLTP</strong> (Online Transaction Processing) runs the
+                  live application — many small, fast reads and writes: place an order, update a
+                  profile. <strong class="c-amber">OLAP</strong> (Online Analytical Processing)
+                  answers big questions over history: "revenue by region by quarter for three
+                  years." Trying to run heavy analytics on your production OLTP database is a
+                  classic mistake — the giant scan slows down every customer's checkout.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Comparison</div>
+                <div class="concept-title">OLTP vs OLAP Side by Side</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>OLTP</th><th>OLAP</th></tr>
+                    <tr><td>Purpose</td><td>Run the application</td><td>Analyze &amp; report</td></tr>
+                    <tr><td>Queries</td><td>Many small reads/writes</td><td>Few huge aggregations</td></tr>
+                    <tr><td>Touches</td><td>A few rows by key</td><td>Millions of rows, few columns</td></tr>
+                    <tr><td>Optimized for</td><td>Fast writes, low latency</td><td>Fast scans &amp; aggregates</td></tr>
+                    <tr><td>Data</td><td>Current, detailed</td><td>Historical, often aggregated</td></tr>
+                    <tr><td>Examples</td><td>Postgres, MySQL</td><td>BigQuery, Snowflake, Redshift</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Why</div>
+                <div class="concept-title">Row Stores vs Column Stores</div>
+                <div class="concept-desc">
+                  The performance gap comes down to physical layout. OLTP databases are
+                  <strong class="c-cyan">row-oriented</strong> — a whole record sits together, so
+                  reading or writing one order is one fast seek. OLAP databases are
+                  <strong class="c-amber">column-oriented</strong> — each column is stored
+                  together, so summing one column over millions of rows reads only that column
+                  (and compresses beautifully, since a column holds similar values).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Row store</th><th>Column store</th></tr>
+                    <tr><td>Great at</td><td>Fetch/modify whole records</td><td>Aggregate a few columns over many rows</td></tr>
+                    <tr><td>Compression</td><td class="c-amber">Modest</td><td class="c-green">Excellent (like values together)</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">In Practice</div>
+                <div class="concept-title">You Use Both — Connected by a Pipeline</div>
+                <div class="concept-desc">
+                  A typical stack keeps them separate: the app writes to an OLTP database, and a
+                  <strong>data pipeline (ETL/ELT)</strong> periodically copies and reshapes that
+                  data into an OLAP warehouse for analysts and dashboards. This isolates the two
+                  workloads so analytics never slows the live app, and lets each database be
+                  tuned for its job. (A newer category, <strong class="c-cyan">HTAP</strong>,
+                  tries to serve both from one system — handy, but the separated pattern still
+                  dominates.)
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body script -->
 <!-- /domain-body script -->
 <!-- /domain-body script -->
