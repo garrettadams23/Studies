@@ -70,6 +70,7 @@ alt="Optimized Study Routine: 4 Pillars for Success infographic."
 <div class="chip c-lifestyle"      data-domain="lifestyle">🧘 LIFESTYLE &amp; PHILOSOPHY</div>
 <div class="chip c-military"       data-domain="military">🎖️ MILITARY CODES</div>
 <div class="chip c-redteam"           data-domain="redteam">🔴 RED TEAM</div>
+<div class="chip c-blueteam"           data-domain="blueteam">🔵 BLUE TEAM</div>
 </div>
 </div>
 <!-- SEARCH BAR ──────────────────────────────────────────────────────── -->
@@ -42377,6 +42378,206 @@ Console removal for anything sensitive that's indexed.
 </div>
 </div>
 <!-- /domain-body redteam -->
+</div>
+</div>
+<div class="domain-section domain-blueteam" data-domain="blueteam">
+<div class="domain-header">
+<span class="domain-icon">🔵</span>
+<span class="domain-title">Blue Team &amp; Defensive Tooling</span>
+<div class="cert-tags">
+<span class="ctag ctag-cysa">CySA+</span>
+<span class="ctag ctag-secplus">GCIH</span>
+</div>
+<span class="domain-sub">NSM · SIEM · EDR · Detection · DFIR · Threat Intel</span>
+<span class="chevron">▾</span>
+</div>
+<div class="domain-body">
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🦈</span>
+<span class="topic-name">Wireshark — Packet Analysis</span>
+<span class="topic-badge">NSM</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">See Exactly What's on the Wire</div>
+<div class="concept-desc">
+Wireshark is the standard GUI protocol analyzer — capture live traffic or open a
+<code>.pcap</code> and inspect every packet, field by field. It's how you confirm
+what actually happened: a failed handshake, plaintext credentials, C2 beaconing,
+or a malformed exploit. The skill is <strong class="c-cyan">display filters</strong>
+— cutting millions of packets down to the ten that matter.
+</div>
+<div class="dw">
+<div class="dt">▸ DISPLAY FILTERS (not capture filters)</div>
+<table class="ref-table">
+<tr><th>Filter</th><th>Shows</th></tr>
+<tr><td><code>ip.addr == 10.0.0.5</code></td><td>Traffic to/from a host</td></tr>
+<tr><td><code>tcp.port == 443</code></td><td>A specific port</td></tr>
+<tr><td><code>http.request.method == "POST"</code></td><td>HTTP POSTs</td></tr>
+<tr><td><code>tcp.flags.syn == 1 &amp;&amp; tcp.flags.ack == 0</code></td><td>Bare SYNs (scans)</td></tr>
+<tr><td><code>dns.qry.name contains "evil"</code></td><td>Suspicious DNS lookups</td></tr>
+<tr><td><code>tcp.analysis.retransmission</code></td><td>Network trouble</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Workflow:</strong> Statistics → Conversations to find
+the top talkers, then right-click → <strong>Follow → TCP Stream</strong> to
+reassemble a full session into readable text. <code>tshark</code> is the CLI
+version for scripting/large captures.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📡</span>
+<span class="topic-name">tcpdump — Capture from the Command Line</span>
+<span class="topic-badge">NSM</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Capture Tool That's Already Installed</div>
+<div class="concept-desc">
+When there's no GUI — a server, a firewall, a container — <strong class="c-cyan">tcpdump</strong>
+captures packets from the terminal using BPF (Berkeley Packet Filter) syntax.
+Grab a capture on the box, then move the <code>.pcap</code> to Wireshark for
+analysis. Every defender needs this in muscle memory.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="fn">tcpdump</span> -i eth0 -n                 <span class="com"># capture, don't resolve names (-n)</span>
+<span class="fn">tcpdump</span> -i eth0 -w capture.pcap     <span class="com"># write to file for Wireshark</span>
+<span class="fn">tcpdump</span> -i eth0 host <span class="num">10.0.0.5</span>      <span class="com"># one host</span>
+<span class="fn">tcpdump</span> -i eth0 port <span class="num">53</span>            <span class="com"># DNS only</span>
+<span class="fn">tcpdump</span> -i eth0 -A <span class="str">'tcp port 80'</span>  <span class="com"># print payload as ASCII</span>
+<span class="fn">tcpdump</span> -i eth0 <span class="str">'tcp[tcpflags] &amp; tcp-syn != 0'</span>  <span class="com"># SYNs</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Tip:</strong> always add <code>-n</code> (skip DNS
+lookups — faster and quieter) and cap size with <code>-c</code> /
+<code>-C</code> so a capture doesn't fill the disk.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧬</span>
+<span class="topic-name">Zeek — Network Metadata &amp; Logging</span>
+<span class="topic-badge">NSM</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Not Packets — Structured Facts About Connections</div>
+<div class="concept-desc">
+Full packet capture is huge and hard to search. <strong class="c-cyan">Zeek</strong>
+(formerly Bro) instead watches traffic and writes rich, structured
+<strong>logs</strong> — one per protocol: <code>conn.log</code>, <code>dns.log</code>,
+<code>http.log</code>, <code>ssl.log</code>, <code>files.log</code>, <code>notice.log</code>.
+It turns raw traffic into queryable evidence and is the backbone of many SOCs and
+Corelight sensors.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Log</th><th>Answers</th></tr>
+<tr><td><code>conn.log</code></td><td>Who talked to whom, how long, how many bytes</td></tr>
+<tr><td><code>dns.log</code></td><td>Every query &amp; response (catch DGA / tunneling)</td></tr>
+<tr><td><code>ssl.log / x509.log</code></td><td>TLS certs &amp; JA3 fingerprints</td></tr>
+<tr><td><code>files.log</code></td><td>Files seen crossing the wire (with hashes)</td></tr>
+<tr><td><code>notice.log</code></td><td>Zeek's own alerts from its scripts</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Zeek's scripting language lets you write custom detections — e.g. flag a host
+that makes 10,000 DNS queries an hour (tunneling) or long-lived beacons with
+fixed intervals (C2).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚨</span>
+<span class="topic-name">Suricata &amp; Snort — Signature IDS/IPS</span>
+<span class="topic-badge">NSM</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Rules That Fire on Known-Bad Traffic</div>
+<div class="concept-desc">
+<strong class="c-cyan">Snort</strong> (the original) and
+<strong class="c-cyan">Suricata</strong> (modern, multi-threaded) inspect traffic
+against <strong>signature rules</strong> and alert (IDS) or block (IPS) on matches.
+They ship with community/ET rulesets covering exploits, malware C2, and policy
+violations. Suricata adds protocol logging and file extraction, overlapping with
+Zeek.
+</div>
+<div class="dw">
+<div class="dt">▸ ANATOMY OF A RULE</div>
+<pre class="code-block"><span class="kw">alert</span> tcp any any -&gt; $HOME_NET <span class="num">445</span> ( \
+  msg:<span class="str">"ET EXPLOIT Possible SMB exploit attempt"</span>; \
+  flow:to_server,established; \
+  content:<span class="str">"|ff|SMB"</span>; \
+  sid:<span class="num">2024001</span>; rev:<span class="num">1</span>; )</pre>
+<table class="ref-table" style="margin-top:10px">
+<tr><th>Part</th><th>Meaning</th></tr>
+<tr><td>action</td><td><code>alert</code> / <code>drop</code> (IPS) / <code>reject</code></td></tr>
+<tr><td>header</td><td>proto, src/dst IPs &amp; ports, direction</td></tr>
+<tr><td>msg / sid</td><td>human label &amp; unique rule ID</td></tr>
+<tr><td>content / flow</td><td>what to match &amp; connection state</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Limit:</strong> signatures catch <em>known</em> attacks.
+Novel or encrypted threats slip past — pair with anomaly detection (Zeek) and
+endpoint telemetry.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗄️</span>
+<span class="topic-name">Arkime &amp; ntopng — Full-Capture &amp; Traffic Analytics</span>
+<span class="topic-badge">NSM</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Searchable History of Everything on the Network</div>
+<div class="concept-desc">
+<strong class="c-cyan">Arkime</strong> (formerly Moloch) captures and indexes
+full packets at scale, giving analysts a searchable web UI to pull the exact
+session behind an alert — critical for incident response ("show me everything
+that host did last Tuesday"). <strong class="c-cyan">ntopng</strong> focuses on
+live traffic analytics — top talkers, flows, bandwidth, and application
+breakdown in real time.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Strength</th></tr>
+<tr><td class="c-cyan">Arkime</td><td>Retrospective PCAP search &amp; session pivoting at scale</td></tr>
+<tr><td class="c-cyan">ntopng</td><td>Real-time flow/bandwidth dashboards &amp; alerting</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Together with Zeek (metadata) and Suricata (signatures), full capture completes
+the classic <strong>NSM triad</strong>: alerts tell you <em>something</em>
+happened, metadata gives context, and full packets prove exactly what.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- /domain-body blueteam -->
 </div>
 </div>
 </div>

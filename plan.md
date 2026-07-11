@@ -389,11 +389,11 @@ Tool reference cards, grouped by kill-chain stage. ~9 waves, ~50 cards.
 ~8 waves, ~45 cards. Each pairs where possible with a Red card above.
 
 **Wave B1 — Network security monitoring**
-- [ ] Wireshark — capture, display filters, Follow Stream, analysis
-- [ ] tcpdump — CLI capture & BPF filters (field card, deeper than the net topic)
-- [ ] Zeek (Bro) — network metadata logging & scripting
-- [ ] Suricata & Snort — signature IDS/IPS, rule syntax
-- [ ] Arkime / ntopng — full-packet capture & traffic analytics
+- [x] Wireshark — capture, display filters, Follow Stream, analysis
+- [x] tcpdump — CLI capture & BPF filters (field card, deeper than the net topic)
+- [x] Zeek (Bro) — network metadata logging & scripting
+- [x] Suricata & Snort — signature IDS/IPS, rule syntax
+- [x] Arkime / ntopng — full-packet capture & traffic analytics
 
 **Wave B2 — SIEM & log analytics**
 - [ ] Splunk — SPL query language, indexes, dashboards, alerts
