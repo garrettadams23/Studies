@@ -3197,6 +3197,87 @@ Why #5: Why isn't that part of the standard testing process?
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔺</span>
+              <span class="topic-name">CAP Theorem &amp; Consistency Models</span>
+              <span class="topic-badge">Architecture</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Pick Two — the Fundamental Trade-off</div>
+                <div class="concept-desc">
+                  The <strong class="c-cyan">CAP theorem</strong> says a distributed data
+                  store can guarantee at most two of three properties:
+                  <strong>Consistency</strong> (every read sees the latest write),
+                  <strong>Availability</strong> (every request gets a response), and
+                  <strong>Partition tolerance</strong> (it keeps working when the network
+                  splits). Since networks <em>will</em> partition, partition tolerance isn't
+                  optional in practice — so the real choice, <em>during a partition</em>, is
+                  <strong class="c-amber">consistency vs availability</strong>.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Three Letters</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Letter</th><th>Guarantee</th></tr>
+                    <tr><td class="c-cyan">Consistency</td><td>All nodes return the same, most-recent data. A read never sees stale values.</td></tr>
+                    <tr><td class="c-cyan">Availability</td><td>Every request gets a (non-error) response, even if some nodes are down.</td></tr>
+                    <tr><td class="c-cyan">Partition tolerance</td><td>The system keeps operating even when nodes can't talk to each other.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Note: CAP's "Consistency" is stricter than ACID's — it means
+                    <em>linearizability</em> (one up-to-date copy), not "constraints hold."
+                    Different word, different guarantee.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">In Practice</div>
+                <div class="concept-title">CP vs AP — What You Choose During a Split</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>CP (consistency)</th><th>AP (availability)</th></tr>
+                    <tr><td>During a partition</td><td>Refuse/blocks writes to stay correct</td><td>Keep serving, reconcile later</td></tr>
+                    <tr><td>Read might be</td><td class="c-green">Always current</td><td class="c-amber">Stale for a moment</td></tr>
+                    <tr><td>Good for</td><td>Banking, inventory, bookings</td><td>Feeds, carts, social, DNS</td></tr>
+                    <tr><td>Examples</td><td>etcd, ZooKeeper, HBase</td><td>Cassandra, DynamoDB, Riak</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Most real systems aren't purely one or the other — they tune per-operation
+                    (a shopping cart is AP; the final checkout is CP).
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Beyond CAP</div>
+                <div class="concept-title">Consistency Is a Spectrum</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Model</th><th>Promise</th></tr>
+                    <tr><td class="c-green">Strong / linearizable</td><td>Reads always see the latest write — as if one copy existed.</td></tr>
+                    <tr><td class="c-amber">Eventual</td><td>Given no new writes, all replicas <em>eventually</em> converge. Cheap &amp; available.</td></tr>
+                    <tr><td class="c-amber">Read-your-writes</td><td>You always see your own updates (even if others lag).</td></tr>
+                    <tr><td class="c-amber">Causal</td><td>Related events are seen in order; unrelated ones may not be.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    A related lens, <strong>PACELC</strong>, extends CAP: even when there's no
+                    partition (<strong>E</strong>lse), you still trade
+                    <strong>L</strong>atency vs <strong>C</strong>onsistency — stronger
+                    guarantees cost round-trips. There's no free lunch in distributed data.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->

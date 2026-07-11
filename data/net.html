@@ -5341,6 +5341,166 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🕰️</span>
+              <span class="topic-name">NTP &amp; Time Synchronization — Why Clocks Matter</span>
+              <span class="topic-badge">Networking</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Few Seconds of Drift Breaks Surprising Things</div>
+                <div class="concept-desc">
+                  Every computer has a cheap quartz clock that drifts — seconds per day. On
+                  one laptop that's harmless; across a fleet it's a disaster. The
+                  <strong class="c-cyan">Network Time Protocol</strong> keeps machines
+                  synchronized to within milliseconds of a reference time by measuring the
+                  round-trip delay to time servers and correcting for it. It's invisible
+                  infrastructure — until a clock is wrong and logins fail, logs won't
+                  correlate, and TLS certificates appear "not yet valid."
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Why It Matters</div>
+                <div class="concept-title">What Breaks When Clocks Disagree</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>System</th><th>Failure With Bad Time</th></tr>
+                    <tr><td class="c-red">TLS / certificates</td><td>Certs have valid-from/valid-to windows; a skewed clock rejects good certs (or trusts expired ones).</td></tr>
+                    <tr><td class="c-red">Kerberos / AD auth</td><td>Tickets are time-stamped; default tolerance is ~5 minutes — beyond that, logins fail.</td></tr>
+                    <tr><td class="c-red">MFA / TOTP codes</td><td>Time-based one-time codes rotate every 30s; a wrong clock rejects valid codes.</td></tr>
+                    <tr><td class="c-red">Log correlation</td><td>Investigating an incident across servers is impossible if their timestamps don't line up.</td></tr>
+                    <tr><td class="c-red">Databases / distributed systems</td><td>Ordering, leases, and conflict resolution can misbehave with clock skew.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Stratum — The Hierarchy of Trust</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Stratum</th><th>Source</th></tr>
+                    <tr><td class="c-cyan">0</td><td>Reference clock — atomic clock, GPS. Not on the network itself.</td></tr>
+                    <tr><td class="c-cyan">1</td><td>Servers directly attached to a stratum-0 source.</td></tr>
+                    <tr><td class="c-cyan">2, 3, …</td><td>Sync from the stratum above; the number grows with distance from the source.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Most machines sync from public pools (<code>pool.ntp.org</code>) or an
+                    internal server. Best practice: point your fleet at a couple of internal
+                    NTP servers that themselves sync upstream — consistent time, less external
+                    dependence.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Commands</div>
+                <div class="concept-title">Checking Time Sync (Linux)</div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">timedatectl</span>                    <span class="com"># is NTP active &amp; synchronized?</span>
+<span class="fn">timedatectl</span> show-timesync      <span class="com"># current server &amp; poll interval</span>
+<span class="fn">chronyc</span> tracking              <span class="com"># chrony: offset, drift, stratum</span>
+<span class="fn">chronyc</span> sources -v            <span class="com"># which servers, how reachable</span>
+<span class="fn">ntpq</span> -p                       <span class="com"># classic ntpd: peer list &amp; offsets</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Modern Linux uses <strong>chrony</strong> or
+                    <strong>systemd-timesyncd</strong>; both slew the clock gradually rather
+                    than jumping it, so time never runs backward. Always store and compare
+                    time in <strong class="c-cyan">UTC</strong> — convert to local only for
+                    display.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🚪</span>
+              <span class="topic-name">Reverse Proxies — nginx, HAProxy &amp; the Front Door</span>
+              <span class="topic-badge">Networking</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">One Front Door for Many Back-End Services</div>
+                <div class="concept-desc">
+                  A <strong class="c-cyan">reverse proxy</strong> sits in front of your
+                  servers and receives every client request first, then forwards it to the
+                  right back-end. (A <em>forward</em> proxy sits in front of <em>clients</em>;
+                  a reverse proxy fronts <em>servers</em> — hence the name.) It's the single
+                  front door where you centralize TLS, routing, caching, and protection — so
+                  your application servers can stay simple and private.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What a Reverse Proxy Does For You</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Job</th><th>What It Means</th></tr>
+                    <tr><td class="c-green">TLS termination</td><td>Handles HTTPS/certs at the edge; talks plain HTTP to back-ends, so they don't each manage certs.</td></tr>
+                    <tr><td class="c-green">Load balancing</td><td>Spreads requests across multiple back-end instances.</td></tr>
+                    <tr><td class="c-green">Routing</td><td>Sends <code>/api</code> to one service and <code>/</code> to another by path or hostname.</td></tr>
+                    <tr><td class="c-green">Caching &amp; compression</td><td>Serves cached/gzipped responses without hitting the app.</td></tr>
+                    <tr><td class="c-green">Protection</td><td>Rate limiting, request filtering, hiding back-end topology.</td></tr>
+                    <tr><td class="c-green">Static files</td><td>Serves assets directly, freeing the app for dynamic work.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">A Minimal nginx Reverse Proxy</div>
+                <div class="dw">
+<pre class="code-block"><span class="kw">server</span> {
+    <span class="var">listen</span> <span class="num">443</span> ssl;
+    <span class="var">server_name</span> app.example.com;
+
+    <span class="var">ssl_certificate</span>     /etc/ssl/app.crt;   <span class="com"># TLS ends here</span>
+    <span class="var">ssl_certificate_key</span> /etc/ssl/app.key;
+
+    <span class="kw">location</span> /api/ {
+        <span class="var">proxy_pass</span> http://<span class="num">127.0.0.1</span>:<span class="num">3000</span>;  <span class="com"># forward to the app</span>
+        <span class="var">proxy_set_header</span> Host <span class="var">$host</span>;
+        <span class="var">proxy_set_header</span> X-Real-IP <span class="var">$remote_addr</span>;  <span class="com"># keep client IP</span>
+    }
+
+    <span class="kw">location</span> / {
+        <span class="var">root</span> /var/www/site;             <span class="com"># serve static files</span>
+    }
+}</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Common Tools</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Strength</th></tr>
+                    <tr><td class="c-cyan">nginx</td><td>Web server + reverse proxy + static + cache. The default workhorse.</td></tr>
+                    <tr><td class="c-cyan">HAProxy</td><td>Purpose-built, high-performance TCP/HTTP load balancer with deep health-check &amp; metrics support.</td></tr>
+                    <tr><td class="c-cyan">Caddy</td><td>Automatic HTTPS (Let's Encrypt out of the box); simplest config.</td></tr>
+                    <tr><td class="c-cyan">Envoy / Traefik</td><td>Cloud-native, dynamic config; common as Kubernetes ingress and service-mesh proxies.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    The <strong class="c-amber">X-Forwarded-For</strong> /
+                    <strong class="c-amber">X-Real-IP</strong> headers matter: once a proxy is
+                    in the path, the back-end sees the <em>proxy's</em> IP unless the proxy
+                    passes the real client IP along in these headers.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->
