@@ -5050,6 +5050,77 @@ conflating them is one of the most common (and most exploited) assumptions on th
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗺️</span>
+<span class="topic-name">BGP — How the Internet Routes Between Networks</span>
+<span class="topic-badge">Routing</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Protocol That Glues the Internet Together</div>
+<div class="concept-desc">
+Protocols like OSPF route <em>inside</em> one organization. But the internet
+is ~75,000 independent networks (ISPs, clouds, universities) that must agree
+on how to reach each other. <strong class="c-cyan">BGP — the Border Gateway
+Protocol</strong> — is how they do it. Each network is an
+<strong class="c-amber">Autonomous System (AS)</strong> with a number, and
+BGP is how ASes <em>advertise</em> which IP ranges they can reach and learn
+routes to everywhere else. It's the internet's routing table, assembled by
+agreement rather than central control.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Key Terms</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td class="c-cyan">Autonomous System (AS)</td><td>A network under one administrative control, identified by an ASN (e.g. AS15169 = Google).</td></tr>
+<tr><td class="c-cyan">Prefix</td><td>An advertised IP range, e.g. <code>8.8.8.0/24</code>.</td></tr>
+<tr><td class="c-cyan">Peering</td><td>Two ASes agree to exchange traffic directly (often settlement-free).</td></tr>
+<tr><td class="c-cyan">Transit</td><td>Paying a larger ISP to reach the rest of the internet.</td></tr>
+<tr><td class="c-cyan">AS_PATH</td><td>The list of ASes a route passes through — used to pick paths and prevent loops.</td></tr>
+<tr><td class="c-cyan">eBGP / iBGP</td><td>BGP between different ASes / within one AS.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">How It Chooses</div>
+<div class="concept-title">Path Selection &amp; Why It's Different</div>
+<div class="concept-desc">
+BGP is a <strong>path-vector</strong> protocol: it doesn't pick the route
+with the least latency or fewest hops the way an interior protocol might —
+it picks based on <em>policy</em>. Operators tune attributes to prefer
+cheaper or contractually-preferred paths.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Attribute (in order)</th><th>Effect</th></tr>
+<tr><td class="c-green">Local Preference</td><td>Highest wins — an AS's own preference for outbound paths.</td></tr>
+<tr><td class="c-green">AS_PATH length</td><td>Shorter path preferred (fewer ASes to cross).</td></tr>
+<tr><td class="c-green">MED</td><td>A hint to a neighbor about which entry point to prefer.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Fragility</div>
+<div class="concept-title">When BGP Goes Wrong</div>
+<div class="concept-desc">
+BGP largely runs on trust, which is also its weakness. A
+<strong class="c-red">route hijack</strong> — an AS advertising prefixes it
+doesn't own — can silently reroute or black-hole traffic (it has taken down
+large chunks of the internet, sometimes by accident via a
+<em>route leak</em>, a misconfigured advertisement). Defenses:
+<strong class="c-green">RPKI</strong> (cryptographically validates who may
+originate a prefix) and prefix filtering between peers. This fragility is why
+a single fat-fingered BGP change at a big provider can make headlines.
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->
@@ -15314,6 +15385,158 @@ the basics of resilience — retries, timeouts, health checks, redundancy.
 Injecting failure into a system you can't observe just causes an outage with
 no lesson. It's an <em>advanced</em> reliability practice that builds on
 observability and SRE fundamentals, not a starting point.
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">☁️</span>
+<span class="topic-name">Serverless &amp; FaaS — Code Without Managing Servers</span>
+<span class="topic-badge">Cloud</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">There Are Still Servers — You Just Don't Touch Them</div>
+<div class="concept-desc">
+<strong class="c-cyan">Serverless</strong> means you deploy code and the
+cloud runs it on demand — provisioning, scaling, patching, and capacity are
+the provider's problem. The flagship form is
+<strong class="c-amber">Functions as a Service (FaaS)</strong>: you upload a
+single function that runs in response to an <em>event</em> (an HTTP request,
+a file upload, a queue message) and you're billed only for the milliseconds
+it executes. Idle costs nothing. It's the far end of the "managed" spectrum
+beyond containers.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Example</div>
+<div class="concept-title">A Function That Runs on an Event</div>
+<div class="dw">
+<div class="code-label">AN HTTP-TRIGGERED FUNCTION (NODE)</div>
+<pre class="code-block"><span class="com">// The cloud invokes this on each request; no server to run</span>
+<span class="kw">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fn">handler</span>(<span class="var">event</span>) {
+  <span class="kw">const</span> <span class="var">name</span> = <span class="var">event</span>.<span class="var">queryStringParameters</span>?.<span class="var">name</span> ?? <span class="str">"world"</span>;
+  <span class="kw">return</span> {
+    <span class="var">statusCode</span>: <span class="num">200</span>,
+    <span class="var">body</span>: <span class="fn">JSON.stringify</span>({ <span class="var">message</span>: <span class="str">`Hello, </span>${<span class="var">name</span>}<span class="str">`</span> }),
+  };
+}</pre>
+<div class="concept-desc" style="margin-top:8px">
+Deploy it, wire a trigger (API Gateway, a bucket event, a cron schedule),
+and it scales from zero to thousands of concurrent invocations
+automatically — each request gets its own isolated run.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Providers &amp; the Compute Spectrum</div>
+<div class="dw">
+<div class="dt">▸ THE BIG FaaS PLATFORMS</div>
+<table class="ref-table" style="margin-bottom:14px">
+<tr><th>Provider</th><th>Service</th></tr>
+<tr><td>AWS</td><td>Lambda</td></tr>
+<tr><td>Azure</td><td>Functions</td></tr>
+<tr><td>Google Cloud</td><td>Cloud Functions / Cloud Run</td></tr>
+<tr><td>Edge</td><td>Cloudflare Workers, Netlify/Vercel Functions</td></tr>
+</table>
+<div class="dt">▸ HOW MUCH DO YOU MANAGE?</div>
+<table class="ref-table">
+<tr><th>Model</th><th>You Manage</th></tr>
+<tr><td>On-prem</td><td class="c-red">Everything — hardware to app</td></tr>
+<tr><td>IaaS (VMs)</td><td>OS + runtime + app</td></tr>
+<tr><td>Containers</td><td>The image + app</td></tr>
+<tr><td>Serverless / FaaS</td><td class="c-green">Just the code</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Trade-offs</div>
+<div class="concept-title">Where Serverless Shines — and Bites</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>Detail</th></tr>
+<tr><td class="c-green">Scale to zero</td><td>No traffic = no cost. Great for spiky or unpredictable load.</td></tr>
+<tr><td class="c-green">No ops</td><td>No servers to patch or capacity-plan; ship features faster.</td></tr>
+<tr><td class="c-red">Cold starts</td><td>An idle function takes extra time to spin up on the first request — latency-sensitive paths feel it.</td></tr>
+<tr><td class="c-red">Stateless &amp; time-limited</td><td>Functions keep no memory between runs and have a max duration — long jobs and in-memory state don't fit.</td></tr>
+<tr><td class="c-amber">Vendor lock-in</td><td>Triggers and runtimes are provider-specific; portability takes effort.</td></tr>
+<tr><td class="c-amber">Harder local debugging</td><td>The event-driven, managed environment is tricky to reproduce on your laptop.</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🪣</span>
+<span class="topic-name">Object Storage — S3 &amp; the Cloud Storage Model</span>
+<span class="topic-badge">Cloud</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">A Different Way to Store Data</div>
+<div class="concept-desc">
+Traditional storage is <strong>files</strong> (a tree of folders) or
+<strong>blocks</strong> (raw disk a filesystem sits on).
+<strong class="c-cyan">Object storage</strong> is a third model: every piece
+of data is an <em>object</em> — the bytes plus metadata plus a unique key —
+living in a flat <strong class="c-amber">bucket</strong>, retrieved over
+HTTP. There are no real folders (the "path" in a key is just a naming
+convention), and you can't edit part of an object — you replace the whole
+thing. Amazon <strong>S3</strong> defined the model; Azure Blob, Google Cloud
+Storage, and MinIO all speak a similar API.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Comparison</div>
+<div class="concept-title">Object vs File vs Block</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>Object</th><th>File</th><th>Block</th></tr>
+<tr><td>Unit</td><td>Object + key</td><td>File in folders</td><td>Raw blocks</td></tr>
+<tr><td>Access</td><td>HTTP API</td><td>NFS/SMB</td><td>Attached disk</td></tr>
+<tr><td>Edit in place</td><td class="c-red">No — replace whole</td><td class="c-green">Yes</td><td class="c-green">Yes</td></tr>
+<tr><td>Scales to</td><td class="c-green">Effectively unlimited</td><td class="c-amber">Limited</td><td class="c-amber">Limited</td></tr>
+<tr><td>Best for</td><td>Media, backups, data lakes, static sites</td><td>Shared docs</td><td>Databases, VMs</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Key Features You'll Use</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Feature</th><th>What It Does</th></tr>
+<tr><td class="c-cyan">Storage classes</td><td>Trade price for access speed: hot (Standard) → cool → cold archive (Glacier). Cheaper to store, pricier/slower to retrieve.</td></tr>
+<tr><td class="c-cyan">Lifecycle rules</td><td>Auto-move objects to colder tiers or delete them after N days.</td></tr>
+<tr><td class="c-cyan">Versioning</td><td>Keep old copies so an overwrite/delete is recoverable.</td></tr>
+<tr><td class="c-cyan">Presigned URLs</td><td>A time-limited link that grants temporary access to one object without exposing credentials.</td></tr>
+<tr><td class="c-cyan">Static website hosting</td><td>Serve a bucket of HTML/JS directly — often fronted by a CDN.</td></tr>
+<tr><td class="c-cyan">Durability</td><td>Providers replicate objects across facilities — S3 advertises 99.999999999% ("11 nines") durability.</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Commands</div>
+<div class="concept-title">Working With a Bucket (AWS CLI)</div>
+<div class="dw">
+<pre class="code-block"><span class="fn">aws</span> s3 mb s3://my-bucket                 <span class="com"># make bucket</span>
+<span class="fn">aws</span> s3 cp report.pdf s3://my-bucket/       <span class="com"># upload an object</span>
+<span class="fn">aws</span> s3 ls s3://my-bucket/                  <span class="com"># list objects</span>
+<span class="fn">aws</span> s3 sync ./site s3://my-bucket/         <span class="com"># upload a whole folder</span>
+<span class="fn">aws</span> s3 presign s3://my-bucket/report.pdf   <span class="com"># temp shareable URL</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-red">Security note:</strong> the classic cloud breach is a
+bucket left <em>public</em>. Keep buckets private by default, use IAM
+policies for access, and reach for presigned URLs when you need to share a
+single object.
+</div>
 </div>
 </div>
 </div>

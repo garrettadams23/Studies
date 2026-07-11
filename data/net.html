@@ -5124,6 +5124,81 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
   </div>
 </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🗺️</span>
+              <span class="topic-name">BGP — How the Internet Routes Between Networks</span>
+              <span class="topic-badge">Routing</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Protocol That Glues the Internet Together</div>
+                <div class="concept-desc">
+                  Protocols like OSPF route <em>inside</em> one organization. But the internet
+                  is ~75,000 independent networks (ISPs, clouds, universities) that must agree
+                  on how to reach each other. <strong class="c-cyan">BGP — the Border Gateway
+                  Protocol</strong> — is how they do it. Each network is an
+                  <strong class="c-amber">Autonomous System (AS)</strong> with a number, and
+                  BGP is how ASes <em>advertise</em> which IP ranges they can reach and learn
+                  routes to everywhere else. It's the internet's routing table, assembled by
+                  agreement rather than central control.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Key Terms</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Term</th><th>Meaning</th></tr>
+                    <tr><td class="c-cyan">Autonomous System (AS)</td><td>A network under one administrative control, identified by an ASN (e.g. AS15169 = Google).</td></tr>
+                    <tr><td class="c-cyan">Prefix</td><td>An advertised IP range, e.g. <code>8.8.8.0/24</code>.</td></tr>
+                    <tr><td class="c-cyan">Peering</td><td>Two ASes agree to exchange traffic directly (often settlement-free).</td></tr>
+                    <tr><td class="c-cyan">Transit</td><td>Paying a larger ISP to reach the rest of the internet.</td></tr>
+                    <tr><td class="c-cyan">AS_PATH</td><td>The list of ASes a route passes through — used to pick paths and prevent loops.</td></tr>
+                    <tr><td class="c-cyan">eBGP / iBGP</td><td>BGP between different ASes / within one AS.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">How It Chooses</div>
+                <div class="concept-title">Path Selection &amp; Why It's Different</div>
+                <div class="concept-desc">
+                  BGP is a <strong>path-vector</strong> protocol: it doesn't pick the route
+                  with the least latency or fewest hops the way an interior protocol might —
+                  it picks based on <em>policy</em>. Operators tune attributes to prefer
+                  cheaper or contractually-preferred paths.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Attribute (in order)</th><th>Effect</th></tr>
+                    <tr><td class="c-green">Local Preference</td><td>Highest wins — an AS's own preference for outbound paths.</td></tr>
+                    <tr><td class="c-green">AS_PATH length</td><td>Shorter path preferred (fewer ASes to cross).</td></tr>
+                    <tr><td class="c-green">MED</td><td>A hint to a neighbor about which entry point to prefer.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Fragility</div>
+                <div class="concept-title">When BGP Goes Wrong</div>
+                <div class="concept-desc">
+                  BGP largely runs on trust, which is also its weakness. A
+                  <strong class="c-red">route hijack</strong> — an AS advertising prefixes it
+                  doesn't own — can silently reroute or black-hole traffic (it has taken down
+                  large chunks of the internet, sometimes by accident via a
+                  <em>route leak</em>, a misconfigured advertisement). Defenses:
+                  <strong class="c-green">RPKI</strong> (cryptographically validates who may
+                  originate a prefix) and prefix filtering between peers. This fragility is why
+                  a single fat-fingered BGP change at a big provider can make headlines.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body net -->
 <!-- /domain-body net -->
 <!-- /domain-body net -->
