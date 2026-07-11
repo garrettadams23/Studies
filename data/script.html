@@ -10528,6 +10528,81 @@ crontab -e</pre>
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔴</span>
+              <span class="topic-name">WebSockets &amp; SSE — Real-Time on the Web</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Push, Don't Poll</div>
+                <div class="concept-desc">
+                  Plain HTTP is request/response: the client asks, the server answers, the
+                  connection closes. That's terrible for live data — chat, notifications,
+                  dashboards, multiplayer — where the <em>server</em> needs to speak first.
+                  The old workaround was <strong class="c-red">polling</strong> (ask "any
+                  news?" every few seconds — wasteful and laggy).
+                  <strong class="c-cyan">WebSockets</strong> and
+                  <strong class="c-amber">Server-Sent Events</strong> keep a connection open
+                  so the server can push the instant something happens.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Three Ways to Get Live Data</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>Direction</th><th>Best For</th></tr>
+                    <tr><td class="c-red">Polling</td><td>Client pulls repeatedly</td><td>Simple, infrequent updates; last resort</td></tr>
+                    <tr><td class="c-amber">SSE (EventSource)</td><td>Server → client, one-way</td><td>Feeds, notifications, live logs, progress</td></tr>
+                    <tr><td class="c-cyan">WebSocket</td><td>Full-duplex, both ways</td><td>Chat, games, collaborative editing, trading</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Reach for <strong>SSE</strong> when only the server needs to push (it's
+                    just HTTP, auto-reconnects, and is dead simple). Reach for
+                    <strong>WebSockets</strong> when the client must send too, in real time.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">WebSocket &amp; SSE Clients</div>
+                <div class="dw">
+                  <div class="code-label">WEBSOCKET — TWO-WAY</div>
+<pre class="code-block"><span class="kw">const</span> <span class="var">ws</span> = <span class="kw">new</span> <span class="fn">WebSocket</span>(<span class="str">"wss://example.com/chat"</span>);
+
+<span class="var">ws</span>.<span class="var">onopen</span>  = () =&gt; <span class="var">ws</span>.<span class="fn">send</span>(<span class="fn">JSON.stringify</span>({ <span class="var">join</span>: <span class="str">"room-7"</span> }));
+<span class="var">ws</span>.<span class="var">onmessage</span> = (<span class="var">e</span>) =&gt; <span class="fn">render</span>(<span class="fn">JSON.parse</span>(<span class="var">e</span>.<span class="var">data</span>));
+<span class="var">ws</span>.<span class="var">onclose</span> = () =&gt; <span class="fn">scheduleReconnect</span>();   <span class="com">// you handle reconnect</span></pre>
+                  <div class="code-label" style="margin-top:12px">SSE — SERVER-TO-CLIENT (AUTO-RECONNECTS)</div>
+<pre class="code-block"><span class="kw">const</span> <span class="var">es</span> = <span class="kw">new</span> <span class="fn">EventSource</span>(<span class="str">"/api/updates"</span>);
+<span class="var">es</span>.<span class="var">onmessage</span> = (<span class="var">e</span>) =&gt; <span class="fn">append</span>(<span class="var">e</span>.<span class="var">data</span>);
+<span class="var">es</span>.<span class="fn">addEventListener</span>(<span class="str">"price"</span>, (<span class="var">e</span>) =&gt; <span class="fn">updateTicker</span>(<span class="var">e</span>.<span class="var">data</span>));</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Practical</div>
+                <div class="concept-title">Gotchas in Production</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Issue</th><th>What To Know</th></tr>
+                    <tr><td class="c-amber">Use <code>wss://</code></td><td>The encrypted (TLS) scheme — like HTTPS for sockets. Never ship plain <code>ws://</code>.</td></tr>
+                    <tr><td class="c-amber">Reconnection</td><td>WebSockets don't auto-reconnect — implement backoff. SSE reconnects for you and can resume via <code>Last-Event-ID</code>.</td></tr>
+                    <tr><td class="c-amber">Heartbeats</td><td>Send periodic pings so proxies/load balancers don't kill an idle connection.</td></tr>
+                    <tr><td class="c-amber">Scaling</td><td>Open connections are stateful — many servers need a shared pub/sub layer (e.g. Redis) to broadcast across nodes.</td></tr>
+                    <tr><td class="c-amber">Auth</td><td>Browsers can't set custom headers on a WebSocket handshake — pass a token via a cookie or a short-lived ticket in the URL.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body script -->
 <!-- /domain-body script -->
 <!-- /domain-body script -->

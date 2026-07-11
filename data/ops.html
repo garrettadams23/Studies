@@ -2629,6 +2629,184 @@ Why #5: Why isn't that part of the standard testing process?
   </div>
 </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🌍</span>
+              <span class="topic-name">Terraform — Infrastructure as Code in Practice</span>
+              <span class="topic-badge">IaC</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Declare Infrastructure, Don't Click It</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Terraform</strong> lets you define cloud
+                  infrastructure — servers, networks, databases, DNS — as text files, then
+                  creates or changes it to match. You describe the <em>desired end state</em>
+                  in HCL (HashiCorp Configuration Language); Terraform figures out the steps
+                  to get there. Because it's declarative and version-controlled, your whole
+                  environment becomes reviewable, repeatable, and rebuildable — no more
+                  "click 40 things in the console and pray you remember them next time."
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">A Minimal Configuration</div>
+                <div class="dw">
+                  <div class="code-label">main.tf</div>
+<pre class="code-block"><span class="com"># Which provider (cloud) and version to use</span>
+<span class="kw">terraform</span> {
+  <span class="var">required_providers</span> {
+    <span class="var">aws</span> = { <span class="var">source</span> = <span class="str">"hashicorp/aws"</span>, <span class="var">version</span> = <span class="str">"~> 5.0"</span> }
+  }
+}
+
+<span class="kw">provider</span> <span class="str">"aws"</span> {
+  <span class="var">region</span> = <span class="str">"us-east-1"</span>
+}
+
+<span class="com"># A resource — Terraform will create/manage this</span>
+<span class="kw">resource</span> <span class="str">"aws_instance"</span> <span class="str">"web"</span> {
+  <span class="var">ami</span>           = <span class="str">"ami-0abcd1234"</span>
+  <span class="var">instance_type</span> = <span class="var">var</span>.<span class="var">size</span>          <span class="com"># from a variable</span>
+  <span class="var">tags</span>          = { <span class="var">Name</span> = <span class="str">"web-server"</span> }
+}
+
+<span class="kw">variable</span> <span class="str">"size"</span> { <span class="var">default</span> = <span class="str">"t3.micro"</span> }
+
+<span class="kw">output</span> <span class="str">"public_ip"</span> {
+  <span class="var">value</span> = <span class="var">aws_instance</span>.<span class="var">web</span>.<span class="var">public_ip</span>   <span class="com"># print after apply</span>
+}</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Core Workflow</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Command</th><th>What It Does</th></tr>
+                    <tr><td><code>terraform init</code></td><td>Download providers &amp; set up the working dir (run first)</td></tr>
+                    <tr><td><code>terraform fmt</code></td><td>Auto-format your <code>.tf</code> files</td></tr>
+                    <tr><td><code>terraform validate</code></td><td>Check the config for syntax/type errors</td></tr>
+                    <tr><td><code>terraform plan</code></td><td><strong class="c-cyan">Preview</strong> what will change — nothing is applied</td></tr>
+                    <tr><td><code>terraform apply</code></td><td>Make reality match the config (prompts to confirm)</td></tr>
+                    <tr><td><code>terraform destroy</code></td><td>Tear down everything this config manages</td></tr>
+                    <tr><td><code>terraform state list</code></td><td>List the resources Terraform is tracking</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The golden habit: <strong>always read the <code>plan</code> before you
+                    <code>apply</code></strong>. It shows adds (<span class="c-green">+</span>),
+                    changes (<span class="c-amber">~</span>), and destroys
+                    (<span class="c-red">-</span>) so nothing surprises you.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Key Ideas</div>
+                <div class="concept-title">State, Plan &amp; Idempotence</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Why It Matters</th></tr>
+                    <tr><td class="c-cyan">State file</td><td>Terraform records what it created in <code>terraform.tfstate</code>. It's the source of truth for "what exists" — store it remotely (S3, Terraform Cloud) so a team shares one, and lock it to prevent concurrent applies.</td></tr>
+                    <tr><td class="c-cyan">Desired vs actual</td><td><code>plan</code> diffs your config against state and the real world, then computes the minimal change set.</td></tr>
+                    <tr><td class="c-cyan">Idempotence</td><td>Running <code>apply</code> twice with no config change does nothing the second time — the end state is what's declared, not a pile of commands.</td></tr>
+                    <tr><td class="c-cyan">Modules</td><td>Reusable bundles of resources with inputs/outputs — package a "VPC" or "web app" once, use it everywhere.</td></tr>
+                    <tr><td class="c-red">Never edit state by hand</td><td>Use <code>terraform state</code> subcommands; hand-editing the JSON corrupts tracking.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📬</span>
+              <span class="topic-name">Message Queues &amp; Event-Driven Architecture</span>
+              <span class="topic-badge">Architecture</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Decouple With a Buffer in the Middle</div>
+                <div class="concept-desc">
+                  When service A calls service B directly, A waits for B and breaks if B is
+                  down. A <strong class="c-cyan">message queue</strong> puts a durable buffer
+                  between them: A drops a message and moves on; B picks it up when ready.
+                  This <strong class="c-amber">decouples</strong> producers from consumers —
+                  they can scale, fail, and deploy independently. It's the backbone of
+                  event-driven systems, where components react to things that
+                  <em>happened</em> rather than calling each other in lockstep.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Queue vs Pub/Sub &amp; Key Terms</div>
+                <div class="dw">
+                  <div class="dt">▸ TWO MESSAGING SHAPES</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Pattern</th><th>Delivery</th><th>Example</th></tr>
+                    <tr><td class="c-green">Queue (point-to-point)</td><td>Each message goes to <em>one</em> consumer in a pool — spreads work</td><td>Task/job processing (RabbitMQ, SQS)</td></tr>
+                    <tr><td class="c-green">Pub/Sub (topic)</td><td>Each message goes to <em>every</em> subscriber — fan-out</td><td>Event broadcasting (Kafka, SNS, Redis)</td></tr>
+                  </table>
+                  <div class="dt">▸ VOCABULARY</div>
+                  <table class="ref-table">
+                    <tr><th>Term</th><th>Meaning</th></tr>
+                    <tr><td class="c-cyan">Producer</td><td>Publishes messages</td></tr>
+                    <tr><td class="c-cyan">Consumer</td><td>Reads and processes them</td></tr>
+                    <tr><td class="c-cyan">Broker</td><td>The queue/log system in the middle (Kafka, RabbitMQ)</td></tr>
+                    <tr><td class="c-cyan">Ack</td><td>Consumer confirms "done" so the broker can drop the message</td></tr>
+                    <tr><td class="c-cyan">Dead-letter queue</td><td>Where messages go after repeated processing failures</td></tr>
+                    <tr><td class="c-cyan">Backpressure</td><td>The queue absorbs bursts so a slow consumer isn't overwhelmed</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Delivery</div>
+                <div class="concept-title">Guarantees &amp; Idempotence</div>
+                <div class="concept-desc">
+                  Distributed messaging can't cheaply promise "exactly once," so you pick a
+                  guarantee and design around it:
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Guarantee</th><th>Meaning</th></tr>
+                    <tr><td class="c-red">At-most-once</td><td>Fast, but a message can be lost. Fine for disposable telemetry.</td></tr>
+                    <tr><td class="c-green">At-least-once</td><td>Never lost, but may be <em>redelivered</em>. The common default.</td></tr>
+                    <tr><td class="c-amber">Exactly-once</td><td>Ideal but expensive/limited — usually emulated via dedup.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Because at-least-once means duplicates happen, make consumers
+                    <strong class="c-cyan">idempotent</strong> — processing the same message
+                    twice has the same effect as once (e.g. key writes on a unique message
+                    ID). This is the single most important habit in event-driven systems.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Trade-offs</div>
+                <div class="concept-title">What You Gain and Pay</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Detail</th></tr>
+                    <tr><td class="c-green">Gain: resilience</td><td>A consumer can crash or deploy; messages wait in the queue.</td></tr>
+                    <tr><td class="c-green">Gain: elastic scale</td><td>Add consumers to drain a backlog faster; smooth out traffic spikes.</td></tr>
+                    <tr><td class="c-green">Gain: decoupling</td><td>Producers don't know or care who consumes — add new consumers freely.</td></tr>
+                    <tr><td class="c-red">Cost: complexity</td><td>Another system to run/monitor; harder to trace a request end-to-end.</td></tr>
+                    <tr><td class="c-red">Cost: eventual consistency</td><td>Work happens asynchronously — the result isn't ready the instant you publish.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->
