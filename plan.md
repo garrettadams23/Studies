@@ -291,7 +291,7 @@ already supports (it renders any entry in `data/domains.json` that has a matchin
 `data/{id}.html`).
 
 **Wave 15 — domain scaffolding (prep, ~30 min):**
-- [ ] Add three entries to `data/domains.json`:
+- [x] Add three entries to `data/domains.json`:
   - `redteam` 🔴 "Red Team & Offensive Tooling" — cert tags PT+ / OSCP
   - `blueteam` 🔵 "Blue Team & Defensive Tooling" — cert tags CySA+ / GCIH
   - `cloud`   ☁️ "Cloud Platforms — AWS · GCP · Azure" — cert tags AWS / GCP
@@ -313,13 +313,13 @@ already supports (it renders any entry in `data/domains.json` that has a matchin
 Tool reference cards, grouped by kill-chain stage. ~9 waves, ~50 cards.
 
 **Wave R1 — Recon & OSINT tooling**
-- [ ] Nmap — Deep Dive (scan types, NSE scripts, timing, output formats)
-- [ ] Masscan & RustScan — Internet-scale port discovery
-- [ ] theHarvester & Recon-ng — email/subdomain/host OSINT frameworks
-- [ ] Amass & Subfinder — subdomain enumeration at scale
-- [ ] Shodan & Censys — the search engines for exposed devices (dorks & filters)
-- [ ] Maltego & SpiderFoot — link-analysis / automated OSINT
-- [ ] Google Dorking & GHDB — advanced operators for exposed data
+- [x] Nmap — Deep Dive (scan types, NSE scripts, timing, output formats)
+- [x] Masscan & RustScan — Internet-scale port discovery
+- [x] theHarvester & Recon-ng — email/subdomain/host OSINT frameworks
+- [x] Amass & Subfinder — subdomain enumeration at scale
+- [x] Shodan & Censys — the search engines for exposed devices (dorks & filters)
+- [x] Maltego & SpiderFoot — link-analysis / automated OSINT
+- [x] Google Dorking & GHDB — advanced operators for exposed data
 
 **Wave R2 — Web app attack tooling**
 - [ ] Burp Suite — Proxy, Repeater, Intruder, Scanner workflow
