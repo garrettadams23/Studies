@@ -4791,6 +4791,88 @@ lsof +L1 2&gt;/dev/null | grep deleted
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🛂</span>
+              <span class="topic-name">SELinux &amp; AppArmor — Mandatory Access Control</span>
+              <span class="topic-badge">Hardening</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Second Lock Even Root Can't Pick</div>
+                <div class="concept-desc">
+                  Normal Linux permissions are <strong class="c-amber">discretionary</strong>
+                  (DAC): the file's owner decides who gets access, and root can do anything.
+                  <strong class="c-cyan">Mandatory Access Control</strong> (MAC) adds a second
+                  layer the kernel enforces from a central policy — <em>even against root</em>.
+                  So if a web server is compromised, MAC can still stop it from reading
+                  <code>/etc/shadow</code> or opening a network port it was never meant to.
+                  It confines each program to exactly what it legitimately needs.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Comparison</div>
+                <div class="concept-title">SELinux vs AppArmor</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>SELinux</th><th>AppArmor</th></tr>
+                    <tr><td>Confines by</td><td>Security <em>labels</em> on every file/process</td><td>File <em>paths</em> in a profile</td></tr>
+                    <tr><td>Default on</td><td>RHEL, Fedora, CentOS</td><td>Ubuntu, Debian, SUSE</td></tr>
+                    <tr><td>Power</td><td class="c-green">Very fine-grained</td><td class="c-amber">Simpler, path-based</td></tr>
+                    <tr><td>Learning curve</td><td class="c-red">Steep</td><td class="c-green">Gentle</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Both solve the same problem — least privilege enforced by the kernel —
+                    just with different models. You typically use whichever ships with your
+                    distro rather than swapping.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Commands</div>
+                <div class="concept-title">SELinux — Modes &amp; Troubleshooting</div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">getenforce</span>                  <span class="com"># Enforcing | Permissive | Disabled</span>
+<span class="fn">sudo</span> setenforce <span class="num">0</span>            <span class="com"># temporarily → Permissive (logs, doesn't block)</span>
+<span class="fn">ls</span> -Z /var/www/html         <span class="com"># -Z shows the security context (label)</span>
+<span class="fn">ps</span> -eZ | grep httpd         <span class="com"># process labels</span>
+
+<span class="com"># The #1 gotcha: wrong file label. Restore the default context:</span>
+<span class="fn">sudo</span> restorecon -Rv /var/www/html
+
+<span class="com"># See WHY something was denied (AVC denials):</span>
+<span class="fn">sudo</span> ausearch -m avc -ts recent
+<span class="fn">sudo</span> sealert -a /var/log/audit/audit.log   <span class="com"># human-readable advice</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Permissive</strong> is your friend: switch to it,
+                    reproduce the problem, read the denials, fix the policy/labels — then go
+                    back to <strong class="c-green">Enforcing</strong>. Don't just disable it.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Commands</div>
+                <div class="concept-title">AppArmor — Profiles &amp; Complain Mode</div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">sudo</span> aa-status                <span class="com"># which profiles are loaded &amp; enforcing</span>
+<span class="fn">sudo</span> aa-complain /etc/apparmor.d/usr.sbin.nginx  <span class="com"># log-only mode</span>
+<span class="fn">sudo</span> aa-enforce /etc/apparmor.d/usr.sbin.nginx  <span class="com"># back to blocking</span>
+<span class="fn">sudo</span> aa-logprof             <span class="com"># interactively build a profile from logs</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    AppArmor's <strong>complain mode</strong> is the analog of SELinux
+                    permissive — it logs what a profile <em>would</em> block so you can
+                    tune it before enforcing.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->
 <!-- /domain-body linux -->

@@ -2807,6 +2807,166 @@ Why #5: Why isn't that part of the standard testing process?
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚡</span>
+              <span class="topic-name">Caching Strategies — From App to CDN</span>
+              <span class="topic-badge">Performance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Store the Answer, Skip the Work</div>
+                <div class="concept-desc">
+                  A cache keeps a copy of expensive-to-compute or slow-to-fetch data
+                  somewhere fast, so repeated requests don't redo the work. Done right, it's
+                  the single biggest performance lever you have. The catch is the famous one:
+                  <em>"There are only two hard things in computer science — cache invalidation
+                  and naming things."</em> A stale cache serves wrong data; the art is
+                  knowing <strong>when to trust the copy and when to refresh it</strong>.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Where Caches Live (the Layers)</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Layer</th><th>Example</th><th>Caches</th></tr>
+                    <tr><td class="c-cyan">Browser</td><td>HTTP cache</td><td>Static assets on the user's device</td></tr>
+                    <tr><td class="c-cyan">CDN / edge</td><td>Cloudflare, CloudFront</td><td>Content served near the user, globally</td></tr>
+                    <tr><td class="c-cyan">App / in-memory</td><td>Redis, Memcached</td><td>Query results, sessions, computed values</td></tr>
+                    <tr><td class="c-cyan">Database</td><td>Query &amp; buffer cache</td><td>Hot pages &amp; plans in RAM</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The closer to the user a cache sits, the faster and cheaper the hit — but
+                    the harder it is to invalidate. Each layer is a trade of speed vs freshness.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Patterns</div>
+                <div class="concept-title">Read &amp; Write Strategies</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pattern</th><th>How It Works</th></tr>
+                    <tr><td class="c-green">Cache-aside (lazy)</td><td>App checks cache; on a miss, reads the DB and populates the cache. Most common.</td></tr>
+                    <tr><td class="c-green">Read-through</td><td>The cache itself loads from the DB on a miss — app only talks to the cache.</td></tr>
+                    <tr><td class="c-green">Write-through</td><td>Writes go to cache <em>and</em> DB together — always fresh, slightly slower writes.</td></tr>
+                    <tr><td class="c-amber">Write-back</td><td>Write to cache now, flush to DB later — fast, but risks loss on crash.</td></tr>
+                  </table>
+                  <div class="dt" style="margin-top:12px">▸ CACHE-ASIDE IN CODE</div>
+<pre class="code-block"><span class="kw">function</span> <span class="fn">getUser</span>(<span class="var">id</span>) {
+  <span class="kw">let</span> <span class="var">u</span> = <span class="var">cache</span>.<span class="fn">get</span>(<span class="str">`user:</span>${<span class="var">id</span>}<span class="str">`</span>);
+  <span class="kw">if</span> (<span class="var">u</span>) <span class="kw">return</span> <span class="var">u</span>;                 <span class="com">// hit</span>
+  <span class="var">u</span> = <span class="var">db</span>.<span class="fn">query</span>(<span class="str">"SELECT ..."</span>, <span class="var">id</span>);  <span class="com">// miss → load</span>
+  <span class="var">cache</span>.<span class="fn">set</span>(<span class="str">`user:</span>${<span class="var">id</span>}<span class="str">`</span>, <span class="var">u</span>, { <span class="var">ttl</span>: <span class="num">300</span> }); <span class="com">// store 5 min</span>
+  <span class="kw">return</span> <span class="var">u</span>;
+}</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Invalidation</div>
+                <div class="concept-title">Keeping Copies Honest</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>What It Does</th></tr>
+                    <tr><td class="c-cyan">TTL (expiry)</td><td>Data auto-expires after N seconds. Simple; tolerates brief staleness.</td></tr>
+                    <tr><td class="c-cyan">Explicit purge</td><td>Delete the key when the source changes. Precise; needs write-path hooks.</td></tr>
+                    <tr><td class="c-cyan">Versioned keys</td><td>Bake a version/hash into the key (<code>user:42:v3</code>); old keys just age out.</td></tr>
+                    <tr><td class="c-cyan">Cache-Control headers</td><td>For HTTP/CDN: <code>max-age</code>, <code>no-store</code>, <code>ETag</code> for revalidation.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Watch for the <strong class="c-red">thundering herd / stampede</strong>: when
+                    a hot key expires, thousands of requests miss at once and hammer the DB.
+                    Mitigate with a short lock, request coalescing, or staggered TTLs.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐒</span>
+              <span class="topic-name">Chaos Engineering — Breaking Things on Purpose</span>
+              <span class="topic-badge">Reliability</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Find the Weakness Before It Finds You</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Chaos engineering</strong> is the discipline of
+                  deliberately injecting failure into a system — killing servers, adding
+                  network latency, exhausting disk — to discover how it <em>actually</em>
+                  behaves under stress, rather than how you hope it does. The insight:
+                  distributed systems fail in ways no one predicted, so you'd rather trigger
+                  those failures in a controlled experiment (business hours, watching closely)
+                  than at 3 a.m. during a real outage. Netflix pioneered it with
+                  <strong class="c-amber">Chaos Monkey</strong>, which randomly kills
+                  production instances to force teams to build resilience in.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Method</div>
+                <div class="concept-title">Running an Experiment</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>What You Do</th></tr>
+                    <tr><td class="c-cyan">1. Steady state</td><td>Define a measurable "healthy" metric (e.g. checkout success rate &gt; 99%).</td></tr>
+                    <tr><td class="c-cyan">2. Hypothesis</td><td>"If we kill one payment node, checkout success stays above 99%."</td></tr>
+                    <tr><td class="c-cyan">3. Blast radius</td><td>Start tiny — one instance, small % of traffic — to limit harm.</td></tr>
+                    <tr><td class="c-cyan">4. Inject &amp; observe</td><td>Introduce the failure; watch the metric and your alerts.</td></tr>
+                    <tr><td class="c-cyan">5. Learn &amp; fix</td><td>If the hypothesis breaks, you found a real weakness — fix it, then re-run.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Always have an <strong class="c-red">abort switch</strong> to stop the
+                    experiment instantly, and never run one you're confident will cause a
+                    major outage — the goal is learning, not self-inflicted downtime.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Common Failures to Inject</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Failure</th><th>Tests Whether…</th></tr>
+                    <tr><td class="c-green">Kill an instance</td><td>Load balancing &amp; auto-healing actually replace it</td></tr>
+                    <tr><td class="c-green">Add network latency</td><td>Timeouts &amp; retries are tuned; slow ≠ down</td></tr>
+                    <tr><td class="c-green">Drop a dependency</td><td>Circuit breakers &amp; fallbacks kick in (graceful degradation)</td></tr>
+                    <tr><td class="c-green">Fill the disk / CPU</td><td>Resource limits &amp; alerts fire before a crash</td></tr>
+                    <tr><td class="c-green">Zone/region outage</td><td>Failover to another region works end-to-end</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Tooling: <strong>Chaos Monkey</strong> / Simian Army, <strong>Gremlin</strong>,
+                    <strong>LitmusChaos</strong> and <strong>Chaos Mesh</strong> (Kubernetes).
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Prerequisites</div>
+                <div class="concept-title">Don't Start Here</div>
+                <div class="concept-desc">
+                  Chaos engineering pays off only once you already have solid
+                  <strong>monitoring and alerting</strong> (or you won't see what breaks) and
+                  the basics of resilience — retries, timeouts, health checks, redundancy.
+                  Injecting failure into a system you can't observe just causes an outage with
+                  no lesson. It's an <em>advanced</em> reliability practice that builds on
+                  observability and SRE fundamentals, not a starting point.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->
