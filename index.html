@@ -43283,7 +43283,7 @@ from console → CLI → IaC as you go.
 <span class="com"># JMESPath --query trims the noise; --output table for humans</span>
 <span class="fn">aws</span> ec2 describe-instances \
   --query <span class="str">'Reservations[].Instances[].[InstanceId,State.Name]'</span> \
-  --output table</span></pre>
+  --output table</pre>
 <div class="concept-desc" style="margin-top:8px">
 <strong class="c-cyan">CloudShell</strong> is a browser terminal with the CLI
 pre-authenticated as your console identity — nothing to install. Prefer
@@ -43790,6 +43790,188 @@ drive requirements, estimate, sketch, then go deep where it matters.
 The senior signal is <strong class="c-green">talking trade-offs out loud</strong>
 and tying decisions back to the requirements — not memorizing one "correct"
 architecture.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🏗️</span>
+<span class="topic-name">Monolith vs Microservices vs Modular Monolith</span>
+<span class="topic-badge">Architecture</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Most Consequential Architecture Choice</div>
+<div class="concept-desc">
+A <strong class="c-cyan">monolith</strong> is one deployable unit — simple to
+build, test, and deploy, but hard to scale teams and selectively scale parts.
+<strong class="c-amber">Microservices</strong> split the system into independently
+deployable services — great for large orgs and independent scaling, but you trade
+code complexity for <em>operational</em> complexity (networking, data consistency,
+observability). The <strong class="c-green">modular monolith</strong> is the
+underrated middle: one deployable, but with strict internal module boundaries — so
+you get simplicity now and can extract services later if you actually need to.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>Monolith</th><th>Microservices</th></tr>
+<tr><td>Deploy</td><td class="c-green">One unit</td><td>Many, independent</td></tr>
+<tr><td>Scale</td><td>Whole app</td><td class="c-green">Per service</td></tr>
+<tr><td>Team fit</td><td>Small teams</td><td class="c-green">Many teams</td></tr>
+<tr><td>Data</td><td class="c-green">One DB, easy joins/txns</td><td class="c-red">DB-per-service, distributed txns</td></tr>
+<tr><td>Failure</td><td>All-or-nothing</td><td>Isolated (if done right)</td></tr>
+<tr><td>Ops cost</td><td class="c-green">Low</td><td class="c-red">High</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Default advice:</strong> start with a (modular) monolith.
+Microservices solve <em>organizational</em> scaling problems you probably don't
+have yet — adopting them too early buys distributed-systems pain for no benefit.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📡</span>
+<span class="topic-name">Event-Driven Architecture</span>
+<span class="topic-badge">Architecture</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">React to Facts, Don't Call in Lockstep</div>
+<div class="concept-desc">
+Instead of service A calling B calling C, components emit
+<strong class="c-cyan">events</strong> ("OrderPlaced") to a broker, and interested
+services react. This decouples producers from consumers: add a new consumer (email,
+analytics, fraud) without touching the producer. It's the architecture behind
+responsive, extensible systems — at the cost of harder debugging and eventual
+consistency.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Style</th><th>How</th><th>Trade-off</th></tr>
+<tr><td class="c-cyan">Choreography</td><td>Each service reacts to events independently</td><td>Loose coupling; flow is emergent/hard to trace</td></tr>
+<tr><td class="c-cyan">Orchestration</td><td>A coordinator directs the steps</td><td>Clear flow; the orchestrator is a coupling point</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Watch for: event ordering, duplicate delivery (make consumers idempotent), and
+schema evolution (version your events). Pairs with the Message Queues topic and
+CQRS/Event Sourcing below.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⬡</span>
+<span class="topic-name">Clean / Hexagonal Architecture</span>
+<span class="topic-badge">Architecture</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Keep Business Logic Independent of Frameworks</div>
+<div class="concept-desc">
+Clean Architecture (and its cousin Hexagonal / Ports &amp; Adapters) organizes code
+so your <strong class="c-cyan">business logic sits at the center</strong>, knowing
+nothing about the database, web framework, or UI. Those outer concerns are
+<strong>adapters</strong> that plug into <strong>ports</strong> (interfaces) the
+core defines. Swap Postgres for Mongo, REST for gRPC, without touching the core.
+</div>
+<div class="dw">
+<div class="concept-desc">
+The key rule is the <strong class="c-amber">dependency rule</strong>:
+dependencies point <em>inward</em>. The domain never imports the framework;
+the framework imports the domain. Concretely: the core defines a
+<code>UserRepository</code> interface; a <code>PostgresUserRepository</code> in
+the outer layer implements it. This makes the core trivially unit-testable
+(mock the ports) and resistant to framework churn — the business rules outlive
+the tech stack.
+</div>
+<table class="ref-table" style="margin-top:10px">
+<tr><th>Layer</th><th>Contains</th></tr>
+<tr><td class="c-cyan">Entities / Domain</td><td>Core business rules (no dependencies)</td></tr>
+<tr><td class="c-cyan">Use cases</td><td>Application-specific orchestration</td></tr>
+<tr><td class="c-cyan">Adapters</td><td>DB, web, external APIs — the replaceable edge</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">✂️</span>
+<span class="topic-name">CQRS &amp; Event Sourcing</span>
+<span class="topic-badge">Architecture</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Split Reads from Writes; Store Events, Not State</div>
+<div class="concept-desc">
+<strong class="c-cyan">CQRS</strong> (Command Query Responsibility Segregation)
+uses separate models for writing (commands) and reading (queries) — so each can be
+optimized and scaled independently (e.g. a normalized write DB + denormalized read
+replicas). <strong class="c-amber">Event Sourcing</strong> goes further: instead of
+storing current state, store the full <em>sequence of events</em> that produced it.
+Current state is a replay of the log.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Pattern</th><th>Gain</th><th>Cost</th></tr>
+<tr><td class="c-cyan">CQRS</td><td>Independent read/write scaling &amp; models</td><td>Two models to keep in sync (eventual consistency)</td></tr>
+<tr><td class="c-cyan">Event Sourcing</td><td>Full audit trail; time-travel; rebuild any view</td><td>Complexity; schema/versioning; snapshots for speed</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Powerful together, but <strong class="c-red">not free</strong> — they add real
+complexity. Use them where audit, temporal queries, or extreme read/write
+asymmetry genuinely demand it (banking, ledgers), not by default.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">1️⃣2️⃣</span>
+<span class="topic-name">The Twelve-Factor App</span>
+<span class="topic-badge">Architecture</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Checklist for Cloud-Native Services</div>
+<div class="concept-desc">
+The Twelve-Factor methodology is a battle-tested set of rules for building services
+that deploy cleanly to modern platforms and scale horizontally. You don't need to
+memorize all twelve — internalize the handful that bite hardest.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Factor</th><th>Rule</th></tr>
+<tr><td class="c-cyan">Config</td><td>Store config in the environment, never in code</td></tr>
+<tr><td class="c-cyan">Backing services</td><td>Treat DBs/queues as attachable resources (via URL)</td></tr>
+<tr><td class="c-cyan">Processes</td><td>Stateless &amp; share-nothing — state goes to a backing service</td></tr>
+<tr><td class="c-cyan">Port binding</td><td>Export services via a port; self-contained</td></tr>
+<tr><td class="c-cyan">Disposability</td><td>Fast startup / graceful shutdown (scale &amp; recover fast)</td></tr>
+<tr><td class="c-cyan">Dev/prod parity</td><td>Keep environments as similar as possible</td></tr>
+<tr><td class="c-cyan">Logs</td><td>Treat logs as event streams to stdout — the platform routes them</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Follow these and your app runs the same on a laptop, in a container, or across
+100 nodes — the foundation for autoscaling, twelve-factor is why containers and
+PaaS "just work."
 </div>
 </div>
 </div>

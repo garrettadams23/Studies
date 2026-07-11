@@ -607,11 +607,11 @@ Blue-team detection note.
 - [x] The System Design Interview — a framework (requirements → estimate → API → data → scale → trade-offs)
 
 **Wave E2 — Architecture Styles**
-- [ ] Monolith vs Microservices vs Modular Monolith — honest trade-offs
-- [ ] Event-Driven Architecture — deep (choreography vs orchestration; ties to Message Queues)
-- [ ] Clean / Hexagonal / Ports & Adapters — keeping business logic independent
-- [ ] CQRS & Event Sourcing — read/write split, the append-only log
-- [ ] The Twelve-Factor App — the checklist for cloud-native services
+- [x] Monolith vs Microservices vs Modular Monolith — honest trade-offs
+- [x] Event-Driven Architecture — deep (choreography vs orchestration; ties to Message Queues)
+- [x] Clean / Hexagonal / Ports & Adapters — keeping business logic independent
+- [x] CQRS & Event Sourcing — read/write split, the append-only log
+- [x] The Twelve-Factor App — the checklist for cloud-native services
 - [ ] Cloud-Native & Serverless architecture patterns
 
 **Wave E3 — Domain Modeling & Design**
