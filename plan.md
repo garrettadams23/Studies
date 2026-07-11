@@ -691,12 +691,12 @@ Blue-team detection note.
 3 waves, ~16 cards. Replaces the single shallow `VS Code` card.
 
 **Wave G1 — VS Code Mastery**
-- [ ] VS Code Setup & Settings — settings.json, Settings Sync, Profiles per stack
-- [ ] Command Palette & Keybindings — the shortcuts that actually save time
-- [ ] Editing Superpowers — multi-cursor, column select, refactor, snippets, regex find/replace
-- [ ] Debugging — launch.json, breakpoints (conditional/logpoints), watch, call stack
-- [ ] Integrated Terminal, Tasks & the Source Control panel
-- [ ] Essential Extensions — per-language + productivity (and how to stay lean)
+- [x] VS Code Setup & Settings — settings.json, Settings Sync, Profiles per stack
+- [x] Command Palette & Keybindings — the shortcuts that actually save time
+- [x] Editing Superpowers — multi-cursor, column select, refactor, snippets, regex find/replace
+- [x] Debugging — launch.json, breakpoints (conditional/logpoints), watch, call stack
+- [x] Integrated Terminal, Tasks & the Source Control panel
+- [x] Essential Extensions — per-language + productivity (and how to stay lean)
 
 **Wave G2 — Remote & Containerized Dev**
 - [ ] Remote Development — Remote-SSH, WSL, and how the client/server split works
