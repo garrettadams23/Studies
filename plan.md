@@ -650,11 +650,11 @@ Blue-team detection note.
 5 waves, ~25 cards. Deepens the tools already present as concept-topics.
 
 **Wave F1 — DevOps Foundations & Culture**
-- [ ] What DevOps Actually Is — CALMS, breaking the dev/ops wall, you-build-it-you-run-it
-- [ ] The Three Ways — Flow, Feedback, Continual Learning (The Phoenix/DevOps Handbook)
-- [ ] DORA Metrics — deploy frequency, lead time, MTTR, change-failure rate
-- [ ] Value Stream Mapping — finding the bottleneck in delivery
-- [ ] Platform Engineering & the IDP — golden paths, self-service, the internal developer platform
+- [x] What DevOps Actually Is — CALMS, breaking the dev/ops wall, you-build-it-you-run-it
+- [x] The Three Ways — Flow, Feedback, Continual Learning (The Phoenix/DevOps Handbook)
+- [x] DORA Metrics — deploy frequency, lead time, MTTR, change-failure rate
+- [x] Value Stream Mapping — finding the bottleneck in delivery
+- [x] Platform Engineering & the IDP — golden paths, self-service, the internal developer platform
 
 **Wave F2 — CI/CD Pipelines Deep**
 - [ ] Pipeline Design — stages, quality gates, artifacts, promotion between envs
