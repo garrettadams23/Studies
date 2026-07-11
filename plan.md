@@ -600,11 +600,11 @@ Blue-team detection note.
 6 waves, ~32 cards. Aimed at the architect / senior+ / staff-engineer path.
 
 **Wave E1 — System Design Fundamentals**
-- [ ] Scalability 101 — vertical vs horizontal, stateless design, shared-nothing
-- [ ] Load Balancing & Sharding — strategies, consistent hashing, hot keys
-- [ ] Back-of-the-Envelope — latency numbers every engineer should know, capacity math
-- [ ] Designing for Failure — redundancy, graceful degradation, bulkheads, blast radius
-- [ ] The System Design Interview — a framework (requirements → estimate → API → data → scale → trade-offs)
+- [x] Scalability 101 — vertical vs horizontal, stateless design, shared-nothing
+- [x] Load Balancing & Sharding — strategies, consistent hashing, hot keys
+- [x] Back-of-the-Envelope — latency numbers every engineer should know, capacity math
+- [x] Designing for Failure — redundancy, graceful degradation, bulkheads, blast radius
+- [x] The System Design Interview — a framework (requirements → estimate → API → data → scale → trade-offs)
 
 **Wave E2 — Architecture Styles**
 - [ ] Monolith vs Microservices vs Modular Monolith — honest trade-offs

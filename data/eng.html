@@ -1,0 +1,195 @@
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📈</span>
+              <span class="topic-name">Scalability 101 — Vertical vs Horizontal</span>
+              <span class="topic-badge">System Design</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Two Ways to Handle More Load</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Vertical scaling</strong> (scale up) means a bigger
+                  machine — more CPU/RAM. Simple, but there's a ceiling and a single point of
+                  failure. <strong class="c-amber">Horizontal scaling</strong> (scale out) means
+                  <em>more</em> machines behind a load balancer — effectively unlimited and
+                  fault-tolerant, but only if your app is designed for it. The design requirement
+                  is <strong class="c-green">statelessness</strong>: any server can handle any
+                  request, so session/state lives in a shared store (Redis, DB), not in one
+                  server's memory.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Vertical (up)</th><th>Horizontal (out)</th></tr>
+                    <tr><td>How</td><td>Bigger box</td><td>More boxes</td></tr>
+                    <tr><td>Ceiling</td><td class="c-red">Hardware limit</td><td class="c-green">~Unlimited</td></tr>
+                    <tr><td>Failure</td><td class="c-red">Single point</td><td class="c-green">Redundant</td></tr>
+                    <tr><td>Complexity</td><td class="c-green">Low</td><td class="c-amber">Needs LB + stateless design</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Real systems do both: scale up the database (hard to shard) and scale out the
+                    stateless app tier. <strong>Shared-nothing</strong> architecture — nodes share
+                    no memory/disk — is what makes horizontal scaling clean.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚖️</span>
+              <span class="topic-name">Load Balancing &amp; Sharding</span>
+              <span class="topic-badge">System Design</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Spreading Requests, Then Spreading Data</div>
+                <div class="concept-desc">
+                  A <strong class="c-cyan">load balancer</strong> spreads incoming requests across
+                  servers; <strong class="c-amber">sharding</strong> spreads the <em>data</em>
+                  across databases when one can't hold or serve it all. Both are "divide the work,"
+                  at different layers.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ LOAD-BALANCING ALGORITHMS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Algorithm</th><th>Sends request to…</th></tr>
+                    <tr><td>Round robin</td><td>Each server in turn</td></tr>
+                    <tr><td>Least connections</td><td>The least-busy server</td></tr>
+                    <tr><td>Weighted</td><td>Bigger servers get more</td></tr>
+                    <tr><td>IP hash / sticky</td><td>Same client → same server</td></tr>
+                  </table>
+                  <div class="dt">▸ SHARDING STRATEGIES</div>
+                  <table class="ref-table">
+                    <tr><th>Strategy</th><th>Split by</th><th>Watch out</th></tr>
+                    <tr><td>Range</td><td>Key ranges (A–M, N–Z)</td><td>Hot ranges</td></tr>
+                    <tr><td>Hash</td><td>hash(key) % N</td><td>Resharding pain</td></tr>
+                    <tr><td>Consistent hashing</td><td>Ring of hashes</td><td>Adding nodes moves few keys — the standard</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The enemy is the <strong class="c-red">hot shard</strong> — one key or range
+                    getting disproportionate traffic (a celebrity user). Choose a shard key with
+                    even distribution and no cross-shard joins on the hot path.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧮</span>
+              <span class="topic-name">Back-of-the-Envelope Estimation</span>
+              <span class="topic-badge">System Design</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Numbers Every Engineer Should Know</div>
+                <div class="concept-desc">
+                  Before designing, sanity-check scale with rough math. Knowing that memory is
+                  ~1000× faster than disk, and a cross-region round trip is ~150 ms, tells you
+                  <em>where</em> the bottleneck will be without building anything.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ LATENCY NUMBERS (orders of magnitude)</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Operation</th><th>~Time</th></tr>
+                    <tr><td>L1 cache reference</td><td>~1 ns</td></tr>
+                    <tr><td>Main memory reference</td><td>~100 ns</td></tr>
+                    <tr><td>SSD random read</td><td>~100 µs</td></tr>
+                    <tr><td>Network round trip (same DC)</td><td>~0.5 ms</td></tr>
+                    <tr><td>Disk (HDD) seek</td><td>~10 ms</td></tr>
+                    <tr><td>Round trip across continents</td><td>~150 ms</td></tr>
+                  </table>
+                  <div class="dt">▸ CAPACITY MATH (worked)</div>
+                  <div class="concept-desc">
+                    <strong>1M daily active users, 10 requests/user/day</strong> = 10M req/day ÷
+                    86,400 s ≈ <strong class="c-cyan">~115 req/s average</strong>. Peak is
+                    typically 2–3× average → design for ~300 req/s. Storage: 10M writes/day ×
+                    1 KB × 365 × 5 yr ≈ <strong class="c-cyan">~18 TB</strong>. These two numbers
+                    (QPS + storage growth) drive most of the architecture.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🛟</span>
+              <span class="topic-name">Designing for Failure</span>
+              <span class="topic-badge">System Design</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Everything Fails — Plan for It</div>
+                <div class="concept-desc">
+                  At scale, hardware dies, networks partition, and dependencies time out
+                  <em>constantly</em>. Robust systems assume failure and stay up anyway. The core
+                  moves: eliminate single points of failure, contain damage, and degrade
+                  gracefully instead of collapsing.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>What It Buys</th></tr>
+                    <tr><td class="c-green">Redundancy (N+1)</td><td>No single point of failure — replicate across AZs</td></tr>
+                    <tr><td class="c-green">Health checks + failover</td><td>Route away from dead instances automatically</td></tr>
+                    <tr><td class="c-green">Bulkheads</td><td>Isolate resources so one overloaded feature can't sink the rest</td></tr>
+                    <tr><td class="c-green">Graceful degradation</td><td>Serve a cached/limited response instead of an error (show stale prices, hide recommendations)</td></tr>
+                    <tr><td class="c-green">Blast-radius limits</td><td>Cell-based / sharded design so an outage hits 5% of users, not 100%</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Pair with the resilience patterns (circuit breaker, retry-with-backoff,
+                    timeout) at the call level. The mindset: <em>"what happens when this
+                    dependency is down?"</em> should have an answer for every dependency.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧩</span>
+              <span class="topic-name">The System Design Interview — A Framework</span>
+              <span class="topic-badge">Career</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">A Repeatable Structure for an Open-Ended Question</div>
+                <div class="concept-desc">
+                  "Design Twitter" has no single right answer — interviewers assess how you
+                  <em>think</em>. A structure keeps you from freezing and shows senior judgment:
+                  drive requirements, estimate, sketch, then go deep where it matters.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>Do</th></tr>
+                    <tr><td class="c-cyan">1. Clarify</td><td>Nail functional + non-functional requirements. Who uses it? Read/write ratio? Consistency vs availability?</td></tr>
+                    <tr><td class="c-cyan">2. Estimate</td><td>QPS, storage, bandwidth — back-of-envelope (previous card). Sets the scale.</td></tr>
+                    <tr><td class="c-cyan">3. API</td><td>Define the core endpoints/contract — forces concreteness.</td></tr>
+                    <tr><td class="c-cyan">4. Data model</td><td>Entities, access patterns → SQL vs NoSQL choice.</td></tr>
+                    <tr><td class="c-cyan">5. High-level design</td><td>Boxes &amp; arrows: clients → LB → services → DB/cache/queue.</td></tr>
+                    <tr><td class="c-cyan">6. Scale &amp; deepen</td><td>Find bottlenecks; add caching, sharding, replicas, CDN, async queues.</td></tr>
+                    <tr><td class="c-cyan">7. Trade-offs</td><td>Name what you gave up. There is no perfect design — only fit-for-purpose.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The senior signal is <strong class="c-green">talking trade-offs out loud</strong>
+                    and tying decisions back to the requirements — not memorizing one "correct"
+                    architecture.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<!-- /domain-body eng -->
