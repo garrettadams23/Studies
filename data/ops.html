@@ -3569,6 +3569,150 @@ Why #5: Why isn't that part of the standard testing process?
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🤖</span>
+              <span class="topic-name">SOAR — Security Orchestration, Automation &amp; Response</span>
+              <span class="topic-badge">SecOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Automating the SOC's Busywork</div>
+                <div class="concept-desc">
+                  A security team drowns in alerts — thousands a day, most of them the same
+                  repetitive triage: look up an IP's reputation, check if a user clicked the
+                  phishing link, isolate a host. <strong class="c-cyan">SOAR</strong> platforms
+                  automate those workflows with <strong>playbooks</strong>: codified,
+                  if-this-then-that response procedures that run in seconds instead of an
+                  analyst doing 20 manual steps. The goal is to let humans focus on the hard
+                  decisions and let machines handle the rote work.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Three Letters</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Capability</th><th>What It Does</th></tr>
+                    <tr><td class="c-cyan">Orchestration</td><td>Connect all your security tools (SIEM, EDR, firewall, threat intel, ticketing) so they act together via APIs.</td></tr>
+                    <tr><td class="c-cyan">Automation</td><td>Run response steps without a human — enrich an alert, block an IP, disable an account.</td></tr>
+                    <tr><td class="c-cyan">Response</td><td>Manage the incident end to end — case tracking, timelines, and collaboration.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">A Phishing Playbook</div>
+                <div class="dw">
+<pre class="code-block"><span class="com"># Trigger: a user reports a suspicious email</span>
+<span class="num">1.</span> Extract URLs, attachments, sender from the email
+<span class="num">2.</span> Enrich → check URL/hash against threat intel (VirusTotal, etc.)
+<span class="num">3.</span> IF malicious:
+     - Search mail server for other copies → quarantine them
+     - Check who else clicked (proxy/EDR logs)
+     - Reset creds / isolate any host that visited the link
+<span class="num">4.</span> Open a case, attach all evidence, notify the analyst
+<span class="num">5.</span> ELSE: close as false positive with a note</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Steps 1–2 and 5 run fully automatically; the risky containment in step 3
+                    can require a <strong class="c-amber">human approval</strong> gate — a
+                    common "automate enrichment, gate the destructive action" pattern.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">SOAR vs SIEM &amp; What to Watch</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">SIEM finds</td><td>Collects &amp; correlates logs to <em>detect</em> and alert.</td></tr>
+                    <tr><td class="c-cyan">SOAR acts</td><td>Takes those alerts and <em>responds</em> via playbooks. They're complementary — SIEM feeds SOAR.</td></tr>
+                    <tr><td class="c-green">Payoff</td><td>Lower MTTR (mean time to respond), consistent handling, less analyst burnout.</td></tr>
+                    <tr><td class="c-red">Watch out</td><td>Automating a bad decision at machine speed scales the mistake. Start with enrichment, gate containment, and test playbooks carefully.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📈</span>
+              <span class="topic-name">Load &amp; Performance Testing</span>
+              <span class="topic-badge">Reliability</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Find the Breaking Point Before Your Users Do</div>
+                <div class="concept-desc">
+                  A system that's fast for one user can collapse for ten thousand. Performance
+                  testing simulates realistic (and unrealistic) traffic to answer questions you
+                  can't answer by clicking around: How many users can we handle? Where's the
+                  bottleneck — CPU, database, a single service? What happens at 2× expected
+                  peak? You'd much rather learn this in a test than during a product launch or a
+                  viral moment.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Types of Test</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Test</th><th>Question It Answers</th></tr>
+                    <tr><td class="c-cyan">Load</td><td>How does it behave at <em>expected</em> peak traffic?</td></tr>
+                    <tr><td class="c-cyan">Stress</td><td>Where does it break, and how? (Push past capacity.)</td></tr>
+                    <tr><td class="c-cyan">Spike</td><td>Can it survive a sudden traffic surge (a launch, a link going viral)?</td></tr>
+                    <tr><td class="c-cyan">Soak / endurance</td><td>Does it degrade over hours/days? (Catches memory leaks, resource exhaustion.)</td></tr>
+                    <tr><td class="c-cyan">Scalability</td><td>Does adding servers actually increase throughput linearly?</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Metrics</div>
+                <div class="concept-title">Measure Percentiles, Not Averages</div>
+                <div class="concept-desc">
+                  The classic mistake is reporting <em>average</em> latency. Averages hide pain:
+                  if 99% of requests are 50 ms but 1% take 5 seconds, the average looks fine
+                  while your worst-affected users suffer. Report <strong class="c-cyan">percentiles</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Metric</th><th>Meaning</th></tr>
+                    <tr><td class="c-green">Throughput</td><td>Requests/sec the system handles (RPS).</td></tr>
+                    <tr><td class="c-green">Latency p50 / p95 / p99</td><td>The value below which 50/95/99% of requests fall. p99 = your unluckiest 1%.</td></tr>
+                    <tr><td class="c-green">Error rate</td><td>% of failed requests — watch it climb as load rises.</td></tr>
+                    <tr><td class="c-green">Saturation</td><td>How full the resources are (CPU, memory, connections) — the leading indicator of trouble.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Doing It Well</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Guideline</th><th>Why</th></tr>
+                    <tr><td class="c-green">Test like production</td><td>Realistic data volumes and traffic mix — a test on an empty DB lies.</td></tr>
+                    <tr><td class="c-green">Ramp up gradually</td><td>Increase load in steps to see where metrics bend, not just where they snap.</td></tr>
+                    <tr><td class="c-green">Watch the whole stack</td><td>Correlate the test with server metrics/traces to find <em>which</em> component is the bottleneck.</td></tr>
+                    <tr><td class="c-amber">Mind the environment</td><td>A scaled-down staging env gives relative, not absolute, numbers. Note the difference.</td></tr>
+                    <tr><td class="c-cyan">Tools</td><td>k6, JMeter, Gatling, Locust generate the traffic; pair with your observability stack.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->
