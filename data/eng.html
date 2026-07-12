@@ -379,4 +379,184 @@
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🗂️</span>
+              <span class="topic-name">Domain-Driven Design (DDD)</span>
+              <span class="topic-badge">Design</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Model the Business, Not the Database</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">DDD</strong> is an approach to complex software that puts
+                  the <em>business domain</em> at the center. Developers and domain experts build a
+                  shared <strong class="c-amber">ubiquitous language</strong> — the same words in
+                  conversation and in code — and split the system into
+                  <strong class="c-amber">bounded contexts</strong> where each term has one precise
+                  meaning ("account" means something different to Billing vs Auth).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Meaning</th></tr>
+                    <tr><td class="c-cyan">Bounded context</td><td>A boundary where a model &amp; language are consistent (often → a service)</td></tr>
+                    <tr><td class="c-cyan">Ubiquitous language</td><td>Shared vocabulary used identically by experts &amp; code</td></tr>
+                    <tr><td class="c-cyan">Entity</td><td>Object with identity that persists over time (a User)</td></tr>
+                    <tr><td class="c-cyan">Value object</td><td>Defined only by its attributes, immutable (an Address, Money)</td></tr>
+                    <tr><td class="c-cyan">Aggregate</td><td>A cluster of objects with one root that guards invariants</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Bounded contexts are why DDD and microservices pair so well — a well-drawn
+                    context is a natural service boundary. Start with the language; the model
+                    follows.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧱</span>
+              <span class="topic-name">SOLID Principles</span>
+              <span class="topic-badge">Design</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Five Rules for Maintainable OO Code</div>
+                <div class="concept-desc">
+                  SOLID is five principles that keep object-oriented code flexible and testable.
+                  You don't apply them dogmatically — you reach for them when code becomes rigid or
+                  hard to change.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Principle</th><th>Means</th></tr>
+                    <tr><td class="c-cyan">S</td><td>Single Responsibility</td><td>A class has one reason to change</td></tr>
+                    <tr><td class="c-cyan">O</td><td>Open/Closed</td><td>Open to extension, closed to modification</td></tr>
+                    <tr><td class="c-cyan">L</td><td>Liskov Substitution</td><td>Subtypes must be usable as their base type</td></tr>
+                    <tr><td class="c-cyan">I</td><td>Interface Segregation</td><td>Many small interfaces &gt; one fat one</td></tr>
+                    <tr><td class="c-cyan">D</td><td>Dependency Inversion</td><td>Depend on abstractions, not concretions</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The throughline is <strong class="c-green">manage dependencies</strong>: isolate
+                    what changes, program to interfaces, and keep the direction of dependency
+                    pointing at stable abstractions (this is the engine behind Clean Architecture).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔗</span>
+              <span class="topic-name">Coupling &amp; Cohesion</span>
+              <span class="topic-badge">Design</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Two Words That Describe Good Structure</div>
+                <div class="concept-desc">
+                  Almost every design principle reduces to two ideas.
+                  <strong class="c-green">High cohesion</strong>: things that change together live
+                  together (a module does one job well). <strong class="c-green">Low coupling</strong>:
+                  modules depend on each other as little as possible, through narrow interfaces. Aim
+                  for both — you want tight-inside, loose-between.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Property</th><th>Good</th><th>Bad</th></tr>
+                    <tr><td>Cohesion</td><td class="c-green">High — focused module</td><td class="c-red">Low — grab-bag of unrelated code</td></tr>
+                    <tr><td>Coupling</td><td class="c-green">Low — few, clean dependencies</td><td class="c-red">High — change one, break many</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The <strong class="c-cyan">Law of Demeter</strong> ("only talk to your
+                    neighbors" — avoid <code>a.getB().getC().doThing()</code>) is a practical way to
+                    keep coupling low. When a change ripples across many files, that's high coupling
+                    telling you the boundaries are wrong.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📐</span>
+              <span class="topic-name">API-First &amp; Contract-Driven Design</span>
+              <span class="topic-badge">Design</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Design the Interface Before the Implementation</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">API-first</strong> means the API contract (e.g. an OpenAPI
+                  or Protobuf spec) is written and agreed <em>before</em> anyone builds the backend.
+                  Frontend, backend, and consumers all code against the same contract in parallel,
+                  and you can generate clients, mocks, and docs from it. The interface becomes the
+                  source of truth, not an afterthought.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Benefit</th><th>Detail</th></tr>
+                    <tr><td class="c-green">Parallel work</td><td>Teams build against the spec + a mock, not a finished server</td></tr>
+                    <tr><td class="c-green">Codegen</td><td>Clients, server stubs, docs, validation from one spec</td></tr>
+                    <tr><td class="c-green">Consumer-driven contracts</td><td>Consumers publish expectations; a broken change fails CI (Pact)</td></tr>
+                    <tr><td class="c-amber">Governance</td><td>Consistent conventions, versioning, and review across APIs</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    This is what makes microservices and public platforms manageable — the contract
+                    is a stable boundary that lets teams move independently without constant
+                    breakage (ties to the API Design topic).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧮</span>
+              <span class="topic-name">Idempotency &amp; Exactly-Once — Safe Retries</span>
+              <span class="topic-badge">Reliability</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Property Distributed Systems Live and Die By</div>
+                <div class="concept-desc">
+                  In any networked system, messages get lost, duplicated, and retried. An operation
+                  is <strong class="c-cyan">idempotent</strong> if doing it twice has the same effect
+                  as doing it once — the single most important property for correctness under
+                  retries. "Charge $10" is dangerous to retry; "set balance to $90" is safe.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>How</th></tr>
+                    <tr><td class="c-green">Idempotency key</td><td>Client sends a unique ID; server dedupes and returns the original result</td></tr>
+                    <tr><td class="c-green">Natural idempotency</td><td>Design ops as "set to X" (absolute) not "add X" (relative)</td></tr>
+                    <tr><td class="c-green">Dedup store</td><td>Track processed message IDs; skip repeats</td></tr>
+                    <tr><td class="c-amber">Outbox pattern</td><td>Atomically write state + the event to publish, so neither is lost</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    True "exactly-once" delivery is famously near-impossible; the practical answer is
+                    <strong class="c-green">at-least-once delivery + idempotent consumers</strong> =
+                    effectively-once processing. Build every consumer and API assuming it will see
+                    duplicates.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body eng -->
