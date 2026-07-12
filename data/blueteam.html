@@ -549,4 +549,153 @@ index=auth <span class="str">"Failed password"</span>
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧾</span>
+              <span class="topic-name">YARA — Pattern-Matching Rules for Malware</span>
+              <span class="topic-badge">Detection</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">"The Pattern-Matching Swiss Knife for Malware"</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">YARA</strong> lets analysts describe malware families by
+                  textual/binary patterns and match files, memory, or processes against them. It's
+                  how threat researchers share detections for a specific implant or campaign — and
+                  it runs in scanners, EDRs, and IR tools alike.
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="kw">rule</span> Suspicious_PowerShell_Downloader {
+  <span class="kw">strings</span>:
+    <span class="var">$a</span> = <span class="str">"DownloadString"</span> nocase
+    <span class="var">$b</span> = <span class="str">"IEX"</span> nocase
+    <span class="var">$c</span> = <span class="str">"FromBase64String"</span> nocase
+  <span class="kw">condition</span>:
+    <span class="num">2</span> <span class="kw">of</span> them          <span class="com">// any 2 of the strings present</span>
+}</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">Use:</strong> hunt across a fleet ("scan every host for
+                    this rule" via Velociraptor/OSQuery), triage a sample, or scan process memory
+                    for an unpacked payload. Pair with <code>yara-x</code> (the modern engine) and
+                    community rulesets. Focus rules on <em>behavior/capabilities</em>, not just
+                    hashes, so they survive repacking.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎯</span>
+              <span class="topic-name">MITRE ATT&amp;CK &amp; Navigator — Coverage-Driven Detection</span>
+              <span class="topic-badge">Detection</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">A Shared Map of How Attackers Operate</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">ATT&amp;CK</strong> is a knowledge base of real adversary
+                  <strong>tactics</strong> (the "why" — e.g. Persistence, Lateral Movement) and
+                  <strong>techniques</strong> (the "how" — e.g. T1053 Scheduled Task). It gives
+                  defenders a common language and a way to measure <em>detection coverage</em>
+                  rather than collecting disconnected alerts.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Tactic</td><td>The adversary's goal for a step (14 columns)</td></tr>
+                    <tr><td class="c-cyan">Technique / Sub-technique</td><td>The specific method (Txxxx)</td></tr>
+                    <tr><td class="c-cyan">Navigator</td><td>Heat-map tool to mark what you can detect/prevent</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">The workflow:</strong> map each detection you have to a
+                    technique, color the Navigator, and the <em>gaps</em> become your detection
+                    backlog. Prioritize techniques your actual threat actors use (tie to threat
+                    intel). Every good detection references its ATT&amp;CK ID.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚛️</span>
+              <span class="topic-name">Adversary Emulation — Atomic Red Team &amp; Caldera</span>
+              <span class="topic-badge">Detection</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Test Whether Your Detections Actually Fire</div>
+                <div class="concept-desc">
+                  A detection you've never triggered is a hope, not a control.
+                  <strong class="c-cyan">Atomic Red Team</strong> is a library of small, precise
+                  tests — one per ATT&amp;CK technique — you run to see if your telemetry and alerts
+                  catch it. <strong class="c-cyan">Caldera</strong> (MITRE) automates full,
+                  chained adversary emulations. This is the safe, authorized way to validate the
+                  blue team.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Does</th></tr>
+                    <tr><td class="c-cyan">Atomic Red Team</td><td>Per-technique "atomic" tests (run T1053, check the alert fired)</td></tr>
+                    <tr><td class="c-cyan">Caldera</td><td>Automated, chained emulation of full adversary behavior</td></tr>
+                    <tr><td class="c-cyan">Purple team</td><td>Red runs the test, blue tunes the detection, together</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Run these in a lab or with authorization. The loop —
+                    <strong class="c-green">emulate → observe → tune → re-test</strong> — is how you
+                    turn ATT&amp;CK coverage from theoretical to proven.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎚️</span>
+              <span class="topic-name">Detection Tuning &amp; the Pyramid of Pain</span>
+              <span class="topic-badge">Detection</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Make Detections Hurt the Attacker, Not the Analyst</div>
+                <div class="concept-desc">
+                  The <strong class="c-cyan">Pyramid of Pain</strong> ranks indicators by how much
+                  it costs an adversary to change them. Detecting a file hash is trivial to evade
+                  (recompile); detecting their <strong>TTPs</strong> (behaviors) forces them to
+                  relearn how they operate. Aim your detections up the pyramid.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Indicator</th><th>Attacker cost to change</th></tr>
+                    <tr><td>Hash values</td><td class="c-red">Trivial</td></tr>
+                    <tr><td>IP addresses</td><td class="c-red">Easy</td></tr>
+                    <tr><td>Domain names</td><td class="c-amber">Simple</td></tr>
+                    <tr><td>Network/host artifacts</td><td class="c-amber">Annoying</td></tr>
+                    <tr><td>Tools</td><td class="c-green">Challenging</td></tr>
+                    <tr><td class="c-green">TTPs (behaviors)</td><td class="c-green">Tough — forces a rethink</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Tuning:</strong> the other half is fighting false
+                    positives — a noisy rule everyone mutes is worse than no rule. Track each
+                    detection's true/false-positive rate, add context/allowlists, and require
+                    every alert to be <em>actionable</em>. Detection-as-code (Sigma in Git, tested
+                    with Atomic) keeps quality high.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body blueteam -->
