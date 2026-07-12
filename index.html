@@ -43290,6 +43290,176 @@ technique catches them.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🩸</span>
+<span class="topic-name">BloodHound &amp; SharpHound — Attack-Path Graphing</span>
+<span class="topic-badge">AD Attacks</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">"Who Can Reach Domain Admin, and How?"</div>
+<div class="concept-desc">
+Active Directory permissions form a graph so complex no human can audit it by eye.
+<strong class="c-cyan">SharpHound</strong> (the collector) enumerates users,
+groups, sessions, and ACLs; <strong class="c-cyan">BloodHound</strong> loads that
+into a graph DB and finds the <em>shortest path</em> from a low-priv foothold to
+Domain Admin. <em>Authorized AD assessments only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Collection</td><td>SharpHound gathers sessions, ACLs, group membership, GPOs</td></tr>
+<tr><td class="c-cyan">Edges</td><td>Relationships like <code>MemberOf</code>, <code>AdminTo</code>, <code>GenericAll</code>, <code>HasSession</code></td></tr>
+<tr><td class="c-cyan">Pre-built queries</td><td>"Shortest path to Domain Admins", "Kerberoastable users"</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> defenders run BloodHound too —
+it's the best way to <em>find and cut</em> those paths before an attacker walks
+them. Collection generates heavy LDAP/SMB queries that anomaly detection can flag.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔓</span>
+<span class="topic-name">Mimikatz — Credential Extraction</span>
+<span class="topic-badge">AD Attacks</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Tool That Redefined AD Security</div>
+<div class="concept-desc">
+<strong class="c-cyan">Mimikatz</strong> extracts plaintext passwords, hashes, and
+Kerberos tickets from Windows memory (LSASS), and forges tickets. It's the canonical
+post-exploitation credential tool — understanding it is essential for both attack
+and defense. <em>Authorized, lab, and cert-prep contexts only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Technique</th><th>What</th></tr>
+<tr><td class="c-cyan">sekurlsa::logonpasswords</td><td>Dump creds/hashes from LSASS memory</td></tr>
+<tr><td class="c-cyan">Pass-the-Hash</td><td>Authenticate with an NTLM hash — no password needed</td></tr>
+<tr><td class="c-cyan">Pass-the-Ticket</td><td>Reuse a stolen Kerberos ticket</td></tr>
+<tr><td class="c-red">Golden Ticket</td><td>Forge a TGT with the krbtgt hash — domain-wide persistence</td></tr>
+<tr><td class="c-cyan">DCSync</td><td>Impersonate a DC to pull password hashes via replication</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> defenses are
+<strong class="c-green">Credential Guard</strong> (protects LSASS), LSASS-access
+alerts (Sysmon event 10), disabling NTLM where possible, and watching for
+anomalous replication (DCSync = event 4662 from a non-DC).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🎟️</span>
+<span class="topic-name">Kerberos Attacks — Rubeus &amp; Kerbrute</span>
+<span class="topic-badge">AD Attacks</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Abusing the Ticket System</div>
+<div class="concept-desc">
+Kerberos is AD's auth protocol — and its ticketing has abusable quirks.
+<strong class="c-cyan">Rubeus</strong> is the Swiss-army knife for ticket attacks;
+<strong class="c-cyan">Kerbrute</strong> does fast username enumeration and
+password spraying against the KDC. <em>Authorized environments only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Attack</th><th>Idea</th></tr>
+<tr><td class="c-cyan">Kerberoasting</td><td>Request service tickets (SPNs), crack them offline for the service account password</td></tr>
+<tr><td class="c-cyan">AS-REP Roasting</td><td>Accounts with "no pre-auth" leak a crackable hash without any creds</td></tr>
+<tr><td class="c-cyan">Password spray</td><td>One password against many users (avoids lockout)</td></tr>
+<tr><td class="c-red">Silver Ticket</td><td>Forge a service ticket with a service account hash</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> Kerberoasting shows as a spike
+of TGS requests (event 4769) for many SPNs from one user. Defenses: long,
+random service-account passwords (or gMSAs), and enabling Kerberos pre-auth.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🕸️</span>
+<span class="topic-name">Responder &amp; NTLM Relay</span>
+<span class="topic-badge">AD Attacks</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Poison the LAN, Capture the Auth</div>
+<div class="concept-desc">
+<strong class="c-cyan">Responder</strong> answers broadcast name-resolution
+requests (LLMNR/NBT-NS/mDNS) that Windows sends when DNS fails — tricking hosts into
+authenticating to the attacker and leaking NetNTLM hashes. Combined with
+<strong class="c-cyan">ntlmrelayx</strong>, the captured auth is
+<em>relayed</em> to another host to gain access without ever cracking a hash.
+<em>Authorized internal engagements only.</em>
+</div>
+<div class="dw">
+<div class="concept-desc">
+<strong class="c-amber">Blue-team note:</strong> this is one of the most common
+real-world internal footholds. Defenses are concrete and high-impact:
+<strong class="c-green">disable LLMNR and NBT-NS</strong> via GPO, enforce
+<strong class="c-green">SMB signing</strong> (breaks relay), and segment the
+network. Detection: a host suddenly answering name queries for everything.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📜</span>
+<span class="topic-name">ADCS Abuse — Certipy &amp; the ESC Techniques</span>
+<span class="topic-badge">AD Attacks</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">When the Certificate Authority Becomes the Backdoor</div>
+<div class="concept-desc">
+Active Directory Certificate Services (ADCS) issues certs — and misconfigured
+templates let a low-priv user request a certificate that authenticates <em>as
+someone else</em>, up to Domain Admin. <strong class="c-cyan">Certipy</strong>
+finds and exploits these (the "ESC1–ESC8" family). It's become one of the most
+impactful AD attack classes. <em>Authorized assessments only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Find</td><td><code>certipy find</code> — enumerate templates &amp; flag vulnerable ones</td></tr>
+<tr><td class="c-red">ESC1</td><td>Template lets requester supply the subject → request a cert as any user</td></tr>
+<tr><td class="c-cyan">Authenticate</td><td>Use the cert to get a TGT / NTLM hash for that identity</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> audit certificate templates
+(remove "enrollee supplies subject" + client-auth combos), monitor the CA's
+issuance logs, and restrict enrollment rights. Certipy's own <code>find</code>
+is the fastest way for defenders to spot the misconfig first.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body redteam -->
 </div>
 </div>
