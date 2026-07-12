@@ -418,4 +418,503 @@
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🌐</span>
+              <span class="topic-name">AWS VPC — Subnets, Security Groups &amp; NACLs</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Your Private Slice of the AWS Network</div>
+                <div class="concept-desc">
+                  A <strong class="c-cyan">VPC</strong> is an isolated virtual network you define
+                  with a CIDR block (e.g. <code>10.0.0.0/16</code>). Inside it you carve
+                  <strong>subnets</strong>, control routing, and layer two firewalls. Getting the
+                  public/private split right is the foundation of a secure architecture.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Piece</th><th>Role</th></tr>
+                    <tr><td class="c-cyan">Public subnet</td><td>Route to an Internet Gateway (IGW) — for load balancers, bastions</td></tr>
+                    <tr><td class="c-cyan">Private subnet</td><td>No direct inbound; outbound via a NAT Gateway — for app servers, DBs</td></tr>
+                    <tr><td class="c-cyan">Route table</td><td>Decides where a subnet's traffic goes (IGW, NAT, peering)</td></tr>
+                    <tr><td class="c-green">Security Group</td><td><strong>Stateful</strong> firewall on the instance — allow rules only; return traffic auto-allowed</td></tr>
+                    <tr><td class="c-amber">NACL</td><td><strong>Stateless</strong> firewall on the subnet — allow + deny; must allow both directions</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Remember:</strong> Security Groups are stateful (the
+                    common case, instance-level); NACLs are stateless (subnet-level, coarse). Put
+                    databases in private subnets and never give them a public IP.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔀</span>
+              <span class="topic-name">AWS Load Balancing &amp; DNS — ELB, Route 53, CloudFront</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Getting Traffic to the Right Place, Fast</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>Does</th></tr>
+                    <tr><td class="c-cyan">ALB (Application LB)</td><td>Layer 7 — routes HTTP(S) by path/host, WebSockets, target groups</td></tr>
+                    <tr><td class="c-cyan">NLB (Network LB)</td><td>Layer 4 — ultra-fast TCP/UDP, static IPs, extreme throughput</td></tr>
+                    <tr><td class="c-cyan">Route 53</td><td>DNS + health checks + routing policies (latency, weighted, failover, geo)</td></tr>
+                    <tr><td class="c-cyan">CloudFront</td><td>CDN — caches content at edge locations near users; also DDoS/TLS termination</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    A typical web path: <strong>Route 53 → CloudFront → ALB → targets</strong> across
+                    multiple AZs. Route 53's <strong class="c-green">failover routing</strong> +
+                    health checks is how you build multi-region resilience.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🌐</span>
+              <span class="topic-name">GCP VPC — Global Networks &amp; Firewall Rules</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">One Network That Spans the Planet</div>
+                <div class="concept-desc">
+                  GCP's big networking difference: a <strong class="c-cyan">VPC is global</strong>,
+                  not regional. One VPC can hold subnets in every region, and instances in different
+                  regions talk over Google's private backbone without extra peering. Subnets are
+                  regional; the VPC that contains them is global.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Piece</th><th>Role</th></tr>
+                    <tr><td class="c-cyan">VPC (global)</td><td>The whole network; subnets are regional within it</td></tr>
+                    <tr><td class="c-green">Firewall rules</td><td>Stateful; applied by network <strong>tags</strong> or service accounts, not per-instance objects</td></tr>
+                    <tr><td class="c-cyan">Cloud NAT</td><td>Managed egress for private instances (no per-VM NAT gateway)</td></tr>
+                    <tr><td class="c-cyan">Cloud Router</td><td>Dynamic (BGP) routing for hybrid/VPN links</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Firewall rules being <strong class="c-green">tag-based</strong> is the mental
+                    shift from AWS: tag an instance <code>web</code>, write a rule "allow 443 to
+                    tag:web" — no security-group object to attach.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔀</span>
+              <span class="topic-name">GCP Load Balancing &amp; DNS</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">A Single Global Anycast IP</div>
+                <div class="concept-desc">
+                  GCP's global load balancer is a standout: one
+                  <strong class="c-cyan">anycast IP</strong> serves users worldwide, automatically
+                  routing each to the nearest healthy backend — no per-region IPs or DNS tricks
+                  needed. It scales instantly without pre-warming.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>Does</th></tr>
+                    <tr><td class="c-cyan">Global External LB</td><td>One IP, worldwide HTTP(S) routing to nearest backend</td></tr>
+                    <tr><td class="c-cyan">Regional LB</td><td>L4/L7 within a region</td></tr>
+                    <tr><td class="c-cyan">Cloud DNS</td><td>Managed, scalable DNS with 100% SLA</td></tr>
+                    <tr><td class="c-cyan">Cloud CDN</td><td>Edge caching, enabled on the LB backend</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔗</span>
+              <span class="topic-name">Hybrid Connectivity — VPN, Interconnect &amp; Peering</span>
+              <span class="topic-badge">Cloud</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Wiring the Cloud to Your Datacenter (and Itself)</div>
+                <div class="concept-desc">
+                  Real deployments connect cloud networks to on-prem and to each other. The options
+                  trade cost against bandwidth and reliability.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Need</th><th>AWS</th><th>GCP</th></tr>
+                    <tr><td>Encrypted over internet</td><td>Site-to-Site VPN</td><td>Cloud VPN</td></tr>
+                    <tr><td>Private dedicated line</td><td>Direct Connect</td><td>Cloud Interconnect</td></tr>
+                    <tr><td>Connect two VPCs</td><td>VPC Peering / Transit Gateway</td><td>VPC Peering / Network Connectivity Center</td></tr>
+                    <tr><td>Reach a managed service privately</td><td>PrivateLink / VPC Endpoints</td><td>Private Service Connect</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">VPN</strong> is cheap and quick but rides the public
+                    internet; <strong class="c-cyan">Direct Connect / Interconnect</strong> is a
+                    private circuit — pricier, but consistent low latency and high bandwidth for
+                    production hybrid workloads. <strong>PrivateLink</strong>-style endpoints keep
+                    traffic to cloud services off the public internet entirely.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🖥️</span>
+              <span class="topic-name">AWS Compute — EC2, AMIs &amp; Auto Scaling</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Renting Virtual Machines That Scale Themselves</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">EC2</strong> is AWS's virtual-machine service. You launch
+                  instances from an <strong>AMI</strong> (a machine image), pick an
+                  <strong>instance type</strong> (family + size), and — critically — put them behind
+                  an <strong>Auto Scaling Group</strong> so capacity follows demand instead of
+                  running fixed (and overpaying).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">AMI</td><td>Snapshot template an instance boots from (OS + config)</td></tr>
+                    <tr><td class="c-cyan">Instance family</td><td>t/m = general, c = compute, r = memory, g/p = GPU</td></tr>
+                    <tr><td class="c-cyan">Auto Scaling Group</td><td>Min/desired/max; adds/removes instances on metrics</td></tr>
+                    <tr><td class="c-cyan">Launch template</td><td>The blueprint an ASG uses to create instances</td></tr>
+                    <tr><td class="c-cyan">User data</td><td>Boot script to configure an instance on launch</td></tr>
+                  </table>
+                  <div class="dt" style="margin-top:12px">▸ PRICING MODELS</div>
+                  <table class="ref-table">
+                    <tr><th>Model</th><th>Use</th></tr>
+                    <tr><td>On-Demand</td><td>Pay per second; spiky/unpredictable</td></tr>
+                    <tr><td class="c-green">Savings Plans / Reserved</td><td>1–3 yr commit → ~30–70% off steady load</td></tr>
+                    <tr><td class="c-green">Spot</td><td>Spare capacity ~90% off; can be reclaimed → fault-tolerant jobs</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📦</span>
+              <span class="topic-name">AWS Serverless &amp; Containers — Lambda, ECS, EKS, Fargate</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Run Code Without (Managing) Servers</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>What</th></tr>
+                    <tr><td class="c-cyan">Lambda</td><td>Functions triggered by events; scale-to-zero, pay per ms</td></tr>
+                    <tr><td class="c-cyan">ECS</td><td>AWS's own container orchestrator (simpler than K8s)</td></tr>
+                    <tr><td class="c-cyan">EKS</td><td>Managed Kubernetes (when you need K8s portability)</td></tr>
+                    <tr><td class="c-cyan">Fargate</td><td>Serverless <em>container</em> compute — runs ECS/EKS tasks with no EC2 to manage</td></tr>
+                    <tr><td class="c-cyan">App Runner</td><td>Push a container/repo → get a URL; simplest path</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Decision:</strong> event-driven glue → Lambda; long-running
+                    services in containers → ECS/EKS on Fargate (no servers) or EC2 (cheaper at
+                    scale, more ops). Fargate is the "I don't want to manage nodes" answer for
+                    containers.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🖥️</span>
+              <span class="topic-name">GCP Compute — Compute Engine &amp; MIGs</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">VMs on Google's Infrastructure</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Compute Engine</strong> is GCP's VM service. Two nice
+                  differentiators: <strong class="c-green">per-second billing with sustained-use
+                  discounts applied automatically</strong> (no upfront commit needed for savings),
+                  and <strong class="c-green">custom machine types</strong> — pick exact vCPU/RAM
+                  instead of fixed sizes.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>AWS Analog</th></tr>
+                    <tr><td class="c-cyan">Machine image / family</td><td>AMI / instance family (e2, n2, c3…)</td></tr>
+                    <tr><td class="c-cyan">Managed Instance Group (MIG)</td><td>Auto Scaling Group — autoscaling + auto-healing</td></tr>
+                    <tr><td class="c-cyan">Instance template</td><td>Launch template</td></tr>
+                    <tr><td class="c-green">Preemptible / Spot VMs</td><td>Spot — deep discount, reclaimable</td></tr>
+                    <tr><td class="c-green">Sustained-use discount</td><td>Automatic; no reservation needed</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🏃</span>
+              <span class="topic-name">GCP Serverless &amp; Containers — Cloud Run, Functions, GKE</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Cloud Run Is the Star</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Cloud Run</strong> is GCP's standout: give it a container,
+                  get a scalable HTTPS endpoint that <strong class="c-green">scales to zero</strong>
+                  and bills per request — serverless containers with almost no config. It's often the
+                  simplest way to deploy a web service on any cloud.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>What</th></tr>
+                    <tr><td class="c-cyan">Cloud Run</td><td>Serverless containers (scale-to-zero, per-request)</td></tr>
+                    <tr><td class="c-cyan">Cloud Functions</td><td>Event-driven functions (like Lambda)</td></tr>
+                    <tr><td class="c-cyan">GKE</td><td>Managed Kubernetes — the reference K8s experience (Google created K8s)</td></tr>
+                    <tr><td class="c-cyan">GKE Autopilot</td><td>K8s where Google manages the nodes for you</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Rule of thumb:</strong> a stateless web service or API →
+                    Cloud Run. Event glue → Cloud Functions. You genuinely need Kubernetes (complex
+                    microservices, existing K8s manifests) → GKE.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧭</span>
+              <span class="topic-name">Choosing Compute — VM vs Container vs Serverless</span>
+              <span class="topic-badge">Reference</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">A Decision Guide</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pick…</th><th>When</th></tr>
+                    <tr><td class="c-cyan">Serverless functions</td><td>Event-driven, spiky, short tasks; you want zero ops &amp; scale-to-zero</td></tr>
+                    <tr><td class="c-cyan">Serverless containers (Cloud Run / Fargate)</td><td>Web services/APIs you want managed, but with a real container &amp; no cold-start-only limits</td></tr>
+                    <tr><td class="c-cyan">Managed Kubernetes</td><td>Many services, complex networking, portability, an existing K8s investment</td></tr>
+                    <tr><td class="c-cyan">Plain VMs</td><td>Legacy apps, special OS/kernel needs, GPUs, or maximum control</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The trend runs left-to-right toward <strong>more managed</strong> — start as
+                    serverless as the workload allows and drop down to VMs only when you need the
+                    control. Less to operate = less to break.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">💾</span>
+              <span class="topic-name">AWS Storage — S3 Classes, EBS &amp; EFS</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Three Storage Types for Three Jobs</div>
+                <div class="concept-desc">
+                  AWS storage splits into <strong class="c-cyan">object</strong> (S3),
+                  <strong class="c-cyan">block</strong> (EBS — a virtual disk for one EC2), and
+                  <strong class="c-cyan">file</strong> (EFS — a shared NFS mount for many). Pick by
+                  access pattern; mixing them up is a classic mistake. (See the Object Storage topic
+                  for S3 fundamentals — here we focus on the AWS-specific pieces.)
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>Type</th><th>Use</th></tr>
+                    <tr><td class="c-cyan">S3</td><td>Object</td><td>Files, backups, static sites, data lakes</td></tr>
+                    <tr><td class="c-cyan">EBS</td><td>Block</td><td>Boot/data volume for one EC2 (like a disk)</td></tr>
+                    <tr><td class="c-cyan">EFS</td><td>File</td><td>Shared filesystem mounted by many instances</td></tr>
+                    <tr><td class="c-cyan">FSx</td><td>File</td><td>Managed Windows/Lustre file systems</td></tr>
+                  </table>
+                  <div class="dt" style="margin-top:12px">▸ S3 STORAGE CLASSES (cost vs access)</div>
+                  <table class="ref-table">
+                    <tr><th>Class</th><th>For</th></tr>
+                    <tr><td>Standard</td><td>Hot, frequent access</td></tr>
+                    <tr><td>Standard-IA / One Zone-IA</td><td>Infrequent access, cheaper storage</td></tr>
+                    <tr><td>Intelligent-Tiering</td><td>Auto-moves objects by usage</td></tr>
+                    <tr><td class="c-green">Glacier / Deep Archive</td><td>Cold archive — pennies to store, slow/paid retrieval</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Use <strong class="c-green">lifecycle rules</strong> to age objects into colder
+                    classes automatically. EBS volumes are AZ-locked — snapshot to S3 for
+                    backup/restore across AZs.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🗃️</span>
+              <span class="topic-name">AWS Databases — RDS, Aurora &amp; DynamoDB</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Managed SQL &amp; NoSQL</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>What</th></tr>
+                    <tr><td class="c-cyan">RDS</td><td>Managed relational (Postgres, MySQL, SQL Server, Oracle, MariaDB) — patching, backups, replicas handled</td></tr>
+                    <tr><td class="c-cyan">Aurora</td><td>AWS's cloud-native MySQL/Postgres-compatible engine — faster, auto-scaling storage, Serverless v2</td></tr>
+                    <tr><td class="c-cyan">DynamoDB</td><td>Managed key-value/document NoSQL — single-digit-ms at any scale, serverless</td></tr>
+                    <tr><td class="c-cyan">ElastiCache</td><td>Managed Redis/Memcached (caching, sessions)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Choosing:</strong> relational data with joins/transactions
+                    → RDS/Aurora. Massive scale with simple key-based access → DynamoDB (design around
+                    your access patterns — no ad-hoc joins). Always enable
+                    <strong>Multi-AZ</strong> for production databases (automatic failover).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">💾</span>
+              <span class="topic-name">GCP Storage — Cloud Storage, Persistent Disk &amp; Filestore</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">The Same Three Types, Google's Names</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>Type</th><th>AWS Analog</th></tr>
+                    <tr><td class="c-cyan">Cloud Storage</td><td>Object</td><td>S3</td></tr>
+                    <tr><td class="c-cyan">Persistent Disk</td><td>Block</td><td>EBS</td></tr>
+                    <tr><td class="c-cyan">Filestore</td><td>File (NFS)</td><td>EFS</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Cloud Storage classes mirror S3: <strong>Standard → Nearline → Coldline →
+                    Archive</strong>, from hot to cheap-cold. A nice touch: one API/bucket namespace
+                    with a per-object storage class, and lifecycle rules to auto-tier. Persistent
+                    Disks can be resized live and snapshotted globally.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🗃️</span>
+              <span class="topic-name">GCP Databases — Cloud SQL, Spanner &amp; Firestore</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Including the One Only Google Has</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>What</th></tr>
+                    <tr><td class="c-cyan">Cloud SQL</td><td>Managed Postgres/MySQL/SQL Server (≈ RDS)</td></tr>
+                    <tr><td class="c-green">Spanner</td><td>Globally-distributed, strongly-consistent relational DB that scales horizontally — unique to Google</td></tr>
+                    <tr><td class="c-cyan">Firestore</td><td>Serverless document NoSQL (≈ DynamoDB), great for app backends</td></tr>
+                    <tr><td class="c-cyan">Bigtable</td><td>Wide-column NoSQL for huge analytical/time-series workloads (≈ Cassandra/HBase)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Spanner</strong> is the standout — it breaks the usual
+                    "you can't have global scale AND strong consistency" rule (via TrueTime atomic
+                    clocks). Reach for it when you genuinely need both; otherwise Cloud SQL is the
+                    everyday relational choice.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📊</span>
+              <span class="topic-name">BigQuery — Serverless Data Warehouse</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Query Terabytes With SQL, No Cluster</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">BigQuery</strong> is GCP's flagship analytics warehouse:
+                  fully serverless (no infrastructure to size), it runs SQL over terabytes-to-
+                  petabytes in seconds by massively parallelizing the scan. It's the OLAP counterpart
+                  to the transactional databases above (see the OLTP vs OLAP topic).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Trait</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Serverless</td><td>No clusters; it scales compute (slots) automatically</td></tr>
+                    <tr><td class="c-cyan">Columnar</td><td>Reads only the columns your query touches → fast + cheap</td></tr>
+                    <tr><td class="c-amber">Cost model</td><td>Priced by bytes scanned (or flat-rate slots) — <code>SELECT *</code> on a huge table is expensive</td></tr>
+                    <tr><td class="c-green">BQ ML</td><td>Train ML models in SQL, in place</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Cost tip:</strong> select only needed columns and use
+                    partitioned/clustered tables — you pay for data scanned, so pruning saves real
+                    money. AWS's equivalent is Redshift (and Athena for S3).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body cloud -->

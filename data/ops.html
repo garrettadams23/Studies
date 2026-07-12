@@ -3884,6 +3884,182 @@ Why #5: Why isn't that part of the standard testing process?
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🏭</span>
+              <span class="topic-name">CI/CD Pipeline Design — Stages, Gates &amp; Artifacts</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Assembly Line From Commit to Production</div>
+                <div class="concept-desc">
+                  A pipeline runs a series of <strong class="c-cyan">stages</strong> on every change,
+                  each a quality <strong class="c-amber">gate</strong> that must pass before the next.
+                  Build <strong>once</strong>, produce an immutable <strong>artifact</strong>, and
+                  promote that same artifact through environments — never rebuild per stage, or
+                  you're testing something different than you ship.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Stage</th><th>Gate</th></tr>
+                    <tr><td class="c-cyan">Build</td><td>Compiles; produces the artifact (jar, image)</td></tr>
+                    <tr><td class="c-cyan">Test</td><td>Unit + integration pass; coverage threshold</td></tr>
+                    <tr><td class="c-cyan">Scan</td><td>SAST/SCA/secrets clean (fail on high sev)</td></tr>
+                    <tr><td class="c-cyan">Deploy → staging</td><td>Smoke/e2e tests green</td></tr>
+                    <tr><td class="c-cyan">Deploy → prod</td><td>Manual approval or automated canary</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">CI</strong> = integrate + test every change automatically.
+                    <strong class="c-green">CD</strong> = that artifact is always deployable
+                    (Continuous Delivery) or actually auto-deployed (Continuous Deployment). Keep
+                    pipelines fast — a 40-minute pipeline kills the feedback loop.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎬</span>
+              <span class="topic-name">GitHub Actions — Workflows, Jobs &amp; Secrets</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">CI/CD Built Into Your Repo</div>
+                <div class="concept-desc">
+                  GitHub Actions runs YAML <strong class="c-cyan">workflows</strong> in
+                  <code>.github/workflows/</code> triggered by events (push, PR, schedule). A
+                  workflow has <strong>jobs</strong> (run in parallel by default) made of
+                  <strong>steps</strong> (shell commands or reusable <strong>actions</strong>).
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="var">name</span>: CI
+<span class="var">on</span>: [push, pull_request]
+<span class="var">jobs</span>:
+  <span class="var">test</span>:
+    <span class="var">runs-on</span>: ubuntu-latest
+    <span class="var">strategy</span>:
+      <span class="var">matrix</span>: { node: [<span class="num">18</span>, <span class="num">20</span>] }   <span class="com"># test on multiple versions</span>
+    <span class="var">steps</span>:
+      - <span class="var">uses</span>: actions/checkout@v4
+      - <span class="var">uses</span>: actions/setup-node@v4
+        <span class="var">with</span>: { node-version: <span class="str">'${{ matrix.node }}'</span> }
+      - <span class="var">run</span>: npm ci &amp;&amp; npm test
+      - <span class="var">run</span>: deploy.sh
+        <span class="var">env</span>: { TOKEN: <span class="str">'${{ secrets.DEPLOY_TOKEN }}'</span> }</pre>
+                  <table class="ref-table" style="margin-top:10px">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td>Matrix</td><td>Run the job across a combination of versions/OSes</td></tr>
+                    <tr><td>Secrets</td><td><code>${{ secrets.X }}</code> — never hard-code creds</td></tr>
+                    <tr><td>Reusable/composite</td><td>Factor shared steps into called workflows/actions</td></tr>
+                    <tr><td>OIDC</td><td>Assume a cloud role with no stored keys (ties to IAM)</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔧</span>
+              <span class="topic-name">Jenkins · GitLab CI · CircleCI — The Landscape</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Which CI Tool, and Why</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Character</th></tr>
+                    <tr><td class="c-cyan">GitHub Actions</td><td>Native to GitHub, huge marketplace — the default for GitHub repos</td></tr>
+                    <tr><td class="c-cyan">GitLab CI</td><td>Deeply integrated with GitLab; one <code>.gitlab-ci.yml</code>; strong self-hosted story</td></tr>
+                    <tr><td class="c-cyan">Jenkins</td><td>The veteran — infinitely pluggable, self-hosted, but you maintain it (Jenkinsfile/Groovy)</td></tr>
+                    <tr><td class="c-cyan">CircleCI / Travis / Drone</td><td>Hosted CI, config-as-YAML, fast setup</td></tr>
+                    <tr><td class="c-cyan">Argo / Tekton</td><td>Kubernetes-native pipelines (GitOps-friendly)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    They all share the model — YAML/DSL pipeline, runners/agents, stages, artifacts,
+                    secrets. Learn the concepts once; the syntax is a lookup. Pick by where your code
+                    lives and whether you want hosted vs self-managed.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🌿</span>
+              <span class="topic-name">Branching Strategies — Trunk vs GitHub Flow vs GitFlow</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">How Your Team Moves Code to Main</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Strategy</th><th>How</th><th>Fits</th></tr>
+                    <tr><td class="c-green">Trunk-based</td><td>Everyone commits to main behind feature flags; tiny short-lived branches</td><td>High-velocity CD; elite DORA teams</td></tr>
+                    <tr><td class="c-cyan">GitHub Flow</td><td>Branch → PR → review → merge → deploy main</td><td>Most web teams; simple &amp; effective</td></tr>
+                    <tr><td class="c-amber">GitFlow</td><td>Long-lived develop/release/hotfix branches</td><td>Versioned/released software; heavier</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">The trend is toward trunk-based:</strong> long-lived
+                    branches cause painful merges and delay integration (the opposite of "continuous
+                    integration"). Short-lived branches + feature flags let you merge constantly and
+                    release independently of deploy.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🚦</span>
+              <span class="topic-name">Progressive Delivery — Flags + Canary in the Pipeline</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Release ≠ Deploy</div>
+                <div class="concept-desc">
+                  Progressive delivery separates <strong class="c-cyan">deploy</strong> (code is on
+                  the servers) from <strong class="c-amber">release</strong> (users see it), and
+                  ramps exposure gradually so a bad change hits few people. It stitches together
+                  patterns you already know into the pipeline.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>Role</th></tr>
+                    <tr><td class="c-green">Feature flags</td><td>Ship code dark; toggle on for cohorts at runtime</td></tr>
+                    <tr><td class="c-green">Canary</td><td>Route 1% → 10% → 100% while watching metrics</td></tr>
+                    <tr><td class="c-green">Blue-green</td><td>Instant switch + instant rollback</td></tr>
+                    <tr><td class="c-green">Automated rollback</td><td>Bad canary metrics → pipeline reverts automatically</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Tools: LaunchDarkly/Unleash/Flagsmith (flags), Argo Rollouts/Flagger (automated
+                    canary on Kubernetes). This is how elite teams deploy dozens of times a day with
+                    a low change-failure rate — the two DORA goals reconciled.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->

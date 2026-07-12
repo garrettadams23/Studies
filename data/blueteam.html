@@ -187,4 +187,515 @@
               </div>
             </div>
           </div>
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔍</span>
+              <span class="topic-name">Splunk — SPL &amp; the SIEM Standard</span>
+              <span class="topic-badge">SIEM</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Ask Questions of All Your Logs at Once</div>
+                <div class="concept-desc">
+                  A <strong class="c-cyan">SIEM</strong> (Security Information &amp; Event
+                  Management) ingests logs from everywhere — firewalls, endpoints, cloud, apps —
+                  and lets you search, correlate, and alert across them. Splunk is the market
+                  leader; its power is <strong class="c-amber">SPL</strong> (Search Processing
+                  Language), a pipe-based query language.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ SPL — PIPE COMMANDS TOGETHER</div>
+<pre class="code-block"><span class="com"># Top source IPs for failed logins in the last 24h</span>
+index=auth sourcetype=linux_secure <span class="str">"Failed password"</span>
+| <span class="fn">stats</span> count <span class="kw">by</span> src_ip
+| <span class="fn">sort</span> -count
+| <span class="fn">head</span> <span class="num">10</span>
+
+<span class="com"># Detect brute force: 20+ failures from one IP in 5 min</span>
+index=auth <span class="str">"Failed password"</span>
+| <span class="fn">bucket</span> _time span=5m
+| <span class="fn">stats</span> count <span class="kw">by</span> _time, src_ip
+| <span class="fn">where</span> count &gt; <span class="num">20</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">Mental model:</strong> <code>search → transform (stats/
+                    eval) → filter (where) → present</code>. Save a search as an
+                    <strong>alert</strong> to run on a schedule and fire on matches. Splunk ES is
+                    the security-specific app with prebuilt correlation rules.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🟡</span>
+              <span class="topic-name">Elastic / ELK Stack — Open-Source Log Analytics</span>
+              <span class="topic-badge">SIEM</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Elasticsearch + Logstash + Kibana + Beats</div>
+                <div class="concept-desc">
+                  The <strong class="c-cyan">ELK stack</strong> is the dominant open-source
+                  logging/SIEM platform. Each piece has a job, and Elastic Security adds SIEM
+                  detection rules on top.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Component</th><th>Role</th></tr>
+                    <tr><td class="c-cyan">Beats</td><td>Lightweight shippers on hosts (Filebeat = logs, Winlogbeat = Windows events, Packetbeat = network)</td></tr>
+                    <tr><td class="c-cyan">Logstash</td><td>Ingest pipeline — parse, enrich, transform (or use Elastic ingest pipelines)</td></tr>
+                    <tr><td class="c-cyan">Elasticsearch</td><td>The search/analytics engine that stores &amp; indexes everything</td></tr>
+                    <tr><td class="c-cyan">Kibana</td><td>Dashboards, search UI, and the Security/SIEM app</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Flow: <strong>Beats → Logstash → Elasticsearch → Kibana</strong>. The trade
+                    vs Splunk: much cheaper (open source) but more ops effort to run and scale the
+                    cluster yourself.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🛡️</span>
+              <span class="topic-name">Wazuh — Open-Source XDR/SIEM</span>
+              <span class="topic-badge">SIEM</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Agents + Detection + Compliance, Free</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Wazuh</strong> is a popular free platform that combines
+                  <strong>endpoint agents</strong> with a SIEM backend (built on the Elastic stack).
+                  Agents on each host do log collection, file-integrity monitoring (FIM), rootkit
+                  detection, and vulnerability detection; the manager correlates with rules and maps
+                  findings to MITRE ATT&amp;CK and compliance frameworks (PCI, CIS).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Capability</th><th>Detail</th></tr>
+                    <tr><td class="c-green">Log analysis</td><td>Decoders + rules turn raw logs into alerts</td></tr>
+                    <tr><td class="c-green">FIM</td><td>Alerts when watched files change (tampering)</td></tr>
+                    <tr><td class="c-green">Vuln detection</td><td>Correlates installed software vs CVE feeds</td></tr>
+                    <tr><td class="c-green">Active response</td><td>Auto-actions (block IP, kill process) on triggers</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    A common home-lab / SMB choice: it delivers endpoint + SIEM + compliance in one
+                    free package, where Splunk/commercial XDR would cost heavily.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📥</span>
+              <span class="topic-name">Graylog &amp; Loki — Log Aggregation Alternatives</span>
+              <span class="topic-badge">SIEM</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Two More Ways to Centralize Logs</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Graylog</strong> is a streamlined, security-friendly log
+                  management platform (streams, alerts, dashboards) that's simpler to operate than
+                  raw ELK. <strong class="c-cyan">Loki</strong> (from Grafana) takes a different
+                  tack: it indexes only <em>labels</em>, not full log content, making it very cheap
+                  to store — and it pairs with Grafana so logs sit next to your metrics.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Best for</th></tr>
+                    <tr><td class="c-cyan">Graylog</td><td>Turnkey central log mgmt with security features</td></tr>
+                    <tr><td class="c-cyan">Loki</td><td>Cheap, high-volume logs alongside Grafana metrics</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The theme across all of these: <strong class="c-green">centralize logs off the
+                    hosts</strong>. An attacker's first move is deleting local logs — if they're
+                    already shipped to a central store, the evidence survives.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📜</span>
+              <span class="topic-name">Sigma — Write Detections Once, Run Anywhere</span>
+              <span class="topic-badge">Detection</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Vendor-Neutral Detection Format</div>
+                <div class="concept-desc">
+                  Every SIEM has its own query language — so a detection written for Splunk doesn't
+                  work in Elastic. <strong class="c-cyan">Sigma</strong> solves this: you write a
+                  detection once in a simple YAML format, then a converter compiles it into SPL,
+                  Elastic KQL, Wazuh rules, etc. It's "the YARA of logs" and how the community shares
+                  detections.
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="var">title</span>: Many Failed Logins (Brute Force)
+<span class="var">logsource</span>:
+  <span class="var">product</span>: linux
+  <span class="var">service</span>: auth
+<span class="var">detection</span>:
+  <span class="var">selection</span>:
+    <span class="var">message</span>: <span class="str">'Failed password'</span>
+  <span class="var">condition</span>: selection | count() by src_ip &gt; <span class="num">20</span>
+<span class="var">level</span>: high</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">Workflow:</strong> pull community Sigma rules (or write
+                    your own) → convert to your SIEM → deploy. It makes detection engineering
+                    portable and reviewable in Git (detection-as-code).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔬</span>
+              <span class="topic-name">Sysmon — The Windows Telemetry Powerhouse</span>
+              <span class="topic-badge">EDR</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Logging Windows Should Have Shipped With</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Sysmon</strong> (Sysinternals) is a free driver that logs
+                  rich, high-fidelity endpoint events far beyond default Windows auditing — process
+                  creation with command lines and hashes, network connections, file/registry changes,
+                  and DLL loads. It's the single highest-value free telemetry source for detecting
+                  the attacks in the Red Team domain, feeding your SIEM.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ HIGH-VALUE EVENT IDS</div>
+                  <table class="ref-table">
+                    <tr><th>ID</th><th>Event</th></tr>
+                    <tr><td class="c-cyan">1</td><td>Process creation (cmd line, hashes, parent) — the workhorse</td></tr>
+                    <tr><td class="c-cyan">3</td><td>Network connection (catch C2 beacons)</td></tr>
+                    <tr><td class="c-cyan">7</td><td>Image/DLL loaded (unsigned DLLs, injection)</td></tr>
+                    <tr><td class="c-cyan">8</td><td>CreateRemoteThread (process injection)</td></tr>
+                    <tr><td class="c-cyan">10</td><td>Process access — <strong>LSASS access = Mimikatz signal</strong></td></tr>
+                    <tr><td class="c-cyan">11</td><td>File create (dropped payloads)</td></tr>
+                    <tr><td class="c-cyan">22</td><td>DNS query (DGA / tunneling)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Deploy with a curated config (the SwiftOnSecurity / Olaf templates are the
+                    community standard) to cut noise. Parent-child process chains (e.g.
+                    <code>winword.exe → powershell.exe</code>) are gold for detection.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🦉</span>
+              <span class="topic-name">OSQuery — Your Fleet as a SQL Database</span>
+              <span class="topic-badge">EDR</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Query Endpoints Like a Table</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">OSQuery</strong> (Meta, open source) exposes the OS as
+                  SQL tables — processes, users, listening ports, installed packages, startup items —
+                  so you can ask questions across your whole fleet with a query. It's cross-platform
+                  (Windows/macOS/Linux) and great for both incident response and continuous
+                  monitoring.
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="com">-- What's listening on the network?</span>
+<span class="kw">SELECT</span> p.name, l.port, l.address
+<span class="kw">FROM</span> listening_ports l <span class="kw">JOIN</span> processes p <span class="kw">ON</span> l.pid = p.pid;
+
+<span class="com">-- Unsigned processes running from temp dirs</span>
+<span class="kw">SELECT</span> name, path <span class="kw">FROM</span> processes
+<span class="kw">WHERE</span> path <span class="kw">LIKE</span> <span class="str">'%\Temp\%'</span>;</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Run ad-hoc during IR, or schedule "packs" of queries that stream diffs to your
+                    SIEM (via Fleet/Kolide) for continuous detection — e.g. alert whenever a new
+                    persistence entry appears.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🦖</span>
+              <span class="topic-name">Velociraptor — Endpoint DFIR &amp; Hunting at Scale</span>
+              <span class="topic-badge">DFIR</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Hunt Across Thousands of Machines</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Velociraptor</strong> is a powerful open-source DFIR and
+                  threat-hunting platform. Using its query language <strong>VQL</strong>, you can
+                  collect artifacts, run hunts, and monitor endpoints across an entire estate from
+                  one console — "check every machine for this IOC" returns answers in minutes, not
+                  days.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Use</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Hunts</td><td>Run an artifact collection across all endpoints at once</td></tr>
+                    <tr><td class="c-cyan">Artifacts</td><td>Reusable collectors (prefetch, browser history, registry, memory)</td></tr>
+                    <tr><td class="c-cyan">Client monitoring</td><td>Continuous event queries (like a lightweight EDR)</td></tr>
+                    <tr><td class="c-cyan">VQL</td><td>SQL-like language to query live endpoint state</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    It's become a go-to for IR teams who need broad, fast visibility without a
+                    six-figure commercial EDR — especially during active incidents.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🪟</span>
+              <span class="topic-name">Windows Event Logs — The IDs That Matter</span>
+              <span class="topic-badge">EDR</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Native Telemetry Every Analyst Must Know</div>
+                <div class="concept-desc">
+                  Before Sysmon, there's the built-in Security log. Knowing the key event IDs lets
+                  you reconstruct logons, privilege use, and lateral movement — these show up
+                  constantly in SOC interviews and real investigations.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>ID</th><th>Meaning</th></tr>
+                    <tr><td class="c-cyan">4624 / 4625</td><td>Successful / failed logon (watch <strong>logon type</strong> — 3=network, 10=RDP)</td></tr>
+                    <tr><td class="c-cyan">4688</td><td>Process creation (enable cmd-line auditing!)</td></tr>
+                    <tr><td class="c-cyan">4672</td><td>Special privileges assigned (admin logon)</td></tr>
+                    <tr><td class="c-cyan">4720 / 4728</td><td>User created / added to a privileged group</td></tr>
+                    <tr><td class="c-cyan">4769</td><td>Kerberos service ticket — spikes = Kerberoasting</td></tr>
+                    <tr><td class="c-cyan">4662</td><td>Directory-object access — from a non-DC can mean DCSync</td></tr>
+                    <tr><td class="c-cyan">7045</td><td>Service installed — classic psexec / persistence</td></tr>
+                    <tr><td class="c-cyan">1102</td><td>Audit log cleared — attackers covering tracks</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐧</span>
+              <span class="topic-name">auditd &amp; Linux Endpoint Logging</span>
+              <span class="topic-badge">EDR</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Same Visibility, on Linux</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">auditd</strong> is the Linux audit framework — it logs
+                  syscalls, file access, and command execution against rules you define. Pair it
+                  with the Linux kernel's audit subsystem (or a modern eBPF agent like Falco) to get
+                  process-level telemetry equivalent to Sysmon on Windows.
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="com"># Watch a sensitive file for any access</span>
+<span class="fn">auditctl</span> -w /etc/shadow -p rwa -k shadow-access
+
+<span class="com"># Log every execve (process execution)</span>
+<span class="fn">auditctl</span> -a always,exit -F arch=b64 -S execve -k exec
+
+<span class="fn">ausearch</span> -k shadow-access        <span class="com"># query by key</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Ship these logs to the SIEM alongside Windows/Sysmon so hunts and detections
+                    cover the whole estate. For richer, lower-overhead visibility, eBPF-based tools
+                    (Falco, Tetragon) are the modern complement — see the eBPF topic in Linux.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧾</span>
+              <span class="topic-name">YARA — Pattern-Matching Rules for Malware</span>
+              <span class="topic-badge">Detection</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">"The Pattern-Matching Swiss Knife for Malware"</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">YARA</strong> lets analysts describe malware families by
+                  textual/binary patterns and match files, memory, or processes against them. It's
+                  how threat researchers share detections for a specific implant or campaign — and
+                  it runs in scanners, EDRs, and IR tools alike.
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="kw">rule</span> Suspicious_PowerShell_Downloader {
+  <span class="kw">strings</span>:
+    <span class="var">$a</span> = <span class="str">"DownloadString"</span> nocase
+    <span class="var">$b</span> = <span class="str">"IEX"</span> nocase
+    <span class="var">$c</span> = <span class="str">"FromBase64String"</span> nocase
+  <span class="kw">condition</span>:
+    <span class="num">2</span> <span class="kw">of</span> them          <span class="com">// any 2 of the strings present</span>
+}</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">Use:</strong> hunt across a fleet ("scan every host for
+                    this rule" via Velociraptor/OSQuery), triage a sample, or scan process memory
+                    for an unpacked payload. Pair with <code>yara-x</code> (the modern engine) and
+                    community rulesets. Focus rules on <em>behavior/capabilities</em>, not just
+                    hashes, so they survive repacking.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎯</span>
+              <span class="topic-name">MITRE ATT&amp;CK &amp; Navigator — Coverage-Driven Detection</span>
+              <span class="topic-badge">Detection</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">A Shared Map of How Attackers Operate</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">ATT&amp;CK</strong> is a knowledge base of real adversary
+                  <strong>tactics</strong> (the "why" — e.g. Persistence, Lateral Movement) and
+                  <strong>techniques</strong> (the "how" — e.g. T1053 Scheduled Task). It gives
+                  defenders a common language and a way to measure <em>detection coverage</em>
+                  rather than collecting disconnected alerts.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Tactic</td><td>The adversary's goal for a step (14 columns)</td></tr>
+                    <tr><td class="c-cyan">Technique / Sub-technique</td><td>The specific method (Txxxx)</td></tr>
+                    <tr><td class="c-cyan">Navigator</td><td>Heat-map tool to mark what you can detect/prevent</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">The workflow:</strong> map each detection you have to a
+                    technique, color the Navigator, and the <em>gaps</em> become your detection
+                    backlog. Prioritize techniques your actual threat actors use (tie to threat
+                    intel). Every good detection references its ATT&amp;CK ID.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚛️</span>
+              <span class="topic-name">Adversary Emulation — Atomic Red Team &amp; Caldera</span>
+              <span class="topic-badge">Detection</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Test Whether Your Detections Actually Fire</div>
+                <div class="concept-desc">
+                  A detection you've never triggered is a hope, not a control.
+                  <strong class="c-cyan">Atomic Red Team</strong> is a library of small, precise
+                  tests — one per ATT&amp;CK technique — you run to see if your telemetry and alerts
+                  catch it. <strong class="c-cyan">Caldera</strong> (MITRE) automates full,
+                  chained adversary emulations. This is the safe, authorized way to validate the
+                  blue team.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Does</th></tr>
+                    <tr><td class="c-cyan">Atomic Red Team</td><td>Per-technique "atomic" tests (run T1053, check the alert fired)</td></tr>
+                    <tr><td class="c-cyan">Caldera</td><td>Automated, chained emulation of full adversary behavior</td></tr>
+                    <tr><td class="c-cyan">Purple team</td><td>Red runs the test, blue tunes the detection, together</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Run these in a lab or with authorization. The loop —
+                    <strong class="c-green">emulate → observe → tune → re-test</strong> — is how you
+                    turn ATT&amp;CK coverage from theoretical to proven.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎚️</span>
+              <span class="topic-name">Detection Tuning &amp; the Pyramid of Pain</span>
+              <span class="topic-badge">Detection</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Make Detections Hurt the Attacker, Not the Analyst</div>
+                <div class="concept-desc">
+                  The <strong class="c-cyan">Pyramid of Pain</strong> ranks indicators by how much
+                  it costs an adversary to change them. Detecting a file hash is trivial to evade
+                  (recompile); detecting their <strong>TTPs</strong> (behaviors) forces them to
+                  relearn how they operate. Aim your detections up the pyramid.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Indicator</th><th>Attacker cost to change</th></tr>
+                    <tr><td>Hash values</td><td class="c-red">Trivial</td></tr>
+                    <tr><td>IP addresses</td><td class="c-red">Easy</td></tr>
+                    <tr><td>Domain names</td><td class="c-amber">Simple</td></tr>
+                    <tr><td>Network/host artifacts</td><td class="c-amber">Annoying</td></tr>
+                    <tr><td>Tools</td><td class="c-green">Challenging</td></tr>
+                    <tr><td class="c-green">TTPs (behaviors)</td><td class="c-green">Tough — forces a rethink</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Tuning:</strong> the other half is fighting false
+                    positives — a noisy rule everyone mutes is worse than no rule. Track each
+                    detection's true/false-positive rate, add context/allowlists, and require
+                    every alert to be <em>actionable</em>. Detection-as-code (Sigma in Git, tested
+                    with Atomic) keeps quality high.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body blueteam -->
