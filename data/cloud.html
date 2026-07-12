@@ -749,4 +749,172 @@
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">💾</span>
+              <span class="topic-name">AWS Storage — S3 Classes, EBS &amp; EFS</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Three Storage Types for Three Jobs</div>
+                <div class="concept-desc">
+                  AWS storage splits into <strong class="c-cyan">object</strong> (S3),
+                  <strong class="c-cyan">block</strong> (EBS — a virtual disk for one EC2), and
+                  <strong class="c-cyan">file</strong> (EFS — a shared NFS mount for many). Pick by
+                  access pattern; mixing them up is a classic mistake. (See the Object Storage topic
+                  for S3 fundamentals — here we focus on the AWS-specific pieces.)
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>Type</th><th>Use</th></tr>
+                    <tr><td class="c-cyan">S3</td><td>Object</td><td>Files, backups, static sites, data lakes</td></tr>
+                    <tr><td class="c-cyan">EBS</td><td>Block</td><td>Boot/data volume for one EC2 (like a disk)</td></tr>
+                    <tr><td class="c-cyan">EFS</td><td>File</td><td>Shared filesystem mounted by many instances</td></tr>
+                    <tr><td class="c-cyan">FSx</td><td>File</td><td>Managed Windows/Lustre file systems</td></tr>
+                  </table>
+                  <div class="dt" style="margin-top:12px">▸ S3 STORAGE CLASSES (cost vs access)</div>
+                  <table class="ref-table">
+                    <tr><th>Class</th><th>For</th></tr>
+                    <tr><td>Standard</td><td>Hot, frequent access</td></tr>
+                    <tr><td>Standard-IA / One Zone-IA</td><td>Infrequent access, cheaper storage</td></tr>
+                    <tr><td>Intelligent-Tiering</td><td>Auto-moves objects by usage</td></tr>
+                    <tr><td class="c-green">Glacier / Deep Archive</td><td>Cold archive — pennies to store, slow/paid retrieval</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Use <strong class="c-green">lifecycle rules</strong> to age objects into colder
+                    classes automatically. EBS volumes are AZ-locked — snapshot to S3 for
+                    backup/restore across AZs.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🗃️</span>
+              <span class="topic-name">AWS Databases — RDS, Aurora &amp; DynamoDB</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Managed SQL &amp; NoSQL</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>What</th></tr>
+                    <tr><td class="c-cyan">RDS</td><td>Managed relational (Postgres, MySQL, SQL Server, Oracle, MariaDB) — patching, backups, replicas handled</td></tr>
+                    <tr><td class="c-cyan">Aurora</td><td>AWS's cloud-native MySQL/Postgres-compatible engine — faster, auto-scaling storage, Serverless v2</td></tr>
+                    <tr><td class="c-cyan">DynamoDB</td><td>Managed key-value/document NoSQL — single-digit-ms at any scale, serverless</td></tr>
+                    <tr><td class="c-cyan">ElastiCache</td><td>Managed Redis/Memcached (caching, sessions)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Choosing:</strong> relational data with joins/transactions
+                    → RDS/Aurora. Massive scale with simple key-based access → DynamoDB (design around
+                    your access patterns — no ad-hoc joins). Always enable
+                    <strong>Multi-AZ</strong> for production databases (automatic failover).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">💾</span>
+              <span class="topic-name">GCP Storage — Cloud Storage, Persistent Disk &amp; Filestore</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">The Same Three Types, Google's Names</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>Type</th><th>AWS Analog</th></tr>
+                    <tr><td class="c-cyan">Cloud Storage</td><td>Object</td><td>S3</td></tr>
+                    <tr><td class="c-cyan">Persistent Disk</td><td>Block</td><td>EBS</td></tr>
+                    <tr><td class="c-cyan">Filestore</td><td>File (NFS)</td><td>EFS</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Cloud Storage classes mirror S3: <strong>Standard → Nearline → Coldline →
+                    Archive</strong>, from hot to cheap-cold. A nice touch: one API/bucket namespace
+                    with a per-object storage class, and lifecycle rules to auto-tier. Persistent
+                    Disks can be resized live and snapshotted globally.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🗃️</span>
+              <span class="topic-name">GCP Databases — Cloud SQL, Spanner &amp; Firestore</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Including the One Only Google Has</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>What</th></tr>
+                    <tr><td class="c-cyan">Cloud SQL</td><td>Managed Postgres/MySQL/SQL Server (≈ RDS)</td></tr>
+                    <tr><td class="c-green">Spanner</td><td>Globally-distributed, strongly-consistent relational DB that scales horizontally — unique to Google</td></tr>
+                    <tr><td class="c-cyan">Firestore</td><td>Serverless document NoSQL (≈ DynamoDB), great for app backends</td></tr>
+                    <tr><td class="c-cyan">Bigtable</td><td>Wide-column NoSQL for huge analytical/time-series workloads (≈ Cassandra/HBase)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Spanner</strong> is the standout — it breaks the usual
+                    "you can't have global scale AND strong consistency" rule (via TrueTime atomic
+                    clocks). Reach for it when you genuinely need both; otherwise Cloud SQL is the
+                    everyday relational choice.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📊</span>
+              <span class="topic-name">BigQuery — Serverless Data Warehouse</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Query Terabytes With SQL, No Cluster</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">BigQuery</strong> is GCP's flagship analytics warehouse:
+                  fully serverless (no infrastructure to size), it runs SQL over terabytes-to-
+                  petabytes in seconds by massively parallelizing the scan. It's the OLAP counterpart
+                  to the transactional databases above (see the OLTP vs OLAP topic).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Trait</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Serverless</td><td>No clusters; it scales compute (slots) automatically</td></tr>
+                    <tr><td class="c-cyan">Columnar</td><td>Reads only the columns your query touches → fast + cheap</td></tr>
+                    <tr><td class="c-amber">Cost model</td><td>Priced by bytes scanned (or flat-rate slots) — <code>SELECT *</code> on a huge table is expensive</td></tr>
+                    <tr><td class="c-green">BQ ML</td><td>Train ML models in SQL, in place</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Cost tip:</strong> select only needed columns and use
+                    partitioned/clustered tables — you pay for data scanned, so pruning saves real
+                    money. AWS's equivalent is Redshift (and Athena for S3).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body cloud -->
