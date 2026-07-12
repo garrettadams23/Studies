@@ -43165,6 +43165,184 @@ happened, metadata gives context, and full packets prove exactly what.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔍</span>
+<span class="topic-name">Splunk — SPL &amp; the SIEM Standard</span>
+<span class="topic-badge">SIEM</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Ask Questions of All Your Logs at Once</div>
+<div class="concept-desc">
+A <strong class="c-cyan">SIEM</strong> (Security Information &amp; Event
+Management) ingests logs from everywhere — firewalls, endpoints, cloud, apps —
+and lets you search, correlate, and alert across them. Splunk is the market
+leader; its power is <strong class="c-amber">SPL</strong> (Search Processing
+Language), a pipe-based query language.
+</div>
+<div class="dw">
+<div class="dt">▸ SPL — PIPE COMMANDS TOGETHER</div>
+<pre class="code-block"><span class="com"># Top source IPs for failed logins in the last 24h</span>
+index=auth sourcetype=linux_secure <span class="str">"Failed password"</span>
+| <span class="fn">stats</span> count <span class="kw">by</span> src_ip
+| <span class="fn">sort</span> -count
+| <span class="fn">head</span> <span class="num">10</span>
+
+<span class="com"># Detect brute force: 20+ failures from one IP in 5 min</span>
+index=auth <span class="str">"Failed password"</span>
+| <span class="fn">bucket</span> _time span=5m
+| <span class="fn">stats</span> count <span class="kw">by</span> _time, src_ip
+| <span class="fn">where</span> count &gt; <span class="num">20</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Mental model:</strong> <code>search → transform (stats/
+eval) → filter (where) → present</code>. Save a search as an
+<strong>alert</strong> to run on a schedule and fire on matches. Splunk ES is
+the security-specific app with prebuilt correlation rules.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🟡</span>
+<span class="topic-name">Elastic / ELK Stack — Open-Source Log Analytics</span>
+<span class="topic-badge">SIEM</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Elasticsearch + Logstash + Kibana + Beats</div>
+<div class="concept-desc">
+The <strong class="c-cyan">ELK stack</strong> is the dominant open-source
+logging/SIEM platform. Each piece has a job, and Elastic Security adds SIEM
+detection rules on top.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Component</th><th>Role</th></tr>
+<tr><td class="c-cyan">Beats</td><td>Lightweight shippers on hosts (Filebeat = logs, Winlogbeat = Windows events, Packetbeat = network)</td></tr>
+<tr><td class="c-cyan">Logstash</td><td>Ingest pipeline — parse, enrich, transform (or use Elastic ingest pipelines)</td></tr>
+<tr><td class="c-cyan">Elasticsearch</td><td>The search/analytics engine that stores &amp; indexes everything</td></tr>
+<tr><td class="c-cyan">Kibana</td><td>Dashboards, search UI, and the Security/SIEM app</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Flow: <strong>Beats → Logstash → Elasticsearch → Kibana</strong>. The trade
+vs Splunk: much cheaper (open source) but more ops effort to run and scale the
+cluster yourself.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🛡️</span>
+<span class="topic-name">Wazuh — Open-Source XDR/SIEM</span>
+<span class="topic-badge">SIEM</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Agents + Detection + Compliance, Free</div>
+<div class="concept-desc">
+<strong class="c-cyan">Wazuh</strong> is a popular free platform that combines
+<strong>endpoint agents</strong> with a SIEM backend (built on the Elastic stack).
+Agents on each host do log collection, file-integrity monitoring (FIM), rootkit
+detection, and vulnerability detection; the manager correlates with rules and maps
+findings to MITRE ATT&amp;CK and compliance frameworks (PCI, CIS).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Capability</th><th>Detail</th></tr>
+<tr><td class="c-green">Log analysis</td><td>Decoders + rules turn raw logs into alerts</td></tr>
+<tr><td class="c-green">FIM</td><td>Alerts when watched files change (tampering)</td></tr>
+<tr><td class="c-green">Vuln detection</td><td>Correlates installed software vs CVE feeds</td></tr>
+<tr><td class="c-green">Active response</td><td>Auto-actions (block IP, kill process) on triggers</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+A common home-lab / SMB choice: it delivers endpoint + SIEM + compliance in one
+free package, where Splunk/commercial XDR would cost heavily.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📥</span>
+<span class="topic-name">Graylog &amp; Loki — Log Aggregation Alternatives</span>
+<span class="topic-badge">SIEM</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Two More Ways to Centralize Logs</div>
+<div class="concept-desc">
+<strong class="c-cyan">Graylog</strong> is a streamlined, security-friendly log
+management platform (streams, alerts, dashboards) that's simpler to operate than
+raw ELK. <strong class="c-cyan">Loki</strong> (from Grafana) takes a different
+tack: it indexes only <em>labels</em>, not full log content, making it very cheap
+to store — and it pairs with Grafana so logs sit next to your metrics.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Best for</th></tr>
+<tr><td class="c-cyan">Graylog</td><td>Turnkey central log mgmt with security features</td></tr>
+<tr><td class="c-cyan">Loki</td><td>Cheap, high-volume logs alongside Grafana metrics</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The theme across all of these: <strong class="c-green">centralize logs off the
+hosts</strong>. An attacker's first move is deleting local logs — if they're
+already shipped to a central store, the evidence survives.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📜</span>
+<span class="topic-name">Sigma — Write Detections Once, Run Anywhere</span>
+<span class="topic-badge">Detection</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Vendor-Neutral Detection Format</div>
+<div class="concept-desc">
+Every SIEM has its own query language — so a detection written for Splunk doesn't
+work in Elastic. <strong class="c-cyan">Sigma</strong> solves this: you write a
+detection once in a simple YAML format, then a converter compiles it into SPL,
+Elastic KQL, Wazuh rules, etc. It's "the YARA of logs" and how the community shares
+detections.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="var">title</span>: Many Failed Logins (Brute Force)
+<span class="var">logsource</span>:
+  <span class="var">product</span>: linux
+  <span class="var">service</span>: auth
+<span class="var">detection</span>:
+  <span class="var">selection</span>:
+    <span class="var">message</span>: <span class="str">'Failed password'</span>
+  <span class="var">condition</span>: selection | count() by src_ip &gt; <span class="num">20</span>
+<span class="var">level</span>: high</pre>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Workflow:</strong> pull community Sigma rules (or write
+your own) → convert to your SIEM → deploy. It makes detection engineering
+portable and reviewable in Git (detection-as-code).
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body blueteam -->
 </div>
 </div>
