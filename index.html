@@ -43768,6 +43768,166 @@ Steampipe) that flag these exact patterns.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌐</span>
+<span class="topic-name">AWS VPC — Subnets, Security Groups &amp; NACLs</span>
+<span class="topic-badge">AWS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">How-To</div>
+<div class="concept-title">Your Private Slice of the AWS Network</div>
+<div class="concept-desc">
+A <strong class="c-cyan">VPC</strong> is an isolated virtual network you define
+with a CIDR block (e.g. <code>10.0.0.0/16</code>). Inside it you carve
+<strong>subnets</strong>, control routing, and layer two firewalls. Getting the
+public/private split right is the foundation of a secure architecture.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Piece</th><th>Role</th></tr>
+<tr><td class="c-cyan">Public subnet</td><td>Route to an Internet Gateway (IGW) — for load balancers, bastions</td></tr>
+<tr><td class="c-cyan">Private subnet</td><td>No direct inbound; outbound via a NAT Gateway — for app servers, DBs</td></tr>
+<tr><td class="c-cyan">Route table</td><td>Decides where a subnet's traffic goes (IGW, NAT, peering)</td></tr>
+<tr><td class="c-green">Security Group</td><td><strong>Stateful</strong> firewall on the instance — allow rules only; return traffic auto-allowed</td></tr>
+<tr><td class="c-amber">NACL</td><td><strong>Stateless</strong> firewall on the subnet — allow + deny; must allow both directions</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Remember:</strong> Security Groups are stateful (the
+common case, instance-level); NACLs are stateless (subnet-level, coarse). Put
+databases in private subnets and never give them a public IP.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔀</span>
+<span class="topic-name">AWS Load Balancing &amp; DNS — ELB, Route 53, CloudFront</span>
+<span class="topic-badge">AWS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">How-To</div>
+<div class="concept-title">Getting Traffic to the Right Place, Fast</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Service</th><th>Does</th></tr>
+<tr><td class="c-cyan">ALB (Application LB)</td><td>Layer 7 — routes HTTP(S) by path/host, WebSockets, target groups</td></tr>
+<tr><td class="c-cyan">NLB (Network LB)</td><td>Layer 4 — ultra-fast TCP/UDP, static IPs, extreme throughput</td></tr>
+<tr><td class="c-cyan">Route 53</td><td>DNS + health checks + routing policies (latency, weighted, failover, geo)</td></tr>
+<tr><td class="c-cyan">CloudFront</td><td>CDN — caches content at edge locations near users; also DDoS/TLS termination</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+A typical web path: <strong>Route 53 → CloudFront → ALB → targets</strong> across
+multiple AZs. Route 53's <strong class="c-green">failover routing</strong> +
+health checks is how you build multi-region resilience.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌐</span>
+<span class="topic-name">GCP VPC — Global Networks &amp; Firewall Rules</span>
+<span class="topic-badge">GCP</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">How-To</div>
+<div class="concept-title">One Network That Spans the Planet</div>
+<div class="concept-desc">
+GCP's big networking difference: a <strong class="c-cyan">VPC is global</strong>,
+not regional. One VPC can hold subnets in every region, and instances in different
+regions talk over Google's private backbone without extra peering. Subnets are
+regional; the VPC that contains them is global.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Piece</th><th>Role</th></tr>
+<tr><td class="c-cyan">VPC (global)</td><td>The whole network; subnets are regional within it</td></tr>
+<tr><td class="c-green">Firewall rules</td><td>Stateful; applied by network <strong>tags</strong> or service accounts, not per-instance objects</td></tr>
+<tr><td class="c-cyan">Cloud NAT</td><td>Managed egress for private instances (no per-VM NAT gateway)</td></tr>
+<tr><td class="c-cyan">Cloud Router</td><td>Dynamic (BGP) routing for hybrid/VPN links</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Firewall rules being <strong class="c-green">tag-based</strong> is the mental
+shift from AWS: tag an instance <code>web</code>, write a rule "allow 443 to
+tag:web" — no security-group object to attach.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔀</span>
+<span class="topic-name">GCP Load Balancing &amp; DNS</span>
+<span class="topic-badge">GCP</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">How-To</div>
+<div class="concept-title">A Single Global Anycast IP</div>
+<div class="concept-desc">
+GCP's global load balancer is a standout: one
+<strong class="c-cyan">anycast IP</strong> serves users worldwide, automatically
+routing each to the nearest healthy backend — no per-region IPs or DNS tricks
+needed. It scales instantly without pre-warming.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Service</th><th>Does</th></tr>
+<tr><td class="c-cyan">Global External LB</td><td>One IP, worldwide HTTP(S) routing to nearest backend</td></tr>
+<tr><td class="c-cyan">Regional LB</td><td>L4/L7 within a region</td></tr>
+<tr><td class="c-cyan">Cloud DNS</td><td>Managed, scalable DNS with 100% SLA</td></tr>
+<tr><td class="c-cyan">Cloud CDN</td><td>Edge caching, enabled on the LB backend</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔗</span>
+<span class="topic-name">Hybrid Connectivity — VPN, Interconnect &amp; Peering</span>
+<span class="topic-badge">Cloud</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Wiring the Cloud to Your Datacenter (and Itself)</div>
+<div class="concept-desc">
+Real deployments connect cloud networks to on-prem and to each other. The options
+trade cost against bandwidth and reliability.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Need</th><th>AWS</th><th>GCP</th></tr>
+<tr><td>Encrypted over internet</td><td>Site-to-Site VPN</td><td>Cloud VPN</td></tr>
+<tr><td>Private dedicated line</td><td>Direct Connect</td><td>Cloud Interconnect</td></tr>
+<tr><td>Connect two VPCs</td><td>VPC Peering / Transit Gateway</td><td>VPC Peering / Network Connectivity Center</td></tr>
+<tr><td>Reach a managed service privately</td><td>PrivateLink / VPC Endpoints</td><td>Private Service Connect</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">VPN</strong> is cheap and quick but rides the public
+internet; <strong class="c-cyan">Direct Connect / Interconnect</strong> is a
+private circuit — pricier, but consistent low latency and high bandwidth for
+production hybrid workloads. <strong>PrivateLink</strong>-style endpoints keep
+traffic to cloud services off the public internet entirely.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body cloud -->
 </div>
 </div>
