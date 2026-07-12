@@ -583,4 +583,170 @@
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🖥️</span>
+              <span class="topic-name">AWS Compute — EC2, AMIs &amp; Auto Scaling</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Renting Virtual Machines That Scale Themselves</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">EC2</strong> is AWS's virtual-machine service. You launch
+                  instances from an <strong>AMI</strong> (a machine image), pick an
+                  <strong>instance type</strong> (family + size), and — critically — put them behind
+                  an <strong>Auto Scaling Group</strong> so capacity follows demand instead of
+                  running fixed (and overpaying).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">AMI</td><td>Snapshot template an instance boots from (OS + config)</td></tr>
+                    <tr><td class="c-cyan">Instance family</td><td>t/m = general, c = compute, r = memory, g/p = GPU</td></tr>
+                    <tr><td class="c-cyan">Auto Scaling Group</td><td>Min/desired/max; adds/removes instances on metrics</td></tr>
+                    <tr><td class="c-cyan">Launch template</td><td>The blueprint an ASG uses to create instances</td></tr>
+                    <tr><td class="c-cyan">User data</td><td>Boot script to configure an instance on launch</td></tr>
+                  </table>
+                  <div class="dt" style="margin-top:12px">▸ PRICING MODELS</div>
+                  <table class="ref-table">
+                    <tr><th>Model</th><th>Use</th></tr>
+                    <tr><td>On-Demand</td><td>Pay per second; spiky/unpredictable</td></tr>
+                    <tr><td class="c-green">Savings Plans / Reserved</td><td>1–3 yr commit → ~30–70% off steady load</td></tr>
+                    <tr><td class="c-green">Spot</td><td>Spare capacity ~90% off; can be reclaimed → fault-tolerant jobs</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📦</span>
+              <span class="topic-name">AWS Serverless &amp; Containers — Lambda, ECS, EKS, Fargate</span>
+              <span class="topic-badge">AWS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Run Code Without (Managing) Servers</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>What</th></tr>
+                    <tr><td class="c-cyan">Lambda</td><td>Functions triggered by events; scale-to-zero, pay per ms</td></tr>
+                    <tr><td class="c-cyan">ECS</td><td>AWS's own container orchestrator (simpler than K8s)</td></tr>
+                    <tr><td class="c-cyan">EKS</td><td>Managed Kubernetes (when you need K8s portability)</td></tr>
+                    <tr><td class="c-cyan">Fargate</td><td>Serverless <em>container</em> compute — runs ECS/EKS tasks with no EC2 to manage</td></tr>
+                    <tr><td class="c-cyan">App Runner</td><td>Push a container/repo → get a URL; simplest path</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Decision:</strong> event-driven glue → Lambda; long-running
+                    services in containers → ECS/EKS on Fargate (no servers) or EC2 (cheaper at
+                    scale, more ops). Fargate is the "I don't want to manage nodes" answer for
+                    containers.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🖥️</span>
+              <span class="topic-name">GCP Compute — Compute Engine &amp; MIGs</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">VMs on Google's Infrastructure</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Compute Engine</strong> is GCP's VM service. Two nice
+                  differentiators: <strong class="c-green">per-second billing with sustained-use
+                  discounts applied automatically</strong> (no upfront commit needed for savings),
+                  and <strong class="c-green">custom machine types</strong> — pick exact vCPU/RAM
+                  instead of fixed sizes.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>AWS Analog</th></tr>
+                    <tr><td class="c-cyan">Machine image / family</td><td>AMI / instance family (e2, n2, c3…)</td></tr>
+                    <tr><td class="c-cyan">Managed Instance Group (MIG)</td><td>Auto Scaling Group — autoscaling + auto-healing</td></tr>
+                    <tr><td class="c-cyan">Instance template</td><td>Launch template</td></tr>
+                    <tr><td class="c-green">Preemptible / Spot VMs</td><td>Spot — deep discount, reclaimable</td></tr>
+                    <tr><td class="c-green">Sustained-use discount</td><td>Automatic; no reservation needed</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🏃</span>
+              <span class="topic-name">GCP Serverless &amp; Containers — Cloud Run, Functions, GKE</span>
+              <span class="topic-badge">GCP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Cloud Run Is the Star</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Cloud Run</strong> is GCP's standout: give it a container,
+                  get a scalable HTTPS endpoint that <strong class="c-green">scales to zero</strong>
+                  and bills per request — serverless containers with almost no config. It's often the
+                  simplest way to deploy a web service on any cloud.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>What</th></tr>
+                    <tr><td class="c-cyan">Cloud Run</td><td>Serverless containers (scale-to-zero, per-request)</td></tr>
+                    <tr><td class="c-cyan">Cloud Functions</td><td>Event-driven functions (like Lambda)</td></tr>
+                    <tr><td class="c-cyan">GKE</td><td>Managed Kubernetes — the reference K8s experience (Google created K8s)</td></tr>
+                    <tr><td class="c-cyan">GKE Autopilot</td><td>K8s where Google manages the nodes for you</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Rule of thumb:</strong> a stateless web service or API →
+                    Cloud Run. Event glue → Cloud Functions. You genuinely need Kubernetes (complex
+                    microservices, existing K8s manifests) → GKE.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧭</span>
+              <span class="topic-name">Choosing Compute — VM vs Container vs Serverless</span>
+              <span class="topic-badge">Reference</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">A Decision Guide</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pick…</th><th>When</th></tr>
+                    <tr><td class="c-cyan">Serverless functions</td><td>Event-driven, spiky, short tasks; you want zero ops &amp; scale-to-zero</td></tr>
+                    <tr><td class="c-cyan">Serverless containers (Cloud Run / Fargate)</td><td>Web services/APIs you want managed, but with a real container &amp; no cold-start-only limits</td></tr>
+                    <tr><td class="c-cyan">Managed Kubernetes</td><td>Many services, complex networking, portability, an existing K8s investment</td></tr>
+                    <tr><td class="c-cyan">Plain VMs</td><td>Legacy apps, special OS/kernel needs, GPUs, or maximum control</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The trend runs left-to-right toward <strong>more managed</strong> — start as
+                    serverless as the workload allows and drop down to VMs only when you need the
+                    control. Less to operate = less to break.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body cloud -->
