@@ -43838,6 +43838,180 @@ portable and reviewable in Git (detection-as-code).
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔬</span>
+<span class="topic-name">Sysmon — The Windows Telemetry Powerhouse</span>
+<span class="topic-badge">EDR</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Logging Windows Should Have Shipped With</div>
+<div class="concept-desc">
+<strong class="c-cyan">Sysmon</strong> (Sysinternals) is a free driver that logs
+rich, high-fidelity endpoint events far beyond default Windows auditing — process
+creation with command lines and hashes, network connections, file/registry changes,
+and DLL loads. It's the single highest-value free telemetry source for detecting
+the attacks in the Red Team domain, feeding your SIEM.
+</div>
+<div class="dw">
+<div class="dt">▸ HIGH-VALUE EVENT IDS</div>
+<table class="ref-table">
+<tr><th>ID</th><th>Event</th></tr>
+<tr><td class="c-cyan">1</td><td>Process creation (cmd line, hashes, parent) — the workhorse</td></tr>
+<tr><td class="c-cyan">3</td><td>Network connection (catch C2 beacons)</td></tr>
+<tr><td class="c-cyan">7</td><td>Image/DLL loaded (unsigned DLLs, injection)</td></tr>
+<tr><td class="c-cyan">8</td><td>CreateRemoteThread (process injection)</td></tr>
+<tr><td class="c-cyan">10</td><td>Process access — <strong>LSASS access = Mimikatz signal</strong></td></tr>
+<tr><td class="c-cyan">11</td><td>File create (dropped payloads)</td></tr>
+<tr><td class="c-cyan">22</td><td>DNS query (DGA / tunneling)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Deploy with a curated config (the SwiftOnSecurity / Olaf templates are the
+community standard) to cut noise. Parent-child process chains (e.g.
+<code>winword.exe → powershell.exe</code>) are gold for detection.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🦉</span>
+<span class="topic-name">OSQuery — Your Fleet as a SQL Database</span>
+<span class="topic-badge">EDR</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Query Endpoints Like a Table</div>
+<div class="concept-desc">
+<strong class="c-cyan">OSQuery</strong> (Meta, open source) exposes the OS as
+SQL tables — processes, users, listening ports, installed packages, startup items —
+so you can ask questions across your whole fleet with a query. It's cross-platform
+(Windows/macOS/Linux) and great for both incident response and continuous
+monitoring.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com">-- What's listening on the network?</span>
+<span class="kw">SELECT</span> p.name, l.port, l.address
+<span class="kw">FROM</span> listening_ports l <span class="kw">JOIN</span> processes p <span class="kw">ON</span> l.pid = p.pid;
+
+<span class="com">-- Unsigned processes running from temp dirs</span>
+<span class="kw">SELECT</span> name, path <span class="kw">FROM</span> processes
+<span class="kw">WHERE</span> path <span class="kw">LIKE</span> <span class="str">'%\Temp\%'</span>;</pre>
+<div class="concept-desc" style="margin-top:8px">
+Run ad-hoc during IR, or schedule "packs" of queries that stream diffs to your
+SIEM (via Fleet/Kolide) for continuous detection — e.g. alert whenever a new
+persistence entry appears.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🦖</span>
+<span class="topic-name">Velociraptor — Endpoint DFIR &amp; Hunting at Scale</span>
+<span class="topic-badge">DFIR</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Hunt Across Thousands of Machines</div>
+<div class="concept-desc">
+<strong class="c-cyan">Velociraptor</strong> is a powerful open-source DFIR and
+threat-hunting platform. Using its query language <strong>VQL</strong>, you can
+collect artifacts, run hunts, and monitor endpoints across an entire estate from
+one console — "check every machine for this IOC" returns answers in minutes, not
+days.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Use</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Hunts</td><td>Run an artifact collection across all endpoints at once</td></tr>
+<tr><td class="c-cyan">Artifacts</td><td>Reusable collectors (prefetch, browser history, registry, memory)</td></tr>
+<tr><td class="c-cyan">Client monitoring</td><td>Continuous event queries (like a lightweight EDR)</td></tr>
+<tr><td class="c-cyan">VQL</td><td>SQL-like language to query live endpoint state</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+It's become a go-to for IR teams who need broad, fast visibility without a
+six-figure commercial EDR — especially during active incidents.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🪟</span>
+<span class="topic-name">Windows Event Logs — The IDs That Matter</span>
+<span class="topic-badge">EDR</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Native Telemetry Every Analyst Must Know</div>
+<div class="concept-desc">
+Before Sysmon, there's the built-in Security log. Knowing the key event IDs lets
+you reconstruct logons, privilege use, and lateral movement — these show up
+constantly in SOC interviews and real investigations.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>ID</th><th>Meaning</th></tr>
+<tr><td class="c-cyan">4624 / 4625</td><td>Successful / failed logon (watch <strong>logon type</strong> — 3=network, 10=RDP)</td></tr>
+<tr><td class="c-cyan">4688</td><td>Process creation (enable cmd-line auditing!)</td></tr>
+<tr><td class="c-cyan">4672</td><td>Special privileges assigned (admin logon)</td></tr>
+<tr><td class="c-cyan">4720 / 4728</td><td>User created / added to a privileged group</td></tr>
+<tr><td class="c-cyan">4769</td><td>Kerberos service ticket — spikes = Kerberoasting</td></tr>
+<tr><td class="c-cyan">4662</td><td>Directory-object access — from a non-DC can mean DCSync</td></tr>
+<tr><td class="c-cyan">7045</td><td>Service installed — classic psexec / persistence</td></tr>
+<tr><td class="c-cyan">1102</td><td>Audit log cleared — attackers covering tracks</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🐧</span>
+<span class="topic-name">auditd &amp; Linux Endpoint Logging</span>
+<span class="topic-badge">EDR</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Same Visibility, on Linux</div>
+<div class="concept-desc">
+<strong class="c-cyan">auditd</strong> is the Linux audit framework — it logs
+syscalls, file access, and command execution against rules you define. Pair it
+with the Linux kernel's audit subsystem (or a modern eBPF agent like Falco) to get
+process-level telemetry equivalent to Sysmon on Windows.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Watch a sensitive file for any access</span>
+<span class="fn">auditctl</span> -w /etc/shadow -p rwa -k shadow-access
+
+<span class="com"># Log every execve (process execution)</span>
+<span class="fn">auditctl</span> -a always,exit -F arch=b64 -S execve -k exec
+
+<span class="fn">ausearch</span> -k shadow-access        <span class="com"># query by key</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+Ship these logs to the SIEM alongside Windows/Sysmon so hunts and detections
+cover the whole estate. For richer, lower-overhead visibility, eBPF-based tools
+(Falco, Tetragon) are the modern complement — see the eBPF topic in Linux.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body blueteam -->
 </div>
 </div>
