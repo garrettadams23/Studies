@@ -1248,4 +1248,284 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🪛</span>
+              <span class="topic-name">Living off the Land — LOLBAS &amp; GTFOBins</span>
+              <span class="topic-badge">Post-Ex</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Turning Built-In Tools Into Weapons</div>
+                <div class="concept-desc">
+                  Attackers avoid dropping malware by abusing <em>legitimate, pre-installed</em>
+                  binaries — <strong class="c-cyan">"living off the land"</strong>. On Windows,
+                  <strong class="c-cyan">LOLBAS</strong> catalogs signed binaries that can download,
+                  execute, or bypass controls; on Linux, <strong class="c-cyan">GTFOBins</strong>
+                  lists how common utilities can break out of restricted shells or escalate.
+                  <em>Study/detection reference for authorized testing.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Example</th><th>Abuse</th></tr>
+                    <tr><td><code>certutil</code></td><td>Downloads files (looks like a cert tool)</td></tr>
+                    <tr><td><code>regsvr32 / mshta</code></td><td>Executes remote scripts</td></tr>
+                    <tr><td><code>rundll32</code></td><td>Runs code via a DLL export</td></tr>
+                    <tr><td><code>bash/vim/find (GTFOBins)</code></td><td>Shell escape / privesc from a limited context</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> signatures don't help — these
+                    are trusted binaries. Detection is <strong class="c-green">behavioral</strong>:
+                    <code>certutil</code> making a network connection, or <code>winword.exe</code>
+                    spawning <code>powershell.exe</code>, is anomalous even though every binary is
+                    signed (this is why Sysmon parent/child chains matter).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧗</span>
+              <span class="topic-name">Privilege Escalation Scanners — PEAS &amp; PowerUp</span>
+              <span class="topic-badge">Post-Ex</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">From User to Root/SYSTEM</div>
+                <div class="concept-desc">
+                  After landing a low-priv foothold, operators enumerate the host for escalation
+                  paths. <strong class="c-cyan">linPEAS/winPEAS</strong> (and PowerUp/PrivescCheck)
+                  automate the checklist — misconfigured services, weak permissions, stored creds,
+                  kernel exploits, SUID binaries. <em>Authorized hosts only.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Finds (Windows)</th><th>Finds (Linux)</th></tr>
+                    <tr><td>Unquoted service paths</td><td>SUID/SGID binaries (GTFOBins)</td></tr>
+                    <tr><td>Writable service binaries</td><td>Writable /etc/passwd, cron jobs</td></tr>
+                    <tr><td>AlwaysInstallElevated</td><td>Sudo misconfigs (NOPASSWD)</td></tr>
+                    <tr><td>Stored creds / autologon</td><td>Kernel version → known exploits</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> PEAS scans touch a huge number
+                    of files/registry keys quickly — noisy to EDR. Defense is the fix, not the
+                    detect: least privilege, patch, remove SUID, lock down sudo, no creds on disk.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🌉</span>
+              <span class="topic-name">Pivoting &amp; Tunneling — Chisel, ligolo-ng &amp; proxychains</span>
+              <span class="topic-badge">Post-Ex</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Reaching Networks You Can't Route To</div>
+                <div class="concept-desc">
+                  A compromised host is often a <strong>pivot</strong> into segments the operator
+                  can't reach directly. Tunneling tools route traffic through the foothold so tools
+                  on the attacker box can hit internal systems. <em>Authorized, scoped internal
+                  networks only.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Role</th></tr>
+                    <tr><td class="c-cyan">Chisel</td><td>Fast TCP/UDP tunnel over HTTP (SOCKS proxy through the pivot)</td></tr>
+                    <tr><td class="c-cyan">ligolo-ng</td><td>Modern tunneling with a virtual interface (route to internal subnets)</td></tr>
+                    <tr><td class="c-cyan">SSH -D / -L</td><td>Dynamic (SOCKS) &amp; local port forwarding</td></tr>
+                    <tr><td class="c-cyan">proxychains</td><td>Force any tool through a SOCKS proxy</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> internal
+                    <strong class="c-green">network segmentation</strong> (Zero Trust microseg) is
+                    what limits a pivot's reach. Watch for unexpected long-lived tunnels and
+                    east-west traffic a host shouldn't originate.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🚪</span>
+              <span class="topic-name">Data Exfiltration Channels — DNS, ICMP &amp; HTTPS</span>
+              <span class="topic-badge">Post-Ex</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">How Data Leaves — and How to Catch It</div>
+                <div class="concept-desc">
+                  In the final phase, operators demonstrate <strong>exfiltration</strong> — moving
+                  data out past controls. Understanding the channels is squarely a detection skill.
+                  <em>Authorized engagements only.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Channel</th><th>Why it's used</th><th>Detection</th></tr>
+                    <tr><td class="c-cyan">DNS tunneling</td><td>DNS is rarely blocked</td><td>Huge volume/entropy of queries to one domain (Zeek dns.log)</td></tr>
+                    <tr><td class="c-cyan">ICMP tunneling</td><td>Ping is often allowed out</td><td>Oversized/frequent ICMP with payloads</td></tr>
+                    <tr><td class="c-cyan">HTTPS to cloud</td><td>Blends with normal web traffic</td><td>Large outbound to new/rare destinations; DLP</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> egress filtering (allow-list
+                    outbound), DNS monitoring, and DLP are the counters. The theme across R8: modern
+                    attackers are <em>quiet and signed</em> — behavioral analytics, not signatures,
+                    catch them.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">☁️</span>
+              <span class="topic-name">Pacu — The AWS Exploitation Framework</span>
+              <span class="topic-badge">Cloud Offense</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Metasploit, But for AWS</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Pacu</strong> (Rhino Security Labs) is a modular framework
+                  for testing AWS environments — once you have a set of credentials (legitimately, in
+                  an authorized assessment), it enumerates permissions, finds privilege-escalation
+                  paths, and demonstrates impact. <em>Authorized cloud assessments only.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Module type</th><th>Does</th></tr>
+                    <tr><td class="c-cyan">enum</td><td>Map what the creds can see (IAM, EC2, S3, Lambda)</td></tr>
+                    <tr><td class="c-cyan">privesc</td><td>Find IAM misconfig chains (iam:PassRole etc.)</td></tr>
+                    <tr><td class="c-cyan">persistence / exfil</td><td>Demonstrate impact for the report</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> everything Pacu does is API
+                    calls — <strong class="c-green">CloudTrail + GuardDuty</strong> see the
+                    enumeration and privesc attempts. This is the offensive mirror of the CSPM tools
+                    in the Cloud domain.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🦊</span>
+              <span class="topic-name">CloudFox &amp; enumerate-iam — Attack-Surface Enumeration</span>
+              <span class="topic-badge">Cloud Offense</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">"What Can I Do With These Creds?"</div>
+                <div class="concept-desc">
+                  After obtaining cloud credentials during an engagement, the first question is what
+                  they grant. <strong class="c-cyan">CloudFox</strong> surfaces exploitable
+                  attack paths (roles you can assume, secrets you can read, instances you can reach);
+                  <strong class="c-cyan">enumerate-iam</strong> brute-forces which API calls a set of
+                  keys is allowed to make. <em>Authorized use only.</em>
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    <strong class="c-amber">Blue-team note:</strong> these produce a burst of
+                    describe/list and access-denied events in CloudTrail — a spike of
+                    <code>AccessDenied</code> from one principal is a strong enumeration signal.
+                    Least privilege shrinks what any leaked key can enumerate in the first place.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">☸️</span>
+              <span class="topic-name">Kubernetes Attacks — RBAC Abuse &amp; Container Escape</span>
+              <span class="topic-badge">Cloud Offense</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">From a Pod to the Cluster</div>
+                <div class="concept-desc">
+                  A compromised container is the start, not the end. Attackers abuse over-permissive
+                  <strong>RBAC</strong>, over-mounted service-account tokens, and privileged/host
+                  configs to escape a pod and take over the node or cluster.
+                  <strong class="c-cyan">kube-hunter</strong> (and kubeaudit) probe for these.
+                  <em>Authorized clusters only.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Weakness</th><th>Impact</th></tr>
+                    <tr><td class="c-red">Over-broad RBAC</td><td>A pod's token can create pods / read secrets cluster-wide</td></tr>
+                    <tr><td class="c-red">Privileged / hostPath pod</td><td>Escape to the node's filesystem/kernel</td></tr>
+                    <tr><td class="c-red">Exposed kubelet / API</td><td>Direct command execution on pods</td></tr>
+                    <tr><td class="c-red">Mounted SA token</td><td>Default token used to call the API</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> this is exactly what the
+                    Kubernetes Security card defends — least-privilege RBAC, Pod Security Standards
+                    (no privileged/hostPath), network policies, and audit logging.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎭</span>
+              <span class="topic-name">Cloud Credential Attacks &amp; the Purple-Team Bridge</span>
+              <span class="topic-badge">Cloud Offense</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">SSRF → Metadata → Role, and Closing the Loop</div>
+                <div class="concept-desc">
+                  The signature cloud breach chain: an app-layer <strong class="c-cyan">SSRF</strong>
+                  is used to reach the <strong>instance metadata service (IMDS)</strong>, steal the
+                  attached role's temporary credentials, then pivot with those creds. Understanding
+                  it is what lets red and blue close the loop together (purple teaming).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>Defense</th></tr>
+                    <tr><td class="c-cyan">SSRF in the app</td><td>Fix the vuln; validate/deny internal URLs</td></tr>
+                    <tr><td class="c-cyan">Hit IMDS for creds</td><td class="c-green">Enforce IMDSv2 (session-token, blocks basic SSRF)</td></tr>
+                    <tr><td class="c-cyan">Use stolen role creds</td><td>Least privilege; detect creds used off-instance (GuardDuty)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Purple team:</strong> the red team demonstrates the chain
+                    against ATT&amp;CK; the blue team confirms each step is detected/blocked (IMDSv2,
+                    CSPM, GuardDuty). That collaboration — offense proving, defense hardening — is the
+                    whole point of pairing these two domains.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body redteam -->

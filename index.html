@@ -5411,11 +5411,105 @@ passes the real client IP along in these headers.
 </div>
 </div>
 </div>
-<!-- /domain-body net -->
-<!-- /domain-body net -->
-<!-- /domain-body net -->
-<!-- /domain-body net -->
-<!-- /domain-body net -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🤖</span>
+<span class="topic-name">Network Automation — Ansible, Netmiko &amp; NAPALM</span>
+<span class="topic-badge">Automation</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Stop Configuring Switches by Hand</div>
+<div class="concept-desc">
+Managing hundreds of devices via CLI is slow and error-prone. Network automation
+treats configuration as code — versioned, tested, and pushed programmatically. This
+is the heart of <strong class="c-cyan">NetDevOps</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Role</th></tr>
+<tr><td class="c-cyan">Ansible (network modules)</td><td>Declarative, agentless config push across vendors</td></tr>
+<tr><td class="c-cyan">Netmiko</td><td>Python SSH library for sending CLI commands</td></tr>
+<tr><td class="c-cyan">NAPALM</td><td>Vendor-neutral API — get/replace config uniformly</td></tr>
+<tr><td class="c-cyan">gNMI / NETCONF / RESTCONF</td><td>Model-driven (YANG) APIs — the modern replacement for CLI scraping</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Source of truth:</strong> keep intended config in Git
+(often generated from a data model with Jinja2 templates), then push and verify.
+Model-driven telemetry (gNMI streaming) is replacing SNMP polling for monitoring.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔐</span>
+<span class="topic-name">DNSSEC &amp; Encrypted DNS — DoH / DoT</span>
+<span class="topic-badge">DNS Security</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Two Different Problems With DNS</div>
+<div class="concept-desc">
+Plain DNS is both <em>unauthenticated</em> (answers can be forged) and
+<em>unencrypted</em> (anyone on-path can read/modify queries). Two separate
+technologies fix these — and they're often confused.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tech</th><th>Solves</th></tr>
+<tr><td class="c-cyan">DNSSEC</td><td><strong>Integrity/authenticity</strong> — signs records so forgery (cache poisoning) is detectable. Not encryption.</td></tr>
+<tr><td class="c-cyan">DoT (DNS over TLS)</td><td><strong>Privacy</strong> — encrypts DNS on port 853</td></tr>
+<tr><td class="c-cyan">DoH (DNS over HTTPS)</td><td><strong>Privacy</strong> — encrypts DNS inside HTTPS (443), blends with web traffic</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Key distinction:</strong> DNSSEC proves an answer is
+<em>genuine</em> but is public; DoH/DoT keep the query <em>private</em> but don't
+prove authenticity. You want both. DoH complicates enterprise DNS filtering — a
+real blue-team consideration.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌐</span>
+<span class="topic-name">WAN &amp; Switching Deep — SD-WAN, MPLS, VLANs &amp; PoE</span>
+<span class="topic-badge">Infrastructure</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Connecting Sites and Carving Up Switches</div>
+<div class="concept-desc">
+A grab-bag of infrastructure concepts that show up constantly in enterprise
+networking and on the Network+/CCNA exams.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">MPLS</td><td>Carrier "label-switched" WAN — fast, reliable, expensive private transport</td></tr>
+<tr><td class="c-cyan">SD-WAN</td><td>Software overlay across cheap internet links; policy-based path selection (displacing MPLS)</td></tr>
+<tr><td class="c-cyan">802.1Q trunking</td><td>Tag frames so one link carries many VLANs between switches</td></tr>
+<tr><td class="c-cyan">Multicast</td><td>One-to-many delivery (IGMP) — video/streaming without flooding</td></tr>
+<tr><td class="c-cyan">PoE</td><td>Power over Ethernet — run APs, phones &amp; cameras on the data cable</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">The trend:</strong> SD-WAN + SASE (security + networking as
+a cloud service) is where enterprise WAN is heading — central policy, encrypted
+overlays, and security inspection built into the fabric.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body net -->
 </div>
 </div>
@@ -8823,10 +8917,6 @@ through.
 </div>
 </div>
 <!-- /domain-body sec -->
-<!-- /domain-body sec -->
-<!-- /domain-body sec -->
-<!-- /domain-body sec -->
-<!-- /domain-body sec -->
 </div>
 </div>
 <div class="domain-section domain-threat" data-domain="threat">
@@ -10766,10 +10856,6 @@ enforcement? Untested assumptions don't reveal themselves until the worst possib
 </div>
 </div>
 </div>
-<!-- /domain-body threat -->
-<!-- /domain-body threat -->
-<!-- /domain-body threat -->
-<!-- /domain-body threat -->
 <!-- /domain-body threat -->
 </div>
 </div>
@@ -13041,10 +13127,6 @@ mathematical promise, not just a best effort.
 </div>
 </div>
 </div>
-<!-- /domain-body grc -->
-<!-- /domain-body grc -->
-<!-- /domain-body grc -->
-<!-- /domain-body grc -->
 <!-- /domain-body grc -->
 </div>
 </div>
@@ -17067,9 +17149,392 @@ container escape are exactly what these controls stop.
 </div>
 </div>
 </div>
-<!-- /domain-body ops -->
-<!-- /domain-body ops -->
-<!-- /domain-body ops -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⚙️</span>
+<span class="topic-name">Configuration Management — Ansible &amp; the Alternatives</span>
+<span class="topic-badge">Config Mgmt</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Make Servers Match a Desired State</div>
+<div class="concept-desc">
+Config management enforces <em>how a server is set up</em> — packages, files,
+services, users — declaratively and repeatably. <strong class="c-cyan">Ansible</strong>
+dominates because it's <strong class="c-green">agentless</strong> (just SSH + Python)
+and its YAML playbooks are readable.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># A tiny playbook: install &amp; start nginx, idempotently</span>
+<span class="var">- hosts:</span> web
+  <span class="var">become:</span> <span class="kw">true</span>
+  <span class="var">tasks:</span>
+    <span class="var">- name:</span> Install nginx
+      <span class="fn">ansible.builtin.apt:</span> { name: nginx, state: present }
+    <span class="var">- name:</span> Ensure it is running
+      <span class="fn">ansible.builtin.service:</span> { name: nginx, state: started, enabled: <span class="kw">true</span> }</pre>
+<table class="ref-table">
+<tr><th>Tool</th><th>Model</th></tr>
+<tr><td class="c-cyan">Ansible</td><td>Agentless, push, YAML — easiest to adopt</td></tr>
+<tr><td class="c-cyan">Puppet / Chef</td><td>Agent-based, pull, mature at large scale</td></tr>
+<tr><td class="c-cyan">Salt</td><td>Agent or agentless; very fast event bus</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Idempotency</strong> is the whole point: run it 100 times,
+the box ends in the same state. Config management handles <em>mutable</em> servers;
+it complements Terraform (which <em>provisions</em> the infra) — ties to the IaC card.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔐</span>
+<span class="topic-name">Secrets Management — Vault &amp; Kubernetes Secrets</span>
+<span class="topic-badge">Secrets</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Stop Putting Passwords in Git</div>
+<div class="concept-desc">
+Hardcoded credentials are one of the most common breach causes. A secrets manager
+stores them centrally, encrypted, with access control and audit — and the best
+systems issue <strong class="c-green">short-lived, dynamic</strong> creds so a leak
+expires on its own.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Approach</th><th>Detail</th></tr>
+<tr><td class="c-cyan">HashiCorp Vault</td><td>Central secrets + dynamic DB/cloud creds + encryption-as-a-service</td></tr>
+<tr><td class="c-cyan">Cloud-native</td><td>AWS Secrets Manager, GCP Secret Manager, Azure Key Vault</td></tr>
+<tr><td class="c-cyan">External Secrets Operator</td><td>Sync a manager's secrets into K8s Secrets</td></tr>
+<tr><td class="c-cyan">Sealed Secrets / SOPS</td><td>Encrypt secrets so they're safe to commit to Git (GitOps)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-red">Note:</strong> plain Kubernetes Secrets are only
+base64-encoded, not encrypted at rest by default — enable encryption providers and
+prefer a real manager. Dynamic short-TTL creds beat static ones every time.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔗</span>
+<span class="topic-name">Software Supply Chain Security — SBOM, SLSA &amp; Sigstore</span>
+<span class="topic-badge">Supply Chain</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Know &amp; Trust What You Ship</div>
+<div class="concept-desc">
+After SolarWinds and Log4Shell, securing the build pipeline itself is a first-class
+concern. The goal: know every component in your artifact, and prove the artifact came
+from your pipeline unmodified.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Standard / Tool</th><th>Answers</th></tr>
+<tr><td class="c-cyan">SBOM</td><td>"What's inside?" — a bill of materials (SPDX/CycloneDX)</td></tr>
+<tr><td class="c-cyan">SLSA</td><td>"How was it built?" — build-integrity levels &amp; provenance</td></tr>
+<tr><td class="c-cyan">Sigstore / cosign</td><td>"Is it really ours?" — keyless signing of artifacts</td></tr>
+<tr><td class="c-cyan">Dependency scanning</td><td>Trivy, Grype, Dependabot — find vulnerable deps (SCA)</td></tr>
+</table>
+<pre class="code-block"><span class="com"># Generate an SBOM and sign an image (keyless, via OIDC)</span>
+syft myimage:1.0 <span class="var">-o</span> cyclonedx-json &gt; sbom.json
+cosign sign myimage:1.0
+cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</pre>
+<div class="concept-desc" style="margin-top:10px">
+Then enforce it: an admission controller can <strong class="c-green">reject
+unsigned images</strong> at deploy time — provenance you actually check, not just
+generate.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📜</span>
+<span class="topic-name">Policy as Code — OPA/Rego &amp; Kyverno</span>
+<span class="topic-badge">Governance</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Guardrails That Enforce Themselves</div>
+<div class="concept-desc">
+Instead of a wiki page saying "don't deploy public S3 buckets," policy-as-code makes
+the rule executable — checked automatically in CI or blocked at admission. Governance
+becomes a test that fails, not a review someone forgets.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Detail</th></tr>
+<tr><td class="c-cyan">OPA / Rego</td><td>General policy engine; Gatekeeper enforces it on K8s</td></tr>
+<tr><td class="c-cyan">Kyverno</td><td>K8s-native policy in YAML (no new language to learn)</td></tr>
+<tr><td class="c-cyan">Conftest</td><td>Run OPA policies against Terraform/JSON/YAML in CI</td></tr>
+<tr><td class="c-cyan">Cloud-native</td><td>AWS SCPs, GCP Org Policy, Azure Policy</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Where to enforce:</strong> shift left (CI catches it before
+merge) <em>and</em> defense in depth (admission control catches it at runtime).
+Ties directly to the CIS Benchmarks and cloud-security cards.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗄️</span>
+<span class="topic-name">Artifact &amp; Registry Management</span>
+<span class="topic-badge">Delivery</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Where Build Outputs Live</div>
+<div class="concept-desc">
+A pipeline builds artifacts — container images, jars, npm packages — that need a
+trusted, versioned home between build and deploy. Registries provide storage, access
+control, scanning, and immutability.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Registry</th><th>Stores</th></tr>
+<tr><td class="c-cyan">Harbor</td><td>Self-hosted container registry + scanning + signing</td></tr>
+<tr><td class="c-cyan">Artifactory / Nexus</td><td>Universal (Docker, Maven, npm, PyPI…) </td></tr>
+<tr><td class="c-cyan">GHCR / ECR / Artifact Registry</td><td>Cloud/platform-native registries</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Practices:</strong> immutable tags (never re-push
+<code>:v1.2.3</code>), retention policies to prune old images, scan on push, and
+promote the <em>same</em> digest through dev→staging→prod rather than rebuilding —
+build once, promote everywhere.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🕸️</span>
+<span class="topic-name">Kubernetes Networking &amp; Storage — CNI &amp; CSI</span>
+<span class="topic-badge">Kubernetes</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">How Pods Talk and Where Data Lives</div>
+<div class="concept-desc">
+Kubernetes defers networking and storage to pluggable interfaces, so the cluster
+works the same whether you run on AWS, bare metal, or a laptop.
+<strong class="c-cyan">CNI</strong> wires up pod networking;
+<strong class="c-cyan">CSI</strong> attaches persistent storage.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Layer</th><th>Detail</th></tr>
+<tr><td class="c-cyan">CNI plugin</td><td>Calico, Cilium, Flannel — gives every pod an IP; enforces NetworkPolicy</td></tr>
+<tr><td class="c-cyan">Service &amp; kube-proxy</td><td>Stable virtual IP + load-balancing across pod replicas</td></tr>
+<tr><td class="c-cyan">Ingress controller</td><td>NGINX, Traefik — HTTP routing &amp; TLS into the cluster</td></tr>
+<tr><td class="c-cyan">CSI driver</td><td>Provisions PersistentVolumes from EBS/PD/etc. via a PVC</td></tr>
+<tr><td class="c-cyan">StorageClass</td><td>Defines a tier (ssd, standard) for dynamic provisioning</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Cilium</strong> (eBPF-based) is increasingly the default —
+it does networking, NetworkPolicy, and observability in one. Storage: a
+<code>PVC</code> requests, the <code>StorageClass</code> + CSI driver fulfill it.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔥</span>
+<span class="topic-name">Prometheus &amp; Grafana — Metrics &amp; Dashboards</span>
+<span class="topic-badge">Observability</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Open-Source Monitoring Standard</div>
+<div class="concept-desc">
+<strong class="c-cyan">Prometheus</strong> scrapes metrics from targets, stores them
+as time-series, and lets you query with <strong class="c-cyan">PromQL</strong>.
+<strong class="c-cyan">Grafana</strong> visualizes them; Alertmanager routes the
+alerts. It's the de-facto stack for cloud-native metrics.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># PromQL: 5xx error rate over the last 5 minutes, per service</span>
+sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span>}[5m]))
+  / sum by (service) (rate(http_requests_total[5m]))</pre>
+<table class="ref-table">
+<tr><th>Piece</th><th>Role</th></tr>
+<tr><td class="c-cyan">Prometheus</td><td>Pull-based scraping + TSDB + PromQL</td></tr>
+<tr><td class="c-cyan">Exporters</td><td>node_exporter, cAdvisor — expose metrics to scrape</td></tr>
+<tr><td class="c-cyan">Alertmanager</td><td>Dedup, group &amp; route alerts to Slack/PagerDuty</td></tr>
+<tr><td class="c-cyan">Grafana</td><td>Dashboards over Prometheus, Loki, and more</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Scale note:</strong> Prometheus is single-node by design;
+Thanos/Mimir/Cortex add long-term storage and HA. Instrument with OpenTelemetry to
+stay portable.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚦</span>
+<span class="topic-name">Golden Signals + RED &amp; USE — What to Measure</span>
+<span class="topic-badge">Observability</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Three Small Frameworks That Cut the Noise</div>
+<div class="concept-desc">
+You can graph a thousand metrics and still miss the outage. These frameworks tell you
+the <em>few</em> signals that actually indicate user pain — so alerts fire on
+symptoms, not on every twitch.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Framework</th><th>Measure</th><th>Best for</th></tr>
+<tr><td class="c-cyan">Golden Signals</td><td>Latency, Traffic, Errors, Saturation</td><td>Any service (Google SRE)</td></tr>
+<tr><td class="c-cyan">RED</td><td>Rate, Errors, Duration</td><td>Request-driven services</td></tr>
+<tr><td class="c-cyan">USE</td><td>Utilization, Saturation, Errors</td><td>Resources (CPU, disk, queues)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Rule of thumb:</strong> alert on <em>symptoms</em> users
+feel (latency/errors), not causes (high CPU) — a busy CPU that still serves fast
+isn't an incident. Page on the golden signals; keep the rest for debugging.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🎯</span>
+<span class="topic-name">SLIs, SLOs &amp; Error Budgets</span>
+<span class="topic-badge">SRE</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Turning Reliability Into a Number You Can Spend</div>
+<div class="concept-desc">
+100% reliability is the wrong target — it's impossible and ruinously expensive.
+SRE instead sets an explicit <em>reliability goal</em> and treats the gap as a
+budget you can spend on shipping features.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td class="c-cyan">SLI</td><td>The measurement — e.g. % of requests &lt; 300ms &amp; 2xx</td></tr>
+<tr><td class="c-cyan">SLO</td><td>The target for that SLI — e.g. 99.9% over 30 days</td></tr>
+<tr><td class="c-cyan">Error budget</td><td>1 − SLO = allowed unreliability (0.1% ≈ 43 min/month)</td></tr>
+<tr><td class="c-cyan">SLA</td><td>The contractual promise (with penalties) — looser than the SLO</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The policy:</strong> budget left → ship fast; budget
+burned → freeze features and fix reliability. <strong class="c-green">Burn-rate
+alerts</strong> (spending the budget too fast) are the modern replacement for
+threshold alerts. This is the SRE card, made operational.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🪵</span>
+<span class="topic-name">Structured Logging &amp; Log Pipelines</span>
+<span class="topic-badge">Observability</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Logs You Can Actually Query</div>
+<div class="concept-desc">
+A log line like <code>User 42 failed login from 1.2.3.4</code> is human-readable but
+painful to search at scale. <strong class="c-cyan">Structured logging</strong> emits
+key-value/JSON so every field is filterable, and correlation IDs stitch a request's
+logs together across services.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Structured (JSON) — machine-queryable, ties to a trace</span>
+{<span class="str">"level"</span>:<span class="str">"warn"</span>,<span class="str">"event"</span>:<span class="str">"login_failed"</span>,<span class="str">"user_id"</span>:42,
+ <span class="str">"src_ip"</span>:<span class="str">"1.2.3.4"</span>,<span class="str">"trace_id"</span>:<span class="str">"abc123"</span>}</pre>
+<table class="ref-table">
+<tr><th>Piece</th><th>Role</th></tr>
+<tr><td class="c-cyan">Correlation / trace ID</td><td>Follow one request across every service &amp; log</td></tr>
+<tr><td class="c-cyan">Collector</td><td>Fluent Bit / Vector / OTel Collector ship &amp; enrich logs</td></tr>
+<tr><td class="c-cyan">Store</td><td>Loki, Elasticsearch, or a cloud logging service</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Structured logs feed both ops <em>and</em> security (SIEM) — the same pipeline that
+helps you debug latency helps the blue team hunt. The three pillars —
+<strong class="c-green">metrics, logs, traces</strong> — correlate via that shared ID.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📟</span>
+<span class="topic-name">On-Call Done Humanely</span>
+<span class="topic-badge">SRE · Culture</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Sustainable Operations, Not Hero Burnout</div>
+<div class="concept-desc">
+On-call is necessary but corrosive when done badly — pages at 3am for non-issues
+drive burnout and attrition. Good on-call is designed: few, actionable alerts and a
+culture that fixes root causes.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Practice</th><th>Detail</th></tr>
+<tr><td class="c-green">Actionable alerts only</td><td>If a human can't act on it, it's a dashboard, not a page</td></tr>
+<tr><td class="c-green">Runbooks</td><td>Every alert links to "what to check &amp; do"</td></tr>
+<tr><td class="c-green">Sane rotations</td><td>Follow-the-sun or weekly; comp time; not the same 2 people</td></tr>
+<tr><td class="c-green">Blameless postmortems</td><td>Blame systems, not people — psychological safety fixes more</td></tr>
+<tr><td class="c-green">Toil budget</td><td>Cap manual work; automate what pages you repeatedly</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The feedback loop that matters: every real page should make the <em>next</em> one
+less likely — via a fix, better alerting, or automation. That's the "Feedback" and
+"Learning" of the Three Ways, applied to operations.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body ops -->
 </div>
 </div>
@@ -18435,10 +18900,6 @@ that and call you back" is treated as competence, not obstruction.</p>
 </div>
 </div>
 </div>
-<!-- /domain-body pentest -->
-<!-- /domain-body pentest -->
-<!-- /domain-body pentest -->
-<!-- /domain-body pentest -->
 <!-- /domain-body pentest -->
 </div>
 </div>
@@ -23034,10 +23495,155 @@ programs).
 </div>
 </div>
 </div>
-<!-- /domain-body linux -->
-<!-- /domain-body linux -->
-<!-- /domain-body linux -->
-<!-- /domain-body linux -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📦</span>
+<span class="topic-name">Podman &amp; Rootless Containers</span>
+<span class="topic-badge">Containers</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Docker-Compatible, Daemonless, Safer</div>
+<div class="concept-desc">
+<strong class="c-cyan">Podman</strong> runs containers without a root daemon —
+each container is a child of your shell, and <strong class="c-green">rootless</strong>
+mode means a container breakout lands as an unprivileged user, not root. The CLI is
+a drop-in for Docker.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Same commands you already know</span>
+<span class="kw">alias</span> docker=podman
+podman run <span class="var">-d</span> <span class="var">-p</span> 8080:80 nginx
+podman generate systemd <span class="var">--name</span> web   <span class="com"># run containers as systemd services</span></pre>
+<table class="ref-table">
+<tr><th>Feature</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Daemonless</td><td>No single root process; better isolation &amp; auditability</td></tr>
+<tr><td class="c-cyan">Rootless</td><td>Uses user namespaces — maps container root to your UID</td></tr>
+<tr><td class="c-cyan">Pods</td><td>Group containers (Kubernetes-style) locally</td></tr>
+<tr><td class="c-cyan">Buildah / Skopeo</td><td>Companion tools to build &amp; move images</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Default on RHEL/Fedora. The security win — no privileged daemon — is why it's
+favored in hardened and multi-tenant environments.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧩</span>
+<span class="topic-name">systemd Deep — Units, Timers &amp; Journald</span>
+<span class="topic-badge">Init System</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Thing That Runs Everything at Boot</div>
+<div class="concept-desc">
+<strong class="c-cyan">systemd</strong> is PID 1 on most modern Linux — it starts
+services, manages dependencies, and supervises processes. Understanding units and
+the journal is core Linux admin.
+</div>
+<div class="dw">
+<pre class="code-block">systemctl status nginx          <span class="com"># is it running?</span>
+systemctl enable <span class="var">--now</span> nginx    <span class="com"># start now + at boot</span>
+journalctl <span class="var">-u</span> nginx <span class="var">-f</span>          <span class="com"># tail its logs</span>
+systemd-analyze blame           <span class="com"># what slowed boot?</span></pre>
+<table class="ref-table">
+<tr><th>Unit type</th><th>Purpose</th></tr>
+<tr><td class="c-cyan">.service</td><td>A daemon/process to supervise</td></tr>
+<tr><td class="c-cyan">.timer</td><td>Cron replacement — schedule a service</td></tr>
+<tr><td class="c-cyan">.socket</td><td>Socket-activate a service on demand</td></tr>
+<tr><td class="c-cyan">.target</td><td>A group of units (like runlevels)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Drop-ins</strong> (<code>systemctl edit</code>) override
+unit settings without touching vendor files. Timers beat cron: they log to the
+journal, handle missed runs, and have dependencies.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗄️</span>
+<span class="topic-name">ZFS &amp; Btrfs — Snapshots &amp; Integrity</span>
+<span class="topic-badge">Filesystems</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Copy-on-Write Filesystems</div>
+<div class="concept-desc">
+<strong class="c-cyan">ZFS</strong> and <strong class="c-cyan">Btrfs</strong> are
+copy-on-write filesystems that combine volume management, checksumming, snapshots,
+and compression. They detect (and with redundancy, repair) silent data corruption —
+a big step up from ext4/XFS.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Feature</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Copy-on-write</td><td>Never overwrite in place → cheap snapshots, no fsck</td></tr>
+<tr><td class="c-cyan">Checksums</td><td>Every block verified → catch bit rot</td></tr>
+<tr><td class="c-cyan">Snapshots &amp; clones</td><td>Instant, near-free point-in-time copies</td></tr>
+<tr><td class="c-cyan">Subvolumes / datasets</td><td>Independently managed slices of the pool</td></tr>
+<tr><td class="c-cyan">RAID-Z / built-in RAID</td><td>Redundancy that can self-heal from checksums</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Use cases:</strong> NAS/storage servers, snapshot-before-
+upgrade, and <code>zfs send</code> for efficient replication/backups. ZFS is more
+mature; Btrfs ships in-kernel and is the openSUSE default.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🐚</span>
+<span class="topic-name">Advanced Bash — Traps, Expansion &amp; Robust Scripts</span>
+<span class="topic-badge">Scripting</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Writing Bash That Doesn't Break</div>
+<div class="concept-desc">
+Beyond one-liners, a few habits and features separate fragile scripts from robust
+ones. These show up constantly in real automation and CI.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Fail fast, and clean up on exit</span>
+<span class="kw">set</span> <span class="var">-Eeuo</span> pipefail
+tmp=$(mktemp)
+<span class="kw">trap</span> <span class="str">'rm -f "$tmp"'</span> EXIT
+
+<span class="com"># Parameter expansion: defaults, trimming</span>
+name=<span class="str">"${1:-world}"</span>          <span class="com"># default if unset</span>
+base=<span class="str">"${path##*/}"</span>           <span class="com"># strip dir → filename</span></pre>
+<table class="ref-table">
+<tr><th>Tool</th><th>Why</th></tr>
+<tr><td class="c-cyan"><code>set -euo pipefail</code></td><td>Exit on error/unset var/failed pipe — the safety header</td></tr>
+<tr><td class="c-cyan"><code>trap</code></td><td>Run cleanup on EXIT/ERR/signals</td></tr>
+<tr><td class="c-cyan">Parameter expansion</td><td><code>${v:-def}</code>, <code>${v##pat}</code>, <code>${v/a/b}</code> — no sed needed</td></tr>
+<tr><td class="c-cyan">ShellCheck</td><td>Lints scripts for the bugs everyone writes</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Golden rules:</strong> quote your variables
+(<code>"$var"</code>) to survive spaces, and run ShellCheck. Past ~100 lines with
+real data structures, reach for Python instead.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body linux -->
 </div>
 </div>
@@ -24571,11 +25177,140 @@ automated on a schedule or a drift alert.
 </div>
 </div>
 </div>
-<!-- /domain-body ai -->
-<!-- /domain-body ai -->
-<!-- /domain-body ai -->
-<!-- /domain-body ai -->
-<!-- /domain-body ai -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🎛️</span>
+<span class="topic-name">Fine-Tuning vs RAG vs Prompting — When to Use Which</span>
+<span class="topic-badge">LLM Ops</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Three Ways to Make an LLM Do What You Want</div>
+<div class="concept-desc">
+The most common architecture question with LLMs. Reach for the cheapest tool that
+works, in order — most problems are solved by prompting or RAG, not fine-tuning.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Approach</th><th>Best for</th><th>Cost</th></tr>
+<tr><td class="c-cyan">Prompting</td><td>Behavior/format the base model already knows</td><td>Lowest — just words</td></tr>
+<tr><td class="c-cyan">RAG</td><td>Injecting fresh/private <em>knowledge</em> at query time</td><td>Medium — a retrieval pipeline</td></tr>
+<tr><td class="c-cyan">Fine-tuning</td><td>Teaching a <em>style/skill/format</em>, not new facts</td><td>Highest — data + training</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The classic mistake:</strong> fine-tuning to add knowledge.
+Fine-tuning changes <em>behavior</em>; for "know our latest docs," use RAG. Rule of
+thumb: prompt first, add RAG for knowledge, fine-tune only when you need consistent
+format/tone at scale. They combine — a fine-tuned model with RAG is common.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗜️</span>
+<span class="topic-name">LoRA, Quantization &amp; Tokenization Internals</span>
+<span class="topic-badge">LLM Internals</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Making Big Models Trainable &amp; Runnable</div>
+<div class="concept-desc">
+Three techniques that make working with large models practical on modest hardware —
+the plumbing behind "run/tune a 70B model on one GPU."
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Technique</th><th>Does</th></tr>
+<tr><td class="c-cyan">LoRA / PEFT</td><td>Fine-tune a few small adapter matrices, not all weights — cheap &amp; swappable</td></tr>
+<tr><td class="c-cyan">Quantization</td><td>Store weights in 8/4-bit (GGUF, bitsandbytes) — big memory cut, tiny quality loss</td></tr>
+<tr><td class="c-cyan">Tokenization</td><td>Text → tokens (subword, BPE); the model sees token IDs, not characters</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Why tokenization bites:</strong> models count and spell
+poorly because they see tokens, not letters; and cost/limits are per-token, not
+per-word (~4 chars/token in English). <strong class="c-green">QLoRA</strong> =
+quantization + LoRA, letting you tune large models on a single consumer GPU.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🖥️</span>
+<span class="topic-name">Running Local LLMs — Ollama, llama.cpp &amp; LM Studio</span>
+<span class="topic-badge">Local AI</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Private, Offline, Free-After-Hardware</div>
+<div class="concept-desc">
+You can run capable open-weight models (Llama, Mistral, Qwen, Gemma) entirely on your
+own machine — no API cost, full privacy, works offline. Great for sensitive data and
+experimentation.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Ollama: the easiest on-ramp</span>
+ollama run llama3.2
+<span class="com"># It exposes an OpenAI-compatible API at localhost:11434</span></pre>
+<table class="ref-table">
+<tr><th>Tool</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Ollama</td><td>One-command model pull &amp; run; local API server</td></tr>
+<tr><td class="c-cyan">llama.cpp</td><td>The C++ engine underneath; runs GGUF on CPU/GPU</td></tr>
+<tr><td class="c-cyan">LM Studio</td><td>GUI to browse, download &amp; chat with models</td></tr>
+<tr><td class="c-cyan">vLLM</td><td>High-throughput serving for production</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Reality check:</strong> local models trail frontier
+hosted ones in capability, and you need RAM/VRAM (quantization helps). But for
+privacy-sensitive or high-volume tasks, local wins on cost and control.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧪</span>
+<span class="topic-name">LLM Evaluation, Guardrails &amp; Diffusion Models</span>
+<span class="topic-badge">LLM Ops</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Measuring Quality &amp; Keeping It Safe</div>
+<div class="concept-desc">
+Shipping LLM features means knowing if they're any good and keeping them from going
+off the rails. And on the image side, <strong class="c-cyan">diffusion</strong> is
+the technique behind modern image generation.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Area</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Evaluation</td><td>Golden sets, LLM-as-judge, human review; track regressions like tests</td></tr>
+<tr><td class="c-cyan">Guardrails</td><td>Input/output filters, PII redaction, jailbreak &amp; prompt-injection defense</td></tr>
+<tr><td class="c-cyan">Grounding</td><td>Cite sources (RAG) to curb hallucination; verify claims</td></tr>
+<tr><td class="c-cyan">Diffusion models</td><td>Learn to denoise pure noise into an image, guided by a text prompt</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-red">Prompt injection</strong> is the LLM era's top security
+risk (untrusted text overriding your instructions) — treat model output as
+untrusted and never give an agent unchecked tools. Evaluation is what turns
+"seems fine" into a number you can defend.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body ai -->
 </div>
 </div>
@@ -34867,9 +35602,475 @@ beats a div patched with attributes. Bad ARIA is worse than none.
 </div>
 </div>
 </div>
-<!-- /domain-body script -->
-<!-- /domain-body script -->
-<!-- /domain-body script -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🦀</span>
+<span class="topic-name">Rust — Safe Systems Programming</span>
+<span class="topic-badge">Language</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Memory Safety Without a Garbage Collector</div>
+<div class="concept-desc">
+Rust's <strong class="c-cyan">ownership</strong> and <strong class="c-cyan">borrow
+checker</strong> guarantee memory safety at <em>compile time</em> — no GC, no
+use-after-free, no data races. That's why it's winning in systems, WASM, CLI tools,
+and increasingly the Linux kernel.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">fn</span> <span class="fn">main</span>() {
+    <span class="kw">let</span> mut nums = <span class="type">vec!</span>[<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+    nums.<span class="fn">push</span>(<span class="num">4</span>);
+    <span class="kw">let</span> sum: <span class="type">i32</span> = nums.<span class="fn">iter</span>().<span class="fn">sum</span>();   <span class="com">// 10</span>
+    <span class="fn">println!</span>(<span class="str">"sum = {sum}"</span>);
+}</pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Ownership / borrow</td><td>Each value has one owner; borrows are checked at compile time</td></tr>
+<tr><td class="c-cyan"><code>Option</code> / <code>Result</code></td><td>No null; errors are values you must handle</td></tr>
+<tr><td class="c-cyan">Cargo</td><td>Build tool + package manager (crates.io)</td></tr>
+<tr><td class="c-cyan">Traits</td><td>Shared behavior (like interfaces) with zero-cost generics</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Trade-off:</strong> a steep learning curve ("fighting the
+borrow checker") buys you C-like speed with safety guarantees. If it compiles, a
+whole class of bugs is simply gone.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">☕</span>
+<span class="topic-name">Java — The Enterprise Workhorse</span>
+<span class="topic-badge">Language</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Write Once, Run Anywhere on the JVM</div>
+<div class="concept-desc">
+Java compiles to bytecode that runs on the <strong class="c-cyan">JVM</strong>,
+making it portable and battle-tested for large backends. Statically typed,
+object-oriented, with a massive ecosystem (Spring) and a mature GC.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">public class</span> <span class="type">App</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">var</span> nums = <span class="type">List</span>.<span class="fn">of</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>);
+        <span class="kw">int</span> sum = nums.<span class="fn">stream</span>().<span class="fn">mapToInt</span>(<span class="type">Integer</span>::intValue).<span class="fn">sum</span>();
+        <span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"sum = "</span> + sum);
+    }
+}</pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">JVM / bytecode</td><td>Portable runtime; also hosts Kotlin, Scala, Clojure</td></tr>
+<tr><td class="c-cyan">Spring Boot</td><td>The dominant framework for services</td></tr>
+<tr><td class="c-cyan">Maven / Gradle</td><td>Build &amp; dependency management</td></tr>
+<tr><td class="c-cyan">Modern Java</td><td>Records, sealed types, virtual threads (Project Loom)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Kotlin</strong> is the modern, less-verbose JVM language
+(and Android's default) — worth reaching for on new JVM projects.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🎯</span>
+<span class="topic-name">C# &amp; .NET — Microsoft's Cross-Platform Stack</span>
+<span class="topic-badge">Language</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Java's Sibling, Now Open &amp; Everywhere</div>
+<div class="concept-desc">
+<strong class="c-cyan">C#</strong> runs on <strong class="c-cyan">.NET</strong>,
+which is now open-source and cross-platform. Strong tooling (Visual Studio),
+first-class async, and used for web (ASP.NET), desktop, games (Unity), and cloud.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">var</span> nums = <span class="kw">new</span>[] { <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span> };
+<span class="kw">var</span> sum = nums.<span class="fn">Sum</span>();            <span class="com">// LINQ</span>
+<span class="type">Console</span>.<span class="fn">WriteLine</span>($<span class="str">"sum = {sum}"</span>);</pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">.NET (Core)</td><td>Cross-platform runtime &amp; SDK (<code>dotnet</code> CLI)</td></tr>
+<tr><td class="c-cyan">LINQ</td><td>Query collections/DBs with a fluent, SQL-like syntax</td></tr>
+<tr><td class="c-cyan">async/await</td><td>C# pioneered the pattern most languages now copy</td></tr>
+<tr><td class="c-cyan">ASP.NET Core / Blazor</td><td>Web APIs &amp; SPA-in-C# via WASM</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Familiar if you know Java; NuGet is the package manager. Unity makes C# a major
+game-development language too.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">💎</span>
+<span class="topic-name">Ruby — Optimized for Developer Happiness</span>
+<span class="topic-badge">Language</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Elegant, Dynamic, and All About Rails</div>
+<div class="concept-desc">
+<strong class="c-cyan">Ruby</strong> is a dynamic, purely object-oriented language
+prized for readable, expressive code. Its killer app is
+<strong class="c-cyan">Ruby on Rails</strong>, the convention-over-configuration
+framework that shaped modern web development.
+</div>
+<div class="dw">
+<pre class="code-block">nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+sum = nums.<span class="fn">reduce</span>(<span class="num">0</span>, :+)   <span class="com"># or nums.sum</span>
+<span class="fn">puts</span> <span class="str">"sum = #{sum}"</span></pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Everything is an object</td><td>Even numbers; blocks &amp; iterators everywhere</td></tr>
+<tr><td class="c-cyan">Rails</td><td>MVC, "convention over configuration", rapid CRUD apps</td></tr>
+<tr><td class="c-cyan">Gems / Bundler</td><td>Packages &amp; dependency locking</td></tr>
+<tr><td class="c-cyan">Metaprogramming</td><td>Powerful DSLs (Rails leans on this heavily)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Great for startups and prototyping — you go from idea to CRUD app fast. Trade-off:
+dynamic typing and slower raw speed than compiled languages.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🐘</span>
+<span class="topic-name">PHP — The Language That Runs the Web</span>
+<span class="topic-badge">Language</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Still Powering the Majority of Websites</div>
+<div class="concept-desc">
+<strong class="c-cyan">PHP</strong> is a server-side language built for the web —
+it powers WordPress, and thus a huge share of all sites. Modern PHP (8.x) is
+genuinely good: typed, fast, with a strong framework in
+<strong class="c-cyan">Laravel</strong>.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">&lt;?php</span>
+$nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+$sum = <span class="fn">array_sum</span>($nums);
+<span class="kw">echo</span> <span class="str">"sum = $sum"</span>;</pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Request-per-script</td><td>Classic model: each request runs a script fresh</td></tr>
+<tr><td class="c-cyan">Composer</td><td>The modern package manager (Packagist)</td></tr>
+<tr><td class="c-cyan">Laravel / Symfony</td><td>Full-featured modern frameworks</td></tr>
+<tr><td class="c-cyan">PHP 8+</td><td>JIT, typed properties, enums, attributes, fibers</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Don't judge it by 2005 — modern PHP is a competent, fast web language. Its
+ubiquity in shared hosting and WordPress keeps demand high.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔩</span>
+<span class="topic-name">C — Close to the Metal</span>
+<span class="topic-badge">Language</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Language Everything Else Is Built On</div>
+<div class="concept-desc">
+<strong class="c-cyan">C</strong> is small, fast, and gives you direct control over
+memory via pointers. Operating systems, embedded firmware, databases, and language
+runtimes are written in it. Learning C teaches how computers <em>actually</em> work.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    <span class="kw">int</span> nums[] = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}, sum = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) sum += nums[i];
+    <span class="fn">printf</span>(<span class="str">"sum = %d\n"</span>, sum);
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Pointers</td><td>Variables that hold memory addresses — power &amp; footguns</td></tr>
+<tr><td class="c-red">Manual memory</td><td><code>malloc</code>/<code>free</code> — you own leaks &amp; use-after-free</td></tr>
+<tr><td class="c-cyan">Compilation</td><td>Preprocess → compile → link (gcc/clang, make)</td></tr>
+<tr><td class="c-cyan">Undefined behavior</td><td>Off-the-rails when you break the rules (buffer overflows)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+C's manual memory is exactly what Rust set out to make safe. Its lack of guardrails
+is why memory-safety bugs dominate CVEs — the security case for newer languages.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⚙️</span>
+<span class="topic-name">Assembly &amp; How Programs Actually Run</span>
+<span class="topic-badge">Fundamentals</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Registers, the Stack &amp; the CPU's Real Job</div>
+<div class="concept-desc">
+Under every language is machine code the CPU executes. Assembly is the
+human-readable form. You rarely write it, but understanding it demystifies
+performance, debugging, and — crucially — how exploits like buffer overflows work
+(ties to the reverse-engineering material).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Registers</td><td>Tiny ultra-fast CPU storage (rax, rsp, rip…)</td></tr>
+<tr><td class="c-cyan">The stack</td><td>Grows down; holds locals, args &amp; return addresses</td></tr>
+<tr><td class="c-cyan">Calling convention</td><td>Rules for passing args &amp; returns (System V, stdcall)</td></tr>
+<tr><td class="c-cyan">Instructions</td><td><code>mov</code>, <code>push</code>, <code>call</code>, <code>ret</code>, <code>jmp</code></td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Why it matters: overwriting a saved <em>return address</em> on the stack is the
+classic buffer-overflow exploit — and why we have stack canaries, ASLR, and NX.
+Reading disassembly is core to malware analysis and CTF pwn/rev challenges.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🏷️</span>
+<span class="topic-name">Semantic Versioning &amp; Dependency Management</span>
+<span class="topic-badge">Fundamentals</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">What <code>^1.2.3</code> Actually Means</div>
+<div class="concept-desc">
+<strong class="c-cyan">SemVer</strong> gives version numbers meaning so tools can
+update safely. <code>MAJOR.MINOR.PATCH</code>: bump MAJOR for breaking changes, MINOR
+for new backward-compatible features, PATCH for fixes.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Range</th><th>Allows</th></tr>
+<tr><td class="c-cyan"><code>^1.2.3</code></td><td>&ge;1.2.3, &lt;2.0.0 (compatible: minor+patch)</td></tr>
+<tr><td class="c-cyan"><code>~1.2.3</code></td><td>&ge;1.2.3, &lt;1.3.0 (patch only)</td></tr>
+<tr><td class="c-cyan"><code>1.2.3</code></td><td>Exactly that version (pinned)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Lockfiles</strong> (<code>package-lock.json</code>,
+<code>poetry.lock</code>, <code>Cargo.lock</code>) pin the <em>exact</em> resolved
+tree so builds are reproducible — commit them. Ranges say "what's allowed"; the
+lockfile says "what you actually got." A <code>0.x</code> version signals anything
+may break at any time.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌊</span>
+<span class="topic-name">Apache Kafka — The Distributed Event Log</span>
+<span class="topic-badge">Data Eng</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Backbone of Streaming Data</div>
+<div class="concept-desc">
+<strong class="c-cyan">Kafka</strong> is a durable, distributed
+<strong>append-only log</strong>. Producers write events to topics; consumers read
+at their own pace. Because the log is retained and replayable, it decouples systems
+and underpins event-driven architectures.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Topic / partition</td><td>A stream, split into ordered partitions for parallelism</td></tr>
+<tr><td class="c-cyan">Offset</td><td>A consumer's position in a partition — replay by rewinding</td></tr>
+<tr><td class="c-cyan">Consumer group</td><td>Consumers share partitions to scale out</td></tr>
+<tr><td class="c-cyan">Retention</td><td>Keep events for days/forever — the log is the source of truth</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">vs a queue:</strong> a classic queue deletes on read;
+Kafka keeps the log so many consumers replay independently. It's the practical
+engine behind Event Sourcing, CQRS, and the Outbox pattern (ties to the
+engineering cards).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">✨</span>
+<span class="topic-name">Apache Spark — Big-Data Processing</span>
+<span class="topic-badge">Data Eng</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Compute Across a Cluster, in Memory</div>
+<div class="concept-desc">
+<strong class="c-cyan">Spark</strong> processes datasets too big for one machine by
+distributing the work across a cluster and keeping data in memory. You write
+DataFrame/SQL code; Spark plans and parallelizes it.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># PySpark: read, aggregate, write — runs distributed</span>
+df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span class="str">"s3://data/events/"</span>)
+(df.<span class="fn">groupBy</span>(<span class="str">"country"</span>)
+   .<span class="fn">count</span>()
+   .<span class="fn">write</span>.<span class="fn">parquet</span>(<span class="str">"s3://out/by_country/"</span>))</pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">DataFrame / Spark SQL</td><td>The high-level API most people use</td></tr>
+<tr><td class="c-cyan">Lazy + DAG</td><td>Transformations build a plan; actions trigger execution</td></tr>
+<tr><td class="c-cyan">Structured Streaming</td><td>Same API for batch &amp; streaming</td></tr>
+<tr><td class="c-cyan">Databricks</td><td>The managed commercial platform</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">When:</strong> data outgrows pandas/one box. For smaller
+data, single-node tools (DuckDB, Polars) are simpler and often faster — don't
+reach for a cluster you don't need.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗓️</span>
+<span class="topic-name">Orchestration — Airflow &amp; Dagster</span>
+<span class="topic-badge">Data Eng</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Scheduling &amp; Wiring Data Pipelines</div>
+<div class="concept-desc">
+Data pipelines are graphs of dependent tasks ("load, then transform, then report").
+Orchestrators schedule them, handle retries and backfills, and show you what failed
+and why.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Model</th></tr>
+<tr><td class="c-cyan">Airflow</td><td>The incumbent — Python DAGs of tasks; huge operator ecosystem</td></tr>
+<tr><td class="c-cyan">Dagster</td><td>Asset-oriented — declare the data assets, it derives the graph</td></tr>
+<tr><td class="c-cyan">Prefect</td><td>Pythonic, dynamic flows; lighter than Airflow</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Key features:</strong> a DAG (no cycles), scheduling,
+retries, and <strong>backfills</strong> (re-run history after a fix).
+Asset-based tools (Dagster) shift thinking from "run these tasks" to "produce
+these datasets," which maps better to lineage and data quality.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔧</span>
+<span class="topic-name">dbt &amp; the Modern Data Stack</span>
+<span class="topic-badge">Data Eng</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Software Engineering for SQL</div>
+<div class="concept-desc">
+<strong class="c-cyan">dbt</strong> brought engineering discipline to analytics: you
+write transformations as version-controlled SQL <code>SELECT</code>s (models), and
+dbt handles dependencies, testing, and documentation — all running inside your
+warehouse.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">ELT (not ETL)</td><td>Load raw first, transform in the warehouse (Snowflake/BigQuery)</td></tr>
+<tr><td class="c-cyan">Models</td><td>A SQL SELECT = a table/view; <code>ref()</code> builds the DAG</td></tr>
+<tr><td class="c-cyan">Tests &amp; docs</td><td>Assert not-null/unique; auto-generate a data catalog</td></tr>
+<tr><td class="c-cyan">The stack</td><td>Fivetran/Airbyte (ingest) → warehouse → dbt → BI (Looker)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Why it stuck:</strong> analytics code gets Git, code
+review, CI, and tests — treating pipelines like software. ELT works because cloud
+warehouses are cheap and powerful enough to transform in place.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⭐</span>
+<span class="topic-name">Dimensional Modeling — Star &amp; Snowflake Schemas</span>
+<span class="topic-badge">Data Eng</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Designing a Warehouse for Analytics</div>
+<div class="concept-desc">
+Transactional (OLTP) schemas are normalized for writes; analytics (OLAP) wants fast
+aggregation over huge tables. <strong class="c-cyan">Dimensional modeling</strong>
+(Kimball) organizes data into facts and dimensions for exactly that.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Fact table</td><td>The measurements/events (sales, clicks) — long &amp; numeric</td></tr>
+<tr><td class="c-cyan">Dimension table</td><td>The context (date, product, customer) — descriptive</td></tr>
+<tr><td class="c-cyan">Star schema</td><td>Facts in the center, dimensions around — few joins, fast</td></tr>
+<tr><td class="c-cyan">Snowflake</td><td>Dimensions further normalized — less duplication, more joins</td></tr>
+<tr><td class="c-cyan">SCD (Type 2)</td><td>Track history when a dimension changes (keep old rows)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Slowly Changing Dimensions</strong> answer "what was the
+customer's tier <em>when</em> they bought?" — Type 2 keeps versioned rows so
+history stays accurate. Star schemas are the default; snowflake only when storage
+or governance demands it.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body script -->
 </div>
 </div>
@@ -36641,9 +37842,6 @@ ones who could have written it themselves and can spot when it's wrong.
 </div>
 </div>
 </div>
-<!-- /domain-body shortcuts -->
-<!-- /domain-body shortcuts -->
-<!-- /domain-body shortcuts -->
 <!-- BEGINNER8-SHORTCUT v1 -->
 <!-- ── TOPIC: TERMINAL PRODUCTIVITY ──────────────────────── -->
 <div class="topic">
@@ -36751,6 +37949,117 @@ command &gt; /dev/null 2&gt;&amp;1
 <span class="fn">ls</span> -la | tee listing.txt
 <span class="com"># xargs: turn output into arguments</span>
 find . -name <span class="str">"*.tmp"</span> | xargs rm -f</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">☁️</span>
+<span class="topic-name">GitHub Codespaces &amp; Cloud Dev Environments</span>
+<span class="topic-badge">VS Code · Remote</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Your Whole Dev Box, in the Browser</div>
+<div class="concept-desc">
+<strong class="c-cyan">Codespaces</strong> spins up a full, container-backed VS Code
+environment in the cloud from a repo — defined by the same
+<code>devcontainer.json</code> as local Dev Containers. Open a repo, get a ready
+toolchain in seconds, on any machine (even an iPad).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Benefit</th><th>Detail</th></tr>
+<tr><td class="c-green">Zero setup</td><td>Toolchain, deps &amp; extensions defined in the repo</td></tr>
+<tr><td class="c-green">Consistent</td><td>Everyone gets the identical environment — no "works on my machine"</td></tr>
+<tr><td class="c-green">Powerful &amp; disposable</td><td>Pick a bigger machine for a build; delete when done</td></tr>
+<tr><td class="c-green">Prebuilds</td><td>Cache the container image so startup is instant</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Same idea, other vendors: <strong class="c-cyan">Gitpod</strong> and JetBrains
+Space. All share the ephemeral, config-as-code model — onboarding a new dev
+becomes "open the repo," not "spend a day installing things."
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">👥</span>
+<span class="topic-name">Live Share — Real-Time Collaborative Editing</span>
+<span class="topic-badge">VS Code · Collab</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Pair Program Without Screen-Sharing</div>
+<div class="concept-desc">
+<strong class="c-cyan">Live Share</strong> lets others join <em>your</em> session and
+edit in <em>their own</em> VS Code — with their keybindings, theme, and cursor. Unlike
+screen-share, everyone can navigate and type independently, and it's far lighter on
+bandwidth.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Shares</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Editor &amp; cursors</td><td>Co-edit files live; follow a participant's focus</td></tr>
+<tr><td class="c-cyan">Shared terminal</td><td>Grant read-only or read/write access</td></tr>
+<tr><td class="c-cyan">Shared servers &amp; debug</td><td>Forward a localhost port; debug together</td></tr>
+<tr><td class="c-cyan">Voice / chat</td><td>Via the companion extension</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Great for:</strong> remote pairing, mob programming,
+interviews, and mentoring. The guest doesn't need the repo cloned or the toolchain
+installed — they're borrowing yours. Pairs naturally with Codespaces above.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🦀</span>
+<span class="topic-name">Modern CLI Tools — ripgrep, fzf, bat, jq &amp; eza</span>
+<span class="topic-badge">Terminal</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Faster, Friendlier Replacements for the Classics</div>
+<div class="concept-desc">
+A wave of (mostly Rust) tools reimagine the Unix classics — faster, with sensible
+defaults, color, and git-awareness. Learning a handful genuinely speeds up daily
+terminal work.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Replaces</th><th>Why</th></tr>
+<tr><td class="c-cyan">ripgrep (rg)</td><td>grep</td><td>Blazing fast; respects .gitignore by default</td></tr>
+<tr><td class="c-cyan">fd</td><td>find</td><td>Simpler syntax, fast, sane defaults</td></tr>
+<tr><td class="c-cyan">fzf</td><td>—</td><td>Fuzzy finder — pipe anything into an interactive picker</td></tr>
+<tr><td class="c-cyan">bat</td><td>cat</td><td>Syntax highlighting + line numbers + git marks</td></tr>
+<tr><td class="c-cyan">eza</td><td>ls</td><td>Colors, icons, a <code>--tree</code> view, git status</td></tr>
+<tr><td class="c-cyan">jq / yq</td><td>—</td><td>Slice, filter &amp; transform JSON/YAML on the CLI</td></tr>
+<tr><td class="c-cyan">zoxide</td><td>cd</td><td>Jumps to frequent dirs (<code>z proj</code>)</td></tr>
+<tr><td class="c-cyan">delta</td><td>diff/pager</td><td>Gorgeous side-by-side git diffs</td></tr>
+</table>
+<pre class="code-block"><span class="com"># fzf + ripgrep + bat: interactively search &amp; preview matches</span>
+rg <span class="var">--line-number</span> . | fzf <span class="var">--preview</span> <span class="str">'bat --color=always {1} --highlight-line {2}'</span>
+
+<span class="com"># jq: pull a field from an API response</span>
+curl <span class="var">-s</span> api.example.com/users | jq <span class="str">'.[] | {name, email}'</span></pre>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Start with three:</strong> <code>rg</code>,
+<code>fzf</code>, and <code>jq</code> pay for themselves immediately. Wire
+<code>fzf</code> into your shell (Ctrl-R history, Ctrl-T files) and it becomes
+muscle memory. <code>jq</code> is essential glue for any API/DevOps work.
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -40735,10 +42044,6 @@ have started.</p>
 </div>
 </div>
 <!-- /domain-body lifestyle -->
-<!-- /domain-body lifestyle -->
-<!-- /domain-body lifestyle -->
-<!-- /domain-body lifestyle -->
-<!-- /domain-body lifestyle -->
 </div>
 </div>
 <div class="domain-section domain-military" data-domain="military">
@@ -42946,9 +44251,6 @@ yet. You need to be present, and real.</p>
 </div>
 </div>
 <!-- /domain-body military -->
-<!-- /domain-body military -->
-<!-- /domain-body military -->
-<!-- /domain-body military -->
 </div>
 </div>
 <div class="domain-section domain-redteam" data-domain="redteam">
@@ -44179,6 +45481,278 @@ access badges, and staff awareness ("don't plug in found USBs / accept tailgater
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🪛</span>
+<span class="topic-name">Living off the Land — LOLBAS &amp; GTFOBins</span>
+<span class="topic-badge">Post-Ex</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Turning Built-In Tools Into Weapons</div>
+<div class="concept-desc">
+Attackers avoid dropping malware by abusing <em>legitimate, pre-installed</em>
+binaries — <strong class="c-cyan">"living off the land"</strong>. On Windows,
+<strong class="c-cyan">LOLBAS</strong> catalogs signed binaries that can download,
+execute, or bypass controls; on Linux, <strong class="c-cyan">GTFOBins</strong>
+lists how common utilities can break out of restricted shells or escalate.
+<em>Study/detection reference for authorized testing.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Example</th><th>Abuse</th></tr>
+<tr><td><code>certutil</code></td><td>Downloads files (looks like a cert tool)</td></tr>
+<tr><td><code>regsvr32 / mshta</code></td><td>Executes remote scripts</td></tr>
+<tr><td><code>rundll32</code></td><td>Runs code via a DLL export</td></tr>
+<tr><td><code>bash/vim/find (GTFOBins)</code></td><td>Shell escape / privesc from a limited context</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> signatures don't help — these
+are trusted binaries. Detection is <strong class="c-green">behavioral</strong>:
+<code>certutil</code> making a network connection, or <code>winword.exe</code>
+spawning <code>powershell.exe</code>, is anomalous even though every binary is
+signed (this is why Sysmon parent/child chains matter).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧗</span>
+<span class="topic-name">Privilege Escalation Scanners — PEAS &amp; PowerUp</span>
+<span class="topic-badge">Post-Ex</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">From User to Root/SYSTEM</div>
+<div class="concept-desc">
+After landing a low-priv foothold, operators enumerate the host for escalation
+paths. <strong class="c-cyan">linPEAS/winPEAS</strong> (and PowerUp/PrivescCheck)
+automate the checklist — misconfigured services, weak permissions, stored creds,
+kernel exploits, SUID binaries. <em>Authorized hosts only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Finds (Windows)</th><th>Finds (Linux)</th></tr>
+<tr><td>Unquoted service paths</td><td>SUID/SGID binaries (GTFOBins)</td></tr>
+<tr><td>Writable service binaries</td><td>Writable /etc/passwd, cron jobs</td></tr>
+<tr><td>AlwaysInstallElevated</td><td>Sudo misconfigs (NOPASSWD)</td></tr>
+<tr><td>Stored creds / autologon</td><td>Kernel version → known exploits</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> PEAS scans touch a huge number
+of files/registry keys quickly — noisy to EDR. Defense is the fix, not the
+detect: least privilege, patch, remove SUID, lock down sudo, no creds on disk.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌉</span>
+<span class="topic-name">Pivoting &amp; Tunneling — Chisel, ligolo-ng &amp; proxychains</span>
+<span class="topic-badge">Post-Ex</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Reaching Networks You Can't Route To</div>
+<div class="concept-desc">
+A compromised host is often a <strong>pivot</strong> into segments the operator
+can't reach directly. Tunneling tools route traffic through the foothold so tools
+on the attacker box can hit internal systems. <em>Authorized, scoped internal
+networks only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Role</th></tr>
+<tr><td class="c-cyan">Chisel</td><td>Fast TCP/UDP tunnel over HTTP (SOCKS proxy through the pivot)</td></tr>
+<tr><td class="c-cyan">ligolo-ng</td><td>Modern tunneling with a virtual interface (route to internal subnets)</td></tr>
+<tr><td class="c-cyan">SSH -D / -L</td><td>Dynamic (SOCKS) &amp; local port forwarding</td></tr>
+<tr><td class="c-cyan">proxychains</td><td>Force any tool through a SOCKS proxy</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> internal
+<strong class="c-green">network segmentation</strong> (Zero Trust microseg) is
+what limits a pivot's reach. Watch for unexpected long-lived tunnels and
+east-west traffic a host shouldn't originate.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚪</span>
+<span class="topic-name">Data Exfiltration Channels — DNS, ICMP &amp; HTTPS</span>
+<span class="topic-badge">Post-Ex</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">How Data Leaves — and How to Catch It</div>
+<div class="concept-desc">
+In the final phase, operators demonstrate <strong>exfiltration</strong> — moving
+data out past controls. Understanding the channels is squarely a detection skill.
+<em>Authorized engagements only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Channel</th><th>Why it's used</th><th>Detection</th></tr>
+<tr><td class="c-cyan">DNS tunneling</td><td>DNS is rarely blocked</td><td>Huge volume/entropy of queries to one domain (Zeek dns.log)</td></tr>
+<tr><td class="c-cyan">ICMP tunneling</td><td>Ping is often allowed out</td><td>Oversized/frequent ICMP with payloads</td></tr>
+<tr><td class="c-cyan">HTTPS to cloud</td><td>Blends with normal web traffic</td><td>Large outbound to new/rare destinations; DLP</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> egress filtering (allow-list
+outbound), DNS monitoring, and DLP are the counters. The theme across R8: modern
+attackers are <em>quiet and signed</em> — behavioral analytics, not signatures,
+catch them.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">☁️</span>
+<span class="topic-name">Pacu — The AWS Exploitation Framework</span>
+<span class="topic-badge">Cloud Offense</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Metasploit, But for AWS</div>
+<div class="concept-desc">
+<strong class="c-cyan">Pacu</strong> (Rhino Security Labs) is a modular framework
+for testing AWS environments — once you have a set of credentials (legitimately, in
+an authorized assessment), it enumerates permissions, finds privilege-escalation
+paths, and demonstrates impact. <em>Authorized cloud assessments only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Module type</th><th>Does</th></tr>
+<tr><td class="c-cyan">enum</td><td>Map what the creds can see (IAM, EC2, S3, Lambda)</td></tr>
+<tr><td class="c-cyan">privesc</td><td>Find IAM misconfig chains (iam:PassRole etc.)</td></tr>
+<tr><td class="c-cyan">persistence / exfil</td><td>Demonstrate impact for the report</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> everything Pacu does is API
+calls — <strong class="c-green">CloudTrail + GuardDuty</strong> see the
+enumeration and privesc attempts. This is the offensive mirror of the CSPM tools
+in the Cloud domain.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🦊</span>
+<span class="topic-name">CloudFox &amp; enumerate-iam — Attack-Surface Enumeration</span>
+<span class="topic-badge">Cloud Offense</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">"What Can I Do With These Creds?"</div>
+<div class="concept-desc">
+After obtaining cloud credentials during an engagement, the first question is what
+they grant. <strong class="c-cyan">CloudFox</strong> surfaces exploitable
+attack paths (roles you can assume, secrets you can read, instances you can reach);
+<strong class="c-cyan">enumerate-iam</strong> brute-forces which API calls a set of
+keys is allowed to make. <em>Authorized use only.</em>
+</div>
+<div class="dw">
+<div class="concept-desc">
+<strong class="c-amber">Blue-team note:</strong> these produce a burst of
+describe/list and access-denied events in CloudTrail — a spike of
+<code>AccessDenied</code> from one principal is a strong enumeration signal.
+Least privilege shrinks what any leaked key can enumerate in the first place.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">☸️</span>
+<span class="topic-name">Kubernetes Attacks — RBAC Abuse &amp; Container Escape</span>
+<span class="topic-badge">Cloud Offense</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">From a Pod to the Cluster</div>
+<div class="concept-desc">
+A compromised container is the start, not the end. Attackers abuse over-permissive
+<strong>RBAC</strong>, over-mounted service-account tokens, and privileged/host
+configs to escape a pod and take over the node or cluster.
+<strong class="c-cyan">kube-hunter</strong> (and kubeaudit) probe for these.
+<em>Authorized clusters only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Weakness</th><th>Impact</th></tr>
+<tr><td class="c-red">Over-broad RBAC</td><td>A pod's token can create pods / read secrets cluster-wide</td></tr>
+<tr><td class="c-red">Privileged / hostPath pod</td><td>Escape to the node's filesystem/kernel</td></tr>
+<tr><td class="c-red">Exposed kubelet / API</td><td>Direct command execution on pods</td></tr>
+<tr><td class="c-red">Mounted SA token</td><td>Default token used to call the API</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> this is exactly what the
+Kubernetes Security card defends — least-privilege RBAC, Pod Security Standards
+(no privileged/hostPath), network policies, and audit logging.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🎭</span>
+<span class="topic-name">Cloud Credential Attacks &amp; the Purple-Team Bridge</span>
+<span class="topic-badge">Cloud Offense</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">SSRF → Metadata → Role, and Closing the Loop</div>
+<div class="concept-desc">
+The signature cloud breach chain: an app-layer <strong class="c-cyan">SSRF</strong>
+is used to reach the <strong>instance metadata service (IMDS)</strong>, steal the
+attached role's temporary credentials, then pivot with those creds. Understanding
+it is what lets red and blue close the loop together (purple teaming).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>Defense</th></tr>
+<tr><td class="c-cyan">SSRF in the app</td><td>Fix the vuln; validate/deny internal URLs</td></tr>
+<tr><td class="c-cyan">Hit IMDS for creds</td><td class="c-green">Enforce IMDSv2 (session-token, blocks basic SSRF)</td></tr>
+<tr><td class="c-cyan">Use stolen role creds</td><td>Least privilege; detect creds used off-instance (GuardDuty)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Purple team:</strong> the red team demonstrates the chain
+against ATT&amp;CK; the blue team confirms each step is detected/blocked (IMDSv2,
+CSPM, GuardDuty). That collaboration — offense proving, defense hardening — is the
+whole point of pairing these two domains.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body redteam -->
 </div>
 </div>
@@ -45161,6 +46735,309 @@ I see?" — turning findings into new automated detections.
 Good hunts are driven by ATT&amp;CK (hunt technique by technique) and threat
 intel (hunt for <em>your</em> actors' TTPs). Every hunt either finds evil or
 finds a detection gap — both are wins.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🩺</span>
+<span class="topic-name">Vulnerability Scanners — Nessus &amp; OpenVAS</span>
+<span class="topic-badge">Vuln Mgmt</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Find the Holes Before Attackers Do</div>
+<div class="concept-desc">
+Authenticated and unauthenticated scanners enumerate hosts, fingerprint services,
+and match them against a vulnerability database (CVE/plugin feeds). They are the
+engine behind the <strong class="c-cyan">vulnerability management lifecycle</strong>
+— discover, prioritize, remediate, verify.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Notes</th></tr>
+<tr><td class="c-cyan">Nessus (Tenable)</td><td>Industry-standard commercial scanner; huge plugin library</td></tr>
+<tr><td class="c-cyan">OpenVAS / Greenbone</td><td>Open-source alternative (GVM); free NVT feed</td></tr>
+<tr><td class="c-cyan">Qualys / Rapid7 InsightVM</td><td>Cloud-delivered VM platforms with agents</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Key idea:</strong> <em>authenticated</em> scans (with
+creds) see missing patches and config far better than network-only scans. Feed
+findings into <strong class="c-green">CVSS + exploitability (EPSS/KEV)</strong> to
+prioritize — patch what's actually being exploited first, not just the highest CVSS.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📏</span>
+<span class="topic-name">CIS Benchmarks &amp; CIS-CAT — Hardening Baselines</span>
+<span class="topic-badge">Hardening</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Consensus Config for Everything</div>
+<div class="concept-desc">
+The <strong class="c-cyan">CIS Benchmarks</strong> are free, consensus-built
+hardening guides for OSes, cloud, containers, and apps — hundreds of specific
+settings ("disable root SSH", "set password age"). <strong class="c-cyan">CIS-CAT</strong>
+audits a system against a benchmark and scores compliance.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Levels 1 &amp; 2</td><td>L1 = safe baseline; L2 = defense-in-depth (may break things)</td></tr>
+<tr><td class="c-cyan">Benchmarks</td><td>OS, K8s, Docker, AWS/Azure/GCP, browsers, databases</td></tr>
+<tr><td class="c-cyan">CIS Controls</td><td>The companion 18 prioritized safeguards (IG1–IG3)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">CIS Hardened Images</strong> (pre-baked AMIs/VMs) let you
+start compliant. Benchmarks pair naturally with policy-as-code — encode the
+controls once, enforce them everywhere.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🐧</span>
+<span class="topic-name">Lynis — Linux Audit &amp; Hardening</span>
+<span class="topic-badge">Hardening</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">A One-Command Health Check for a Host</div>
+<div class="concept-desc">
+<strong class="c-cyan">Lynis</strong> is an agentless shell-script auditor for
+Linux/Unix/macOS. Run it on a host and it walks hundreds of checks — kernel params,
+file permissions, services, SSH config, firewall — then prints a hardening index
+and prioritized suggestions.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Audit the local system</span>
+<span class="fn">sudo</span> lynis audit system
+
+<span class="com"># Key output: warnings, suggestions, and a Hardening index (0-100)</span>
+<span class="com"># Reports land in /var/log/lynis.log &amp; lynis-report.dat</span></pre>
+<div class="concept-desc" style="margin-top:10px">
+Great for a fast baseline and for teaching <em>why</em> each setting matters
+(each suggestion links to guidance). Complements — doesn't replace — a real
+benchmark like CIS.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🛡️</span>
+<span class="topic-name">OpenSCAP &amp; DISA STIGs — Compliance-Driven Hardening</span>
+<span class="topic-badge">Compliance</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Machine-Readable Security Policy</div>
+<div class="concept-desc">
+<strong class="c-cyan">SCAP</strong> (Security Content Automation Protocol) is a set
+of standards (OVAL, XCCDF, CCE) for expressing security policy as
+<em>machine-readable content</em>. <strong class="c-cyan">OpenSCAP</strong> scans and
+even auto-remediates against that content; <strong class="c-cyan">DISA STIGs</strong>
+are the U.S. DoD's hardening standards distributed in this format.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Scan RHEL against a STIG profile and generate an HTML report</span>
+oscap xccdf eval \
+  <span class="var">--profile</span> xccdf_org.ssgproject.content_profile_stig \
+  <span class="var">--report</span> report.html \
+  /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml</pre>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">SSG</strong> (SCAP Security Guide) ships ready profiles —
+STIG, CIS, PCI-DSS, HIPAA. This is how regulated environments prove and enforce a
+baseline continuously rather than via a one-time checklist.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🩹</span>
+<span class="topic-name">Patch &amp; Config Management as a Control</span>
+<span class="topic-badge">Vuln Mgmt</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Finding Vulns Is Easy — Fixing at Scale Is Hard</div>
+<div class="concept-desc">
+A scanner produces a list; the real work is closing the loop across thousands of
+systems reliably. Patch and configuration management turn remediation from a manual
+scramble into a repeatable, measurable control.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Role</th></tr>
+<tr><td class="c-cyan">WSUS / SCCM / Intune</td><td>Windows patch orchestration &amp; compliance</td></tr>
+<tr><td class="c-cyan">Ansible / Salt</td><td>Cross-platform patching &amp; config enforcement (ties to F4)</td></tr>
+<tr><td class="c-cyan">unattended-upgrades / dnf-automatic</td><td>OS-native auto-patching for Linux</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Metrics that matter:</strong> patch coverage %, mean time
+to remediate (MTTR) by severity, and <em>drift</em> (systems that fell out of
+compliance). Config management also prevents drift — the box stays hardened, not
+just gets hardened once.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🍯</span>
+<span class="topic-name">Honeypots &amp; Canarytokens — Deception Tech</span>
+<span class="topic-badge">Deception</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Traps That Only an Intruder Trips</div>
+<div class="concept-desc">
+A legitimate user never touches a fake admin account, a decoy database, or a file
+named <code>passwords.xlsx</code> planted on a share. Deception assets have
+<strong class="c-green">near-zero false positives</strong> — any interaction is,
+by definition, suspicious.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Type</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Honeypot</td><td>A fake system that logs everything an attacker does (T-Pot, Cowrie)</td></tr>
+<tr><td class="c-cyan">Honeytoken / Canarytoken</td><td>A fake credential, AWS key, or URL that alerts when used</td></tr>
+<tr><td class="c-cyan">Honey account</td><td>A dormant AD account — any auth attempt is an alert</td></tr>
+<tr><td class="c-cyan">Deception grid</td><td>Decoys scattered through the network to catch lateral movement</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Best value:</strong> place canarytokens <em>inside</em>
+the network where only a snooping attacker would find them. A tripped token is
+high-fidelity evidence of a breach in progress — the mirror image of the red-team
+exfil/pivot cards.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📧</span>
+<span class="topic-name">Email Security — SPF, DKIM &amp; DMARC</span>
+<span class="topic-badge">Email Defense</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Stopping Spoofed Mail at the Door</div>
+<div class="concept-desc">
+Email is the #1 initial-access vector, and by default anyone can forge your domain
+in the "From" field. Three DNS-based standards, layered, let receivers verify that
+mail really came from you — and tell them what to do when it didn't.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Record</th><th>Answers</th></tr>
+<tr><td class="c-cyan">SPF</td><td>"Which servers may send mail for this domain?" (IP allow-list in DNS)</td></tr>
+<tr><td class="c-cyan">DKIM</td><td>"Was this message signed by the domain &amp; unmodified?" (crypto signature)</td></tr>
+<tr><td class="c-cyan">DMARC</td><td>"If SPF/DKIM fail, what do I do — and where do I report?" (policy + alignment)</td></tr>
+</table>
+<pre class="code-block"><span class="com"># A DMARC record that quarantines fakes and sends reports</span>
+_dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com; adkim=s; aspf=s"</span></pre>
+<div class="concept-desc" style="margin-top:10px">
+Progress <code>p=none</code> (monitor) → <code>quarantine</code> →
+<code>reject</code> as you gain confidence. Add
+<strong class="c-green">sandboxing, link rewriting, and external-sender banners</strong>
+for the phishing that still gets through.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🪪</span>
+<span class="topic-name">Identity Threat Detection &amp; Response (ITDR)</span>
+<span class="topic-badge">Identity</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">"Identity Is the New Perimeter"</div>
+<div class="concept-desc">
+Modern attackers don't break in, they <em>log in</em> — with phished, sprayed, or
+stolen credentials and session tokens. ITDR watches the identity provider (Entra ID,
+Okta, AD) for the behavioral signals of account takeover.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Signal</th><th>What it suggests</th></tr>
+<tr><td class="c-red">Impossible travel</td><td>Logins from two distant locations too close in time</td></tr>
+<tr><td class="c-red">MFA fatigue / bombing</td><td>Repeated push prompts hoping the user taps "approve"</td></tr>
+<tr><td class="c-red">Token / session theft</td><td>A valid session used from a new device/IP (AiTM phishing)</td></tr>
+<tr><td class="c-red">Password spray</td><td>One password tried across many accounts</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Controls:</strong> phishing-resistant MFA (FIDO2/passkeys),
+Conditional Access (device + risk based), and continuous access evaluation that can
+kill a session mid-flight. This is the defensive answer to the credential-attack and
+AD cards on the red-team side.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🤝</span>
+<span class="topic-name">Purple Teaming — Closing the Detection Gap</span>
+<span class="topic-badge">Purple</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Red + Blue in the Same Room</div>
+<div class="concept-desc">
+Instead of red team "winning" and blue team "losing," a
+<strong class="c-cyan">purple team</strong> exercise runs attacks collaboratively:
+red executes a known technique, blue checks whether it was logged, alerted, and
+actionable — and they fix the gap on the spot.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Pick an ATT&amp;CK technique</td><td>e.g. T1003 credential dumping</td></tr>
+<tr><td class="c-cyan">Red emulates it</td><td>Atomic Red Team / Caldera runs the procedure (ties to B4)</td></tr>
+<tr><td class="c-green">Blue verifies</td><td>Was it in the logs? Did an alert fire? Was it triaged?</td></tr>
+<tr><td class="c-amber">Improve</td><td>Add telemetry, write/tune the detection, re-test</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The output is measurable <strong class="c-green">detection coverage</strong> mapped
+to ATT&amp;CK — you learn exactly which techniques you'd catch and which you'd miss.
+This card is the keystone that ties the whole Red and Blue domains together.
 </div>
 </div>
 </div>
@@ -46362,6 +48239,282 @@ enforce rules — "no public S3," "only these regions" — org-wide.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📦</span>
+<span class="topic-name">GCP-Native IaC — Deployment Manager &amp; Config Controller</span>
+<span class="topic-badge">GCP · IaC</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Declarative Infrastructure the Google Way</div>
+<div class="concept-desc">
+Beyond Terraform, GCP has native declarative options. Google now steers most users
+toward <strong class="c-cyan">Config Controller</strong> (managed Config Connector +
+Policy Controller) — you describe cloud resources as Kubernetes-style YAML and GCP
+reconciles them continuously.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Option</th><th>Notes</th></tr>
+<tr><td class="c-cyan">Config Connector</td><td>Manage GCP resources as K8s CRDs (GitOps-friendly)</td></tr>
+<tr><td class="c-cyan">Config Controller</td><td>Managed KRM stack: Connector + Policy Controller + sync</td></tr>
+<tr><td class="c-muted">Deployment Manager</td><td>The older Jinja/Python template engine (legacy; being retired)</td></tr>
+<tr><td class="c-green">Terraform (+ Blueprints)</td><td>Google's actual recommended default for most teams</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Takeaway:</strong> for greenfield GCP IaC, reach for
+Terraform or Config Controller, not Deployment Manager. The KRM model unifies app
+and infra config under one reconciliation loop (ties to GitOps in ops).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚚</span>
+<span class="topic-name">Cloud CI/CD — CodePipeline &amp; Cloud Build</span>
+<span class="topic-badge">AWS · GCP</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Managed Build-and-Deploy Pipelines</div>
+<div class="concept-desc">
+Both clouds offer first-party CI/CD so you don't run your own build servers. They
+slot in next to (or instead of) GitHub Actions when you want tight IAM and artifact
+integration with the platform.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>AWS</th><th>GCP</th><th>Role</th></tr>
+<tr><td class="c-cyan">CodePipeline</td><td>Cloud Build (triggers)</td><td>Orchestrate stages</td></tr>
+<tr><td class="c-cyan">CodeBuild</td><td>Cloud Build</td><td>Run build/test steps</td></tr>
+<tr><td class="c-cyan">CodeDeploy</td><td>Cloud Deploy</td><td>Progressive delivery to targets</td></tr>
+<tr><td class="c-cyan">ECR</td><td>Artifact Registry</td><td>Store container/package artifacts</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Why native:</strong> pipelines assume an IAM role (no
+long-lived keys), and use <strong class="c-green">OIDC</strong> to let external
+CI authenticate without stored secrets. Push signed images to the registry, then
+Cloud Deploy/CodeDeploy roll them out canary-style.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📊</span>
+<span class="topic-name">AWS Observability — CloudWatch &amp; X-Ray</span>
+<span class="topic-badge">AWS · Ops</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Metrics, Logs, Alarms &amp; Traces</div>
+<div class="concept-desc">
+<strong class="c-cyan">CloudWatch</strong> is the central nervous system for AWS
+ops — it collects metrics, aggregates logs, fires alarms, and triggers automated
+responses. <strong class="c-cyan">X-Ray</strong> adds distributed tracing so you can
+see a request hop across services.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Piece</th><th>Does</th></tr>
+<tr><td class="c-cyan">Metrics &amp; Alarms</td><td>Numeric time-series; alarm → SNS/Auto Scaling/Lambda</td></tr>
+<tr><td class="c-cyan">Logs &amp; Logs Insights</td><td>Central log store with a query language</td></tr>
+<tr><td class="c-cyan">Dashboards</td><td>Single-pane views of a service's health</td></tr>
+<tr><td class="c-cyan">X-Ray</td><td>Traces &amp; service maps for latency debugging</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Modern path:</strong> instrument with
+<strong class="c-green">OpenTelemetry</strong> (via the AWS Distro, ADOT) so your
+telemetry isn't locked in. Alarms on the <em>golden signals</em> (latency, errors,
+saturation) are what turn raw metrics into on-call signal.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📈</span>
+<span class="topic-name">GCP Observability — Cloud Monitoring, Logging &amp; Trace</span>
+<span class="topic-badge">GCP · Ops</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Operations Suite (formerly Stackdriver)</div>
+<div class="concept-desc">
+Google's operations suite mirrors CloudWatch/X-Ray with metrics, logs, and traces —
+and leans on the SRE practices Google literally wrote the book on (SLOs, error
+budgets are first-class in Cloud Monitoring).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Service</th><th>AWS equivalent</th></tr>
+<tr><td class="c-cyan">Cloud Monitoring</td><td>CloudWatch metrics/alarms/dashboards</td></tr>
+<tr><td class="c-cyan">Cloud Logging</td><td>CloudWatch Logs (with LogQL-like queries)</td></tr>
+<tr><td class="c-cyan">Cloud Trace</td><td>X-Ray (distributed tracing)</td></tr>
+<tr><td class="c-cyan">Cloud Profiler / Error Reporting</td><td>Continuous profiling &amp; error grouping</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Define an <strong class="c-green">SLO</strong> right in Cloud Monitoring and it
+tracks the error budget and burn rate for you — the theory from the SRE card,
+operationalized. Also OpenTelemetry-native.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🏛️</span>
+<span class="topic-name">Well-Architected &amp; the Architecture Framework</span>
+<span class="topic-badge">AWS · GCP</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Pillars for Grading a Cloud Design</div>
+<div class="concept-desc">
+Both AWS (<strong class="c-cyan">Well-Architected Framework</strong>) and GCP
+(<strong class="c-cyan">Architecture Framework</strong>) publish a set of pillars to
+review any workload against. It's the rubric architects use in design reviews and
+the basis of the "Well-Architected Review."
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Pillar</th><th>Asks</th></tr>
+<tr><td class="c-cyan">Operational Excellence</td><td>Can you run &amp; improve it (IaC, observability, runbooks)?</td></tr>
+<tr><td class="c-cyan">Security</td><td>Least privilege, encryption, detection in depth</td></tr>
+<tr><td class="c-cyan">Reliability</td><td>Recovers from failure, scales to demand</td></tr>
+<tr><td class="c-cyan">Performance Efficiency</td><td>Right resources, evolve as tech changes</td></tr>
+<tr><td class="c-cyan">Cost Optimization</td><td>Pay only for what delivers value (→ FinOps)</td></tr>
+<tr><td class="c-cyan">Sustainability</td><td>(AWS) minimize environmental impact</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Run a review before a big launch: score each pillar, log the risks, remediate the
+high ones. It's the cloud-specific companion to the engineering-domain system
+design cards.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔷</span>
+<span class="topic-name">Azure — Getting Started &amp; Entra ID</span>
+<span class="topic-badge">Azure</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Third Major Cloud</div>
+<div class="concept-desc">
+Microsoft Azure is especially common in enterprises already on Microsoft 365. Its
+identity backbone is <strong class="c-cyan">Entra ID</strong> (formerly Azure AD) —
+the tenant-wide directory that authenticates users and apps across Azure and M365.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>AWS / GCP analog</th></tr>
+<tr><td class="c-cyan">Tenant</td><td>The identity boundary (~ AWS Organization root)</td></tr>
+<tr><td class="c-cyan">Management Group → Subscription</td><td>Org/folder → account/project billing boundary</td></tr>
+<tr><td class="c-cyan">Entra ID</td><td>IAM Identity Center / Cloud Identity</td></tr>
+<tr><td class="c-cyan">az CLI / Cloud Shell</td><td>aws / gcloud CLI</td></tr>
+</table>
+<pre class="code-block"><span class="com"># Sign in and set the active subscription</span>
+az login
+az account set <span class="var">--subscription</span> <span class="str">"Prod"</span></pre>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Note the terms:</strong> Azure "subscription" ≈ AWS
+account, and RBAC is assigned on scopes (management group → subscription →
+resource group → resource) that inherit downward.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧱</span>
+<span class="topic-name">Azure Core — Resource Groups, VNet, VMs &amp; Storage</span>
+<span class="topic-badge">Azure</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Building Blocks</div>
+<div class="concept-desc">
+Everything in Azure lives in a <strong class="c-cyan">Resource Group</strong> — a
+container for related resources sharing a lifecycle. Networking, compute, and
+storage map cleanly onto their AWS/GCP counterparts.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Azure</th><th>Does</th><th>AWS analog</th></tr>
+<tr><td class="c-cyan">Resource Group</td><td>Lifecycle container for resources</td><td>(no direct one)</td></tr>
+<tr><td class="c-cyan">Virtual Network (VNet)</td><td>Private network + subnets + NSGs</td><td>VPC</td></tr>
+<tr><td class="c-cyan">Virtual Machines / VMSS</td><td>Compute + autoscale sets</td><td>EC2 / ASG</td></tr>
+<tr><td class="c-cyan">Storage Account (Blob)</td><td>Object/blob, file, queue, table</td><td>S3 (+ more)</td></tr>
+<tr><td class="c-cyan">AKS</td><td>Managed Kubernetes</td><td>EKS / GKE</td></tr>
+<tr><td class="c-cyan">ARM / Bicep</td><td>Native IaC (Bicep = friendly ARM)</td><td>CloudFormation</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Bicep</strong> is worth knowing — a clean DSL that
+compiles to ARM templates, Azure's answer to Terraform/CloudFormation for
+declarative infra.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🛡️</span>
+<span class="topic-name">Azure Security — Defender, Key Vault &amp; Sentinel</span>
+<span class="topic-badge">Azure</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Defensive Stack</div>
+<div class="concept-desc">
+Azure's security services close the loop with the Blue-team domain:
+<strong class="c-cyan">Sentinel</strong> is a cloud-native SIEM/SOAR, and
+<strong class="c-cyan">Defender for Cloud</strong> is the CSPM/CWPP posture engine.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Service</th><th>Role</th><th>Analog</th></tr>
+<tr><td class="c-cyan">Defender for Cloud</td><td>Posture (CSPM) + workload protection + secure score</td><td>Security Hub / SCC</td></tr>
+<tr><td class="c-cyan">Microsoft Sentinel</td><td>Cloud SIEM + SOAR (KQL hunting)</td><td>Splunk / Chronicle</td></tr>
+<tr><td class="c-cyan">Key Vault</td><td>Secrets, keys &amp; certificates</td><td>Secrets Manager / Secret Manager</td></tr>
+<tr><td class="c-cyan">Conditional Access</td><td>Risk/device-based access policy (ties to ITDR)</td><td>—</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">KQL</strong> (Kusto Query Language) powers Sentinel
+hunting and Log Analytics — a genuinely useful skill that carries across Defender,
+Sentinel, and Azure Monitor. This closes the AWS ↔ GCP ↔ Azure security triangle.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body cloud -->
 </div>
 </div>
@@ -47384,6 +49537,144 @@ Pick a track that matches your goal and work up it.
 <div class="concept-desc" style="margin-top:8px">
 The whole site maps to these — this reference domain (Red/Blue/Cloud/Engineering)
 is effectively a study companion for the tracks above.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">☁️</span>
+<span class="topic-name">Cloud-Native &amp; Serverless Architecture Patterns</span>
+<span class="topic-badge">Architecture</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Designing for the Platform, Not Just on It</div>
+<div class="concept-desc">
+Cloud-native architecture assumes elastic, disposable infrastructure and managed
+services. Serverless takes it further — you write functions and the platform handles
+scaling to zero and back. Both change how you decompose a system.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Pattern</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Managed-service-first</td><td>Prefer a queue/DB/auth service over running your own</td></tr>
+<tr><td class="c-cyan">Event-driven / FaaS</td><td>Functions triggered by events; scale per-event</td></tr>
+<tr><td class="c-cyan">Strangler Fig</td><td>Incrementally replace a monolith by routing slices to new services</td></tr>
+<tr><td class="c-cyan">BFF</td><td>Backend-for-frontend: a tailored API per client type</td></tr>
+<tr><td class="c-red">Cold starts / limits</td><td>Serverless trade-offs: latency spikes, timeouts, statelessness</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Trade-off:</strong> serverless minimizes ops and cost at
+low/spiky load but can get expensive and awkward at steady high volume (and
+vendor lock-in rises). Match the model to the traffic shape — ties to the
+"Choosing Compute" cloud card.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗃️</span>
+<span class="topic-name">Schema &amp; Data Modeling Patterns</span>
+<span class="topic-badge">Data Design</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Model the Data to Match the Access</div>
+<div class="concept-desc">
+How you shape data determines what's fast and what's painful. Relational
+normalization optimizes for integrity; denormalization and NoSQL optimize for read
+patterns. Good design starts from <em>how the data is queried</em>, not an abstract
+ideal.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Choice</th><th>Trade-off</th></tr>
+<tr><td class="c-cyan">Normalization (3NF)</td><td>No duplication, integrity — but more joins</td></tr>
+<tr><td class="c-cyan">Denormalization</td><td>Fast reads, fewer joins — but update anomalies</td></tr>
+<tr><td class="c-cyan">NoSQL single-table</td><td>Model around access patterns (DynamoDB style)</td></tr>
+<tr><td class="c-cyan">Polyglot persistence</td><td>Right store per job: relational + doc + cache + search</td></tr>
+<tr><td class="c-cyan">Star / snowflake</td><td>Dimensional modeling for analytics warehouses</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Rule:</strong> normalize until it hurts, denormalize until
+it works. In NoSQL you design the table around queries up front — the opposite of
+relational's "model entities, query later."
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📐</span>
+<span class="topic-name">Estimation &amp; Planning</span>
+<span class="topic-badge">Career</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Why Software Estimates Are Always Wrong</div>
+<div class="concept-desc">
+Estimation is hard because building software is <em>discovering</em> the problem, not
+repeating a known task. Mature teams estimate <em>relative</em> effort and manage
+uncertainty rather than pretending to predict exact dates.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Idea</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Story points</td><td>Relative size (complexity/effort/uncertainty), not hours</td></tr>
+<tr><td class="c-cyan">Velocity</td><td>Points/sprint historically — forecast, don't commit to it</td></tr>
+<tr><td class="c-cyan">Planning poker</td><td>Estimate together to surface hidden complexity</td></tr>
+<tr><td class="c-cyan">Cone of uncertainty</td><td>Estimates tighten as you learn — re-estimate</td></tr>
+<tr><td class="c-cyan">Ranges &amp; buffers</td><td>Give "2–4 weeks", not "3 weeks"; account for the unknown</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Senior move:</strong> break big work into small,
+independently shippable slices — small things estimate accurately, and you get
+feedback early. Padding a giant estimate just hides the risk.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧑‍💻</span>
+<span class="topic-name">Career Ladders &amp; Interviews</span>
+<span class="topic-badge">Career</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Leveling Up &amp; Getting Through the Loop</div>
+<div class="concept-desc">
+A career ladder makes expectations explicit per level; interviews test whether you
+meet the bar. Preparing deliberately for each stage beats raw talent for both getting
+hired and getting promoted.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Interview stage</th><th>Prep</th></tr>
+<tr><td class="c-cyan">Coding</td><td>Data structures &amp; algorithms; think aloud, test your code (LeetCode-style)</td></tr>
+<tr><td class="c-cyan">System design</td><td>Use the framework: requirements → estimate → API → data → scale → trade-offs</td></tr>
+<tr><td class="c-cyan">Behavioral</td><td>STAR stories tied to the level's expectations (scope, impact)</td></tr>
+<tr><td class="c-cyan">Take-home / practical</td><td>Clean, tested, documented — treat it like real work</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">For promotion:</strong> operate at the next level
+<em>before</em> the title — keep a brag doc of impact mapped to the ladder's
+criteria. The whole Engineering domain here is study material for the design &amp;
+coding loops.
 </div>
 </div>
 </div>

@@ -4951,8 +4951,157 @@ lsof +L1 2&gt;/dev/null | grep deleted
             </div>
           </div>
 
-<!-- /domain-body linux -->
-<!-- /domain-body linux -->
-<!-- /domain-body linux -->
-<!-- /domain-body linux -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📦</span>
+              <span class="topic-name">Podman &amp; Rootless Containers</span>
+              <span class="topic-badge">Containers</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Docker-Compatible, Daemonless, Safer</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Podman</strong> runs containers without a root daemon —
+                  each container is a child of your shell, and <strong class="c-green">rootless</strong>
+                  mode means a container breakout lands as an unprivileged user, not root. The CLI is
+                  a drop-in for Docker.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Same commands you already know</span>
+<span class="kw">alias</span> docker=podman
+podman run <span class="var">-d</span> <span class="var">-p</span> 8080:80 nginx
+podman generate systemd <span class="var">--name</span> web   <span class="com"># run containers as systemd services</span></pre>
+                  <table class="ref-table">
+                    <tr><th>Feature</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Daemonless</td><td>No single root process; better isolation &amp; auditability</td></tr>
+                    <tr><td class="c-cyan">Rootless</td><td>Uses user namespaces — maps container root to your UID</td></tr>
+                    <tr><td class="c-cyan">Pods</td><td>Group containers (Kubernetes-style) locally</td></tr>
+                    <tr><td class="c-cyan">Buildah / Skopeo</td><td>Companion tools to build &amp; move images</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Default on RHEL/Fedora. The security win — no privileged daemon — is why it's
+                    favored in hardened and multi-tenant environments.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧩</span>
+              <span class="topic-name">systemd Deep — Units, Timers &amp; Journald</span>
+              <span class="topic-badge">Init System</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Thing That Runs Everything at Boot</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">systemd</strong> is PID 1 on most modern Linux — it starts
+                  services, manages dependencies, and supervises processes. Understanding units and
+                  the journal is core Linux admin.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">systemctl status nginx          <span class="com"># is it running?</span>
+systemctl enable <span class="var">--now</span> nginx    <span class="com"># start now + at boot</span>
+journalctl <span class="var">-u</span> nginx <span class="var">-f</span>          <span class="com"># tail its logs</span>
+systemd-analyze blame           <span class="com"># what slowed boot?</span></pre>
+                  <table class="ref-table">
+                    <tr><th>Unit type</th><th>Purpose</th></tr>
+                    <tr><td class="c-cyan">.service</td><td>A daemon/process to supervise</td></tr>
+                    <tr><td class="c-cyan">.timer</td><td>Cron replacement — schedule a service</td></tr>
+                    <tr><td class="c-cyan">.socket</td><td>Socket-activate a service on demand</td></tr>
+                    <tr><td class="c-cyan">.target</td><td>A group of units (like runlevels)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Drop-ins</strong> (<code>systemctl edit</code>) override
+                    unit settings without touching vendor files. Timers beat cron: they log to the
+                    journal, handle missed runs, and have dependencies.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🗄️</span>
+              <span class="topic-name">ZFS &amp; Btrfs — Snapshots &amp; Integrity</span>
+              <span class="topic-badge">Filesystems</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Copy-on-Write Filesystems</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">ZFS</strong> and <strong class="c-cyan">Btrfs</strong> are
+                  copy-on-write filesystems that combine volume management, checksumming, snapshots,
+                  and compression. They detect (and with redundancy, repair) silent data corruption —
+                  a big step up from ext4/XFS.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Feature</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Copy-on-write</td><td>Never overwrite in place → cheap snapshots, no fsck</td></tr>
+                    <tr><td class="c-cyan">Checksums</td><td>Every block verified → catch bit rot</td></tr>
+                    <tr><td class="c-cyan">Snapshots &amp; clones</td><td>Instant, near-free point-in-time copies</td></tr>
+                    <tr><td class="c-cyan">Subvolumes / datasets</td><td>Independently managed slices of the pool</td></tr>
+                    <tr><td class="c-cyan">RAID-Z / built-in RAID</td><td>Redundancy that can self-heal from checksums</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Use cases:</strong> NAS/storage servers, snapshot-before-
+                    upgrade, and <code>zfs send</code> for efficient replication/backups. ZFS is more
+                    mature; Btrfs ships in-kernel and is the openSUSE default.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐚</span>
+              <span class="topic-name">Advanced Bash — Traps, Expansion &amp; Robust Scripts</span>
+              <span class="topic-badge">Scripting</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Writing Bash That Doesn't Break</div>
+                <div class="concept-desc">
+                  Beyond one-liners, a few habits and features separate fragile scripts from robust
+                  ones. These show up constantly in real automation and CI.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Fail fast, and clean up on exit</span>
+<span class="kw">set</span> <span class="var">-Eeuo</span> pipefail
+tmp=$(mktemp)
+<span class="kw">trap</span> <span class="str">'rm -f "$tmp"'</span> EXIT
+
+<span class="com"># Parameter expansion: defaults, trimming</span>
+name=<span class="str">"${1:-world}"</span>          <span class="com"># default if unset</span>
+base=<span class="str">"${path##*/}"</span>           <span class="com"># strip dir → filename</span></pre>
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Why</th></tr>
+                    <tr><td class="c-cyan"><code>set -euo pipefail</code></td><td>Exit on error/unset var/failed pipe — the safety header</td></tr>
+                    <tr><td class="c-cyan"><code>trap</code></td><td>Run cleanup on EXIT/ERR/signals</td></tr>
+                    <tr><td class="c-cyan">Parameter expansion</td><td><code>${v:-def}</code>, <code>${v##pat}</code>, <code>${v/a/b}</code> — no sed needed</td></tr>
+                    <tr><td class="c-cyan">ShellCheck</td><td>Lints scripts for the bugs everyone writes</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Golden rules:</strong> quote your variables
+                    (<code>"$var"</code>) to survive spaces, and run ShellCheck. Past ~100 lines with
+                    real data structures, reach for Python instead.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body linux -->

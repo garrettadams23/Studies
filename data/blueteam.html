@@ -997,4 +997,316 @@ index=auth <span class="str">"Failed password"</span>
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🩺</span>
+              <span class="topic-name">Vulnerability Scanners — Nessus &amp; OpenVAS</span>
+              <span class="topic-badge">Vuln Mgmt</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Find the Holes Before Attackers Do</div>
+                <div class="concept-desc">
+                  Authenticated and unauthenticated scanners enumerate hosts, fingerprint services,
+                  and match them against a vulnerability database (CVE/plugin feeds). They are the
+                  engine behind the <strong class="c-cyan">vulnerability management lifecycle</strong>
+                  — discover, prioritize, remediate, verify.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Notes</th></tr>
+                    <tr><td class="c-cyan">Nessus (Tenable)</td><td>Industry-standard commercial scanner; huge plugin library</td></tr>
+                    <tr><td class="c-cyan">OpenVAS / Greenbone</td><td>Open-source alternative (GVM); free NVT feed</td></tr>
+                    <tr><td class="c-cyan">Qualys / Rapid7 InsightVM</td><td>Cloud-delivered VM platforms with agents</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Key idea:</strong> <em>authenticated</em> scans (with
+                    creds) see missing patches and config far better than network-only scans. Feed
+                    findings into <strong class="c-green">CVSS + exploitability (EPSS/KEV)</strong> to
+                    prioritize — patch what's actually being exploited first, not just the highest CVSS.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📏</span>
+              <span class="topic-name">CIS Benchmarks &amp; CIS-CAT — Hardening Baselines</span>
+              <span class="topic-badge">Hardening</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Consensus Config for Everything</div>
+                <div class="concept-desc">
+                  The <strong class="c-cyan">CIS Benchmarks</strong> are free, consensus-built
+                  hardening guides for OSes, cloud, containers, and apps — hundreds of specific
+                  settings ("disable root SSH", "set password age"). <strong class="c-cyan">CIS-CAT</strong>
+                  audits a system against a benchmark and scores compliance.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Levels 1 &amp; 2</td><td>L1 = safe baseline; L2 = defense-in-depth (may break things)</td></tr>
+                    <tr><td class="c-cyan">Benchmarks</td><td>OS, K8s, Docker, AWS/Azure/GCP, browsers, databases</td></tr>
+                    <tr><td class="c-cyan">CIS Controls</td><td>The companion 18 prioritized safeguards (IG1–IG3)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">CIS Hardened Images</strong> (pre-baked AMIs/VMs) let you
+                    start compliant. Benchmarks pair naturally with policy-as-code — encode the
+                    controls once, enforce them everywhere.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐧</span>
+              <span class="topic-name">Lynis — Linux Audit &amp; Hardening</span>
+              <span class="topic-badge">Hardening</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">A One-Command Health Check for a Host</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Lynis</strong> is an agentless shell-script auditor for
+                  Linux/Unix/macOS. Run it on a host and it walks hundreds of checks — kernel params,
+                  file permissions, services, SSH config, firewall — then prints a hardening index
+                  and prioritized suggestions.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Audit the local system</span>
+<span class="fn">sudo</span> lynis audit system
+
+<span class="com"># Key output: warnings, suggestions, and a Hardening index (0-100)</span>
+<span class="com"># Reports land in /var/log/lynis.log &amp; lynis-report.dat</span></pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Great for a fast baseline and for teaching <em>why</em> each setting matters
+                    (each suggestion links to guidance). Complements — doesn't replace — a real
+                    benchmark like CIS.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🛡️</span>
+              <span class="topic-name">OpenSCAP &amp; DISA STIGs — Compliance-Driven Hardening</span>
+              <span class="topic-badge">Compliance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Machine-Readable Security Policy</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">SCAP</strong> (Security Content Automation Protocol) is a set
+                  of standards (OVAL, XCCDF, CCE) for expressing security policy as
+                  <em>machine-readable content</em>. <strong class="c-cyan">OpenSCAP</strong> scans and
+                  even auto-remediates against that content; <strong class="c-cyan">DISA STIGs</strong>
+                  are the U.S. DoD's hardening standards distributed in this format.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Scan RHEL against a STIG profile and generate an HTML report</span>
+oscap xccdf eval \
+  <span class="var">--profile</span> xccdf_org.ssgproject.content_profile_stig \
+  <span class="var">--report</span> report.html \
+  /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml</pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">SSG</strong> (SCAP Security Guide) ships ready profiles —
+                    STIG, CIS, PCI-DSS, HIPAA. This is how regulated environments prove and enforce a
+                    baseline continuously rather than via a one-time checklist.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🩹</span>
+              <span class="topic-name">Patch &amp; Config Management as a Control</span>
+              <span class="topic-badge">Vuln Mgmt</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Finding Vulns Is Easy — Fixing at Scale Is Hard</div>
+                <div class="concept-desc">
+                  A scanner produces a list; the real work is closing the loop across thousands of
+                  systems reliably. Patch and configuration management turn remediation from a manual
+                  scramble into a repeatable, measurable control.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Role</th></tr>
+                    <tr><td class="c-cyan">WSUS / SCCM / Intune</td><td>Windows patch orchestration &amp; compliance</td></tr>
+                    <tr><td class="c-cyan">Ansible / Salt</td><td>Cross-platform patching &amp; config enforcement (ties to F4)</td></tr>
+                    <tr><td class="c-cyan">unattended-upgrades / dnf-automatic</td><td>OS-native auto-patching for Linux</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Metrics that matter:</strong> patch coverage %, mean time
+                    to remediate (MTTR) by severity, and <em>drift</em> (systems that fell out of
+                    compliance). Config management also prevents drift — the box stays hardened, not
+                    just gets hardened once.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🍯</span>
+              <span class="topic-name">Honeypots &amp; Canarytokens — Deception Tech</span>
+              <span class="topic-badge">Deception</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Traps That Only an Intruder Trips</div>
+                <div class="concept-desc">
+                  A legitimate user never touches a fake admin account, a decoy database, or a file
+                  named <code>passwords.xlsx</code> planted on a share. Deception assets have
+                  <strong class="c-green">near-zero false positives</strong> — any interaction is,
+                  by definition, suspicious.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Type</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Honeypot</td><td>A fake system that logs everything an attacker does (T-Pot, Cowrie)</td></tr>
+                    <tr><td class="c-cyan">Honeytoken / Canarytoken</td><td>A fake credential, AWS key, or URL that alerts when used</td></tr>
+                    <tr><td class="c-cyan">Honey account</td><td>A dormant AD account — any auth attempt is an alert</td></tr>
+                    <tr><td class="c-cyan">Deception grid</td><td>Decoys scattered through the network to catch lateral movement</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Best value:</strong> place canarytokens <em>inside</em>
+                    the network where only a snooping attacker would find them. A tripped token is
+                    high-fidelity evidence of a breach in progress — the mirror image of the red-team
+                    exfil/pivot cards.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📧</span>
+              <span class="topic-name">Email Security — SPF, DKIM &amp; DMARC</span>
+              <span class="topic-badge">Email Defense</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Stopping Spoofed Mail at the Door</div>
+                <div class="concept-desc">
+                  Email is the #1 initial-access vector, and by default anyone can forge your domain
+                  in the "From" field. Three DNS-based standards, layered, let receivers verify that
+                  mail really came from you — and tell them what to do when it didn't.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Record</th><th>Answers</th></tr>
+                    <tr><td class="c-cyan">SPF</td><td>"Which servers may send mail for this domain?" (IP allow-list in DNS)</td></tr>
+                    <tr><td class="c-cyan">DKIM</td><td>"Was this message signed by the domain &amp; unmodified?" (crypto signature)</td></tr>
+                    <tr><td class="c-cyan">DMARC</td><td>"If SPF/DKIM fail, what do I do — and where do I report?" (policy + alignment)</td></tr>
+                  </table>
+                  <pre class="code-block"><span class="com"># A DMARC record that quarantines fakes and sends reports</span>
+_dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com; adkim=s; aspf=s"</span></pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Progress <code>p=none</code> (monitor) → <code>quarantine</code> →
+                    <code>reject</code> as you gain confidence. Add
+                    <strong class="c-green">sandboxing, link rewriting, and external-sender banners</strong>
+                    for the phishing that still gets through.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🪪</span>
+              <span class="topic-name">Identity Threat Detection &amp; Response (ITDR)</span>
+              <span class="topic-badge">Identity</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">"Identity Is the New Perimeter"</div>
+                <div class="concept-desc">
+                  Modern attackers don't break in, they <em>log in</em> — with phished, sprayed, or
+                  stolen credentials and session tokens. ITDR watches the identity provider (Entra ID,
+                  Okta, AD) for the behavioral signals of account takeover.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Signal</th><th>What it suggests</th></tr>
+                    <tr><td class="c-red">Impossible travel</td><td>Logins from two distant locations too close in time</td></tr>
+                    <tr><td class="c-red">MFA fatigue / bombing</td><td>Repeated push prompts hoping the user taps "approve"</td></tr>
+                    <tr><td class="c-red">Token / session theft</td><td>A valid session used from a new device/IP (AiTM phishing)</td></tr>
+                    <tr><td class="c-red">Password spray</td><td>One password tried across many accounts</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Controls:</strong> phishing-resistant MFA (FIDO2/passkeys),
+                    Conditional Access (device + risk based), and continuous access evaluation that can
+                    kill a session mid-flight. This is the defensive answer to the credential-attack and
+                    AD cards on the red-team side.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🤝</span>
+              <span class="topic-name">Purple Teaming — Closing the Detection Gap</span>
+              <span class="topic-badge">Purple</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Red + Blue in the Same Room</div>
+                <div class="concept-desc">
+                  Instead of red team "winning" and blue team "losing," a
+                  <strong class="c-cyan">purple team</strong> exercise runs attacks collaboratively:
+                  red executes a known technique, blue checks whether it was logged, alerted, and
+                  actionable — and they fix the gap on the spot.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Pick an ATT&amp;CK technique</td><td>e.g. T1003 credential dumping</td></tr>
+                    <tr><td class="c-cyan">Red emulates it</td><td>Atomic Red Team / Caldera runs the procedure (ties to B4)</td></tr>
+                    <tr><td class="c-green">Blue verifies</td><td>Was it in the logs? Did an alert fire? Was it triaged?</td></tr>
+                    <tr><td class="c-amber">Improve</td><td>Add telemetry, write/tune the detection, re-test</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The output is measurable <strong class="c-green">detection coverage</strong> mapped
+                    to ATT&amp;CK — you learn exactly which techniques you'd catch and which you'd miss.
+                    This card is the keystone that ties the whole Red and Blue domains together.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body blueteam -->

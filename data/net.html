@@ -5501,9 +5501,106 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             </div>
           </div>
 
-<!-- /domain-body net -->
-<!-- /domain-body net -->
-<!-- /domain-body net -->
-<!-- /domain-body net -->
-<!-- /domain-body net -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🤖</span>
+              <span class="topic-name">Network Automation — Ansible, Netmiko &amp; NAPALM</span>
+              <span class="topic-badge">Automation</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Stop Configuring Switches by Hand</div>
+                <div class="concept-desc">
+                  Managing hundreds of devices via CLI is slow and error-prone. Network automation
+                  treats configuration as code — versioned, tested, and pushed programmatically. This
+                  is the heart of <strong class="c-cyan">NetDevOps</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Role</th></tr>
+                    <tr><td class="c-cyan">Ansible (network modules)</td><td>Declarative, agentless config push across vendors</td></tr>
+                    <tr><td class="c-cyan">Netmiko</td><td>Python SSH library for sending CLI commands</td></tr>
+                    <tr><td class="c-cyan">NAPALM</td><td>Vendor-neutral API — get/replace config uniformly</td></tr>
+                    <tr><td class="c-cyan">gNMI / NETCONF / RESTCONF</td><td>Model-driven (YANG) APIs — the modern replacement for CLI scraping</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Source of truth:</strong> keep intended config in Git
+                    (often generated from a data model with Jinja2 templates), then push and verify.
+                    Model-driven telemetry (gNMI streaming) is replacing SNMP polling for monitoring.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔐</span>
+              <span class="topic-name">DNSSEC &amp; Encrypted DNS — DoH / DoT</span>
+              <span class="topic-badge">DNS Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Two Different Problems With DNS</div>
+                <div class="concept-desc">
+                  Plain DNS is both <em>unauthenticated</em> (answers can be forged) and
+                  <em>unencrypted</em> (anyone on-path can read/modify queries). Two separate
+                  technologies fix these — and they're often confused.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tech</th><th>Solves</th></tr>
+                    <tr><td class="c-cyan">DNSSEC</td><td><strong>Integrity/authenticity</strong> — signs records so forgery (cache poisoning) is detectable. Not encryption.</td></tr>
+                    <tr><td class="c-cyan">DoT (DNS over TLS)</td><td><strong>Privacy</strong> — encrypts DNS on port 853</td></tr>
+                    <tr><td class="c-cyan">DoH (DNS over HTTPS)</td><td><strong>Privacy</strong> — encrypts DNS inside HTTPS (443), blends with web traffic</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Key distinction:</strong> DNSSEC proves an answer is
+                    <em>genuine</em> but is public; DoH/DoT keep the query <em>private</em> but don't
+                    prove authenticity. You want both. DoH complicates enterprise DNS filtering — a
+                    real blue-team consideration.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🌐</span>
+              <span class="topic-name">WAN &amp; Switching Deep — SD-WAN, MPLS, VLANs &amp; PoE</span>
+              <span class="topic-badge">Infrastructure</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Connecting Sites and Carving Up Switches</div>
+                <div class="concept-desc">
+                  A grab-bag of infrastructure concepts that show up constantly in enterprise
+                  networking and on the Network+/CCNA exams.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">MPLS</td><td>Carrier "label-switched" WAN — fast, reliable, expensive private transport</td></tr>
+                    <tr><td class="c-cyan">SD-WAN</td><td>Software overlay across cheap internet links; policy-based path selection (displacing MPLS)</td></tr>
+                    <tr><td class="c-cyan">802.1Q trunking</td><td>Tag frames so one link carries many VLANs between switches</td></tr>
+                    <tr><td class="c-cyan">Multicast</td><td>One-to-many delivery (IGMP) — video/streaming without flooding</td></tr>
+                    <tr><td class="c-cyan">PoE</td><td>Power over Ethernet — run APs, phones &amp; cameras on the data cable</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">The trend:</strong> SD-WAN + SASE (security + networking as
+                    a cloud service) is where enterprise WAN is heading — central policy, encrypted
+                    overlays, and security inspection built into the fabric.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body net -->

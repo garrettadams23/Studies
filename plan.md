@@ -295,11 +295,11 @@ already supports (it renders any entry in `data/domains.json` that has a matchin
   - `redteam` 🔴 "Red Team & Offensive Tooling" — cert tags PT+ / OSCP
   - `blueteam` 🔵 "Blue Team & Defensive Tooling" — cert tags CySA+ / GCIH
   - `cloud`   ☁️ "Cloud Platforms — AWS · GCP · Azure" — cert tags AWS / GCP
-- [ ] Add three filter chips to `index-shell.html` (`data-domain`, `.c-redteam`
+- [x] Add three filter chips to `index-shell.html` (`data-domain`, `.c-redteam`
   / `.c-blueteam` / `.c-cloud` classes).
-- [ ] Add `.domain-redteam` / `.domain-blueteam` / `.domain-cloud` accent colors
+- [x] Add `.domain-redteam` / `.domain-blueteam` / `.domain-cloud` accent colors
   and `.chip.c-*` rules to `style.css` (mirror an existing domain's block).
-- [ ] Create empty `data/redteam.html` / `data/blueteam.html` / `data/cloud.html`
+- [x] Create empty `data/redteam.html` / `data/blueteam.html` / `data/cloud.html`
   with the trailing sentinel comment, then `python3 build.py` to verify 15 domains
   render and filter.
 - *(Alternative if you'd rather not add domains: red cards → `pentest`, blue cards
@@ -322,65 +322,65 @@ Tool reference cards, grouped by kill-chain stage. ~9 waves, ~50 cards.
 - [x] Google Dorking & GHDB — advanced operators for exposed data
 
 **Wave R2 — Web app attack tooling**
-- [ ] Burp Suite — Proxy, Repeater, Intruder, Scanner workflow
-- [ ] OWASP ZAP — the open-source web proxy/scanner
-- [ ] sqlmap — automated SQL injection (levels, risk, tamper scripts)
-- [ ] ffuf & Gobuster — content/parameter/vhost fuzzing
-- [ ] Nuclei — templated vulnerability scanning (dual-use with Blue)
-- [ ] Nikto & wpscan — web server & WordPress scanning
+- [x] Burp Suite — Proxy, Repeater, Intruder, Scanner workflow
+- [x] OWASP ZAP — the open-source web proxy/scanner
+- [x] sqlmap — automated SQL injection (levels, risk, tamper scripts)
+- [x] ffuf & Gobuster — content/parameter/vhost fuzzing
+- [x] Nuclei — templated vulnerability scanning (dual-use with Blue)
+- [x] Nikto & wpscan — web server & WordPress scanning
 
 **Wave R3 — Exploitation frameworks**
-- [ ] Metasploit Framework — modules, sessions, msfconsole workflow
-- [ ] msfvenom — payload generation & encoders (concepts + formats)
-- [ ] Searchsploit / Exploit-DB — finding & vetting public exploits
-- [ ] Impacket — the Python toolkit (psexec, secretsdump, wmiexec, ntlmrelayx)
-- [ ] Nuclei/CrackMapExec as exploitation orchestrators
+- [x] Metasploit Framework — modules, sessions, msfconsole workflow
+- [x] msfvenom — payload generation & encoders (concepts + formats)
+- [x] Searchsploit / Exploit-DB — finding & vetting public exploits
+- [x] Impacket — the Python toolkit (psexec, secretsdump, wmiexec, ntlmrelayx)
+- [x] Nuclei/CrackMapExec as exploitation orchestrators
 
 **Wave R4 — Active Directory attack tooling**
-- [ ] BloodHound / SharpHound — AD attack-path graphing
-- [ ] Mimikatz — credential extraction (what it does; Blue detections)
-- [ ] Rubeus & Kerbrute — Kerberos abuse (roasting, AS-REP, TGT)
-- [ ] Responder & ntlmrelayx — LLMNR/NBT-NS poisoning & relay
-- [ ] NetExec (CrackMapExec) — the AD swiss-army knife
-- [ ] PowerView / PowerSploit — AD enumeration from PowerShell
-- [ ] Certify / Certipy — AD CS (ADCS) abuse (ESC1–ESC8 overview)
+- [x] BloodHound / SharpHound — AD attack-path graphing
+- [x] Mimikatz — credential extraction (what it does; Blue detections)
+- [x] Rubeus & Kerbrute — Kerberos abuse (roasting, AS-REP, TGT)
+- [x] Responder & ntlmrelayx — LLMNR/NBT-NS poisoning & relay
+- [x] NetExec (CrackMapExec) — the AD swiss-army knife
+- [x] PowerView / PowerSploit — AD enumeration from PowerShell
+- [x] Certify / Certipy — AD CS (ADCS) abuse (ESC1–ESC8 overview)
 
 **Wave R5 — Command & Control (C2)**
-- [ ] C2 Concepts — beacons, listeners, redirectors, malleable profiles
-- [ ] Cobalt Strike — the commercial standard (what defenders look for)
-- [ ] Sliver — the open-source modern C2
-- [ ] Mythic & Havoc — agent/collaboration frameworks
-- [ ] Empire / Starkiller — PowerShell/Python post-ex C2
+- [x] C2 Concepts — beacons, listeners, redirectors, malleable profiles
+- [x] Cobalt Strike — the commercial standard (what defenders look for)
+- [x] Sliver — the open-source modern C2
+- [x] Mythic & Havoc — agent/collaboration frameworks
+- [x] Empire / Starkiller — PowerShell/Python post-ex C2
 
 **Wave R6 — Password & hash attacks**
-- [ ] Hashcat — modes, masks, rules, GPU cracking workflow
-- [ ] John the Ripper — formats, wordlist/incremental, jumbo
-- [ ] Hydra & Medusa — online/network login brute-forcing
-- [ ] Wordlists & CeWL/Crunch — rockyou, custom lists, mangling
-- [ ] Hash identification & extraction (hashid, /etc/shadow, NTDS)
+- [x] Hashcat — modes, masks, rules, GPU cracking workflow
+- [x] John the Ripper — formats, wordlist/incremental, jumbo
+- [x] Hydra & Medusa — online/network login brute-forcing
+- [x] Wordlists & CeWL/Crunch — rockyou, custom lists, mangling
+- [x] Hash identification & extraction (hashid, /etc/shadow, NTDS)
 
 **Wave R7 — Wireless & hardware**
-- [ ] Aircrack-ng suite — capture, deauth, WPA handshake cracking
-- [ ] Wifite & hcxdumptool — automated Wi-Fi + PMKID attacks
-- [ ] Bettercap — MITM framework (Wi-Fi, BLE, HID, ARP)
-- [ ] Kismet — wireless detection & sniffing
-- [ ] Flipper Zero — Sub-GHz/RFID/NFC/IR/BadUSB multi-tool
-- [ ] Rubber Ducky / O.MG cable — HID injection (BadUSB)
-- [ ] Proxmark3 & HackRF — RFID cloning & software-defined radio
+- [x] Aircrack-ng suite — capture, deauth, WPA handshake cracking
+- [x] Wifite & hcxdumptool — automated Wi-Fi + PMKID attacks
+- [x] Bettercap — MITM framework (Wi-Fi, BLE, HID, ARP)
+- [x] Kismet — wireless detection & sniffing
+- [x] Flipper Zero — Sub-GHz/RFID/NFC/IR/BadUSB multi-tool
+- [x] Rubber Ducky / O.MG cable — HID injection (BadUSB)
+- [x] Proxmark3 & HackRF — RFID cloning & software-defined radio
 
 **Wave R8 — Post-exploitation, evasion & LOLBins**
-- [ ] Living off the Land — LOLBAS / GTFOBins (built-ins as weapons)
-- [ ] Privilege escalation scanners — linPEAS / winPEAS / PowerUp
-- [ ] AMSI & AV/EDR evasion — concepts, obfuscation, why it works (defensive lens)
-- [ ] Pivoting & tunneling — Chisel, ligolo-ng, SSH/socks, proxychains
-- [ ] Data exfil channels — DNS/ICMP/HTTPS tunneling (detection notes)
+- [x] Living off the Land — LOLBAS / GTFOBins (built-ins as weapons)
+- [x] Privilege escalation scanners — linPEAS / winPEAS / PowerUp
+- [x] AMSI & AV/EDR evasion — concepts, obfuscation, why it works (defensive lens)
+- [x] Pivoting & tunneling — Chisel, ligolo-ng, SSH/socks, proxychains
+- [x] Data exfil channels — DNS/ICMP/HTTPS tunneling (detection notes)
 
 **Wave R9 — Cloud & container offense**
-- [ ] Pacu — the AWS exploitation framework
-- [ ] CloudFox & enumerate-iam — cloud attack-surface enumeration
-- [ ] Kubernetes attacks — kube-hunter, RBAC abuse, container escape
-- [ ] Cloud credential attacks — SSRF→IMDS, key theft, role chaining
-- [ ] Purple-team bridge — mapping the above to ATT&CK & detections
+- [x] Pacu — the AWS exploitation framework
+- [x] CloudFox & enumerate-iam — cloud attack-surface enumeration
+- [x] Kubernetes attacks — kube-hunter, RBAC abuse, container escape
+- [x] Cloud credential attacks — SSRF→IMDS, key theft, role chaining
+- [x] Purple-team bridge — mapping the above to ATT&CK & detections
 
 ---
 
@@ -396,52 +396,52 @@ Tool reference cards, grouped by kill-chain stage. ~9 waves, ~50 cards.
 - [x] Arkime / ntopng — full-packet capture & traffic analytics
 
 **Wave B2 — SIEM & log analytics**
-- [ ] Splunk — SPL query language, indexes, dashboards, alerts
-- [ ] Elastic / ELK Stack — Elasticsearch, Logstash, Kibana, Beats
-- [ ] Wazuh — open-source XDR/SIEM (agents, rules, decoders)
-- [ ] Graylog & Loki — log aggregation alternatives
-- [ ] Sigma — vendor-neutral detection rules (write once, convert anywhere)
+- [x] Splunk — SPL query language, indexes, dashboards, alerts
+- [x] Elastic / ELK Stack — Elasticsearch, Logstash, Kibana, Beats
+- [x] Wazuh — open-source XDR/SIEM (agents, rules, decoders)
+- [x] Graylog & Loki — log aggregation alternatives
+- [x] Sigma — vendor-neutral detection rules (write once, convert anywhere)
 
 **Wave B3 — Endpoint visibility & EDR**
-- [ ] Sysmon — the Windows telemetry powerhouse (config, event IDs)
-- [ ] OSQuery — your endpoints as a SQL-queryable fleet
-- [ ] Velociraptor — endpoint DFIR & hunting at scale
-- [ ] Windows Event Logs — the IDs that matter (4624/4625/4688/4768…)
-- [ ] auditd & Linux endpoint logging
+- [x] Sysmon — the Windows telemetry powerhouse (config, event IDs)
+- [x] OSQuery — your endpoints as a SQL-queryable fleet
+- [x] Velociraptor — endpoint DFIR & hunting at scale
+- [x] Windows Event Logs — the IDs that matter (4624/4625/4688/4768…)
+- [x] auditd & Linux endpoint logging
 
 **Wave B4 — Detection engineering**
-- [ ] YARA — pattern-matching rules for malware/files
-- [ ] Sigma-to-SIEM — detection-as-code workflow
-- [ ] MITRE ATT&CK mapping & Navigator — coverage-driven detection
-- [ ] Atomic Red Team & Caldera — adversary emulation to test detections
-- [ ] Detection tuning — reducing false positives, alert fatigue
+- [x] YARA — pattern-matching rules for malware/files
+- [x] Sigma-to-SIEM — detection-as-code workflow
+- [x] MITRE ATT&CK mapping & Navigator — coverage-driven detection
+- [x] Atomic Red Team & Caldera — adversary emulation to test detections
+- [x] Detection tuning — reducing false positives, alert fatigue
 
 **Wave B5 — Digital forensics & IR (DFIR)**
-- [ ] Volatility — memory forensics (processes, injection, artifacts)
-- [ ] Autopsy / The Sleuth Kit — disk forensics
-- [ ] KAPE & plaso/log2timeline — triage collection & super-timelines
-- [ ] Chain of custody & evidence handling (procedure card)
-- [ ] Windows forensic artifacts — Prefetch, ShimCache, AmCache, MFT, registry
+- [x] Volatility — memory forensics (processes, injection, artifacts)
+- [x] Autopsy / The Sleuth Kit — disk forensics
+- [x] KAPE & plaso/log2timeline — triage collection & super-timelines
+- [x] Chain of custody & evidence handling (procedure card)
+- [x] Windows forensic artifacts — Prefetch, ShimCache, AmCache, MFT, registry
 
 **Wave B6 — Threat intelligence & sharing**
-- [ ] MISP — threat-intel sharing platform (IOCs, feeds, taxonomies)
-- [ ] OpenCTI — structured CTI knowledge base
-- [ ] STIX / TAXII — the standards for exchanging threat intel
-- [ ] VirusTotal / Hybrid Analysis / Any.Run — sample analysis & sandboxing
-- [ ] Pyramid of Pain & IOC vs TTP-based detection
+- [x] MISP — threat-intel sharing platform (IOCs, feeds, taxonomies)
+- [x] OpenCTI — structured CTI knowledge base
+- [x] STIX / TAXII — the standards for exchanging threat intel
+- [x] VirusTotal / Hybrid Analysis / Any.Run — sample analysis & sandboxing
+- [x] Pyramid of Pain & IOC vs TTP-based detection
 
 **Wave B7 — Vuln management, hardening & benchmarks**
-- [ ] Nessus & OpenVAS/Greenbone — vulnerability scanners
-- [ ] CIS Benchmarks & CIS-CAT — hardening baselines
-- [ ] Lynis — Linux/Unix audit & hardening
-- [ ] OpenSCAP & DISA STIGs — compliance-driven hardening
-- [ ] Patch & config management (WSUS/Ansible) as a control
+- [x] Nessus & OpenVAS/Greenbone — vulnerability scanners
+- [x] CIS Benchmarks & CIS-CAT — hardening baselines
+- [x] Lynis — Linux/Unix audit & hardening
+- [x] OpenSCAP & DISA STIGs — compliance-driven hardening
+- [x] Patch & config management (WSUS/Ansible) as a control
 
 **Wave B8 — Deception & email/identity defense**
-- [ ] Honeypots & Canarytokens — deception tech (T-Pot, canaries)
-- [ ] Email security stack — SPF/DKIM/DMARC enforcement, sandboxing, banners
-- [ ] Identity threat detection — impossible travel, ITDR, conditional access
-- [ ] Purple teaming — running the exercise & closing detection gaps
+- [x] Honeypots & Canarytokens — deception tech (T-Pot, canaries)
+- [x] Email security stack — SPF/DKIM/DMARC enforcement, sandboxing, banners
+- [x] Identity threat detection — impossible travel, ITDR, conditional access
+- [x] Purple teaming — running the exercise & closing detection gaps
 
 ---
 
@@ -459,57 +459,57 @@ an explicit "Rosetta stone" card. Azure kept as a lighter bonus set.
 - [x] Cloud Service Rosetta Stone — AWS ↔ GCP ↔ Azure equivalents table
 
 **Wave C2 — Identity & access (the #1 cloud risk)**
-- [ ] AWS IAM — users, groups, roles, policies (identity vs resource vs SCP)
-- [ ] AWS IAM Deep — assume-role, STS, permission boundaries, least privilege
-- [ ] GCP IAM — members, roles (basic/predefined/custom), resource hierarchy
-- [ ] GCP Service Accounts & Workload Identity — machine auth done right
-- [ ] Cloud IAM pitfalls — wildcard policies, privilege escalation paths
+- [x] AWS IAM — users, groups, roles, policies (identity vs resource vs SCP)
+- [x] AWS IAM Deep — assume-role, STS, permission boundaries, least privilege
+- [x] GCP IAM — members, roles (basic/predefined/custom), resource hierarchy
+- [x] GCP Service Accounts & Workload Identity — machine auth done right
+- [x] Cloud IAM pitfalls — wildcard policies, privilege escalation paths
 
 **Wave C3 — Networking**
-- [ ] AWS VPC — subnets, route tables, IGW/NAT, security groups vs NACLs
-- [ ] AWS Load Balancing & DNS — ALB/NLB, Route 53, CloudFront
-- [ ] GCP VPC — global VPC, subnets, firewall rules, Cloud NAT
-- [ ] GCP Load Balancing & DNS — global LB, Cloud DNS, Cloud CDN
-- [ ] Hybrid connectivity — VPN, Direct Connect / Cloud Interconnect, peering
+- [x] AWS VPC — subnets, route tables, IGW/NAT, security groups vs NACLs
+- [x] AWS Load Balancing & DNS — ALB/NLB, Route 53, CloudFront
+- [x] GCP VPC — global VPC, subnets, firewall rules, Cloud NAT
+- [x] GCP Load Balancing & DNS — global LB, Cloud DNS, Cloud CDN
+- [x] Hybrid connectivity — VPN, Direct Connect / Cloud Interconnect, peering
 
 **Wave C4 — Compute**
-- [ ] AWS Compute — EC2, AMIs, instance types, Auto Scaling, spot
-- [ ] AWS Serverless & Containers — Lambda, ECS, EKS, Fargate
-- [ ] GCP Compute — Compute Engine, machine families, MIGs, preemptible
-- [ ] GCP Serverless & Containers — Cloud Run, Cloud Functions, GKE
-- [ ] Choosing compute — VM vs container vs serverless decision guide
+- [x] AWS Compute — EC2, AMIs, instance types, Auto Scaling, spot
+- [x] AWS Serverless & Containers — Lambda, ECS, EKS, Fargate
+- [x] GCP Compute — Compute Engine, machine families, MIGs, preemptible
+- [x] GCP Serverless & Containers — Cloud Run, Cloud Functions, GKE
+- [x] Choosing compute — VM vs container vs serverless decision guide
 
 **Wave C5 — Storage & databases**
-- [ ] AWS Storage — S3 (deep), EBS, EFS, storage classes & lifecycle
-- [ ] AWS Databases — RDS, Aurora, DynamoDB, ElastiCache
-- [ ] GCP Storage — Cloud Storage, Persistent Disk, Filestore
-- [ ] GCP Databases — Cloud SQL, Spanner, Firestore, Bigtable
-- [ ] BigQuery — serverless analytics warehouse (SQL, slots, cost)
+- [x] AWS Storage — S3 (deep), EBS, EFS, storage classes & lifecycle
+- [x] AWS Databases — RDS, Aurora, DynamoDB, ElastiCache
+- [x] GCP Storage — Cloud Storage, Persistent Disk, Filestore
+- [x] GCP Databases — Cloud SQL, Spanner, Firestore, Bigtable
+- [x] BigQuery — serverless analytics warehouse (SQL, slots, cost)
 
 **Wave C6 — Cloud security services**
-- [ ] AWS Security Stack — CloudTrail, Config, GuardDuty, Security Hub, Inspector
-- [ ] AWS Data Protection — KMS, Secrets Manager, encryption at rest/in transit
-- [ ] GCP Security Stack — Cloud Logging/Audit, Security Command Center
-- [ ] GCP Data Protection — Cloud KMS, Secret Manager, VPC Service Controls
-- [ ] CSPM & cloud posture — ScoutSuite, Prowler, Steampipe (Blue-team bridge)
+- [x] AWS Security Stack — CloudTrail, Config, GuardDuty, Security Hub, Inspector
+- [x] AWS Data Protection — KMS, Secrets Manager, encryption at rest/in transit
+- [x] GCP Security Stack — Cloud Logging/Audit, Security Command Center
+- [x] GCP Data Protection — Cloud KMS, Secret Manager, VPC Service Controls
+- [x] CSPM & cloud posture — ScoutSuite, Prowler, Steampipe (Blue-team bridge)
 
 **Wave C7 — Infrastructure as Code & DevOps on cloud**
-- [ ] Terraform on AWS/GCP — providers, remote state, modules (ties to ops topic)
-- [ ] AWS-native IaC — CloudFormation & CDK
-- [ ] GCP-native IaC — Deployment Manager & Config Controller
-- [ ] Cloud CI/CD — CodePipeline / Cloud Build, artifact registries
-- [ ] Cloud cost control — budgets, tagging, Cost Explorer / billing export (→ FinOps)
+- [x] Terraform on AWS/GCP — providers, remote state, modules (ties to ops topic)
+- [x] AWS-native IaC — CloudFormation & CDK
+- [x] GCP-native IaC — Deployment Manager & Config Controller
+- [x] Cloud CI/CD — CodePipeline / Cloud Build, artifact registries
+- [x] Cloud cost control — budgets, tagging, Cost Explorer / billing export (→ FinOps)
 
 **Wave C8 — Observability & operations on cloud**
-- [ ] AWS Observability — CloudWatch (metrics/logs/alarms), X-Ray
-- [ ] GCP Observability — Cloud Monitoring, Cloud Logging, Cloud Trace
-- [ ] Well-Architected / Architecture Framework — the 5–6 pillars
-- [ ] Landing zones & multi-account/project — Organizations, Control Tower
+- [x] AWS Observability — CloudWatch (metrics/logs/alarms), X-Ray
+- [x] GCP Observability — Cloud Monitoring, Cloud Logging, Cloud Trace
+- [x] Well-Architected / Architecture Framework — the 5–6 pillars
+- [x] Landing zones & multi-account/project — Organizations, Control Tower
 
 **Wave C9 — Azure bonus (lighter set)**
-- [ ] Azure — Getting Started, Entra ID (formerly Azure AD)
-- [ ] Azure Core — Resource Groups, VNet, VMs, Storage Accounts
-- [ ] Azure Security — Defender for Cloud, Key Vault, Sentinel (SIEM)
+- [x] Azure — Getting Started, Entra ID (formerly Azure AD)
+- [x] Azure Core — Resource Groups, VNet, VMs, Storage Accounts
+- [x] Azure Security — Defender for Cloud, Key Vault, Sentinel (SIEM)
 
 ---
 
@@ -518,36 +518,36 @@ an explicit "Rosetta stone" card. Azure kept as a lighter bonus set.
 Lower priority than R/B/C but each fills a real gap; interleave as desired.
 
 **Languages (`script`)**
-- [ ] Rust · Java · C# / .NET · Ruby · PHP · C — one card each (mirror the Go/Python style)
-- [ ] Assembly & how programs run — registers, stack, calling conventions (pairs w/ RE)
-- [ ] Semantic Versioning & dependency management (npm/pip/cargo lockfiles)
+- [x] Rust · Java · C# / .NET · Ruby · PHP · C — one card each (mirror the Go/Python style)
+- [x] Assembly & how programs run — registers, stack, calling conventions (pairs w/ RE)
+- [x] Semantic Versioning & dependency management (npm/pip/cargo lockfiles)
 
 **Networking (`net`)**
-- [ ] Network Automation — Ansible, Netmiko, NAPALM, gNMI
-- [ ] SD-WAN & MPLS · Multicast · PoE · 802.1Q trunking deep-dive
-- [ ] DNSSEC, DoH/DoT — securing name resolution
+- [x] Network Automation — Ansible, Netmiko, NAPALM, gNMI
+- [x] SD-WAN & MPLS · Multicast · PoE · 802.1Q trunking deep-dive
+- [x] DNSSEC, DoH/DoT — securing name resolution
 
 **Linux (`linux`)**
-- [ ] Podman & rootless containers · systemd deep-dive · sysctl/kernel tuning
-- [ ] ZFS & Btrfs — snapshots, subvolumes, integrity
-- [ ] Advanced Bash — traps, parameter expansion, coprocesses
+- [x] Podman & rootless containers · systemd deep-dive · sysctl/kernel tuning
+- [x] ZFS & Btrfs — snapshots, subvolumes, integrity
+- [x] Advanced Bash — traps, parameter expansion, coprocesses
 
 **AI & ML (`ai`)**
-- [ ] Fine-tuning vs RAG vs prompting — when to use which
-- [ ] LoRA / PEFT · Quantization (GGUF, bitsandbytes) · Tokenization internals
-- [ ] Running local LLMs — Ollama, llama.cpp, LM Studio
-- [ ] LLM evaluation & guardrails · Diffusion models (how image gen works)
+- [x] Fine-tuning vs RAG vs prompting — when to use which
+- [x] LoRA / PEFT · Quantization (GGUF, bitsandbytes) · Tokenization internals
+- [x] Running local LLMs — Ollama, llama.cpp, LM Studio
+- [x] LLM evaluation & guardrails · Diffusion models (how image gen works)
 
 **Data (`script`/`ai`)**
-- [ ] Apache Kafka (deep) · Spark · Airflow/Dagster · dbt
-- [ ] Dimensional modeling — star/snowflake schemas, slowly-changing dimensions
+- [x] Apache Kafka (deep) · Spark · Airflow/Dagster · dbt
+- [x] Dimensional modeling — star/snowflake schemas, slowly-changing dimensions
 
 **Productivity (`shortcut`)**
-- [ ] VS Code · Vim (deep) · modern CLI tools (ripgrep, fzf, bat, jq, eza)
-- [ ] Git power-user — rebase, reflog, bisect, worktrees, aliases
+- [x] VS Code · Vim (deep) · modern CLI tools (ripgrep, fzf, bat, jq, eza)
+- [x] Git power-user — rebase, reflog, bisect, worktrees, aliases
 
 **Study meta (any domain / a new `certs` section)**
-- [ ] Cert Roadmaps — CompTIA (A+→Net+→Sec+→CySA+→PenTest+→CASP), OSCP path,
+- [x] Cert Roadmaps — CompTIA (A+→Net+→Sec+→CySA+→PenTest+→CASP), OSCP path,
       CISSP, and cloud tracks (AWS SAA/Security, GCP ACE/PCA) with study order.
 
 ---
@@ -612,36 +612,36 @@ Blue-team detection note.
 - [x] Clean / Hexagonal / Ports & Adapters — keeping business logic independent
 - [x] CQRS & Event Sourcing — read/write split, the append-only log
 - [x] The Twelve-Factor App — the checklist for cloud-native services
-- [ ] Cloud-Native & Serverless architecture patterns
+- [x] Cloud-Native & Serverless architecture patterns
 
 **Wave E3 — Domain Modeling & Design**
-- [ ] Domain-Driven Design (DDD) — bounded contexts, ubiquitous language, aggregates
-- [ ] SOLID Principles — deep card with examples of each
-- [ ] Coupling & Cohesion — Law of Demeter, dependency direction
-- [ ] API-First & Contract-Driven design — OpenAPI, consumer-driven contracts
-- [ ] Schema & data modeling patterns — normalization trade-offs, polyglot persistence
+- [x] Domain-Driven Design (DDD) — bounded contexts, ubiquitous language, aggregates
+- [x] SOLID Principles — deep card with examples of each
+- [x] Coupling & Cohesion — Law of Demeter, dependency direction
+- [x] API-First & Contract-Driven design — OpenAPI, consumer-driven contracts
+- [x] Schema & data modeling patterns — normalization trade-offs, polyglot persistence
 
 **Wave E4 — Engineering Craft & Quality**
-- [ ] Clean Code & Naming — deep (functions, comments, structure)
-- [ ] Code Review — doing it well (giving + receiving; what to look for)
-- [ ] Testing Strategy — the test pyramid, unit/integration/e2e, TDD & BDD
-- [ ] Technical Debt — recognizing, quantifying, and paying it down deliberately
-- [ ] ADRs & Design Docs — Architecture Decision Records, RFCs, the C4 model
+- [x] Clean Code & Naming — deep (functions, comments, structure)
+- [x] Code Review — doing it well (giving + receiving; what to look for)
+- [x] Testing Strategy — the test pyramid, unit/integration/e2e, TDD & BDD
+- [x] Technical Debt — recognizing, quantifying, and paying it down deliberately
+- [x] ADRs & Design Docs — Architecture Decision Records, RFCs, the C4 model
 
 **Wave E5 — Reliability & Distributed Patterns**
-- [ ] Resilience Patterns — circuit breaker, retry + backoff + jitter, timeout, bulkhead
-- [ ] Idempotency & Exactly-Once — deep (ties to API Design + Message Queues)
-- [ ] Distributed Transactions — Saga, Outbox, 2PC and why 2PC is avoided
-- [ ] Backpressure & Flow Control — protecting systems under load
-- [ ] Consistency in practice — read-repair, quorums, tunable consistency (ties to CAP)
+- [x] Resilience Patterns — circuit breaker, retry + backoff + jitter, timeout, bulkhead
+- [x] Idempotency & Exactly-Once — deep (ties to API Design + Message Queues)
+- [x] Distributed Transactions — Saga, Outbox, 2PC and why 2PC is avoided
+- [x] Backpressure & Flow Control — protecting systems under load
+- [x] Consistency in practice — read-repair, quorums, tunable consistency (ties to CAP)
 
 **Wave E6 — Engineering Career & Roles**
-- [ ] The Engineering Ladder — junior → mid → senior → staff → principal
-- [ ] Staff+ Archetypes — tech lead, architect, solver, right-hand
-- [ ] Tech Lead vs Engineering Manager — the fork in the road
-- [ ] Estimation & Planning — story points, velocity, why estimates are hard
-- [ ] Influence Without Authority — RFCs, stakeholder comms, driving alignment
-- [ ] Career Ladders & Interviews — leveling, system-design & coding interview prep
+- [x] The Engineering Ladder — junior → mid → senior → staff → principal
+- [x] Staff+ Archetypes — tech lead, architect, solver, right-hand
+- [x] Tech Lead vs Engineering Manager — the fork in the road
+- [x] Estimation & Planning — story points, velocity, why estimates are hard
+- [x] Influence Without Authority — RFCs, stakeholder comms, driving alignment
+- [x] Career Ladders & Interviews — leveling, system-design & coding interview prep
 
 ---
 
@@ -657,32 +657,32 @@ Blue-team detection note.
 - [x] Platform Engineering & the IDP — golden paths, self-service, the internal developer platform
 
 **Wave F2 — CI/CD Pipelines Deep**
-- [ ] Pipeline Design — stages, quality gates, artifacts, promotion between envs
-- [ ] GitHub Actions — workflows, jobs, matrix builds, secrets, reusable/composite actions
-- [ ] Jenkins · GitLab CI · CircleCI — comparison & when to pick which
-- [ ] Branching Strategies — trunk-based vs GitHub Flow vs GitFlow (and why trunk wins at scale)
-- [ ] Progressive Delivery — feature flags + canary + blue-green wired into the pipeline
+- [x] Pipeline Design — stages, quality gates, artifacts, promotion between envs
+- [x] GitHub Actions — workflows, jobs, matrix builds, secrets, reusable/composite actions
+- [x] Jenkins · GitLab CI · CircleCI — comparison & when to pick which
+- [x] Branching Strategies — trunk-based vs GitHub Flow vs GitFlow (and why trunk wins at scale)
+- [x] Progressive Delivery — feature flags + canary + blue-green wired into the pipeline
 
 **Wave F3 — Containers & Kubernetes Deep**
-- [ ] Docker Deep — multi-stage builds, layer caching, image slimming, distroless
-- [ ] Kubernetes Objects — pods, deployments, services, ingress, configmaps/secrets
-- [ ] Helm & Kustomize — packaging and templating manifests
-- [ ] K8s Networking & Storage — CNI, CSI, ingress controllers, persistent volumes
-- [ ] K8s Security — RBAC, network policies, pod security standards, admission control
+- [x] Docker Deep — multi-stage builds, layer caching, image slimming, distroless
+- [x] Kubernetes Objects — pods, deployments, services, ingress, configmaps/secrets
+- [x] Helm & Kustomize — packaging and templating manifests
+- [x] K8s Networking & Storage — CNI, CSI, ingress controllers, persistent volumes
+- [x] K8s Security — RBAC, network policies, pod security standards, admission control
 
 **Wave F4 — Config, Secrets & Supply Chain**
-- [ ] Configuration Management — Ansible deep (playbooks, roles, inventory), Chef/Puppet/Salt
-- [ ] Secrets Management — HashiCorp Vault, external-secrets, sealed secrets, dynamic creds
-- [ ] Software Supply Chain Security — SBOM, SLSA, Sigstore/cosign, provenance & signing
-- [ ] Policy as Code — OPA/Rego, Kyverno, Conftest guardrails in CI
-- [ ] Artifact & Registry Management — container/package registries, retention, promotion
+- [x] Configuration Management — Ansible deep (playbooks, roles, inventory), Chef/Puppet/Salt
+- [x] Secrets Management — HashiCorp Vault, external-secrets, sealed secrets, dynamic creds
+- [x] Software Supply Chain Security — SBOM, SLSA, Sigstore/cosign, provenance & signing
+- [x] Policy as Code — OPA/Rego, Kyverno, Conftest guardrails in CI
+- [x] Artifact & Registry Management — container/package registries, retention, promotion
 
 **Wave F5 — Observability & Operations Deep**
-- [ ] Prometheus & Grafana — metrics model, PromQL, dashboards, Alertmanager
-- [ ] Golden Signals + RED / USE — what to actually measure
-- [ ] SLIs, SLOs & Error Budgets — deep (turning SRE theory into alert thresholds)
-- [ ] Structured Logging & Log Pipelines — correlation IDs, aggregation (ties to SIEM)
-- [ ] On-Call Done Humanely — rotations, escalation, runbooks, blameless postmortems
+- [x] Prometheus & Grafana — metrics model, PromQL, dashboards, Alertmanager
+- [x] Golden Signals + RED / USE — what to actually measure
+- [x] SLIs, SLOs & Error Budgets — deep (turning SRE theory into alert thresholds)
+- [x] Structured Logging & Log Pipelines — correlation IDs, aggregation (ties to SIEM)
+- [x] On-Call Done Humanely — rotations, escalation, runbooks, blameless postmortems
 
 ---
 
@@ -699,16 +699,16 @@ Blue-team detection note.
 - [x] Essential Extensions — per-language + productivity (and how to stay lean)
 
 **Wave G2 — Remote & Containerized Dev**
-- [ ] Remote Development — Remote-SSH, WSL, and how the client/server split works
-- [ ] Dev Containers — devcontainer.json, reproducible per-project toolchains
-- [ ] GitHub Codespaces & cloud dev environments
-- [ ] Live Share — real-time collaborative editing & debugging
+- [x] Remote Development — Remote-SSH, WSL, and how the client/server split works
+- [x] Dev Containers — devcontainer.json, reproducible per-project toolchains
+- [x] GitHub Codespaces & cloud dev environments
+- [x] Live Share — real-time collaborative editing & debugging
 
 **Wave G3 — The Modern Dev Environment**
-- [ ] Dotfiles & Config Management — chezmoi/stow, version-controlled setup
-- [ ] Shell & Terminal Setup — zsh/fish, starship prompt, tmux (ties to existing tmux card)
-- [ ] Runtime & Version Managers — asdf/mise, nvm, pyenv, direnv per-project
-- [ ] AI Pair Programming — Copilot, Cursor, Claude Code — using them well without over-trusting
+- [x] Dotfiles & Config Management — chezmoi/stow, version-controlled setup
+- [x] Shell & Terminal Setup — zsh/fish, starship prompt, tmux (ties to existing tmux card)
+- [x] Runtime & Version Managers — asdf/mise, nvm, pyenv, direnv per-project
+- [x] AI Pair Programming — Copilot, Cursor, Claude Code — using them well without over-trusting
 
 ---
 
