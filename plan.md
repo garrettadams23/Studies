@@ -533,10 +533,10 @@ Lower priority than R/B/C but each fills a real gap; interleave as desired.
 - [ ] Advanced Bash — traps, parameter expansion, coprocesses
 
 **AI & ML (`ai`)**
-- [ ] Fine-tuning vs RAG vs prompting — when to use which
-- [ ] LoRA / PEFT · Quantization (GGUF, bitsandbytes) · Tokenization internals
-- [ ] Running local LLMs — Ollama, llama.cpp, LM Studio
-- [ ] LLM evaluation & guardrails · Diffusion models (how image gen works)
+- [x] Fine-tuning vs RAG vs prompting — when to use which
+- [x] LoRA / PEFT · Quantization (GGUF, bitsandbytes) · Tokenization internals
+- [x] Running local LLMs — Ollama, llama.cpp, LM Studio
+- [x] LLM evaluation & guardrails · Diffusion models (how image gen works)
 
 **Data (`script`/`ai`)**
 - [ ] Apache Kafka (deep) · Spark · Airflow/Dagster · dbt

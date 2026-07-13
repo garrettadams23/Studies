@@ -1574,4 +1574,142 @@ prompts = [
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎛️</span>
+              <span class="topic-name">Fine-Tuning vs RAG vs Prompting — When to Use Which</span>
+              <span class="topic-badge">LLM Ops</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Three Ways to Make an LLM Do What You Want</div>
+                <div class="concept-desc">
+                  The most common architecture question with LLMs. Reach for the cheapest tool that
+                  works, in order — most problems are solved by prompting or RAG, not fine-tuning.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Approach</th><th>Best for</th><th>Cost</th></tr>
+                    <tr><td class="c-cyan">Prompting</td><td>Behavior/format the base model already knows</td><td>Lowest — just words</td></tr>
+                    <tr><td class="c-cyan">RAG</td><td>Injecting fresh/private <em>knowledge</em> at query time</td><td>Medium — a retrieval pipeline</td></tr>
+                    <tr><td class="c-cyan">Fine-tuning</td><td>Teaching a <em>style/skill/format</em>, not new facts</td><td>Highest — data + training</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">The classic mistake:</strong> fine-tuning to add knowledge.
+                    Fine-tuning changes <em>behavior</em>; for "know our latest docs," use RAG. Rule of
+                    thumb: prompt first, add RAG for knowledge, fine-tune only when you need consistent
+                    format/tone at scale. They combine — a fine-tuned model with RAG is common.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🗜️</span>
+              <span class="topic-name">LoRA, Quantization &amp; Tokenization Internals</span>
+              <span class="topic-badge">LLM Internals</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Making Big Models Trainable &amp; Runnable</div>
+                <div class="concept-desc">
+                  Three techniques that make working with large models practical on modest hardware —
+                  the plumbing behind "run/tune a 70B model on one GPU."
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>Does</th></tr>
+                    <tr><td class="c-cyan">LoRA / PEFT</td><td>Fine-tune a few small adapter matrices, not all weights — cheap &amp; swappable</td></tr>
+                    <tr><td class="c-cyan">Quantization</td><td>Store weights in 8/4-bit (GGUF, bitsandbytes) — big memory cut, tiny quality loss</td></tr>
+                    <tr><td class="c-cyan">Tokenization</td><td>Text → tokens (subword, BPE); the model sees token IDs, not characters</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Why tokenization bites:</strong> models count and spell
+                    poorly because they see tokens, not letters; and cost/limits are per-token, not
+                    per-word (~4 chars/token in English). <strong class="c-green">QLoRA</strong> =
+                    quantization + LoRA, letting you tune large models on a single consumer GPU.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🖥️</span>
+              <span class="topic-name">Running Local LLMs — Ollama, llama.cpp &amp; LM Studio</span>
+              <span class="topic-badge">Local AI</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Private, Offline, Free-After-Hardware</div>
+                <div class="concept-desc">
+                  You can run capable open-weight models (Llama, Mistral, Qwen, Gemma) entirely on your
+                  own machine — no API cost, full privacy, works offline. Great for sensitive data and
+                  experimentation.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Ollama: the easiest on-ramp</span>
+ollama run llama3.2
+<span class="com"># It exposes an OpenAI-compatible API at localhost:11434</span></pre>
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Ollama</td><td>One-command model pull &amp; run; local API server</td></tr>
+                    <tr><td class="c-cyan">llama.cpp</td><td>The C++ engine underneath; runs GGUF on CPU/GPU</td></tr>
+                    <tr><td class="c-cyan">LM Studio</td><td>GUI to browse, download &amp; chat with models</td></tr>
+                    <tr><td class="c-cyan">vLLM</td><td>High-throughput serving for production</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Reality check:</strong> local models trail frontier
+                    hosted ones in capability, and you need RAM/VRAM (quantization helps). But for
+                    privacy-sensitive or high-volume tasks, local wins on cost and control.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧪</span>
+              <span class="topic-name">LLM Evaluation, Guardrails &amp; Diffusion Models</span>
+              <span class="topic-badge">LLM Ops</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Measuring Quality &amp; Keeping It Safe</div>
+                <div class="concept-desc">
+                  Shipping LLM features means knowing if they're any good and keeping them from going
+                  off the rails. And on the image side, <strong class="c-cyan">diffusion</strong> is
+                  the technique behind modern image generation.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Area</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Evaluation</td><td>Golden sets, LLM-as-judge, human review; track regressions like tests</td></tr>
+                    <tr><td class="c-cyan">Guardrails</td><td>Input/output filters, PII redaction, jailbreak &amp; prompt-injection defense</td></tr>
+                    <tr><td class="c-cyan">Grounding</td><td>Cite sources (RAG) to curb hallucination; verify claims</td></tr>
+                    <tr><td class="c-cyan">Diffusion models</td><td>Learn to denoise pure noise into an image, guided by a text prompt</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-red">Prompt injection</strong> is the LLM era's top security
+                    risk (untrusted text overriding your instructions) — treat model output as
+                    untrusted and never give an agent unchecked tools. Evaluation is what turns
+                    "seems fine" into a number you can defend.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body ai -->
