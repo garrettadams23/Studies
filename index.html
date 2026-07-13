@@ -43598,6 +43598,147 @@ signatures.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔥</span>
+<span class="topic-name">Hashcat — GPU Password Cracking</span>
+<span class="topic-badge">Passwords</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Fastest Way to Recover Passwords From Hashes</div>
+<div class="concept-desc">
+<strong class="c-cyan">Hashcat</strong> cracks password hashes using the GPU,
+trying billions of guesses per second. In an authorized engagement you feed it
+hashes you legitimately captured (e.g. from an NTDS dump) to demonstrate weak
+passwords. <em>Authorized assessment / cert-prep / your-own-hashes only.</em>
+</div>
+<div class="dw">
+<div class="dt">▸ ATTACK MODES</div>
+<table class="ref-table" style="margin-bottom:14px">
+<tr><th>Mode</th><th>How</th></tr>
+<tr><td class="c-cyan">Dictionary (-a 0)</td><td>Try each word in a wordlist</td></tr>
+<tr><td class="c-cyan">+ Rules (-r)</td><td>Mutate words (Password→P@ssw0rd!) — huge multiplier</td></tr>
+<tr><td class="c-cyan">Mask (-a 3)</td><td>Brute-force a known pattern (<code>?u?l?l?l?d?d</code>)</td></tr>
+<tr><td class="c-cyan">Combinator (-a 1)</td><td>Join two wordlists</td></tr>
+</table>
+<pre class="code-block"><span class="com"># NTLM hashes, rockyou wordlist + best64 rules</span>
+<span class="fn">hashcat</span> -m <span class="num">1000</span> -a <span class="num">0</span> hashes.txt rockyou.txt -r rules/best64.rule</pre>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Blue-team note:</strong> cracking is <em>offline</em>
+(nothing to detect on the wire) — the defense is upstream: long passphrases,
+slow hashes (bcrypt/argon2, not fast MD5/NTLM), and stopping the hash theft in
+the first place.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🃏</span>
+<span class="topic-name">John the Ripper — The Versatile Cracker</span>
+<span class="topic-badge">Passwords</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Auto-Detect &amp; Crack Almost Anything</div>
+<div class="concept-desc">
+<strong class="c-cyan">John the Ripper</strong> (the "jumbo" build especially) is
+the veteran CPU cracker — great at auto-detecting hash formats and packed with
+<code>*2john</code> helpers that extract crackable hashes from files (ZIP, PDF,
+SSH keys, KeePass). <em>Authorized use only.</em>
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Extract a hash from a protected file, then crack it</span>
+<span class="fn">zip2john</span> secret.zip &gt; hash.txt
+<span class="fn">john</span> --wordlist=rockyou.txt hash.txt
+<span class="fn">john</span> --show hash.txt            <span class="com"># reveal cracked passwords</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">When to use which:</strong> Hashcat for raw GPU speed on
+big hash lists; John for format auto-detection, the <code>*2john</code>
+extractors, and quick CPU jobs. Most operators keep both.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚪</span>
+<span class="topic-name">Hydra &amp; Medusa — Online Login Attacks</span>
+<span class="topic-badge">Passwords</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Brute-Forcing Live Services (Loudly)</div>
+<div class="concept-desc">
+Where Hashcat/John are <em>offline</em>, <strong class="c-cyan">Hydra</strong> and
+<strong class="c-cyan">Medusa</strong> attack <em>live</em> logins — SSH, RDP,
+HTTP forms, databases — trying credentials over the network.
+<strong class="c-amber">Password spraying</strong> (one password vs many users) is
+usually smarter than brute-forcing one account into a lockout.
+<em>Authorized targets only; this is noisy and can lock accounts.</em>
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># SSH, one user, a wordlist (authorized lab host)</span>
+<span class="fn">hydra</span> -l admin -P passwords.txt ssh://<span class="num">10.0.0.5</span>
+
+<span class="com"># Spray one password across many users</span>
+<span class="fn">hydra</span> -L users.txt -p <span class="str">'Spring2026!'</span> ssh://<span class="num">10.0.0.5</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Blue-team note:</strong> online attacks are very
+detectable — bursts of failed logins (Windows 4625, SSH auth failures) from one
+source. Defenses: lockout/backoff, MFA, and rate-limiting. Spraying is stealthier
+but still shows as many users failing with the <em>same</em> password.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📚</span>
+<span class="topic-name">Wordlists &amp; Hash Identification</span>
+<span class="topic-badge">Passwords</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Know the Hash, Pick the List</div>
+<div class="concept-desc">
+Two prerequisites make cracking work: identifying the <strong>hash type</strong>
+(so you use the right mode) and choosing good <strong>wordlists</strong>.
+</div>
+<div class="dw">
+<table class="ref-table" style="margin-bottom:14px">
+<tr><th>Identify with</th><th>Detail</th></tr>
+<tr><td><code>hashid</code> / <code>hash-identifier</code></td><td>Guess the algorithm from a hash's shape</td></tr>
+<tr><td>Hashcat example hashes</td><td>The wiki maps every <code>-m</code> mode to a sample</td></tr>
+</table>
+<table class="ref-table">
+<tr><th>Wordlist source</th><th>Detail</th></tr>
+<tr><td class="c-cyan">rockyou.txt</td><td>The classic ~14M-password leak list</td></tr>
+<tr><td class="c-cyan">SecLists</td><td>Curated lists for passwords, usernames, fuzzing</td></tr>
+<tr><td class="c-cyan">CeWL</td><td>Build a custom list by spidering the target's own website</td></tr>
+<tr><td class="c-cyan">Rules</td><td>best64 / OneRuleToRuleThemAll mutate a base list enormously</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+A <strong class="c-green">targeted</strong> list (company terms via CeWL + a good
+rule set) beats a giant generic list. This is also the defender's lesson: your
+org's name + a year + <code>!</code> is exactly what these lists+rules generate.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body redteam -->
 </div>
 </div>
