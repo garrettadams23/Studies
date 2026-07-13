@@ -46229,6 +46229,139 @@ the Cloud and Blue Team domains: run them regularly to find gaps before attacker
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🏗️</span>
+<span class="topic-name">Terraform on AWS &amp; GCP</span>
+<span class="topic-badge">IaC</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">How-To</div>
+<div class="concept-title">One Tool for Every Cloud</div>
+<div class="concept-desc">
+Terraform's superpower in the cloud is being <strong class="c-cyan">provider-
+agnostic</strong> — the same HCL workflow (init/plan/apply) provisions AWS, GCP,
+Azure, and 100+ others. You declare a provider, then resources. (See the Terraform
+topic for the core workflow — here's the cloud-specific shape.)
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">provider</span> <span class="str">"aws"</span>    { <span class="var">region</span>  = <span class="str">"us-east-1"</span> }
+<span class="kw">provider</span> <span class="str">"google"</span> { <span class="var">project</span> = <span class="str">"my-proj"</span>, <span class="var">region</span> = <span class="str">"us-central1"</span> }
+
+<span class="kw">resource</span> <span class="str">"aws_s3_bucket"</span> <span class="str">"data"</span>   { <span class="var">bucket</span> = <span class="str">"my-data"</span> }
+<span class="kw">resource</span> <span class="str">"google_storage_bucket"</span> <span class="str">"data"</span> { <span class="var">name</span> = <span class="str">"my-data"</span>, <span class="var">location</span> = <span class="str">"US"</span> }</pre>
+<div class="concept-desc" style="margin-top:8px">
+Cloud essentials: store <strong class="c-green">state remotely</strong> (S3 +
+DynamoDB lock, or GCS) so a team shares it; use <strong>modules</strong> for
+reusable stacks (a "VPC module"); and never edit cloud resources by hand once
+Terraform manages them (drift).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📜</span>
+<span class="topic-name">AWS-Native IaC — CloudFormation &amp; CDK</span>
+<span class="topic-badge">AWS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Terraform's In-House Rivals</div>
+<div class="concept-desc">
+<strong class="c-cyan">CloudFormation</strong> is AWS's native IaC — YAML/JSON
+templates, deeply integrated, no state file to manage (AWS tracks it as a "stack").
+<strong class="c-cyan">CDK</strong> (Cloud Development Kit) lets you write infra in
+a real programming language (TypeScript, Python) that <em>synthesizes</em> to
+CloudFormation — loops, conditions, and abstractions instead of sprawling YAML.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>CloudFormation</th><th>CDK</th><th>Terraform</th></tr>
+<tr><td>Language</td><td>YAML/JSON</td><td>Real code → CFN</td><td>HCL</td></tr>
+<tr><td>Scope</td><td>AWS only</td><td>AWS only</td><td class="c-green">Multi-cloud</td></tr>
+<tr><td>State</td><td class="c-green">Managed by AWS</td><td>Managed by AWS</td><td>You manage</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+Rule of thumb: all-in on AWS → CloudFormation/CDK is tightly integrated;
+multi-cloud or tool consistency → Terraform. GCP's equivalents are Deployment
+Manager and Config Controller (Terraform is common on GCP too).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">💸</span>
+<span class="topic-name">Cloud Cost Control — Budgets, Tags &amp; Rightsizing</span>
+<span class="topic-badge">Cloud</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">How-To</div>
+<div class="concept-title">Keep the Bill From Surprising You</div>
+<div class="concept-desc">
+Cloud spend is variable and easy to lose track of. The practical controls (a
+hands-on companion to the FinOps topic) start on day one and run continuously.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Control</th><th>AWS</th><th>GCP</th></tr>
+<tr><td>Budgets + alerts</td><td>AWS Budgets</td><td>Budgets &amp; alerts</td></tr>
+<tr><td>Cost analysis</td><td>Cost Explorer</td><td>Billing reports / BigQuery export</td></tr>
+<tr><td>Attribute spend</td><td>Cost allocation tags</td><td>Labels</td></tr>
+<tr><td>Anomaly detection</td><td>Cost Anomaly Detection</td><td>Budget anomaly alerts</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Biggest levers: <strong class="c-green">tag everything</strong> (or you can't
+attribute spend), set budget alerts before you deploy, rightsize idle resources,
+and commit (Savings Plans / CUDs) for steady workloads. Watch data-egress — the
+sneaky line item.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🏛️</span>
+<span class="topic-name">Landing Zones &amp; Multi-Account Structure</span>
+<span class="topic-badge">Cloud</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Don't Put Everything in One Account</div>
+<div class="concept-desc">
+Mature cloud setups isolate workloads across <strong class="c-cyan">many accounts
+/ projects</strong> — separate prod from dev, and each team/app in its own blast-
+radius boundary — governed centrally. A <strong>landing zone</strong> is the
+pre-built, secure, multi-account foundation you start from.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>AWS</th><th>GCP</th></tr>
+<tr><td>Org hierarchy</td><td>Organizations + OUs</td><td>Organization + Folders</td></tr>
+<tr><td>Guardrails</td><td>Service Control Policies (SCPs)</td><td>Org Policies</td></tr>
+<tr><td>Landing zone</td><td>Control Tower</td><td>Cloud Foundation Toolkit</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The win: a compromise or mistake in one account/project can't reach the others,
+and central <strong class="c-green">guardrails</strong> (SCPs/Org Policies)
+enforce rules — "no public S3," "only these regions" — org-wide.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body cloud -->
 </div>
 </div>
