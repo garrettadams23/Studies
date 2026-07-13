@@ -11084,7 +11084,306 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
             </div>
           </div>
 
-<!-- /domain-body script -->
-<!-- /domain-body script -->
-<!-- /domain-body script -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🦀</span>
+              <span class="topic-name">Rust — Safe Systems Programming</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Memory Safety Without a Garbage Collector</div>
+                <div class="concept-desc">
+                  Rust's <strong class="c-cyan">ownership</strong> and <strong class="c-cyan">borrow
+                  checker</strong> guarantee memory safety at <em>compile time</em> — no GC, no
+                  use-after-free, no data races. That's why it's winning in systems, WASM, CLI tools,
+                  and increasingly the Linux kernel.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">fn</span> <span class="fn">main</span>() {
+    <span class="kw">let</span> mut nums = <span class="type">vec!</span>[<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+    nums.<span class="fn">push</span>(<span class="num">4</span>);
+    <span class="kw">let</span> sum: <span class="type">i32</span> = nums.<span class="fn">iter</span>().<span class="fn">sum</span>();   <span class="com">// 10</span>
+    <span class="fn">println!</span>(<span class="str">"sum = {sum}"</span>);
+}</pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Ownership / borrow</td><td>Each value has one owner; borrows are checked at compile time</td></tr>
+                    <tr><td class="c-cyan"><code>Option</code> / <code>Result</code></td><td>No null; errors are values you must handle</td></tr>
+                    <tr><td class="c-cyan">Cargo</td><td>Build tool + package manager (crates.io)</td></tr>
+                    <tr><td class="c-cyan">Traits</td><td>Shared behavior (like interfaces) with zero-cost generics</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Trade-off:</strong> a steep learning curve ("fighting the
+                    borrow checker") buys you C-like speed with safety guarantees. If it compiles, a
+                    whole class of bugs is simply gone.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">☕</span>
+              <span class="topic-name">Java — The Enterprise Workhorse</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Write Once, Run Anywhere on the JVM</div>
+                <div class="concept-desc">
+                  Java compiles to bytecode that runs on the <strong class="c-cyan">JVM</strong>,
+                  making it portable and battle-tested for large backends. Statically typed,
+                  object-oriented, with a massive ecosystem (Spring) and a mature GC.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">public class</span> <span class="type">App</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">var</span> nums = <span class="type">List</span>.<span class="fn">of</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>);
+        <span class="kw">int</span> sum = nums.<span class="fn">stream</span>().<span class="fn">mapToInt</span>(<span class="type">Integer</span>::intValue).<span class="fn">sum</span>();
+        <span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"sum = "</span> + sum);
+    }
+}</pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">JVM / bytecode</td><td>Portable runtime; also hosts Kotlin, Scala, Clojure</td></tr>
+                    <tr><td class="c-cyan">Spring Boot</td><td>The dominant framework for services</td></tr>
+                    <tr><td class="c-cyan">Maven / Gradle</td><td>Build &amp; dependency management</td></tr>
+                    <tr><td class="c-cyan">Modern Java</td><td>Records, sealed types, virtual threads (Project Loom)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Kotlin</strong> is the modern, less-verbose JVM language
+                    (and Android's default) — worth reaching for on new JVM projects.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎯</span>
+              <span class="topic-name">C# &amp; .NET — Microsoft's Cross-Platform Stack</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Java's Sibling, Now Open &amp; Everywhere</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">C#</strong> runs on <strong class="c-cyan">.NET</strong>,
+                  which is now open-source and cross-platform. Strong tooling (Visual Studio),
+                  first-class async, and used for web (ASP.NET), desktop, games (Unity), and cloud.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">var</span> nums = <span class="kw">new</span>[] { <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span> };
+<span class="kw">var</span> sum = nums.<span class="fn">Sum</span>();            <span class="com">// LINQ</span>
+<span class="type">Console</span>.<span class="fn">WriteLine</span>($<span class="str">"sum = {sum}"</span>);</pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">.NET (Core)</td><td>Cross-platform runtime &amp; SDK (<code>dotnet</code> CLI)</td></tr>
+                    <tr><td class="c-cyan">LINQ</td><td>Query collections/DBs with a fluent, SQL-like syntax</td></tr>
+                    <tr><td class="c-cyan">async/await</td><td>C# pioneered the pattern most languages now copy</td></tr>
+                    <tr><td class="c-cyan">ASP.NET Core / Blazor</td><td>Web APIs &amp; SPA-in-C# via WASM</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Familiar if you know Java; NuGet is the package manager. Unity makes C# a major
+                    game-development language too.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">💎</span>
+              <span class="topic-name">Ruby — Optimized for Developer Happiness</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Elegant, Dynamic, and All About Rails</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Ruby</strong> is a dynamic, purely object-oriented language
+                  prized for readable, expressive code. Its killer app is
+                  <strong class="c-cyan">Ruby on Rails</strong>, the convention-over-configuration
+                  framework that shaped modern web development.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+sum = nums.<span class="fn">reduce</span>(<span class="num">0</span>, :+)   <span class="com"># or nums.sum</span>
+<span class="fn">puts</span> <span class="str">"sum = #{sum}"</span></pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Everything is an object</td><td>Even numbers; blocks &amp; iterators everywhere</td></tr>
+                    <tr><td class="c-cyan">Rails</td><td>MVC, "convention over configuration", rapid CRUD apps</td></tr>
+                    <tr><td class="c-cyan">Gems / Bundler</td><td>Packages &amp; dependency locking</td></tr>
+                    <tr><td class="c-cyan">Metaprogramming</td><td>Powerful DSLs (Rails leans on this heavily)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Great for startups and prototyping — you go from idea to CRUD app fast. Trade-off:
+                    dynamic typing and slower raw speed than compiled languages.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐘</span>
+              <span class="topic-name">PHP — The Language That Runs the Web</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Still Powering the Majority of Websites</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">PHP</strong> is a server-side language built for the web —
+                  it powers WordPress, and thus a huge share of all sites. Modern PHP (8.x) is
+                  genuinely good: typed, fast, with a strong framework in
+                  <strong class="c-cyan">Laravel</strong>.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">&lt;?php</span>
+$nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+$sum = <span class="fn">array_sum</span>($nums);
+<span class="kw">echo</span> <span class="str">"sum = $sum"</span>;</pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Request-per-script</td><td>Classic model: each request runs a script fresh</td></tr>
+                    <tr><td class="c-cyan">Composer</td><td>The modern package manager (Packagist)</td></tr>
+                    <tr><td class="c-cyan">Laravel / Symfony</td><td>Full-featured modern frameworks</td></tr>
+                    <tr><td class="c-cyan">PHP 8+</td><td>JIT, typed properties, enums, attributes, fibers</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Don't judge it by 2005 — modern PHP is a competent, fast web language. Its
+                    ubiquity in shared hosting and WordPress keeps demand high.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔩</span>
+              <span class="topic-name">C — Close to the Metal</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Language Everything Else Is Built On</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">C</strong> is small, fast, and gives you direct control over
+                  memory via pointers. Operating systems, embedded firmware, databases, and language
+                  runtimes are written in it. Learning C teaches how computers <em>actually</em> work.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    <span class="kw">int</span> nums[] = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}, sum = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) sum += nums[i];
+    <span class="fn">printf</span>(<span class="str">"sum = %d\n"</span>, sum);
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Pointers</td><td>Variables that hold memory addresses — power &amp; footguns</td></tr>
+                    <tr><td class="c-red">Manual memory</td><td><code>malloc</code>/<code>free</code> — you own leaks &amp; use-after-free</td></tr>
+                    <tr><td class="c-cyan">Compilation</td><td>Preprocess → compile → link (gcc/clang, make)</td></tr>
+                    <tr><td class="c-cyan">Undefined behavior</td><td>Off-the-rails when you break the rules (buffer overflows)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    C's manual memory is exactly what Rust set out to make safe. Its lack of guardrails
+                    is why memory-safety bugs dominate CVEs — the security case for newer languages.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚙️</span>
+              <span class="topic-name">Assembly &amp; How Programs Actually Run</span>
+              <span class="topic-badge">Fundamentals</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Registers, the Stack &amp; the CPU's Real Job</div>
+                <div class="concept-desc">
+                  Under every language is machine code the CPU executes. Assembly is the
+                  human-readable form. You rarely write it, but understanding it demystifies
+                  performance, debugging, and — crucially — how exploits like buffer overflows work
+                  (ties to the reverse-engineering material).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Registers</td><td>Tiny ultra-fast CPU storage (rax, rsp, rip…)</td></tr>
+                    <tr><td class="c-cyan">The stack</td><td>Grows down; holds locals, args &amp; return addresses</td></tr>
+                    <tr><td class="c-cyan">Calling convention</td><td>Rules for passing args &amp; returns (System V, stdcall)</td></tr>
+                    <tr><td class="c-cyan">Instructions</td><td><code>mov</code>, <code>push</code>, <code>call</code>, <code>ret</code>, <code>jmp</code></td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Why it matters: overwriting a saved <em>return address</em> on the stack is the
+                    classic buffer-overflow exploit — and why we have stack canaries, ASLR, and NX.
+                    Reading disassembly is core to malware analysis and CTF pwn/rev challenges.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🏷️</span>
+              <span class="topic-name">Semantic Versioning &amp; Dependency Management</span>
+              <span class="topic-badge">Fundamentals</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What <code>^1.2.3</code> Actually Means</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">SemVer</strong> gives version numbers meaning so tools can
+                  update safely. <code>MAJOR.MINOR.PATCH</code>: bump MAJOR for breaking changes, MINOR
+                  for new backward-compatible features, PATCH for fixes.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Range</th><th>Allows</th></tr>
+                    <tr><td class="c-cyan"><code>^1.2.3</code></td><td>&ge;1.2.3, &lt;2.0.0 (compatible: minor+patch)</td></tr>
+                    <tr><td class="c-cyan"><code>~1.2.3</code></td><td>&ge;1.2.3, &lt;1.3.0 (patch only)</td></tr>
+                    <tr><td class="c-cyan"><code>1.2.3</code></td><td>Exactly that version (pinned)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Lockfiles</strong> (<code>package-lock.json</code>,
+                    <code>poetry.lock</code>, <code>Cargo.lock</code>) pin the <em>exact</em> resolved
+                    tree so builds are reproducible — commit them. Ranges say "what's allowed"; the
+                    lockfile says "what you actually got." A <code>0.x</code> version signals anything
+                    may break at any time.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body script -->

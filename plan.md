@@ -518,9 +518,9 @@ an explicit "Rosetta stone" card. Azure kept as a lighter bonus set.
 Lower priority than R/B/C but each fills a real gap; interleave as desired.
 
 **Languages (`script`)**
-- [ ] Rust · Java · C# / .NET · Ruby · PHP · C — one card each (mirror the Go/Python style)
-- [ ] Assembly & how programs run — registers, stack, calling conventions (pairs w/ RE)
-- [ ] Semantic Versioning & dependency management (npm/pip/cargo lockfiles)
+- [x] Rust · Java · C# / .NET · Ruby · PHP · C — one card each (mirror the Go/Python style)
+- [x] Assembly & how programs run — registers, stack, calling conventions (pairs w/ RE)
+- [x] Semantic Versioning & dependency management (npm/pip/cargo lockfiles)
 
 **Networking (`net`)**
 - [ ] Network Automation — Ansible, Netmiko, NAPALM, gNMI
