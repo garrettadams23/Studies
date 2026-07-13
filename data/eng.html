@@ -559,4 +559,177 @@
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">✍️</span>
+              <span class="topic-name">Clean Code &amp; Naming</span>
+              <span class="topic-badge">Craft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Code Is Read Far More Than It's Written</div>
+                <div class="concept-desc">
+                  You write a line once; it's read dozens of times over its life. Clean code
+                  optimizes for the reader — clarity beats cleverness. The highest-leverage skill is
+                  <strong class="c-cyan">naming</strong>: a good name removes the need for a comment.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Principle</th><th>Detail</th></tr>
+                    <tr><td class="c-green">Intention-revealing names</td><td><code>elapsedDays</code> &gt; <code>d</code>; say what it is</td></tr>
+                    <tr><td class="c-green">Small functions</td><td>Do one thing; a screenful is a smell</td></tr>
+                    <tr><td class="c-green">Few arguments</td><td>0–2 ideal; many args hint at a missing object</td></tr>
+                    <tr><td class="c-green">No surprises</td><td>A function does exactly what its name says, nothing hidden</td></tr>
+                    <tr><td class="c-amber">Comments explain why</td><td>Not what — the code shows what; comments justify the non-obvious</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The <strong class="c-green">Boy Scout Rule</strong>: leave the code a little
+                    cleaner than you found it. Small, constant improvements beat big rewrites.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">👀</span>
+              <span class="topic-name">Code Review — Doing It Well</span>
+              <span class="topic-badge">Craft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Highest-ROI Quality Practice</div>
+                <div class="concept-desc">
+                  Review catches bugs, spreads knowledge, and keeps a codebase coherent — but only
+                  if done with care. Bad reviews (nitpicky, slow, ego-driven) poison a team; good
+                  ones make everyone better.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>As reviewer</th><th>As author</th></tr>
+                    <tr><td class="c-green">Review promptly (unblock people)</td><td>Keep PRs small &amp; focused</td></tr>
+                    <tr><td class="c-green">Comment on the code, not the person</td><td>Explain the "why" in the description</td></tr>
+                    <tr><td class="c-green">Distinguish must-fix from nit (label it)</td><td>Respond to every comment</td></tr>
+                    <tr><td class="c-green">Ask questions, don't demand</td><td>Don't take feedback personally</td></tr>
+                    <tr><td class="c-green">Approve when good enough, not perfect</td><td>Let the machine catch style (linters)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Automate the boring parts (formatting, lint, tests in CI) so humans review what
+                    matters: correctness, design, edge cases, and clarity.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧪</span>
+              <span class="topic-name">Testing Strategy — The Test Pyramid</span>
+              <span class="topic-badge">Craft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Many Fast Tests, Few Slow Ones</div>
+                <div class="concept-desc">
+                  The <strong class="c-cyan">test pyramid</strong> guides how to balance test types:
+                  lots of fast unit tests at the base, fewer integration tests, and a thin layer of
+                  slow end-to-end tests on top. Invert it (mostly E2E) and your suite is slow,
+                  flaky, and brittle — the dreaded "ice-cream cone."
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Level</th><th>Tests</th><th>Trait</th></tr>
+                    <tr><td class="c-green">Unit (many)</td><td>One function/class in isolation</td><td>Fast, precise, cheap</td></tr>
+                    <tr><td class="c-cyan">Integration (some)</td><td>Components together (DB, API)</td><td>Slower, more realistic</td></tr>
+                    <tr><td class="c-amber">E2E (few)</td><td>The whole system as a user</td><td>Slow, flaky, high-value paths only</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">TDD</strong> (write the test first) drives better design
+                    and guarantees coverage; <strong class="c-green">BDD</strong> frames tests as
+                    behavior ("given/when/then"). Aim to test <em>behavior</em>, not implementation,
+                    so refactors don't break the suite.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">💳</span>
+              <span class="topic-name">Technical Debt — Recognize &amp; Pay It Down</span>
+              <span class="topic-badge">Craft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Borrowing Speed Now Against Effort Later</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Technical debt</strong> is the implied future cost of a
+                  quick-and-dirty choice. Like financial debt, a little is a useful tool (ship now,
+                  fix later); too much, unmanaged, and the "interest" — slower changes, more bugs —
+                  eventually consumes all your capacity.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Type</th><th>Example</th></tr>
+                    <tr><td class="c-amber">Deliberate</td><td>"We'll hardcode this to hit the deadline" (fine, if tracked)</td></tr>
+                    <tr><td class="c-red">Accidental</td><td>Learned a better design too late; code lagging behind understanding</td></tr>
+                    <tr><td class="c-red">Bit rot</td><td>Dependencies age, the world changes, code decays</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Manage it:</strong> make it visible (a backlog, not
+                    tribal knowledge), pay it down opportunistically (Boy Scout Rule) plus dedicated
+                    time, and prioritize debt in code you touch often. Debt in a stable, untouched
+                    corner rarely matters.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📝</span>
+              <span class="topic-name">ADRs &amp; Design Docs</span>
+              <span class="topic-badge">Craft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Write Down the Decision and the Why</div>
+                <div class="concept-desc">
+                  Six months later, no one remembers <em>why</em> the team chose Postgres over Mongo,
+                  and the reasoning gets re-litigated. An <strong class="c-cyan">Architecture Decision
+                  Record (ADR)</strong> is a short doc capturing one decision: the context, the
+                  options, the choice, and the consequences. A <strong class="c-cyan">design doc</strong>
+                  (or RFC) does the same before building something significant.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Artifact</th><th>Purpose</th></tr>
+                    <tr><td class="c-cyan">ADR</td><td>1-page record of a single decision (context/options/decision/consequences)</td></tr>
+                    <tr><td class="c-cyan">Design doc / RFC</td><td>Propose &amp; get feedback before building; align the team</td></tr>
+                    <tr><td class="c-cyan">C4 model</td><td>Diagrams at 4 zoom levels: Context, Container, Component, Code</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Keep them short and in the repo (version-controlled next to the code). The value
+                    is the <em>trail of reasoning</em> — it onboards new people and stops old debates
+                    from restarting.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body eng -->
