@@ -1390,4 +1390,111 @@
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔷</span>
+              <span class="topic-name">Azure — Getting Started &amp; Entra ID</span>
+              <span class="topic-badge">Azure</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Third Major Cloud</div>
+                <div class="concept-desc">
+                  Microsoft Azure is especially common in enterprises already on Microsoft 365. Its
+                  identity backbone is <strong class="c-cyan">Entra ID</strong> (formerly Azure AD) —
+                  the tenant-wide directory that authenticates users and apps across Azure and M365.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>AWS / GCP analog</th></tr>
+                    <tr><td class="c-cyan">Tenant</td><td>The identity boundary (~ AWS Organization root)</td></tr>
+                    <tr><td class="c-cyan">Management Group → Subscription</td><td>Org/folder → account/project billing boundary</td></tr>
+                    <tr><td class="c-cyan">Entra ID</td><td>IAM Identity Center / Cloud Identity</td></tr>
+                    <tr><td class="c-cyan">az CLI / Cloud Shell</td><td>aws / gcloud CLI</td></tr>
+                  </table>
+                  <pre class="code-block"><span class="com"># Sign in and set the active subscription</span>
+az login
+az account set <span class="var">--subscription</span> <span class="str">"Prod"</span></pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Note the terms:</strong> Azure "subscription" ≈ AWS
+                    account, and RBAC is assigned on scopes (management group → subscription →
+                    resource group → resource) that inherit downward.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧱</span>
+              <span class="topic-name">Azure Core — Resource Groups, VNet, VMs &amp; Storage</span>
+              <span class="topic-badge">Azure</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Building Blocks</div>
+                <div class="concept-desc">
+                  Everything in Azure lives in a <strong class="c-cyan">Resource Group</strong> — a
+                  container for related resources sharing a lifecycle. Networking, compute, and
+                  storage map cleanly onto their AWS/GCP counterparts.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Azure</th><th>Does</th><th>AWS analog</th></tr>
+                    <tr><td class="c-cyan">Resource Group</td><td>Lifecycle container for resources</td><td>(no direct one)</td></tr>
+                    <tr><td class="c-cyan">Virtual Network (VNet)</td><td>Private network + subnets + NSGs</td><td>VPC</td></tr>
+                    <tr><td class="c-cyan">Virtual Machines / VMSS</td><td>Compute + autoscale sets</td><td>EC2 / ASG</td></tr>
+                    <tr><td class="c-cyan">Storage Account (Blob)</td><td>Object/blob, file, queue, table</td><td>S3 (+ more)</td></tr>
+                    <tr><td class="c-cyan">AKS</td><td>Managed Kubernetes</td><td>EKS / GKE</td></tr>
+                    <tr><td class="c-cyan">ARM / Bicep</td><td>Native IaC (Bicep = friendly ARM)</td><td>CloudFormation</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Bicep</strong> is worth knowing — a clean DSL that
+                    compiles to ARM templates, Azure's answer to Terraform/CloudFormation for
+                    declarative infra.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🛡️</span>
+              <span class="topic-name">Azure Security — Defender, Key Vault &amp; Sentinel</span>
+              <span class="topic-badge">Azure</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Defensive Stack</div>
+                <div class="concept-desc">
+                  Azure's security services close the loop with the Blue-team domain:
+                  <strong class="c-cyan">Sentinel</strong> is a cloud-native SIEM/SOAR, and
+                  <strong class="c-cyan">Defender for Cloud</strong> is the CSPM/CWPP posture engine.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Service</th><th>Role</th><th>Analog</th></tr>
+                    <tr><td class="c-cyan">Defender for Cloud</td><td>Posture (CSPM) + workload protection + secure score</td><td>Security Hub / SCC</td></tr>
+                    <tr><td class="c-cyan">Microsoft Sentinel</td><td>Cloud SIEM + SOAR (KQL hunting)</td><td>Splunk / Chronicle</td></tr>
+                    <tr><td class="c-cyan">Key Vault</td><td>Secrets, keys &amp; certificates</td><td>Secrets Manager / Secret Manager</td></tr>
+                    <tr><td class="c-cyan">Conditional Access</td><td>Risk/device-based access policy (ties to ITDR)</td><td>—</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">KQL</strong> (Kusto Query Language) powers Sentinel
+                    hunting and Log Analytics — a genuinely useful skill that carries across Defender,
+                    Sentinel, and Azure Monitor. This closes the AWS ↔ GCP ↔ Azure security triangle.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body cloud -->

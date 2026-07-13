@@ -507,9 +507,9 @@ an explicit "Rosetta stone" card. Azure kept as a lighter bonus set.
 - [ ] Landing zones & multi-account/project — Organizations, Control Tower
 
 **Wave C9 — Azure bonus (lighter set)**
-- [ ] Azure — Getting Started, Entra ID (formerly Azure AD)
-- [ ] Azure Core — Resource Groups, VNet, VMs, Storage Accounts
-- [ ] Azure Security — Defender for Cloud, Key Vault, Sentinel (SIEM)
+- [x] Azure — Getting Started, Entra ID (formerly Azure AD)
+- [x] Azure Core — Resource Groups, VNet, VMs, Storage Accounts
+- [x] Azure Security — Defender for Cloud, Key Vault, Sentinel (SIEM)
 
 ---
 
