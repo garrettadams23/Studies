@@ -44179,6 +44179,146 @@ access badges, and staff awareness ("don't plug in found USBs / accept tailgater
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🪛</span>
+<span class="topic-name">Living off the Land — LOLBAS &amp; GTFOBins</span>
+<span class="topic-badge">Post-Ex</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Turning Built-In Tools Into Weapons</div>
+<div class="concept-desc">
+Attackers avoid dropping malware by abusing <em>legitimate, pre-installed</em>
+binaries — <strong class="c-cyan">"living off the land"</strong>. On Windows,
+<strong class="c-cyan">LOLBAS</strong> catalogs signed binaries that can download,
+execute, or bypass controls; on Linux, <strong class="c-cyan">GTFOBins</strong>
+lists how common utilities can break out of restricted shells or escalate.
+<em>Study/detection reference for authorized testing.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Example</th><th>Abuse</th></tr>
+<tr><td><code>certutil</code></td><td>Downloads files (looks like a cert tool)</td></tr>
+<tr><td><code>regsvr32 / mshta</code></td><td>Executes remote scripts</td></tr>
+<tr><td><code>rundll32</code></td><td>Runs code via a DLL export</td></tr>
+<tr><td><code>bash/vim/find (GTFOBins)</code></td><td>Shell escape / privesc from a limited context</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> signatures don't help — these
+are trusted binaries. Detection is <strong class="c-green">behavioral</strong>:
+<code>certutil</code> making a network connection, or <code>winword.exe</code>
+spawning <code>powershell.exe</code>, is anomalous even though every binary is
+signed (this is why Sysmon parent/child chains matter).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧗</span>
+<span class="topic-name">Privilege Escalation Scanners — PEAS &amp; PowerUp</span>
+<span class="topic-badge">Post-Ex</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">From User to Root/SYSTEM</div>
+<div class="concept-desc">
+After landing a low-priv foothold, operators enumerate the host for escalation
+paths. <strong class="c-cyan">linPEAS/winPEAS</strong> (and PowerUp/PrivescCheck)
+automate the checklist — misconfigured services, weak permissions, stored creds,
+kernel exploits, SUID binaries. <em>Authorized hosts only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Finds (Windows)</th><th>Finds (Linux)</th></tr>
+<tr><td>Unquoted service paths</td><td>SUID/SGID binaries (GTFOBins)</td></tr>
+<tr><td>Writable service binaries</td><td>Writable /etc/passwd, cron jobs</td></tr>
+<tr><td>AlwaysInstallElevated</td><td>Sudo misconfigs (NOPASSWD)</td></tr>
+<tr><td>Stored creds / autologon</td><td>Kernel version → known exploits</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> PEAS scans touch a huge number
+of files/registry keys quickly — noisy to EDR. Defense is the fix, not the
+detect: least privilege, patch, remove SUID, lock down sudo, no creds on disk.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌉</span>
+<span class="topic-name">Pivoting &amp; Tunneling — Chisel, ligolo-ng &amp; proxychains</span>
+<span class="topic-badge">Post-Ex</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Reaching Networks You Can't Route To</div>
+<div class="concept-desc">
+A compromised host is often a <strong>pivot</strong> into segments the operator
+can't reach directly. Tunneling tools route traffic through the foothold so tools
+on the attacker box can hit internal systems. <em>Authorized, scoped internal
+networks only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Role</th></tr>
+<tr><td class="c-cyan">Chisel</td><td>Fast TCP/UDP tunnel over HTTP (SOCKS proxy through the pivot)</td></tr>
+<tr><td class="c-cyan">ligolo-ng</td><td>Modern tunneling with a virtual interface (route to internal subnets)</td></tr>
+<tr><td class="c-cyan">SSH -D / -L</td><td>Dynamic (SOCKS) &amp; local port forwarding</td></tr>
+<tr><td class="c-cyan">proxychains</td><td>Force any tool through a SOCKS proxy</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> internal
+<strong class="c-green">network segmentation</strong> (Zero Trust microseg) is
+what limits a pivot's reach. Watch for unexpected long-lived tunnels and
+east-west traffic a host shouldn't originate.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚪</span>
+<span class="topic-name">Data Exfiltration Channels — DNS, ICMP &amp; HTTPS</span>
+<span class="topic-badge">Post-Ex</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">How Data Leaves — and How to Catch It</div>
+<div class="concept-desc">
+In the final phase, operators demonstrate <strong>exfiltration</strong> — moving
+data out past controls. Understanding the channels is squarely a detection skill.
+<em>Authorized engagements only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Channel</th><th>Why it's used</th><th>Detection</th></tr>
+<tr><td class="c-cyan">DNS tunneling</td><td>DNS is rarely blocked</td><td>Huge volume/entropy of queries to one domain (Zeek dns.log)</td></tr>
+<tr><td class="c-cyan">ICMP tunneling</td><td>Ping is often allowed out</td><td>Oversized/frequent ICMP with payloads</td></tr>
+<tr><td class="c-cyan">HTTPS to cloud</td><td>Blends with normal web traffic</td><td>Large outbound to new/rare destinations; DLP</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> egress filtering (allow-list
+outbound), DNS monitoring, and DLP are the counters. The theme across R8: modern
+attackers are <em>quiet and signed</em> — behavioral analytics, not signatures,
+catch them.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body redteam -->
 </div>
 </div>
