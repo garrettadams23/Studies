@@ -44013,6 +44013,172 @@ org's name + a year + <code>!</code> is exactly what these lists+rules generate.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📶</span>
+<span class="topic-name">Aircrack-ng — Wi-Fi Auditing Suite</span>
+<span class="topic-badge">Wireless</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Capture the Handshake, Test the Passphrase</div>
+<div class="concept-desc">
+<strong class="c-cyan">Aircrack-ng</strong> is the classic suite for assessing
+Wi-Fi security: put a card in monitor mode, capture the WPA2 4-way handshake, and
+test it against a wordlist offline. <em>Only on networks you own or are authorized
+to test — intercepting others' Wi-Fi is illegal.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Step</th></tr>
+<tr><td><code>airmon-ng</code></td><td>Put the adapter into monitor mode</td></tr>
+<tr><td><code>airodump-ng</code></td><td>Scan APs/clients; capture the handshake</td></tr>
+<tr><td><code>aireplay-ng</code></td><td>Deauth a client to force a re-handshake</td></tr>
+<tr><td><code>aircrack-ng</code></td><td>Crack the captured handshake vs a wordlist</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> deauth floods are detectable by
+WIDS/WIPS. Defenses: WPA3 (resists offline cracking), long random passphrases,
+802.1X/enterprise auth instead of a shared PSK.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📡</span>
+<span class="topic-name">Wifite &amp; hcxdumptool — Automated Wi-Fi &amp; PMKID</span>
+<span class="topic-badge">Wireless</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">One Command, Modern Attacks</div>
+<div class="concept-desc">
+<strong class="c-cyan">Wifite</strong> automates the whole aircrack workflow across
+all nearby networks. <strong class="c-cyan">hcxdumptool</strong> enables the
+<strong>PMKID attack</strong> — grabbing a crackable value from an AP <em>without
+needing a connected client or a deauth</em>, making it faster and quieter than the
+classic handshake capture. <em>Authorized networks only.</em>
+</div>
+<div class="dw">
+<div class="concept-desc">
+<strong class="c-amber">Blue-team note:</strong> PMKID works against APs that
+include the value in the first handshake message; disabling it where possible,
+and (again) WPA3 + strong passphrases, is the mitigation. The captured hash still
+has to be cracked offline — long passphrases defeat it.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🥷</span>
+<span class="topic-name">Bettercap — The MITM Framework</span>
+<span class="topic-badge">Wireless</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Man-in-the-Middle Across Wi-Fi, BLE &amp; Ethernet</div>
+<div class="concept-desc">
+<strong class="c-cyan">Bettercap</strong> is a modular framework for
+man-in-the-middle attacks — ARP spoofing on a LAN, Wi-Fi and Bluetooth Low Energy
+recon, HTTP(S) proxying and credential capture. It's a Swiss-army knife for the
+network-attack phase of an authorized internal test. <em>Authorized engagements
+only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Capability</th><th>Detail</th></tr>
+<tr><td class="c-cyan">ARP spoof</td><td>Insert yourself between hosts on a LAN</td></tr>
+<tr><td class="c-cyan">Sniffing</td><td>Capture credentials/traffic in transit</td></tr>
+<tr><td class="c-cyan">BLE / Wi-Fi recon</td><td>Enumerate wireless devices</td></tr>
+<tr><td class="c-cyan">Caplets</td><td>Scripted attack modules</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> ARP spoofing shows as a MAC/IP
+mapping suddenly changing — dynamic ARP inspection (DAI) on switches and
+ubiquitous TLS (which MITM can't silently read) are the defenses.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🐬</span>
+<span class="topic-name">Flipper Zero &amp; Sub-GHz / RFID Tools</span>
+<span class="topic-badge">Hardware</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Multi-Tool for Physical &amp; RF Testing</div>
+<div class="concept-desc">
+The <strong class="c-cyan">Flipper Zero</strong> is a pocket multi-tool for
+physical/RF security testing: Sub-GHz radio (garage remotes, some sensors), 125 kHz
+RFID and 13.56 MHz NFC (access badges), infrared, GPIO, and BadUSB (HID injection).
+It's popular for learning RF/access-control weaknesses. <em>Test only systems you
+own or are authorized to assess.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Function</th><th>Tests</th></tr>
+<tr><td class="c-cyan">RFID / NFC</td><td>Weak/cloneable access badges (e.g. legacy 125 kHz)</td></tr>
+<tr><td class="c-cyan">Sub-GHz</td><td>Fixed-code remotes without rolling codes</td></tr>
+<tr><td class="c-cyan">BadUSB</td><td>HID keystroke injection (like Rubber Ducky)</td></tr>
+<tr><td class="c-cyan">Infrared</td><td>Universal remote / IR devices</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> defenses are physical-security
+hygiene — modern encrypted badge tech (not clonable 125 kHz), rolling-code
+remotes, USB port control / device allow-listing against BadUSB.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🦆</span>
+<span class="topic-name">BadUSB &amp; RF Implants — Rubber Ducky, O.MG, Proxmark, HackRF</span>
+<span class="topic-badge">Hardware</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Physical Red-Team Kit</div>
+<div class="concept-desc">
+Physical access changes everything. This gear (from Hak5 and others) is used in
+authorized physical/social-engineering assessments to demonstrate what an intruder
+with seconds of access could do. <em>Authorized physical engagements only.</em>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Device</th><th>What</th></tr>
+<tr><td class="c-cyan">USB Rubber Ducky</td><td>Looks like a USB stick; types pre-loaded keystrokes at machine speed (BadUSB)</td></tr>
+<tr><td class="c-cyan">O.MG Cable</td><td>A normal-looking cable with a covert BadUSB/Wi-Fi implant</td></tr>
+<tr><td class="c-cyan">Proxmark3</td><td>Advanced RFID research — read/clone/analyze many card types</td></tr>
+<tr><td class="c-cyan">HackRF / RTL-SDR</td><td>Software-defined radio — receive/transmit across a wide spectrum</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Blue-team note:</strong> the defenses are unglamorous
+but effective — lock screens, USB device control/allow-listing, encrypted modern
+access badges, and staff awareness ("don't plug in found USBs / accept tailgaters").
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body redteam -->
 </div>
 </div>
