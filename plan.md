@@ -724,3 +724,521 @@ Blue-team detection note.
 Conventions unchanged: `CONTRIBUTING.md` skeleton, `python3 build.py` + headless
 smoke check + CI-green commit per wave; each topic inherits search / permalinks /
 progress / keyboard-a11y automatically.
+
+---
+
+# Content Roadmap — Phase 3: Depth, Breadth & New Domains (Wave 35+)
+
+> **Added on request — "a big plan."** The Phase-2 roadmap (Tracks R/B/C/E/F/G/X)
+> is fully shipped: **660 topics across 16 domains**, zero console errors. This
+> phase is the ambitious follow-on — it **adds new domains** where the site is
+> thin, and **deepens every existing domain** with the next layer of material.
+> Ordered roughly by value; interleave freely. Each wave stays ~4–6 cards, follows
+> `CONTRIBUTING.md`, and ships as one CI-green commit (`build.py` + headless smoke
+> check). Offensive cards keep the authorized-use + paired-detection framing.
+
+## Structural decisions
+
+- **New domain `data` 📊 "Data & Databases"** — SQL/DB material is currently
+  scattered across `script`/`ai`/`ops`. Give it a home: query mastery, database
+  internals, NoSQL, warehousing, and the DBA/analytics-engineer path. Wire like
+  Wave 15 (domains.json + chip + `.c-data`/`.domain-data` colors + `data/data.html`).
+- **New domain `web` 🌐 "Web & Frontend Engineering"** — the site has only
+  beginner HTML/CSS/JS. Modern frontend is a huge career surface: frameworks,
+  the browser platform, performance, accessibility, and full-stack patterns.
+- **Optional new domain `product` 🧭 "Product, Agile & Ways of Working"** — only
+  if it grows past ~8 cards; otherwise fold into `eng`/`lifestyle`. Kept as a
+  stretch goal at the end.
+- **Everything else = new waves inside existing domains.** No new scaffolding.
+
+---
+
+## TRACK H — Data & Databases  (→ new `data` domain)
+
+~8 waves, ~45 cards. The DBA / data-analyst / analytics-engineer companion.
+
+**Wave H1 — Relational Foundations**
+- [ ] How a Database Works — pages, buffer pool, WAL, the storage engine
+- [ ] The Relational Model — relations, keys, referential integrity, NULL semantics
+- [ ] Normalization Deep — 1NF→BCNF with worked examples; when to denormalize
+- [ ] ACID & Transactions — atomicity, isolation levels, the anomalies each prevents
+- [ ] ER Modeling — entities, relationships, cardinality, crow's-foot diagrams
+
+**Wave H2 — SQL Mastery**
+- [ ] SQL Joins Deep — inner/outer/self/cross, and how NULLs break naive joins
+- [ ] Window Functions — ranking, running totals, LAG/LEAD, partitions
+- [ ] CTEs & Recursion — readable queries, hierarchical/graph traversal
+- [ ] Aggregation & GROUP BY — HAVING, GROUPING SETS, ROLLUP/CUBE
+- [ ] Subqueries, EXISTS & Set Ops — correlated subqueries, UNION/INTERSECT/EXCEPT
+
+**Wave H3 — Performance & Internals**
+- [ ] Indexes Explained — B-tree vs hash vs GIN/GiST, covering & composite indexes
+- [ ] Reading EXPLAIN / Query Plans — seq scan vs index scan, join strategies
+- [ ] Query Optimization — sargability, cardinality, the N+1 problem, statistics
+- [ ] Locking & MVCC — how Postgres/InnoDB avoid readers blocking writers
+- [ ] Partitioning & Sharding — scaling a single table/database horizontally
+
+**Wave H4 — Postgres in Practice**
+- [ ] PostgreSQL Deep — psql, roles, schemas, extensions (the "default" DB)
+- [ ] Postgres Power Features — JSONB, arrays, full-text search, LISTEN/NOTIFY
+- [ ] MySQL / MariaDB — engine differences, gotchas, when it's chosen
+- [ ] SQLite — the embedded database that's everywhere (and its sweet spot)
+- [ ] Connection Pooling & PgBouncer — surviving many clients
+
+**Wave H5 — NoSQL & Beyond**
+- [ ] NoSQL Landscape — document / key-value / wide-column / graph, CAP trade-offs
+- [ ] MongoDB — documents, aggregation pipeline, indexing, schema design
+- [ ] Redis — data structures, caching patterns, pub/sub, persistence, Lua
+- [ ] Cassandra / DynamoDB — wide-column, partition keys, single-table design
+- [ ] Graph Databases — Neo4j, Cypher, when relationships are the data
+
+**Wave H6 — Analytics & Warehousing**
+- [ ] OLTP vs OLAP — row vs columnar storage, why analytics needs a warehouse
+- [ ] Columnar Engines — Parquet, DuckDB, ClickHouse; vectorized execution
+- [ ] Data Warehouse vs Lake vs Lakehouse — Snowflake/BigQuery/Databricks
+- [ ] The Semantic Layer & Metrics — one definition of "revenue" everywhere
+- [ ] Data Quality & Observability — tests, freshness, lineage, contracts
+
+**Wave H7 — Operating Databases**
+- [ ] Backups & PITR — dumps vs physical, point-in-time recovery, testing restores
+- [ ] Replication & HA — primary/replica, failover, read scaling, split-brain
+- [ ] Migrations & Schema Change — zero-downtime, expand/contract, Flyway/Liquibase
+- [ ] Database Security — least privilege, row-level security, encryption, auditing
+- [ ] Monitoring a DB — slow-query logs, bloat, connection saturation, key metrics
+
+**Wave H8 — Data Career & Modeling Craft**
+- [ ] Data Roles — analyst vs analytics engineer vs data engineer vs DBA vs scientist
+- [ ] Designing a Schema From Requirements — a walkthrough, OLTP → OLAP
+- [ ] Time-Series & Event Data — retention, downsampling, TimescaleDB/InfluxDB
+- [ ] Vector Databases — embeddings, ANN search, pgvector (bridge to AI domain)
+- [ ] The Data Interview — SQL problems, modeling questions, case studies
+
+---
+
+## TRACK I — Web & Frontend Engineering  (→ new `web` domain)
+
+~7 waves, ~38 cards. From "I know some HTML" to shipping modern web apps.
+
+**Wave I1 — The Browser Platform**
+- [ ] How the Browser Renders — parse → DOM/CSSOM → layout → paint → composite
+- [ ] The Critical Rendering Path & Reflow/Repaint — what makes pages jank
+- [ ] The DOM & Events — bubbling/capture, delegation, the event loop revisited
+- [ ] Web Storage & State — cookies vs localStorage vs IndexedDB vs cache
+- [ ] DevTools Mastery — elements, network, performance, memory, Lighthouse
+
+**Wave I2 — Modern CSS**
+- [ ] Flexbox — the one-dimensional layout system, deep
+- [ ] CSS Grid — two-dimensional layout, template areas, auto-fit/minmax
+- [ ] Responsive Design — media/container queries, fluid type, mobile-first
+- [ ] Modern CSS — custom properties, nesting, :has(), cascade layers, clamp()
+- [ ] Design Systems & Tokens — Tailwind, CSS-in-JS, BEM, component styling
+
+**Wave I3 — JavaScript Deep (beyond the basics)**
+- [ ] Closures, Scope & the `this` Keyword — the interview favorites, clearly
+- [ ] Async Deep — promises, async/await, microtasks vs macrotasks, the event loop
+- [ ] Prototypes & Modern Classes — inheritance, the prototype chain
+- [ ] Modules & Bundlers — ESM, tree-shaking, Vite/esbuild/webpack
+- [ ] TypeScript — types, generics, narrowing, why teams adopt it
+
+**Wave I4 — Frameworks**
+- [ ] React — components, hooks, state, reconciliation, the mental model
+- [ ] React Patterns — context, memoization, data fetching, common pitfalls
+- [ ] Vue & Svelte — reactivity models compared to React
+- [ ] Meta-Frameworks — Next.js/Nuxt/SvelteKit, SSR vs SSG vs ISR vs CSR
+- [ ] State Management — when you need Redux/Zustand/signals (and when you don't)
+
+**Wave I5 — Talking to Backends**
+- [ ] Fetch, REST & the Network — status codes, CORS, caching headers in practice
+- [ ] GraphQL — schema, queries/mutations, over/under-fetching, when to use it
+- [ ] WebSockets & Realtime — SSE, polling, when each fits
+- [ ] Auth on the Frontend — tokens vs cookies, OAuth flows, secure storage
+- [ ] API Client Patterns — React Query/SWR, caching, optimistic updates
+
+**Wave I6 — Quality, Performance & A11y**
+- [ ] Web Performance — Core Web Vitals (LCP/INP/CLS), code-splitting, lazy loading
+- [ ] Web Accessibility (a11y) — WCAG, ARIA, keyboard nav, screen readers
+- [ ] Frontend Testing — unit (Vitest), component (Testing Library), e2e (Playwright)
+- [ ] Web Security for Frontend — XSS, CSRF, CSP, clickjacking (bridge to `sec`)
+- [ ] SEO & Metadata — semantic HTML, Open Graph, structured data
+
+**Wave I7 — Shipping & The Edge**
+- [ ] Progressive Web Apps — service workers, offline, installability
+- [ ] Rendering at the Edge — CDNs, edge functions, image optimization
+- [ ] Web Assembly — what it is, when to reach for it
+- [ ] Frontend Build & Deploy — CI, preview deploys, Netlify/Vercel/Pages
+- [ ] The Full-Stack Picture — how frontend, API, and DB fit together end-to-end
+
+---
+
+## TRACK J — Applied Security Depth  (→ `sec`)
+
+~5 waves, ~28 cards. Beyond fundamentals — the working security engineer's kit.
+
+**Wave J1 — Application Security**
+- [ ] OWASP Top 10 Deep — one card walking every category with fixes
+- [ ] Injection Family — SQLi, command, LDAP, template, NoSQL injection
+- [ ] Broken Access Control — IDOR, path traversal, privilege escalation in apps
+- [ ] SSRF, XXE & Deserialization — the server-side heavy hitters
+- [ ] Secure SDLC & Threat Modeling — STRIDE, abuse cases, security gates
+
+**Wave J2 — API & Cloud-Native Security**
+- [ ] API Security — OWASP API Top 10, BOLA, rate limiting, API gateways
+- [ ] OAuth/OIDC Security Deep — PKCE, token types, common flow mistakes
+- [ ] Container Security Deep — image scanning, runtime, capabilities, seccomp
+- [ ] Kubernetes Security Deep — pod security, admission control, RBAC pitfalls
+- [ ] DevSecOps — shifting left, SAST/DAST/SCA in CI, policy gates
+
+**Wave J3 — Cryptography Engineering**
+- [ ] Symmetric Crypto Deep — AES modes (GCM/CBC/CTR), nonces, AEAD
+- [ ] Asymmetric & Key Exchange — RSA vs ECC, Diffie-Hellman, forward secrecy
+- [ ] Hashing & Password Storage — bcrypt/scrypt/Argon2, salts, HMAC
+- [ ] Crypto in Practice — what to use (libsodium), what never to roll yourself
+- [ ] Post-Quantum Cryptography — why it matters, ML-KEM/ML-DSA, the migration
+
+**Wave J4 — Detection & Defensive Engineering**
+- [ ] Data Loss Prevention (DLP) — classification, egress controls, insider risk
+- [ ] Network Security Architecture — segmentation, microseg, DMZ, egress filtering
+- [ ] Web App Firewalls & RASP — where they help and where they don't
+- [ ] Secrets & Key Management Deep — HSMs, KMS envelope encryption, rotation
+- [ ] Security Logging Strategy — what to log, retention, the audit trail
+
+**Wave J5 — Identity & Modern Auth**
+- [ ] Modern IAM Architecture — IdP, SSO, SCIM provisioning, lifecycle
+- [ ] Zero Trust Implementation — beyond the buzzword: policy, device trust, ZTNA
+- [ ] Privileged Access Management (PAM) — vaulting, JIT access, session recording
+- [ ] Federation Deep — SAML vs OIDC assertions, trust chains, common attacks
+- [ ] Passwordless & Passkeys Deep — FIDO2/WebAuthn ceremony, attestation
+
+---
+
+## TRACK K — Threat, Malware & Intel Depth  (→ `threat`)
+
+~4 waves, ~22 cards.
+
+**Wave K1 — Malware Analysis**
+- [ ] Static Analysis — strings, PE/ELF headers, imports, packing detection
+- [ ] Dynamic Analysis — sandboxing, behavioral indicators, API monitoring
+- [ ] Reverse Engineering Basics — Ghidra/IDA, disassembly, decompilation
+- [ ] Malware Families — loaders, RATs, infostealers, rootkits, wipers
+- [ ] Anti-Analysis Techniques — obfuscation, anti-VM, anti-debug (and defeating them)
+
+**Wave K2 — Adversary Knowledge**
+- [ ] APT Case Studies — how nation-state campaigns actually unfolded
+- [ ] Ransomware Deep — RaaS ecosystem, double extortion, negotiation, recovery
+- [ ] Initial Access Brokers & the Criminal Economy — how breaches get sold
+- [ ] Supply-Chain Attacks — SolarWinds, XZ, npm/PyPI poisoning, dependency confusion
+- [ ] Living-off-the-Land at Scale — LOLBins/LOLDrivers from the defender's view
+
+**Wave K3 — Frameworks & Modeling**
+- [ ] MITRE ATT&CK Deep — tactics/techniques/procedures, sub-techniques, data sources
+- [ ] MITRE D3FEND & Engage — mapping defenses and deception to ATT&CK
+- [ ] The Diamond Model — adversary/capability/infrastructure/victim
+- [ ] Threat Modeling Methodologies — STRIDE vs PASTA vs attack trees
+- [ ] Cyber Threat Intel Programs — requirements, collection, dissemination, feedback
+
+**Wave K4 — Incident Response Deep**
+- [ ] The IR Lifecycle — NIST/SANS phases with concrete playbooks
+- [ ] Containment Strategies — isolate vs monitor, the eradication decision
+- [ ] Forensic Acquisition — order of volatility, imaging, memory capture
+- [ ] Timeline Reconstruction — correlating logs, super-timelines, pivoting
+- [ ] Tabletop Exercises & Postmortems — practicing before the real thing
+
+---
+
+## TRACK L — GRC, Compliance & Risk Depth  (→ `grc`)
+
+~4 waves, ~22 cards. The framework-by-framework reference practitioners actually need.
+
+**Wave L1 — The Big Frameworks**
+- [ ] ISO/IEC 27001 & 27002 — the ISMS, Annex A controls, certification path
+- [ ] SOC 2 — trust services criteria, Type I vs II, what an audit involves
+- [ ] PCI-DSS — the 12 requirements, scope reduction, SAQ vs ROC
+- [ ] HIPAA — privacy vs security rule, PHI, safeguards, breach notification
+- [ ] FedRAMP & NIST 800-53 — control baselines, ATO, the government cloud path
+
+**Wave L2 — Risk & Assurance**
+- [ ] Quantitative Risk — ALE/SLE/ARO, and FAIR for defensible risk numbers
+- [ ] Risk Treatment — accept/mitigate/transfer/avoid, risk registers, appetite
+- [ ] The Controls Universe — preventive/detective/corrective, control mapping
+- [ ] Internal Audit Deep — evidence, sampling, findings, remediation tracking
+- [ ] Metrics & Reporting to the Board — KRIs, maturity models, telling the story
+
+**Wave L3 — Privacy & Governance**
+- [ ] GDPR Deep — lawful basis, data subject rights, DPIAs, cross-border transfers
+- [ ] US Privacy Patchwork — CCPA/CPRA and the state-law landscape
+- [ ] Privacy Engineering — privacy by design, data minimization, PETs
+- [ ] Data Governance — ownership, stewardship, cataloging, retention schedules
+- [ ] Records & eDiscovery — legal hold, retention, defensible deletion
+
+**Wave L4 — Third-Party & Resilience**
+- [ ] Vendor Risk Management — assessments, SIG/CAIQ, continuous monitoring
+- [ ] Business Continuity Deep — BIA, RTO/RPO, DR strategies, testing
+- [ ] Supply-Chain Risk (GRC lens) — SBOM mandates, EO 14028, attestations
+- [ ] Security Program Building — from zero: policy, standards, procedures, culture
+- [ ] Regulatory Landscape — DORA, NIS2, SEC disclosure rules, sector regs
+
+---
+
+## TRACK M — Offensive Security Depth  (→ `pentest` / `redteam`)
+
+~4 waves, ~22 cards. Authorized-testing framing throughout, paired detections noted.
+
+**Wave M1 — Web & API Exploitation (hands-on lens)**
+- [ ] Burp Suite Pro Workflow — deep: macros, session handling, extensions
+- [ ] Auth & Session Attacks — JWT flaws, OAuth abuse, session fixation
+- [ ] Business-Logic Flaws — the bugs scanners can't find
+- [ ] API Pentesting — enumerating, mass assignment, BOLA/BFLA in practice
+- [ ] Client-Side — DOM XSS, prototype pollution, postMessage, CORS abuse
+
+**Wave M2 — Active Directory Attack Paths (study reference)**
+- [ ] AD Enumeration Methodology — from a foothold to a map
+- [ ] Kerberos Deep — roasting, delegation abuse, golden/silver tickets (+ detections)
+- [ ] ADCS Attack Paths — ESC1–ESC16 overview and the defensive fixes
+- [ ] Lateral Movement Techniques — and the exact telemetry that catches each
+- [ ] Domain Persistence — DCSync/Shadow (concepts) and the blue-team tripwires
+
+**Wave M3 — Cloud & Container Offense (study reference)**
+- [ ] Cloud Pentest Methodology — recon → enum → privesc → impact, per provider
+- [ ] IAM Privilege Escalation — the classic misconfig chains (+ CSPM detections)
+- [ ] Serverless & CI/CD Attacks — poisoned pipelines, OIDC trust abuse
+- [ ] Container Escape Techniques — and the runtime controls that stop them
+- [ ] Kubernetes Attack Paths — RBAC → cluster admin (+ audit-log detections)
+
+**Wave M4 — Tradecraft & Professionalism**
+- [ ] Report Writing — findings, risk ratings, exec summary, remediation
+- [ ] Scoping & Rules of Engagement Deep — the legal & safety guardrails
+- [ ] OPSEC for Testers — staying in-scope, safe payloads, cleanup
+- [ ] Purple-Team Playbooks — running technique-by-technique detection validation
+- [ ] The OSCP/Cert Path — how to actually prepare and pass
+
+---
+
+## TRACK N — Linux & Systems Depth  (→ `linux`)
+
+~3 waves, ~16 cards.
+
+**Wave N1 — Linux Security Hardening**
+- [ ] SELinux & AppArmor — mandatory access control, contexts, troubleshooting
+- [ ] Linux Capabilities & Namespaces — the primitives containers are built on
+- [ ] auditd & Hardening — CIS baseline, sudo, PAM, SSH hardening
+- [ ] Firewalling — nftables/iptables, firewalld, ufw in practice
+- [ ] Secure Boot, LUKS & Integrity — disk encryption, IMA, measured boot
+
+**Wave N2 — Performance & Troubleshooting**
+- [ ] The USE Method on Linux — a systematic performance-debug workflow
+- [ ] CPU & Memory Tools — top/htop, vmstat, perf, flame graphs, OOM killer
+- [ ] Disk & I/O — iostat, iotop, LVM, RAID, filesystems compared
+- [ ] Network Debugging — ss, tcpdump, ip, nftables tracing, DNS issues
+- [ ] eBPF & Modern Observability — bpftrace, the future of Linux tracing
+
+**Wave N3 — Storage & Ops**
+- [ ] LVM Deep — PVs/VGs/LVs, snapshots, resizing, thin provisioning
+- [ ] Software RAID & mdadm — levels, rebuilds, monitoring
+- [ ] NFS/Samba & Network Storage — sharing files across a network
+- [ ] Package & Image Building — rpm/deb, building images, immutable OSes
+- [ ] Systemd Advanced — cgroups v2, resource limits, hardening directives
+
+---
+
+## TRACK O — AI Engineering Depth  (→ `ai`)
+
+~4 waves, ~22 cards. From "I use ChatGPT" to building reliable AI systems.
+
+**Wave O1 — How Models Actually Work**
+- [ ] Neural Networks From Zero — neurons, layers, weights, backprop (gently)
+- [ ] The Transformer — attention, tokens, embeddings, why it changed everything
+- [ ] Training Pipeline — pretraining, SFT, RLHF/DPO, what each stage does
+- [ ] Inference Internals — the KV cache, context windows, temperature/top-p
+- [ ] Classic ML Still Matters — regression, trees, clustering, when not to use an LLM
+
+**Wave O2 — Building With LLMs**
+- [ ] Prompt Engineering Deep — few-shot, chain-of-thought, structured output
+- [ ] RAG Architecture — chunking, embeddings, retrieval, reranking, evaluation
+- [ ] Vector Search Deep — ANN algorithms, hybrid search, pgvector/pinecone
+- [ ] Function Calling & Tools — giving models the ability to act
+- [ ] Structured Output & Validation — JSON mode, schemas, guardrails
+
+**Wave O3 — Agents & Orchestration**
+- [ ] AI Agents — the loop, planning, memory, when agents beat pipelines
+- [ ] Model Context Protocol (MCP) — connecting models to tools & data
+- [ ] Multi-Agent Systems — orchestration, hand-offs, the coordination cost
+- [ ] Agent Frameworks — LangChain/LlamaIndex/Agent SDKs compared
+- [ ] Agent Safety & Sandboxing — untrusted output, tool permissions, human-in-loop
+
+**Wave O4 — Production AI (LLMOps)**
+- [ ] Evaluation Deep — golden sets, LLM-as-judge, regression testing, drift
+- [ ] Cost & Latency Optimization — caching, routing, batching, model tiering
+- [ ] AI Security — prompt injection, data exfiltration, the OWASP LLM Top 10
+- [ ] Observability for AI — tracing, token accounting, quality monitoring
+- [ ] Responsible AI — bias, privacy, hallucination mitigation, governance
+
+---
+
+## TRACK P — Languages & Programming Depth  (→ `script`)
+
+~3 waves, ~18 cards.
+
+**Wave P1 — More Languages (one card each)**
+- [ ] Kotlin — modern JVM, coroutines, Android
+- [ ] Swift — iOS/macOS, optionals, value types
+- [ ] Scala & Functional JVM — the FP-on-the-JVM story
+- [ ] Elixir/Erlang — the actor model, fault tolerance, the BEAM
+- [ ] Lua · R · MATLAB — embedded scripting & the scientific/stats niche
+- [ ] Haskell (a taste) — pure FP, why it makes you a better programmer
+
+**Wave P2 — Programming Craft**
+- [ ] Functional Programming — immutability, pure functions, map/filter/reduce, monads (gently)
+- [ ] Concurrency & Parallelism — threads, async, actors, locks vs message-passing
+- [ ] Memory Management — stack/heap, GC vs manual vs ownership, leaks
+- [ ] Error Handling Patterns — exceptions vs results, retries, failing well
+- [ ] Testing Deep — TDD, property-based, mutation testing, test doubles
+
+**Wave P3 — Tools & Practices**
+- [ ] Debugging Like a Pro — debuggers, print vs breakpoint, bisecting, rubber-ducking
+- [ ] Build Systems & Package Managers — across ecosystems, monorepos, lockfiles
+- [ ] Regular Expressions Deep — groups, lookaround, backreferences, catastrophic backtracking
+- [ ] API Design Deep — REST maturity, versioning, pagination, idempotency
+- [ ] Code Architecture in the Small — modules, layering, dependency injection
+
+---
+
+## TRACK Q — Networking Depth  (→ `net`)
+
+~3 waves, ~16 cards.
+
+**Wave Q1 — Routing & Switching Deep**
+- [ ] BGP — the protocol that runs the internet, path selection, common issues
+- [ ] OSPF & EIGRP — interior routing, areas, convergence
+- [ ] IPv6 Deep — addressing, SLAAC, dual-stack, why migration is slow
+- [ ] VLANs, STP & Trunking Deep — loops, root bridge, port security
+- [ ] QoS — marking, queuing, shaping vs policing, why voice/video need it
+
+**Wave Q2 — Network Services & Security**
+- [ ] DHCP & DNS Internals — the full resolution + lease dance, and attacks
+- [ ] VPN Deep — IPsec vs WireGuard vs SSL-VPN, site-to-site vs remote-access
+- [ ] Load Balancing & Proxies — L4 vs L7, reverse proxies, health checks
+- [ ] Network Access Control — 802.1X, RADIUS, NAC, guest isolation
+- [ ] Wireless Deep — 802.11 standards, RF, roaming, WPA3, enterprise Wi-Fi
+
+**Wave Q3 — Modern & Cloud Networking**
+- [ ] SASE & SD-WAN Deep — the converged network+security cloud model
+- [ ] Cloud Networking Patterns — transit gateways, peering, hybrid connectivity
+- [ ] Network Troubleshooting Methodology — OSI-layered, the tools per layer
+- [ ] Observability for Networks — flow logs, SNMP vs streaming telemetry
+- [ ] eBPF & Cilium Networking — the programmable-datapath future
+
+---
+
+## TRACK S — Career, Mind & Life Depth  (→ `lifestyle`)
+
+~4 waves, ~22 cards. The non-technical skills that decide careers.
+
+**Wave S1 — Health for Knowledge Workers**
+- [ ] Sleep — the highest-leverage performance lever, and how to protect it
+- [ ] Nutrition Basics — energy, focus, and not crashing at 3pm
+- [ ] Movement & Ergonomics — desk health, the body behind the keyboard
+- [ ] Stress & the Nervous System — recovery, breathwork, actual burnout prevention
+- [ ] Focus & Attention — deep work, distraction, the cost of context switching
+
+**Wave S2 — Productivity Systems**
+- [ ] GTD — capture, clarify, organize, review; getting it out of your head
+- [ ] PARA & PKM — note systems, second brain, Zettelkasten
+- [ ] Time Blocking & Prioritization — Eisenhower, MITs, energy management
+- [ ] Goal Systems — OKRs for individuals, systems vs goals, habit stacking
+- [ ] Learning Systems — spaced repetition, Feynman, deliberate practice
+
+**Wave S3 — Money & Independence**
+- [ ] Personal Finance Deep — budgeting, emergency fund, debt payoff order
+- [ ] Investing Basics — index funds, compounding, retirement accounts
+- [ ] Comp & Equity for Tech Workers — RSUs, options, negotiating an offer
+- [ ] Taxes & Freelancing — 1099 vs W2, quarterly, deductions, entities
+- [ ] Financial Independence — the math, runway, why engineers reach it
+
+**Wave S4 — People Skills**
+- [ ] Negotiation — salary, scope, and everyday asks (BATNA, anchoring)
+- [ ] Giving & Receiving Feedback — radical candor, SBI, the hard conversations
+- [ ] Managing Up & Across — making your manager and peers effective
+- [ ] Public Speaking & Presenting — talks, demos, executive updates
+- [ ] Conflict & Difficult Conversations — de-escalation, finding the real issue
+
+---
+
+## TRACK T — Military, Leadership & Decision-Making Depth  (→ `military`)
+
+~2 waves, ~11 cards. Frameworks that transfer directly to tech leadership & IR.
+
+**Wave T1 — Planning & Operations**
+- [ ] The Military Decision-Making Process (MDMP) — full planning cycle
+- [ ] Intelligence Cycle — direction, collection, processing, dissemination
+- [ ] Logistics & Sustainment — the unglamorous thing that wins
+- [ ] Mission Orders & Operations Order (OPORD) — the 5-paragraph format
+- [ ] Risk Management (Military) — the deliberate risk process, applied anywhere
+
+**Wave T2 — Leadership Under Pressure**
+- [ ] Mission Command Deep — decentralized execution, trust, disciplined initiative
+- [ ] Crisis Leadership — decision-making with incomplete info (ties to IR/on-call)
+- [ ] Building Cohesive Teams — trust, shared hardship, morale
+- [ ] Red Teaming as a Discipline — structured contrarian thinking, premortems
+- [ ] Small-Unit Leadership Lessons for Tech Leads — direct parallels to eng teams
+
+---
+
+## TRACK U — Cross-Cutting Capstones & Study Aids  (spans domains)
+
+~4 waves, ~20 cards. Tie the whole site together for exam & interview prep.
+
+**Wave U1 — Certification Study Guides**
+- [ ] CompTIA Security+ — objective-by-objective map to site topics
+- [ ] CISSP — the 8 domains, mapped to Red/Blue/Cloud/GRC cards
+- [ ] AWS/GCP/Azure Cert Paths — which cards cover which exam objectives
+- [ ] OSCP & Offensive Certs — the practical prep plan
+- [ ] Cloud & DevOps Certs — CKA/CKAD/Terraform Associate study maps
+
+**Wave U2 — Interview Prep Hubs**
+- [ ] System Design Interview — a reusable template + worked examples
+- [ ] Coding Interview — patterns (two-pointer, sliding window, DP, graphs)
+- [ ] Behavioral Interview — STAR bank mapped to leveling rubrics
+- [ ] Security Interview — blue/red/GRC question banks
+- [ ] SRE/DevOps Interview — debugging, on-call scenarios, design
+
+**Wave U3 — Hands-On Labs & Projects**
+- [ ] Build a Home Lab — from one old PC to a full security lab
+- [ ] Build a SIEM at Home — ELK/Wazuh + generating & hunting logs
+- [ ] Build a CI/CD Pipeline End-to-End — code → test → scan → deploy
+- [ ] Deploy a Full-Stack App — DB + API + frontend + IaC + observability
+- [ ] Capture-the-Flag Walkthroughs — how to approach a CTF, categories, tools
+
+**Wave U4 — Reference Sheets & Meta**
+- [ ] Ports & Protocols Cheat Sheet — the ones exams and jobs actually test
+- [ ] Regex / SQL / Git / Linux One-Page Cheat Sheets — printable quick-refs
+- [ ] Incident Response Runbook Templates — fill-in-the-blank playbooks
+- [ ] Decision Trees — "which database/language/cloud service/auth method?" pickers
+- [ ] Glossary — the acronym soup, one searchable place
+
+---
+
+## Suggested execution order (Phase 3)
+
+| Phase | Tracks | Theme | Rough size |
+|-------|--------|-------|-----------|
+| 35 | scaffold `data` + H1–H2 | new Data domain; relational + SQL mastery | ~15 cards |
+| 36–38 | H3–H8 | DB internals, Postgres, NoSQL, warehousing, ops, career | ~30 cards |
+| 39 | scaffold `web` + I1–I2 | new Web domain; browser + modern CSS | ~10 cards |
+| 40–42 | I3–I7 | JS deep, frameworks, backends, quality/a11y, shipping | ~25 cards |
+| 43–45 | J1–J5 | application/API/crypto/detection/identity security depth | ~28 cards |
+| 46–48 | K, L | threat/malware/IR depth; GRC framework-by-framework | ~44 cards |
+| 49–51 | M, N, Q | offensive depth; Linux & networking depth | ~54 cards |
+| 52–54 | O, P | AI engineering depth; languages & craft | ~40 cards |
+| 55–57 | S, T, U | life/mind/career; military leadership; capstones & study aids | ~53 cards |
+
+**Grand total: ~11 new tracks, ~55 waves, ~320 planned cards**, taking the site
+from 660 → ~980 topics across 18 domains. Same conventions throughout: one wave
+= one CI-green commit; offensive content stays authorized-use + detection-paired;
+every card inherits search / permalinks / progress / keyboard-a11y automatically.
+
+**Stretch goals (only if they earn their keep):**
+- New `product` 🧭 domain — agile/scrum/kanban, product thinking, UX for engineers,
+  roadmapping, stakeholder management, metrics/experimentation.
+- New `mobile` 📱 domain — iOS/Android/React Native/Flutter, app store, mobile security.
+- Interactive extras — a quiz/flashcard mode over existing cards; a "learning path"
+  overlay that sequences cards into guided tracks.
