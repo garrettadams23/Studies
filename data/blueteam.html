@@ -997,4 +997,174 @@ index=auth <span class="str">"Failed password"</span>
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🩺</span>
+              <span class="topic-name">Vulnerability Scanners — Nessus &amp; OpenVAS</span>
+              <span class="topic-badge">Vuln Mgmt</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Find the Holes Before Attackers Do</div>
+                <div class="concept-desc">
+                  Authenticated and unauthenticated scanners enumerate hosts, fingerprint services,
+                  and match them against a vulnerability database (CVE/plugin feeds). They are the
+                  engine behind the <strong class="c-cyan">vulnerability management lifecycle</strong>
+                  — discover, prioritize, remediate, verify.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Notes</th></tr>
+                    <tr><td class="c-cyan">Nessus (Tenable)</td><td>Industry-standard commercial scanner; huge plugin library</td></tr>
+                    <tr><td class="c-cyan">OpenVAS / Greenbone</td><td>Open-source alternative (GVM); free NVT feed</td></tr>
+                    <tr><td class="c-cyan">Qualys / Rapid7 InsightVM</td><td>Cloud-delivered VM platforms with agents</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Key idea:</strong> <em>authenticated</em> scans (with
+                    creds) see missing patches and config far better than network-only scans. Feed
+                    findings into <strong class="c-green">CVSS + exploitability (EPSS/KEV)</strong> to
+                    prioritize — patch what's actually being exploited first, not just the highest CVSS.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📏</span>
+              <span class="topic-name">CIS Benchmarks &amp; CIS-CAT — Hardening Baselines</span>
+              <span class="topic-badge">Hardening</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Consensus Config for Everything</div>
+                <div class="concept-desc">
+                  The <strong class="c-cyan">CIS Benchmarks</strong> are free, consensus-built
+                  hardening guides for OSes, cloud, containers, and apps — hundreds of specific
+                  settings ("disable root SSH", "set password age"). <strong class="c-cyan">CIS-CAT</strong>
+                  audits a system against a benchmark and scores compliance.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Levels 1 &amp; 2</td><td>L1 = safe baseline; L2 = defense-in-depth (may break things)</td></tr>
+                    <tr><td class="c-cyan">Benchmarks</td><td>OS, K8s, Docker, AWS/Azure/GCP, browsers, databases</td></tr>
+                    <tr><td class="c-cyan">CIS Controls</td><td>The companion 18 prioritized safeguards (IG1–IG3)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">CIS Hardened Images</strong> (pre-baked AMIs/VMs) let you
+                    start compliant. Benchmarks pair naturally with policy-as-code — encode the
+                    controls once, enforce them everywhere.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐧</span>
+              <span class="topic-name">Lynis — Linux Audit &amp; Hardening</span>
+              <span class="topic-badge">Hardening</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">A One-Command Health Check for a Host</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Lynis</strong> is an agentless shell-script auditor for
+                  Linux/Unix/macOS. Run it on a host and it walks hundreds of checks — kernel params,
+                  file permissions, services, SSH config, firewall — then prints a hardening index
+                  and prioritized suggestions.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Audit the local system</span>
+<span class="fn">sudo</span> lynis audit system
+
+<span class="com"># Key output: warnings, suggestions, and a Hardening index (0-100)</span>
+<span class="com"># Reports land in /var/log/lynis.log &amp; lynis-report.dat</span></pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Great for a fast baseline and for teaching <em>why</em> each setting matters
+                    (each suggestion links to guidance). Complements — doesn't replace — a real
+                    benchmark like CIS.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🛡️</span>
+              <span class="topic-name">OpenSCAP &amp; DISA STIGs — Compliance-Driven Hardening</span>
+              <span class="topic-badge">Compliance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Machine-Readable Security Policy</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">SCAP</strong> (Security Content Automation Protocol) is a set
+                  of standards (OVAL, XCCDF, CCE) for expressing security policy as
+                  <em>machine-readable content</em>. <strong class="c-cyan">OpenSCAP</strong> scans and
+                  even auto-remediates against that content; <strong class="c-cyan">DISA STIGs</strong>
+                  are the U.S. DoD's hardening standards distributed in this format.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Scan RHEL against a STIG profile and generate an HTML report</span>
+oscap xccdf eval \
+  <span class="var">--profile</span> xccdf_org.ssgproject.content_profile_stig \
+  <span class="var">--report</span> report.html \
+  /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml</pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">SSG</strong> (SCAP Security Guide) ships ready profiles —
+                    STIG, CIS, PCI-DSS, HIPAA. This is how regulated environments prove and enforce a
+                    baseline continuously rather than via a one-time checklist.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🩹</span>
+              <span class="topic-name">Patch &amp; Config Management as a Control</span>
+              <span class="topic-badge">Vuln Mgmt</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Finding Vulns Is Easy — Fixing at Scale Is Hard</div>
+                <div class="concept-desc">
+                  A scanner produces a list; the real work is closing the loop across thousands of
+                  systems reliably. Patch and configuration management turn remediation from a manual
+                  scramble into a repeatable, measurable control.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Role</th></tr>
+                    <tr><td class="c-cyan">WSUS / SCCM / Intune</td><td>Windows patch orchestration &amp; compliance</td></tr>
+                    <tr><td class="c-cyan">Ansible / Salt</td><td>Cross-platform patching &amp; config enforcement (ties to F4)</td></tr>
+                    <tr><td class="c-cyan">unattended-upgrades / dnf-automatic</td><td>OS-native auto-patching for Linux</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Metrics that matter:</strong> patch coverage %, mean time
+                    to remediate (MTTR) by severity, and <em>drift</em> (systems that fell out of
+                    compliance). Config management also prevents drift — the box stays hardened, not
+                    just gets hardened once.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body blueteam -->

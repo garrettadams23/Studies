@@ -431,11 +431,11 @@ Tool reference cards, grouped by kill-chain stage. ~9 waves, ~50 cards.
 - [ ] Pyramid of Pain & IOC vs TTP-based detection
 
 **Wave B7 — Vuln management, hardening & benchmarks**
-- [ ] Nessus & OpenVAS/Greenbone — vulnerability scanners
-- [ ] CIS Benchmarks & CIS-CAT — hardening baselines
-- [ ] Lynis — Linux/Unix audit & hardening
-- [ ] OpenSCAP & DISA STIGs — compliance-driven hardening
-- [ ] Patch & config management (WSUS/Ansible) as a control
+- [x] Nessus & OpenVAS/Greenbone — vulnerability scanners
+- [x] CIS Benchmarks & CIS-CAT — hardening baselines
+- [x] Lynis — Linux/Unix audit & hardening
+- [x] OpenSCAP & DISA STIGs — compliance-driven hardening
+- [x] Patch & config management (WSUS/Ansible) as a control
 
 **Wave B8 — Deception & email/identity defense**
 - [ ] Honeypots & Canarytokens — deception tech (T-Pot, canaries)
