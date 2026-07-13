@@ -45505,6 +45505,160 @@ money. AWS's equivalent is Redshift (and Athena for S3).
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🛡️</span>
+<span class="topic-name">AWS Security Stack — CloudTrail, GuardDuty &amp; Security Hub</span>
+<span class="topic-badge">AWS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">How-To</div>
+<div class="concept-title">See, Detect, and Govern Your Account</div>
+<div class="concept-desc">
+AWS security starts with <strong class="c-red">visibility</strong>. These services
+layer together: log everything, detect threats, check config, and aggregate it all.
+<strong class="c-cyan">CloudTrail</strong> is non-negotiable — turn it on day one.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Service</th><th>Does</th></tr>
+<tr><td class="c-cyan">CloudTrail</td><td>Records every API call — the audit log of who did what</td></tr>
+<tr><td class="c-cyan">Config</td><td>Tracks resource configuration over time + rules for compliance</td></tr>
+<tr><td class="c-cyan">GuardDuty</td><td>ML/threat-intel detection on logs (crypto-mining, recon, exfil)</td></tr>
+<tr><td class="c-cyan">Security Hub</td><td>Aggregates findings from all of them + CIS/AWS benchmarks</td></tr>
+<tr><td class="c-cyan">Inspector</td><td>Automated vuln scanning of EC2/ECR/Lambda</td></tr>
+<tr><td class="c-cyan">Macie</td><td>Finds sensitive data (PII) in S3</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Pattern:</strong> CloudTrail + Config feed GuardDuty +
+Security Hub, which stream findings to your SIEM/SOAR. This is the AWS-native
+version of the Blue Team stack.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔐</span>
+<span class="topic-name">AWS Data Protection — KMS &amp; Secrets Manager</span>
+<span class="topic-badge">AWS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">How-To</div>
+<div class="concept-title">Encryption &amp; Secrets, Managed</div>
+<div class="concept-desc">
+<strong class="c-cyan">KMS</strong> (Key Management Service) creates and controls
+encryption keys; most AWS services integrate with it for encryption-at-rest with a
+checkbox. <strong class="c-cyan">Secrets Manager</strong> stores credentials/API
+keys with automatic rotation, so secrets never live in code or env files.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Service</th><th>Detail</th></tr>
+<tr><td class="c-cyan">KMS</td><td>Managed keys; envelope encryption; per-key IAM policies + audit via CloudTrail</td></tr>
+<tr><td class="c-cyan">Secrets Manager</td><td>Store + auto-rotate DB creds/API keys; fetch at runtime</td></tr>
+<tr><td class="c-cyan">Parameter Store</td><td>Cheaper config + secret storage (SSM)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+Enable <strong class="c-green">default encryption</strong> on S3/EBS/RDS with KMS,
+and pull secrets from Secrets Manager at runtime — the two habits that close the
+most common data-exposure gaps.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🛡️</span>
+<span class="topic-name">GCP Security — Cloud Audit Logs &amp; Security Command Center</span>
+<span class="topic-badge">GCP</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">How-To</div>
+<div class="concept-title">The Google-Side Equivalents</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Service</th><th>Does</th><th>AWS Analog</th></tr>
+<tr><td class="c-cyan">Cloud Audit Logs</td><td>Admin/data-access API audit trail</td><td>CloudTrail</td></tr>
+<tr><td class="c-cyan">Security Command Center</td><td>Central posture + threat findings dashboard</td><td>Security Hub + GuardDuty</td></tr>
+<tr><td class="c-cyan">Cloud Logging / Monitoring</td><td>Logs, metrics, alerting</td><td>CloudWatch</td></tr>
+<tr><td class="c-cyan">Chronicle</td><td>Google's SIEM at scale</td><td>—</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">SCC</strong> is the single pane for GCP security posture —
+it surfaces misconfigurations, vulnerabilities, and active threats across your
+projects, mapped to standards.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔐</span>
+<span class="topic-name">GCP Data Protection — Cloud KMS, Secret Manager &amp; VPC-SC</span>
+<span class="topic-badge">GCP</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">How-To</div>
+<div class="concept-title">Keys, Secrets &amp; a Data-Exfil Perimeter</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Service</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Cloud KMS</td><td>Managed encryption keys (like AWS KMS); CMEK on most services</td></tr>
+<tr><td class="c-cyan">Secret Manager</td><td>Versioned secret storage with IAM + audit</td></tr>
+<tr><td class="c-green">VPC Service Controls</td><td>A security perimeter around services to stop data exfiltration — GCP-distinctive</td></tr>
+<tr><td class="c-cyan">DLP API</td><td>Discover &amp; redact sensitive data (PII)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">VPC-SC</strong> is the standout: it draws a boundary so
+that even a stolen credential can't pull data out to the internet — mitigating
+the exact SSRF/exfil chains from the IAM Pitfalls card.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔎</span>
+<span class="topic-name">CSPM — Prowler, ScoutSuite &amp; Steampipe</span>
+<span class="topic-badge">Security</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Continuously Audit Your Cloud Posture</div>
+<div class="concept-desc">
+<strong class="c-cyan">Cloud Security Posture Management (CSPM)</strong> tools scan
+your accounts for misconfigurations — public buckets, over-broad IAM, unencrypted
+volumes, disabled logging — against benchmarks (CIS). This is the bridge between
+the Cloud and Blue Team domains: run them regularly to find gaps before attackers
+(using the same tools) do.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Prowler</td><td>Open-source AWS/GCP/Azure security assessments (CIS, NIST, etc.)</td></tr>
+<tr><td class="c-cyan">ScoutSuite</td><td>Multi-cloud config auditing → HTML report</td></tr>
+<tr><td class="c-cyan">Steampipe</td><td>Query your cloud with SQL (find issues with a SELECT)</td></tr>
+<tr><td class="c-cyan">Cloud-native</td><td>Security Hub / SCC do continuous CSPM too</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body cloud -->
 </div>
 </div>
