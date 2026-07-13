@@ -1674,6 +1674,142 @@ exit   <span class="com"># closes the window/session from inside</span>
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🗃️</span>
+              <span class="topic-name">Dotfiles &amp; Environment Management</span>
+              <span class="topic-badge">Dev Env</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Your Setup, Version-Controlled &amp; Portable</div>
+                <div class="concept-desc">
+                  Your shell config, editor settings, git config, and aliases (the "dotfiles" —
+                  <code>.bashrc</code>, <code>.gitconfig</code>, …) are your personal productivity
+                  layer. Put them in a Git repo so a new machine is one command away from feeling
+                  like home, and you never lose that alias you set up two years ago.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Approach</th></tr>
+                    <tr><td class="c-cyan">chezmoi</td><td>Powerful: templating, secrets, per-machine differences</td></tr>
+                    <tr><td class="c-cyan">GNU stow</td><td>Simple symlink farm — great for basic setups</td></tr>
+                    <tr><td class="c-cyan">bare git repo</td><td>Track <code>$HOME</code> directly with an alias</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-red">Never commit secrets</strong> — keep API keys/tokens out of
+                    dotfiles (use a secrets tool or machine-local files in <code>.gitignore</code>).
+                    A public dotfiles repo is a classic accidental-leak source.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐚</span>
+              <span class="topic-name">Shell &amp; Terminal Setup</span>
+              <span class="topic-badge">Dev Env</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">A Terminal That Works With You</div>
+                <div class="concept-desc">
+                  A little terminal investment pays off every day. Pick a shell, add a fast prompt,
+                  and layer in modern CLI tools that are strictly better than the classics.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Piece</th><th>Options</th></tr>
+                    <tr><td class="c-cyan">Shell</td><td>zsh (+ oh-my-zsh) or fish (great defaults)</td></tr>
+                    <tr><td class="c-cyan">Prompt</td><td>starship — fast, shows git/context, one config</td></tr>
+                    <tr><td class="c-cyan">Multiplexer</td><td>tmux — persistent sessions &amp; splits (see the tmux topic)</td></tr>
+                    <tr><td class="c-cyan">Better CLIs</td><td>ripgrep (grep), fd (find), bat (cat), eza (ls), fzf (fuzzy), zoxide (cd), jq (JSON)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">fzf</strong> especially — fuzzy-finding files, history,
+                    and git branches interactively — is a step-change once wired into your shell.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔢</span>
+              <span class="topic-name">Runtime &amp; Version Managers</span>
+              <span class="topic-badge">Dev Env</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">The Right Language Version, Per Project</div>
+                <div class="concept-desc">
+                  Project A needs Node 18, Project B needs Node 22; one needs Python 3.11, another
+                  3.13. Version managers let you install many versions and switch automatically per
+                  directory — no more "works on my machine" from a version mismatch.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Manages</th></tr>
+                    <tr><td class="c-cyan">mise / asdf</td><td>One tool for many languages (Node, Python, Go, …)</td></tr>
+                    <tr><td class="c-cyan">nvm / fnm</td><td>Node versions</td></tr>
+                    <tr><td class="c-cyan">pyenv + uv/venv</td><td>Python versions + isolated envs</td></tr>
+                    <tr><td class="c-cyan">direnv</td><td>Auto-load per-directory env vars &amp; tool versions</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Commit a version file (<code>.tool-versions</code>, <code>.nvmrc</code>) so the
+                    whole team — and CI — uses the same runtime. <strong class="c-green">mise</strong>
+                    is the rising all-in-one; <strong>direnv</strong> makes it automatic on
+                    <code>cd</code>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🤖</span>
+              <span class="topic-name">AI Pair Programming — Using It Well</span>
+              <span class="topic-badge">Dev Env</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">A Force Multiplier — If You Stay in Charge</div>
+                <div class="concept-desc">
+                  AI assistants (GitHub Copilot, Cursor, Claude Code, and others) generate code,
+                  explain unfamiliar code, write tests, and draft boilerplate fast. Used well they're
+                  a big accelerant; used blindly they introduce subtle bugs and security holes.
+                  <strong class="c-cyan">You stay the engineer</strong> — the AI drafts, you own.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Do</th><th>Watch out for</th></tr>
+                    <tr><td class="c-green">Great for boilerplate, tests, glue code</td><td class="c-red">Plausible-but-wrong code (hallucinated APIs)</td></tr>
+                    <tr><td class="c-green">Explaining a codebase / error</td><td class="c-red">Insecure defaults (no input validation)</td></tr>
+                    <tr><td class="c-green">Refactoring with a clear spec</td><td class="c-red">Outdated patterns from training data</td></tr>
+                    <tr><td class="c-green">Review every line before you commit</td><td class="c-red">Leaking secrets/proprietary code to a service</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Treat AI output like a junior's PR: <strong class="c-green">read it, test it,
+                    understand it</strong> before it ships. The engineers who benefit most are the
+                    ones who could have written it themselves and can spot when it's wrong.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body shortcuts -->
 <!-- /domain-body shortcuts -->
 <!-- /domain-body shortcuts -->
