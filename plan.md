@@ -523,14 +523,14 @@ Lower priority than R/B/C but each fills a real gap; interleave as desired.
 - [x] Semantic Versioning & dependency management (npm/pip/cargo lockfiles)
 
 **Networking (`net`)**
-- [ ] Network Automation — Ansible, Netmiko, NAPALM, gNMI
-- [ ] SD-WAN & MPLS · Multicast · PoE · 802.1Q trunking deep-dive
-- [ ] DNSSEC, DoH/DoT — securing name resolution
+- [x] Network Automation — Ansible, Netmiko, NAPALM, gNMI
+- [x] SD-WAN & MPLS · Multicast · PoE · 802.1Q trunking deep-dive
+- [x] DNSSEC, DoH/DoT — securing name resolution
 
 **Linux (`linux`)**
-- [ ] Podman & rootless containers · systemd deep-dive · sysctl/kernel tuning
-- [ ] ZFS & Btrfs — snapshots, subvolumes, integrity
-- [ ] Advanced Bash — traps, parameter expansion, coprocesses
+- [x] Podman & rootless containers · systemd deep-dive · sysctl/kernel tuning
+- [x] ZFS & Btrfs — snapshots, subvolumes, integrity
+- [x] Advanced Bash — traps, parameter expansion, coprocesses
 
 **AI & ML (`ai`)**
 - [x] Fine-tuning vs RAG vs prompting — when to use which
