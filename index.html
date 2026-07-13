@@ -46931,6 +46931,178 @@ enforce rules — "no public S3," "only these regions" — org-wide.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📦</span>
+<span class="topic-name">GCP-Native IaC — Deployment Manager &amp; Config Controller</span>
+<span class="topic-badge">GCP · IaC</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Declarative Infrastructure the Google Way</div>
+<div class="concept-desc">
+Beyond Terraform, GCP has native declarative options. Google now steers most users
+toward <strong class="c-cyan">Config Controller</strong> (managed Config Connector +
+Policy Controller) — you describe cloud resources as Kubernetes-style YAML and GCP
+reconciles them continuously.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Option</th><th>Notes</th></tr>
+<tr><td class="c-cyan">Config Connector</td><td>Manage GCP resources as K8s CRDs (GitOps-friendly)</td></tr>
+<tr><td class="c-cyan">Config Controller</td><td>Managed KRM stack: Connector + Policy Controller + sync</td></tr>
+<tr><td class="c-muted">Deployment Manager</td><td>The older Jinja/Python template engine (legacy; being retired)</td></tr>
+<tr><td class="c-green">Terraform (+ Blueprints)</td><td>Google's actual recommended default for most teams</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Takeaway:</strong> for greenfield GCP IaC, reach for
+Terraform or Config Controller, not Deployment Manager. The KRM model unifies app
+and infra config under one reconciliation loop (ties to GitOps in ops).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚚</span>
+<span class="topic-name">Cloud CI/CD — CodePipeline &amp; Cloud Build</span>
+<span class="topic-badge">AWS · GCP</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Managed Build-and-Deploy Pipelines</div>
+<div class="concept-desc">
+Both clouds offer first-party CI/CD so you don't run your own build servers. They
+slot in next to (or instead of) GitHub Actions when you want tight IAM and artifact
+integration with the platform.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>AWS</th><th>GCP</th><th>Role</th></tr>
+<tr><td class="c-cyan">CodePipeline</td><td>Cloud Build (triggers)</td><td>Orchestrate stages</td></tr>
+<tr><td class="c-cyan">CodeBuild</td><td>Cloud Build</td><td>Run build/test steps</td></tr>
+<tr><td class="c-cyan">CodeDeploy</td><td>Cloud Deploy</td><td>Progressive delivery to targets</td></tr>
+<tr><td class="c-cyan">ECR</td><td>Artifact Registry</td><td>Store container/package artifacts</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Why native:</strong> pipelines assume an IAM role (no
+long-lived keys), and use <strong class="c-green">OIDC</strong> to let external
+CI authenticate without stored secrets. Push signed images to the registry, then
+Cloud Deploy/CodeDeploy roll them out canary-style.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📊</span>
+<span class="topic-name">AWS Observability — CloudWatch &amp; X-Ray</span>
+<span class="topic-badge">AWS · Ops</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Metrics, Logs, Alarms &amp; Traces</div>
+<div class="concept-desc">
+<strong class="c-cyan">CloudWatch</strong> is the central nervous system for AWS
+ops — it collects metrics, aggregates logs, fires alarms, and triggers automated
+responses. <strong class="c-cyan">X-Ray</strong> adds distributed tracing so you can
+see a request hop across services.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Piece</th><th>Does</th></tr>
+<tr><td class="c-cyan">Metrics &amp; Alarms</td><td>Numeric time-series; alarm → SNS/Auto Scaling/Lambda</td></tr>
+<tr><td class="c-cyan">Logs &amp; Logs Insights</td><td>Central log store with a query language</td></tr>
+<tr><td class="c-cyan">Dashboards</td><td>Single-pane views of a service's health</td></tr>
+<tr><td class="c-cyan">X-Ray</td><td>Traces &amp; service maps for latency debugging</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Modern path:</strong> instrument with
+<strong class="c-green">OpenTelemetry</strong> (via the AWS Distro, ADOT) so your
+telemetry isn't locked in. Alarms on the <em>golden signals</em> (latency, errors,
+saturation) are what turn raw metrics into on-call signal.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📈</span>
+<span class="topic-name">GCP Observability — Cloud Monitoring, Logging &amp; Trace</span>
+<span class="topic-badge">GCP · Ops</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Operations Suite (formerly Stackdriver)</div>
+<div class="concept-desc">
+Google's operations suite mirrors CloudWatch/X-Ray with metrics, logs, and traces —
+and leans on the SRE practices Google literally wrote the book on (SLOs, error
+budgets are first-class in Cloud Monitoring).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Service</th><th>AWS equivalent</th></tr>
+<tr><td class="c-cyan">Cloud Monitoring</td><td>CloudWatch metrics/alarms/dashboards</td></tr>
+<tr><td class="c-cyan">Cloud Logging</td><td>CloudWatch Logs (with LogQL-like queries)</td></tr>
+<tr><td class="c-cyan">Cloud Trace</td><td>X-Ray (distributed tracing)</td></tr>
+<tr><td class="c-cyan">Cloud Profiler / Error Reporting</td><td>Continuous profiling &amp; error grouping</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Define an <strong class="c-green">SLO</strong> right in Cloud Monitoring and it
+tracks the error budget and burn rate for you — the theory from the SRE card,
+operationalized. Also OpenTelemetry-native.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🏛️</span>
+<span class="topic-name">Well-Architected &amp; the Architecture Framework</span>
+<span class="topic-badge">AWS · GCP</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Pillars for Grading a Cloud Design</div>
+<div class="concept-desc">
+Both AWS (<strong class="c-cyan">Well-Architected Framework</strong>) and GCP
+(<strong class="c-cyan">Architecture Framework</strong>) publish a set of pillars to
+review any workload against. It's the rubric architects use in design reviews and
+the basis of the "Well-Architected Review."
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Pillar</th><th>Asks</th></tr>
+<tr><td class="c-cyan">Operational Excellence</td><td>Can you run &amp; improve it (IaC, observability, runbooks)?</td></tr>
+<tr><td class="c-cyan">Security</td><td>Least privilege, encryption, detection in depth</td></tr>
+<tr><td class="c-cyan">Reliability</td><td>Recovers from failure, scales to demand</td></tr>
+<tr><td class="c-cyan">Performance Efficiency</td><td>Right resources, evolve as tech changes</td></tr>
+<tr><td class="c-cyan">Cost Optimization</td><td>Pay only for what delivers value (→ FinOps)</td></tr>
+<tr><td class="c-cyan">Sustainability</td><td>(AWS) minimize environmental impact</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Run a review before a big launch: score each pillar, log the risks, remediate the
+high ones. It's the cloud-specific companion to the engineering-domain system
+design cards.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body cloud -->
 </div>
 </div>

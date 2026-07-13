@@ -496,14 +496,14 @@ an explicit "Rosetta stone" card. Azure kept as a lighter bonus set.
 **Wave C7 — Infrastructure as Code & DevOps on cloud**
 - [ ] Terraform on AWS/GCP — providers, remote state, modules (ties to ops topic)
 - [ ] AWS-native IaC — CloudFormation & CDK
-- [ ] GCP-native IaC — Deployment Manager & Config Controller
-- [ ] Cloud CI/CD — CodePipeline / Cloud Build, artifact registries
-- [ ] Cloud cost control — budgets, tagging, Cost Explorer / billing export (→ FinOps)
+- [x] GCP-native IaC — Deployment Manager & Config Controller
+- [x] Cloud CI/CD — CodePipeline / Cloud Build, artifact registries
+- [x] Cloud cost control — budgets, tagging, Cost Explorer / billing export (→ FinOps)
 
 **Wave C8 — Observability & operations on cloud**
-- [ ] AWS Observability — CloudWatch (metrics/logs/alarms), X-Ray
-- [ ] GCP Observability — Cloud Monitoring, Cloud Logging, Cloud Trace
-- [ ] Well-Architected / Architecture Framework — the 5–6 pillars
+- [x] AWS Observability — CloudWatch (metrics/logs/alarms), X-Ray
+- [x] GCP Observability — Cloud Monitoring, Cloud Logging, Cloud Trace
+- [x] Well-Architected / Architecture Framework — the 5–6 pillars
 - [ ] Landing zones & multi-account/project — Organizations, Control Tower
 
 **Wave C9 — Azure bonus (lighter set)**
