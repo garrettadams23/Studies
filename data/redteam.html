@@ -1392,4 +1392,140 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">☁️</span>
+              <span class="topic-name">Pacu — The AWS Exploitation Framework</span>
+              <span class="topic-badge">Cloud Offense</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Metasploit, But for AWS</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Pacu</strong> (Rhino Security Labs) is a modular framework
+                  for testing AWS environments — once you have a set of credentials (legitimately, in
+                  an authorized assessment), it enumerates permissions, finds privilege-escalation
+                  paths, and demonstrates impact. <em>Authorized cloud assessments only.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Module type</th><th>Does</th></tr>
+                    <tr><td class="c-cyan">enum</td><td>Map what the creds can see (IAM, EC2, S3, Lambda)</td></tr>
+                    <tr><td class="c-cyan">privesc</td><td>Find IAM misconfig chains (iam:PassRole etc.)</td></tr>
+                    <tr><td class="c-cyan">persistence / exfil</td><td>Demonstrate impact for the report</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> everything Pacu does is API
+                    calls — <strong class="c-green">CloudTrail + GuardDuty</strong> see the
+                    enumeration and privesc attempts. This is the offensive mirror of the CSPM tools
+                    in the Cloud domain.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🦊</span>
+              <span class="topic-name">CloudFox &amp; enumerate-iam — Attack-Surface Enumeration</span>
+              <span class="topic-badge">Cloud Offense</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">"What Can I Do With These Creds?"</div>
+                <div class="concept-desc">
+                  After obtaining cloud credentials during an engagement, the first question is what
+                  they grant. <strong class="c-cyan">CloudFox</strong> surfaces exploitable
+                  attack paths (roles you can assume, secrets you can read, instances you can reach);
+                  <strong class="c-cyan">enumerate-iam</strong> brute-forces which API calls a set of
+                  keys is allowed to make. <em>Authorized use only.</em>
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    <strong class="c-amber">Blue-team note:</strong> these produce a burst of
+                    describe/list and access-denied events in CloudTrail — a spike of
+                    <code>AccessDenied</code> from one principal is a strong enumeration signal.
+                    Least privilege shrinks what any leaked key can enumerate in the first place.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">☸️</span>
+              <span class="topic-name">Kubernetes Attacks — RBAC Abuse &amp; Container Escape</span>
+              <span class="topic-badge">Cloud Offense</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">From a Pod to the Cluster</div>
+                <div class="concept-desc">
+                  A compromised container is the start, not the end. Attackers abuse over-permissive
+                  <strong>RBAC</strong>, over-mounted service-account tokens, and privileged/host
+                  configs to escape a pod and take over the node or cluster.
+                  <strong class="c-cyan">kube-hunter</strong> (and kubeaudit) probe for these.
+                  <em>Authorized clusters only.</em>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Weakness</th><th>Impact</th></tr>
+                    <tr><td class="c-red">Over-broad RBAC</td><td>A pod's token can create pods / read secrets cluster-wide</td></tr>
+                    <tr><td class="c-red">Privileged / hostPath pod</td><td>Escape to the node's filesystem/kernel</td></tr>
+                    <tr><td class="c-red">Exposed kubelet / API</td><td>Direct command execution on pods</td></tr>
+                    <tr><td class="c-red">Mounted SA token</td><td>Default token used to call the API</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Blue-team note:</strong> this is exactly what the
+                    Kubernetes Security card defends — least-privilege RBAC, Pod Security Standards
+                    (no privileged/hostPath), network policies, and audit logging.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎭</span>
+              <span class="topic-name">Cloud Credential Attacks &amp; the Purple-Team Bridge</span>
+              <span class="topic-badge">Cloud Offense</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">SSRF → Metadata → Role, and Closing the Loop</div>
+                <div class="concept-desc">
+                  The signature cloud breach chain: an app-layer <strong class="c-cyan">SSRF</strong>
+                  is used to reach the <strong>instance metadata service (IMDS)</strong>, steal the
+                  attached role's temporary credentials, then pivot with those creds. Understanding
+                  it is what lets red and blue close the loop together (purple teaming).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>Defense</th></tr>
+                    <tr><td class="c-cyan">SSRF in the app</td><td>Fix the vuln; validate/deny internal URLs</td></tr>
+                    <tr><td class="c-cyan">Hit IMDS for creds</td><td class="c-green">Enforce IMDSv2 (session-token, blocks basic SSRF)</td></tr>
+                    <tr><td class="c-cyan">Use stolen role creds</td><td>Least privilege; detect creds used off-instance (GuardDuty)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Purple team:</strong> the red team demonstrates the chain
+                    against ATT&amp;CK; the blue team confirms each step is detected/blocked (IMDSv2,
+                    CSPM, GuardDuty). That collaboration — offense proving, defense hardening — is the
+                    whole point of pairing these two domains.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body redteam -->

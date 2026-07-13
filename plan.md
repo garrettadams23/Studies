@@ -369,18 +369,18 @@ Tool reference cards, grouped by kill-chain stage. ~9 waves, ~50 cards.
 - [ ] Proxmark3 & HackRF — RFID cloning & software-defined radio
 
 **Wave R8 — Post-exploitation, evasion & LOLBins**
-- [ ] Living off the Land — LOLBAS / GTFOBins (built-ins as weapons)
-- [ ] Privilege escalation scanners — linPEAS / winPEAS / PowerUp
-- [ ] AMSI & AV/EDR evasion — concepts, obfuscation, why it works (defensive lens)
-- [ ] Pivoting & tunneling — Chisel, ligolo-ng, SSH/socks, proxychains
-- [ ] Data exfil channels — DNS/ICMP/HTTPS tunneling (detection notes)
+- [x] Living off the Land — LOLBAS / GTFOBins (built-ins as weapons)
+- [x] Privilege escalation scanners — linPEAS / winPEAS / PowerUp
+- [x] AMSI & AV/EDR evasion — concepts, obfuscation, why it works (defensive lens)
+- [x] Pivoting & tunneling — Chisel, ligolo-ng, SSH/socks, proxychains
+- [x] Data exfil channels — DNS/ICMP/HTTPS tunneling (detection notes)
 
 **Wave R9 — Cloud & container offense**
-- [ ] Pacu — the AWS exploitation framework
-- [ ] CloudFox & enumerate-iam — cloud attack-surface enumeration
-- [ ] Kubernetes attacks — kube-hunter, RBAC abuse, container escape
-- [ ] Cloud credential attacks — SSRF→IMDS, key theft, role chaining
-- [ ] Purple-team bridge — mapping the above to ATT&CK & detections
+- [x] Pacu — the AWS exploitation framework
+- [x] CloudFox & enumerate-iam — cloud attack-surface enumeration
+- [x] Kubernetes attacks — kube-hunter, RBAC abuse, container escape
+- [x] Cloud credential attacks — SSRF→IMDS, key theft, role chaining
+- [x] Purple-team bridge — mapping the above to ATT&CK & detections
 
 ---
 
