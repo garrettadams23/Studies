@@ -539,8 +539,8 @@ Lower priority than R/B/C but each fills a real gap; interleave as desired.
 - [x] LLM evaluation & guardrails · Diffusion models (how image gen works)
 
 **Data (`script`/`ai`)**
-- [ ] Apache Kafka (deep) · Spark · Airflow/Dagster · dbt
-- [ ] Dimensional modeling — star/snowflake schemas, slowly-changing dimensions
+- [x] Apache Kafka (deep) · Spark · Airflow/Dagster · dbt
+- [x] Dimensional modeling — star/snowflake schemas, slowly-changing dimensions
 
 **Productivity (`shortcut`)**
 - [ ] VS Code · Vim (deep) · modern CLI tools (ripgrep, fzf, bat, jq, eza)

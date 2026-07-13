@@ -35896,6 +35896,181 @@ may break at any time.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌊</span>
+<span class="topic-name">Apache Kafka — The Distributed Event Log</span>
+<span class="topic-badge">Data Eng</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Backbone of Streaming Data</div>
+<div class="concept-desc">
+<strong class="c-cyan">Kafka</strong> is a durable, distributed
+<strong>append-only log</strong>. Producers write events to topics; consumers read
+at their own pace. Because the log is retained and replayable, it decouples systems
+and underpins event-driven architectures.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Topic / partition</td><td>A stream, split into ordered partitions for parallelism</td></tr>
+<tr><td class="c-cyan">Offset</td><td>A consumer's position in a partition — replay by rewinding</td></tr>
+<tr><td class="c-cyan">Consumer group</td><td>Consumers share partitions to scale out</td></tr>
+<tr><td class="c-cyan">Retention</td><td>Keep events for days/forever — the log is the source of truth</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">vs a queue:</strong> a classic queue deletes on read;
+Kafka keeps the log so many consumers replay independently. It's the practical
+engine behind Event Sourcing, CQRS, and the Outbox pattern (ties to the
+engineering cards).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">✨</span>
+<span class="topic-name">Apache Spark — Big-Data Processing</span>
+<span class="topic-badge">Data Eng</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Compute Across a Cluster, in Memory</div>
+<div class="concept-desc">
+<strong class="c-cyan">Spark</strong> processes datasets too big for one machine by
+distributing the work across a cluster and keeping data in memory. You write
+DataFrame/SQL code; Spark plans and parallelizes it.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># PySpark: read, aggregate, write — runs distributed</span>
+df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span class="str">"s3://data/events/"</span>)
+(df.<span class="fn">groupBy</span>(<span class="str">"country"</span>)
+   .<span class="fn">count</span>()
+   .<span class="fn">write</span>.<span class="fn">parquet</span>(<span class="str">"s3://out/by_country/"</span>))</pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">DataFrame / Spark SQL</td><td>The high-level API most people use</td></tr>
+<tr><td class="c-cyan">Lazy + DAG</td><td>Transformations build a plan; actions trigger execution</td></tr>
+<tr><td class="c-cyan">Structured Streaming</td><td>Same API for batch &amp; streaming</td></tr>
+<tr><td class="c-cyan">Databricks</td><td>The managed commercial platform</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">When:</strong> data outgrows pandas/one box. For smaller
+data, single-node tools (DuckDB, Polars) are simpler and often faster — don't
+reach for a cluster you don't need.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗓️</span>
+<span class="topic-name">Orchestration — Airflow &amp; Dagster</span>
+<span class="topic-badge">Data Eng</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Scheduling &amp; Wiring Data Pipelines</div>
+<div class="concept-desc">
+Data pipelines are graphs of dependent tasks ("load, then transform, then report").
+Orchestrators schedule them, handle retries and backfills, and show you what failed
+and why.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Model</th></tr>
+<tr><td class="c-cyan">Airflow</td><td>The incumbent — Python DAGs of tasks; huge operator ecosystem</td></tr>
+<tr><td class="c-cyan">Dagster</td><td>Asset-oriented — declare the data assets, it derives the graph</td></tr>
+<tr><td class="c-cyan">Prefect</td><td>Pythonic, dynamic flows; lighter than Airflow</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Key features:</strong> a DAG (no cycles), scheduling,
+retries, and <strong>backfills</strong> (re-run history after a fix).
+Asset-based tools (Dagster) shift thinking from "run these tasks" to "produce
+these datasets," which maps better to lineage and data quality.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔧</span>
+<span class="topic-name">dbt &amp; the Modern Data Stack</span>
+<span class="topic-badge">Data Eng</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Software Engineering for SQL</div>
+<div class="concept-desc">
+<strong class="c-cyan">dbt</strong> brought engineering discipline to analytics: you
+write transformations as version-controlled SQL <code>SELECT</code>s (models), and
+dbt handles dependencies, testing, and documentation — all running inside your
+warehouse.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">ELT (not ETL)</td><td>Load raw first, transform in the warehouse (Snowflake/BigQuery)</td></tr>
+<tr><td class="c-cyan">Models</td><td>A SQL SELECT = a table/view; <code>ref()</code> builds the DAG</td></tr>
+<tr><td class="c-cyan">Tests &amp; docs</td><td>Assert not-null/unique; auto-generate a data catalog</td></tr>
+<tr><td class="c-cyan">The stack</td><td>Fivetran/Airbyte (ingest) → warehouse → dbt → BI (Looker)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Why it stuck:</strong> analytics code gets Git, code
+review, CI, and tests — treating pipelines like software. ELT works because cloud
+warehouses are cheap and powerful enough to transform in place.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⭐</span>
+<span class="topic-name">Dimensional Modeling — Star &amp; Snowflake Schemas</span>
+<span class="topic-badge">Data Eng</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Designing a Warehouse for Analytics</div>
+<div class="concept-desc">
+Transactional (OLTP) schemas are normalized for writes; analytics (OLAP) wants fast
+aggregation over huge tables. <strong class="c-cyan">Dimensional modeling</strong>
+(Kimball) organizes data into facts and dimensions for exactly that.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Fact table</td><td>The measurements/events (sales, clicks) — long &amp; numeric</td></tr>
+<tr><td class="c-cyan">Dimension table</td><td>The context (date, product, customer) — descriptive</td></tr>
+<tr><td class="c-cyan">Star schema</td><td>Facts in the center, dimensions around — few joins, fast</td></tr>
+<tr><td class="c-cyan">Snowflake</td><td>Dimensions further normalized — less duplication, more joins</td></tr>
+<tr><td class="c-cyan">SCD (Type 2)</td><td>Track history when a dimension changes (keep old rows)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Slowly Changing Dimensions</strong> answer "what was the
+customer's tier <em>when</em> they bought?" — Type 2 keeps versioned rows so
+history stays accurate. Star schemas are the default; snowflake only when storage
+or governance demands it.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body script -->
 </div>
 </div>
