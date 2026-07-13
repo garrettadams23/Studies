@@ -559,4 +559,483 @@
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">✍️</span>
+              <span class="topic-name">Clean Code &amp; Naming</span>
+              <span class="topic-badge">Craft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Code Is Read Far More Than It's Written</div>
+                <div class="concept-desc">
+                  You write a line once; it's read dozens of times over its life. Clean code
+                  optimizes for the reader — clarity beats cleverness. The highest-leverage skill is
+                  <strong class="c-cyan">naming</strong>: a good name removes the need for a comment.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Principle</th><th>Detail</th></tr>
+                    <tr><td class="c-green">Intention-revealing names</td><td><code>elapsedDays</code> &gt; <code>d</code>; say what it is</td></tr>
+                    <tr><td class="c-green">Small functions</td><td>Do one thing; a screenful is a smell</td></tr>
+                    <tr><td class="c-green">Few arguments</td><td>0–2 ideal; many args hint at a missing object</td></tr>
+                    <tr><td class="c-green">No surprises</td><td>A function does exactly what its name says, nothing hidden</td></tr>
+                    <tr><td class="c-amber">Comments explain why</td><td>Not what — the code shows what; comments justify the non-obvious</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The <strong class="c-green">Boy Scout Rule</strong>: leave the code a little
+                    cleaner than you found it. Small, constant improvements beat big rewrites.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">👀</span>
+              <span class="topic-name">Code Review — Doing It Well</span>
+              <span class="topic-badge">Craft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Highest-ROI Quality Practice</div>
+                <div class="concept-desc">
+                  Review catches bugs, spreads knowledge, and keeps a codebase coherent — but only
+                  if done with care. Bad reviews (nitpicky, slow, ego-driven) poison a team; good
+                  ones make everyone better.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>As reviewer</th><th>As author</th></tr>
+                    <tr><td class="c-green">Review promptly (unblock people)</td><td>Keep PRs small &amp; focused</td></tr>
+                    <tr><td class="c-green">Comment on the code, not the person</td><td>Explain the "why" in the description</td></tr>
+                    <tr><td class="c-green">Distinguish must-fix from nit (label it)</td><td>Respond to every comment</td></tr>
+                    <tr><td class="c-green">Ask questions, don't demand</td><td>Don't take feedback personally</td></tr>
+                    <tr><td class="c-green">Approve when good enough, not perfect</td><td>Let the machine catch style (linters)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Automate the boring parts (formatting, lint, tests in CI) so humans review what
+                    matters: correctness, design, edge cases, and clarity.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧪</span>
+              <span class="topic-name">Testing Strategy — The Test Pyramid</span>
+              <span class="topic-badge">Craft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Many Fast Tests, Few Slow Ones</div>
+                <div class="concept-desc">
+                  The <strong class="c-cyan">test pyramid</strong> guides how to balance test types:
+                  lots of fast unit tests at the base, fewer integration tests, and a thin layer of
+                  slow end-to-end tests on top. Invert it (mostly E2E) and your suite is slow,
+                  flaky, and brittle — the dreaded "ice-cream cone."
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Level</th><th>Tests</th><th>Trait</th></tr>
+                    <tr><td class="c-green">Unit (many)</td><td>One function/class in isolation</td><td>Fast, precise, cheap</td></tr>
+                    <tr><td class="c-cyan">Integration (some)</td><td>Components together (DB, API)</td><td>Slower, more realistic</td></tr>
+                    <tr><td class="c-amber">E2E (few)</td><td>The whole system as a user</td><td>Slow, flaky, high-value paths only</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">TDD</strong> (write the test first) drives better design
+                    and guarantees coverage; <strong class="c-green">BDD</strong> frames tests as
+                    behavior ("given/when/then"). Aim to test <em>behavior</em>, not implementation,
+                    so refactors don't break the suite.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">💳</span>
+              <span class="topic-name">Technical Debt — Recognize &amp; Pay It Down</span>
+              <span class="topic-badge">Craft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Borrowing Speed Now Against Effort Later</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Technical debt</strong> is the implied future cost of a
+                  quick-and-dirty choice. Like financial debt, a little is a useful tool (ship now,
+                  fix later); too much, unmanaged, and the "interest" — slower changes, more bugs —
+                  eventually consumes all your capacity.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Type</th><th>Example</th></tr>
+                    <tr><td class="c-amber">Deliberate</td><td>"We'll hardcode this to hit the deadline" (fine, if tracked)</td></tr>
+                    <tr><td class="c-red">Accidental</td><td>Learned a better design too late; code lagging behind understanding</td></tr>
+                    <tr><td class="c-red">Bit rot</td><td>Dependencies age, the world changes, code decays</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Manage it:</strong> make it visible (a backlog, not
+                    tribal knowledge), pay it down opportunistically (Boy Scout Rule) plus dedicated
+                    time, and prioritize debt in code you touch often. Debt in a stable, untouched
+                    corner rarely matters.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📝</span>
+              <span class="topic-name">ADRs &amp; Design Docs</span>
+              <span class="topic-badge">Craft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Write Down the Decision and the Why</div>
+                <div class="concept-desc">
+                  Six months later, no one remembers <em>why</em> the team chose Postgres over Mongo,
+                  and the reasoning gets re-litigated. An <strong class="c-cyan">Architecture Decision
+                  Record (ADR)</strong> is a short doc capturing one decision: the context, the
+                  options, the choice, and the consequences. A <strong class="c-cyan">design doc</strong>
+                  (or RFC) does the same before building something significant.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Artifact</th><th>Purpose</th></tr>
+                    <tr><td class="c-cyan">ADR</td><td>1-page record of a single decision (context/options/decision/consequences)</td></tr>
+                    <tr><td class="c-cyan">Design doc / RFC</td><td>Propose &amp; get feedback before building; align the team</td></tr>
+                    <tr><td class="c-cyan">C4 model</td><td>Diagrams at 4 zoom levels: Context, Container, Component, Code</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Keep them short and in the repo (version-controlled next to the code). The value
+                    is the <em>trail of reasoning</em> — it onboards new people and stops old debates
+                    from restarting.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔌</span>
+              <span class="topic-name">Resilience Patterns — Circuit Breaker, Retry &amp; Timeout</span>
+              <span class="topic-badge">Reliability</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Stop One Failure From Cascading</div>
+                <div class="concept-desc">
+                  In a distributed system, one slow or dead dependency can drag down everything that
+                  calls it — threads pile up waiting, and the failure cascades. Resilience patterns
+                  contain that at every remote call.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pattern</th><th>Protects against</th></tr>
+                    <tr><td class="c-cyan">Timeout</td><td>Waiting forever on a hung dependency</td></tr>
+                    <tr><td class="c-cyan">Retry + backoff + jitter</td><td>Transient blips — but back off so you don't stampede</td></tr>
+                    <tr><td class="c-cyan">Circuit breaker</td><td>A failing dependency — "trip open" and fail fast instead of hammering it</td></tr>
+                    <tr><td class="c-cyan">Bulkhead</td><td>One overloaded feature sinking the rest (isolate resource pools)</td></tr>
+                    <tr><td class="c-cyan">Fallback</td><td>Degrade gracefully — cached/default response over an error</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-red">Careful with retries:</strong> naive retries during an
+                    outage create a <em>retry storm</em> that keeps the dependency down. Always pair
+                    retries with backoff, jitter, and a circuit breaker; only retry idempotent
+                    operations.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">💰</span>
+              <span class="topic-name">Distributed Transactions — Saga &amp; Outbox</span>
+              <span class="topic-badge">Reliability</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Consistency Across Services Without 2PC</div>
+                <div class="concept-desc">
+                  When a business action spans multiple services/databases (place order → charge
+                  card → reserve stock), you can't wrap it in one ACID transaction. Two-phase commit
+                  (2PC) technically can, but it's slow and fragile — so modern systems avoid it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pattern</th><th>How</th></tr>
+                    <tr><td class="c-cyan">Saga</td><td>A sequence of local transactions; on failure, run <strong>compensating</strong> actions to undo</td></tr>
+                    <tr><td class="c-cyan">Outbox</td><td>Write state + the "event to publish" in one local transaction, so the event can't be lost</td></tr>
+                    <tr><td class="c-red">2PC</td><td>Coordinator locks all participants to commit atomically — avoided at scale (blocking, SPOF)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Sagas trade atomicity for availability: the system is briefly inconsistent, then
+                    converges (or compensates). "Charge failed → cancel the order" is a compensating
+                    transaction. Pair with idempotency (E3) so retried steps are safe.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🌊</span>
+              <span class="topic-name">Backpressure &amp; Flow Control</span>
+              <span class="topic-badge">Reliability</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Don't Accept More Than You Can Handle</div>
+                <div class="concept-desc">
+                  When work arrives faster than a system can process it, unbounded queues grow until
+                  memory runs out and everything crashes. <strong class="c-cyan">Backpressure</strong>
+                  is the system signaling "slow down" upstream, so load is shed or throttled rather
+                  than silently piling up.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>Detail</th></tr>
+                    <tr><td class="c-green">Bounded queues</td><td>Fixed size; reject/block when full instead of growing forever</td></tr>
+                    <tr><td class="c-green">Load shedding</td><td>Drop low-priority work under overload (protect the core)</td></tr>
+                    <tr><td class="c-green">Rate limiting</td><td>Cap intake at a sustainable rate (token bucket)</td></tr>
+                    <tr><td class="c-green">Reactive streams</td><td>Consumer signals demand to the producer (pull, not push)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The counter-intuitive lesson: a system that <strong class="c-green">rejects</strong>
+                    excess load cleanly stays up; one that politely accepts everything falls over.
+                    Fail fast, shed early.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎛️</span>
+              <span class="topic-name">Consistency in Practice — Quorums &amp; Tunable Reads</span>
+              <span class="topic-badge">Reliability</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Dialing the CAP Trade-off Per Operation</div>
+                <div class="concept-desc">
+                  The CAP theorem is abstract; in practice distributed databases give you knobs.
+                  With <strong class="c-cyan">quorums</strong>, a value is written to/read from a
+                  <em>majority</em> of replicas — and by tuning how many must respond (W + R &gt; N),
+                  you choose consistency vs latency <em>per query</em>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Term</th><th>Meaning</th></tr>
+                    <tr><td class="c-cyan">N / W / R</td><td>Replicas / write acks required / read acks required</td></tr>
+                    <tr><td class="c-green">W + R &gt; N</td><td>Guarantees a read sees the latest write (strong)</td></tr>
+                    <tr><td class="c-amber">Low W, low R</td><td>Fast + available, but reads may be stale (eventual)</td></tr>
+                    <tr><td class="c-cyan">Read repair / anti-entropy</td><td>Replicas reconcile in the background</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    So a shopping-cart read can be fast-and-eventual (low R) while the final
+                    checkout uses a strong quorum — the same store, tuned per operation. This is how
+                    Dynamo-style systems make CAP practical (ties to the CAP Theorem topic).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🪜</span>
+              <span class="topic-name">The Engineering Ladder — Junior to Principal</span>
+              <span class="topic-badge">Career</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What Changes as You Level Up</div>
+                <div class="concept-desc">
+                  Seniority isn't about writing more code — it's about the <strong class="c-cyan">scope
+                  of impact</strong> and how much ambiguity you can absorb. The ladder describes a
+                  widening blast radius of responsibility.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Level</th><th>Scope</th></tr>
+                    <tr><td class="c-cyan">Junior</td><td>Completes well-defined tasks with guidance</td></tr>
+                    <tr><td class="c-cyan">Mid</td><td>Owns features end-to-end independently</td></tr>
+                    <tr><td class="c-cyan">Senior</td><td>Owns systems; mentors; handles ambiguity within a team</td></tr>
+                    <tr><td class="c-cyan">Staff</td><td>Impact across multiple teams; sets technical direction</td></tr>
+                    <tr><td class="c-cyan">Principal+</td><td>Org/company-wide technical strategy</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The shift from senior → staff is the big one: from "I solve hard problems" to
+                    "I make <em>other</em> teams more effective" — via influence, not authority.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⭐</span>
+              <span class="topic-name">Staff+ Archetypes</span>
+              <span class="topic-badge">Career</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">There's No Single "Staff Engineer"</div>
+                <div class="concept-desc">
+                  Will Larson's <em>Staff Engineer</em> identifies four common shapes the role takes.
+                  Knowing them helps you play to your strengths and recognize the kind of senior
+                  leadership your org needs.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Archetype</th><th>Does</th></tr>
+                    <tr><td class="c-cyan">Tech Lead</td><td>Guides a team's execution on a specific area</td></tr>
+                    <tr><td class="c-cyan">Architect</td><td>Owns direction for a critical domain across teams</td></tr>
+                    <tr><td class="c-cyan">Solver</td><td>Parachutes into the gnarliest problems</td></tr>
+                    <tr><td class="c-cyan">Right Hand</td><td>Extends a senior leader's reach across the org</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    All four share the staff-level core: technical judgment, cross-team influence,
+                    and moving the org forward — not just shipping personal code.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🍴</span>
+              <span class="topic-name">Tech Lead vs Engineering Manager</span>
+              <span class="topic-badge">Career</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Fork in the Senior Road</div>
+                <div class="concept-desc">
+                  Around senior level, careers often fork into two tracks — both leadership, but
+                  different work. Good orgs value them equally; the mistake is assuming management
+                  is "up" and IC is "stuck."
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>IC / Tech Lead track</th><th>Management track</th></tr>
+                    <tr><td>Leads through</td><td>Technical influence &amp; design</td><td>People, process, delivery</td></tr>
+                    <tr><td>Spends time on</td><td>Architecture, hard problems, mentoring</td><td>1:1s, hiring, coordination, careers</td></tr>
+                    <tr><td>Measured by</td><td>Technical outcomes &amp; leverage</td><td>Team health &amp; throughput</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    You can switch tracks (and back) — many do. Choose based on what energizes you:
+                    solving technical problems, or growing people and systems. Neither is superior.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📣</span>
+              <span class="topic-name">Influence Without Authority</span>
+              <span class="topic-badge">Career</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Skill That Defines Senior+ Engineers</div>
+                <div class="concept-desc">
+                  Past a certain level, your impact depends on getting <em>other</em> people and
+                  teams — whom you don't manage — to align on technical direction. That's done
+                  through credibility, clear writing, and trust, not org-chart power.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Lever</th><th>Detail</th></tr>
+                    <tr><td class="c-green">Write it down</td><td>An RFC/design doc scales your idea &amp; invites input</td></tr>
+                    <tr><td class="c-green">Build credibility</td><td>Ship, help others, be right consistently</td></tr>
+                    <tr><td class="c-green">Frame in their terms</td><td>Tie your proposal to what stakeholders care about</td></tr>
+                    <tr><td class="c-green">Disagree &amp; commit</td><td>Argue hard, then support the decision fully</td></tr>
+                    <tr><td class="c-green">Give credit</td><td>Trust compounds; hoarding credit destroys it</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The best technical idea loses to a well-communicated mediocre one. Learning to
+                    write and persuade is as much a "senior engineering skill" as system design.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎓</span>
+              <span class="topic-name">Cert Roadmaps — Choosing a Path</span>
+              <span class="topic-badge">Career</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">A Study Order for the Big Tracks</div>
+                <div class="concept-desc">
+                  Certs won't make you an engineer, but they structure learning and clear HR filters.
+                  Pick a track that matches your goal and work up it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Track</th><th>Path</th></tr>
+                    <tr><td class="c-cyan">IT foundations</td><td>A+ → Network+ → Security+</td></tr>
+                    <tr><td class="c-cyan">Blue team</td><td>Security+ → CySA+ → (GCIH/GCIA) → CISSP</td></tr>
+                    <tr><td class="c-cyan">Red team</td><td>Security+ → PenTest+ → OSCP → (OSEP/CRTO)</td></tr>
+                    <tr><td class="c-cyan">Cloud (AWS)</td><td>Cloud Practitioner → Solutions Architect Assoc → Security Specialty</td></tr>
+                    <tr><td class="c-cyan">Cloud (GCP)</td><td>Cloud Digital Leader → Associate Cloud Engineer → Professional Architect</td></tr>
+                    <tr><td class="c-cyan">Management</td><td>PMP / CISM for leadership tracks</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    The whole site maps to these — this reference domain (Red/Blue/Cloud/Engineering)
+                    is effectively a study companion for the tracks above.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body eng -->
