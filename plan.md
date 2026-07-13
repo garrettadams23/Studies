@@ -612,14 +612,14 @@ Blue-team detection note.
 - [x] Clean / Hexagonal / Ports & Adapters — keeping business logic independent
 - [x] CQRS & Event Sourcing — read/write split, the append-only log
 - [x] The Twelve-Factor App — the checklist for cloud-native services
-- [ ] Cloud-Native & Serverless architecture patterns
+- [x] Cloud-Native & Serverless architecture patterns
 
 **Wave E3 — Domain Modeling & Design**
 - [ ] Domain-Driven Design (DDD) — bounded contexts, ubiquitous language, aggregates
 - [ ] SOLID Principles — deep card with examples of each
 - [ ] Coupling & Cohesion — Law of Demeter, dependency direction
 - [ ] API-First & Contract-Driven design — OpenAPI, consumer-driven contracts
-- [ ] Schema & data modeling patterns — normalization trade-offs, polyglot persistence
+- [x] Schema & data modeling patterns — normalization trade-offs, polyglot persistence
 
 **Wave E4 — Engineering Craft & Quality**
 - [ ] Clean Code & Naming — deep (functions, comments, structure)
@@ -639,9 +639,9 @@ Blue-team detection note.
 - [ ] The Engineering Ladder — junior → mid → senior → staff → principal
 - [ ] Staff+ Archetypes — tech lead, architect, solver, right-hand
 - [ ] Tech Lead vs Engineering Manager — the fork in the road
-- [ ] Estimation & Planning — story points, velocity, why estimates are hard
+- [x] Estimation & Planning — story points, velocity, why estimates are hard
 - [ ] Influence Without Authority — RFCs, stakeholder comms, driving alignment
-- [ ] Career Ladders & Interviews — leveling, system-design & coding interview prep
+- [x] Career Ladders & Interviews — leveling, system-design & coding interview prep
 
 ---
 
@@ -701,8 +701,8 @@ Blue-team detection note.
 **Wave G2 — Remote & Containerized Dev**
 - [ ] Remote Development — Remote-SSH, WSL, and how the client/server split works
 - [ ] Dev Containers — devcontainer.json, reproducible per-project toolchains
-- [ ] GitHub Codespaces & cloud dev environments
-- [ ] Live Share — real-time collaborative editing & debugging
+- [x] GitHub Codespaces & cloud dev environments
+- [x] Live Share — real-time collaborative editing & debugging
 
 **Wave G3 — The Modern Dev Environment**
 - [ ] Dotfiles & Config Management — chezmoi/stow, version-controlled setup
