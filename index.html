@@ -16925,6 +16925,148 @@ a low change-failure rate — the two DORA goals reconciled.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🐳</span>
+<span class="topic-name">Docker Deep — Multi-Stage Builds &amp; Image Slimming</span>
+<span class="topic-badge">DevOps</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">How-To</div>
+<div class="concept-title">Small, Fast, Secure Images</div>
+<div class="concept-desc">
+A naive Dockerfile produces bloated, slow, insecure images. Two techniques fix
+most of it: <strong class="c-cyan">multi-stage builds</strong> (build in a fat
+image, copy only the artifact into a tiny final image) and
+<strong class="c-cyan">layer caching</strong> (order instructions so dependencies
+cache across builds).
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Stage 1: build</span>
+<span class="kw">FROM</span> golang:1.22 <span class="kw">AS</span> build
+<span class="kw">WORKDIR</span> /src
+<span class="kw">COPY</span> go.* ./
+<span class="kw">RUN</span> go mod download        <span class="com"># cached unless go.* changes</span>
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> go build -o /app
+
+<span class="com"># Stage 2: tiny runtime — just the binary</span>
+<span class="kw">FROM</span> gcr.io/distroless/base
+<span class="kw">COPY</span> --from=build /app /app
+<span class="kw">ENTRYPOINT</span> [<span class="str">"/app"</span>]</pre>
+<table class="ref-table" style="margin-top:10px">
+<tr><th>Technique</th><th>Win</th></tr>
+<tr><td>Multi-stage</td><td>MB-sized final image, no build tools shipped</td></tr>
+<tr><td>Distroless / Alpine</td><td>Minimal base = smaller attack surface</td></tr>
+<tr><td>Layer order</td><td>Copy deps before source → fast rebuilds</td></tr>
+<tr><td>Non-root USER</td><td>Don't run containers as root</td></tr>
+<tr><td>.dockerignore</td><td>Keep secrets/junk out of the build context</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">☸️</span>
+<span class="topic-name">Kubernetes Objects — The Ones You Actually Use</span>
+<span class="topic-badge">DevOps</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Building Blocks of a Deployment</div>
+<div class="concept-desc">
+Kubernetes has dozens of object types, but day-to-day you use a handful. They
+compose: a Deployment manages Pods; a Service gives them a stable address; an
+Ingress routes external traffic in.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Object</th><th>Role</th></tr>
+<tr><td class="c-cyan">Pod</td><td>The smallest unit — one or more containers sharing network/storage</td></tr>
+<tr><td class="c-cyan">Deployment</td><td>Manages a replicated, self-healing set of Pods + rolling updates</td></tr>
+<tr><td class="c-cyan">Service</td><td>Stable virtual IP/DNS load-balancing to a set of Pods</td></tr>
+<tr><td class="c-cyan">Ingress</td><td>HTTP(S) routing from outside into Services</td></tr>
+<tr><td class="c-cyan">ConfigMap / Secret</td><td>Config &amp; credentials injected into Pods</td></tr>
+<tr><td class="c-cyan">StatefulSet</td><td>Pods with stable identity/storage (databases)</td></tr>
+<tr><td class="c-cyan">Namespace</td><td>Virtual cluster for isolation/multi-tenancy</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+Everything is <strong class="c-green">declarative YAML</strong> reconciled to
+desired state — you describe what you want; the controllers make it so
+(<code>kubectl apply -f</code>).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⎈</span>
+<span class="topic-name">Helm &amp; Kustomize — Packaging Manifests</span>
+<span class="topic-badge">DevOps</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Stop Copy-Pasting YAML Per Environment</div>
+<div class="concept-desc">
+Raw manifests don't scale across dev/staging/prod. Two tools solve it differently:
+<strong class="c-cyan">Helm</strong> templates manifests with variables into
+reusable "charts" (the K8s package manager); <strong class="c-cyan">Kustomize</strong>
+layers <em>overlays</em> that patch a common base — no templating language.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>Helm</th><th>Kustomize</th></tr>
+<tr><td>Approach</td><td>Templating + values.yaml</td><td>Base + overlay patches</td></tr>
+<tr><td>Packaging</td><td class="c-green">Charts, repos, releases, rollback</td><td>No packaging</td></tr>
+<tr><td>Complexity</td><td>Powerful but templating can get gnarly</td><td class="c-green">Simple, YAML-native (built into kubectl)</td></tr>
+<tr><td>Best for</td><td>Distributing apps (Postgres, nginx)</td><td>Your own app across environments</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔒</span>
+<span class="topic-name">Kubernetes Security — RBAC, Network Policies &amp; Pod Security</span>
+<span class="topic-badge">DevOps</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">A Cluster Is Insecure by Default</div>
+<div class="concept-desc">
+Out of the box, K8s is permissive — pods can talk to everything, run as root, and
+service accounts may be over-privileged. Hardening is a checklist every production
+cluster needs.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Control</th><th>Does</th></tr>
+<tr><td class="c-green">RBAC</td><td>Least-privilege for users &amp; service accounts (who can do what)</td></tr>
+<tr><td class="c-green">Network Policies</td><td>Default-deny pod-to-pod traffic; allow only what's needed</td></tr>
+<tr><td class="c-green">Pod Security Standards</td><td>Block root, privileged, host mounts (restricted profile)</td></tr>
+<tr><td class="c-green">Admission control</td><td>OPA/Gatekeeper, Kyverno enforce policy at deploy time</td></tr>
+<tr><td class="c-green">Image scanning</td><td>Trivy/Grype in CI; only signed images (see supply chain)</td></tr>
+<tr><td class="c-green">Secrets</td><td>Encrypt at rest (etcd); external secrets operators</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+This is where the Red Team's "Kubernetes attacks" meet defense — RBAC abuse and
+container escape are exactly what these controls stop.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->
 <!-- /domain-body ops -->
