@@ -44436,6 +44436,166 @@ with Atomic) keeps quality high.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧠</span>
+<span class="topic-name">Volatility — Memory Forensics</span>
+<span class="topic-badge">DFIR</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">RAM Holds What Disk Never Sees</div>
+<div class="concept-desc">
+Malware runs in memory — decrypted payloads, injected code, live network
+connections, and cached credentials that never touch disk.
+<strong class="c-cyan">Volatility</strong> (v3) analyzes a RAM capture to
+reconstruct exactly what a machine was doing at the moment of capture. It's the
+cornerstone of incident response.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="fn">vol</span> -f mem.raw windows.pslist        <span class="com"># running processes</span>
+<span class="fn">vol</span> -f mem.raw windows.pstree        <span class="com"># parent/child tree (spot odd chains)</span>
+<span class="fn">vol</span> -f mem.raw windows.netscan       <span class="com"># network connections (C2)</span>
+<span class="fn">vol</span> -f mem.raw windows.malfind       <span class="com"># injected/hidden code</span>
+<span class="fn">vol</span> -f mem.raw windows.cmdline       <span class="com"># process command lines</span></pre>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Workflow:</strong> pslist/pstree to spot anomalies →
+malfind for injection → netscan for C2 → dump the suspect process for deeper
+analysis. Capture memory <em>before</em> pulling the plug — it's volatile
+(order-of-volatility rule).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">💽</span>
+<span class="topic-name">Autopsy &amp; The Sleuth Kit — Disk Forensics</span>
+<span class="topic-badge">DFIR</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Investigate a Disk Image, File by File</div>
+<div class="concept-desc">
+<strong class="c-cyan">The Sleuth Kit (TSK)</strong> is the CLI engine;
+<strong class="c-cyan">Autopsy</strong> is its GUI. Together they analyze a
+forensic disk image — recovering deleted files, building timelines, carving
+artifacts, and hashing everything — without altering the original evidence.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Capability</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Deleted-file recovery</td><td>Recover files still in unallocated space</td></tr>
+<tr><td class="c-cyan">File carving</td><td>Rebuild files from raw bytes by signature</td></tr>
+<tr><td class="c-cyan">Timeline</td><td>MAC times (modified/accessed/created) across the FS</td></tr>
+<tr><td class="c-cyan">Keyword &amp; hash search</td><td>Find IOCs; flag known-bad by hash</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Always work on a <strong class="c-green">write-blocked copy</strong> and verify
+the image hash matches the original — evidence integrity is everything.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⏱️</span>
+<span class="topic-name">KAPE &amp; plaso — Triage &amp; Super-Timelines</span>
+<span class="topic-badge">DFIR</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Fast Collection, Then a Unified Timeline</div>
+<div class="concept-desc">
+Full disk imaging is slow; often you need answers now.
+<strong class="c-cyan">KAPE</strong> rapidly collects just the high-value forensic
+artifacts (registry, event logs, prefetch, browser history) from a live or imaged
+system. <strong class="c-cyan">plaso/log2timeline</strong> then merges everything
+into one chronological <strong>super-timeline</strong> — the single most useful
+artifact in an investigation.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Role</th></tr>
+<tr><td class="c-cyan">KAPE</td><td>Targeted artifact collection + modules to parse them</td></tr>
+<tr><td class="c-cyan">plaso (log2timeline)</td><td>Combine all timestamped artifacts into one timeline</td></tr>
+<tr><td class="c-cyan">Timeline Explorer</td><td>Filter/pivot the resulting mega-CSV</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The timeline answers the core IR question: <strong class="c-green">what happened,
+in what order?</strong> — from initial access to persistence to exfil.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗂️</span>
+<span class="topic-name">Windows Forensic Artifacts</span>
+<span class="topic-badge">DFIR</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Where Windows Records "This Ran"</div>
+<div class="concept-desc">
+Windows silently records evidence of execution and access all over the OS.
+Knowing these artifacts is what lets an examiner prove a program ran even when
+the attacker deleted it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Artifact</th><th>Proves</th></tr>
+<tr><td class="c-cyan">Prefetch</td><td>A program executed (and when/how often)</td></tr>
+<tr><td class="c-cyan">ShimCache / AmCache</td><td>Program presence/execution (even if deleted)</td></tr>
+<tr><td class="c-cyan">$MFT / $J (USN journal)</td><td>File creation/deletion/rename history</td></tr>
+<tr><td class="c-cyan">Registry (Run keys, Services)</td><td>Persistence mechanisms</td></tr>
+<tr><td class="c-cyan">SRUM</td><td>App resource/network usage over time</td></tr>
+<tr><td class="c-cyan">Jump Lists / LNK / Shellbags</td><td>Files &amp; folders a user opened</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⚖️</span>
+<span class="topic-name">Chain of Custody &amp; Evidence Handling</span>
+<span class="topic-badge">DFIR</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Procedure</div>
+<div class="concept-title">Evidence That Holds Up in Court</div>
+<div class="concept-desc">
+If findings might lead to legal action, <em>how</em> you handle evidence matters as
+much as what you find. Mishandled evidence is inadmissible — the process is as
+important as the tools.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Principle</th><th>Detail</th></tr>
+<tr><td class="c-green">Order of volatility</td><td>Collect most-volatile first: RAM → network state → disk → archives</td></tr>
+<tr><td class="c-green">Write-blocking</td><td>Never alter the original; image it, work on copies</td></tr>
+<tr><td class="c-green">Hashing</td><td>Hash on acquisition &amp; verify — proves the evidence is unchanged</td></tr>
+<tr><td class="c-green">Chain of custody log</td><td>Who had it, when, why — an unbroken documented trail</td></tr>
+<tr><td class="c-green">Documentation</td><td>Record every action; reproducibility = credibility</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body blueteam -->
 </div>
 </div>
