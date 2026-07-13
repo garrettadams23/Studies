@@ -17245,6 +17245,214 @@ build once, promote everywhere.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🕸️</span>
+<span class="topic-name">Kubernetes Networking &amp; Storage — CNI &amp; CSI</span>
+<span class="topic-badge">Kubernetes</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">How Pods Talk and Where Data Lives</div>
+<div class="concept-desc">
+Kubernetes defers networking and storage to pluggable interfaces, so the cluster
+works the same whether you run on AWS, bare metal, or a laptop.
+<strong class="c-cyan">CNI</strong> wires up pod networking;
+<strong class="c-cyan">CSI</strong> attaches persistent storage.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Layer</th><th>Detail</th></tr>
+<tr><td class="c-cyan">CNI plugin</td><td>Calico, Cilium, Flannel — gives every pod an IP; enforces NetworkPolicy</td></tr>
+<tr><td class="c-cyan">Service &amp; kube-proxy</td><td>Stable virtual IP + load-balancing across pod replicas</td></tr>
+<tr><td class="c-cyan">Ingress controller</td><td>NGINX, Traefik — HTTP routing &amp; TLS into the cluster</td></tr>
+<tr><td class="c-cyan">CSI driver</td><td>Provisions PersistentVolumes from EBS/PD/etc. via a PVC</td></tr>
+<tr><td class="c-cyan">StorageClass</td><td>Defines a tier (ssd, standard) for dynamic provisioning</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Cilium</strong> (eBPF-based) is increasingly the default —
+it does networking, NetworkPolicy, and observability in one. Storage: a
+<code>PVC</code> requests, the <code>StorageClass</code> + CSI driver fulfill it.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔥</span>
+<span class="topic-name">Prometheus &amp; Grafana — Metrics &amp; Dashboards</span>
+<span class="topic-badge">Observability</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Open-Source Monitoring Standard</div>
+<div class="concept-desc">
+<strong class="c-cyan">Prometheus</strong> scrapes metrics from targets, stores them
+as time-series, and lets you query with <strong class="c-cyan">PromQL</strong>.
+<strong class="c-cyan">Grafana</strong> visualizes them; Alertmanager routes the
+alerts. It's the de-facto stack for cloud-native metrics.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># PromQL: 5xx error rate over the last 5 minutes, per service</span>
+sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span>}[5m]))
+  / sum by (service) (rate(http_requests_total[5m]))</pre>
+<table class="ref-table">
+<tr><th>Piece</th><th>Role</th></tr>
+<tr><td class="c-cyan">Prometheus</td><td>Pull-based scraping + TSDB + PromQL</td></tr>
+<tr><td class="c-cyan">Exporters</td><td>node_exporter, cAdvisor — expose metrics to scrape</td></tr>
+<tr><td class="c-cyan">Alertmanager</td><td>Dedup, group &amp; route alerts to Slack/PagerDuty</td></tr>
+<tr><td class="c-cyan">Grafana</td><td>Dashboards over Prometheus, Loki, and more</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Scale note:</strong> Prometheus is single-node by design;
+Thanos/Mimir/Cortex add long-term storage and HA. Instrument with OpenTelemetry to
+stay portable.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚦</span>
+<span class="topic-name">Golden Signals + RED &amp; USE — What to Measure</span>
+<span class="topic-badge">Observability</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Three Small Frameworks That Cut the Noise</div>
+<div class="concept-desc">
+You can graph a thousand metrics and still miss the outage. These frameworks tell you
+the <em>few</em> signals that actually indicate user pain — so alerts fire on
+symptoms, not on every twitch.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Framework</th><th>Measure</th><th>Best for</th></tr>
+<tr><td class="c-cyan">Golden Signals</td><td>Latency, Traffic, Errors, Saturation</td><td>Any service (Google SRE)</td></tr>
+<tr><td class="c-cyan">RED</td><td>Rate, Errors, Duration</td><td>Request-driven services</td></tr>
+<tr><td class="c-cyan">USE</td><td>Utilization, Saturation, Errors</td><td>Resources (CPU, disk, queues)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Rule of thumb:</strong> alert on <em>symptoms</em> users
+feel (latency/errors), not causes (high CPU) — a busy CPU that still serves fast
+isn't an incident. Page on the golden signals; keep the rest for debugging.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🎯</span>
+<span class="topic-name">SLIs, SLOs &amp; Error Budgets</span>
+<span class="topic-badge">SRE</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Turning Reliability Into a Number You Can Spend</div>
+<div class="concept-desc">
+100% reliability is the wrong target — it's impossible and ruinously expensive.
+SRE instead sets an explicit <em>reliability goal</em> and treats the gap as a
+budget you can spend on shipping features.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td class="c-cyan">SLI</td><td>The measurement — e.g. % of requests &lt; 300ms &amp; 2xx</td></tr>
+<tr><td class="c-cyan">SLO</td><td>The target for that SLI — e.g. 99.9% over 30 days</td></tr>
+<tr><td class="c-cyan">Error budget</td><td>1 − SLO = allowed unreliability (0.1% ≈ 43 min/month)</td></tr>
+<tr><td class="c-cyan">SLA</td><td>The contractual promise (with penalties) — looser than the SLO</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The policy:</strong> budget left → ship fast; budget
+burned → freeze features and fix reliability. <strong class="c-green">Burn-rate
+alerts</strong> (spending the budget too fast) are the modern replacement for
+threshold alerts. This is the SRE card, made operational.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🪵</span>
+<span class="topic-name">Structured Logging &amp; Log Pipelines</span>
+<span class="topic-badge">Observability</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Logs You Can Actually Query</div>
+<div class="concept-desc">
+A log line like <code>User 42 failed login from 1.2.3.4</code> is human-readable but
+painful to search at scale. <strong class="c-cyan">Structured logging</strong> emits
+key-value/JSON so every field is filterable, and correlation IDs stitch a request's
+logs together across services.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Structured (JSON) — machine-queryable, ties to a trace</span>
+{<span class="str">"level"</span>:<span class="str">"warn"</span>,<span class="str">"event"</span>:<span class="str">"login_failed"</span>,<span class="str">"user_id"</span>:42,
+ <span class="str">"src_ip"</span>:<span class="str">"1.2.3.4"</span>,<span class="str">"trace_id"</span>:<span class="str">"abc123"</span>}</pre>
+<table class="ref-table">
+<tr><th>Piece</th><th>Role</th></tr>
+<tr><td class="c-cyan">Correlation / trace ID</td><td>Follow one request across every service &amp; log</td></tr>
+<tr><td class="c-cyan">Collector</td><td>Fluent Bit / Vector / OTel Collector ship &amp; enrich logs</td></tr>
+<tr><td class="c-cyan">Store</td><td>Loki, Elasticsearch, or a cloud logging service</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Structured logs feed both ops <em>and</em> security (SIEM) — the same pipeline that
+helps you debug latency helps the blue team hunt. The three pillars —
+<strong class="c-green">metrics, logs, traces</strong> — correlate via that shared ID.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📟</span>
+<span class="topic-name">On-Call Done Humanely</span>
+<span class="topic-badge">SRE · Culture</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Sustainable Operations, Not Hero Burnout</div>
+<div class="concept-desc">
+On-call is necessary but corrosive when done badly — pages at 3am for non-issues
+drive burnout and attrition. Good on-call is designed: few, actionable alerts and a
+culture that fixes root causes.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Practice</th><th>Detail</th></tr>
+<tr><td class="c-green">Actionable alerts only</td><td>If a human can't act on it, it's a dashboard, not a page</td></tr>
+<tr><td class="c-green">Runbooks</td><td>Every alert links to "what to check &amp; do"</td></tr>
+<tr><td class="c-green">Sane rotations</td><td>Follow-the-sun or weekly; comp time; not the same 2 people</td></tr>
+<tr><td class="c-green">Blameless postmortems</td><td>Blame systems, not people — psychological safety fixes more</td></tr>
+<tr><td class="c-green">Toil budget</td><td>Cap manual work; automate what pages you repeatedly</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The feedback loop that matters: every real page should make the <em>next</em> one
+less likely — via a fix, better alerting, or automation. That's the "Feedback" and
+"Learning" of the Three Ways, applied to operations.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body ops -->
 </div>
 </div>

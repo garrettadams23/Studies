@@ -668,7 +668,7 @@ Blue-team detection note.
 - [ ] Kubernetes Objects — pods, deployments, services, ingress, configmaps/secrets
 - [ ] Helm & Kustomize — packaging and templating manifests
 - [ ] K8s Networking & Storage — CNI, CSI, ingress controllers, persistent volumes
-- [ ] K8s Security — RBAC, network policies, pod security standards, admission control
+- [x] K8s Security — RBAC, network policies, pod security standards, admission control
 
 **Wave F4 — Config, Secrets & Supply Chain**
 - [x] Configuration Management — Ansible deep (playbooks, roles, inventory), Chef/Puppet/Salt
@@ -678,11 +678,11 @@ Blue-team detection note.
 - [x] Artifact & Registry Management — container/package registries, retention, promotion
 
 **Wave F5 — Observability & Operations Deep**
-- [ ] Prometheus & Grafana — metrics model, PromQL, dashboards, Alertmanager
-- [ ] Golden Signals + RED / USE — what to actually measure
-- [ ] SLIs, SLOs & Error Budgets — deep (turning SRE theory into alert thresholds)
-- [ ] Structured Logging & Log Pipelines — correlation IDs, aggregation (ties to SIEM)
-- [ ] On-Call Done Humanely — rotations, escalation, runbooks, blameless postmortems
+- [x] Prometheus & Grafana — metrics model, PromQL, dashboards, Alertmanager
+- [x] Golden Signals + RED / USE — what to actually measure
+- [x] SLIs, SLOs & Error Budgets — deep (turning SRE theory into alert thresholds)
+- [x] Structured Logging & Log Pipelines — correlation IDs, aggregation (ties to SIEM)
+- [x] On-Call Done Humanely — rotations, escalation, runbooks, blameless postmortems
 
 ---
 
