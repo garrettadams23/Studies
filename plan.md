@@ -671,11 +671,11 @@ Blue-team detection note.
 - [ ] K8s Security — RBAC, network policies, pod security standards, admission control
 
 **Wave F4 — Config, Secrets & Supply Chain**
-- [ ] Configuration Management — Ansible deep (playbooks, roles, inventory), Chef/Puppet/Salt
-- [ ] Secrets Management — HashiCorp Vault, external-secrets, sealed secrets, dynamic creds
-- [ ] Software Supply Chain Security — SBOM, SLSA, Sigstore/cosign, provenance & signing
-- [ ] Policy as Code — OPA/Rego, Kyverno, Conftest guardrails in CI
-- [ ] Artifact & Registry Management — container/package registries, retention, promotion
+- [x] Configuration Management — Ansible deep (playbooks, roles, inventory), Chef/Puppet/Salt
+- [x] Secrets Management — HashiCorp Vault, external-secrets, sealed secrets, dynamic creds
+- [x] Software Supply Chain Security — SBOM, SLSA, Sigstore/cosign, provenance & signing
+- [x] Policy as Code — OPA/Rego, Kyverno, Conftest guardrails in CI
+- [x] Artifact & Registry Management — container/package registries, retention, promotion
 
 **Wave F5 — Observability & Operations Deep**
 - [ ] Prometheus & Grafana — metrics model, PromQL, dashboards, Alertmanager

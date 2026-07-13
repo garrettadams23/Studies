@@ -4206,4 +4206,187 @@ Why #5: Why isn't that part of the standard testing process?
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚙️</span>
+              <span class="topic-name">Configuration Management — Ansible &amp; the Alternatives</span>
+              <span class="topic-badge">Config Mgmt</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Make Servers Match a Desired State</div>
+                <div class="concept-desc">
+                  Config management enforces <em>how a server is set up</em> — packages, files,
+                  services, users — declaratively and repeatably. <strong class="c-cyan">Ansible</strong>
+                  dominates because it's <strong class="c-green">agentless</strong> (just SSH + Python)
+                  and its YAML playbooks are readable.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># A tiny playbook: install &amp; start nginx, idempotently</span>
+<span class="var">- hosts:</span> web
+  <span class="var">become:</span> <span class="kw">true</span>
+  <span class="var">tasks:</span>
+    <span class="var">- name:</span> Install nginx
+      <span class="fn">ansible.builtin.apt:</span> { name: nginx, state: present }
+    <span class="var">- name:</span> Ensure it is running
+      <span class="fn">ansible.builtin.service:</span> { name: nginx, state: started, enabled: <span class="kw">true</span> }</pre>
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Model</th></tr>
+                    <tr><td class="c-cyan">Ansible</td><td>Agentless, push, YAML — easiest to adopt</td></tr>
+                    <tr><td class="c-cyan">Puppet / Chef</td><td>Agent-based, pull, mature at large scale</td></tr>
+                    <tr><td class="c-cyan">Salt</td><td>Agent or agentless; very fast event bus</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Idempotency</strong> is the whole point: run it 100 times,
+                    the box ends in the same state. Config management handles <em>mutable</em> servers;
+                    it complements Terraform (which <em>provisions</em> the infra) — ties to the IaC card.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔐</span>
+              <span class="topic-name">Secrets Management — Vault &amp; Kubernetes Secrets</span>
+              <span class="topic-badge">Secrets</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Stop Putting Passwords in Git</div>
+                <div class="concept-desc">
+                  Hardcoded credentials are one of the most common breach causes. A secrets manager
+                  stores them centrally, encrypted, with access control and audit — and the best
+                  systems issue <strong class="c-green">short-lived, dynamic</strong> creds so a leak
+                  expires on its own.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Approach</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">HashiCorp Vault</td><td>Central secrets + dynamic DB/cloud creds + encryption-as-a-service</td></tr>
+                    <tr><td class="c-cyan">Cloud-native</td><td>AWS Secrets Manager, GCP Secret Manager, Azure Key Vault</td></tr>
+                    <tr><td class="c-cyan">External Secrets Operator</td><td>Sync a manager's secrets into K8s Secrets</td></tr>
+                    <tr><td class="c-cyan">Sealed Secrets / SOPS</td><td>Encrypt secrets so they're safe to commit to Git (GitOps)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-red">Note:</strong> plain Kubernetes Secrets are only
+                    base64-encoded, not encrypted at rest by default — enable encryption providers and
+                    prefer a real manager. Dynamic short-TTL creds beat static ones every time.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔗</span>
+              <span class="topic-name">Software Supply Chain Security — SBOM, SLSA &amp; Sigstore</span>
+              <span class="topic-badge">Supply Chain</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Know &amp; Trust What You Ship</div>
+                <div class="concept-desc">
+                  After SolarWinds and Log4Shell, securing the build pipeline itself is a first-class
+                  concern. The goal: know every component in your artifact, and prove the artifact came
+                  from your pipeline unmodified.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Standard / Tool</th><th>Answers</th></tr>
+                    <tr><td class="c-cyan">SBOM</td><td>"What's inside?" — a bill of materials (SPDX/CycloneDX)</td></tr>
+                    <tr><td class="c-cyan">SLSA</td><td>"How was it built?" — build-integrity levels &amp; provenance</td></tr>
+                    <tr><td class="c-cyan">Sigstore / cosign</td><td>"Is it really ours?" — keyless signing of artifacts</td></tr>
+                    <tr><td class="c-cyan">Dependency scanning</td><td>Trivy, Grype, Dependabot — find vulnerable deps (SCA)</td></tr>
+                  </table>
+                  <pre class="code-block"><span class="com"># Generate an SBOM and sign an image (keyless, via OIDC)</span>
+syft myimage:1.0 <span class="var">-o</span> cyclonedx-json &gt; sbom.json
+cosign sign myimage:1.0
+cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Then enforce it: an admission controller can <strong class="c-green">reject
+                    unsigned images</strong> at deploy time — provenance you actually check, not just
+                    generate.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📜</span>
+              <span class="topic-name">Policy as Code — OPA/Rego &amp; Kyverno</span>
+              <span class="topic-badge">Governance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Guardrails That Enforce Themselves</div>
+                <div class="concept-desc">
+                  Instead of a wiki page saying "don't deploy public S3 buckets," policy-as-code makes
+                  the rule executable — checked automatically in CI or blocked at admission. Governance
+                  becomes a test that fails, not a review someone forgets.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">OPA / Rego</td><td>General policy engine; Gatekeeper enforces it on K8s</td></tr>
+                    <tr><td class="c-cyan">Kyverno</td><td>K8s-native policy in YAML (no new language to learn)</td></tr>
+                    <tr><td class="c-cyan">Conftest</td><td>Run OPA policies against Terraform/JSON/YAML in CI</td></tr>
+                    <tr><td class="c-cyan">Cloud-native</td><td>AWS SCPs, GCP Org Policy, Azure Policy</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Where to enforce:</strong> shift left (CI catches it before
+                    merge) <em>and</em> defense in depth (admission control catches it at runtime).
+                    Ties directly to the CIS Benchmarks and cloud-security cards.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🗄️</span>
+              <span class="topic-name">Artifact &amp; Registry Management</span>
+              <span class="topic-badge">Delivery</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Where Build Outputs Live</div>
+                <div class="concept-desc">
+                  A pipeline builds artifacts — container images, jars, npm packages — that need a
+                  trusted, versioned home between build and deploy. Registries provide storage, access
+                  control, scanning, and immutability.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Registry</th><th>Stores</th></tr>
+                    <tr><td class="c-cyan">Harbor</td><td>Self-hosted container registry + scanning + signing</td></tr>
+                    <tr><td class="c-cyan">Artifactory / Nexus</td><td>Universal (Docker, Maven, npm, PyPI…) </td></tr>
+                    <tr><td class="c-cyan">GHCR / ECR / Artifact Registry</td><td>Cloud/platform-native registries</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Practices:</strong> immutable tags (never re-push
+                    <code>:v1.2.3</code>), retention policies to prune old images, scan on push, and
+                    promote the <em>same</em> digest through dev→staging→prod rather than rebuilding —
+                    build once, promote everywhere.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body ops -->
