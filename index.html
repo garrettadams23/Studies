@@ -45597,6 +45597,144 @@ just gets hardened once.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🍯</span>
+<span class="topic-name">Honeypots &amp; Canarytokens — Deception Tech</span>
+<span class="topic-badge">Deception</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Traps That Only an Intruder Trips</div>
+<div class="concept-desc">
+A legitimate user never touches a fake admin account, a decoy database, or a file
+named <code>passwords.xlsx</code> planted on a share. Deception assets have
+<strong class="c-green">near-zero false positives</strong> — any interaction is,
+by definition, suspicious.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Type</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Honeypot</td><td>A fake system that logs everything an attacker does (T-Pot, Cowrie)</td></tr>
+<tr><td class="c-cyan">Honeytoken / Canarytoken</td><td>A fake credential, AWS key, or URL that alerts when used</td></tr>
+<tr><td class="c-cyan">Honey account</td><td>A dormant AD account — any auth attempt is an alert</td></tr>
+<tr><td class="c-cyan">Deception grid</td><td>Decoys scattered through the network to catch lateral movement</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Best value:</strong> place canarytokens <em>inside</em>
+the network where only a snooping attacker would find them. A tripped token is
+high-fidelity evidence of a breach in progress — the mirror image of the red-team
+exfil/pivot cards.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📧</span>
+<span class="topic-name">Email Security — SPF, DKIM &amp; DMARC</span>
+<span class="topic-badge">Email Defense</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Stopping Spoofed Mail at the Door</div>
+<div class="concept-desc">
+Email is the #1 initial-access vector, and by default anyone can forge your domain
+in the "From" field. Three DNS-based standards, layered, let receivers verify that
+mail really came from you — and tell them what to do when it didn't.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Record</th><th>Answers</th></tr>
+<tr><td class="c-cyan">SPF</td><td>"Which servers may send mail for this domain?" (IP allow-list in DNS)</td></tr>
+<tr><td class="c-cyan">DKIM</td><td>"Was this message signed by the domain &amp; unmodified?" (crypto signature)</td></tr>
+<tr><td class="c-cyan">DMARC</td><td>"If SPF/DKIM fail, what do I do — and where do I report?" (policy + alignment)</td></tr>
+</table>
+<pre class="code-block"><span class="com"># A DMARC record that quarantines fakes and sends reports</span>
+_dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com; adkim=s; aspf=s"</span></pre>
+<div class="concept-desc" style="margin-top:10px">
+Progress <code>p=none</code> (monitor) → <code>quarantine</code> →
+<code>reject</code> as you gain confidence. Add
+<strong class="c-green">sandboxing, link rewriting, and external-sender banners</strong>
+for the phishing that still gets through.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🪪</span>
+<span class="topic-name">Identity Threat Detection &amp; Response (ITDR)</span>
+<span class="topic-badge">Identity</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">"Identity Is the New Perimeter"</div>
+<div class="concept-desc">
+Modern attackers don't break in, they <em>log in</em> — with phished, sprayed, or
+stolen credentials and session tokens. ITDR watches the identity provider (Entra ID,
+Okta, AD) for the behavioral signals of account takeover.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Signal</th><th>What it suggests</th></tr>
+<tr><td class="c-red">Impossible travel</td><td>Logins from two distant locations too close in time</td></tr>
+<tr><td class="c-red">MFA fatigue / bombing</td><td>Repeated push prompts hoping the user taps "approve"</td></tr>
+<tr><td class="c-red">Token / session theft</td><td>A valid session used from a new device/IP (AiTM phishing)</td></tr>
+<tr><td class="c-red">Password spray</td><td>One password tried across many accounts</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Controls:</strong> phishing-resistant MFA (FIDO2/passkeys),
+Conditional Access (device + risk based), and continuous access evaluation that can
+kill a session mid-flight. This is the defensive answer to the credential-attack and
+AD cards on the red-team side.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🤝</span>
+<span class="topic-name">Purple Teaming — Closing the Detection Gap</span>
+<span class="topic-badge">Purple</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Red + Blue in the Same Room</div>
+<div class="concept-desc">
+Instead of red team "winning" and blue team "losing," a
+<strong class="c-cyan">purple team</strong> exercise runs attacks collaboratively:
+red executes a known technique, blue checks whether it was logged, alerted, and
+actionable — and they fix the gap on the spot.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Pick an ATT&amp;CK technique</td><td>e.g. T1003 credential dumping</td></tr>
+<tr><td class="c-cyan">Red emulates it</td><td>Atomic Red Team / Caldera runs the procedure (ties to B4)</td></tr>
+<tr><td class="c-green">Blue verifies</td><td>Was it in the logs? Did an alert fire? Was it triaged?</td></tr>
+<tr><td class="c-amber">Improve</td><td>Add telemetry, write/tune the detection, re-test</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The output is measurable <strong class="c-green">detection coverage</strong> mapped
+to ATT&amp;CK — you learn exactly which techniques you'd catch and which you'd miss.
+This card is the keystone that ties the whole Red and Blue domains together.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body blueteam -->
 </div>
 </div>

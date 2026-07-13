@@ -438,10 +438,10 @@ Tool reference cards, grouped by kill-chain stage. ~9 waves, ~50 cards.
 - [x] Patch & config management (WSUS/Ansible) as a control
 
 **Wave B8 — Deception & email/identity defense**
-- [ ] Honeypots & Canarytokens — deception tech (T-Pot, canaries)
-- [ ] Email security stack — SPF/DKIM/DMARC enforcement, sandboxing, banners
-- [ ] Identity threat detection — impossible travel, ITDR, conditional access
-- [ ] Purple teaming — running the exercise & closing detection gaps
+- [x] Honeypots & Canarytokens — deception tech (T-Pot, canaries)
+- [x] Email security stack — SPF/DKIM/DMARC enforcement, sandboxing, banners
+- [x] Identity threat detection — impossible travel, ITDR, conditional access
+- [x] Purple teaming — running the exercise & closing detection gaps
 
 ---
 
