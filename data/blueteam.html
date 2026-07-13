@@ -863,4 +863,138 @@ index=auth <span class="str">"Failed password"</span>
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔗</span>
+              <span class="topic-name">MISP &amp; OpenCTI — Threat-Intel Platforms</span>
+              <span class="topic-badge">Threat Intel</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Organize and Share What You Know About Adversaries</div>
+                <div class="concept-desc">
+                  Threat intelligence is only useful if it's structured and actionable.
+                  <strong class="c-cyan">MISP</strong> is the widely-used open platform for storing
+                  and <em>sharing</em> indicators (IOCs) and events between organizations/ISACs.
+                  <strong class="c-cyan">OpenCTI</strong> models the bigger picture — linking actors,
+                  campaigns, malware, and TTPs into a queryable knowledge graph.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Platform</th><th>Strength</th></tr>
+                    <tr><td class="c-cyan">MISP</td><td>IOC storage + community sharing + feeds; export to your SIEM</td></tr>
+                    <tr><td class="c-cyan">OpenCTI</td><td>Structured CTI knowledge graph (actors↔TTPs↔malware)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The payoff: pull a feed of known-bad indicators into detection, and enrich alerts
+                    ("this IP belongs to APT-X's infrastructure") so responders act with context, not
+                    guesswork.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📦</span>
+              <span class="topic-name">STIX &amp; TAXII — The Sharing Standards</span>
+              <span class="topic-badge">Threat Intel</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">A Common Language for Threat Data</div>
+                <div class="concept-desc">
+                  For orgs to share intel, they need a shared format and transport.
+                  <strong class="c-cyan">STIX</strong> is the standardized <em>language</em> for
+                  describing threats (indicators, actors, TTPs) as structured JSON;
+                  <strong class="c-cyan">TAXII</strong> is the <em>protocol</em> for exchanging STIX
+                  data between systems. Together they let MISP, commercial feeds, and government
+                  sources interoperate.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Standard</th><th>Role</th></tr>
+                    <tr><td class="c-cyan">STIX</td><td>The data model — what a threat object looks like</td></tr>
+                    <tr><td class="c-cyan">TAXII</td><td>The transport — how feeds are served &amp; pulled</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Think of it like the Sigma/YARA idea applied to intel: a portable format so a
+                    detection or indicator written once can be consumed anywhere.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧫</span>
+              <span class="topic-name">Malware Sandboxes — VirusTotal, Any.Run &amp; Hybrid Analysis</span>
+              <span class="topic-badge">Threat Intel</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Detonate the Sample, Watch What It Does</div>
+                <div class="concept-desc">
+                  When you have a suspicious file, a sandbox runs it in an instrumented VM and
+                  reports its behavior — files dropped, registry changes, network callbacks —
+                  without risking a real host. <strong class="c-cyan">VirusTotal</strong> aggregates
+                  dozens of AV verdicts + community intel; <strong class="c-cyan">Any.Run</strong>
+                  gives an interactive live detonation; <strong class="c-cyan">Hybrid Analysis</strong>
+                  produces deep behavioral reports.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    <strong class="c-red">OPSEC caution:</strong> uploading a sample to a public
+                    sandbox makes it (and any secrets in it) <em>public</em> — attackers monitor VT
+                    for their own samples. For sensitive incidents, use a private/on-prem sandbox
+                    (Cuckoo, CAPE) instead of a public service.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧭</span>
+              <span class="topic-name">Threat Hunting — Assume Breach, Go Looking</span>
+              <span class="topic-badge">Threat Intel</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Proactively Finding What Alerts Missed</div>
+                <div class="concept-desc">
+                  Detection waits for a rule to fire; <strong class="c-cyan">threat hunting</strong>
+                  proactively searches the environment on a <em>hypothesis</em> that something
+                  slipped through. It assumes breach and asks "if an attacker were here, what would
+                  I see?" — turning findings into new automated detections.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Hypothesis</td><td>"An attacker would use scheduled tasks for persistence"</td></tr>
+                    <tr><td class="c-cyan">Hunt</td><td>Query telemetry (Sysmon/EDR/SIEM) for that behavior</td></tr>
+                    <tr><td class="c-cyan">Investigate</td><td>Triage anomalies — benign or malicious?</td></tr>
+                    <tr><td class="c-cyan">Operationalize</td><td>Turn a real finding into a standing detection</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Good hunts are driven by ATT&amp;CK (hunt technique by technique) and threat
+                    intel (hunt for <em>your</em> actors' TTPs). Every hunt either finds evil or
+                    finds a detection gap — both are wins.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body blueteam -->
