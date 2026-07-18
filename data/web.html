@@ -368,4 +368,192 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔒</span>
+              <span class="topic-name">Closures, Scope &amp; <code>this</code></span>
+              <span class="topic-badge">JavaScript</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Interview Trio, Explained</div>
+                <div class="concept-desc">
+                  Three JS concepts that confuse beginners and get asked in every interview. Get them
+                  and most "weird JavaScript" stops being weird.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">function</span> <span class="fn">counter</span>() {
+  <span class="kw">let</span> n = <span class="num">0</span>;                 <span class="com">// captured by the closure</span>
+  <span class="kw">return</span> () =&gt; ++n;         <span class="com">// remembers n after counter() returns</span>
+}
+<span class="kw">const</span> c = <span class="fn">counter</span>(); c(); c();  <span class="com">// 1, 2</span></pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Scope</td><td>Where a variable is visible; <code>let</code>/<code>const</code> are block-scoped</td></tr>
+                    <tr><td class="c-cyan">Closure</td><td>A function that remembers variables from where it was defined</td></tr>
+                    <tr><td class="c-cyan"><code>this</code></td><td>Depends on <em>how</em> a function is called (not where defined)</td></tr>
+                    <tr><td class="c-cyan">Arrow functions</td><td>No own <code>this</code> — inherit from the enclosing scope</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber"><code>this</code> gotcha:</strong> a method passed as a
+                    callback loses its <code>this</code>. Arrow functions or <code>.bind()</code> fix
+                    it. Closures power data privacy, memoization, and every event handler that
+                    "remembers" state.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⏳</span>
+              <span class="topic-name">Async Deep — Promises, await &amp; the Event Loop</span>
+              <span class="topic-badge">JavaScript</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">How Single-Threaded JS Does Many Things</div>
+                <div class="concept-desc">
+                  JavaScript runs on one thread but stays responsive via the
+                  <strong class="c-cyan">event loop</strong>: long operations (network, timers) run
+                  elsewhere and their callbacks are queued back. Promises and
+                  <code>async/await</code> make this readable.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">async function</span> <span class="fn">load</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> [a, b] = <span class="kw">await</span> Promise.<span class="fn">all</span>([<span class="fn">getA</span>(), <span class="fn">getB</span>()]); <span class="com">// parallel</span>
+    <span class="kw">return</span> <span class="fn">merge</span>(a, b);
+  } <span class="kw">catch</span> (e) { <span class="fn">handle</span>(e); }
+}</pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Promise</td><td>A value that arrives later (pending → fulfilled/rejected)</td></tr>
+                    <tr><td class="c-cyan">async/await</td><td>Write async code that reads like sync</td></tr>
+                    <tr><td class="c-cyan">Microtask vs macrotask</td><td>Promises (micro) run before timers (macro)</td></tr>
+                    <tr><td class="c-cyan">Promise.all / race / allSettled</td><td>Coordinate multiple promises</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">Parallel vs serial:</strong> <code>await a; await b;</code>
+                    runs one after the other; <code>Promise.all([a,b])</code> runs them together — a
+                    common performance win. Never <code>await</code> in a loop when the iterations are
+                    independent.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧬</span>
+              <span class="topic-name">Prototypes &amp; Modern Classes</span>
+              <span class="topic-badge">JavaScript</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">JavaScript's Real Inheritance Model</div>
+                <div class="concept-desc">
+                  Under the <code>class</code> syntax, JS uses <strong class="c-cyan">prototypal
+                  inheritance</strong>: objects delegate to a prototype object. Knowing this explains
+                  how method lookup and <code>class</code> actually work.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Prototype chain</td><td>Miss a property → look up the chain until <code>null</code></td></tr>
+                    <tr><td class="c-cyan">class</td><td>Syntactic sugar over prototypes (constructor, methods)</td></tr>
+                    <tr><td class="c-cyan">extends / super</td><td>Inheritance &amp; calling the parent</td></tr>
+                    <tr><td class="c-cyan">Static / #private</td><td>Class-level members; true private fields (<code>#</code>)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Modern advice:</strong> favor composition and plain objects
+                    /modules over deep class hierarchies. But you must understand prototypes to debug
+                    "why is this method undefined?" and to read library code.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📦</span>
+              <span class="topic-name">Modules &amp; Bundlers — ESM, Vite &amp; Tree-Shaking</span>
+              <span class="topic-badge">JavaScript</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">From Many Files to Shipped Code</div>
+                <div class="concept-desc">
+                  Modern JS is written as <strong class="c-cyan">ES modules</strong>
+                  (<code>import</code>/<code>export</code>) across many files, then a
+                  <strong class="c-cyan">bundler</strong> optimizes them into what ships to the browser.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">ESM</td><td>Standard <code>import</code>/<code>export</code> (vs old CommonJS <code>require</code>)</td></tr>
+                    <tr><td class="c-cyan">Bundling</td><td>Combine modules, resolve deps</td></tr>
+                    <tr><td class="c-cyan">Tree-shaking</td><td>Drop unused exports → smaller bundles</td></tr>
+                    <tr><td class="c-cyan">Code-splitting</td><td>Load chunks on demand (per route)</td></tr>
+                    <tr><td class="c-cyan">Vite / esbuild / Rollup</td><td>Fast modern tooling (webpack's successors)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">Vite</strong> is the current default: instant dev server
+                    (native ESM, no bundling in dev) + optimized production builds. Tree-shaking is why
+                    <code>import { thing }</code> beats importing a whole library.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔷</span>
+              <span class="topic-name">TypeScript — Types for JavaScript</span>
+              <span class="topic-badge">JavaScript</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Catch Bugs Before They Ship</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">TypeScript</strong> adds static types to JavaScript, caught at
+                  compile time. It's now the default for serious projects — the editor autocomplete and
+                  refactoring safety alone are worth it.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">type</span> <span class="type">User</span> = { id: <span class="type">number</span>; name: <span class="type">string</span>; email?: <span class="type">string</span> };
+<span class="kw">function</span> <span class="fn">greet</span>(u: <span class="type">User</span>): <span class="type">string</span> {
+  <span class="kw">return</span> <span class="str">`Hi ${u.name}`</span>;
+}</pre>
+                  <table class="ref-table">
+                    <tr><th>Feature</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Interfaces / types</td><td>Describe object shapes</td></tr>
+                    <tr><td class="c-cyan">Generics</td><td>Reusable, type-safe code (<code>Array&lt;T&gt;</code>)</td></tr>
+                    <tr><td class="c-cyan">Narrowing</td><td>Types refine via checks (unions, guards)</td></tr>
+                    <tr><td class="c-cyan">strict mode</td><td>Null-safety &amp; more — turn it on</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Mental model:</strong> types are erased at build time — they
+                    guide the compiler and editor, then disappear. The payoff is fewer runtime
+                    <code>undefined</code> errors and fearless refactoring in large codebases.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body web -->

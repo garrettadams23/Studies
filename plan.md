@@ -834,11 +834,11 @@ progress / keyboard-a11y automatically.
 - [x] Design Systems & Tokens — Tailwind, CSS-in-JS, BEM, component styling
 
 **Wave I3 — JavaScript Deep (beyond the basics)**
-- [ ] Closures, Scope & the `this` Keyword — the interview favorites, clearly
-- [ ] Async Deep — promises, async/await, microtasks vs macrotasks, the event loop
-- [ ] Prototypes & Modern Classes — inheritance, the prototype chain
-- [ ] Modules & Bundlers — ESM, tree-shaking, Vite/esbuild/webpack
-- [ ] TypeScript — types, generics, narrowing, why teams adopt it
+- [x] Closures, Scope & the `this` Keyword — the interview favorites, clearly
+- [x] Async Deep — promises, async/await, microtasks vs macrotasks, the event loop
+- [x] Prototypes & Modern Classes — inheritance, the prototype chain
+- [x] Modules & Bundlers — ESM, tree-shaking, Vite/esbuild/webpack
+- [x] TypeScript — types, generics, narrowing, why teams adopt it
 
 **Wave I4 — Frameworks**
 - [ ] React — components, hooks, state, reconciliation, the mental model
