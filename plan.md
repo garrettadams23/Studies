@@ -862,11 +862,11 @@ progress / keyboard-a11y automatically.
 - [x] SEO & Metadata — semantic HTML, Open Graph, structured data
 
 **Wave I7 — Shipping & The Edge**
-- [ ] Progressive Web Apps — service workers, offline, installability
-- [ ] Rendering at the Edge — CDNs, edge functions, image optimization
-- [ ] Web Assembly — what it is, when to reach for it
-- [ ] Frontend Build & Deploy — CI, preview deploys, Netlify/Vercel/Pages
-- [ ] The Full-Stack Picture — how frontend, API, and DB fit together end-to-end
+- [x] Progressive Web Apps — service workers, offline, installability
+- [x] Rendering at the Edge — CDNs, edge functions, image optimization
+- [x] Web Assembly — what it is, when to reach for it
+- [x] Frontend Build & Deploy — CI, preview deploys, Netlify/Vercel/Pages
+- [x] The Full-Stack Picture — how frontend, API, and DB fit together end-to-end
 
 ---
 

@@ -52177,6 +52177,178 @@ as SEO work.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📲</span>
+<span class="topic-name">Progressive Web Apps — Offline &amp; Installable</span>
+<span class="topic-badge">Shipping</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Websites That Act Like Native Apps</div>
+<div class="concept-desc">
+A <strong class="c-cyan">PWA</strong> is a website with app-like superpowers: it can
+be installed to the home screen, work offline, and receive push notifications — all
+from the web platform. (This very site is installable — that's why the icon fix
+mattered.)
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Piece</th><th>Role</th></tr>
+<tr><td class="c-cyan">Web app manifest</td><td>Name, icons, theme → installability</td></tr>
+<tr><td class="c-cyan">Service worker</td><td>A background proxy — caches responses, enables offline</td></tr>
+<tr><td class="c-cyan">Cache strategies</td><td>Cache-first, network-first, stale-while-revalidate</td></tr>
+<tr><td class="c-cyan">Push / background sync</td><td>Notifications &amp; deferred actions</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Service workers are powerful &amp; sharp:</strong> they
+intercept every request, so a bad cache strategy can serve stale content forever.
+Test your update flow. For content sites, "offline + installable" is a big UX win
+for little cost.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌍</span>
+<span class="topic-name">Rendering at the Edge — CDNs &amp; Edge Functions</span>
+<span class="topic-badge">Shipping</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Compute Close to the User</div>
+<div class="concept-desc">
+A <strong class="c-cyan">CDN</strong> caches static assets in hundreds of locations
+worldwide so users download from nearby. <strong class="c-cyan">Edge functions</strong>
+push <em>compute</em> there too — run code milliseconds from the user.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">CDN caching</td><td>Static assets served from the nearest POP</td></tr>
+<tr><td class="c-cyan">Edge functions</td><td>Lightweight compute at the edge (auth, redirects, A/B)</td></tr>
+<tr><td class="c-cyan">Image optimization</td><td>Resize/format on the fly (WebP/AVIF) at the edge</td></tr>
+<tr><td class="c-cyan">Cache headers</td><td><code>Cache-Control</code>, ETags, immutable hashed assets</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Trade-off:</strong> edge runtimes are limited (no full
+Node APIs, short execution) — great for fast, small logic, not heavy work.
+Combined with hashed filenames + long cache TTLs, the edge makes global sites feel
+local.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧩</span>
+<span class="topic-name">WebAssembly — Native Speed in the Browser</span>
+<span class="topic-badge">Platform</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">When JavaScript Isn't Fast Enough</div>
+<div class="concept-desc">
+<strong class="c-cyan">WebAssembly (Wasm)</strong> is a compact binary format that
+runs at near-native speed in the browser. Compile C/C++/Rust/Go to Wasm and call it
+from JS for compute-heavy work.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Great for</th><th>Example</th></tr>
+<tr><td class="c-cyan">Heavy compute</td><td>Image/video editing, games, simulations</td></tr>
+<tr><td class="c-cyan">Porting native code</td><td>Existing C/C++ libraries to the web (FFmpeg, SQLite)</td></tr>
+<tr><td class="c-cyan">Beyond the browser</td><td>Wasm + WASI as a portable, sandboxed runtime (edge, plugins)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Not a JS replacement:</strong> Wasm can't touch the DOM
+directly and has call-overhead — reach for it for the hot compute path, not the
+whole app. Its bigger future may be server-side: a fast, secure, language-agnostic
+sandbox.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚀</span>
+<span class="topic-name">Frontend Build &amp; Deploy — CI &amp; Preview Deploys</span>
+<span class="topic-badge">Shipping</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">From Commit to Live</div>
+<div class="concept-desc">
+Modern frontend deploy is largely solved by platforms that build on every push and
+give each pull request its own preview URL. Understand the pipeline so you can debug
+it — this static site uses exactly this flow (build script + CI + Netlify/Pages).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Stage</th><th>Detail</th></tr>
+<tr><td class="c-cyan">CI on push</td><td>Install, build, test, lint on every commit/PR</td></tr>
+<tr><td class="c-cyan">Preview deploys</td><td>Every PR gets a live URL to review</td></tr>
+<tr><td class="c-cyan">Atomic deploys &amp; rollback</td><td>Instant switch; revert to a prior build in one click</td></tr>
+<tr><td class="c-cyan">Env vars &amp; secrets</td><td>Per-environment config, never in the bundle</td></tr>
+<tr><td class="c-cyan">Platforms</td><td>Netlify, Vercel, Cloudflare/GitHub Pages</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-red">Client bundles are public:</strong> never put secrets in
+frontend env vars — anything shipped to the browser can be read. Keep secrets on the
+server/edge.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔗</span>
+<span class="topic-name">The Full-Stack Picture — How It All Connects</span>
+<span class="topic-badge">Shipping</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Frontend + API + DB, End to End</div>
+<div class="concept-desc">
+Zooming out: a request flows through many layers you've now studied across the web,
+data, cloud, and ops domains. Seeing the whole path is what makes you full-stack.
+</div>
+<div class="dw">
+<pre class="code-block">Browser (React) →  CDN/Edge  →  API (REST/GraphQL)
+   →  Auth  →  Business logic  →  Cache (Redis)  →  Database
+   →  back up the stack as JSON  →  React renders</pre>
+<table class="ref-table">
+<tr><th>Layer</th><th>Studied in</th></tr>
+<tr><td class="c-cyan">UI &amp; state</td><td>web (frameworks, I4)</td></tr>
+<tr><td class="c-cyan">API &amp; auth</td><td>web (I5), sec (OAuth)</td></tr>
+<tr><td class="c-cyan">Data &amp; cache</td><td>data (H*), ops (caching)</td></tr>
+<tr><td class="c-cyan">Deploy &amp; observe</td><td>ops, cloud domains</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">The takeaway:</strong> no single layer is magic — each is a
+tractable piece you can learn. "Full-stack" is just fluency in how the request
+travels and where each concern lives. This domain, plus <code>data</code>,
+<code>eng</code>, <code>ops</code>, and <code>cloud</code>, is the whole map.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body web -->
 </div>
 </div>
