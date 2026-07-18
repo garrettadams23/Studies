@@ -50589,6 +50589,177 @@ performance stays flat as hops increase. Use a graph DB when connections
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">↔️</span>
+<span class="topic-name">OLTP vs OLAP — Rows vs Columns</span>
+<span class="topic-badge">Analytics</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Two Opposite Jobs, Two Storage Layouts</div>
+<div class="concept-desc">
+<strong class="c-cyan">OLTP</strong> (transactional) handles many small
+reads/writes of whole rows — your app database. <strong class="c-cyan">OLAP</strong>
+(analytical) scans huge numbers of rows over a few columns — your reporting
+warehouse. Their opposite needs drive opposite storage.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>OLTP (row store)</th><th>OLAP (column store)</th></tr>
+<tr><td>Access</td><td>Few rows, all columns</td><td>Many rows, few columns</td></tr>
+<tr><td>Layout</td><td>Rows together</td><td>Columns together</td></tr>
+<tr><td>Wins at</td><td>Point lookups &amp; writes</td><td>Aggregations &amp; scans</td></tr>
+<tr><td>Example</td><td>Postgres, MySQL</td><td>BigQuery, Snowflake, ClickHouse</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Why columnar is fast for analytics:</strong> reading only
+the 3 columns a query touches (not all 50), plus massive compression on similar
+values. Don't run heavy analytics on your OLTP database — it competes with live
+traffic. Move it to a warehouse.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧊</span>
+<span class="topic-name">Columnar Engines — Parquet, DuckDB &amp; ClickHouse</span>
+<span class="topic-badge">Analytics</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Fast Path for Big Scans</div>
+<div class="concept-desc">
+Columnar storage plus vectorized execution (processing batches of values at once)
+is what makes modern analytics fast. You'll meet it as a file format and as query
+engines.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Role</th></tr>
+<tr><td class="c-cyan">Parquet</td><td>Columnar file format — the lingua franca of data lakes</td></tr>
+<tr><td class="c-cyan">DuckDB</td><td>"SQLite for analytics" — query Parquet/CSV locally, blazing fast</td></tr>
+<tr><td class="c-cyan">ClickHouse</td><td>Real-time columnar DB for huge event volumes</td></tr>
+<tr><td class="c-cyan">Apache Arrow</td><td>In-memory columnar standard that ties them together</td></tr>
+</table>
+<pre class="code-block"><span class="com">-- DuckDB: query a Parquet file directly, no loading</span>
+<span class="kw">SELECT</span> country, <span class="fn">count</span>(*) <span class="kw">FROM</span> <span class="str">'events/*.parquet'</span> <span class="kw">GROUP BY</span> <span class="num">1</span>;</pre>
+<div class="concept-desc" style="margin-top:6px">
+<strong class="c-green">Trend:</strong> DuckDB has made "big data" analytics
+possible on a laptop for datasets that once needed a cluster — reach for it before
+spinning up Spark.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🏞️</span>
+<span class="topic-name">Warehouse vs Lake vs Lakehouse</span>
+<span class="topic-badge">Analytics</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Where Analytical Data Lives</div>
+<div class="concept-desc">
+Three architectures for storing analytical data, each solving the previous one's
+limitation. The lakehouse is the current convergence.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Approach</th><th>What it is</th></tr>
+<tr><td class="c-cyan">Data Warehouse</td><td>Structured, schema-on-write, SQL — Snowflake, BigQuery, Redshift</td></tr>
+<tr><td class="c-cyan">Data Lake</td><td>Raw files (Parquet) in object storage, schema-on-read — cheap, flexible, messy</td></tr>
+<tr><td class="c-cyan">Lakehouse</td><td>Lake storage + warehouse features (ACID, tables) via Delta/Iceberg/Hudi</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Table formats</strong> (Apache Iceberg, Delta Lake) are the
+key innovation — they add transactions, schema evolution, and time-travel on top of
+plain files, so one copy of data serves many engines. Warehouse = easy &amp;
+governed; lake = cheap &amp; open; lakehouse = both, at the cost of complexity.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📊</span>
+<span class="topic-name">The Semantic Layer &amp; Metrics</span>
+<span class="topic-badge">Analytics</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">One Definition of "Revenue," Everywhere</div>
+<div class="concept-desc">
+When every dashboard computes "active users" or "revenue" its own way, numbers
+disagree and trust evaporates. A <strong class="c-cyan">semantic layer</strong>
+defines metrics <em>once</em>, centrally, so every tool and query returns the same
+answer.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Piece</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Metric definition</td><td>The canonical formula for a KPI, version-controlled</td></tr>
+<tr><td class="c-cyan">Dimensions</td><td>How you slice it (time, region, plan)</td></tr>
+<tr><td class="c-cyan">Governance</td><td>Certified vs experimental metrics</td></tr>
+<tr><td class="c-cyan">Tools</td><td>dbt Semantic Layer, Cube, LookML</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The payoff: a single source of truth for business logic that BI tools, notebooks,
+and APIs all consume — no more "whose number is right?" meetings. It's the
+analytics equivalent of DRY.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">✅</span>
+<span class="topic-name">Data Quality &amp; Observability</span>
+<span class="topic-badge">Analytics</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Garbage In, Wrong Decisions Out</div>
+<div class="concept-desc">
+A pipeline that runs "successfully" can still deliver silently wrong data — a null
+spike, a duplicated load, a schema change upstream. Data quality makes correctness a
+tested, monitored property, not a hope.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Dimension</th><th>Check</th></tr>
+<tr><td class="c-cyan">Freshness</td><td>Did the data arrive on time?</td></tr>
+<tr><td class="c-cyan">Volume</td><td>Row count in the expected range?</td></tr>
+<tr><td class="c-cyan">Schema</td><td>Did columns/types change upstream?</td></tr>
+<tr><td class="c-cyan">Distribution</td><td>Nulls/values within normal bounds?</td></tr>
+<tr><td class="c-cyan">Lineage</td><td>What feeds this, and what breaks if it fails?</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Tools:</strong> dbt tests &amp; contracts, Great
+Expectations, Soda; observability platforms (Monte Carlo) auto-detect anomalies.
+<strong class="c-amber">Data contracts</strong> push the guarantee upstream to
+producers — the analytics equivalent of an API contract.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body data -->
 </div>
 </div>

@@ -793,11 +793,11 @@ progress / keyboard-a11y automatically.
 - [x] Graph Databases — Neo4j, Cypher, when relationships are the data
 
 **Wave H6 — Analytics & Warehousing**
-- [ ] OLTP vs OLAP — row vs columnar storage, why analytics needs a warehouse
-- [ ] Columnar Engines — Parquet, DuckDB, ClickHouse; vectorized execution
-- [ ] Data Warehouse vs Lake vs Lakehouse — Snowflake/BigQuery/Databricks
-- [ ] The Semantic Layer & Metrics — one definition of "revenue" everywhere
-- [ ] Data Quality & Observability — tests, freshness, lineage, contracts
+- [x] OLTP vs OLAP — row vs columnar storage, why analytics needs a warehouse
+- [x] Columnar Engines — Parquet, DuckDB, ClickHouse; vectorized execution
+- [x] Data Warehouse vs Lake vs Lakehouse — Snowflake/BigQuery/Databricks
+- [x] The Semantic Layer & Metrics — one definition of "revenue" everywhere
+- [x] Data Quality & Observability — tests, freshness, lineage, contracts
 
 **Wave H7 — Operating Databases**
 - [ ] Backups & PITR — dumps vs physical, point-in-time recovery, testing restores
