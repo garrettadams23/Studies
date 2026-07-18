@@ -181,4 +181,195 @@
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔗</span>
+              <span class="topic-name">SQL Joins — Every Type, and the NULL Traps</span>
+              <span class="topic-badge">SQL</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Combining Rows Across Tables</div>
+                <div class="concept-desc">
+                  Joins match rows from two tables on a condition. The type decides what happens to
+                  rows that <em>don't</em> match — and that's where most bugs live.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">SELECT</span> u.name, o.total
+<span class="kw">FROM</span> users u
+<span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> o.user_id = u.id;   <span class="com">-- keeps users with no orders</span></pre>
+                  <table class="ref-table">
+                    <tr><th>Join</th><th>Returns</th></tr>
+                    <tr><td class="c-cyan">INNER</td><td>Only rows that match in both tables</td></tr>
+                    <tr><td class="c-cyan">LEFT / RIGHT</td><td>All rows from one side; NULLs where no match</td></tr>
+                    <tr><td class="c-cyan">FULL OUTER</td><td>All rows from both; NULLs on either side</td></tr>
+                    <tr><td class="c-cyan">CROSS</td><td>Cartesian product (every combo) — usually a mistake</td></tr>
+                    <tr><td class="c-cyan">SELF</td><td>A table joined to itself (hierarchies, pairs)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Traps:</strong> putting a filter on the outer table in
+                    <code>WHERE</code> silently turns a LEFT JOIN into an INNER JOIN (put it in the
+                    <code>ON</code> instead); and joining on a nullable column drops rows because
+                    <code>NULL = NULL</code> isn't true. Watch for <em>fan-out</em>: a one-to-many
+                    join multiplies rows and inflates <code>SUM()</code>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🪟</span>
+              <span class="topic-name">Window Functions — Analytics Without Collapsing Rows</span>
+              <span class="topic-badge">SQL</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Rankings, Running Totals &amp; Row-to-Row Math</div>
+                <div class="concept-desc">
+                  <code>GROUP BY</code> collapses rows; <strong class="c-cyan">window functions</strong>
+                  compute across a set of rows <em>while keeping every row</em>. The
+                  <code>OVER()</code> clause defines the "window" (partition + order).
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">SELECT</span> name, dept, salary,
+  <span class="fn">RANK</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> dept <span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>) <span class="kw">AS</span> rnk,
+  <span class="fn">SUM</span>(salary) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> dept) <span class="kw">AS</span> dept_total
+<span class="kw">FROM</span> employees;</pre>
+                  <table class="ref-table">
+                    <tr><th>Function</th><th>Use</th></tr>
+                    <tr><td class="c-cyan">ROW_NUMBER / RANK / DENSE_RANK</td><td>Ordering &amp; top-N per group</td></tr>
+                    <tr><td class="c-cyan">LAG / LEAD</td><td>Compare to the previous/next row (deltas, growth)</td></tr>
+                    <tr><td class="c-cyan">SUM/AVG OVER</td><td>Running totals &amp; moving averages</td></tr>
+                    <tr><td class="c-cyan">NTILE</td><td>Buckets/percentiles</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Killer use:</strong> "top 3 earners per department" or
+                    "each order vs the customer's previous order" — one query, no self-joins. Window
+                    functions are the single biggest jump from beginner to intermediate SQL.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧱</span>
+              <span class="topic-name">CTEs &amp; Recursion — Readable, Composable Queries</span>
+              <span class="topic-badge">SQL</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Name Your Steps With WITH</div>
+                <div class="concept-desc">
+                  A <strong class="c-cyan">Common Table Expression</strong> (<code>WITH</code>) names a
+                  subquery so you can build a complex query as readable, stacked steps instead of
+                  nested parentheses. <strong class="c-cyan">Recursive CTEs</strong> traverse
+                  hierarchies and graphs.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">WITH</span> ranked <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> *, <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> user_id <span class="kw">ORDER BY</span> ts <span class="kw">DESC</span>) rn
+  <span class="kw">FROM</span> events
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> ranked <span class="kw">WHERE</span> rn = <span class="num">1</span>;   <span class="com">-- latest event per user</span></pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Recursive form:</strong> an anchor query
+                    <code>UNION ALL</code> a step that references the CTE — perfect for org charts,
+                    category trees, or "all descendants of X." Readability tip: CTEs make a 60-line
+                    query reviewable; deeply nested subqueries don't. (Note: some engines
+                    materialize CTEs — check the plan if performance matters.)
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">Σ</span>
+              <span class="topic-name">Aggregation — GROUP BY, HAVING &amp; ROLLUP</span>
+              <span class="topic-badge">SQL</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Summarizing Rows Into Groups</div>
+                <div class="concept-desc">
+                  Aggregate functions (<code>COUNT</code>, <code>SUM</code>, <code>AVG</code>,
+                  <code>MIN/MAX</code>) collapse many rows into one per group. <code>GROUP BY</code>
+                  defines the groups; <code>HAVING</code> filters <em>after</em> aggregation (unlike
+                  <code>WHERE</code>, which filters before).
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">SELECT</span> country, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> n, <span class="fn">SUM</span>(total) <span class="kw">AS</span> rev
+<span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> status = <span class="str">'paid'</span>          <span class="com">-- filter rows first</span>
+<span class="kw">GROUP BY</span> country
+<span class="kw">HAVING</span> <span class="fn">SUM</span>(total) &gt; <span class="num">10000</span>      <span class="com">-- filter groups after</span>
+<span class="kw">ORDER BY</span> rev <span class="kw">DESC</span>;</pre>
+                  <table class="ref-table">
+                    <tr><th>Feature</th><th>Does</th></tr>
+                    <tr><td class="c-cyan">COUNT(*) vs COUNT(col)</td><td>All rows vs non-NULL values only</td></tr>
+                    <tr><td class="c-cyan">COUNT(DISTINCT …)</td><td>Unique values</td></tr>
+                    <tr><td class="c-cyan">ROLLUP / CUBE / GROUPING SETS</td><td>Subtotals &amp; grand totals in one pass</td></tr>
+                    <tr><td class="c-cyan">FILTER (WHERE …)</td><td>Conditional aggregates (Postgres)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-red">Classic error:</strong> selecting a non-aggregated column
+                    that isn't in <code>GROUP BY</code> — either group by it or wrap it in an
+                    aggregate.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🎯</span>
+              <span class="topic-name">Subqueries, EXISTS &amp; Set Operations</span>
+              <span class="topic-badge">SQL</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Queries Inside Queries</div>
+                <div class="concept-desc">
+                  A subquery is a <code>SELECT</code> nested in another statement. It can return a
+                  scalar, a list (for <code>IN</code>), or a table. <strong class="c-cyan">Correlated</strong>
+                  subqueries reference the outer row and run per-row.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com">-- customers who have placed at least one order</span>
+<span class="kw">SELECT</span> name <span class="kw">FROM</span> users u
+<span class="kw">WHERE EXISTS</span> (<span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> orders o <span class="kw">WHERE</span> o.user_id = u.id);</pre>
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Use</th></tr>
+                    <tr><td class="c-cyan">IN / NOT IN</td><td>Membership — but <code>NOT IN</code> + NULLs = no rows (trap!)</td></tr>
+                    <tr><td class="c-cyan">EXISTS / NOT EXISTS</td><td>Existence check — NULL-safe, often faster</td></tr>
+                    <tr><td class="c-cyan">UNION / UNION ALL</td><td>Stack result sets (ALL keeps duplicates &amp; is faster)</td></tr>
+                    <tr><td class="c-cyan">INTERSECT / EXCEPT</td><td>Rows in both / in one but not the other</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Prefer <code>EXISTS</code> over <code>NOT IN</code></strong>
+                    whenever the inner column can be NULL — <code>NOT IN (…NULL…)</code> returns
+                    nothing, a famously silent bug. Many subqueries also rewrite cleanly as joins or
+                    CTEs; pick whichever reads clearest.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body data -->

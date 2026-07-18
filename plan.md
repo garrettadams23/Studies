@@ -765,11 +765,11 @@ progress / keyboard-a11y automatically.
 - [x] ER Modeling — entities, relationships, cardinality, crow's-foot diagrams
 
 **Wave H2 — SQL Mastery**
-- [ ] SQL Joins Deep — inner/outer/self/cross, and how NULLs break naive joins
-- [ ] Window Functions — ranking, running totals, LAG/LEAD, partitions
-- [ ] CTEs & Recursion — readable queries, hierarchical/graph traversal
-- [ ] Aggregation & GROUP BY — HAVING, GROUPING SETS, ROLLUP/CUBE
-- [ ] Subqueries, EXISTS & Set Ops — correlated subqueries, UNION/INTERSECT/EXCEPT
+- [x] SQL Joins Deep — inner/outer/self/cross, and how NULLs break naive joins
+- [x] Window Functions — ranking, running totals, LAG/LEAD, partitions
+- [x] CTEs & Recursion — readable queries, hierarchical/graph traversal
+- [x] Aggregation & GROUP BY — HAVING, GROUPING SETS, ROLLUP/CUBE
+- [x] Subqueries, EXISTS & Set Ops — correlated subqueries, UNION/INTERSECT/EXCEPT
 
 **Wave H3 — Performance & Internals**
 - [ ] Indexes Explained — B-tree vs hash vs GIN/GiST, covering & composite indexes
