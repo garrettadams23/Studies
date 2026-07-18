@@ -74,6 +74,7 @@ alt="Optimized Study Routine: 4 Pillars for Success infographic."
 <div class="chip c-cloud"           data-domain="cloud">☁️ CLOUD</div>
 <div class="chip c-eng"           data-domain="eng">🏛️ ENGINEERING</div>
 <div class="chip c-data"           data-domain="data">📊 Data</div>
+<div class="chip c-web"           data-domain="web">🌐 Web</div>
 </div>
 </div>
 <!-- SEARCH BAR ──────────────────────────────────────────────────────── -->
@@ -51101,6 +51102,195 @@ not just writing the query. Every card in this domain maps to one of these round
 </div>
 </div>
 <!-- /domain-body data -->
+</div>
+</div>
+<div class="domain-section domain-web" data-domain="web">
+<div class="domain-header">
+<span class="domain-icon">🌐</span>
+<span class="domain-title">Web &amp; Frontend Engineering</span>
+<div class="cert-tags">
+<span class="ctag ctag-general">WEB</span>
+<span class="ctag ctag-general">JS</span>
+</div>
+<span class="domain-sub">Browser · CSS · JS · Frameworks · Performance · A11y</span>
+<span class="chevron">▾</span>
+</div>
+<div class="domain-body">
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🖼️</span>
+<span class="topic-name">How the Browser Renders a Page</span>
+<span class="topic-badge">Browser</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">From Bytes to Pixels</div>
+<div class="concept-desc">
+Understanding the rendering pipeline is what separates people who "write CSS" from
+people who make fast sites. The browser turns your HTML/CSS into pixels through a
+fixed sequence of steps.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>Does</th></tr>
+<tr><td class="c-cyan">Parse → DOM</td><td>HTML becomes the Document Object Model tree</td></tr>
+<tr><td class="c-cyan">Parse → CSSOM</td><td>CSS becomes the style tree</td></tr>
+<tr><td class="c-cyan">Render tree</td><td>DOM + CSSOM combined (visible nodes only)</td></tr>
+<tr><td class="c-cyan">Layout (reflow)</td><td>Compute geometry — where &amp; how big everything is</td></tr>
+<tr><td class="c-cyan">Paint</td><td>Fill in pixels (text, colors, borders)</td></tr>
+<tr><td class="c-cyan">Composite</td><td>Assemble layers on the GPU</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Render-blocking:</strong> CSS blocks rendering (the browser
+won't paint unstyled content); a plain <code>&lt;script&gt;</code> blocks parsing.
+Use <code>defer</code>/<code>async</code> and keep critical CSS small so the page
+paints fast.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌀</span>
+<span class="topic-name">Reflow, Repaint &amp; What Causes Jank</span>
+<span class="topic-badge">Performance</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Why Animations Stutter</div>
+<div class="concept-desc">
+To hit 60fps the browser has ~16ms per frame. <strong class="c-cyan">Reflow</strong>
+(recomputing layout) is expensive; <strong class="c-cyan">repaint</strong> is
+cheaper; compositing a transform is cheapest. Triggering layout every frame causes
+<strong class="c-red">jank</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Change</th><th>Cost</th></tr>
+<tr><td class="c-red">width/height/top/left</td><td>Reflow (layout) — avoid animating these</td></tr>
+<tr><td class="c-amber">color/background</td><td>Repaint only</td></tr>
+<tr><td class="c-green">transform / opacity</td><td>Composite only — GPU, no layout (animate these!)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-red">Layout thrashing:</strong> reading a layout property (like
+<code>offsetHeight</code>) right after writing one forces a synchronous reflow in a
+loop. Batch reads, then writes. <strong class="c-green">Animate <code>transform</code>
+and <code>opacity</code></strong> — they skip layout and paint entirely.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌳</span>
+<span class="topic-name">The DOM &amp; Events — Bubbling &amp; Delegation</span>
+<span class="topic-badge">Browser</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">How Clicks Travel Through the Page</div>
+<div class="concept-desc">
+The DOM is the live tree of the page that JavaScript manipulates. Events flow through
+it in phases — understanding this powers efficient event handling.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com">// Event delegation: one listener for many children</span>
+list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, (e) =&gt; {
+  <span class="kw">const</span> item = e.target.<span class="fn">closest</span>(<span class="str">'.item'</span>);
+  <span class="kw">if</span> (item) <span class="fn">select</span>(item.dataset.id);
+});</pre>
+<table class="ref-table">
+<tr><th>Phase</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Capture</td><td>Top → target (rarely used)</td></tr>
+<tr><td class="c-cyan">Target</td><td>The element clicked</td></tr>
+<tr><td class="c-cyan">Bubble</td><td>Target → top (default for listeners)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Delegation</strong> attaches one listener to a parent and
+uses bubbling to handle any child — essential for dynamic lists (no re-binding on
+add/remove). <code>stopPropagation()</code> halts bubbling;
+<code>preventDefault()</code> stops the browser's default action.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗃️</span>
+<span class="topic-name">Web Storage — Cookies, localStorage &amp; IndexedDB</span>
+<span class="topic-badge">Browser</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Where State Lives in the Browser</div>
+<div class="concept-desc">
+The browser offers several places to persist data, each with different size, lifetime,
+and security properties. Picking the wrong one causes bugs and vulnerabilities.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Store</th><th>Use / Note</th></tr>
+<tr><td class="c-cyan">Cookies</td><td>Sent with every request; use <code>HttpOnly</code>+<code>Secure</code> for auth tokens</td></tr>
+<tr><td class="c-cyan">localStorage</td><td>~5MB, persists, sync API — <strong class="c-red">readable by JS (XSS risk)</strong></td></tr>
+<tr><td class="c-cyan">sessionStorage</td><td>Per-tab, cleared on close</td></tr>
+<tr><td class="c-cyan">IndexedDB</td><td>Large, async, structured — offline apps</td></tr>
+<tr><td class="c-cyan">Cache API</td><td>Store responses for service workers/PWAs</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-red">Security:</strong> never store auth tokens in
+<code>localStorage</code> — any XSS reads them. Prefer <code>HttpOnly</code> cookies
+(JS can't touch them). Ties to the web-security cards.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🛠️</span>
+<span class="topic-name">DevTools Mastery</span>
+<span class="topic-badge">Tooling</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Your Most-Used Debugging Tool</div>
+<div class="concept-desc">
+Browser DevTools (F12) are where frontend work actually happens. Fluency here is the
+fastest way to level up — most developers use 20% of them.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Panel</th><th>Use</th></tr>
+<tr><td class="c-cyan">Elements</td><td>Inspect/edit DOM &amp; CSS live; check the box model</td></tr>
+<tr><td class="c-cyan">Console</td><td>Logs, run JS, <code>$0</code> = selected element</td></tr>
+<tr><td class="c-cyan">Network</td><td>Requests, timing, payloads, throttling</td></tr>
+<tr><td class="c-cyan">Performance</td><td>Record &amp; find jank, long tasks, layout shifts</td></tr>
+<tr><td class="c-cyan">Application</td><td>Storage, cookies, service workers, manifest</td></tr>
+<tr><td class="c-cyan">Lighthouse</td><td>Audit performance, a11y, SEO, best practices</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Pro moves:</strong> throttle to "Slow 3G" + 4× CPU to feel
+what users feel; use the Performance panel's flame chart to find the function eating
+your frame budget.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- /domain-body web -->
 </div>
 </div>
 </div>

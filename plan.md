@@ -820,11 +820,11 @@ progress / keyboard-a11y automatically.
 ~7 waves, ~38 cards. From "I know some HTML" to shipping modern web apps.
 
 **Wave I1 — The Browser Platform**
-- [ ] How the Browser Renders — parse → DOM/CSSOM → layout → paint → composite
-- [ ] The Critical Rendering Path & Reflow/Repaint — what makes pages jank
-- [ ] The DOM & Events — bubbling/capture, delegation, the event loop revisited
-- [ ] Web Storage & State — cookies vs localStorage vs IndexedDB vs cache
-- [ ] DevTools Mastery — elements, network, performance, memory, Lighthouse
+- [x] How the Browser Renders — parse → DOM/CSSOM → layout → paint → composite
+- [x] The Critical Rendering Path & Reflow/Repaint — what makes pages jank
+- [x] The DOM & Events — bubbling/capture, delegation, the event loop revisited
+- [x] Web Storage & State — cookies vs localStorage vs IndexedDB vs cache
+- [x] DevTools Mastery — elements, network, performance, memory, Lighthouse
 
 **Wave I2 — Modern CSS**
 - [ ] Flexbox — the one-dimensional layout system, deep
