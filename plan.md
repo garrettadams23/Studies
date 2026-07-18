@@ -807,11 +807,11 @@ progress / keyboard-a11y automatically.
 - [x] Monitoring a DB — slow-query logs, bloat, connection saturation, key metrics
 
 **Wave H8 — Data Career & Modeling Craft**
-- [ ] Data Roles — analyst vs analytics engineer vs data engineer vs DBA vs scientist
-- [ ] Designing a Schema From Requirements — a walkthrough, OLTP → OLAP
-- [ ] Time-Series & Event Data — retention, downsampling, TimescaleDB/InfluxDB
-- [ ] Vector Databases — embeddings, ANN search, pgvector (bridge to AI domain)
-- [ ] The Data Interview — SQL problems, modeling questions, case studies
+- [x] Data Roles — analyst vs analytics engineer vs data engineer vs DBA vs scientist
+- [x] Designing a Schema From Requirements — a walkthrough, OLTP → OLAP
+- [x] Time-Series & Event Data — retention, downsampling, TimescaleDB/InfluxDB
+- [x] Vector Databases — embeddings, ANN search, pgvector (bridge to AI domain)
+- [x] The Data Interview — SQL problems, modeling questions, case studies
 
 ---
 
