@@ -855,11 +855,11 @@ progress / keyboard-a11y automatically.
 - [x] API Client Patterns — React Query/SWR, caching, optimistic updates
 
 **Wave I6 — Quality, Performance & A11y**
-- [ ] Web Performance — Core Web Vitals (LCP/INP/CLS), code-splitting, lazy loading
-- [ ] Web Accessibility (a11y) — WCAG, ARIA, keyboard nav, screen readers
-- [ ] Frontend Testing — unit (Vitest), component (Testing Library), e2e (Playwright)
-- [ ] Web Security for Frontend — XSS, CSRF, CSP, clickjacking (bridge to `sec`)
-- [ ] SEO & Metadata — semantic HTML, Open Graph, structured data
+- [x] Web Performance — Core Web Vitals (LCP/INP/CLS), code-splitting, lazy loading
+- [x] Web Accessibility (a11y) — WCAG, ARIA, keyboard nav, screen readers
+- [x] Frontend Testing — unit (Vitest), component (Testing Library), e2e (Playwright)
+- [x] Web Security for Frontend — XSS, CSRF, CSP, clickjacking (bridge to `sec`)
+- [x] SEO & Metadata — semantic HTML, Open Graph, structured data
 
 **Wave I7 — Shipping & The Edge**
 - [ ] Progressive Web Apps — service workers, offline, installability

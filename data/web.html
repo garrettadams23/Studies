@@ -918,4 +918,175 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚡</span>
+              <span class="topic-name">Web Performance — Core Web Vitals</span>
+              <span class="topic-badge">Performance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Metrics Google (and Users) Care About</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Core Web Vitals</strong> are Google's user-centric performance
+                  metrics — they affect both experience and search ranking. Optimize these three and
+                  the site <em>feels</em> fast.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Metric</th><th>Measures</th><th>Fix</th></tr>
+                    <tr><td class="c-cyan">LCP</td><td>Largest content paint (load speed)</td><td>Optimize images, server response, critical CSS</td></tr>
+                    <tr><td class="c-cyan">INP</td><td>Interaction responsiveness</td><td>Break up long JS tasks; less main-thread work</td></tr>
+                    <tr><td class="c-cyan">CLS</td><td>Layout shift (visual stability)</td><td>Set image/ad dimensions; reserve space</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">Big levers:</strong> ship less JavaScript (code-split,
+                    tree-shake), optimize &amp; lazy-load images (modern formats, <code>loading="lazy"</code>),
+                    and cache aggressively. Measure with Lighthouse and real-user data (RUM) — lab and
+                    field can differ.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">♿</span>
+              <span class="topic-name">Web Accessibility (a11y) — WCAG &amp; ARIA</span>
+              <span class="topic-badge">A11y</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Usable by Everyone — and Often the Law</div>
+                <div class="concept-desc">
+                  Accessibility means people using keyboards, screen readers, or with low vision can
+                  use your site. It's a legal requirement in many contexts (ADA, EAA) and simply good
+                  engineering — accessible sites are more robust for everyone.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Principle (POUR)</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Semantic HTML</td><td>Use real <code>&lt;button&gt;</code>/<code>&lt;nav&gt;</code>/<code>&lt;h1&gt;</code> — free a11y</td></tr>
+                    <tr><td class="c-cyan">Keyboard</td><td>Everything operable without a mouse; visible focus</td></tr>
+                    <tr><td class="c-cyan">Contrast &amp; text</td><td>4.5:1 contrast; resizable text; alt text on images</td></tr>
+                    <tr><td class="c-cyan">ARIA</td><td>Roles/labels for custom widgets — only when HTML can't</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">First rule of ARIA: don't use ARIA</strong> — a native
+                    element beats a div with roles every time. Test by unplugging your mouse and by
+                    running a screen reader. WCAG AA is the common target. (This site follows these:
+                    keyboard nav, focus states, semantic structure.)
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧪</span>
+              <span class="topic-name">Frontend Testing — Unit, Component &amp; E2E</span>
+              <span class="topic-badge">Quality</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Confidence Without Manual Clicking</div>
+                <div class="concept-desc">
+                  Frontend tests catch regressions before users do. The test pyramid applies: lots of
+                  fast unit tests, fewer component tests, a handful of end-to-end tests for critical
+                  flows.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Level</th><th>Tool</th><th>Tests</th></tr>
+                    <tr><td class="c-cyan">Unit</td><td>Vitest / Jest</td><td>Pure functions, logic</td></tr>
+                    <tr><td class="c-cyan">Component</td><td>Testing Library</td><td>Render + interact like a user</td></tr>
+                    <tr><td class="c-cyan">E2E</td><td>Playwright / Cypress</td><td>Real browser, full flows (login → checkout)</td></tr>
+                    <tr><td class="c-cyan">Visual / a11y</td><td>Storybook, axe</td><td>Regression &amp; accessibility checks</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">Testing Library philosophy:</strong> test behavior, not
+                    implementation — query by what a user sees (roles, text), not CSS classes. Then
+                    refactors don't break tests. A few reliable E2E tests on the money-path beat a
+                    hundred brittle ones.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🛡️</span>
+              <span class="topic-name">Frontend Security — XSS, CSRF &amp; CSP</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Browser-Side Attack Surface</div>
+                <div class="concept-desc">
+                  The frontend has its own security risks distinct from the server. The big three
+                  every web dev must know — directly bridging to the security domain's web cards.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Attack</th><th>Defense</th></tr>
+                    <tr><td class="c-red">XSS</td><td>Injected script runs in your page → escape output, avoid <code>innerHTML</code>/<code>dangerouslySetInnerHTML</code>, use CSP</td></tr>
+                    <tr><td class="c-red">CSRF</td><td>Forged request using the user's cookie → SameSite cookies, CSRF tokens</td></tr>
+                    <tr><td class="c-red">Clickjacking</td><td>Your page iframed &amp; tricked → <code>X-Frame-Options</code>/frame-ancestors</td></tr>
+                    <tr><td class="c-green">CSP</td><td>Content-Security-Policy limits what can load/run — big XSS mitigation</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Frameworks help:</strong> React escapes by default (which
+                    is why <code>dangerouslySetInnerHTML</code> is named to scare you). Never build HTML
+                    from untrusted strings; sanitize any rich content with a vetted library (DOMPurify).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔍</span>
+              <span class="topic-name">SEO &amp; Metadata for Developers</span>
+              <span class="topic-badge">Quality</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Being Found &amp; Shared Correctly</div>
+                <div class="concept-desc">
+                  Technical SEO is the part developers own: making pages crawlable, fast, and
+                  correctly described. Modern SEO overlaps heavily with performance and semantic HTML.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Element</th><th>Purpose</th></tr>
+                    <tr><td class="c-cyan">Semantic HTML &amp; headings</td><td>Structure crawlers understand</td></tr>
+                    <tr><td class="c-cyan">&lt;title&gt; &amp; meta description</td><td>The search-result snippet</td></tr>
+                    <tr><td class="c-cyan">Open Graph / Twitter cards</td><td>Rich link previews when shared</td></tr>
+                    <tr><td class="c-cyan">Structured data (JSON-LD)</td><td>Rich results (ratings, FAQs)</td></tr>
+                    <tr><td class="c-cyan">Sitemap &amp; robots.txt</td><td>Guide crawlers; canonical URLs avoid dupes</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">SSR/SSG helps SEO</strong> because crawlers get real HTML
+                    immediately. Core Web Vitals are a ranking factor too — so performance work doubles
+                    as SEO work.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body web -->
