@@ -50760,6 +50760,176 @@ producers — the analytics equivalent of an API contract.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">💾</span>
+<span class="topic-name">Backups &amp; Point-in-Time Recovery</span>
+<span class="topic-badge">DBA</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">A Backup You Haven't Restored Isn't a Backup</div>
+<div class="concept-desc">
+The database holds the business's most irreplaceable asset. Backups protect against
+hardware failure, bad deploys, and <code>DELETE</code>-without-<code>WHERE</code>.
+The goal is a tested path back to any moment before disaster.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Type</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Logical dump</td><td><code>pg_dump</code>/<code>mysqldump</code> — portable, slow to restore, per-DB</td></tr>
+<tr><td class="c-cyan">Physical backup</td><td>File-level (pgBackRest, Percona) — fast, whole cluster</td></tr>
+<tr><td class="c-cyan">PITR</td><td>Base backup + WAL archive → restore to an exact second</td></tr>
+<tr><td class="c-cyan">Snapshots</td><td>Cloud volume snapshots — fast but check consistency</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">RPO/RPO drive design:</strong> continuous WAL archiving
+gives near-zero data loss (RPO). But the only backup that counts is a
+<strong class="c-green">restore you've actually tested</strong> — schedule restore
+drills, or you have Schrödinger's backup.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">👯</span>
+<span class="topic-name">Replication &amp; High Availability</span>
+<span class="topic-badge">DBA</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Copies for Scale and Survival</div>
+<div class="concept-desc">
+Replication streams changes from a <strong class="c-cyan">primary</strong> to one or
+more <strong class="c-cyan">replicas</strong>. It buys you read scaling, failover,
+and geographic locality — but introduces lag and failover complexity.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Async replication</td><td>Fast writes, but replicas lag → possible stale reads/data loss on failover</td></tr>
+<tr><td class="c-cyan">Sync replication</td><td>No data loss, higher write latency</td></tr>
+<tr><td class="c-cyan">Read replicas</td><td>Offload reporting/read traffic</td></tr>
+<tr><td class="c-cyan">Automatic failover</td><td>Patroni/orchestrator promote a replica on primary death</td></tr>
+<tr><td class="c-red">Split-brain</td><td>Two primaries accept writes — data divergence; fencing prevents it</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Replication lag</strong> means "read your own write" can
+fail — route critical reads to the primary. HA needs a leader-election mechanism;
+rolling your own failover is how you get split-brain.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔀</span>
+<span class="topic-name">Schema Migrations — Zero-Downtime Change</span>
+<span class="topic-badge">DBA</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Changing the Schema While Live</div>
+<div class="concept-desc">
+Schema changes are code changes and must be versioned, reviewed, and reversible.
+The hard part is altering a big table <em>without</em> locking it or breaking the
+currently-running app version.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool / Idea</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Migration tools</td><td>Flyway, Liquibase, Alembic, Rails — versioned, ordered scripts</td></tr>
+<tr><td class="c-cyan">Expand/contract</td><td>Add new → backfill → switch → remove old (multi-deploy)</td></tr>
+<tr><td class="c-red">Locking DDL</td><td>Some <code>ALTER</code>s rewrite/lock the table — check first</td></tr>
+<tr><td class="c-green">Online tools</td><td>gh-ost, pt-online-schema-change for big MySQL tables</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Golden rule:</strong> every migration must be
+backward-compatible with the currently-deployed code, because during a rollout both
+versions run at once. "Add a nullable column, deploy, backfill, then enforce" beats
+a single locking change. Always have a rollback.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🛡️</span>
+<span class="topic-name">Database Security — Least Privilege &amp; RLS</span>
+<span class="topic-badge">Security</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Protecting the Crown Jewels</div>
+<div class="concept-desc">
+The database is the highest-value target. Defense is layered: control who connects,
+what they can touch, and protect the data at rest and in transit. Ties directly to
+the security domain.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Control</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Least-privilege roles</td><td>App user ≠ superuser; separate read/write/migration roles</td></tr>
+<tr><td class="c-cyan">Row-Level Security</td><td>Postgres RLS — rows filtered by policy (multi-tenant isolation)</td></tr>
+<tr><td class="c-cyan">Encryption</td><td>TLS in transit; TDE / disk encryption at rest</td></tr>
+<tr><td class="c-cyan">Secrets</td><td>Rotate credentials via Vault/IAM; never hardcode</td></tr>
+<tr><td class="c-cyan">Auditing</td><td>Log privileged actions &amp; access to sensitive tables</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-red">And of course:</strong> parameterized queries to stop SQL
+injection (the app's job), and network isolation so the DB is never internet-facing.
+Column-level encryption/masking protects PII even from DB admins.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📟</span>
+<span class="topic-name">Monitoring a Database — What to Watch</span>
+<span class="topic-badge">DBA</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Signals That Predict an Outage</div>
+<div class="concept-desc">
+Databases fail in fairly predictable ways. Watch the right handful of metrics and
+you catch trouble before users do — this is the ops side of the SRE golden signals,
+applied to data.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Signal</th><th>Why</th></tr>
+<tr><td class="c-cyan">Slow-query log</td><td>Find the queries actually hurting — start here</td></tr>
+<tr><td class="c-cyan">Connections / saturation</td><td>Nearing <code>max_connections</code> → pool it</td></tr>
+<tr><td class="c-cyan">Cache hit ratio</td><td>Low buffer-pool hits → more RAM or better indexes</td></tr>
+<tr><td class="c-cyan">Replication lag</td><td>Rising lag → stale reads, failover risk</td></tr>
+<tr><td class="c-cyan">Bloat / vacuum (PG)</td><td>Dead tuples piling up → autovacuum tuning</td></tr>
+<tr><td class="c-cyan">Disk &amp; IOPS</td><td>Running out of space is a hard outage</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<code>pg_stat_statements</code> (Postgres) and the Performance Schema (MySQL)
+surface your worst queries — the single most useful place to look when the DB is slow.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body data -->
 </div>
 </div>

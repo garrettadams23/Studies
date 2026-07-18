@@ -800,11 +800,11 @@ progress / keyboard-a11y automatically.
 - [x] Data Quality & Observability — tests, freshness, lineage, contracts
 
 **Wave H7 — Operating Databases**
-- [ ] Backups & PITR — dumps vs physical, point-in-time recovery, testing restores
-- [ ] Replication & HA — primary/replica, failover, read scaling, split-brain
-- [ ] Migrations & Schema Change — zero-downtime, expand/contract, Flyway/Liquibase
-- [ ] Database Security — least privilege, row-level security, encryption, auditing
-- [ ] Monitoring a DB — slow-query logs, bloat, connection saturation, key metrics
+- [x] Backups & PITR — dumps vs physical, point-in-time recovery, testing restores
+- [x] Replication & HA — primary/replica, failover, read scaling, split-brain
+- [x] Migrations & Schema Change — zero-downtime, expand/contract, Flyway/Liquibase
+- [x] Database Security — least privilege, row-level security, encryption, auditing
+- [x] Monitoring a DB — slow-query logs, bloat, connection saturation, key metrics
 
 **Wave H8 — Data Career & Modeling Craft**
 - [ ] Data Roles — analyst vs analytics engineer vs data engineer vs DBA vs scientist
