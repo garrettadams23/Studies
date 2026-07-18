@@ -553,4 +553,183 @@
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐘</span>
+              <span class="topic-name">PostgreSQL — The Default Choice</span>
+              <span class="topic-badge">Postgres</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Swiss-Army Relational Database</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">PostgreSQL</strong> has become the default open-source RDBMS:
+                  standards-compliant, extensible, rock-solid, and free. If you're starting a project
+                  and don't have a specific reason not to, reach for Postgres.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># psql — the CLI you'll live in</span>
+psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span class="var">-d</span> mydb
+\dt              <span class="com"># list tables</span>
+\d+ users        <span class="com"># describe a table</span>
+\di              <span class="com"># list indexes</span>
+\timing on       <span class="com"># show query durations</span></pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Roles</td><td>Users &amp; groups are both "roles"; grant privileges</td></tr>
+                    <tr><td class="c-cyan">Schemas</td><td>Namespaces within a database (<code>public</code> by default)</td></tr>
+                    <tr><td class="c-cyan">Extensions</td><td><code>CREATE EXTENSION</code> — pgvector, PostGIS, pg_stat_statements</td></tr>
+                    <tr><td class="c-cyan">MVCC + VACUUM</td><td>Autovacuum reclaims dead rows; monitor bloat</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧰</span>
+              <span class="topic-name">Postgres Power Features — JSONB &amp; Full-Text</span>
+              <span class="topic-badge">Postgres</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">More Than Rows and Columns</div>
+                <div class="concept-desc">
+                  Postgres blurs the line with NoSQL: store and index JSON documents, arrays, and
+                  run full-text search — often removing the need for a separate datastore.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com">-- JSONB: query inside a document, indexed with GIN</span>
+<span class="kw">SELECT</span> data-&gt;&gt;<span class="str">'email'</span> <span class="kw">FROM</span> users
+<span class="kw">WHERE</span> data @&gt; <span class="str">'{"plan":"pro"}'</span>;
+
+<span class="com">-- Full-text search</span>
+<span class="kw">WHERE</span> to_tsvector(body) @@ to_tsquery(<span class="str">'postgres &amp; index'</span>);</pre>
+                  <table class="ref-table">
+                    <tr><th>Feature</th><th>Use</th></tr>
+                    <tr><td class="c-cyan">JSONB</td><td>Semi-structured data, indexed with GIN; <code>@&gt;</code>, <code>-&gt;&gt;</code></td></tr>
+                    <tr><td class="c-cyan">Arrays</td><td>Native array columns &amp; operators</td></tr>
+                    <tr><td class="c-cyan">Full-text search</td><td>tsvector/tsquery, ranking — no Elasticsearch needed for many apps</td></tr>
+                    <tr><td class="c-cyan">LISTEN/NOTIFY</td><td>Built-in pub/sub for lightweight eventing</td></tr>
+                    <tr><td class="c-cyan">pgvector</td><td>Store embeddings &amp; do similarity search (AI apps)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Rule:</strong> use JSONB for genuinely variable data, not
+                    as an excuse to skip schema design — relational columns are still faster and safer
+                    for structured fields.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🐬</span>
+              <span class="topic-name">MySQL / MariaDB — The Other Giant</span>
+              <span class="topic-badge">MySQL</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Powering LAMP and Half the Web</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">MySQL</strong> (and its community fork
+                  <strong class="c-cyan">MariaDB</strong>) is ubiquitous — WordPress, countless web
+                  apps, and managed offerings everywhere. Very capable; a few behaviors differ from
+                  Postgres and catch people out.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Thing to know</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">InnoDB engine</td><td>The default — transactional, row-locking, FKs</td></tr>
+                    <tr><td class="c-cyan">Default isolation</td><td>Repeatable Read (Postgres uses Read Committed)</td></tr>
+                    <tr><td class="c-amber">Collation/charset</td><td>Use <code>utf8mb4</code> — plain <code>utf8</code> is a 3-byte trap</td></tr>
+                    <tr><td class="c-amber">Looser SQL</td><td>Historically permissive; enable strict mode</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Choosing:</strong> Postgres for richer features &amp;
+                    strictness; MySQL where the ecosystem/hosting assumes it (WordPress) or the team
+                    knows it well. Both are excellent — the differences are smaller than the tribalism.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📦</span>
+              <span class="topic-name">SQLite — The Database That's Everywhere</span>
+              <span class="topic-badge">SQLite</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">A Whole Database in One File</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">SQLite</strong> is an embedded, serverless database — the
+                  entire DB is a single file, no process to run. It's the most deployed database in
+                  the world: every phone, browser, and countless apps ship it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Great for</th><th>Not for</th></tr>
+                    <tr><td class="c-green">App/local storage, mobile, edge</td><td class="c-red">High write concurrency (single-writer)</td></tr>
+                    <tr><td class="c-green">Tests &amp; prototypes</td><td class="c-red">Multiple app servers sharing it</td></tr>
+                    <tr><td class="c-green">Analytics on a file (with extensions)</td><td class="c-red">Network access by many clients</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Don't dismiss it:</strong> "SQLite is not a toy" — for
+                    read-heavy or single-node workloads it's blazing fast and zero-ops. Modern tools
+                    (Litestream, LiteFS, Turso) even give it replication. Know when <em>not</em> to
+                    reach for a server database.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🌊</span>
+              <span class="topic-name">Connection Pooling — Surviving Many Clients</span>
+              <span class="topic-badge">Ops</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Why Your DB Falls Over Under Load</div>
+                <div class="concept-desc">
+                  Each database connection costs memory and a backend process. Open one per request
+                  and a traffic spike (or a serverless fleet) opens thousands, exhausting the server.
+                  A <strong class="c-cyan">connection pool</strong> reuses a small, fixed set of
+                  connections.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Layer</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">App-side pool</td><td>HikariCP, pgx, SQLAlchemy — reuse connections per app</td></tr>
+                    <tr><td class="c-cyan">PgBouncer</td><td>External pooler; transaction mode multiplexes many clients</td></tr>
+                    <tr><td class="c-cyan">Serverless</td><td>Functions × requests = connection storm → use a pooler/proxy</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Sizing:</strong> more connections isn't faster — past a
+                    point they just contend. A good pool is often just <em>(cores × 2) + spindles</em>,
+                    not hundreds. Connection exhaustion presents as timeouts under load; the fix is
+                    pooling, not a bigger <code>max_connections</code>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body data -->

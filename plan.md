@@ -779,11 +779,11 @@ progress / keyboard-a11y automatically.
 - [x] Partitioning & Sharding — scaling a single table/database horizontally
 
 **Wave H4 — Postgres in Practice**
-- [ ] PostgreSQL Deep — psql, roles, schemas, extensions (the "default" DB)
-- [ ] Postgres Power Features — JSONB, arrays, full-text search, LISTEN/NOTIFY
-- [ ] MySQL / MariaDB — engine differences, gotchas, when it's chosen
-- [ ] SQLite — the embedded database that's everywhere (and its sweet spot)
-- [ ] Connection Pooling & PgBouncer — surviving many clients
+- [x] PostgreSQL Deep — psql, roles, schemas, extensions (the "default" DB)
+- [x] Postgres Power Features — JSONB, arrays, full-text search, LISTEN/NOTIFY
+- [x] MySQL / MariaDB — engine differences, gotchas, when it's chosen
+- [x] SQLite — the embedded database that's everywhere (and its sweet spot)
+- [x] Connection Pooling & PgBouncer — surviving many clients
 
 **Wave H5 — NoSQL & Beyond**
 - [ ] NoSQL Landscape — document / key-value / wide-column / graph, CAP trade-offs
