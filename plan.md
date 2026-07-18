@@ -758,11 +758,11 @@ progress / keyboard-a11y automatically.
 ~8 waves, ~45 cards. The DBA / data-analyst / analytics-engineer companion.
 
 **Wave H1 — Relational Foundations**
-- [ ] How a Database Works — pages, buffer pool, WAL, the storage engine
-- [ ] The Relational Model — relations, keys, referential integrity, NULL semantics
-- [ ] Normalization Deep — 1NF→BCNF with worked examples; when to denormalize
-- [ ] ACID & Transactions — atomicity, isolation levels, the anomalies each prevents
-- [ ] ER Modeling — entities, relationships, cardinality, crow's-foot diagrams
+- [x] How a Database Works — pages, buffer pool, WAL, the storage engine
+- [x] The Relational Model — relations, keys, referential integrity, NULL semantics
+- [x] Normalization Deep — 1NF→BCNF with worked examples; when to denormalize
+- [x] ACID & Transactions — atomicity, isolation levels, the anomalies each prevents
+- [x] ER Modeling — entities, relationships, cardinality, crow's-foot diagrams
 
 **Wave H2 — SQL Mastery**
 - [ ] SQL Joins Deep — inner/outer/self/cross, and how NULLs break naive joins

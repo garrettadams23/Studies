@@ -1,0 +1,184 @@
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚙️</span>
+              <span class="topic-name">How a Database Actually Works</span>
+              <span class="topic-badge">Internals</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Pages, the Buffer Pool &amp; the Write-Ahead Log</div>
+                <div class="concept-desc">
+                  A database is not magic — it's a careful dance between disk and memory. Data lives
+                  on disk in fixed-size <strong class="c-cyan">pages</strong> (commonly 8&nbsp;KB); the
+                  engine caches hot pages in a memory <strong class="c-cyan">buffer pool</strong> so
+                  most reads never touch disk. Durability comes from the
+                  <strong class="c-cyan">write-ahead log (WAL)</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Component</th><th>Job</th></tr>
+                    <tr><td class="c-cyan">Storage engine</td><td>Reads/writes pages, manages indexes (InnoDB, Postgres heap)</td></tr>
+                    <tr><td class="c-cyan">Buffer pool</td><td>In-memory page cache — the #1 performance factor</td></tr>
+                    <tr><td class="c-cyan">WAL / redo log</td><td>Append every change <em>before</em> the data page — crash recovery</td></tr>
+                    <tr><td class="c-cyan">Checkpoint</td><td>Flush dirty pages to disk; trim the log</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Why WAL:</strong> writing a tiny sequential log entry is
+                    fast and safe; the actual (random) page write can happen later. On crash, replay
+                    the log to recover committed work. This one idea gives you the "D" in ACID and
+                    underpins replication and point-in-time recovery.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🧮</span>
+              <span class="topic-name">The Relational Model — Keys &amp; Integrity</span>
+              <span class="topic-badge">Foundations</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Tables, Keys &amp; the NULL Gotcha</div>
+                <div class="concept-desc">
+                  The relational model organizes data into <strong class="c-cyan">relations</strong>
+                  (tables) of rows and typed columns, with relationships expressed by
+                  <em>keys</em> rather than pointers. Constraints let the database enforce
+                  correctness so your application doesn't have to.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Term</th><th>Meaning</th></tr>
+                    <tr><td class="c-cyan">Primary key</td><td>Uniquely identifies a row; not null</td></tr>
+                    <tr><td class="c-cyan">Foreign key</td><td>References a PK elsewhere — enforces referential integrity</td></tr>
+                    <tr><td class="c-cyan">Unique / Check</td><td>Column-level rules the DB guarantees</td></tr>
+                    <tr><td class="c-cyan">Candidate / composite key</td><td>Other unique columns; keys spanning multiple columns</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">The NULL trap:</strong> <code>NULL</code> means "unknown,"
+                    not zero or empty. It uses <em>three-valued logic</em> — <code>NULL = NULL</code>
+                    is not true but <code>NULL</code>, and <code>WHERE x = NULL</code> matches nothing
+                    (use <code>IS NULL</code>). NULLs silently break naive comparisons, joins, and
+                    aggregates — the single most common SQL bug.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📐</span>
+              <span class="topic-name">Normalization — 1NF Through BCNF</span>
+              <span class="topic-badge">Design</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Eliminate Redundancy, Then Know When to Stop</div>
+                <div class="concept-desc">
+                  Normalization structures tables so each fact is stored <em>once</em>, preventing
+                  update anomalies (change an address in one row, forget the other five). You progress
+                  through normal forms, each removing a specific kind of redundancy.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Form</th><th>Rule</th></tr>
+                    <tr><td class="c-cyan">1NF</td><td>Atomic values — no repeating groups or lists in a cell</td></tr>
+                    <tr><td class="c-cyan">2NF</td><td>No partial dependency on part of a composite key</td></tr>
+                    <tr><td class="c-cyan">3NF</td><td>No transitive dependency (non-key → non-key)</td></tr>
+                    <tr><td class="c-cyan">BCNF</td><td>Every determinant is a candidate key (stricter 3NF)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Rule of thumb:</strong> normalize to 3NF for
+                    transactional (OLTP) systems — it keeps writes clean. Then
+                    <strong class="c-amber">denormalize deliberately</strong> for read-heavy or
+                    analytics workloads, trading duplication for fewer joins. Star schemas (analytics)
+                    are intentionally denormalized.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔒</span>
+              <span class="topic-name">ACID &amp; Transactions — Isolation Levels</span>
+              <span class="topic-badge">Foundations</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">All-or-Nothing, and Who Sees What</div>
+                <div class="concept-desc">
+                  A <strong class="c-cyan">transaction</strong> groups statements so they succeed or
+                  fail as a unit. <strong class="c-cyan">ACID</strong> is the guarantee:
+                  <em>Atomic</em> (all or nothing), <em>Consistent</em> (constraints hold),
+                  <em>Isolated</em> (concurrent txns don't corrupt each other),
+                  <em>Durable</em> (committed = survives a crash).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Isolation level</th><th>Prevents</th></tr>
+                    <tr><td class="c-cyan">Read Uncommitted</td><td>nothing — can read dirty (uncommitted) data</td></tr>
+                    <tr><td class="c-cyan">Read Committed</td><td>dirty reads (Postgres default)</td></tr>
+                    <tr><td class="c-cyan">Repeatable Read</td><td>+ non-repeatable reads (MySQL default)</td></tr>
+                    <tr><td class="c-cyan">Serializable</td><td>+ phantom reads — as if txns ran one at a time</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">The trade-off:</strong> stricter isolation = more correct
+                    but more locking/aborts and less concurrency. Know the three anomalies (dirty,
+                    non-repeatable, phantom) and pick the weakest level that's still safe for your
+                    workload.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🕸️</span>
+              <span class="topic-name">ER Modeling — Designing the Schema</span>
+              <span class="topic-badge">Design</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Entities, Relationships &amp; Cardinality</div>
+                <div class="concept-desc">
+                  Before writing DDL, you model the domain: what things exist
+                  (<strong class="c-cyan">entities</strong>), their
+                  <strong class="c-cyan">attributes</strong>, and how they relate. An
+                  <strong>entity-relationship diagram</strong> (crow's-foot notation) is the shared
+                  language between engineers and stakeholders.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Relationship</th><th>Implemented as</th></tr>
+                    <tr><td class="c-cyan">One-to-many</td><td>FK on the "many" side (most common)</td></tr>
+                    <tr><td class="c-cyan">Many-to-many</td><td>A junction/join table with two FKs</td></tr>
+                    <tr><td class="c-cyan">One-to-one</td><td>Shared/unique FK — often a sign to merge tables</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Crow's-foot</strong> marks each end with cardinality
+                    (one/many) and optionality (zero/one). Get the relationships right here and the
+                    tables, keys, and joins fall out naturally — this is the bridge from requirements
+                    to a normalized schema.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+<!-- /domain-body data -->
