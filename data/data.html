@@ -372,4 +372,185 @@
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📇</span>
+              <span class="topic-name">Indexes Explained — B-tree, Hash &amp; Covering</span>
+              <span class="topic-badge">Performance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Book's Index, for Your Data</div>
+                <div class="concept-desc">
+                  An index is a sorted data structure that lets the database find rows without
+                  scanning the whole table — the difference between O(log n) and O(n). The cost:
+                  every write must also update the index, and indexes take space.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Type</th><th>Best for</th></tr>
+                    <tr><td class="c-cyan">B-tree</td><td>The default — equality &amp; range (<code>=</code>, <code>&lt;</code>, <code>BETWEEN</code>, <code>ORDER BY</code>)</td></tr>
+                    <tr><td class="c-cyan">Hash</td><td>Equality only, very fast</td></tr>
+                    <tr><td class="c-cyan">GIN / GiST</td><td>Full-text, JSONB, arrays, geospatial (Postgres)</td></tr>
+                    <tr><td class="c-cyan">Composite</td><td>Multi-column — order matters (leftmost-prefix rule)</td></tr>
+                    <tr><td class="c-cyan">Covering</td><td>Includes all columns a query needs → index-only scan</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Composite key order:</strong> an index on
+                    <code>(a, b)</code> helps <code>WHERE a=…</code> and <code>WHERE a=… AND b=…</code>,
+                    but <em>not</em> <code>WHERE b=…</code> alone. Index the columns you filter/sort on;
+                    don't over-index — each one slows writes.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🔍</span>
+              <span class="topic-name">Reading Query Plans — EXPLAIN ANALYZE</span>
+              <span class="topic-badge">Performance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Ask the Database What It's Doing</div>
+                <div class="concept-desc">
+                  The optimizer turns your SQL into a physical plan. <code>EXPLAIN</code> shows that
+                  plan; <code>EXPLAIN ANALYZE</code> actually runs it and shows real timings and row
+                  counts. Reading plans is <em>the</em> core skill for fixing slow queries.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">EXPLAIN ANALYZE</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> user_id = <span class="num">42</span>;</pre>
+                  <table class="ref-table">
+                    <tr><th>See</th><th>Means</th></tr>
+                    <tr><td class="c-red">Seq Scan</td><td>Reading the whole table — often a missing index</td></tr>
+                    <tr><td class="c-green">Index Scan / Index-Only</td><td>Using an index (good)</td></tr>
+                    <tr><td class="c-cyan">Nested Loop / Hash / Merge Join</td><td>The three join strategies</td></tr>
+                    <tr><td class="c-amber">Rows estimated vs actual</td><td>Big mismatch = stale statistics → bad plan</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Workflow:</strong> find the node eating the most time,
+                    check if a Seq Scan should be an index, and compare estimated vs actual rows. A
+                    huge estimate error usually means <code>ANALYZE</code> (statistics) is out of date.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🚀</span>
+              <span class="topic-name">Query Optimization — Sargability &amp; N+1</span>
+              <span class="topic-badge">Performance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Write Queries the Index Can Use</div>
+                <div class="concept-desc">
+                  A query is <strong class="c-cyan">sargable</strong> ("Search ARGument able") when it
+                  can use an index. Wrapping an indexed column in a function or leading a
+                  <code>LIKE</code> with a wildcard defeats the index and forces a scan.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com">-- NOT sargable: function on the column</span>
+<span class="kw">WHERE</span> <span class="fn">DATE</span>(created_at) = <span class="str">'2026-01-01'</span>
+<span class="com">-- sargable: range on the raw column</span>
+<span class="kw">WHERE</span> created_at &gt;= <span class="str">'2026-01-01'</span> <span class="kw">AND</span> created_at &lt; <span class="str">'2026-01-02'</span></pre>
+                  <table class="ref-table">
+                    <tr><th>Anti-pattern</th><th>Fix</th></tr>
+                    <tr><td class="c-red"><code>func(col) = x</code></td><td>Rewrite as a range, or index the expression</td></tr>
+                    <tr><td class="c-red"><code>LIKE '%foo'</code></td><td>Leading wildcard can't use B-tree — use full-text</td></tr>
+                    <tr><td class="c-red">The N+1 query</td><td>1 query + N per-row queries → JOIN or batch (IN)</td></tr>
+                    <tr><td class="c-red"><code>SELECT *</code></td><td>Fetch only needed columns → enables covering indexes</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">The N+1 problem</strong> is the #1 app-layer DB killer
+                    (ORMs love to cause it): loading a list, then firing one query per item. Fix by
+                    eager-loading with a join or a single <code>WHERE id IN (…)</code>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🚦</span>
+              <span class="topic-name">Locking &amp; MVCC — Concurrency Without Chaos</span>
+              <span class="topic-badge">Internals</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">How Readers and Writers Coexist</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">MVCC</strong> (Multi-Version Concurrency Control) is how
+                  Postgres/InnoDB let many transactions run at once: writers create <em>new versions</em>
+                  of rows instead of overwriting, so <strong class="c-green">readers never block
+                  writers and writers never block readers</strong>. Each transaction sees a consistent
+                  snapshot.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Row versions</td><td>Old versions kept until no txn needs them</td></tr>
+                    <tr><td class="c-cyan">VACUUM (Postgres)</td><td>Cleans up dead tuples — neglect it and the table bloats</td></tr>
+                    <tr><td class="c-cyan">Row vs table locks</td><td><code>FOR UPDATE</code> locks specific rows for a write</td></tr>
+                    <tr><td class="c-red">Deadlock</td><td>Two txns wait on each other — DB kills one; retry it</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Avoiding deadlocks:</strong> acquire locks in a consistent
+                    order and keep transactions short. Explicit locking (<code>SELECT … FOR UPDATE</code>)
+                    is how you safely implement "decrement inventory" under concurrency.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🍰</span>
+              <span class="topic-name">Partitioning &amp; Sharding — Scaling One Big Table</span>
+              <span class="topic-badge">Scale</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Split the Data When It Won't Fit</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Partitioning</strong> splits one table into pieces
+                  <em>within a single database</em> (by range/list/hash) so queries scan less and old
+                  data is easy to drop. <strong class="c-cyan">Sharding</strong> spreads data across
+                  <em>multiple databases/servers</em> to scale beyond one machine.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Range partition</td><td>By date — drop last month in one command (time-series)</td></tr>
+                    <tr><td class="c-cyan">Hash partition</td><td>Even spread by a key's hash</td></tr>
+                    <tr><td class="c-cyan">Shard key</td><td>Chooses which server a row lives on — pick carefully</td></tr>
+                    <tr><td class="c-red">Cross-shard queries/joins</td><td>The hard part — slow, complex; avoid by design</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Order of escalation:</strong> optimize queries &amp;
+                    indexes → add a read replica → partition → (only then) shard. Sharding adds real
+                    operational complexity; a bad shard key causes hotspots and painful re-sharding.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body data -->

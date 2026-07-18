@@ -772,11 +772,11 @@ progress / keyboard-a11y automatically.
 - [x] Subqueries, EXISTS & Set Ops — correlated subqueries, UNION/INTERSECT/EXCEPT
 
 **Wave H3 — Performance & Internals**
-- [ ] Indexes Explained — B-tree vs hash vs GIN/GiST, covering & composite indexes
-- [ ] Reading EXPLAIN / Query Plans — seq scan vs index scan, join strategies
-- [ ] Query Optimization — sargability, cardinality, the N+1 problem, statistics
-- [ ] Locking & MVCC — how Postgres/InnoDB avoid readers blocking writers
-- [ ] Partitioning & Sharding — scaling a single table/database horizontally
+- [x] Indexes Explained — B-tree vs hash vs GIN/GiST, covering & composite indexes
+- [x] Reading EXPLAIN / Query Plans — seq scan vs index scan, join strategies
+- [x] Query Optimization — sargability, cardinality, the N+1 problem, statistics
+- [x] Locking & MVCC — how Postgres/InnoDB avoid readers blocking writers
+- [x] Partitioning & Sharding — scaling a single table/database horizontally
 
 **Wave H4 — Postgres in Practice**
 - [ ] PostgreSQL Deep — psql, roles, schemas, extensions (the "default" DB)
