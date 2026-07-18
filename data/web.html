@@ -556,4 +556,184 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚛️</span>
+              <span class="topic-name">React — Components, Hooks &amp; the Mental Model</span>
+              <span class="topic-badge">Frameworks</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">UI as a Function of State</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">React</strong>'s core idea: your UI is a function of state —
+                  <code>UI = f(state)</code>. You describe what the screen should look like for the
+                  current data; React efficiently updates the DOM when state changes.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="kw">const</span> [n, setN] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="kw">return</span> &lt;button onClick={() =&gt; <span class="fn">setN</span>(n + <span class="num">1</span>)}&gt;{n}&lt;/button&gt;;
+}</pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Components</td><td>Reusable functions returning JSX</td></tr>
+                    <tr><td class="c-cyan">Props</td><td>Read-only inputs passed down</td></tr>
+                    <tr><td class="c-cyan">useState / useReducer</td><td>Local state</td></tr>
+                    <tr><td class="c-cyan">useEffect</td><td>Side effects (fetch, subscriptions) — has gotchas</td></tr>
+                    <tr><td class="c-cyan">Keys</td><td>Stable list identity — never use array index if items change</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">The rules of hooks:</strong> call them at the top level,
+                    same order every render. State updates are asynchronous and batched. "Lift state
+                    up" to the nearest common parent when siblings need to share it.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🪝</span>
+              <span class="topic-name">React Patterns &amp; Pitfalls</span>
+              <span class="topic-badge">Frameworks</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Avoiding the Common Traps</div>
+                <div class="concept-desc">
+                  Most React bugs come from a handful of misunderstandings around effects, re-renders,
+                  and stale state. Knowing them saves days.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Topic</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Context</td><td>Share data without prop-drilling (theme, auth)</td></tr>
+                    <tr><td class="c-cyan">useMemo / useCallback</td><td>Memoize expensive work / stable function identity</td></tr>
+                    <tr><td class="c-red">useEffect overuse</td><td>Don't sync state you can derive during render</td></tr>
+                    <tr><td class="c-red">Stale closures</td><td>Effect captures old state — fix deps array</td></tr>
+                    <tr><td class="c-red">Unnecessary re-renders</td><td>New object/array props break memoization</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">Modern guidance:</strong> "You Might Not Need an Effect" —
+                    derive values during render, handle events in handlers, and reserve
+                    <code>useEffect</code> for genuine external synchronization. Don't reach for
+                    memoization until you've measured a problem.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🟢</span>
+              <span class="topic-name">Vue &amp; Svelte — Other Reactivity Models</span>
+              <span class="topic-badge">Frameworks</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Not Everything Is React</div>
+                <div class="concept-desc">
+                  React isn't the only game. <strong class="c-cyan">Vue</strong> and
+                  <strong class="c-cyan">Svelte</strong> reach the same goal — reactive UI — with
+                  different (often simpler) models worth understanding.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Framework</th><th>Approach</th></tr>
+                    <tr><td class="c-cyan">React</td><td>Re-render on state change; virtual DOM diff; explicit</td></tr>
+                    <tr><td class="c-cyan">Vue</td><td>Fine-grained reactivity + template syntax; gentle learning curve</td></tr>
+                    <tr><td class="c-cyan">Svelte</td><td>Compiler — no virtual DOM; compiles away to tiny vanilla JS</td></tr>
+                    <tr><td class="c-cyan">Solid / signals</td><td>Fine-grained signals; the model many are converging on</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">The trend: signals.</strong> Fine-grained reactivity
+                    (Solid, Vue, Svelte 5, Angular signals) updates exactly what changed without
+                    re-running whole components — the industry direction. Learn React for jobs; learn
+                    signals to understand where things are going.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">▲</span>
+              <span class="topic-name">Meta-Frameworks — Next.js &amp; Rendering Modes</span>
+              <span class="topic-badge">Frameworks</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">SSR, SSG, ISR &amp; CSR — When Each</div>
+                <div class="concept-desc">
+                  Meta-frameworks (<strong class="c-cyan">Next.js</strong>, Nuxt, SvelteKit) add
+                  routing, data fetching, and server rendering on top of the UI library. The key
+                  decision is <em>where and when</em> your HTML is generated.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Mode</th><th>HTML built…</th><th>Best for</th></tr>
+                    <tr><td class="c-cyan">CSR</td><td>In the browser</td><td>App-like dashboards (behind login)</td></tr>
+                    <tr><td class="c-cyan">SSR</td><td>Per request on the server</td><td>Personalized, fresh pages</td></tr>
+                    <tr><td class="c-cyan">SSG</td><td>At build time</td><td>Blogs, docs, marketing (fastest)</td></tr>
+                    <tr><td class="c-cyan">ISR</td><td>Static + periodic rebuild</td><td>Large mostly-static sites</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">SSR/SSG win</strong> on first-load speed and SEO (real HTML
+                    arrives immediately). <strong class="c-amber">React Server Components</strong> are
+                    the current frontier — render components on the server, ship less JS. Match the mode
+                    to the page: static where you can, dynamic where you must.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🗄️</span>
+              <span class="topic-name">State Management — When You Actually Need It</span>
+              <span class="topic-badge">Frameworks</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Don't Reach for Redux by Default</div>
+                <div class="concept-desc">
+                  As apps grow, sharing state gets messy — but the answer usually isn't a big global
+                  store. Distinguish <strong class="c-cyan">server state</strong> (data from an API)
+                  from <strong class="c-cyan">client state</strong> (UI toggles); they need different
+                  tools.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Need</th><th>Reach for</th></tr>
+                    <tr><td class="c-cyan">Server data (caching, refetch)</td><td>React Query / SWR — not a global store</td></tr>
+                    <tr><td class="c-cyan">Simple shared UI state</td><td>Context, or lift state up</td></tr>
+                    <tr><td class="c-cyan">Complex global client state</td><td>Zustand / Redux Toolkit / signals</td></tr>
+                    <tr><td class="c-cyan">URL as state</td><td>Query params for filters/tabs (shareable)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-amber">Biggest insight:</strong> most "state management" pain is
+                    really <em>server</em> state (loading, caching, revalidation) — a data-fetching
+                    library like React Query solves it far better than Redux. Add global stores only
+                    for genuinely global client state.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body web -->

@@ -841,11 +841,11 @@ progress / keyboard-a11y automatically.
 - [x] TypeScript — types, generics, narrowing, why teams adopt it
 
 **Wave I4 — Frameworks**
-- [ ] React — components, hooks, state, reconciliation, the mental model
-- [ ] React Patterns — context, memoization, data fetching, common pitfalls
-- [ ] Vue & Svelte — reactivity models compared to React
-- [ ] Meta-Frameworks — Next.js/Nuxt/SvelteKit, SSR vs SSG vs ISR vs CSR
-- [ ] State Management — when you need Redux/Zustand/signals (and when you don't)
+- [x] React — components, hooks, state, reconciliation, the mental model
+- [x] React Patterns — context, memoization, data fetching, common pitfalls
+- [x] Vue & Svelte — reactivity models compared to React
+- [x] Meta-Frameworks — Next.js/Nuxt/SvelteKit, SSR vs SSG vs ISR vs CSR
+- [x] State Management — when you need Redux/Zustand/signals (and when you don't)
 
 **Wave I5 — Talking to Backends**
 - [ ] Fetch, REST & the Network — status codes, CORS, caching headers in practice
