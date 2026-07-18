@@ -827,11 +827,11 @@ progress / keyboard-a11y automatically.
 - [x] DevTools Mastery — elements, network, performance, memory, Lighthouse
 
 **Wave I2 — Modern CSS**
-- [ ] Flexbox — the one-dimensional layout system, deep
-- [ ] CSS Grid — two-dimensional layout, template areas, auto-fit/minmax
-- [ ] Responsive Design — media/container queries, fluid type, mobile-first
-- [ ] Modern CSS — custom properties, nesting, :has(), cascade layers, clamp()
-- [ ] Design Systems & Tokens — Tailwind, CSS-in-JS, BEM, component styling
+- [x] Flexbox — the one-dimensional layout system, deep
+- [x] CSS Grid — two-dimensional layout, template areas, auto-fit/minmax
+- [x] Responsive Design — media/container queries, fluid type, mobile-first
+- [x] Modern CSS — custom properties, nesting, :has(), cascade layers, clamp()
+- [x] Design Systems & Tokens — Tailwind, CSS-in-JS, BEM, component styling
 
 **Wave I3 — JavaScript Deep (beyond the basics)**
 - [ ] Closures, Scope & the `this` Keyword — the interview favorites, clearly

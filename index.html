@@ -51290,6 +51290,192 @@ your frame budget.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📏</span>
+<span class="topic-name">Flexbox — One-Dimensional Layout</span>
+<span class="topic-badge">CSS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Aligning Things in a Row or Column</div>
+<div class="concept-desc">
+<strong class="c-cyan">Flexbox</strong> lays out items along a single axis and is the
+go-to for components: navbars, toolbars, centering, card rows. Set
+<code>display:flex</code> on the parent, then control alignment and distribution.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="var">.bar</span> {
+  display: flex;
+  justify-content: space-between;  <span class="com">/* main axis */</span>
+  align-items: center;             <span class="com">/* cross axis */</span>
+  gap: <span class="num">1rem</span>;
+}</pre>
+<table class="ref-table">
+<tr><th>Property</th><th>Controls</th></tr>
+<tr><td class="c-cyan">flex-direction</td><td>row (default) or column — sets the main axis</td></tr>
+<tr><td class="c-cyan">justify-content</td><td>Spacing along the main axis</td></tr>
+<tr><td class="c-cyan">align-items</td><td>Alignment on the cross axis</td></tr>
+<tr><td class="c-cyan">flex: 1</td><td>Grow to fill; <code>flex-wrap</code> to wrap</td></tr>
+<tr><td class="c-cyan">gap</td><td>Space between items (no more margin hacks)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Centering, solved:</strong> <code>display:flex;
+justify-content:center; align-items:center</code> — the answer to a decade of
+"how do I center a div."
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔲</span>
+<span class="topic-name">CSS Grid — Two-Dimensional Layout</span>
+<span class="topic-badge">CSS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Rows and Columns at the Same Time</div>
+<div class="concept-desc">
+<strong class="c-cyan">Grid</strong> handles two dimensions at once — perfect for
+page layouts and any grid of cards. Where Flexbox is content-driven,
+Grid is layout-driven: you define the structure, items flow in.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="var">.gallery</span> {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(<span class="num">200px</span>, <span class="num">1fr</span>));
+  gap: <span class="num">1rem</span>;
+}</pre>
+<table class="ref-table">
+<tr><th>Feature</th><th>Detail</th></tr>
+<tr><td class="c-cyan">grid-template-columns/rows</td><td>Define tracks; <code>fr</code> = fraction of free space</td></tr>
+<tr><td class="c-cyan">repeat() + minmax()</td><td>Responsive columns without media queries</td></tr>
+<tr><td class="c-cyan">auto-fit / auto-fill</td><td>Wrap columns to fit the container</td></tr>
+<tr><td class="c-cyan">grid-template-areas</td><td>Name regions; lay out visually in CSS</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Rule of thumb:</strong> Grid for the overall page/section
+layout, Flexbox for the components inside it. The
+<code>auto-fit + minmax</code> one-liner gives a fully responsive card grid with
+zero media queries.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📱</span>
+<span class="topic-name">Responsive Design — Fluid, Mobile-First</span>
+<span class="topic-badge">CSS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">One Site, Every Screen</div>
+<div class="concept-desc">
+Responsive design adapts the layout to the viewport. The modern approach is
+<strong class="c-cyan">mobile-first</strong> (style the small screen, then add
+complexity up) and increasingly <strong class="c-cyan">intrinsic</strong> (let the
+content size itself).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Use</th></tr>
+<tr><td class="c-cyan">Media queries</td><td>Breakpoints by viewport width</td></tr>
+<tr><td class="c-cyan">Container queries</td><td>Respond to the <em>parent's</em> size — true component responsiveness</td></tr>
+<tr><td class="c-cyan">clamp()</td><td>Fluid type/spacing: <code>clamp(min, preferred, max)</code></td></tr>
+<tr><td class="c-cyan">rem / % / fr / vw</td><td>Relative units over fixed px</td></tr>
+<tr><td class="c-cyan">&lt;meta viewport&gt;</td><td>Required tag or mobile scales wrong</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Container queries</strong> are the big recent shift: a card
+can restyle based on the space <em>it</em> has, so the same component works in a
+sidebar or full-width — impossible with media queries alone.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">✨</span>
+<span class="topic-name">Modern CSS — Custom Properties, :has() &amp; Layers</span>
+<span class="topic-badge">CSS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">CSS Got Genuinely Powerful</div>
+<div class="concept-desc">
+Recent CSS added features that used to need preprocessors or JavaScript. Worth
+knowing because they simplify code you may still be writing the old way.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="var">:root</span> { <span class="var">--brand</span>: <span class="num">#f97316</span>; }
+<span class="var">.btn</span> { background: <span class="kw">var</span>(<span class="var">--brand</span>); }
+<span class="com">/* style a label only if it HAS an invalid input */</span>
+<span class="var">.field:has(input:invalid)</span> { color: red; }</pre>
+<table class="ref-table">
+<tr><th>Feature</th><th>Does</th></tr>
+<tr><td class="c-cyan">Custom properties</td><td>Real variables — themeable, runtime-changeable</td></tr>
+<tr><td class="c-cyan">:has()</td><td>The "parent selector" — style based on descendants</td></tr>
+<tr><td class="c-cyan">Nesting</td><td>Native nested rules (no Sass needed)</td></tr>
+<tr><td class="c-cyan">@layer</td><td>Cascade layers — tame specificity wars</td></tr>
+<tr><td class="c-cyan">clamp/min/max</td><td>Math in CSS for fluid design</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Custom properties + <code>prefers-color-scheme</code></strong>
+is how modern dark mode works — swap variable values, not whole stylesheets (exactly
+how this site themes itself).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🎨</span>
+<span class="topic-name">Design Systems, Tokens &amp; Tailwind</span>
+<span class="topic-badge">CSS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Styling That Scales Across a Team</div>
+<div class="concept-desc">
+At scale, ad-hoc CSS becomes unmaintainable. Design systems encode consistent
+spacing, color, and type as reusable <strong class="c-cyan">tokens</strong> and
+components, so a large app stays coherent.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Approach</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Design tokens</td><td>Named values (spacing-4, color-primary) — the source of truth</td></tr>
+<tr><td class="c-cyan">Utility-first (Tailwind)</td><td>Compose small classes; consistency by constraint</td></tr>
+<tr><td class="c-cyan">Component libraries</td><td>shadcn/ui, MUI, Radix — accessible building blocks</td></tr>
+<tr><td class="c-cyan">BEM / CSS Modules</td><td>Naming &amp; scoping conventions</td></tr>
+<tr><td class="c-cyan">CSS-in-JS</td><td>Styles colocated with components (styled-components)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">The trade-off debate:</strong> Tailwind trades "ugly
+markup" for never leaving your HTML and never fighting the cascade — hugely popular
+for that reason. Whatever the method, the win is <em>constraints</em>: a limited
+palette of choices keeps a big UI consistent.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body web -->
 </div>
 </div>
