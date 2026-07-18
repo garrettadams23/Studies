@@ -732,4 +732,188 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
             </div>
           </div>
 
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🗂️</span>
+              <span class="topic-name">The NoSQL Landscape — Four Families</span>
+              <span class="topic-badge">NoSQL</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Not "No SQL" — "Not Only SQL"</div>
+                <div class="concept-desc">
+                  NoSQL databases relax the relational model to gain scale, flexibility, or a shape
+                  that fits a specific access pattern. They usually trade strong consistency and rich
+                  joins for horizontal scalability (the CAP trade-off).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Family</th><th>Model</th><th>Example</th></tr>
+                    <tr><td class="c-cyan">Key-Value</td><td>Simple map — fastest lookups</td><td>Redis, DynamoDB</td></tr>
+                    <tr><td class="c-cyan">Document</td><td>JSON-like docs, flexible schema</td><td>MongoDB, Couchbase</td></tr>
+                    <tr><td class="c-cyan">Wide-Column</td><td>Rows with dynamic columns, huge scale</td><td>Cassandra, Bigtable</td></tr>
+                    <tr><td class="c-cyan">Graph</td><td>Nodes &amp; edges — relationships first</td><td>Neo4j</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Choosing:</strong> pick NoSQL for a <em>specific</em>
+                    reason — massive scale, a document-shaped domain, or graph traversal — not to
+                    avoid SQL. Most apps are still best served by a relational database; "boring
+                    technology" wins more often than not.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🍃</span>
+              <span class="topic-name">MongoDB — Documents &amp; the Aggregation Pipeline</span>
+              <span class="topic-badge">Document</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Store the Object, Not the Rows</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">MongoDB</strong> stores flexible JSON-like
+                  <strong>documents</strong> in collections. It shines when your data is naturally
+                  nested and your access pattern reads whole objects — no joins to reassemble them.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com">// find + aggregate</span>
+db.orders.<span class="fn">aggregate</span>([
+  { $match: { status: <span class="str">"paid"</span> } },
+  { $group: { _id: <span class="str">"$country"</span>, revenue: { $sum: <span class="str">"$total"</span> } } },
+  { $sort: { revenue: -<span class="num">1</span> } }
+])</pre>
+                  <div class="concept-desc">
+                    <strong class="c-green">Schema design:</strong> model around access patterns —
+                    embed data you read together, reference data you read separately. Add indexes
+                    just like SQL. Modern Mongo has ACID multi-document transactions, but they signal
+                    you may have wanted relational.
+                  </div>
+                  <div class="concept-desc" style="margin-top:6px">
+                    <strong class="c-red">Watch out:</strong> unbounded array growth, and treating it
+                    as schemaless forever — inconsistent documents become a nightmare. Enforce a
+                    schema at the app (or with schema validation).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">⚡</span>
+              <span class="topic-name">Redis — The In-Memory Multi-Tool</span>
+              <span class="topic-badge">Key-Value</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Data Structures at Memory Speed</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Redis</strong> keeps data in RAM, making it microsecond-fast.
+                  It's not just a cache — it offers real data structures and is the go-to for caching,
+                  sessions, rate limiting, queues, and leaderboards.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Structure</th><th>Use</th></tr>
+                    <tr><td class="c-cyan">String / counter</td><td>Cache values, rate limits (<code>INCR</code>)</td></tr>
+                    <tr><td class="c-cyan">Hash</td><td>Store objects (session, user)</td></tr>
+                    <tr><td class="c-cyan">Sorted Set</td><td>Leaderboards, time-ordered queues</td></tr>
+                    <tr><td class="c-cyan">List / Stream</td><td>Queues &amp; event logs</td></tr>
+                    <tr><td class="c-cyan">Pub/Sub</td><td>Lightweight messaging</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Caching patterns:</strong> cache-aside (check Redis, miss →
+                    DB → populate) is most common; always set a <strong class="c-green">TTL</strong>
+                    and plan for cache invalidation. Persistence (RDB snapshots / AOF) means it can
+                    survive restarts, but treat it as a fast layer, not the source of truth.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🏛️</span>
+              <span class="topic-name">Cassandra &amp; DynamoDB — Wide-Column at Scale</span>
+              <span class="topic-badge">Wide-Column</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Design for the Query, Not the Entity</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Cassandra</strong> and
+                  <strong class="c-cyan">DynamoDB</strong> scale to enormous write volumes across many
+                  nodes with no single point of failure. The catch: you must model around your
+                  queries up front — there are no ad-hoc joins.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Partition key</td><td>Decides which node stores the row — even distribution is critical</td></tr>
+                    <tr><td class="c-cyan">Sort/clustering key</td><td>Orders rows within a partition</td></tr>
+                    <tr><td class="c-cyan">Single-table design</td><td>DynamoDB: model many entities in one table by key design</td></tr>
+                    <tr><td class="c-red">Hot partition</td><td>A bad key funnels traffic to one node — throttling</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Tunable consistency</strong> (quorums) lets you dial
+                    latency vs freshness per operation. These shine for known, high-volume access
+                    patterns (feeds, IoT, sessions) — and hurt when requirements need flexible
+                    querying. Choose the key like your scalability depends on it, because it does.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🕸️</span>
+              <span class="topic-name">Graph Databases — When Relationships Are the Data</span>
+              <span class="topic-badge">Graph</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Traversals Instead of Joins</div>
+                <div class="concept-desc">
+                  A graph database stores <strong class="c-cyan">nodes</strong> and
+                  <strong class="c-cyan">relationships</strong> as first-class citizens. Questions
+                  that need many-hop joins in SQL ("friends of friends who like X") become natural,
+                  fast traversals.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com">// Neo4j Cypher: mutual connections</span>
+<span class="kw">MATCH</span> (me:Person {name:<span class="str">"Ann"</span>})-[:KNOWS]-&gt;(f)-[:KNOWS]-&gt;(fof)
+<span class="kw">WHERE</span> fof &lt;&gt; me
+<span class="kw">RETURN</span> fof.name, <span class="fn">count</span>(*) <span class="kw">ORDER BY</span> <span class="fn">count</span>(*) <span class="kw">DESC</span></pre>
+                  <table class="ref-table">
+                    <tr><th>Great for</th><th>Example</th></tr>
+                    <tr><td class="c-cyan">Networks</td><td>Social graphs, org charts</td></tr>
+                    <tr><td class="c-cyan">Recommendations</td><td>"People who bought… also…"</td></tr>
+                    <tr><td class="c-cyan">Fraud / security</td><td>Attack-path &amp; ring detection (cf. BloodHound)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The relationship is stored directly, so a traversal is a pointer-hop, not a join —
+                    performance stays flat as hops increase. Use a graph DB when connections
+                    <em>are</em> the primary query; otherwise a relational DB is simpler.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body data -->

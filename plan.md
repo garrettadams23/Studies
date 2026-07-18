@@ -786,11 +786,11 @@ progress / keyboard-a11y automatically.
 - [x] Connection Pooling & PgBouncer — surviving many clients
 
 **Wave H5 — NoSQL & Beyond**
-- [ ] NoSQL Landscape — document / key-value / wide-column / graph, CAP trade-offs
-- [ ] MongoDB — documents, aggregation pipeline, indexing, schema design
-- [ ] Redis — data structures, caching patterns, pub/sub, persistence, Lua
-- [ ] Cassandra / DynamoDB — wide-column, partition keys, single-table design
-- [ ] Graph Databases — Neo4j, Cypher, when relationships are the data
+- [x] NoSQL Landscape — document / key-value / wide-column / graph, CAP trade-offs
+- [x] MongoDB — documents, aggregation pipeline, indexing, schema design
+- [x] Redis — data structures, caching patterns, pub/sub, persistence, Lua
+- [x] Cassandra / DynamoDB — wide-column, partition keys, single-table design
+- [x] Graph Databases — Neo4j, Cypher, when relationships are the data
 
 **Wave H6 — Analytics & Warehousing**
 - [ ] OLTP vs OLAP — row vs columnar storage, why analytics needs a warehouse
