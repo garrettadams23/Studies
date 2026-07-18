@@ -848,11 +848,11 @@ progress / keyboard-a11y automatically.
 - [x] State Management — when you need Redux/Zustand/signals (and when you don't)
 
 **Wave I5 — Talking to Backends**
-- [ ] Fetch, REST & the Network — status codes, CORS, caching headers in practice
-- [ ] GraphQL — schema, queries/mutations, over/under-fetching, when to use it
-- [ ] WebSockets & Realtime — SSE, polling, when each fits
-- [ ] Auth on the Frontend — tokens vs cookies, OAuth flows, secure storage
-- [ ] API Client Patterns — React Query/SWR, caching, optimistic updates
+- [x] Fetch, REST & the Network — status codes, CORS, caching headers in practice
+- [x] GraphQL — schema, queries/mutations, over/under-fetching, when to use it
+- [x] WebSockets & Realtime — SSE, polling, when each fits
+- [x] Auth on the Frontend — tokens vs cookies, OAuth flows, secure storage
+- [x] API Client Patterns — React Query/SWR, caching, optimistic updates
 
 **Wave I6 — Quality, Performance & A11y**
 - [ ] Web Performance — Core Web Vitals (LCP/INP/CLS), code-splitting, lazy loading

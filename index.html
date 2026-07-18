@@ -51834,6 +51834,183 @@ for genuinely global client state.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔌</span>
+<span class="topic-name">Fetch, REST &amp; CORS in Practice</span>
+<span class="topic-badge">Backends</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">How the Frontend Talks to APIs</div>
+<div class="concept-desc">
+The browser's <code>fetch</code> makes HTTP requests. You'll spend real time on
+status codes, headers, and the one that trips everyone up:
+<strong class="c-cyan">CORS</strong>.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/users'</span>, {
+  method: <span class="str">'POST'</span>,
+  headers: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> },
+  body: JSON.<span class="fn">stringify</span>(user),
+});
+<span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="type">Error</span>(res.status);   <span class="com">// fetch doesn't throw on 4xx/5xx!</span></pre>
+<table class="ref-table">
+<tr><th>Thing</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Status codes</td><td>2xx ok, 3xx redirect, 4xx client, 5xx server</td></tr>
+<tr><td class="c-red">CORS</td><td>Browser blocks cross-origin unless the server sends <code>Access-Control-Allow-*</code></td></tr>
+<tr><td class="c-cyan">Preflight</td><td>An <code>OPTIONS</code> request before non-simple calls</td></tr>
+<tr><td class="c-amber">fetch quirk</td><td>Only rejects on network error — check <code>res.ok</code> yourself</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">CORS is server-side:</strong> a CORS error means the
+<em>API</em> must allow your origin — you can't fix it from the browser. It's a
+browser security feature, not a bug in your code.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">◈</span>
+<span class="topic-name">GraphQL — Ask for Exactly What You Need</span>
+<span class="topic-badge">Backends</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">One Endpoint, Client-Shaped Responses</div>
+<div class="concept-desc">
+<strong class="c-cyan">GraphQL</strong> exposes a typed schema through one endpoint;
+the client specifies exactly which fields it wants. It solves REST's over- and
+under-fetching, at the cost of new complexity.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">query</span> {
+  user(id: <span class="num">42</span>) { name, orders { total } }   <span class="com"># exactly these fields</span>
+}</pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Schema &amp; types</td><td>Strongly typed contract</td></tr>
+<tr><td class="c-cyan">Query / Mutation / Subscription</td><td>Read / write / realtime</td></tr>
+<tr><td class="c-cyan">Resolvers</td><td>Server functions that fetch each field</td></tr>
+<tr><td class="c-red">N+1 resolvers</td><td>Classic pitfall — fix with DataLoader batching</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">When to use:</strong> many clients with different data
+needs, or deeply nested data. For simple CRUD, REST is often simpler. Caching is
+harder than REST (one endpoint, POST) — weigh the trade-off.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔴</span>
+<span class="topic-name">Realtime — WebSockets, SSE &amp; Polling</span>
+<span class="topic-badge">Backends</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Pushing Data to the Browser</div>
+<div class="concept-desc">
+HTTP is request/response — the server can't just push. For live features (chat,
+notifications, dashboards) you need a different transport. Pick the lightest one
+that fits.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Option</th><th>Use</th></tr>
+<tr><td class="c-cyan">WebSockets</td><td>Full-duplex, persistent — chat, games, collaboration</td></tr>
+<tr><td class="c-cyan">Server-Sent Events</td><td>Server→client stream over HTTP — feeds, notifications (simpler)</td></tr>
+<tr><td class="c-cyan">Long polling</td><td>Fallback where sockets aren't available</td></tr>
+<tr><td class="c-cyan">Short polling</td><td>Just refetch on a timer — fine for low-frequency updates</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Don't over-engineer:</strong> if data changes every few
+minutes, polling is simplest. Reserve WebSockets for genuinely bidirectional,
+high-frequency needs. SSE is the underrated middle ground for one-way streams.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔑</span>
+<span class="topic-name">Frontend Auth — Tokens, Cookies &amp; OAuth</span>
+<span class="topic-badge">Backends</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Logging Users In, Safely</div>
+<div class="concept-desc">
+Auth on the frontend is mostly about <em>where you store the credential</em> and how
+you attach it. Get this wrong and you ship an XSS-exploitable token. Ties directly to
+the security domain's OAuth/session cards.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Approach</th><th>Detail</th></tr>
+<tr><td class="c-green">HttpOnly cookie</td><td>JS can't read it → XSS-safe; pair with SameSite/CSRF protection</td></tr>
+<tr><td class="c-red">JWT in localStorage</td><td>Convenient but XSS-readable — widely discouraged</td></tr>
+<tr><td class="c-cyan">OAuth / OIDC + PKCE</td><td>"Sign in with…"; PKCE for public clients</td></tr>
+<tr><td class="c-cyan">Refresh flow</td><td>Short-lived access token + refresh token rotation</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Rule:</strong> prefer <code>HttpOnly</code>,
+<code>Secure</code>, <code>SameSite</code> cookies for session tokens. Never store
+long-lived secrets where JavaScript can read them. Auth is one place to use a
+battle-tested library, not roll your own.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔄</span>
+<span class="topic-name">Data Fetching Patterns — React Query &amp; Caching</span>
+<span class="topic-badge">Backends</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Server State Is Its Own Problem</div>
+<div class="concept-desc">
+Fetching data is easy; keeping it <em>fresh, cached, and in sync</em> across a UI is
+hard. Libraries like <strong class="c-cyan">React Query</strong> (TanStack Query) and
+<strong class="c-cyan">SWR</strong> handle the whole lifecycle so you don't reinvent
+it per component.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Feature</th><th>Does</th></tr>
+<tr><td class="c-cyan">Caching &amp; dedup</td><td>Same query used twice → one request</td></tr>
+<tr><td class="c-cyan">Background refetch</td><td>Revalidate stale data on focus/interval</td></tr>
+<tr><td class="c-cyan">Loading/error states</td><td>Built in — no manual flags</td></tr>
+<tr><td class="c-cyan">Optimistic updates</td><td>Update UI instantly, roll back on failure</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Why it matters:</strong> hand-rolled
+<code>useEffect</code> + <code>useState</code> fetching leads to race conditions,
+duplicate requests, and stale UI. A query library turns all that into a hook —
+genuinely one of the biggest quality-of-life wins in modern frontend.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body web -->
 </div>
 </div>
