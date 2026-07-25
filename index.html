@@ -73,6 +73,8 @@ alt="Optimized Study Routine: 4 Pillars for Success infographic."
 <div class="chip c-blueteam"           data-domain="blueteam">🔵 BLUE TEAM</div>
 <div class="chip c-cloud"           data-domain="cloud">☁️ CLOUD</div>
 <div class="chip c-eng"           data-domain="eng">🏛️ ENGINEERING</div>
+<div class="chip c-data"           data-domain="data">📊 Data</div>
+<div class="chip c-web"           data-domain="web">🌐 Web</div>
 </div>
 </div>
 <!-- SEARCH BAR ──────────────────────────────────────────────────────── -->
@@ -49681,6 +49683,2673 @@ coding loops.
 </div>
 </div>
 <!-- /domain-body eng -->
+</div>
+</div>
+<div class="domain-section domain-data" data-domain="data">
+<div class="domain-header">
+<span class="domain-icon">📊</span>
+<span class="domain-title">Data &amp; Databases</span>
+<div class="cert-tags">
+<span class="ctag ctag-general">SQL</span>
+<span class="ctag ctag-general">DATA</span>
+</div>
+<span class="domain-sub">SQL · DB Internals · NoSQL · Warehousing · DBA</span>
+<span class="chevron">▾</span>
+</div>
+<div class="domain-body">
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⚙️</span>
+<span class="topic-name">How a Database Actually Works</span>
+<span class="topic-badge">Internals</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Pages, the Buffer Pool &amp; the Write-Ahead Log</div>
+<div class="concept-desc">
+A database is not magic — it's a careful dance between disk and memory. Data lives
+on disk in fixed-size <strong class="c-cyan">pages</strong> (commonly 8&nbsp;KB); the
+engine caches hot pages in a memory <strong class="c-cyan">buffer pool</strong> so
+most reads never touch disk. Durability comes from the
+<strong class="c-cyan">write-ahead log (WAL)</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Component</th><th>Job</th></tr>
+<tr><td class="c-cyan">Storage engine</td><td>Reads/writes pages, manages indexes (InnoDB, Postgres heap)</td></tr>
+<tr><td class="c-cyan">Buffer pool</td><td>In-memory page cache — the #1 performance factor</td></tr>
+<tr><td class="c-cyan">WAL / redo log</td><td>Append every change <em>before</em> the data page — crash recovery</td></tr>
+<tr><td class="c-cyan">Checkpoint</td><td>Flush dirty pages to disk; trim the log</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Why WAL:</strong> writing a tiny sequential log entry is
+fast and safe; the actual (random) page write can happen later. On crash, replay
+the log to recover committed work. This one idea gives you the "D" in ACID and
+underpins replication and point-in-time recovery.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧮</span>
+<span class="topic-name">The Relational Model — Keys &amp; Integrity</span>
+<span class="topic-badge">Foundations</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Tables, Keys &amp; the NULL Gotcha</div>
+<div class="concept-desc">
+The relational model organizes data into <strong class="c-cyan">relations</strong>
+(tables) of rows and typed columns, with relationships expressed by
+<em>keys</em> rather than pointers. Constraints let the database enforce
+correctness so your application doesn't have to.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td class="c-cyan">Primary key</td><td>Uniquely identifies a row; not null</td></tr>
+<tr><td class="c-cyan">Foreign key</td><td>References a PK elsewhere — enforces referential integrity</td></tr>
+<tr><td class="c-cyan">Unique / Check</td><td>Column-level rules the DB guarantees</td></tr>
+<tr><td class="c-cyan">Candidate / composite key</td><td>Other unique columns; keys spanning multiple columns</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The NULL trap:</strong> <code>NULL</code> means "unknown,"
+not zero or empty. It uses <em>three-valued logic</em> — <code>NULL = NULL</code>
+is not true but <code>NULL</code>, and <code>WHERE x = NULL</code> matches nothing
+(use <code>IS NULL</code>). NULLs silently break naive comparisons, joins, and
+aggregates — the single most common SQL bug.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📐</span>
+<span class="topic-name">Normalization — 1NF Through BCNF</span>
+<span class="topic-badge">Design</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Eliminate Redundancy, Then Know When to Stop</div>
+<div class="concept-desc">
+Normalization structures tables so each fact is stored <em>once</em>, preventing
+update anomalies (change an address in one row, forget the other five). You progress
+through normal forms, each removing a specific kind of redundancy.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Form</th><th>Rule</th></tr>
+<tr><td class="c-cyan">1NF</td><td>Atomic values — no repeating groups or lists in a cell</td></tr>
+<tr><td class="c-cyan">2NF</td><td>No partial dependency on part of a composite key</td></tr>
+<tr><td class="c-cyan">3NF</td><td>No transitive dependency (non-key → non-key)</td></tr>
+<tr><td class="c-cyan">BCNF</td><td>Every determinant is a candidate key (stricter 3NF)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Rule of thumb:</strong> normalize to 3NF for
+transactional (OLTP) systems — it keeps writes clean. Then
+<strong class="c-amber">denormalize deliberately</strong> for read-heavy or
+analytics workloads, trading duplication for fewer joins. Star schemas (analytics)
+are intentionally denormalized.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔒</span>
+<span class="topic-name">ACID &amp; Transactions — Isolation Levels</span>
+<span class="topic-badge">Foundations</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">All-or-Nothing, and Who Sees What</div>
+<div class="concept-desc">
+A <strong class="c-cyan">transaction</strong> groups statements so they succeed or
+fail as a unit. <strong class="c-cyan">ACID</strong> is the guarantee:
+<em>Atomic</em> (all or nothing), <em>Consistent</em> (constraints hold),
+<em>Isolated</em> (concurrent txns don't corrupt each other),
+<em>Durable</em> (committed = survives a crash).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Isolation level</th><th>Prevents</th></tr>
+<tr><td class="c-cyan">Read Uncommitted</td><td>nothing — can read dirty (uncommitted) data</td></tr>
+<tr><td class="c-cyan">Read Committed</td><td>dirty reads (Postgres default)</td></tr>
+<tr><td class="c-cyan">Repeatable Read</td><td>+ non-repeatable reads (MySQL default)</td></tr>
+<tr><td class="c-cyan">Serializable</td><td>+ phantom reads — as if txns ran one at a time</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The trade-off:</strong> stricter isolation = more correct
+but more locking/aborts and less concurrency. Know the three anomalies (dirty,
+non-repeatable, phantom) and pick the weakest level that's still safe for your
+workload.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🕸️</span>
+<span class="topic-name">ER Modeling — Designing the Schema</span>
+<span class="topic-badge">Design</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Entities, Relationships &amp; Cardinality</div>
+<div class="concept-desc">
+Before writing DDL, you model the domain: what things exist
+(<strong class="c-cyan">entities</strong>), their
+<strong class="c-cyan">attributes</strong>, and how they relate. An
+<strong>entity-relationship diagram</strong> (crow's-foot notation) is the shared
+language between engineers and stakeholders.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Relationship</th><th>Implemented as</th></tr>
+<tr><td class="c-cyan">One-to-many</td><td>FK on the "many" side (most common)</td></tr>
+<tr><td class="c-cyan">Many-to-many</td><td>A junction/join table with two FKs</td></tr>
+<tr><td class="c-cyan">One-to-one</td><td>Shared/unique FK — often a sign to merge tables</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Crow's-foot</strong> marks each end with cardinality
+(one/many) and optionality (zero/one). Get the relationships right here and the
+tables, keys, and joins fall out naturally — this is the bridge from requirements
+to a normalized schema.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔗</span>
+<span class="topic-name">SQL Joins — Every Type, and the NULL Traps</span>
+<span class="topic-badge">SQL</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Combining Rows Across Tables</div>
+<div class="concept-desc">
+Joins match rows from two tables on a condition. The type decides what happens to
+rows that <em>don't</em> match — and that's where most bugs live.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">SELECT</span> u.name, o.total
+<span class="kw">FROM</span> users u
+<span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> o.user_id = u.id;   <span class="com">-- keeps users with no orders</span></pre>
+<table class="ref-table">
+<tr><th>Join</th><th>Returns</th></tr>
+<tr><td class="c-cyan">INNER</td><td>Only rows that match in both tables</td></tr>
+<tr><td class="c-cyan">LEFT / RIGHT</td><td>All rows from one side; NULLs where no match</td></tr>
+<tr><td class="c-cyan">FULL OUTER</td><td>All rows from both; NULLs on either side</td></tr>
+<tr><td class="c-cyan">CROSS</td><td>Cartesian product (every combo) — usually a mistake</td></tr>
+<tr><td class="c-cyan">SELF</td><td>A table joined to itself (hierarchies, pairs)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Traps:</strong> putting a filter on the outer table in
+<code>WHERE</code> silently turns a LEFT JOIN into an INNER JOIN (put it in the
+<code>ON</code> instead); and joining on a nullable column drops rows because
+<code>NULL = NULL</code> isn't true. Watch for <em>fan-out</em>: a one-to-many
+join multiplies rows and inflates <code>SUM()</code>.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🪟</span>
+<span class="topic-name">Window Functions — Analytics Without Collapsing Rows</span>
+<span class="topic-badge">SQL</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Rankings, Running Totals &amp; Row-to-Row Math</div>
+<div class="concept-desc">
+<code>GROUP BY</code> collapses rows; <strong class="c-cyan">window functions</strong>
+compute across a set of rows <em>while keeping every row</em>. The
+<code>OVER()</code> clause defines the "window" (partition + order).
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">SELECT</span> name, dept, salary,
+  <span class="fn">RANK</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> dept <span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>) <span class="kw">AS</span> rnk,
+  <span class="fn">SUM</span>(salary) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> dept) <span class="kw">AS</span> dept_total
+<span class="kw">FROM</span> employees;</pre>
+<table class="ref-table">
+<tr><th>Function</th><th>Use</th></tr>
+<tr><td class="c-cyan">ROW_NUMBER / RANK / DENSE_RANK</td><td>Ordering &amp; top-N per group</td></tr>
+<tr><td class="c-cyan">LAG / LEAD</td><td>Compare to the previous/next row (deltas, growth)</td></tr>
+<tr><td class="c-cyan">SUM/AVG OVER</td><td>Running totals &amp; moving averages</td></tr>
+<tr><td class="c-cyan">NTILE</td><td>Buckets/percentiles</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Killer use:</strong> "top 3 earners per department" or
+"each order vs the customer's previous order" — one query, no self-joins. Window
+functions are the single biggest jump from beginner to intermediate SQL.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧱</span>
+<span class="topic-name">CTEs &amp; Recursion — Readable, Composable Queries</span>
+<span class="topic-badge">SQL</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Name Your Steps With WITH</div>
+<div class="concept-desc">
+A <strong class="c-cyan">Common Table Expression</strong> (<code>WITH</code>) names a
+subquery so you can build a complex query as readable, stacked steps instead of
+nested parentheses. <strong class="c-cyan">Recursive CTEs</strong> traverse
+hierarchies and graphs.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">WITH</span> ranked <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> *, <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> user_id <span class="kw">ORDER BY</span> ts <span class="kw">DESC</span>) rn
+  <span class="kw">FROM</span> events
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> ranked <span class="kw">WHERE</span> rn = <span class="num">1</span>;   <span class="com">-- latest event per user</span></pre>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Recursive form:</strong> an anchor query
+<code>UNION ALL</code> a step that references the CTE — perfect for org charts,
+category trees, or "all descendants of X." Readability tip: CTEs make a 60-line
+query reviewable; deeply nested subqueries don't. (Note: some engines
+materialize CTEs — check the plan if performance matters.)
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">Σ</span>
+<span class="topic-name">Aggregation — GROUP BY, HAVING &amp; ROLLUP</span>
+<span class="topic-badge">SQL</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Summarizing Rows Into Groups</div>
+<div class="concept-desc">
+Aggregate functions (<code>COUNT</code>, <code>SUM</code>, <code>AVG</code>,
+<code>MIN/MAX</code>) collapse many rows into one per group. <code>GROUP BY</code>
+defines the groups; <code>HAVING</code> filters <em>after</em> aggregation (unlike
+<code>WHERE</code>, which filters before).
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">SELECT</span> country, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> n, <span class="fn">SUM</span>(total) <span class="kw">AS</span> rev
+<span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> status = <span class="str">'paid'</span>          <span class="com">-- filter rows first</span>
+<span class="kw">GROUP BY</span> country
+<span class="kw">HAVING</span> <span class="fn">SUM</span>(total) &gt; <span class="num">10000</span>      <span class="com">-- filter groups after</span>
+<span class="kw">ORDER BY</span> rev <span class="kw">DESC</span>;</pre>
+<table class="ref-table">
+<tr><th>Feature</th><th>Does</th></tr>
+<tr><td class="c-cyan">COUNT(*) vs COUNT(col)</td><td>All rows vs non-NULL values only</td></tr>
+<tr><td class="c-cyan">COUNT(DISTINCT …)</td><td>Unique values</td></tr>
+<tr><td class="c-cyan">ROLLUP / CUBE / GROUPING SETS</td><td>Subtotals &amp; grand totals in one pass</td></tr>
+<tr><td class="c-cyan">FILTER (WHERE …)</td><td>Conditional aggregates (Postgres)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-red">Classic error:</strong> selecting a non-aggregated column
+that isn't in <code>GROUP BY</code> — either group by it or wrap it in an
+aggregate.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🎯</span>
+<span class="topic-name">Subqueries, EXISTS &amp; Set Operations</span>
+<span class="topic-badge">SQL</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Queries Inside Queries</div>
+<div class="concept-desc">
+A subquery is a <code>SELECT</code> nested in another statement. It can return a
+scalar, a list (for <code>IN</code>), or a table. <strong class="c-cyan">Correlated</strong>
+subqueries reference the outer row and run per-row.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com">-- customers who have placed at least one order</span>
+<span class="kw">SELECT</span> name <span class="kw">FROM</span> users u
+<span class="kw">WHERE EXISTS</span> (<span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> orders o <span class="kw">WHERE</span> o.user_id = u.id);</pre>
+<table class="ref-table">
+<tr><th>Tool</th><th>Use</th></tr>
+<tr><td class="c-cyan">IN / NOT IN</td><td>Membership — but <code>NOT IN</code> + NULLs = no rows (trap!)</td></tr>
+<tr><td class="c-cyan">EXISTS / NOT EXISTS</td><td>Existence check — NULL-safe, often faster</td></tr>
+<tr><td class="c-cyan">UNION / UNION ALL</td><td>Stack result sets (ALL keeps duplicates &amp; is faster)</td></tr>
+<tr><td class="c-cyan">INTERSECT / EXCEPT</td><td>Rows in both / in one but not the other</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Prefer <code>EXISTS</code> over <code>NOT IN</code></strong>
+whenever the inner column can be NULL — <code>NOT IN (…NULL…)</code> returns
+nothing, a famously silent bug. Many subqueries also rewrite cleanly as joins or
+CTEs; pick whichever reads clearest.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📇</span>
+<span class="topic-name">Indexes Explained — B-tree, Hash &amp; Covering</span>
+<span class="topic-badge">Performance</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Book's Index, for Your Data</div>
+<div class="concept-desc">
+An index is a sorted data structure that lets the database find rows without
+scanning the whole table — the difference between O(log n) and O(n). The cost:
+every write must also update the index, and indexes take space.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Type</th><th>Best for</th></tr>
+<tr><td class="c-cyan">B-tree</td><td>The default — equality &amp; range (<code>=</code>, <code>&lt;</code>, <code>BETWEEN</code>, <code>ORDER BY</code>)</td></tr>
+<tr><td class="c-cyan">Hash</td><td>Equality only, very fast</td></tr>
+<tr><td class="c-cyan">GIN / GiST</td><td>Full-text, JSONB, arrays, geospatial (Postgres)</td></tr>
+<tr><td class="c-cyan">Composite</td><td>Multi-column — order matters (leftmost-prefix rule)</td></tr>
+<tr><td class="c-cyan">Covering</td><td>Includes all columns a query needs → index-only scan</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Composite key order:</strong> an index on
+<code>(a, b)</code> helps <code>WHERE a=…</code> and <code>WHERE a=… AND b=…</code>,
+but <em>not</em> <code>WHERE b=…</code> alone. Index the columns you filter/sort on;
+don't over-index — each one slows writes.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔍</span>
+<span class="topic-name">Reading Query Plans — EXPLAIN ANALYZE</span>
+<span class="topic-badge">Performance</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Ask the Database What It's Doing</div>
+<div class="concept-desc">
+The optimizer turns your SQL into a physical plan. <code>EXPLAIN</code> shows that
+plan; <code>EXPLAIN ANALYZE</code> actually runs it and shows real timings and row
+counts. Reading plans is <em>the</em> core skill for fixing slow queries.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">EXPLAIN ANALYZE</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> user_id = <span class="num">42</span>;</pre>
+<table class="ref-table">
+<tr><th>See</th><th>Means</th></tr>
+<tr><td class="c-red">Seq Scan</td><td>Reading the whole table — often a missing index</td></tr>
+<tr><td class="c-green">Index Scan / Index-Only</td><td>Using an index (good)</td></tr>
+<tr><td class="c-cyan">Nested Loop / Hash / Merge Join</td><td>The three join strategies</td></tr>
+<tr><td class="c-amber">Rows estimated vs actual</td><td>Big mismatch = stale statistics → bad plan</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Workflow:</strong> find the node eating the most time,
+check if a Seq Scan should be an index, and compare estimated vs actual rows. A
+huge estimate error usually means <code>ANALYZE</code> (statistics) is out of date.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚀</span>
+<span class="topic-name">Query Optimization — Sargability &amp; N+1</span>
+<span class="topic-badge">Performance</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Write Queries the Index Can Use</div>
+<div class="concept-desc">
+A query is <strong class="c-cyan">sargable</strong> ("Search ARGument able") when it
+can use an index. Wrapping an indexed column in a function or leading a
+<code>LIKE</code> with a wildcard defeats the index and forces a scan.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com">-- NOT sargable: function on the column</span>
+<span class="kw">WHERE</span> <span class="fn">DATE</span>(created_at) = <span class="str">'2026-01-01'</span>
+<span class="com">-- sargable: range on the raw column</span>
+<span class="kw">WHERE</span> created_at &gt;= <span class="str">'2026-01-01'</span> <span class="kw">AND</span> created_at &lt; <span class="str">'2026-01-02'</span></pre>
+<table class="ref-table">
+<tr><th>Anti-pattern</th><th>Fix</th></tr>
+<tr><td class="c-red"><code>func(col) = x</code></td><td>Rewrite as a range, or index the expression</td></tr>
+<tr><td class="c-red"><code>LIKE '%foo'</code></td><td>Leading wildcard can't use B-tree — use full-text</td></tr>
+<tr><td class="c-red">The N+1 query</td><td>1 query + N per-row queries → JOIN or batch (IN)</td></tr>
+<tr><td class="c-red"><code>SELECT *</code></td><td>Fetch only needed columns → enables covering indexes</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The N+1 problem</strong> is the #1 app-layer DB killer
+(ORMs love to cause it): loading a list, then firing one query per item. Fix by
+eager-loading with a join or a single <code>WHERE id IN (…)</code>.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚦</span>
+<span class="topic-name">Locking &amp; MVCC — Concurrency Without Chaos</span>
+<span class="topic-badge">Internals</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">How Readers and Writers Coexist</div>
+<div class="concept-desc">
+<strong class="c-cyan">MVCC</strong> (Multi-Version Concurrency Control) is how
+Postgres/InnoDB let many transactions run at once: writers create <em>new versions</em>
+of rows instead of overwriting, so <strong class="c-green">readers never block
+writers and writers never block readers</strong>. Each transaction sees a consistent
+snapshot.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Row versions</td><td>Old versions kept until no txn needs them</td></tr>
+<tr><td class="c-cyan">VACUUM (Postgres)</td><td>Cleans up dead tuples — neglect it and the table bloats</td></tr>
+<tr><td class="c-cyan">Row vs table locks</td><td><code>FOR UPDATE</code> locks specific rows for a write</td></tr>
+<tr><td class="c-red">Deadlock</td><td>Two txns wait on each other — DB kills one; retry it</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Avoiding deadlocks:</strong> acquire locks in a consistent
+order and keep transactions short. Explicit locking (<code>SELECT … FOR UPDATE</code>)
+is how you safely implement "decrement inventory" under concurrency.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🍰</span>
+<span class="topic-name">Partitioning &amp; Sharding — Scaling One Big Table</span>
+<span class="topic-badge">Scale</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Split the Data When It Won't Fit</div>
+<div class="concept-desc">
+<strong class="c-cyan">Partitioning</strong> splits one table into pieces
+<em>within a single database</em> (by range/list/hash) so queries scan less and old
+data is easy to drop. <strong class="c-cyan">Sharding</strong> spreads data across
+<em>multiple databases/servers</em> to scale beyond one machine.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Technique</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Range partition</td><td>By date — drop last month in one command (time-series)</td></tr>
+<tr><td class="c-cyan">Hash partition</td><td>Even spread by a key's hash</td></tr>
+<tr><td class="c-cyan">Shard key</td><td>Chooses which server a row lives on — pick carefully</td></tr>
+<tr><td class="c-red">Cross-shard queries/joins</td><td>The hard part — slow, complex; avoid by design</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Order of escalation:</strong> optimize queries &amp;
+indexes → add a read replica → partition → (only then) shard. Sharding adds real
+operational complexity; a bad shard key causes hotspots and painful re-sharding.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🐘</span>
+<span class="topic-name">PostgreSQL — The Default Choice</span>
+<span class="topic-badge">Postgres</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Swiss-Army Relational Database</div>
+<div class="concept-desc">
+<strong class="c-cyan">PostgreSQL</strong> has become the default open-source RDBMS:
+standards-compliant, extensible, rock-solid, and free. If you're starting a project
+and don't have a specific reason not to, reach for Postgres.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># psql — the CLI you'll live in</span>
+psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span class="var">-d</span> mydb
+\dt              <span class="com"># list tables</span>
+\d+ users        <span class="com"># describe a table</span>
+\di              <span class="com"># list indexes</span>
+\timing on       <span class="com"># show query durations</span></pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Roles</td><td>Users &amp; groups are both "roles"; grant privileges</td></tr>
+<tr><td class="c-cyan">Schemas</td><td>Namespaces within a database (<code>public</code> by default)</td></tr>
+<tr><td class="c-cyan">Extensions</td><td><code>CREATE EXTENSION</code> — pgvector, PostGIS, pg_stat_statements</td></tr>
+<tr><td class="c-cyan">MVCC + VACUUM</td><td>Autovacuum reclaims dead rows; monitor bloat</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧰</span>
+<span class="topic-name">Postgres Power Features — JSONB &amp; Full-Text</span>
+<span class="topic-badge">Postgres</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">More Than Rows and Columns</div>
+<div class="concept-desc">
+Postgres blurs the line with NoSQL: store and index JSON documents, arrays, and
+run full-text search — often removing the need for a separate datastore.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com">-- JSONB: query inside a document, indexed with GIN</span>
+<span class="kw">SELECT</span> data-&gt;&gt;<span class="str">'email'</span> <span class="kw">FROM</span> users
+<span class="kw">WHERE</span> data @&gt; <span class="str">'{"plan":"pro"}'</span>;
+
+<span class="com">-- Full-text search</span>
+<span class="kw">WHERE</span> to_tsvector(body) @@ to_tsquery(<span class="str">'postgres &amp; index'</span>);</pre>
+<table class="ref-table">
+<tr><th>Feature</th><th>Use</th></tr>
+<tr><td class="c-cyan">JSONB</td><td>Semi-structured data, indexed with GIN; <code>@&gt;</code>, <code>-&gt;&gt;</code></td></tr>
+<tr><td class="c-cyan">Arrays</td><td>Native array columns &amp; operators</td></tr>
+<tr><td class="c-cyan">Full-text search</td><td>tsvector/tsquery, ranking — no Elasticsearch needed for many apps</td></tr>
+<tr><td class="c-cyan">LISTEN/NOTIFY</td><td>Built-in pub/sub for lightweight eventing</td></tr>
+<tr><td class="c-cyan">pgvector</td><td>Store embeddings &amp; do similarity search (AI apps)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Rule:</strong> use JSONB for genuinely variable data, not
+as an excuse to skip schema design — relational columns are still faster and safer
+for structured fields.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🐬</span>
+<span class="topic-name">MySQL / MariaDB — The Other Giant</span>
+<span class="topic-badge">MySQL</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Powering LAMP and Half the Web</div>
+<div class="concept-desc">
+<strong class="c-cyan">MySQL</strong> (and its community fork
+<strong class="c-cyan">MariaDB</strong>) is ubiquitous — WordPress, countless web
+apps, and managed offerings everywhere. Very capable; a few behaviors differ from
+Postgres and catch people out.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Thing to know</th><th>Detail</th></tr>
+<tr><td class="c-cyan">InnoDB engine</td><td>The default — transactional, row-locking, FKs</td></tr>
+<tr><td class="c-cyan">Default isolation</td><td>Repeatable Read (Postgres uses Read Committed)</td></tr>
+<tr><td class="c-amber">Collation/charset</td><td>Use <code>utf8mb4</code> — plain <code>utf8</code> is a 3-byte trap</td></tr>
+<tr><td class="c-amber">Looser SQL</td><td>Historically permissive; enable strict mode</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Choosing:</strong> Postgres for richer features &amp;
+strictness; MySQL where the ecosystem/hosting assumes it (WordPress) or the team
+knows it well. Both are excellent — the differences are smaller than the tribalism.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📦</span>
+<span class="topic-name">SQLite — The Database That's Everywhere</span>
+<span class="topic-badge">SQLite</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">A Whole Database in One File</div>
+<div class="concept-desc">
+<strong class="c-cyan">SQLite</strong> is an embedded, serverless database — the
+entire DB is a single file, no process to run. It's the most deployed database in
+the world: every phone, browser, and countless apps ship it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Great for</th><th>Not for</th></tr>
+<tr><td class="c-green">App/local storage, mobile, edge</td><td class="c-red">High write concurrency (single-writer)</td></tr>
+<tr><td class="c-green">Tests &amp; prototypes</td><td class="c-red">Multiple app servers sharing it</td></tr>
+<tr><td class="c-green">Analytics on a file (with extensions)</td><td class="c-red">Network access by many clients</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Don't dismiss it:</strong> "SQLite is not a toy" — for
+read-heavy or single-node workloads it's blazing fast and zero-ops. Modern tools
+(Litestream, LiteFS, Turso) even give it replication. Know when <em>not</em> to
+reach for a server database.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌊</span>
+<span class="topic-name">Connection Pooling — Surviving Many Clients</span>
+<span class="topic-badge">Ops</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Why Your DB Falls Over Under Load</div>
+<div class="concept-desc">
+Each database connection costs memory and a backend process. Open one per request
+and a traffic spike (or a serverless fleet) opens thousands, exhausting the server.
+A <strong class="c-cyan">connection pool</strong> reuses a small, fixed set of
+connections.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Layer</th><th>Detail</th></tr>
+<tr><td class="c-cyan">App-side pool</td><td>HikariCP, pgx, SQLAlchemy — reuse connections per app</td></tr>
+<tr><td class="c-cyan">PgBouncer</td><td>External pooler; transaction mode multiplexes many clients</td></tr>
+<tr><td class="c-cyan">Serverless</td><td>Functions × requests = connection storm → use a pooler/proxy</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Sizing:</strong> more connections isn't faster — past a
+point they just contend. A good pool is often just <em>(cores × 2) + spindles</em>,
+not hundreds. Connection exhaustion presents as timeouts under load; the fix is
+pooling, not a bigger <code>max_connections</code>.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗂️</span>
+<span class="topic-name">The NoSQL Landscape — Four Families</span>
+<span class="topic-badge">NoSQL</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Not "No SQL" — "Not Only SQL"</div>
+<div class="concept-desc">
+NoSQL databases relax the relational model to gain scale, flexibility, or a shape
+that fits a specific access pattern. They usually trade strong consistency and rich
+joins for horizontal scalability (the CAP trade-off).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Family</th><th>Model</th><th>Example</th></tr>
+<tr><td class="c-cyan">Key-Value</td><td>Simple map — fastest lookups</td><td>Redis, DynamoDB</td></tr>
+<tr><td class="c-cyan">Document</td><td>JSON-like docs, flexible schema</td><td>MongoDB, Couchbase</td></tr>
+<tr><td class="c-cyan">Wide-Column</td><td>Rows with dynamic columns, huge scale</td><td>Cassandra, Bigtable</td></tr>
+<tr><td class="c-cyan">Graph</td><td>Nodes &amp; edges — relationships first</td><td>Neo4j</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Choosing:</strong> pick NoSQL for a <em>specific</em>
+reason — massive scale, a document-shaped domain, or graph traversal — not to
+avoid SQL. Most apps are still best served by a relational database; "boring
+technology" wins more often than not.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🍃</span>
+<span class="topic-name">MongoDB — Documents &amp; the Aggregation Pipeline</span>
+<span class="topic-badge">Document</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Store the Object, Not the Rows</div>
+<div class="concept-desc">
+<strong class="c-cyan">MongoDB</strong> stores flexible JSON-like
+<strong>documents</strong> in collections. It shines when your data is naturally
+nested and your access pattern reads whole objects — no joins to reassemble them.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com">// find + aggregate</span>
+db.orders.<span class="fn">aggregate</span>([
+  { $match: { status: <span class="str">"paid"</span> } },
+  { $group: { _id: <span class="str">"$country"</span>, revenue: { $sum: <span class="str">"$total"</span> } } },
+  { $sort: { revenue: -<span class="num">1</span> } }
+])</pre>
+<div class="concept-desc">
+<strong class="c-green">Schema design:</strong> model around access patterns —
+embed data you read together, reference data you read separately. Add indexes
+just like SQL. Modern Mongo has ACID multi-document transactions, but they signal
+you may have wanted relational.
+</div>
+<div class="concept-desc" style="margin-top:6px">
+<strong class="c-red">Watch out:</strong> unbounded array growth, and treating it
+as schemaless forever — inconsistent documents become a nightmare. Enforce a
+schema at the app (or with schema validation).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⚡</span>
+<span class="topic-name">Redis — The In-Memory Multi-Tool</span>
+<span class="topic-badge">Key-Value</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Data Structures at Memory Speed</div>
+<div class="concept-desc">
+<strong class="c-cyan">Redis</strong> keeps data in RAM, making it microsecond-fast.
+It's not just a cache — it offers real data structures and is the go-to for caching,
+sessions, rate limiting, queues, and leaderboards.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Structure</th><th>Use</th></tr>
+<tr><td class="c-cyan">String / counter</td><td>Cache values, rate limits (<code>INCR</code>)</td></tr>
+<tr><td class="c-cyan">Hash</td><td>Store objects (session, user)</td></tr>
+<tr><td class="c-cyan">Sorted Set</td><td>Leaderboards, time-ordered queues</td></tr>
+<tr><td class="c-cyan">List / Stream</td><td>Queues &amp; event logs</td></tr>
+<tr><td class="c-cyan">Pub/Sub</td><td>Lightweight messaging</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Caching patterns:</strong> cache-aside (check Redis, miss →
+DB → populate) is most common; always set a <strong class="c-green">TTL</strong>
+and plan for cache invalidation. Persistence (RDB snapshots / AOF) means it can
+survive restarts, but treat it as a fast layer, not the source of truth.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🏛️</span>
+<span class="topic-name">Cassandra &amp; DynamoDB — Wide-Column at Scale</span>
+<span class="topic-badge">Wide-Column</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Design for the Query, Not the Entity</div>
+<div class="concept-desc">
+<strong class="c-cyan">Cassandra</strong> and
+<strong class="c-cyan">DynamoDB</strong> scale to enormous write volumes across many
+nodes with no single point of failure. The catch: you must model around your
+queries up front — there are no ad-hoc joins.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Partition key</td><td>Decides which node stores the row — even distribution is critical</td></tr>
+<tr><td class="c-cyan">Sort/clustering key</td><td>Orders rows within a partition</td></tr>
+<tr><td class="c-cyan">Single-table design</td><td>DynamoDB: model many entities in one table by key design</td></tr>
+<tr><td class="c-red">Hot partition</td><td>A bad key funnels traffic to one node — throttling</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Tunable consistency</strong> (quorums) lets you dial
+latency vs freshness per operation. These shine for known, high-volume access
+patterns (feeds, IoT, sessions) — and hurt when requirements need flexible
+querying. Choose the key like your scalability depends on it, because it does.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🕸️</span>
+<span class="topic-name">Graph Databases — When Relationships Are the Data</span>
+<span class="topic-badge">Graph</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Traversals Instead of Joins</div>
+<div class="concept-desc">
+A graph database stores <strong class="c-cyan">nodes</strong> and
+<strong class="c-cyan">relationships</strong> as first-class citizens. Questions
+that need many-hop joins in SQL ("friends of friends who like X") become natural,
+fast traversals.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com">// Neo4j Cypher: mutual connections</span>
+<span class="kw">MATCH</span> (me:Person {name:<span class="str">"Ann"</span>})-[:KNOWS]-&gt;(f)-[:KNOWS]-&gt;(fof)
+<span class="kw">WHERE</span> fof &lt;&gt; me
+<span class="kw">RETURN</span> fof.name, <span class="fn">count</span>(*) <span class="kw">ORDER BY</span> <span class="fn">count</span>(*) <span class="kw">DESC</span></pre>
+<table class="ref-table">
+<tr><th>Great for</th><th>Example</th></tr>
+<tr><td class="c-cyan">Networks</td><td>Social graphs, org charts</td></tr>
+<tr><td class="c-cyan">Recommendations</td><td>"People who bought… also…"</td></tr>
+<tr><td class="c-cyan">Fraud / security</td><td>Attack-path &amp; ring detection (cf. BloodHound)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The relationship is stored directly, so a traversal is a pointer-hop, not a join —
+performance stays flat as hops increase. Use a graph DB when connections
+<em>are</em> the primary query; otherwise a relational DB is simpler.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">↔️</span>
+<span class="topic-name">OLTP vs OLAP — Rows vs Columns</span>
+<span class="topic-badge">Analytics</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Two Opposite Jobs, Two Storage Layouts</div>
+<div class="concept-desc">
+<strong class="c-cyan">OLTP</strong> (transactional) handles many small
+reads/writes of whole rows — your app database. <strong class="c-cyan">OLAP</strong>
+(analytical) scans huge numbers of rows over a few columns — your reporting
+warehouse. Their opposite needs drive opposite storage.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th></th><th>OLTP (row store)</th><th>OLAP (column store)</th></tr>
+<tr><td>Access</td><td>Few rows, all columns</td><td>Many rows, few columns</td></tr>
+<tr><td>Layout</td><td>Rows together</td><td>Columns together</td></tr>
+<tr><td>Wins at</td><td>Point lookups &amp; writes</td><td>Aggregations &amp; scans</td></tr>
+<tr><td>Example</td><td>Postgres, MySQL</td><td>BigQuery, Snowflake, ClickHouse</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Why columnar is fast for analytics:</strong> reading only
+the 3 columns a query touches (not all 50), plus massive compression on similar
+values. Don't run heavy analytics on your OLTP database — it competes with live
+traffic. Move it to a warehouse.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧊</span>
+<span class="topic-name">Columnar Engines — Parquet, DuckDB &amp; ClickHouse</span>
+<span class="topic-badge">Analytics</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Fast Path for Big Scans</div>
+<div class="concept-desc">
+Columnar storage plus vectorized execution (processing batches of values at once)
+is what makes modern analytics fast. You'll meet it as a file format and as query
+engines.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Role</th></tr>
+<tr><td class="c-cyan">Parquet</td><td>Columnar file format — the lingua franca of data lakes</td></tr>
+<tr><td class="c-cyan">DuckDB</td><td>"SQLite for analytics" — query Parquet/CSV locally, blazing fast</td></tr>
+<tr><td class="c-cyan">ClickHouse</td><td>Real-time columnar DB for huge event volumes</td></tr>
+<tr><td class="c-cyan">Apache Arrow</td><td>In-memory columnar standard that ties them together</td></tr>
+</table>
+<pre class="code-block"><span class="com">-- DuckDB: query a Parquet file directly, no loading</span>
+<span class="kw">SELECT</span> country, <span class="fn">count</span>(*) <span class="kw">FROM</span> <span class="str">'events/*.parquet'</span> <span class="kw">GROUP BY</span> <span class="num">1</span>;</pre>
+<div class="concept-desc" style="margin-top:6px">
+<strong class="c-green">Trend:</strong> DuckDB has made "big data" analytics
+possible on a laptop for datasets that once needed a cluster — reach for it before
+spinning up Spark.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🏞️</span>
+<span class="topic-name">Warehouse vs Lake vs Lakehouse</span>
+<span class="topic-badge">Analytics</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Where Analytical Data Lives</div>
+<div class="concept-desc">
+Three architectures for storing analytical data, each solving the previous one's
+limitation. The lakehouse is the current convergence.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Approach</th><th>What it is</th></tr>
+<tr><td class="c-cyan">Data Warehouse</td><td>Structured, schema-on-write, SQL — Snowflake, BigQuery, Redshift</td></tr>
+<tr><td class="c-cyan">Data Lake</td><td>Raw files (Parquet) in object storage, schema-on-read — cheap, flexible, messy</td></tr>
+<tr><td class="c-cyan">Lakehouse</td><td>Lake storage + warehouse features (ACID, tables) via Delta/Iceberg/Hudi</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Table formats</strong> (Apache Iceberg, Delta Lake) are the
+key innovation — they add transactions, schema evolution, and time-travel on top of
+plain files, so one copy of data serves many engines. Warehouse = easy &amp;
+governed; lake = cheap &amp; open; lakehouse = both, at the cost of complexity.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📊</span>
+<span class="topic-name">The Semantic Layer &amp; Metrics</span>
+<span class="topic-badge">Analytics</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">One Definition of "Revenue," Everywhere</div>
+<div class="concept-desc">
+When every dashboard computes "active users" or "revenue" its own way, numbers
+disagree and trust evaporates. A <strong class="c-cyan">semantic layer</strong>
+defines metrics <em>once</em>, centrally, so every tool and query returns the same
+answer.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Piece</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Metric definition</td><td>The canonical formula for a KPI, version-controlled</td></tr>
+<tr><td class="c-cyan">Dimensions</td><td>How you slice it (time, region, plan)</td></tr>
+<tr><td class="c-cyan">Governance</td><td>Certified vs experimental metrics</td></tr>
+<tr><td class="c-cyan">Tools</td><td>dbt Semantic Layer, Cube, LookML</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The payoff: a single source of truth for business logic that BI tools, notebooks,
+and APIs all consume — no more "whose number is right?" meetings. It's the
+analytics equivalent of DRY.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">✅</span>
+<span class="topic-name">Data Quality &amp; Observability</span>
+<span class="topic-badge">Analytics</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Garbage In, Wrong Decisions Out</div>
+<div class="concept-desc">
+A pipeline that runs "successfully" can still deliver silently wrong data — a null
+spike, a duplicated load, a schema change upstream. Data quality makes correctness a
+tested, monitored property, not a hope.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Dimension</th><th>Check</th></tr>
+<tr><td class="c-cyan">Freshness</td><td>Did the data arrive on time?</td></tr>
+<tr><td class="c-cyan">Volume</td><td>Row count in the expected range?</td></tr>
+<tr><td class="c-cyan">Schema</td><td>Did columns/types change upstream?</td></tr>
+<tr><td class="c-cyan">Distribution</td><td>Nulls/values within normal bounds?</td></tr>
+<tr><td class="c-cyan">Lineage</td><td>What feeds this, and what breaks if it fails?</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Tools:</strong> dbt tests &amp; contracts, Great
+Expectations, Soda; observability platforms (Monte Carlo) auto-detect anomalies.
+<strong class="c-amber">Data contracts</strong> push the guarantee upstream to
+producers — the analytics equivalent of an API contract.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">💾</span>
+<span class="topic-name">Backups &amp; Point-in-Time Recovery</span>
+<span class="topic-badge">DBA</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">A Backup You Haven't Restored Isn't a Backup</div>
+<div class="concept-desc">
+The database holds the business's most irreplaceable asset. Backups protect against
+hardware failure, bad deploys, and <code>DELETE</code>-without-<code>WHERE</code>.
+The goal is a tested path back to any moment before disaster.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Type</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Logical dump</td><td><code>pg_dump</code>/<code>mysqldump</code> — portable, slow to restore, per-DB</td></tr>
+<tr><td class="c-cyan">Physical backup</td><td>File-level (pgBackRest, Percona) — fast, whole cluster</td></tr>
+<tr><td class="c-cyan">PITR</td><td>Base backup + WAL archive → restore to an exact second</td></tr>
+<tr><td class="c-cyan">Snapshots</td><td>Cloud volume snapshots — fast but check consistency</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">RPO/RPO drive design:</strong> continuous WAL archiving
+gives near-zero data loss (RPO). But the only backup that counts is a
+<strong class="c-green">restore you've actually tested</strong> — schedule restore
+drills, or you have Schrödinger's backup.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">👯</span>
+<span class="topic-name">Replication &amp; High Availability</span>
+<span class="topic-badge">DBA</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Copies for Scale and Survival</div>
+<div class="concept-desc">
+Replication streams changes from a <strong class="c-cyan">primary</strong> to one or
+more <strong class="c-cyan">replicas</strong>. It buys you read scaling, failover,
+and geographic locality — but introduces lag and failover complexity.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Async replication</td><td>Fast writes, but replicas lag → possible stale reads/data loss on failover</td></tr>
+<tr><td class="c-cyan">Sync replication</td><td>No data loss, higher write latency</td></tr>
+<tr><td class="c-cyan">Read replicas</td><td>Offload reporting/read traffic</td></tr>
+<tr><td class="c-cyan">Automatic failover</td><td>Patroni/orchestrator promote a replica on primary death</td></tr>
+<tr><td class="c-red">Split-brain</td><td>Two primaries accept writes — data divergence; fencing prevents it</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Replication lag</strong> means "read your own write" can
+fail — route critical reads to the primary. HA needs a leader-election mechanism;
+rolling your own failover is how you get split-brain.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔀</span>
+<span class="topic-name">Schema Migrations — Zero-Downtime Change</span>
+<span class="topic-badge">DBA</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Changing the Schema While Live</div>
+<div class="concept-desc">
+Schema changes are code changes and must be versioned, reviewed, and reversible.
+The hard part is altering a big table <em>without</em> locking it or breaking the
+currently-running app version.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool / Idea</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Migration tools</td><td>Flyway, Liquibase, Alembic, Rails — versioned, ordered scripts</td></tr>
+<tr><td class="c-cyan">Expand/contract</td><td>Add new → backfill → switch → remove old (multi-deploy)</td></tr>
+<tr><td class="c-red">Locking DDL</td><td>Some <code>ALTER</code>s rewrite/lock the table — check first</td></tr>
+<tr><td class="c-green">Online tools</td><td>gh-ost, pt-online-schema-change for big MySQL tables</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Golden rule:</strong> every migration must be
+backward-compatible with the currently-deployed code, because during a rollout both
+versions run at once. "Add a nullable column, deploy, backfill, then enforce" beats
+a single locking change. Always have a rollback.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🛡️</span>
+<span class="topic-name">Database Security — Least Privilege &amp; RLS</span>
+<span class="topic-badge">Security</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Protecting the Crown Jewels</div>
+<div class="concept-desc">
+The database is the highest-value target. Defense is layered: control who connects,
+what they can touch, and protect the data at rest and in transit. Ties directly to
+the security domain.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Control</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Least-privilege roles</td><td>App user ≠ superuser; separate read/write/migration roles</td></tr>
+<tr><td class="c-cyan">Row-Level Security</td><td>Postgres RLS — rows filtered by policy (multi-tenant isolation)</td></tr>
+<tr><td class="c-cyan">Encryption</td><td>TLS in transit; TDE / disk encryption at rest</td></tr>
+<tr><td class="c-cyan">Secrets</td><td>Rotate credentials via Vault/IAM; never hardcode</td></tr>
+<tr><td class="c-cyan">Auditing</td><td>Log privileged actions &amp; access to sensitive tables</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-red">And of course:</strong> parameterized queries to stop SQL
+injection (the app's job), and network isolation so the DB is never internet-facing.
+Column-level encryption/masking protects PII even from DB admins.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📟</span>
+<span class="topic-name">Monitoring a Database — What to Watch</span>
+<span class="topic-badge">DBA</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Signals That Predict an Outage</div>
+<div class="concept-desc">
+Databases fail in fairly predictable ways. Watch the right handful of metrics and
+you catch trouble before users do — this is the ops side of the SRE golden signals,
+applied to data.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Signal</th><th>Why</th></tr>
+<tr><td class="c-cyan">Slow-query log</td><td>Find the queries actually hurting — start here</td></tr>
+<tr><td class="c-cyan">Connections / saturation</td><td>Nearing <code>max_connections</code> → pool it</td></tr>
+<tr><td class="c-cyan">Cache hit ratio</td><td>Low buffer-pool hits → more RAM or better indexes</td></tr>
+<tr><td class="c-cyan">Replication lag</td><td>Rising lag → stale reads, failover risk</td></tr>
+<tr><td class="c-cyan">Bloat / vacuum (PG)</td><td>Dead tuples piling up → autovacuum tuning</td></tr>
+<tr><td class="c-cyan">Disk &amp; IOPS</td><td>Running out of space is a hard outage</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<code>pg_stat_statements</code> (Postgres) and the Performance Schema (MySQL)
+surface your worst queries — the single most useful place to look when the DB is slow.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧑‍💼</span>
+<span class="topic-name">Data Roles — Who Does What</span>
+<span class="topic-badge">Career</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Analyst vs Engineer vs Scientist vs DBA</div>
+<div class="concept-desc">
+"Data" spans several distinct jobs that get conflated. Knowing the boundaries helps
+you pick a lane — and know who to hire.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Role</th><th>Owns</th></tr>
+<tr><td class="c-cyan">Data Analyst</td><td>SQL + BI dashboards; answers business questions</td></tr>
+<tr><td class="c-cyan">Analytics Engineer</td><td>dbt models &amp; the semantic layer (analyst + SWE practices)</td></tr>
+<tr><td class="c-cyan">Data Engineer</td><td>Pipelines, ingestion, warehouses, infra (Kafka/Spark/Airflow)</td></tr>
+<tr><td class="c-cyan">Data Scientist</td><td>Statistics, experiments, ML models</td></tr>
+<tr><td class="c-cyan">ML Engineer</td><td>Productionizing models (MLOps)</td></tr>
+<tr><td class="c-cyan">DBA</td><td>Runs &amp; tunes the operational databases</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">The modern stack</strong> blurred these: analytics
+engineering emerged from analysts adopting version control, testing, and CI. The
+common core is SQL — it's the one skill every data role shares.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🏗️</span>
+<span class="topic-name">Designing a Schema From Requirements</span>
+<span class="topic-badge">Craft</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Walkthrough</div>
+<div class="concept-title">From "We Sell Stuff" to Tables</div>
+<div class="concept-desc">
+A repeatable process turns fuzzy requirements into a sound schema. Example: an
+e-commerce order system.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>Do</th></tr>
+<tr><td class="c-cyan">1. Find nouns</td><td>Customer, Product, Order, OrderItem, Payment → entities</td></tr>
+<tr><td class="c-cyan">2. Relationships</td><td>Order has many OrderItems; OrderItem → one Product</td></tr>
+<tr><td class="c-cyan">3. Keys &amp; types</td><td>PKs, FKs, pick types &amp; constraints (money as decimal!)</td></tr>
+<tr><td class="c-cyan">4. Normalize to 3NF</td><td>Each fact once; no update anomalies</td></tr>
+<tr><td class="c-cyan">5. Index for access</td><td>Add indexes for the real queries</td></tr>
+<tr><td class="c-cyan">6. OLAP later</td><td>Star schema in the warehouse for reporting</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Snapshot the price:</strong> an <code>OrderItem</code>
+stores the price <em>at time of sale</em>, not a live FK to Product.price — a
+classic modeling insight. Design OLTP for correctness; derive OLAP from it.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⏱️</span>
+<span class="topic-name">Time-Series &amp; Event Data</span>
+<span class="topic-badge">Craft</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">When Time Is the Primary Axis</div>
+<div class="concept-desc">
+Metrics, logs, IoT readings, and financial ticks are append-heavy and queried by
+time window. Specialized handling keeps them fast and affordable as they grow
+without bound.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Technique</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Time partitioning</td><td>Chunk by day/week; drop old chunks instantly</td></tr>
+<tr><td class="c-cyan">Downsampling / rollups</td><td>Keep 1s data briefly, 1m/1h aggregates long-term</td></tr>
+<tr><td class="c-cyan">Retention policies</td><td>Auto-expire raw data past N days</td></tr>
+<tr><td class="c-cyan">Tools</td><td>TimescaleDB, InfluxDB, Prometheus, ClickHouse</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The pattern that makes it sustainable: <strong class="c-green">high-resolution
+recent + low-resolution history</strong>. You almost never need per-second data
+from last year, so roll it up and let raw data expire. Ties to the observability
+cards in ops.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧭</span>
+<span class="topic-name">Vector Databases — Embeddings &amp; Similarity Search</span>
+<span class="topic-badge">AI Bridge</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Searching by Meaning, Not Keywords</div>
+<div class="concept-desc">
+AI models turn text/images into <strong class="c-cyan">embeddings</strong> — vectors
+where similar meaning = nearby points. A vector database indexes these for fast
+<strong class="c-cyan">nearest-neighbor</strong> search, the backbone of RAG and
+semantic search.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Embedding</td><td>A model maps content → a high-dimensional vector</td></tr>
+<tr><td class="c-cyan">ANN index</td><td>HNSW/IVF — approximate nearest-neighbor for speed</td></tr>
+<tr><td class="c-cyan">Similarity</td><td>Cosine / dot product ranks "closeness"</td></tr>
+<tr><td class="c-cyan">Options</td><td>pgvector, Pinecone, Weaviate, Qdrant, Milvus</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Start simple:</strong> <code>pgvector</code> adds vector
+search to Postgres — often you don't need a separate vector DB at all.
+<strong class="c-amber">Hybrid search</strong> (vectors + keyword/filters) beats
+either alone. Direct bridge to the AI domain's RAG cards.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🎓</span>
+<span class="topic-name">The Data Interview</span>
+<span class="topic-badge">Career</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">What They'll Actually Ask</div>
+<div class="concept-desc">
+Data interviews test a predictable set of skills. Prepare each and this whole domain
+becomes your study guide.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Round</th><th>Prep</th></tr>
+<tr><td class="c-cyan">SQL</td><td>Joins, window functions, group-by, "second highest salary"-style puzzles</td></tr>
+<tr><td class="c-cyan">Data modeling</td><td>Design a schema for X; normalize; star schema for analytics</td></tr>
+<tr><td class="c-cyan">Pipeline / system design</td><td>Ingest → store → transform → serve; batch vs streaming</td></tr>
+<tr><td class="c-cyan">Warehousing</td><td>OLTP vs OLAP, SCDs, dbt, incremental models</td></tr>
+<tr><td class="c-cyan">Case / product sense</td><td>Define a metric, debug a dashboard drop</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Highest-leverage prep:</strong> window functions and the
+NULL/join traps — they separate mid from senior. Practice explaining <em>why</em>,
+not just writing the query. Every card in this domain maps to one of these rounds.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- /domain-body data -->
+</div>
+</div>
+<div class="domain-section domain-web" data-domain="web">
+<div class="domain-header">
+<span class="domain-icon">🌐</span>
+<span class="domain-title">Web &amp; Frontend Engineering</span>
+<div class="cert-tags">
+<span class="ctag ctag-general">WEB</span>
+<span class="ctag ctag-general">JS</span>
+</div>
+<span class="domain-sub">Browser · CSS · JS · Frameworks · Performance · A11y</span>
+<span class="chevron">▾</span>
+</div>
+<div class="domain-body">
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🖼️</span>
+<span class="topic-name">How the Browser Renders a Page</span>
+<span class="topic-badge">Browser</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">From Bytes to Pixels</div>
+<div class="concept-desc">
+Understanding the rendering pipeline is what separates people who "write CSS" from
+people who make fast sites. The browser turns your HTML/CSS into pixels through a
+fixed sequence of steps.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>Does</th></tr>
+<tr><td class="c-cyan">Parse → DOM</td><td>HTML becomes the Document Object Model tree</td></tr>
+<tr><td class="c-cyan">Parse → CSSOM</td><td>CSS becomes the style tree</td></tr>
+<tr><td class="c-cyan">Render tree</td><td>DOM + CSSOM combined (visible nodes only)</td></tr>
+<tr><td class="c-cyan">Layout (reflow)</td><td>Compute geometry — where &amp; how big everything is</td></tr>
+<tr><td class="c-cyan">Paint</td><td>Fill in pixels (text, colors, borders)</td></tr>
+<tr><td class="c-cyan">Composite</td><td>Assemble layers on the GPU</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Render-blocking:</strong> CSS blocks rendering (the browser
+won't paint unstyled content); a plain <code>&lt;script&gt;</code> blocks parsing.
+Use <code>defer</code>/<code>async</code> and keep critical CSS small so the page
+paints fast.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌀</span>
+<span class="topic-name">Reflow, Repaint &amp; What Causes Jank</span>
+<span class="topic-badge">Performance</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Why Animations Stutter</div>
+<div class="concept-desc">
+To hit 60fps the browser has ~16ms per frame. <strong class="c-cyan">Reflow</strong>
+(recomputing layout) is expensive; <strong class="c-cyan">repaint</strong> is
+cheaper; compositing a transform is cheapest. Triggering layout every frame causes
+<strong class="c-red">jank</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Change</th><th>Cost</th></tr>
+<tr><td class="c-red">width/height/top/left</td><td>Reflow (layout) — avoid animating these</td></tr>
+<tr><td class="c-amber">color/background</td><td>Repaint only</td></tr>
+<tr><td class="c-green">transform / opacity</td><td>Composite only — GPU, no layout (animate these!)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-red">Layout thrashing:</strong> reading a layout property (like
+<code>offsetHeight</code>) right after writing one forces a synchronous reflow in a
+loop. Batch reads, then writes. <strong class="c-green">Animate <code>transform</code>
+and <code>opacity</code></strong> — they skip layout and paint entirely.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌳</span>
+<span class="topic-name">The DOM &amp; Events — Bubbling &amp; Delegation</span>
+<span class="topic-badge">Browser</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">How Clicks Travel Through the Page</div>
+<div class="concept-desc">
+The DOM is the live tree of the page that JavaScript manipulates. Events flow through
+it in phases — understanding this powers efficient event handling.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com">// Event delegation: one listener for many children</span>
+list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, (e) =&gt; {
+  <span class="kw">const</span> item = e.target.<span class="fn">closest</span>(<span class="str">'.item'</span>);
+  <span class="kw">if</span> (item) <span class="fn">select</span>(item.dataset.id);
+});</pre>
+<table class="ref-table">
+<tr><th>Phase</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Capture</td><td>Top → target (rarely used)</td></tr>
+<tr><td class="c-cyan">Target</td><td>The element clicked</td></tr>
+<tr><td class="c-cyan">Bubble</td><td>Target → top (default for listeners)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Delegation</strong> attaches one listener to a parent and
+uses bubbling to handle any child — essential for dynamic lists (no re-binding on
+add/remove). <code>stopPropagation()</code> halts bubbling;
+<code>preventDefault()</code> stops the browser's default action.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗃️</span>
+<span class="topic-name">Web Storage — Cookies, localStorage &amp; IndexedDB</span>
+<span class="topic-badge">Browser</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Where State Lives in the Browser</div>
+<div class="concept-desc">
+The browser offers several places to persist data, each with different size, lifetime,
+and security properties. Picking the wrong one causes bugs and vulnerabilities.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Store</th><th>Use / Note</th></tr>
+<tr><td class="c-cyan">Cookies</td><td>Sent with every request; use <code>HttpOnly</code>+<code>Secure</code> for auth tokens</td></tr>
+<tr><td class="c-cyan">localStorage</td><td>~5MB, persists, sync API — <strong class="c-red">readable by JS (XSS risk)</strong></td></tr>
+<tr><td class="c-cyan">sessionStorage</td><td>Per-tab, cleared on close</td></tr>
+<tr><td class="c-cyan">IndexedDB</td><td>Large, async, structured — offline apps</td></tr>
+<tr><td class="c-cyan">Cache API</td><td>Store responses for service workers/PWAs</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-red">Security:</strong> never store auth tokens in
+<code>localStorage</code> — any XSS reads them. Prefer <code>HttpOnly</code> cookies
+(JS can't touch them). Ties to the web-security cards.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🛠️</span>
+<span class="topic-name">DevTools Mastery</span>
+<span class="topic-badge">Tooling</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Your Most-Used Debugging Tool</div>
+<div class="concept-desc">
+Browser DevTools (F12) are where frontend work actually happens. Fluency here is the
+fastest way to level up — most developers use 20% of them.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Panel</th><th>Use</th></tr>
+<tr><td class="c-cyan">Elements</td><td>Inspect/edit DOM &amp; CSS live; check the box model</td></tr>
+<tr><td class="c-cyan">Console</td><td>Logs, run JS, <code>$0</code> = selected element</td></tr>
+<tr><td class="c-cyan">Network</td><td>Requests, timing, payloads, throttling</td></tr>
+<tr><td class="c-cyan">Performance</td><td>Record &amp; find jank, long tasks, layout shifts</td></tr>
+<tr><td class="c-cyan">Application</td><td>Storage, cookies, service workers, manifest</td></tr>
+<tr><td class="c-cyan">Lighthouse</td><td>Audit performance, a11y, SEO, best practices</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Pro moves:</strong> throttle to "Slow 3G" + 4× CPU to feel
+what users feel; use the Performance panel's flame chart to find the function eating
+your frame budget.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📏</span>
+<span class="topic-name">Flexbox — One-Dimensional Layout</span>
+<span class="topic-badge">CSS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Aligning Things in a Row or Column</div>
+<div class="concept-desc">
+<strong class="c-cyan">Flexbox</strong> lays out items along a single axis and is the
+go-to for components: navbars, toolbars, centering, card rows. Set
+<code>display:flex</code> on the parent, then control alignment and distribution.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="var">.bar</span> {
+  display: flex;
+  justify-content: space-between;  <span class="com">/* main axis */</span>
+  align-items: center;             <span class="com">/* cross axis */</span>
+  gap: <span class="num">1rem</span>;
+}</pre>
+<table class="ref-table">
+<tr><th>Property</th><th>Controls</th></tr>
+<tr><td class="c-cyan">flex-direction</td><td>row (default) or column — sets the main axis</td></tr>
+<tr><td class="c-cyan">justify-content</td><td>Spacing along the main axis</td></tr>
+<tr><td class="c-cyan">align-items</td><td>Alignment on the cross axis</td></tr>
+<tr><td class="c-cyan">flex: 1</td><td>Grow to fill; <code>flex-wrap</code> to wrap</td></tr>
+<tr><td class="c-cyan">gap</td><td>Space between items (no more margin hacks)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Centering, solved:</strong> <code>display:flex;
+justify-content:center; align-items:center</code> — the answer to a decade of
+"how do I center a div."
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔲</span>
+<span class="topic-name">CSS Grid — Two-Dimensional Layout</span>
+<span class="topic-badge">CSS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Rows and Columns at the Same Time</div>
+<div class="concept-desc">
+<strong class="c-cyan">Grid</strong> handles two dimensions at once — perfect for
+page layouts and any grid of cards. Where Flexbox is content-driven,
+Grid is layout-driven: you define the structure, items flow in.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="var">.gallery</span> {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(<span class="num">200px</span>, <span class="num">1fr</span>));
+  gap: <span class="num">1rem</span>;
+}</pre>
+<table class="ref-table">
+<tr><th>Feature</th><th>Detail</th></tr>
+<tr><td class="c-cyan">grid-template-columns/rows</td><td>Define tracks; <code>fr</code> = fraction of free space</td></tr>
+<tr><td class="c-cyan">repeat() + minmax()</td><td>Responsive columns without media queries</td></tr>
+<tr><td class="c-cyan">auto-fit / auto-fill</td><td>Wrap columns to fit the container</td></tr>
+<tr><td class="c-cyan">grid-template-areas</td><td>Name regions; lay out visually in CSS</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Rule of thumb:</strong> Grid for the overall page/section
+layout, Flexbox for the components inside it. The
+<code>auto-fit + minmax</code> one-liner gives a fully responsive card grid with
+zero media queries.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📱</span>
+<span class="topic-name">Responsive Design — Fluid, Mobile-First</span>
+<span class="topic-badge">CSS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">One Site, Every Screen</div>
+<div class="concept-desc">
+Responsive design adapts the layout to the viewport. The modern approach is
+<strong class="c-cyan">mobile-first</strong> (style the small screen, then add
+complexity up) and increasingly <strong class="c-cyan">intrinsic</strong> (let the
+content size itself).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Use</th></tr>
+<tr><td class="c-cyan">Media queries</td><td>Breakpoints by viewport width</td></tr>
+<tr><td class="c-cyan">Container queries</td><td>Respond to the <em>parent's</em> size — true component responsiveness</td></tr>
+<tr><td class="c-cyan">clamp()</td><td>Fluid type/spacing: <code>clamp(min, preferred, max)</code></td></tr>
+<tr><td class="c-cyan">rem / % / fr / vw</td><td>Relative units over fixed px</td></tr>
+<tr><td class="c-cyan">&lt;meta viewport&gt;</td><td>Required tag or mobile scales wrong</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Container queries</strong> are the big recent shift: a card
+can restyle based on the space <em>it</em> has, so the same component works in a
+sidebar or full-width — impossible with media queries alone.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">✨</span>
+<span class="topic-name">Modern CSS — Custom Properties, :has() &amp; Layers</span>
+<span class="topic-badge">CSS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">CSS Got Genuinely Powerful</div>
+<div class="concept-desc">
+Recent CSS added features that used to need preprocessors or JavaScript. Worth
+knowing because they simplify code you may still be writing the old way.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="var">:root</span> { <span class="var">--brand</span>: <span class="num">#f97316</span>; }
+<span class="var">.btn</span> { background: <span class="kw">var</span>(<span class="var">--brand</span>); }
+<span class="com">/* style a label only if it HAS an invalid input */</span>
+<span class="var">.field:has(input:invalid)</span> { color: red; }</pre>
+<table class="ref-table">
+<tr><th>Feature</th><th>Does</th></tr>
+<tr><td class="c-cyan">Custom properties</td><td>Real variables — themeable, runtime-changeable</td></tr>
+<tr><td class="c-cyan">:has()</td><td>The "parent selector" — style based on descendants</td></tr>
+<tr><td class="c-cyan">Nesting</td><td>Native nested rules (no Sass needed)</td></tr>
+<tr><td class="c-cyan">@layer</td><td>Cascade layers — tame specificity wars</td></tr>
+<tr><td class="c-cyan">clamp/min/max</td><td>Math in CSS for fluid design</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Custom properties + <code>prefers-color-scheme</code></strong>
+is how modern dark mode works — swap variable values, not whole stylesheets (exactly
+how this site themes itself).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🎨</span>
+<span class="topic-name">Design Systems, Tokens &amp; Tailwind</span>
+<span class="topic-badge">CSS</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Styling That Scales Across a Team</div>
+<div class="concept-desc">
+At scale, ad-hoc CSS becomes unmaintainable. Design systems encode consistent
+spacing, color, and type as reusable <strong class="c-cyan">tokens</strong> and
+components, so a large app stays coherent.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Approach</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Design tokens</td><td>Named values (spacing-4, color-primary) — the source of truth</td></tr>
+<tr><td class="c-cyan">Utility-first (Tailwind)</td><td>Compose small classes; consistency by constraint</td></tr>
+<tr><td class="c-cyan">Component libraries</td><td>shadcn/ui, MUI, Radix — accessible building blocks</td></tr>
+<tr><td class="c-cyan">BEM / CSS Modules</td><td>Naming &amp; scoping conventions</td></tr>
+<tr><td class="c-cyan">CSS-in-JS</td><td>Styles colocated with components (styled-components)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">The trade-off debate:</strong> Tailwind trades "ugly
+markup" for never leaving your HTML and never fighting the cascade — hugely popular
+for that reason. Whatever the method, the win is <em>constraints</em>: a limited
+palette of choices keeps a big UI consistent.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔒</span>
+<span class="topic-name">Closures, Scope &amp; <code>this</code></span>
+<span class="topic-badge">JavaScript</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Interview Trio, Explained</div>
+<div class="concept-desc">
+Three JS concepts that confuse beginners and get asked in every interview. Get them
+and most "weird JavaScript" stops being weird.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">function</span> <span class="fn">counter</span>() {
+  <span class="kw">let</span> n = <span class="num">0</span>;                 <span class="com">// captured by the closure</span>
+  <span class="kw">return</span> () =&gt; ++n;         <span class="com">// remembers n after counter() returns</span>
+}
+<span class="kw">const</span> c = <span class="fn">counter</span>(); c(); c();  <span class="com">// 1, 2</span></pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Scope</td><td>Where a variable is visible; <code>let</code>/<code>const</code> are block-scoped</td></tr>
+<tr><td class="c-cyan">Closure</td><td>A function that remembers variables from where it was defined</td></tr>
+<tr><td class="c-cyan"><code>this</code></td><td>Depends on <em>how</em> a function is called (not where defined)</td></tr>
+<tr><td class="c-cyan">Arrow functions</td><td>No own <code>this</code> — inherit from the enclosing scope</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber"><code>this</code> gotcha:</strong> a method passed as a
+callback loses its <code>this</code>. Arrow functions or <code>.bind()</code> fix
+it. Closures power data privacy, memoization, and every event handler that
+"remembers" state.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⏳</span>
+<span class="topic-name">Async Deep — Promises, await &amp; the Event Loop</span>
+<span class="topic-badge">JavaScript</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">How Single-Threaded JS Does Many Things</div>
+<div class="concept-desc">
+JavaScript runs on one thread but stays responsive via the
+<strong class="c-cyan">event loop</strong>: long operations (network, timers) run
+elsewhere and their callbacks are queued back. Promises and
+<code>async/await</code> make this readable.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">async function</span> <span class="fn">load</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> [a, b] = <span class="kw">await</span> Promise.<span class="fn">all</span>([<span class="fn">getA</span>(), <span class="fn">getB</span>()]); <span class="com">// parallel</span>
+    <span class="kw">return</span> <span class="fn">merge</span>(a, b);
+  } <span class="kw">catch</span> (e) { <span class="fn">handle</span>(e); }
+}</pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Promise</td><td>A value that arrives later (pending → fulfilled/rejected)</td></tr>
+<tr><td class="c-cyan">async/await</td><td>Write async code that reads like sync</td></tr>
+<tr><td class="c-cyan">Microtask vs macrotask</td><td>Promises (micro) run before timers (macro)</td></tr>
+<tr><td class="c-cyan">Promise.all / race / allSettled</td><td>Coordinate multiple promises</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Parallel vs serial:</strong> <code>await a; await b;</code>
+runs one after the other; <code>Promise.all([a,b])</code> runs them together — a
+common performance win. Never <code>await</code> in a loop when the iterations are
+independent.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧬</span>
+<span class="topic-name">Prototypes &amp; Modern Classes</span>
+<span class="topic-badge">JavaScript</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">JavaScript's Real Inheritance Model</div>
+<div class="concept-desc">
+Under the <code>class</code> syntax, JS uses <strong class="c-cyan">prototypal
+inheritance</strong>: objects delegate to a prototype object. Knowing this explains
+how method lookup and <code>class</code> actually work.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Prototype chain</td><td>Miss a property → look up the chain until <code>null</code></td></tr>
+<tr><td class="c-cyan">class</td><td>Syntactic sugar over prototypes (constructor, methods)</td></tr>
+<tr><td class="c-cyan">extends / super</td><td>Inheritance &amp; calling the parent</td></tr>
+<tr><td class="c-cyan">Static / #private</td><td>Class-level members; true private fields (<code>#</code>)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Modern advice:</strong> favor composition and plain objects
+/modules over deep class hierarchies. But you must understand prototypes to debug
+"why is this method undefined?" and to read library code.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📦</span>
+<span class="topic-name">Modules &amp; Bundlers — ESM, Vite &amp; Tree-Shaking</span>
+<span class="topic-badge">JavaScript</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">From Many Files to Shipped Code</div>
+<div class="concept-desc">
+Modern JS is written as <strong class="c-cyan">ES modules</strong>
+(<code>import</code>/<code>export</code>) across many files, then a
+<strong class="c-cyan">bundler</strong> optimizes them into what ships to the browser.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">ESM</td><td>Standard <code>import</code>/<code>export</code> (vs old CommonJS <code>require</code>)</td></tr>
+<tr><td class="c-cyan">Bundling</td><td>Combine modules, resolve deps</td></tr>
+<tr><td class="c-cyan">Tree-shaking</td><td>Drop unused exports → smaller bundles</td></tr>
+<tr><td class="c-cyan">Code-splitting</td><td>Load chunks on demand (per route)</td></tr>
+<tr><td class="c-cyan">Vite / esbuild / Rollup</td><td>Fast modern tooling (webpack's successors)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Vite</strong> is the current default: instant dev server
+(native ESM, no bundling in dev) + optimized production builds. Tree-shaking is why
+<code>import { thing }</code> beats importing a whole library.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔷</span>
+<span class="topic-name">TypeScript — Types for JavaScript</span>
+<span class="topic-badge">JavaScript</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Catch Bugs Before They Ship</div>
+<div class="concept-desc">
+<strong class="c-cyan">TypeScript</strong> adds static types to JavaScript, caught at
+compile time. It's now the default for serious projects — the editor autocomplete and
+refactoring safety alone are worth it.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">type</span> <span class="type">User</span> = { id: <span class="type">number</span>; name: <span class="type">string</span>; email?: <span class="type">string</span> };
+<span class="kw">function</span> <span class="fn">greet</span>(u: <span class="type">User</span>): <span class="type">string</span> {
+  <span class="kw">return</span> <span class="str">`Hi ${u.name}`</span>;
+}</pre>
+<table class="ref-table">
+<tr><th>Feature</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Interfaces / types</td><td>Describe object shapes</td></tr>
+<tr><td class="c-cyan">Generics</td><td>Reusable, type-safe code (<code>Array&lt;T&gt;</code>)</td></tr>
+<tr><td class="c-cyan">Narrowing</td><td>Types refine via checks (unions, guards)</td></tr>
+<tr><td class="c-cyan">strict mode</td><td>Null-safety &amp; more — turn it on</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Mental model:</strong> types are erased at build time — they
+guide the compiler and editor, then disappear. The payoff is fewer runtime
+<code>undefined</code> errors and fearless refactoring in large codebases.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⚛️</span>
+<span class="topic-name">React — Components, Hooks &amp; the Mental Model</span>
+<span class="topic-badge">Frameworks</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">UI as a Function of State</div>
+<div class="concept-desc">
+<strong class="c-cyan">React</strong>'s core idea: your UI is a function of state —
+<code>UI = f(state)</code>. You describe what the screen should look like for the
+current data; React efficiently updates the DOM when state changes.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="kw">const</span> [n, setN] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="kw">return</span> &lt;button onClick={() =&gt; <span class="fn">setN</span>(n + <span class="num">1</span>)}&gt;{n}&lt;/button&gt;;
+}</pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Components</td><td>Reusable functions returning JSX</td></tr>
+<tr><td class="c-cyan">Props</td><td>Read-only inputs passed down</td></tr>
+<tr><td class="c-cyan">useState / useReducer</td><td>Local state</td></tr>
+<tr><td class="c-cyan">useEffect</td><td>Side effects (fetch, subscriptions) — has gotchas</td></tr>
+<tr><td class="c-cyan">Keys</td><td>Stable list identity — never use array index if items change</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">The rules of hooks:</strong> call them at the top level,
+same order every render. State updates are asynchronous and batched. "Lift state
+up" to the nearest common parent when siblings need to share it.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🪝</span>
+<span class="topic-name">React Patterns &amp; Pitfalls</span>
+<span class="topic-badge">Frameworks</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Avoiding the Common Traps</div>
+<div class="concept-desc">
+Most React bugs come from a handful of misunderstandings around effects, re-renders,
+and stale state. Knowing them saves days.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Topic</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Context</td><td>Share data without prop-drilling (theme, auth)</td></tr>
+<tr><td class="c-cyan">useMemo / useCallback</td><td>Memoize expensive work / stable function identity</td></tr>
+<tr><td class="c-red">useEffect overuse</td><td>Don't sync state you can derive during render</td></tr>
+<tr><td class="c-red">Stale closures</td><td>Effect captures old state — fix deps array</td></tr>
+<tr><td class="c-red">Unnecessary re-renders</td><td>New object/array props break memoization</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Modern guidance:</strong> "You Might Not Need an Effect" —
+derive values during render, handle events in handlers, and reserve
+<code>useEffect</code> for genuine external synchronization. Don't reach for
+memoization until you've measured a problem.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🟢</span>
+<span class="topic-name">Vue &amp; Svelte — Other Reactivity Models</span>
+<span class="topic-badge">Frameworks</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Not Everything Is React</div>
+<div class="concept-desc">
+React isn't the only game. <strong class="c-cyan">Vue</strong> and
+<strong class="c-cyan">Svelte</strong> reach the same goal — reactive UI — with
+different (often simpler) models worth understanding.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Framework</th><th>Approach</th></tr>
+<tr><td class="c-cyan">React</td><td>Re-render on state change; virtual DOM diff; explicit</td></tr>
+<tr><td class="c-cyan">Vue</td><td>Fine-grained reactivity + template syntax; gentle learning curve</td></tr>
+<tr><td class="c-cyan">Svelte</td><td>Compiler — no virtual DOM; compiles away to tiny vanilla JS</td></tr>
+<tr><td class="c-cyan">Solid / signals</td><td>Fine-grained signals; the model many are converging on</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">The trend: signals.</strong> Fine-grained reactivity
+(Solid, Vue, Svelte 5, Angular signals) updates exactly what changed without
+re-running whole components — the industry direction. Learn React for jobs; learn
+signals to understand where things are going.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">▲</span>
+<span class="topic-name">Meta-Frameworks — Next.js &amp; Rendering Modes</span>
+<span class="topic-badge">Frameworks</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">SSR, SSG, ISR &amp; CSR — When Each</div>
+<div class="concept-desc">
+Meta-frameworks (<strong class="c-cyan">Next.js</strong>, Nuxt, SvelteKit) add
+routing, data fetching, and server rendering on top of the UI library. The key
+decision is <em>where and when</em> your HTML is generated.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Mode</th><th>HTML built…</th><th>Best for</th></tr>
+<tr><td class="c-cyan">CSR</td><td>In the browser</td><td>App-like dashboards (behind login)</td></tr>
+<tr><td class="c-cyan">SSR</td><td>Per request on the server</td><td>Personalized, fresh pages</td></tr>
+<tr><td class="c-cyan">SSG</td><td>At build time</td><td>Blogs, docs, marketing (fastest)</td></tr>
+<tr><td class="c-cyan">ISR</td><td>Static + periodic rebuild</td><td>Large mostly-static sites</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">SSR/SSG win</strong> on first-load speed and SEO (real HTML
+arrives immediately). <strong class="c-amber">React Server Components</strong> are
+the current frontier — render components on the server, ship less JS. Match the mode
+to the page: static where you can, dynamic where you must.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🗄️</span>
+<span class="topic-name">State Management — When You Actually Need It</span>
+<span class="topic-badge">Frameworks</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Don't Reach for Redux by Default</div>
+<div class="concept-desc">
+As apps grow, sharing state gets messy — but the answer usually isn't a big global
+store. Distinguish <strong class="c-cyan">server state</strong> (data from an API)
+from <strong class="c-cyan">client state</strong> (UI toggles); they need different
+tools.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Need</th><th>Reach for</th></tr>
+<tr><td class="c-cyan">Server data (caching, refetch)</td><td>React Query / SWR — not a global store</td></tr>
+<tr><td class="c-cyan">Simple shared UI state</td><td>Context, or lift state up</td></tr>
+<tr><td class="c-cyan">Complex global client state</td><td>Zustand / Redux Toolkit / signals</td></tr>
+<tr><td class="c-cyan">URL as state</td><td>Query params for filters/tabs (shareable)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Biggest insight:</strong> most "state management" pain is
+really <em>server</em> state (loading, caching, revalidation) — a data-fetching
+library like React Query solves it far better than Redux. Add global stores only
+for genuinely global client state.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔌</span>
+<span class="topic-name">Fetch, REST &amp; CORS in Practice</span>
+<span class="topic-badge">Backends</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">How the Frontend Talks to APIs</div>
+<div class="concept-desc">
+The browser's <code>fetch</code> makes HTTP requests. You'll spend real time on
+status codes, headers, and the one that trips everyone up:
+<strong class="c-cyan">CORS</strong>.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/users'</span>, {
+  method: <span class="str">'POST'</span>,
+  headers: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> },
+  body: JSON.<span class="fn">stringify</span>(user),
+});
+<span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="type">Error</span>(res.status);   <span class="com">// fetch doesn't throw on 4xx/5xx!</span></pre>
+<table class="ref-table">
+<tr><th>Thing</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Status codes</td><td>2xx ok, 3xx redirect, 4xx client, 5xx server</td></tr>
+<tr><td class="c-red">CORS</td><td>Browser blocks cross-origin unless the server sends <code>Access-Control-Allow-*</code></td></tr>
+<tr><td class="c-cyan">Preflight</td><td>An <code>OPTIONS</code> request before non-simple calls</td></tr>
+<tr><td class="c-amber">fetch quirk</td><td>Only rejects on network error — check <code>res.ok</code> yourself</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">CORS is server-side:</strong> a CORS error means the
+<em>API</em> must allow your origin — you can't fix it from the browser. It's a
+browser security feature, not a bug in your code.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">◈</span>
+<span class="topic-name">GraphQL — Ask for Exactly What You Need</span>
+<span class="topic-badge">Backends</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">One Endpoint, Client-Shaped Responses</div>
+<div class="concept-desc">
+<strong class="c-cyan">GraphQL</strong> exposes a typed schema through one endpoint;
+the client specifies exactly which fields it wants. It solves REST's over- and
+under-fetching, at the cost of new complexity.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">query</span> {
+  user(id: <span class="num">42</span>) { name, orders { total } }   <span class="com"># exactly these fields</span>
+}</pre>
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Schema &amp; types</td><td>Strongly typed contract</td></tr>
+<tr><td class="c-cyan">Query / Mutation / Subscription</td><td>Read / write / realtime</td></tr>
+<tr><td class="c-cyan">Resolvers</td><td>Server functions that fetch each field</td></tr>
+<tr><td class="c-red">N+1 resolvers</td><td>Classic pitfall — fix with DataLoader batching</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">When to use:</strong> many clients with different data
+needs, or deeply nested data. For simple CRUD, REST is often simpler. Caching is
+harder than REST (one endpoint, POST) — weigh the trade-off.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔴</span>
+<span class="topic-name">Realtime — WebSockets, SSE &amp; Polling</span>
+<span class="topic-badge">Backends</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Pushing Data to the Browser</div>
+<div class="concept-desc">
+HTTP is request/response — the server can't just push. For live features (chat,
+notifications, dashboards) you need a different transport. Pick the lightest one
+that fits.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Option</th><th>Use</th></tr>
+<tr><td class="c-cyan">WebSockets</td><td>Full-duplex, persistent — chat, games, collaboration</td></tr>
+<tr><td class="c-cyan">Server-Sent Events</td><td>Server→client stream over HTTP — feeds, notifications (simpler)</td></tr>
+<tr><td class="c-cyan">Long polling</td><td>Fallback where sockets aren't available</td></tr>
+<tr><td class="c-cyan">Short polling</td><td>Just refetch on a timer — fine for low-frequency updates</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Don't over-engineer:</strong> if data changes every few
+minutes, polling is simplest. Reserve WebSockets for genuinely bidirectional,
+high-frequency needs. SSE is the underrated middle ground for one-way streams.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔑</span>
+<span class="topic-name">Frontend Auth — Tokens, Cookies &amp; OAuth</span>
+<span class="topic-badge">Backends</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Logging Users In, Safely</div>
+<div class="concept-desc">
+Auth on the frontend is mostly about <em>where you store the credential</em> and how
+you attach it. Get this wrong and you ship an XSS-exploitable token. Ties directly to
+the security domain's OAuth/session cards.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Approach</th><th>Detail</th></tr>
+<tr><td class="c-green">HttpOnly cookie</td><td>JS can't read it → XSS-safe; pair with SameSite/CSRF protection</td></tr>
+<tr><td class="c-red">JWT in localStorage</td><td>Convenient but XSS-readable — widely discouraged</td></tr>
+<tr><td class="c-cyan">OAuth / OIDC + PKCE</td><td>"Sign in with…"; PKCE for public clients</td></tr>
+<tr><td class="c-cyan">Refresh flow</td><td>Short-lived access token + refresh token rotation</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Rule:</strong> prefer <code>HttpOnly</code>,
+<code>Secure</code>, <code>SameSite</code> cookies for session tokens. Never store
+long-lived secrets where JavaScript can read them. Auth is one place to use a
+battle-tested library, not roll your own.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔄</span>
+<span class="topic-name">Data Fetching Patterns — React Query &amp; Caching</span>
+<span class="topic-badge">Backends</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Server State Is Its Own Problem</div>
+<div class="concept-desc">
+Fetching data is easy; keeping it <em>fresh, cached, and in sync</em> across a UI is
+hard. Libraries like <strong class="c-cyan">React Query</strong> (TanStack Query) and
+<strong class="c-cyan">SWR</strong> handle the whole lifecycle so you don't reinvent
+it per component.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Feature</th><th>Does</th></tr>
+<tr><td class="c-cyan">Caching &amp; dedup</td><td>Same query used twice → one request</td></tr>
+<tr><td class="c-cyan">Background refetch</td><td>Revalidate stale data on focus/interval</td></tr>
+<tr><td class="c-cyan">Loading/error states</td><td>Built in — no manual flags</td></tr>
+<tr><td class="c-cyan">Optimistic updates</td><td>Update UI instantly, roll back on failure</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Why it matters:</strong> hand-rolled
+<code>useEffect</code> + <code>useState</code> fetching leads to race conditions,
+duplicate requests, and stale UI. A query library turns all that into a hook —
+genuinely one of the biggest quality-of-life wins in modern frontend.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⚡</span>
+<span class="topic-name">Web Performance — Core Web Vitals</span>
+<span class="topic-badge">Performance</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Metrics Google (and Users) Care About</div>
+<div class="concept-desc">
+<strong class="c-cyan">Core Web Vitals</strong> are Google's user-centric performance
+metrics — they affect both experience and search ranking. Optimize these three and
+the site <em>feels</em> fast.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Metric</th><th>Measures</th><th>Fix</th></tr>
+<tr><td class="c-cyan">LCP</td><td>Largest content paint (load speed)</td><td>Optimize images, server response, critical CSS</td></tr>
+<tr><td class="c-cyan">INP</td><td>Interaction responsiveness</td><td>Break up long JS tasks; less main-thread work</td></tr>
+<tr><td class="c-cyan">CLS</td><td>Layout shift (visual stability)</td><td>Set image/ad dimensions; reserve space</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Big levers:</strong> ship less JavaScript (code-split,
+tree-shake), optimize &amp; lazy-load images (modern formats, <code>loading="lazy"</code>),
+and cache aggressively. Measure with Lighthouse and real-user data (RUM) — lab and
+field can differ.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">♿</span>
+<span class="topic-name">Web Accessibility (a11y) — WCAG &amp; ARIA</span>
+<span class="topic-badge">A11y</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Usable by Everyone — and Often the Law</div>
+<div class="concept-desc">
+Accessibility means people using keyboards, screen readers, or with low vision can
+use your site. It's a legal requirement in many contexts (ADA, EAA) and simply good
+engineering — accessible sites are more robust for everyone.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Principle (POUR)</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Semantic HTML</td><td>Use real <code>&lt;button&gt;</code>/<code>&lt;nav&gt;</code>/<code>&lt;h1&gt;</code> — free a11y</td></tr>
+<tr><td class="c-cyan">Keyboard</td><td>Everything operable without a mouse; visible focus</td></tr>
+<tr><td class="c-cyan">Contrast &amp; text</td><td>4.5:1 contrast; resizable text; alt text on images</td></tr>
+<tr><td class="c-cyan">ARIA</td><td>Roles/labels for custom widgets — only when HTML can't</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">First rule of ARIA: don't use ARIA</strong> — a native
+element beats a div with roles every time. Test by unplugging your mouse and by
+running a screen reader. WCAG AA is the common target. (This site follows these:
+keyboard nav, focus states, semantic structure.)
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧪</span>
+<span class="topic-name">Frontend Testing — Unit, Component &amp; E2E</span>
+<span class="topic-badge">Quality</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Confidence Without Manual Clicking</div>
+<div class="concept-desc">
+Frontend tests catch regressions before users do. The test pyramid applies: lots of
+fast unit tests, fewer component tests, a handful of end-to-end tests for critical
+flows.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Level</th><th>Tool</th><th>Tests</th></tr>
+<tr><td class="c-cyan">Unit</td><td>Vitest / Jest</td><td>Pure functions, logic</td></tr>
+<tr><td class="c-cyan">Component</td><td>Testing Library</td><td>Render + interact like a user</td></tr>
+<tr><td class="c-cyan">E2E</td><td>Playwright / Cypress</td><td>Real browser, full flows (login → checkout)</td></tr>
+<tr><td class="c-cyan">Visual / a11y</td><td>Storybook, axe</td><td>Regression &amp; accessibility checks</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Testing Library philosophy:</strong> test behavior, not
+implementation — query by what a user sees (roles, text), not CSS classes. Then
+refactors don't break tests. A few reliable E2E tests on the money-path beat a
+hundred brittle ones.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🛡️</span>
+<span class="topic-name">Frontend Security — XSS, CSRF &amp; CSP</span>
+<span class="topic-badge">Security</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Browser-Side Attack Surface</div>
+<div class="concept-desc">
+The frontend has its own security risks distinct from the server. The big three
+every web dev must know — directly bridging to the security domain's web cards.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Attack</th><th>Defense</th></tr>
+<tr><td class="c-red">XSS</td><td>Injected script runs in your page → escape output, avoid <code>innerHTML</code>/<code>dangerouslySetInnerHTML</code>, use CSP</td></tr>
+<tr><td class="c-red">CSRF</td><td>Forged request using the user's cookie → SameSite cookies, CSRF tokens</td></tr>
+<tr><td class="c-red">Clickjacking</td><td>Your page iframed &amp; tricked → <code>X-Frame-Options</code>/frame-ancestors</td></tr>
+<tr><td class="c-green">CSP</td><td>Content-Security-Policy limits what can load/run — big XSS mitigation</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Frameworks help:</strong> React escapes by default (which
+is why <code>dangerouslySetInnerHTML</code> is named to scare you). Never build HTML
+from untrusted strings; sanitize any rich content with a vetted library (DOMPurify).
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔍</span>
+<span class="topic-name">SEO &amp; Metadata for Developers</span>
+<span class="topic-badge">Quality</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Being Found &amp; Shared Correctly</div>
+<div class="concept-desc">
+Technical SEO is the part developers own: making pages crawlable, fast, and
+correctly described. Modern SEO overlaps heavily with performance and semantic HTML.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Element</th><th>Purpose</th></tr>
+<tr><td class="c-cyan">Semantic HTML &amp; headings</td><td>Structure crawlers understand</td></tr>
+<tr><td class="c-cyan">&lt;title&gt; &amp; meta description</td><td>The search-result snippet</td></tr>
+<tr><td class="c-cyan">Open Graph / Twitter cards</td><td>Rich link previews when shared</td></tr>
+<tr><td class="c-cyan">Structured data (JSON-LD)</td><td>Rich results (ratings, FAQs)</td></tr>
+<tr><td class="c-cyan">Sitemap &amp; robots.txt</td><td>Guide crawlers; canonical URLs avoid dupes</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">SSR/SSG helps SEO</strong> because crawlers get real HTML
+immediately. Core Web Vitals are a ranking factor too — so performance work doubles
+as SEO work.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📲</span>
+<span class="topic-name">Progressive Web Apps — Offline &amp; Installable</span>
+<span class="topic-badge">Shipping</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Websites That Act Like Native Apps</div>
+<div class="concept-desc">
+A <strong class="c-cyan">PWA</strong> is a website with app-like superpowers: it can
+be installed to the home screen, work offline, and receive push notifications — all
+from the web platform. (This very site is installable — that's why the icon fix
+mattered.)
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Piece</th><th>Role</th></tr>
+<tr><td class="c-cyan">Web app manifest</td><td>Name, icons, theme → installability</td></tr>
+<tr><td class="c-cyan">Service worker</td><td>A background proxy — caches responses, enables offline</td></tr>
+<tr><td class="c-cyan">Cache strategies</td><td>Cache-first, network-first, stale-while-revalidate</td></tr>
+<tr><td class="c-cyan">Push / background sync</td><td>Notifications &amp; deferred actions</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Service workers are powerful &amp; sharp:</strong> they
+intercept every request, so a bad cache strategy can serve stale content forever.
+Test your update flow. For content sites, "offline + installable" is a big UX win
+for little cost.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🌍</span>
+<span class="topic-name">Rendering at the Edge — CDNs &amp; Edge Functions</span>
+<span class="topic-badge">Shipping</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Compute Close to the User</div>
+<div class="concept-desc">
+A <strong class="c-cyan">CDN</strong> caches static assets in hundreds of locations
+worldwide so users download from nearby. <strong class="c-cyan">Edge functions</strong>
+push <em>compute</em> there too — run code milliseconds from the user.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td class="c-cyan">CDN caching</td><td>Static assets served from the nearest POP</td></tr>
+<tr><td class="c-cyan">Edge functions</td><td>Lightweight compute at the edge (auth, redirects, A/B)</td></tr>
+<tr><td class="c-cyan">Image optimization</td><td>Resize/format on the fly (WebP/AVIF) at the edge</td></tr>
+<tr><td class="c-cyan">Cache headers</td><td><code>Cache-Control</code>, ETags, immutable hashed assets</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">Trade-off:</strong> edge runtimes are limited (no full
+Node APIs, short execution) — great for fast, small logic, not heavy work.
+Combined with hashed filenames + long cache TTLs, the edge makes global sites feel
+local.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧩</span>
+<span class="topic-name">WebAssembly — Native Speed in the Browser</span>
+<span class="topic-badge">Platform</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">When JavaScript Isn't Fast Enough</div>
+<div class="concept-desc">
+<strong class="c-cyan">WebAssembly (Wasm)</strong> is a compact binary format that
+runs at near-native speed in the browser. Compile C/C++/Rust/Go to Wasm and call it
+from JS for compute-heavy work.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Great for</th><th>Example</th></tr>
+<tr><td class="c-cyan">Heavy compute</td><td>Image/video editing, games, simulations</td></tr>
+<tr><td class="c-cyan">Porting native code</td><td>Existing C/C++ libraries to the web (FFmpeg, SQLite)</td></tr>
+<tr><td class="c-cyan">Beyond the browser</td><td>Wasm + WASI as a portable, sandboxed runtime (edge, plugins)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-amber">Not a JS replacement:</strong> Wasm can't touch the DOM
+directly and has call-overhead — reach for it for the hot compute path, not the
+whole app. Its bigger future may be server-side: a fast, secure, language-agnostic
+sandbox.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🚀</span>
+<span class="topic-name">Frontend Build &amp; Deploy — CI &amp; Preview Deploys</span>
+<span class="topic-badge">Shipping</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">From Commit to Live</div>
+<div class="concept-desc">
+Modern frontend deploy is largely solved by platforms that build on every push and
+give each pull request its own preview URL. Understand the pipeline so you can debug
+it — this static site uses exactly this flow (build script + CI + Netlify/Pages).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Stage</th><th>Detail</th></tr>
+<tr><td class="c-cyan">CI on push</td><td>Install, build, test, lint on every commit/PR</td></tr>
+<tr><td class="c-cyan">Preview deploys</td><td>Every PR gets a live URL to review</td></tr>
+<tr><td class="c-cyan">Atomic deploys &amp; rollback</td><td>Instant switch; revert to a prior build in one click</td></tr>
+<tr><td class="c-cyan">Env vars &amp; secrets</td><td>Per-environment config, never in the bundle</td></tr>
+<tr><td class="c-cyan">Platforms</td><td>Netlify, Vercel, Cloudflare/GitHub Pages</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-red">Client bundles are public:</strong> never put secrets in
+frontend env vars — anything shipped to the browser can be read. Keep secrets on the
+server/edge.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🔗</span>
+<span class="topic-name">The Full-Stack Picture — How It All Connects</span>
+<span class="topic-badge">Shipping</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Frontend + API + DB, End to End</div>
+<div class="concept-desc">
+Zooming out: a request flows through many layers you've now studied across the web,
+data, cloud, and ops domains. Seeing the whole path is what makes you full-stack.
+</div>
+<div class="dw">
+<pre class="code-block">Browser (React) →  CDN/Edge  →  API (REST/GraphQL)
+   →  Auth  →  Business logic  →  Cache (Redis)  →  Database
+   →  back up the stack as JSON  →  React renders</pre>
+<table class="ref-table">
+<tr><th>Layer</th><th>Studied in</th></tr>
+<tr><td class="c-cyan">UI &amp; state</td><td>web (frameworks, I4)</td></tr>
+<tr><td class="c-cyan">API &amp; auth</td><td>web (I5), sec (OAuth)</td></tr>
+<tr><td class="c-cyan">Data &amp; cache</td><td>data (H*), ops (caching)</td></tr>
+<tr><td class="c-cyan">Deploy &amp; observe</td><td>ops, cloud domains</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:8px">
+<strong class="c-green">The takeaway:</strong> no single layer is magic — each is a
+tractable piece you can learn. "Full-stack" is just fluency in how the request
+travels and where each concern lives. This domain, plus <code>data</code>,
+<code>eng</code>, <code>ops</code>, and <code>cloud</code>, is the whole map.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- /domain-body web -->
 </div>
 </div>
 </div>

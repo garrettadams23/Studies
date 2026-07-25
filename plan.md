@@ -758,60 +758,60 @@ progress / keyboard-a11y automatically.
 ~8 waves, ~45 cards. The DBA / data-analyst / analytics-engineer companion.
 
 **Wave H1 — Relational Foundations**
-- [ ] How a Database Works — pages, buffer pool, WAL, the storage engine
-- [ ] The Relational Model — relations, keys, referential integrity, NULL semantics
-- [ ] Normalization Deep — 1NF→BCNF with worked examples; when to denormalize
-- [ ] ACID & Transactions — atomicity, isolation levels, the anomalies each prevents
-- [ ] ER Modeling — entities, relationships, cardinality, crow's-foot diagrams
+- [x] How a Database Works — pages, buffer pool, WAL, the storage engine
+- [x] The Relational Model — relations, keys, referential integrity, NULL semantics
+- [x] Normalization Deep — 1NF→BCNF with worked examples; when to denormalize
+- [x] ACID & Transactions — atomicity, isolation levels, the anomalies each prevents
+- [x] ER Modeling — entities, relationships, cardinality, crow's-foot diagrams
 
 **Wave H2 — SQL Mastery**
-- [ ] SQL Joins Deep — inner/outer/self/cross, and how NULLs break naive joins
-- [ ] Window Functions — ranking, running totals, LAG/LEAD, partitions
-- [ ] CTEs & Recursion — readable queries, hierarchical/graph traversal
-- [ ] Aggregation & GROUP BY — HAVING, GROUPING SETS, ROLLUP/CUBE
-- [ ] Subqueries, EXISTS & Set Ops — correlated subqueries, UNION/INTERSECT/EXCEPT
+- [x] SQL Joins Deep — inner/outer/self/cross, and how NULLs break naive joins
+- [x] Window Functions — ranking, running totals, LAG/LEAD, partitions
+- [x] CTEs & Recursion — readable queries, hierarchical/graph traversal
+- [x] Aggregation & GROUP BY — HAVING, GROUPING SETS, ROLLUP/CUBE
+- [x] Subqueries, EXISTS & Set Ops — correlated subqueries, UNION/INTERSECT/EXCEPT
 
 **Wave H3 — Performance & Internals**
-- [ ] Indexes Explained — B-tree vs hash vs GIN/GiST, covering & composite indexes
-- [ ] Reading EXPLAIN / Query Plans — seq scan vs index scan, join strategies
-- [ ] Query Optimization — sargability, cardinality, the N+1 problem, statistics
-- [ ] Locking & MVCC — how Postgres/InnoDB avoid readers blocking writers
-- [ ] Partitioning & Sharding — scaling a single table/database horizontally
+- [x] Indexes Explained — B-tree vs hash vs GIN/GiST, covering & composite indexes
+- [x] Reading EXPLAIN / Query Plans — seq scan vs index scan, join strategies
+- [x] Query Optimization — sargability, cardinality, the N+1 problem, statistics
+- [x] Locking & MVCC — how Postgres/InnoDB avoid readers blocking writers
+- [x] Partitioning & Sharding — scaling a single table/database horizontally
 
 **Wave H4 — Postgres in Practice**
-- [ ] PostgreSQL Deep — psql, roles, schemas, extensions (the "default" DB)
-- [ ] Postgres Power Features — JSONB, arrays, full-text search, LISTEN/NOTIFY
-- [ ] MySQL / MariaDB — engine differences, gotchas, when it's chosen
-- [ ] SQLite — the embedded database that's everywhere (and its sweet spot)
-- [ ] Connection Pooling & PgBouncer — surviving many clients
+- [x] PostgreSQL Deep — psql, roles, schemas, extensions (the "default" DB)
+- [x] Postgres Power Features — JSONB, arrays, full-text search, LISTEN/NOTIFY
+- [x] MySQL / MariaDB — engine differences, gotchas, when it's chosen
+- [x] SQLite — the embedded database that's everywhere (and its sweet spot)
+- [x] Connection Pooling & PgBouncer — surviving many clients
 
 **Wave H5 — NoSQL & Beyond**
-- [ ] NoSQL Landscape — document / key-value / wide-column / graph, CAP trade-offs
-- [ ] MongoDB — documents, aggregation pipeline, indexing, schema design
-- [ ] Redis — data structures, caching patterns, pub/sub, persistence, Lua
-- [ ] Cassandra / DynamoDB — wide-column, partition keys, single-table design
-- [ ] Graph Databases — Neo4j, Cypher, when relationships are the data
+- [x] NoSQL Landscape — document / key-value / wide-column / graph, CAP trade-offs
+- [x] MongoDB — documents, aggregation pipeline, indexing, schema design
+- [x] Redis — data structures, caching patterns, pub/sub, persistence, Lua
+- [x] Cassandra / DynamoDB — wide-column, partition keys, single-table design
+- [x] Graph Databases — Neo4j, Cypher, when relationships are the data
 
 **Wave H6 — Analytics & Warehousing**
-- [ ] OLTP vs OLAP — row vs columnar storage, why analytics needs a warehouse
-- [ ] Columnar Engines — Parquet, DuckDB, ClickHouse; vectorized execution
-- [ ] Data Warehouse vs Lake vs Lakehouse — Snowflake/BigQuery/Databricks
-- [ ] The Semantic Layer & Metrics — one definition of "revenue" everywhere
-- [ ] Data Quality & Observability — tests, freshness, lineage, contracts
+- [x] OLTP vs OLAP — row vs columnar storage, why analytics needs a warehouse
+- [x] Columnar Engines — Parquet, DuckDB, ClickHouse; vectorized execution
+- [x] Data Warehouse vs Lake vs Lakehouse — Snowflake/BigQuery/Databricks
+- [x] The Semantic Layer & Metrics — one definition of "revenue" everywhere
+- [x] Data Quality & Observability — tests, freshness, lineage, contracts
 
 **Wave H7 — Operating Databases**
-- [ ] Backups & PITR — dumps vs physical, point-in-time recovery, testing restores
-- [ ] Replication & HA — primary/replica, failover, read scaling, split-brain
-- [ ] Migrations & Schema Change — zero-downtime, expand/contract, Flyway/Liquibase
-- [ ] Database Security — least privilege, row-level security, encryption, auditing
-- [ ] Monitoring a DB — slow-query logs, bloat, connection saturation, key metrics
+- [x] Backups & PITR — dumps vs physical, point-in-time recovery, testing restores
+- [x] Replication & HA — primary/replica, failover, read scaling, split-brain
+- [x] Migrations & Schema Change — zero-downtime, expand/contract, Flyway/Liquibase
+- [x] Database Security — least privilege, row-level security, encryption, auditing
+- [x] Monitoring a DB — slow-query logs, bloat, connection saturation, key metrics
 
 **Wave H8 — Data Career & Modeling Craft**
-- [ ] Data Roles — analyst vs analytics engineer vs data engineer vs DBA vs scientist
-- [ ] Designing a Schema From Requirements — a walkthrough, OLTP → OLAP
-- [ ] Time-Series & Event Data — retention, downsampling, TimescaleDB/InfluxDB
-- [ ] Vector Databases — embeddings, ANN search, pgvector (bridge to AI domain)
-- [ ] The Data Interview — SQL problems, modeling questions, case studies
+- [x] Data Roles — analyst vs analytics engineer vs data engineer vs DBA vs scientist
+- [x] Designing a Schema From Requirements — a walkthrough, OLTP → OLAP
+- [x] Time-Series & Event Data — retention, downsampling, TimescaleDB/InfluxDB
+- [x] Vector Databases — embeddings, ANN search, pgvector (bridge to AI domain)
+- [x] The Data Interview — SQL problems, modeling questions, case studies
 
 ---
 
@@ -820,53 +820,53 @@ progress / keyboard-a11y automatically.
 ~7 waves, ~38 cards. From "I know some HTML" to shipping modern web apps.
 
 **Wave I1 — The Browser Platform**
-- [ ] How the Browser Renders — parse → DOM/CSSOM → layout → paint → composite
-- [ ] The Critical Rendering Path & Reflow/Repaint — what makes pages jank
-- [ ] The DOM & Events — bubbling/capture, delegation, the event loop revisited
-- [ ] Web Storage & State — cookies vs localStorage vs IndexedDB vs cache
-- [ ] DevTools Mastery — elements, network, performance, memory, Lighthouse
+- [x] How the Browser Renders — parse → DOM/CSSOM → layout → paint → composite
+- [x] The Critical Rendering Path & Reflow/Repaint — what makes pages jank
+- [x] The DOM & Events — bubbling/capture, delegation, the event loop revisited
+- [x] Web Storage & State — cookies vs localStorage vs IndexedDB vs cache
+- [x] DevTools Mastery — elements, network, performance, memory, Lighthouse
 
 **Wave I2 — Modern CSS**
-- [ ] Flexbox — the one-dimensional layout system, deep
-- [ ] CSS Grid — two-dimensional layout, template areas, auto-fit/minmax
-- [ ] Responsive Design — media/container queries, fluid type, mobile-first
-- [ ] Modern CSS — custom properties, nesting, :has(), cascade layers, clamp()
-- [ ] Design Systems & Tokens — Tailwind, CSS-in-JS, BEM, component styling
+- [x] Flexbox — the one-dimensional layout system, deep
+- [x] CSS Grid — two-dimensional layout, template areas, auto-fit/minmax
+- [x] Responsive Design — media/container queries, fluid type, mobile-first
+- [x] Modern CSS — custom properties, nesting, :has(), cascade layers, clamp()
+- [x] Design Systems & Tokens — Tailwind, CSS-in-JS, BEM, component styling
 
 **Wave I3 — JavaScript Deep (beyond the basics)**
-- [ ] Closures, Scope & the `this` Keyword — the interview favorites, clearly
-- [ ] Async Deep — promises, async/await, microtasks vs macrotasks, the event loop
-- [ ] Prototypes & Modern Classes — inheritance, the prototype chain
-- [ ] Modules & Bundlers — ESM, tree-shaking, Vite/esbuild/webpack
-- [ ] TypeScript — types, generics, narrowing, why teams adopt it
+- [x] Closures, Scope & the `this` Keyword — the interview favorites, clearly
+- [x] Async Deep — promises, async/await, microtasks vs macrotasks, the event loop
+- [x] Prototypes & Modern Classes — inheritance, the prototype chain
+- [x] Modules & Bundlers — ESM, tree-shaking, Vite/esbuild/webpack
+- [x] TypeScript — types, generics, narrowing, why teams adopt it
 
 **Wave I4 — Frameworks**
-- [ ] React — components, hooks, state, reconciliation, the mental model
-- [ ] React Patterns — context, memoization, data fetching, common pitfalls
-- [ ] Vue & Svelte — reactivity models compared to React
-- [ ] Meta-Frameworks — Next.js/Nuxt/SvelteKit, SSR vs SSG vs ISR vs CSR
-- [ ] State Management — when you need Redux/Zustand/signals (and when you don't)
+- [x] React — components, hooks, state, reconciliation, the mental model
+- [x] React Patterns — context, memoization, data fetching, common pitfalls
+- [x] Vue & Svelte — reactivity models compared to React
+- [x] Meta-Frameworks — Next.js/Nuxt/SvelteKit, SSR vs SSG vs ISR vs CSR
+- [x] State Management — when you need Redux/Zustand/signals (and when you don't)
 
 **Wave I5 — Talking to Backends**
-- [ ] Fetch, REST & the Network — status codes, CORS, caching headers in practice
-- [ ] GraphQL — schema, queries/mutations, over/under-fetching, when to use it
-- [ ] WebSockets & Realtime — SSE, polling, when each fits
-- [ ] Auth on the Frontend — tokens vs cookies, OAuth flows, secure storage
-- [ ] API Client Patterns — React Query/SWR, caching, optimistic updates
+- [x] Fetch, REST & the Network — status codes, CORS, caching headers in practice
+- [x] GraphQL — schema, queries/mutations, over/under-fetching, when to use it
+- [x] WebSockets & Realtime — SSE, polling, when each fits
+- [x] Auth on the Frontend — tokens vs cookies, OAuth flows, secure storage
+- [x] API Client Patterns — React Query/SWR, caching, optimistic updates
 
 **Wave I6 — Quality, Performance & A11y**
-- [ ] Web Performance — Core Web Vitals (LCP/INP/CLS), code-splitting, lazy loading
-- [ ] Web Accessibility (a11y) — WCAG, ARIA, keyboard nav, screen readers
-- [ ] Frontend Testing — unit (Vitest), component (Testing Library), e2e (Playwright)
-- [ ] Web Security for Frontend — XSS, CSRF, CSP, clickjacking (bridge to `sec`)
-- [ ] SEO & Metadata — semantic HTML, Open Graph, structured data
+- [x] Web Performance — Core Web Vitals (LCP/INP/CLS), code-splitting, lazy loading
+- [x] Web Accessibility (a11y) — WCAG, ARIA, keyboard nav, screen readers
+- [x] Frontend Testing — unit (Vitest), component (Testing Library), e2e (Playwright)
+- [x] Web Security for Frontend — XSS, CSRF, CSP, clickjacking (bridge to `sec`)
+- [x] SEO & Metadata — semantic HTML, Open Graph, structured data
 
 **Wave I7 — Shipping & The Edge**
-- [ ] Progressive Web Apps — service workers, offline, installability
-- [ ] Rendering at the Edge — CDNs, edge functions, image optimization
-- [ ] Web Assembly — what it is, when to reach for it
-- [ ] Frontend Build & Deploy — CI, preview deploys, Netlify/Vercel/Pages
-- [ ] The Full-Stack Picture — how frontend, API, and DB fit together end-to-end
+- [x] Progressive Web Apps — service workers, offline, installability
+- [x] Rendering at the Edge — CDNs, edge functions, image optimization
+- [x] Web Assembly — what it is, when to reach for it
+- [x] Frontend Build & Deploy — CI, preview deploys, Netlify/Vercel/Pages
+- [x] The Full-Stack Picture — how frontend, API, and DB fit together end-to-end
 
 ---
 
