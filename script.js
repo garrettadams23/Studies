@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("domain-container");
   container?.addEventListener("click", e => {
     // Per-topic tool buttons take precedence over the toggle
-    const tool = e.target.closest(".topic-review, .topic-permalink");
+    const tool = e.target.closest(".topic-review, .topic-permalink, .topic-bookmark");
     if (tool) { e.stopPropagation(); handleTopicTool(tool); return; }
     const dh = e.target.closest(".domain-header");
     if (dh) { toggleDomain(dh); return; }
@@ -130,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initAccessibilityAndTools();
   initBackToTop();
+  initStudyTools();
 });
 
 // ── SNAP QUOTE ─────────────────────────────────────────────────────────────
@@ -234,11 +235,22 @@ function initAccessibilityAndTools() {
       if (localStorage.getItem(REVIEWED_PREFIX + topic.id) === "1") {
         topic.classList.add("reviewed");
       }
+      // Reflect stored "bookmarked" state
+      if (localStorage.getItem(BOOKMARK_PREFIX + topic.id) === "1") {
+        topic.classList.add("bookmarked");
+      }
 
-      // Inject the tool cluster (reviewed toggle + permalink) once
+      // Inject the tool cluster (bookmark + reviewed toggle + permalink) once
       if (!header.querySelector(".topic-tools")) {
         const tools = document.createElement("span");
         tools.className = "topic-tools";
+
+        const bookmark = document.createElement("button");
+        bookmark.type = "button";
+        bookmark.className = "topic-bookmark";
+        bookmark.title = "Save to study list";
+        bookmark.setAttribute("aria-label", "Save topic to study list");
+        bookmark.textContent = "★";
 
         const review = document.createElement("button");
         review.type = "button";
@@ -254,7 +266,7 @@ function initAccessibilityAndTools() {
         link.setAttribute("aria-label", "Copy link to this topic");
         link.textContent = "🔗";
 
-        tools.append(review, link);
+        tools.append(bookmark, review, link);
         // Insert before the chevron so it stays right-aligned
         const chev = header.querySelector(".topic-chev");
         chev ? header.insertBefore(tools, chev) : header.appendChild(tools);
@@ -271,7 +283,12 @@ function initAccessibilityAndTools() {
 function handleTopicTool(btn) {
   const topic = btn.closest(".topic");
   if (!topic) return;
-  if (btn.classList.contains("topic-review")) {
+  if (btn.classList.contains("topic-bookmark")) {
+    const on = topic.classList.toggle("bookmarked");
+    const key = BOOKMARK_PREFIX + topic.id;
+    on ? localStorage.setItem(key, "1") : localStorage.removeItem(key);
+    if (typeof stRefreshStudyList === "function") stRefreshStudyList();
+  } else if (btn.classList.contains("topic-review")) {
     const on = topic.classList.toggle("reviewed");
     const key = REVIEWED_PREFIX + topic.id;
     on ? localStorage.setItem(key, "1") : localStorage.removeItem(key);
@@ -760,4 +777,347 @@ function mountNotepad(root) {
 
   updateCharCount();
   renderList();
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STUDY TOOLS — bookmarks / study list, quick-jump palette, flashcards, quiz.
+// All vanilla JS, state in localStorage. UI is injected at runtime (no build
+// dependency beyond the CSS in style.css).
+// ═══════════════════════════════════════════════════════════════════════════
+
+const BOOKMARK_PREFIX = "bookmark:";
+const KNOWN_PREFIX = "known:";
+let _stIndex = null;
+
+/** Build a flat index of every topic on the page (once). */
+function stIndex() {
+  if (_stIndex) return _stIndex;
+  _stIndex = [];
+  document.querySelectorAll(".domain-section").forEach(domain => {
+    const domainId = domain.dataset.domain || "";
+    const domainTitle = (domain.querySelector(".domain-title")?.textContent || "").trim();
+    const domainIcon = (domain.querySelector(".domain-icon")?.textContent || "").trim();
+    domain.querySelectorAll(".topic").forEach(t => {
+      const name = (t.querySelector(".topic-name")?.textContent
+        || t.querySelector(".topic-header")?.textContent || "").trim();
+      const title = (t.querySelector(".concept-title")?.textContent || "").trim();
+      const desc = (t.querySelector(".concept-desc")?.textContent || "").trim();
+      const badge = (t.querySelector(".topic-badge")?.textContent || "").trim();
+      if (t.id && name) _stIndex.push({ id: t.id, name, title, desc, badge, domainId, domainTitle, domainIcon, el: t });
+    });
+  });
+  return _stIndex;
+}
+
+function stIsBookmarked(id) { return localStorage.getItem(BOOKMARK_PREFIX + id) === "1"; }
+
+/** Reveal + scroll to a topic by id (reuses the deep-link opener). */
+function stGoToTopic(id) {
+  location.hash = id;      // triggers openHashTarget via hashchange
+  openHashTarget();
+}
+
+// ── Shared modal shell ──────────────────────────────────────────────────────
+let _stOverlay = null;
+function stModal() {
+  if (_stOverlay) return _stOverlay;
+  const ov = document.createElement("div");
+  ov.id = "st-overlay";
+  ov.hidden = true;
+  ov.innerHTML =
+    '<div id="st-modal" role="dialog" aria-modal="true" aria-label="Study tools">' +
+    '<button id="st-close" title="Close (Esc)" aria-label="Close">✕</button>' +
+    '<div id="st-body"></div></div>';
+  ov.addEventListener("click", e => { if (e.target === ov) stClose(); });
+  ov.querySelector("#st-close").addEventListener("click", stClose);
+  document.body.appendChild(ov);
+  _stOverlay = ov;
+  return ov;
+}
+function stOpen(renderFn) {
+  const ov = stModal();
+  ov.hidden = false;
+  document.body.classList.add("st-lock");
+  renderFn(ov.querySelector("#st-body"));
+}
+function stClose() {
+  if (_stOverlay) _stOverlay.hidden = true;
+  document.body.classList.remove("st-lock");
+  _stQuizState = null;
+  _stCardState = null;
+}
+
+function esc(s) { return (s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+// ── Scope selector (All / a domain / Bookmarks) ─────────────────────────────
+function stScopeOptions() {
+  const doms = [];
+  const seen = new Set();
+  stIndex().forEach(t => {
+    if (!seen.has(t.domainId)) { seen.add(t.domainId); doms.push({ id: t.domainId, title: t.domainTitle, icon: t.domainIcon }); }
+  });
+  return doms;
+}
+function stTopicsForScope(scope) {
+  const all = stIndex();
+  if (scope === "__all") return all.slice();
+  if (scope === "__bookmarks") return all.filter(t => stIsBookmarked(t.id));
+  return all.filter(t => t.domainId === scope);
+}
+function stScopeSelectHTML(id) {
+  const opts = ['<option value="__all">◈ All domains</option>',
+    '<option value="__bookmarks">★ My study list</option>']
+    .concat(stScopeOptions().map(d => `<option value="${esc(d.id)}">${esc(d.icon)} ${esc(d.domainTitle)}</option>`));
+  return `<select id="${id}" class="st-select">${opts.join("")}</select>`;
+}
+
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+// ── QUICK-JUMP PALETTE ──────────────────────────────────────────────────────
+function stOpenJump() {
+  stOpen(body => {
+    body.innerHTML =
+      '<h2 class="st-h">Quick jump</h2>' +
+      '<input id="st-jump-input" class="st-input" type="search" placeholder="Type a topic or domain…" autocomplete="off" />' +
+      '<ul id="st-jump-list" class="st-jump-list"></ul>' +
+      '<p class="st-hint">↑ ↓ to move · Enter to jump · Esc to close</p>';
+    const input = body.querySelector("#st-jump-input");
+    const list = body.querySelector("#st-jump-list");
+    let items = [], active = 0;
+
+    function render(q) {
+      const query = q.trim().toLowerCase();
+      const idx = stIndex();
+      items = (query
+        ? idx.filter(t => (t.name + " " + t.domainTitle + " " + t.title).toLowerCase().includes(query))
+        : idx).slice(0, 60);
+      active = 0;
+      list.innerHTML = items.map((t, i) =>
+        `<li class="st-jump-item${i === 0 ? " active" : ""}" data-i="${i}">` +
+        `<span class="st-jump-name">${esc(t.name)}</span>` +
+        `<span class="st-jump-dom">${esc(t.domainIcon)} ${esc(t.domainTitle)}</span></li>`).join("")
+        || '<li class="st-jump-empty">No matches</li>';
+    }
+    function move(d) {
+      if (!items.length) return;
+      active = (active + d + items.length) % items.length;
+      list.querySelectorAll(".st-jump-item").forEach((el, i) => el.classList.toggle("active", i === active));
+      list.querySelector(".st-jump-item.active")?.scrollIntoView({ block: "nearest" });
+    }
+    function choose() { const t = items[active]; if (t) { stClose(); stGoToTopic(t.id); } }
+
+    input.addEventListener("input", () => render(input.value));
+    input.addEventListener("keydown", e => {
+      if (e.key === "ArrowDown") { e.preventDefault(); move(1); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); move(-1); }
+      else if (e.key === "Enter") { e.preventDefault(); choose(); }
+    });
+    list.addEventListener("click", e => {
+      const li = e.target.closest(".st-jump-item"); if (!li) return;
+      active = +li.dataset.i; choose();
+    });
+    render("");
+    setTimeout(() => input.focus(), 30);
+  });
+}
+
+// ── FLASHCARDS ──────────────────────────────────────────────────────────────
+let _stCardState = null;
+function stOpenFlashcards() {
+  stOpen(body => {
+    body.innerHTML =
+      '<h2 class="st-h">Flashcards</h2>' +
+      '<div class="st-toolbar"><label class="st-lbl">Deck</label>' + stScopeSelectHTML("st-fc-scope") +
+      '<button id="st-fc-start" class="st-btn st-btn-primary">Start</button></div>' +
+      '<div id="st-fc-stage"></div>';
+    const scope = body.querySelector("#st-fc-scope");
+    body.querySelector("#st-fc-start").addEventListener("click", () => stStartFlashcards(scope.value, body.querySelector("#st-fc-stage")));
+    stStartFlashcards(scope.value, body.querySelector("#st-fc-stage"));
+  });
+}
+function stStartFlashcards(scope, stage) {
+  let deck = shuffle(stTopicsForScope(scope));
+  if (!deck.length) { stage.innerHTML = '<p class="st-empty">No cards in this deck. Star some topics with ★, or pick another deck.</p>'; return; }
+  _stCardState = { deck, i: 0, flipped: false, total: deck.length, done: 0 };
+  stRenderCard(stage);
+}
+function stRenderCard(stage) {
+  const s = _stCardState; if (!s) return;
+  if (s.i >= s.deck.length) {
+    stage.innerHTML = `<div class="st-result"><div class="st-result-big">✅</div><p>Deck complete — ${s.total} card${s.total === 1 ? "" : "s"} reviewed.</p>` +
+      '<button id="st-fc-again" class="st-btn st-btn-primary">Shuffle &amp; repeat</button></div>';
+    stage.querySelector("#st-fc-again").addEventListener("click", () => { s.deck = shuffle(s.deck); s.i = 0; s.done = 0; stRenderCard(stage); });
+    return;
+  }
+  const t = s.deck[s.i];
+  stage.innerHTML =
+    `<div class="st-progress">Card ${s.i + 1} / ${s.deck.length}</div>` +
+    `<div class="st-card${s.flipped ? " flipped" : ""}" id="st-card" tabindex="0" role="button" aria-label="Flip card">` +
+      `<div class="st-card-face st-card-front"><span class="st-card-dom">${esc(t.domainIcon)} ${esc(t.domainTitle)}</span>` +
+        `<span class="st-card-q">${esc(t.name)}</span><span class="st-card-tap">Tap or press Space to flip</span></div>` +
+      `<div class="st-card-face st-card-back"><span class="st-card-title">${esc(t.title || t.name)}</span>` +
+        `<span class="st-card-desc">${esc(t.desc || "(open the topic for details)")}</span></div>` +
+    `</div>` +
+    (s.flipped
+      ? '<div class="st-card-actions"><button id="st-again" class="st-btn st-btn-again">↻ Again</button>' +
+        '<button id="st-good" class="st-btn st-btn-good">✓ Got it</button>' +
+        '<button id="st-open" class="st-btn">Open topic ↗</button></div>'
+      : '<div class="st-card-actions"><button id="st-flip" class="st-btn st-btn-primary">Flip</button></div>');
+
+  const card = stage.querySelector("#st-card");
+  const flip = () => { s.flipped = !s.flipped; stRenderCard(stage); };
+  card.addEventListener("click", flip);
+  card.addEventListener("keydown", e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); } });
+  stage.querySelector("#st-flip")?.addEventListener("click", flip);
+  stage.querySelector("#st-again")?.addEventListener("click", () => { s.deck.push(t); s.flipped = false; s.i++; stRenderCard(stage); });
+  stage.querySelector("#st-good")?.addEventListener("click", () => { localStorage.setItem(KNOWN_PREFIX + t.id, "1"); s.done++; s.flipped = false; s.i++; stRenderCard(stage); });
+  stage.querySelector("#st-open")?.addEventListener("click", () => { stClose(); stGoToTopic(t.id); });
+  setTimeout(() => card.focus(), 20);
+}
+
+// ── QUIZ (multiple choice, auto-generated) ──────────────────────────────────
+let _stQuizState = null;
+function stOpenQuiz() {
+  stOpen(body => {
+    body.innerHTML =
+      '<h2 class="st-h">Quiz</h2>' +
+      '<div class="st-toolbar"><label class="st-lbl">From</label>' + stScopeSelectHTML("st-qz-scope") +
+      '<button id="st-qz-start" class="st-btn st-btn-primary">Start</button></div>' +
+      '<div id="st-qz-stage"></div>';
+    const scope = body.querySelector("#st-qz-scope");
+    body.querySelector("#st-qz-start").addEventListener("click", () => stStartQuiz(scope.value, body.querySelector("#st-qz-stage")));
+    stStartQuiz(scope.value, body.querySelector("#st-qz-stage"));
+  });
+}
+function stStartQuiz(scope, stage) {
+  const pool = stTopicsForScope(scope).filter(t => t.title || t.desc);
+  if (pool.length < 4) { stage.innerHTML = '<p class="st-empty">Need at least 4 topics with descriptions to build a quiz. Pick a broader scope.</p>'; return; }
+  const questions = shuffle(pool.slice()).slice(0, Math.min(10, pool.length));
+  _stQuizState = { pool, questions, i: 0, score: 0, answered: false };
+  stRenderQuestion(stage);
+}
+function stRenderQuestion(stage) {
+  const s = _stQuizState; if (!s) return;
+  if (s.i >= s.questions.length) {
+    const pct = Math.round((s.score / s.questions.length) * 100);
+    stage.innerHTML = `<div class="st-result"><div class="st-result-big">${pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "📚"}</div>` +
+      `<p>Score: <strong>${s.score} / ${s.questions.length}</strong> (${pct}%)</p>` +
+      '<button id="st-qz-retry" class="st-btn st-btn-primary">New quiz</button></div>';
+    stage.querySelector("#st-qz-retry").addEventListener("click", () => stRestartQuizSame(stage));
+    return;
+  }
+  const q = s.questions[s.i];
+  const prompt = q.title || q.desc.slice(0, 160);
+  const distractors = shuffle(s.pool.filter(t => t.id !== q.id)).slice(0, 3);
+  const options = shuffle([q, ...distractors]);
+  stage.innerHTML =
+    `<div class="st-progress">Question ${s.i + 1} / ${s.questions.length} · Score ${s.score}</div>` +
+    `<div class="st-q-prompt"><span class="st-q-label">Which topic does this describe?</span>${esc(prompt)}</div>` +
+    '<ul class="st-q-options">' + options.map(o =>
+      `<li><button class="st-q-opt" data-id="${esc(o.id)}">${esc(o.name)}</button></li>`).join("") + '</ul>' +
+    '<div id="st-q-feedback" class="st-q-feedback"></div>';
+  s.answered = false;
+  stage.querySelectorAll(".st-q-opt").forEach(btn => btn.addEventListener("click", () => {
+    if (s.answered) return; s.answered = true;
+    const correct = btn.dataset.id === q.id;
+    if (correct) s.score++;
+    stage.querySelectorAll(".st-q-opt").forEach(b => {
+      if (b.dataset.id === q.id) b.classList.add("correct");
+      else if (b === btn) b.classList.add("wrong");
+      b.disabled = true;
+    });
+    const fb = stage.querySelector("#st-q-feedback");
+    fb.innerHTML = (correct ? '<span class="st-ok">Correct!</span> ' : '<span class="st-no">Not quite.</span> ') +
+      `Answer: <strong>${esc(q.name)}</strong>` +
+      ` · <button class="st-link" id="st-q-open">open ↗</button>` +
+      ` <button class="st-btn st-btn-primary st-next" id="st-q-next">Next →</button>`;
+    fb.querySelector("#st-q-open").addEventListener("click", () => { stClose(); stGoToTopic(q.id); });
+    fb.querySelector("#st-q-next").addEventListener("click", () => { s.i++; stRenderQuestion(stage); });
+  }));
+}
+function stRestartQuizSame(stage) {
+  const s = _stQuizState; if (!s) return;
+  s.questions = shuffle(s.pool.slice()).slice(0, Math.min(10, s.pool.length));
+  s.i = 0; s.score = 0; stRenderQuestion(stage);
+}
+
+// ── STUDY LIST (bookmarks) ──────────────────────────────────────────────────
+function stOpenStudyList() {
+  stOpen(body => {
+    body.innerHTML = '<h2 class="st-h">★ My study list</h2><div id="st-list-body"></div>';
+    stRenderStudyList(body.querySelector("#st-list-body"));
+  });
+}
+function stRenderStudyList(host) {
+  const marked = stIndex().filter(t => stIsBookmarked(t.id));
+  if (!marked.length) {
+    host.innerHTML = '<p class="st-empty">No saved topics yet. Click the ★ on any topic to add it here, then quiz or flashcard just your list.</p>';
+    return;
+  }
+  const byDom = {};
+  marked.forEach(t => { (byDom[t.domainTitle] = byDom[t.domainTitle] || []).push(t); });
+  host.innerHTML =
+    `<div class="st-toolbar"><span class="st-count">${marked.length} saved</span>` +
+    '<button id="st-list-fc" class="st-btn">Flashcard these</button>' +
+    '<button id="st-list-qz" class="st-btn">Quiz these</button></div>' +
+    '<ul class="st-list">' + Object.keys(byDom).map(dom =>
+      `<li class="st-list-dom">${esc(byDom[dom][0].domainIcon)} ${esc(dom)}</li>` +
+      byDom[dom].map(t =>
+        `<li class="st-list-item"><button class="st-list-link" data-id="${esc(t.id)}">${esc(t.name)}</button>` +
+        `<button class="st-list-remove" data-id="${esc(t.id)}" title="Remove">✕</button></li>`).join("")
+    ).join("") + '</ul>';
+  host.querySelector("#st-list-fc").addEventListener("click", () => stOpenFlashcards());
+  host.querySelector("#st-list-qz").addEventListener("click", () => stOpenQuiz());
+  host.querySelectorAll(".st-list-link").forEach(b => b.addEventListener("click", () => { stClose(); stGoToTopic(b.dataset.id); }));
+  host.querySelectorAll(".st-list-remove").forEach(b => b.addEventListener("click", () => {
+    const id = b.dataset.id;
+    localStorage.removeItem(BOOKMARK_PREFIX + id);
+    document.getElementById(id)?.classList.remove("bookmarked");
+    stRenderStudyList(host);
+  }));
+}
+/** Called when a bookmark toggles elsewhere so an open list stays fresh. */
+function stRefreshStudyList() {
+  const host = document.getElementById("st-list-body");
+  if (host && _stOverlay && !_stOverlay.hidden) stRenderStudyList(host);
+}
+
+// ── LAUNCHER (FAB + menu) + keyboard shortcut ───────────────────────────────
+function initStudyTools() {
+  const fab = document.createElement("div");
+  fab.id = "study-fab-wrap";
+  fab.innerHTML =
+    '<div id="study-menu" hidden>' +
+      '<button class="study-mi" data-act="jump"><span>⌘K</span> Quick jump</button>' +
+      '<button class="study-mi" data-act="cards"><span>🃏</span> Flashcards</button>' +
+      '<button class="study-mi" data-act="quiz"><span>❓</span> Quiz</button>' +
+      '<button class="study-mi" data-act="list"><span>★</span> Study list</button>' +
+    '</div>' +
+    '<button id="study-fab" title="Study tools" aria-label="Study tools" aria-haspopup="true" aria-expanded="false">🎓</button>';
+  document.body.appendChild(fab);
+
+  const menu = fab.querySelector("#study-menu");
+  const btn = fab.querySelector("#study-fab");
+  const closeMenu = () => { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); };
+  btn.addEventListener("click", () => {
+    const open = menu.hidden;
+    menu.hidden = !open;
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  menu.addEventListener("click", e => {
+    const mi = e.target.closest(".study-mi"); if (!mi) return;
+    closeMenu();
+    ({ jump: stOpenJump, cards: stOpenFlashcards, quiz: stOpenQuiz, list: stOpenStudyList }[mi.dataset.act])();
+  });
+  document.addEventListener("click", e => { if (!fab.contains(e.target) && !menu.hidden) closeMenu(); });
+
+  // Global keyboard shortcuts
+  document.addEventListener("keydown", e => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); stOpenJump(); return; }
+    if (e.key === "Escape" && _stOverlay && !_stOverlay.hidden) { stClose(); }
+  });
 }
