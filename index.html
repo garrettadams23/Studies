@@ -88,6 +88,7 @@ alt="Optimized Study Routine: 4 Pillars for Success infographic."
 <div class="chip c-eng"           data-domain="eng">🏛️ ENGINEERING</div>
 <div class="chip c-data"           data-domain="data">📊 Data</div>
 <div class="chip c-web"           data-domain="web">🌐 Web</div>
+<div class="chip c-endpoint"           data-domain="endpoint">🖥️ Endpoint</div>
 </div>
 </div>
 <!-- SEARCH BAR ──────────────────────────────────────────────────────── -->
@@ -52363,6 +52364,317 @@ travels and where each concern lives. This domain, plus <code>data</code>,
 </div>
 </div>
 <!-- /domain-body web -->
+</div>
+</div>
+<div class="domain-section domain-endpoint" data-domain="endpoint">
+<div class="domain-header">
+<span class="domain-icon">🖥️</span>
+<span class="domain-title">Endpoint Management — Intune · MECM</span>
+<div class="cert-tags">
+<span class="ctag ctag-general">MD-102</span>
+<span class="ctag ctag-general">MEM</span>
+</div>
+<span class="domain-sub">MECM · Entra · Intune · Autopilot · ESP · Co-management</span>
+<span class="chevron">▾</span>
+</div>
+<div class="domain-body">
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🏢</span>
+<span class="topic-name">Microsoft Endpoint Configuration Manager (MECM)</span>
+<span class="topic-badge">On-Prem</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">ConfigMgr / SCCM — The On-Prem Management Workhorse</div>
+<div class="concept-desc">
+<strong class="c-cyan">MECM</strong> (formerly SCCM, still called
+<em>ConfigMgr</em>) is Microsoft's on-premises platform for managing Windows at
+scale — software deployment, patching, OS imaging, inventory, and compliance across
+thousands of devices. It's the traditional half of the modern
+<strong class="c-cyan">co-management</strong> story (the cloud half is Intune).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Component</th><th>Role</th></tr>
+<tr><td class="c-cyan">Site server &amp; site code</td><td>The brain of a site (3-letter code, e.g. <code>P01</code>); stores config &amp; runs the SMS Provider</td></tr>
+<tr><td class="c-cyan">Hierarchy</td><td>CAS (Central Admin Site) → Primary → Secondary sites for scale/geography</td></tr>
+<tr><td class="c-cyan">ConfigMgr client</td><td>Agent on each device that runs policy, inventory &amp; deployments</td></tr>
+<tr><td class="c-cyan">Management Point (MP)</td><td>Client ↔ site communication endpoint</td></tr>
+<tr><td class="c-cyan">Distribution Point (DP)</td><td>Hosts content (apps, updates, images) close to clients</td></tr>
+<tr><td class="c-cyan">SUP (WSUS)</td><td>Software Update Point — drives patching</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Boundaries &amp; boundary groups:</strong> define client
+locations (IP subnet, AD site, IP range) and map them to the DPs/MPs they should
+use — misconfigured boundaries are the #1 cause of "content not downloading."
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">How It Works</div>
+<div class="concept-title">Collections, Deployments &amp; Task Sequences</div>
+<div class="concept-desc">
+Everything in ConfigMgr targets a <strong class="c-cyan">collection</strong> — a
+grouping of devices or users. Collections can be <em>direct</em> (hand-picked) or
+<em>query-based</em> (dynamic membership via WQL, e.g. "all Windows 11 laptops").
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Capability</th><th>Detail</th></tr>
+<tr><td class="c-cyan">Applications</td><td>Detection method + install/uninstall; <em>Available</em> (Software Center) or <em>Required</em> (forced)</td></tr>
+<tr><td class="c-cyan">Software Updates</td><td>ADRs (Automatic Deployment Rules) auto-approve &amp; deploy Patch Tuesday updates</td></tr>
+<tr><td class="c-cyan">OSD / Task Sequences</td><td>OS deployment: partition → apply image (WIM) → drivers → apps → domain/Entra join</td></tr>
+<tr><td class="c-cyan">Compliance settings</td><td>Configuration baselines &amp; items — audit/remediate settings</td></tr>
+<tr><td class="c-cyan">Inventory</td><td>Hardware &amp; software inventory, Asset Intelligence</td></tr>
+<tr><td class="c-cyan">Software Center</td><td>The end-user portal for optional installs</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Co-management</strong> lets ConfigMgr and Intune manage
+the same device at once — you move <em>workloads</em> (compliance, updates, apps,
+endpoint protection) from ConfigMgr to Intune slider-by-slider. This is the bridge
+from on-prem to cloud and the modern migration path.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🪪</span>
+<span class="topic-name">Azure AD / Microsoft Entra ID — Endpoint Identity</span>
+<span class="topic-badge">Identity</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Identity Foundation Everything Else Sits On</div>
+<div class="concept-desc">
+<strong class="c-cyan">Microsoft Entra ID</strong> (formerly Azure AD) is the cloud
+identity/directory behind Microsoft 365 and Intune. Every modern-managed device has
+a <strong>device identity</strong> in Entra, and how it gets that identity
+(<em>join type</em>) determines what management and sign-in experiences are possible.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Join type</th><th>What it means</th></tr>
+<tr><td class="c-cyan">Entra Joined</td><td>Cloud-only join — sign in with Entra account; the modern default (Autopilot uses this)</td></tr>
+<tr><td class="c-cyan">Entra Hybrid Joined</td><td>Joined to <em>both</em> on-prem AD and Entra (needs Entra Connect sync) — for orgs still tied to on-prem AD/GPO</td></tr>
+<tr><td class="c-cyan">Entra Registered</td><td>Personal/BYOD device with a work identity added (not fully "owned" by the org)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Rule of thumb:</strong> greenfield/cloud-first →
+<strong class="c-green">Entra Joined</strong>; still dependent on Group Policy or
+on-prem apps → Hybrid Joined (but it's more fragile — sync timing, SCP config).
+Microsoft's guidance is to go cloud-native (Entra Joined) wherever possible.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">MDM Authority, Conditional Access &amp; the PRT</div>
+<div class="concept-desc">
+Entra is where you set the <strong class="c-cyan">MDM authority</strong> (Intune),
+configure <strong>automatic enrollment</strong>, and enforce access with
+<strong class="c-cyan">Conditional Access</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Feature</th><th>Detail</th></tr>
+<tr><td class="c-cyan">MDM auto-enrollment</td><td>Entra setting: devices auto-enroll into Intune on join (scoped by group)</td></tr>
+<tr><td class="c-cyan">Conditional Access (CA)</td><td>"Only compliant / Entra-joined devices can reach email" — ties device state to access</td></tr>
+<tr><td class="c-cyan">Primary Refresh Token (PRT)</td><td>The token that gives Windows SSO to M365 apps after sign-in</td></tr>
+<tr><td class="c-cyan">Device compliance signal</td><td>Intune tells Entra a device is compliant → CA allows access</td></tr>
+<tr><td class="c-cyan">Groups (dynamic)</td><td>Membership by rule (e.g. device OS, department) — drive targeting everywhere</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">The loop that matters:</strong> Intune evaluates
+compliance → writes the result to the device's Entra identity → Conditional Access
+reads it → grants or blocks access to corporate resources. Identity + compliance +
+CA is the heart of Zero Trust for endpoints.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">☁️</span>
+<span class="topic-name">Microsoft Intune — Cloud MDM &amp; MAM</span>
+<span class="topic-badge">Cloud MDM</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Manage Devices &amp; Apps From the Cloud</div>
+<div class="concept-desc">
+<strong class="c-cyan">Microsoft Intune</strong> (part of Microsoft Intune Suite /
+the Intune admin center, <code>intune.microsoft.com</code>) is the cloud service that
+manages devices (<strong>MDM</strong>) and apps (<strong>MAM</strong>) across
+Windows, macOS, iOS/iPadOS, Android, and Linux — no on-prem infrastructure required.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Policy type</th><th>Does</th></tr>
+<tr><td class="c-cyan">Compliance policies</td><td>Define "healthy" (encryption on, min OS, defender on) → feeds Conditional Access</td></tr>
+<tr><td class="c-cyan">Configuration profiles</td><td>Settings Catalog, ADMX-backed (GPO-equivalent), templates, custom OMA-URI</td></tr>
+<tr><td class="c-cyan">Apps</td><td>Win32 (<code>.intunewin</code>), MSI/LOB, Microsoft Store, web links, iOS/Android store apps</td></tr>
+<tr><td class="c-cyan">App Protection Policies (APP/MAM)</td><td>Protect corporate data <em>inside</em> apps on unmanaged/BYOD devices (no full enrollment)</td></tr>
+<tr><td class="c-cyan">Endpoint security</td><td>Defender AV, ASR rules, disk encryption (BitLocker/FileVault), firewall</td></tr>
+<tr><td class="c-cyan">Update rings</td><td>Windows Update for Business — phased deferrals &amp; deadlines</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">How It Works</div>
+<div class="concept-title">Enrollment, Targeting &amp; Win32 Packaging</div>
+<div class="concept-desc">
+Policies and apps are <strong class="c-cyan">assigned to Entra groups</strong>
+(user- or device-based), with optional <strong>filters</strong> (e.g. only Windows
+11) and <strong>scope tags</strong> for delegated (RBAC) administration.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Enrollment path</th><th>For</th></tr>
+<tr><td class="c-cyan">Automatic (Entra join + MDM)</td><td>Corporate Windows — Autopilot / bulk</td></tr>
+<tr><td class="c-cyan">BYOD (Company Portal)</td><td>User adds a personal device</td></tr>
+<tr><td class="c-cyan">Apple ABM / Android Enterprise</td><td>Zero-touch for mobile fleets</td></tr>
+<tr><td class="c-cyan">Group Policy / co-mgmt</td><td>Hybrid devices enrolled from ConfigMgr</td></tr>
+</table>
+<pre class="code-block"><span class="com"># Package a Win32 app into .intunewin with the Content Prep Tool</span>
+IntuneWinAppUtil.exe <span class="var">-c</span> <span class="str">"C:\Source"</span> <span class="var">-s</span> setup.exe <span class="var">-o</span> <span class="str">"C:\Output"</span>
+<span class="com"># Then in Intune: set install/uninstall commands + a detection rule</span>
+<span class="com"># (file/registry/MSI code) so Intune knows if it's already installed.</span></pre>
+<div class="concept-desc" style="margin-top:6px">
+<strong class="c-amber">Detection rules matter:</strong> a wrong or missing
+detection rule makes an app reinstall forever or report failure. Assignments come
+in <em>Required</em>, <em>Available</em> (Company Portal), and
+<em>Uninstall</em> intents.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">✈️</span>
+<span class="topic-name">Windows Autopilot — Zero-Touch Provisioning</span>
+<span class="topic-badge">Provisioning</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Ship a Sealed Laptop Straight to the User</div>
+<div class="concept-desc">
+<strong class="c-cyan">Windows Autopilot</strong> turns the out-of-box experience
+(OOBE) into a self-configuring, corporate setup — no imaging. The device's hardware
+identity is pre-registered to your tenant, so when the user signs in, it
+automatically Entra-joins and enrolls in Intune, then applies your apps and policies.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Deployment mode</th><th>Use case</th></tr>
+<tr><td class="c-cyan">User-driven</td><td>Standard — user signs in, device joins Entra &amp; sets up as theirs</td></tr>
+<tr><td class="c-cyan">Pre-provisioning (White Glove)</td><td>IT/partner runs the device phase first; user gets a fast finish</td></tr>
+<tr><td class="c-cyan">Self-deploying</td><td>No user credentials — kiosks, digital signage, shared/lab PCs</td></tr>
+<tr><td class="c-cyan">Autopilot for existing devices</td><td>Wipe &amp; re-provision an existing PC via a ConfigMgr task sequence</td></tr>
+<tr><td class="c-cyan">Autopilot Reset</td><td>Return a device to a business-ready state, keeping enrollment</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">How It Works</div>
+<div class="concept-title">Hardware Hash, Profiles &amp; the OOBE Flow</div>
+<div class="concept-desc">
+Registration is by <strong class="c-cyan">hardware hash</strong> (a unique device
+fingerprint). OEMs/CSPs can register at purchase, or you capture it yourself.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Capture the hardware hash on a device and upload to Autopilot</span>
+<span class="fn">Install-Script</span> <span class="var">-Name</span> Get-WindowsAutopilotInfo <span class="var">-Force</span>
+Get-WindowsAutopilotInfo <span class="var">-Online</span>   <span class="com"># prompts Entra sign-in, registers the device</span></pre>
+<table class="ref-table">
+<tr><th>Step</th><th>What happens</th></tr>
+<tr><td class="c-cyan">1. Register</td><td>Hardware hash uploaded → device appears under Autopilot devices</td></tr>
+<tr><td class="c-cyan">2. Assign profile</td><td>Deployment profile (join type, OOBE settings) assigned via group</td></tr>
+<tr><td class="c-cyan">3. OOBE</td><td>Device boots, hits network, recognizes itself, shows branded sign-in</td></tr>
+<tr><td class="c-cyan">4. Entra join + enroll</td><td>Joins Entra, enrolls in Intune automatically</td></tr>
+<tr><td class="c-cyan">5. ESP</td><td>Enrollment Status Page tracks apps/policies before desktop (next card)</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:6px">
+<strong class="c-amber">Profile settings</strong> control the experience: skip
+privacy/EULA, hide account-change options, set the join type, and give the device a
+naming template. <strong class="c-green">Pre-provisioning</strong> front-loads the
+heavy device-targeted apps so the end user's wait is short.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">⏳</span>
+<span class="topic-name">Enrollment Status Page (ESP)</span>
+<span class="topic-badge">Provisioning</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Gate That Makes a Device Ready Before First Use</div>
+<div class="concept-desc">
+The <strong class="c-cyan">Enrollment Status Page</strong> is the full-screen
+progress screen shown during Autopilot/enrollment. Its job is to
+<strong>block access to the desktop</strong> until the device is genuinely
+ready — required apps installed, policies applied, certs delivered — so users don't
+land on a half-configured machine.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Phase</th><th>Tracks</th></tr>
+<tr><td class="c-cyan">Device preparation</td><td>Entra join, Intune enrollment (before any user signs in)</td></tr>
+<tr><td class="c-cyan">Device setup</td><td>Device-targeted apps, policies, certificates, security</td></tr>
+<tr><td class="c-cyan">Account setup</td><td>User-targeted apps &amp; policies after sign-in</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+ESP is configured under <strong class="c-cyan">Enrollment → Enrollment Status
+Page</strong> in Intune, assigned to groups (default profile + targeted profiles).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Key Settings &amp; Troubleshooting</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Setting</th><th>Effect</th></tr>
+<tr><td class="c-cyan">Show app/profile install progress</td><td>Turns the ESP on for that group</td></tr>
+<tr><td class="c-cyan">Block device use until all apps installed</td><td>Hard gate — desktop is withheld until success</td></tr>
+<tr><td class="c-cyan">Blocking apps</td><td>Explicit list that <em>must</em> succeed (choose critical ones only)</td></tr>
+<tr><td class="c-red">Timeout (default 60 min)</td><td>How long before it fails/allows — tune for large app sets</td></tr>
+<tr><td class="c-cyan">Allow reset on failure</td><td>Let the user retry/reset instead of being stuck</td></tr>
+<tr><td class="c-cyan">Allow use on failure</td><td>Let the user continue to the desktop if non-blocking items fail</td></tr>
+<tr><td class="c-cyan">Collect logs</td><td>Let users export diagnostics on error</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Common pitfalls:</strong> too many
+<strong class="c-red">blocking apps</strong> or a large Win32 app makes ESP hit the
+timeout and fail; a wrong app <em>detection rule</em> makes ESP wait forever on an
+install that already succeeded. <strong class="c-green">Best practice:</strong>
+keep the blocking set minimal (only what a user truly needs on day one), raise the
+timeout for heavy images, and use pre-provisioning so device-phase apps finish
+before the user ever sees the account phase.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- /domain-body endpoint -->
 </div>
 </div>
 </div>
