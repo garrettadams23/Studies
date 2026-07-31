@@ -1103,10 +1103,13 @@ function initStudyTools() {
   const menu = fab.querySelector("#study-menu");
   const btn = fab.querySelector("#study-fab");
   const closeMenu = () => { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); };
-  btn.addEventListener("click", () => {
-    const open = menu.hidden;
-    menu.hidden = !open;
-    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  btn.addEventListener("click", e => {
+    // Stop this click from also reaching the document "click-outside" handler,
+    // which could otherwise re-close the menu we just opened (touch devices).
+    e.stopPropagation();
+    const willOpen = menu.hidden;      // currently hidden -> we're opening
+    menu.hidden = !willOpen;           // toggle
+    btn.setAttribute("aria-expanded", willOpen ? "true" : "false");
   });
   menu.addEventListener("click", e => {
     const mi = e.target.closest(".study-mi"); if (!mi) return;
