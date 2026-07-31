@@ -1097,7 +1097,11 @@ function initStudyTools() {
       '<button class="study-mi" data-act="quiz"><span>❓</span> Quiz</button>' +
       '<button class="study-mi" data-act="list"><span>★</span> Study list</button>' +
     '</div>' +
-    '<button id="study-fab" title="Study tools" aria-label="Study tools" aria-haspopup="true" aria-expanded="false">🎓</button>';
+    '<button id="study-fab" title="Study tools" aria-label="Study tools" aria-haspopup="true" aria-expanded="false">' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+        '<path fill="currentColor" d="M12 3 1 8l11 5 9-4.09V15h2V8L12 3z"/>' +
+        '<path fill="currentColor" d="M5 11.18v3.02C5 15.75 8.13 17 12 17s7-1.25 7-2.8v-3.02l-7 3.18-7-3.18z"/>' +
+      '</svg></button>';
   document.body.appendChild(fab);
 
   const menu = fab.querySelector("#study-menu");

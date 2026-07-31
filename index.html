@@ -53062,6 +53062,90 @@ IME logs for Win32 app failures.
 </div>
 </div>
 </div>
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📖</span>
+<span class="topic-name">Glossary — Acronyms, Logs &amp; Task-Sequence Variables</span>
+<span class="topic-badge">Reference</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Acronyms &amp; Components You'll Keep Meeting</div>
+<div class="concept-desc">
+The alphabet soup of Microsoft endpoint management, decoded — the pieces that show
+up constantly in ConfigMgr/Intune/Autopilot work.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td class="c-cyan">WMI</td><td><strong>Windows Management Instrumentation</strong> — the local management data layer. ConfigMgr's console talks to the site through the <em>SMS Provider</em> over WMI; the client stores state &amp; inventory in the <code>root\ccm</code> and <code>root\cimv2</code> namespaces (query with <code>wbemtest</code> / <code>Get-CimInstance</code>)</td></tr>
+<tr><td class="c-cyan">OSD</td><td><strong>Operating System Deployment</strong> — ConfigMgr's imaging feature: build &amp; capture, then deploy Windows via a <em>task sequence</em> (WinPE boot image → apply WIM → drivers → join → apps)</td></tr>
+<tr><td class="c-cyan">CCM</td><td>The <strong>Configuration Manager client</strong>. Lives in <code>C:\Windows\CCM</code>, runs as the <code>CcmExec</code> service, WMI namespace <code>root\ccm</code>, cache at <code>C:\Windows\ccmcache</code></td></tr>
+<tr><td class="c-cyan">MDM</td><td><strong>Mobile Device Management</strong> — the cloud management channel (Intune) using the OMA-DM protocol over HTTPS; the modern alternative to the ConfigMgr agent</td></tr>
+<tr><td class="c-cyan">HKCU</td><td><strong>HKEY_CURRENT_USER</strong> — the registry hive for the signed-in user's settings (vs <code>HKLM</code> = machine-wide). Per-user policy, ADMX user settings, and app config live here</td></tr>
+<tr><td class="c-cyan">dsregcmd</td><td>Built-in Windows tool for <strong>device registration</strong> state. <code>dsregcmd /status</code> shows AzureAdJoined, DomainJoined, the PRT, and MDM enrollment URLs — the first check for join/SSO/enrollment issues</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Key Log Files (open with CMTrace)</div>
+<div class="concept-desc">
+ConfigMgr troubleshooting is log reading. Client logs live in
+<code>C:\Windows\CCM\Logs</code>; during OSD they start in
+<code>X:\Windows\Temp\SMSTSLog</code> (WinPE) and move to
+<code>C:\_SMSTaskSequence\Logs</code> then <code>C:\Windows\CCM\Logs</code>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Log</th><th>Tells you</th></tr>
+<tr><td><code>smsts.log</code></td><td>The <strong>task sequence</strong> engine — every OSD step, variable, and failure. The single most important OSD log</td></tr>
+<tr><td><code>CAS.log</code></td><td><strong>Content Access Service</strong> — how the client locates content and whether it's already in the cache (cache hits/misses, requesting a DP list)</td></tr>
+<tr><td><code>ContentTransferManager.log</code></td><td>Schedules and tracks the actual <strong>content download</strong> jobs (via BITS or SMB) from a distribution point</td></tr>
+<tr><td><code>DataTransferService.log</code></td><td>The <strong>BITS</strong> transfer layer used for policy and content downloads — TLS/proxy/BITS errors surface here</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Content-download triage order:</strong>
+<code>CAS.log</code> (is it cached / which DPs?) →
+<code>ContentTransferManager.log</code> (did a job start?) →
+<code>DataTransferService.log</code> (did BITS actually move the bytes?). During
+OSD, cross-reference all of it against <code>smsts.log</code>.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">OSD Task-Sequence Variables Worth Knowing</div>
+<div class="concept-desc">
+Task-sequence variables tune how OSD downloads, caches, and stores content. Set them
+on a <em>collection</em>, in the deployment, or with a <em>Set Task Sequence
+Variable</em> step. <code>TRUE</code>/<code>FALSE</code> values are strings.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Variable</th><th>What it does</th></tr>
+<tr><td class="c-cyan">SMSTSPreserveContent</td><td>Keeps the TS's downloaded content in the <strong>ConfigMgr client cache (ccmcache)</strong> after the sequence finishes, instead of purging it — handy when the same content is needed again soon (<code>TRUE</code>)</td></tr>
+<tr><td class="c-cyan">SMSTSPersistContent</td><td>Persists content in the <strong>task-sequence working cache</strong> (<code>_SMSTaskSequence</code>) for the duration of the sequence, so it survives reboots between steps</td></tr>
+<tr><td class="c-cyan">SMSTSDownloadRetryCount</td><td>How many times the client <strong>retries</strong> a failed content download (default 2) — raise it on flaky/slow links</td></tr>
+<tr><td class="c-cyan">SMSTSDownloadRetryDelay</td><td>Seconds to <strong>wait between</strong> download retries (default 15) — pair with the count above for unreliable networks</td></tr>
+<tr><td class="c-cyan">SMSTSLocalDataDrive</td><td>Chooses the <strong>drive</strong> where the TS stores its temp working files &amp; logs (the <code>_SMSTaskSequence</code> folder) — set it before content downloads to avoid X:\ (RAM) space issues in WinPE</td></tr>
+<tr><td class="c-cyan">SMSTSPeerDownload</td><td>Enables/allows the TS to pull content from <strong>peers</strong> (Windows PE Peer Cache / peer sources) rather than a DP — <code>TRUE</code>/<code>FALSE</code></td></tr>
+<tr><td class="c-cyan">SMSTSDownloadProgram</td><td>Specifies an <strong>Alternate Content Provider (ACP)</strong> — a custom download program (e.g. third-party peer-to-peer like Nomad/Adaptiva) used instead of the built-in downloader</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Common combos:</strong> on slow branch links, raise
+<code>SMSTSDownloadRetryCount</code>/<code>Delay</code>, set
+<code>SMSTSLocalDataDrive=C</code> early, and enable
+<code>SMSTSPeerDownload</code> so peers share content. Use
+<code>SMSTSPreserveContent</code> when a later phase (or a re-image retry) reuses
+the same packages. Verify all of it in <code>smsts.log</code>.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body endpoint -->
 </div>
 </div>
