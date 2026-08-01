@@ -129,6 +129,16 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("hdr-expand-btn")?.addEventListener("click", toggleAll);
   document.getElementById("hdr-random-btn")?.addEventListener("click", jumpToRandomTopic);
 
+  // Search + notepad + URL codec — wired here (not inline) so the CSP can stay
+  // script-src 'self' with no 'unsafe-inline'.
+  document.getElementById("search-input")?.addEventListener("input", e => onSearchInput(e.target.value));
+  document.getElementById("search-clear")?.addEventListener("click", clearSearch);
+  document.getElementById("notepad-tab")?.addEventListener("click", toggleNotepad);
+  document.querySelector(".url-codec-btn.btn-encode")?.addEventListener("click", urlToolEncode);
+  document.querySelector(".url-codec-btn.btn-decode")?.addEventListener("click", urlToolDecode);
+  document.querySelector(".url-codec-btn.btn-copy")?.addEventListener("click", urlToolCopy);
+  document.querySelector(".url-codec-btn.btn-clear")?.addEventListener("click", urlToolClear);
+
   // Global keyboard shortcuts (ignored while typing in a field)
   document.addEventListener("keydown", handleGlobalKeys);
 
