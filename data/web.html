@@ -10,19 +10,19 @@
                 <div class="concept-label">Concept</div>
                 <div class="concept-title">From Bytes to Pixels</div>
                 <div class="concept-desc">
-                  Understanding the rendering pipeline is what separates people who "write CSS" from
+                  Understanding the rendering pipeline is what separates people who "write CSS <span class="acro-exp">(Cascading Style Sheets)</span>" from
                   people who make fast sites. The browser turns your HTML/CSS into pixels through a
                   fixed sequence of steps.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Step</th><th>Does</th></tr>
-                    <tr><td class="c-cyan">Parse → DOM</td><td>HTML becomes the Document Object Model tree</td></tr>
+                    <tr><td class="c-cyan">Parse → DOM</td><td>HTML <span class="acro-exp">(HyperText Markup Language)</span> becomes the Document Object Model tree</td></tr>
                     <tr><td class="c-cyan">Parse → CSSOM</td><td>CSS becomes the style tree</td></tr>
                     <tr><td class="c-cyan">Render tree</td><td>DOM + CSSOM combined (visible nodes only)</td></tr>
                     <tr><td class="c-cyan">Layout (reflow)</td><td>Compute geometry — where &amp; how big everything is</td></tr>
                     <tr><td class="c-cyan">Paint</td><td>Fill in pixels (text, colors, borders)</td></tr>
-                    <tr><td class="c-cyan">Composite</td><td>Assemble layers on the GPU</td></tr>
+                    <tr><td class="c-cyan">Composite</td><td>Assemble layers on the GPU <span class="acro-exp">(Graphics Processing Unit)</span></td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Render-blocking:</strong> CSS blocks rendering (the browser
@@ -57,7 +57,7 @@
                     <tr><th>Change</th><th>Cost</th></tr>
                     <tr><td class="c-red">width/height/top/left</td><td>Reflow (layout) — avoid animating these</td></tr>
                     <tr><td class="c-amber">color/background</td><td>Repaint only</td></tr>
-                    <tr><td class="c-green">transform / opacity</td><td>Composite only — GPU, no layout (animate these!)</td></tr>
+                    <tr><td class="c-green">transform / opacity</td><td>Composite only — GPU <span class="acro-exp">(Graphics Processing Unit)</span>, no layout (animate these!)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-red">Layout thrashing:</strong> reading a layout property (like
@@ -73,7 +73,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🌳</span>
-              <span class="topic-name">The DOM &amp; Events — Bubbling &amp; Delegation</span>
+              <span class="topic-name">The DOM <span class="acro-exp">(Document Object Model)</span> &amp; Events — Bubbling &amp; Delegation</span>
               <span class="topic-badge">Browser</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -127,14 +127,14 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   <table class="ref-table">
                     <tr><th>Store</th><th>Use / Note</th></tr>
                     <tr><td class="c-cyan">Cookies</td><td>Sent with every request; use <code>HttpOnly</code>+<code>Secure</code> for auth tokens</td></tr>
-                    <tr><td class="c-cyan">localStorage</td><td>~5MB, persists, sync API — <strong class="c-red">readable by JS (XSS risk)</strong></td></tr>
+                    <tr><td class="c-cyan">localStorage</td><td>~5MB, persists, sync API <span class="acro-exp">(Application Programming Interface)</span> — <strong class="c-red">readable by JS <span class="acro-exp">(JavaScript)</span> (XSS risk)</strong></td></tr>
                     <tr><td class="c-cyan">sessionStorage</td><td>Per-tab, cleared on close</td></tr>
                     <tr><td class="c-cyan">IndexedDB</td><td>Large, async, structured — offline apps</td></tr>
                     <tr><td class="c-cyan">Cache API</td><td>Store responses for service workers/PWAs</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-red">Security:</strong> never store auth tokens in
-                    <code>localStorage</code> — any XSS reads them. Prefer <code>HttpOnly</code> cookies
+                    <code>localStorage</code> — any XSS <span class="acro-exp">(Cross-Site Scripting)</span> reads them. Prefer <code>HttpOnly</code> cookies
                     (JS can't touch them). Ties to the web-security cards.
                   </div>
                 </div>
@@ -160,15 +160,15 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Panel</th><th>Use</th></tr>
-                    <tr><td class="c-cyan">Elements</td><td>Inspect/edit DOM &amp; CSS live; check the box model</td></tr>
-                    <tr><td class="c-cyan">Console</td><td>Logs, run JS, <code>$0</code> = selected element</td></tr>
+                    <tr><td class="c-cyan">Elements</td><td>Inspect/edit DOM <span class="acro-exp">(Document Object Model)</span> &amp; CSS <span class="acro-exp">(Cascading Style Sheets)</span> live; check the box model</td></tr>
+                    <tr><td class="c-cyan">Console</td><td>Logs, run JS <span class="acro-exp">(JavaScript)</span>, <code>$0</code> = selected element</td></tr>
                     <tr><td class="c-cyan">Network</td><td>Requests, timing, payloads, throttling</td></tr>
                     <tr><td class="c-cyan">Performance</td><td>Record &amp; find jank, long tasks, layout shifts</td></tr>
                     <tr><td class="c-cyan">Application</td><td>Storage, cookies, service workers, manifest</td></tr>
-                    <tr><td class="c-cyan">Lighthouse</td><td>Audit performance, a11y, SEO, best practices</td></tr>
+                    <tr><td class="c-cyan">Lighthouse</td><td>Audit performance, a11y <span class="acro-exp">(Accessibility)</span>, SEO <span class="acro-exp">(Search Engine Optimization)</span>, best practices</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
-                    <strong class="c-green">Pro moves:</strong> throttle to "Slow 3G" + 4× CPU to feel
+                    <strong class="c-green">Pro moves:</strong> throttle to "Slow 3G" + 4× CPU <span class="acro-exp">(Central Processing Unit)</span> to feel
                     what users feel; use the Performance panel's flame chart to find the function eating
                     your frame budget.
                   </div>
@@ -221,7 +221,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔲</span>
-              <span class="topic-name">CSS Grid — Two-Dimensional Layout</span>
+              <span class="topic-name">CSS <span class="acro-exp">(Cascading Style Sheets)</span> Grid — Two-Dimensional Layout</span>
               <span class="topic-badge">CSS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -297,7 +297,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">✨</span>
-              <span class="topic-name">Modern CSS — Custom Properties, :has() &amp; Layers</span>
+              <span class="topic-name">Modern CSS <span class="acro-exp">(Cascading Style Sheets)</span> — Custom Properties, :has() &amp; Layers</span>
               <span class="topic-badge">CSS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -344,7 +344,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="concept-label">Concept</div>
                 <div class="concept-title">Styling That Scales Across a Team</div>
                 <div class="concept-desc">
-                  At scale, ad-hoc CSS becomes unmaintainable. Design systems encode consistent
+                  At scale, ad-hoc CSS <span class="acro-exp">(Cascading Style Sheets)</span> becomes unmaintainable. Design systems encode consistent
                   spacing, color, and type as reusable <strong class="c-cyan">tokens</strong> and
                   components, so a large app stays coherent.
                 </div>
@@ -359,9 +359,9 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-amber">The trade-off debate:</strong> Tailwind trades "ugly
-                    markup" for never leaving your HTML and never fighting the cascade — hugely popular
+                    markup" for never leaving your HTML <span class="acro-exp">(HyperText Markup Language)</span> and never fighting the cascade — hugely popular
                     for that reason. Whatever the method, the win is <em>constraints</em>: a limited
-                    palette of choices keeps a big UI consistent.
+                    palette of choices keeps a big UI <span class="acro-exp">(User Interface)</span> consistent.
                   </div>
                 </div>
               </div>
@@ -486,7 +486,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">📦</span>
-              <span class="topic-name">Modules &amp; Bundlers — ESM, Vite &amp; Tree-Shaking</span>
+              <span class="topic-name">Modules &amp; Bundlers — ESM <span class="acro-exp">(ECMAScript Modules)</span>, Vite &amp; Tree-Shaking</span>
               <span class="topic-badge">JavaScript</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -495,7 +495,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">From Many Files to Shipped Code</div>
                 <div class="concept-desc">
-                  Modern JS is written as <strong class="c-cyan">ES modules</strong>
+                  Modern JS <span class="acro-exp">(JavaScript)</span> is written as <strong class="c-cyan">ES modules</strong>
                   (<code>import</code>/<code>export</code>) across many files, then a
                   <strong class="c-cyan">bundler</strong> optimizes them into what ships to the browser.
                 </div>
@@ -566,11 +566,11 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Reference</div>
-                <div class="concept-title">UI as a Function of State</div>
+                <div class="concept-title">UI <span class="acro-exp">(User Interface)</span> as a Function of State</div>
                 <div class="concept-desc">
                   <strong class="c-cyan">React</strong>'s core idea: your UI is a function of state —
                   <code>UI = f(state)</code>. You describe what the screen should look like for the
-                  current data; React efficiently updates the DOM when state changes.
+                  current data; React efficiently updates the DOM <span class="acro-exp">(Document Object Model)</span> when state changes.
                 </div>
                 <div class="dw">
                   <pre class="code-block"><span class="kw">function</span> <span class="fn">Counter</span>() {
@@ -579,7 +579,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
 }</pre>
                   <table class="ref-table">
                     <tr><th>Concept</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Components</td><td>Reusable functions returning JSX</td></tr>
+                    <tr><td class="c-cyan">Components</td><td>Reusable functions returning JSX <span class="acro-exp">(JavaScript XML)</span></td></tr>
                     <tr><td class="c-cyan">Props</td><td>Read-only inputs passed down</td></tr>
                     <tr><td class="c-cyan">useState / useReducer</td><td>Local state</td></tr>
                     <tr><td class="c-cyan">useEffect</td><td>Side effects (fetch, subscriptions) — has gotchas</td></tr>
@@ -643,15 +643,15 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="concept-title">Not Everything Is React</div>
                 <div class="concept-desc">
                   React isn't the only game. <strong class="c-cyan">Vue</strong> and
-                  <strong class="c-cyan">Svelte</strong> reach the same goal — reactive UI — with
+                  <strong class="c-cyan">Svelte</strong> reach the same goal — reactive UI <span class="acro-exp">(User Interface)</span> — with
                   different (often simpler) models worth understanding.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Framework</th><th>Approach</th></tr>
-                    <tr><td class="c-cyan">React</td><td>Re-render on state change; virtual DOM diff; explicit</td></tr>
+                    <tr><td class="c-cyan">React</td><td>Re-render on state change; virtual DOM <span class="acro-exp">(Document Object Model)</span> diff; explicit</td></tr>
                     <tr><td class="c-cyan">Vue</td><td>Fine-grained reactivity + template syntax; gentle learning curve</td></tr>
-                    <tr><td class="c-cyan">Svelte</td><td>Compiler — no virtual DOM; compiles away to tiny vanilla JS</td></tr>
+                    <tr><td class="c-cyan">Svelte</td><td>Compiler — no virtual DOM; compiles away to tiny vanilla JS <span class="acro-exp">(JavaScript)</span></td></tr>
                     <tr><td class="c-cyan">Solid / signals</td><td>Fine-grained signals; the model many are converging on</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
@@ -675,11 +675,11 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Concept</div>
-                <div class="concept-title">SSR, SSG, ISR &amp; CSR — When Each</div>
+                <div class="concept-title">SSR <span class="acro-exp">(Server-Side Rendering)</span>, SSG <span class="acro-exp">(Static Site Generation)</span>, ISR &amp; CSR <span class="acro-exp">(Certificate Signing Request)</span> — When Each</div>
                 <div class="concept-desc">
                   Meta-frameworks (<strong class="c-cyan">Next.js</strong>, Nuxt, SvelteKit) add
-                  routing, data fetching, and server rendering on top of the UI library. The key
-                  decision is <em>where and when</em> your HTML is generated.
+                  routing, data fetching, and server rendering on top of the UI <span class="acro-exp">(User Interface)</span> library. The key
+                  decision is <em>where and when</em> your HTML <span class="acro-exp">(HyperText Markup Language)</span> is generated.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -690,9 +690,9 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td class="c-cyan">ISR</td><td>Static + periodic rebuild</td><td>Large mostly-static sites</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
-                    <strong class="c-green">SSR/SSG win</strong> on first-load speed and SEO (real HTML
+                    <strong class="c-green">SSR/SSG win</strong> on first-load speed and SEO <span class="acro-exp">(Search Engine Optimization)</span> (real HTML
                     arrives immediately). <strong class="c-amber">React Server Components</strong> are
-                    the current frontier — render components on the server, ship less JS. Match the mode
+                    the current frontier — render components on the server, ship less JS <span class="acro-exp">(JavaScript)</span>. Match the mode
                     to the page: static where you can, dynamic where you must.
                   </div>
                 </div>
@@ -721,9 +721,9 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   <table class="ref-table">
                     <tr><th>Need</th><th>Reach for</th></tr>
                     <tr><td class="c-cyan">Server data (caching, refetch)</td><td>React Query / SWR — not a global store</td></tr>
-                    <tr><td class="c-cyan">Simple shared UI state</td><td>Context, or lift state up</td></tr>
+                    <tr><td class="c-cyan">Simple shared UI <span class="acro-exp">(User Interface)</span> state</td><td>Context, or lift state up</td></tr>
                     <tr><td class="c-cyan">Complex global client state</td><td>Zustand / Redux Toolkit / signals</td></tr>
-                    <tr><td class="c-cyan">URL as state</td><td>Query params for filters/tabs (shareable)</td></tr>
+                    <tr><td class="c-cyan">URL <span class="acro-exp">(Uniform Resource Locator)</span> as state</td><td>Query params for filters/tabs (shareable)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-amber">Biggest insight:</strong> most "state management" pain is
@@ -739,16 +739,16 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔌</span>
-              <span class="topic-name">Fetch, REST &amp; CORS in Practice</span>
+              <span class="topic-name">Fetch, REST <span class="acro-exp">(Representational State Transfer)</span> &amp; CORS <span class="acro-exp">(Cross-Origin Resource Sharing)</span> in Practice</span>
               <span class="topic-badge">Backends</span>
               <span class="topic-chev">▶</span>
             </div>
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Reference</div>
-                <div class="concept-title">How the Frontend Talks to APIs</div>
+                <div class="concept-title">How the Frontend Talks to APIs <span class="acro-exp">(Application Programming Interface)</span></div>
                 <div class="concept-desc">
-                  The browser's <code>fetch</code> makes HTTP requests. You'll spend real time on
+                  The browser's <code>fetch</code> makes HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> requests. You'll spend real time on
                   status codes, headers, and the one that trips everyone up:
                   <strong class="c-cyan">CORS</strong>.
                 </div>
@@ -789,7 +789,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="concept-title">One Endpoint, Client-Shaped Responses</div>
                 <div class="concept-desc">
                   <strong class="c-cyan">GraphQL</strong> exposes a typed schema through one endpoint;
-                  the client specifies exactly which fields it wants. It solves REST's over- and
+                  the client specifies exactly which fields it wants. It solves REST <span class="acro-exp">(Representational State Transfer)</span>'s over- and
                   under-fetching, at the cost of new complexity.
                 </div>
                 <div class="dw">
@@ -805,7 +805,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-amber">When to use:</strong> many clients with different data
-                    needs, or deeply nested data. For simple CRUD, REST is often simpler. Caching is
+                    needs, or deeply nested data. For simple CRUD <span class="acro-exp">(Create, Read, Update, Delete)</span>, REST is often simpler. Caching is
                     harder than REST (one endpoint, POST) — weigh the trade-off.
                   </div>
                 </div>
@@ -816,7 +816,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔴</span>
-              <span class="topic-name">Realtime — WebSockets, SSE &amp; Polling</span>
+              <span class="topic-name">Realtime — WebSockets, SSE <span class="acro-exp">(Server-Sent Events)</span> &amp; Polling</span>
               <span class="topic-badge">Backends</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -825,7 +825,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">Pushing Data to the Browser</div>
                 <div class="concept-desc">
-                  HTTP is request/response — the server can't just push. For live features (chat,
+                  HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> is request/response — the server can't just push. For live features (chat,
                   notifications, dashboards) you need a different transport. Pick the lightest one
                   that fits.
                 </div>
@@ -850,7 +850,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔑</span>
-              <span class="topic-name">Frontend Auth — Tokens, Cookies &amp; OAuth</span>
+              <span class="topic-name">Frontend Auth — Tokens, Cookies &amp; OAuth <span class="acro-exp">(Open Authorization)</span></span>
               <span class="topic-badge">Backends</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -866,9 +866,9 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Approach</th><th>Detail</th></tr>
-                    <tr><td class="c-green">HttpOnly cookie</td><td>JS can't read it → XSS-safe; pair with SameSite/CSRF protection</td></tr>
-                    <tr><td class="c-red">JWT in localStorage</td><td>Convenient but XSS-readable — widely discouraged</td></tr>
-                    <tr><td class="c-cyan">OAuth / OIDC + PKCE</td><td>"Sign in with…"; PKCE for public clients</td></tr>
+                    <tr><td class="c-green">HttpOnly cookie</td><td>JS <span class="acro-exp">(JavaScript)</span> can't read it → XSS-safe; pair with SameSite/CSRF protection</td></tr>
+                    <tr><td class="c-red">JWT <span class="acro-exp">(JSON Web Token)</span> in localStorage</td><td>Convenient but XSS-readable — widely discouraged</td></tr>
+                    <tr><td class="c-cyan">OAuth / OIDC <span class="acro-exp">(OpenID Connect)</span> + PKCE <span class="acro-exp">(Proof Key for Code Exchange)</span></td><td>"Sign in with…"; PKCE for public clients</td></tr>
                     <tr><td class="c-cyan">Refresh flow</td><td>Short-lived access token + refresh token rotation</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
@@ -894,7 +894,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">Server State Is Its Own Problem</div>
                 <div class="concept-desc">
-                  Fetching data is easy; keeping it <em>fresh, cached, and in sync</em> across a UI is
+                  Fetching data is easy; keeping it <em>fresh, cached, and in sync</em> across a UI <span class="acro-exp">(User Interface)</span> is
                   hard. Libraries like <strong class="c-cyan">React Query</strong> (TanStack Query) and
                   <strong class="c-cyan">SWR</strong> handle the whole lifecycle so you don't reinvent
                   it per component.
@@ -937,9 +937,9 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Metric</th><th>Measures</th><th>Fix</th></tr>
-                    <tr><td class="c-cyan">LCP</td><td>Largest content paint (load speed)</td><td>Optimize images, server response, critical CSS</td></tr>
-                    <tr><td class="c-cyan">INP</td><td>Interaction responsiveness</td><td>Break up long JS tasks; less main-thread work</td></tr>
-                    <tr><td class="c-cyan">CLS</td><td>Layout shift (visual stability)</td><td>Set image/ad dimensions; reserve space</td></tr>
+                    <tr><td class="c-cyan">LCP <span class="acro-exp">(Largest Contentful Paint)</span></td><td>Largest content paint (load speed)</td><td>Optimize images, server response, critical CSS <span class="acro-exp">(Cascading Style Sheets)</span></td></tr>
+                    <tr><td class="c-cyan">INP <span class="acro-exp">(Interaction to Next Paint)</span></td><td>Interaction responsiveness</td><td>Break up long JS <span class="acro-exp">(JavaScript)</span> tasks; less main-thread work</td></tr>
+                    <tr><td class="c-cyan">CLS <span class="acro-exp">(Cumulative Layout Shift)</span></td><td>Layout shift (visual stability)</td><td>Set image/ad dimensions; reserve space</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-green">Big levers:</strong> ship less JavaScript (code-split,
@@ -955,7 +955,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">♿</span>
-              <span class="topic-name">Web Accessibility (a11y) — WCAG &amp; ARIA</span>
+              <span class="topic-name">Web Accessibility (a11y) — WCAG <span class="acro-exp">(Web Content Accessibility Guidelines)</span> &amp; ARIA <span class="acro-exp">(Accessible Rich Internet Applications)</span></span>
               <span class="topic-badge">A11y</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -971,7 +971,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Principle (POUR)</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Semantic HTML</td><td>Use real <code>&lt;button&gt;</code>/<code>&lt;nav&gt;</code>/<code>&lt;h1&gt;</code> — free a11y</td></tr>
+                    <tr><td class="c-cyan">Semantic HTML <span class="acro-exp">(HyperText Markup Language)</span></td><td>Use real <code>&lt;button&gt;</code>/<code>&lt;nav&gt;</code>/<code>&lt;h1&gt;</code> — free a11y</td></tr>
                     <tr><td class="c-cyan">Keyboard</td><td>Everything operable without a mouse; visible focus</td></tr>
                     <tr><td class="c-cyan">Contrast &amp; text</td><td>4.5:1 contrast; resizable text; alt text on images</td></tr>
                     <tr><td class="c-cyan">ARIA</td><td>Roles/labels for custom widgets — only when HTML can't</td></tr>
@@ -1013,7 +1013,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-green">Testing Library philosophy:</strong> test behavior, not
-                    implementation — query by what a user sees (roles, text), not CSS classes. Then
+                    implementation — query by what a user sees (roles, text), not CSS <span class="acro-exp">(Cascading Style Sheets)</span> classes. Then
                     refactors don't break tests. A few reliable E2E tests on the money-path beat a
                     hundred brittle ones.
                   </div>
@@ -1025,7 +1025,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🛡️</span>
-              <span class="topic-name">Frontend Security — XSS, CSRF &amp; CSP</span>
+              <span class="topic-name">Frontend Security — XSS <span class="acro-exp">(Cross-Site Scripting)</span>, CSRF <span class="acro-exp">(Cross-Site Request Forgery)</span> &amp; CSP <span class="acro-exp">(Content Security Policy)</span></span>
               <span class="topic-badge">Security</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1047,7 +1047,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-amber">Frameworks help:</strong> React escapes by default (which
-                    is why <code>dangerouslySetInnerHTML</code> is named to scare you). Never build HTML
+                    is why <code>dangerouslySetInnerHTML</code> is named to scare you). Never build HTML <span class="acro-exp">(HyperText Markup Language)</span>
                     from untrusted strings; sanitize any rich content with a vetted library (DOMPurify).
                   </div>
                 </div>
@@ -1058,7 +1058,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔍</span>
-              <span class="topic-name">SEO &amp; Metadata for Developers</span>
+              <span class="topic-name">SEO <span class="acro-exp">(Search Engine Optimization)</span> &amp; Metadata for Developers</span>
               <span class="topic-badge">Quality</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1068,7 +1068,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="concept-title">Being Found &amp; Shared Correctly</div>
                 <div class="concept-desc">
                   Technical SEO is the part developers own: making pages crawlable, fast, and
-                  correctly described. Modern SEO overlaps heavily with performance and semantic HTML.
+                  correctly described. Modern SEO overlaps heavily with performance and semantic HTML <span class="acro-exp">(HyperText Markup Language)</span>.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -1077,7 +1077,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td class="c-cyan">&lt;title&gt; &amp; meta description</td><td>The search-result snippet</td></tr>
                     <tr><td class="c-cyan">Open Graph / Twitter cards</td><td>Rich link previews when shared</td></tr>
                     <tr><td class="c-cyan">Structured data (JSON-LD)</td><td>Rich results (ratings, FAQs)</td></tr>
-                    <tr><td class="c-cyan">Sitemap &amp; robots.txt</td><td>Guide crawlers; canonical URLs avoid dupes</td></tr>
+                    <tr><td class="c-cyan">Sitemap &amp; robots.txt</td><td>Guide crawlers; canonical URLs <span class="acro-exp">(Uniform Resource Locator)</span> avoid dupes</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-green">SSR/SSG helps SEO</strong> because crawlers get real HTML
@@ -1101,7 +1101,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="concept-label">Concept</div>
                 <div class="concept-title">Websites That Act Like Native Apps</div>
                 <div class="concept-desc">
-                  A <strong class="c-cyan">PWA</strong> is a website with app-like superpowers: it can
+                  A <strong class="c-cyan">PWA <span class="acro-exp">(Progressive Web App)</span></strong> is a website with app-like superpowers: it can
                   be installed to the home screen, work offline, and receive push notifications — all
                   from the web platform. (This very site is installable — that's why the icon fix
                   mattered.)
@@ -1117,7 +1117,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-amber">Service workers are powerful &amp; sharp:</strong> they
                     intercept every request, so a bad cache strategy can serve stale content forever.
-                    Test your update flow. For content sites, "offline + installable" is a big UX win
+                    Test your update flow. For content sites, "offline + installable" is a big UX <span class="acro-exp">(User Experience)</span> win
                     for little cost.
                   </div>
                 </div>
@@ -1128,7 +1128,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🌍</span>
-              <span class="topic-name">Rendering at the Edge — CDNs &amp; Edge Functions</span>
+              <span class="topic-name">Rendering at the Edge — CDNs <span class="acro-exp">(Content Delivery Network)</span> &amp; Edge Functions</span>
               <span class="topic-badge">Shipping</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1152,7 +1152,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-green">Trade-off:</strong> edge runtimes are limited (no full
                     Node APIs, short execution) — great for fast, small logic, not heavy work.
-                    Combined with hashed filenames + long cache TTLs, the edge makes global sites feel
+                    Combined with hashed filenames + long cache TTLs <span class="acro-exp">(Time To Live)</span>, the edge makes global sites feel
                     local.
                   </div>
                 </div>
@@ -1174,7 +1174,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="concept-desc">
                   <strong class="c-cyan">WebAssembly (Wasm)</strong> is a compact binary format that
                   runs at near-native speed in the browser. Compile C/C++/Rust/Go to Wasm and call it
-                  from JS for compute-heavy work.
+                  from JS <span class="acro-exp">(JavaScript)</span> for compute-heavy work.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -1184,7 +1184,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td class="c-cyan">Beyond the browser</td><td>Wasm + WASI as a portable, sandboxed runtime (edge, plugins)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
-                    <strong class="c-amber">Not a JS replacement:</strong> Wasm can't touch the DOM
+                    <strong class="c-amber">Not a JS replacement:</strong> Wasm can't touch the DOM <span class="acro-exp">(Document Object Model)</span>
                     directly and has call-overhead — reach for it for the hot compute path, not the
                     whole app. Its bigger future may be server-side: a fast, secure, language-agnostic
                     sandbox.
@@ -1207,7 +1207,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="concept-title">From Commit to Live</div>
                 <div class="concept-desc">
                   Modern frontend deploy is largely solved by platforms that build on every push and
-                  give each pull request its own preview URL. Understand the pipeline so you can debug
+                  give each pull request its own preview URL <span class="acro-exp">(Uniform Resource Locator)</span>. Understand the pipeline so you can debug
                   it — this static site uses exactly this flow (build script + CI + Netlify/Pages).
                 </div>
                 <div class="dw">
@@ -1239,7 +1239,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Concept</div>
-                <div class="concept-title">Frontend + API + DB, End to End</div>
+                <div class="concept-title">Frontend + API <span class="acro-exp">(Application Programming Interface)</span> + DB, End to End</div>
                 <div class="concept-desc">
                   Zooming out: a request flows through many layers you've now studied across the web,
                   data, cloud, and ops domains. Seeing the whole path is what makes you full-stack.
@@ -1250,7 +1250,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
    →  back up the stack as JSON  →  React renders</pre>
                   <table class="ref-table">
                     <tr><th>Layer</th><th>Studied in</th></tr>
-                    <tr><td class="c-cyan">UI &amp; state</td><td>web (frameworks, I4)</td></tr>
+                    <tr><td class="c-cyan">UI <span class="acro-exp">(User Interface)</span> &amp; state</td><td>web (frameworks, I4)</td></tr>
                     <tr><td class="c-cyan">API &amp; auth</td><td>web (I5), sec (OAuth)</td></tr>
                     <tr><td class="c-cyan">Data &amp; cache</td><td>data (H*), ops (caching)</td></tr>
                     <tr><td class="c-cyan">Deploy &amp; observe</td><td>ops, cloud domains</td></tr>

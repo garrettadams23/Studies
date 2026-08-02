@@ -27,7 +27,7 @@
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Why WAL:</strong> writing a tiny sequential log entry is
                     fast and safe; the actual (random) page write can happen later. On crash, replay
-                    the log to recover committed work. This one idea gives you the "D" in ACID and
+                    the log to recover committed work. This one idea gives you the "D" in ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span> and
                     underpins replication and point-in-time recovery.
                   </div>
                 </div>
@@ -65,7 +65,7 @@
                     not zero or empty. It uses <em>three-valued logic</em> — <code>NULL = NULL</code>
                     is not true but <code>NULL</code>, and <code>WHERE x = NULL</code> matches nothing
                     (use <code>IS NULL</code>). NULLs silently break naive comparisons, joins, and
-                    aggregates — the single most common SQL bug.
+                    aggregates — the single most common SQL <span class="acro-exp">(Structured Query Language)</span> bug.
                   </div>
                 </div>
               </div>
@@ -111,7 +111,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔒</span>
-              <span class="topic-name">ACID &amp; Transactions — Isolation Levels</span>
+              <span class="topic-name">ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span> &amp; Transactions — Isolation Levels</span>
               <span class="topic-badge">Foundations</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -157,7 +157,7 @@
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">Entities, Relationships &amp; Cardinality</div>
                 <div class="concept-desc">
-                  Before writing DDL, you model the domain: what things exist
+                  Before writing DDL <span class="acro-exp">(Data Definition Language)</span>, you model the domain: what things exist
                   (<strong class="c-cyan">entities</strong>), their
                   <strong class="c-cyan">attributes</strong>, and how they relate. An
                   <strong>entity-relationship diagram</strong> (crow's-foot notation) is the shared
@@ -184,7 +184,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔗</span>
-              <span class="topic-name">SQL Joins — Every Type, and the NULL Traps</span>
+              <span class="topic-name">SQL <span class="acro-exp">(Structured Query Language)</span> Joins — Every Type, and the NULL Traps</span>
               <span class="topic-badge">SQL</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -251,7 +251,7 @@
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Killer use:</strong> "top 3 earners per department" or
                     "each order vs the customer's previous order" — one query, no self-joins. Window
-                    functions are the single biggest jump from beginner to intermediate SQL.
+                    functions are the single biggest jump from beginner to intermediate SQL <span class="acro-exp">(Structured Query Language)</span>.
                   </div>
                 </div>
               </div>
@@ -261,7 +261,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🧱</span>
-              <span class="topic-name">CTEs &amp; Recursion — Readable, Composable Queries</span>
+              <span class="topic-name">CTEs <span class="acro-exp">(Common Table Expression)</span> &amp; Recursion — Readable, Composable Queries</span>
               <span class="topic-badge">SQL</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -365,7 +365,7 @@
                     <strong class="c-green">Prefer <code>EXISTS</code> over <code>NOT IN</code></strong>
                     whenever the inner column can be NULL — <code>NOT IN (…NULL…)</code> returns
                     nothing, a famously silent bug. Many subqueries also rewrite cleanly as joins or
-                    CTEs; pick whichever reads clearest.
+                    CTEs <span class="acro-exp">(Common Table Expression)</span>; pick whichever reads clearest.
                   </div>
                 </div>
               </div>
@@ -420,7 +420,7 @@
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">Ask the Database What It's Doing</div>
                 <div class="concept-desc">
-                  The optimizer turns your SQL into a physical plan. <code>EXPLAIN</code> shows that
+                  The optimizer turns your SQL <span class="acro-exp">(Structured Query Language)</span> into a physical plan. <code>EXPLAIN</code> shows that
                   plan; <code>EXPLAIN ANALYZE</code> actually runs it and shows real timings and row
                   counts. Reading plans is <em>the</em> core skill for fixing slow queries.
                 </div>
@@ -565,7 +565,7 @@
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">The Swiss-Army Relational Database</div>
                 <div class="concept-desc">
-                  <strong class="c-cyan">PostgreSQL</strong> has become the default open-source RDBMS:
+                  <strong class="c-cyan">PostgreSQL</strong> has become the default open-source RDBMS <span class="acro-exp">(Relational Database Management System)</span>:
                   standards-compliant, extensible, rock-solid, and free. If you're starting a project
                   and don't have a specific reason not to, reach for Postgres.
                 </div>
@@ -600,7 +600,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">More Than Rows and Columns</div>
                 <div class="concept-desc">
-                  Postgres blurs the line with NoSQL: store and index JSON documents, arrays, and
+                  Postgres blurs the line with NoSQL: store and index JSON <span class="acro-exp">(JavaScript Object Notation)</span> documents, arrays, and
                   run full-text search — often removing the need for a separate datastore.
                 </div>
                 <div class="dw">
@@ -651,7 +651,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><td class="c-cyan">InnoDB engine</td><td>The default — transactional, row-locking, FKs</td></tr>
                     <tr><td class="c-cyan">Default isolation</td><td>Repeatable Read (Postgres uses Read Committed)</td></tr>
                     <tr><td class="c-amber">Collation/charset</td><td>Use <code>utf8mb4</code> — plain <code>utf8</code> is a 3-byte trap</td></tr>
-                    <tr><td class="c-amber">Looser SQL</td><td>Historically permissive; enable strict mode</td></tr>
+                    <tr><td class="c-amber">Looser SQL <span class="acro-exp">(Structured Query Language)</span></td><td>Historically permissive; enable strict mode</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Choosing:</strong> Postgres for richer features &amp;
@@ -742,7 +742,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Concept</div>
-                <div class="concept-title">Not "No SQL" — "Not Only SQL"</div>
+                <div class="concept-title">Not "No SQL <span class="acro-exp">(Structured Query Language)</span>" — "Not Only SQL"</div>
                 <div class="concept-desc">
                   NoSQL databases relax the relational model to gain scale, flexibility, or a shape
                   that fits a specific access pattern. They usually trade strong consistency and rich
@@ -793,7 +793,7 @@ db.orders.<span class="fn">aggregate</span>([
                   <div class="concept-desc">
                     <strong class="c-green">Schema design:</strong> model around access patterns —
                     embed data you read together, reference data you read separately. Add indexes
-                    just like SQL. Modern Mongo has ACID multi-document transactions, but they signal
+                    just like SQL <span class="acro-exp">(Structured Query Language)</span>. Modern Mongo has ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span> multi-document transactions, but they signal
                     you may have wanted relational.
                   </div>
                   <div class="concept-desc" style="margin-top:6px">
@@ -818,7 +818,7 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">Data Structures at Memory Speed</div>
                 <div class="concept-desc">
-                  <strong class="c-cyan">Redis</strong> keeps data in RAM, making it microsecond-fast.
+                  <strong class="c-cyan">Redis</strong> keeps data in RAM <span class="acro-exp">(Random Access Memory)</span>, making it microsecond-fast.
                   It's not just a cache — it offers real data structures and is the go-to for caching,
                   sessions, rate limiting, queues, and leaderboards.
                 </div>
@@ -833,7 +833,7 @@ db.orders.<span class="fn">aggregate</span>([
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Caching patterns:</strong> cache-aside (check Redis, miss →
-                    DB → populate) is most common; always set a <strong class="c-green">TTL</strong>
+                    DB → populate) is most common; always set a <strong class="c-green">TTL <span class="acro-exp">(Time To Live)</span></strong>
                     and plan for cache invalidation. Persistence (RDB snapshots / AOF) means it can
                     survive restarts, but treat it as a fast layer, not the source of truth.
                   </div>
@@ -892,7 +892,7 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="concept-desc">
                   A graph database stores <strong class="c-cyan">nodes</strong> and
                   <strong class="c-cyan">relationships</strong> as first-class citizens. Questions
-                  that need many-hop joins in SQL ("friends of friends who like X") become natural,
+                  that need many-hop joins in SQL <span class="acro-exp">(Structured Query Language)</span> ("friends of friends who like X") become natural,
                   fast traversals.
                 </div>
                 <div class="dw">
@@ -919,7 +919,7 @@ db.orders.<span class="fn">aggregate</span>([
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">↔️</span>
-              <span class="topic-name">OLTP vs OLAP — Rows vs Columns</span>
+              <span class="topic-name">OLTP <span class="acro-exp">(Online Transaction Processing)</span> vs OLAP <span class="acro-exp">(Online Analytical Processing)</span> — Rows vs Columns</span>
               <span class="topic-badge">Analytics</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1006,7 +1006,7 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Approach</th><th>What it is</th></tr>
-                    <tr><td class="c-cyan">Data Warehouse</td><td>Structured, schema-on-write, SQL — Snowflake, BigQuery, Redshift</td></tr>
+                    <tr><td class="c-cyan">Data Warehouse</td><td>Structured, schema-on-write, SQL <span class="acro-exp">(Structured Query Language)</span> — Snowflake, BigQuery, Redshift</td></tr>
                     <tr><td class="c-cyan">Data Lake</td><td>Raw files (Parquet) in object storage, schema-on-read — cheap, flexible, messy</td></tr>
                     <tr><td class="c-cyan">Lakehouse</td><td>Lake storage + warehouse features (ACID, tables) via Delta/Iceberg/Hudi</td></tr>
                   </table>
@@ -1041,15 +1041,15 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Piece</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Metric definition</td><td>The canonical formula for a KPI, version-controlled</td></tr>
+                    <tr><td class="c-cyan">Metric definition</td><td>The canonical formula for a KPI <span class="acro-exp">(Key Performance Indicator)</span>, version-controlled</td></tr>
                     <tr><td class="c-cyan">Dimensions</td><td>How you slice it (time, region, plan)</td></tr>
                     <tr><td class="c-cyan">Governance</td><td>Certified vs experimental metrics</td></tr>
                     <tr><td class="c-cyan">Tools</td><td>dbt Semantic Layer, Cube, LookML</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
-                    The payoff: a single source of truth for business logic that BI tools, notebooks,
-                    and APIs all consume — no more "whose number is right?" meetings. It's the
-                    analytics equivalent of DRY.
+                    The payoff: a single source of truth for business logic that BI <span class="acro-exp">(Business Intelligence)</span> tools, notebooks,
+                    and APIs <span class="acro-exp">(Application Programming Interface)</span> all consume — no more "whose number is right?" meetings. It's the
+                    analytics equivalent of DRY <span class="acro-exp">(Don't Repeat Yourself)</span>.
                   </div>
                 </div>
               </div>
@@ -1085,7 +1085,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <strong class="c-green">Tools:</strong> dbt tests &amp; contracts, Great
                     Expectations, Soda; observability platforms (Monte Carlo) auto-detect anomalies.
                     <strong class="c-amber">Data contracts</strong> push the guarantee upstream to
-                    producers — the analytics equivalent of an API contract.
+                    producers — the analytics equivalent of an API <span class="acro-exp">(Application Programming Interface)</span> contract.
                   </div>
                 </div>
               </div>
@@ -1113,7 +1113,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><th>Type</th><th>Detail</th></tr>
                     <tr><td class="c-cyan">Logical dump</td><td><code>pg_dump</code>/<code>mysqldump</code> — portable, slow to restore, per-DB</td></tr>
                     <tr><td class="c-cyan">Physical backup</td><td>File-level (pgBackRest, Percona) — fast, whole cluster</td></tr>
-                    <tr><td class="c-cyan">PITR</td><td>Base backup + WAL archive → restore to an exact second</td></tr>
+                    <tr><td class="c-cyan">PITR</td><td>Base backup + WAL <span class="acro-exp">(Write-Ahead Log)</span> archive → restore to an exact second</td></tr>
                     <tr><td class="c-cyan">Snapshots</td><td>Cloud volume snapshots — fast but check consistency</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
@@ -1183,7 +1183,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><th>Tool / Idea</th><th>Detail</th></tr>
                     <tr><td class="c-cyan">Migration tools</td><td>Flyway, Liquibase, Alembic, Rails — versioned, ordered scripts</td></tr>
                     <tr><td class="c-cyan">Expand/contract</td><td>Add new → backfill → switch → remove old (multi-deploy)</td></tr>
-                    <tr><td class="c-red">Locking DDL</td><td>Some <code>ALTER</code>s rewrite/lock the table — check first</td></tr>
+                    <tr><td class="c-red">Locking DDL <span class="acro-exp">(Data Definition Language)</span></td><td>Some <code>ALTER</code>s rewrite/lock the table — check first</td></tr>
                     <tr><td class="c-green">Online tools</td><td>gh-ost, pt-online-schema-change for big MySQL tables</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
@@ -1218,14 +1218,14 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><th>Control</th><th>Detail</th></tr>
                     <tr><td class="c-cyan">Least-privilege roles</td><td>App user ≠ superuser; separate read/write/migration roles</td></tr>
                     <tr><td class="c-cyan">Row-Level Security</td><td>Postgres RLS — rows filtered by policy (multi-tenant isolation)</td></tr>
-                    <tr><td class="c-cyan">Encryption</td><td>TLS in transit; TDE / disk encryption at rest</td></tr>
+                    <tr><td class="c-cyan">Encryption</td><td>TLS <span class="acro-exp">(Transport Layer Security)</span> in transit; TDE <span class="acro-exp">(Transparent Data Encryption)</span> / disk encryption at rest</td></tr>
                     <tr><td class="c-cyan">Secrets</td><td>Rotate credentials via Vault/IAM; never hardcode</td></tr>
                     <tr><td class="c-cyan">Auditing</td><td>Log privileged actions &amp; access to sensitive tables</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
-                    <strong class="c-red">And of course:</strong> parameterized queries to stop SQL
+                    <strong class="c-red">And of course:</strong> parameterized queries to stop SQL <span class="acro-exp">(Structured Query Language)</span>
                     injection (the app's job), and network isolation so the DB is never internet-facing.
-                    Column-level encryption/masking protects PII even from DB admins.
+                    Column-level encryption/masking protects PII <span class="acro-exp">(Personally Identifiable Information)</span> even from DB admins.
                   </div>
                 </div>
               </div>
@@ -1245,7 +1245,7 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="concept-title">The Signals That Predict an Outage</div>
                 <div class="concept-desc">
                   Databases fail in fairly predictable ways. Watch the right handful of metrics and
-                  you catch trouble before users do — this is the ops side of the SRE golden signals,
+                  you catch trouble before users do — this is the ops side of the SRE <span class="acro-exp">(Site Reliability Engineering)</span> golden signals,
                   applied to data.
                 </div>
                 <div class="dw">
@@ -1253,10 +1253,10 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><th>Signal</th><th>Why</th></tr>
                     <tr><td class="c-cyan">Slow-query log</td><td>Find the queries actually hurting — start here</td></tr>
                     <tr><td class="c-cyan">Connections / saturation</td><td>Nearing <code>max_connections</code> → pool it</td></tr>
-                    <tr><td class="c-cyan">Cache hit ratio</td><td>Low buffer-pool hits → more RAM or better indexes</td></tr>
+                    <tr><td class="c-cyan">Cache hit ratio</td><td>Low buffer-pool hits → more RAM <span class="acro-exp">(Random Access Memory)</span> or better indexes</td></tr>
                     <tr><td class="c-cyan">Replication lag</td><td>Rising lag → stale reads, failover risk</td></tr>
                     <tr><td class="c-cyan">Bloat / vacuum (PG)</td><td>Dead tuples piling up → autovacuum tuning</td></tr>
-                    <tr><td class="c-cyan">Disk &amp; IOPS</td><td>Running out of space is a hard outage</td></tr>
+                    <tr><td class="c-cyan">Disk &amp; IOPS <span class="acro-exp">(Input/Output Operations Per Second)</span></td><td>Running out of space is a hard outage</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     <code>pg_stat_statements</code> (Postgres) and the Performance Schema (MySQL)
@@ -1277,7 +1277,7 @@ db.orders.<span class="fn">aggregate</span>([
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Reference</div>
-                <div class="concept-title">Analyst vs Engineer vs Scientist vs DBA</div>
+                <div class="concept-title">Analyst vs Engineer vs Scientist vs DBA <span class="acro-exp">(Database Administrator)</span></div>
                 <div class="concept-desc">
                   "Data" spans several distinct jobs that get conflated. Knowing the boundaries helps
                   you pick a lane — and know who to hire.
@@ -1285,10 +1285,10 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Role</th><th>Owns</th></tr>
-                    <tr><td class="c-cyan">Data Analyst</td><td>SQL + BI dashboards; answers business questions</td></tr>
+                    <tr><td class="c-cyan">Data Analyst</td><td>SQL <span class="acro-exp">(Structured Query Language)</span> + BI <span class="acro-exp">(Business Intelligence)</span> dashboards; answers business questions</td></tr>
                     <tr><td class="c-cyan">Analytics Engineer</td><td>dbt models &amp; the semantic layer (analyst + SWE practices)</td></tr>
                     <tr><td class="c-cyan">Data Engineer</td><td>Pipelines, ingestion, warehouses, infra (Kafka/Spark/Airflow)</td></tr>
-                    <tr><td class="c-cyan">Data Scientist</td><td>Statistics, experiments, ML models</td></tr>
+                    <tr><td class="c-cyan">Data Scientist</td><td>Statistics, experiments, ML <span class="acro-exp">(Machine Learning)</span> models</td></tr>
                     <tr><td class="c-cyan">ML Engineer</td><td>Productionizing models (MLOps)</td></tr>
                     <tr><td class="c-cyan">DBA</td><td>Runs &amp; tunes the operational databases</td></tr>
                   </table>
@@ -1325,12 +1325,12 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td class="c-cyan">3. Keys &amp; types</td><td>PKs, FKs, pick types &amp; constraints (money as decimal!)</td></tr>
                     <tr><td class="c-cyan">4. Normalize to 3NF</td><td>Each fact once; no update anomalies</td></tr>
                     <tr><td class="c-cyan">5. Index for access</td><td>Add indexes for the real queries</td></tr>
-                    <tr><td class="c-cyan">6. OLAP later</td><td>Star schema in the warehouse for reporting</td></tr>
+                    <tr><td class="c-cyan">6. OLAP <span class="acro-exp">(Online Analytical Processing)</span> later</td><td>Star schema in the warehouse for reporting</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Snapshot the price:</strong> an <code>OrderItem</code>
                     stores the price <em>at time of sale</em>, not a live FK to Product.price — a
-                    classic modeling insight. Design OLTP for correctness; derive OLAP from it.
+                    classic modeling insight. Design OLTP <span class="acro-exp">(Online Transaction Processing)</span> for correctness; derive OLAP from it.
                   </div>
                 </div>
               </div>
@@ -1349,7 +1349,7 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="concept-label">Concept</div>
                 <div class="concept-title">When Time Is the Primary Axis</div>
                 <div class="concept-desc">
-                  Metrics, logs, IoT readings, and financial ticks are append-heavy and queried by
+                  Metrics, logs, IoT <span class="acro-exp">(Internet of Things)</span> readings, and financial ticks are append-heavy and queried by
                   time window. Specialized handling keeps them fast and affordable as they grow
                   without bound.
                 </div>
@@ -1384,16 +1384,16 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="concept-label">Concept</div>
                 <div class="concept-title">Searching by Meaning, Not Keywords</div>
                 <div class="concept-desc">
-                  AI models turn text/images into <strong class="c-cyan">embeddings</strong> — vectors
+                  AI <span class="acro-exp">(Artificial Intelligence)</span> models turn text/images into <strong class="c-cyan">embeddings</strong> — vectors
                   where similar meaning = nearby points. A vector database indexes these for fast
-                  <strong class="c-cyan">nearest-neighbor</strong> search, the backbone of RAG and
+                  <strong class="c-cyan">nearest-neighbor</strong> search, the backbone of RAG <span class="acro-exp">(Retrieval-Augmented Generation)</span> and
                   semantic search.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Concept</th><th>Detail</th></tr>
                     <tr><td class="c-cyan">Embedding</td><td>A model maps content → a high-dimensional vector</td></tr>
-                    <tr><td class="c-cyan">ANN index</td><td>HNSW/IVF — approximate nearest-neighbor for speed</td></tr>
+                    <tr><td class="c-cyan">ANN <span class="acro-exp">(Artificial Neural Network)</span> index</td><td>HNSW/IVF — approximate nearest-neighbor for speed</td></tr>
                     <tr><td class="c-cyan">Similarity</td><td>Cosine / dot product ranks "closeness"</td></tr>
                     <tr><td class="c-cyan">Options</td><td>pgvector, Pinecone, Weaviate, Qdrant, Milvus</td></tr>
                   </table>
@@ -1426,10 +1426,10 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Round</th><th>Prep</th></tr>
-                    <tr><td class="c-cyan">SQL</td><td>Joins, window functions, group-by, "second highest salary"-style puzzles</td></tr>
+                    <tr><td class="c-cyan">SQL <span class="acro-exp">(Structured Query Language)</span></td><td>Joins, window functions, group-by, "second highest salary"-style puzzles</td></tr>
                     <tr><td class="c-cyan">Data modeling</td><td>Design a schema for X; normalize; star schema for analytics</td></tr>
                     <tr><td class="c-cyan">Pipeline / system design</td><td>Ingest → store → transform → serve; batch vs streaming</td></tr>
-                    <tr><td class="c-cyan">Warehousing</td><td>OLTP vs OLAP, SCDs, dbt, incremental models</td></tr>
+                    <tr><td class="c-cyan">Warehousing</td><td>OLTP <span class="acro-exp">(Online Transaction Processing)</span> vs OLAP <span class="acro-exp">(Online Analytical Processing)</span>, SCDs, dbt, incremental models</td></tr>
                     <tr><td class="c-cyan">Case / product sense</td><td>Define a metric, debug a dashboard drop</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">

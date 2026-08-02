@@ -8,11 +8,11 @@
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Reference</div>
-                <div class="concept-title">ConfigMgr / SCCM — What It Is &amp; Where It Fits</div>
+                <div class="concept-title">ConfigMgr / SCCM <span class="acro-exp">(System Center Configuration Manager)</span> — What It Is &amp; Where It Fits</div>
                 <div class="concept-desc">
                   <strong class="c-cyan">MECM</strong> (formerly SCCM, universally called
                   <em>ConfigMgr</em>) is Microsoft's on-premises platform for managing Windows (and
-                  some Linux/macOS/servers) at scale: application deployment, patching, OS imaging,
+                  some Linux/macOS/servers) at scale: application deployment, patching, OS <span class="acro-exp">(Operating System)</span> imaging,
                   hardware/software inventory, and compliance. It ships in the
                   <strong>Current Branch</strong> model — a new feature release roughly three times a
                   year (e.g. <code>2403</code> = 2024, March), applied in-console.
@@ -23,7 +23,7 @@
                     <tr><td class="c-cyan">Deep OS deployment</td><td>Full bare-metal imaging &amp; task sequences Intune can't match</td></tr>
                     <tr><td class="c-cyan">Bandwidth control</td><td>On-prem DPs, peer caching for large/branch fleets</td></tr>
                     <tr><td class="c-cyan">Granular software dist.</td><td>Complex app models, supersedence, dependencies</td></tr>
-                    <tr><td class="c-cyan">Mature reporting</td><td>SQL Reporting Services, rich inventory</td></tr>
+                    <tr><td class="c-cyan">Mature reporting</td><td>SQL <span class="acro-exp">(Structured Query Language)</span> Reporting Services, rich inventory</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">The direction of travel</strong> is cloud: most orgs now
@@ -53,10 +53,10 @@
                   <table class="ref-table" style="margin-top:8px">
                     <tr><th>Site system role</th><th>Job</th></tr>
                     <tr><td class="c-cyan">Site database (SQL)</td><td>Everything — config, inventory, status</td></tr>
-                    <tr><td class="c-cyan">SMS Provider</td><td>WMI layer the console talks through</td></tr>
+                    <tr><td class="c-cyan">SMS Provider</td><td>WMI <span class="acro-exp">(Windows Management Instrumentation)</span> layer the console talks through</td></tr>
                     <tr><td class="c-cyan">Management Point (MP)</td><td>Primary client ↔ site channel (policy, inventory)</td></tr>
                     <tr><td class="c-cyan">Distribution Point (DP)</td><td>Hosts &amp; serves content</td></tr>
-                    <tr><td class="c-cyan">Software Update Point (SUP)</td><td>Sits on WSUS; drives patching</td></tr>
+                    <tr><td class="c-cyan">Software Update Point (SUP)</td><td>Sits on WSUS <span class="acro-exp">(Windows Server Update Services)</span>; drives patching</td></tr>
                     <tr><td class="c-cyan">Cloud Management Gateway (CMG)</td><td>Manage internet-based clients via Azure (no VPN)</td></tr>
                     <tr><td class="c-cyan">Reporting Services Point</td><td>SSRS reports</td></tr>
                     <tr><td class="c-cyan">Fallback Status Point (FSP)</td><td>Collects client install/health state</td></tr>
@@ -78,7 +78,7 @@
                   <table class="ref-table">
                     <tr><th>Install method</th><th>Notes</th></tr>
                     <tr><td class="c-cyan">Client push</td><td>Site pushes to discovered devices (needs push account + firewall)</td></tr>
-                    <tr><td class="c-cyan">GPO / logon script</td><td>Classic mass deployment</td></tr>
+                    <tr><td class="c-cyan">GPO <span class="acro-exp">(Group Policy Object)</span> / logon script</td><td>Classic mass deployment</td></tr>
                     <tr><td class="c-cyan">Software update-based</td><td>Client delivered as an "update" via WSUS</td></tr>
                     <tr><td class="c-cyan">Intune / co-mgmt (ccmsetup)</td><td>Push the client as a Win32 app during Autopilot</td></tr>
                   </table>
@@ -108,7 +108,7 @@
                     <tr><td class="c-cyan">Content library</td><td>Single-instance store of all distributed content on a DP</td></tr>
                     <tr><td class="c-cyan">Pull DP</td><td>A DP that pulls content from another DP (scale-out)</td></tr>
                     <tr><td class="c-cyan">Peer Cache</td><td>Clients serve content to peers on the same subnet</td></tr>
-                    <tr><td class="c-cyan">BranchCache / Delivery Optimization</td><td>Peer-to-peer to cut WAN usage</td></tr>
+                    <tr><td class="c-cyan">BranchCache / Delivery Optimization</td><td>Peer-to-peer to cut WAN <span class="acro-exp">(Wide Area Network)</span> usage</td></tr>
                     <tr><td class="c-cyan">Prestaged content</td><td>Ship content on disk to a slow-link DP</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
@@ -132,7 +132,7 @@
                     <tr><th>Workload</th><th>Key pieces</th></tr>
                     <tr><td class="c-cyan">Applications</td><td>Deployment types + <strong>detection method</strong> + requirement rules + supersedence; purpose <em>Available</em> (Software Center) or <em>Required</em> (enforced by deadline)</td></tr>
                     <tr><td class="c-cyan">Software Updates</td><td>SUP scan → deploy manually or via <strong>ADR</strong> (Automatic Deployment Rule) that grabs each Patch Tuesday into a deployment package</td></tr>
-                    <tr><td class="c-cyan">OS Deployment (OSD)</td><td><strong>Task sequence</strong>: boot image (WinPE) → partition → apply WIM → drivers → join (AD/Entra) → apps</td></tr>
+                    <tr><td class="c-cyan">OS Deployment (OSD)</td><td><strong>Task sequence</strong>: boot image (WinPE) → partition → apply WIM <span class="acro-exp">(Windows Imaging Format)</span> → drivers → join (AD/Entra) → apps</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Detection method</strong> is the make-or-break of app
@@ -151,7 +151,7 @@
                   ConfigMgr troubleshooting <em>is</em> log reading. Open logs with
                   <strong class="c-cyan">CMTrace</strong> (ships in the client; live-tails and
                   highlights errors). Client logs live in
-                  <code>C:\Windows\CCM\Logs</code>; during OSD, in <code>X:\Windows\Temp\SMSTSLog</code>
+                  <code>C:\Windows\CCM\Logs</code>; during OSD <span class="acro-exp">(Operating System Deployment)</span>, in <code>X:\Windows\Temp\SMSTSLog</code>
                   then <code>C:\_SMSTaskSequence</code>.
                 </div>
                 <div class="dw">
@@ -173,7 +173,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🪪</span>
-              <span class="topic-name">Azure AD / Microsoft Entra ID — Endpoint Identity</span>
+              <span class="topic-name">Azure AD <span class="acro-exp">(Active Directory)</span> / Microsoft Entra ID — Endpoint Identity</span>
               <span class="topic-badge">Identity</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -185,7 +185,7 @@
                   <strong class="c-cyan">Microsoft Entra ID</strong> (formerly Azure AD) is the cloud
                   directory behind Microsoft 365 and Intune. Every managed device gets a
                   <strong>device object</strong> in Entra; how it obtains that identity (its
-                  <em>join type</em>) determines which management, SSO, and Conditional Access
+                  <em>join type</em>) determines which management, SSO <span class="acro-exp">(Single Sign-On)</span>, and Conditional Access
                   experiences are possible.
                 </div>
                 <div class="dw">
@@ -230,18 +230,18 @@ dsregcmd /status
 
               <div class="concept-card">
                 <div class="concept-label">Reference</div>
-                <div class="concept-title">MDM Authority &amp; Automatic Enrollment</div>
+                <div class="concept-title">MDM <span class="acro-exp">(Mobile Device Management)</span> Authority &amp; Automatic Enrollment</div>
                 <div class="concept-desc">
                   Entra is where devices are told to enroll. Under
                   <strong class="c-cyan">Entra → Mobility (MDM and MAM) → Microsoft Intune</strong>
                   you set the <strong>MDM user scope</strong> (which users' devices auto-enroll on
-                  Entra join) and the MAM scope.
+                  Entra join) and the MAM <span class="acro-exp">(Mobile Application Management)</span> scope.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Setting</th><th>Effect</th></tr>
                     <tr><td class="c-cyan">MDM user scope = All / Some</td><td>Devices those users join auto-enroll into Intune</td></tr>
-                    <tr><td class="c-cyan">MAM user scope</td><td>App-level (MAM) enrollment for BYOD without full MDM</td></tr>
+                    <tr><td class="c-cyan">MAM user scope</td><td>App-level (MAM) enrollment for BYOD <span class="acro-exp">(Bring Your Own Device)</span> without full MDM</td></tr>
                     <tr><td class="c-cyan">Dynamic device groups</td><td>Membership by rule (OS, ownership, enrollment profile) → drives targeting everywhere</td></tr>
                     <tr><td class="c-cyan">Device categories</td><td>Auto-place devices into groups at enrollment</td></tr>
                   </table>
@@ -258,7 +258,7 @@ dsregcmd /status
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">☁️</span>
-              <span class="topic-name">Microsoft Intune — Cloud MDM &amp; MAM</span>
+              <span class="topic-name">Microsoft Intune — Cloud MDM <span class="acro-exp">(Mobile Device Management)</span> &amp; MAM <span class="acro-exp">(Mobile Application Management)</span></span>
               <span class="topic-badge">Cloud MDM</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -271,17 +271,17 @@ dsregcmd /status
                   <code>intune.microsoft.com</code>) manages devices (<strong>MDM</strong>) and apps
                   (<strong>MAM</strong>) across Windows, macOS, iOS/iPadOS, Android, and Linux — no
                   on-prem infrastructure. Admin scoping uses
-                  <strong class="c-cyan">RBAC roles</strong> + <strong>scope tags</strong> (limit which
+                  <strong class="c-cyan">RBAC <span class="acro-exp">(Role-Based Access Control)</span> roles</strong> + <strong>scope tags</strong> (limit which
                   admins see which objects/devices).
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Object</th><th>Does</th></tr>
                     <tr><td class="c-cyan">Compliance policy</td><td>Defines "healthy" (BitLocker on, min OS, Defender, not jailbroken) → feeds Conditional Access</td></tr>
-                    <tr><td class="c-cyan">Configuration profile</td><td>Settings Catalog, ADMX templates (GPO-equivalent), custom OMA-URI</td></tr>
-                    <tr><td class="c-cyan">Apps</td><td>Win32, MSI/LOB, Store, web link, iOS/Android store &amp; VPP</td></tr>
+                    <tr><td class="c-cyan">Configuration profile</td><td>Settings Catalog, ADMX <span class="acro-exp">(Administrative Template)</span> templates (GPO-equivalent), custom OMA-URI <span class="acro-exp">(Open Mobile Alliance Uniform Resource Identifier)</span></td></tr>
+                    <tr><td class="c-cyan">Apps</td><td>Win32, MSI/LOB, Store, web link, iOS/Android store &amp; VPP <span class="acro-exp">(Volume Purchase Program)</span></td></tr>
                     <tr><td class="c-cyan">App Protection Policy (APP/MAM)</td><td>Protect data <em>inside</em> apps without enrolling the device</td></tr>
-                    <tr><td class="c-cyan">Endpoint security</td><td>AV, ASR, disk encryption, firewall, EDR onboarding</td></tr>
+                    <tr><td class="c-cyan">Endpoint security</td><td>AV, ASR, disk encryption, firewall, EDR <span class="acro-exp">(Endpoint Detection and Response)</span> onboarding</td></tr>
                   </table>
                 </div>
               </div>
@@ -296,11 +296,11 @@ dsregcmd /status
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Platform</th><th>Corporate</th><th>BYOD</th></tr>
+                    <tr><th>Platform</th><th>Corporate</th><th>BYOD <span class="acro-exp">(Bring Your Own Device)</span></th></tr>
                     <tr><td class="c-cyan">Windows</td><td>Autopilot / Entra join + auto-enroll / co-mgmt</td><td>Company Portal (Add work account)</td></tr>
                     <tr><td class="c-cyan">iOS/iPadOS</td><td>Apple Business Manager (ADE) + enrollment profile</td><td>Company Portal + APP</td></tr>
                     <tr><td class="c-cyan">Android</td><td>Android Enterprise (fully managed / dedicated)</td><td>Work profile</td></tr>
-                    <tr><td class="c-cyan">macOS</td><td>ABM / ADE, or Company Portal</td><td>Company Portal</td></tr>
+                    <tr><td class="c-cyan">macOS</td><td>ABM <span class="acro-exp">(Apple Business Manager)</span> / ADE, or Company Portal</td><td>Company Portal</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-green">Filters vs groups:</strong> use groups for <em>who</em>,
@@ -350,7 +350,7 @@ IntuneWinAppUtil.exe <span class="var">-c</span> <span class="str">"C:\Source"</
                   <table class="ref-table">
                     <tr><th>Area</th><th>Detail</th></tr>
                     <tr><td class="c-cyan">Settings Catalog</td><td>The modern way to configure almost anything — thousands of settings, per-setting search</td></tr>
-                    <tr><td class="c-cyan">ADMX-backed profiles</td><td>Bring familiar GPO ADMX settings to MDM</td></tr>
+                    <tr><td class="c-cyan">ADMX-backed profiles</td><td>Bring familiar GPO <span class="acro-exp">(Group Policy Object)</span> ADMX settings to MDM</td></tr>
                     <tr><td class="c-cyan">Compliance policy</td><td>Health rules + <em>actions for noncompliance</em> (grace period, email, retire)</td></tr>
                     <tr><td class="c-cyan">Update rings (WUfB)</td><td>Windows Update for Business — deferrals, deadlines, active hours (ring 1 pilot → broad)</td></tr>
                     <tr><td class="c-cyan">Feature update policy</td><td>Pin/roll a target Windows feature version</td></tr>
@@ -383,7 +383,7 @@ IntuneWinAppUtil.exe <span class="var">-c</span> <span class="str">"C:\Source"</
                   experience (OOBE) so a factory device configures itself for your org — no imaging,
                   no touching it in IT. The device's hardware identity is pre-registered to your
                   tenant; at first boot it recognizes itself, Entra-joins, enrolls in Intune, and
-                  applies your apps/policies through the ESP.
+                  applies your apps/policies through the ESP <span class="acro-exp">(Enrollment Status Page)</span>.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -443,7 +443,7 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-amber">Sequence:</strong> power on → network → OOBE fetches the
-                    Autopilot profile → branded Entra sign-in → Entra join → auto MDM enroll →
+                    Autopilot profile → branded Entra sign-in → Entra join → auto MDM <span class="acro-exp">(Mobile Device Management)</span> enroll →
                     <strong class="c-green">ESP</strong> installs device- &amp; user-targeted content →
                     desktop. Requires internet + a supported Windows edition (Pro/Enterprise/Edu).
                   </div>
@@ -487,7 +487,7 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Phase</th><th>Runs</th><th>Tracks</th></tr>
-                    <tr><td class="c-cyan">Device preparation</td><td>Pre-sign-in</td><td>TPM attestation (self-deploy), Entra join, Intune enrollment</td></tr>
+                    <tr><td class="c-cyan">Device preparation</td><td>Pre-sign-in</td><td>TPM <span class="acro-exp">(Trusted Platform Module)</span> attestation (self-deploy), Entra join, Intune enrollment</td></tr>
                     <tr><td class="c-cyan">Device setup</td><td>Pre-sign-in</td><td>Device-targeted apps, policies, certificates, security</td></tr>
                     <tr><td class="c-cyan">Account setup</td><td>After user signs in</td><td>User-targeted apps &amp; policies</td></tr>
                   </table>
@@ -571,7 +571,7 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
                     <tr><th>Workload slider</th><th>When moved to Intune…</th></tr>
                     <tr><td class="c-cyan">Compliance policies</td><td>Intune evaluates device health</td></tr>
                     <tr><td class="c-cyan">Device configuration</td><td>Intune profiles apply settings</td></tr>
-                    <tr><td class="c-cyan">Windows Update policies</td><td>WUfB rings drive patching</td></tr>
+                    <tr><td class="c-cyan">Windows Update policies</td><td>WUfB <span class="acro-exp">(Windows Update for Business)</span> rings drive patching</td></tr>
                     <tr><td class="c-cyan">Endpoint Protection</td><td>Intune manages Defender/ASR</td></tr>
                     <tr><td class="c-cyan">Resource access / Office / Client apps</td><td>Intune delivers profiles &amp; apps</td></tr>
                   </table>
@@ -584,13 +584,13 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
 
               <div class="concept-card">
                 <div class="concept-label">Reference</div>
-                <div class="concept-title">Cloud Attach, Tenant Attach &amp; the CMG</div>
+                <div class="concept-title">Cloud Attach, Tenant Attach &amp; the CMG <span class="acro-exp">(Cloud Management Gateway)</span></div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Feature</th><th>What it gives you</th></tr>
                     <tr><td class="c-cyan">Tenant attach</td><td>Surface ConfigMgr devices in the Intune admin center; run actions/scripts from the cloud (low effort, no client change)</td></tr>
                     <tr><td class="c-cyan">Co-management</td><td>Full dual management + workload migration (client must be Entra-joined/registered + enrolled)</td></tr>
-                    <tr><td class="c-cyan">Cloud Management Gateway (CMG)</td><td>Manage internet-based ConfigMgr clients through Azure — no VPN, no inbound firewall</td></tr>
+                    <tr><td class="c-cyan">Cloud Management Gateway (CMG)</td><td>Manage internet-based ConfigMgr clients through Azure — no VPN <span class="acro-exp">(Virtual Private Network)</span>, no inbound firewall</td></tr>
                     <tr><td class="c-cyan">Cloud DP (in CMG)</td><td>Serve content to remote clients from Azure</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
@@ -647,7 +647,7 @@ Conditional Access reads it  ──▶  Grant (compliant OR Entra-joined) / Bloc
                     <tr><td class="c-cyan">Users/groups</td><td>All users, exclude break-glass admins</td></tr>
                     <tr><td class="c-cyan">Target resources</td><td>Office 365, a specific app, all cloud apps</td></tr>
                     <tr><td class="c-cyan">Conditions</td><td>Device platform, location, client app, <strong>sign-in risk</strong> (P2)</td></tr>
-                    <tr><td class="c-cyan">Grant controls</td><td>Require MFA, <strong>require compliant device</strong>, require Entra hybrid join, require app protection policy</td></tr>
+                    <tr><td class="c-cyan">Grant controls</td><td>Require MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, <strong>require compliant device</strong>, require Entra hybrid join, require app protection policy</td></tr>
                     <tr><td class="c-cyan">Session controls</td><td>App-enforced restrictions, sign-in frequency</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
@@ -690,7 +690,7 @@ MdmDiagnosticsTool.exe <span class="var">-area</span> <span class="str">"Autopil
                   <table class="ref-table">
                     <tr><th>Source</th><th>Use</th></tr>
                     <tr><td class="c-cyan">Event Viewer → Apps &amp; Services → Microsoft → Windows → <em>DeviceManagement-Enterprise-Diagnostics-Provider</em></td><td>The Intune/MDM log — enrollment, policy, app results</td></tr>
-                    <tr><td class="c-cyan">Registry <code>HKLM\SOFTWARE\Microsoft\Provisioning</code></td><td>Autopilot profile &amp; ESP state</td></tr>
+                    <tr><td class="c-cyan">Registry <code>HKLM\SOFTWARE\Microsoft\Provisioning</code></td><td>Autopilot profile &amp; ESP <span class="acro-exp">(Enrollment Status Page)</span> state</td></tr>
                     <tr><td class="c-cyan"><code>%ProgramData%\Microsoft\IntuneManagementExtension\Logs</code></td><td>Win32 app &amp; PowerShell-script (IME) logs</td></tr>
                     <tr><td class="c-cyan">ConfigMgr <code>C:\Windows\CCM\Logs</code> + CMTrace</td><td>Co-managed/ConfigMgr client</td></tr>
                     <tr><td class="c-cyan">Intune admin center → Troubleshooting + Reports</td><td>Per-user/device view, policy &amp; app status, device diagnostics upload</td></tr>
@@ -728,9 +728,9 @@ MdmDiagnosticsTool.exe <span class="var">-area</span> <span class="str">"Autopil
                     <tr><td class="c-cyan">WMI</td><td><strong>Windows Management Instrumentation</strong> — the local management data layer. ConfigMgr's console talks to the site through the <em>SMS Provider</em> over WMI; the client stores state &amp; inventory in the <code>root\ccm</code> and <code>root\cimv2</code> namespaces (query with <code>wbemtest</code> / <code>Get-CimInstance</code>)</td></tr>
                     <tr><td class="c-cyan">OSD</td><td><strong>Operating System Deployment</strong> — ConfigMgr's imaging feature: build &amp; capture, then deploy Windows via a <em>task sequence</em> (WinPE boot image → apply WIM → drivers → join → apps)</td></tr>
                     <tr><td class="c-cyan">CCM</td><td>The <strong>Configuration Manager client</strong>. Lives in <code>C:\Windows\CCM</code>, runs as the <code>CcmExec</code> service, WMI namespace <code>root\ccm</code>, cache at <code>C:\Windows\ccmcache</code></td></tr>
-                    <tr><td class="c-cyan">MDM</td><td><strong>Mobile Device Management</strong> — the cloud management channel (Intune) using the OMA-DM protocol over HTTPS; the modern alternative to the ConfigMgr agent</td></tr>
-                    <tr><td class="c-cyan">HKCU</td><td><strong>HKEY_CURRENT_USER</strong> — the registry hive for the signed-in user's settings (vs <code>HKLM</code> = machine-wide). Per-user policy, ADMX user settings, and app config live here</td></tr>
-                    <tr><td class="c-cyan">dsregcmd</td><td>Built-in Windows tool for <strong>device registration</strong> state. <code>dsregcmd /status</code> shows AzureAdJoined, DomainJoined, the PRT, and MDM enrollment URLs — the first check for join/SSO/enrollment issues</td></tr>
+                    <tr><td class="c-cyan">MDM</td><td><strong>Mobile Device Management</strong> — the cloud management channel (Intune) using the OMA-DM protocol over HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span>; the modern alternative to the ConfigMgr agent</td></tr>
+                    <tr><td class="c-cyan">HKCU</td><td><strong>HKEY_CURRENT_USER</strong> — the registry hive for the signed-in user's settings (vs <code>HKLM</code> = machine-wide). Per-user policy, ADMX <span class="acro-exp">(Administrative Template)</span> user settings, and app config live here</td></tr>
+                    <tr><td class="c-cyan">dsregcmd</td><td>Built-in Windows tool for <strong>device registration</strong> state. <code>dsregcmd /status</code> shows AzureAdJoined, DomainJoined, the PRT, and MDM enrollment URLs <span class="acro-exp">(Uniform Resource Locator)</span> — the first check for join/SSO/enrollment issues</td></tr>
                   </table>
                 </div>
               </div>
@@ -777,7 +777,7 @@ MdmDiagnosticsTool.exe <span class="var">-area</span> <span class="str">"Autopil
                     <tr><td class="c-cyan">SMSTSPersistContent</td><td>Persists content in the <strong>task-sequence working cache</strong> (<code>_SMSTaskSequence</code>) for the duration of the sequence, so it survives reboots between steps</td></tr>
                     <tr><td class="c-cyan">SMSTSDownloadRetryCount</td><td>How many times the client <strong>retries</strong> a failed content download (default 2) — raise it on flaky/slow links</td></tr>
                     <tr><td class="c-cyan">SMSTSDownloadRetryDelay</td><td>Seconds to <strong>wait between</strong> download retries (default 15) — pair with the count above for unreliable networks</td></tr>
-                    <tr><td class="c-cyan">SMSTSLocalDataDrive</td><td>Chooses the <strong>drive</strong> where the TS stores its temp working files &amp; logs (the <code>_SMSTaskSequence</code> folder) — set it before content downloads to avoid X:\ (RAM) space issues in WinPE</td></tr>
+                    <tr><td class="c-cyan">SMSTSLocalDataDrive</td><td>Chooses the <strong>drive</strong> where the TS stores its temp working files &amp; logs (the <code>_SMSTaskSequence</code> folder) — set it before content downloads to avoid X:\ (RAM) space issues in WinPE <span class="acro-exp">(Windows Preinstallation Environment)</span></td></tr>
                     <tr><td class="c-cyan">SMSTSPeerDownload</td><td>Enables/allows the TS to pull content from <strong>peers</strong> (Windows PE Peer Cache / peer sources) rather than a DP — <code>TRUE</code>/<code>FALSE</code></td></tr>
                     <tr><td class="c-cyan">SMSTSDownloadProgram</td><td>Specifies an <strong>Alternate Content Provider (ACP)</strong> — a custom download program (e.g. third-party peer-to-peer like Nomad/Adaptiva) used instead of the built-in downloader</td></tr>
                   </table>

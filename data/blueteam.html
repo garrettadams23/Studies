@@ -10,9 +10,9 @@
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">See Exactly What's on the Wire</div>
                 <div class="concept-desc">
-                  Wireshark is the standard GUI protocol analyzer — capture live traffic or open a
+                  Wireshark is the standard GUI <span class="acro-exp">(Graphical User Interface)</span> protocol analyzer — capture live traffic or open a
                   <code>.pcap</code> and inspect every packet, field by field. It's how you confirm
-                  what actually happened: a failed handshake, plaintext credentials, C2 beaconing,
+                  what actually happened: a failed handshake, plaintext credentials, C2 <span class="acro-exp">(Command and Control)</span> beaconing,
                   or a malformed exploit. The skill is <strong class="c-cyan">display filters</strong>
                   — cutting millions of packets down to the ten that matter.
                 </div>
@@ -22,15 +22,15 @@
                     <tr><th>Filter</th><th>Shows</th></tr>
                     <tr><td><code>ip.addr == 10.0.0.5</code></td><td>Traffic to/from a host</td></tr>
                     <tr><td><code>tcp.port == 443</code></td><td>A specific port</td></tr>
-                    <tr><td><code>http.request.method == "POST"</code></td><td>HTTP POSTs</td></tr>
+                    <tr><td><code>http.request.method == "POST"</code></td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> POSTs</td></tr>
                     <tr><td><code>tcp.flags.syn == 1 &amp;&amp; tcp.flags.ack == 0</code></td><td>Bare SYNs (scans)</td></tr>
-                    <tr><td><code>dns.qry.name contains "evil"</code></td><td>Suspicious DNS lookups</td></tr>
+                    <tr><td><code>dns.qry.name contains "evil"</code></td><td>Suspicious DNS <span class="acro-exp">(Domain Name System)</span> lookups</td></tr>
                     <tr><td><code>tcp.analysis.retransmission</code></td><td>Network trouble</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Workflow:</strong> Statistics → Conversations to find
-                    the top talkers, then right-click → <strong>Follow → TCP Stream</strong> to
-                    reassemble a full session into readable text. <code>tshark</code> is the CLI
+                    the top talkers, then right-click → <strong>Follow → TCP <span class="acro-exp">(Transmission Control Protocol)</span> Stream</strong> to
+                    reassemble a full session into readable text. <code>tshark</code> is the CLI <span class="acro-exp">(Command Line Interface)</span>
                     version for scripting/large captures.
                   </div>
                 </div>
@@ -50,7 +50,7 @@
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">The Capture Tool That's Already Installed</div>
                 <div class="concept-desc">
-                  When there's no GUI — a server, a firewall, a container — <strong class="c-cyan">tcpdump</strong>
+                  When there's no GUI <span class="acro-exp">(Graphical User Interface)</span> — a server, a firewall, a container — <strong class="c-cyan">tcpdump</strong>
                   captures packets from the terminal using BPF (Berkeley Packet Filter) syntax.
                   Grab a capture on the box, then move the <code>.pcap</code> to Wireshark for
                   analysis. Every defender needs this in muscle memory.
@@ -88,7 +88,7 @@
                   (formerly Bro) instead watches traffic and writes rich, structured
                   <strong>logs</strong> — one per protocol: <code>conn.log</code>, <code>dns.log</code>,
                   <code>http.log</code>, <code>ssl.log</code>, <code>files.log</code>, <code>notice.log</code>.
-                  It turns raw traffic into queryable evidence and is the backbone of many SOCs and
+                  It turns raw traffic into queryable evidence and is the backbone of many SOCs <span class="acro-exp">(Security Operations Center)</span> and
                   Corelight sensors.
                 </div>
                 <div class="dw">
@@ -96,13 +96,13 @@
                     <tr><th>Log</th><th>Answers</th></tr>
                     <tr><td><code>conn.log</code></td><td>Who talked to whom, how long, how many bytes</td></tr>
                     <tr><td><code>dns.log</code></td><td>Every query &amp; response (catch DGA / tunneling)</td></tr>
-                    <tr><td><code>ssl.log / x509.log</code></td><td>TLS certs &amp; JA3 fingerprints</td></tr>
+                    <tr><td><code>ssl.log / x509.log</code></td><td>TLS <span class="acro-exp">(Transport Layer Security)</span> certs &amp; JA3 fingerprints</td></tr>
                     <tr><td><code>files.log</code></td><td>Files seen crossing the wire (with hashes)</td></tr>
                     <tr><td><code>notice.log</code></td><td>Zeek's own alerts from its scripts</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Zeek's scripting language lets you write custom detections — e.g. flag a host
-                    that makes 10,000 DNS queries an hour (tunneling) or long-lived beacons with
+                    that makes 10,000 DNS <span class="acro-exp">(Domain Name System)</span> queries an hour (tunneling) or long-lived beacons with
                     fixed intervals (C2).
                   </div>
                 </div>
@@ -125,7 +125,7 @@
                   <strong class="c-cyan">Snort</strong> (the original) and
                   <strong class="c-cyan">Suricata</strong> (modern, multi-threaded) inspect traffic
                   against <strong>signature rules</strong> and alert (IDS) or block (IPS) on matches.
-                  They ship with community/ET rulesets covering exploits, malware C2, and policy
+                  They ship with community/ET rulesets covering exploits, malware C2 <span class="acro-exp">(Command and Control)</span>, and policy
                   violations. Suricata adds protocol logging and file extraction, overlapping with
                   Zeek.
                 </div>
@@ -139,7 +139,7 @@
                   <table class="ref-table" style="margin-top:10px">
                     <tr><th>Part</th><th>Meaning</th></tr>
                     <tr><td>action</td><td><code>alert</code> / <code>drop</code> (IPS) / <code>reject</code></td></tr>
-                    <tr><td>header</td><td>proto, src/dst IPs &amp; ports, direction</td></tr>
+                    <tr><td>header</td><td>proto, src/dst IPs <span class="acro-exp">(Internet Protocol)</span> &amp; ports, direction</td></tr>
                     <tr><td>msg / sid</td><td>human label &amp; unique rule ID</td></tr>
                     <tr><td>content / flow</td><td>what to match &amp; connection state</td></tr>
                   </table>
@@ -166,7 +166,7 @@
                 <div class="concept-title">Searchable History of Everything on the Network</div>
                 <div class="concept-desc">
                   <strong class="c-cyan">Arkime</strong> (formerly Moloch) captures and indexes
-                  full packets at scale, giving analysts a searchable web UI to pull the exact
+                  full packets at scale, giving analysts a searchable web UI <span class="acro-exp">(User Interface)</span> to pull the exact
                   session behind an alert — critical for incident response ("show me everything
                   that host did last Tuesday"). <strong class="c-cyan">ntopng</strong> focuses on
                   live traffic analytics — top talkers, flows, bandwidth, and application
@@ -175,12 +175,12 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Tool</th><th>Strength</th></tr>
-                    <tr><td class="c-cyan">Arkime</td><td>Retrospective PCAP search &amp; session pivoting at scale</td></tr>
+                    <tr><td class="c-cyan">Arkime</td><td>Retrospective PCAP <span class="acro-exp">(Packet Capture)</span> search &amp; session pivoting at scale</td></tr>
                     <tr><td class="c-cyan">ntopng</td><td>Real-time flow/bandwidth dashboards &amp; alerting</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Together with Zeek (metadata) and Suricata (signatures), full capture completes
-                    the classic <strong>NSM triad</strong>: alerts tell you <em>something</em>
+                    the classic <strong>NSM <span class="acro-exp">(Network Security Monitoring)</span> triad</strong>: alerts tell you <em>something</em>
                     happened, metadata gives context, and full packets prove exactly what.
                   </div>
                 </div>
@@ -190,7 +190,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔍</span>
-              <span class="topic-name">Splunk — SPL &amp; the SIEM Standard</span>
+              <span class="topic-name">Splunk — SPL <span class="acro-exp">(Search Processing Language)</span> &amp; the SIEM <span class="acro-exp">(Security Information and Event Management)</span> Standard</span>
               <span class="topic-badge">SIEM</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -242,7 +242,7 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="concept-title">Elasticsearch + Logstash + Kibana + Beats</div>
                 <div class="concept-desc">
                   The <strong class="c-cyan">ELK stack</strong> is the dominant open-source
-                  logging/SIEM platform. Each piece has a job, and Elastic Security adds SIEM
+                  logging/SIEM platform. Each piece has a job, and Elastic Security adds SIEM <span class="acro-exp">(Security Information and Event Management)</span>
                   detection rules on top.
                 </div>
                 <div class="dw">
@@ -251,7 +251,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td class="c-cyan">Beats</td><td>Lightweight shippers on hosts (Filebeat = logs, Winlogbeat = Windows events, Packetbeat = network)</td></tr>
                     <tr><td class="c-cyan">Logstash</td><td>Ingest pipeline — parse, enrich, transform (or use Elastic ingest pipelines)</td></tr>
                     <tr><td class="c-cyan">Elasticsearch</td><td>The search/analytics engine that stores &amp; indexes everything</td></tr>
-                    <tr><td class="c-cyan">Kibana</td><td>Dashboards, search UI, and the Security/SIEM app</td></tr>
+                    <tr><td class="c-cyan">Kibana</td><td>Dashboards, search UI <span class="acro-exp">(User Interface)</span>, and the Security/SIEM app</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Flow: <strong>Beats → Logstash → Elasticsearch → Kibana</strong>. The trade
@@ -276,22 +276,22 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="concept-title">Agents + Detection + Compliance, Free</div>
                 <div class="concept-desc">
                   <strong class="c-cyan">Wazuh</strong> is a popular free platform that combines
-                  <strong>endpoint agents</strong> with a SIEM backend (built on the Elastic stack).
+                  <strong>endpoint agents</strong> with a SIEM <span class="acro-exp">(Security Information and Event Management)</span> backend (built on the Elastic stack).
                   Agents on each host do log collection, file-integrity monitoring (FIM), rootkit
                   detection, and vulnerability detection; the manager correlates with rules and maps
-                  findings to MITRE ATT&amp;CK and compliance frameworks (PCI, CIS).
+                  findings to MITRE ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> and compliance frameworks (PCI, CIS).
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Capability</th><th>Detail</th></tr>
                     <tr><td class="c-green">Log analysis</td><td>Decoders + rules turn raw logs into alerts</td></tr>
                     <tr><td class="c-green">FIM</td><td>Alerts when watched files change (tampering)</td></tr>
-                    <tr><td class="c-green">Vuln detection</td><td>Correlates installed software vs CVE feeds</td></tr>
+                    <tr><td class="c-green">Vuln detection</td><td>Correlates installed software vs CVE <span class="acro-exp">(Common Vulnerabilities and Exposures)</span> feeds</td></tr>
                     <tr><td class="c-green">Active response</td><td>Auto-actions (block IP, kill process) on triggers</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
-                    A common home-lab / SMB choice: it delivers endpoint + SIEM + compliance in one
-                    free package, where Splunk/commercial XDR would cost heavily.
+                    A common home-lab / SMB <span class="acro-exp">(Server Message Block)</span> choice: it delivers endpoint + SIEM + compliance in one
+                    free package, where Splunk/commercial XDR <span class="acro-exp">(Extended Detection and Response)</span> would cost heavily.
                   </div>
                 </div>
               </div>
@@ -344,10 +344,10 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">The Vendor-Neutral Detection Format</div>
                 <div class="concept-desc">
-                  Every SIEM has its own query language — so a detection written for Splunk doesn't
+                  Every SIEM <span class="acro-exp">(Security Information and Event Management)</span> has its own query language — so a detection written for Splunk doesn't
                   work in Elastic. <strong class="c-cyan">Sigma</strong> solves this: you write a
-                  detection once in a simple YAML format, then a converter compiles it into SPL,
-                  Elastic KQL, Wazuh rules, etc. It's "the YARA of logs" and how the community shares
+                  detection once in a simple YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> format, then a converter compiles it into SPL <span class="acro-exp">(Search Processing Language)</span>,
+                  Elastic KQL <span class="acro-exp">(Kusto Query Language)</span>, Wazuh rules, etc. It's "the YARA <span class="acro-exp">(Yet Another Recursive Acronym)</span> of logs" and how the community shares
                   detections.
                 </div>
                 <div class="dw">
@@ -385,20 +385,20 @@ index=auth <span class="str">"Failed password"</span>
                   <strong class="c-cyan">Sysmon</strong> (Sysinternals) is a free driver that logs
                   rich, high-fidelity endpoint events far beyond default Windows auditing — process
                   creation with command lines and hashes, network connections, file/registry changes,
-                  and DLL loads. It's the single highest-value free telemetry source for detecting
-                  the attacks in the Red Team domain, feeding your SIEM.
+                  and DLL <span class="acro-exp">(Dynamic Link Library)</span> loads. It's the single highest-value free telemetry source for detecting
+                  the attacks in the Red Team domain, feeding your SIEM <span class="acro-exp">(Security Information and Event Management)</span>.
                 </div>
                 <div class="dw">
-                  <div class="dt">▸ HIGH-VALUE EVENT IDS</div>
+                  <div class="dt">▸ HIGH-VALUE EVENT IDS <span class="acro-exp">(Intrusion Detection System)</span></div>
                   <table class="ref-table">
                     <tr><th>ID</th><th>Event</th></tr>
                     <tr><td class="c-cyan">1</td><td>Process creation (cmd line, hashes, parent) — the workhorse</td></tr>
                     <tr><td class="c-cyan">3</td><td>Network connection (catch C2 beacons)</td></tr>
                     <tr><td class="c-cyan">7</td><td>Image/DLL loaded (unsigned DLLs, injection)</td></tr>
                     <tr><td class="c-cyan">8</td><td>CreateRemoteThread (process injection)</td></tr>
-                    <tr><td class="c-cyan">10</td><td>Process access — <strong>LSASS access = Mimikatz signal</strong></td></tr>
+                    <tr><td class="c-cyan">10</td><td>Process access — <strong>LSASS <span class="acro-exp">(Local Security Authority Subsystem Service)</span> access = Mimikatz signal</strong></td></tr>
                     <tr><td class="c-cyan">11</td><td>File create (dropped payloads)</td></tr>
-                    <tr><td class="c-cyan">22</td><td>DNS query (DGA / tunneling)</td></tr>
+                    <tr><td class="c-cyan">22</td><td>DNS <span class="acro-exp">(Domain Name System)</span> query (DGA / tunneling)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Deploy with a curated config (the SwiftOnSecurity / Olaf templates are the
@@ -413,7 +413,7 @@ index=auth <span class="str">"Failed password"</span>
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🦉</span>
-              <span class="topic-name">OSQuery — Your Fleet as a SQL Database</span>
+              <span class="topic-name">OSQuery — Your Fleet as a SQL <span class="acro-exp">(Structured Query Language)</span> Database</span>
               <span class="topic-badge">EDR</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -422,7 +422,7 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">Query Endpoints Like a Table</div>
                 <div class="concept-desc">
-                  <strong class="c-cyan">OSQuery</strong> (Meta, open source) exposes the OS as
+                  <strong class="c-cyan">OSQuery</strong> (Meta, open source) exposes the OS <span class="acro-exp">(Operating System)</span> as
                   SQL tables — processes, users, listening ports, installed packages, startup items —
                   so you can ask questions across your whole fleet with a query. It's cross-platform
                   (Windows/macOS/Linux) and great for both incident response and continuous
@@ -437,8 +437,8 @@ index=auth <span class="str">"Failed password"</span>
 <span class="kw">SELECT</span> name, path <span class="kw">FROM</span> processes
 <span class="kw">WHERE</span> path <span class="kw">LIKE</span> <span class="str">'%\Temp\%'</span>;</pre>
                   <div class="concept-desc" style="margin-top:8px">
-                    Run ad-hoc during IR, or schedule "packs" of queries that stream diffs to your
-                    SIEM (via Fleet/Kolide) for continuous detection — e.g. alert whenever a new
+                    Run ad-hoc during IR <span class="acro-exp">(Incident Response)</span>, or schedule "packs" of queries that stream diffs to your
+                    SIEM <span class="acro-exp">(Security Information and Event Management)</span> (via Fleet/Kolide) for continuous detection — e.g. alert whenever a new
                     persistence entry appears.
                   </div>
                 </div>
@@ -449,7 +449,7 @@ index=auth <span class="str">"Failed password"</span>
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🦖</span>
-              <span class="topic-name">Velociraptor — Endpoint DFIR &amp; Hunting at Scale</span>
+              <span class="topic-name">Velociraptor — Endpoint DFIR <span class="acro-exp">(Digital Forensics and Incident Response)</span> &amp; Hunting at Scale</span>
               <span class="topic-badge">DFIR</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -461,7 +461,7 @@ index=auth <span class="str">"Failed password"</span>
                   <strong class="c-cyan">Velociraptor</strong> is a powerful open-source DFIR and
                   threat-hunting platform. Using its query language <strong>VQL</strong>, you can
                   collect artifacts, run hunts, and monitor endpoints across an entire estate from
-                  one console — "check every machine for this IOC" returns answers in minutes, not
+                  one console — "check every machine for this IOC <span class="acro-exp">(Indicator of Compromise)</span>" returns answers in minutes, not
                   days.
                 </div>
                 <div class="dw">
@@ -473,8 +473,8 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td class="c-cyan">VQL</td><td>SQL-like language to query live endpoint state</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
-                    It's become a go-to for IR teams who need broad, fast visibility without a
-                    six-figure commercial EDR — especially during active incidents.
+                    It's become a go-to for IR <span class="acro-exp">(Incident Response)</span> teams who need broad, fast visibility without a
+                    six-figure commercial EDR <span class="acro-exp">(Endpoint Detection and Response)</span> — especially during active incidents.
                   </div>
                 </div>
               </div>
@@ -495,12 +495,12 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="concept-desc">
                   Before Sysmon, there's the built-in Security log. Knowing the key event IDs lets
                   you reconstruct logons, privilege use, and lateral movement — these show up
-                  constantly in SOC interviews and real investigations.
+                  constantly in SOC <span class="acro-exp">(Security Operations Center)</span> interviews and real investigations.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>ID</th><th>Meaning</th></tr>
-                    <tr><td class="c-cyan">4624 / 4625</td><td>Successful / failed logon (watch <strong>logon type</strong> — 3=network, 10=RDP)</td></tr>
+                    <tr><td class="c-cyan">4624 / 4625</td><td>Successful / failed logon (watch <strong>logon type</strong> — 3=network, 10=RDP <span class="acro-exp">(Remote Desktop Protocol)</span>)</td></tr>
                     <tr><td class="c-cyan">4688</td><td>Process creation (enable cmd-line auditing!)</td></tr>
                     <tr><td class="c-cyan">4672</td><td>Special privileges assigned (admin logon)</td></tr>
                     <tr><td class="c-cyan">4720 / 4728</td><td>User created / added to a privileged group</td></tr>
@@ -540,9 +540,9 @@ index=auth <span class="str">"Failed password"</span>
 
 <span class="fn">ausearch</span> -k shadow-access        <span class="com"># query by key</span></pre>
                   <div class="concept-desc" style="margin-top:8px">
-                    Ship these logs to the SIEM alongside Windows/Sysmon so hunts and detections
+                    Ship these logs to the SIEM <span class="acro-exp">(Security Information and Event Management)</span> alongside Windows/Sysmon so hunts and detections
                     cover the whole estate. For richer, lower-overhead visibility, eBPF-based tools
-                    (Falco, Tetragon) are the modern complement — see the eBPF topic in Linux.
+                    (Falco, Tetragon) are the modern complement — see the eBPF <span class="acro-exp">(Extended Berkeley Packet Filter)</span> topic in Linux.
                   </div>
                 </div>
               </div>
@@ -552,7 +552,7 @@ index=auth <span class="str">"Failed password"</span>
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🧾</span>
-              <span class="topic-name">YARA — Pattern-Matching Rules for Malware</span>
+              <span class="topic-name">YARA <span class="acro-exp">(Yet Another Recursive Acronym)</span> — Pattern-Matching Rules for Malware</span>
               <span class="topic-badge">Detection</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -564,7 +564,7 @@ index=auth <span class="str">"Failed password"</span>
                   <strong class="c-cyan">YARA</strong> lets analysts describe malware families by
                   textual/binary patterns and match files, memory, or processes against them. It's
                   how threat researchers share detections for a specific implant or campaign — and
-                  it runs in scanners, EDRs, and IR tools alike.
+                  it runs in scanners, EDRs <span class="acro-exp">(Endpoint Detection and Response)</span>, and IR <span class="acro-exp">(Incident Response)</span> tools alike.
                 </div>
                 <div class="dw">
 <pre class="code-block"><span class="kw">rule</span> Suspicious_PowerShell_Downloader {
@@ -590,7 +590,7 @@ index=auth <span class="str">"Failed password"</span>
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🎯</span>
-              <span class="topic-name">MITRE ATT&amp;CK &amp; Navigator — Coverage-Driven Detection</span>
+              <span class="topic-name">MITRE ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> &amp; Navigator — Coverage-Driven Detection</span>
               <span class="topic-badge">Detection</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -637,7 +637,7 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="concept-desc">
                   A detection you've never triggered is a hope, not a control.
                   <strong class="c-cyan">Atomic Red Team</strong> is a library of small, precise
-                  tests — one per ATT&amp;CK technique — you run to see if your telemetry and alerts
+                  tests — one per ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> technique — you run to see if your telemetry and alerts
                   catch it. <strong class="c-cyan">Caldera</strong> (MITRE) automates full,
                   chained adversary emulations. This is the safe, authorized way to validate the
                   blue team.
@@ -673,14 +673,14 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="concept-desc">
                   The <strong class="c-cyan">Pyramid of Pain</strong> ranks indicators by how much
                   it costs an adversary to change them. Detecting a file hash is trivial to evade
-                  (recompile); detecting their <strong>TTPs</strong> (behaviors) forces them to
+                  (recompile); detecting their <strong>TTPs <span class="acro-exp">(Tactics, Techniques, and Procedures)</span></strong> (behaviors) forces them to
                   relearn how they operate. Aim your detections up the pyramid.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Indicator</th><th>Attacker cost to change</th></tr>
                     <tr><td>Hash values</td><td class="c-red">Trivial</td></tr>
-                    <tr><td>IP addresses</td><td class="c-red">Easy</td></tr>
+                    <tr><td>IP <span class="acro-exp">(Internet Protocol)</span> addresses</td><td class="c-red">Easy</td></tr>
                     <tr><td>Domain names</td><td class="c-amber">Simple</td></tr>
                     <tr><td>Network/host artifacts</td><td class="c-amber">Annoying</td></tr>
                     <tr><td>Tools</td><td class="c-green">Challenging</td></tr>
@@ -708,7 +708,7 @@ index=auth <span class="str">"Failed password"</span>
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Reference</div>
-                <div class="concept-title">RAM Holds What Disk Never Sees</div>
+                <div class="concept-title">RAM <span class="acro-exp">(Random Access Memory)</span> Holds What Disk Never Sees</div>
                 <div class="concept-desc">
                   Malware runs in memory — decrypted payloads, injected code, live network
                   connections, and cached credentials that never touch disk.
@@ -724,7 +724,7 @@ index=auth <span class="str">"Failed password"</span>
 <span class="fn">vol</span> -f mem.raw windows.cmdline       <span class="com"># process command lines</span></pre>
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-green">Workflow:</strong> pslist/pstree to spot anomalies →
-                    malfind for injection → netscan for C2 → dump the suspect process for deeper
+                    malfind for injection → netscan for C2 <span class="acro-exp">(Command and Control)</span> → dump the suspect process for deeper
                     analysis. Capture memory <em>before</em> pulling the plug — it's volatile
                     (order-of-volatility rule).
                   </div>
@@ -745,8 +745,8 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">Investigate a Disk Image, File by File</div>
                 <div class="concept-desc">
-                  <strong class="c-cyan">The Sleuth Kit (TSK)</strong> is the CLI engine;
-                  <strong class="c-cyan">Autopsy</strong> is its GUI. Together they analyze a
+                  <strong class="c-cyan">The Sleuth Kit (TSK)</strong> is the CLI <span class="acro-exp">(Command Line Interface)</span> engine;
+                  <strong class="c-cyan">Autopsy</strong> is its GUI <span class="acro-exp">(Graphical User Interface)</span>. Together they analyze a
                   forensic disk image — recovering deleted files, building timelines, carving
                   artifacts, and hashing everything — without altering the original evidence.
                 </div>
@@ -756,7 +756,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td class="c-cyan">Deleted-file recovery</td><td>Recover files still in unallocated space</td></tr>
                     <tr><td class="c-cyan">File carving</td><td>Rebuild files from raw bytes by signature</td></tr>
                     <tr><td class="c-cyan">Timeline</td><td>MAC times (modified/accessed/created) across the FS</td></tr>
-                    <tr><td class="c-cyan">Keyword &amp; hash search</td><td>Find IOCs; flag known-bad by hash</td></tr>
+                    <tr><td class="c-cyan">Keyword &amp; hash search</td><td>Find IOCs <span class="acro-exp">(Indicator of Compromise)</span>; flag known-bad by hash</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Always work on a <strong class="c-green">write-blocked copy</strong> and verify
@@ -794,7 +794,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td class="c-cyan">Timeline Explorer</td><td>Filter/pivot the resulting mega-CSV</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
-                    The timeline answers the core IR question: <strong class="c-green">what happened,
+                    The timeline answers the core IR <span class="acro-exp">(Incident Response)</span> question: <strong class="c-green">what happened,
                     in what order?</strong> — from initial access to persistence to exfil.
                   </div>
                 </div>
@@ -814,7 +814,7 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">Where Windows Records "This Ran"</div>
                 <div class="concept-desc">
-                  Windows silently records evidence of execution and access all over the OS.
+                  Windows silently records evidence of execution and access all over the OS <span class="acro-exp">(Operating System)</span>.
                   Knowing these artifacts is what lets an examiner prove a program ran even when
                   the attacker deleted it.
                 </div>
@@ -823,7 +823,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><th>Artifact</th><th>Proves</th></tr>
                     <tr><td class="c-cyan">Prefetch</td><td>A program executed (and when/how often)</td></tr>
                     <tr><td class="c-cyan">ShimCache / AmCache</td><td>Program presence/execution (even if deleted)</td></tr>
-                    <tr><td class="c-cyan">$MFT / $J (USN journal)</td><td>File creation/deletion/rename history</td></tr>
+                    <tr><td class="c-cyan">$MFT <span class="acro-exp">(Master File Table)</span> / $J (USN journal)</td><td>File creation/deletion/rename history</td></tr>
                     <tr><td class="c-cyan">Registry (Run keys, Services)</td><td>Persistence mechanisms</td></tr>
                     <tr><td class="c-cyan">SRUM</td><td>App resource/network usage over time</td></tr>
                     <tr><td class="c-cyan">Jump Lists / LNK / Shellbags</td><td>Files &amp; folders a user opened</td></tr>
@@ -852,7 +852,7 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Principle</th><th>Detail</th></tr>
-                    <tr><td class="c-green">Order of volatility</td><td>Collect most-volatile first: RAM → network state → disk → archives</td></tr>
+                    <tr><td class="c-green">Order of volatility</td><td>Collect most-volatile first: RAM <span class="acro-exp">(Random Access Memory)</span> → network state → disk → archives</td></tr>
                     <tr><td class="c-green">Write-blocking</td><td>Never alter the original; image it, work on copies</td></tr>
                     <tr><td class="c-green">Hashing</td><td>Hash on acquisition &amp; verify — proves the evidence is unchanged</td></tr>
                     <tr><td class="c-green">Chain of custody log</td><td>Who had it, when, why — an unbroken documented trail</td></tr>
@@ -866,7 +866,7 @@ index=auth <span class="str">"Failed password"</span>
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔗</span>
-              <span class="topic-name">MISP &amp; OpenCTI — Threat-Intel Platforms</span>
+              <span class="topic-name">MISP <span class="acro-exp">(Malware Information Sharing Platform)</span> &amp; OpenCTI — Threat-Intel Platforms</span>
               <span class="topic-badge">Threat Intel</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -879,13 +879,13 @@ index=auth <span class="str">"Failed password"</span>
                   <strong class="c-cyan">MISP</strong> is the widely-used open platform for storing
                   and <em>sharing</em> indicators (IOCs) and events between organizations/ISACs.
                   <strong class="c-cyan">OpenCTI</strong> models the bigger picture — linking actors,
-                  campaigns, malware, and TTPs into a queryable knowledge graph.
+                  campaigns, malware, and TTPs <span class="acro-exp">(Tactics, Techniques, and Procedures)</span> into a queryable knowledge graph.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Platform</th><th>Strength</th></tr>
-                    <tr><td class="c-cyan">MISP</td><td>IOC storage + community sharing + feeds; export to your SIEM</td></tr>
-                    <tr><td class="c-cyan">OpenCTI</td><td>Structured CTI knowledge graph (actors↔TTPs↔malware)</td></tr>
+                    <tr><td class="c-cyan">MISP</td><td>IOC <span class="acro-exp">(Indicator of Compromise)</span> storage + community sharing + feeds; export to your SIEM <span class="acro-exp">(Security Information and Event Management)</span></td></tr>
+                    <tr><td class="c-cyan">OpenCTI</td><td>Structured CTI <span class="acro-exp">(Cyber Threat Intelligence)</span> knowledge graph (actors↔TTPs↔malware)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     The payoff: pull a feed of known-bad indicators into detection, and enrich alerts
@@ -900,7 +900,7 @@ index=auth <span class="str">"Failed password"</span>
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">📦</span>
-              <span class="topic-name">STIX &amp; TAXII — The Sharing Standards</span>
+              <span class="topic-name">STIX <span class="acro-exp">(Structured Threat Information eXpression)</span> &amp; TAXII <span class="acro-exp">(Trusted Automated eXchange of Intelligence Information)</span> — The Sharing Standards</span>
               <span class="topic-badge">Threat Intel</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -911,9 +911,9 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="concept-desc">
                   For orgs to share intel, they need a shared format and transport.
                   <strong class="c-cyan">STIX</strong> is the standardized <em>language</em> for
-                  describing threats (indicators, actors, TTPs) as structured JSON;
+                  describing threats (indicators, actors, TTPs) as structured JSON <span class="acro-exp">(JavaScript Object Notation)</span>;
                   <strong class="c-cyan">TAXII</strong> is the <em>protocol</em> for exchanging STIX
-                  data between systems. Together they let MISP, commercial feeds, and government
+                  data between systems. Together they let MISP <span class="acro-exp">(Malware Information Sharing Platform)</span>, commercial feeds, and government
                   sources interoperate.
                 </div>
                 <div class="dw">
@@ -943,7 +943,7 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">Detonate the Sample, Watch What It Does</div>
                 <div class="concept-desc">
-                  When you have a suspicious file, a sandbox runs it in an instrumented VM and
+                  When you have a suspicious file, a sandbox runs it in an instrumented VM <span class="acro-exp">(Virtual Machine)</span> and
                   reports its behavior — files dropped, registry changes, network callbacks —
                   without risking a real host. <strong class="c-cyan">VirusTotal</strong> aggregates
                   dozens of AV verdicts + community intel; <strong class="c-cyan">Any.Run</strong>
@@ -988,8 +988,8 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td class="c-cyan">Operationalize</td><td>Turn a real finding into a standing detection</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
-                    Good hunts are driven by ATT&amp;CK (hunt technique by technique) and threat
-                    intel (hunt for <em>your</em> actors' TTPs). Every hunt either finds evil or
+                    Good hunts are driven by ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> (hunt technique by technique) and threat
+                    intel (hunt for <em>your</em> actors' TTPs <span class="acro-exp">(Tactics, Techniques, and Procedures)</span>). Every hunt either finds evil or
                     finds a detection gap — both are wins.
                   </div>
                 </div>
@@ -1019,12 +1019,12 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><th>Tool</th><th>Notes</th></tr>
                     <tr><td class="c-cyan">Nessus (Tenable)</td><td>Industry-standard commercial scanner; huge plugin library</td></tr>
                     <tr><td class="c-cyan">OpenVAS / Greenbone</td><td>Open-source alternative (GVM); free NVT feed</td></tr>
-                    <tr><td class="c-cyan">Qualys / Rapid7 InsightVM</td><td>Cloud-delivered VM platforms with agents</td></tr>
+                    <tr><td class="c-cyan">Qualys / Rapid7 InsightVM</td><td>Cloud-delivered VM <span class="acro-exp">(Virtual Machine)</span> platforms with agents</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Key idea:</strong> <em>authenticated</em> scans (with
                     creds) see missing patches and config far better than network-only scans. Feed
-                    findings into <strong class="c-green">CVSS + exploitability (EPSS/KEV)</strong> to
+                    findings into <strong class="c-green">CVSS <span class="acro-exp">(Common Vulnerability Scoring System)</span> + exploitability (EPSS/KEV)</strong> to
                     prioritize — patch what's actually being exploited first, not just the highest CVSS.
                   </div>
                 </div>
@@ -1035,7 +1035,7 @@ index=auth <span class="str">"Failed password"</span>
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">📏</span>
-              <span class="topic-name">CIS Benchmarks &amp; CIS-CAT — Hardening Baselines</span>
+              <span class="topic-name">CIS <span class="acro-exp">(Center for Internet Security)</span> Benchmarks &amp; CIS-CAT — Hardening Baselines</span>
               <span class="topic-badge">Hardening</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1053,7 +1053,7 @@ index=auth <span class="str">"Failed password"</span>
                   <table class="ref-table">
                     <tr><th>Concept</th><th>Detail</th></tr>
                     <tr><td class="c-cyan">Levels 1 &amp; 2</td><td>L1 = safe baseline; L2 = defense-in-depth (may break things)</td></tr>
-                    <tr><td class="c-cyan">Benchmarks</td><td>OS, K8s, Docker, AWS/Azure/GCP, browsers, databases</td></tr>
+                    <tr><td class="c-cyan">Benchmarks</td><td>OS <span class="acro-exp">(Operating System)</span>, K8s <span class="acro-exp">(Kubernetes)</span>, Docker, AWS/Azure/GCP, browsers, databases</td></tr>
                     <tr><td class="c-cyan">CIS Controls</td><td>The companion 18 prioritized safeguards (IG1–IG3)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
@@ -1080,7 +1080,7 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="concept-desc">
                   <strong class="c-cyan">Lynis</strong> is an agentless shell-script auditor for
                   Linux/Unix/macOS. Run it on a host and it walks hundreds of checks — kernel params,
-                  file permissions, services, SSH config, firewall — then prints a hardening index
+                  file permissions, services, SSH <span class="acro-exp">(Secure Shell)</span> config, firewall — then prints a hardening index
                   and prioritized suggestions.
                 </div>
                 <div class="dw">
@@ -1092,7 +1092,7 @@ index=auth <span class="str">"Failed password"</span>
                   <div class="concept-desc" style="margin-top:10px">
                     Great for a fast baseline and for teaching <em>why</em> each setting matters
                     (each suggestion links to guidance). Complements — doesn't replace — a real
-                    benchmark like CIS.
+                    benchmark like CIS <span class="acro-exp">(Center for Internet Security)</span>.
                   </div>
                 </div>
               </div>
@@ -1102,7 +1102,7 @@ index=auth <span class="str">"Failed password"</span>
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🛡️</span>
-              <span class="topic-name">OpenSCAP &amp; DISA STIGs — Compliance-Driven Hardening</span>
+              <span class="topic-name">OpenSCAP &amp; DISA <span class="acro-exp">(Defense Information Systems Agency)</span> STIGs <span class="acro-exp">(Security Technical Implementation Guide)</span> — Compliance-Driven Hardening</span>
               <span class="topic-badge">Compliance</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1115,7 +1115,7 @@ index=auth <span class="str">"Failed password"</span>
                   of standards (OVAL, XCCDF, CCE) for expressing security policy as
                   <em>machine-readable content</em>. <strong class="c-cyan">OpenSCAP</strong> scans and
                   even auto-remediates against that content; <strong class="c-cyan">DISA STIGs</strong>
-                  are the U.S. DoD's hardening standards distributed in this format.
+                  are the U.S. DoD <span class="acro-exp">(Department of Defense)</span>'s hardening standards distributed in this format.
                 </div>
                 <div class="dw">
                   <pre class="code-block"><span class="com"># Scan RHEL against a STIG profile and generate an HTML report</span>
@@ -1125,7 +1125,7 @@ oscap xccdf eval \
   /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml</pre>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">SSG</strong> (SCAP Security Guide) ships ready profiles —
-                    STIG, CIS, PCI-DSS, HIPAA. This is how regulated environments prove and enforce a
+                    STIG, CIS <span class="acro-exp">(Center for Internet Security)</span>, PCI-DSS, HIPAA <span class="acro-exp">(Health Insurance Portability and Accountability Act)</span>. This is how regulated environments prove and enforce a
                     baseline continuously rather than via a one-time checklist.
                   </div>
                 </div>
@@ -1152,7 +1152,7 @@ oscap xccdf eval \
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Tool</th><th>Role</th></tr>
-                    <tr><td class="c-cyan">WSUS / SCCM / Intune</td><td>Windows patch orchestration &amp; compliance</td></tr>
+                    <tr><td class="c-cyan">WSUS <span class="acro-exp">(Windows Server Update Services)</span> / SCCM <span class="acro-exp">(System Center Configuration Manager)</span> / Intune</td><td>Windows patch orchestration &amp; compliance</td></tr>
                     <tr><td class="c-cyan">Ansible / Salt</td><td>Cross-platform patching &amp; config enforcement (ties to F4)</td></tr>
                     <tr><td class="c-cyan">unattended-upgrades / dnf-automatic</td><td>OS-native auto-patching for Linux</td></tr>
                   </table>
@@ -1188,8 +1188,8 @@ oscap xccdf eval \
                   <table class="ref-table">
                     <tr><th>Type</th><th>Detail</th></tr>
                     <tr><td class="c-cyan">Honeypot</td><td>A fake system that logs everything an attacker does (T-Pot, Cowrie)</td></tr>
-                    <tr><td class="c-cyan">Honeytoken / Canarytoken</td><td>A fake credential, AWS key, or URL that alerts when used</td></tr>
-                    <tr><td class="c-cyan">Honey account</td><td>A dormant AD account — any auth attempt is an alert</td></tr>
+                    <tr><td class="c-cyan">Honeytoken / Canarytoken</td><td>A fake credential, AWS <span class="acro-exp">(Amazon Web Services)</span> key, or URL <span class="acro-exp">(Uniform Resource Locator)</span> that alerts when used</td></tr>
+                    <tr><td class="c-cyan">Honey account</td><td>A dormant AD <span class="acro-exp">(Active Directory)</span> account — any auth attempt is an alert</td></tr>
                     <tr><td class="c-cyan">Deception grid</td><td>Decoys scattered through the network to catch lateral movement</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
@@ -1206,7 +1206,7 @@ oscap xccdf eval \
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">📧</span>
-              <span class="topic-name">Email Security — SPF, DKIM &amp; DMARC</span>
+              <span class="topic-name">Email Security — SPF, DKIM <span class="acro-exp">(DomainKeys Identified Mail)</span> &amp; DMARC <span class="acro-exp">(Domain-based Message Authentication, Reporting and Conformance)</span></span>
               <span class="topic-badge">Email Defense</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1259,7 +1259,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
                   <table class="ref-table">
                     <tr><th>Signal</th><th>What it suggests</th></tr>
                     <tr><td class="c-red">Impossible travel</td><td>Logins from two distant locations too close in time</td></tr>
-                    <tr><td class="c-red">MFA fatigue / bombing</td><td>Repeated push prompts hoping the user taps "approve"</td></tr>
+                    <tr><td class="c-red">MFA <span class="acro-exp">(Multi-Factor Authentication)</span> fatigue / bombing</td><td>Repeated push prompts hoping the user taps "approve"</td></tr>
                     <tr><td class="c-red">Token / session theft</td><td>A valid session used from a new device/IP (AiTM phishing)</td></tr>
                     <tr><td class="c-red">Password spray</td><td>One password tried across many accounts</td></tr>
                   </table>
@@ -1267,7 +1267,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
                     <strong class="c-green">Controls:</strong> phishing-resistant MFA (FIDO2/passkeys),
                     Conditional Access (device + risk based), and continuous access evaluation that can
                     kill a session mid-flight. This is the defensive answer to the credential-attack and
-                    AD cards on the red-team side.
+                    AD <span class="acro-exp">(Active Directory)</span> cards on the red-team side.
                   </div>
                 </div>
               </div>
@@ -1294,7 +1294,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Step</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Pick an ATT&amp;CK technique</td><td>e.g. T1003 credential dumping</td></tr>
+                    <tr><td class="c-cyan">Pick an ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> technique</td><td>e.g. T1003 credential dumping</td></tr>
                     <tr><td class="c-cyan">Red emulates it</td><td>Atomic Red Team / Caldera runs the procedure (ties to B4)</td></tr>
                     <tr><td class="c-green">Blue verifies</td><td>Was it in the logs? Did an alert fire? Was it triaged?</td></tr>
                     <tr><td class="c-amber">Improve</td><td>Add telemetry, write/tune the detection, re-test</td></tr>
