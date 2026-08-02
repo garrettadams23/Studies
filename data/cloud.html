@@ -1,7 +1,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🌩️</span>
-              <span class="topic-name">Cloud Fundamentals — Regions, AZs &amp; Shared Responsibility</span>
+              <span class="topic-name">Cloud Fundamentals — Regions, AZs <span class="acro-exp">(Availability Zone)</span> &amp; Shared Responsibility</span>
               <span class="topic-badge">Foundations</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -20,21 +20,21 @@
                   <div class="dt">▸ SERVICE MODELS</div>
                   <table class="ref-table" style="margin-bottom:14px">
                     <tr><th>Model</th><th>You Manage</th><th>Example</th></tr>
-                    <tr><td>IaaS</td><td>OS + runtime + app</td><td>EC2, Compute Engine</td></tr>
-                    <tr><td>PaaS</td><td>Just your app</td><td>App Engine, Elastic Beanstalk</td></tr>
-                    <tr><td>SaaS</td><td>Nothing — just use it</td><td>Gmail, Workspace</td></tr>
+                    <tr><td>IaaS <span class="acro-exp">(Infrastructure as a Service)</span></td><td>OS <span class="acro-exp">(Operating System)</span> + runtime + app</td><td>EC2 <span class="acro-exp">(Elastic Compute Cloud)</span>, Compute Engine</td></tr>
+                    <tr><td>PaaS <span class="acro-exp">(Platform as a Service)</span></td><td>Just your app</td><td>App Engine, Elastic Beanstalk</td></tr>
+                    <tr><td>SaaS <span class="acro-exp">(Software as a Service)</span></td><td>Nothing — just use it</td><td>Gmail, Workspace</td></tr>
                   </table>
                   <div class="dt">▸ GLOBAL LAYOUT</div>
                   <table class="ref-table" style="margin-bottom:14px">
                     <tr><th>Term</th><th>Meaning</th></tr>
                     <tr><td class="c-cyan">Region</td><td>A geographic area (us-east-1, europe-west1). Pick for latency, law, cost.</td></tr>
                     <tr><td class="c-cyan">Availability Zone</td><td>Isolated datacenter(s) in a region. Deploy across ≥2 AZs for HA.</td></tr>
-                    <tr><td class="c-cyan">Edge / PoP</td><td>CDN locations near users (CloudFront, Cloud CDN).</td></tr>
+                    <tr><td class="c-cyan">Edge / PoP</td><td>CDN <span class="acro-exp">(Content Delivery Network)</span> locations near users (CloudFront, Cloud CDN).</td></tr>
                   </table>
                   <div class="concept-desc">
                     <strong class="c-green">Shared responsibility:</strong> the provider secures the
                     cloud <em>itself</em> (hardware, hypervisor, physical); <strong>you</strong>
-                    secure what you put <em>in</em> it — IAM, data, patching your VMs, network
+                    secure what you put <em>in</em> it — IAM <span class="acro-exp">(Identity and Access Management)</span>, data, patching your VMs <span class="acro-exp">(Virtual Machine)</span>, network
                     config. Most breaches are the customer's side (a public bucket, a wildcard IAM
                     policy), not the provider's.
                   </div>
@@ -46,7 +46,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🟧</span>
-              <span class="topic-name">AWS — Getting Started</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> — Getting Started</span>
               <span class="topic-badge">AWS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -63,17 +63,17 @@
                   <div class="dt">▸ DAY-ONE CHECKLIST</div>
                   <table class="ref-table">
                     <tr><th>Do</th><th>Why</th></tr>
-                    <tr><td class="c-red">Stop using the root account</td><td>Create an admin IAM user/role; lock root with MFA and don't use it daily.</td></tr>
+                    <tr><td class="c-red">Stop using the root account</td><td>Create an admin IAM <span class="acro-exp">(Identity and Access Management)</span> user/role; lock root with MFA <span class="acro-exp">(Multi-Factor Authentication)</span> and don't use it daily.</td></tr>
                     <tr><td class="c-green">Enable MFA everywhere</td><td>The single biggest account-takeover defense.</td></tr>
                     <tr><td class="c-green">Set a billing alarm</td><td>Budgets → alert at $X so a runaway resource doesn't run for weeks.</td></tr>
                     <tr><td class="c-green">Pick a home region</td><td>Everything is regional; resources in us-east-1 aren't visible in eu-west-1.</td></tr>
-                    <tr><td class="c-green">Learn the Free Tier</td><td>t2/t3.micro, 5 GB S3, etc. — practice without cost.</td></tr>
+                    <tr><td class="c-green">Learn the Free Tier</td><td>t2/t3.micro, 5 GB S3 <span class="acro-exp">(Simple Storage Service)</span>, etc. — practice without cost.</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Three ways to drive AWS: the <strong>Console</strong> (web, learn here),
-                    the <strong>CLI</strong> (scripting/repeatability), and
+                    the <strong>CLI <span class="acro-exp">(Command Line Interface)</span></strong> (scripting/repeatability), and
                     <strong>SDKs/IaC</strong> (Terraform, CloudFormation) for production. Graduate
-                    from console → CLI → IaC as you go.
+                    from console → CLI → IaC <span class="acro-exp">(Infrastructure as Code)</span> as you go.
                   </div>
                 </div>
               </div>
@@ -83,7 +83,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">⌨️</span>
-              <span class="topic-name">AWS CLI &amp; CloudShell</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> CLI <span class="acro-exp">(Command Line Interface)</span> &amp; CloudShell</span>
               <span class="topic-badge">AWS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -107,8 +107,8 @@
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-cyan">CloudShell</strong> is a browser terminal with the CLI
                     pre-authenticated as your console identity — nothing to install. Prefer
-                    <strong class="c-green">IAM roles</strong> over long-lived access keys; on an
-                    EC2 instance the CLI picks up an attached role automatically (no keys on disk).
+                    <strong class="c-green">IAM <span class="acro-exp">(Identity and Access Management)</span> roles</strong> over long-lived access keys; on an
+                    EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> instance the CLI picks up an attached role automatically (no keys on disk).
                   </div>
                 </div>
               </div>
@@ -127,7 +127,7 @@
                 <div class="concept-label">How-To</div>
                 <div class="concept-title">The Resource Hierarchy Is Everything</div>
                 <div class="concept-desc">
-                  GCP's defining concept is its <strong class="c-cyan">resource hierarchy</strong> —
+                  GCP <span class="acro-exp">(Google Cloud Platform)</span>'s defining concept is its <strong class="c-cyan">resource hierarchy</strong> —
                   understand it and the rest falls into place. Policies (IAM, budgets) set high up
                   are <em>inherited</em> downward.
                 </div>
@@ -138,13 +138,13 @@
                     <tr><td class="c-cyan">Organization</td><td>Your whole company (tied to a domain)</td></tr>
                     <tr><td class="c-cyan">Folders</td><td>Departments / environments (optional grouping)</td></tr>
                     <tr><td class="c-cyan">Projects</td><td><strong>The core unit</strong> — every resource lives in exactly one project; billing &amp; isolation boundary</td></tr>
-                    <tr><td class="c-cyan">Resources</td><td>VMs, buckets, databases</td></tr>
+                    <tr><td class="c-cyan">Resources</td><td>VMs <span class="acro-exp">(Virtual Machine)</span>, buckets, databases</td></tr>
                   </table>
                   <div class="concept-desc">
                     <strong class="c-green">Day one:</strong> create a project, link a billing
-                    account, enable the APIs you need (services are off by default —
+                    account, enable the APIs <span class="acro-exp">(Application Programming Interface)</span> you need (services are off by default —
                     <code>gcloud services enable compute.googleapis.com</code>), set a budget
-                    alert, and use IAM instead of the owner account for daily work. The
+                    alert, and use IAM <span class="acro-exp">(Identity and Access Management)</span> instead of the owner account for daily work. The
                     <strong>Always Free</strong> tier (e2-micro, 5 GB storage) is generous for
                     learning.
                   </div>
@@ -156,7 +156,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">⌨️</span>
-              <span class="topic-name">gcloud CLI &amp; Cloud Shell</span>
+              <span class="topic-name">gcloud CLI <span class="acro-exp">(Command Line Interface)</span> &amp; Cloud Shell</span>
               <span class="topic-badge">GCP</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -191,7 +191,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔄</span>
-              <span class="topic-name">Cloud Rosetta Stone — AWS ↔ GCP ↔ Azure</span>
+              <span class="topic-name">Cloud Rosetta Stone — AWS <span class="acro-exp">(Amazon Web Services)</span> ↔ GCP <span class="acro-exp">(Google Cloud Platform)</span> ↔ Azure</span>
               <span class="topic-badge">Reference</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -207,20 +207,20 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Concept</th><th>AWS</th><th>GCP</th><th>Azure</th></tr>
-                    <tr><td>Virtual machines</td><td>EC2</td><td>Compute Engine</td><td>Virtual Machines</td></tr>
-                    <tr><td>Object storage</td><td>S3</td><td>Cloud Storage</td><td>Blob Storage</td></tr>
+                    <tr><td>Virtual machines</td><td>EC2 <span class="acro-exp">(Elastic Compute Cloud)</span></td><td>Compute Engine</td><td>Virtual Machines</td></tr>
+                    <tr><td>Object storage</td><td>S3 <span class="acro-exp">(Simple Storage Service)</span></td><td>Cloud Storage</td><td>Blob Storage</td></tr>
                     <tr><td>Serverless functions</td><td>Lambda</td><td>Cloud Functions</td><td>Functions</td></tr>
-                    <tr><td>Containers (managed K8s)</td><td>EKS</td><td>GKE</td><td>AKS</td></tr>
+                    <tr><td>Containers (managed K8s)</td><td>EKS <span class="acro-exp">(Elastic Kubernetes Service)</span></td><td>GKE <span class="acro-exp">(Google Kubernetes Engine)</span></td><td>AKS <span class="acro-exp">(Azure Kubernetes Service)</span></td></tr>
                     <tr><td>Run a container</td><td>Fargate / App Runner</td><td>Cloud Run</td><td>Container Apps</td></tr>
-                    <tr><td>Relational DB</td><td>RDS</td><td>Cloud SQL</td><td>Azure SQL</td></tr>
+                    <tr><td>Relational DB</td><td>RDS <span class="acro-exp">(Relational Database Service)</span></td><td>Cloud SQL <span class="acro-exp">(Structured Query Language)</span></td><td>Azure SQL</td></tr>
                     <tr><td>NoSQL</td><td>DynamoDB</td><td>Firestore / Bigtable</td><td>Cosmos DB</td></tr>
                     <tr><td>Data warehouse</td><td>Redshift</td><td>BigQuery</td><td>Synapse</td></tr>
-                    <tr><td>Virtual network</td><td>VPC</td><td>VPC</td><td>VNet</td></tr>
-                    <tr><td>Identity</td><td>IAM</td><td>Cloud IAM</td><td>Entra ID + RBAC</td></tr>
+                    <tr><td>Virtual network</td><td>VPC <span class="acro-exp">(Virtual Private Cloud)</span></td><td>VPC</td><td>VNet</td></tr>
+                    <tr><td>Identity</td><td>IAM <span class="acro-exp">(Identity and Access Management)</span></td><td>Cloud IAM</td><td>Entra ID + RBAC <span class="acro-exp">(Role-Based Access Control)</span></td></tr>
                     <tr><td>Secrets</td><td>Secrets Manager</td><td>Secret Manager</td><td>Key Vault</td></tr>
-                    <tr><td>Managed keys</td><td>KMS</td><td>Cloud KMS</td><td>Key Vault</td></tr>
-                    <tr><td>CDN</td><td>CloudFront</td><td>Cloud CDN</td><td>Front Door / CDN</td></tr>
-                    <tr><td>Infra as Code</td><td>CloudFormation</td><td>Deployment Manager</td><td>ARM / Bicep</td></tr>
+                    <tr><td>Managed keys</td><td>KMS <span class="acro-exp">(Key Management Service)</span></td><td>Cloud KMS</td><td>Key Vault</td></tr>
+                    <tr><td>CDN <span class="acro-exp">(Content Delivery Network)</span></td><td>CloudFront</td><td>Cloud CDN</td><td>Front Door / CDN</td></tr>
+                    <tr><td>Infra as Code</td><td>CloudFormation</td><td>Deployment Manager</td><td>ARM <span class="acro-exp">(Azure Resource Manager)</span> / Bicep</td></tr>
                     <tr><td>Monitoring</td><td>CloudWatch</td><td>Cloud Monitoring</td><td>Monitor</td></tr>
                   </table>
                 </div>
@@ -230,7 +230,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔑</span>
-              <span class="topic-name">AWS IAM — Users, Roles &amp; Policies</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> IAM <span class="acro-exp">(Identity and Access Management)</span> — Users, Roles &amp; Policies</span>
               <span class="topic-badge">AWS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -252,7 +252,7 @@
                     <tr><td class="c-cyan">User</td><td>A long-lived human/app identity (avoid keys where possible)</td></tr>
                     <tr><td class="c-cyan">Role</td><td>An identity you <em>assume</em> temporarily — the preferred pattern (no stored keys)</td></tr>
                     <tr><td class="c-cyan">Group</td><td>A bucket of users sharing policies</td></tr>
-                    <tr><td class="c-cyan">Policy</td><td>JSON document granting/denying permissions</td></tr>
+                    <tr><td class="c-cyan">Policy</td><td>JSON <span class="acro-exp">(JavaScript Object Notation)</span> document granting/denying permissions</td></tr>
                   </table>
                   <div class="dt">▸ A POLICY (JSON)</div>
 <pre class="code-block">{
@@ -274,7 +274,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🎫</span>
-              <span class="topic-name">AWS IAM Deep — AssumeRole, STS &amp; Boundaries</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> IAM <span class="acro-exp">(Identity and Access Management)</span> Deep — AssumeRole, STS <span class="acro-exp">(Security Token Service)</span> &amp; Boundaries</span>
               <span class="topic-badge">AWS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -286,7 +286,7 @@
                   Long-lived access keys are the thing that leaks. The modern pattern is
                   <strong class="c-cyan">roles + STS</strong>: you assume a role and get
                   <strong>temporary credentials</strong> that auto-expire (minutes to hours).
-                  Cross-account access, CI/CD, and EC2/Lambda all use this.
+                  Cross-account access, CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span>, and EC2/Lambda all use this.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -295,14 +295,14 @@
                     <tr><td class="c-cyan">Trust policy</td><td>On the role — says <em>who</em> is allowed to assume it</td></tr>
                     <tr><td class="c-cyan">Instance/Task role</td><td>EC2/ECS/Lambda auto-receive creds — no keys on disk</td></tr>
                     <tr><td class="c-cyan">Permission boundary</td><td>A ceiling on the max perms an identity can ever have</td></tr>
-                    <tr><td class="c-cyan">IAM Identity Center</td><td>SSO for humans → short-lived console/CLI sessions</td></tr>
-                    <tr><td class="c-cyan">OIDC federation</td><td>Let GitHub Actions assume a role with no stored secret</td></tr>
+                    <tr><td class="c-cyan">IAM Identity Center</td><td>SSO <span class="acro-exp">(Single Sign-On)</span> for humans → short-lived console/CLI sessions</td></tr>
+                    <tr><td class="c-cyan">OIDC <span class="acro-exp">(OpenID Connect)</span> federation</td><td>Let GitHub Actions assume a role with no stored secret</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Policy evaluation:</strong> an explicit
                     <strong class="c-red">Deny</strong> always wins; otherwise you need an explicit
                     Allow. Effective permission = intersection of identity policy, resource policy,
-                    permission boundary, and any SCP (org guardrail).
+                    permission boundary, and any SCP <span class="acro-exp">(Service Control Policy)</span> (org guardrail).
                   </div>
                 </div>
               </div>
@@ -312,7 +312,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔑</span>
-              <span class="topic-name">GCP IAM — Members, Roles &amp; Hierarchy</span>
+              <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> IAM <span class="acro-exp">(Identity and Access Management)</span> — Members, Roles &amp; Hierarchy</span>
               <span class="topic-badge">GCP</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -350,7 +350,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🤖</span>
-              <span class="topic-name">GCP Service Accounts &amp; Workload Identity</span>
+              <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Service Accounts &amp; Workload Identity</span>
               <span class="topic-badge">GCP</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -360,8 +360,8 @@
                 <div class="concept-title">Machine Identity Without Leaking Keys</div>
                 <div class="concept-desc">
                   A <strong class="c-cyan">service account (SA)</strong> is an identity for an app or
-                  VM rather than a person. The trap is <strong class="c-red">downloaded SA key
-                  files</strong> — long-lived JSON secrets that leak and rarely rotate.
+                  VM <span class="acro-exp">(Virtual Machine)</span> rather than a person. The trap is <strong class="c-red">downloaded SA key
+                  files</strong> — long-lived JSON <span class="acro-exp">(JavaScript Object Notation)</span> secrets that leak and rarely rotate.
                   <strong class="c-green">Workload Identity</strong> is the modern answer: it lets
                   workloads (GKE pods, or external systems like GitHub Actions and even AWS) obtain
                   short-lived SA credentials automatically, with <em>no key file at all</em>.
@@ -385,7 +385,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">⚠️</span>
-              <span class="topic-name">Cloud IAM Pitfalls &amp; Privilege Escalation</span>
+              <span class="topic-name">Cloud IAM <span class="acro-exp">(Identity and Access Management)</span> Pitfalls &amp; Privilege Escalation</span>
               <span class="topic-badge">Security</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -405,12 +405,12 @@
                     <tr><td class="c-red">iam:PassRole / actAs</td><td>Lets a low-priv identity hand a powerful role to a service it controls → escalation</td></tr>
                     <tr><td class="c-red">Overbroad AssumeRole trust</td><td>A role anyone can assume is a role attackers assume</td></tr>
                     <tr><td class="c-red">Long-lived access keys</td><td>Leak in code/logs/laptops; rarely rotated</td></tr>
-                    <tr><td class="c-red">SSRF → metadata service</td><td>App-layer SSRF steals the instance's role creds (IMDSv2 mitigates on AWS)</td></tr>
+                    <tr><td class="c-red">SSRF <span class="acro-exp">(Server-Side Request Forgery)</span> → metadata service</td><td>App-layer SSRF steals the instance's role creds (IMDSv2 mitigates on AWS)</td></tr>
                     <tr><td class="c-red">Public resource policies</td><td>A bucket/queue open to <code>"Principal": "*"</code></td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Defenses:</strong> least privilege, no wildcards, IMDSv2,
-                    short-lived creds, and continuous scanning with CSPM tools (Prowler, ScoutSuite,
+                    short-lived creds, and continuous scanning with CSPM <span class="acro-exp">(Cloud Security Posture Management)</span> tools (Prowler, ScoutSuite,
                     Steampipe) that flag these exact patterns.
                   </div>
                 </div>
@@ -421,7 +421,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🌐</span>
-              <span class="topic-name">AWS VPC — Subnets, Security Groups &amp; NACLs</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> VPC <span class="acro-exp">(Virtual Private Cloud)</span> — Subnets, Security Groups &amp; NACLs <span class="acro-exp">(Network Access Control List)</span></span>
               <span class="topic-badge">AWS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -431,7 +431,7 @@
                 <div class="concept-title">Your Private Slice of the AWS Network</div>
                 <div class="concept-desc">
                   A <strong class="c-cyan">VPC</strong> is an isolated virtual network you define
-                  with a CIDR block (e.g. <code>10.0.0.0/16</code>). Inside it you carve
+                  with a CIDR <span class="acro-exp">(Classless Inter-Domain Routing)</span> block (e.g. <code>10.0.0.0/16</code>). Inside it you carve
                   <strong>subnets</strong>, control routing, and layer two firewalls. Getting the
                   public/private split right is the foundation of a secure architecture.
                 </div>
@@ -439,7 +439,7 @@
                   <table class="ref-table">
                     <tr><th>Piece</th><th>Role</th></tr>
                     <tr><td class="c-cyan">Public subnet</td><td>Route to an Internet Gateway (IGW) — for load balancers, bastions</td></tr>
-                    <tr><td class="c-cyan">Private subnet</td><td>No direct inbound; outbound via a NAT Gateway — for app servers, DBs</td></tr>
+                    <tr><td class="c-cyan">Private subnet</td><td>No direct inbound; outbound via a NAT <span class="acro-exp">(Network Address Translation)</span> Gateway — for app servers, DBs</td></tr>
                     <tr><td class="c-cyan">Route table</td><td>Decides where a subnet's traffic goes (IGW, NAT, peering)</td></tr>
                     <tr><td class="c-green">Security Group</td><td><strong>Stateful</strong> firewall on the instance — allow rules only; return traffic auto-allowed</td></tr>
                     <tr><td class="c-amber">NACL</td><td><strong>Stateless</strong> firewall on the subnet — allow + deny; must allow both directions</td></tr>
@@ -447,7 +447,7 @@
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Remember:</strong> Security Groups are stateful (the
                     common case, instance-level); NACLs are stateless (subnet-level, coarse). Put
-                    databases in private subnets and never give them a public IP.
+                    databases in private subnets and never give them a public IP <span class="acro-exp">(Internet Protocol)</span>.
                   </div>
                 </div>
               </div>
@@ -457,7 +457,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔀</span>
-              <span class="topic-name">AWS Load Balancing &amp; DNS — ELB, Route 53, CloudFront</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Load Balancing &amp; DNS <span class="acro-exp">(Domain Name System)</span> — ELB <span class="acro-exp">(Elastic Load Balancing)</span>, Route 53, CloudFront</span>
               <span class="topic-badge">AWS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -468,14 +468,14 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Service</th><th>Does</th></tr>
-                    <tr><td class="c-cyan">ALB (Application LB)</td><td>Layer 7 — routes HTTP(S) by path/host, WebSockets, target groups</td></tr>
-                    <tr><td class="c-cyan">NLB (Network LB)</td><td>Layer 4 — ultra-fast TCP/UDP, static IPs, extreme throughput</td></tr>
+                    <tr><td class="c-cyan">ALB <span class="acro-exp">(Application Load Balancer)</span> (Application LB)</td><td>Layer 7 — routes HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>(S) by path/host, WebSockets, target groups</td></tr>
+                    <tr><td class="c-cyan">NLB <span class="acro-exp">(Network Load Balancer)</span> (Network LB)</td><td>Layer 4 — ultra-fast TCP/UDP, static IPs <span class="acro-exp">(Internet Protocol)</span>, extreme throughput</td></tr>
                     <tr><td class="c-cyan">Route 53</td><td>DNS + health checks + routing policies (latency, weighted, failover, geo)</td></tr>
-                    <tr><td class="c-cyan">CloudFront</td><td>CDN — caches content at edge locations near users; also DDoS/TLS termination</td></tr>
+                    <tr><td class="c-cyan">CloudFront</td><td>CDN <span class="acro-exp">(Content Delivery Network)</span> — caches content at edge locations near users; also DDoS/TLS termination</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     A typical web path: <strong>Route 53 → CloudFront → ALB → targets</strong> across
-                    multiple AZs. Route 53's <strong class="c-green">failover routing</strong> +
+                    multiple AZs <span class="acro-exp">(Availability Zone)</span>. Route 53's <strong class="c-green">failover routing</strong> +
                     health checks is how you build multi-region resilience.
                   </div>
                 </div>
@@ -486,7 +486,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🌐</span>
-              <span class="topic-name">GCP VPC — Global Networks &amp; Firewall Rules</span>
+              <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> VPC <span class="acro-exp">(Virtual Private Cloud)</span> — Global Networks &amp; Firewall Rules</span>
               <span class="topic-badge">GCP</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -505,12 +505,12 @@
                     <tr><th>Piece</th><th>Role</th></tr>
                     <tr><td class="c-cyan">VPC (global)</td><td>The whole network; subnets are regional within it</td></tr>
                     <tr><td class="c-green">Firewall rules</td><td>Stateful; applied by network <strong>tags</strong> or service accounts, not per-instance objects</td></tr>
-                    <tr><td class="c-cyan">Cloud NAT</td><td>Managed egress for private instances (no per-VM NAT gateway)</td></tr>
+                    <tr><td class="c-cyan">Cloud NAT <span class="acro-exp">(Network Address Translation)</span></td><td>Managed egress for private instances (no per-VM NAT gateway)</td></tr>
                     <tr><td class="c-cyan">Cloud Router</td><td>Dynamic (BGP) routing for hybrid/VPN links</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Firewall rules being <strong class="c-green">tag-based</strong> is the mental
-                    shift from AWS: tag an instance <code>web</code>, write a rule "allow 443 to
+                    shift from AWS <span class="acro-exp">(Amazon Web Services)</span>: tag an instance <code>web</code>, write a rule "allow 443 to
                     tag:web" — no security-group object to attach.
                   </div>
                 </div>
@@ -521,14 +521,14 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔀</span>
-              <span class="topic-name">GCP Load Balancing &amp; DNS</span>
+              <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Load Balancing &amp; DNS <span class="acro-exp">(Domain Name System)</span></span>
               <span class="topic-badge">GCP</span>
               <span class="topic-chev">▶</span>
             </div>
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">How-To</div>
-                <div class="concept-title">A Single Global Anycast IP</div>
+                <div class="concept-title">A Single Global Anycast IP <span class="acro-exp">(Internet Protocol)</span></div>
                 <div class="concept-desc">
                   GCP's global load balancer is a standout: one
                   <strong class="c-cyan">anycast IP</strong> serves users worldwide, automatically
@@ -538,10 +538,10 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Service</th><th>Does</th></tr>
-                    <tr><td class="c-cyan">Global External LB</td><td>One IP, worldwide HTTP(S) routing to nearest backend</td></tr>
+                    <tr><td class="c-cyan">Global External LB</td><td>One IP, worldwide HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>(S) routing to nearest backend</td></tr>
                     <tr><td class="c-cyan">Regional LB</td><td>L4/L7 within a region</td></tr>
-                    <tr><td class="c-cyan">Cloud DNS</td><td>Managed, scalable DNS with 100% SLA</td></tr>
-                    <tr><td class="c-cyan">Cloud CDN</td><td>Edge caching, enabled on the LB backend</td></tr>
+                    <tr><td class="c-cyan">Cloud DNS</td><td>Managed, scalable DNS with 100% SLA <span class="acro-exp">(Service Level Agreement)</span></td></tr>
+                    <tr><td class="c-cyan">Cloud CDN <span class="acro-exp">(Content Delivery Network)</span></td><td>Edge caching, enabled on the LB backend</td></tr>
                   </table>
                 </div>
               </div>
@@ -551,7 +551,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔗</span>
-              <span class="topic-name">Hybrid Connectivity — VPN, Interconnect &amp; Peering</span>
+              <span class="topic-name">Hybrid Connectivity — VPN <span class="acro-exp">(Virtual Private Network)</span>, Interconnect &amp; Peering</span>
               <span class="topic-badge">Cloud</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -565,10 +565,10 @@
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Need</th><th>AWS</th><th>GCP</th></tr>
+                    <tr><th>Need</th><th>AWS <span class="acro-exp">(Amazon Web Services)</span></th><th>GCP <span class="acro-exp">(Google Cloud Platform)</span></th></tr>
                     <tr><td>Encrypted over internet</td><td>Site-to-Site VPN</td><td>Cloud VPN</td></tr>
                     <tr><td>Private dedicated line</td><td>Direct Connect</td><td>Cloud Interconnect</td></tr>
-                    <tr><td>Connect two VPCs</td><td>VPC Peering / Transit Gateway</td><td>VPC Peering / Network Connectivity Center</td></tr>
+                    <tr><td>Connect two VPCs <span class="acro-exp">(Virtual Private Cloud)</span></td><td>VPC Peering / Transit Gateway</td><td>VPC Peering / Network Connectivity Center</td></tr>
                     <tr><td>Reach a managed service privately</td><td>PrivateLink / VPC Endpoints</td><td>Private Service Connect</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
@@ -586,7 +586,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🖥️</span>
-              <span class="topic-name">AWS Compute — EC2, AMIs &amp; Auto Scaling</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Compute — EC2 <span class="acro-exp">(Elastic Compute Cloud)</span>, AMIs <span class="acro-exp">(Amazon Machine Image)</span> &amp; Auto Scaling</span>
               <span class="topic-badge">AWS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -605,7 +605,7 @@
                   <table class="ref-table">
                     <tr><th>Concept</th><th>Detail</th></tr>
                     <tr><td class="c-cyan">AMI</td><td>Snapshot template an instance boots from (OS + config)</td></tr>
-                    <tr><td class="c-cyan">Instance family</td><td>t/m = general, c = compute, r = memory, g/p = GPU</td></tr>
+                    <tr><td class="c-cyan">Instance family</td><td>t/m = general, c = compute, r = memory, g/p = GPU <span class="acro-exp">(Graphics Processing Unit)</span></td></tr>
                     <tr><td class="c-cyan">Auto Scaling Group</td><td>Min/desired/max; adds/removes instances on metrics</td></tr>
                     <tr><td class="c-cyan">Launch template</td><td>The blueprint an ASG uses to create instances</td></tr>
                     <tr><td class="c-cyan">User data</td><td>Boot script to configure an instance on launch</td></tr>
@@ -625,7 +625,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">📦</span>
-              <span class="topic-name">AWS Serverless &amp; Containers — Lambda, ECS, EKS, Fargate</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Serverless &amp; Containers — Lambda, ECS <span class="acro-exp">(Elastic Container Service)</span>, EKS <span class="acro-exp">(Elastic Kubernetes Service)</span>, Fargate</span>
               <span class="topic-badge">AWS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -639,8 +639,8 @@
                     <tr><td class="c-cyan">Lambda</td><td>Functions triggered by events; scale-to-zero, pay per ms</td></tr>
                     <tr><td class="c-cyan">ECS</td><td>AWS's own container orchestrator (simpler than K8s)</td></tr>
                     <tr><td class="c-cyan">EKS</td><td>Managed Kubernetes (when you need K8s portability)</td></tr>
-                    <tr><td class="c-cyan">Fargate</td><td>Serverless <em>container</em> compute — runs ECS/EKS tasks with no EC2 to manage</td></tr>
-                    <tr><td class="c-cyan">App Runner</td><td>Push a container/repo → get a URL; simplest path</td></tr>
+                    <tr><td class="c-cyan">Fargate</td><td>Serverless <em>container</em> compute — runs ECS/EKS tasks with no EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> to manage</td></tr>
+                    <tr><td class="c-cyan">App Runner</td><td>Push a container/repo → get a URL <span class="acro-exp">(Uniform Resource Locator)</span>; simplest path</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Decision:</strong> event-driven glue → Lambda; long-running
@@ -656,14 +656,14 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🖥️</span>
-              <span class="topic-name">GCP Compute — Compute Engine &amp; MIGs</span>
+              <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Compute — Compute Engine &amp; MIGs</span>
               <span class="topic-badge">GCP</span>
               <span class="topic-chev">▶</span>
             </div>
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">How-To</div>
-                <div class="concept-title">VMs on Google's Infrastructure</div>
+                <div class="concept-title">VMs <span class="acro-exp">(Virtual Machine)</span> on Google's Infrastructure</div>
                 <div class="concept-desc">
                   <strong class="c-cyan">Compute Engine</strong> is GCP's VM service. Two nice
                   differentiators: <strong class="c-green">per-second billing with sustained-use
@@ -673,8 +673,8 @@
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Concept</th><th>AWS Analog</th></tr>
-                    <tr><td class="c-cyan">Machine image / family</td><td>AMI / instance family (e2, n2, c3…)</td></tr>
+                    <tr><th>Concept</th><th>AWS <span class="acro-exp">(Amazon Web Services)</span> Analog</th></tr>
+                    <tr><td class="c-cyan">Machine image / family</td><td>AMI <span class="acro-exp">(Amazon Machine Image)</span> / instance family (e2, n2, c3…)</td></tr>
                     <tr><td class="c-cyan">Managed Instance Group (MIG)</td><td>Auto Scaling Group — autoscaling + auto-healing</td></tr>
                     <tr><td class="c-cyan">Instance template</td><td>Launch template</td></tr>
                     <tr><td class="c-green">Preemptible / Spot VMs</td><td>Spot — deep discount, reclaimable</td></tr>
@@ -688,7 +688,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🏃</span>
-              <span class="topic-name">GCP Serverless &amp; Containers — Cloud Run, Functions, GKE</span>
+              <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Serverless &amp; Containers — Cloud Run, Functions, GKE <span class="acro-exp">(Google Kubernetes Engine)</span></span>
               <span class="topic-badge">GCP</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -698,7 +698,7 @@
                 <div class="concept-title">Cloud Run Is the Star</div>
                 <div class="concept-desc">
                   <strong class="c-cyan">Cloud Run</strong> is GCP's standout: give it a container,
-                  get a scalable HTTPS endpoint that <strong class="c-green">scales to zero</strong>
+                  get a scalable HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span> endpoint that <strong class="c-green">scales to zero</strong>
                   and bills per request — serverless containers with almost no config. It's often the
                   simplest way to deploy a web service on any cloud.
                 </div>
@@ -711,7 +711,7 @@
                     <tr><td class="c-cyan">GKE Autopilot</td><td>K8s where Google manages the nodes for you</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
-                    <strong class="c-green">Rule of thumb:</strong> a stateless web service or API →
+                    <strong class="c-green">Rule of thumb:</strong> a stateless web service or API <span class="acro-exp">(Application Programming Interface)</span> →
                     Cloud Run. Event glue → Cloud Functions. You genuinely need Kubernetes (complex
                     microservices, existing K8s manifests) → GKE.
                   </div>
@@ -723,7 +723,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🧭</span>
-              <span class="topic-name">Choosing Compute — VM vs Container vs Serverless</span>
+              <span class="topic-name">Choosing Compute — VM <span class="acro-exp">(Virtual Machine)</span> vs Container vs Serverless</span>
               <span class="topic-badge">Reference</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -737,7 +737,7 @@
                     <tr><td class="c-cyan">Serverless functions</td><td>Event-driven, spiky, short tasks; you want zero ops &amp; scale-to-zero</td></tr>
                     <tr><td class="c-cyan">Serverless containers (Cloud Run / Fargate)</td><td>Web services/APIs you want managed, but with a real container &amp; no cold-start-only limits</td></tr>
                     <tr><td class="c-cyan">Managed Kubernetes</td><td>Many services, complex networking, portability, an existing K8s investment</td></tr>
-                    <tr><td class="c-cyan">Plain VMs</td><td>Legacy apps, special OS/kernel needs, GPUs, or maximum control</td></tr>
+                    <tr><td class="c-cyan">Plain VMs</td><td>Legacy apps, special OS/kernel needs, GPUs <span class="acro-exp">(Graphics Processing Unit)</span>, or maximum control</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     The trend runs left-to-right toward <strong>more managed</strong> — start as
@@ -752,7 +752,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">💾</span>
-              <span class="topic-name">AWS Storage — S3 Classes, EBS &amp; EFS</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Storage — S3 <span class="acro-exp">(Simple Storage Service)</span> Classes, EBS <span class="acro-exp">(Elastic Block Store)</span> &amp; EFS <span class="acro-exp">(Elastic File System)</span></span>
               <span class="topic-badge">AWS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -771,7 +771,7 @@
                   <table class="ref-table">
                     <tr><th>Service</th><th>Type</th><th>Use</th></tr>
                     <tr><td class="c-cyan">S3</td><td>Object</td><td>Files, backups, static sites, data lakes</td></tr>
-                    <tr><td class="c-cyan">EBS</td><td>Block</td><td>Boot/data volume for one EC2 (like a disk)</td></tr>
+                    <tr><td class="c-cyan">EBS</td><td>Block</td><td>Boot/data volume for one EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> (like a disk)</td></tr>
                     <tr><td class="c-cyan">EFS</td><td>File</td><td>Shared filesystem mounted by many instances</td></tr>
                     <tr><td class="c-cyan">FSx</td><td>File</td><td>Managed Windows/Lustre file systems</td></tr>
                   </table>
@@ -786,7 +786,7 @@
                   <div class="concept-desc" style="margin-top:8px">
                     Use <strong class="c-green">lifecycle rules</strong> to age objects into colder
                     classes automatically. EBS volumes are AZ-locked — snapshot to S3 for
-                    backup/restore across AZs.
+                    backup/restore across AZs <span class="acro-exp">(Availability Zone)</span>.
                   </div>
                 </div>
               </div>
@@ -796,14 +796,14 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🗃️</span>
-              <span class="topic-name">AWS Databases — RDS, Aurora &amp; DynamoDB</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Databases — RDS <span class="acro-exp">(Relational Database Service)</span>, Aurora &amp; DynamoDB</span>
               <span class="topic-badge">AWS</span>
               <span class="topic-chev">▶</span>
             </div>
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">How-To</div>
-                <div class="concept-title">Managed SQL &amp; NoSQL</div>
+                <div class="concept-title">Managed SQL <span class="acro-exp">(Structured Query Language)</span> &amp; NoSQL</div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Service</th><th>What</th></tr>
@@ -826,7 +826,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">💾</span>
-              <span class="topic-name">GCP Storage — Cloud Storage, Persistent Disk &amp; Filestore</span>
+              <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Storage — Cloud Storage, Persistent Disk &amp; Filestore</span>
               <span class="topic-badge">GCP</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -836,10 +836,10 @@
                 <div class="concept-title">The Same Three Types, Google's Names</div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Service</th><th>Type</th><th>AWS Analog</th></tr>
-                    <tr><td class="c-cyan">Cloud Storage</td><td>Object</td><td>S3</td></tr>
-                    <tr><td class="c-cyan">Persistent Disk</td><td>Block</td><td>EBS</td></tr>
-                    <tr><td class="c-cyan">Filestore</td><td>File (NFS)</td><td>EFS</td></tr>
+                    <tr><th>Service</th><th>Type</th><th>AWS <span class="acro-exp">(Amazon Web Services)</span> Analog</th></tr>
+                    <tr><td class="c-cyan">Cloud Storage</td><td>Object</td><td>S3 <span class="acro-exp">(Simple Storage Service)</span></td></tr>
+                    <tr><td class="c-cyan">Persistent Disk</td><td>Block</td><td>EBS <span class="acro-exp">(Elastic Block Store)</span></td></tr>
+                    <tr><td class="c-cyan">Filestore</td><td>File (NFS)</td><td>EFS <span class="acro-exp">(Elastic File System)</span></td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Cloud Storage classes mirror S3: <strong>Standard → Nearline → Coldline →
@@ -855,7 +855,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🗃️</span>
-              <span class="topic-name">GCP Databases — Cloud SQL, Spanner &amp; Firestore</span>
+              <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Databases — Cloud SQL <span class="acro-exp">(Structured Query Language)</span>, Spanner &amp; Firestore</span>
               <span class="topic-badge">GCP</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -892,11 +892,11 @@
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">How-To</div>
-                <div class="concept-title">Query Terabytes With SQL, No Cluster</div>
+                <div class="concept-title">Query Terabytes With SQL <span class="acro-exp">(Structured Query Language)</span>, No Cluster</div>
                 <div class="concept-desc">
-                  <strong class="c-cyan">BigQuery</strong> is GCP's flagship analytics warehouse:
+                  <strong class="c-cyan">BigQuery</strong> is GCP <span class="acro-exp">(Google Cloud Platform)</span>'s flagship analytics warehouse:
                   fully serverless (no infrastructure to size), it runs SQL over terabytes-to-
-                  petabytes in seconds by massively parallelizing the scan. It's the OLAP counterpart
+                  petabytes in seconds by massively parallelizing the scan. It's the OLAP <span class="acro-exp">(Online Analytical Processing)</span> counterpart
                   to the transactional databases above (see the OLTP vs OLAP topic).
                 </div>
                 <div class="dw">
@@ -905,12 +905,12 @@
                     <tr><td class="c-cyan">Serverless</td><td>No clusters; it scales compute (slots) automatically</td></tr>
                     <tr><td class="c-cyan">Columnar</td><td>Reads only the columns your query touches → fast + cheap</td></tr>
                     <tr><td class="c-amber">Cost model</td><td>Priced by bytes scanned (or flat-rate slots) — <code>SELECT *</code> on a huge table is expensive</td></tr>
-                    <tr><td class="c-green">BQ ML</td><td>Train ML models in SQL, in place</td></tr>
+                    <tr><td class="c-green">BQ ML <span class="acro-exp">(Machine Learning)</span></td><td>Train ML models in SQL, in place</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-amber">Cost tip:</strong> select only needed columns and use
                     partitioned/clustered tables — you pay for data scanned, so pruning saves real
-                    money. AWS's equivalent is Redshift (and Athena for S3).
+                    money. AWS <span class="acro-exp">(Amazon Web Services)</span>'s equivalent is Redshift (and Athena for S3).
                   </div>
                 </div>
               </div>
@@ -920,7 +920,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🛡️</span>
-              <span class="topic-name">AWS Security Stack — CloudTrail, GuardDuty &amp; Security Hub</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Security Stack — CloudTrail, GuardDuty &amp; Security Hub</span>
               <span class="topic-badge">AWS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -936,12 +936,12 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Service</th><th>Does</th></tr>
-                    <tr><td class="c-cyan">CloudTrail</td><td>Records every API call — the audit log of who did what</td></tr>
+                    <tr><td class="c-cyan">CloudTrail</td><td>Records every API <span class="acro-exp">(Application Programming Interface)</span> call — the audit log of who did what</td></tr>
                     <tr><td class="c-cyan">Config</td><td>Tracks resource configuration over time + rules for compliance</td></tr>
                     <tr><td class="c-cyan">GuardDuty</td><td>ML/threat-intel detection on logs (crypto-mining, recon, exfil)</td></tr>
                     <tr><td class="c-cyan">Security Hub</td><td>Aggregates findings from all of them + CIS/AWS benchmarks</td></tr>
                     <tr><td class="c-cyan">Inspector</td><td>Automated vuln scanning of EC2/ECR/Lambda</td></tr>
-                    <tr><td class="c-cyan">Macie</td><td>Finds sensitive data (PII) in S3</td></tr>
+                    <tr><td class="c-cyan">Macie</td><td>Finds sensitive data (PII) in S3 <span class="acro-exp">(Simple Storage Service)</span></td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     <strong class="c-green">Pattern:</strong> CloudTrail + Config feed GuardDuty +
@@ -956,7 +956,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔐</span>
-              <span class="topic-name">AWS Data Protection — KMS &amp; Secrets Manager</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Data Protection — KMS <span class="acro-exp">(Key Management Service)</span> &amp; Secrets Manager</span>
               <span class="topic-badge">AWS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -973,7 +973,7 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Service</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">KMS</td><td>Managed keys; envelope encryption; per-key IAM policies + audit via CloudTrail</td></tr>
+                    <tr><td class="c-cyan">KMS</td><td>Managed keys; envelope encryption; per-key IAM <span class="acro-exp">(Identity and Access Management)</span> policies + audit via CloudTrail</td></tr>
                     <tr><td class="c-cyan">Secrets Manager</td><td>Store + auto-rotate DB creds/API keys; fetch at runtime</td></tr>
                     <tr><td class="c-cyan">Parameter Store</td><td>Cheaper config + secret storage (SSM)</td></tr>
                   </table>
@@ -990,7 +990,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🛡️</span>
-              <span class="topic-name">GCP Security — Cloud Audit Logs &amp; Security Command Center</span>
+              <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Security — Cloud Audit Logs &amp; Security Command Center</span>
               <span class="topic-badge">GCP</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1000,11 +1000,11 @@
                 <div class="concept-title">The Google-Side Equivalents</div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Service</th><th>Does</th><th>AWS Analog</th></tr>
-                    <tr><td class="c-cyan">Cloud Audit Logs</td><td>Admin/data-access API audit trail</td><td>CloudTrail</td></tr>
+                    <tr><th>Service</th><th>Does</th><th>AWS <span class="acro-exp">(Amazon Web Services)</span> Analog</th></tr>
+                    <tr><td class="c-cyan">Cloud Audit Logs</td><td>Admin/data-access API <span class="acro-exp">(Application Programming Interface)</span> audit trail</td><td>CloudTrail</td></tr>
                     <tr><td class="c-cyan">Security Command Center</td><td>Central posture + threat findings dashboard</td><td>Security Hub + GuardDuty</td></tr>
                     <tr><td class="c-cyan">Cloud Logging / Monitoring</td><td>Logs, metrics, alerting</td><td>CloudWatch</td></tr>
-                    <tr><td class="c-cyan">Chronicle</td><td>Google's SIEM at scale</td><td>—</td></tr>
+                    <tr><td class="c-cyan">Chronicle</td><td>Google's SIEM <span class="acro-exp">(Security Information and Event Management)</span> at scale</td><td>—</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">SCC</strong> is the single pane for GCP security posture —
@@ -1019,7 +1019,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔐</span>
-              <span class="topic-name">GCP Data Protection — Cloud KMS, Secret Manager &amp; VPC-SC</span>
+              <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Data Protection — Cloud KMS <span class="acro-exp">(Key Management Service)</span>, Secret Manager &amp; VPC-SC</span>
               <span class="topic-badge">GCP</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1031,9 +1031,9 @@
                   <table class="ref-table">
                     <tr><th>Service</th><th>Detail</th></tr>
                     <tr><td class="c-cyan">Cloud KMS</td><td>Managed encryption keys (like AWS KMS); CMEK on most services</td></tr>
-                    <tr><td class="c-cyan">Secret Manager</td><td>Versioned secret storage with IAM + audit</td></tr>
-                    <tr><td class="c-green">VPC Service Controls</td><td>A security perimeter around services to stop data exfiltration — GCP-distinctive</td></tr>
-                    <tr><td class="c-cyan">DLP API</td><td>Discover &amp; redact sensitive data (PII)</td></tr>
+                    <tr><td class="c-cyan">Secret Manager</td><td>Versioned secret storage with IAM <span class="acro-exp">(Identity and Access Management)</span> + audit</td></tr>
+                    <tr><td class="c-green">VPC <span class="acro-exp">(Virtual Private Cloud)</span> Service Controls</td><td>A security perimeter around services to stop data exfiltration — GCP-distinctive</td></tr>
+                    <tr><td class="c-cyan">DLP <span class="acro-exp">(Data Loss Prevention)</span> API <span class="acro-exp">(Application Programming Interface)</span></td><td>Discover &amp; redact sensitive data (PII)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">VPC-SC</strong> is the standout: it draws a boundary so
@@ -1048,7 +1048,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🔎</span>
-              <span class="topic-name">CSPM — Prowler, ScoutSuite &amp; Steampipe</span>
+              <span class="topic-name">CSPM <span class="acro-exp">(Cloud Security Posture Management)</span> — Prowler, ScoutSuite &amp; Steampipe</span>
               <span class="topic-badge">Security</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1058,7 +1058,7 @@
                 <div class="concept-title">Continuously Audit Your Cloud Posture</div>
                 <div class="concept-desc">
                   <strong class="c-cyan">Cloud Security Posture Management (CSPM)</strong> tools scan
-                  your accounts for misconfigurations — public buckets, over-broad IAM, unencrypted
+                  your accounts for misconfigurations — public buckets, over-broad IAM <span class="acro-exp">(Identity and Access Management)</span>, unencrypted
                   volumes, disabled logging — against benchmarks (CIS). This is the bridge between
                   the Cloud and Blue Team domains: run them regularly to find gaps before attackers
                   (using the same tools) do.
@@ -1067,8 +1067,8 @@
                   <table class="ref-table">
                     <tr><th>Tool</th><th>Detail</th></tr>
                     <tr><td class="c-cyan">Prowler</td><td>Open-source AWS/GCP/Azure security assessments (CIS, NIST, etc.)</td></tr>
-                    <tr><td class="c-cyan">ScoutSuite</td><td>Multi-cloud config auditing → HTML report</td></tr>
-                    <tr><td class="c-cyan">Steampipe</td><td>Query your cloud with SQL (find issues with a SELECT)</td></tr>
+                    <tr><td class="c-cyan">ScoutSuite</td><td>Multi-cloud config auditing → HTML <span class="acro-exp">(HyperText Markup Language)</span> report</td></tr>
+                    <tr><td class="c-cyan">Steampipe</td><td>Query your cloud with SQL <span class="acro-exp">(Structured Query Language)</span> (find issues with a SELECT)</td></tr>
                     <tr><td class="c-cyan">Cloud-native</td><td>Security Hub / SCC do continuous CSPM too</td></tr>
                   </table>
                 </div>
@@ -1079,7 +1079,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🏗️</span>
-              <span class="topic-name">Terraform on AWS &amp; GCP</span>
+              <span class="topic-name">Terraform on AWS <span class="acro-exp">(Amazon Web Services)</span> &amp; GCP <span class="acro-exp">(Google Cloud Platform)</span></span>
               <span class="topic-badge">IaC</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1113,7 +1113,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">📜</span>
-              <span class="topic-name">AWS-Native IaC — CloudFormation &amp; CDK</span>
+              <span class="topic-name">AWS-Native IaC <span class="acro-exp">(Infrastructure as Code)</span> — CloudFormation &amp; CDK <span class="acro-exp">(Cloud Development Kit)</span></span>
               <span class="topic-badge">AWS</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1122,11 +1122,11 @@
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">Terraform's In-House Rivals</div>
                 <div class="concept-desc">
-                  <strong class="c-cyan">CloudFormation</strong> is AWS's native IaC — YAML/JSON
+                  <strong class="c-cyan">CloudFormation</strong> is AWS <span class="acro-exp">(Amazon Web Services)</span>'s native IaC — YAML/JSON
                   templates, deeply integrated, no state file to manage (AWS tracks it as a "stack").
                   <strong class="c-cyan">CDK</strong> (Cloud Development Kit) lets you write infra in
                   a real programming language (TypeScript, Python) that <em>synthesizes</em> to
-                  CloudFormation — loops, conditions, and abstractions instead of sprawling YAML.
+                  CloudFormation — loops, conditions, and abstractions instead of sprawling YAML <span class="acro-exp">(YAML Ain't Markup Language)</span>.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -1137,7 +1137,7 @@
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     Rule of thumb: all-in on AWS → CloudFormation/CDK is tightly integrated;
-                    multi-cloud or tool consistency → Terraform. GCP's equivalents are Deployment
+                    multi-cloud or tool consistency → Terraform. GCP <span class="acro-exp">(Google Cloud Platform)</span>'s equivalents are Deployment
                     Manager and Config Controller (Terraform is common on GCP too).
                   </div>
                 </div>
@@ -1162,7 +1162,7 @@
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Control</th><th>AWS</th><th>GCP</th></tr>
+                    <tr><th>Control</th><th>AWS <span class="acro-exp">(Amazon Web Services)</span></th><th>GCP <span class="acro-exp">(Google Cloud Platform)</span></th></tr>
                     <tr><td>Budgets + alerts</td><td>AWS Budgets</td><td>Budgets &amp; alerts</td></tr>
                     <tr><td>Cost analysis</td><td>Cost Explorer</td><td>Billing reports / BigQuery export</td></tr>
                     <tr><td>Attribute spend</td><td>Cost allocation tags</td><td>Labels</td></tr>
@@ -1198,7 +1198,7 @@
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Concept</th><th>AWS</th><th>GCP</th></tr>
+                    <tr><th>Concept</th><th>AWS <span class="acro-exp">(Amazon Web Services)</span></th><th>GCP <span class="acro-exp">(Google Cloud Platform)</span></th></tr>
                     <tr><td>Org hierarchy</td><td>Organizations + OUs</td><td>Organization + Folders</td></tr>
                     <tr><td>Guardrails</td><td>Service Control Policies (SCPs)</td><td>Org Policies</td></tr>
                     <tr><td>Landing zone</td><td>Control Tower</td><td>Cloud Foundation Toolkit</td></tr>
@@ -1206,7 +1206,7 @@
                   <div class="concept-desc" style="margin-top:10px">
                     The win: a compromise or mistake in one account/project can't reach the others,
                     and central <strong class="c-green">guardrails</strong> (SCPs/Org Policies)
-                    enforce rules — "no public S3," "only these regions" — org-wide.
+                    enforce rules — "no public S3 <span class="acro-exp">(Simple Storage Service)</span>," "only these regions" — org-wide.
                   </div>
                 </div>
               </div>
@@ -1216,7 +1216,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">📦</span>
-              <span class="topic-name">GCP-Native IaC — Deployment Manager &amp; Config Controller</span>
+              <span class="topic-name">GCP-Native IaC <span class="acro-exp">(Infrastructure as Code)</span> — Deployment Manager &amp; Config Controller</span>
               <span class="topic-badge">GCP · IaC</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1225,15 +1225,15 @@
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">Declarative Infrastructure the Google Way</div>
                 <div class="concept-desc">
-                  Beyond Terraform, GCP has native declarative options. Google now steers most users
+                  Beyond Terraform, GCP <span class="acro-exp">(Google Cloud Platform)</span> has native declarative options. Google now steers most users
                   toward <strong class="c-cyan">Config Controller</strong> (managed Config Connector +
-                  Policy Controller) — you describe cloud resources as Kubernetes-style YAML and GCP
+                  Policy Controller) — you describe cloud resources as Kubernetes-style YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> and GCP
                   reconciles them continuously.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Option</th><th>Notes</th></tr>
-                    <tr><td class="c-cyan">Config Connector</td><td>Manage GCP resources as K8s CRDs (GitOps-friendly)</td></tr>
+                    <tr><td class="c-cyan">Config Connector</td><td>Manage GCP resources as K8s <span class="acro-exp">(Kubernetes)</span> CRDs <span class="acro-exp">(Custom Resource Definition)</span> (GitOps-friendly)</td></tr>
                     <tr><td class="c-cyan">Config Controller</td><td>Managed KRM stack: Connector + Policy Controller + sync</td></tr>
                     <tr><td class="c-muted">Deployment Manager</td><td>The older Jinja/Python template engine (legacy; being retired)</td></tr>
                     <tr><td class="c-green">Terraform (+ Blueprints)</td><td>Google's actual recommended default for most teams</td></tr>
@@ -1251,7 +1251,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🚚</span>
-              <span class="topic-name">Cloud CI/CD — CodePipeline &amp; Cloud Build</span>
+              <span class="topic-name">Cloud CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> — CodePipeline &amp; Cloud Build</span>
               <span class="topic-badge">AWS · GCP</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1261,20 +1261,20 @@
                 <div class="concept-title">Managed Build-and-Deploy Pipelines</div>
                 <div class="concept-desc">
                   Both clouds offer first-party CI/CD so you don't run your own build servers. They
-                  slot in next to (or instead of) GitHub Actions when you want tight IAM and artifact
+                  slot in next to (or instead of) GitHub Actions when you want tight IAM <span class="acro-exp">(Identity and Access Management)</span> and artifact
                   integration with the platform.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>AWS</th><th>GCP</th><th>Role</th></tr>
+                    <tr><th>AWS <span class="acro-exp">(Amazon Web Services)</span></th><th>GCP <span class="acro-exp">(Google Cloud Platform)</span></th><th>Role</th></tr>
                     <tr><td class="c-cyan">CodePipeline</td><td>Cloud Build (triggers)</td><td>Orchestrate stages</td></tr>
                     <tr><td class="c-cyan">CodeBuild</td><td>Cloud Build</td><td>Run build/test steps</td></tr>
                     <tr><td class="c-cyan">CodeDeploy</td><td>Cloud Deploy</td><td>Progressive delivery to targets</td></tr>
-                    <tr><td class="c-cyan">ECR</td><td>Artifact Registry</td><td>Store container/package artifacts</td></tr>
+                    <tr><td class="c-cyan">ECR <span class="acro-exp">(Elastic Container Registry)</span></td><td>Artifact Registry</td><td>Store container/package artifacts</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Why native:</strong> pipelines assume an IAM role (no
-                    long-lived keys), and use <strong class="c-green">OIDC</strong> to let external
+                    long-lived keys), and use <strong class="c-green">OIDC <span class="acro-exp">(OpenID Connect)</span></strong> to let external
                     CI authenticate without stored secrets. Push signed images to the registry, then
                     Cloud Deploy/CodeDeploy roll them out canary-style.
                   </div>
@@ -1286,7 +1286,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">📊</span>
-              <span class="topic-name">AWS Observability — CloudWatch &amp; X-Ray</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Observability — CloudWatch &amp; X-Ray</span>
               <span class="topic-badge">AWS · Ops</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1322,7 +1322,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">📈</span>
-              <span class="topic-name">GCP Observability — Cloud Monitoring, Logging &amp; Trace</span>
+              <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Observability — Cloud Monitoring, Logging &amp; Trace</span>
               <span class="topic-badge">GCP · Ops</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1332,19 +1332,19 @@
                 <div class="concept-title">The Operations Suite (formerly Stackdriver)</div>
                 <div class="concept-desc">
                   Google's operations suite mirrors CloudWatch/X-Ray with metrics, logs, and traces —
-                  and leans on the SRE practices Google literally wrote the book on (SLOs, error
+                  and leans on the SRE <span class="acro-exp">(Site Reliability Engineering)</span> practices Google literally wrote the book on (SLOs, error
                   budgets are first-class in Cloud Monitoring).
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Service</th><th>AWS equivalent</th></tr>
+                    <tr><th>Service</th><th>AWS <span class="acro-exp">(Amazon Web Services)</span> equivalent</th></tr>
                     <tr><td class="c-cyan">Cloud Monitoring</td><td>CloudWatch metrics/alarms/dashboards</td></tr>
                     <tr><td class="c-cyan">Cloud Logging</td><td>CloudWatch Logs (with LogQL-like queries)</td></tr>
                     <tr><td class="c-cyan">Cloud Trace</td><td>X-Ray (distributed tracing)</td></tr>
                     <tr><td class="c-cyan">Cloud Profiler / Error Reporting</td><td>Continuous profiling &amp; error grouping</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
-                    Define an <strong class="c-green">SLO</strong> right in Cloud Monitoring and it
+                    Define an <strong class="c-green">SLO <span class="acro-exp">(Service Level Objective)</span></strong> right in Cloud Monitoring and it
                     tracks the error budget and burn rate for you — the theory from the SRE card,
                     operationalized. Also OpenTelemetry-native.
                   </div>
@@ -1365,7 +1365,7 @@
                 <div class="concept-label">Concept</div>
                 <div class="concept-title">The Pillars for Grading a Cloud Design</div>
                 <div class="concept-desc">
-                  Both AWS (<strong class="c-cyan">Well-Architected Framework</strong>) and GCP
+                  Both AWS <span class="acro-exp">(Amazon Web Services)</span> (<strong class="c-cyan">Well-Architected Framework</strong>) and GCP <span class="acro-exp">(Google Cloud Platform)</span>
                   (<strong class="c-cyan">Architecture Framework</strong>) publish a set of pillars to
                   review any workload against. It's the rubric architects use in design reviews and
                   the basis of the "Well-Architected Review."
@@ -1408,18 +1408,18 @@
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Concept</th><th>AWS / GCP analog</th></tr>
+                    <tr><th>Concept</th><th>AWS <span class="acro-exp">(Amazon Web Services)</span> / GCP <span class="acro-exp">(Google Cloud Platform)</span> analog</th></tr>
                     <tr><td class="c-cyan">Tenant</td><td>The identity boundary (~ AWS Organization root)</td></tr>
                     <tr><td class="c-cyan">Management Group → Subscription</td><td>Org/folder → account/project billing boundary</td></tr>
-                    <tr><td class="c-cyan">Entra ID</td><td>IAM Identity Center / Cloud Identity</td></tr>
-                    <tr><td class="c-cyan">az CLI / Cloud Shell</td><td>aws / gcloud CLI</td></tr>
+                    <tr><td class="c-cyan">Entra ID</td><td>IAM <span class="acro-exp">(Identity and Access Management)</span> Identity Center / Cloud Identity</td></tr>
+                    <tr><td class="c-cyan">az CLI <span class="acro-exp">(Command Line Interface)</span> / Cloud Shell</td><td>aws / gcloud CLI</td></tr>
                   </table>
                   <pre class="code-block"><span class="com"># Sign in and set the active subscription</span>
 az login
 az account set <span class="var">--subscription</span> <span class="str">"Prod"</span></pre>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Note the terms:</strong> Azure "subscription" ≈ AWS
-                    account, and RBAC is assigned on scopes (management group → subscription →
+                    account, and RBAC <span class="acro-exp">(Role-Based Access Control)</span> is assigned on scopes (management group → subscription →
                     resource group → resource) that inherit downward.
                   </div>
                 </div>
@@ -1430,7 +1430,7 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🧱</span>
-              <span class="topic-name">Azure Core — Resource Groups, VNet, VMs &amp; Storage</span>
+              <span class="topic-name">Azure Core — Resource Groups, VNet, VMs <span class="acro-exp">(Virtual Machine)</span> &amp; Storage</span>
               <span class="topic-badge">Azure</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1445,16 +1445,16 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Azure</th><th>Does</th><th>AWS analog</th></tr>
+                    <tr><th>Azure</th><th>Does</th><th>AWS <span class="acro-exp">(Amazon Web Services)</span> analog</th></tr>
                     <tr><td class="c-cyan">Resource Group</td><td>Lifecycle container for resources</td><td>(no direct one)</td></tr>
-                    <tr><td class="c-cyan">Virtual Network (VNet)</td><td>Private network + subnets + NSGs</td><td>VPC</td></tr>
-                    <tr><td class="c-cyan">Virtual Machines / VMSS</td><td>Compute + autoscale sets</td><td>EC2 / ASG</td></tr>
-                    <tr><td class="c-cyan">Storage Account (Blob)</td><td>Object/blob, file, queue, table</td><td>S3 (+ more)</td></tr>
-                    <tr><td class="c-cyan">AKS</td><td>Managed Kubernetes</td><td>EKS / GKE</td></tr>
-                    <tr><td class="c-cyan">ARM / Bicep</td><td>Native IaC (Bicep = friendly ARM)</td><td>CloudFormation</td></tr>
+                    <tr><td class="c-cyan">Virtual Network (VNet)</td><td>Private network + subnets + NSGs</td><td>VPC <span class="acro-exp">(Virtual Private Cloud)</span></td></tr>
+                    <tr><td class="c-cyan">Virtual Machines / VMSS</td><td>Compute + autoscale sets</td><td>EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> / ASG <span class="acro-exp">(Auto Scaling Group)</span></td></tr>
+                    <tr><td class="c-cyan">Storage Account (Blob)</td><td>Object/blob, file, queue, table</td><td>S3 <span class="acro-exp">(Simple Storage Service)</span> (+ more)</td></tr>
+                    <tr><td class="c-cyan">AKS <span class="acro-exp">(Azure Kubernetes Service)</span></td><td>Managed Kubernetes</td><td>EKS <span class="acro-exp">(Elastic Kubernetes Service)</span> / GKE <span class="acro-exp">(Google Kubernetes Engine)</span></td></tr>
+                    <tr><td class="c-cyan">ARM <span class="acro-exp">(Azure Resource Manager)</span> / Bicep</td><td>Native IaC <span class="acro-exp">(Infrastructure as Code)</span> (Bicep = friendly ARM)</td><td>CloudFormation</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
-                    <strong class="c-green">Bicep</strong> is worth knowing — a clean DSL that
+                    <strong class="c-green">Bicep</strong> is worth knowing — a clean DSL <span class="acro-exp">(Domain-Specific Language)</span> that
                     compiles to ARM templates, Azure's answer to Terraform/CloudFormation for
                     declarative infra.
                   </div>
@@ -1483,14 +1483,14 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                   <table class="ref-table">
                     <tr><th>Service</th><th>Role</th><th>Analog</th></tr>
                     <tr><td class="c-cyan">Defender for Cloud</td><td>Posture (CSPM) + workload protection + secure score</td><td>Security Hub / SCC</td></tr>
-                    <tr><td class="c-cyan">Microsoft Sentinel</td><td>Cloud SIEM + SOAR (KQL hunting)</td><td>Splunk / Chronicle</td></tr>
+                    <tr><td class="c-cyan">Microsoft Sentinel</td><td>Cloud SIEM <span class="acro-exp">(Security Information and Event Management)</span> + SOAR <span class="acro-exp">(Security Orchestration, Automation, and Response)</span> (KQL hunting)</td><td>Splunk / Chronicle</td></tr>
                     <tr><td class="c-cyan">Key Vault</td><td>Secrets, keys &amp; certificates</td><td>Secrets Manager / Secret Manager</td></tr>
                     <tr><td class="c-cyan">Conditional Access</td><td>Risk/device-based access policy (ties to ITDR)</td><td>—</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">KQL</strong> (Kusto Query Language) powers Sentinel
                     hunting and Log Analytics — a genuinely useful skill that carries across Defender,
-                    Sentinel, and Azure Monitor. This closes the AWS ↔ GCP ↔ Azure security triangle.
+                    Sentinel, and Azure Monitor. This closes the AWS <span class="acro-exp">(Amazon Web Services)</span> ↔ GCP <span class="acro-exp">(Google Cloud Platform)</span> ↔ Azure security triangle.
                   </div>
                 </div>
               </div>

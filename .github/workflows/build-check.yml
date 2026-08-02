@@ -18,6 +18,19 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Rebuild the acronym dictionary
+        run: python tools/gen_acronym_domain.py
+
+      - name: Fail if data/acronym.html is stale
+        run: |
+          if ! git diff --exit-code -- data/acronym.html; then
+            echo "::error::data/acronym.html is out of date. Run 'python tools/gen_acronym_domain.py' and commit the result."
+            exit 1
+          fi
+
+      - name: Check inline acronym expansions
+        run: python tools/annotate_acronyms.py --check
+
       - name: Rebuild index.html
         run: python build.py
 

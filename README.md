@@ -22,6 +22,10 @@ Open `index.html` in any modern web browser — no server or build step required
   domain header shows a live `n/m` counter.
 - **Notepad** — Slide-out scratchpad backed by `localStorage`, synced live
   across your open tabs. No dependencies.
+- **Acronym Expansions Everywhere** — The first use of an acronym in any topic
+  carries what it stands for right beside it, e.g. `ACL (Access Control List)`.
+- **Acronym Dictionary** — A dedicated domain with 980+ IT acronyms, browsable
+  A–Z or by subject area, searchable by acronym *or* by what it expands to.
 - **Rotating Snap Quotes** — Philosophical quotes on a fade cycle.
 - **URL Encode / Decode Widget** — Interactive tool in the Scripting domain.
 - **Cloud Responsibility Matrix** — Visual IaaS / PaaS / SaaS / On-Prem breakdown.
@@ -44,6 +48,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | ⌨️ Shortcuts | General | Windows, Linux Terminal, Excel, Word, Spotify, Google Chrome, DoD |
 | 🧘 Lifestyle & Philosophy | Life | Stoicism, Buddhism, Taoism, Existentialism, Minimalism, Wicca, Paganism, Druidism |
 | 🎖️ Military Codes | MIL | NATO Phonetic, Military Time, US Army Ranks, CMMC, DISA STIGs, Staff Codes J/G/S/N/A/C |
+| 🔤 Acronym Dictionary | REF | 980+ IT acronyms A–Z, plus per-subject indexes (Networking, Security, Cloud, Crypto, Data, AI, …) |
 
 ## Project Structure
 
@@ -57,12 +62,18 @@ script.js             All interactive logic (accordion, filter, search, theme, U
 style.css             Layout, themes, and component styles
 data/
   domains.json        Domain metadata (id, icon, title, cert tags, subtitle)
+  acronyms.json       Every acronym and what it stands for — the single source
+                      of truth for both the dictionary and the inline expansions
+  acronym.html        Generated from acronyms.json; do not hand-edit
   net.html … military.html   One file per domain — the .domain-body inner content
 Img/
   favicon/            favicon.ico, site.webmanifest, PNG variants
   fonts/              Self-hosted Share Tech Mono + Outfit woff2
   fonts.css           @font-face rules pointing at Img/fonts/
   Studying-Tips.png   Header infographic (optimized)
+tools/
+  gen_acronym_domain.py   data/acronyms.json → data/acronym.html
+  annotate_acronyms.py    Adds/refreshes the inline `(expansion)` spans in data/*.html
 patches/              Historical one-time content-injection scripts (already applied)
 CONTRIBUTING.md       Canonical topic markup conventions for new content
 plan.md               Improvement plan / review log
@@ -81,6 +92,34 @@ All topic content lives in `data/*.html` — one file per domain. To add or upda
 To add a new domain, add an entry to `data/domains.json` and create the matching
 `data/{id}.html`. **Never hand-edit `index.html`** — it is generated; if it ever
 drifts from `data/*`, `reconcile_build.py` can rebuild the sources from it.
+
+### Acronyms
+
+Acronym expansions live in one place: **`data/acronyms.json`**. After editing it,
+or after adding content that uses acronyms, run:
+
+```sh
+python3 tools/gen_acronym_domain.py   # rebuilds the Acronym Dictionary domain
+python3 tools/annotate_acronyms.py    # refreshes the inline (expansion) spans
+python3 build.py
+```
+
+Both tools are idempotent — `annotate_acronyms.py` strips the spans it added
+before re-adding them, so it is safe to re-run at any time, and
+`--check` makes it report drift without writing. CI runs all three.
+
+Each JSON entry looks like:
+
+```json
+{"a": "ACL", "m": [{"e": "Access Control List", "c": "Security"}]}
+```
+
+`a` is the acronym, `m` its meanings (`e` = expansion, `c` = subject area,
+`n` = optional note). For terms that mean different things in different places,
+`annotate` picks the default inline expansion, `byDomain` overrides it per domain
+file (`null` = leave that domain alone), and `noAnnotate` keeps a term in the
+dictionary while never expanding it inline — used for acronyms that collide with
+ordinary words, like `IT` or `MAN`.
 
 ## Built With
 

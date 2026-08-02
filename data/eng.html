@@ -61,7 +61,7 @@
                     <tr><td>Round robin</td><td>Each server in turn</td></tr>
                     <tr><td>Least connections</td><td>The least-busy server</td></tr>
                     <tr><td>Weighted</td><td>Bigger servers get more</td></tr>
-                    <tr><td>IP hash / sticky</td><td>Same client → same server</td></tr>
+                    <tr><td>IP <span class="acro-exp">(Internet Protocol)</span> hash / sticky</td><td>Same client → same server</td></tr>
                   </table>
                   <div class="dt">▸ SHARDING STRATEGIES</div>
                   <table class="ref-table">
@@ -102,7 +102,7 @@
                     <tr><th>Operation</th><th>~Time</th></tr>
                     <tr><td>L1 cache reference</td><td>~1 ns</td></tr>
                     <tr><td>Main memory reference</td><td>~100 ns</td></tr>
-                    <tr><td>SSD random read</td><td>~100 µs</td></tr>
+                    <tr><td>SSD <span class="acro-exp">(Solid State Drive)</span> random read</td><td>~100 µs</td></tr>
                     <tr><td>Network round trip (same DC)</td><td>~0.5 ms</td></tr>
                     <tr><td>Disk (HDD) seek</td><td>~10 ms</td></tr>
                     <tr><td>Round trip across continents</td><td>~150 ms</td></tr>
@@ -140,7 +140,7 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Technique</th><th>What It Buys</th></tr>
-                    <tr><td class="c-green">Redundancy (N+1)</td><td>No single point of failure — replicate across AZs</td></tr>
+                    <tr><td class="c-green">Redundancy (N+1)</td><td>No single point of failure — replicate across AZs <span class="acro-exp">(Availability Zone)</span></td></tr>
                     <tr><td class="c-green">Health checks + failover</td><td>Route away from dead instances automatically</td></tr>
                     <tr><td class="c-green">Bulkheads</td><td>Isolate resources so one overloaded feature can't sink the rest</td></tr>
                     <tr><td class="c-green">Graceful degradation</td><td>Serve a cached/limited response instead of an error (show stale prices, hide recommendations)</td></tr>
@@ -176,11 +176,11 @@
                   <table class="ref-table">
                     <tr><th>Step</th><th>Do</th></tr>
                     <tr><td class="c-cyan">1. Clarify</td><td>Nail functional + non-functional requirements. Who uses it? Read/write ratio? Consistency vs availability?</td></tr>
-                    <tr><td class="c-cyan">2. Estimate</td><td>QPS, storage, bandwidth — back-of-envelope (previous card). Sets the scale.</td></tr>
-                    <tr><td class="c-cyan">3. API</td><td>Define the core endpoints/contract — forces concreteness.</td></tr>
-                    <tr><td class="c-cyan">4. Data model</td><td>Entities, access patterns → SQL vs NoSQL choice.</td></tr>
+                    <tr><td class="c-cyan">2. Estimate</td><td>QPS <span class="acro-exp">(Queries Per Second)</span>, storage, bandwidth — back-of-envelope (previous card). Sets the scale.</td></tr>
+                    <tr><td class="c-cyan">3. API <span class="acro-exp">(Application Programming Interface)</span></td><td>Define the core endpoints/contract — forces concreteness.</td></tr>
+                    <tr><td class="c-cyan">4. Data model</td><td>Entities, access patterns → SQL <span class="acro-exp">(Structured Query Language)</span> vs NoSQL choice.</td></tr>
                     <tr><td class="c-cyan">5. High-level design</td><td>Boxes &amp; arrows: clients → LB → services → DB/cache/queue.</td></tr>
-                    <tr><td class="c-cyan">6. Scale &amp; deepen</td><td>Find bottlenecks; add caching, sharding, replicas, CDN, async queues.</td></tr>
+                    <tr><td class="c-cyan">6. Scale &amp; deepen</td><td>Find bottlenecks; add caching, sharding, replicas, CDN <span class="acro-exp">(Content Delivery Network)</span>, async queues.</td></tr>
                     <tr><td class="c-cyan">7. Trade-offs</td><td>Name what you gave up. There is no perfect design — only fit-for-purpose.</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
@@ -282,9 +282,9 @@
                 <div class="concept-desc">
                   Clean Architecture (and its cousin Hexagonal / Ports &amp; Adapters) organizes code
                   so your <strong class="c-cyan">business logic sits at the center</strong>, knowing
-                  nothing about the database, web framework, or UI. Those outer concerns are
+                  nothing about the database, web framework, or UI <span class="acro-exp">(User Interface)</span>. Those outer concerns are
                   <strong>adapters</strong> that plug into <strong>ports</strong> (interfaces) the
-                  core defines. Swap Postgres for Mongo, REST for gRPC, without touching the core.
+                  core defines. Swap Postgres for Mongo, REST <span class="acro-exp">(Representational State Transfer)</span> for gRPC, without touching the core.
                 </div>
                 <div class="dw">
                   <div class="concept-desc">
@@ -300,7 +300,7 @@
                     <tr><th>Layer</th><th>Contains</th></tr>
                     <tr><td class="c-cyan">Entities / Domain</td><td>Core business rules (no dependencies)</td></tr>
                     <tr><td class="c-cyan">Use cases</td><td>Application-specific orchestration</td></tr>
-                    <tr><td class="c-cyan">Adapters</td><td>DB, web, external APIs — the replaceable edge</td></tr>
+                    <tr><td class="c-cyan">Adapters</td><td>DB, web, external APIs <span class="acro-exp">(Application Programming Interface)</span> — the replaceable edge</td></tr>
                   </table>
                 </div>
               </div>
@@ -310,7 +310,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">✂️</span>
-              <span class="topic-name">CQRS &amp; Event Sourcing</span>
+              <span class="topic-name">CQRS <span class="acro-exp">(Command Query Responsibility Segregation)</span> &amp; Event Sourcing</span>
               <span class="topic-badge">Architecture</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -372,7 +372,7 @@
                   <div class="concept-desc" style="margin-top:10px">
                     Follow these and your app runs the same on a laptop, in a container, or across
                     100 nodes — the foundation for autoscaling, twelve-factor is why containers and
-                    PaaS "just work."
+                    PaaS <span class="acro-exp">(Platform as a Service)</span> "just work."
                   </div>
                 </div>
               </div>
@@ -420,7 +420,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🧱</span>
-              <span class="topic-name">SOLID Principles</span>
+              <span class="topic-name">SOLID <span class="acro-exp">(Single responsibility, Open-closed, Liskov substitution, Interface segregation, Dependency inversion)</span> Principles</span>
               <span class="topic-badge">Design</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -499,7 +499,7 @@
                 <div class="concept-label">Concept</div>
                 <div class="concept-title">Design the Interface Before the Implementation</div>
                 <div class="concept-desc">
-                  <strong class="c-cyan">API-first</strong> means the API contract (e.g. an OpenAPI
+                  <strong class="c-cyan">API-first</strong> means the API <span class="acro-exp">(Application Programming Interface)</span> contract (e.g. an OpenAPI
                   or Protobuf spec) is written and agreed <em>before</em> anyone builds the backend.
                   Frontend, backend, and consumers all code against the same contract in parallel,
                   and you can generate clients, mocks, and docs from it. The interface becomes the
@@ -551,7 +551,7 @@
                   <div class="concept-desc" style="margin-top:10px">
                     True "exactly-once" delivery is famously near-impossible; the practical answer is
                     <strong class="c-green">at-least-once delivery + idempotent consumers</strong> =
-                    effectively-once processing. Build every consumer and API assuming it will see
+                    effectively-once processing. Build every consumer and API <span class="acro-exp">(Application Programming Interface)</span> assuming it will see
                     duplicates.
                   </div>
                 </div>
@@ -652,8 +652,8 @@
                     <tr><td class="c-amber">E2E (few)</td><td>The whole system as a user</td><td>Slow, flaky, high-value paths only</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
-                    <strong class="c-green">TDD</strong> (write the test first) drives better design
-                    and guarantees coverage; <strong class="c-green">BDD</strong> frames tests as
+                    <strong class="c-green">TDD <span class="acro-exp">(Test-Driven Development)</span></strong> (write the test first) drives better design
+                    and guarantees coverage; <strong class="c-green">BDD <span class="acro-exp">(Behavior-Driven Development)</span></strong> frames tests as
                     behavior ("given/when/then"). Aim to test <em>behavior</em>, not implementation,
                     so refactors don't break the suite.
                   </div>
@@ -700,7 +700,7 @@
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">📝</span>
-              <span class="topic-name">ADRs &amp; Design Docs</span>
+              <span class="topic-name">ADRs <span class="acro-exp">(Architecture Decision Record)</span> &amp; Design Docs</span>
               <span class="topic-badge">Craft</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -719,7 +719,7 @@
                   <table class="ref-table">
                     <tr><th>Artifact</th><th>Purpose</th></tr>
                     <tr><td class="c-cyan">ADR</td><td>1-page record of a single decision (context/options/decision/consequences)</td></tr>
-                    <tr><td class="c-cyan">Design doc / RFC</td><td>Propose &amp; get feedback before building; align the team</td></tr>
+                    <tr><td class="c-cyan">Design doc / RFC <span class="acro-exp">(Request for Comments)</span></td><td>Propose &amp; get feedback before building; align the team</td></tr>
                     <tr><td class="c-cyan">C4 model</td><td>Diagrams at 4 zoom levels: Context, Container, Component, Code</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
@@ -781,7 +781,7 @@
                 <div class="concept-title">Consistency Across Services Without 2PC</div>
                 <div class="concept-desc">
                   When a business action spans multiple services/databases (place order → charge
-                  card → reserve stock), you can't wrap it in one ACID transaction. Two-phase commit
+                  card → reserve stock), you can't wrap it in one ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span> transaction. Two-phase commit
                   (2PC) technically can, but it's slow and fragile — so modern systems avoid it.
                 </div>
                 <div class="dw">
@@ -1023,11 +1023,11 @@
                   <table class="ref-table">
                     <tr><th>Track</th><th>Path</th></tr>
                     <tr><td class="c-cyan">IT foundations</td><td>A+ → Network+ → Security+</td></tr>
-                    <tr><td class="c-cyan">Blue team</td><td>Security+ → CySA+ → (GCIH/GCIA) → CISSP</td></tr>
-                    <tr><td class="c-cyan">Red team</td><td>Security+ → PenTest+ → OSCP → (OSEP/CRTO)</td></tr>
+                    <tr><td class="c-cyan">Blue team</td><td>Security+ → CySA+ → (GCIH/GCIA) → CISSP <span class="acro-exp">(Certified Information Systems Security Professional)</span></td></tr>
+                    <tr><td class="c-cyan">Red team</td><td>Security+ → PenTest+ → OSCP <span class="acro-exp">(Offensive Security Certified Professional)</span> → (OSEP/CRTO)</td></tr>
                     <tr><td class="c-cyan">Cloud (AWS)</td><td>Cloud Practitioner → Solutions Architect Assoc → Security Specialty</td></tr>
                     <tr><td class="c-cyan">Cloud (GCP)</td><td>Cloud Digital Leader → Associate Cloud Engineer → Professional Architect</td></tr>
-                    <tr><td class="c-cyan">Management</td><td>PMP / CISM for leadership tracks</td></tr>
+                    <tr><td class="c-cyan">Management</td><td>PMP <span class="acro-exp">(Project Management Professional)</span> / CISM <span class="acro-exp">(Certified Information Security Manager)</span> for leadership tracks</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     The whole site maps to these — this reference domain (Red/Blue/Cloud/Engineering)
@@ -1060,7 +1060,7 @@
                     <tr><td class="c-cyan">Managed-service-first</td><td>Prefer a queue/DB/auth service over running your own</td></tr>
                     <tr><td class="c-cyan">Event-driven / FaaS</td><td>Functions triggered by events; scale per-event</td></tr>
                     <tr><td class="c-cyan">Strangler Fig</td><td>Incrementally replace a monolith by routing slices to new services</td></tr>
-                    <tr><td class="c-cyan">BFF</td><td>Backend-for-frontend: a tailored API per client type</td></tr>
+                    <tr><td class="c-cyan">BFF</td><td>Backend-for-frontend: a tailored API <span class="acro-exp">(Application Programming Interface)</span> per client type</td></tr>
                     <tr><td class="c-red">Cold starts / limits</td><td>Serverless trade-offs: latency spikes, timeouts, statelessness</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
@@ -1165,7 +1165,7 @@
                   <table class="ref-table">
                     <tr><th>Interview stage</th><th>Prep</th></tr>
                     <tr><td class="c-cyan">Coding</td><td>Data structures &amp; algorithms; think aloud, test your code (LeetCode-style)</td></tr>
-                    <tr><td class="c-cyan">System design</td><td>Use the framework: requirements → estimate → API → data → scale → trade-offs</td></tr>
+                    <tr><td class="c-cyan">System design</td><td>Use the framework: requirements → estimate → API <span class="acro-exp">(Application Programming Interface)</span> → data → scale → trade-offs</td></tr>
                     <tr><td class="c-cyan">Behavioral</td><td>STAR stories tied to the level's expectations (scope, impact)</td></tr>
                     <tr><td class="c-cyan">Take-home / practical</td><td>Clean, tested, documented — treat it like real work</td></tr>
                   </table>

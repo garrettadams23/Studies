@@ -2430,3 +2430,49 @@ body.st-lock { overflow: hidden; }
 .hdr-random-btn:hover .sw-text { color: var(--cyan); }
 .hdr-random-btn:focus-visible { outline: 2px solid var(--accent, var(--cyan)); outline-offset: 2px; }
 .hdr-random-icon { font-size: 12px; line-height: 1; }
+
+/* domain: acronym (scaffolded) */
+.chip.c-acronym {
+  color: #f472b6;
+  border-color: rgba(244, 114, 182, 0.35);
+}
+.chip.c-acronym.active,
+.chip.c-acronym:hover {
+  background: rgba(244, 114, 182, 0.12);
+}
+.domain-acronym {
+  --accent: #f472b6;
+}
+
+/* ── Inline acronym expansions ─────────────────────────────────────────────
+   Added beside the first use of each acronym in a topic by
+   tools/annotate_acronyms.py. Deliberately quiet: the acronym stays the thing
+   you read, the expansion is there when you need it. */
+.acro-exp {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.82em;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: normal;
+}
+
+.topic-name .acro-exp,
+.concept-title .acro-exp {
+  font-size: 0.72em;
+}
+
+/* Muted grey on a coloured or bold run would vanish; keep it legible. */
+strong .acro-exp,
+em .acro-exp,
+th .acro-exp,
+.g-name .acro-exp,
+.concept-label .acro-exp {
+  opacity: 0.85;
+}
+
+@media print {
+  .acro-exp { color: #444; }
+}

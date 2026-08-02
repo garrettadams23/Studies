@@ -6,8 +6,9 @@ into `index.html` by `build.py`. **Never hand-edit `index.html`.**
 ## Workflow
 
 1. Edit the relevant `data/{domain}.html`.
-2. Run `python3 build.py`.
-3. Open `index.html` and verify (filter, search, expand, light/dark).
+2. Run `python3 tools/annotate_acronyms.py` (adds inline acronym expansions).
+3. Run `python3 build.py`.
+4. Open `index.html` and verify (filter, search, expand, light/dark).
 
 ## Canonical topic skeleton
 
@@ -60,6 +61,24 @@ They already track the light/dark theme via CSS variables.
 Wrap literal code in `<pre class="code-block">…</pre>`. The build's minifier
 preserves whitespace **only** inside `<pre>`, so never rely on indentation being
 significant anywhere else.
+
+## Acronyms
+
+Never write an `<span class="acro-exp">…</span>` by hand — that class is owned by
+`tools/annotate_acronyms.py`, which strips and re-adds every one of them on each
+run. Just write the acronym normally; the tool annotates its first use in each
+topic from `data/acronyms.json`.
+
+If an acronym is missing an expansion, add it to `data/acronyms.json` and
+re-run both tools:
+
+```sh
+python3 tools/gen_acronym_domain.py && python3 tools/annotate_acronyms.py && python3 build.py
+```
+
+Two things the tool will not touch, by design: anything inside `<pre>`, `<code>`
+or `<kbd>`, and badges/chips/icons. So an acronym that only appears in a command
+example never gets expanded inline — mention it in prose if it needs explaining.
 
 ## Adding a domain
 

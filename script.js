@@ -252,6 +252,25 @@ function initTouchFeedback() {
 // ── ACCESSIBILITY, PERMALINKS & PROGRESS ───────────────────────────────────
 const REVIEWED_PREFIX = "reviewed:";
 
+/**
+ * Text of an element with the inline acronym expansions removed.
+ *
+ * tools/annotate_acronyms.py injects `<span class="acro-exp">(…)</span>` beside
+ * the first use of an acronym, including inside `.topic-name`. Deep-link slugs
+ * and the study-list index are derived from that text, so they have to see the
+ * title as it was written — otherwise every annotated topic's permalink would
+ * change and stored bookmarks would break.
+ */
+function labelText(el) {
+  if (!el) return "";
+  let node = el;
+  if (el.querySelector(".acro-exp")) {
+    node = el.cloneNode(true);
+    node.querySelectorAll(".acro-exp").forEach(n => n.remove());
+  }
+  return node.textContent.replace(/\s+/g, " ");
+}
+
 function slugify(s) {
   return s.toLowerCase()
     .replace(/[^\w\s-]/g, "")
@@ -281,7 +300,7 @@ function initAccessibilityAndTools() {
       const nameEl = header.querySelector(".topic-name");
       // Older "Beginner" topics carry the title as a bare text node in the
       // header (no .topic-name); fall back to the header's own text.
-      const label = (nameEl ? nameEl.textContent : header.textContent).trim();
+      const label = labelText(nameEl || header).trim();
 
       // Stable, unique slug id for deep-linking
       if (!topic.id) {
@@ -859,8 +878,8 @@ function stIndex() {
     const domainTitle = (domain.querySelector(".domain-title")?.textContent || "").trim();
     const domainIcon = (domain.querySelector(".domain-icon")?.textContent || "").trim();
     domain.querySelectorAll(".topic").forEach(t => {
-      const name = (t.querySelector(".topic-name")?.textContent
-        || t.querySelector(".topic-header")?.textContent || "").trim();
+      const name = labelText(t.querySelector(".topic-name")
+        || t.querySelector(".topic-header")).trim();
       const title = (t.querySelector(".concept-title")?.textContent || "").trim();
       const desc = (t.querySelector(".concept-desc")?.textContent || "").trim();
       const badge = (t.querySelector(".topic-badge")?.textContent || "").trim();
