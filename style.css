@@ -2476,3 +2476,80 @@ th .acro-exp,
 @media print {
   .acro-exp { color: #444; }
 }
+
+/* ── Role scope diagram (nested rings: Coder ⊂ Programmer ⊂ … ) ────────────
+   Each ring is a superset of the one inside it: the outer role owns
+   everything the inner roles own, plus its own concerns. */
+.role-scope {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin: 6px 0 4px;
+}
+
+.rs-ring {
+  width: 100%;
+  border: 1px solid var(--ring, var(--cyan));
+  border-radius: 14px;
+  padding: 10px 12px 12px;
+  background: color-mix(in srgb, var(--ring, var(--cyan)) 7%, transparent);
+}
+
+.rs-ring + .rs-ring,
+.rs-ring .rs-ring {
+  margin-top: 8px;
+}
+
+.rs-name {
+  display: block;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ring, var(--cyan));
+  margin-bottom: 6px;
+}
+
+.rs-owns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.rs-owns span {
+  font-size: 12px;
+  line-height: 1.35;
+  padding: 3px 7px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg2);
+  color: var(--text);
+}
+
+.rs-dev    { --ring: var(--purple); }
+.rs-arch   { --ring: var(--cyan); }
+.rs-prog   { --ring: var(--amber); }
+.rs-coder  { --ring: var(--green); }
+
+.rs-core {
+  font-family: var(--mono);
+  font-size: 13px;
+  text-align: center;
+  padding: 8px;
+  border: 1px dashed var(--green);
+  border-radius: 6px;
+  color: var(--green);
+}
+
+/* The open question the diagram leaves hanging. */
+.rs-question {
+  margin-top: 10px;
+  border: 1px dashed var(--muted);
+  border-radius: 14px;
+  padding: 12px 14px;
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--mono);
+}
