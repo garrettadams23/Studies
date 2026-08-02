@@ -67,6 +67,8 @@ data/
   acronym.html        Generated from acronyms.json; do not hand-edit
   net.html … military.html   One file per domain — the .domain-body inner content
 Img/
+  diagrams/           Standalone copies of the two SVG diagrams (role scope,
+                      acronym anatomy) — self-contained, light/dark aware
   favicon/            favicon.ico, site.webmanifest, PNG variants
   fonts/              Self-hosted Share Tech Mono + Outfit woff2
   fonts.css           @font-face rules pointing at Img/fonts/
