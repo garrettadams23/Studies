@@ -2553,3 +2553,127 @@ th .acro-exp,
   color: var(--muted);
   font-family: var(--mono);
 }
+
+/* ── Role-scope SVG (Coder ⊂ Programmer ⊂ Architect ⊂ Developer) ───────────
+   Colours come from theme variables so the diagram works in light and dark.
+   The nested fills deliberately stack: the deeper you go, the denser it gets. */
+.role-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 520px;
+  margin: 4px 0 2px;
+}
+
+.rsv-rings circle { stroke-width: 2; }
+.rsv-dev   { fill: var(--purple); fill-opacity: 0.10; stroke: var(--purple); }
+.rsv-arch  { fill: var(--cyan);   fill-opacity: 0.10; stroke: var(--cyan); }
+.rsv-prog  { fill: var(--amber);  fill-opacity: 0.10; stroke: var(--amber); }
+.rsv-coder { fill: var(--green);  fill-opacity: 0.12; stroke: var(--green); }
+
+.rsv-name {
+  font-family: var(--sans);
+  font-size: 25px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.rsv-t-dev   { fill: var(--purple); }
+.rsv-t-arch  { fill: var(--cyan); }
+.rsv-t-prog  { fill: var(--amber); }
+.rsv-t-coder { fill: var(--green); }
+
+.rsv-core rect {
+  fill: var(--bg2);
+  stroke: var(--green);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+.rsv-core text {
+  font-family: var(--mono);
+  font-size: 19px;
+  fill: var(--green);
+  text-anchor: middle;
+}
+
+.rsv-chip   { fill: var(--bg2); stroke: var(--border); stroke-width: 1; }
+.rsv-chip-t { font-family: var(--sans); font-size: 12.5px; fill: var(--text); }
+.rsv-lead   { stroke-width: 1; opacity: 0.55; }
+.rsv-dot    { stroke: none; opacity: 0.75; }
+
+.rsv-l-dev   { stroke: var(--purple); fill: var(--purple); }
+.rsv-l-arch  { stroke: var(--cyan);   fill: var(--cyan); }
+.rsv-l-prog  { stroke: var(--amber);  fill: var(--amber); }
+.rsv-c-dev   { stroke: var(--purple); }
+.rsv-c-arch  { stroke: var(--cyan); }
+.rsv-c-prog  { stroke: var(--amber); }
+
+.rsv-question circle {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 2;
+  stroke-dasharray: 7 6;
+}
+.rsv-question text { text-anchor: middle; fill: var(--muted); }
+.rsv-q1 { font-family: var(--sans); font-size: 30px; font-weight: 600; }
+.rsv-q2 { font-family: var(--sans); font-size: 42px; font-weight: 700; }
+.rsv-q3 { font-family: var(--mono); font-size: 15px; }
+
+/* Below this width the SVG's text is too small to read — fall back to the
+   stacked CSS rings, which reflow. Exactly one of the two is ever shown. */
+@media (max-width: 720px) {
+  .role-svg { display: none; }
+}
+@media (min-width: 721px) {
+  .role-scope-fallback,
+  .role-scope-fallback + .rs-question { display: none; }
+}
+
+/* ── Acronym anatomy SVG (Acronym Dictionary overview) ────────────────────- */
+.acro-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 440px;
+  margin: 4px 0 2px;
+}
+
+.acs-panel rect { fill: var(--bg2); stroke: var(--border); stroke-width: 1; }
+.acs-step {
+  font-family: var(--mono);
+  font-size: 14px;
+  fill: var(--cyan);
+  letter-spacing: 0.04em;
+}
+.acs-step-alt { fill: var(--amber); }
+
+.acs-letter   { fill: var(--bg3); stroke: var(--amber); stroke-width: 1.5; }
+.acs-letter-t {
+  font-family: var(--mono);
+  font-size: 21px;
+  fill: var(--amber);
+  text-anchor: middle;
+}
+.acs-word  { font-family: var(--sans); font-size: 17px; fill: var(--text); }
+.acs-aside { font-family: var(--mono); font-size: 13px; fill: var(--muted); }
+
+.acs-mockbox { fill: var(--bg3); stroke: var(--border); stroke-width: 1; }
+.acs-mock { font-family: var(--sans); font-size: 16px; fill: var(--text); }
+.acs-term { font-family: var(--sans); font-size: 16px; font-weight: 700; fill: var(--green); }
+.acs-exp  { font-family: var(--mono); font-size: 13px; fill: var(--muted); }
+
+.acs-lead { stroke: var(--green); stroke-width: 1; opacity: 0.6; fill: none; }
+.acs-lead-muted { stroke: var(--muted); }
+.acs-callout { font-family: var(--mono); font-size: 13px; fill: var(--green); }
+.acs-callout-r { text-anchor: end; }
+.acs-callout-dim { fill: var(--muted); }
+
+.acs-rule    { stroke: var(--border); stroke-width: 1; }
+.acs-divider { stroke: var(--border); stroke-width: 1; }
+.acs-key     { font-family: var(--mono); font-size: 13px; fill: var(--muted); }
+.acs-val     { font-family: var(--sans); font-size: 17px; fill: var(--text); }
+.acs-val-term { font-family: var(--mono); font-size: 19px; fill: var(--amber); }
+.acs-val-dim { fill: var(--muted); }
+
+.acs-alt-term { font-family: var(--mono); font-size: 18px; fill: var(--amber); }
+.acs-alt      { font-family: var(--sans); font-size: 15px; fill: var(--text); }
+.acs-alt-dim  { font-family: var(--mono); font-size: 12.5px; fill: var(--muted); }

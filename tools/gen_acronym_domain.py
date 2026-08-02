@@ -14,6 +14,7 @@ Usage:
 import html
 import json
 import re
+from textwrap import indent
 from collections import defaultdict
 from pathlib import Path
 
@@ -51,6 +52,78 @@ CATEGORY_ICONS = {
     "Web": "🕸️",
     "Windows": "🪟",
 }
+
+
+ANATOMY_SVG = """\
+<svg class="acro-svg" viewBox="0 0 1120 470" role="img" aria-labelledby="acrosvg-t acrosvg-d" preserveAspectRatio="xMidYMid meet">
+  <title id="acrosvg-t">How an acronym is recorded and shown</title>
+  <desc id="acrosvg-d">An acronym breaks into the words its letters stand for. On a topic page the expansion is added in brackets beside its first use. In this dictionary the same acronym is stored with its expansion, subject area, an optional note, and every other meaning it carries.</desc>
+
+  <!-- ── 1. the letters ────────────────────────────────────────────────── -->
+  <g class="acs-panel">
+    <rect x="24" y="28" width="410" height="200" rx="12" />
+  </g>
+  <text class="acs-step" x="48" y="60">1 · What the letters stand for</text>
+  <g class="acs-letters">
+    <rect class="acs-letter" x="48" y="82" width="40" height="34" rx="5" />
+    <text class="acs-letter-t" x="68" y="106">U</text>
+    <text class="acs-word" x="104" y="106">Unified</text>
+
+    <rect class="acs-letter" x="48" y="126" width="40" height="34" rx="5" />
+    <text class="acs-letter-t" x="68" y="150">E</text>
+    <text class="acs-word" x="104" y="150">Endpoint</text>
+
+    <rect class="acs-letter" x="48" y="170" width="40" height="34" rx="5" />
+    <text class="acs-letter-t" x="68" y="194">M</text>
+    <text class="acs-word" x="104" y="194">Management</text>
+  </g>
+  <text class="acs-aside" x="268" y="150">an initialism —</text>
+  <text class="acs-aside" x="268" y="172">read letter by</text>
+  <text class="acs-aside" x="268" y="194">letter, not a word</text>
+
+  <!-- ── 2. how it appears in a topic ──────────────────────────────────── -->
+  <g class="acs-panel">
+    <rect x="466" y="28" width="630" height="200" rx="12" />
+  </g>
+  <text class="acs-step" x="490" y="60">2 · Where you meet it in a topic</text>
+
+  <rect class="acs-mockbox" x="490" y="80" width="582" height="52" rx="6" />
+  <text class="acs-mock" x="510" y="112">Enrol the device in</text>
+  <text class="acs-term" x="692" y="112">UEM</text>
+  <text class="acs-exp" x="742" y="112">(Unified Endpoint Management)</text>
+
+  <polyline class="acs-lead" points="708,134 708,160 620,160" />
+  <text class="acs-callout acs-callout-r" x="612" y="164">the acronym</text>
+
+  <polyline class="acs-lead acs-lead-muted" points="852,134 852,190 898,190" />
+  <text class="acs-callout acs-callout-dim" x="906" y="184">added on its</text>
+  <text class="acs-callout acs-callout-dim" x="906" y="204">first use in a topic</text>
+
+  <!-- ── 3. the dictionary entry ───────────────────────────────────────── -->
+  <g class="acs-panel">
+    <rect x="24" y="256" width="1072" height="190" rx="12" />
+  </g>
+  <text class="acs-step" x="48" y="288">3 · What the dictionary stores</text>
+
+  <line class="acs-rule" x1="48" y1="302" x2="640" y2="302" />
+  <text class="acs-key" x="48" y="330">Acronym</text>
+  <text class="acs-val acs-val-term" x="230" y="330">UEM</text>
+  <line class="acs-rule" x1="48" y1="344" x2="640" y2="344" />
+  <text class="acs-key" x="48" y="372">Stands for</text>
+  <text class="acs-val" x="230" y="372">Unified Endpoint Management</text>
+  <line class="acs-rule" x1="48" y1="386" x2="640" y2="386" />
+  <text class="acs-key" x="48" y="414">Area</text>
+  <text class="acs-val acs-val-dim" x="230" y="414">Endpoint</text>
+
+  <line class="acs-divider" x1="680" y1="296" x2="680" y2="424" />
+  <text class="acs-step acs-step-alt" x="712" y="306">When one acronym means several things</text>
+  <text class="acs-alt-term" x="712" y="348">MAC</text>
+  <text class="acs-alt" x="776" y="348">Media Access Control</text>
+  <text class="acs-alt" x="776" y="374">Mandatory Access Control</text>
+  <text class="acs-alt" x="776" y="400">Message Authentication Code</text>
+  <text class="acs-alt-dim" x="712" y="428">only the one that fits the topic is shown inline</text>
+</svg>
+"""
 
 
 def esc(s):
@@ -154,6 +227,7 @@ def main():
         for c in sorted(by_category)
     )
     overview_body = (
+        indent(ANATOMY_SVG, "                  ") + "\n"
         '                  <table class="ref-table">\n'
         "                    <thead><tr><th>Area</th><th>Acronyms</th></tr></thead>\n"
         f"                    <tbody>\n    {cat_rows}\n                    </tbody>\n"
