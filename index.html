@@ -21730,7 +21730,7 @@ chown -R www-data:www-data /var/www   <span class="com"># recursive</span>
 chgrp devs file.txt            <span class="com"># change group only</span></div>
 </div>
 <div class="concept-card">
-<div class="concept-label">SPECIAL PERMISSION BITS</div>
+<div class="concept-label">SPECIAL PERMISSION BITS <span class="acro-exp">(Background Intelligent Transfer Service)</span></div>
 <div class="concept-title">SUID <span class="acro-exp">(Set User ID)</span>, SGID, and the Sticky Bit</div>
 <div class="concept-desc">Beyond rwx, there are three special bits that change execution and inheritance behavior. These matter for both administration and security (SUID binaries are a classic privilege-escalation target).</div>
 <table class="ai-table">
@@ -47094,7 +47094,7 @@ This card is the keystone that ties the whole Red and Blue domains together.
 <span class="ctag ctag-general">AWS</span>
 <span class="ctag ctag-general">GCP</span>
 </div>
-<span class="domain-sub">AWS · GCP · IAM · Networking · Compute · Storage · Security</span>
+<span class="domain-sub">AWS · GCP · Azure · IAM · Networking · Compute · Storage · Security · Troubleshooting</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body">
@@ -48490,7 +48490,7 @@ resource group → resource) that inherit downward.
 <div class="topic">
 <div class="topic-header">
 <span class="topic-icon">🧱</span>
-<span class="topic-name">Azure Core — Resource Groups, VNet, VMs <span class="acro-exp">(Virtual Machine)</span> &amp; Storage</span>
+<span class="topic-name">Azure Core — Resource Groups, VNet <span class="acro-exp">(Virtual Network)</span>, VMs <span class="acro-exp">(Virtual Machine)</span> &amp; Storage</span>
 <span class="topic-badge">Azure</span>
 <span class="topic-chev">▶</span>
 </div>
@@ -48507,8 +48507,8 @@ storage map cleanly onto their AWS/GCP counterparts.
 <table class="ref-table">
 <tr><th>Azure</th><th>Does</th><th>AWS <span class="acro-exp">(Amazon Web Services)</span> analog</th></tr>
 <tr><td class="c-cyan">Resource Group</td><td>Lifecycle container for resources</td><td>(no direct one)</td></tr>
-<tr><td class="c-cyan">Virtual Network (VNet)</td><td>Private network + subnets + NSGs</td><td>VPC <span class="acro-exp">(Virtual Private Cloud)</span></td></tr>
-<tr><td class="c-cyan">Virtual Machines / VMSS</td><td>Compute + autoscale sets</td><td>EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> / ASG <span class="acro-exp">(Auto Scaling Group)</span></td></tr>
+<tr><td class="c-cyan">Virtual Network (VNet)</td><td>Private network + subnets + NSGs <span class="acro-exp">(Network Security Group)</span></td><td>VPC <span class="acro-exp">(Virtual Private Cloud)</span></td></tr>
+<tr><td class="c-cyan">Virtual Machines / VMSS</td><td>Compute + autoscale sets</td><td>EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> / ASG</td></tr>
 <tr><td class="c-cyan">Storage Account (Blob)</td><td>Object/blob, file, queue, table</td><td>S3 <span class="acro-exp">(Simple Storage Service)</span> (+ more)</td></tr>
 <tr><td class="c-cyan">AKS <span class="acro-exp">(Azure Kubernetes Service)</span></td><td>Managed Kubernetes</td><td>EKS <span class="acro-exp">(Elastic Kubernetes Service)</span> / GKE <span class="acro-exp">(Google Kubernetes Engine)</span></td></tr>
 <tr><td class="c-cyan">ARM <span class="acro-exp">(Azure Resource Manager)</span> / Bicep</td><td>Native IaC <span class="acro-exp">(Infrastructure as Code)</span> (Bicep = friendly ARM)</td><td>CloudFormation</td></tr>
@@ -48550,6 +48550,422 @@ Azure's security services close the loop with the Blue-team domain:
 <strong class="c-amber">KQL</strong> (Kusto Query Language) powers Sentinel
 hunting and Log Analytics — a genuinely useful skill that carries across Defender,
 Sentinel, and Azure Monitor. This closes the AWS <span class="acro-exp">(Amazon Web Services)</span> ↔ GCP <span class="acro-exp">(Google Cloud Platform)</span> ↔ Azure security triangle.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ══════════════════════════════════════════════════════════════
+SECTION: MICROSOFT AZURE — DEPTH & TROUBLESHOOTING
+══════════════════════════════════════════════════════════════ -->
+<!-- ── TOPIC: AZURE HIERARCHY & GOVERNANCE ──────────────────────── -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🏛️</span>
+<span class="topic-name">Azure Hierarchy, RBAC <span class="acro-exp">(Role-Based Access Control)</span> Scopes &amp; Policy</span>
+<span class="topic-badge">Azure</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Foundation</div>
+<div class="concept-title">Four Levels, and Everything Inherits Downward</div>
+<div class="concept-desc">
+Almost every "why can't I do this?" in Azure is answered by knowing
+<em>which scope</em> a setting was applied at. Permissions, policy and cost
+all flow down the same four-level tree, and nothing flows back up.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Scope</th><th>What it is</th><th>What you attach here</th></tr></thead>
+<tbody>
+<tr><td class="c-purple">Management group</td><td>A container for subscriptions; nests up to six levels under the tenant root</td><td>Org-wide policy, broad role assignments</td></tr>
+<tr><td class="c-cyan">Subscription</td><td>The billing and quota boundary — roughly an AWS <span class="acro-exp">(Amazon Web Services)</span> account</td><td>Budgets, quotas, environment separation (prod / non-prod)</td></tr>
+<tr><td class="c-amber">Resource group</td><td>A lifecycle container; resources in it are deployed and deleted together</td><td>Team-level RBAC, locks, tags</td></tr>
+<tr><td class="c-green">Resource</td><td>The individual VM <span class="acro-exp">(Virtual Machine)</span>, storage account, key vault…</td><td>Narrow, exception-level access</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The gotcha:</strong> a resource group is not a security
+boundary by itself and it is not a network boundary at all — two VMs in different
+resource groups can sit in the same subnet and talk freely.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Access vs Shape</div>
+<div class="concept-title">RBAC Answers "Who", Policy Answers "What"</div>
+<div class="concept-desc">
+These two get confused constantly. A role assignment decides whether
+<em>you</em> may act. A policy decides whether the <em>resource</em> is allowed to
+exist in that shape. A deployment can fail on either, and the error text tells you
+which.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th></th><th>Azure RBAC</th><th>Azure Policy</th></tr></thead>
+<tbody>
+<tr><td>Controls</td><td>Actions a principal may perform</td><td>Properties a resource may have</td></tr>
+<tr><td>Made of</td><td>Principal + role definition + scope</td><td>Condition + effect, grouped into initiatives</td></tr>
+<tr><td>Effects</td><td>Allow (deny assignments are rare and system-made)</td><td>Audit, Deny, Modify, DeployIfNotExists, AuditIfNotExists</td></tr>
+<tr><td>Failure looks like</td><td><code>AuthorizationFailed</code> — 403</td><td><code>RequestDisallowedByPolicy</code> — names the policy</td></tr>
+<tr><td>Fix</td><td>Assign the role at the right scope, then wait for propagation</td><td>Change the request, or exempt the scope deliberately</td></tr>
+</tbody>
+</table>
+<pre class="code-block"><span class="com"># Who has access here, and inherited from where?</span>
+az role assignment list --scope <span class="str">"/subscriptions/&lt;sub-id&gt;/resourceGroups/rg-prod"</span> --include-inherited -o table
+
+<span class="com"># Why did that deployment get blocked? Ask the policy engine directly</span>
+az policy state list --resource <span class="str">"&lt;resource-id&gt;"</span> --filter <span class="str">"complianceState eq 'NonCompliant'"</span> -o table
+
+<span class="com"># Built-in roles are usually enough — check before writing a custom one</span>
+az role definition list --custom-role-only <span class="kw">false</span> --query <span class="str">"[?contains(roleName,'Contributor')].roleName"</span></pre>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Least privilege in practice:</strong> Reader for everyone
+by default, Contributor scoped to a resource group, and Owner or User Access
+Administrator handed out only through PIM <span class="acro-exp">(Privileged Identity Management)</span> with approval and a time limit.
+<strong>Resource locks</strong> (CanNotDelete / ReadOnly) are a separate,
+dumber safety net — they stop even an Owner, which is exactly why prod
+deployments sometimes fail mysteriously.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: AZURE NETWORKING ──────────────────────────────────── -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🕸️</span>
+<span class="topic-name">Azure Networking — VNet <span class="acro-exp">(Virtual Network)</span>, NSG <span class="acro-exp">(Network Security Group)</span> &amp; the Load-Balancer Family</span>
+<span class="topic-badge">Azure</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Filtering, Routing and Reaching Out</div>
+<div class="concept-desc">
+A virtual network is the private address space; everything else is a decision about
+what may cross it. Network security groups filter, route tables steer, and peering
+or a gateway connects it to somewhere else.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Building block</th><th>What it does</th><th>Worth remembering</th></tr></thead>
+<tbody>
+<tr><td class="c-cyan">Virtual network / subnet</td><td>Private address space, carved into subnets</td><td>Azure reserves five addresses per subnet — .0, .1, .2, .3 and the broadcast</td></tr>
+<tr><td class="c-cyan">Network security group</td><td>Stateful allow/deny rules on a subnet and/or a NIC <span class="acro-exp">(Network Interface Card)</span></td><td>Priority 100–4096, lowest number wins; default rules allow intra-VNet and deny inbound internet</td></tr>
+<tr><td class="c-cyan">Application security group</td><td>A named group of NICs you can use as a rule source or destination</td><td>Lets rules say "web tier → app tier" instead of listing addresses</td></tr>
+<tr><td class="c-cyan">Route table / UDR</td><td>User-defined routes that override Azure's system routes</td><td>The usual way traffic is forced through a firewall appliance</td></tr>
+<tr><td class="c-cyan">VNet peering</td><td>Private, low-latency link between two virtual networks</td><td><strong class="c-red">Not transitive</strong> — A↔B and B↔C does not give you A↔C</td></tr>
+<tr><td class="c-cyan">VPN gateway / ExpressRoute</td><td>Encrypted tunnel over the internet / a private circuit</td><td>ExpressRoute skips the public internet entirely; VPN is cheaper and slower</td></tr>
+<tr><td class="c-cyan">Azure Firewall</td><td>Managed stateful firewall with FQDN <span class="acro-exp">(Fully Qualified Domain Name)</span> and threat-intel filtering</td><td>Sits in its own subnet named <code>AzureFirewallSubnet</code></td></tr>
+<tr><td class="c-cyan">Private endpoint</td><td>A private IP <span class="acro-exp">(Internet Protocol)</span> inside your VNet for a PaaS <span class="acro-exp">(Platform as a Service)</span> service</td><td>Needs a matching private DNS <span class="acro-exp">(Domain Name System)</span> zone or names still resolve public</td></tr>
+<tr><td class="c-cyan">Service endpoint</td><td>Keeps traffic to a PaaS service on the Azure backbone</td><td>Cheaper than a private endpoint, but the service keeps its public IP</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Choosing</div>
+<div class="concept-title">Four Load Balancers, One Right Answer</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Service</th><th>Layer</th><th>Reach</th><th>Reach for it when</th></tr></thead>
+<tbody>
+<tr><td class="c-green">Load Balancer</td><td>4 — TCP/UDP</td><td>Regional</td><td>You need raw throughput and any protocol</td></tr>
+<tr><td class="c-green">Application Gateway</td><td>7 — HTTP/S</td><td>Regional</td><td>Path/host routing, TLS <span class="acro-exp">(Transport Layer Security)</span> termination, WAF <span class="acro-exp">(Web Application Firewall)</span> on a regional app</td></tr>
+<tr><td class="c-green">Front Door</td><td>7 — HTTP/S</td><td>Global</td><td>Worldwide entry point with caching, WAF and failover between regions</td></tr>
+<tr><td class="c-green">Traffic Manager</td><td>DNS</td><td>Global</td><td>You need to steer by DNS answer — including to non-Azure endpoints</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Traffic Manager hands out an answer, not a connection.</strong>
+Clients cache DNS, so failover is only as fast as the record's TTL <span class="acro-exp">(Time To Live)</span> — if you need
+instant failover at the HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> layer, that is Front Door's job.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: AZURE COMPUTE & STORAGE ───────────────────────────── -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">💽</span>
+<span class="topic-name">Azure Compute &amp; Storage — Picking the Right SKU <span class="acro-exp">(Stock Keeping Unit)</span></span>
+<span class="topic-badge">Azure</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Compute</div>
+<div class="concept-title">From Virtual Machines to "No Machine at All"</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Option</th><th>You manage</th><th>Good for</th></tr></thead>
+<tbody>
+<tr><td class="c-cyan">Virtual Machines</td><td>The OS <span class="acro-exp">(Operating System)</span> and everything on it</td><td>Lift-and-shift, anything needing full control</td></tr>
+<tr><td class="c-cyan">Virtual Machine Scale Sets</td><td>An image and a scaling rule</td><td>Identical VMs that grow and shrink on demand</td></tr>
+<tr><td class="c-cyan">App Service</td><td>Your code and the plan size</td><td>Web apps and APIs <span class="acro-exp">(Application Programming Interface)</span> where a VM is overkill</td></tr>
+<tr><td class="c-cyan">Azure Functions</td><td>A function and its trigger</td><td>Event-driven glue; Consumption plan bills per execution</td></tr>
+<tr><td class="c-cyan">Container Apps</td><td>A container and scale rules</td><td>Microservices without operating Kubernetes</td></tr>
+<tr><td class="c-cyan">AKS <span class="acro-exp">(Azure Kubernetes Service)</span></td><td>The cluster's workloads and node pools</td><td>Teams already invested in Kubernetes</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Sizing shorthand:</strong> B = burstable and cheap,
+D = general purpose, E = memory-heavy, F = compute-heavy, L = storage-heavy,
+N = GPU <span class="acro-exp">(Graphics Processing Unit)</span>. <strong class="c-amber">Availability:</strong> an availability set spreads
+VMs across fault and update domains inside one datacenter; availability
+<em>zones</em> spread them across physically separate datacenters in the region.
+Zones are the stronger guarantee, and not every region or SKU offers them.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Storage</div>
+<div class="concept-title">Redundancy, Tiers and Who Holds the Key</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Redundancy</th><th>Copies</th><th>Survives</th></tr></thead>
+<tbody>
+<tr><td class="c-cyan">LRS <span class="acro-exp">(Locally Redundant Storage)</span></td><td>3, one datacenter</td><td>A disk or rack failure</td></tr>
+<tr><td class="c-cyan">ZRS <span class="acro-exp">(Zone-Redundant Storage)</span></td><td>3, across zones in one region</td><td>Losing a whole datacenter</td></tr>
+<tr><td class="c-cyan">GRS <span class="acro-exp">(Geo-Redundant Storage)</span></td><td>LRS locally + 3 in a paired region</td><td>Losing a region (read access only after failover)</td></tr>
+<tr><td class="c-cyan">GZRS <span class="acro-exp">(Geo-Zone-Redundant Storage)</span></td><td>ZRS locally + LRS in the paired region</td><td>Both a zone and a region loss</td></tr>
+<tr><td class="c-cyan">RA-GRS <span class="acro-exp">(Read-Access Geo-Redundant Storage)</span> / RA-GZRS</td><td>As above, plus a readable secondary endpoint</td><td>Same, but you can read the copy any time</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Access tiers trade storage cost against retrieval cost: <strong>Hot</strong> for
+active data, <strong>Cool</strong> (30-day minimum), <strong>Cold</strong>
+(90-day) and <strong>Archive</strong> (180-day, and it must be rehydrated before
+you can read it). Lifecycle management rules move blobs between them
+automatically.
+</div>
+<pre class="code-block"><span class="com"># Prefer Entra ID over account keys — keys are shared secrets nobody rotates</span>
+az storage blob list --account-name stprod01 --container-name backups --auth-mode login -o table
+
+<span class="com"># If you must hand out temporary access, a user-delegation SAS is the safest kind:</span>
+<span class="com"># it is signed with an Entra credential, so revoking the identity revokes the link</span>
+az storage blob generate-sas --account-name stprod01 --container-name backups \
+  --name report.csv --permissions r --expiry <span class="str">2026-01-01T00:00Z</span> --auth-mode login --as-user</pre>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: AZURE MONITOR & KQL ───────────────────────────────── -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📈</span>
+<span class="topic-name">Azure Monitor, Log Analytics &amp; KQL <span class="acro-exp">(Kusto Query Language)</span></span>
+<span class="topic-badge">Azure</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Observability</div>
+<div class="concept-title">Metrics Are Free, Logs Are Opt-In</div>
+<div class="concept-desc">
+Platform <strong>metrics</strong> are collected automatically and kept for 93 days.
+Resource <strong>logs</strong> are not collected at all until you add a
+<strong>diagnostic setting</strong> pointing the resource at a Log Analytics
+workspace. The single most common monitoring complaint — "there's nothing in the
+logs" — is usually that nobody ever turned them on.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Table</th><th>What lands in it</th></tr></thead>
+<tbody>
+<tr><td class="c-amber">AzureActivity</td><td>Control-plane operations — who created, changed or deleted a resource</td></tr>
+<tr><td class="c-amber">AzureDiagnostics</td><td>Resource logs from services that use the shared schema</td></tr>
+<tr><td class="c-amber">Heartbeat</td><td>Agent check-ins; the fastest way to spot a machine that stopped reporting</td></tr>
+<tr><td class="c-amber">Perf / InsightsMetrics</td><td>CPU <span class="acro-exp">(Central Processing Unit)</span>, memory, disk and network counters from monitored machines</td></tr>
+<tr><td class="c-amber">SigninLogs / AuditLogs</td><td>Entra ID sign-ins and directory changes</td></tr>
+<tr><td class="c-amber">SecurityEvent / Syslog</td><td>Windows security events and Linux syslog</td></tr>
+<tr><td class="c-amber">AppRequests / AppExceptions</td><td>Application Insights telemetry for your own code</td></tr>
+</tbody>
+</table>
+<pre class="code-block"><span class="com">// Who deleted things in the last day, and did it succeed?</span>
+AzureActivity
+| <span class="kw">where</span> TimeGenerated &gt; ago(1d)
+| <span class="kw">where</span> OperationNameValue endswith <span class="str">"/DELETE"</span>
+| <span class="kw">project</span> TimeGenerated, Caller, OperationNameValue, ActivityStatusValue, ResourceGroup
+| <span class="kw">order by</span> TimeGenerated desc
+
+<span class="com">// Machines that have stopped sending a heartbeat in the last 15 minutes</span>
+Heartbeat
+| <span class="kw">summarize</span> LastSeen = max(TimeGenerated) <span class="kw">by</span> Computer
+| <span class="kw">where</span> LastSeen &lt; ago(15m)
+
+<span class="com">// Failed sign-ins by error code — the shape of an attack, or of a broken app</span>
+SigninLogs
+| <span class="kw">where</span> TimeGenerated &gt; ago(24h) <span class="kw">and</span> ResultType != <span class="num">0</span>
+| <span class="kw">summarize</span> attempts = count() <span class="kw">by</span> ResultType, ResultDescription, AppDisplayName
+| <span class="kw">order by</span> attempts desc
+
+<span class="com">// Top CPU offenders, bucketed for a chart</span>
+Perf
+| <span class="kw">where</span> ObjectName == <span class="str">"Processor"</span> <span class="kw">and</span> CounterName == <span class="str">"% Processor Time"</span>
+| <span class="kw">summarize</span> avg(CounterValue) <span class="kw">by</span> Computer, bin(TimeGenerated, <span class="num">5</span>m)
+| <span class="kw">render</span> timechart</pre>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">The KQL that covers most days:</strong>
+<code>where</code> to filter, <code>project</code> to pick columns,
+<code>extend</code> to compute one, <code>summarize … by</code> to aggregate,
+<code>bin()</code> to bucket time, <code>join</code> to correlate two tables, and
+<code>render</code> to chart it. Filter on <code>TimeGenerated</code> first —
+it is the difference between a fast query and an expensive one. The same
+language drives Sentinel, Defender and Resource Graph.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: AZURE TROUBLESHOOTING PLAYBOOK ────────────────────── -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🩺</span>
+<span class="topic-name">Azure Troubleshooting Playbook</span>
+<span class="topic-badge">Azure • Ops</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Method</div>
+<div class="concept-title">Five Questions, In This Order</div>
+<div class="concept-desc">
+Azure failures nearly always fall into one of five buckets. Asking them in order
+saves you from packet-capturing a problem that was a missing role assignment.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>#</th><th>Question</th><th>Where to look</th></tr></thead>
+<tbody>
+<tr><td class="c-cyan">1</td><td>Is Azure itself broken?</td><td><strong>Service Health</strong> for regional incidents, <strong>Resource Health</strong> for this specific resource</td></tr>
+<tr><td class="c-cyan">2</td><td>Did the action even reach Azure — and who made it?</td><td><strong>Activity Log</strong>: the operation, the caller, the status and the correlation ID</td></tr>
+<tr><td class="c-cyan">3</td><td>Am I allowed to do it?</td><td>RBAC <span class="acro-exp">(Role-Based Access Control)</span> at every scope, plus any policy assignment or resource lock</td></tr>
+<tr><td class="c-cyan">4</td><td>Can the packets get there?</td><td><strong>Network Watcher</strong> — effective rules, effective routes, connection troubleshoot</td></tr>
+<tr><td class="c-cyan">5</td><td>Is the thing inside the box healthy?</td><td>Boot diagnostics, serial console, Run Command, app logs</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Always capture the correlation ID.</strong> Every
+Azure Resource Manager operation carries one, it ties the portal error to the
+Activity Log entry to the deployment operation — and it is the first thing
+support asks for.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Toolkit</div>
+<div class="concept-title">The Commands That Answer Each Question</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># 2 — what actually happened, and under whose identity</span>
+az monitor activity-log list --resource-group rg-prod --offset 2h \
+  --query <span class="str">"[?status.value=='Failed'].{op:operationName.value,by:caller,msg:properties.statusMessage}"</span> -o table
+
+<span class="com"># 2 — a failed template/Bicep deployment: the top-level error hides the real one</span>
+az deployment group show -g rg-prod -n my-deploy --query properties.error
+az deployment operation group list -g rg-prod -n my-deploy \
+  --query <span class="str">"[?properties.provisioningState=='Failed'].properties.statusMessage"</span>
+
+<span class="com"># 3 — effective permissions for a principal at a scope</span>
+az role assignment list --assignee user@contoso.com --all --include-inherited -o table
+
+<span class="com"># 4 — will this packet be allowed? (evaluates every NSG in the path)</span>
+az network watcher test-ip-flow --vm web01 -g rg-prod --direction Inbound \
+  --protocol TCP --local 10.0.1.4:443 --remote 203.0.113.10:51234
+
+<span class="com"># 4 — what the NIC actually sees after all inheritance</span>
+az network nic list-effective-nsg --name web01-nic -g rg-prod -o table
+az network nic show-effective-route-table --name web01-nic -g rg-prod -o table
+
+<span class="com"># 4 — end-to-end reachability including DNS and the next hop</span>
+az network watcher test-connectivity --source-resource web01 -g rg-prod \
+  --dest-address api.internal.contoso.com --dest-port 443
+
+<span class="com"># 5 — the VM is unreachable: look at the screen and the boot log</span>
+az vm boot-diagnostics get-boot-log --name web01 -g rg-prod
+az vm run-command invoke --name web01 -g rg-prod --command-id RunPowerShellScript \
+  --scripts <span class="str">"Get-Service W3SVC | Select Status"</span></pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Error Reference</div>
+<div class="concept-title">What the Message Actually Means</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Error</th><th>Real cause</th><th>First move</th></tr></thead>
+<tbody>
+<tr><td class="c-red">AuthorizationFailed</td><td>No role assignment grants that action at that scope</td><td>Check the scope, not just the role — and allow for propagation delay</td></tr>
+<tr><td class="c-red">RequestDisallowedByPolicy</td><td>An Azure Policy deny effect blocked the shape of the request</td><td>The message names the policy; fix the request or file an exemption</td></tr>
+<tr><td class="c-red">ScopeLocked</td><td>A CanNotDelete or ReadOnly lock is in the way</td><td>Remove the lock deliberately, then put it back</td></tr>
+<tr><td class="c-red">QuotaExceeded / SkuNotAvailable</td><td>Subscription vCPU quota, or that size isn't offered in the region/zone</td><td>Request a quota increase, or pick another size or region</td></tr>
+<tr><td class="c-red">ZonalAllocationFailed</td><td>Capacity in that specific zone, right now</td><td>Retry, try another zone, or use a different VM <span class="acro-exp">(Virtual Machine)</span> family</td></tr>
+<tr><td class="c-red">429 / TooManyRequests</td><td>Resource Manager or a data plane is throttling you</td><td>Honour <code>Retry-After</code>, back off exponentially, batch the calls</td></tr>
+<tr><td class="c-red">InvalidTemplateDeployment</td><td>A nested or dependent resource failed, not the template syntax</td><td>Read the <em>inner</em> error from the deployment operations</td></tr>
+<tr><td class="c-red">Name resolves to a public IP <span class="acro-exp">(Internet Protocol)</span></td><td>Private endpoint exists, private DNS <span class="acro-exp">(Domain Name System)</span> zone isn't linked to the VNet <span class="acro-exp">(Virtual Network)</span></td><td>Link the zone, confirm with <code>nslookup</code> from inside the VNet</td></tr>
+<tr><td class="c-red">Public network access is disabled</td><td>The PaaS <span class="acro-exp">(Platform as a Service)</span> firewall is on and your client isn't on the allow list</td><td>Add the IP or subnet, or go through the private endpoint</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">A pattern worth internalising:</strong> if something
+worked yesterday and fails today with no deployment in between, check the
+Activity Log for a policy or lock added at a <em>parent</em> scope. Inheritance
+means someone can break your resource group without ever touching it.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: ENTRA ID SIGN-IN TROUBLESHOOTING ──────────────────── -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🪪</span>
+<span class="topic-name">Entra ID — Sign-In &amp; Conditional Access Troubleshooting</span>
+<span class="topic-badge">Azure • Identity</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Method</div>
+<div class="concept-title">The Sign-In Log Already Knows Why</div>
+<div class="concept-desc">
+Nearly every "I can't get in" ends at one row in the Entra sign-in logs. Find the
+attempt by user and time, then read three fields: the <strong>failure
+code</strong>, the <strong>Conditional Access</strong> tab showing which policies
+evaluated and what each one decided, and the <strong>device</strong> details.
+Guessing before reading that row wastes the afternoon.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Code</th><th>Means</th><th>Fix</th></tr></thead>
+<tbody>
+<tr><td class="c-red">AADSTS50126</td><td>Wrong username or password</td><td>Genuinely a credential problem — check for lockout and password spray</td></tr>
+<tr><td class="c-red">AADSTS50076</td><td>MFA <span class="acro-exp">(Multi-Factor Authentication)</span> required for this resource</td><td>Expected; the client must be able to prompt interactively</td></tr>
+<tr><td class="c-red">AADSTS50079</td><td>User must enrol in MFA first</td><td>Send them through registration, or use temporary access pass</td></tr>
+<tr><td class="c-red">AADSTS53003</td><td>Blocked by a Conditional Access policy</td><td>The log names the policy — check device compliance and location</td></tr>
+<tr><td class="c-red">AADSTS50105</td><td>User isn't assigned to the application</td><td>Assign the user or group to the enterprise app</td></tr>
+<tr><td class="c-red">AADSTS700016</td><td>App not found in this tenant</td><td>Wrong tenant, or the service principal was never consented</td></tr>
+<tr><td class="c-red">AADSTS90094</td><td>Admin consent required</td><td>Grant consent for the delegated permission</td></tr>
+<tr><td class="c-red">AADSTS50058</td><td>Silent sign-in failed — no session</td><td>Usually benign; the client then prompts interactively</td></tr>
+</tbody>
+</table>
+<pre class="code-block"><span class="com"># On the device: is it joined, and does it hold a usable PRT?</span>
+dsregcmd /status
+<span class="com"># AzureAdJoined : YES  |  AzureAdPrt : YES  — if PRT is NO, SSO and device-based CA will fail</span>
+
+<span class="com"># Least-risk way to test a policy change before anyone feels it</span>
+<span class="com"># Entra admin center ▸ Conditional Access ▸ What If  — simulate user + app + device + location</span>
+<span class="com"># then ship the policy in Report-only mode and read the results for a week</span></pre>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The three rules that prevent most Conditional Access outages:</strong>
+keep a break-glass account excluded from every policy and monitored for use;
+roll every new policy out in report-only first; and remember that a policy
+requiring a <em>compliant device</em> silently depends on Intune — if compliance
+evaluation breaks, sign-ins break with it. That seam is why endpoint and identity
+engineers end up in the same incident bridge.
 </div>
 </div>
 </div>
@@ -52860,7 +53276,7 @@ travels and where each concern lives. This domain, plus <code>data</code>,
 <span class="ctag ctag-general">MD-102</span>
 <span class="ctag ctag-general">MEM</span>
 </div>
-<span class="domain-sub">MECM · Entra · Intune · Autopilot · ESP · Co-management</span>
+<span class="domain-sub">MECM · Entra · Intune · Autopilot · ESP · Co-management · Troubleshooting</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body">
@@ -52918,7 +53334,7 @@ multi-geo estates add a CAS and/or secondary sites.
 <table class="ref-table" style="margin-top:8px">
 <tr><th>Site system role</th><th>Job</th></tr>
 <tr><td class="c-cyan">Site database (SQL)</td><td>Everything — config, inventory, status</td></tr>
-<tr><td class="c-cyan">SMS Provider</td><td>WMI <span class="acro-exp">(Windows Management Instrumentation)</span> layer the console talks through</td></tr>
+<tr><td class="c-cyan">SMS <span class="acro-exp">(Systems Management Server)</span> Provider</td><td>WMI <span class="acro-exp">(Windows Management Instrumentation)</span> layer the console talks through</td></tr>
 <tr><td class="c-cyan">Management Point (MP)</td><td>Primary client ↔ site channel (policy, inventory)</td></tr>
 <tr><td class="c-cyan">Distribution Point (DP)</td><td>Hosts &amp; serves content</td></tr>
 <tr><td class="c-cyan">Software Update Point (SUP)</td><td>Sits on WSUS <span class="acro-exp">(Windows Server Update Services)</span>; drives patching</td></tr>
@@ -53065,7 +53481,7 @@ dependency forces hybrid.
 </div>
 <div class="concept-card">
 <div class="concept-label">Internals</div>
-<div class="concept-title">dsregcmd, the PRT &amp; Windows Hello for Business</div>
+<div class="concept-title">dsregcmd, the PRT <span class="acro-exp">(Primary Refresh Token)</span> &amp; Windows Hello for Business</div>
 <div class="concept-desc">
 The device's join/registration state is the first thing to check when SSO or
 enrollment misbehaves. <code>dsregcmd /status</code> is the definitive local tool.
@@ -53566,12 +53982,12 @@ up constantly in ConfigMgr/Intune/Autopilot work.
 <div class="dw">
 <table class="ref-table">
 <tr><th>Term</th><th>Meaning</th></tr>
-<tr><td class="c-cyan">WMI</td><td><strong>Windows Management Instrumentation</strong> — the local management data layer. ConfigMgr's console talks to the site through the <em>SMS Provider</em> over WMI; the client stores state &amp; inventory in the <code>root\ccm</code> and <code>root\cimv2</code> namespaces (query with <code>wbemtest</code> / <code>Get-CimInstance</code>)</td></tr>
+<tr><td class="c-cyan">WMI</td><td><strong>Windows Management Instrumentation</strong> — the local management data layer. ConfigMgr's console talks to the site through the <em>SMS <span class="acro-exp">(Systems Management Server)</span> Provider</em> over WMI; the client stores state &amp; inventory in the <code>root\ccm</code> and <code>root\cimv2</code> namespaces (query with <code>wbemtest</code> / <code>Get-CimInstance</code>)</td></tr>
 <tr><td class="c-cyan">OSD</td><td><strong>Operating System Deployment</strong> — ConfigMgr's imaging feature: build &amp; capture, then deploy Windows via a <em>task sequence</em> (WinPE boot image → apply WIM → drivers → join → apps)</td></tr>
 <tr><td class="c-cyan">CCM</td><td>The <strong>Configuration Manager client</strong>. Lives in <code>C:\Windows\CCM</code>, runs as the <code>CcmExec</code> service, WMI namespace <code>root\ccm</code>, cache at <code>C:\Windows\ccmcache</code></td></tr>
-<tr><td class="c-cyan">MDM</td><td><strong>Mobile Device Management</strong> — the cloud management channel (Intune) using the OMA-DM protocol over HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span>; the modern alternative to the ConfigMgr agent</td></tr>
+<tr><td class="c-cyan">MDM</td><td><strong>Mobile Device Management</strong> — the cloud management channel (Intune) using the OMA-DM <span class="acro-exp">(Open Mobile Alliance Device Management)</span> protocol over HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span>; the modern alternative to the ConfigMgr agent</td></tr>
 <tr><td class="c-cyan">HKCU</td><td><strong>HKEY_CURRENT_USER</strong> — the registry hive for the signed-in user's settings (vs <code>HKLM</code> = machine-wide). Per-user policy, ADMX <span class="acro-exp">(Administrative Template)</span> user settings, and app config live here</td></tr>
-<tr><td class="c-cyan">dsregcmd</td><td>Built-in Windows tool for <strong>device registration</strong> state. <code>dsregcmd /status</code> shows AzureAdJoined, DomainJoined, the PRT, and MDM enrollment URLs <span class="acro-exp">(Uniform Resource Locator)</span> — the first check for join/SSO/enrollment issues</td></tr>
+<tr><td class="c-cyan">dsregcmd</td><td>Built-in Windows tool for <strong>device registration</strong> state. <code>dsregcmd /status</code> shows AzureAdJoined, DomainJoined, the PRT <span class="acro-exp">(Primary Refresh Token)</span>, and MDM enrollment URLs <span class="acro-exp">(Uniform Resource Locator)</span> — the first check for join/SSO/enrollment issues</td></tr>
 </table>
 </div>
 </div>
@@ -53590,7 +54006,7 @@ ConfigMgr troubleshooting is log reading. Client logs live in
 <tr><td><code>smsts.log</code></td><td>The <strong>task sequence</strong> engine — every OSD step, variable, and failure. The single most important OSD log</td></tr>
 <tr><td><code>CAS.log</code></td><td><strong>Content Access Service</strong> — how the client locates content and whether it's already in the cache (cache hits/misses, requesting a DP list)</td></tr>
 <tr><td><code>ContentTransferManager.log</code></td><td>Schedules and tracks the actual <strong>content download</strong> jobs (via BITS or SMB) from a distribution point</td></tr>
-<tr><td><code>DataTransferService.log</code></td><td>The <strong>BITS</strong> transfer layer used for policy and content downloads — TLS/proxy/BITS errors surface here</td></tr>
+<tr><td><code>DataTransferService.log</code></td><td>The <strong>BITS <span class="acro-exp">(Background Intelligent Transfer Service)</span></strong> transfer layer used for policy and content downloads — TLS/proxy/BITS errors surface here</td></tr>
 </table>
 <div class="concept-desc" style="margin-top:10px">
 <strong class="c-amber">Content-download triage order:</strong>
@@ -53632,6 +54048,321 @@ the same packages. Verify all of it in <code>smsts.log</code>.
 </div>
 </div>
 </div>
+<!-- ══════════════════════════════════════════════════════════════
+SECTION: MECM TROUBLESHOOTING
+══════════════════════════════════════════════════════════════ -->
+<!-- ── TOPIC: MECM CLIENT HEALTH ─────────────────────────────── -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🩹</span>
+<span class="topic-name">MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> Client Health — Install, Repair &amp; the Cycles</span>
+<span class="topic-badge">MECM • Troubleshooting</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">First Principles</div>
+<div class="concept-title">A Silent Client Is Not the Same as a Broken Deployment</div>
+<div class="concept-desc">
+Before blaming a deployment, prove the client is alive: it is installed, it found a
+management point, it is downloading policy, and it is sending state back. Those four
+checks answer the majority of "the software never arrived" tickets, and each one has
+its own log.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Check</th><th>How</th><th>Log</th></tr></thead>
+<tbody>
+<tr><td class="c-cyan">Is the client installed and running?</td><td><code>Get-Service CcmExec</code>; Control Panel ▸ Configuration Manager</td><td><code>ccmsetup.log</code>, <code>CcmExec.log</code></td></tr>
+<tr><td class="c-cyan">Did it get a site code and a management point?</td><td>Control Panel applet ▸ General tab</td><td><code>LocationServices.log</code>, <code>ClientLocation.log</code></td></tr>
+<tr><td class="c-cyan">Is it receiving policy?</td><td>Trigger a machine policy cycle and watch</td><td><code>PolicyAgent.log</code>, <code>PolicyEvaluator.log</code></td></tr>
+<tr><td class="c-cyan">Is it reporting back?</td><td>Compare the console's last-active time</td><td><code>StateMessage.log</code>, <code>InventoryAgent.log</code></td></tr>
+</tbody>
+</table>
+<pre class="code-block"><span class="com"># Trigger client actions from PowerShell — same as the Actions tab, scriptable</span>
+<span class="kw">function</span> <span class="fn">Invoke-CMAction</span> (<span class="var">$Id</span>) {
+  Invoke-CimMethod -Namespace root\ccm -ClassName SMS_Client `
+    -MethodName TriggerSchedule -Arguments @{ sScheduleID = <span class="var">$Id</span> }
+}
+
+Invoke-CMAction <span class="str">'{00000000-0000-0000-0000-000000000021}'</span>   <span class="com"># Machine Policy Retrieval</span>
+Invoke-CMAction <span class="str">'{00000000-0000-0000-0000-000000000022}'</span>   <span class="com"># Machine Policy Evaluation</span>
+Invoke-CMAction <span class="str">'{00000000-0000-0000-0000-000000000001}'</span>   <span class="com"># Hardware Inventory</span>
+Invoke-CMAction <span class="str">'{00000000-0000-0000-0000-000000000113}'</span>   <span class="com"># Software Updates Scan</span>
+Invoke-CMAction <span class="str">'{00000000-0000-0000-0000-000000000121}'</span>   <span class="com"># Application Deployment Evaluation</span>
+Invoke-CMAction <span class="str">'{00000000-0000-0000-0000-000000000108}'</span>   <span class="com"># Software Update Deployment Evaluation</span>
+
+<span class="com"># Which site and management point does this client think it belongs to?</span>
+Get-CimInstance -Namespace root\ccm -ClassName SMS_Authority |
+  Select-Object Name, CurrentManagementPoint</pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Repair Ladder</div>
+<div class="concept-title">Escalate Slowly — Reinstalling Is Not Step One</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Step</th><th>Do</th><th>When it helps</th></tr></thead>
+<tbody>
+<tr><td class="c-green">1</td><td>Run the client actions and read the logs</td><td>Policy is simply stale</td></tr>
+<tr><td class="c-green">2</td><td><code>ccmrepair.exe</code> or the console's Client Repair</td><td>Agent files or registrations are damaged</td></tr>
+<tr><td class="c-amber">3</td><td>Check WMI <span class="acro-exp">(Windows Management Instrumentation)</span>: <code>winmgmt /verifyrepository</code></td><td>Inventory and policy both fail, applet is missing tabs</td></tr>
+<tr><td class="c-amber">4</td><td>Reinstall: <code>ccmsetup.exe /uninstall</code>, reboot, then reinstall</td><td>Repair didn't take; clears a wedged install</td></tr>
+<tr><td class="c-red">5</td><td><code>winmgmt /salvagerepository</code> — last resort</td><td>Only when the repository is genuinely corrupt; it can break other agents</td></tr>
+</tbody>
+</table>
+<pre class="code-block"><span class="com"># A clean reinstall pointed at a specific MP and site</span>
+ccmsetup.exe /mp:mp01.contoso.com /forceinstall SMSSITECODE=P01 <span class="str">/logon</span>
+
+<span class="com"># ccmsetup writes to its own folder, NOT C:\Windows\CCM\Logs</span>
+<span class="com">#   C:\Windows\ccmsetup\Logs\ccmsetup.log</span>
+
+<span class="com"># Common ccmsetup exit codes</span>
+<span class="com">#   0        success</span>
+<span class="com">#   7        reboot required to finish</span>
+<span class="com">#   1603     generic MSI failure — read the MSI log beside it</span>
+<span class="com">#   0x87d00227  client could not download source from the MP (boundary/firewall/PKI)</span></pre>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The boundary trap:</strong> a client on an IP <span class="acro-exp">(Internet Protocol)</span> with no boundary
+in a boundary group has no site assignment and no content source. It will look
+installed, log cheerfully in <code>CcmExec.log</code>, and never do anything useful.
+<code>LocationServices.log</code> is where that shows up.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: MECM DEPLOYMENT & CONTENT ──────────────────────── -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">📦</span>
+<span class="topic-name">MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> Deployment &amp; Content Troubleshooting</span>
+<span class="topic-badge">MECM • Troubleshooting</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Flow</div>
+<div class="concept-title">Follow the Package Server-Side, Then Client-Side</div>
+<div class="concept-desc">
+An application reaches a device through a fixed chain: it is distributed to a
+distribution point, advertised in policy, located by the client, downloaded, then
+enforced. Find the first link that failed and stop reading logs from the wrong end.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Stage</th><th>Where</th><th>Log</th></tr></thead>
+<tbody>
+<tr><td class="c-purple">Content sent to the DP</td><td>Site server</td><td><code>distmgr.log</code> then <code>PkgXferMgr.log</code></td></tr>
+<tr><td class="c-purple">Content verified on the DP</td><td>Distribution point</td><td><code>smsdpmon.log</code>, <code>smsdpprov.log</code></td></tr>
+<tr><td class="c-cyan">Policy reaches the client</td><td>Client</td><td><code>PolicyAgent.log</code>, <code>AppIntentEval.log</code></td></tr>
+<tr><td class="c-cyan">Client finds a source</td><td>Client</td><td><code>CAS.log</code> — cached? which DP?</td></tr>
+<tr><td class="c-cyan">Bytes actually move</td><td>Client</td><td><code>ContentTransferManager.log</code>, <code>DataTransferService.log</code></td></tr>
+<tr><td class="c-green">Install runs</td><td>Client</td><td><code>AppEnforce.log</code> (apps), <code>execmgr.log</code> (packages)</td></tr>
+<tr><td class="c-green">Result detected</td><td>Client</td><td><code>AppDiscovery.log</code> — the detection method's verdict</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The single most common false failure:</strong> the installer ran
+fine, but the <strong>detection method</strong> looks for the wrong file, version or
+registry key — so MECM reports failure and retries forever.
+<code>AppEnforce.log</code> shows exit code 0 while <code>AppDiscovery.log</code> says
+"not detected". That combination always means the detection rule, never the installer.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Error Reference</div>
+<div class="concept-title">Codes You Will See Weekly</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Code</th><th>Means</th><th>First move</th></tr></thead>
+<tbody>
+<tr><td class="c-red">0x87D00324</td><td>Installed successfully but not detected</td><td>Fix the detection method — check it by hand on the device</td></tr>
+<tr><td class="c-red">0x87D00269</td><td>No content available at any distribution point</td><td>Confirm distribution finished; check boundary groups</td></tr>
+<tr><td class="c-red">0x80091007</td><td>Content hash mismatch</td><td>Redistribute the package; validate content on the DP</td></tr>
+<tr><td class="c-red">0x87D01106</td><td>The install command line failed</td><td>Run it manually as SYSTEM with PsExec to see the real error</td></tr>
+<tr><td class="c-red">1603</td><td>Generic MSI <span class="acro-exp">(Microsoft Installer)</span> failure</td><td>Read the MSI verbose log; usually a prerequisite or a locked file</td></tr>
+<tr><td class="c-red">1618</td><td>Another installation is already in progress</td><td>Wait and retry; check for a stuck msiexec</td></tr>
+<tr><td class="c-red">0x80070005</td><td>Access denied</td><td>Network access account, share permissions, or running as the wrong context</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Software Updates</div>
+<div class="concept-title">When Patching Stops, Suspect WSUS <span class="acro-exp">(Windows Server Update Services)</span> First</div>
+<div class="concept-desc">
+Software updates run on the software update point, which is WSUS wearing a MECM hat.
+Scan failures are almost always the WSUS side: a bloated database, an exhausted app
+pool, or a proxy in the way.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Log</th><th>Answers</th></tr></thead>
+<tbody>
+<tr><td class="c-cyan">wsyncmgr.log</td><td>Did the catalogue sync from Microsoft, and what failed</td></tr>
+<tr><td class="c-cyan">WCM.log / WSUSCtrl.log</td><td>Is MECM able to configure and reach WSUS at all</td></tr>
+<tr><td class="c-cyan">ruleengine.log</td><td>Automatic deployment rule runs</td></tr>
+<tr><td class="c-cyan">ScanAgent.log</td><td>Did the client decide to scan, and against which SUP <span class="acro-exp">(Software Update Point)</span></td></tr>
+<tr><td class="c-cyan">WUAHandler.log</td><td>What the Windows Update agent reported back</td></tr>
+<tr><td class="c-cyan">UpdatesDeployment.log</td><td>Deployment enforcement, deadlines and reboots</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-red">0x80244010</strong> — "exceeded max server round trips" — is the
+classic sign of an unmaintained WSUS: decline superseded updates and run the cleanup
+so the client can finish enumerating. <strong class="c-red">0x80072ee2</strong> is a
+timeout, usually a proxy or firewall. And if the WSUS app pool keeps recycling, raise
+its private memory limit (0 = unlimited) before touching anything else.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: MECM OSD / TASK SEQUENCE ───────────────────────── -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🧬</span>
+<span class="topic-name">MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> OSD <span class="acro-exp">(Operating System Deployment)</span> — Task Sequence Failure Triage</span>
+<span class="topic-badge">MECM • Troubleshooting</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Method</div>
+<div class="concept-title">Find smsts.log, Then Read Backwards</div>
+<div class="concept-desc">
+Every task sequence failure is in <code>smsts.log</code>. The hard part is knowing
+where it lives at the moment it failed — the file moves as the sequence progresses.
+Open it in CMTrace, jump to the end, and scroll <em>up</em> to the first red line: the
+error you see reported is usually the consequence, not the cause.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Phase</th><th>smsts.log lives at</th></tr></thead>
+<tbody>
+<tr><td class="c-cyan">In WinPE <span class="acro-exp">(Windows Preinstallation Environment)</span>, before the disk is formatted</td><td><code>X:\Windows\Temp\SMSTSLog\smsts.log</code></td></tr>
+<tr><td class="c-cyan">In WinPE, after formatting</td><td><code>X:\SMSTSLog\smsts.log</code> then <code>C:\_SMSTaskSequence\Logs</code></td></tr>
+<tr><td class="c-cyan">In the full OS <span class="acro-exp">(Operating System)</span>, before the client is installed</td><td><code>C:\_SMSTaskSequence\Logs\SMSTSLog</code></td></tr>
+<tr><td class="c-cyan">In the full OS, client installed</td><td><code>C:\Windows\CCM\Logs\SMSTSLog</code></td></tr>
+<tr><td class="c-cyan">After the sequence ends</td><td><code>C:\Windows\CCM\Logs\smsts.log</code></td></tr>
+</tbody>
+</table>
+<pre class="code-block"><span class="com"># In WinPE: F8 needs to be enabled on the boot image (Enable command support)</span>
+<span class="com"># Keep the window open on failure so the log survives the reboot:</span>
+<span class="com">#   set the task sequence variable  SMSTSPostAction = cmd.exe /c pause</span>
+<span class="com">#   or copy the log out before it goes:</span>
+copy X:\Windows\Temp\SMSTSLog\smsts.log \\fileserver\logs\%COMPUTERNAME%-smsts.log
+
+<span class="com"># Check the network stack from WinPE before blaming the sequence</span>
+ipconfig /all
+ping mp01.contoso.com
+net use \\dp01\SMSPKGD$ /user:CONTOSO\svc-osd</pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Error Reference</div>
+<div class="concept-title">The Usual Suspects</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Code</th><th>Usually means</th><th>Check</th></tr></thead>
+<tbody>
+<tr><td class="c-red">0x80070002</td><td>File not found — content missing or not distributed</td><td>Package distributed to a DP in this boundary group?</td></tr>
+<tr><td class="c-red">0x80070070</td><td>Disk full</td><td>Partition size, or cache too small for the content</td></tr>
+<tr><td class="c-red">0x80072EE7</td><td>Name resolution failed in WinPE</td><td>DNS <span class="acro-exp">(Domain Name System)</span> from PE, and whether the MP name resolves at all</td></tr>
+<tr><td class="c-red">0x80004005</td><td>Generic failure — meaningless on its own</td><td>Ignore the code, read the lines above it</td></tr>
+<tr><td class="c-red">0x80220014</td><td>Bad or missing task sequence variable</td><td>A collection variable or Set Variable step that never ran</td></tr>
+<tr><td class="c-red">0x87D00267</td><td>No task sequence deployment for this machine</td><td>Collection membership, and whether the deployment is available to unknown computers</td></tr>
+<tr><td class="c-red">Missing NIC <span class="acro-exp">(Network Interface Card)</span> or storage driver</td><td>PE loads, then nothing works</td><td>Driver package injected into the boot image for the right architecture</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Triage order that saves the most time:</strong>
+1. Does the machine have a deployment at all — is it in the collection?
+2. Can WinPE reach the network and resolve the MP?
+3. Is the content on a DP this boundary group can reach?
+4. Did a specific step fail, or did the sequence never start?
+Only then start reading step-level errors.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: MECM SITE & SERVER-SIDE ────────────────────────── -->
+<div class="topic">
+<div class="topic-header">
+<span class="topic-icon">🏢</span>
+<span class="topic-name">MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> Site Health &amp; Server Log Map</span>
+<span class="topic-badge">MECM • Troubleshooting</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Which Server Log Owns Which Symptom</div>
+<div class="concept-desc">
+Client logs live in <code>C:\Windows\CCM\Logs</code>; site server logs live in
+<code>&lt;install&gt;\Logs</code> (commonly
+<code>D:\Program Files\Microsoft Configuration Manager\Logs</code>). When a symptom is
+fleet-wide rather than per-device, the answer is on the server.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Symptom</th><th>Log</th><th>Component</th></tr></thead>
+<tbody>
+<tr><td class="c-amber">Content stuck distributing to a DP</td><td><code>distmgr.log</code>, <code>PkgXferMgr.log</code></td><td>Distribution Manager</td></tr>
+<tr><td class="c-amber">Collections not updating membership</td><td><code>colleval.log</code></td><td>Collection Evaluator</td></tr>
+<tr><td class="c-amber">Deployment status never changes</td><td><code>statesys.log</code>, <code>MP_StatusManager</code></td><td>State System</td></tr>
+<tr><td class="c-amber">Inventory not arriving</td><td><code>dataldr.log</code>, <code>MP_HinvEndpoint</code></td><td>Inventory Data Loader</td></tr>
+<tr><td class="c-amber">Discovery not finding machines</td><td><code>adsysdis.log</code>, <code>ddm.log</code></td><td>AD <span class="acro-exp">(Active Directory)</span> System Discovery</td></tr>
+<tr><td class="c-amber">Clients can't get policy</td><td><code>MP_GetPolicy.log</code>, <code>MP_Location.log</code></td><td>Management Point</td></tr>
+<tr><td class="c-amber">Console errors or slowness</td><td><code>SMSProv.log</code></td><td>SMS <span class="acro-exp">(Systems Management Server)</span> Provider (WMI layer)</td></tr>
+<tr><td class="c-amber">Site-to-site replication behind</td><td><code>sender.log</code>, <code>despool.log</code>, <code>rcmctrl.log</code></td><td>Replication</td></tr>
+<tr><td class="c-amber">Site components in a warning state</td><td><code>sitecomp.log</code>, <code>hman.log</code></td><td>Site Component Manager</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Before diving in, check <strong>Monitoring ▸ System Status ▸ Component Status</strong>
+and <strong>Site Status</strong> — MECM usually tells you which component is unhappy,
+which narrows the log list to one.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Real Time</div>
+<div class="concept-title">CMPivot <span class="acro-exp">(Configuration Manager Pivot)</span> — Ask the Fleet Instead of Waiting for Inventory</div>
+<div class="concept-desc">
+Hardware inventory is a scheduled snapshot; CMPivot queries live clients now, in a
+KQL-like syntax. It is the fastest way to answer "how many machines actually have
+this" during an incident — and it doubles as a hunting tool alongside the Blue Team
+domain.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com">// Which machines still have the vulnerable version installed?</span>
+InstalledSoftware
+| <span class="kw">where</span> ProductName contains <span class="str">'Contoso Agent'</span>
+| <span class="kw">summarize</span> count() <span class="kw">by</span> ProductVersion
+
+<span class="com">// Is the file present, and when was it last written?</span>
+File(<span class="str">'C:\\Program Files\\Contoso\\agent.exe'</span>)
+| <span class="kw">project</span> Device, Version, LastWriteTime
+
+<span class="com">// Disk pressure across the fleet, worst first</span>
+LogicalDisk
+| <span class="kw">where</span> DeviceID == <span class="str">'C:'</span>
+| <span class="kw">project</span> Device, FreeGB = FreeSpace / <span class="num">1024</span>
+| <span class="kw">order by</span> FreeGB asc</pre>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Two limits to keep in mind:</strong> CMPivot only reaches
+clients that are online and healthy — the broken ones you most want to see are exactly
+the ones that will not answer — and results are capped, so scope the query to a
+collection rather than the whole estate.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body endpoint -->
 </div>
 </div>
@@ -53663,8 +54394,8 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">Overview</div>
-<div class="concept-title">996 acronyms · 1043 meanings</div>
-<div class="concept-desc">Every acronym used anywhere on this site is expanded inline the first time it appears in a topic — the grey text in brackets beside it. This domain is the full lookup table: browse <strong>A&nbsp;–&nbsp;Z</strong> below, jump to a subject area, or use the search box at the top of the page (it matches both the acronym and what it stands for). Where an acronym means more than one thing, every meaning is listed. Letter index: <strong class="c-cyan">0–9</strong> <span class="c-muted">(3)</span> · <strong class="c-cyan">A</strong> <span class="c-muted">(72)</span> · <strong class="c-cyan">B</strong> <span class="c-muted">(25)</span> · <strong class="c-cyan">C</strong> <span class="c-muted">(106)</span> · <strong class="c-cyan">D</strong> <span class="c-muted">(61)</span> · <strong class="c-cyan">E</strong> <span class="c-muted">(47)</span> · <strong class="c-cyan">F</strong> <span class="c-muted">(28)</span> · <strong class="c-cyan">G</strong> <span class="c-muted">(28)</span> · <strong class="c-cyan">H</strong> <span class="c-muted">(25)</span> · <strong class="c-cyan">I</strong> <span class="c-muted">(58)</span> · <strong class="c-cyan">J</strong> <span class="c-muted">(9)</span> · <strong class="c-cyan">K</strong> <span class="c-muted">(12)</span> · <strong class="c-cyan">L</strong> <span class="c-muted">(38)</span> · <strong class="c-cyan">M</strong> <span class="c-muted">(52)</span> · <strong class="c-cyan">N</strong> <span class="c-muted">(38)</span> · <strong class="c-cyan">O</strong> <span class="c-muted">(31)</span> · <strong class="c-cyan">P</strong> <span class="c-muted">(58)</span> · <strong class="c-cyan">Q</strong> <span class="c-muted">(6)</span> · <strong class="c-cyan">R</strong> <span class="c-muted">(55)</span> · <strong class="c-cyan">S</strong> <span class="c-muted">(120)</span> · <strong class="c-cyan">T</strong> <span class="c-muted">(33)</span> · <strong class="c-cyan">U</strong> <span class="c-muted">(22)</span> · <strong class="c-cyan">V</strong> <span class="c-muted">(23)</span> · <strong class="c-cyan">W</strong> <span class="c-muted">(29)</span> · <strong class="c-cyan">X</strong> <span class="c-muted">(10)</span> · <strong class="c-cyan">Y</strong> <span class="c-muted">(4)</span> · <strong class="c-cyan">Z</strong> <span class="c-muted">(3)</span>.</div>
+<div class="concept-title">1021 acronyms · 1070 meanings</div>
+<div class="concept-desc">Every acronym used anywhere on this site is expanded inline the first time it appears in a topic — the grey text in brackets beside it. This domain is the full lookup table: browse <strong>A&nbsp;–&nbsp;Z</strong> below, jump to a subject area, or use the search box at the top of the page (it matches both the acronym and what it stands for). Where an acronym means more than one thing, every meaning is listed. Letter index: <strong class="c-cyan">0–9</strong> <span class="c-muted">(3)</span> · <strong class="c-cyan">A</strong> <span class="c-muted">(74)</span> · <strong class="c-cyan">B</strong> <span class="c-muted">(26)</span> · <strong class="c-cyan">C</strong> <span class="c-muted">(106)</span> · <strong class="c-cyan">D</strong> <span class="c-muted">(61)</span> · <strong class="c-cyan">E</strong> <span class="c-muted">(48)</span> · <strong class="c-cyan">F</strong> <span class="c-muted">(28)</span> · <strong class="c-cyan">G</strong> <span class="c-muted">(30)</span> · <strong class="c-cyan">H</strong> <span class="c-muted">(25)</span> · <strong class="c-cyan">I</strong> <span class="c-muted">(60)</span> · <strong class="c-cyan">J</strong> <span class="c-muted">(9)</span> · <strong class="c-cyan">K</strong> <span class="c-muted">(12)</span> · <strong class="c-cyan">L</strong> <span class="c-muted">(39)</span> · <strong class="c-cyan">M</strong> <span class="c-muted">(54)</span> · <strong class="c-cyan">N</strong> <span class="c-muted">(40)</span> · <strong class="c-cyan">O</strong> <span class="c-muted">(32)</span> · <strong class="c-cyan">P</strong> <span class="c-muted">(60)</span> · <strong class="c-cyan">Q</strong> <span class="c-muted">(6)</span> · <strong class="c-cyan">R</strong> <span class="c-muted">(57)</span> · <strong class="c-cyan">S</strong> <span class="c-muted">(122)</span> · <strong class="c-cyan">T</strong> <span class="c-muted">(34)</span> · <strong class="c-cyan">U</strong> <span class="c-muted">(23)</span> · <strong class="c-cyan">V</strong> <span class="c-muted">(25)</span> · <strong class="c-cyan">W</strong> <span class="c-muted">(29)</span> · <strong class="c-cyan">X</strong> <span class="c-muted">(10)</span> · <strong class="c-cyan">Y</strong> <span class="c-muted">(4)</span> · <strong class="c-cyan">Z</strong> <span class="c-muted">(4)</span>.</div>
 <div class="dw">
 <svg class="acro-svg" viewBox="0 0 1120 470" role="img" aria-labelledby="acrosvg-t acrosvg-d" preserveAspectRatio="xMidYMid meet">
 <title id="acrosvg-t">How an acronym is recorded and shown</title>
@@ -53730,12 +54461,12 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td>🤖 <strong class="c-amber">AI</strong></td><td>29</td></tr>
 <tr><td>💼 <strong class="c-amber">Business</strong></td><td>36</td></tr>
 <tr><td>🎓 <strong class="c-amber">Certifications</strong></td><td>24</td></tr>
-<tr><td>☁️ <strong class="c-amber">Cloud</strong></td><td>44</td></tr>
+<tr><td>☁️ <strong class="c-amber">Cloud</strong></td><td>61</td></tr>
 <tr><td>⚖️ <strong class="c-amber">Compliance</strong></td><td>36</td></tr>
 <tr><td>🔑 <strong class="c-amber">Cryptography</strong></td><td>50</td></tr>
 <tr><td>📊 <strong class="c-amber">Data</strong></td><td>31</td></tr>
 <tr><td>🔁 <strong class="c-amber">DevOps</strong></td><td>13</td></tr>
-<tr><td>🖥️ <strong class="c-amber">Endpoint</strong></td><td>35</td></tr>
+<tr><td>🖥️ <strong class="c-amber">Endpoint</strong></td><td>39</td></tr>
 <tr><td>🏛️ <strong class="c-amber">Engineering</strong></td><td>63</td></tr>
 <tr><td>🎖️ <strong class="c-amber">Government</strong></td><td>7</td></tr>
 <tr><td>🔧 <strong class="c-amber">Hardware</strong></td><td>71</td></tr>
@@ -53745,13 +54476,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td>🔬 <strong class="c-amber">Operations</strong></td><td>34</td></tr>
 <tr><td>🏢 <strong class="c-amber">Organizations</strong></td><td>14</td></tr>
 <tr><td>⚠️ <strong class="c-amber">Risk</strong></td><td>10</td></tr>
-<tr><td>🔐 <strong class="c-amber">Security</strong></td><td>154</td></tr>
+<tr><td>🔐 <strong class="c-amber">Security</strong></td><td>156</td></tr>
 <tr><td>📐 <strong class="c-amber">Standards</strong></td><td>2</td></tr>
 <tr><td>💾 <strong class="c-amber">Storage</strong></td><td>21</td></tr>
 <tr><td>⚙️ <strong class="c-amber">Systems</strong></td><td>15</td></tr>
 <tr><td>📦 <strong class="c-amber">Virtualization</strong></td><td>6</td></tr>
 <tr><td>🕸️ <strong class="c-amber">Web</strong></td><td>58</td></tr>
-<tr><td>🪟 <strong class="c-amber">Windows</strong></td><td>37</td></tr>
+<tr><td>🪟 <strong class="c-amber">Windows</strong></td><td>40</td></tr>
 </tbody>
 </table>
 </div>
@@ -53789,13 +54520,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — A</span>
-<span class="topic-badge">72 TERMS</span>
+<span class="topic-badge">74 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">A — 72 acronyms</div>
+<div class="concept-title">A — 74 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>A</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -53818,6 +54549,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">ACM</strong></td><td><strong class="c-cyan">AWS Certificate Manager</strong><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Association for Computing Machinery</strong><br /><span class="c-muted">Publishes the ACM Code of Ethics</span></td><td>Cloud · Organizations</td></tr>
 <tr><td><strong class="c-amber">ACME</strong></td><td><strong class="c-cyan">Automatic Certificate Management Environment</strong><br /><span class="c-muted">The protocol behind Let's Encrypt</span></td><td>Cryptography</td></tr>
 <tr><td><strong class="c-amber">ACPI</strong></td><td><strong class="c-cyan">Advanced Configuration and Power Interface</strong></td><td>Hardware</td></tr>
+<tr><td><strong class="c-amber">ACR</strong></td><td><strong class="c-cyan">Azure Container Registry</strong></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">AD</strong></td><td><strong class="c-cyan">Active Directory</strong><br /><span class="c-muted">Microsoft's on-premises directory service</span></td><td>Windows</td></tr>
 <tr><td><strong class="c-amber">AD CS</strong></td><td><strong class="c-cyan">Active Directory Certificate Services</strong></td><td>Windows</td></tr>
 <tr><td><strong class="c-amber">AD DS</strong></td><td><strong class="c-cyan">Active Directory Domain Services</strong></td><td>Windows</td></tr>
@@ -53856,7 +54588,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">ARP</strong></td><td><strong class="c-cyan">Address Resolution Protocol</strong><br /><span class="c-muted">Maps IPv4 addresses to MAC addresses</span></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">AS</strong></td><td><strong class="c-cyan">Autonomous System</strong><br /><span class="c-muted">A routing domain under one administrative authority</span></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">ASCII</strong></td><td><strong class="c-cyan">American Standard Code for Information Interchange</strong><br /><span class="c-muted">7-bit character encoding</span></td><td>Engineering</td></tr>
-<tr><td><strong class="c-amber">ASG</strong></td><td><strong class="c-cyan">Auto Scaling Group</strong></td><td>Cloud</td></tr>
+<tr><td><strong class="c-amber">ASG</strong></td><td><strong class="c-cyan">Auto Scaling Group</strong><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Application Security Group</strong><br /><span class="c-muted">A named group of Azure NICs usable as a rule source or destination</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">ASIC</strong></td><td><strong class="c-cyan">Application-Specific Integrated Circuit</strong></td><td>Hardware</td></tr>
 <tr><td><strong class="c-amber">ASLR</strong></td><td><strong class="c-cyan">Address Space Layout Randomization</strong><br /><span class="c-muted">Randomises memory layout to frustrate exploits</span></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">ASN</strong></td><td><strong class="c-cyan">Autonomous System Number</strong></td><td>Networking</td></tr>
@@ -53869,6 +54601,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">ATX</strong></td><td><strong class="c-cyan">Advanced Technology eXtended</strong><br /><span class="c-muted">The common motherboard and power-supply form factor</span></td><td>Hardware</td></tr>
 <tr><td><strong class="c-amber">AUC</strong></td><td><strong class="c-cyan">Area Under the Curve</strong></td><td>AI</td></tr>
 <tr><td><strong class="c-amber">AV</strong></td><td><strong class="c-cyan">Antivirus</strong></td><td>Security</td></tr>
+<tr><td><strong class="c-amber">AVD</strong></td><td><strong class="c-cyan">Azure Virtual Desktop</strong></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">AVIF</strong></td><td><strong class="c-cyan">AV1 Image File Format</strong></td><td>Web</td></tr>
 <tr><td><strong class="c-amber">AWS</strong></td><td><strong class="c-cyan">Amazon Web Services</strong></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">AXFR</strong></td><td><strong class="c-cyan">Full Zone Transfer</strong></td><td>Networking</td></tr>
@@ -53884,13 +54617,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — B</span>
-<span class="topic-badge">25 TERMS</span>
+<span class="topic-badge">26 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">B — 25 acronyms</div>
+<div class="concept-title">B — 26 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>B</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -53912,6 +54645,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">BI</strong></td><td><strong class="c-cyan">Business Intelligence</strong></td><td>Data</td></tr>
 <tr><td><strong class="c-amber">BIA</strong></td><td><strong class="c-cyan">Business Impact Analysis</strong><br /><span class="c-muted">Identifies critical functions and their tolerable downtime</span></td><td>Risk</td></tr>
 <tr><td><strong class="c-amber">BIOS</strong></td><td><strong class="c-cyan">Basic Input/Output System</strong><br /><span class="c-muted">Legacy firmware that starts the boot process</span></td><td>Hardware</td></tr>
+<tr><td><strong class="c-amber">BITS</strong></td><td><strong class="c-cyan">Background Intelligent Transfer Service</strong><br /><span class="c-muted">The throttled background download service MECM uses for content</span></td><td>Windows</td></tr>
 <tr><td><strong class="c-amber">BLE</strong></td><td><strong class="c-cyan">Bluetooth Low Energy</strong></td><td>Hardware</td></tr>
 <tr><td><strong class="c-amber">BNC</strong></td><td><strong class="c-cyan">Bayonet Neill-Concelman</strong><br /><span class="c-muted">Coaxial cable connector</span></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">BOM</strong></td><td><strong class="c-cyan">Byte Order Mark</strong></td><td>Engineering</td></tr>
@@ -54145,13 +54879,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — E</span>
-<span class="topic-badge">47 TERMS</span>
+<span class="topic-badge">48 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">E — 47 acronyms</div>
+<div class="concept-title">E — 48 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>E</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -54192,6 +54926,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">EPP</strong></td><td><strong class="c-cyan">Endpoint Protection Platform</strong></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">EPSS</strong></td><td><strong class="c-cyan">Exploit Prediction Scoring System</strong><br /><span class="c-muted">Probability a vulnerability will be exploited in the wild</span></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">EQL</strong></td><td><strong class="c-cyan">Event Query Language</strong></td><td>Security</td></tr>
+<tr><td><strong class="c-amber">ER</strong></td><td><strong class="c-cyan">ExpressRoute</strong><br /><span class="c-muted">A private circuit into Azure that bypasses the public internet</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">ERP</strong></td><td><strong class="c-cyan">Enterprise Resource Planning</strong></td><td>Business</td></tr>
 <tr><td><strong class="c-amber">ESB</strong></td><td><strong class="c-cyan">Enterprise Service Bus</strong></td><td>Engineering</td></tr>
 <tr><td><strong class="c-amber">ESD</strong></td><td><strong class="c-cyan">Electrostatic Discharge</strong></td><td>Hardware</td></tr>
@@ -54266,13 +55001,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — G</span>
-<span class="topic-badge">28 TERMS</span>
+<span class="topic-badge">30 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">G — 28 acronyms</div>
+<div class="concept-title">G — 30 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>G</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -54302,10 +55037,12 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">GQL</strong></td><td><strong class="c-cyan">GraphQL Query Language</strong></td><td>Web</td></tr>
 <tr><td><strong class="c-amber">GRC</strong></td><td><strong class="c-cyan">Governance, Risk, and Compliance</strong></td><td>Compliance</td></tr>
 <tr><td><strong class="c-amber">GRE</strong></td><td><strong class="c-cyan">Generic Routing Encapsulation</strong><br /><span class="c-muted">Tunnelling protocol</span></td><td>Networking</td></tr>
+<tr><td><strong class="c-amber">GRS</strong></td><td><strong class="c-cyan">Geo-Redundant Storage</strong><br /><span class="c-muted">Local copies plus three more in the paired region</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">GRUB</strong></td><td><strong class="c-cyan">GRand Unified Bootloader</strong></td><td>Linux</td></tr>
 <tr><td><strong class="c-amber">GSM</strong></td><td><strong class="c-cyan">Global System for Mobile Communications</strong></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">GUI</strong></td><td><strong class="c-cyan">Graphical User Interface</strong></td><td>Systems</td></tr>
 <tr><td><strong class="c-amber">GUID</strong></td><td><strong class="c-cyan">Globally Unique Identifier</strong></td><td>Systems</td></tr>
+<tr><td><strong class="c-amber">GZRS</strong></td><td><strong class="c-cyan">Geo-Zone-Redundant Storage</strong><br /><span class="c-muted">Zone-redundant locally, geo-redundant across regions</span></td><td>Cloud</td></tr>
 </tbody>
 </table>
 </div>
@@ -54365,13 +55102,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — I</span>
-<span class="topic-badge">58 TERMS</span>
+<span class="topic-badge">60 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">I — 58 acronyms</div>
+<div class="concept-title">I — 60 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>I</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -54399,6 +55136,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">IIoT</strong></td><td><strong class="c-cyan">Industrial Internet of Things</strong></td><td>Misc</td></tr>
 <tr><td><strong class="c-amber">IKE</strong></td><td><strong class="c-cyan">Internet Key Exchange</strong><br /><span class="c-muted">Negotiates IPsec security associations</span></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">IMAP</strong></td><td><strong class="c-cyan">Internet Message Access Protocol</strong><br /><span class="c-muted">Server-side mailbox access on TCP 143/993</span></td><td>Networking</td></tr>
+<tr><td><strong class="c-amber">IME</strong></td><td><strong class="c-cyan">Intune Management Extension</strong><br /><span class="c-muted">The agent that runs Win32 app installs and PowerShell scripts</span></td><td>Endpoint</td></tr>
 <tr><td><strong class="c-amber">IMEI</strong></td><td><strong class="c-cyan">International Mobile Equipment Identity</strong></td><td>Hardware</td></tr>
 <tr><td><strong class="c-amber">initramfs</strong></td><td><strong class="c-cyan">Initial RAM Filesystem</strong></td><td>Linux</td></tr>
 <tr><td><strong class="c-amber">initrd</strong></td><td><strong class="c-cyan">Initial RAM Disk</strong></td><td>Linux</td></tr>
@@ -54430,6 +55168,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">IT</strong></td><td><strong class="c-cyan">Information Technology</strong></td><td>Misc</td></tr>
 <tr><td><strong class="c-amber">ITAM</strong></td><td><strong class="c-cyan">IT Asset Management</strong></td><td>Operations</td></tr>
 <tr><td><strong class="c-amber">ITAR</strong></td><td><strong class="c-cyan">International Traffic in Arms Regulations</strong></td><td>Compliance</td></tr>
+<tr><td><strong class="c-amber">ITDR</strong></td><td><strong class="c-cyan">Identity Threat Detection and Response</strong></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">ITIL</strong></td><td><strong class="c-cyan">Information Technology Infrastructure Library</strong><br /><span class="c-muted">The service management practice framework</span></td><td>Operations</td></tr>
 <tr><td><strong class="c-amber">ITSM</strong></td><td><strong class="c-cyan">IT Service Management</strong></td><td>Operations</td></tr>
 <tr><td><strong class="c-amber">IV</strong></td><td><strong class="c-cyan">Initialization Vector</strong><br /><span class="c-muted">Random value that keeps identical plaintexts from encrypting alike</span></td><td>Cryptography</td></tr>
@@ -54513,13 +55252,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — L</span>
-<span class="topic-badge">38 TERMS</span>
+<span class="topic-badge">39 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">L — 38 acronyms</div>
+<div class="concept-title">L — 39 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>L</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -54552,6 +55291,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">LOS</strong></td><td><strong class="c-cyan">Line of Sight</strong></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">LPAR</strong></td><td><strong class="c-cyan">Logical Partition</strong></td><td>Virtualization</td></tr>
 <tr><td><strong class="c-amber">LQL</strong></td><td><strong class="c-cyan">Log Query Language</strong></td><td>Operations</td></tr>
+<tr><td><strong class="c-amber">LRS</strong></td><td><strong class="c-cyan">Locally Redundant Storage</strong><br /><span class="c-muted">Three copies inside one datacenter</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">LRU</strong></td><td><strong class="c-cyan">Least Recently Used</strong><br /><span class="c-muted">Common cache eviction policy</span></td><td>Systems</td></tr>
 <tr><td><strong class="c-amber">LSA</strong></td><td><strong class="c-cyan">Local Security Authority</strong></td><td>Windows</td></tr>
 <tr><td><strong class="c-amber">LSASS</strong></td><td><strong class="c-cyan">Local Security Authority Subsystem Service</strong><br /><span class="c-muted">The process holding Windows credential material in memory</span></td><td>Windows</td></tr>
@@ -54574,13 +55314,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — M</span>
-<span class="topic-badge">52 TERMS</span>
+<span class="topic-badge">54 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">M — 52 acronyms</div>
+<div class="concept-title">M — 54 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>M</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -54604,6 +55344,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">MFA</strong></td><td><strong class="c-cyan">Multi-Factor Authentication</strong><br /><span class="c-muted">Two or more independent authentication factors</span></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">MFP</strong></td><td><strong class="c-cyan">Multifunction Printer</strong></td><td>Hardware</td></tr>
 <tr><td><strong class="c-amber">MFT</strong></td><td><strong class="c-cyan">Master File Table</strong><br /><span class="c-muted">The NTFS index of every file on a volume</span></td><td>Windows</td></tr>
+<tr><td><strong class="c-amber">MG</strong></td><td><strong class="c-cyan">Management Group</strong><br /><span class="c-muted">The Azure scope that contains subscriptions</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">MIB</strong></td><td><strong class="c-cyan">Management Information Base</strong><br /><span class="c-muted">The object tree an SNMP agent exposes</span></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">MIME</strong></td><td><strong class="c-cyan">Multipurpose Internet Mail Extensions</strong><br /><span class="c-muted">Declares the content type of a payload</span></td><td>Web</td></tr>
 <tr><td><strong class="c-amber">MIMO</strong></td><td><strong class="c-cyan">Multiple Input Multiple Output</strong><br /><span class="c-muted">Multi-antenna wireless technique</span></td><td>Networking</td></tr>
@@ -54620,6 +55361,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">MPLS</strong></td><td><strong class="c-cyan">Multiprotocol Label Switching</strong><br /><span class="c-muted">Label-based carrier forwarding</span></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">MSA</strong></td><td><strong class="c-cyan">Master Service Agreement</strong></td><td>Business</td></tr>
 <tr><td><strong class="c-amber">MSI</strong></td><td><strong class="c-cyan">Microsoft Installer</strong><br /><span class="c-muted">The Windows installer package format</span></td><td>Endpoint</td></tr>
+<tr><td><strong class="c-amber">MSIX</strong></td><td><strong class="c-cyan">Microsoft Installer for Windows Apps</strong><br /><span class="c-muted">The modern Windows app packaging format</span></td><td>Endpoint</td></tr>
 <tr><td><strong class="c-amber">MSP</strong></td><td><strong class="c-cyan">Managed Service Provider</strong></td><td>Business</td></tr>
 <tr><td><strong class="c-amber">MSSP</strong></td><td><strong class="c-cyan">Managed Security Service Provider</strong></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">MTA</strong></td><td><strong class="c-cyan">Mail Transfer Agent</strong></td><td>Networking</td></tr>
@@ -54649,13 +55391,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — N</span>
-<span class="topic-badge">38 TERMS</span>
+<span class="topic-badge">40 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">N — 38 acronyms</div>
+<div class="concept-title">N — 40 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>N</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -54691,12 +55433,14 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">NPU</strong></td><td><strong class="c-cyan">Neural Processing Unit</strong></td><td>Hardware</td></tr>
 <tr><td><strong class="c-amber">NS</strong></td><td><strong class="c-cyan">Name Server</strong><br /><span class="c-muted">DNS record delegating a zone</span></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">NSA</strong></td><td><strong class="c-cyan">National Security Agency</strong></td><td>Government</td></tr>
+<tr><td><strong class="c-amber">NSG</strong></td><td><strong class="c-cyan">Network Security Group</strong><br /><span class="c-muted">Stateful allow/deny rules on an Azure subnet or NIC</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">NSM</strong></td><td><strong class="c-cyan">Network Security Monitoring</strong></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">NSS</strong></td><td><strong class="c-cyan">Name Service Switch</strong></td><td>Linux</td></tr>
 <tr><td><strong class="c-amber">NTFS</strong></td><td><strong class="c-cyan">New Technology File System</strong><br /><span class="c-muted">The default Windows filesystem</span></td><td>Windows</td></tr>
 <tr><td><strong class="c-amber">NTLM</strong></td><td><strong class="c-cyan">NT LAN Manager</strong><br /><span class="c-muted">Legacy Windows challenge-response authentication</span></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">NTP</strong></td><td><strong class="c-cyan">Network Time Protocol</strong><br /><span class="c-muted">Clock synchronisation on UDP 123</span></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">NUMA</strong></td><td><strong class="c-cyan">Non-Uniform Memory Access</strong></td><td>Hardware</td></tr>
+<tr><td><strong class="c-amber">NVA</strong></td><td><strong class="c-cyan">Network Virtual Appliance</strong><br /><span class="c-muted">A firewall or router run as a VM in the cloud</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">NVMe</strong></td><td><strong class="c-cyan">Non-Volatile Memory Express</strong><br /><span class="c-muted">Low-latency PCIe protocol for SSDs</span></td><td>Storage</td></tr>
 <tr><td><strong class="c-amber">NVR</strong></td><td><strong class="c-cyan">Network Video Recorder</strong></td><td>Hardware</td></tr>
 </tbody>
@@ -54710,13 +55454,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — O</span>
-<span class="topic-badge">31 TERMS</span>
+<span class="topic-badge">32 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">O — 31 acronyms</div>
+<div class="concept-title">O — 32 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>O</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -54732,6 +55476,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">OLAP</strong></td><td><strong class="c-cyan">Online Analytical Processing</strong><br /><span class="c-muted">Wide analytical queries over historical data</span></td><td>Data</td></tr>
 <tr><td><strong class="c-amber">OLED</strong></td><td><strong class="c-cyan">Organic Light Emitting Diode</strong></td><td>Hardware</td></tr>
 <tr><td><strong class="c-amber">OLTP</strong></td><td><strong class="c-cyan">Online Transaction Processing</strong><br /><span class="c-muted">High-volume short read/write transactions</span></td><td>Data</td></tr>
+<tr><td><strong class="c-amber">OMA-DM</strong></td><td><strong class="c-cyan">Open Mobile Alliance Device Management</strong><br /><span class="c-muted">The protocol behind Windows and mobile MDM enrollment</span></td><td>Endpoint</td></tr>
 <tr><td><strong class="c-amber">OMA-URI</strong></td><td><strong class="c-cyan">Open Mobile Alliance Uniform Resource Identifier</strong><br /><span class="c-muted">Path syntax for custom Intune policy</span></td><td>Endpoint</td></tr>
 <tr><td><strong class="c-amber">OODA</strong></td><td><strong class="c-cyan">Observe, Orient, Decide, Act</strong><br /><span class="c-muted">Boyd's decision loop</span></td><td>Operations</td></tr>
 <tr><td><strong class="c-amber">OOM</strong></td><td><strong class="c-cyan">Out of Memory</strong><br /><span class="c-muted">The kernel killer that reaps memory hogs</span></td><td>Linux</td></tr>
@@ -54764,13 +55509,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — P</span>
-<span class="topic-badge">58 TERMS</span>
+<span class="topic-badge">60 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">P — 58 acronyms</div>
+<div class="concept-title">P — 60 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>P</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -54825,6 +55570,8 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">PRNG</strong></td><td><strong class="c-cyan">Pseudorandom Number Generator</strong></td><td>Cryptography</td></tr>
 <tr><td><strong class="c-amber">procfs</strong></td><td><strong class="c-cyan">Process Filesystem</strong><br /><span class="c-muted">The /proc virtual filesystem</span></td><td>Linux</td></tr>
 <tr><td><strong class="c-amber">PromQL</strong></td><td><strong class="c-cyan">Prometheus Query Language</strong></td><td>Operations</td></tr>
+<tr><td><strong class="c-amber">PRT</strong></td><td><strong class="c-cyan">Primary Refresh Token</strong><br /><span class="c-muted">The token that gives a joined Windows device single sign-on</span></td><td>Windows</td></tr>
+<tr><td><strong class="c-amber">PSEXEC</strong></td><td><strong class="c-cyan">PsExec</strong><br /><span class="c-muted">Sysinternals tool for running a process remotely or as SYSTEM</span></td><td>Windows</td></tr>
 <tr><td><strong class="c-amber">PSK</strong></td><td><strong class="c-cyan">Pre-Shared Key</strong></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">PSU</strong></td><td><strong class="c-cyan">Power Supply Unit</strong></td><td>Hardware</td></tr>
 <tr><td><strong class="c-amber">PT+</strong></td><td><strong class="c-cyan">CompTIA PenTest+</strong></td><td>Certifications</td></tr>
@@ -54874,19 +55621,20 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — R</span>
-<span class="topic-badge">55 TERMS</span>
+<span class="topic-badge">57 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">R — 55 acronyms</div>
+<div class="concept-title">R — 57 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>R</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
 <thead><tr><th>Acronym</th><th>Stands For</th><th>Area</th></tr></thead>
 <tbody>
 <tr><td><strong class="c-amber">RA</strong></td><td><strong class="c-cyan">Router Advertisement</strong><br /><span class="c-muted">IPv6 message announcing prefixes and defaults</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Registration Authority</strong><br /><span class="c-muted">Verifies identity on behalf of a certificate authority</span></td><td>Networking · Cryptography</td></tr>
+<tr><td><strong class="c-amber">RA-GRS</strong></td><td><strong class="c-cyan">Read-Access Geo-Redundant Storage</strong><br /><span class="c-muted">Geo-redundant with a readable secondary endpoint</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">RADIUS</strong></td><td><strong class="c-cyan">Remote Authentication Dial-In User Service</strong><br /><span class="c-muted">AAA protocol on UDP 1812/1813</span></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">RAG</strong></td><td><strong class="c-cyan">Retrieval-Augmented Generation</strong><br /><span class="c-muted">Grounding a model's answer in retrieved documents</span></td><td>AI</td></tr>
 <tr><td><strong class="c-amber">RAID</strong></td><td><strong class="c-cyan">Redundant Array of Independent Disks</strong><br /><span class="c-muted">Striping, mirroring and parity across multiple disks</span></td><td>Storage</td></tr>
@@ -54910,6 +55658,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">RFID</strong></td><td><strong class="c-cyan">Radio Frequency Identification</strong></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">RFP</strong></td><td><strong class="c-cyan">Request for Proposal</strong></td><td>Business</td></tr>
 <tr><td><strong class="c-amber">RFQ</strong></td><td><strong class="c-cyan">Request for Quote</strong></td><td>Business</td></tr>
+<tr><td><strong class="c-amber">RG</strong></td><td><strong class="c-cyan">Resource Group</strong><br /><span class="c-muted">The Azure lifecycle container for related resources</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">RGB</strong></td><td><strong class="c-cyan">Red, Green, Blue</strong></td><td>Hardware</td></tr>
 <tr><td><strong class="c-amber">RHCSA</strong></td><td><strong class="c-cyan">Red Hat Certified System Administrator</strong></td><td>Certifications</td></tr>
 <tr><td><strong class="c-amber">RHEL</strong></td><td><strong class="c-cyan">Red Hat Enterprise Linux</strong></td><td>Linux</td></tr>
@@ -54952,13 +55701,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — S</span>
-<span class="topic-badge">120 TERMS</span>
+<span class="topic-badge">122 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">S — 120 acronyms</div>
+<div class="concept-title">S — 122 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>S</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -54973,7 +55722,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">SAML</strong></td><td><strong class="c-cyan">Security Assertion Markup Language</strong><br /><span class="c-muted">XML-based federation and single sign-on standard</span></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">SAN</strong></td><td><strong class="c-cyan">Storage Area Network</strong><br /><span class="c-muted">Block-level storage fabric; also Subject Alternative Name in PKI</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Subject Alternative Name</strong><br /><span class="c-muted">Certificate field listing every name the cert covers</span></td><td>Storage · Cryptography</td></tr>
 <tr><td><strong class="c-amber">SANS</strong></td><td><strong class="c-cyan">SysAdmin, Audit, Network and Security</strong></td><td>Organizations</td></tr>
-<tr><td><strong class="c-amber">SAS</strong></td><td><strong class="c-cyan">Serial Attached SCSI</strong></td><td>Storage</td></tr>
+<tr><td><strong class="c-amber">SAS</strong></td><td><strong class="c-cyan">Serial Attached SCSI</strong><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Shared Access Signature</strong><br /><span class="c-muted">A signed URL granting scoped, time-limited access to Azure storage</span></td><td>Storage · Cloud</td></tr>
 <tr><td><strong class="c-amber">SASE</strong></td><td><strong class="c-cyan">Secure Access Service Edge</strong><br /><span class="c-muted">Converged network and security delivered from the cloud</span></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">SAST</strong></td><td><strong class="c-cyan">Static Application Security Testing</strong><br /><span class="c-muted">Scanning source code without running it</span></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">SATA</strong></td><td><strong class="c-cyan">Serial Advanced Technology Attachment</strong></td><td>Hardware</td></tr>
@@ -55011,6 +55760,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">SIGMA</strong></td><td><strong class="c-cyan">Generic Signature Format for SIEM Systems</strong></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">SIM</strong></td><td><strong class="c-cyan">Subscriber Identity Module</strong></td><td>Hardware</td></tr>
 <tr><td><strong class="c-amber">SIP</strong></td><td><strong class="c-cyan">Session Initiation Protocol</strong><br /><span class="c-muted">Signalling protocol for VoIP calls</span></td><td>Networking</td></tr>
+<tr><td><strong class="c-amber">SKU</strong></td><td><strong class="c-cyan">Stock Keeping Unit</strong><br /><span class="c-muted">A specific size or tier of a cloud service</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">SLA</strong></td><td><strong class="c-cyan">Service Level Agreement</strong><br /><span class="c-muted">Contractual commitment to a level of service</span></td><td>Business</td></tr>
 <tr><td><strong class="c-amber">SLAAC</strong></td><td><strong class="c-cyan">Stateless Address Autoconfiguration</strong><br /><span class="c-muted">How IPv6 hosts self-assign addresses</span></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">SLE</strong></td><td><strong class="c-cyan">Single Loss Expectancy</strong><br /><span class="c-muted">Asset value multiplied by the exposure factor</span></td><td>Risk</td></tr>
@@ -55022,6 +55772,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">SMB</strong></td><td><strong class="c-cyan">Server Message Block</strong><br /><span class="c-muted">Windows file and printer sharing on TCP 445</span></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">SMM</strong></td><td><strong class="c-cyan">System Management Mode</strong></td><td>Hardware</td></tr>
 <tr><td><strong class="c-amber">SMP</strong></td><td><strong class="c-cyan">Symmetric Multiprocessing</strong></td><td>Hardware</td></tr>
+<tr><td><strong class="c-amber">SMS</strong></td><td><strong class="c-cyan">Systems Management Server</strong><br /><span class="c-muted">Configuration Manager's original name; still all over its log and class names</span></td><td>Endpoint</td></tr>
 <tr><td><strong class="c-amber">SMTP</strong></td><td><strong class="c-cyan">Simple Mail Transfer Protocol</strong><br /><span class="c-muted">Mail submission and relay on TCP 25/587</span></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">SMTPS</strong></td><td><strong class="c-cyan">Simple Mail Transfer Protocol Secure</strong></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">SNAT</strong></td><td><strong class="c-cyan">Source Network Address Translation</strong></td><td>Networking</td></tr>
@@ -55095,13 +55846,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — T</span>
-<span class="topic-badge">33 TERMS</span>
+<span class="topic-badge">34 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">T — 33 acronyms</div>
+<div class="concept-title">T — 34 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>T</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -55109,6 +55860,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tbody>
 <tr><td><strong class="c-amber">TA</strong></td><td><strong class="c-cyan">Threat Actor</strong></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">TACACS+</strong></td><td><strong class="c-cyan">Terminal Access Controller Access-Control System Plus</strong><br /><span class="c-muted">Cisco AAA protocol on TCP 49</span></td><td>Security</td></tr>
+<tr><td><strong class="c-amber">TAP</strong></td><td><strong class="c-cyan">Temporary Access Pass</strong><br /><span class="c-muted">A time-limited passcode for bootstrapping or recovering MFA</span></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">TAXII</strong></td><td><strong class="c-cyan">Trusted Automated eXchange of Intelligence Information</strong><br /><span class="c-muted">Transport for STIX data</span></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">TCO</strong></td><td><strong class="c-cyan">Total Cost of Ownership</strong></td><td>Business</td></tr>
 <tr><td><strong class="c-amber">TCP</strong></td><td><strong class="c-cyan">Transmission Control Protocol</strong><br /><span class="c-muted">Connection-oriented, reliable Layer 4 transport</span></td><td>Networking</td></tr>
@@ -55151,13 +55903,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — U</span>
-<span class="topic-badge">22 TERMS</span>
+<span class="topic-badge">23 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">U — 22 acronyms</div>
+<div class="concept-title">U — 23 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>U</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -55166,6 +55918,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">UAC</strong></td><td><strong class="c-cyan">User Account Control</strong><br /><span class="c-muted">Prompts before elevating to administrator rights</span></td><td>Windows</td></tr>
 <tr><td><strong class="c-amber">UBA</strong></td><td><strong class="c-cyan">User Behavior Analytics</strong></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">UDP</strong></td><td><strong class="c-cyan">User Datagram Protocol</strong><br /><span class="c-muted">Connectionless, best-effort Layer 4 transport</span></td><td>Networking</td></tr>
+<tr><td><strong class="c-amber">UDR</strong></td><td><strong class="c-cyan">User-Defined Route</strong><br /><span class="c-muted">A route that overrides Azure's system routing</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">UEBA</strong></td><td><strong class="c-cyan">User and Entity Behavior Analytics</strong></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">UEFI</strong></td><td><strong class="c-cyan">Unified Extensible Firmware Interface</strong><br /><span class="c-muted">Modern firmware replacing BIOS; supports Secure Boot</span></td><td>Hardware</td></tr>
 <tr><td><strong class="c-amber">UEM</strong></td><td><strong class="c-cyan">Unified Endpoint Management</strong><br /><span class="c-muted">One management plane for every end-user device — PC, Mac and mobile</span></td><td>Endpoint</td></tr>
@@ -55196,13 +55949,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — V</span>
-<span class="topic-badge">23 TERMS</span>
+<span class="topic-badge">25 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">V — 23 acronyms</div>
+<div class="concept-title">V — 25 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>V</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -55221,7 +55974,9 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">VLSM</strong></td><td><strong class="c-cyan">Variable Length Subnet Mask</strong></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">VM</strong></td><td><strong class="c-cyan">Virtual Machine</strong><br /><span class="c-muted">Also: Vulnerability Management in a SecOps context</span></td><td>Virtualization</td></tr>
 <tr><td><strong class="c-amber">VMM</strong></td><td><strong class="c-cyan">Virtual Machine Monitor</strong><br /><span class="c-muted">Another name for a hypervisor</span></td><td>Virtualization</td></tr>
+<tr><td><strong class="c-amber">VMSS</strong></td><td><strong class="c-cyan">Virtual Machine Scale Set</strong><br /><span class="c-muted">Azure's autoscaling group of identical VMs</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">VNC</strong></td><td><strong class="c-cyan">Virtual Network Computing</strong></td><td>Networking</td></tr>
+<tr><td><strong class="c-amber">VNet</strong></td><td><strong class="c-cyan">Virtual Network</strong><br /><span class="c-muted">Azure's private address space, the equivalent of an AWS VPC</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">VoIP</strong></td><td><strong class="c-cyan">Voice over Internet Protocol</strong></td><td>Networking</td></tr>
 <tr><td><strong class="c-amber">VPC</strong></td><td><strong class="c-cyan">Virtual Private Cloud</strong><br /><span class="c-muted">A logically isolated network inside a cloud account</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">VPN</strong></td><td><strong class="c-cyan">Virtual Private Network</strong><br /><span class="c-muted">Encrypted tunnel across an untrusted network</span></td><td>Networking</td></tr>
@@ -55354,19 +56109,20 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — Z</span>
-<span class="topic-badge">3 TERMS</span>
+<span class="topic-badge">4 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">Z — 3 acronyms</div>
+<div class="concept-title">Z — 4 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>Z</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
 <thead><tr><th>Acronym</th><th>Stands For</th><th>Area</th></tr></thead>
 <tbody>
 <tr><td><strong class="c-amber">ZFS</strong></td><td><strong class="c-cyan">Zettabyte File System</strong><br /><span class="c-muted">Pooled storage with checksums and snapshots</span></td><td>Storage</td></tr>
+<tr><td><strong class="c-amber">ZRS</strong></td><td><strong class="c-cyan">Zone-Redundant Storage</strong><br /><span class="c-muted">Three copies across availability zones in one region</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">ZTA</strong></td><td><strong class="c-cyan">Zero Trust Architecture</strong><br /><span class="c-muted">Never trust, always verify</span></td><td>Security</td></tr>
 <tr><td><strong class="c-amber">ZTNA</strong></td><td><strong class="c-cyan">Zero Trust Network Access</strong></td><td>Security</td></tr>
 </tbody>
@@ -55538,25 +56294,27 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">☁️</span>
 <span class="topic-name">By Area — Cloud</span>
-<span class="topic-badge">44 TERMS</span>
+<span class="topic-badge">61 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">Subject Index</div>
 <div class="concept-title">Cloud acronyms</div>
-<div class="concept-desc">The 44 dictionary entries that belong to <strong>Cloud</strong>.</div>
+<div class="concept-desc">The 61 dictionary entries that belong to <strong>Cloud</strong>.</div>
 <div class="dw">
 <table class="ref-table">
 <thead><tr><th>Acronym</th><th>Stands For</th></tr></thead>
 <tbody>
 <tr><td><strong class="c-amber">ACM</strong></td><td><strong class="c-cyan">AWS Certificate Manager</strong><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Association for Computing Machinery</strong><br /><span class="c-muted">Publishes the ACM Code of Ethics</span></td></tr>
+<tr><td><strong class="c-amber">ACR</strong></td><td><strong class="c-cyan">Azure Container Registry</strong></td></tr>
 <tr><td><strong class="c-amber">AKS</strong></td><td><strong class="c-cyan">Azure Kubernetes Service</strong></td></tr>
 <tr><td><strong class="c-amber">ALB</strong></td><td><strong class="c-cyan">Application Load Balancer</strong></td></tr>
 <tr><td><strong class="c-amber">AMI</strong></td><td><strong class="c-cyan">Amazon Machine Image</strong></td></tr>
 <tr><td><strong class="c-amber">ARM</strong></td><td><strong class="c-cyan">Advanced RISC Machines</strong><br /><span class="c-muted">The low-power CPU architecture family</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Azure Resource Manager</strong><br /><span class="c-muted">Azure's deployment and template engine</span></td></tr>
 <tr><td><strong class="c-amber">ARN</strong></td><td><strong class="c-cyan">Amazon Resource Name</strong><br /><span class="c-muted">The globally unique identifier of an AWS resource</span></td></tr>
-<tr><td><strong class="c-amber">ASG</strong></td><td><strong class="c-cyan">Auto Scaling Group</strong></td></tr>
+<tr><td><strong class="c-amber">ASG</strong></td><td><strong class="c-cyan">Auto Scaling Group</strong><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Application Security Group</strong><br /><span class="c-muted">A named group of Azure NICs usable as a rule source or destination</span></td></tr>
+<tr><td><strong class="c-amber">AVD</strong></td><td><strong class="c-cyan">Azure Virtual Desktop</strong></td></tr>
 <tr><td><strong class="c-amber">AWS</strong></td><td><strong class="c-cyan">Amazon Web Services</strong></td></tr>
 <tr><td><strong class="c-amber">AZ</strong></td><td><strong class="c-cyan">Availability Zone</strong><br /><span class="c-muted">An isolated datacenter within a cloud region</span></td></tr>
 <tr><td><strong class="c-amber">CDK</strong></td><td><strong class="c-cyan">Cloud Development Kit</strong><br /><span class="c-muted">Infrastructure defined in a general-purpose language</span></td></tr>
@@ -55571,29 +56329,44 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">EFS</strong></td><td><strong class="c-cyan">Elastic File System</strong></td></tr>
 <tr><td><strong class="c-amber">EKS</strong></td><td><strong class="c-cyan">Elastic Kubernetes Service</strong></td></tr>
 <tr><td><strong class="c-amber">ELB</strong></td><td><strong class="c-cyan">Elastic Load Balancing</strong></td></tr>
+<tr><td><strong class="c-amber">ER</strong></td><td><strong class="c-cyan">ExpressRoute</strong><br /><span class="c-muted">A private circuit into Azure that bypasses the public internet</span></td></tr>
 <tr><td><strong class="c-amber">FaaS</strong></td><td><strong class="c-cyan">Function as a Service</strong><br /><span class="c-muted">Serverless functions billed per invocation</span></td></tr>
 <tr><td><strong class="c-amber">GCE</strong></td><td><strong class="c-cyan">Google Compute Engine</strong></td></tr>
 <tr><td><strong class="c-amber">GCP</strong></td><td><strong class="c-cyan">Google Cloud Platform</strong></td></tr>
 <tr><td><strong class="c-amber">GKE</strong></td><td><strong class="c-cyan">Google Kubernetes Engine</strong></td></tr>
+<tr><td><strong class="c-amber">GRS</strong></td><td><strong class="c-cyan">Geo-Redundant Storage</strong><br /><span class="c-muted">Local copies plus three more in the paired region</span></td></tr>
+<tr><td><strong class="c-amber">GZRS</strong></td><td><strong class="c-cyan">Geo-Zone-Redundant Storage</strong><br /><span class="c-muted">Zone-redundant locally, geo-redundant across regions</span></td></tr>
 <tr><td><strong class="c-amber">IaaS</strong></td><td><strong class="c-cyan">Infrastructure as a Service</strong><br /><span class="c-muted">You manage the OS upward; the provider manages the hardware</span></td></tr>
 <tr><td><strong class="c-amber">IGW</strong></td><td><strong class="c-cyan">Internet Gateway</strong></td></tr>
 <tr><td><strong class="c-amber">KMS</strong></td><td><strong class="c-cyan">Key Management Service</strong><br /><span class="c-muted">Managed encryption key custody</span></td></tr>
+<tr><td><strong class="c-amber">LRS</strong></td><td><strong class="c-cyan">Locally Redundant Storage</strong><br /><span class="c-muted">Three copies inside one datacenter</span></td></tr>
+<tr><td><strong class="c-amber">MG</strong></td><td><strong class="c-cyan">Management Group</strong><br /><span class="c-muted">The Azure scope that contains subscriptions</span></td></tr>
 <tr><td><strong class="c-amber">NACL</strong></td><td><strong class="c-cyan">Network Access Control List</strong><br /><span class="c-muted">Stateless subnet-level filtering in a VPC</span></td></tr>
 <tr><td><strong class="c-amber">NLB</strong></td><td><strong class="c-cyan">Network Load Balancer</strong></td></tr>
+<tr><td><strong class="c-amber">NSG</strong></td><td><strong class="c-cyan">Network Security Group</strong><br /><span class="c-muted">Stateful allow/deny rules on an Azure subnet or NIC</span></td></tr>
+<tr><td><strong class="c-amber">NVA</strong></td><td><strong class="c-cyan">Network Virtual Appliance</strong><br /><span class="c-muted">A firewall or router run as a VM in the cloud</span></td></tr>
 <tr><td><strong class="c-amber">PaaS</strong></td><td><strong class="c-cyan">Platform as a Service</strong><br /><span class="c-muted">The provider manages the runtime; you deploy code</span></td></tr>
+<tr><td><strong class="c-amber">RA-GRS</strong></td><td><strong class="c-cyan">Read-Access Geo-Redundant Storage</strong><br /><span class="c-muted">Geo-redundant with a readable secondary endpoint</span></td></tr>
 <tr><td><strong class="c-amber">RDS</strong></td><td><strong class="c-cyan">Relational Database Service</strong><br /><span class="c-muted">AWS managed relational databases</span></td></tr>
+<tr><td><strong class="c-amber">RG</strong></td><td><strong class="c-cyan">Resource Group</strong><br /><span class="c-muted">The Azure lifecycle container for related resources</span></td></tr>
 <tr><td><strong class="c-amber">S3</strong></td><td><strong class="c-cyan">Simple Storage Service</strong><br /><span class="c-muted">AWS object storage</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Operations and Training Staff Section</strong><br /><span class="c-muted">The S3 of a US Army battalion or brigade staff</span></td></tr>
 <tr><td><strong class="c-amber">SaaS</strong></td><td><strong class="c-cyan">Software as a Service</strong><br /><span class="c-muted">Fully managed application delivered over the web</span></td></tr>
+<tr><td><strong class="c-amber">SAS</strong></td><td><strong class="c-cyan">Serial Attached SCSI</strong><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Shared Access Signature</strong><br /><span class="c-muted">A signed URL granting scoped, time-limited access to Azure storage</span></td></tr>
 <tr><td><strong class="c-amber">SCP</strong></td><td><strong class="c-cyan">Secure Copy Protocol</strong><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Service Control Policy</strong><br /><span class="c-muted">AWS Organizations guardrail capping account permissions</span></td></tr>
 <tr><td><strong class="c-amber">SES</strong></td><td><strong class="c-cyan">Simple Email Service</strong></td></tr>
 <tr><td><strong class="c-amber">SG</strong></td><td><strong class="c-cyan">Security Group</strong><br /><span class="c-muted">Stateful instance-level firewall in a VPC</span></td></tr>
+<tr><td><strong class="c-amber">SKU</strong></td><td><strong class="c-cyan">Stock Keeping Unit</strong><br /><span class="c-muted">A specific size or tier of a cloud service</span></td></tr>
 <tr><td><strong class="c-amber">SNS</strong></td><td><strong class="c-cyan">Simple Notification Service</strong><br /><span class="c-muted">AWS pub/sub messaging</span></td></tr>
 <tr><td><strong class="c-amber">SQS</strong></td><td><strong class="c-cyan">Simple Queue Service</strong><br /><span class="c-muted">AWS managed message queue</span></td></tr>
 <tr><td><strong class="c-amber">SSE</strong></td><td><strong class="c-cyan">Server-Side Encryption</strong><br /><span class="c-muted">Also: Server-Sent Events on the web</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Server-Sent Events</strong><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Security Service Edge</strong><br /><span class="c-muted">The security half of SASE</span></td></tr>
 <tr><td><strong class="c-amber">STS</strong></td><td><strong class="c-cyan">Security Token Service</strong><br /><span class="c-muted">Issues short-lived AWS credentials</span></td></tr>
 <tr><td><strong class="c-amber">TGW</strong></td><td><strong class="c-cyan">Transit Gateway</strong></td></tr>
+<tr><td><strong class="c-amber">UDR</strong></td><td><strong class="c-cyan">User-Defined Route</strong><br /><span class="c-muted">A route that overrides Azure's system routing</span></td></tr>
+<tr><td><strong class="c-amber">VMSS</strong></td><td><strong class="c-cyan">Virtual Machine Scale Set</strong><br /><span class="c-muted">Azure's autoscaling group of identical VMs</span></td></tr>
+<tr><td><strong class="c-amber">VNet</strong></td><td><strong class="c-cyan">Virtual Network</strong><br /><span class="c-muted">Azure's private address space, the equivalent of an AWS VPC</span></td></tr>
 <tr><td><strong class="c-amber">VPC</strong></td><td><strong class="c-cyan">Virtual Private Cloud</strong><br /><span class="c-muted">A logically isolated network inside a cloud account</span></td></tr>
 <tr><td><strong class="c-amber">WAF</strong></td><td><strong class="c-cyan">Web Application Firewall</strong><br /><span class="c-muted">Layer 7 filter in front of web applications</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Well-Architected Framework</strong><br /><span class="c-muted">Also: Web Application Firewall in a security context</span></td></tr>
+<tr><td><strong class="c-amber">ZRS</strong></td><td><strong class="c-cyan">Zone-Redundant Storage</strong><br /><span class="c-muted">Three copies across availability zones in one region</span></td></tr>
 </tbody>
 </table>
 </div>
@@ -55827,14 +56600,14 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🖥️</span>
 <span class="topic-name">By Area — Endpoint</span>
-<span class="topic-badge">35 TERMS</span>
+<span class="topic-badge">39 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">Subject Index</div>
 <div class="concept-title">Endpoint acronyms</div>
-<div class="concept-desc">The 35 dictionary entries that belong to <strong>Endpoint</strong>.</div>
+<div class="concept-desc">The 39 dictionary entries that belong to <strong>Endpoint</strong>.</div>
 <div class="dw">
 <table class="ref-table">
 <thead><tr><th>Acronym</th><th>Stands For</th></tr></thead>
@@ -55852,6 +56625,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">DP</strong></td><td><strong class="c-cyan">Distribution Point</strong><br /><span class="c-muted">MECM content server</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">DisplayPort</strong><br /><span class="c-muted">Also Distribution Point in MECM</span></td></tr>
 <tr><td><strong class="c-amber">EMM</strong></td><td><strong class="c-cyan">Enterprise Mobility Management</strong><br /><span class="c-muted">MDM plus application, identity and content management</span></td></tr>
 <tr><td><strong class="c-amber">ESP</strong></td><td><strong class="c-cyan">Encapsulating Security Payload</strong><br /><span class="c-muted">IPsec protocol providing encryption and integrity</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Enrollment Status Page</strong><br /><span class="c-muted">The Autopilot provisioning progress screen</span></td></tr>
+<tr><td><strong class="c-amber">IME</strong></td><td><strong class="c-cyan">Intune Management Extension</strong><br /><span class="c-muted">The agent that runs Win32 app installs and PowerShell scripts</span></td></tr>
 <tr><td><strong class="c-amber">LOB</strong></td><td><strong class="c-cyan">Line of Business</strong><br /><span class="c-muted">An in-house app deployed outside any public store</span></td></tr>
 <tr><td><strong class="c-amber">MAM</strong></td><td><strong class="c-cyan">Mobile Application Management</strong><br /><span class="c-muted">Policy applied to apps rather than whole devices</span></td></tr>
 <tr><td><strong class="c-amber">MDT</strong></td><td><strong class="c-cyan">Microsoft Deployment Toolkit</strong></td></tr>
@@ -55859,6 +56633,8 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">MEM</strong></td><td><strong class="c-cyan">Microsoft Endpoint Manager</strong></td></tr>
 <tr><td><strong class="c-amber">MP</strong></td><td><strong class="c-cyan">Management Point</strong><br /><span class="c-muted">MECM client communication role</span></td></tr>
 <tr><td><strong class="c-amber">MSI</strong></td><td><strong class="c-cyan">Microsoft Installer</strong><br /><span class="c-muted">The Windows installer package format</span></td></tr>
+<tr><td><strong class="c-amber">MSIX</strong></td><td><strong class="c-cyan">Microsoft Installer for Windows Apps</strong><br /><span class="c-muted">The modern Windows app packaging format</span></td></tr>
+<tr><td><strong class="c-amber">OMA-DM</strong></td><td><strong class="c-cyan">Open Mobile Alliance Device Management</strong><br /><span class="c-muted">The protocol behind Windows and mobile MDM enrollment</span></td></tr>
 <tr><td><strong class="c-amber">OMA-URI</strong></td><td><strong class="c-cyan">Open Mobile Alliance Uniform Resource Identifier</strong><br /><span class="c-muted">Path syntax for custom Intune policy</span></td></tr>
 <tr><td><strong class="c-amber">OSD</strong></td><td><strong class="c-cyan">Operating System Deployment</strong></td></tr>
 <tr><td><strong class="c-amber">OTA</strong></td><td><strong class="c-cyan">Over the Air</strong></td></tr>
@@ -55866,6 +56642,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">PPKG</strong></td><td><strong class="c-cyan">Provisioning Package</strong></td></tr>
 <tr><td><strong class="c-amber">SCCM</strong></td><td><strong class="c-cyan">System Center Configuration Manager</strong><br /><span class="c-muted">Renamed to MECM</span></td></tr>
 <tr><td><strong class="c-amber">SCEP</strong></td><td><strong class="c-cyan">Simple Certificate Enrollment Protocol</strong></td></tr>
+<tr><td><strong class="c-amber">SMS</strong></td><td><strong class="c-cyan">Systems Management Server</strong><br /><span class="c-muted">Configuration Manager's original name; still all over its log and class names</span></td></tr>
 <tr><td><strong class="c-amber">SUP</strong></td><td><strong class="c-cyan">Software Update Point</strong></td></tr>
 <tr><td><strong class="c-amber">TS</strong></td><td><strong class="c-cyan">TypeScript</strong><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Task Sequence</strong><br /><span class="c-muted">Also TypeScript in a web context</span></td></tr>
 <tr><td><strong class="c-amber">UEM</strong></td><td><strong class="c-cyan">Unified Endpoint Management</strong><br /><span class="c-muted">One management plane for every end-user device — PC, Mac and mobile</span></td></tr>
@@ -56541,14 +57318,14 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔐</span>
 <span class="topic-name">By Area — Security</span>
-<span class="topic-badge">154 TERMS</span>
+<span class="topic-badge">156 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">Subject Index</div>
 <div class="concept-title">Security acronyms</div>
-<div class="concept-desc">The 154 dictionary entries that belong to <strong>Security</strong>.</div>
+<div class="concept-desc">The 156 dictionary entries that belong to <strong>Security</strong>.</div>
 <div class="dw">
 <table class="ref-table">
 <thead><tr><th>Acronym</th><th>Stands For</th></tr></thead>
@@ -56616,6 +57393,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">IPS</strong></td><td><strong class="c-cyan">Intrusion Prevention System</strong><br /><span class="c-muted">Inline detection that blocks matching traffic</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">In-Plane Switching</strong><br /><span class="c-muted">Display panel type; also Intrusion Prevention System</span></td></tr>
 <tr><td><strong class="c-amber">IR</strong></td><td><strong class="c-cyan">Incident Response</strong></td></tr>
 <tr><td><strong class="c-amber">ISAC</strong></td><td><strong class="c-cyan">Information Sharing and Analysis Center</strong><br /><span class="c-muted">Sector-specific threat intelligence sharing body</span></td></tr>
+<tr><td><strong class="c-amber">ITDR</strong></td><td><strong class="c-cyan">Identity Threat Detection and Response</strong></td></tr>
 <tr><td><strong class="c-amber">JIT</strong></td><td><strong class="c-cyan">Just-In-Time</strong><br /><span class="c-muted">Access granted only for the moment it is needed</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Just-In-Time Compilation</strong></td></tr>
 <tr><td><strong class="c-amber">JWT</strong></td><td><strong class="c-cyan">JSON Web Token</strong><br /><span class="c-muted">Signed, base64url-encoded claims token</span></td></tr>
 <tr><td><strong class="c-amber">KDC</strong></td><td><strong class="c-cyan">Key Distribution Center</strong><br /><span class="c-muted">The Kerberos service issuing tickets</span></td></tr>
@@ -56681,6 +57459,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">SWG</strong></td><td><strong class="c-cyan">Secure Web Gateway</strong></td></tr>
 <tr><td><strong class="c-amber">TA</strong></td><td><strong class="c-cyan">Threat Actor</strong></td></tr>
 <tr><td><strong class="c-amber">TACACS+</strong></td><td><strong class="c-cyan">Terminal Access Controller Access-Control System Plus</strong><br /><span class="c-muted">Cisco AAA protocol on TCP 49</span></td></tr>
+<tr><td><strong class="c-amber">TAP</strong></td><td><strong class="c-cyan">Temporary Access Pass</strong><br /><span class="c-muted">A time-limited passcode for bootstrapping or recovering MFA</span></td></tr>
 <tr><td><strong class="c-amber">TAXII</strong></td><td><strong class="c-cyan">Trusted Automated eXchange of Intelligence Information</strong><br /><span class="c-muted">Transport for STIX data</span></td></tr>
 <tr><td><strong class="c-amber">TGS</strong></td><td><strong class="c-cyan">Ticket Granting Service</strong><br /><span class="c-muted">Kerberos service issuing service tickets</span></td></tr>
 <tr><td><strong class="c-amber">TGT</strong></td><td><strong class="c-cyan">Ticket Granting Ticket</strong><br /><span class="c-muted">The Kerberos ticket used to request service tickets</span></td></tr>
@@ -56772,7 +57551,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">NVMe</strong></td><td><strong class="c-cyan">Non-Volatile Memory Express</strong><br /><span class="c-muted">Low-latency PCIe protocol for SSDs</span></td></tr>
 <tr><td><strong class="c-amber">RAID</strong></td><td><strong class="c-cyan">Redundant Array of Independent Disks</strong><br /><span class="c-muted">Striping, mirroring and parity across multiple disks</span></td></tr>
 <tr><td><strong class="c-amber">SAN</strong></td><td><strong class="c-cyan">Storage Area Network</strong><br /><span class="c-muted">Block-level storage fabric; also Subject Alternative Name in PKI</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Subject Alternative Name</strong><br /><span class="c-muted">Certificate field listing every name the cert covers</span></td></tr>
-<tr><td><strong class="c-amber">SAS</strong></td><td><strong class="c-cyan">Serial Attached SCSI</strong></td></tr>
+<tr><td><strong class="c-amber">SAS</strong></td><td><strong class="c-cyan">Serial Attached SCSI</strong><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Shared Access Signature</strong><br /><span class="c-muted">A signed URL granting scoped, time-limited access to Azure storage</span></td></tr>
 <tr><td><strong class="c-amber">SCSI</strong></td><td><strong class="c-cyan">Small Computer System Interface</strong></td></tr>
 <tr><td><strong class="c-amber">WORM</strong></td><td><strong class="c-cyan">Write Once Read Many</strong><br /><span class="c-muted">Immutable storage used for log and evidence retention</span></td></tr>
 <tr><td><strong class="c-amber">ZFS</strong></td><td><strong class="c-cyan">Zettabyte File System</strong><br /><span class="c-muted">Pooled storage with checksums and snapshots</span></td></tr>
@@ -56935,14 +57714,14 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🪟</span>
 <span class="topic-name">By Area — Windows</span>
-<span class="topic-badge">37 TERMS</span>
+<span class="topic-badge">40 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">Subject Index</div>
 <div class="concept-title">Windows acronyms</div>
-<div class="concept-desc">The 37 dictionary entries that belong to <strong>Windows</strong>.</div>
+<div class="concept-desc">The 40 dictionary entries that belong to <strong>Windows</strong>.</div>
 <div class="dw">
 <table class="ref-table">
 <thead><tr><th>Acronym</th><th>Stands For</th></tr></thead>
@@ -56954,6 +57733,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">AD FS</strong></td><td><strong class="c-cyan">Active Directory Federation Services</strong></td></tr>
 <tr><td><strong class="c-amber">ADMX</strong></td><td><strong class="c-cyan">Administrative Template</strong><br /><span class="c-muted">XML-based Group Policy template</span></td></tr>
 <tr><td><strong class="c-amber">AMSI</strong></td><td><strong class="c-cyan">Antimalware Scan Interface</strong><br /><span class="c-muted">Lets scanners inspect scripts before execution</span></td></tr>
+<tr><td><strong class="c-amber">BITS</strong></td><td><strong class="c-cyan">Background Intelligent Transfer Service</strong><br /><span class="c-muted">The throttled background download service MECM uses for content</span></td></tr>
 <tr><td><strong class="c-amber">BSOD</strong></td><td><strong class="c-cyan">Blue Screen of Death</strong></td></tr>
 <tr><td><strong class="c-amber">CLM</strong></td><td><strong class="c-cyan">Constrained Language Mode</strong><br /><span class="c-muted">PowerShell restriction mode</span></td></tr>
 <tr><td><strong class="c-amber">DACL</strong></td><td><strong class="c-cyan">Discretionary Access Control List</strong></td></tr>
@@ -56971,6 +57751,8 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">MFT</strong></td><td><strong class="c-cyan">Master File Table</strong><br /><span class="c-muted">The NTFS index of every file on a volume</span></td></tr>
 <tr><td><strong class="c-amber">NTFS</strong></td><td><strong class="c-cyan">New Technology File System</strong><br /><span class="c-muted">The default Windows filesystem</span></td></tr>
 <tr><td><strong class="c-amber">OU</strong></td><td><strong class="c-cyan">Organizational Unit</strong><br /><span class="c-muted">A container in an Active Directory or LDAP tree</span></td></tr>
+<tr><td><strong class="c-amber">PRT</strong></td><td><strong class="c-cyan">Primary Refresh Token</strong><br /><span class="c-muted">The token that gives a joined Windows device single sign-on</span></td></tr>
+<tr><td><strong class="c-amber">PSEXEC</strong></td><td><strong class="c-cyan">PsExec</strong><br /><span class="c-muted">Sysinternals tool for running a process remotely or as SYSTEM</span></td></tr>
 <tr><td><strong class="c-amber">RID</strong></td><td><strong class="c-cyan">Relative Identifier</strong><br /><span class="c-muted">The trailing portion of a SID</span></td></tr>
 <tr><td><strong class="c-amber">RSAT</strong></td><td><strong class="c-cyan">Remote Server Administration Tools</strong></td></tr>
 <tr><td><strong class="c-amber">SACL</strong></td><td><strong class="c-cyan">System Access Control List</strong><br /><span class="c-muted">Drives auditing rather than access</span></td></tr>

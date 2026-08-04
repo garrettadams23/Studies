@@ -1430,7 +1430,7 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
           <div class="topic">
             <div class="topic-header">
               <span class="topic-icon">🧱</span>
-              <span class="topic-name">Azure Core — Resource Groups, VNet, VMs <span class="acro-exp">(Virtual Machine)</span> &amp; Storage</span>
+              <span class="topic-name">Azure Core — Resource Groups, VNet <span class="acro-exp">(Virtual Network)</span>, VMs <span class="acro-exp">(Virtual Machine)</span> &amp; Storage</span>
               <span class="topic-badge">Azure</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1447,8 +1447,8 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                   <table class="ref-table">
                     <tr><th>Azure</th><th>Does</th><th>AWS <span class="acro-exp">(Amazon Web Services)</span> analog</th></tr>
                     <tr><td class="c-cyan">Resource Group</td><td>Lifecycle container for resources</td><td>(no direct one)</td></tr>
-                    <tr><td class="c-cyan">Virtual Network (VNet)</td><td>Private network + subnets + NSGs</td><td>VPC <span class="acro-exp">(Virtual Private Cloud)</span></td></tr>
-                    <tr><td class="c-cyan">Virtual Machines / VMSS</td><td>Compute + autoscale sets</td><td>EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> / ASG <span class="acro-exp">(Auto Scaling Group)</span></td></tr>
+                    <tr><td class="c-cyan">Virtual Network (VNet)</td><td>Private network + subnets + NSGs <span class="acro-exp">(Network Security Group)</span></td><td>VPC <span class="acro-exp">(Virtual Private Cloud)</span></td></tr>
+                    <tr><td class="c-cyan">Virtual Machines / VMSS</td><td>Compute + autoscale sets</td><td>EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> / ASG</td></tr>
                     <tr><td class="c-cyan">Storage Account (Blob)</td><td>Object/blob, file, queue, table</td><td>S3 <span class="acro-exp">(Simple Storage Service)</span> (+ more)</td></tr>
                     <tr><td class="c-cyan">AKS <span class="acro-exp">(Azure Kubernetes Service)</span></td><td>Managed Kubernetes</td><td>EKS <span class="acro-exp">(Elastic Kubernetes Service)</span> / GKE <span class="acro-exp">(Google Kubernetes Engine)</span></td></tr>
                     <tr><td class="c-cyan">ARM <span class="acro-exp">(Azure Resource Manager)</span> / Bicep</td><td>Native IaC <span class="acro-exp">(Infrastructure as Code)</span> (Bicep = friendly ARM)</td><td>CloudFormation</td></tr>
@@ -1491,6 +1491,435 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                     <strong class="c-amber">KQL</strong> (Kusto Query Language) powers Sentinel
                     hunting and Log Analytics — a genuinely useful skill that carries across Defender,
                     Sentinel, and Azure Monitor. This closes the AWS <span class="acro-exp">(Amazon Web Services)</span> ↔ GCP <span class="acro-exp">(Google Cloud Platform)</span> ↔ Azure security triangle.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- ══════════════════════════════════════════════════════════════
+               SECTION: MICROSOFT AZURE — DEPTH & TROUBLESHOOTING
+               ══════════════════════════════════════════════════════════════ -->
+
+          <!-- ── TOPIC: AZURE HIERARCHY & GOVERNANCE ──────────────────────── -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🏛️</span>
+              <span class="topic-name">Azure Hierarchy, RBAC <span class="acro-exp">(Role-Based Access Control)</span> Scopes &amp; Policy</span>
+              <span class="topic-badge">Azure</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Foundation</div>
+                <div class="concept-title">Four Levels, and Everything Inherits Downward</div>
+                <div class="concept-desc">
+                  Almost every "why can't I do this?" in Azure is answered by knowing
+                  <em>which scope</em> a setting was applied at. Permissions, policy and cost
+                  all flow down the same four-level tree, and nothing flows back up.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Scope</th><th>What it is</th><th>What you attach here</th></tr></thead>
+                    <tbody>
+                      <tr><td class="c-purple">Management group</td><td>A container for subscriptions; nests up to six levels under the tenant root</td><td>Org-wide policy, broad role assignments</td></tr>
+                      <tr><td class="c-cyan">Subscription</td><td>The billing and quota boundary — roughly an AWS <span class="acro-exp">(Amazon Web Services)</span> account</td><td>Budgets, quotas, environment separation (prod / non-prod)</td></tr>
+                      <tr><td class="c-amber">Resource group</td><td>A lifecycle container; resources in it are deployed and deleted together</td><td>Team-level RBAC, locks, tags</td></tr>
+                      <tr><td class="c-green">Resource</td><td>The individual VM <span class="acro-exp">(Virtual Machine)</span>, storage account, key vault…</td><td>Narrow, exception-level access</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">The gotcha:</strong> a resource group is not a security
+                    boundary by itself and it is not a network boundary at all — two VMs in different
+                    resource groups can sit in the same subnet and talk freely.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Access vs Shape</div>
+                <div class="concept-title">RBAC Answers "Who", Policy Answers "What"</div>
+                <div class="concept-desc">
+                  These two get confused constantly. A role assignment decides whether
+                  <em>you</em> may act. A policy decides whether the <em>resource</em> is allowed to
+                  exist in that shape. A deployment can fail on either, and the error text tells you
+                  which.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th></th><th>Azure RBAC</th><th>Azure Policy</th></tr></thead>
+                    <tbody>
+                      <tr><td>Controls</td><td>Actions a principal may perform</td><td>Properties a resource may have</td></tr>
+                      <tr><td>Made of</td><td>Principal + role definition + scope</td><td>Condition + effect, grouped into initiatives</td></tr>
+                      <tr><td>Effects</td><td>Allow (deny assignments are rare and system-made)</td><td>Audit, Deny, Modify, DeployIfNotExists, AuditIfNotExists</td></tr>
+                      <tr><td>Failure looks like</td><td><code>AuthorizationFailed</code> — 403</td><td><code>RequestDisallowedByPolicy</code> — names the policy</td></tr>
+                      <tr><td>Fix</td><td>Assign the role at the right scope, then wait for propagation</td><td>Change the request, or exempt the scope deliberately</td></tr>
+                    </tbody>
+                  </table>
+<pre class="code-block"><span class="com"># Who has access here, and inherited from where?</span>
+az role assignment list --scope <span class="str">"/subscriptions/&lt;sub-id&gt;/resourceGroups/rg-prod"</span> --include-inherited -o table
+
+<span class="com"># Why did that deployment get blocked? Ask the policy engine directly</span>
+az policy state list --resource <span class="str">"&lt;resource-id&gt;"</span> --filter <span class="str">"complianceState eq 'NonCompliant'"</span> -o table
+
+<span class="com"># Built-in roles are usually enough — check before writing a custom one</span>
+az role definition list --custom-role-only <span class="kw">false</span> --query <span class="str">"[?contains(roleName,'Contributor')].roleName"</span></pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Least privilege in practice:</strong> Reader for everyone
+                    by default, Contributor scoped to a resource group, and Owner or User Access
+                    Administrator handed out only through PIM <span class="acro-exp">(Privileged Identity Management)</span> with approval and a time limit.
+                    <strong>Resource locks</strong> (CanNotDelete / ReadOnly) are a separate,
+                    dumber safety net — they stop even an Owner, which is exactly why prod
+                    deployments sometimes fail mysteriously.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: AZURE NETWORKING ──────────────────────────────────── -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🕸️</span>
+              <span class="topic-name">Azure Networking — VNet <span class="acro-exp">(Virtual Network)</span>, NSG <span class="acro-exp">(Network Security Group)</span> &amp; the Load-Balancer Family</span>
+              <span class="topic-badge">Azure</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Filtering, Routing and Reaching Out</div>
+                <div class="concept-desc">
+                  A virtual network is the private address space; everything else is a decision about
+                  what may cross it. Network security groups filter, route tables steer, and peering
+                  or a gateway connects it to somewhere else.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Building block</th><th>What it does</th><th>Worth remembering</th></tr></thead>
+                    <tbody>
+                      <tr><td class="c-cyan">Virtual network / subnet</td><td>Private address space, carved into subnets</td><td>Azure reserves five addresses per subnet — .0, .1, .2, .3 and the broadcast</td></tr>
+                      <tr><td class="c-cyan">Network security group</td><td>Stateful allow/deny rules on a subnet and/or a NIC <span class="acro-exp">(Network Interface Card)</span></td><td>Priority 100–4096, lowest number wins; default rules allow intra-VNet and deny inbound internet</td></tr>
+                      <tr><td class="c-cyan">Application security group</td><td>A named group of NICs you can use as a rule source or destination</td><td>Lets rules say "web tier → app tier" instead of listing addresses</td></tr>
+                      <tr><td class="c-cyan">Route table / UDR</td><td>User-defined routes that override Azure's system routes</td><td>The usual way traffic is forced through a firewall appliance</td></tr>
+                      <tr><td class="c-cyan">VNet peering</td><td>Private, low-latency link between two virtual networks</td><td><strong class="c-red">Not transitive</strong> — A↔B and B↔C does not give you A↔C</td></tr>
+                      <tr><td class="c-cyan">VPN gateway / ExpressRoute</td><td>Encrypted tunnel over the internet / a private circuit</td><td>ExpressRoute skips the public internet entirely; VPN is cheaper and slower</td></tr>
+                      <tr><td class="c-cyan">Azure Firewall</td><td>Managed stateful firewall with FQDN <span class="acro-exp">(Fully Qualified Domain Name)</span> and threat-intel filtering</td><td>Sits in its own subnet named <code>AzureFirewallSubnet</code></td></tr>
+                      <tr><td class="c-cyan">Private endpoint</td><td>A private IP <span class="acro-exp">(Internet Protocol)</span> inside your VNet for a PaaS <span class="acro-exp">(Platform as a Service)</span> service</td><td>Needs a matching private DNS <span class="acro-exp">(Domain Name System)</span> zone or names still resolve public</td></tr>
+                      <tr><td class="c-cyan">Service endpoint</td><td>Keeps traffic to a PaaS service on the Azure backbone</td><td>Cheaper than a private endpoint, but the service keeps its public IP</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Choosing</div>
+                <div class="concept-title">Four Load Balancers, One Right Answer</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Service</th><th>Layer</th><th>Reach</th><th>Reach for it when</th></tr></thead>
+                    <tbody>
+                      <tr><td class="c-green">Load Balancer</td><td>4 — TCP/UDP</td><td>Regional</td><td>You need raw throughput and any protocol</td></tr>
+                      <tr><td class="c-green">Application Gateway</td><td>7 — HTTP/S</td><td>Regional</td><td>Path/host routing, TLS <span class="acro-exp">(Transport Layer Security)</span> termination, WAF <span class="acro-exp">(Web Application Firewall)</span> on a regional app</td></tr>
+                      <tr><td class="c-green">Front Door</td><td>7 — HTTP/S</td><td>Global</td><td>Worldwide entry point with caching, WAF and failover between regions</td></tr>
+                      <tr><td class="c-green">Traffic Manager</td><td>DNS</td><td>Global</td><td>You need to steer by DNS answer — including to non-Azure endpoints</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Traffic Manager hands out an answer, not a connection.</strong>
+                    Clients cache DNS, so failover is only as fast as the record's TTL <span class="acro-exp">(Time To Live)</span> — if you need
+                    instant failover at the HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> layer, that is Front Door's job.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: AZURE COMPUTE & STORAGE ───────────────────────────── -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">💽</span>
+              <span class="topic-name">Azure Compute &amp; Storage — Picking the Right SKU <span class="acro-exp">(Stock Keeping Unit)</span></span>
+              <span class="topic-badge">Azure</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Compute</div>
+                <div class="concept-title">From Virtual Machines to "No Machine at All"</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Option</th><th>You manage</th><th>Good for</th></tr></thead>
+                    <tbody>
+                      <tr><td class="c-cyan">Virtual Machines</td><td>The OS <span class="acro-exp">(Operating System)</span> and everything on it</td><td>Lift-and-shift, anything needing full control</td></tr>
+                      <tr><td class="c-cyan">Virtual Machine Scale Sets</td><td>An image and a scaling rule</td><td>Identical VMs that grow and shrink on demand</td></tr>
+                      <tr><td class="c-cyan">App Service</td><td>Your code and the plan size</td><td>Web apps and APIs <span class="acro-exp">(Application Programming Interface)</span> where a VM is overkill</td></tr>
+                      <tr><td class="c-cyan">Azure Functions</td><td>A function and its trigger</td><td>Event-driven glue; Consumption plan bills per execution</td></tr>
+                      <tr><td class="c-cyan">Container Apps</td><td>A container and scale rules</td><td>Microservices without operating Kubernetes</td></tr>
+                      <tr><td class="c-cyan">AKS <span class="acro-exp">(Azure Kubernetes Service)</span></td><td>The cluster's workloads and node pools</td><td>Teams already invested in Kubernetes</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Sizing shorthand:</strong> B = burstable and cheap,
+                    D = general purpose, E = memory-heavy, F = compute-heavy, L = storage-heavy,
+                    N = GPU <span class="acro-exp">(Graphics Processing Unit)</span>. <strong class="c-amber">Availability:</strong> an availability set spreads
+                    VMs across fault and update domains inside one datacenter; availability
+                    <em>zones</em> spread them across physically separate datacenters in the region.
+                    Zones are the stronger guarantee, and not every region or SKU offers them.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Storage</div>
+                <div class="concept-title">Redundancy, Tiers and Who Holds the Key</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Redundancy</th><th>Copies</th><th>Survives</th></tr></thead>
+                    <tbody>
+                      <tr><td class="c-cyan">LRS <span class="acro-exp">(Locally Redundant Storage)</span></td><td>3, one datacenter</td><td>A disk or rack failure</td></tr>
+                      <tr><td class="c-cyan">ZRS <span class="acro-exp">(Zone-Redundant Storage)</span></td><td>3, across zones in one region</td><td>Losing a whole datacenter</td></tr>
+                      <tr><td class="c-cyan">GRS <span class="acro-exp">(Geo-Redundant Storage)</span></td><td>LRS locally + 3 in a paired region</td><td>Losing a region (read access only after failover)</td></tr>
+                      <tr><td class="c-cyan">GZRS <span class="acro-exp">(Geo-Zone-Redundant Storage)</span></td><td>ZRS locally + LRS in the paired region</td><td>Both a zone and a region loss</td></tr>
+                      <tr><td class="c-cyan">RA-GRS <span class="acro-exp">(Read-Access Geo-Redundant Storage)</span> / RA-GZRS</td><td>As above, plus a readable secondary endpoint</td><td>Same, but you can read the copy any time</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Access tiers trade storage cost against retrieval cost: <strong>Hot</strong> for
+                    active data, <strong>Cool</strong> (30-day minimum), <strong>Cold</strong>
+                    (90-day) and <strong>Archive</strong> (180-day, and it must be rehydrated before
+                    you can read it). Lifecycle management rules move blobs between them
+                    automatically.
+                  </div>
+<pre class="code-block"><span class="com"># Prefer Entra ID over account keys — keys are shared secrets nobody rotates</span>
+az storage blob list --account-name stprod01 --container-name backups --auth-mode login -o table
+
+<span class="com"># If you must hand out temporary access, a user-delegation SAS is the safest kind:</span>
+<span class="com"># it is signed with an Entra credential, so revoking the identity revokes the link</span>
+az storage blob generate-sas --account-name stprod01 --container-name backups \
+  --name report.csv --permissions r --expiry <span class="str">2026-01-01T00:00Z</span> --auth-mode login --as-user</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: AZURE MONITOR & KQL ───────────────────────────────── -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">📈</span>
+              <span class="topic-name">Azure Monitor, Log Analytics &amp; KQL <span class="acro-exp">(Kusto Query Language)</span></span>
+              <span class="topic-badge">Azure</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Observability</div>
+                <div class="concept-title">Metrics Are Free, Logs Are Opt-In</div>
+                <div class="concept-desc">
+                  Platform <strong>metrics</strong> are collected automatically and kept for 93 days.
+                  Resource <strong>logs</strong> are not collected at all until you add a
+                  <strong>diagnostic setting</strong> pointing the resource at a Log Analytics
+                  workspace. The single most common monitoring complaint — "there's nothing in the
+                  logs" — is usually that nobody ever turned them on.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Table</th><th>What lands in it</th></tr></thead>
+                    <tbody>
+                      <tr><td class="c-amber">AzureActivity</td><td>Control-plane operations — who created, changed or deleted a resource</td></tr>
+                      <tr><td class="c-amber">AzureDiagnostics</td><td>Resource logs from services that use the shared schema</td></tr>
+                      <tr><td class="c-amber">Heartbeat</td><td>Agent check-ins; the fastest way to spot a machine that stopped reporting</td></tr>
+                      <tr><td class="c-amber">Perf / InsightsMetrics</td><td>CPU <span class="acro-exp">(Central Processing Unit)</span>, memory, disk and network counters from monitored machines</td></tr>
+                      <tr><td class="c-amber">SigninLogs / AuditLogs</td><td>Entra ID sign-ins and directory changes</td></tr>
+                      <tr><td class="c-amber">SecurityEvent / Syslog</td><td>Windows security events and Linux syslog</td></tr>
+                      <tr><td class="c-amber">AppRequests / AppExceptions</td><td>Application Insights telemetry for your own code</td></tr>
+                    </tbody>
+                  </table>
+<pre class="code-block"><span class="com">// Who deleted things in the last day, and did it succeed?</span>
+AzureActivity
+| <span class="kw">where</span> TimeGenerated &gt; ago(1d)
+| <span class="kw">where</span> OperationNameValue endswith <span class="str">"/DELETE"</span>
+| <span class="kw">project</span> TimeGenerated, Caller, OperationNameValue, ActivityStatusValue, ResourceGroup
+| <span class="kw">order by</span> TimeGenerated desc
+
+<span class="com">// Machines that have stopped sending a heartbeat in the last 15 minutes</span>
+Heartbeat
+| <span class="kw">summarize</span> LastSeen = max(TimeGenerated) <span class="kw">by</span> Computer
+| <span class="kw">where</span> LastSeen &lt; ago(15m)
+
+<span class="com">// Failed sign-ins by error code — the shape of an attack, or of a broken app</span>
+SigninLogs
+| <span class="kw">where</span> TimeGenerated &gt; ago(24h) <span class="kw">and</span> ResultType != <span class="num">0</span>
+| <span class="kw">summarize</span> attempts = count() <span class="kw">by</span> ResultType, ResultDescription, AppDisplayName
+| <span class="kw">order by</span> attempts desc
+
+<span class="com">// Top CPU offenders, bucketed for a chart</span>
+Perf
+| <span class="kw">where</span> ObjectName == <span class="str">"Processor"</span> <span class="kw">and</span> CounterName == <span class="str">"% Processor Time"</span>
+| <span class="kw">summarize</span> avg(CounterValue) <span class="kw">by</span> Computer, bin(TimeGenerated, <span class="num">5</span>m)
+| <span class="kw">render</span> timechart</pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">The KQL that covers most days:</strong>
+                    <code>where</code> to filter, <code>project</code> to pick columns,
+                    <code>extend</code> to compute one, <code>summarize … by</code> to aggregate,
+                    <code>bin()</code> to bucket time, <code>join</code> to correlate two tables, and
+                    <code>render</code> to chart it. Filter on <code>TimeGenerated</code> first —
+                    it is the difference between a fast query and an expensive one. The same
+                    language drives Sentinel, Defender and Resource Graph.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: AZURE TROUBLESHOOTING PLAYBOOK ────────────────────── -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🩺</span>
+              <span class="topic-name">Azure Troubleshooting Playbook</span>
+              <span class="topic-badge">Azure • Ops</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Method</div>
+                <div class="concept-title">Five Questions, In This Order</div>
+                <div class="concept-desc">
+                  Azure failures nearly always fall into one of five buckets. Asking them in order
+                  saves you from packet-capturing a problem that was a missing role assignment.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>#</th><th>Question</th><th>Where to look</th></tr></thead>
+                    <tbody>
+                      <tr><td class="c-cyan">1</td><td>Is Azure itself broken?</td><td><strong>Service Health</strong> for regional incidents, <strong>Resource Health</strong> for this specific resource</td></tr>
+                      <tr><td class="c-cyan">2</td><td>Did the action even reach Azure — and who made it?</td><td><strong>Activity Log</strong>: the operation, the caller, the status and the correlation ID</td></tr>
+                      <tr><td class="c-cyan">3</td><td>Am I allowed to do it?</td><td>RBAC <span class="acro-exp">(Role-Based Access Control)</span> at every scope, plus any policy assignment or resource lock</td></tr>
+                      <tr><td class="c-cyan">4</td><td>Can the packets get there?</td><td><strong>Network Watcher</strong> — effective rules, effective routes, connection troubleshoot</td></tr>
+                      <tr><td class="c-cyan">5</td><td>Is the thing inside the box healthy?</td><td>Boot diagnostics, serial console, Run Command, app logs</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Always capture the correlation ID.</strong> Every
+                    Azure Resource Manager operation carries one, it ties the portal error to the
+                    Activity Log entry to the deployment operation — and it is the first thing
+                    support asks for.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Toolkit</div>
+                <div class="concept-title">The Commands That Answer Each Question</div>
+                <div class="dw">
+<pre class="code-block"><span class="com"># 2 — what actually happened, and under whose identity</span>
+az monitor activity-log list --resource-group rg-prod --offset 2h \
+  --query <span class="str">"[?status.value=='Failed'].{op:operationName.value,by:caller,msg:properties.statusMessage}"</span> -o table
+
+<span class="com"># 2 — a failed template/Bicep deployment: the top-level error hides the real one</span>
+az deployment group show -g rg-prod -n my-deploy --query properties.error
+az deployment operation group list -g rg-prod -n my-deploy \
+  --query <span class="str">"[?properties.provisioningState=='Failed'].properties.statusMessage"</span>
+
+<span class="com"># 3 — effective permissions for a principal at a scope</span>
+az role assignment list --assignee user@contoso.com --all --include-inherited -o table
+
+<span class="com"># 4 — will this packet be allowed? (evaluates every NSG in the path)</span>
+az network watcher test-ip-flow --vm web01 -g rg-prod --direction Inbound \
+  --protocol TCP --local 10.0.1.4:443 --remote 203.0.113.10:51234
+
+<span class="com"># 4 — what the NIC actually sees after all inheritance</span>
+az network nic list-effective-nsg --name web01-nic -g rg-prod -o table
+az network nic show-effective-route-table --name web01-nic -g rg-prod -o table
+
+<span class="com"># 4 — end-to-end reachability including DNS and the next hop</span>
+az network watcher test-connectivity --source-resource web01 -g rg-prod \
+  --dest-address api.internal.contoso.com --dest-port 443
+
+<span class="com"># 5 — the VM is unreachable: look at the screen and the boot log</span>
+az vm boot-diagnostics get-boot-log --name web01 -g rg-prod
+az vm run-command invoke --name web01 -g rg-prod --command-id RunPowerShellScript \
+  --scripts <span class="str">"Get-Service W3SVC | Select Status"</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Error Reference</div>
+                <div class="concept-title">What the Message Actually Means</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Error</th><th>Real cause</th><th>First move</th></tr></thead>
+                    <tbody>
+                      <tr><td class="c-red">AuthorizationFailed</td><td>No role assignment grants that action at that scope</td><td>Check the scope, not just the role — and allow for propagation delay</td></tr>
+                      <tr><td class="c-red">RequestDisallowedByPolicy</td><td>An Azure Policy deny effect blocked the shape of the request</td><td>The message names the policy; fix the request or file an exemption</td></tr>
+                      <tr><td class="c-red">ScopeLocked</td><td>A CanNotDelete or ReadOnly lock is in the way</td><td>Remove the lock deliberately, then put it back</td></tr>
+                      <tr><td class="c-red">QuotaExceeded / SkuNotAvailable</td><td>Subscription vCPU quota, or that size isn't offered in the region/zone</td><td>Request a quota increase, or pick another size or region</td></tr>
+                      <tr><td class="c-red">ZonalAllocationFailed</td><td>Capacity in that specific zone, right now</td><td>Retry, try another zone, or use a different VM <span class="acro-exp">(Virtual Machine)</span> family</td></tr>
+                      <tr><td class="c-red">429 / TooManyRequests</td><td>Resource Manager or a data plane is throttling you</td><td>Honour <code>Retry-After</code>, back off exponentially, batch the calls</td></tr>
+                      <tr><td class="c-red">InvalidTemplateDeployment</td><td>A nested or dependent resource failed, not the template syntax</td><td>Read the <em>inner</em> error from the deployment operations</td></tr>
+                      <tr><td class="c-red">Name resolves to a public IP <span class="acro-exp">(Internet Protocol)</span></td><td>Private endpoint exists, private DNS <span class="acro-exp">(Domain Name System)</span> zone isn't linked to the VNet <span class="acro-exp">(Virtual Network)</span></td><td>Link the zone, confirm with <code>nslookup</code> from inside the VNet</td></tr>
+                      <tr><td class="c-red">Public network access is disabled</td><td>The PaaS <span class="acro-exp">(Platform as a Service)</span> firewall is on and your client isn't on the allow list</td><td>Add the IP or subnet, or go through the private endpoint</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">A pattern worth internalising:</strong> if something
+                    worked yesterday and fails today with no deployment in between, check the
+                    Activity Log for a policy or lock added at a <em>parent</em> scope. Inheritance
+                    means someone can break your resource group without ever touching it.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: ENTRA ID SIGN-IN TROUBLESHOOTING ──────────────────── -->
+          <div class="topic">
+            <div class="topic-header">
+              <span class="topic-icon">🪪</span>
+              <span class="topic-name">Entra ID — Sign-In &amp; Conditional Access Troubleshooting</span>
+              <span class="topic-badge">Azure • Identity</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Method</div>
+                <div class="concept-title">The Sign-In Log Already Knows Why</div>
+                <div class="concept-desc">
+                  Nearly every "I can't get in" ends at one row in the Entra sign-in logs. Find the
+                  attempt by user and time, then read three fields: the <strong>failure
+                  code</strong>, the <strong>Conditional Access</strong> tab showing which policies
+                  evaluated and what each one decided, and the <strong>device</strong> details.
+                  Guessing before reading that row wastes the afternoon.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Code</th><th>Means</th><th>Fix</th></tr></thead>
+                    <tbody>
+                      <tr><td class="c-red">AADSTS50126</td><td>Wrong username or password</td><td>Genuinely a credential problem — check for lockout and password spray</td></tr>
+                      <tr><td class="c-red">AADSTS50076</td><td>MFA <span class="acro-exp">(Multi-Factor Authentication)</span> required for this resource</td><td>Expected; the client must be able to prompt interactively</td></tr>
+                      <tr><td class="c-red">AADSTS50079</td><td>User must enrol in MFA first</td><td>Send them through registration, or use temporary access pass</td></tr>
+                      <tr><td class="c-red">AADSTS53003</td><td>Blocked by a Conditional Access policy</td><td>The log names the policy — check device compliance and location</td></tr>
+                      <tr><td class="c-red">AADSTS50105</td><td>User isn't assigned to the application</td><td>Assign the user or group to the enterprise app</td></tr>
+                      <tr><td class="c-red">AADSTS700016</td><td>App not found in this tenant</td><td>Wrong tenant, or the service principal was never consented</td></tr>
+                      <tr><td class="c-red">AADSTS90094</td><td>Admin consent required</td><td>Grant consent for the delegated permission</td></tr>
+                      <tr><td class="c-red">AADSTS50058</td><td>Silent sign-in failed — no session</td><td>Usually benign; the client then prompts interactively</td></tr>
+                    </tbody>
+                  </table>
+<pre class="code-block"><span class="com"># On the device: is it joined, and does it hold a usable PRT?</span>
+dsregcmd /status
+<span class="com"># AzureAdJoined : YES  |  AzureAdPrt : YES  — if PRT is NO, SSO and device-based CA will fail</span>
+
+<span class="com"># Least-risk way to test a policy change before anyone feels it</span>
+<span class="com"># Entra admin center ▸ Conditional Access ▸ What If  — simulate user + app + device + location</span>
+<span class="com"># then ship the policy in Report-only mode and read the results for a week</span></pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">The three rules that prevent most Conditional Access outages:</strong>
+                    keep a break-glass account excluded from every policy and monitored for use;
+                    roll every new policy out in report-only first; and remember that a policy
+                    requiring a <em>compliant device</em> silently depends on Intune — if compliance
+                    evaluation breaks, sign-ins break with it. That seam is why endpoint and identity
+                    engineers end up in the same incident bridge.
                   </div>
                 </div>
               </div>

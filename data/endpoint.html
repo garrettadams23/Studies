@@ -53,7 +53,7 @@
                   <table class="ref-table" style="margin-top:8px">
                     <tr><th>Site system role</th><th>Job</th></tr>
                     <tr><td class="c-cyan">Site database (SQL)</td><td>Everything — config, inventory, status</td></tr>
-                    <tr><td class="c-cyan">SMS Provider</td><td>WMI <span class="acro-exp">(Windows Management Instrumentation)</span> layer the console talks through</td></tr>
+                    <tr><td class="c-cyan">SMS <span class="acro-exp">(Systems Management Server)</span> Provider</td><td>WMI <span class="acro-exp">(Windows Management Instrumentation)</span> layer the console talks through</td></tr>
                     <tr><td class="c-cyan">Management Point (MP)</td><td>Primary client ↔ site channel (policy, inventory)</td></tr>
                     <tr><td class="c-cyan">Distribution Point (DP)</td><td>Hosts &amp; serves content</td></tr>
                     <tr><td class="c-cyan">Software Update Point (SUP)</td><td>Sits on WSUS <span class="acro-exp">(Windows Server Update Services)</span>; drives patching</td></tr>
@@ -206,7 +206,7 @@
 
               <div class="concept-card">
                 <div class="concept-label">Internals</div>
-                <div class="concept-title">dsregcmd, the PRT &amp; Windows Hello for Business</div>
+                <div class="concept-title">dsregcmd, the PRT <span class="acro-exp">(Primary Refresh Token)</span> &amp; Windows Hello for Business</div>
                 <div class="concept-desc">
                   The device's join/registration state is the first thing to check when SSO or
                   enrollment misbehaves. <code>dsregcmd /status</code> is the definitive local tool.
@@ -725,12 +725,12 @@ MdmDiagnosticsTool.exe <span class="var">-area</span> <span class="str">"Autopil
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Term</th><th>Meaning</th></tr>
-                    <tr><td class="c-cyan">WMI</td><td><strong>Windows Management Instrumentation</strong> — the local management data layer. ConfigMgr's console talks to the site through the <em>SMS Provider</em> over WMI; the client stores state &amp; inventory in the <code>root\ccm</code> and <code>root\cimv2</code> namespaces (query with <code>wbemtest</code> / <code>Get-CimInstance</code>)</td></tr>
+                    <tr><td class="c-cyan">WMI</td><td><strong>Windows Management Instrumentation</strong> — the local management data layer. ConfigMgr's console talks to the site through the <em>SMS <span class="acro-exp">(Systems Management Server)</span> Provider</em> over WMI; the client stores state &amp; inventory in the <code>root\ccm</code> and <code>root\cimv2</code> namespaces (query with <code>wbemtest</code> / <code>Get-CimInstance</code>)</td></tr>
                     <tr><td class="c-cyan">OSD</td><td><strong>Operating System Deployment</strong> — ConfigMgr's imaging feature: build &amp; capture, then deploy Windows via a <em>task sequence</em> (WinPE boot image → apply WIM → drivers → join → apps)</td></tr>
                     <tr><td class="c-cyan">CCM</td><td>The <strong>Configuration Manager client</strong>. Lives in <code>C:\Windows\CCM</code>, runs as the <code>CcmExec</code> service, WMI namespace <code>root\ccm</code>, cache at <code>C:\Windows\ccmcache</code></td></tr>
-                    <tr><td class="c-cyan">MDM</td><td><strong>Mobile Device Management</strong> — the cloud management channel (Intune) using the OMA-DM protocol over HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span>; the modern alternative to the ConfigMgr agent</td></tr>
+                    <tr><td class="c-cyan">MDM</td><td><strong>Mobile Device Management</strong> — the cloud management channel (Intune) using the OMA-DM <span class="acro-exp">(Open Mobile Alliance Device Management)</span> protocol over HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span>; the modern alternative to the ConfigMgr agent</td></tr>
                     <tr><td class="c-cyan">HKCU</td><td><strong>HKEY_CURRENT_USER</strong> — the registry hive for the signed-in user's settings (vs <code>HKLM</code> = machine-wide). Per-user policy, ADMX <span class="acro-exp">(Administrative Template)</span> user settings, and app config live here</td></tr>
-                    <tr><td class="c-cyan">dsregcmd</td><td>Built-in Windows tool for <strong>device registration</strong> state. <code>dsregcmd /status</code> shows AzureAdJoined, DomainJoined, the PRT, and MDM enrollment URLs <span class="acro-exp">(Uniform Resource Locator)</span> — the first check for join/SSO/enrollment issues</td></tr>
+                    <tr><td class="c-cyan">dsregcmd</td><td>Built-in Windows tool for <strong>device registration</strong> state. <code>dsregcmd /status</code> shows AzureAdJoined, DomainJoined, the PRT <span class="acro-exp">(Primary Refresh Token)</span>, and MDM enrollment URLs <span class="acro-exp">(Uniform Resource Locator)</span> — the first check for join/SSO/enrollment issues</td></tr>
                   </table>
                 </div>
               </div>
@@ -750,7 +750,7 @@ MdmDiagnosticsTool.exe <span class="var">-area</span> <span class="str">"Autopil
                     <tr><td><code>smsts.log</code></td><td>The <strong>task sequence</strong> engine — every OSD step, variable, and failure. The single most important OSD log</td></tr>
                     <tr><td><code>CAS.log</code></td><td><strong>Content Access Service</strong> — how the client locates content and whether it's already in the cache (cache hits/misses, requesting a DP list)</td></tr>
                     <tr><td><code>ContentTransferManager.log</code></td><td>Schedules and tracks the actual <strong>content download</strong> jobs (via BITS or SMB) from a distribution point</td></tr>
-                    <tr><td><code>DataTransferService.log</code></td><td>The <strong>BITS</strong> transfer layer used for policy and content downloads — TLS/proxy/BITS errors surface here</td></tr>
+                    <tr><td><code>DataTransferService.log</code></td><td>The <strong>BITS <span class="acro-exp">(Background Intelligent Transfer Service)</span></strong> transfer layer used for policy and content downloads — TLS/proxy/BITS errors surface here</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Content-download triage order:</strong>
@@ -793,5 +793,331 @@ MdmDiagnosticsTool.exe <span class="var">-area</span> <span class="str">"Autopil
               </div>
             </div>
           </div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     SECTION: MECM TROUBLESHOOTING
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: MECM CLIENT HEALTH ─────────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🩹</span>
+    <span class="topic-name">MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> Client Health — Install, Repair &amp; the Cycles</span>
+    <span class="topic-badge">MECM • Troubleshooting</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">First Principles</div>
+      <div class="concept-title">A Silent Client Is Not the Same as a Broken Deployment</div>
+      <div class="concept-desc">
+        Before blaming a deployment, prove the client is alive: it is installed, it found a
+        management point, it is downloading policy, and it is sending state back. Those four
+        checks answer the majority of "the software never arrived" tickets, and each one has
+        its own log.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Check</th><th>How</th><th>Log</th></tr></thead>
+          <tbody>
+            <tr><td class="c-cyan">Is the client installed and running?</td><td><code>Get-Service CcmExec</code>; Control Panel ▸ Configuration Manager</td><td><code>ccmsetup.log</code>, <code>CcmExec.log</code></td></tr>
+            <tr><td class="c-cyan">Did it get a site code and a management point?</td><td>Control Panel applet ▸ General tab</td><td><code>LocationServices.log</code>, <code>ClientLocation.log</code></td></tr>
+            <tr><td class="c-cyan">Is it receiving policy?</td><td>Trigger a machine policy cycle and watch</td><td><code>PolicyAgent.log</code>, <code>PolicyEvaluator.log</code></td></tr>
+            <tr><td class="c-cyan">Is it reporting back?</td><td>Compare the console's last-active time</td><td><code>StateMessage.log</code>, <code>InventoryAgent.log</code></td></tr>
+          </tbody>
+        </table>
+<pre class="code-block"><span class="com"># Trigger client actions from PowerShell — same as the Actions tab, scriptable</span>
+<span class="kw">function</span> <span class="fn">Invoke-CMAction</span> (<span class="var">$Id</span>) {
+  Invoke-CimMethod -Namespace root\ccm -ClassName SMS_Client `
+    -MethodName TriggerSchedule -Arguments @{ sScheduleID = <span class="var">$Id</span> }
+}
+
+Invoke-CMAction <span class="str">'{00000000-0000-0000-0000-000000000021}'</span>   <span class="com"># Machine Policy Retrieval</span>
+Invoke-CMAction <span class="str">'{00000000-0000-0000-0000-000000000022}'</span>   <span class="com"># Machine Policy Evaluation</span>
+Invoke-CMAction <span class="str">'{00000000-0000-0000-0000-000000000001}'</span>   <span class="com"># Hardware Inventory</span>
+Invoke-CMAction <span class="str">'{00000000-0000-0000-0000-000000000113}'</span>   <span class="com"># Software Updates Scan</span>
+Invoke-CMAction <span class="str">'{00000000-0000-0000-0000-000000000121}'</span>   <span class="com"># Application Deployment Evaluation</span>
+Invoke-CMAction <span class="str">'{00000000-0000-0000-0000-000000000108}'</span>   <span class="com"># Software Update Deployment Evaluation</span>
+
+<span class="com"># Which site and management point does this client think it belongs to?</span>
+Get-CimInstance -Namespace root\ccm -ClassName SMS_Authority |
+  Select-Object Name, CurrentManagementPoint</pre>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Repair Ladder</div>
+      <div class="concept-title">Escalate Slowly — Reinstalling Is Not Step One</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Do</th><th>When it helps</th></tr></thead>
+          <tbody>
+            <tr><td class="c-green">1</td><td>Run the client actions and read the logs</td><td>Policy is simply stale</td></tr>
+            <tr><td class="c-green">2</td><td><code>ccmrepair.exe</code> or the console's Client Repair</td><td>Agent files or registrations are damaged</td></tr>
+            <tr><td class="c-amber">3</td><td>Check WMI <span class="acro-exp">(Windows Management Instrumentation)</span>: <code>winmgmt /verifyrepository</code></td><td>Inventory and policy both fail, applet is missing tabs</td></tr>
+            <tr><td class="c-amber">4</td><td>Reinstall: <code>ccmsetup.exe /uninstall</code>, reboot, then reinstall</td><td>Repair didn't take; clears a wedged install</td></tr>
+            <tr><td class="c-red">5</td><td><code>winmgmt /salvagerepository</code> — last resort</td><td>Only when the repository is genuinely corrupt; it can break other agents</td></tr>
+          </tbody>
+        </table>
+<pre class="code-block"><span class="com"># A clean reinstall pointed at a specific MP and site</span>
+ccmsetup.exe /mp:mp01.contoso.com /forceinstall SMSSITECODE=P01 <span class="str">/logon</span>
+
+<span class="com"># ccmsetup writes to its own folder, NOT C:\Windows\CCM\Logs</span>
+<span class="com">#   C:\Windows\ccmsetup\Logs\ccmsetup.log</span>
+
+<span class="com"># Common ccmsetup exit codes</span>
+<span class="com">#   0        success</span>
+<span class="com">#   7        reboot required to finish</span>
+<span class="com">#   1603     generic MSI failure — read the MSI log beside it</span>
+<span class="com">#   0x87d00227  client could not download source from the MP (boundary/firewall/PKI)</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">The boundary trap:</strong> a client on an IP <span class="acro-exp">(Internet Protocol)</span> with no boundary
+          in a boundary group has no site assignment and no content source. It will look
+          installed, log cheerfully in <code>CcmExec.log</code>, and never do anything useful.
+          <code>LocationServices.log</code> is where that shows up.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MECM DEPLOYMENT & CONTENT ──────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">📦</span>
+    <span class="topic-name">MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> Deployment &amp; Content Troubleshooting</span>
+    <span class="topic-badge">MECM • Troubleshooting</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">Follow the Package Server-Side, Then Client-Side</div>
+      <div class="concept-desc">
+        An application reaches a device through a fixed chain: it is distributed to a
+        distribution point, advertised in policy, located by the client, downloaded, then
+        enforced. Find the first link that failed and stop reading logs from the wrong end.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stage</th><th>Where</th><th>Log</th></tr></thead>
+          <tbody>
+            <tr><td class="c-purple">Content sent to the DP</td><td>Site server</td><td><code>distmgr.log</code> then <code>PkgXferMgr.log</code></td></tr>
+            <tr><td class="c-purple">Content verified on the DP</td><td>Distribution point</td><td><code>smsdpmon.log</code>, <code>smsdpprov.log</code></td></tr>
+            <tr><td class="c-cyan">Policy reaches the client</td><td>Client</td><td><code>PolicyAgent.log</code>, <code>AppIntentEval.log</code></td></tr>
+            <tr><td class="c-cyan">Client finds a source</td><td>Client</td><td><code>CAS.log</code> — cached? which DP?</td></tr>
+            <tr><td class="c-cyan">Bytes actually move</td><td>Client</td><td><code>ContentTransferManager.log</code>, <code>DataTransferService.log</code></td></tr>
+            <tr><td class="c-green">Install runs</td><td>Client</td><td><code>AppEnforce.log</code> (apps), <code>execmgr.log</code> (packages)</td></tr>
+            <tr><td class="c-green">Result detected</td><td>Client</td><td><code>AppDiscovery.log</code> — the detection method's verdict</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">The single most common false failure:</strong> the installer ran
+          fine, but the <strong>detection method</strong> looks for the wrong file, version or
+          registry key — so MECM reports failure and retries forever.
+          <code>AppEnforce.log</code> shows exit code 0 while <code>AppDiscovery.log</code> says
+          "not detected". That combination always means the detection rule, never the installer.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Error Reference</div>
+      <div class="concept-title">Codes You Will See Weekly</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Code</th><th>Means</th><th>First move</th></tr></thead>
+          <tbody>
+            <tr><td class="c-red">0x87D00324</td><td>Installed successfully but not detected</td><td>Fix the detection method — check it by hand on the device</td></tr>
+            <tr><td class="c-red">0x87D00269</td><td>No content available at any distribution point</td><td>Confirm distribution finished; check boundary groups</td></tr>
+            <tr><td class="c-red">0x80091007</td><td>Content hash mismatch</td><td>Redistribute the package; validate content on the DP</td></tr>
+            <tr><td class="c-red">0x87D01106</td><td>The install command line failed</td><td>Run it manually as SYSTEM with PsExec to see the real error</td></tr>
+            <tr><td class="c-red">1603</td><td>Generic MSI <span class="acro-exp">(Microsoft Installer)</span> failure</td><td>Read the MSI verbose log; usually a prerequisite or a locked file</td></tr>
+            <tr><td class="c-red">1618</td><td>Another installation is already in progress</td><td>Wait and retry; check for a stuck msiexec</td></tr>
+            <tr><td class="c-red">0x80070005</td><td>Access denied</td><td>Network access account, share permissions, or running as the wrong context</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Software Updates</div>
+      <div class="concept-title">When Patching Stops, Suspect WSUS <span class="acro-exp">(Windows Server Update Services)</span> First</div>
+      <div class="concept-desc">
+        Software updates run on the software update point, which is WSUS wearing a MECM hat.
+        Scan failures are almost always the WSUS side: a bloated database, an exhausted app
+        pool, or a proxy in the way.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Log</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td class="c-cyan">wsyncmgr.log</td><td>Did the catalogue sync from Microsoft, and what failed</td></tr>
+            <tr><td class="c-cyan">WCM.log / WSUSCtrl.log</td><td>Is MECM able to configure and reach WSUS at all</td></tr>
+            <tr><td class="c-cyan">ruleengine.log</td><td>Automatic deployment rule runs</td></tr>
+            <tr><td class="c-cyan">ScanAgent.log</td><td>Did the client decide to scan, and against which SUP <span class="acro-exp">(Software Update Point)</span></td></tr>
+            <tr><td class="c-cyan">WUAHandler.log</td><td>What the Windows Update agent reported back</td></tr>
+            <tr><td class="c-cyan">UpdatesDeployment.log</td><td>Deployment enforcement, deadlines and reboots</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-red">0x80244010</strong> — "exceeded max server round trips" — is the
+          classic sign of an unmaintained WSUS: decline superseded updates and run the cleanup
+          so the client can finish enumerating. <strong class="c-red">0x80072ee2</strong> is a
+          timeout, usually a proxy or firewall. And if the WSUS app pool keeps recycling, raise
+          its private memory limit (0 = unlimited) before touching anything else.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MECM OSD / TASK SEQUENCE ───────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🧬</span>
+    <span class="topic-name">MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> OSD <span class="acro-exp">(Operating System Deployment)</span> — Task Sequence Failure Triage</span>
+    <span class="topic-badge">MECM • Troubleshooting</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Method</div>
+      <div class="concept-title">Find smsts.log, Then Read Backwards</div>
+      <div class="concept-desc">
+        Every task sequence failure is in <code>smsts.log</code>. The hard part is knowing
+        where it lives at the moment it failed — the file moves as the sequence progresses.
+        Open it in CMTrace, jump to the end, and scroll <em>up</em> to the first red line: the
+        error you see reported is usually the consequence, not the cause.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Phase</th><th>smsts.log lives at</th></tr></thead>
+          <tbody>
+            <tr><td class="c-cyan">In WinPE <span class="acro-exp">(Windows Preinstallation Environment)</span>, before the disk is formatted</td><td><code>X:\Windows\Temp\SMSTSLog\smsts.log</code></td></tr>
+            <tr><td class="c-cyan">In WinPE, after formatting</td><td><code>X:\SMSTSLog\smsts.log</code> then <code>C:\_SMSTaskSequence\Logs</code></td></tr>
+            <tr><td class="c-cyan">In the full OS <span class="acro-exp">(Operating System)</span>, before the client is installed</td><td><code>C:\_SMSTaskSequence\Logs\SMSTSLog</code></td></tr>
+            <tr><td class="c-cyan">In the full OS, client installed</td><td><code>C:\Windows\CCM\Logs\SMSTSLog</code></td></tr>
+            <tr><td class="c-cyan">After the sequence ends</td><td><code>C:\Windows\CCM\Logs\smsts.log</code></td></tr>
+          </tbody>
+        </table>
+<pre class="code-block"><span class="com"># In WinPE: F8 needs to be enabled on the boot image (Enable command support)</span>
+<span class="com"># Keep the window open on failure so the log survives the reboot:</span>
+<span class="com">#   set the task sequence variable  SMSTSPostAction = cmd.exe /c pause</span>
+<span class="com">#   or copy the log out before it goes:</span>
+copy X:\Windows\Temp\SMSTSLog\smsts.log \\fileserver\logs\%COMPUTERNAME%-smsts.log
+
+<span class="com"># Check the network stack from WinPE before blaming the sequence</span>
+ipconfig /all
+ping mp01.contoso.com
+net use \\dp01\SMSPKGD$ /user:CONTOSO\svc-osd</pre>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Error Reference</div>
+      <div class="concept-title">The Usual Suspects</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Code</th><th>Usually means</th><th>Check</th></tr></thead>
+          <tbody>
+            <tr><td class="c-red">0x80070002</td><td>File not found — content missing or not distributed</td><td>Package distributed to a DP in this boundary group?</td></tr>
+            <tr><td class="c-red">0x80070070</td><td>Disk full</td><td>Partition size, or cache too small for the content</td></tr>
+            <tr><td class="c-red">0x80072EE7</td><td>Name resolution failed in WinPE</td><td>DNS <span class="acro-exp">(Domain Name System)</span> from PE, and whether the MP name resolves at all</td></tr>
+            <tr><td class="c-red">0x80004005</td><td>Generic failure — meaningless on its own</td><td>Ignore the code, read the lines above it</td></tr>
+            <tr><td class="c-red">0x80220014</td><td>Bad or missing task sequence variable</td><td>A collection variable or Set Variable step that never ran</td></tr>
+            <tr><td class="c-red">0x87D00267</td><td>No task sequence deployment for this machine</td><td>Collection membership, and whether the deployment is available to unknown computers</td></tr>
+            <tr><td class="c-red">Missing NIC <span class="acro-exp">(Network Interface Card)</span> or storage driver</td><td>PE loads, then nothing works</td><td>Driver package injected into the boot image for the right architecture</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-green">Triage order that saves the most time:</strong>
+          1. Does the machine have a deployment at all — is it in the collection?
+          2. Can WinPE reach the network and resolve the MP?
+          3. Is the content on a DP this boundary group can reach?
+          4. Did a specific step fail, or did the sequence never start?
+          Only then start reading step-level errors.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MECM SITE & SERVER-SIDE ────────────────────────── -->
+<div class="topic">
+  <div class="topic-header">
+    <span class="topic-icon">🏢</span>
+    <span class="topic-name">MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> Site Health &amp; Server Log Map</span>
+    <span class="topic-badge">MECM • Troubleshooting</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Which Server Log Owns Which Symptom</div>
+      <div class="concept-desc">
+        Client logs live in <code>C:\Windows\CCM\Logs</code>; site server logs live in
+        <code>&lt;install&gt;\Logs</code> (commonly
+        <code>D:\Program Files\Microsoft Configuration Manager\Logs</code>). When a symptom is
+        fleet-wide rather than per-device, the answer is on the server.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Log</th><th>Component</th></tr></thead>
+          <tbody>
+            <tr><td class="c-amber">Content stuck distributing to a DP</td><td><code>distmgr.log</code>, <code>PkgXferMgr.log</code></td><td>Distribution Manager</td></tr>
+            <tr><td class="c-amber">Collections not updating membership</td><td><code>colleval.log</code></td><td>Collection Evaluator</td></tr>
+            <tr><td class="c-amber">Deployment status never changes</td><td><code>statesys.log</code>, <code>MP_StatusManager</code></td><td>State System</td></tr>
+            <tr><td class="c-amber">Inventory not arriving</td><td><code>dataldr.log</code>, <code>MP_HinvEndpoint</code></td><td>Inventory Data Loader</td></tr>
+            <tr><td class="c-amber">Discovery not finding machines</td><td><code>adsysdis.log</code>, <code>ddm.log</code></td><td>AD <span class="acro-exp">(Active Directory)</span> System Discovery</td></tr>
+            <tr><td class="c-amber">Clients can't get policy</td><td><code>MP_GetPolicy.log</code>, <code>MP_Location.log</code></td><td>Management Point</td></tr>
+            <tr><td class="c-amber">Console errors or slowness</td><td><code>SMSProv.log</code></td><td>SMS <span class="acro-exp">(Systems Management Server)</span> Provider (WMI layer)</td></tr>
+            <tr><td class="c-amber">Site-to-site replication behind</td><td><code>sender.log</code>, <code>despool.log</code>, <code>rcmctrl.log</code></td><td>Replication</td></tr>
+            <tr><td class="c-amber">Site components in a warning state</td><td><code>sitecomp.log</code>, <code>hman.log</code></td><td>Site Component Manager</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Before diving in, check <strong>Monitoring ▸ System Status ▸ Component Status</strong>
+          and <strong>Site Status</strong> — MECM usually tells you which component is unhappy,
+          which narrows the log list to one.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Real Time</div>
+      <div class="concept-title">CMPivot <span class="acro-exp">(Configuration Manager Pivot)</span> — Ask the Fleet Instead of Waiting for Inventory</div>
+      <div class="concept-desc">
+        Hardware inventory is a scheduled snapshot; CMPivot queries live clients now, in a
+        KQL-like syntax. It is the fastest way to answer "how many machines actually have
+        this" during an incident — and it doubles as a hunting tool alongside the Blue Team
+        domain.
+      </div>
+      <div class="dw">
+<pre class="code-block"><span class="com">// Which machines still have the vulnerable version installed?</span>
+InstalledSoftware
+| <span class="kw">where</span> ProductName contains <span class="str">'Contoso Agent'</span>
+| <span class="kw">summarize</span> count() <span class="kw">by</span> ProductVersion
+
+<span class="com">// Is the file present, and when was it last written?</span>
+File(<span class="str">'C:\\Program Files\\Contoso\\agent.exe'</span>)
+| <span class="kw">project</span> Device, Version, LastWriteTime
+
+<span class="com">// Disk pressure across the fleet, worst first</span>
+LogicalDisk
+| <span class="kw">where</span> DeviceID == <span class="str">'C:'</span>
+| <span class="kw">project</span> Device, FreeGB = FreeSpace / <span class="num">1024</span>
+| <span class="kw">order by</span> FreeGB asc</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">Two limits to keep in mind:</strong> CMPivot only reaches
+          clients that are online and healthy — the broken ones you most want to see are exactly
+          the ones that will not answer — and results are capped, so scope the query to a
+          collection rather than the whole estate.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- /domain-body endpoint -->
