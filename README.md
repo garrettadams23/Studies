@@ -48,6 +48,13 @@ Open `index.html` in any modern web browser — no server or build step required
 | ⌨️ Shortcuts | General | Windows, Linux Terminal, Excel, Word, Spotify, Google Chrome, DoD |
 | 🧘 Lifestyle & Philosophy | Life | Stoicism, Buddhism, Taoism, Existentialism, Minimalism, Wicca, Paganism, Druidism |
 | 🎖️ Military Codes | MIL | NATO Phonetic, Military Time, US Army Ranks, CMMC, DISA STIGs, Staff Codes J/G/S/N/A/C |
+| 🔴 Red Team | PT+, OSCP | Recon, Exploitation, AD Attacks, C2, Password & Wireless |
+| 🔵 Blue Team | CySA+, GCIH | NSM, SIEM, EDR, Detection, DFIR, Threat Intel |
+| ☁️ Cloud | AWS, GCP | AWS, GCP, **Azure** (hierarchy, networking, compute/storage, Monitor & KQL, **troubleshooting playbook**, Entra ID sign-in), IAM, IaC, Cost |
+| 🏛️ Engineering | ARCH, SWE | System Design, Architecture, Craft, Reliability, Career, IT Job Titles |
+| 📊 Data | SQL, DATA | SQL, DB Internals, NoSQL, Warehousing, DBA |
+| 🌐 Web | WEB, JS | Browser, CSS, JS, Frameworks, Performance, A11y |
+| 🖥️ Endpoint | MD-102, MEM | **MECM** (client health, deployment & content, OSD/task sequences, site & server logs, CMPivot), Intune, Autopilot, ESP, Co-management |
 | 🔤 Acronym Dictionary | REF | 980+ IT acronyms A–Z, plus per-subject indexes (Networking, Security, Cloud, Crypto, Data, AI, …) |
 
 ## Project Structure
