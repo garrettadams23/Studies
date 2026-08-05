@@ -13,6 +13,33 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
 
 ---
 
+## What's in this file
+
+`plan.md` has grown into the project's full roadmap history. Read it in order or
+jump to what you need:
+
+| Section | What it is | Status |
+|---|---|---|
+| **Improvement Plan** (P1–P5) | The original repo review — performance, security, UX, hygiene | ✅ applied |
+| **Content Roadmap — Next Waves** (Tracks R/B/C/X) | Red team, blue team, cloud, rounding out existing domains | ✅ shipped |
+| **Architecture, Engineering & DevOps** (Tracks E/F/G) | Software architecture, DevOps, developer environment | ✅ shipped |
+| **Phase 3 — Depth, Breadth & New Domains** (Tracks H–U) | `data` and `web` domains shipped; depth tracks **J–U outstanding (201 cards)** | 🔶 half done |
+| **Phase 4 — The Enterprise Estate & the Study Platform** (Tracks V–AK) | Windows Server, M365, endpoint depth, virtualization, ITSM, vendor networking, automation, Apple/mobile, OT/regulated, AI at work + study tooling | ⬜ planned |
+| **Phase 5 — Foundations, Frontiers & the Business of IT** (Tracks AL–AY) | CS & mathematics, hardware/embedded, post-quantum, emerging platforms, physical security, IT finance, leadership, enablement, consulting + content-trust tooling | ⬜ planned |
+| **Phase 6 — Specialisms, and How This Gets Written** (Tracks BA–BJ) | Detection engineering, purple teaming, Kubernetes security, API/identity security, supply chain, privacy engineering, platform engineering, observability, resilience — **plus the card pattern library, authoring rules, risk register and success measures, written out rather than planned** | ⬜ planned |
+| **Execution Handbook** | Ordering constraints, per-domain queue, a concrete first-ten-sessions schedule, three waves specified to the point of transcription, and reusable checklists | 📘 reference |
+
+**Remaining backlog: 891 content cards and 44 engineering items** across
+Phases 3–6, which would take the site from 900 topics / 20 domains to roughly
+1,800 topics / 26 domains — about 180 working sessions.
+
+**If you read only two things:** the *"Suggested actual priority"* shortlist at
+the end of Phase 5, and *Part 3 of Phase 6* (how to write a card, the pattern
+library, the risk register). The backlog is a menu, not a queue — and at this
+size, how well each card is written matters more than how many remain.
+
+---
+
 ## P1 — High-impact quick wins
 
 ### 1. Remove ~135 KB of dead code from `script.js`
@@ -1242,3 +1269,2278 @@ every card inherits search / permalinks / progress / keyboard-a11y automatically
 - New `mobile` 📱 domain — iOS/Android/React Native/Flutter, app store, mobile security.
 - Interactive extras — a quiz/flashcard mode over existing cards; a "learning path"
   overlay that sequences cards into guided tracks.
+
+---
+
+# Content & Capability Roadmap — Phase 4: The Enterprise Estate & the Study Platform (Wave 58+)
+
+> **Added on request — "make more plan."** Written August 2026 against a measured
+> snapshot of the repo, not from memory. Phase 3's *new-domain* half shipped
+> (Tracks H and I are complete — `data` and `web` exist); its *depth* half
+> (Tracks J–U, ~201 cards) is still open and **remains the priority queue**.
+> Phase 4 is deliberately about ground Phase 3 never covers: the **enterprise
+> estate an IT professional actually operates**, the **operational trades**, and
+> turning the site from a reference into a **study platform**.
+
+## Where the site actually stands
+
+Measured from `data/*.html` at the time of writing:
+
+| Domain | Topics | | Domain | Topics |
+|---|---:|---|---|---:|
+| `script` Scripting & Web | 137 | | `redteam` Red Team | 43 |
+| `ops` Security Operations | 68 | | `data` Data & Databases | 40 |
+| `lifestyle` Lifestyle | 59 | | `blueteam` Blue Team | 37 |
+| `linux` Linux & Systems | 56 | | `shortcut` Shortcuts | 37 |
+| `net` Networking | 55 | | `eng` Engineering | 36 |
+| `acronym` Acronym Dictionary | 53 | | `web` Web & Frontend | 35 |
+| `cloud` Cloud (AWS·GCP·Azure) | 49 | | `ai` AI & ML | 34 |
+| `sec` Security Core | 43 | | `pentest` PenTest | 29 |
+| `grc` Governance & Risk | 28 | | `threat` Threat & Attack | 25 |
+| `military` Military Codes | 23 | | `endpoint` Endpoint Mgmt | **13** |
+
+**900 topics across 20 domains.** Two numbers drive this phase:
+
+- **`endpoint` has 13 topics** — the thinnest domain on the site, and the one
+  closest to the day job of the person maintaining it. Phase 4 takes it to ~55.
+- **There is no home at all** for Windows Server, Active Directory
+  administration, Exchange/SharePoint/Teams, virtualization, backup, or the
+  service desk. That is most of enterprise IT, and it is entirely absent.
+
+## What Phase 4 is, and is not
+
+**It is:** the operator's half of IT. Phase 1–3 built an excellent *security and
+software engineering* reference. A person running a real estate spends their week
+in Active Directory, Intune, Exchange, a hypervisor, a backup console and a
+ticket queue — and almost none of that is on the site yet.
+
+**It is not:** a replacement for Tracks J–U. Ship those first or in parallel;
+they deepen domains that already exist and already have an audience.
+
+## Structural decisions
+
+- **New domain `infra` 🏗️ "Infrastructure & Datacenter"** — Windows Server, AD
+  DS administration, DNS/DHCP/PKI operations, virtualization, storage and
+  backup. This is the biggest single hole in the site. Wire it the usual way:
+  `scaffold_domain.py infra 🏗️ …` then `data/infra.html`.
+- **New domain `m365` 📨 "Microsoft 365 & Collaboration"** — Exchange Online,
+  SharePoint/OneDrive, Teams, Purview, licensing and tenant administration.
+  Justified on its own because it is a distinct admin surface from Azure and
+  from endpoint, with its own portals, PowerShell modules and failure modes.
+- **New domain `itsm` 🎫 "Service Management & Support"** — ITIL practices,
+  ticket craft, escalation, on-call, knowledge management, metrics. Small but
+  high value: it is the layer every other domain gets consumed through, and it
+  is what most people are actually hired into first.
+- **Grow `endpoint` rather than splitting it** — Intune, MECM, Autopilot,
+  packaging, servicing, macOS and mobile all belong to one role. 13 → ~55.
+- **Rule for new domains, applied consistently:** a domain earns its own chip
+  when it has (a) ≥ 15 cards of real material, (b) its own tooling and console,
+  and (c) a job title attached to it. `infra`, `m365` and `itsm` all pass;
+  "printing", "telephony" and "licensing" do not, and get folded in.
+- **Part 4 is engineering, not content.** Those tracks change `script.js`,
+  `style.css`, `build.py` and CI — they ship as normal commits, not waves.
+
+---
+
+## PART 1 — THE ENTERPRISE MICROSOFT ESTATE
+
+### TRACK V — Windows Server & Directory Services  (→ new `infra` domain)
+
+~7 waves, ~35 cards. The on-prem backbone almost every organisation still runs.
+Pairs directly with the `redteam` AD-attack cards — same objects, defender's view.
+
+**Wave V1 — Windows Server Foundations**
+- [ ] Windows Server Editions & Licensing — Standard vs Datacenter, CALs, Core vs Desktop Experience
+- [ ] Server Core & Administration at Scale — why no GUI, and how you manage it anyway
+- [ ] Server Manager, RSAT & Windows Admin Center — the three consoles and when each wins
+- [ ] Roles & Features — what installing a role actually changes
+- [ ] Server Hardening Baseline — LAPS, no browsing, minimal roles, audit policy
+
+**Wave V2 — Active Directory Domain Services**
+- [ ] AD DS Architecture — forest, domain, tree, OU, site; what each boundary really means
+- [ ] Domain Controllers & FSMO Roles — the five roles, who holds them, seizing vs transferring
+- [ ] AD Replication — multi-master, USN, tombstones, `repadmin` triage
+- [ ] Trusts — forest/external/shortcut, direction vs transitivity, SID filtering
+- [ ] Sites, Subnets & Site Links — why clients authenticate against the wrong DC
+
+**Wave V3 — Group Policy in Practice**
+- [ ] Group Policy Architecture — GPO, GPC/GPT, SYSVOL, where settings actually live
+- [ ] Processing Order & Precedence — LSDOU, enforcement, blocking, loopback
+- [ ] Filtering — security filtering vs WMI filtering vs item-level targeting
+- [ ] Group Policy Preferences — the half of GPO people forget exists
+- [ ] GPO Troubleshooting — `gpresult /h`, RSoP, `gpupdate /force`, and reading the Group Policy operational log
+
+**Wave V4 — Identity Operations**
+- [ ] Users, Groups & Nesting Strategy — AGDLP, and why nested groups become a mess
+- [ ] Service Accounts — gMSA, delegation, and retiring shared passwords
+- [ ] Kerberos in Operations — SPNs, delegation types, ticket lifetimes, clock skew
+- [ ] Entra Connect & Hybrid Identity — sync, password hash vs pass-through vs federation
+- [ ] Cleaning Up a Legacy Directory — stale objects, orphaned SIDs, over-permissive ACLs
+
+**Wave V5 — Core Network Services (on-prem)**
+- [ ] Windows DNS Administration — zones, scavenging, forwarders, conditional forwarders
+- [ ] DHCP Administration — scopes, reservations, options, failover, relay
+- [ ] IPAM & Address Discipline — when a spreadsheet stops being enough
+- [ ] Time Sync — the PDC emulator, `w32tm`, and why Kerberos dies without it
+- [ ] File Services — shares, NTFS vs share permissions, DFS-N/DFS-R, quotas
+
+**Wave V6 — Certificate Services**
+- [ ] AD CS Design — root vs issuing CA, offline roots, CRL/OCSP publishing
+- [ ] Certificate Templates — the settings that matter, and the ones that get you owned
+- [ ] Auto-enrolment — getting certificates onto devices without touching them
+- [ ] Certificate Lifecycle Ops — renewal, revocation, the expiry outage nobody schedules
+- [ ] ADCS Misconfiguration — ESC1–ESC8 from the defender's side (pairs with `redteam`)
+
+**Wave V7 — Server Operations & Troubleshooting**
+- [ ] Windows Event Log Triage — the channels worth watching, and building a useful filter
+- [ ] Performance Monitor & Resource Monitor — counters that actually diagnose
+- [ ] Windows Patching Strategy — rings, maintenance windows, reboot coordination
+- [ ] Domain Controller Recovery — authoritative vs non-authoritative restore, DSRM
+- [ ] Decommissioning a Server Properly — the checklist that prevents next year's mystery outage
+
+### TRACK W — Microsoft 365 & Collaboration  (→ new `m365` domain)
+
+~6 waves, ~30 cards. The tenant most organisations live inside.
+
+**Wave W1 — Tenant Foundations**
+- [ ] M365 Tenant Anatomy — tenant, domains, admin centers, and how they relate to Azure
+- [ ] Licensing Without Tears — E3 vs E5 vs Business, add-ons, group-based licensing
+- [ ] Admin Roles & Least Privilege — the built-in roles worth knowing, and PIM for the rest
+- [ ] Service Health & Message Center — knowing about the outage before the tickets
+- [ ] Tenant-to-Tenant & Mergers — the migration nobody plans enough time for
+
+**Wave W2 — Exchange Online**
+- [ ] Mail Flow Explained — connectors, transport rules, the path a message actually takes
+- [ ] Mailbox Types — user, shared, room, equipment, and delegation done right
+- [ ] Anti-Spam & Anti-Phish — EOP, Defender for Office, quarantine, safe links/attachments
+- [ ] Message Trace & Header Analysis — proving where a message went, and where it died
+- [ ] Retention, Litigation Hold & Archiving — legal's requirements in mailbox terms
+
+**Wave W3 — SharePoint & OneDrive**
+- [ ] SharePoint Online Architecture — sites, libraries, lists, and the 400-URL trap
+- [ ] Permissions Model — groups, inheritance, sharing links, and why it sprawls
+- [ ] OneDrive Known Folder Move — redirecting Desktop/Documents without user pain
+- [ ] Sync Client Troubleshooting — the top failure modes and their fixes
+- [ ] External Sharing & Guest Access — B2B collaboration without leaking the tenant
+
+**Wave W4 — Teams**
+- [ ] Teams Architecture — what a team really is (M365 group + SharePoint + Exchange + chat)
+- [ ] Teams Policies — meeting, messaging, app and calling policy packages
+- [ ] Teams Voice Basics — Phone System, calling plans, Direct Routing, SIP at a glance
+- [ ] Teams Call Quality Troubleshooting — CQD, network requirements, the real culprits
+- [ ] Governance & Sprawl — naming policy, expiration, the 4,000-team problem
+
+**Wave W5 — Purview, Compliance & Data**
+- [ ] Purview Overview — the compliance surface, mapped to what auditors ask for
+- [ ] Sensitivity Labels & DLP — classification that survives contact with users
+- [ ] Retention Policies vs Retention Labels — the distinction that trips everyone
+- [ ] eDiscovery & Content Search — running a legal hold end to end
+- [ ] Insider Risk & Audit Log — what is recorded, for how long, and how to search it
+
+**Wave W6 — M365 Operations & Troubleshooting**
+- [ ] The PowerShell Modules — Graph, Exchange Online, Teams; connecting and staying connected
+- [ ] Graph API for Admins — batch operations, permissions, throttling
+- [ ] Reporting & Usage Analytics — adoption data that answers a real question
+- [ ] Backup for M365 — why native retention is not a backup
+- [ ] M365 Troubleshooting Playbook — tenant, identity, licence, policy, client: in that order
+
+### TRACK Y — Endpoint Engineering Depth  (→ `endpoint`, 13 → ~55)
+
+~8 waves, ~40 cards. The domain closest to the maintainer's day job, and the
+thinnest on the site. Builds on the MECM troubleshooting cards already shipped.
+
+**Wave Y1 — Intune Deep: Policy**
+- [ ] Configuration Profiles — settings catalog vs templates vs custom OMA-URI
+- [ ] Policy Conflicts — how Intune resolves them, and how to prove which one won
+- [ ] Security Baselines — applying them without breaking the fleet
+- [ ] Administrative Templates in Intune — ADMX-backed policy and its limits
+- [ ] Assignment Strategy — user vs device targeting, filters, exclusion groups
+
+**Wave Y2 — Intune Deep: Applications**
+- [ ] Win32 App Packaging — `.intunewin`, detection, requirements, dependencies, supersedence
+- [ ] Install Contexts — system vs user, and the failures that come from choosing wrong
+- [ ] Store, LOB & Enterprise App Catalog Apps — when each is the right vehicle
+- [ ] App Protection Policies — MAM without enrolment, on unmanaged devices
+- [ ] Application Troubleshooting — reading the IME log like a professional
+
+**Wave Y3 — Windows Servicing & Updates**
+- [ ] Windows Update for Business — rings, deferrals, deadlines, pause
+- [ ] Feature vs Quality vs Driver Updates — three pipelines with three risk profiles
+- [ ] Windows Autopatch — what it takes over, and what it does not
+- [ ] Update Compliance Reporting — proving the fleet is patched
+- [ ] Emergency Patching — an out-of-band CVE, from advisory to verified deployment
+
+**Wave Y4 — Provisioning & Imaging**
+- [ ] Autopilot Deep — profiles, hash harvesting, deployment modes, hybrid vs Entra join
+- [ ] Autopilot Device Preparation — the newer flow, and how it differs
+- [ ] Driver Management — DISM, driver packs, and the Autopilot driver dilemma
+- [ ] Provisioning Packages & Bulk Enrolment — the escape hatch when Autopilot cannot
+- [ ] Reprovisioning & Device Reuse — wipe, fresh start, retire, and what each actually removes
+
+**Wave Y5 — Endpoint Security**
+- [ ] BitLocker at Scale — silent enablement, key escrow, recovery, TPM attestation
+- [ ] Defender for Endpoint & Intune — onboarding, ASR rules, tamper protection
+- [ ] Local Admin Rights — removing them, and the endpoint privilege management options
+- [ ] Windows LAPS — the modern version, in Entra and in AD
+- [ ] Firewall & Removable Media Policy — the two controls auditors always ask about
+
+**Wave Y6 — Compliance & Conditional Access**
+- [ ] Compliance Policies Deep — settings, grace periods, and what "non-compliant" costs a user
+- [ ] Device Trust End to End — enrolment → compliance → CA → resource access
+- [ ] Filters & Dynamic Groups — targeting that scales past a naming convention
+- [ ] Reporting on Drift — finding the devices that quietly stopped complying
+- [ ] The Identity/Endpoint Seam — the failure mode that lands both teams on the same bridge
+
+**Wave Y7 — MECM Beyond Troubleshooting**
+- [ ] MECM Site Design — CAS, primary, secondary, and when each is justified
+- [ ] Boundary Groups Done Right — fallback, relationships, and the classic misconfiguration
+- [ ] Collections & Queries — WQL that does not melt the site server
+- [ ] Co-management Workloads — moving each slider, safely, in order
+- [ ] Retiring MECM — the honest migration path to cloud-only, and what genuinely blocks it
+
+**Wave Y8 — Endpoint Analytics & the Fleet**
+- [ ] Endpoint Analytics — startup score, app reliability, work-from-anywhere metrics
+- [ ] Proactive Remediations — detect-and-fix scripts as a first-class tool
+- [ ] Hardware Lifecycle — refresh planning, warranty, disposal, data destruction
+- [ ] Fleet Reporting — the five numbers leadership actually asks for
+- [ ] Building an Endpoint Runbook — the document that lets someone else take the pager
+
+### TRACK Z — Virtualization, Storage & Backup  (→ `infra`)
+
+~5 waves, ~25 cards. The layer under everything, and the one nobody tests until
+they need it.
+
+**Wave Z1 — Hypervisors**
+- [ ] Virtualization Fundamentals — type 1 vs type 2, paravirtualization, hardware assist
+- [ ] VMware vSphere — ESXi, vCenter, clusters, DRS/HA, the vocabulary
+- [ ] Hyper-V — generations, integration services, checkpoints, Windows-shop realities
+- [ ] Proxmox & KVM — the open-source stack, and where it fits
+- [ ] Sizing & Overcommit — CPU ready, memory ballooning, the noisy-neighbour problem
+
+**Wave Z2 — Virtual Machine Operations**
+- [ ] VM Lifecycle — templates, cloning, sysprep, golden images
+- [ ] Snapshots Are Not Backups — what they cost, and how they bite
+- [ ] Live Migration & Maintenance Mode — patching hosts without an outage
+- [ ] P2V and V2V — the migrations that still happen
+- [ ] Virtualization Troubleshooting — the storage/network/host triage order
+
+**Wave Z3 — Storage**
+- [ ] Storage Fundamentals — block vs file vs object, restated for the datacenter
+- [ ] SAN & Fabric Basics — LUNs, zoning, multipathing, iSCSI vs Fibre Channel
+- [ ] NAS & File Services — SMB/NFS at scale, DFS, quotas, access-based enumeration
+- [ ] Storage Performance — IOPS, throughput, latency, queue depth, and which one is your limit
+- [ ] Storage Tiering & Capacity Planning — forecasting growth before it becomes an incident
+
+**Wave Z4 — Backup & Recovery**
+- [ ] Backup Strategy — 3-2-1-1-0, full/incremental/differential, retention schemes
+- [ ] Backup Targets — disk, tape, cloud, immutable and air-gapped copies
+- [ ] Backup Products in Practice — Veeam and friends: jobs, repositories, proxies
+- [ ] Restore Testing — the drill that turns a backup into a recovery capability
+- [ ] Ransomware-Resilient Backup — immutability, isolation, and assuming the domain is lost
+
+**Wave Z5 — Business Continuity in the Real World**
+- [ ] DR Design — hot/warm/cold, replication, and matching spend to RTO/RPO
+- [ ] Failover & Failback — the half of the runbook everyone forgets to write
+- [ ] Tabletop Exercises — running one that finds real gaps
+- [ ] The Post-Incident Review — blameless, specific, and actually followed up
+- [ ] DR for Cloud & SaaS — what the provider covers, and precisely what it does not
+
+---
+
+## PART 2 — THE OPERATIONAL TRADES
+
+### TRACK AA — Service Desk & IT Service Management  (→ new `itsm` domain)
+
+~5 waves, ~25 cards. The trade most people enter IT through, treated seriously.
+
+**Wave AA1 — The Practices**
+- [ ] ITIL 4 Without the Jargon — the practices that survive contact with a real team
+- [ ] Incident vs Problem vs Change vs Request — the distinction, and why it matters
+- [ ] Priority, Impact & Urgency — building a matrix people actually apply
+- [ ] Service Catalog & Request Fulfilment — turning ad-hoc asks into a repeatable service
+- [ ] Change Enablement — CAB, standard changes, emergency changes, freeze windows
+
+**Wave AA2 — The Ticket Craft**
+- [ ] Writing a Ticket Someone Else Can Solve — the fields that decide resolution time
+- [ ] Triage & Categorization — routing correctly the first time
+- [ ] Escalation — functional vs hierarchical, and how to hand over without losing context
+- [ ] Closing Well — resolution notes, root cause, and the knowledge article that follows
+- [ ] Working a Queue — prioritisation, batching, and not drowning
+
+**Wave AA3 — Talking to Humans**
+- [ ] The First Ninety Seconds — establishing what actually happened
+- [ ] Explaining Technical Things to Non-Technical People — a repeatable method
+- [ ] Difficult Conversations — angry users, VIP pressure, saying no
+- [ ] Remote Support Skills — screen shares, phone-only diagnosis, guiding blind
+- [ ] Writing for Users — emails, outage notices, and status pages people trust
+
+**Wave AA4 — Knowledge & Automation**
+- [ ] Knowledge Management — KCS in practice, and keeping articles from rotting
+- [ ] Self-Service That Works — password reset, software portal, and their adoption traps
+- [ ] Shift-Left — moving fixes from tier 3 toward tier 1 deliberately
+- [ ] Ticket Automation — templates, workflows, and where automation backfires
+- [ ] Asset & Configuration Management — a CMDB that stays true
+
+**Wave AA5 — Running the Function**
+- [ ] Service Desk Metrics — the ones that improve service vs the ones that game it
+- [ ] SLAs, OLAs & Underpinning Contracts — the chain of promises
+- [ ] Capacity & Shift Planning — staffing a queue that has a shape
+- [ ] On-Call Without Burnout — rotations, handovers, escalation policy, comp time
+- [ ] Major Incident Management — commander, comms lead, scribe, and the bridge discipline
+
+### TRACK AB — Vendor Networking, Firewalls & Wireless  (→ `net`)
+
+~5 waves, ~25 cards. Complements Track Q's protocol depth with the kit people
+actually touch. Vendor-specific, deliberately.
+
+**Wave AB1 — Cisco IOS in Practice**
+- [ ] IOS Navigation — modes, `show` commands worth memorising, config archives
+- [ ] Switch Configuration — VLANs, trunks, port security, PortFast/BPDU guard
+- [ ] Router Configuration — interfaces, static and dynamic routing, ACLs
+- [ ] Troubleshooting on IOS — `show interface`, CDP/LLDP, SPAN, debug safely
+- [ ] Config Management & Upgrades — backups, staged upgrades, rollback plan
+
+**Wave AB2 — Enterprise Firewalls**
+- [ ] Firewall Policy Design — zones, rule order, the implicit deny, documentation
+- [ ] Palo Alto Concepts — App-ID, User-ID, security profiles, the commit model
+- [ ] FortiGate Concepts — policies, VDOMs, SD-WAN features, logging
+- [ ] NAT on Firewalls — source/destination NAT, hairpinning, and reading a flow
+- [ ] Firewall Troubleshooting — packet capture, session table, policy lookup order
+
+**Wave AB3 — Wireless Engineering**
+- [ ] RF Fundamentals — channels, width, co-channel interference, cell design
+- [ ] Site Surveys — predictive vs passive vs active, and reading a heat map
+- [ ] Enterprise Wi-Fi Auth — 802.1X, RADIUS, certificates, PSK's remaining niche
+- [ ] Controller vs Cloud-Managed — Meraki/Mist/Aruba models compared
+- [ ] Wireless Troubleshooting — roaming, sticky clients, retries, "it's slow" triage
+
+**Wave AB4 — Network Operations**
+- [ ] Monitoring a Network — SNMP, NetFlow/IPFIX, syslog, streaming telemetry
+- [ ] Change Control for Networks — the discipline that prevents the 2 a.m. outage
+- [ ] Network Documentation — diagrams that stay current, IP plans, cable schedules
+- [ ] Capacity & Utilisation — reading trends before users report slowness
+- [ ] Network Automation Basics — Netmiko/NAPALM/Ansible for network devices
+
+**Wave AB5 — Physical & Field**
+- [ ] Structured Cabling — standards, labelling, patch panel discipline
+- [ ] Rack & Power Planning — U space, PDUs, redundant feeds, airflow
+- [ ] Fiber in Practice — types, connectors, cleaning, loss budgets
+- [ ] Cutover Nights — planning, comms, rollback triggers, go/no-go
+- [ ] Field Toolkit — what to actually carry, and the tests each tool answers
+
+### TRACK AC — Automation for Administrators  (→ `script` + `ops`)
+
+~5 waves, ~25 cards. Scripting aimed at the ops trade rather than at developers.
+
+**Wave AC1 — PowerShell for Real Work**
+- [ ] The Object Pipeline — the thing that makes PowerShell different from Bash
+- [ ] Remoting — WinRM, sessions, `Invoke-Command` fan-out, JEA
+- [ ] Error Handling That Survives Production — try/catch, `-ErrorAction`, transcripts
+- [ ] Writing a Reusable Function — parameters, validation, `-WhatIf`, comment-based help
+- [ ] Modules & Distribution — packaging, signing, and an internal repository
+
+**Wave AC2 — Automating the Estate**
+- [ ] Bulk User & Group Operations — CSV-driven changes with a dry run
+- [ ] Reporting Scripts — from ad-hoc query to scheduled, versioned report
+- [ ] Working With Graph From PowerShell — auth, paging, throttling, permissions
+- [ ] Scheduled Tasks vs Azure Automation vs Functions — where to run the thing
+- [ ] Idempotency for Admins — scripts that are safe to run twice
+
+**Wave AC3 — Configuration as Code, On-Prem**
+- [ ] Ansible for Windows & Linux — inventory, playbooks, idempotent modules
+- [ ] Desired State Configuration — where it still fits
+- [ ] Golden Images as Code — Packer, and versioning what you deploy
+- [ ] Secrets in Automation — vaults, managed identities, and never a plaintext credential
+- [ ] Testing Automation — Pester, dry runs, and a lab that mirrors production
+
+**Wave AC4 — Glue, APIs & Integration**
+- [ ] Consuming REST APIs From Scripts — auth, pagination, retries, backoff
+- [ ] Webhooks & Event-Driven Ops — reacting instead of polling
+- [ ] Power Automate & Logic Apps — the low-code option, and its real limits
+- [ ] CSV, JSON & Excel Wrangling — the daily data shuffling, done cleanly
+- [ ] Building an Internal Tool — when a script deserves a front end
+
+**Wave AC5 — Operational Discipline**
+- [ ] Version Control for Admins — Git for people who do not ship software
+- [ ] Documenting a Script So It Outlives You — the header that saves the next person
+- [ ] Logging & Auditability — what an automation must record to be trusted
+- [ ] Automation Risk — blast radius, approval gates, and the kill switch
+- [ ] From Script to Service — handover, ownership, and retirement
+
+### TRACK AD — Apple, Android & Cross-Platform Endpoint  (→ `endpoint`)
+
+~4 waves, ~20 cards. Fleets are not all Windows; the site currently assumes they are.
+
+**Wave AD1 — macOS Administration**
+- [ ] macOS for Windows Admins — the translation table for every concept
+- [ ] macOS Security Model — Gatekeeper, notarization, TCC, SIP, XProtect
+- [ ] Configuration Profiles — the `.mobileconfig` model and its payloads
+- [ ] macOS Update Management — deferrals, enforcement, and Apple's timing
+- [ ] macOS Troubleshooting — logs, `profiles`, `mdmclient`, and the console
+
+**Wave AD2 — Apple Fleet Management**
+- [ ] Apple Business Manager — ADE, VPP, Managed Apple IDs
+- [ ] Jamf Pro Concepts — smart groups, policies, patch management
+- [ ] Intune for macOS — what it covers, and where it still falls short
+- [ ] Apple Device Enrolment Flows — ADE vs user enrolment vs BYOD
+- [ ] FileVault & Escrow — encryption and recovery keys on Apple hardware
+
+**Wave AD3 — Mobile**
+- [ ] iOS Management — supervised vs unsupervised, the supervision-only capabilities
+- [ ] Android Enterprise — work profile, fully managed, dedicated devices
+- [ ] Mobile App Management Without Enrolment — protecting data on personal phones
+- [ ] Certificates & Wi-Fi/VPN on Mobile — SCEP/PKCS profiles that actually deploy
+- [ ] Mobile Troubleshooting — enrolment failures, push, and the vendor-specific traps
+
+**Wave AD4 — Cross-Platform Reality**
+- [ ] Multi-Platform Policy Design — one intent, four implementations
+- [ ] Linux Desktop Management — the enterprise-Linux endpoint story
+- [ ] ChromeOS in the Enterprise — where it wins, and its management model
+- [ ] Kiosks, Shared & Frontline Devices — shared sign-in, autologin, lockdown
+- [ ] Choosing a UEM — evaluation criteria that are not a vendor feature matrix
+
+---
+
+## PART 3 — SPECIALIST & EMERGING
+
+### TRACK AE — Regulated, OT & Specialist Environments
+
+~4 waves, ~20 cards. Where the generic answer is the wrong answer.
+
+**Wave AE1 — Operational Technology & ICS**
+- [ ] OT vs IT — different priorities, different consequences, different clocks
+- [ ] The Purdue Model — levels, and where the boundaries really sit today
+- [ ] ICS Protocols — Modbus, DNP3, OPC UA and their security assumptions
+- [ ] Securing OT Without Breaking It — passive monitoring, segmentation, patch reality
+- [ ] OT Incident Response — safety first, and why you may not pull the plug
+
+**Wave AE2 — Regulated Industries**
+- [ ] Healthcare IT — HIPAA in operations, clinical systems, medical device gotchas
+- [ ] Financial Services IT — SOX, PCI DSS in practice, change control expectations
+- [ ] Government & Defense IT — CMMC, STIGs, ATO packages, air-gapped realities
+- [ ] Education IT — FERPA, 1:1 device programs, seasonal load, tiny budgets
+- [ ] Legal Hold & Discovery for IT — what "preserve everything" means operationally
+
+**Wave AE3 — Scale Extremes**
+- [ ] IT for Very Small Organisations — one person, no budget, and what to prioritise
+- [ ] IT for the Very Large — federation, delegation, and standardising across business units
+- [ ] MSP Operations — multi-tenant tooling, onboarding, and the support model
+- [ ] Remote & Distributed Workforces — provisioning, support and security without an office
+- [ ] Mergers, Acquisitions & Divestitures — the IT workstream nobody staffs properly
+
+**Wave AE4 — Sustainability, Accessibility & Ethics in Operations**
+- [ ] Green IT — power, cooling, hardware lifespan, and the honest carbon maths
+- [ ] Accessible IT — assistive technology, procurement, and testing your own tools
+- [ ] E-Waste & Secure Disposal — data destruction standards and chain of custody
+- [ ] Surveillance vs Monitoring — where legitimate telemetry becomes something else
+- [ ] Professional Ethics Under Pressure — the situations that actually come up
+
+### TRACK AF — Working With AI as an IT Professional
+
+~4 waves, ~20 cards. Complements Track O (building AI) with *using* AI at work,
+and defending against its misuse.
+
+**Wave AF1 — Using AI Well**
+- [ ] What LLMs Are Good and Bad At — a calibrated mental model for daily work
+- [ ] Prompting for Technical Work — context, constraints, and verification loops
+- [ ] AI-Assisted Scripting — generating, reviewing and testing code you did not write
+- [ ] AI for Log & Error Analysis — where it accelerates triage, where it invents
+- [ ] Verification Discipline — never shipping an unverified AI answer
+
+**Wave AF2 — AI in the Enterprise**
+- [ ] Copilot & Assistant Deployment — licensing, data boundaries, admin controls
+- [ ] Data Governance for AI — what the assistant can see, and oversharing at scale
+- [ ] Shadow AI — discovering it, and giving people a sanctioned path instead
+- [ ] AI Acceptable Use Policy — a policy people will actually follow
+- [ ] Measuring Whether It Helped — beyond vendor-supplied productivity claims
+
+**Wave AF3 — AI-Enabled Attacks & Defence**
+- [ ] AI-Assisted Phishing & Deepfakes — what changed, and what did not
+- [ ] Voice & Video Impersonation — verification procedures that resist it
+- [ ] Prompt Injection Against Your Own Tools — the agent that reads attacker text
+- [ ] Detecting Automated Attacks — behavioural signals that scale
+- [ ] Tabletop: An AI-Assisted Incident — running the exercise
+
+**Wave AF4 — Career Effects**
+- [ ] What AI Changes About IT Roles — honestly, by role, with the parts it cannot do
+- [ ] Skills That Appreciate — judgement, systems thinking, verification, communication
+- [ ] Building AI Into a Workflow — one real workflow, before and after
+- [ ] Interviewing in an AI World — what employers now test for
+- [ ] Staying Current Without Drowning — a sustainable information diet
+
+---
+
+## PART 4 — THE SITE AS A STUDY PLATFORM (engineering, not content)
+
+These change code, not `data/*.html`. Each is a normal commit with a headless
+smoke check; none of them should regress `file://` support.
+
+### TRACK AG — Study Tooling
+
+The study FAB already has **flashcards, an auto-generated quiz, a study list and
+a quick-jump palette**. This track makes them into a system rather than four
+separate toys.
+
+- [ ] **Spaced repetition** — an SM-2-style scheduler over the existing
+  `known:` / `bookmark:` state, so flashcards resurface on a schedule instead of
+  randomly. Store `{id, ease, interval, due}` in `localStorage`; add a "due
+  today" count to the FAB.
+- [ ] **Acronym quiz mode** — generate questions directly from
+  `data/acronyms.json` (expansion → acronym and back). It is the highest-quality
+  question source on the site because the answers are already structured, and
+  the current MCQ generator has to guess distractors from topic titles.
+- [ ] **Better distractors** — pick wrong answers from the *same domain* and,
+  where available, the same subject area, so questions stop being trivially
+  guessable.
+- [ ] **Exam mode** — timed, fixed question count, no feedback until the end,
+  then a scored report broken down by domain with links to the weak topics.
+- [ ] **Learning paths** — an ordered sequence of existing topic IDs
+  (`paths.json`) rendered as a checklist: "Net+ in 30 topics", "First 90 days as
+  a UEM engineer", "SOC analyst starter". Pure data over existing content.
+- [ ] **Progress dashboard** — reviewed / bookmarked / known per domain over
+  time, plus a streak. All from `localStorage`, no backend.
+- [ ] **Export & import progress** — a JSON download and restore, so clearing
+  browser data is not a catastrophe. Also the only realistic cross-device path.
+- [ ] **Per-topic notes** — extend the notepad to attach a note to a topic ID and
+  surface it inline when that topic is open.
+
+### TRACK AH — Findability & Navigation
+
+- [ ] **Acronym-aware search** — expand the query through `acronyms.json` so
+  searching "Unified Endpoint Management" finds UEM cards and vice versa.
+  The data already exists; the search does not use it.
+- [ ] **Expansion density toggle** — a header control for the inline acronym
+  expansions: *always* (today) / *first use per domain* / *hover only* /
+  *off*. Purely a CSS class on `<body>` plus a `localStorage` preference.
+  Addresses the one real cost of the acronym feature — density in tables.
+- [ ] **Related topics** — a small "see also" strip per topic, driven by a
+  hand-curated `related.json` keyed on topic ID, with a script that suggests
+  candidates by shared acronyms and title terms.
+- [ ] **Domain landing cards** — an intro card at the top of each domain: what it
+  covers, who it is for, where to start, what to read next.
+- [ ] **Search operators** — `domain:net`, `badge:beginner`, quoted phrases.
+- [ ] **Recently viewed** — the last ten topics, in the quick-jump palette.
+- [ ] **Deep-link to a card, not just a topic** — anchor IDs on `concept-card`s
+  for precise sharing.
+
+### TRACK AJ — Quality Gates & Tooling
+
+*(No "TRACK AI" — the letters would collide with the AI domain.)*
+
+- [ ] **Markup validator in CI** — parse every `data/*.html` with a real HTML
+  parser and fail on unclosed or stray tags. A one-off parse run showed the
+  markup is currently clean; this keeps it that way.
+- [ ] **Content linter** — enforce `CONTRIBUTING.md` mechanically: every
+  `.topic` has a `.topic-name`, `.topic-chev` (never `topic-chevron`),
+  `ref-table` over `ai-table` for new content, no hard-coded hex colours, no
+  inline `style="color:…"`.
+- [ ] **Duplicate-slug guard** — fail the build if two topics slugify to the same
+  id, since `script.js` silently suffixes them and permalinks shift.
+- [ ] **Accessibility CI** — run axe against the built page; enforce contrast,
+  landmark and `aria-expanded` correctness on the accordions.
+- [ ] **Link & anchor checker** — every `#slug` referenced in prose resolves to a
+  real topic; every external link is alive.
+- [ ] **Performance budget** — fail if `index.html` grows beyond an agreed size
+  without a deliberate bump (it is ~3.2 MB today).
+- [ ] **Visual regression** — headless screenshots of a few representative
+  topics in both themes, diffed on PRs.
+- [ ] **Acronym drift report** — list capitalised tokens appearing in content
+  that are *not* in `acronyms.json`, as a to-do queue for the dictionary.
+
+### TRACK AK — Delivery, Performance & Reach
+
+- [ ] **Lazy domain loading (server build only)** — `index.html` is ~3.2 MB of
+  HTML; every visitor downloads all 20 domains to read one. Emit per-domain
+  fragments plus a shell that fetches on expand, **while keeping the current
+  single-file build for `file://`**. Two outputs from one `build.py`, selected
+  by a flag. This is the single biggest performance win available, and also the
+  riskiest change on this list — it must not break offline or the PWA.
+- [ ] **Print packs** — a print stylesheet variant that outputs one domain, or
+  one learning path, as a clean revision handout.
+- [ ] **Markdown export** — dump any topic or domain as Markdown for notes apps.
+- [ ] **PWA polish** — an update prompt when a new `CACHE_VERSION` is available,
+  and precache the fragments if lazy loading ships.
+- [ ] **Share cards** — generated OG images per domain for link previews.
+- [ ] **Reading time & size hints** — per domain, so a study session can be
+  planned realistically.
+
+---
+
+## Content debt register
+
+Measured, not guessed. None of it is urgent; all of it is cheap to fix while
+touching a file for other reasons.
+
+| Item | Count | Notes |
+|---|---:|---|
+| Topics with no `.topic-name` | 90 | `script.js` falls back to the header's full text, so their slugs include the badge and icon text. Concentrated in the older "Beginner" waves. |
+| Inline `style="…"` attributes | 1,918 | `CONTRIBUTING.md` says use the `c-*` utility classes; the light theme is where this shows. |
+| Hard-coded hex colours in content | 148 | Same problem, worse: these do not track the theme at all. |
+| `ai-table` vs `ref-table` | 361 vs 615 | `CONTRIBUTING.md` prefers `ref-table` for new content; the split is historical. |
+| Old `topo-svg` diagrams | 5 | In `net.html`, hard-coded dark-theme strokes — invisible-ish in light mode. The two new SVGs use theme variables and should be the pattern. |
+| `patches/` | ~1.7 MB | 50+ already-applied one-shot scripts. Archive to a tag or a branch and delete from `main`. |
+| `index.html` | ~3.2 MB | See Track AK. |
+
+**Markup health:** a full parse of every `data/*.html` found **no unclosed or
+stray tags**. Raw `<span` vs `</span>` counts differ only because the formatter
+splits closing tags across lines (`</span\n>`), which is valid — worth knowing
+before someone "fixes" a bug that does not exist.
+
+---
+
+## Suggested execution order (Phase 4)
+
+Interleave with the outstanding Phase-3 tracks; do not block on them.
+
+| Slot | Tracks | Theme | Rough size |
+|---|---|---|---|
+| 58 | AG (spaced repetition, acronym quiz) + AH (acronym-aware search, density toggle) | Make what exists better before adding more | code only |
+| 59–62 | scaffold `infra` + V1–V4 | Windows Server, AD DS, Group Policy, identity ops | ~20 cards |
+| 63–64 | V5–V7 | DNS/DHCP/files, AD CS, server troubleshooting | ~15 cards |
+| 65–68 | Y1–Y4 | Intune policy & apps, servicing, provisioning | ~20 cards |
+| 69–71 | Y5–Y8 | endpoint security, compliance, MECM depth, analytics | ~20 cards |
+| 72–74 | scaffold `m365` + W1–W6 | tenant, Exchange, SharePoint, Teams, Purview, ops | ~30 cards |
+| 75–77 | Z1–Z5 | hypervisors, storage, backup, DR | ~25 cards |
+| 78–79 | scaffold `itsm` + AA1–AA5 | the support trade, done seriously | ~25 cards |
+| 80–82 | AB1–AB5 | Cisco, firewalls, wireless, netops, physical | ~25 cards |
+| 83–84 | AC1–AC5 | PowerShell and automation for admins | ~25 cards |
+| 85–86 | AD1–AD4 | macOS, Apple fleet, mobile, cross-platform | ~20 cards |
+| 87–88 | AE1–AE4, AF1–AF4 | OT/regulated/scale; AI at work | ~40 cards |
+| 89–90 | AJ + AK | quality gates, then lazy loading and print packs | code only |
+
+**Phase 4 total: 10 content tracks, 53 waves, 265 cards, 3 new domains**,
+taking the site from 900 → ~1,165 topics across 23 domains — plus ~29
+engineering items that make those topics easier to find, study and trust.
+
+Combined with the outstanding Phase-3 depth tracks (J–U, ~201 cards), the full
+remaining backlog is **466 cards**.
+
+## Definition of done for a wave
+
+Unchanged from earlier phases, restated so it is in one place:
+
+1. Content lives in `data/{domain}.html` and follows `CONTRIBUTING.md`.
+2. `python3 tools/annotate_acronyms.py` — add any new acronyms to
+   `data/acronyms.json` first, with a `byDomain` override if the term is
+   ambiguous in that domain.
+3. `python3 tools/gen_acronym_domain.py` if the dictionary changed.
+4. `python3 build.py`, then a headless load of `index.html`: zero console
+   errors, the new topic reachable by permalink, search finds it.
+5. One commit per wave, CI green.
+6. Offensive content keeps the authorized-use framing and pairs with detection.
+
+## Ideas considered and deliberately rejected
+
+Recorded so they do not get re-proposed every planning round.
+
+- **A `product` domain** (agile, roadmapping, stakeholder management) — real
+  subject, wrong site. It has no operational surface and would sit unread next
+  to twenty technical domains. The parts that matter to engineers already live
+  in `eng` and `lifestyle`.
+- **A `mobile` app-development domain** — distinct from mobile *device
+  management*, which Track AD covers. App development is a whole career the site
+  does not otherwise touch; adding it would stretch the premise past breaking.
+- **User accounts and a backend** — the site's defining property is that it is
+  static, works from `file://`, and stores nothing about anyone. Cross-device
+  sync is worth wanting, but export/import (Track AG) buys most of the value at
+  none of the cost.
+- **A comments or contributions layer** — moderation burden, no audience for it.
+- **Splitting the acronym dictionary into its own site** — the inline expansions
+  are the feature; separating the data from the content it annotates would
+  remove the reason it works.
+- **Translating the site** — the vocabulary is English-native (every acronym,
+  every certification, every vendor console). Translation would be a permanent
+  maintenance tax on a solo project. Track AK's exports are the pragmatic
+  substitute.
+
+---
+
+# Content & Capability Roadmap — Phase 5: Foundations, Frontiers & the Business of IT (Wave 91+)
+
+> **The layers Phases 1–4 sit on top of, and the ones they stop short of.**
+> Phase 4 covered the estate an operator runs. Phase 5 goes one level *down* —
+> the computer science and mathematics under every domain, and the physical
+> hardware under that — and one level *out* — the frontier technologies arriving
+> now, and the business, leadership and practice layer that decides whether any
+> of it gets funded.
+
+## What is deliberately not here
+
+Checked against existing content before writing, because three of these nearly
+became duplicate tracks:
+
+- **Personal health, productivity systems and personal finance** — already
+  Phase-3 Track S (Waves S1–S3), and `lifestyle` already ships *Burnout*,
+  *Time Management*, *Financial Basics for IT Workers* and *Learning How to
+  Learn*. Phase 5 touches money only at the **organisational** level: budgets,
+  vendors, contracts, TCO.
+- **Technical writing, mentorship and professional ethics as personal skills** —
+  already in `lifestyle`. Track AU is about **enablement as a function**:
+  curricula, labs, workshops, internal training programmes.
+- **Freelance tax mechanics** — Track S3 has it. Track AV is about building and
+  running a *practice*: positioning, scoping, pricing, delivery, client risk.
+
+## Structural decisions
+
+- **New domain `cs` 🧮 "Computer Science & Mathematics"** (Tracks AL, AM). This
+  bends the Phase-4 rule that a domain needs its own tooling and console —
+  theory has neither. It earns the exception because it is the substrate under
+  *every* other domain and belongs to none of them: complexity theory is as
+  relevant to a query plan as to a rate limiter as to a password-cracking
+  estimate. Filing it inside `eng` would bury it from the security and data
+  readers who need it most.
+- **New domain `hw` 🔧 "Hardware, Electronics & Embedded"** (Track AN). Passes
+  the rule cleanly: its own tools (multimeter, logic analyser, soldering iron,
+  POST card), its own job titles (bench tech, field engineer, embedded
+  developer), and easily 30 cards of material.
+  **Migration note:** `linux` already holds A+ hardware cards. Do **not** move
+  them — that would break permalinks and stored progress. Add new material to
+  `hw` and cross-link both ways; revisit consolidation only if `hw` passes ~25
+  cards and the duplication becomes visible.
+- **New domain `biz` 💼 "IT Business, Leadership & Practice"** (Tracks AS–AV).
+  Distinct from `lifestyle` (which is the *individual*) and from `grc` (which is
+  *controls and audit*). This is the money, the people and the practice.
+- **A consequence to plan for:** this takes the site to **26 domains**, and the
+  filter chip bar is already a single scrolling row of 21. Phase 4's Track AH
+  gains one item: **group the chips into categories** — Core IT · Security ·
+  Engineering · Cloud & Infrastructure · Foundations · Human — as a two-tier
+  bar or a grouped dropdown. Ship that *before* the 24th domain, not after.
+
+---
+
+## PART 1 — FOUNDATIONS
+
+### TRACK AL — Computer Science Fundamentals  (→ new `cs` domain)
+
+~7 waves, ~35 cards. The theory that keeps turning up in interviews, incident
+reviews and design arguments — taught for practitioners, not for a degree.
+
+**Wave AL1 — Complexity & Correctness**
+- [ ] Big-O in Practice — what the notation hides, and when constants win
+- [ ] Time vs Space Trade-offs — caching, precomputation, and the memory you pay
+- [ ] Amortized Analysis — why a dynamic array is O(1) "on average"
+- [ ] Recursion & Induction — reasoning about a function that calls itself
+- [ ] P, NP & Why It Matters to You — intractability, approximation, and knowing when to stop
+
+**Wave AL2 — Data Structures From First Principles**
+- [ ] Arrays, Lists & Memory Layout — cache lines, locality, and why arrays win
+- [ ] Hash Tables — hashing, collisions, load factor, and the DoS that exploits them
+- [ ] Trees — BST, balanced trees, tries, heaps, and what each is actually for
+- [ ] Graphs — representations, traversal, shortest path, topological sort
+- [ ] Probabilistic Structures — Bloom filters, HyperLogLog, count-min sketch
+
+**Wave AL3 — Algorithms Worth Knowing**
+- [ ] Sorting & Searching — the classics, and why your language picked the one it did
+- [ ] Divide & Conquer, Greedy, Dynamic Programming — recognising which applies
+- [ ] String Algorithms — matching, edit distance, and where regex fits
+- [ ] Randomised Algorithms — sampling, reservoir sampling, Monte Carlo
+- [ ] Algorithm Interview Patterns — mapped to the site's coding-interview card
+
+**Wave AL4 — Operating System Theory**
+- [ ] Processes, Threads & Scheduling — context switches and what they cost
+- [ ] Virtual Memory — paging, TLB, page faults, and swap's bad reputation
+- [ ] Concurrency Primitives — mutexes, semaphores, condition variables, atomics
+- [ ] Deadlock & Livelock — the four conditions, detection, prevention
+- [ ] Filesystems From the Inside — inodes, journaling, and crash consistency
+
+**Wave AL5 — Computer Architecture**
+- [ ] Instruction Execution — fetch/decode/execute, pipelining, branch prediction
+- [ ] Caches & the Memory Hierarchy — L1 to disk, and the numbers every engineer should know
+- [ ] Speculative Execution & Its Security Cost — Spectre/Meltdown, explained properly
+- [ ] Number Representation — two's complement, IEEE-754, and the bugs each causes
+- [ ] Instruction Sets — x86-64 vs ARM64 vs RISC-V, and why the shift is happening
+
+**Wave AL6 — Languages, Compilers & Runtimes**
+- [ ] How a Compiler Works — lexing, parsing, IR, optimisation, codegen
+- [ ] Interpreters, Bytecode & JIT — the spectrum from Python to the JVM
+- [ ] Type Systems — static/dynamic, strong/weak, inference, and what types buy you
+- [ ] Garbage Collection Deep — mark-sweep, generational, pauses, tuning
+- [ ] Undefined Behaviour & Memory Safety — the class of bug behind most CVEs
+
+**Wave AL7 — Distributed Systems Theory**
+- [ ] Time in Distributed Systems — clocks, causality, Lamport and vector clocks
+- [ ] Consensus — Paxos and Raft, explained without the paper
+- [ ] Consistency Models — linearizable, sequential, causal, eventual
+- [ ] Failure Detection & the FLP Result — why "is it down?" has no perfect answer
+- [ ] Idempotency, Exactly-Once & the Truth — what is actually achievable
+
+### TRACK AM — Mathematics for IT, Security & AI  (→ `cs`)
+
+~5 waves, ~25 cards. Only the mathematics that pays rent, each card anchored to
+a place it already shows up on the site.
+
+**Wave AM1 — Numbers, Logic & Bases**
+- [ ] Binary, Hex & Bit Manipulation — masks, shifts, flags; subnetting revisited
+- [ ] Boolean Algebra — truth tables, De Morgan, and firewall/query logic
+- [ ] Modular Arithmetic — the clock maths behind hashing, checksums and crypto
+- [ ] Sets & Relations — the formal spine of SQL joins and access control
+- [ ] Proof Techniques for Engineers — invariants, contradiction, counterexample
+
+**Wave AM2 — Probability for Defenders**
+- [ ] Probability Fundamentals — independence, conditional probability, expectation
+- [ ] Bayes' Theorem — base rates, and why a 99%-accurate detector still floods the SOC
+- [ ] Distributions That Matter — normal, Poisson, power-law, long tails in latency
+- [ ] Sampling & Confidence — what a percentile really claims, and sample-size sanity
+- [ ] Birthday Paradox & Collisions — hash collisions, GUID reuse, key spaces
+
+**Wave AM3 — Statistics for Operations**
+- [ ] Descriptive vs Inferential — the mistake most dashboards make
+- [ ] Percentiles & Latency — why p99 beats the mean, and how to aggregate it wrongly
+- [ ] Anomaly Detection Maths — z-scores, MAD, seasonality, and false-positive cost
+- [ ] A/B Testing & Significance — power, p-values, and stopping rules
+- [ ] Forecasting Capacity — trend, seasonality, and headroom planning
+
+**Wave AM4 — Mathematics of Cryptography**
+- [ ] Prime Numbers & Factoring — why RSA rests on a hard problem
+- [ ] Discrete Logarithms & Elliptic Curves — the other hard problem, and why keys shrank
+- [ ] Entropy & Randomness — measuring it, and where implementations lose it
+- [ ] Information Theory Basics — Shannon entropy, compression, password strength
+- [ ] Lattices, Gently — the hard problem post-quantum cryptography moved to
+
+**Wave AM5 — Mathematics for Machine Learning**
+- [ ] Vectors & Embeddings — similarity, cosine distance, and what a dimension means
+- [ ] Matrices & Linear Transformations — the operation a GPU spends its life doing
+- [ ] Derivatives & Gradient Descent — how a model actually learns
+- [ ] Loss Functions & Optimisation — what the model is being told to minimise
+- [ ] Dimensionality & the Curse — why high-dimensional intuition fails
+
+### TRACK AN — Hardware, Electronics & Embedded  (→ new `hw` domain)
+
+~6 waves, ~30 cards. The physical layer, from a bench repair to a soldered board.
+
+**Wave AN1 — Electronics Fundamentals**
+- [ ] Voltage, Current & Resistance — Ohm's law with worked IT examples
+- [ ] Power & Thermals — watts, heat, and why the PSU calculation matters
+- [ ] Components — resistors, capacitors, diodes, transistors, and reading a schematic
+- [ ] Signals — analogue vs digital, sampling, noise, grounding
+- [ ] Test Gear — multimeter, oscilloscope, logic analyser: what each answers
+
+**Wave AN2 — PC Hardware Deep**
+- [ ] Motherboard Anatomy — chipsets, lanes, headers, and the block diagram
+- [ ] CPU & Cooling — sockets, TDP, thermal paste, throttling diagnosis
+- [ ] Memory Deep — channels, ranks, timings, ECC, and diagnosing bad RAM
+- [ ] Storage Interfaces — SATA/NVMe/PCIe lanes, and where the bottleneck really is
+- [ ] Power Supplies — rails, efficiency ratings, sizing, and failure symptoms
+
+**Wave AN3 — Diagnosis & Repair**
+- [ ] Systematic Hardware Troubleshooting — isolate, swap, minimum viable system
+- [ ] POST, Beep Codes & Diagnostic LEDs — reading a machine that will not boot
+- [ ] Intermittent Faults — heat, vibration, marginal power, and how to reproduce them
+- [ ] Soldering & Rework — through-hole and SMD basics, and knowing when not to
+- [ ] Data Recovery Triage — when to stop and send it to a lab
+
+**Wave AN4 — Peripherals & the Office Estate**
+- [ ] Displays — panel types, scaling, colour, multi-monitor and docking pitfalls
+- [ ] Printers & MFPs — the technologies, drivers, print servers, and secure release
+- [ ] Docks, USB-C & Thunderbolt — power delivery, alt modes, and the compatibility mess
+- [ ] Input Devices & Accessibility Hardware — switches, trackballs, ergonomic kit
+- [ ] Conference Room Technology — the AV stack, and why it always breaks
+
+**Wave AN5 — Embedded & Single-Board**
+- [ ] Microcontrollers vs SBCs — Arduino vs Raspberry Pi, and choosing correctly
+- [ ] GPIO, I²C, SPI & UART — talking to the physical world
+- [ ] Firmware Basics — bootloaders, flashing, JTAG/SWD, bricking and recovery
+- [ ] Real-Time Constraints — RTOS, determinism, and why Linux is not always right
+- [ ] Home Lab Hardware — a genuinely useful build, at three budgets
+
+**Wave AN6 — Hardware Security**
+- [ ] Hardware Root of Trust — TPM, secure enclaves, measured boot, attestation
+- [ ] Firmware & Supply-Chain Attacks — UEFI implants, Option ROMs, vendor trust
+- [ ] Physical Attacks — evil maid, DMA attacks, cold boot, chip-off forensics
+- [ ] Hardware Hacking Tools — Bus Pirate, logic analysers, JTAG; authorised use only
+- [ ] Defending Physical Access — port control, chassis intrusion, screen locks that hold
+
+---
+
+## PART 2 — FRONTIERS
+
+### TRACK AP — Post-Quantum & Cryptographic Migration  (→ `sec`)
+
+~3 waves, ~15 cards. The migration is live now; "harvest now, decrypt later"
+makes it an operational problem, not a research one.
+
+**Wave AP1 — The Threat & the Standards**
+- [ ] Quantum Computing for Security People — qubits, Shor, Grover, and what actually breaks
+- [ ] Harvest Now, Decrypt Later — which of today's data has a long enough shelf life to care
+- [ ] The NIST PQC Standards — ML-KEM, ML-DSA, SLH-DSA, and what each replaces
+- [ ] Hybrid Key Exchange — running classical and post-quantum side by side
+- [ ] What Does *Not* Break — symmetric crypto, hashes, and the Grover correction
+
+**Wave AP2 — Doing the Migration**
+- [ ] Cryptographic Inventory — finding every place you use crypto, including the forgotten ones
+- [ ] Crypto-Agility — designing so the next algorithm swap is a config change
+- [ ] CBOM — a cryptographic bill of materials, and how it differs from an SBOM
+- [ ] Certificate & PKI Migration — chains, hardware, and the long tail of embedded devices
+- [ ] A Migration Roadmap — sequencing by data lifetime and by system replaceability
+
+**Wave AP3 — Adjacent Cryptography**
+- [ ] Zero-Knowledge Proofs — the concept, and the small number of real IT uses
+- [ ] Homomorphic Encryption — computing on ciphertext, and the current cost
+- [ ] Secure Multi-Party Computation & Threshold Signatures — splitting trust
+- [ ] Confidential Computing — TEEs, enclaves, attestation, and the trust you still extend
+- [ ] Reading a Cryptographic Claim Critically — the marketing tells to distrust
+
+### TRACK AQ — Emerging Platforms & Connectivity  (→ `net` / `ops`)
+
+~4 waves, ~20 cards. Kept deliberately practical: what an operator would have to
+support if the business bought it tomorrow.
+
+**Wave AQ1 — Edge & Distributed Compute**
+- [ ] Edge Computing — what it is once the marketing is removed, and when latency justifies it
+- [ ] CDN Compute & Function-at-Edge — running logic in the POP
+- [ ] Managing Fleets of Edge Devices — updates, drift and observability without a datacenter
+- [ ] Offline-First Design — the constraint edge and field work share
+- [ ] Edge Security — physical exposure, key management, and lateral movement risk
+
+**Wave AQ2 — Modern Connectivity**
+- [ ] 5G for Enterprises — what changed, network slicing, and the realistic use cases
+- [ ] Private Cellular & CBRS — when Wi-Fi is genuinely the wrong tool
+- [ ] Satellite Internet — LEO constellations, latency, and where it fits in a WAN
+- [ ] LPWAN & IoT Radios — LoRaWAN, Zigbee, Thread, Matter; range vs power vs bandwidth
+- [ ] Choosing a Connectivity Mix — a decision table for a distributed site
+
+**Wave AQ3 — Immersive & Spatial**
+- [ ] AR/VR/XR in the Enterprise — training, field service, and the honest adoption record
+- [ ] Managing Headsets — enrolment, updates, hygiene, and the support model
+- [ ] Digital Twins — the useful definition, and the data pipeline behind one
+- [ ] Spatial Data & Privacy — what a room-scanning device actually records
+- [ ] Evaluating a Frontier Pilot — the criteria that stop a demo becoming a commitment
+
+**Wave AQ4 — Automation at the Physical Layer**
+- [ ] Robotics & Warehouse Automation for IT — the systems, the networks, the failure modes
+- [ ] Building Management Systems — HVAC, access, lighting on the corporate network
+- [ ] Smart Buildings & the IoT Attack Surface — segmentation as the primary control
+- [ ] Drones & Field Sensors — data volume, chain of custody, airspace rules
+- [ ] Supporting Non-Standard Devices — the runbook for kit that has no MDM
+
+### TRACK AR — Physical Security, Investigations & Insider Threat  (→ `sec` / `ops`)
+
+~4 waves, ~20 cards. The half of security that is not on the network.
+
+**Wave AR1 — Physical Security Systems**
+- [ ] Access Control Systems — badges, readers, controllers, anti-passback, tailgating
+- [ ] Credential Cloning — why 125 kHz prox is not a control, and what to move to
+- [ ] CCTV & Video Management — retention, coverage, evidentiary quality, privacy limits
+- [ ] Datacenter & Facility Security — layers, mantraps, visitor control, delivery bays
+- [ ] Environmental Controls & Monitoring — power, cooling, water, fire suppression
+
+**Wave AR2 — Insider Threat**
+- [ ] The Insider Threat Model — malicious, negligent, compromised; each needs a different control
+- [ ] Behavioural Indicators — and the ethical line around monitoring people
+- [ ] Separation of Duties & Least Privilege in Practice — beyond the slide
+- [ ] Offboarding as a Security Control — the checklist and its failure modes
+- [ ] Building an Insider Threat Programme — legal, HR and IT together
+
+**Wave AR3 — Investigations**
+- [ ] Running an Internal Investigation — scope, authorisation, and staying in your lane
+- [ ] Evidence Handling — chain of custody, imaging, hashing, contemporaneous notes
+- [ ] Interviewing & Statements — what IT should and absolutely should not do
+- [ ] Working With Legal, HR & Law Enforcement — the handoffs and their timing
+- [ ] Writing an Investigation Report — findings, evidence, limits, no speculation
+
+**Wave AR4 — OSINT & Attack-Surface Discovery (defensive)**
+- [ ] Mapping Your Own Exposure — domains, certificates, cloud, code, people
+- [ ] Credential Exposure Monitoring — breach data, paste sites, and responsible use
+- [ ] Executive & VIP Exposure — data brokers, doxxing risk, protective steps
+- [ ] Brand & Impersonation Monitoring — lookalike domains, fake apps, takedowns
+- [ ] Turning Findings Into Work — from a scary spreadsheet to a prioritised backlog
+
+---
+
+## PART 3 — THE BUSINESS OF IT  (→ new `biz` domain)
+
+### TRACK AS — IT Finance, Vendors & Procurement
+
+~5 waves, ~25 cards. Organisational money, not personal money.
+
+**Wave AS1 — The Money Model**
+- [ ] CapEx vs OpEx — and why the cloud migration changed the conversation
+- [ ] Building an IT Budget — run vs grow vs transform, and defending each line
+- [ ] TCO Modelling — the costs that never appear on the quote
+- [ ] Chargeback & Showback — making consumption visible without starting a war
+- [ ] Business Case Writing — the one-page version an executive will actually read
+
+**Wave AS2 — Buying Well**
+- [ ] Requirements Before Vendors — writing them so the demo cannot dazzle you
+- [ ] RFI / RFP / RFQ — running a fair process that gets a real answer
+- [ ] Evaluating a Vendor — financial health, roadmap, support model, references
+- [ ] Proof of Concept Design — success criteria agreed *before* the trial starts
+- [ ] Negotiation for IT Buyers — timing, leverage, and what is actually discountable
+
+**Wave AS3 — Contracts & Licensing**
+- [ ] Reading a Contract as an Engineer — the clauses that bite operations
+- [ ] SLAs, Credits & What They Are Really Worth — an outage refund is not a control
+- [ ] Software Licensing Models — per-user, per-device, core-based, consumption
+- [ ] Surviving a Licence Audit — preparation, evidence, and the true-up conversation
+- [ ] Exit Clauses & Lock-In — data export, transition assistance, and the migration you will do
+
+**Wave AS4 — Cost Control in Operations**
+- [ ] Cloud FinOps — showback, rightsizing, commitment discounts, anomaly alerts
+- [ ] SaaS Sprawl — discovery, consolidation, and reclaiming unused seats
+- [ ] Hardware Refresh Economics — when replacing beats maintaining
+- [ ] The Cost of Downtime — modelling it credibly enough to fund resilience
+- [ ] Technical Debt as a Financial Argument — translating it into language that funds it
+
+**Wave AS5 — Governance of Spend**
+- [ ] Vendor Risk Management — security review, concentration risk, fourth parties
+- [ ] Asset Management End to End — procure → deploy → maintain → retire → dispose
+- [ ] Portfolio & Prioritisation — deciding what *not* to do, defensibly
+- [ ] Benefits Realisation — checking afterwards whether it did what the case claimed
+- [ ] Reporting to the Board — three slides, no jargon, no surprises
+
+### TRACK AT — Leading Technical Teams
+
+~5 waves, ~25 cards. Complements the individual-contributor ladder in `eng`.
+
+**Wave AT1 — The Transition**
+- [ ] From Engineer to Manager — what you actually stop doing
+- [ ] The First 90 Days Leading a Team — listen, map, stabilise, then change
+- [ ] Delegation — the levels, and why "I'll just do it" is a trap
+- [ ] Your Calendar Is the Strategy — where a manager's time really goes
+- [ ] Keeping Technical Enough — staying credible without taking the work back
+
+**Wave AT2 — People**
+- [ ] One-to-Ones That Are Worth Having — structure, cadence, and what not to use them for
+- [ ] Feedback & Difficult Conversations — specific, timely, and survivable
+- [ ] Performance Management — the honest version, including managing someone out
+- [ ] Career Development for Your Reports — growth plans that are not just promotion
+- [ ] Retention — why good people leave, and the ones you can prevent
+
+**Wave AT3 — Hiring**
+- [ ] Writing a Job Description That Attracts the Right Person
+- [ ] Designing an Interview Loop — signal per hour, and reducing bias
+- [ ] Technical Assessment Without Hazing — realistic tasks, fair scope
+- [ ] Reference Checks & Offers — closing well, and the counter-offer conversation
+- [ ] Onboarding — the 30/60/90 that produces a contributor, not a spectator
+
+**Wave AT4 — Running the Work**
+- [ ] Planning Without Theatre — roadmaps, capacity, and honest estimates
+- [ ] Prioritisation Under Pressure — saying no with a reason attached
+- [ ] Project Management for Technical Leads — the minimum viable process
+- [ ] Managing Incidents as a Leader — comms, decisions, and protecting the responders
+- [ ] Metrics for Engineering Teams — what DORA does and does not tell you
+
+**Wave AT5 — Organisation & Influence**
+- [ ] Team Topologies — stream-aligned, platform, enabling, complicated-subsystem
+- [ ] Conway's Law in Practice — shaping the org to get the architecture you want
+- [ ] Managing Up — giving your leadership what they need to back you
+- [ ] Cross-Team Politics — alliances, escalation, and picking battles
+- [ ] Building a Culture Deliberately — rituals, defaults, and what you tolerate
+
+### TRACK AU — Enablement, Training & Technical Influence
+
+~4 waves, ~20 cards. Teaching as a function, not as a personality trait.
+
+**Wave AU1 — Designing Learning**
+- [ ] How Adults Actually Learn — relevance, practice, feedback, spacing
+- [ ] Curriculum Design — objectives, sequencing, and cutting the nice-to-know
+- [ ] Building a Lab — repeatable, resettable, and cheap enough to keep
+- [ ] Assessment That Means Something — beyond a multiple-choice quiz
+- [ ] Measuring Training — behaviour change, not attendance
+
+**Wave AU2 — Delivering It**
+- [ ] Running a Workshop — pacing, energy, and rescuing the room when it stalls
+- [ ] Live Demos That Do Not Fail — rehearsal, fallbacks, recorded escape hatch
+- [ ] Screencasts & Async Video — scripting, recording, editing, and length discipline
+- [ ] Facilitating a Retrospective or Tabletop — neutrality and the hard question
+- [ ] Teaching a Tool You Just Learned — the honest way to do it
+
+**Wave AU3 — Documentation as Infrastructure**
+- [ ] Documentation Types — tutorial, how-to, reference, explanation (and mixing them up)
+- [ ] Runbooks That Work at 3 a.m. — testable, unambiguous, no missing step
+- [ ] Docs-as-Code — review, versioning, CI checks, and ownership
+- [ ] Keeping Documentation Alive — review triggers, owners, and deleting the dead
+- [ ] Diagrams That Explain — the small number of shapes worth using
+
+**Wave AU4 — Influence Beyond Your Team**
+- [ ] Writing a Proposal People Say Yes To — problem, options, recommendation, cost
+- [ ] Presenting to Executives — the pyramid principle, and the first thirty seconds
+- [ ] Speaking at a Conference — CFP writing, talk structure, rehearsal
+- [ ] Community & Open Source Contribution — what it gives back, realistically
+- [ ] Building an Internal Community of Practice — starting one that survives month three
+
+### TRACK AV — Consulting, Contracting & Independent Practice
+
+~4 waves, ~20 cards. Complements `lifestyle`'s freelance-tax card with the craft
+of running the work.
+
+**Wave AV1 — Positioning**
+- [ ] Consultant vs Contractor vs Staff Augmentation — three different businesses
+- [ ] Choosing a Niche — why specificity wins work
+- [ ] Pricing — hourly, day rate, fixed price, value-based; and their risk profiles
+- [ ] Finding Clients — referrals, partners, content, and the honest cold-outreach maths
+- [ ] The Proposal & Statement of Work — scope, exclusions, acceptance criteria
+
+**Wave AV2 — Delivering**
+- [ ] Discovery — the first two weeks that determine the engagement
+- [ ] Managing Scope — change control without becoming the difficult one
+- [ ] Working Inside Someone Else's Politics — reading the room you were dropped into
+- [ ] Handover & Enablement — leaving a client better, not dependent
+- [ ] The Assessment Report — findings, risk-ranked recommendations, and an owner per item
+
+**Wave AV3 — The Business Side**
+- [ ] Cash Flow & Runway — invoicing, payment terms, and the late-payer problem
+- [ ] Insurance, Liability & Entity Choice — the boring protections that matter
+- [ ] Contracts for Independents — IP, indemnity, non-solicit, limitation of liability
+- [ ] Subcontracting & Partnering — growing past your own hours
+- [ ] Knowing When to Stop — bad clients, bad engagements, exiting cleanly
+
+**Wave AV4 — Specialist Practices**
+- [ ] Running a Security Assessment Engagement — rules of engagement to final debrief
+- [ ] Fractional & Advisory Roles — vCISO, fractional IT director; scope and boundaries
+- [ ] Expert Witness & Forensic Work — standards, impartiality, and report discipline
+- [ ] Training & Workshop Delivery as a Product — packaging what you know
+- [ ] Productising a Service — from bespoke hours to a repeatable offer
+
+---
+
+## PART 4 — SITE: TRUST & LONGEVITY (engineering, not content)
+
+The site is now large enough that its main risk is no longer "too little
+content" — it is **content that quietly goes stale and nobody notices**. Azure AD
+became Entra ID; SCCM became MECM; CASP+ became SecurityX. Every one of those
+renames is already somewhere in `data/`.
+
+### TRACK AX — Content Freshness & Accuracy
+
+- [ ] **Per-topic freshness metadata** — a `reviewed: YYYY-MM` attribute on each
+  `.topic`, surfaced as a quiet badge, and a build report of the oldest 50.
+  Start by stamping everything with its last real commit date via `git log`.
+- [ ] **Volatility tags** — mark topics as *stable* (OSI model, TCP handshake) or
+  *volatile* (vendor consoles, pricing, product names). Only volatile ones need
+  an annual review; stable ones can sit for years. Without this distinction a
+  freshness system just generates guilt.
+- [ ] **Rename/deprecation registry** — a `renames.json` (`Azure AD → Entra ID`,
+  `SCCM → MECM`, `CASP+ → SecurityX`) plus a checker that flags superseded names
+  in new content and suggests the current one. The acronym pipeline already
+  proves this pattern works.
+- [ ] **Link rot check in CI** — external links, on a schedule rather than every
+  PR, reported as an issue rather than a hard failure.
+- [ ] **Fact-anchor comments** — for claims that are version-specific ("six
+  levels of management groups", "93 days of platform metrics"), an HTML comment
+  naming the source, so the next reader can re-verify rather than re-research.
+- [ ] **Per-domain changelog** — an auto-generated "what changed here recently"
+  card at the top of each domain, from git history.
+- [ ] **Contradiction check** — cross-domain grep for the same acronym or metric
+  defined two different ways. This session found three (`CA`, `SPF`, `S3`); a
+  script would find the rest.
+- [ ] **Screenshot-dated warnings** — any card describing a vendor UI gets a
+  "console as of <date>" note, because those age fastest of all.
+
+### TRACK AY — Content Model & Build Evolution
+
+Recorded with trade-offs rather than as a recommendation, because it is the kind
+of change that is easy to start and expensive to abandon.
+
+- [ ] **Evaluate a structured content model** — topics as data (JSON/YAML with
+  typed blocks: prose, table, code, diagram) rendered by `build.py`, instead of
+  hand-written HTML. **For:** mechanical validation, trivial exports (Markdown,
+  print, quiz questions), no more inline-style drift, and every card becomes
+  queryable. **Against:** 900 existing topics to migrate, HTML is currently
+  expressive and easy to hand-edit, and the build becomes a real program.
+  **Decision rule:** only worth it if Tracks AG/AK actually need topic-level
+  structured data — do not do it for tidiness alone.
+- [ ] **Incremental path if that is a yes** — new domains author in the new model
+  and old ones stay HTML; `build.py` handles both. Never a big-bang migration.
+- [ ] **Topic ID stability contract** — write down, in `CONTRIBUTING.md`, that
+  topic slugs are a public interface: renaming a `.topic-name` breaks
+  permalinks and stored progress. Add an alias map so renames are survivable.
+- [ ] **Split `data/script.html`** — at 719 KB and 137 topics it is a third of
+  the content in one file and the hardest to work in. It contains at least three
+  domains' worth of material (shell/regex, languages, web fundamentals).
+  Splitting it into multiple source files that build into the *same* domain
+  keeps every slug intact — `build.py` would concatenate `script.*.html`.
+- [ ] **Build performance & determinism** — the build is fast today; add a
+  guard so it stays reproducible (stable ordering, no timestamps in output).
+- [ ] **Archive `patches/`** — ~1.7 MB of already-applied one-shot scripts. Tag
+  the current commit, then delete them from `main` with the tag recorded in
+  `CONTRIBUTING.md` so the history is recoverable.
+- [ ] **A `make` or `just` entry point** — `just build` running gen → annotate →
+  build → smoke test, so the four-command sequence cannot be half-run. The
+  number of steps is now the most likely source of a stale commit.
+
+---
+
+## Suggested execution order (Phase 5)
+
+Phase 5 assumes Phase 4 is under way but does not depend on it, with one
+exception noted below.
+
+| Slot | Tracks | Theme | Rough size |
+|---|---|---|---|
+| 91 | AH chip grouping + AX freshness metadata | **Do first** — the chip bar breaks before the 24th domain, and freshness metadata is cheapest to add before another 500 topics exist | code only |
+| 92–95 | scaffold `cs` + AL1–AL7 | complexity, data structures, algorithms, OS, architecture, compilers, distributed theory | ~35 cards |
+| 96–97 | AM1–AM5 | the mathematics that pays rent | ~25 cards |
+| 98–100 | scaffold `hw` + AN1–AN6 | electronics, PC hardware, repair, peripherals, embedded, hardware security | ~30 cards |
+| 101–102 | AP1–AP3 | post-quantum migration and adjacent cryptography | ~15 cards |
+| 103–104 | AQ1–AQ4, AR1–AR4 | emerging platforms; physical security and investigations | ~40 cards |
+| 105–107 | scaffold `biz` + AS1–AS5 | IT finance, vendors, contracts, cost control | ~25 cards |
+| 108–110 | AT1–AT5 | leading technical teams | ~25 cards |
+| 111–112 | AU1–AU4, AV1–AV4 | enablement and independent practice | ~40 cards |
+| 113–114 | AX remainder + AY | freshness system, then the content-model decision | code only |
+
+**Phase 5 total: 10 content tracks, 47 waves, 235 cards, 3 new domains**, plus
+15 engineering items.
+
+## Where that leaves the site
+
+| | Topics | Domains |
+|---|---:|---:|
+| Today | 900 | 20 |
+| + Phase 3 outstanding (J–U) | 1,101 | 20 |
+| + Phase 4 | 1,366 | 23 |
+| + Phase 5 | 1,601 | 26 |
+
+**Total remaining backlog across all three phases: 701 cards and 44 engineering
+items.** At one wave (~5 cards) per working session that is roughly 140 sessions
+— which is the point at which the honest advice is: *do not treat this as a
+queue to finish*. Treat it as a menu. Ship the tracks that match what you are
+actually doing at work, because those are the ones you will write well and the
+ones you will keep using.
+
+## Suggested actual priority, if the list is overwhelming
+
+Ignoring track order entirely, these are the six that would most improve the
+site as it stands today:
+
+1. **AH chip grouping + Y1–Y2** — the navigation breaks soon, and `endpoint` is
+   both the thinnest domain and the maintainer's day job.
+2. **AG spaced repetition + acronym quiz** — turns 900 topics of reference into
+   something you revise from, using data that already exists.
+3. **AX freshness metadata** — cheapest now, impossible later.
+4. **V1–V3 (Windows Server, AD DS, Group Policy)** — the largest genuine subject
+   gap on the site.
+5. **AL1–AL3 (complexity, data structures, algorithms)** — the most-requested
+   interview material, and it is nowhere yet.
+6. **AY split of `data/script.html`** — 719 KB in one file is the single biggest
+   drag on actually doing any of the above.
+
+---
+
+# Content & Capability Roadmap — Phase 6: Specialisms, and How This Gets Written (Wave 115+)
+
+> **Two halves, deliberately different in kind.**
+> The first is nine tracks covering the jobs that split off from "security
+> engineer" and "SRE" and became disciplines with their own titles, tooling and
+> interview loops. The second is not a plan at all — it is the **authoring
+> craft, pattern library, risk register and success measures written out now**,
+> because after five phases the constraint on this project is no longer *what to
+> write* (745 open items) but *how to write 745 cards that are worth reading*.
+
+## No new domains
+
+Phases 3–5 added eight domains. Phase 6 adds **none**. Every track here lands in
+an existing domain — `blueteam`, `redteam`, `sec`, `cloud`, `ops`, `eng`, `grc`.
+That is a deliberate correction: 26 domains is already at the edge of what a
+filter bar and a mental model can hold, and every one of these specialisms is
+recognisably a deeper cut of something the site already covers.
+
+---
+
+## PART 1 — SECURITY ENGINEERING SPECIALISMS
+
+### TRACK BA — Detection Engineering  (→ `blueteam`)
+
+~5 waves, ~25 cards. Writing detections as a software discipline, not as a
+tuning exercise in a console. The site has SIEM and EDR cards; it has nothing on
+the craft of building what runs inside them.
+
+**Wave BA1 — The Discipline**
+- [ ] What Detection Engineering Is — and why it split off from SOC analysis
+- [ ] The Detection Lifecycle — idea → hypothesis → logic → test → deploy → tune → retire
+- [ ] Detection Requirements — writing one before writing the rule
+- [ ] The Pyramid of Pain Applied — choosing what to detect on, and its cost to the attacker
+- [ ] Coverage vs Noise — the trade every rule makes, made explicit
+
+**Wave BA2 — Data Before Rules**
+- [ ] Log Source Inventory — knowing what you actually collect, and at what fidelity
+- [ ] Data Normalization — OCSF, ECS, ASIM; why a schema decides your query
+- [ ] Telemetry Gaps — proving a detection cannot fire, before you promise it does
+- [ ] Log Volume & Cost — sampling, filtering, and the detections cost quietly kills
+- [ ] Enrichment — asset, identity and threat context that turns an alert into a decision
+
+**Wave BA3 — Writing Detections**
+- [ ] Sigma as an Interchange Format — writing once, deploying to several backends
+- [ ] Detection-as-Code — Git, review, CI, and versioned rules
+- [ ] Writing a Good Rule — specificity, false-positive analysis, the tuning fields
+- [ ] Behavioural vs Signature Detections — worked examples of both for one technique
+- [ ] Correlation & Sequencing — when a single event genuinely is not enough
+
+**Wave BA4 — Testing Detections**
+- [ ] Unit-Testing a Detection — synthetic events and expected verdicts
+- [ ] Atomic Red Team & Emulation for Validation — proving the rule fires on the real thing
+- [ ] Detection Regression — the rule that silently stopped working after a log change
+- [ ] Measuring Detection Quality — precision, recall, alert-to-incident ratio, time-to-detect
+- [ ] Purple-Team Feedback Loop — closing the gap the exercise found
+
+**Wave BA5 — Running the Programme**
+- [ ] ATT&CK Coverage Mapping — honest heat maps, and the lie of "100% coverage"
+- [ ] Detection Backlog & Prioritisation — threat model in, rules out
+- [ ] Rule Retirement — deleting detections without losing the reason they existed
+- [ ] Documentation for Responders — the runbook that ships *with* the rule
+- [ ] Detection Engineering Interview — what the role is actually assessed on
+
+### TRACK BB — Adversary Emulation & Purple Teaming  (→ `redteam` / `blueteam`)
+
+~4 waves, ~20 cards. Authorized-use framing throughout, and every offensive card
+pairs with the detection it should trigger — the site's existing rule.
+
+**Wave BB1 — Emulation Foundations**
+- [ ] Emulation vs Simulation vs Penetration Testing — three different questions
+- [ ] Building a Threat Profile — picking an adversary that is relevant to *you*
+- [ ] Emulation Plans — CTID plans, and writing your own from intel
+- [ ] Rules of Engagement for Emulation — scope, safety, deconfliction, kill switch
+- [ ] Lab Design for Emulation — a range that is safe to break
+
+**Wave BB2 — Running an Exercise**
+- [ ] Purple Team Mechanics — the room, the roles, the cadence
+- [ ] Technique-by-Technique Execution — run, observe, record, adjust
+- [ ] Detection Gaps in Real Time — the value that only appears when both teams watch together
+- [ ] Evidence Capture — screenshots, timestamps, telemetry references
+- [ ] The Debrief — findings that turn into backlog items, not a scorecard
+
+**Wave BB3 — Automation**
+- [ ] Breach & Attack Simulation Tools — what they do well, and their blind spots
+- [ ] Atomic Testing at Scale — scheduled, safe, continuous validation
+- [ ] CI for Security Controls — treating control efficacy as a test suite
+- [ ] Safe Payloads — proving execution without doing damage
+- [ ] Avoiding Emulation Theatre — when a green dashboard means nothing
+
+**Wave BB4 — Reporting & Value**
+- [ ] Writing the Emulation Report — narrative, timeline, gaps, recommendations
+- [ ] Mapping Findings to Controls & Owners — every gap gets a name and a date
+- [ ] Measuring Programme Improvement Over Time — the metric that survives scrutiny
+- [ ] Communicating Risk to Leadership — without either alarmism or false comfort
+- [ ] Building the Business Case for Purple — funding the second exercise
+
+### TRACK BC — Cloud-Native & Kubernetes Security  (→ `cloud` / `blueteam`)
+
+~5 waves, ~25 cards. The site teaches Kubernetes operationally; this is the
+attack and defence surface.
+
+**Wave BC1 — The Kubernetes Threat Model**
+- [ ] What an Attacker Sees — the control plane, the kubelet, etcd, the workloads
+- [ ] The Four Cs — cloud, cluster, container, code
+- [ ] Kubernetes RBAC Deep — verbs, resources, and the escalation paths people miss
+- [ ] Service Accounts & Token Projection — the credential every pod carries
+- [ ] etcd & Control-Plane Exposure — the game-over surfaces
+
+**Wave BC2 — Workload Hardening**
+- [ ] Pod Security Standards — privileged/baseline/restricted, and enforcing them
+- [ ] Container Breakout Paths — privileged pods, hostPath, hostPID, capabilities
+- [ ] Admission Control — OPA/Gatekeeper and Kyverno, and policy-as-code
+- [ ] Image Security — minimal bases, non-root, read-only filesystems, distroless
+- [ ] Secrets in Kubernetes — why the built-in kind is only base64, and the options
+
+**Wave BC3 — Network & Identity**
+- [ ] Network Policies — default-deny, and why almost nobody has it
+- [ ] Service Mesh Security — mTLS, authorization policy, and the complexity cost
+- [ ] Workload Identity — federating pods to cloud IAM without long-lived keys
+- [ ] Ingress & API Exposure — the gateway as a control point
+- [ ] Multi-Tenancy — namespaces are not a security boundary; what to do instead
+
+**Wave BC4 — Runtime & Detection**
+- [ ] Runtime Security — Falco/Tetragon, eBPF-based detection in the cluster
+- [ ] Audit Logs — what the API server records, and the queries worth saving
+- [ ] Container Forensics — investigating something that no longer exists
+- [ ] Drift & Immutability — detecting a changed container in a declarative world
+- [ ] Incident Response in Kubernetes — isolate, snapshot, evict, and preserve evidence
+
+**Wave BC5 — Serverless & Managed Services**
+- [ ] Serverless Threat Model — event injection, over-permissive roles, cold-start secrets
+- [ ] Managed Service Trust Boundaries — what the provider secures, and precisely what you do
+- [ ] IaC Security Scanning — catching the misconfiguration before it deploys
+- [ ] Cloud Detection Engineering — CloudTrail/Activity Log/Audit Logs as detection sources
+- [ ] Cloud Incident Response — snapshotting, credential revocation, blast-radius containment
+
+### TRACK BD — API & Identity-First Security  (→ `sec` / `web`)
+
+~4 waves, ~20 cards. The perimeter moved to the API and the token; the site's
+coverage has not caught up.
+
+**Wave BD1 — API Security**
+- [ ] OWASP API Top 10 — what differs from the web Top 10, and why
+- [ ] Broken Object-Level Authorization — the single most common real API bug
+- [ ] Authentication vs Authorization at the API — where each belongs
+- [ ] Rate Limiting & Abuse — quotas, burst, and distinguishing abuse from success
+- [ ] API Inventory & Shadow APIs — you cannot protect the endpoint you forgot
+
+**Wave BD2 — Tokens Done Right**
+- [ ] JWT Security — algorithm confusion, `none`, key confusion, expiry, revocation
+- [ ] OAuth 2.1 & PKCE — the flows that remain, and the ones that were removed
+- [ ] Token Lifetime & Revocation — refresh, rotation, and the logout that does not
+- [ ] Machine-to-Machine Auth — client credentials, mTLS, workload identity
+- [ ] Secrets vs Tokens vs Keys — a taxonomy that prevents the wrong control
+
+**Wave BD3 — Identity as the Control Plane**
+- [ ] Identity-First Security — what changes when identity is the perimeter
+- [ ] ITDR — detecting identity attacks: token theft, consent phishing, MFA fatigue
+- [ ] Conditional Access Patterns — a policy set that is coherent rather than accreted
+- [ ] Privileged Access Done Properly — tiering, PAWs, break-glass, JIT elevation
+- [ ] Non-Human Identity — service principals, workload identities, and the sprawl nobody owns
+
+**Wave BD4 — Federation & Third Parties**
+- [ ] SAML & OIDC Attack Surface — golden SAML, signature confusion, reply-URL abuse
+- [ ] SCIM & Provisioning Risk — the integration that quietly holds write access
+- [ ] OAuth Consent Phishing — the attack that needs no password
+- [ ] B2B & Guest Access — external identities without opening the tenant
+- [ ] Third-Party App Governance — reviewing, restricting and revoking app permissions
+
+### TRACK BE — Software Supply Chain & Integrity  (→ `eng` / `sec`)
+
+~4 waves, ~20 cards. The SBOM cards exist; the discipline around them does not.
+
+**Wave BE1 — Understanding the Chain**
+- [ ] Where a Build Actually Comes From — every input, including the ones you forgot
+- [ ] Historic Supply-Chain Attacks — what each one actually exploited
+- [ ] Dependency Risk — transitive depth, typosquatting, abandoned packages
+- [ ] Build System as a Target — the CI runner is production-adjacent
+- [ ] Trust Decisions — pinning, vendoring, mirrors, and their maintenance cost
+
+**Wave BE2 — Provenance & Attestation**
+- [ ] SLSA Levels — what each one actually requires you to change
+- [ ] Signing & Sigstore — keyless signing, transparency logs, verification
+- [ ] Attestations & in-toto — statements about how an artifact was produced
+- [ ] Verifying at Deploy Time — admission policy that refuses unsigned artifacts
+- [ ] Reproducible Builds — the property, the practical obstacles
+
+**Wave BE3 — Operating It**
+- [ ] SBOM in Practice — generating, storing, and actually querying one
+- [ ] VEX — saying "we ship it but are not affected", credibly
+- [ ] Dependency Update Strategy — automated bumps without a broken main branch
+- [ ] Vulnerability Triage for Dependencies — reachability, exploitability, real priority
+- [ ] Responding to a Compromised Dependency — the first hour
+
+**Wave BE4 — Internal Supply Chain**
+- [ ] Securing the CI/CD Pipeline — secrets, runners, forks, and injection via pull request
+- [ ] Artifact Repositories — promotion, retention, immutability, access
+- [ ] Internal Package Registries — and the dependency-confusion class of attack
+- [ ] Golden Images & Base Layer Hygiene — one place to patch, one place to break
+- [ ] Developer Workstation Trust — the machine that signs your commits
+
+### TRACK BF — Privacy Engineering  (→ `grc` / `eng`)
+
+~4 waves, ~20 cards. Distinct from GRC: GRC proves compliance, privacy
+engineering builds systems that do not need much proving.
+
+**Wave BF1 — Privacy as a System Property**
+- [ ] Privacy vs Security — overlapping, not the same, and where they conflict
+- [ ] Data Minimisation — the control that removes whole classes of risk
+- [ ] Purpose Limitation in a Data Warehouse — hard, and why it is usually skipped
+- [ ] Data Inventory & Mapping — knowing where personal data actually flows
+- [ ] Privacy by Design — the seven principles, translated into engineering decisions
+
+**Wave BF2 — Technical Controls**
+- [ ] De-identification — anonymisation vs pseudonymisation, and re-identification risk
+- [ ] Differential Privacy, Practically — the intuition, the epsilon, the trade
+- [ ] Tokenisation & Format-Preserving Encryption — protecting data that must stay usable
+- [ ] Access Control for Personal Data — purpose-bound access and audit
+- [ ] Retention & Deletion That Actually Deletes — backups, replicas, caches, logs
+
+**Wave BF3 — User-Facing Obligations**
+- [ ] DSARs — building a subject-access process that scales
+- [ ] Right to Erasure — the engineering problem behind the legal right
+- [ ] Consent & Preference Management — storing and honouring it across systems
+- [ ] Cookies & Tracking — the technical reality behind the banner
+- [ ] Cross-Border Transfers — the mechanisms, and their architectural consequences
+
+**Wave BF4 — Privacy in New Systems**
+- [ ] Privacy in Machine Learning — training data, memorisation, model inversion
+- [ ] Telemetry Design — useful product analytics that collect less
+- [ ] Third-Party Data Sharing — contracts, technical limits, and verification
+- [ ] Privacy Incident Response — when it is a breach, and the clock that starts
+- [ ] Privacy Review as a Process — lightweight enough that teams use it
+
+---
+
+## PART 2 — PLATFORM & RESILIENCE CRAFT
+
+### TRACK BG — Platform Engineering & the Internal Developer Platform  (→ `eng` / `ops`)
+
+~4 waves, ~20 cards. The discipline that grew out of DevOps once "you build it,
+you run it" met a hundred teams.
+
+**Wave BG1 — The Premise**
+- [ ] Why Platform Engineering Exists — the cognitive-load argument, stated honestly
+- [ ] Platform as a Product — users, roadmap, adoption, and the option to not use it
+- [ ] Golden Paths — paved roads that are genuinely faster than going around
+- [ ] Thinnest Viable Platform — resisting the urge to build a cloud on the cloud
+- [ ] Platform Team Anti-Patterns — the gatekeeper, the ticket queue, the abstraction leak
+
+**Wave BG2 — Building It**
+- [ ] Developer Portals — service catalogue, ownership, scorecards
+- [ ] Self-Service Infrastructure — templates, modules, and guard rails over gates
+- [ ] Environment Management — ephemeral environments, seeding, cost control
+- [ ] Paved-Path CI/CD — a pipeline teams inherit rather than copy
+- [ ] Policy as Code in the Platform — compliance that happens by default
+
+**Wave BG3 — Operating It**
+- [ ] Platform SLOs — the platform is production for its users
+- [ ] Versioning & Migrating Consumers — changing a platform without breaking teams
+- [ ] Support Model — office hours, escalation, and not becoming a help desk
+- [ ] Documentation as the Product Surface — where adoption is actually won or lost
+- [ ] Measuring Platform Success — adoption, lead time, and the counter-metrics
+
+**Wave BG4 — Developer Experience**
+- [ ] Local Development That Matches Production — containers, seeds, fakes
+- [ ] Build & Test Speed as a Feature — the compounding cost of a slow pipeline
+- [ ] Inner vs Outer Loop — where a developer's day actually goes
+- [ ] Onboarding to First Commit — measuring and shortening it
+- [ ] Toil Audits — finding the manual work worth automating, and the work that is not
+
+### TRACK BH — Observability Engineering  (→ `ops`)
+
+~4 waves, ~20 cards. Beyond the monitoring cards: designing for questions you
+have not thought of yet.
+
+**Wave BH1 — Foundations**
+- [ ] Monitoring vs Observability — the distinction that is not just marketing
+- [ ] The Three Signals & Their Costs — metrics, logs, traces; what each is bad at
+- [ ] Cardinality — the concept that decides your observability bill
+- [ ] Structured Events — wide events as an alternative to three separate pipelines
+- [ ] Instrumentation Strategy — what to instrument first in an unfamiliar system
+
+**Wave BH2 — OpenTelemetry in Practice**
+- [ ] OTel Architecture — API, SDK, collector, exporters
+- [ ] Distributed Tracing Deep — spans, context propagation, sampling strategies
+- [ ] Metrics With OTel — instruments, views, and avoiding cardinality explosions
+- [ ] The Collector as a Control Point — filtering, redaction, routing, cost control
+- [ ] Migrating an Existing Stack — incrementally, without a big-bang cutover
+
+**Wave BH3 — Using It**
+- [ ] Debugging With Traces — the workflow that finds an unknown-unknown
+- [ ] Correlating Signals — trace to log to metric, and the IDs that make it possible
+- [ ] Dashboards Worth Keeping — the small number that answer real questions
+- [ ] Alerting on Symptoms, Not Causes — and the pager quality that follows
+- [ ] Observability-Driven Development — shipping instrumentation with the feature
+
+**Wave BH4 — SLOs as a Practice**
+- [ ] Choosing SLIs — the signal that matches the user's experience
+- [ ] Setting an SLO That Survives — negotiated, achievable, and meaningful
+- [ ] Error Budgets & Policy — what actually happens when it is spent
+- [ ] Reporting Reliability — to engineering, and separately to the business
+- [ ] When SLOs Fail — the organisational reasons, not the technical ones
+
+### TRACK BJ — Resilience & Chaos Engineering  (→ `ops` / `eng`)
+
+*(Skipping "BI" — it reads as "B1".)*
+
+~4 waves, ~20 cards.
+
+**Wave BJ1 — Designing for Failure**
+- [ ] Failure Modes & Effects Analysis for Systems — thinking it through before it happens
+- [ ] Blast Radius Design — bulkheads, cells, shuffle sharding
+- [ ] Graceful Degradation — the feature that turns off instead of the site going down
+- [ ] Dependency Failure — timeouts, retries with jitter, circuit breakers revisited
+- [ ] Capacity & Load Shedding — choosing what to drop before you are forced to
+
+**Wave BJ2 — Chaos Engineering**
+- [ ] The Method — steady-state hypothesis, blast radius, abort conditions
+- [ ] Your First Experiment — safe, small, and in production eventually
+- [ ] Fault Injection Techniques — latency, errors, resource exhaustion, dependency loss
+- [ ] GameDays — running one that people volunteer for twice
+- [ ] Chaos Maturity — from an annual exercise to continuous verification
+
+**Wave BJ3 — Incidents as a System**
+- [ ] Incident Command Deep — roles, handovers, and long incidents
+- [ ] Communication During an Incident — internal, customer, and status page discipline
+- [ ] Blameless Postmortems That Change Something — actions with owners and dates
+- [ ] Learning From Near-Misses — the free lessons most organisations throw away
+- [ ] Incident Metrics — what MTTR does and does not tell you
+
+**Wave BJ4 — Human Factors**
+- [ ] Resilience Engineering — the field, and why "human error" is a bad root cause
+- [ ] Alert Fatigue — measuring it, and treating it as a reliability problem
+- [ ] On-Call Health — load, compensation, and the sustainable rotation
+- [ ] Runbook Quality — testing your runbooks the way you test code
+- [ ] Organisational Memory — keeping what was learned after the people leave
+
+---
+
+## PART 3 — WRITTEN NOW, NOT PLANNED
+
+Everything above is a list. This part is the material itself, because the
+binding constraint on this project has changed: there are now 745 planned cards
+and one person. Quality per card matters more than another list.
+
+### The card pattern library
+
+Measured across the 2,014 `.concept-card`s currently on the site (counting the
+markup each card contains, up to the next card boundary):
+
+| Shape | Share | Notes |
+|---|---:|---|
+| Prose only | ~50% | The default, and correctly so |
+| With a table | ~38% | Reference and comparison material |
+| With a code block | ~7% | Commands and syntax |
+| Table + code | ~4% | The heaviest cards; use sparingly |
+| Grid or SVG | ~1% | Diagrams, used rarely |
+
+Nine patterns cover almost everything worth writing. Each has a job; using the
+wrong one is why some cards read as padding.
+
+**1 — Concept card (prose only).** One idea, three to six sentences, no table.
+Use when the reader needs a mental model before any detail. *Failure mode:* a
+concept card that lists things — that is a table wearing prose.
+
+**2 — Reference table.** `Thing | What it is | Worth remembering`. The workhorse.
+*Rule:* always follow it with one sentence of "so what" — the table states
+facts, the sentence states the judgement.
+
+**3 — Comparison table.** `— | Option A | Option B`, rows are dimensions.
+Use when the reader's real question is "which one". *Rule:* include a row for
+how each one *fails*, not only what each one does.
+
+**4 — Decision table.** `Option | Reach for it when`. Shorter than a comparison,
+and better when there are more than three options. See *Four Load Balancers, One
+Right Answer* in `cloud`.
+
+**5 — Error reference.** `Code | What it actually means | First move`. The
+highest-value pattern on the site for operational domains, because it maps the
+thing the reader is staring at to the thing they should do. See the Azure and
+MECM troubleshooting cards.
+
+**6 — Command toolkit.** A `<pre class="code-block">` where every command is
+preceded by a comment saying what question it answers. *Rule:* commands must be
+runnable as written; placeholders in `<angle-brackets>`.
+
+**7 — Artifact map.** `Symptom | Where to look | Log`. The diagnostic companion
+to the error reference — used by both the MECM and Intune troubleshooting cards.
+
+**8 — Staged flow.** Numbered phases with what happens and what can break at
+each. Use for lifecycles: enrolment, boot, a request path, an incident.
+
+**9 — The trap.** A short bolded callout after a table naming the mistake
+everyone makes. `<strong class="c-amber">The gotcha:</strong> …`. This is the
+pattern readers remember, and the one most often missing.
+
+### How to write a card that earns its place
+
+1. **Lead with what it is for**, not what it is or where it came from. History
+   is a sentence, not a paragraph.
+2. **One card, one idea.** If the title needs an "and", it is two cards — unless
+   the "and" is the point (*"Coder vs Programmer"*).
+3. **Every table gets a verdict.** A table without a following judgement sentence
+   makes the reader do work you should have done.
+4. **Name the failure mode.** The card is more useful for saying what breaks than
+   for listing what exists. Vendors write the feature list already.
+5. **No marketing verbs.** *Leverages, empowers, seamlessly, robust* — if a
+   sentence survives deleting them, delete them.
+6. **Numbers need a source or a hedge.** Either cite where a figure comes from,
+   or write "roughly". Precision you cannot defend is worse than an estimate.
+7. **Write for the person mid-incident**, not the person studying on a Sunday.
+   The Sunday reader can follow a card written for 3 a.m.; the reverse is false.
+8. **Code must run.** If it was not executed, mark it as illustrative.
+9. **Assume the acronym pipeline.** Write acronyms plainly; do not hand-write
+   expansions — `tools/annotate_acronyms.py` owns that, and hand-written ones
+   get stripped.
+10. **Cut the card that only exists for completeness.** A domain with 20 good
+    cards beats one with 35 where 15 are filler. This is the hardest rule and
+    the one that most protects the site.
+
+### Project risk register
+
+The realistic threats to this project, in likelihood order. Three are already
+mitigated by work in this repo; the rest are open.
+
+| Risk | Likelihood | Impact | Mitigation | State |
+|---|---|---|---|---|
+| **Content goes stale** — vendor renames, dead consoles, changed limits | High | High | Phase-5 Track AX: freshness metadata, volatility tags, rename registry | Planned |
+| **Scope paralysis** — 745 open items is demotivating rather than motivating | High | Medium | Treat the plan as a menu; the "actual priority" list at the end of Phase 5 | Partly |
+| **Progress data loss** — everything is `localStorage`; clearing the browser wipes it | Medium | Medium | Phase-4 Track AG: export/import | Planned |
+| **Page weight** — `index.html` is 3.2 MB and grows with every wave | Medium | Medium | Phase-4 Track AK: lazy per-domain loading, performance budget in CI | Planned |
+| **Generated-file drift** — `acronym.html` / `index.html` committed stale | Medium | Low | CI already rebuilds and fails on drift; `--check` mode on the annotator | **Mitigated** |
+| **Slug churn** — renaming a topic silently breaks permalinks and progress | Medium | Medium | Phase-5 Track AY: ID stability contract and alias map | Planned |
+| **Accuracy drift** — a confident wrong card is worse than no card | Medium | High | Authoring rule 6; Phase-5 fact-anchor comments | Partly |
+| **Bus factor of one** — one maintainer holds all the context | Medium | High | The plan itself, `CONTRIBUTING.md`, and tooling that encodes conventions | Partly |
+| **Markup rot** — inconsistent classes and inline styles accumulate | Medium | Low | Phase-4 Track AJ content linter | Planned |
+| **Burnout** — a 140-session backlog written by someone with a day job | Medium | High | Ship what matches current work; no deadline; the menu framing | Open |
+| **Hosting/domain lapse** | Low | High | Static site, works from `file://`, in Git — recoverable by design | **Mitigated** |
+| **Tooling single point of failure** — the acronym pipeline is now load-bearing | Low | Medium | Idempotent, `--check` mode, CI-verified, documented in README | **Mitigated** |
+
+### How you would know the site is working
+
+No analytics, by design — so the measures have to be ones you can observe
+directly.
+
+- **The lookup test.** When a real question comes up at work, is the site faster
+  than a web search? If not for a given domain, that domain is decorative.
+- **The onboarding test.** Could you hand a new colleague a domain and a learning
+  path and have them be useful? Track AG's paths make this testable.
+- **Time-to-card.** When something new lands (a rename, a new service, a CVE
+  class), how long until a card exists? Weeks is fine; never is the failure.
+- **Volatile-topic freshness.** Percentage of *volatile* topics reviewed in the
+  last twelve months. Stable topics are excluded deliberately — see Track AX.
+- **Your own usage.** The `reviewed:` and `bookmark:` keys already record it. A
+  dashboard (Track AG) turns that into the most honest signal available: which
+  domains you actually return to.
+- **Build health.** CI green, zero console errors, build reproducible, generated
+  files never stale. Already true; keep it true.
+
+---
+
+## Phase 6 in numbers
+
+| | |
+|---|---|
+| Content tracks | 9 (BA–BJ) |
+| Waves | 38 |
+| Cards | 190 |
+| New domains | **0** |
+| Written now, not planned | Card pattern library · authoring rules · risk register · success measures |
+
+## Cumulative position
+
+| | Topics | Domains |
+|---|---:|---:|
+| Today | 900 | 20 |
+| + Phase 3 outstanding | 1,101 | 20 |
+| + Phase 4 | 1,366 | 23 |
+| + Phase 5 | 1,601 | 26 |
+| + Phase 6 | 1,791 | 26 |
+
+**Total remaining backlog: 891 content cards and 44 engineering items.**
+
+That number is now large enough to be its own risk, which is why it is in the
+register above. The plan is finished; the correct next move is not to plan
+further but to **ship one wave** — and the shortlist for which one is at the end
+of Phase 5.
+
+---
+
+# Execution Handbook — turning 891 cards into shipped work
+
+> **This is not Phase 7.** Phase 6 closed by saying the subject planning is
+> finished and the next move is to ship a wave, and that still holds — another
+> list of card titles would be padding. What the plan genuinely lacks is the
+> layer between "891 items" and "a commit": the ordering constraints, a
+> per-domain view, and at least one wave specified in enough detail that it can
+> be executed without re-deciding anything. That is what this section is.
+
+## 1. Ordering constraints
+
+Most of the backlog can be done in any order. These are the exceptions — the
+places where doing B before A costs real rework.
+
+| Do this first | Before this | Why |
+|---|---|---|
+| **AH — chip grouping** | The 24th domain (`cs`) | The filter bar is one scrolling row of 21 chips today. Three more (`infra`, `m365`, `itsm`) is survivable; six is not. Retrofitting grouping after six new chips means re-testing every chip. |
+| **AX — freshness metadata** | Any large content wave | Stamping ~900 topics from `git log` is one script today. After another 500 topics, the same script runs on 1,400 and the backfill is less accurate because more topics have been touched for unrelated reasons. |
+| **AJ — duplicate-slug guard** | Any wave adding 20+ topics | `script.js` silently suffixes colliding slugs (`-2`), which shifts permalinks. Cheapest to catch at build time, and near-impossible to unpick later. |
+| **AY — split `data/script.html`** | Tracks P and AC (28 cards queued into `script`) | 719 KB in one file is already the hardest place to work. Adding 28 cards first makes the split bigger and riskier. |
+| **AG — export/import progress** | Telling anyone to rely on the study tools | Progress is `localStorage` only. Recommending flashcards before there is a backup path is setting up a data-loss complaint. |
+| **Domain scaffold** | That domain's first wave | `scaffold_domain.py` must run before `data/{id}.html` has content, or `build.py` warns and skips it. |
+| **`data/acronyms.json` entries** | The wave that uses them | The annotator only expands terms it knows. Add the acronym, then write the cards, then run the annotator — in that order. |
+| **AK — performance budget** | AK — lazy loading | Set the budget while the number is still known and defensible (3.15 MB), so the lazy-loading work has a target to hit rather than a vibe. |
+
+Everything else is genuinely parallel. In particular, no content track blocks
+any other content track.
+
+## 2. Per-domain queue
+
+Derived from the plan's own track→domain annotations. "Queued" splits a track's
+cards evenly across the domains it names.
+
+| Domain | Topics now | Queued | After | Tracks targeting it |
+|---|---:|---:|---:|---|
+| `ops` | 68 | 72 | 140 | AC, AQ, AR, BG, BH, BJ |
+| `sec` | 43 | 70 | 113 | J, AP, AR, BD, BE |
+| `endpoint` | 13 | 60 | 73 | Y, AD |
+| `net` | 55 | 50 | 105 | Q, AB, AQ |
+| `blueteam` | 37 | 48 | 85 | BA, BB, BC |
+| `eng` | 36 | 40 | 76 | BE, BF, BG, BJ |
+| `grc` | 28 | 30 | 58 | L, BF |
+| `script` | 137 | 28 | 165 | P, AC |
+| `threat` | 25 | 20 | 45 | K |
+| `ai` | 34 | 20 | 54 | O |
+| `lifestyle` | 59 | 20 | 79 | S |
+| `redteam` | 43 | 20 | 63 | M, BB |
+| `linux` | 56 | 15 | 71 | N |
+| `cloud` | 49 | 12 | 61 | BC |
+| `pentest` | 29 | 10 | 39 | M |
+| `military` | 23 | 10 | 33 | T |
+| `web` | 35 | 10 | 45 | BD |
+| `shortcut` | 37 | **0** | 37 | — |
+| `data` | 40 | **0** | 40 | — |
+| `acronym` | 53 | n/a | — | generated |
+
+Plus five new domains carrying their own tracks: `infra` (V + Z, 60), `m365`
+(W, 30), `itsm` (AA, 25), `cs` (AL + AM, 60), `hw` (AN, 30), and `biz`
+(AS–AV, 90).
+
+**Two findings worth acting on:**
+
+- **`shortcut` and `data` have nothing queued.** Not an oversight to fix by
+  inventing tracks — `data` is genuinely complete at 40 cards (Track H shipped
+  in full), and `shortcut` is a productivity grab-bag that does not need depth.
+  Record them as **done unless something changes**, and stop feeling the gap.
+- **`ops` is the most over-subscribed domain** at 68 → 140. Six tracks point at
+  it because "operations" absorbs anything that is neither pure security nor
+  pure engineering. Before starting BG/BH/BJ, check whether the platform,
+  observability and resilience material would be better as its own domain — the
+  Phase-4 rule (≥15 cards, own tooling, a job title) says yes for all three
+  combined. That decision should be made **before** 72 cards land, not after.
+
+## 3. The first ten sessions
+
+One session ≈ one wave ≈ one commit. This turns the shortlist at the end of
+Phase 5 into something with an order.
+
+| # | Do | Output |
+|---|---|---|
+| 1 | **AH chip grouping** — group the 21 chips into six categories | `index-shell.html` + `style.css`; no content change |
+| 2 | **AX freshness stamp** — script that writes `data-reviewed="YYYY-MM"` on every topic from `git log`, plus an "oldest 50" build report | `tools/stamp_freshness.py`, one-time run committed |
+| 3 | **AJ duplicate-slug guard + markup validator** in CI | `tools/lint_content.py`, wired into `build-check.yml` |
+| 4 | **Wave Y1 — Intune policy** (spec'd in §4 below) | 5 cards in `endpoint` |
+| 5 | **Wave Y2 — Intune applications** | 5 cards in `endpoint` |
+| 6 | **AG-1 spaced repetition** (spec'd in §5) | `script.js` + FAB badge |
+| 7 | **AG-2 acronym quiz mode** — questions generated from `acronyms.json` | `script.js` |
+| 8 | **AH-2 acronym-aware search + density toggle** (spec'd in §6) | `script.js`, `style.css`, `index-shell.html` |
+| 9 | **Wave Y3 — Windows servicing & updates** | 5 cards in `endpoint` |
+| 10 | **AG-3 export/import progress** | `script.js`; closes the data-loss risk |
+
+After ten sessions: `endpoint` has grown 13 → 28, the study tools are a system
+rather than four toys, the navigation survives six more domains, and three of
+the open risks in the register are closed. That is a better position than any
+ten content waves would leave.
+
+## 4. Worked specification — Wave Y1, "Intune Deep: Policy"
+
+Specified to the point where writing it is transcription, not design. Use this
+as the template for spec'ing any other wave.
+
+**Target:** `data/endpoint.html`, appended before `<!-- /domain-body endpoint -->`.
+**Badge:** `Intune • Policy`. **Icon per card:** `⚙️ 🥊 🛡️ 📋 🎯`.
+
+| # | Topic name | Pattern (§ Phase 6) | Must contain | The trap to name |
+|---|---|---|---|---|
+| 1 | Configuration Profiles — Settings Catalog, Templates & Custom | Comparison table | Three-column comparison: settings catalog / template / custom OMA-URI, with rows for *coverage*, *discoverability*, *reporting*, *when it breaks* | Custom OMA-URI has no reporting to speak of — you find out it failed from the device, not the console |
+| 2 | Policy Conflicts — Proving Which One Won | Staged flow + error reference | The resolution order, then a per-device diagnosis path: console conflict report → device `MDMDiagnostics` → registry under `Provisioning` | Two profiles setting the same CSP to different values leaves the setting *unset*, not "last writer wins" |
+| 3 | Security Baselines Without Breaking the Fleet | Decision table | Baseline vs settings-catalog policy vs GPO parity; a staged rollout ring plan; what to exclude on day one | Applying a baseline at 100% is the single fastest way to lock a fleet out of something |
+| 4 | Administrative Templates & ADMX-Backed Policy | Reference table | Which GPO settings exist in Intune, which do not, and the ADMX ingestion path for third-party templates | ADMX-backed policy is not the same surface as the settings catalog; a setting in one may be absent in the other |
+| 5 | Assignment Strategy — Users, Devices, Filters & Exclusions | Decision table + trap | User vs device targeting per policy type; filters vs dynamic groups; exclusion precedence | Exclusion always wins over inclusion — the commonest cause of "the policy is assigned but not applying" |
+
+**Acronyms.** Checked against `data/acronyms.json`: `ADMX`, `OMA-URI`, `CSP`,
+`MDM`, `MAM`, `RBAC`, `ESP`, `GPO`, `IME`, `TPM`, `BYOD` are all present, and
+`CSP`/`ESP` already carry the correct `byDomain` override for `endpoint`.
+**Missing and needed before writing:** `ADML` (Administrative Language file),
+`COPE` (Corporate-Owned, Personally Enabled), `COBO` (Corporate-Owned, Business
+Only), `KFM` (Known Folder Move). Add those four first.
+
+**Sequence:**
+
+```sh
+# 1. acronyms first, or the annotator will not expand them
+$EDITOR data/acronyms.json          # add ADML, COPE, COBO, KFM
+python3 tools/gen_acronym_domain.py
+
+# 2. write the five cards into data/endpoint.html
+
+# 3. annotate, build, verify
+python3 tools/annotate_acronyms.py
+python3 build.py
+python3 -m http.server 8000         # then load and check the console
+```
+
+**Done when:** five topics reachable by permalink, zero console errors, search
+finds each by title and by an expansion (e.g. searching "Configuration Service
+Provider" finds card 2), `tools/annotate_acronyms.py --check` exits 0, and
+`git diff --exit-code -- index.html` is clean after a rebuild.
+
+**Commit message shape:** one line naming the wave, then what each card covers
+and any acronym or tooling change — the pattern used by the Azure/MECM commits.
+
+## 5. Worked specification — AG-1, spaced repetition
+
+The study FAB already has flashcards, a quiz, a study list and a jump palette.
+This adds scheduling, using state that already exists.
+
+**Existing keys** (`script.js`): `reviewed:<id>`, `bookmark:<id>`, `known:<id>`.
+**New key:** `srs:<id>` → `{"e":2.5,"i":1,"d":"2026-08-12","n":0}` — ease,
+interval in days, due date, repetition count.
+
+**Algorithm — SM-2, reduced.** On grading a card *again / hard / good / easy*:
+
+```
+again  → n=0, i=1,            e = max(1.3, e-0.20)
+hard   → n+=1, i = max(1, i*1.2), e = max(1.3, e-0.15)
+good   → n+=1, i = (n==1 ? 1 : n==2 ? 6 : round(i*e))
+easy   → n+=1, i = round(i*e*1.3), e = e+0.15
+due    = today + i days
+```
+
+**Surface area:**
+- Flashcard view gains four grade buttons in place of the current advance.
+- The FAB shows a "due today" count; zero means no badge.
+- The scope selector gains **Due today** alongside All / domain / Bookmarks.
+- A card with no `srs:` entry is treated as new and enters at `n=0`.
+
+**Deliberately not doing:** cross-device sync (see AG export/import), per-card
+statistics beyond the four fields, or replacing the existing random flashcard
+mode — keep it as "browse" and add "review" beside it.
+
+**Done when:** grading four cards and reloading preserves due dates; the badge
+count matches the number of `srs:` entries with `d <= today`; and clearing
+`localStorage` degrades to the current behaviour rather than erroring.
+
+## 6. Worked specification — AH-2, acronym-aware search + density toggle
+
+Two changes that share one data source and should ship together.
+
+**A — acronym-aware search.** `runSearch()` currently matches raw text. Before
+matching, expand the query through the dictionary:
+
+1. At first search, build `Map<lowercased expansion → [acronyms]>` and
+   `Map<acronym → [expansions]>` from the same JSON the annotator uses. The
+   built page already contains every expansion inline, so the map can be built
+   from the DOM (`.acro-exp` spans) with no new fetch — which keeps `file://`
+   working.
+2. If the query matches an acronym, also match its expansions, and vice versa.
+3. Highlight both forms in results.
+
+**Done when:** searching `Unified Endpoint Management` returns the UEM cards,
+searching `UEM` returns them too, and the search still runs under the existing
+debounce with no visible delay on a 3.15 MB page.
+
+**B — expansion density toggle.** A header control writing
+`localStorage["acro-density"]` and a class on `<body>`:
+
+| Mode | Class | Behaviour |
+|---|---|---|
+| Always (default) | — | Current behaviour: bracketed expansion inline |
+| Hover | `acro-hover` | `.acro-exp { display:none }`; shown on `:hover`/`:focus-within` of the parent, and always shown on touch-only via a media query |
+| Off | `acro-off` | `.acro-exp { display:none }` unconditionally |
+
+This is pure CSS plus one preference — no rebuild, no change to the annotator,
+and it directly answers the one real cost of the acronym feature: density inside
+tables.
+
+**Done when:** the setting survives a reload, the dictionary domain is
+unaffected (it has no `.acro-exp` spans), and printing respects the current mode.
+
+## 7. Checklists
+
+These use `☐` rather than task-list checkboxes on purpose: they are reusable,
+and every backlog figure in this file is a tally of unchecked task-list boxes.
+Ticking a checklist should never move the backlog number.
+
+**Ship a content wave**
+
+☐ Any new acronyms added to `data/acronyms.json` first, with `byDomain` set if the term is ambiguous in that domain
+☐ `python3 tools/gen_acronym_domain.py` if the dictionary changed
+☐ Cards follow `CONTRIBUTING.md` and use one of the nine patterns
+☐ Every table followed by a verdict sentence; the trap named where there is one
+☐ `python3 tools/annotate_acronyms.py` then read the diff — check no expansion is wrong for the context
+☐ `python3 build.py`
+☐ Load `index.html`: zero console errors, each new topic reachable by `#slug`, search finds it
+☐ `git diff --exit-code -- index.html` clean after a second build
+☐ One commit, CI green
+
+**Scaffold a new domain**
+
+☐ `python3 scaffold_domain.py <id> <icon> "<title>" "<CHIP>" <chipColor> <accent> "<sub>" ctag-general:TAG`
+☐ Create `data/<id>.html` with at least one topic before building
+☐ Add the chip to its category group (post-AH)
+☐ Add a row to the README domain table
+☐ Confirm the domain accent colour is legible in both themes
+
+**Before calling it a release**
+
+☐ `tools/annotate_acronyms.py --check` exits 0
+☐ `tools/gen_acronym_domain.py` produces no diff
+☐ `build.py` twice produces no diff
+☐ Headless load in both themes, no console errors
+☐ `sw.js` `CACHE_VERSION` bumped if assets changed
+
+## 8. Appendix — subject gaps with no track
+
+Recorded for completeness. None of these justifies a seventh phase; each is a
+card or two folded into an existing track if it ever matters.
+
+| Gap | Where it would go | Verdict |
+|---|---|---|
+| Mainframe & legacy systems (z/OS, COBOL, AS/400) | `infra` | Genuinely uncovered and genuinely still running banks — worth **one card** on why it persists and how it integrates, not a track |
+| Reverse engineering & binary analysis | `redteam` / Track M | Partly implied by malware analysis in Track K; add explicitly to M if it is ever a working need |
+| Accessibility engineering (beyond WCAG basics in `web`) | `web` | Two cards at most: testing with assistive tech, and remediation workflow |
+| Internationalization engineering | `web` | One card; the site itself has rejected translation, so this is for the reader's products |
+| Payments & fintech infrastructure | `data` / `grc` | PCI DSS is already covered; the rest is a niche |
+| Blockchain & distributed ledger | — | **Rejected.** Low operational relevance to this site's readership, and the security angle is already covered by key management |
+| HPC & scientific computing | — | **Rejected.** Different career entirely |
+| Video, streaming & media engineering | — | **Rejected.** Same reason |
+| Technical SEO & web operations | `web` | One card, and only because the site itself has SEO tags |
+
+---
+
+## Closing note
+
+The plan is done. Three phases of subject roadmap, one handbook, and a register
+of what could go wrong. The remaining risk is not that something was left
+unplanned — it is that planning is more comfortable than writing, and this file
+is now 891 unwritten cards long.
+
+**Session one is a two-hour job: group the chips.** Start there.
+
+---
+
+# Execution Handbook, Part 2 — the remaining seven session specs
+
+> §3 above lists ten sessions; §4–6 specified three of them. This specifies the
+> other seven to the same standard, so that every one of the first ten sessions
+> can be started without designing anything first. After this, the plan contains
+> no undesigned work for the next ten commits.
+
+## Session 1 — AH-1, group the filter chips
+
+**Problem.** `.filter-inner` is a single `flex-wrap: nowrap` row inside an
+`overflow-x: auto` bar, holding 21 chips. Three more domains is tolerable; six
+is not.
+
+**Constraint that makes this cheap.** Chips are handled by delegation on
+`.filter-bar` (`e.target.closest(".chip")`), and `filter()` only reads
+`chip.dataset.domain` and toggles `.hidden` on `.domain-section`. **Neither
+function needs to change** — grouping is a markup and CSS job as long as every
+chip keeps its class and `data-domain`.
+
+**Design.** Wrap chips in labelled groups inside `.filter-inner`:
+
+```html
+<div class="chip-group" data-group="core">
+  <span class="chip-group-label">Core IT</span>
+  <div class="chip c-net" data-domain="net">🌐 NETWORKING</div>
+  …
+</div>
+```
+
+Six groups, mapping every current and planned domain:
+
+| Group | Domains |
+|---|---|
+| Core IT | `net`, `linux`, `endpoint`, `shortcut`, *`infra`*, *`m365`*, *`itsm`*, *`hw`* |
+| Security | `sec`, `threat`, `grc`, `ops`, `pentest`, `redteam`, `blueteam` |
+| Engineering | `eng`, `script`, `web`, `data`, `ai` |
+| Cloud | `cloud` |
+| Foundations | `acronym`, *`cs`* |
+| Human | `lifestyle`, `military`, *`biz`* |
+
+(*italic* = planned, not yet scaffolded.)
+
+**CSS.** `.filter-inner` becomes `flex-wrap: wrap` with `row-gap: 10px`;
+`.chip-group` is a flex row with its own `gap: 6px` and a small uppercase
+`--muted` label. Below 720 px, collapse to a `<details>` per group so the bar
+stays one or two rows on a phone. `ALL DOMAINS` stays outside any group, first.
+
+**Accessibility.** Give each group `role="group"` and
+`aria-label="<group name> domains"`. The chips are already reachable; do not
+change their tab order.
+
+**Done when:** every chip still filters, the active state still moves, the bar
+is at most two rows at 1280 px and collapsed on mobile, and adding a new chip
+means editing one group rather than the whole row.
+
+## Session 2 — AX-1, stamp topic freshness from git history
+
+**Goal.** `data-reviewed="YYYY-MM"` on every `.topic`, plus a report of the
+oldest volatile ones.
+
+**The trap that makes a naive version wrong.** `git blame` returns the last
+commit that touched each line — and mechanical passes touch nearly every line.
+The acronym annotation in this repo modified 2,388 lines across 19 files in one
+commit. Blaming naively would report the entire site as freshly reviewed, which
+is worse than no metadata at all.
+
+**Fix.** Use git's own mechanism:
+
+```sh
+# .git-blame-ignore-revs — mechanical commits only, one SHA per line with a comment
+<sha>   # bulk acronym annotation
+<sha>   # formatter pass
+git blame --line-porcelain --ignore-revs-file=.git-blame-ignore-revs -- data/net.html
+```
+
+Also set `blame.ignoreRevsFile` in `.git/config` locally so interactive blame
+agrees with the tool.
+
+**Algorithm (`tools/stamp_freshness.py`).**
+
+1. For each `data/*.html` except `acronym.html`, blame once and build
+   `line → author-time`.
+2. Split the file on `<div class="topic">` to get each topic's line range.
+3. `reviewed = max(author-time in range)` → format `YYYY-MM`.
+4. Rewrite the opening tag as `<div class="topic" data-reviewed="2026-08">`.
+5. Idempotent: strip any existing `data-reviewed` first, exactly as the
+   annotator strips its own spans.
+
+**Volatility.** Add `data-volatile="true"` only where it is true. Seed the
+candidate list by keyword — *Intune, MECM, Entra, portal, console, pricing,
+licence, tier, SKU, version* — and print it for a human to confirm. Do **not**
+auto-apply: a wrong volatility tag either creates noise or hides staleness.
+
+**Report (`tools/freshness_report.py`).** Oldest 50 topics that are
+`data-volatile="true"`, with domain, title and age in months. Stable topics are
+excluded by design — see the Phase-5 rationale.
+
+**Surfacing it.** A quiet `.topic-age` badge on topics older than 18 months,
+volatile only, hidden in print. Optional; the report alone earns the session.
+
+**Done when:** running the stamper twice produces no diff, no topic is marked
+fresh purely because of a mechanical commit, and the report names topics you
+recognise as genuinely stale.
+
+## Session 3 — AJ-1, content linter and duplicate-slug guard
+
+**One script, `tools/lint_content.py`, exit non-zero on error.**
+
+| Check | Level | Rule |
+|---|---|---|
+| Markup well-formed | error | Parse each `data/*.html` with `html.parser`; no unclosed or stray tags |
+| Duplicate slugs | error | Two topics slugifying to the same id |
+| Missing `.topic-name` | warn | 90 today; do not fail the build, report the count so it trends down |
+| `topic-chevron` | error | The banned variant from `CONTRIBUTING.md` |
+| Hand-written `.acro-exp` | error | That class belongs to the annotator |
+| Hard-coded hex colour | warn | 148 today; breaks the light theme |
+| Inline `style="color:…"` | warn | Use the `c-*` utility classes |
+| `ai-table` in a changed file | warn | Prefer `ref-table` for new content |
+
+**Replicating the slug exactly.** `script.js` uses:
+
+```js
+s.toLowerCase().replace(/[^\w\s-]/g,"").trim()
+ .replace(/[\s_]+/g,"-").replace(/-+/g,"-").slice(0,60) || "topic"
+```
+
+In JavaScript `\w` is ASCII-only. Python's `\w` is Unicode-aware by default, so
+a naive port keeps accented characters the browser would strip and the two
+disagree. **Pass `flags=re.ASCII`.** Titles are ASCII today, so the bug would
+lie dormant until the first topic with an accent — exactly the kind of drift a
+guard exists to prevent.
+
+Uniqueness must be computed the same way too: `script.js` walks
+`.domain-section` in document order and suffixes collisions `-2`, `-3`. The
+linter should report the *pair*, not just the duplicate.
+
+**Wire into CI** after the existing acronym checks in `build-check.yml`.
+
+**Done when:** the linter passes on `main` as it stands, deliberately breaking
+one rule in a scratch commit fails CI, and the warn counts are printed as a
+single summary line so they can be tracked over time.
+
+## Session 5 — Wave Y2, "Intune Deep: Applications"
+
+**Target:** `data/endpoint.html`. **Badge:** `Intune • Apps`.
+
+| # | Topic name | Pattern | Must contain | The trap to name |
+|---|---|---|---|---|
+| 1 | Win32 App Packaging — `.intunewin` End to End | Staged flow + command toolkit | Content prep tool → upload → install/uninstall commands → detection → requirements → dependencies → supersedence | Supersedence and dependencies are evaluated per-device at assignment time; a loop between two apps stalls both silently |
+| 2 | Install Contexts — System vs User | Comparison table | Which context each install type runs in, where each writes, and how detection differs per context | A user-context app assigned to a device group installs for whoever happens to log in first — and reports success for the device |
+| 3 | Store, LOB & Enterprise App Catalog Apps | Decision table | Five delivery vehicles with update ownership, offline capability and version pinning per row | Store apps update themselves; if you need a pinned version, Win32 is the only honest choice |
+| 4 | App Protection Policies — MAM Without Enrolment | Reference table + trap | Protected app list, data-transfer rules, conditional launch, wipe scope | App protection only covers apps that are MAM-aware; a PDF opened in an unmanaged viewer leaves the boundary |
+| 5 | Application Troubleshooting — Reading the IME Log | Artifact map + error reference | `IntuneManagementExtension.log` and `AgentExecutor.log`; the detection-vs-enforcement split; the error codes from the MECM card that also apply here | Exit code 0 with "not detected" is always the detection rule, never the installer — the same trap as MECM, worth repeating here |
+
+**Acronyms:** `IME`, `LOB`, `MAM`, `MSI`, `PKG` present. **Check before
+writing:** `MSIX` (present), and add `PSADT` (PowerShell App Deployment Toolkit)
+if it is mentioned.
+
+**Cross-link:** card 5 should reference the MECM deployment-troubleshooting
+topic rather than restating it — same failure, two consoles.
+
+## Session 7 — AG-2, acronym quiz mode
+
+**Why this one is worth a session.** The existing quiz generates multiple-choice
+questions from topic titles and has to invent distractors. `acronyms.json` is
+1,021 entries of structured question/answer pairs that already exist.
+
+**Question types.**
+
+| Type | Prompt | Answer | Distractors |
+|---|---|---|---|
+| Expand | "UEM stands for…" | `annotate` or `m[0].e` | Three expansions from the **same subject area** |
+| Contract | "Which acronym means *Unified Endpoint Management*?" | `a` | Three acronyms of similar length from the same area |
+| Disambiguate | "In a networking context, MAC means…" | The `byDomain` value | The entry's other meanings |
+
+**Rules that keep it fair.**
+- Only the *disambiguate* type may use multi-meaning entries; the other two
+  skip anything with `m.length > 1`, or accept any listed meaning.
+- Distractors must come from the same `c` (subject area) — otherwise "which of
+  these is a storage term" gives it away.
+- Never use two acronyms in one question that differ only by case (`IoC` /
+  `IOC`) — that is a typography test, not knowledge.
+- Entries flagged `noAnnotate` are still fair game: they are ambiguous in prose,
+  not unknowable.
+
+**Data source.** Read `acronyms.json` at build time and emit it as a
+`<script type="application/json" id="acronym-data">` block in `index.html`, so
+the quiz works over `file://` with no fetch. That block is also what Session 8's
+acronym-aware search should consume — build it here, use it twice.
+
+**Done when:** 20 questions generate with no repeats, every distractor is
+plausible, and the scope selector can limit to one subject area.
+
+## Session 9 — Wave Y3, "Windows Servicing & Updates"
+
+**Target:** `data/endpoint.html`. **Badge:** `Intune • Servicing`.
+
+| # | Topic name | Pattern | Must contain | The trap to name |
+|---|---|---|---|---|
+| 1 | Windows Update for Business — Rings, Deferrals & Deadlines | Staged flow | A four-ring model with population, deferral, deadline and grace period per ring | A deadline with no grace period reboots people mid-meeting; the grace period is the control that decides whether users trust you |
+| 2 | Feature vs Quality vs Driver Updates | Comparison table | Cadence, risk, rollback window and control surface for each of the three pipelines | They are three independent pipelines — pausing quality updates does not pause drivers |
+| 3 | Windows Autopatch — What It Takes Over | Decision table | What Autopatch owns, what stays yours, prerequisites, and the exit path | It manages the rings for you, which means your carefully built rings stop being the source of truth |
+| 4 | Update Compliance Reporting | Artifact map | Where the truth lives: Intune reports, Update Compliance, and the device's own history | "Not applicable" and "unknown" are not the same as compliant, and most dashboards blur them |
+| 5 | Emergency Patching — Advisory to Verified | Staged flow + checklist | Triage the CVE, pick the vehicle, ring-skip criteria, verification query, and the comms | Skipping rings for a genuine emergency is correct; skipping *verification* never is |
+
+**Acronyms:** `WUfB`, `CVE`, `KEV`, `SLA` all present. Add `LCU` (Latest
+Cumulative Update) and `SSU` (Servicing Stack Update) before writing.
+
+## Session 10 — AG-3, export and import progress
+
+**Goal.** Close the "progress data loss" risk in the register, and give the only
+realistic cross-device path without a backend.
+
+**Shape.**
+
+```json
+{
+  "format": "techref-progress",
+  "version": 1,
+  "exported": "2026-08-05T12:00:00Z",
+  "counts": { "reviewed": 128, "bookmark": 34, "known": 71, "srs": 71 },
+  "data": {
+    "reviewed:aaa-framework": "1",
+    "bookmark:azure-troubleshooting-playbook": "1",
+    "srs:uem-engineer": { "e": 2.5, "i": 6, "d": "2026-08-19", "n": 3 }
+  }
+}
+```
+
+**Export.** Collect keys with the known prefixes plus the notepad key. Download
+as `techref-progress-YYYY-MM-DD.json` via a Blob URL — no network, works over
+`file://`.
+
+**Import.** Three explicit modes, chosen in the dialog:
+
+| Mode | Behaviour |
+|---|---|
+| Merge (default) | Union of keys; for `srs:` entries present in both, keep the **later** due date so nothing is re-surfaced unexpectedly |
+| Replace | Clear the known prefixes first, then write the file |
+| Preview | Show counts per category and what would change, write nothing |
+
+**Guard rails.** Validate `format` and `version` before touching anything;
+refuse unknown versions rather than guessing. Ignore any key that does not match
+a known prefix — an imported file must not be able to write arbitrary
+`localStorage`. Show the counts and require a confirm click.
+
+**Done when:** export → clear site data → import restores every counter exactly;
+merge on a device with existing progress loses nothing; and a hand-edited file
+with a bad version is rejected with a readable message.
+
+---
+
+## After these ten
+
+Every remaining item in this file is a card title or a one-line engineering
+idea, and that is the correct level of detail for work that is months away.
+Specifying further now would be planning for its own sake — the specs above
+exist because they are *next*, not because specs are inherently valuable.
+
+The rule to carry forward: **spec one session ahead, not ten.** When session 10
+is done, spec session 11 from whichever track matches the work in front of you,
+using §4 as the template.
