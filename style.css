@@ -183,9 +183,46 @@ header p {
 }
 .filter-inner {
   display: flex;
-  gap: 8px;
-  flex-wrap: nowrap;
-  min-width: max-content;
+  align-items: flex-start;
+  gap: 8px 18px;
+  flex-wrap: wrap;
+}
+
+/* ── Chip groups ───────────────────────────────────────────────────────────
+   The bar held 21 chips in one nowrap row and the roadmap adds six more
+   domains. Chips keep their class and data-domain, so filter() and the
+   delegated click handler are untouched — this is markup and CSS only. */
+.chip-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 10px;
+  border-left: 1px solid var(--border);
+}
+
+.chip-group-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  padding-right: 2px;
+  user-select: none;
+}
+
+/* On a phone the bar is sticky, so height matters more than scanability:
+   fall back to the original single scrolling row, with the group labels
+   acting as inline signposts while you swipe. */
+@media (max-width: 900px) {
+  .filter-bar { padding: 10px 14px; }
+  .filter-inner {
+    flex-wrap: nowrap;
+    min-width: max-content;
+    gap: 6px;
+    align-items: center;
+  }
+  .chip-group { flex-wrap: nowrap; }
 }
 
 .chip {
