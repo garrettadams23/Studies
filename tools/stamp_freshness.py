@@ -42,7 +42,12 @@ EXCLUDE = {"acronym.html"}
 
 TOPIC_OPEN_RE = re.compile(r'<div class="topic"((?:\s+[^>]*?)?)>')
 REVIEWED_ATTR_RE = re.compile(r'\s+data-reviewed="\d{4}-\d{2}"')
-ACRO_SPAN_RE = re.compile(r'\s*<span class="acro-exp">\([^<]*?\)</span>')
+ACRO_SPAN_RE = re.compile(r'\s*<span class="acro-exp">\([^<]*?\)</span\s*>')
+
+# Prettier splits tags across lines — `<span class="topic-name"\n  >` and
+# `</span\n>` are both valid and both appear in data/*.html. Every pattern that
+# matches markup here has to tolerate that, or it silently under-reports.
+TOPIC_NAME_RE = re.compile(r'<span\b[^>]*class="topic-name"[^>]*>(.*?)</span\s*>', re.S)
 
 # Terms that mark a topic as tracking something that moves: vendor consoles,
 # product names, prices, versions. Only these need periodic review — the OSI
@@ -182,7 +187,7 @@ def report(limit=50):
             # nested `.acro-exp` span, so a non-greedy match would otherwise stop
             # at the inner closing tag and keep the expansion text.
             plain = ACRO_SPAN_RE.sub("", head)
-            name = re.search(r'<span class="topic-name">(.*?)</span>', plain, re.S)
+            name = TOPIC_NAME_RE.search(plain)
             if name:
                 name = unescape(re.sub(r"<[^>]+>|\s+", " ", name.group(1))).strip()
             else:
