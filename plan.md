@@ -27,6 +27,7 @@ jump to what you need:
 | **Phase 4 — The Enterprise Estate & the Study Platform** (Tracks V–AK) | Windows Server, M365, endpoint depth, virtualization, ITSM, vendor networking, automation, Apple/mobile, OT/regulated, AI at work + study tooling | ⬜ planned |
 | **Phase 5 — Foundations, Frontiers & the Business of IT** (Tracks AL–AY) | CS & mathematics, hardware/embedded, post-quantum, emerging platforms, physical security, IT finance, leadership, enablement, consulting + content-trust tooling | ⬜ planned |
 | **Phase 6 — Specialisms, and How This Gets Written** (Tracks BA–BJ) | Detection engineering, purple teaming, Kubernetes security, API/identity security, supply chain, privacy engineering, platform engineering, observability, resilience — **plus the card pattern library, authoring rules, risk register and success measures, written out rather than planned** | ⬜ planned |
+| **Execution Handbook** | Ordering constraints, per-domain queue, a concrete first-ten-sessions schedule, three waves specified to the point of transcription, and reusable checklists | 📘 reference |
 
 **Remaining backlog: 891 content cards and 44 engineering items** across
 Phases 3–6, which would take the site from 900 topics / 20 domains to roughly
@@ -3004,3 +3005,277 @@ That number is now large enough to be its own risk, which is why it is in the
 register above. The plan is finished; the correct next move is not to plan
 further but to **ship one wave** — and the shortlist for which one is at the end
 of Phase 5.
+
+---
+
+# Execution Handbook — turning 891 cards into shipped work
+
+> **This is not Phase 7.** Phase 6 closed by saying the subject planning is
+> finished and the next move is to ship a wave, and that still holds — another
+> list of card titles would be padding. What the plan genuinely lacks is the
+> layer between "891 items" and "a commit": the ordering constraints, a
+> per-domain view, and at least one wave specified in enough detail that it can
+> be executed without re-deciding anything. That is what this section is.
+
+## 1. Ordering constraints
+
+Most of the backlog can be done in any order. These are the exceptions — the
+places where doing B before A costs real rework.
+
+| Do this first | Before this | Why |
+|---|---|---|
+| **AH — chip grouping** | The 24th domain (`cs`) | The filter bar is one scrolling row of 21 chips today. Three more (`infra`, `m365`, `itsm`) is survivable; six is not. Retrofitting grouping after six new chips means re-testing every chip. |
+| **AX — freshness metadata** | Any large content wave | Stamping ~900 topics from `git log` is one script today. After another 500 topics, the same script runs on 1,400 and the backfill is less accurate because more topics have been touched for unrelated reasons. |
+| **AJ — duplicate-slug guard** | Any wave adding 20+ topics | `script.js` silently suffixes colliding slugs (`-2`), which shifts permalinks. Cheapest to catch at build time, and near-impossible to unpick later. |
+| **AY — split `data/script.html`** | Tracks P and AC (28 cards queued into `script`) | 719 KB in one file is already the hardest place to work. Adding 28 cards first makes the split bigger and riskier. |
+| **AG — export/import progress** | Telling anyone to rely on the study tools | Progress is `localStorage` only. Recommending flashcards before there is a backup path is setting up a data-loss complaint. |
+| **Domain scaffold** | That domain's first wave | `scaffold_domain.py` must run before `data/{id}.html` has content, or `build.py` warns and skips it. |
+| **`data/acronyms.json` entries** | The wave that uses them | The annotator only expands terms it knows. Add the acronym, then write the cards, then run the annotator — in that order. |
+| **AK — performance budget** | AK — lazy loading | Set the budget while the number is still known and defensible (3.15 MB), so the lazy-loading work has a target to hit rather than a vibe. |
+
+Everything else is genuinely parallel. In particular, no content track blocks
+any other content track.
+
+## 2. Per-domain queue
+
+Derived from the plan's own track→domain annotations. "Queued" splits a track's
+cards evenly across the domains it names.
+
+| Domain | Topics now | Queued | After | Tracks targeting it |
+|---|---:|---:|---:|---|
+| `ops` | 68 | 72 | 140 | AC, AQ, AR, BG, BH, BJ |
+| `sec` | 43 | 70 | 113 | J, AP, AR, BD, BE |
+| `endpoint` | 13 | 60 | 73 | Y, AD |
+| `net` | 55 | 50 | 105 | Q, AB, AQ |
+| `blueteam` | 37 | 48 | 85 | BA, BB, BC |
+| `eng` | 36 | 40 | 76 | BE, BF, BG, BJ |
+| `grc` | 28 | 30 | 58 | L, BF |
+| `script` | 137 | 28 | 165 | P, AC |
+| `threat` | 25 | 20 | 45 | K |
+| `ai` | 34 | 20 | 54 | O |
+| `lifestyle` | 59 | 20 | 79 | S |
+| `redteam` | 43 | 20 | 63 | M, BB |
+| `linux` | 56 | 15 | 71 | N |
+| `cloud` | 49 | 12 | 61 | BC |
+| `pentest` | 29 | 10 | 39 | M |
+| `military` | 23 | 10 | 33 | T |
+| `web` | 35 | 10 | 45 | BD |
+| `shortcut` | 37 | **0** | 37 | — |
+| `data` | 40 | **0** | 40 | — |
+| `acronym` | 53 | n/a | — | generated |
+
+Plus five new domains carrying their own tracks: `infra` (V + Z, 60), `m365`
+(W, 30), `itsm` (AA, 25), `cs` (AL + AM, 60), `hw` (AN, 30), and `biz`
+(AS–AV, 90).
+
+**Two findings worth acting on:**
+
+- **`shortcut` and `data` have nothing queued.** Not an oversight to fix by
+  inventing tracks — `data` is genuinely complete at 40 cards (Track H shipped
+  in full), and `shortcut` is a productivity grab-bag that does not need depth.
+  Record them as **done unless something changes**, and stop feeling the gap.
+- **`ops` is the most over-subscribed domain** at 68 → 140. Six tracks point at
+  it because "operations" absorbs anything that is neither pure security nor
+  pure engineering. Before starting BG/BH/BJ, check whether the platform,
+  observability and resilience material would be better as its own domain — the
+  Phase-4 rule (≥15 cards, own tooling, a job title) says yes for all three
+  combined. That decision should be made **before** 72 cards land, not after.
+
+## 3. The first ten sessions
+
+One session ≈ one wave ≈ one commit. This turns the shortlist at the end of
+Phase 5 into something with an order.
+
+| # | Do | Output |
+|---|---|---|
+| 1 | **AH chip grouping** — group the 21 chips into six categories | `index-shell.html` + `style.css`; no content change |
+| 2 | **AX freshness stamp** — script that writes `data-reviewed="YYYY-MM"` on every topic from `git log`, plus an "oldest 50" build report | `tools/stamp_freshness.py`, one-time run committed |
+| 3 | **AJ duplicate-slug guard + markup validator** in CI | `tools/lint_content.py`, wired into `build-check.yml` |
+| 4 | **Wave Y1 — Intune policy** (spec'd in §4 below) | 5 cards in `endpoint` |
+| 5 | **Wave Y2 — Intune applications** | 5 cards in `endpoint` |
+| 6 | **AG-1 spaced repetition** (spec'd in §5) | `script.js` + FAB badge |
+| 7 | **AG-2 acronym quiz mode** — questions generated from `acronyms.json` | `script.js` |
+| 8 | **AH-2 acronym-aware search + density toggle** (spec'd in §6) | `script.js`, `style.css`, `index-shell.html` |
+| 9 | **Wave Y3 — Windows servicing & updates** | 5 cards in `endpoint` |
+| 10 | **AG-3 export/import progress** | `script.js`; closes the data-loss risk |
+
+After ten sessions: `endpoint` has grown 13 → 28, the study tools are a system
+rather than four toys, the navigation survives six more domains, and three of
+the open risks in the register are closed. That is a better position than any
+ten content waves would leave.
+
+## 4. Worked specification — Wave Y1, "Intune Deep: Policy"
+
+Specified to the point where writing it is transcription, not design. Use this
+as the template for spec'ing any other wave.
+
+**Target:** `data/endpoint.html`, appended before `<!-- /domain-body endpoint -->`.
+**Badge:** `Intune • Policy`. **Icon per card:** `⚙️ 🥊 🛡️ 📋 🎯`.
+
+| # | Topic name | Pattern (§ Phase 6) | Must contain | The trap to name |
+|---|---|---|---|---|
+| 1 | Configuration Profiles — Settings Catalog, Templates &amp; Custom | Comparison table | Three-column comparison: settings catalog / template / custom OMA-URI, with rows for *coverage*, *discoverability*, *reporting*, *when it breaks* | Custom OMA-URI has no reporting to speak of — you find out it failed from the device, not the console |
+| 2 | Policy Conflicts — Proving Which One Won | Staged flow + error reference | The resolution order, then a per-device diagnosis path: console conflict report → device `MDMDiagnostics` → registry under `Provisioning` | Two profiles setting the same CSP to different values leaves the setting *unset*, not "last writer wins" |
+| 3 | Security Baselines Without Breaking the Fleet | Decision table | Baseline vs settings-catalog policy vs GPO parity; a staged rollout ring plan; what to exclude on day one | Applying a baseline at 100% is the single fastest way to lock a fleet out of something |
+| 4 | Administrative Templates &amp; ADMX-Backed Policy | Reference table | Which GPO settings exist in Intune, which do not, and the ADMX ingestion path for third-party templates | ADMX-backed policy is not the same surface as the settings catalog; a setting in one may be absent in the other |
+| 5 | Assignment Strategy — Users, Devices, Filters &amp; Exclusions | Decision table + trap | User vs device targeting per policy type; filters vs dynamic groups; exclusion precedence | Exclusion always wins over inclusion — the commonest cause of "the policy is assigned but not applying" |
+
+**Acronyms.** Checked against `data/acronyms.json`: `ADMX`, `OMA-URI`, `CSP`,
+`MDM`, `MAM`, `RBAC`, `ESP`, `GPO`, `IME`, `TPM`, `BYOD` are all present, and
+`CSP`/`ESP` already carry the correct `byDomain` override for `endpoint`.
+**Missing and needed before writing:** `ADML` (Administrative Language file),
+`COPE` (Corporate-Owned, Personally Enabled), `COBO` (Corporate-Owned, Business
+Only), `KFM` (Known Folder Move). Add those four first.
+
+**Sequence:**
+
+```sh
+# 1. acronyms first, or the annotator will not expand them
+$EDITOR data/acronyms.json          # add ADML, COPE, COBO, KFM
+python3 tools/gen_acronym_domain.py
+
+# 2. write the five cards into data/endpoint.html
+
+# 3. annotate, build, verify
+python3 tools/annotate_acronyms.py
+python3 build.py
+python3 -m http.server 8000         # then load and check the console
+```
+
+**Done when:** five topics reachable by permalink, zero console errors, search
+finds each by title and by an expansion (e.g. searching "Configuration Service
+Provider" finds card 2), `tools/annotate_acronyms.py --check` exits 0, and
+`git diff --exit-code -- index.html` is clean after a rebuild.
+
+**Commit message shape:** one line naming the wave, then what each card covers
+and any acronym or tooling change — the pattern used by the Azure/MECM commits.
+
+## 5. Worked specification — AG-1, spaced repetition
+
+The study FAB already has flashcards, a quiz, a study list and a jump palette.
+This adds scheduling, using state that already exists.
+
+**Existing keys** (`script.js`): `reviewed:<id>`, `bookmark:<id>`, `known:<id>`.
+**New key:** `srs:<id>` → `{"e":2.5,"i":1,"d":"2026-08-12","n":0}` — ease,
+interval in days, due date, repetition count.
+
+**Algorithm — SM-2, reduced.** On grading a card *again / hard / good / easy*:
+
+```
+again  → n=0, i=1,            e = max(1.3, e-0.20)
+hard   → n+=1, i = max(1, i*1.2), e = max(1.3, e-0.15)
+good   → n+=1, i = (n==1 ? 1 : n==2 ? 6 : round(i*e))
+easy   → n+=1, i = round(i*e*1.3), e = e+0.15
+due    = today + i days
+```
+
+**Surface area:**
+- Flashcard view gains four grade buttons in place of the current advance.
+- The FAB shows a "due today" count; zero means no badge.
+- The scope selector gains **Due today** alongside All / domain / Bookmarks.
+- A card with no `srs:` entry is treated as new and enters at `n=0`.
+
+**Deliberately not doing:** cross-device sync (see AG export/import), per-card
+statistics beyond the four fields, or replacing the existing random flashcard
+mode — keep it as "browse" and add "review" beside it.
+
+**Done when:** grading four cards and reloading preserves due dates; the badge
+count matches the number of `srs:` entries with `d <= today`; and clearing
+`localStorage` degrades to the current behaviour rather than erroring.
+
+## 6. Worked specification — AH-2, acronym-aware search + density toggle
+
+Two changes that share one data source and should ship together.
+
+**A — acronym-aware search.** `runSearch()` currently matches raw text. Before
+matching, expand the query through the dictionary:
+
+1. At first search, build `Map<lowercased expansion → [acronyms]>` and
+   `Map<acronym → [expansions]>` from the same JSON the annotator uses. The
+   built page already contains every expansion inline, so the map can be built
+   from the DOM (`.acro-exp` spans) with no new fetch — which keeps `file://`
+   working.
+2. If the query matches an acronym, also match its expansions, and vice versa.
+3. Highlight both forms in results.
+
+**Done when:** searching `Unified Endpoint Management` returns the UEM cards,
+searching `UEM` returns them too, and the search still runs under the existing
+debounce with no visible delay on a 3.15 MB page.
+
+**B — expansion density toggle.** A header control writing
+`localStorage["acro-density"]` and a class on `<body>`:
+
+| Mode | Class | Behaviour |
+|---|---|---|
+| Always (default) | — | Current behaviour: bracketed expansion inline |
+| Hover | `acro-hover` | `.acro-exp { display:none }`; shown on `:hover`/`:focus-within` of the parent, and always shown on touch-only via a media query |
+| Off | `acro-off` | `.acro-exp { display:none }` unconditionally |
+
+This is pure CSS plus one preference — no rebuild, no change to the annotator,
+and it directly answers the one real cost of the acronym feature: density inside
+tables.
+
+**Done when:** the setting survives a reload, the dictionary domain is
+unaffected (it has no `.acro-exp` spans), and printing respects the current mode.
+
+## 7. Checklists
+
+These use `☐` rather than task-list checkboxes on purpose: they are reusable,
+and every backlog figure in this file is a tally of unchecked task-list boxes.
+Ticking a checklist should never move the backlog number.
+
+**Ship a content wave**
+
+☐ Any new acronyms added to `data/acronyms.json` first, with `byDomain` set if the term is ambiguous in that domain
+☐ `python3 tools/gen_acronym_domain.py` if the dictionary changed
+☐ Cards follow `CONTRIBUTING.md` and use one of the nine patterns
+☐ Every table followed by a verdict sentence; the trap named where there is one
+☐ `python3 tools/annotate_acronyms.py` then read the diff — check no expansion is wrong for the context
+☐ `python3 build.py`
+☐ Load `index.html`: zero console errors, each new topic reachable by `#slug`, search finds it
+☐ `git diff --exit-code -- index.html` clean after a second build
+☐ One commit, CI green
+
+**Scaffold a new domain**
+
+☐ `python3 scaffold_domain.py <id> <icon> "<title>" "<CHIP>" <chipColor> <accent> "<sub>" ctag-general:TAG`
+☐ Create `data/<id>.html` with at least one topic before building
+☐ Add the chip to its category group (post-AH)
+☐ Add a row to the README domain table
+☐ Confirm the domain accent colour is legible in both themes
+
+**Before calling it a release**
+
+☐ `tools/annotate_acronyms.py --check` exits 0
+☐ `tools/gen_acronym_domain.py` produces no diff
+☐ `build.py` twice produces no diff
+☐ Headless load in both themes, no console errors
+☐ `sw.js` `CACHE_VERSION` bumped if assets changed
+
+## 8. Appendix — subject gaps with no track
+
+Recorded for completeness. None of these justifies a seventh phase; each is a
+card or two folded into an existing track if it ever matters.
+
+| Gap | Where it would go | Verdict |
+|---|---|---|
+| Mainframe & legacy systems (z/OS, COBOL, AS/400) | `infra` | Genuinely uncovered and genuinely still running banks — worth **one card** on why it persists and how it integrates, not a track |
+| Reverse engineering & binary analysis | `redteam` / Track M | Partly implied by malware analysis in Track K; add explicitly to M if it is ever a working need |
+| Accessibility engineering (beyond WCAG basics in `web`) | `web` | Two cards at most: testing with assistive tech, and remediation workflow |
+| Internationalization engineering | `web` | One card; the site itself has rejected translation, so this is for the reader's products |
+| Payments & fintech infrastructure | `data` / `grc` | PCI DSS is already covered; the rest is a niche |
+| Blockchain & distributed ledger | — | **Rejected.** Low operational relevance to this site's readership, and the security angle is already covered by key management |
+| HPC & scientific computing | — | **Rejected.** Different career entirely |
+| Video, streaming & media engineering | — | **Rejected.** Same reason |
+| Technical SEO & web operations | `web` | One card, and only because the site itself has SEO tags |
+
+---
+
+## Closing note
+
+The plan is done. Three phases of subject roadmap, one handbook, and a register
+of what could go wrong. The remaining risk is not that something was left
+unplanned — it is that planning is more comfortable than writing, and this file
+is now 891 unwritten cards long.
+
+**Session one is a two-hour job: group the chips.** Start there.
