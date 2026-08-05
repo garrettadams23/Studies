@@ -3114,11 +3114,11 @@ as the template for spec'ing any other wave.
 
 | # | Topic name | Pattern (§ Phase 6) | Must contain | The trap to name |
 |---|---|---|---|---|
-| 1 | Configuration Profiles — Settings Catalog, Templates &amp; Custom | Comparison table | Three-column comparison: settings catalog / template / custom OMA-URI, with rows for *coverage*, *discoverability*, *reporting*, *when it breaks* | Custom OMA-URI has no reporting to speak of — you find out it failed from the device, not the console |
+| 1 | Configuration Profiles — Settings Catalog, Templates & Custom | Comparison table | Three-column comparison: settings catalog / template / custom OMA-URI, with rows for *coverage*, *discoverability*, *reporting*, *when it breaks* | Custom OMA-URI has no reporting to speak of — you find out it failed from the device, not the console |
 | 2 | Policy Conflicts — Proving Which One Won | Staged flow + error reference | The resolution order, then a per-device diagnosis path: console conflict report → device `MDMDiagnostics` → registry under `Provisioning` | Two profiles setting the same CSP to different values leaves the setting *unset*, not "last writer wins" |
 | 3 | Security Baselines Without Breaking the Fleet | Decision table | Baseline vs settings-catalog policy vs GPO parity; a staged rollout ring plan; what to exclude on day one | Applying a baseline at 100% is the single fastest way to lock a fleet out of something |
-| 4 | Administrative Templates &amp; ADMX-Backed Policy | Reference table | Which GPO settings exist in Intune, which do not, and the ADMX ingestion path for third-party templates | ADMX-backed policy is not the same surface as the settings catalog; a setting in one may be absent in the other |
-| 5 | Assignment Strategy — Users, Devices, Filters &amp; Exclusions | Decision table + trap | User vs device targeting per policy type; filters vs dynamic groups; exclusion precedence | Exclusion always wins over inclusion — the commonest cause of "the policy is assigned but not applying" |
+| 4 | Administrative Templates & ADMX-Backed Policy | Reference table | Which GPO settings exist in Intune, which do not, and the ADMX ingestion path for third-party templates | ADMX-backed policy is not the same surface as the settings catalog; a setting in one may be absent in the other |
+| 5 | Assignment Strategy — Users, Devices, Filters & Exclusions | Decision table + trap | User vs device targeting per policy type; filters vs dynamic groups; exclusion precedence | Exclusion always wins over inclusion — the commonest cause of "the policy is assigned but not applying" |
 
 **Acronyms.** Checked against `data/acronyms.json`: `ADMX`, `OMA-URI`, `CSP`,
 `MDM`, `MAM`, `RBAC`, `ESP`, `GPO`, `IME`, `TPM`, `BYOD` are all present, and
@@ -3279,3 +3279,268 @@ unplanned — it is that planning is more comfortable than writing, and this fil
 is now 891 unwritten cards long.
 
 **Session one is a two-hour job: group the chips.** Start there.
+
+---
+
+# Execution Handbook, Part 2 — the remaining seven session specs
+
+> §3 above lists ten sessions; §4–6 specified three of them. This specifies the
+> other seven to the same standard, so that every one of the first ten sessions
+> can be started without designing anything first. After this, the plan contains
+> no undesigned work for the next ten commits.
+
+## Session 1 — AH-1, group the filter chips
+
+**Problem.** `.filter-inner` is a single `flex-wrap: nowrap` row inside an
+`overflow-x: auto` bar, holding 21 chips. Three more domains is tolerable; six
+is not.
+
+**Constraint that makes this cheap.** Chips are handled by delegation on
+`.filter-bar` (`e.target.closest(".chip")`), and `filter()` only reads
+`chip.dataset.domain` and toggles `.hidden` on `.domain-section`. **Neither
+function needs to change** — grouping is a markup and CSS job as long as every
+chip keeps its class and `data-domain`.
+
+**Design.** Wrap chips in labelled groups inside `.filter-inner`:
+
+```html
+<div class="chip-group" data-group="core">
+  <span class="chip-group-label">Core IT</span>
+  <div class="chip c-net" data-domain="net">🌐 NETWORKING</div>
+  …
+</div>
+```
+
+Six groups, mapping every current and planned domain:
+
+| Group | Domains |
+|---|---|
+| Core IT | `net`, `linux`, `endpoint`, `shortcut`, *`infra`*, *`m365`*, *`itsm`*, *`hw`* |
+| Security | `sec`, `threat`, `grc`, `ops`, `pentest`, `redteam`, `blueteam` |
+| Engineering | `eng`, `script`, `web`, `data`, `ai` |
+| Cloud | `cloud` |
+| Foundations | `acronym`, *`cs`* |
+| Human | `lifestyle`, `military`, *`biz`* |
+
+(*italic* = planned, not yet scaffolded.)
+
+**CSS.** `.filter-inner` becomes `flex-wrap: wrap` with `row-gap: 10px`;
+`.chip-group` is a flex row with its own `gap: 6px` and a small uppercase
+`--muted` label. Below 720 px, collapse to a `<details>` per group so the bar
+stays one or two rows on a phone. `ALL DOMAINS` stays outside any group, first.
+
+**Accessibility.** Give each group `role="group"` and
+`aria-label="<group name> domains"`. The chips are already reachable; do not
+change their tab order.
+
+**Done when:** every chip still filters, the active state still moves, the bar
+is at most two rows at 1280 px and collapsed on mobile, and adding a new chip
+means editing one group rather than the whole row.
+
+## Session 2 — AX-1, stamp topic freshness from git history
+
+**Goal.** `data-reviewed="YYYY-MM"` on every `.topic`, plus a report of the
+oldest volatile ones.
+
+**The trap that makes a naive version wrong.** `git blame` returns the last
+commit that touched each line — and mechanical passes touch nearly every line.
+The acronym annotation in this repo modified 2,388 lines across 19 files in one
+commit. Blaming naively would report the entire site as freshly reviewed, which
+is worse than no metadata at all.
+
+**Fix.** Use git's own mechanism:
+
+```sh
+# .git-blame-ignore-revs — mechanical commits only, one SHA per line with a comment
+<sha>   # bulk acronym annotation
+<sha>   # formatter pass
+git blame --line-porcelain --ignore-revs-file=.git-blame-ignore-revs -- data/net.html
+```
+
+Also set `blame.ignoreRevsFile` in `.git/config` locally so interactive blame
+agrees with the tool.
+
+**Algorithm (`tools/stamp_freshness.py`).**
+
+1. For each `data/*.html` except `acronym.html`, blame once and build
+   `line → author-time`.
+2. Split the file on `<div class="topic">` to get each topic's line range.
+3. `reviewed = max(author-time in range)` → format `YYYY-MM`.
+4. Rewrite the opening tag as `<div class="topic" data-reviewed="2026-08">`.
+5. Idempotent: strip any existing `data-reviewed` first, exactly as the
+   annotator strips its own spans.
+
+**Volatility.** Add `data-volatile="true"` only where it is true. Seed the
+candidate list by keyword — *Intune, MECM, Entra, portal, console, pricing,
+licence, tier, SKU, version* — and print it for a human to confirm. Do **not**
+auto-apply: a wrong volatility tag either creates noise or hides staleness.
+
+**Report (`tools/freshness_report.py`).** Oldest 50 topics that are
+`data-volatile="true"`, with domain, title and age in months. Stable topics are
+excluded by design — see the Phase-5 rationale.
+
+**Surfacing it.** A quiet `.topic-age` badge on topics older than 18 months,
+volatile only, hidden in print. Optional; the report alone earns the session.
+
+**Done when:** running the stamper twice produces no diff, no topic is marked
+fresh purely because of a mechanical commit, and the report names topics you
+recognise as genuinely stale.
+
+## Session 3 — AJ-1, content linter and duplicate-slug guard
+
+**One script, `tools/lint_content.py`, exit non-zero on error.**
+
+| Check | Level | Rule |
+|---|---|---|
+| Markup well-formed | error | Parse each `data/*.html` with `html.parser`; no unclosed or stray tags |
+| Duplicate slugs | error | Two topics slugifying to the same id |
+| Missing `.topic-name` | warn | 90 today; do not fail the build, report the count so it trends down |
+| `topic-chevron` | error | The banned variant from `CONTRIBUTING.md` |
+| Hand-written `.acro-exp` | error | That class belongs to the annotator |
+| Hard-coded hex colour | warn | 148 today; breaks the light theme |
+| Inline `style="color:…"` | warn | Use the `c-*` utility classes |
+| `ai-table` in a changed file | warn | Prefer `ref-table` for new content |
+
+**Replicating the slug exactly.** `script.js` uses:
+
+```js
+s.toLowerCase().replace(/[^\w\s-]/g,"").trim()
+ .replace(/[\s_]+/g,"-").replace(/-+/g,"-").slice(0,60) || "topic"
+```
+
+In JavaScript `\w` is ASCII-only. Python's `\w` is Unicode-aware by default, so
+a naive port keeps accented characters the browser would strip and the two
+disagree. **Pass `flags=re.ASCII`.** Titles are ASCII today, so the bug would
+lie dormant until the first topic with an accent — exactly the kind of drift a
+guard exists to prevent.
+
+Uniqueness must be computed the same way too: `script.js` walks
+`.domain-section` in document order and suffixes collisions `-2`, `-3`. The
+linter should report the *pair*, not just the duplicate.
+
+**Wire into CI** after the existing acronym checks in `build-check.yml`.
+
+**Done when:** the linter passes on `main` as it stands, deliberately breaking
+one rule in a scratch commit fails CI, and the warn counts are printed as a
+single summary line so they can be tracked over time.
+
+## Session 5 — Wave Y2, "Intune Deep: Applications"
+
+**Target:** `data/endpoint.html`. **Badge:** `Intune • Apps`.
+
+| # | Topic name | Pattern | Must contain | The trap to name |
+|---|---|---|---|---|
+| 1 | Win32 App Packaging — `.intunewin` End to End | Staged flow + command toolkit | Content prep tool → upload → install/uninstall commands → detection → requirements → dependencies → supersedence | Supersedence and dependencies are evaluated per-device at assignment time; a loop between two apps stalls both silently |
+| 2 | Install Contexts — System vs User | Comparison table | Which context each install type runs in, where each writes, and how detection differs per context | A user-context app assigned to a device group installs for whoever happens to log in first — and reports success for the device |
+| 3 | Store, LOB & Enterprise App Catalog Apps | Decision table | Five delivery vehicles with update ownership, offline capability and version pinning per row | Store apps update themselves; if you need a pinned version, Win32 is the only honest choice |
+| 4 | App Protection Policies — MAM Without Enrolment | Reference table + trap | Protected app list, data-transfer rules, conditional launch, wipe scope | App protection only covers apps that are MAM-aware; a PDF opened in an unmanaged viewer leaves the boundary |
+| 5 | Application Troubleshooting — Reading the IME Log | Artifact map + error reference | `IntuneManagementExtension.log` and `AgentExecutor.log`; the detection-vs-enforcement split; the error codes from the MECM card that also apply here | Exit code 0 with "not detected" is always the detection rule, never the installer — the same trap as MECM, worth repeating here |
+
+**Acronyms:** `IME`, `LOB`, `MAM`, `MSI`, `PKG` present. **Check before
+writing:** `MSIX` (present), and add `PSADT` (PowerShell App Deployment Toolkit)
+if it is mentioned.
+
+**Cross-link:** card 5 should reference the MECM deployment-troubleshooting
+topic rather than restating it — same failure, two consoles.
+
+## Session 7 — AG-2, acronym quiz mode
+
+**Why this one is worth a session.** The existing quiz generates multiple-choice
+questions from topic titles and has to invent distractors. `acronyms.json` is
+1,021 entries of structured question/answer pairs that already exist.
+
+**Question types.**
+
+| Type | Prompt | Answer | Distractors |
+|---|---|---|---|
+| Expand | "UEM stands for…" | `annotate` or `m[0].e` | Three expansions from the **same subject area** |
+| Contract | "Which acronym means *Unified Endpoint Management*?" | `a` | Three acronyms of similar length from the same area |
+| Disambiguate | "In a networking context, MAC means…" | The `byDomain` value | The entry's other meanings |
+
+**Rules that keep it fair.**
+- Only the *disambiguate* type may use multi-meaning entries; the other two
+  skip anything with `m.length > 1`, or accept any listed meaning.
+- Distractors must come from the same `c` (subject area) — otherwise "which of
+  these is a storage term" gives it away.
+- Never use two acronyms in one question that differ only by case (`IoC` /
+  `IOC`) — that is a typography test, not knowledge.
+- Entries flagged `noAnnotate` are still fair game: they are ambiguous in prose,
+  not unknowable.
+
+**Data source.** Read `acronyms.json` at build time and emit it as a
+`<script type="application/json" id="acronym-data">` block in `index.html`, so
+the quiz works over `file://` with no fetch. That block is also what Session 8's
+acronym-aware search should consume — build it here, use it twice.
+
+**Done when:** 20 questions generate with no repeats, every distractor is
+plausible, and the scope selector can limit to one subject area.
+
+## Session 9 — Wave Y3, "Windows Servicing & Updates"
+
+**Target:** `data/endpoint.html`. **Badge:** `Intune • Servicing`.
+
+| # | Topic name | Pattern | Must contain | The trap to name |
+|---|---|---|---|---|
+| 1 | Windows Update for Business — Rings, Deferrals & Deadlines | Staged flow | A four-ring model with population, deferral, deadline and grace period per ring | A deadline with no grace period reboots people mid-meeting; the grace period is the control that decides whether users trust you |
+| 2 | Feature vs Quality vs Driver Updates | Comparison table | Cadence, risk, rollback window and control surface for each of the three pipelines | They are three independent pipelines — pausing quality updates does not pause drivers |
+| 3 | Windows Autopatch — What It Takes Over | Decision table | What Autopatch owns, what stays yours, prerequisites, and the exit path | It manages the rings for you, which means your carefully built rings stop being the source of truth |
+| 4 | Update Compliance Reporting | Artifact map | Where the truth lives: Intune reports, Update Compliance, and the device's own history | "Not applicable" and "unknown" are not the same as compliant, and most dashboards blur them |
+| 5 | Emergency Patching — Advisory to Verified | Staged flow + checklist | Triage the CVE, pick the vehicle, ring-skip criteria, verification query, and the comms | Skipping rings for a genuine emergency is correct; skipping *verification* never is |
+
+**Acronyms:** `WUfB`, `CVE`, `KEV`, `SLA` all present. Add `LCU` (Latest
+Cumulative Update) and `SSU` (Servicing Stack Update) before writing.
+
+## Session 10 — AG-3, export and import progress
+
+**Goal.** Close the "progress data loss" risk in the register, and give the only
+realistic cross-device path without a backend.
+
+**Shape.**
+
+```json
+{
+  "format": "techref-progress",
+  "version": 1,
+  "exported": "2026-08-05T12:00:00Z",
+  "counts": { "reviewed": 128, "bookmark": 34, "known": 71, "srs": 71 },
+  "data": {
+    "reviewed:aaa-framework": "1",
+    "bookmark:azure-troubleshooting-playbook": "1",
+    "srs:uem-engineer": { "e": 2.5, "i": 6, "d": "2026-08-19", "n": 3 }
+  }
+}
+```
+
+**Export.** Collect keys with the known prefixes plus the notepad key. Download
+as `techref-progress-YYYY-MM-DD.json` via a Blob URL — no network, works over
+`file://`.
+
+**Import.** Three explicit modes, chosen in the dialog:
+
+| Mode | Behaviour |
+|---|---|
+| Merge (default) | Union of keys; for `srs:` entries present in both, keep the **later** due date so nothing is re-surfaced unexpectedly |
+| Replace | Clear the known prefixes first, then write the file |
+| Preview | Show counts per category and what would change, write nothing |
+
+**Guard rails.** Validate `format` and `version` before touching anything;
+refuse unknown versions rather than guessing. Ignore any key that does not match
+a known prefix — an imported file must not be able to write arbitrary
+`localStorage`. Show the counts and require a confirm click.
+
+**Done when:** export → clear site data → import restores every counter exactly;
+merge on a device with existing progress loses nothing; and a hand-edited file
+with a bad version is rejected with a readable message.
+
+---
+
+## After these ten
+
+Every remaining item in this file is a card title or a one-line engineering
+idea, and that is the correct level of detail for work that is months away.
+Specifying further now would be planning for its own sake — the specs above
+exist because they are *next*, not because specs are inherently valuable.
+
+The rule to carry forward: **spec one session ahead, not ten.** When session 10
+is done, spec session 11 from whichever track matches the work in front of you,
+using §4 as the template.
