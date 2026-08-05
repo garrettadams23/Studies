@@ -1484,4 +1484,285 @@ Get-ChildItem <span class="str">'HKLM:\SOFTWARE\Microsoft\Provisioning\NodeCache
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE Y2 — INTUNE DEEP: APPLICATIONS
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: WIN32 APP PACKAGING ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📦</span>
+    <span class="topic-name">Win32 App Packaging — .intunewin End to End</span>
+    <span class="topic-badge">Intune • Apps</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">Seven Steps, and Only One of Them Is the Installer</div>
+      <div class="concept-desc">
+        A Win32 app is a folder of source files wrapped into a single
+        <code>.intunewin</code> container, uploaded once, then described to Intune well
+        enough that it can decide — per device, forever — whether the app is present.
+        Most packaging failures are in the describing, not the installing.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>#</th><th>Step</th><th>Where it goes wrong</th></tr></thead>
+          <tbody>
+            <tr><td class="c-cyan">1</td><td>Stage a clean source folder</td><td>Extra files bloat the package; missing dependencies fail only on clean devices</td></tr>
+            <tr><td class="c-cyan">2</td><td>Wrap with the content prep tool</td><td>Pointing at the wrong setup file — the wrapper records it inside the container</td></tr>
+            <tr><td class="c-cyan">3</td><td>Install command</td><td>Not silent; an installer that shows UI <span class="acro-exp">(User Interface)</span> never completes under SYSTEM</td></tr>
+            <tr><td class="c-cyan">4</td><td>Uninstall command</td><td>Left as a guess, then discovered during an emergency removal</td></tr>
+            <tr><td class="c-red">5</td><td>Detection rule</td><td>The single biggest source of false failures — see the trap below</td></tr>
+            <tr><td class="c-cyan">6</td><td>Requirements</td><td>Architecture and OS <span class="acro-exp">(Operating System)</span> minimums too broad, so it attempts on devices it cannot work on</td></tr>
+            <tr><td class="c-cyan">7</td><td>Dependencies and supersedence</td><td>Evaluated per device at assignment; a cycle between two apps stalls both silently</td></tr>
+          </tbody>
+        </table>
+<pre class="code-block"><span class="com"># Wrap: -c source folder, -s the setup file inside it, -o output folder</span>
+IntuneWinAppUtil.exe -c C:\Pkg\ContosoAgent\Source -s ContosoAgent.msi -o C:\Pkg\Out
+
+<span class="com"># Install / uninstall commands as Intune will run them (SYSTEM, no desktop)</span>
+msiexec /i <span class="str">"ContosoAgent.msi"</span> /qn /norestart
+msiexec /x <span class="str">"{PRODUCT-GUID-HERE}"</span> /qn /norestart
+
+<span class="com"># A wrapper script gives you logging and an exit code you control</span>
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install.ps1
+
+<span class="com"># Test the exact command as SYSTEM before blaming Intune</span>
+PsExec64.exe -s -i cmd.exe</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">Supersedence is not an upgrade path by itself.</strong>
+          It tells Intune the new app replaces the old one, optionally uninstalling it
+          first. If the new installer already upgrades in place, adding an uninstall step
+          removes user data on the way through. Decide which of the two is doing the
+          upgrade, and only one of them.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: INSTALL CONTEXTS ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">👤</span>
+    <span class="topic-name">Install Contexts — System vs User</span>
+    <span class="topic-badge">Intune • Apps</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Comparison</div>
+      <div class="concept-title">Same Package, Two Completely Different Outcomes</div>
+      <div class="concept-desc">
+        Install context decides which account runs the installer, where it may write, and
+        crucially <em>where the detection rule looks</em>. Getting it wrong produces an app
+        that installs successfully and reports as failed, or one that reports success while
+        being present for exactly one person.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>System context</th><th>User context</th></tr></thead>
+          <tbody>
+            <tr><td>Runs as</td><td>SYSTEM, no desktop, no user profile</td><td>The signed-in user, with their token</td></tr>
+            <tr><td>Installs for</td><td>All users of the device</td><td>That user only</td></tr>
+            <tr><td>Writes to</td><td>Program Files, HKLM</td><td>AppData, HKCU</td></tr>
+            <tr><td>Detection looks in</td><td>HKLM and machine paths</td><td>HKCU and the user's profile — per user</td></tr>
+            <tr><td>Needs a logged-in user</td><td class="c-green">No — installs during provisioning</td><td class="c-red">Yes — nothing happens until someone signs in</td></tr>
+            <tr><td>Good for</td><td>Agents, drivers, anything shared</td><td>Per-user tools, anything that refuses to install machine-wide</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-red">The trap:</strong> a user-context app assigned to a
+          <em>device</em> group installs for whoever happens to sign in first, and then
+          reports success for the device. Every subsequent user sees a machine where the
+          console says the app is installed and the Start menu disagrees. If the app must
+          exist for everyone, it has to be system context — reassigning it later does not
+          retroactively fix the devices.
+        </div>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-green">Quick test:</strong> if the installer works from an
+          elevated <code>PsExec -s</code> shell with no desktop, it will work in system
+          context. If it needs a profile, a mapped drive or a UI <span class="acro-exp">(User Interface)</span>, it will not — and no
+          amount of Intune configuration changes that.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: APP DELIVERY VEHICLES ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🚚</span>
+    <span class="topic-name">Store, LOB <span class="acro-exp">(Line of Business)</span> &amp; Enterprise App Catalog Apps</span>
+    <span class="topic-badge">Intune • Apps</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Five Vehicles, and Who Owns the Updates</div>
+      <div class="concept-desc">
+        The decisive question is not "how do I deploy this" — all five work. It is
+        <strong>who updates it, and can you stop them</strong>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Vehicle</th><th>Updates owned by</th><th>Can you pin a version</th><th>Reach for it when</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="c-green">Win32 (.intunewin)</td><td>You</td><td class="c-green">Yes</td>
+              <td>You need control: a specific version, a custom install, a wrapper script</td>
+            </tr>
+            <tr>
+              <td class="c-green">Microsoft Store app</td><td>The store</td><td class="c-red">No</td>
+              <td>A common app where always-current is what you want anyway</td>
+            </tr>
+            <tr>
+              <td class="c-green">Enterprise App Catalog</td><td>Microsoft packages it, you approve</td><td class="c-amber">Version-by-version</td>
+              <td>Common third-party apps you would otherwise repackage every month</td>
+            </tr>
+            <tr>
+              <td class="c-green">Line-of-business (MSI)</td><td>You</td><td class="c-green">Yes</td>
+              <td>A plain MSI <span class="acro-exp">(Microsoft Installer)</span> with no wrapper needed — simpler than Win32, and less capable</td>
+            </tr>
+            <tr>
+              <td class="c-green">Web link</td><td>Nobody — it is a shortcut</td><td>n/a</td>
+              <td>A web app you want on the Start menu and in Company Portal</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">Store apps update themselves.</strong> That is usually a
+          feature and occasionally an incident — when a vendor ships a breaking release to
+          your whole fleet on a Tuesday. If a version must be pinned for a compliance or
+          compatibility reason, Win32 is the only honest answer.
+        </div>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-green">Required vs Available matters more than people expect:</strong>
+          <em>Required</em> installs without asking; <em>Available</em> puts it in Company
+          Portal for the user to choose. Making everything required is how you end up
+          pushing 4 GB of design software to laptops that will never open it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: APP PROTECTION POLICIES ────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧴</span>
+    <span class="topic-name">App Protection Policies — MAM <span class="acro-exp">(Mobile Application Management)</span> Without Enrolment</span>
+    <span class="topic-badge">Intune • Apps</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Protecting the Data on a Device You Do Not Own</div>
+      <div class="concept-desc">
+        App protection policies apply controls to the <em>app and its data</em> rather than
+        to the device. That is what makes BYOD <span class="acro-exp">(Bring Your Own Device)</span> workable: the user keeps their phone
+        unmanaged, and company data inside supported apps still obeys your rules.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td class="c-cyan">Data transfer</td><td>Restricts save-as, copy/paste and open-in to other policy-managed apps</td></tr>
+            <tr><td class="c-cyan">Encryption</td><td>Encrypts company data at rest inside the app's sandbox</td></tr>
+            <tr><td class="c-cyan">Access requirements</td><td>PIN or biometric on the app itself, independent of the device lock</td></tr>
+            <tr><td class="c-cyan">Conditional launch</td><td>Blocks or wipes on jailbreak, minimum OS <span class="acro-exp">(Operating System)</span>, minimum app version, offline grace period</td></tr>
+            <tr><td class="c-cyan">Selective wipe</td><td>Removes company data from the app and leaves everything personal alone</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-red">The boundary is the app, and only the app.</strong>
+          Protection applies to apps that are policy-aware. A document opened in an
+          unmanaged PDF <span class="acro-exp">(Portable Document Format)</span> viewer, forwarded from an unmanaged mail client, or synced by a
+          personal cloud client has left the boundary — and the policy has no view of it.
+          The controls are real, but they are a fence around a set of apps, not around the
+          data itself.
+        </div>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-green">Pair it with Conditional Access.</strong> App protection
+          decides what happens to data once the app has it; Conditional Access decides
+          whether the app gets it at all. Requiring an approved client app plus an app
+          protection policy is the combination that makes unenrolled BYOD defensible.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: APPLICATION TROUBLESHOOTING ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔎</span>
+    <span class="topic-name">Application Troubleshooting — Reading the IME <span class="acro-exp">(Intune Management Extension)</span> Log</span>
+    <span class="topic-badge">Intune • Apps</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Artifact Map</div>
+      <div class="concept-title">Where the Answer Lives</div>
+      <div class="concept-desc">
+        Win32 apps and PowerShell scripts are delivered by the Intune Management Extension,
+        which keeps its own logs on the device. Read them in this order; the console is a
+        summary of what these files already said.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Log</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td><code>IntuneManagementExtension.log</code></td><td>Did the app arrive, what did detection decide, what was the exit code</td></tr>
+            <tr><td><code>AgentExecutor.log</code></td><td>What the PowerShell script actually did, and its output</td></tr>
+            <tr><td><code>ClientHealth.log</code></td><td>Whether the extension itself is healthy and checking in</td></tr>
+            <tr><td>Win32 app cache</td><td>Whether content downloaded at all — under <code>C:\Program Files (x86)\Microsoft Intune Management Extension\Content</code></td></tr>
+            <tr><td>Intune ▸ Apps ▸ the app ▸ Device install status</td><td>The fleet view, and the error code to search for</td></tr>
+          </tbody>
+        </table>
+<pre class="code-block"><span class="com"># The logs live here — open with CMTrace, they are CMTrace-formatted</span>
+C:\ProgramData\Microsoft\IntuneManagementExtension\Logs\
+
+<span class="com"># Follow an install in near real time</span>
+Get-Content <span class="str">'C:\ProgramData\Microsoft\IntuneManagementExtension\Logs\IntuneManagementExtension.log'</span> -Tail 50 -Wait
+
+<span class="com"># Force the extension to re-check for app assignments</span>
+Restart-Service IntuneManagementExtension</pre>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Error Reference</div>
+      <div class="concept-title">The Codes That Come Up Weekly</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Code</th><th>Means</th><th>First move</th></tr></thead>
+          <tbody>
+            <tr><td class="c-red">0x87D00324</td><td>Installed, but the detection rule says it is not there</td><td>Run the detection check by hand on the device — the installer is fine</td></tr>
+            <tr><td class="c-red">0x87D00325</td><td>Detection found it when it should not have</td><td>Usually a leftover key or file from a previous version</td></tr>
+            <tr><td class="c-red">0x87D300</td><td>Content download failed</td><td>Proxy, TLS <span class="acro-exp">(Transport Layer Security)</span> inspection, or the device cannot reach the CDN <span class="acro-exp">(Content Delivery Network)</span></td></tr>
+            <tr><td class="c-red">1603</td><td>Generic MSI <span class="acro-exp">(Microsoft Installer)</span> failure</td><td>Read the MSI verbose log; usually a prerequisite or a file in use</td></tr>
+            <tr><td class="c-red">1618</td><td>Another install is already running</td><td>Wait; check for a stuck msiexec or a competing deployment</td></tr>
+            <tr><td class="c-red">3010</td><td>Success, reboot required</td><td>Not a failure — map it as a soft-reboot return code in the app</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">The one worth memorising, again:</strong> exit code 0 in
+          the log with "not detected" in the console is <em>always</em> the detection rule
+          and never the installer. It is the same failure as its MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> counterpart — see
+          <strong>MECM Deployment &amp; Content Troubleshooting</strong> in this domain,
+          which describes the identical trap in the other console.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body endpoint -->
