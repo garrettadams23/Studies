@@ -26,11 +26,16 @@ jump to what you need:
 | **Phase 3 — Depth, Breadth & New Domains** (Tracks H–U) | `data` and `web` domains shipped; depth tracks **J–U outstanding (201 cards)** | 🔶 half done |
 | **Phase 4 — The Enterprise Estate & the Study Platform** (Tracks V–AK) | Windows Server, M365, endpoint depth, virtualization, ITSM, vendor networking, automation, Apple/mobile, OT/regulated, AI at work + study tooling | ⬜ planned |
 | **Phase 5 — Foundations, Frontiers & the Business of IT** (Tracks AL–AY) | CS & mathematics, hardware/embedded, post-quantum, emerging platforms, physical security, IT finance, leadership, enablement, consulting + content-trust tooling | ⬜ planned |
+| **Phase 6 — Specialisms, and How This Gets Written** (Tracks BA–BJ) | Detection engineering, purple teaming, Kubernetes security, API/identity security, supply chain, privacy engineering, platform engineering, observability, resilience — **plus the card pattern library, authoring rules, risk register and success measures, written out rather than planned** | ⬜ planned |
 
-**Remaining backlog: 701 content cards and 44 engineering items** across
-Phases 3–5, which would take the site from 900 topics / 20 domains to roughly
-1,600 topics / 26 domains. See *"Suggested actual priority"* at the very end of
-the file before committing to any of it — the list is a menu, not a queue.
+**Remaining backlog: 891 content cards and 44 engineering items** across
+Phases 3–6, which would take the site from 900 topics / 20 domains to roughly
+1,800 topics / 26 domains — about 180 working sessions.
+
+**If you read only two things:** the *"Suggested actual priority"* shortlist at
+the end of Phase 5, and *Part 3 of Phase 6* (how to write a card, the pattern
+library, the risk register). The backlog is a menu, not a queue — and at this
+size, how well each card is written matters more than how many remain.
 
 ---
 
@@ -2508,3 +2513,494 @@ site as it stands today:
    interview material, and it is nowhere yet.
 6. **AY split of `data/script.html`** — 719 KB in one file is the single biggest
    drag on actually doing any of the above.
+
+---
+
+# Content & Capability Roadmap — Phase 6: Specialisms, and How This Gets Written (Wave 115+)
+
+> **Two halves, deliberately different in kind.**
+> The first is nine tracks covering the jobs that split off from "security
+> engineer" and "SRE" and became disciplines with their own titles, tooling and
+> interview loops. The second is not a plan at all — it is the **authoring
+> craft, pattern library, risk register and success measures written out now**,
+> because after five phases the constraint on this project is no longer *what to
+> write* (745 open items) but *how to write 745 cards that are worth reading*.
+
+## No new domains
+
+Phases 3–5 added eight domains. Phase 6 adds **none**. Every track here lands in
+an existing domain — `blueteam`, `redteam`, `sec`, `cloud`, `ops`, `eng`, `grc`.
+That is a deliberate correction: 26 domains is already at the edge of what a
+filter bar and a mental model can hold, and every one of these specialisms is
+recognisably a deeper cut of something the site already covers.
+
+---
+
+## PART 1 — SECURITY ENGINEERING SPECIALISMS
+
+### TRACK BA — Detection Engineering  (→ `blueteam`)
+
+~5 waves, ~25 cards. Writing detections as a software discipline, not as a
+tuning exercise in a console. The site has SIEM and EDR cards; it has nothing on
+the craft of building what runs inside them.
+
+**Wave BA1 — The Discipline**
+- [ ] What Detection Engineering Is — and why it split off from SOC analysis
+- [ ] The Detection Lifecycle — idea → hypothesis → logic → test → deploy → tune → retire
+- [ ] Detection Requirements — writing one before writing the rule
+- [ ] The Pyramid of Pain Applied — choosing what to detect on, and its cost to the attacker
+- [ ] Coverage vs Noise — the trade every rule makes, made explicit
+
+**Wave BA2 — Data Before Rules**
+- [ ] Log Source Inventory — knowing what you actually collect, and at what fidelity
+- [ ] Data Normalization — OCSF, ECS, ASIM; why a schema decides your query
+- [ ] Telemetry Gaps — proving a detection cannot fire, before you promise it does
+- [ ] Log Volume & Cost — sampling, filtering, and the detections cost quietly kills
+- [ ] Enrichment — asset, identity and threat context that turns an alert into a decision
+
+**Wave BA3 — Writing Detections**
+- [ ] Sigma as an Interchange Format — writing once, deploying to several backends
+- [ ] Detection-as-Code — Git, review, CI, and versioned rules
+- [ ] Writing a Good Rule — specificity, false-positive analysis, the tuning fields
+- [ ] Behavioural vs Signature Detections — worked examples of both for one technique
+- [ ] Correlation & Sequencing — when a single event genuinely is not enough
+
+**Wave BA4 — Testing Detections**
+- [ ] Unit-Testing a Detection — synthetic events and expected verdicts
+- [ ] Atomic Red Team & Emulation for Validation — proving the rule fires on the real thing
+- [ ] Detection Regression — the rule that silently stopped working after a log change
+- [ ] Measuring Detection Quality — precision, recall, alert-to-incident ratio, time-to-detect
+- [ ] Purple-Team Feedback Loop — closing the gap the exercise found
+
+**Wave BA5 — Running the Programme**
+- [ ] ATT&CK Coverage Mapping — honest heat maps, and the lie of "100% coverage"
+- [ ] Detection Backlog & Prioritisation — threat model in, rules out
+- [ ] Rule Retirement — deleting detections without losing the reason they existed
+- [ ] Documentation for Responders — the runbook that ships *with* the rule
+- [ ] Detection Engineering Interview — what the role is actually assessed on
+
+### TRACK BB — Adversary Emulation & Purple Teaming  (→ `redteam` / `blueteam`)
+
+~4 waves, ~20 cards. Authorized-use framing throughout, and every offensive card
+pairs with the detection it should trigger — the site's existing rule.
+
+**Wave BB1 — Emulation Foundations**
+- [ ] Emulation vs Simulation vs Penetration Testing — three different questions
+- [ ] Building a Threat Profile — picking an adversary that is relevant to *you*
+- [ ] Emulation Plans — CTID plans, and writing your own from intel
+- [ ] Rules of Engagement for Emulation — scope, safety, deconfliction, kill switch
+- [ ] Lab Design for Emulation — a range that is safe to break
+
+**Wave BB2 — Running an Exercise**
+- [ ] Purple Team Mechanics — the room, the roles, the cadence
+- [ ] Technique-by-Technique Execution — run, observe, record, adjust
+- [ ] Detection Gaps in Real Time — the value that only appears when both teams watch together
+- [ ] Evidence Capture — screenshots, timestamps, telemetry references
+- [ ] The Debrief — findings that turn into backlog items, not a scorecard
+
+**Wave BB3 — Automation**
+- [ ] Breach & Attack Simulation Tools — what they do well, and their blind spots
+- [ ] Atomic Testing at Scale — scheduled, safe, continuous validation
+- [ ] CI for Security Controls — treating control efficacy as a test suite
+- [ ] Safe Payloads — proving execution without doing damage
+- [ ] Avoiding Emulation Theatre — when a green dashboard means nothing
+
+**Wave BB4 — Reporting & Value**
+- [ ] Writing the Emulation Report — narrative, timeline, gaps, recommendations
+- [ ] Mapping Findings to Controls & Owners — every gap gets a name and a date
+- [ ] Measuring Programme Improvement Over Time — the metric that survives scrutiny
+- [ ] Communicating Risk to Leadership — without either alarmism or false comfort
+- [ ] Building the Business Case for Purple — funding the second exercise
+
+### TRACK BC — Cloud-Native & Kubernetes Security  (→ `cloud` / `blueteam`)
+
+~5 waves, ~25 cards. The site teaches Kubernetes operationally; this is the
+attack and defence surface.
+
+**Wave BC1 — The Kubernetes Threat Model**
+- [ ] What an Attacker Sees — the control plane, the kubelet, etcd, the workloads
+- [ ] The Four Cs — cloud, cluster, container, code
+- [ ] Kubernetes RBAC Deep — verbs, resources, and the escalation paths people miss
+- [ ] Service Accounts & Token Projection — the credential every pod carries
+- [ ] etcd & Control-Plane Exposure — the game-over surfaces
+
+**Wave BC2 — Workload Hardening**
+- [ ] Pod Security Standards — privileged/baseline/restricted, and enforcing them
+- [ ] Container Breakout Paths — privileged pods, hostPath, hostPID, capabilities
+- [ ] Admission Control — OPA/Gatekeeper and Kyverno, and policy-as-code
+- [ ] Image Security — minimal bases, non-root, read-only filesystems, distroless
+- [ ] Secrets in Kubernetes — why the built-in kind is only base64, and the options
+
+**Wave BC3 — Network & Identity**
+- [ ] Network Policies — default-deny, and why almost nobody has it
+- [ ] Service Mesh Security — mTLS, authorization policy, and the complexity cost
+- [ ] Workload Identity — federating pods to cloud IAM without long-lived keys
+- [ ] Ingress & API Exposure — the gateway as a control point
+- [ ] Multi-Tenancy — namespaces are not a security boundary; what to do instead
+
+**Wave BC4 — Runtime & Detection**
+- [ ] Runtime Security — Falco/Tetragon, eBPF-based detection in the cluster
+- [ ] Audit Logs — what the API server records, and the queries worth saving
+- [ ] Container Forensics — investigating something that no longer exists
+- [ ] Drift & Immutability — detecting a changed container in a declarative world
+- [ ] Incident Response in Kubernetes — isolate, snapshot, evict, and preserve evidence
+
+**Wave BC5 — Serverless & Managed Services**
+- [ ] Serverless Threat Model — event injection, over-permissive roles, cold-start secrets
+- [ ] Managed Service Trust Boundaries — what the provider secures, and precisely what you do
+- [ ] IaC Security Scanning — catching the misconfiguration before it deploys
+- [ ] Cloud Detection Engineering — CloudTrail/Activity Log/Audit Logs as detection sources
+- [ ] Cloud Incident Response — snapshotting, credential revocation, blast-radius containment
+
+### TRACK BD — API & Identity-First Security  (→ `sec` / `web`)
+
+~4 waves, ~20 cards. The perimeter moved to the API and the token; the site's
+coverage has not caught up.
+
+**Wave BD1 — API Security**
+- [ ] OWASP API Top 10 — what differs from the web Top 10, and why
+- [ ] Broken Object-Level Authorization — the single most common real API bug
+- [ ] Authentication vs Authorization at the API — where each belongs
+- [ ] Rate Limiting & Abuse — quotas, burst, and distinguishing abuse from success
+- [ ] API Inventory & Shadow APIs — you cannot protect the endpoint you forgot
+
+**Wave BD2 — Tokens Done Right**
+- [ ] JWT Security — algorithm confusion, `none`, key confusion, expiry, revocation
+- [ ] OAuth 2.1 & PKCE — the flows that remain, and the ones that were removed
+- [ ] Token Lifetime & Revocation — refresh, rotation, and the logout that does not
+- [ ] Machine-to-Machine Auth — client credentials, mTLS, workload identity
+- [ ] Secrets vs Tokens vs Keys — a taxonomy that prevents the wrong control
+
+**Wave BD3 — Identity as the Control Plane**
+- [ ] Identity-First Security — what changes when identity is the perimeter
+- [ ] ITDR — detecting identity attacks: token theft, consent phishing, MFA fatigue
+- [ ] Conditional Access Patterns — a policy set that is coherent rather than accreted
+- [ ] Privileged Access Done Properly — tiering, PAWs, break-glass, JIT elevation
+- [ ] Non-Human Identity — service principals, workload identities, and the sprawl nobody owns
+
+**Wave BD4 — Federation & Third Parties**
+- [ ] SAML & OIDC Attack Surface — golden SAML, signature confusion, reply-URL abuse
+- [ ] SCIM & Provisioning Risk — the integration that quietly holds write access
+- [ ] OAuth Consent Phishing — the attack that needs no password
+- [ ] B2B & Guest Access — external identities without opening the tenant
+- [ ] Third-Party App Governance — reviewing, restricting and revoking app permissions
+
+### TRACK BE — Software Supply Chain & Integrity  (→ `eng` / `sec`)
+
+~4 waves, ~20 cards. The SBOM cards exist; the discipline around them does not.
+
+**Wave BE1 — Understanding the Chain**
+- [ ] Where a Build Actually Comes From — every input, including the ones you forgot
+- [ ] Historic Supply-Chain Attacks — what each one actually exploited
+- [ ] Dependency Risk — transitive depth, typosquatting, abandoned packages
+- [ ] Build System as a Target — the CI runner is production-adjacent
+- [ ] Trust Decisions — pinning, vendoring, mirrors, and their maintenance cost
+
+**Wave BE2 — Provenance & Attestation**
+- [ ] SLSA Levels — what each one actually requires you to change
+- [ ] Signing & Sigstore — keyless signing, transparency logs, verification
+- [ ] Attestations & in-toto — statements about how an artifact was produced
+- [ ] Verifying at Deploy Time — admission policy that refuses unsigned artifacts
+- [ ] Reproducible Builds — the property, the practical obstacles
+
+**Wave BE3 — Operating It**
+- [ ] SBOM in Practice — generating, storing, and actually querying one
+- [ ] VEX — saying "we ship it but are not affected", credibly
+- [ ] Dependency Update Strategy — automated bumps without a broken main branch
+- [ ] Vulnerability Triage for Dependencies — reachability, exploitability, real priority
+- [ ] Responding to a Compromised Dependency — the first hour
+
+**Wave BE4 — Internal Supply Chain**
+- [ ] Securing the CI/CD Pipeline — secrets, runners, forks, and injection via pull request
+- [ ] Artifact Repositories — promotion, retention, immutability, access
+- [ ] Internal Package Registries — and the dependency-confusion class of attack
+- [ ] Golden Images & Base Layer Hygiene — one place to patch, one place to break
+- [ ] Developer Workstation Trust — the machine that signs your commits
+
+### TRACK BF — Privacy Engineering  (→ `grc` / `eng`)
+
+~4 waves, ~20 cards. Distinct from GRC: GRC proves compliance, privacy
+engineering builds systems that do not need much proving.
+
+**Wave BF1 — Privacy as a System Property**
+- [ ] Privacy vs Security — overlapping, not the same, and where they conflict
+- [ ] Data Minimisation — the control that removes whole classes of risk
+- [ ] Purpose Limitation in a Data Warehouse — hard, and why it is usually skipped
+- [ ] Data Inventory & Mapping — knowing where personal data actually flows
+- [ ] Privacy by Design — the seven principles, translated into engineering decisions
+
+**Wave BF2 — Technical Controls**
+- [ ] De-identification — anonymisation vs pseudonymisation, and re-identification risk
+- [ ] Differential Privacy, Practically — the intuition, the epsilon, the trade
+- [ ] Tokenisation & Format-Preserving Encryption — protecting data that must stay usable
+- [ ] Access Control for Personal Data — purpose-bound access and audit
+- [ ] Retention & Deletion That Actually Deletes — backups, replicas, caches, logs
+
+**Wave BF3 — User-Facing Obligations**
+- [ ] DSARs — building a subject-access process that scales
+- [ ] Right to Erasure — the engineering problem behind the legal right
+- [ ] Consent & Preference Management — storing and honouring it across systems
+- [ ] Cookies & Tracking — the technical reality behind the banner
+- [ ] Cross-Border Transfers — the mechanisms, and their architectural consequences
+
+**Wave BF4 — Privacy in New Systems**
+- [ ] Privacy in Machine Learning — training data, memorisation, model inversion
+- [ ] Telemetry Design — useful product analytics that collect less
+- [ ] Third-Party Data Sharing — contracts, technical limits, and verification
+- [ ] Privacy Incident Response — when it is a breach, and the clock that starts
+- [ ] Privacy Review as a Process — lightweight enough that teams use it
+
+---
+
+## PART 2 — PLATFORM & RESILIENCE CRAFT
+
+### TRACK BG — Platform Engineering & the Internal Developer Platform  (→ `eng` / `ops`)
+
+~4 waves, ~20 cards. The discipline that grew out of DevOps once "you build it,
+you run it" met a hundred teams.
+
+**Wave BG1 — The Premise**
+- [ ] Why Platform Engineering Exists — the cognitive-load argument, stated honestly
+- [ ] Platform as a Product — users, roadmap, adoption, and the option to not use it
+- [ ] Golden Paths — paved roads that are genuinely faster than going around
+- [ ] Thinnest Viable Platform — resisting the urge to build a cloud on the cloud
+- [ ] Platform Team Anti-Patterns — the gatekeeper, the ticket queue, the abstraction leak
+
+**Wave BG2 — Building It**
+- [ ] Developer Portals — service catalogue, ownership, scorecards
+- [ ] Self-Service Infrastructure — templates, modules, and guard rails over gates
+- [ ] Environment Management — ephemeral environments, seeding, cost control
+- [ ] Paved-Path CI/CD — a pipeline teams inherit rather than copy
+- [ ] Policy as Code in the Platform — compliance that happens by default
+
+**Wave BG3 — Operating It**
+- [ ] Platform SLOs — the platform is production for its users
+- [ ] Versioning & Migrating Consumers — changing a platform without breaking teams
+- [ ] Support Model — office hours, escalation, and not becoming a help desk
+- [ ] Documentation as the Product Surface — where adoption is actually won or lost
+- [ ] Measuring Platform Success — adoption, lead time, and the counter-metrics
+
+**Wave BG4 — Developer Experience**
+- [ ] Local Development That Matches Production — containers, seeds, fakes
+- [ ] Build & Test Speed as a Feature — the compounding cost of a slow pipeline
+- [ ] Inner vs Outer Loop — where a developer's day actually goes
+- [ ] Onboarding to First Commit — measuring and shortening it
+- [ ] Toil Audits — finding the manual work worth automating, and the work that is not
+
+### TRACK BH — Observability Engineering  (→ `ops`)
+
+~4 waves, ~20 cards. Beyond the monitoring cards: designing for questions you
+have not thought of yet.
+
+**Wave BH1 — Foundations**
+- [ ] Monitoring vs Observability — the distinction that is not just marketing
+- [ ] The Three Signals & Their Costs — metrics, logs, traces; what each is bad at
+- [ ] Cardinality — the concept that decides your observability bill
+- [ ] Structured Events — wide events as an alternative to three separate pipelines
+- [ ] Instrumentation Strategy — what to instrument first in an unfamiliar system
+
+**Wave BH2 — OpenTelemetry in Practice**
+- [ ] OTel Architecture — API, SDK, collector, exporters
+- [ ] Distributed Tracing Deep — spans, context propagation, sampling strategies
+- [ ] Metrics With OTel — instruments, views, and avoiding cardinality explosions
+- [ ] The Collector as a Control Point — filtering, redaction, routing, cost control
+- [ ] Migrating an Existing Stack — incrementally, without a big-bang cutover
+
+**Wave BH3 — Using It**
+- [ ] Debugging With Traces — the workflow that finds an unknown-unknown
+- [ ] Correlating Signals — trace to log to metric, and the IDs that make it possible
+- [ ] Dashboards Worth Keeping — the small number that answer real questions
+- [ ] Alerting on Symptoms, Not Causes — and the pager quality that follows
+- [ ] Observability-Driven Development — shipping instrumentation with the feature
+
+**Wave BH4 — SLOs as a Practice**
+- [ ] Choosing SLIs — the signal that matches the user's experience
+- [ ] Setting an SLO That Survives — negotiated, achievable, and meaningful
+- [ ] Error Budgets & Policy — what actually happens when it is spent
+- [ ] Reporting Reliability — to engineering, and separately to the business
+- [ ] When SLOs Fail — the organisational reasons, not the technical ones
+
+### TRACK BJ — Resilience & Chaos Engineering  (→ `ops` / `eng`)
+
+*(Skipping "BI" — it reads as "B1".)*
+
+~4 waves, ~20 cards.
+
+**Wave BJ1 — Designing for Failure**
+- [ ] Failure Modes & Effects Analysis for Systems — thinking it through before it happens
+- [ ] Blast Radius Design — bulkheads, cells, shuffle sharding
+- [ ] Graceful Degradation — the feature that turns off instead of the site going down
+- [ ] Dependency Failure — timeouts, retries with jitter, circuit breakers revisited
+- [ ] Capacity & Load Shedding — choosing what to drop before you are forced to
+
+**Wave BJ2 — Chaos Engineering**
+- [ ] The Method — steady-state hypothesis, blast radius, abort conditions
+- [ ] Your First Experiment — safe, small, and in production eventually
+- [ ] Fault Injection Techniques — latency, errors, resource exhaustion, dependency loss
+- [ ] GameDays — running one that people volunteer for twice
+- [ ] Chaos Maturity — from an annual exercise to continuous verification
+
+**Wave BJ3 — Incidents as a System**
+- [ ] Incident Command Deep — roles, handovers, and long incidents
+- [ ] Communication During an Incident — internal, customer, and status page discipline
+- [ ] Blameless Postmortems That Change Something — actions with owners and dates
+- [ ] Learning From Near-Misses — the free lessons most organisations throw away
+- [ ] Incident Metrics — what MTTR does and does not tell you
+
+**Wave BJ4 — Human Factors**
+- [ ] Resilience Engineering — the field, and why "human error" is a bad root cause
+- [ ] Alert Fatigue — measuring it, and treating it as a reliability problem
+- [ ] On-Call Health — load, compensation, and the sustainable rotation
+- [ ] Runbook Quality — testing your runbooks the way you test code
+- [ ] Organisational Memory — keeping what was learned after the people leave
+
+---
+
+## PART 3 — WRITTEN NOW, NOT PLANNED
+
+Everything above is a list. This part is the material itself, because the
+binding constraint on this project has changed: there are now 745 planned cards
+and one person. Quality per card matters more than another list.
+
+### The card pattern library
+
+Measured across the 2,014 `.concept-card`s currently on the site (counting the
+markup each card contains, up to the next card boundary):
+
+| Shape | Share | Notes |
+|---|---:|---|
+| Prose only | ~50% | The default, and correctly so |
+| With a table | ~38% | Reference and comparison material |
+| With a code block | ~7% | Commands and syntax |
+| Table + code | ~4% | The heaviest cards; use sparingly |
+| Grid or SVG | ~1% | Diagrams, used rarely |
+
+Nine patterns cover almost everything worth writing. Each has a job; using the
+wrong one is why some cards read as padding.
+
+**1 — Concept card (prose only).** One idea, three to six sentences, no table.
+Use when the reader needs a mental model before any detail. *Failure mode:* a
+concept card that lists things — that is a table wearing prose.
+
+**2 — Reference table.** `Thing | What it is | Worth remembering`. The workhorse.
+*Rule:* always follow it with one sentence of "so what" — the table states
+facts, the sentence states the judgement.
+
+**3 — Comparison table.** `— | Option A | Option B`, rows are dimensions.
+Use when the reader's real question is "which one". *Rule:* include a row for
+how each one *fails*, not only what each one does.
+
+**4 — Decision table.** `Option | Reach for it when`. Shorter than a comparison,
+and better when there are more than three options. See *Four Load Balancers, One
+Right Answer* in `cloud`.
+
+**5 — Error reference.** `Code | What it actually means | First move`. The
+highest-value pattern on the site for operational domains, because it maps the
+thing the reader is staring at to the thing they should do. See the Azure and
+MECM troubleshooting cards.
+
+**6 — Command toolkit.** A `<pre class="code-block">` where every command is
+preceded by a comment saying what question it answers. *Rule:* commands must be
+runnable as written; placeholders in `<angle-brackets>`.
+
+**7 — Artifact map.** `Symptom | Where to look | Log`. The diagnostic companion
+to the error reference — used by both the MECM and Intune troubleshooting cards.
+
+**8 — Staged flow.** Numbered phases with what happens and what can break at
+each. Use for lifecycles: enrolment, boot, a request path, an incident.
+
+**9 — The trap.** A short bolded callout after a table naming the mistake
+everyone makes. `<strong class="c-amber">The gotcha:</strong> …`. This is the
+pattern readers remember, and the one most often missing.
+
+### How to write a card that earns its place
+
+1. **Lead with what it is for**, not what it is or where it came from. History
+   is a sentence, not a paragraph.
+2. **One card, one idea.** If the title needs an "and", it is two cards — unless
+   the "and" is the point (*"Coder vs Programmer"*).
+3. **Every table gets a verdict.** A table without a following judgement sentence
+   makes the reader do work you should have done.
+4. **Name the failure mode.** The card is more useful for saying what breaks than
+   for listing what exists. Vendors write the feature list already.
+5. **No marketing verbs.** *Leverages, empowers, seamlessly, robust* — if a
+   sentence survives deleting them, delete them.
+6. **Numbers need a source or a hedge.** Either cite where a figure comes from,
+   or write "roughly". Precision you cannot defend is worse than an estimate.
+7. **Write for the person mid-incident**, not the person studying on a Sunday.
+   The Sunday reader can follow a card written for 3 a.m.; the reverse is false.
+8. **Code must run.** If it was not executed, mark it as illustrative.
+9. **Assume the acronym pipeline.** Write acronyms plainly; do not hand-write
+   expansions — `tools/annotate_acronyms.py` owns that, and hand-written ones
+   get stripped.
+10. **Cut the card that only exists for completeness.** A domain with 20 good
+    cards beats one with 35 where 15 are filler. This is the hardest rule and
+    the one that most protects the site.
+
+### Project risk register
+
+The realistic threats to this project, in likelihood order. Three are already
+mitigated by work in this repo; the rest are open.
+
+| Risk | Likelihood | Impact | Mitigation | State |
+|---|---|---|---|---|
+| **Content goes stale** — vendor renames, dead consoles, changed limits | High | High | Phase-5 Track AX: freshness metadata, volatility tags, rename registry | Planned |
+| **Scope paralysis** — 745 open items is demotivating rather than motivating | High | Medium | Treat the plan as a menu; the "actual priority" list at the end of Phase 5 | Partly |
+| **Progress data loss** — everything is `localStorage`; clearing the browser wipes it | Medium | Medium | Phase-4 Track AG: export/import | Planned |
+| **Page weight** — `index.html` is 3.2 MB and grows with every wave | Medium | Medium | Phase-4 Track AK: lazy per-domain loading, performance budget in CI | Planned |
+| **Generated-file drift** — `acronym.html` / `index.html` committed stale | Medium | Low | CI already rebuilds and fails on drift; `--check` mode on the annotator | **Mitigated** |
+| **Slug churn** — renaming a topic silently breaks permalinks and progress | Medium | Medium | Phase-5 Track AY: ID stability contract and alias map | Planned |
+| **Accuracy drift** — a confident wrong card is worse than no card | Medium | High | Authoring rule 6; Phase-5 fact-anchor comments | Partly |
+| **Bus factor of one** — one maintainer holds all the context | Medium | High | The plan itself, `CONTRIBUTING.md`, and tooling that encodes conventions | Partly |
+| **Markup rot** — inconsistent classes and inline styles accumulate | Medium | Low | Phase-4 Track AJ content linter | Planned |
+| **Burnout** — a 140-session backlog written by someone with a day job | Medium | High | Ship what matches current work; no deadline; the menu framing | Open |
+| **Hosting/domain lapse** | Low | High | Static site, works from `file://`, in Git — recoverable by design | **Mitigated** |
+| **Tooling single point of failure** — the acronym pipeline is now load-bearing | Low | Medium | Idempotent, `--check` mode, CI-verified, documented in README | **Mitigated** |
+
+### How you would know the site is working
+
+No analytics, by design — so the measures have to be ones you can observe
+directly.
+
+- **The lookup test.** When a real question comes up at work, is the site faster
+  than a web search? If not for a given domain, that domain is decorative.
+- **The onboarding test.** Could you hand a new colleague a domain and a learning
+  path and have them be useful? Track AG's paths make this testable.
+- **Time-to-card.** When something new lands (a rename, a new service, a CVE
+  class), how long until a card exists? Weeks is fine; never is the failure.
+- **Volatile-topic freshness.** Percentage of *volatile* topics reviewed in the
+  last twelve months. Stable topics are excluded deliberately — see Track AX.
+- **Your own usage.** The `reviewed:` and `bookmark:` keys already record it. A
+  dashboard (Track AG) turns that into the most honest signal available: which
+  domains you actually return to.
+- **Build health.** CI green, zero console errors, build reproducible, generated
+  files never stale. Already true; keep it true.
+
+---
+
+## Phase 6 in numbers
+
+| | |
+|---|---|
+| Content tracks | 9 (BA–BJ) |
+| Waves | 38 |
+| Cards | 190 |
+| New domains | **0** |
+| Written now, not planned | Card pattern library · authoring rules · risk register · success measures |
+
+## Cumulative position
+
+| | Topics | Domains |
+|---|---:|---:|
+| Today | 900 | 20 |
+| + Phase 3 outstanding | 1,101 | 20 |
+| + Phase 4 | 1,366 | 23 |
+| + Phase 5 | 1,601 | 26 |
+| + Phase 6 | 1,791 | 26 |
+
+**Total remaining backlog: 891 content cards and 44 engineering items.**
+
+That number is now large enough to be its own risk, which is why it is in the
+register above. The plan is finished; the correct next move is not to plan
+further but to **ship one wave** — and the shortlist for which one is at the end
+of Phase 5.
