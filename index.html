@@ -54378,6 +54378,360 @@ collection rather than the whole estate.
 </div>
 </div>
 </div>
+<!-- ══════════════════════════════════════════════════════════════
+WAVE Y1 — INTUNE DEEP: POLICY
+══════════════════════════════════════════════════════════════ -->
+<!-- ── TOPIC: CONFIGURATION PROFILES ─────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">⚙️</span>
+<span class="topic-name">Configuration Profiles — Settings Catalog, Templates &amp; Custom</span>
+<span class="topic-badge">Intune • Policy</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Choosing</div>
+<div class="concept-title">Three Ways to Say the Same Thing, With Different Consequences</div>
+<div class="concept-desc">
+Every configuration profile ends up writing to a CSP <span class="acro-exp">(Configuration Service Provider)</span> on the device. What differs
+is how you get there — and, more importantly, what you can see afterwards.
+Pick on <strong>reporting</strong>, not on which blade you found first.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead>
+<tr><th></th><th>Settings catalog</th><th>Template</th><th>Custom (OMA-URI)</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>What it is</td>
+<td>A searchable picker over the CSP surface</td>
+<td>A curated group of related settings</td>
+<td>The raw CSP path, typed by hand</td>
+</tr>
+<tr>
+<td>Coverage</td>
+<td>Broad and growing; most new settings land here first</td>
+<td>Fixed — what the template author included</td>
+<td>Anything the device supports</td>
+</tr>
+<tr>
+<td>Discoverability</td>
+<td>Search by name; the setting explains itself</td>
+<td>Grouped sensibly, but you must know the template</td>
+<td>None — you need the CSP documentation open</td>
+</tr>
+<tr>
+<td>Reporting</td>
+<td class="c-green">Per setting, per device</td>
+<td class="c-green">Per setting, per device</td>
+<td class="c-red">Profile-level only, with a raw error code</td>
+</tr>
+<tr>
+<td>Fails like</td>
+<td>Named setting shows Error or Conflict</td>
+<td>Named setting shows Error or Conflict</td>
+<td>"Remediation failed" and a hex code, for the whole profile</td>
+</tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Default to the settings catalog.</strong> Reach for a
+template when it groups something fiddly you would otherwise assemble by hand,
+and reach for custom OMA-URI <span class="acro-exp">(Open Mobile Alliance Uniform Resource Identifier)</span> only when the setting genuinely is not surfaced
+anywhere else.
+</div>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The trap:</strong> a custom OMA-URI profile reports at
+the <em>profile</em> level, not the setting level. One bad URI <span class="acro-exp">(Uniform Resource Identifier)</span> in a profile of
+twenty makes the whole profile red on every device, and the console will not
+tell you which line it was. Keep custom profiles small and single-purpose —
+one setting per profile is not paranoid here, it is how you stay able to debug.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: POLICY CONFLICTS ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🥊</span>
+<span class="topic-name">Policy Conflicts — Proving Which One Won</span>
+<span class="topic-badge">Intune • Policy</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Nobody Wins a Conflict</div>
+<div class="concept-desc">
+The instinct from Group Policy is that the last writer, or the most restrictive
+value, wins. That is not how Intune configuration profiles behave. When two
+profiles set the same setting to different values, the usual outcome is a
+<strong class="c-red">Conflict</strong> state and the setting is
+<strong>not applied at all</strong> — the device keeps whatever it had. A few CSP <span class="acro-exp">(Configuration Service Provider)</span>
+areas do resolve to the more restrictive value, but relying on any tie-break is
+how you end up with a fleet that is neither configuration.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Situation</th><th>What actually happens</th></tr></thead>
+<tbody>
+<tr><td>Two Intune profiles, same setting, different values</td><td class="c-red">Conflict — the setting is not applied</td></tr>
+<tr><td>Two Intune profiles, same setting, same value</td><td class="c-green">Applies cleanly; no conflict</td></tr>
+<tr><td>Intune profile vs security baseline</td><td class="c-red">Still a conflict — a baseline is just another profile</td></tr>
+<tr><td>Intune vs GPO <span class="acro-exp">(Group Policy Object)</span> on a co-managed device</td><td>Depends on the workload slider; whichever authority owns it wins</td></tr>
+<tr><td>User-targeted vs device-targeted</td><td>Both apply to their own scope; a conflict only if the CSP is the same node</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">The fix is always the same:</strong> find the duplicate
+and delete one. There is no correct way to have two profiles arguing about one
+setting.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Diagnosis</div>
+<div class="concept-title">Three Places to Look, In Order</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>#</th><th>Where</th><th>What it tells you</th></tr></thead>
+<tbody>
+<tr>
+<td class="c-cyan">1</td>
+<td>Intune ▸ Devices ▸ the device ▸ Device configuration</td>
+<td>Per-profile state; drill into a profile for per-setting status including <em>Conflict</em>, and the name of the other policy involved</td>
+</tr>
+<tr>
+<td class="c-cyan">2</td>
+<td>On the device — MDM <span class="acro-exp">(Mobile Device Management)</span> diagnostics</td>
+<td>The full picture when the console disagrees with reality</td>
+</tr>
+<tr>
+<td class="c-cyan">3</td>
+<td>Registry under PolicyManager</td>
+<td>The value the device actually holds right now, per area</td>
+</tr>
+</tbody>
+</table>
+<pre class="code-block"><span class="com"># Collect everything the MDM stack knows, into a folder you can read</span>
+MdmDiagnosticsTool.exe -area <span class="str">"DeviceEnrollment;DeviceProvisioning;Autopilot"</span> -zip C:\Temp\mdm.zip
+
+<span class="com"># The applied value, per policy area — this is the ground truth</span>
+Get-ChildItem <span class="str">'HKLM:\SOFTWARE\Microsoft\PolicyManager\current\device'</span> |
+  Select-Object -ExpandProperty PSChildName
+
+<span class="com"># What a specific area currently holds (example: BitLocker)</span>
+Get-ItemProperty <span class="str">'HKLM:\SOFTWARE\Microsoft\PolicyManager\current\device\BitLocker'</span>
+
+<span class="com"># Which policies the device has been sent at all</span>
+Get-ChildItem <span class="str">'HKLM:\SOFTWARE\Microsoft\Provisioning\NodeCache\CSP\Device\MS DM Server\Nodes'</span></pre>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Before you dig:</strong> confirm the device has actually
+checked in since you changed anything. Half of all "the policy is not applying"
+reports are a device that last synced yesterday. Force it from Settings ▸
+Accounts ▸ Access work or school ▸ Info ▸ Sync, and give it a few minutes.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: SECURITY BASELINES ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🛡️</span>
+<span class="topic-name">Security Baselines Without Breaking the Fleet</span>
+<span class="topic-badge">Intune • Policy</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">A Baseline Is an Opinion, Not a Law</div>
+<div class="concept-desc">
+A security baseline is a large pre-built configuration profile carrying Microsoft's
+recommended values. It is genuinely useful and it is genuinely opinionated — it
+will turn things on that your users depend on being off. Treat it as a starting
+proposal to be reviewed setting by setting, not as a switch to flip.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Option</th><th>Reach for it when</th></tr></thead>
+<tbody>
+<tr><td class="c-green">Security baseline</td><td>You want a defensible starting posture fast, and you can afford to review a few hundred settings</td></tr>
+<tr><td class="c-green">Settings catalog policy</td><td>You know the specific controls you need; you want per-setting reporting and no surprises</td></tr>
+<tr><td class="c-green">Baseline + targeted overrides</td><td class="c-red">Tempting, and the main source of conflicts — every override is a future conflict report</td></tr>
+<tr><td class="c-green">CIS <span class="acro-exp">(Center for Internet Security)</span> or STIG-derived policy</td><td>An external standard is the requirement; import it as a settings-catalog policy so it reports cleanly</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Baselines are versioned.</strong> A new version does not
+apply itself — you review the changes and move the assignment to it. A baseline
+left on an old version quietly stops being the thing you think you deployed.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Rollout</div>
+<div class="concept-title">Four Rings, and What to Hold Back on Day One</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Ring</th><th>Who</th><th>Soak</th><th>What you are watching for</th></tr></thead>
+<tbody>
+<tr><td class="c-cyan">0 — Lab</td><td>Your own devices</td><td>Days</td><td>Does anything refuse to apply at all</td></tr>
+<tr><td class="c-cyan">1 — IT</td><td>The team, ~10 devices</td><td>1 week</td><td>Admin tooling, remote access, drivers</td></tr>
+<tr><td class="c-cyan">2 — Pilot</td><td>Volunteers across departments, ~5%</td><td>2 weeks</td><td>Line-of-business apps, printing, VPN <span class="acro-exp">(Virtual Private Network)</span>, peripherals</td></tr>
+<tr><td class="c-cyan">3 — Broad</td><td>Everyone else</td><td>—</td><td>Ticket volume in the first 48 hours</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-red">Hold these back until ring 2 at the earliest:</strong>
+anything touching removable media, anything that blocks script execution,
+credential-delegation and remote-assistance restrictions, and the firewall
+profile. Each one is individually reasonable and each one has locked a fleet out
+of something it needed.
+</div>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">The rollback that actually works:</strong> remove the
+<em>assignment</em>, not the policy. Deleting a profile leaves settings behind on
+devices in many cases; unassigning triggers the tattoo-removal path where the CSP <span class="acro-exp">(Configuration Service Provider)</span>
+supports it. Know before you deploy which of your settings will revert and which
+will stick.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: ADMINISTRATIVE TEMPLATES ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📋</span>
+<span class="topic-name">Administrative Templates &amp; ADMX-Backed Policy</span>
+<span class="topic-badge">Intune • Policy</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Group Policy's Vocabulary, Delivered Over MDM <span class="acro-exp">(Mobile Device Management)</span></div>
+<div class="concept-desc">
+Administrative Templates in Intune are ADMX-backed CSPs <span class="acro-exp">(Configuration Service Provider)</span>: the same setting names and
+the same explanatory text you know from the Group Policy editor, delivered through
+the MDM channel instead of SYSVOL. It is a <em>subset</em> — a large one, but the
+gaps are what generate migration tickets.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Coming from GPO <span class="acro-exp">(Group Policy Object)</span></th><th>In Intune</th></tr></thead>
+<tbody>
+<tr><td>Most Windows, Office and Edge policies</td><td class="c-green">Present as Administrative Templates, same names</td></tr>
+<tr><td>Third-party ADMX (Chrome, Adobe, your own)</td><td class="c-green">Supported by importing the .admx and its .adml, then referencing it in a custom profile</td></tr>
+<tr><td>Preferences — drive maps, shortcuts, registry items</td><td class="c-red">No equivalent; use a script or a remediation instead</td></tr>
+<tr><td>Startup and logon scripts</td><td class="c-red">Use platform scripts or the Intune Management Extension</td></tr>
+<tr><td>Item-level targeting</td><td class="c-amber">Approximated with filters and group assignment, not per-item</td></tr>
+<tr><td>Loopback processing</td><td class="c-red">No equivalent; rethink as device-scoped policy</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The trap:</strong> Administrative Templates and the
+settings catalog are two different surfaces onto overlapping settings. A setting
+present in one is not guaranteed to be in the other, and configuring the same
+thing in both is a conflict waiting to happen. Pick one surface per setting and
+write down which.
+</div>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">Migration order that works:</strong> export your GPOs,
+run them through Group Policy analytics to see what has a direct MDM equivalent,
+port those first, and keep a deliberate list of the leftovers. The leftovers are
+the project — everything else is data entry.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: ASSIGNMENT STRATEGY ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🎯</span>
+<span class="topic-name">Assignment Strategy — Users, Devices, Filters &amp; Exclusions</span>
+<span class="topic-badge">Intune • Policy</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Targeting Is Where Policy Goes Wrong</div>
+<div class="concept-desc">
+Most "the policy is assigned but not applying" tickets are not policy problems at
+all — they are targeting problems. Three rules cover nearly all of them.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Rule</th><th>Consequence</th></tr></thead>
+<tbody>
+<tr>
+<td class="c-red">Exclusion always beats inclusion</td>
+<td>A user in both an included and an excluded group is excluded. Nested groups count. This is the single most common cause.</td>
+</tr>
+<tr>
+<td class="c-amber">Scope has to match the setting</td>
+<td>A device-scoped CSP <span class="acro-exp">(Configuration Service Provider)</span> assigned to a user group applies to that user's devices; a user-scoped setting assigned to a device group may never apply at all.</td>
+</tr>
+<tr>
+<td class="c-cyan">A device with no primary user is invisible to user targeting</td>
+<td>Kiosks, shared and Autopilot pre-provisioned devices need device-group assignment.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Choosing</div>
+<div class="concept-title">Groups, Filters, or Both</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Tool</th><th>Reach for it when</th><th>Cost</th></tr></thead>
+<tbody>
+<tr>
+<td class="c-green">Static group</td>
+<td>Membership is a deliberate decision — pilot rings, exceptions</td>
+<td>Someone has to maintain it</td>
+</tr>
+<tr>
+<td class="c-green">Dynamic group</td>
+<td>Membership follows an attribute you trust — department, device type</td>
+<td>Rule evaluation is not instant; a new device is not in it immediately</td>
+</tr>
+<tr>
+<td class="c-green">Filter</td>
+<td>Narrowing one assignment by device property — OS <span class="acro-exp">(Operating System)</span> version, ownership, model</td>
+<td>Evaluated at assignment time; no group sprawl, but invisible unless you open the assignment</td>
+</tr>
+<tr>
+<td class="c-green">All Users / All Devices</td>
+<td>Genuinely universal policy, plus a filter to narrow it</td>
+<td>Nothing to maintain, and nothing to stop it hitting a device you forgot about</td>
+</tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-green">The pattern worth standardising on:</strong> assign broadly
+to <em>All Devices</em> with a filter that expresses the real condition, and keep
+static groups only for exclusions and pilot rings. Group-per-policy is what
+produces a tenant with four hundred groups nobody can name.
+</div>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Corporate-owned models change the answer:</strong> a COPE <span class="acro-exp">(Corporate-Owned, Personally Enabled)</span>
+device has a real primary user and user targeting works; a COBO <span class="acro-exp">(Corporate-Owned, Business Only)</span> or kiosk device
+does not, and every policy for it must be device-assigned. Decide the ownership
+model before you design the group structure, not after.
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body endpoint -->
 </div>
 </div>
@@ -54409,8 +54763,8 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">Overview</div>
-<div class="concept-title">1021 acronyms · 1070 meanings</div>
-<div class="concept-desc">Every acronym used anywhere on this site is expanded inline the first time it appears in a topic — the grey text in brackets beside it. This domain is the full lookup table: browse <strong>A&nbsp;–&nbsp;Z</strong> below, jump to a subject area, or use the search box at the top of the page (it matches both the acronym and what it stands for). Where an acronym means more than one thing, every meaning is listed. Letter index: <strong class="c-cyan">0–9</strong> <span class="c-muted">(3)</span> · <strong class="c-cyan">A</strong> <span class="c-muted">(74)</span> · <strong class="c-cyan">B</strong> <span class="c-muted">(26)</span> · <strong class="c-cyan">C</strong> <span class="c-muted">(106)</span> · <strong class="c-cyan">D</strong> <span class="c-muted">(61)</span> · <strong class="c-cyan">E</strong> <span class="c-muted">(48)</span> · <strong class="c-cyan">F</strong> <span class="c-muted">(28)</span> · <strong class="c-cyan">G</strong> <span class="c-muted">(30)</span> · <strong class="c-cyan">H</strong> <span class="c-muted">(25)</span> · <strong class="c-cyan">I</strong> <span class="c-muted">(60)</span> · <strong class="c-cyan">J</strong> <span class="c-muted">(9)</span> · <strong class="c-cyan">K</strong> <span class="c-muted">(12)</span> · <strong class="c-cyan">L</strong> <span class="c-muted">(39)</span> · <strong class="c-cyan">M</strong> <span class="c-muted">(54)</span> · <strong class="c-cyan">N</strong> <span class="c-muted">(40)</span> · <strong class="c-cyan">O</strong> <span class="c-muted">(32)</span> · <strong class="c-cyan">P</strong> <span class="c-muted">(60)</span> · <strong class="c-cyan">Q</strong> <span class="c-muted">(6)</span> · <strong class="c-cyan">R</strong> <span class="c-muted">(57)</span> · <strong class="c-cyan">S</strong> <span class="c-muted">(122)</span> · <strong class="c-cyan">T</strong> <span class="c-muted">(34)</span> · <strong class="c-cyan">U</strong> <span class="c-muted">(23)</span> · <strong class="c-cyan">V</strong> <span class="c-muted">(25)</span> · <strong class="c-cyan">W</strong> <span class="c-muted">(29)</span> · <strong class="c-cyan">X</strong> <span class="c-muted">(10)</span> · <strong class="c-cyan">Y</strong> <span class="c-muted">(4)</span> · <strong class="c-cyan">Z</strong> <span class="c-muted">(4)</span>.</div>
+<div class="concept-title">1025 acronyms · 1074 meanings</div>
+<div class="concept-desc">Every acronym used anywhere on this site is expanded inline the first time it appears in a topic — the grey text in brackets beside it. This domain is the full lookup table: browse <strong>A&nbsp;–&nbsp;Z</strong> below, jump to a subject area, or use the search box at the top of the page (it matches both the acronym and what it stands for). Where an acronym means more than one thing, every meaning is listed. Letter index: <strong class="c-cyan">0–9</strong> <span class="c-muted">(3)</span> · <strong class="c-cyan">A</strong> <span class="c-muted">(75)</span> · <strong class="c-cyan">B</strong> <span class="c-muted">(26)</span> · <strong class="c-cyan">C</strong> <span class="c-muted">(108)</span> · <strong class="c-cyan">D</strong> <span class="c-muted">(61)</span> · <strong class="c-cyan">E</strong> <span class="c-muted">(48)</span> · <strong class="c-cyan">F</strong> <span class="c-muted">(28)</span> · <strong class="c-cyan">G</strong> <span class="c-muted">(30)</span> · <strong class="c-cyan">H</strong> <span class="c-muted">(25)</span> · <strong class="c-cyan">I</strong> <span class="c-muted">(60)</span> · <strong class="c-cyan">J</strong> <span class="c-muted">(9)</span> · <strong class="c-cyan">K</strong> <span class="c-muted">(13)</span> · <strong class="c-cyan">L</strong> <span class="c-muted">(39)</span> · <strong class="c-cyan">M</strong> <span class="c-muted">(54)</span> · <strong class="c-cyan">N</strong> <span class="c-muted">(40)</span> · <strong class="c-cyan">O</strong> <span class="c-muted">(32)</span> · <strong class="c-cyan">P</strong> <span class="c-muted">(60)</span> · <strong class="c-cyan">Q</strong> <span class="c-muted">(6)</span> · <strong class="c-cyan">R</strong> <span class="c-muted">(57)</span> · <strong class="c-cyan">S</strong> <span class="c-muted">(122)</span> · <strong class="c-cyan">T</strong> <span class="c-muted">(34)</span> · <strong class="c-cyan">U</strong> <span class="c-muted">(23)</span> · <strong class="c-cyan">V</strong> <span class="c-muted">(25)</span> · <strong class="c-cyan">W</strong> <span class="c-muted">(29)</span> · <strong class="c-cyan">X</strong> <span class="c-muted">(10)</span> · <strong class="c-cyan">Y</strong> <span class="c-muted">(4)</span> · <strong class="c-cyan">Z</strong> <span class="c-muted">(4)</span>.</div>
 <div class="dw">
 <svg class="acro-svg" viewBox="0 0 1120 470" role="img" aria-labelledby="acrosvg-t acrosvg-d" preserveAspectRatio="xMidYMid meet">
 <title id="acrosvg-t">How an acronym is recorded and shown</title>
@@ -54481,7 +54835,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td>🔑 <strong class="c-amber">Cryptography</strong></td><td>50</td></tr>
 <tr><td>📊 <strong class="c-amber">Data</strong></td><td>31</td></tr>
 <tr><td>🔁 <strong class="c-amber">DevOps</strong></td><td>13</td></tr>
-<tr><td>🖥️ <strong class="c-amber">Endpoint</strong></td><td>39</td></tr>
+<tr><td>🖥️ <strong class="c-amber">Endpoint</strong></td><td>42</td></tr>
 <tr><td>🏛️ <strong class="c-amber">Engineering</strong></td><td>63</td></tr>
 <tr><td>🎖️ <strong class="c-amber">Government</strong></td><td>7</td></tr>
 <tr><td>🔧 <strong class="c-amber">Hardware</strong></td><td>71</td></tr>
@@ -54497,7 +54851,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td>⚙️ <strong class="c-amber">Systems</strong></td><td>15</td></tr>
 <tr><td>📦 <strong class="c-amber">Virtualization</strong></td><td>6</td></tr>
 <tr><td>🕸️ <strong class="c-amber">Web</strong></td><td>58</td></tr>
-<tr><td>🪟 <strong class="c-amber">Windows</strong></td><td>40</td></tr>
+<tr><td>🪟 <strong class="c-amber">Windows</strong></td><td>41</td></tr>
 </tbody>
 </table>
 </div>
@@ -54535,13 +54889,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — A</span>
-<span class="topic-badge">74 TERMS</span>
+<span class="topic-badge">75 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">A — 74 acronyms</div>
+<div class="concept-title">A — 75 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>A</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -54570,6 +54924,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">AD DS</strong></td><td><strong class="c-cyan">Active Directory Domain Services</strong></td><td>Windows</td></tr>
 <tr><td><strong class="c-amber">AD FS</strong></td><td><strong class="c-cyan">Active Directory Federation Services</strong></td><td>Windows</td></tr>
 <tr><td><strong class="c-amber">ADB</strong></td><td><strong class="c-cyan">Android Debug Bridge</strong></td><td>Endpoint</td></tr>
+<tr><td><strong class="c-amber">ADML</strong></td><td><strong class="c-cyan">Administrative Language file</strong><br /><span class="c-muted">The localised strings that pair with an .admx template</span></td><td>Windows</td></tr>
 <tr><td><strong class="c-amber">ADMX</strong></td><td><strong class="c-cyan">Administrative Template</strong><br /><span class="c-muted">XML-based Group Policy template</span></td><td>Windows</td></tr>
 <tr><td><strong class="c-amber">ADR</strong></td><td><strong class="c-cyan">Architecture Decision Record</strong><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Automatic Deployment Rule</strong><br /><span class="c-muted">MECM rule that deploys updates on a schedule</span></td><td>Engineering · Endpoint</td></tr>
 <tr><td><strong class="c-amber">ADSL</strong></td><td><strong class="c-cyan">Asymmetric Digital Subscriber Line</strong></td><td>Networking</td></tr>
@@ -54681,13 +55036,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — C</span>
-<span class="topic-badge">106 TERMS</span>
+<span class="topic-badge">108 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">C — 106 acronyms</div>
+<div class="concept-title">C — 108 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>C</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -54752,9 +55107,11 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">CNCF</strong></td><td><strong class="c-cyan">Cloud Native Computing Foundation</strong></td><td>Organizations</td></tr>
 <tr><td><strong class="c-amber">CNN</strong></td><td><strong class="c-cyan">Convolutional Neural Network</strong><br /><span class="c-muted">Image-oriented architecture using learned filters</span></td><td>AI</td></tr>
 <tr><td><strong class="c-amber">COBIT</strong></td><td><strong class="c-cyan">Control Objectives for Information and Related Technologies</strong></td><td>Compliance</td></tr>
+<tr><td><strong class="c-amber">COBO</strong></td><td><strong class="c-cyan">Corporate-Owned, Business Only</strong><br /><span class="c-muted">A locked-down company device with no personal use</span></td><td>Endpoint</td></tr>
 <tr><td><strong class="c-amber">COEP</strong></td><td><strong class="c-cyan">Cross-Origin Embedder Policy</strong></td><td>Web</td></tr>
 <tr><td><strong class="c-amber">CompTIA</strong></td><td><strong class="c-cyan">Computing Technology Industry Association</strong></td><td>Organizations</td></tr>
 <tr><td><strong class="c-amber">COOP</strong></td><td><strong class="c-cyan">Continuity of Operations Plan</strong><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Cross-Origin Opener Policy</strong></td><td>Risk · Web</td></tr>
+<tr><td><strong class="c-amber">COPE</strong></td><td><strong class="c-cyan">Corporate-Owned, Personally Enabled</strong><br /><span class="c-muted">A company device the user may also use personally</span></td><td>Endpoint</td></tr>
 <tr><td><strong class="c-amber">COPPA</strong></td><td><strong class="c-cyan">Children's Online Privacy Protection Act</strong></td><td>Compliance</td></tr>
 <tr><td><strong class="c-amber">CORP</strong></td><td><strong class="c-cyan">Cross-Origin Resource Policy</strong></td><td>Web</td></tr>
 <tr><td><strong class="c-amber">CORS</strong></td><td><strong class="c-cyan">Cross-Origin Resource Sharing</strong><br /><span class="c-muted">Headers that let a page call another origin</span></td><td>Web</td></tr>
@@ -55232,13 +55589,13 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Acronyms — K</span>
-<span class="topic-badge">12 TERMS</span>
+<span class="topic-badge">13 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">A–Z Index</div>
-<div class="concept-title">K — 12 acronyms</div>
+<div class="concept-title">K — 13 acronyms</div>
 <div class="concept-desc">Every acronym in the dictionary beginning with <strong>K</strong>, with each meaning it carries in IT.</div>
 <div class="dw">
 <table class="ref-table">
@@ -55250,6 +55607,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">KDF</strong></td><td><strong class="c-cyan">Key Derivation Function</strong><br /><span class="c-muted">Stretches a password or secret into a cryptographic key</span></td><td>Cryptography</td></tr>
 <tr><td><strong class="c-amber">KEM</strong></td><td><strong class="c-cyan">Key Encapsulation Mechanism</strong></td><td>Cryptography</td></tr>
 <tr><td><strong class="c-amber">KEV</strong></td><td><strong class="c-cyan">Known Exploited Vulnerabilities</strong><br /><span class="c-muted">CISA's catalogue of actively exploited CVEs</span></td><td>Security</td></tr>
+<tr><td><strong class="c-amber">KFM</strong></td><td><strong class="c-cyan">Known Folder Move</strong><br /><span class="c-muted">Redirects Desktop, Documents and Pictures into OneDrive</span></td><td>Endpoint</td></tr>
 <tr><td><strong class="c-amber">KISS</strong></td><td><strong class="c-cyan">Keep It Simple, Stupid</strong></td><td>Engineering</td></tr>
 <tr><td><strong class="c-amber">KMS</strong></td><td><strong class="c-cyan">Key Management Service</strong><br /><span class="c-muted">Managed encryption key custody</span></td><td>Cloud</td></tr>
 <tr><td><strong class="c-amber">KPI</strong></td><td><strong class="c-cyan">Key Performance Indicator</strong></td><td>Business</td></tr>
@@ -56615,14 +56973,14 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🖥️</span>
 <span class="topic-name">By Area — Endpoint</span>
-<span class="topic-badge">39 TERMS</span>
+<span class="topic-badge">42 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">Subject Index</div>
 <div class="concept-title">Endpoint acronyms</div>
-<div class="concept-desc">The 39 dictionary entries that belong to <strong>Endpoint</strong>.</div>
+<div class="concept-desc">The 42 dictionary entries that belong to <strong>Endpoint</strong>.</div>
 <div class="dw">
 <table class="ref-table">
 <thead><tr><th>Acronym</th><th>Stands For</th></tr></thead>
@@ -56634,6 +56992,8 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">CCM</strong></td><td><strong class="c-cyan">Counter with CBC-MAC</strong><br /><span class="c-muted">Authenticated encryption mode used by WPA2</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Configuration Manager Client</strong><br /><span class="c-muted">The MECM agent, installed under C:\Windows\CCM</span></td></tr>
 <tr><td><strong class="c-amber">CMG</strong></td><td><strong class="c-cyan">Cloud Management Gateway</strong><br /><span class="c-muted">Internet-facing MECM client access</span></td></tr>
 <tr><td><strong class="c-amber">CMPivot</strong></td><td><strong class="c-cyan">Configuration Manager Pivot</strong><br /><span class="c-muted">Real-time query tool in MECM</span></td></tr>
+<tr><td><strong class="c-amber">COBO</strong></td><td><strong class="c-cyan">Corporate-Owned, Business Only</strong><br /><span class="c-muted">A locked-down company device with no personal use</span></td></tr>
+<tr><td><strong class="c-amber">COPE</strong></td><td><strong class="c-cyan">Corporate-Owned, Personally Enabled</strong><br /><span class="c-muted">A company device the user may also use personally</span></td></tr>
 <tr><td><strong class="c-amber">CSP</strong></td><td><strong class="c-cyan">Content Security Policy</strong><br /><span class="c-muted">Browser header restricting what a page may load or execute</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Configuration Service Provider</strong><br /><span class="c-muted">The Windows MDM policy surface</span></td></tr>
 <tr><td><strong class="c-amber">DEM</strong></td><td><strong class="c-cyan">Device Enrollment Manager</strong></td></tr>
 <tr><td><strong class="c-amber">DEP</strong></td><td><strong class="c-cyan">Data Execution Prevention</strong><br /><span class="c-muted">Marks data pages non-executable</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Device Enrollment Program</strong><br /><span class="c-muted">Apple's automated enrollment; also Data Execution Prevention</span></td></tr>
@@ -56641,6 +57001,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">EMM</strong></td><td><strong class="c-cyan">Enterprise Mobility Management</strong><br /><span class="c-muted">MDM plus application, identity and content management</span></td></tr>
 <tr><td><strong class="c-amber">ESP</strong></td><td><strong class="c-cyan">Encapsulating Security Payload</strong><br /><span class="c-muted">IPsec protocol providing encryption and integrity</span><br /><span class="c-muted">— or —</span><br /><strong class="c-cyan">Enrollment Status Page</strong><br /><span class="c-muted">The Autopilot provisioning progress screen</span></td></tr>
 <tr><td><strong class="c-amber">IME</strong></td><td><strong class="c-cyan">Intune Management Extension</strong><br /><span class="c-muted">The agent that runs Win32 app installs and PowerShell scripts</span></td></tr>
+<tr><td><strong class="c-amber">KFM</strong></td><td><strong class="c-cyan">Known Folder Move</strong><br /><span class="c-muted">Redirects Desktop, Documents and Pictures into OneDrive</span></td></tr>
 <tr><td><strong class="c-amber">LOB</strong></td><td><strong class="c-cyan">Line of Business</strong><br /><span class="c-muted">An in-house app deployed outside any public store</span></td></tr>
 <tr><td><strong class="c-amber">MAM</strong></td><td><strong class="c-cyan">Mobile Application Management</strong><br /><span class="c-muted">Policy applied to apps rather than whole devices</span></td></tr>
 <tr><td><strong class="c-amber">MDT</strong></td><td><strong class="c-cyan">Microsoft Deployment Toolkit</strong></td></tr>
@@ -57729,14 +58090,14 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <div class="topic-header">
 <span class="topic-icon">🪟</span>
 <span class="topic-name">By Area — Windows</span>
-<span class="topic-badge">40 TERMS</span>
+<span class="topic-badge">41 TERMS</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">Subject Index</div>
 <div class="concept-title">Windows acronyms</div>
-<div class="concept-desc">The 40 dictionary entries that belong to <strong>Windows</strong>.</div>
+<div class="concept-desc">The 41 dictionary entries that belong to <strong>Windows</strong>.</div>
 <div class="dw">
 <table class="ref-table">
 <thead><tr><th>Acronym</th><th>Stands For</th></tr></thead>
@@ -57746,6 +58107,7 @@ Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py
 <tr><td><strong class="c-amber">AD CS</strong></td><td><strong class="c-cyan">Active Directory Certificate Services</strong></td></tr>
 <tr><td><strong class="c-amber">AD DS</strong></td><td><strong class="c-cyan">Active Directory Domain Services</strong></td></tr>
 <tr><td><strong class="c-amber">AD FS</strong></td><td><strong class="c-cyan">Active Directory Federation Services</strong></td></tr>
+<tr><td><strong class="c-amber">ADML</strong></td><td><strong class="c-cyan">Administrative Language file</strong><br /><span class="c-muted">The localised strings that pair with an .admx template</span></td></tr>
 <tr><td><strong class="c-amber">ADMX</strong></td><td><strong class="c-cyan">Administrative Template</strong><br /><span class="c-muted">XML-based Group Policy template</span></td></tr>
 <tr><td><strong class="c-amber">AMSI</strong></td><td><strong class="c-cyan">Antimalware Scan Interface</strong><br /><span class="c-muted">Lets scanners inspect scripts before execution</span></td></tr>
 <tr><td><strong class="c-amber">BITS</strong></td><td><strong class="c-cyan">Background Intelligent Transfer Service</strong><br /><span class="c-muted">The throttled background download service MECM uses for content</span></td></tr>
