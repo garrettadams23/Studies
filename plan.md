@@ -1242,3 +1242,686 @@ every card inherits search / permalinks / progress / keyboard-a11y automatically
 - New `mobile` 📱 domain — iOS/Android/React Native/Flutter, app store, mobile security.
 - Interactive extras — a quiz/flashcard mode over existing cards; a "learning path"
   overlay that sequences cards into guided tracks.
+
+---
+
+# Content & Capability Roadmap — Phase 4: The Enterprise Estate & the Study Platform (Wave 58+)
+
+> **Added on request — "make more plan."** Written August 2026 against a measured
+> snapshot of the repo, not from memory. Phase 3's *new-domain* half shipped
+> (Tracks H and I are complete — `data` and `web` exist); its *depth* half
+> (Tracks J–U, ~201 cards) is still open and **remains the priority queue**.
+> Phase 4 is deliberately about ground Phase 3 never covers: the **enterprise
+> estate an IT professional actually operates**, the **operational trades**, and
+> turning the site from a reference into a **study platform**.
+
+## Where the site actually stands
+
+Measured from `data/*.html` at the time of writing:
+
+| Domain | Topics | | Domain | Topics |
+|---|---:|---|---|---:|
+| `script` Scripting & Web | 137 | | `redteam` Red Team | 43 |
+| `ops` Security Operations | 68 | | `data` Data & Databases | 40 |
+| `lifestyle` Lifestyle | 59 | | `blueteam` Blue Team | 37 |
+| `linux` Linux & Systems | 56 | | `shortcut` Shortcuts | 37 |
+| `net` Networking | 55 | | `eng` Engineering | 36 |
+| `acronym` Acronym Dictionary | 53 | | `web` Web & Frontend | 35 |
+| `cloud` Cloud (AWS·GCP·Azure) | 49 | | `ai` AI & ML | 34 |
+| `sec` Security Core | 43 | | `pentest` PenTest | 29 |
+| `grc` Governance & Risk | 28 | | `threat` Threat & Attack | 25 |
+| `military` Military Codes | 23 | | `endpoint` Endpoint Mgmt | **13** |
+
+**900 topics across 20 domains.** Two numbers drive this phase:
+
+- **`endpoint` has 13 topics** — the thinnest domain on the site, and the one
+  closest to the day job of the person maintaining it. Phase 4 takes it to ~55.
+- **There is no home at all** for Windows Server, Active Directory
+  administration, Exchange/SharePoint/Teams, virtualization, backup, or the
+  service desk. That is most of enterprise IT, and it is entirely absent.
+
+## What Phase 4 is, and is not
+
+**It is:** the operator's half of IT. Phase 1–3 built an excellent *security and
+software engineering* reference. A person running a real estate spends their week
+in Active Directory, Intune, Exchange, a hypervisor, a backup console and a
+ticket queue — and almost none of that is on the site yet.
+
+**It is not:** a replacement for Tracks J–U. Ship those first or in parallel;
+they deepen domains that already exist and already have an audience.
+
+## Structural decisions
+
+- **New domain `infra` 🏗️ "Infrastructure & Datacenter"** — Windows Server, AD
+  DS administration, DNS/DHCP/PKI operations, virtualization, storage and
+  backup. This is the biggest single hole in the site. Wire it the usual way:
+  `scaffold_domain.py infra 🏗️ …` then `data/infra.html`.
+- **New domain `m365` 📨 "Microsoft 365 & Collaboration"** — Exchange Online,
+  SharePoint/OneDrive, Teams, Purview, licensing and tenant administration.
+  Justified on its own because it is a distinct admin surface from Azure and
+  from endpoint, with its own portals, PowerShell modules and failure modes.
+- **New domain `itsm` 🎫 "Service Management & Support"** — ITIL practices,
+  ticket craft, escalation, on-call, knowledge management, metrics. Small but
+  high value: it is the layer every other domain gets consumed through, and it
+  is what most people are actually hired into first.
+- **Grow `endpoint` rather than splitting it** — Intune, MECM, Autopilot,
+  packaging, servicing, macOS and mobile all belong to one role. 13 → ~55.
+- **Rule for new domains, applied consistently:** a domain earns its own chip
+  when it has (a) ≥ 15 cards of real material, (b) its own tooling and console,
+  and (c) a job title attached to it. `infra`, `m365` and `itsm` all pass;
+  "printing", "telephony" and "licensing" do not, and get folded in.
+- **Part 4 is engineering, not content.** Those tracks change `script.js`,
+  `style.css`, `build.py` and CI — they ship as normal commits, not waves.
+
+---
+
+## PART 1 — THE ENTERPRISE MICROSOFT ESTATE
+
+### TRACK V — Windows Server & Directory Services  (→ new `infra` domain)
+
+~7 waves, ~35 cards. The on-prem backbone almost every organisation still runs.
+Pairs directly with the `redteam` AD-attack cards — same objects, defender's view.
+
+**Wave V1 — Windows Server Foundations**
+- [ ] Windows Server Editions & Licensing — Standard vs Datacenter, CALs, Core vs Desktop Experience
+- [ ] Server Core & Administration at Scale — why no GUI, and how you manage it anyway
+- [ ] Server Manager, RSAT & Windows Admin Center — the three consoles and when each wins
+- [ ] Roles & Features — what installing a role actually changes
+- [ ] Server Hardening Baseline — LAPS, no browsing, minimal roles, audit policy
+
+**Wave V2 — Active Directory Domain Services**
+- [ ] AD DS Architecture — forest, domain, tree, OU, site; what each boundary really means
+- [ ] Domain Controllers & FSMO Roles — the five roles, who holds them, seizing vs transferring
+- [ ] AD Replication — multi-master, USN, tombstones, `repadmin` triage
+- [ ] Trusts — forest/external/shortcut, direction vs transitivity, SID filtering
+- [ ] Sites, Subnets & Site Links — why clients authenticate against the wrong DC
+
+**Wave V3 — Group Policy in Practice**
+- [ ] Group Policy Architecture — GPO, GPC/GPT, SYSVOL, where settings actually live
+- [ ] Processing Order & Precedence — LSDOU, enforcement, blocking, loopback
+- [ ] Filtering — security filtering vs WMI filtering vs item-level targeting
+- [ ] Group Policy Preferences — the half of GPO people forget exists
+- [ ] GPO Troubleshooting — `gpresult /h`, RSoP, `gpupdate /force`, and reading the Group Policy operational log
+
+**Wave V4 — Identity Operations**
+- [ ] Users, Groups & Nesting Strategy — AGDLP, and why nested groups become a mess
+- [ ] Service Accounts — gMSA, delegation, and retiring shared passwords
+- [ ] Kerberos in Operations — SPNs, delegation types, ticket lifetimes, clock skew
+- [ ] Entra Connect & Hybrid Identity — sync, password hash vs pass-through vs federation
+- [ ] Cleaning Up a Legacy Directory — stale objects, orphaned SIDs, over-permissive ACLs
+
+**Wave V5 — Core Network Services (on-prem)**
+- [ ] Windows DNS Administration — zones, scavenging, forwarders, conditional forwarders
+- [ ] DHCP Administration — scopes, reservations, options, failover, relay
+- [ ] IPAM & Address Discipline — when a spreadsheet stops being enough
+- [ ] Time Sync — the PDC emulator, `w32tm`, and why Kerberos dies without it
+- [ ] File Services — shares, NTFS vs share permissions, DFS-N/DFS-R, quotas
+
+**Wave V6 — Certificate Services**
+- [ ] AD CS Design — root vs issuing CA, offline roots, CRL/OCSP publishing
+- [ ] Certificate Templates — the settings that matter, and the ones that get you owned
+- [ ] Auto-enrolment — getting certificates onto devices without touching them
+- [ ] Certificate Lifecycle Ops — renewal, revocation, the expiry outage nobody schedules
+- [ ] ADCS Misconfiguration — ESC1–ESC8 from the defender's side (pairs with `redteam`)
+
+**Wave V7 — Server Operations & Troubleshooting**
+- [ ] Windows Event Log Triage — the channels worth watching, and building a useful filter
+- [ ] Performance Monitor & Resource Monitor — counters that actually diagnose
+- [ ] Windows Patching Strategy — rings, maintenance windows, reboot coordination
+- [ ] Domain Controller Recovery — authoritative vs non-authoritative restore, DSRM
+- [ ] Decommissioning a Server Properly — the checklist that prevents next year's mystery outage
+
+### TRACK W — Microsoft 365 & Collaboration  (→ new `m365` domain)
+
+~6 waves, ~30 cards. The tenant most organisations live inside.
+
+**Wave W1 — Tenant Foundations**
+- [ ] M365 Tenant Anatomy — tenant, domains, admin centers, and how they relate to Azure
+- [ ] Licensing Without Tears — E3 vs E5 vs Business, add-ons, group-based licensing
+- [ ] Admin Roles & Least Privilege — the built-in roles worth knowing, and PIM for the rest
+- [ ] Service Health & Message Center — knowing about the outage before the tickets
+- [ ] Tenant-to-Tenant & Mergers — the migration nobody plans enough time for
+
+**Wave W2 — Exchange Online**
+- [ ] Mail Flow Explained — connectors, transport rules, the path a message actually takes
+- [ ] Mailbox Types — user, shared, room, equipment, and delegation done right
+- [ ] Anti-Spam & Anti-Phish — EOP, Defender for Office, quarantine, safe links/attachments
+- [ ] Message Trace & Header Analysis — proving where a message went, and where it died
+- [ ] Retention, Litigation Hold & Archiving — legal's requirements in mailbox terms
+
+**Wave W3 — SharePoint & OneDrive**
+- [ ] SharePoint Online Architecture — sites, libraries, lists, and the 400-URL trap
+- [ ] Permissions Model — groups, inheritance, sharing links, and why it sprawls
+- [ ] OneDrive Known Folder Move — redirecting Desktop/Documents without user pain
+- [ ] Sync Client Troubleshooting — the top failure modes and their fixes
+- [ ] External Sharing & Guest Access — B2B collaboration without leaking the tenant
+
+**Wave W4 — Teams**
+- [ ] Teams Architecture — what a team really is (M365 group + SharePoint + Exchange + chat)
+- [ ] Teams Policies — meeting, messaging, app and calling policy packages
+- [ ] Teams Voice Basics — Phone System, calling plans, Direct Routing, SIP at a glance
+- [ ] Teams Call Quality Troubleshooting — CQD, network requirements, the real culprits
+- [ ] Governance & Sprawl — naming policy, expiration, the 4,000-team problem
+
+**Wave W5 — Purview, Compliance & Data**
+- [ ] Purview Overview — the compliance surface, mapped to what auditors ask for
+- [ ] Sensitivity Labels & DLP — classification that survives contact with users
+- [ ] Retention Policies vs Retention Labels — the distinction that trips everyone
+- [ ] eDiscovery & Content Search — running a legal hold end to end
+- [ ] Insider Risk & Audit Log — what is recorded, for how long, and how to search it
+
+**Wave W6 — M365 Operations & Troubleshooting**
+- [ ] The PowerShell Modules — Graph, Exchange Online, Teams; connecting and staying connected
+- [ ] Graph API for Admins — batch operations, permissions, throttling
+- [ ] Reporting & Usage Analytics — adoption data that answers a real question
+- [ ] Backup for M365 — why native retention is not a backup
+- [ ] M365 Troubleshooting Playbook — tenant, identity, licence, policy, client: in that order
+
+### TRACK Y — Endpoint Engineering Depth  (→ `endpoint`, 13 → ~55)
+
+~8 waves, ~40 cards. The domain closest to the maintainer's day job, and the
+thinnest on the site. Builds on the MECM troubleshooting cards already shipped.
+
+**Wave Y1 — Intune Deep: Policy**
+- [ ] Configuration Profiles — settings catalog vs templates vs custom OMA-URI
+- [ ] Policy Conflicts — how Intune resolves them, and how to prove which one won
+- [ ] Security Baselines — applying them without breaking the fleet
+- [ ] Administrative Templates in Intune — ADMX-backed policy and its limits
+- [ ] Assignment Strategy — user vs device targeting, filters, exclusion groups
+
+**Wave Y2 — Intune Deep: Applications**
+- [ ] Win32 App Packaging — `.intunewin`, detection, requirements, dependencies, supersedence
+- [ ] Install Contexts — system vs user, and the failures that come from choosing wrong
+- [ ] Store, LOB & Enterprise App Catalog Apps — when each is the right vehicle
+- [ ] App Protection Policies — MAM without enrolment, on unmanaged devices
+- [ ] Application Troubleshooting — reading the IME log like a professional
+
+**Wave Y3 — Windows Servicing & Updates**
+- [ ] Windows Update for Business — rings, deferrals, deadlines, pause
+- [ ] Feature vs Quality vs Driver Updates — three pipelines with three risk profiles
+- [ ] Windows Autopatch — what it takes over, and what it does not
+- [ ] Update Compliance Reporting — proving the fleet is patched
+- [ ] Emergency Patching — an out-of-band CVE, from advisory to verified deployment
+
+**Wave Y4 — Provisioning & Imaging**
+- [ ] Autopilot Deep — profiles, hash harvesting, deployment modes, hybrid vs Entra join
+- [ ] Autopilot Device Preparation — the newer flow, and how it differs
+- [ ] Driver Management — DISM, driver packs, and the Autopilot driver dilemma
+- [ ] Provisioning Packages & Bulk Enrolment — the escape hatch when Autopilot cannot
+- [ ] Reprovisioning & Device Reuse — wipe, fresh start, retire, and what each actually removes
+
+**Wave Y5 — Endpoint Security**
+- [ ] BitLocker at Scale — silent enablement, key escrow, recovery, TPM attestation
+- [ ] Defender for Endpoint & Intune — onboarding, ASR rules, tamper protection
+- [ ] Local Admin Rights — removing them, and the endpoint privilege management options
+- [ ] Windows LAPS — the modern version, in Entra and in AD
+- [ ] Firewall & Removable Media Policy — the two controls auditors always ask about
+
+**Wave Y6 — Compliance & Conditional Access**
+- [ ] Compliance Policies Deep — settings, grace periods, and what "non-compliant" costs a user
+- [ ] Device Trust End to End — enrolment → compliance → CA → resource access
+- [ ] Filters & Dynamic Groups — targeting that scales past a naming convention
+- [ ] Reporting on Drift — finding the devices that quietly stopped complying
+- [ ] The Identity/Endpoint Seam — the failure mode that lands both teams on the same bridge
+
+**Wave Y7 — MECM Beyond Troubleshooting**
+- [ ] MECM Site Design — CAS, primary, secondary, and when each is justified
+- [ ] Boundary Groups Done Right — fallback, relationships, and the classic misconfiguration
+- [ ] Collections & Queries — WQL that does not melt the site server
+- [ ] Co-management Workloads — moving each slider, safely, in order
+- [ ] Retiring MECM — the honest migration path to cloud-only, and what genuinely blocks it
+
+**Wave Y8 — Endpoint Analytics & the Fleet**
+- [ ] Endpoint Analytics — startup score, app reliability, work-from-anywhere metrics
+- [ ] Proactive Remediations — detect-and-fix scripts as a first-class tool
+- [ ] Hardware Lifecycle — refresh planning, warranty, disposal, data destruction
+- [ ] Fleet Reporting — the five numbers leadership actually asks for
+- [ ] Building an Endpoint Runbook — the document that lets someone else take the pager
+
+### TRACK Z — Virtualization, Storage & Backup  (→ `infra`)
+
+~5 waves, ~25 cards. The layer under everything, and the one nobody tests until
+they need it.
+
+**Wave Z1 — Hypervisors**
+- [ ] Virtualization Fundamentals — type 1 vs type 2, paravirtualization, hardware assist
+- [ ] VMware vSphere — ESXi, vCenter, clusters, DRS/HA, the vocabulary
+- [ ] Hyper-V — generations, integration services, checkpoints, Windows-shop realities
+- [ ] Proxmox & KVM — the open-source stack, and where it fits
+- [ ] Sizing & Overcommit — CPU ready, memory ballooning, the noisy-neighbour problem
+
+**Wave Z2 — Virtual Machine Operations**
+- [ ] VM Lifecycle — templates, cloning, sysprep, golden images
+- [ ] Snapshots Are Not Backups — what they cost, and how they bite
+- [ ] Live Migration & Maintenance Mode — patching hosts without an outage
+- [ ] P2V and V2V — the migrations that still happen
+- [ ] Virtualization Troubleshooting — the storage/network/host triage order
+
+**Wave Z3 — Storage**
+- [ ] Storage Fundamentals — block vs file vs object, restated for the datacenter
+- [ ] SAN & Fabric Basics — LUNs, zoning, multipathing, iSCSI vs Fibre Channel
+- [ ] NAS & File Services — SMB/NFS at scale, DFS, quotas, access-based enumeration
+- [ ] Storage Performance — IOPS, throughput, latency, queue depth, and which one is your limit
+- [ ] Storage Tiering & Capacity Planning — forecasting growth before it becomes an incident
+
+**Wave Z4 — Backup & Recovery**
+- [ ] Backup Strategy — 3-2-1-1-0, full/incremental/differential, retention schemes
+- [ ] Backup Targets — disk, tape, cloud, immutable and air-gapped copies
+- [ ] Backup Products in Practice — Veeam and friends: jobs, repositories, proxies
+- [ ] Restore Testing — the drill that turns a backup into a recovery capability
+- [ ] Ransomware-Resilient Backup — immutability, isolation, and assuming the domain is lost
+
+**Wave Z5 — Business Continuity in the Real World**
+- [ ] DR Design — hot/warm/cold, replication, and matching spend to RTO/RPO
+- [ ] Failover & Failback — the half of the runbook everyone forgets to write
+- [ ] Tabletop Exercises — running one that finds real gaps
+- [ ] The Post-Incident Review — blameless, specific, and actually followed up
+- [ ] DR for Cloud & SaaS — what the provider covers, and precisely what it does not
+
+---
+
+## PART 2 — THE OPERATIONAL TRADES
+
+### TRACK AA — Service Desk & IT Service Management  (→ new `itsm` domain)
+
+~5 waves, ~25 cards. The trade most people enter IT through, treated seriously.
+
+**Wave AA1 — The Practices**
+- [ ] ITIL 4 Without the Jargon — the practices that survive contact with a real team
+- [ ] Incident vs Problem vs Change vs Request — the distinction, and why it matters
+- [ ] Priority, Impact & Urgency — building a matrix people actually apply
+- [ ] Service Catalog & Request Fulfilment — turning ad-hoc asks into a repeatable service
+- [ ] Change Enablement — CAB, standard changes, emergency changes, freeze windows
+
+**Wave AA2 — The Ticket Craft**
+- [ ] Writing a Ticket Someone Else Can Solve — the fields that decide resolution time
+- [ ] Triage & Categorization — routing correctly the first time
+- [ ] Escalation — functional vs hierarchical, and how to hand over without losing context
+- [ ] Closing Well — resolution notes, root cause, and the knowledge article that follows
+- [ ] Working a Queue — prioritisation, batching, and not drowning
+
+**Wave AA3 — Talking to Humans**
+- [ ] The First Ninety Seconds — establishing what actually happened
+- [ ] Explaining Technical Things to Non-Technical People — a repeatable method
+- [ ] Difficult Conversations — angry users, VIP pressure, saying no
+- [ ] Remote Support Skills — screen shares, phone-only diagnosis, guiding blind
+- [ ] Writing for Users — emails, outage notices, and status pages people trust
+
+**Wave AA4 — Knowledge & Automation**
+- [ ] Knowledge Management — KCS in practice, and keeping articles from rotting
+- [ ] Self-Service That Works — password reset, software portal, and their adoption traps
+- [ ] Shift-Left — moving fixes from tier 3 toward tier 1 deliberately
+- [ ] Ticket Automation — templates, workflows, and where automation backfires
+- [ ] Asset & Configuration Management — a CMDB that stays true
+
+**Wave AA5 — Running the Function**
+- [ ] Service Desk Metrics — the ones that improve service vs the ones that game it
+- [ ] SLAs, OLAs & Underpinning Contracts — the chain of promises
+- [ ] Capacity & Shift Planning — staffing a queue that has a shape
+- [ ] On-Call Without Burnout — rotations, handovers, escalation policy, comp time
+- [ ] Major Incident Management — commander, comms lead, scribe, and the bridge discipline
+
+### TRACK AB — Vendor Networking, Firewalls & Wireless  (→ `net`)
+
+~5 waves, ~25 cards. Complements Track Q's protocol depth with the kit people
+actually touch. Vendor-specific, deliberately.
+
+**Wave AB1 — Cisco IOS in Practice**
+- [ ] IOS Navigation — modes, `show` commands worth memorising, config archives
+- [ ] Switch Configuration — VLANs, trunks, port security, PortFast/BPDU guard
+- [ ] Router Configuration — interfaces, static and dynamic routing, ACLs
+- [ ] Troubleshooting on IOS — `show interface`, CDP/LLDP, SPAN, debug safely
+- [ ] Config Management & Upgrades — backups, staged upgrades, rollback plan
+
+**Wave AB2 — Enterprise Firewalls**
+- [ ] Firewall Policy Design — zones, rule order, the implicit deny, documentation
+- [ ] Palo Alto Concepts — App-ID, User-ID, security profiles, the commit model
+- [ ] FortiGate Concepts — policies, VDOMs, SD-WAN features, logging
+- [ ] NAT on Firewalls — source/destination NAT, hairpinning, and reading a flow
+- [ ] Firewall Troubleshooting — packet capture, session table, policy lookup order
+
+**Wave AB3 — Wireless Engineering**
+- [ ] RF Fundamentals — channels, width, co-channel interference, cell design
+- [ ] Site Surveys — predictive vs passive vs active, and reading a heat map
+- [ ] Enterprise Wi-Fi Auth — 802.1X, RADIUS, certificates, PSK's remaining niche
+- [ ] Controller vs Cloud-Managed — Meraki/Mist/Aruba models compared
+- [ ] Wireless Troubleshooting — roaming, sticky clients, retries, "it's slow" triage
+
+**Wave AB4 — Network Operations**
+- [ ] Monitoring a Network — SNMP, NetFlow/IPFIX, syslog, streaming telemetry
+- [ ] Change Control for Networks — the discipline that prevents the 2 a.m. outage
+- [ ] Network Documentation — diagrams that stay current, IP plans, cable schedules
+- [ ] Capacity & Utilisation — reading trends before users report slowness
+- [ ] Network Automation Basics — Netmiko/NAPALM/Ansible for network devices
+
+**Wave AB5 — Physical & Field**
+- [ ] Structured Cabling — standards, labelling, patch panel discipline
+- [ ] Rack & Power Planning — U space, PDUs, redundant feeds, airflow
+- [ ] Fiber in Practice — types, connectors, cleaning, loss budgets
+- [ ] Cutover Nights — planning, comms, rollback triggers, go/no-go
+- [ ] Field Toolkit — what to actually carry, and the tests each tool answers
+
+### TRACK AC — Automation for Administrators  (→ `script` + `ops`)
+
+~5 waves, ~25 cards. Scripting aimed at the ops trade rather than at developers.
+
+**Wave AC1 — PowerShell for Real Work**
+- [ ] The Object Pipeline — the thing that makes PowerShell different from Bash
+- [ ] Remoting — WinRM, sessions, `Invoke-Command` fan-out, JEA
+- [ ] Error Handling That Survives Production — try/catch, `-ErrorAction`, transcripts
+- [ ] Writing a Reusable Function — parameters, validation, `-WhatIf`, comment-based help
+- [ ] Modules & Distribution — packaging, signing, and an internal repository
+
+**Wave AC2 — Automating the Estate**
+- [ ] Bulk User & Group Operations — CSV-driven changes with a dry run
+- [ ] Reporting Scripts — from ad-hoc query to scheduled, versioned report
+- [ ] Working With Graph From PowerShell — auth, paging, throttling, permissions
+- [ ] Scheduled Tasks vs Azure Automation vs Functions — where to run the thing
+- [ ] Idempotency for Admins — scripts that are safe to run twice
+
+**Wave AC3 — Configuration as Code, On-Prem**
+- [ ] Ansible for Windows & Linux — inventory, playbooks, idempotent modules
+- [ ] Desired State Configuration — where it still fits
+- [ ] Golden Images as Code — Packer, and versioning what you deploy
+- [ ] Secrets in Automation — vaults, managed identities, and never a plaintext credential
+- [ ] Testing Automation — Pester, dry runs, and a lab that mirrors production
+
+**Wave AC4 — Glue, APIs & Integration**
+- [ ] Consuming REST APIs From Scripts — auth, pagination, retries, backoff
+- [ ] Webhooks & Event-Driven Ops — reacting instead of polling
+- [ ] Power Automate & Logic Apps — the low-code option, and its real limits
+- [ ] CSV, JSON & Excel Wrangling — the daily data shuffling, done cleanly
+- [ ] Building an Internal Tool — when a script deserves a front end
+
+**Wave AC5 — Operational Discipline**
+- [ ] Version Control for Admins — Git for people who do not ship software
+- [ ] Documenting a Script So It Outlives You — the header that saves the next person
+- [ ] Logging & Auditability — what an automation must record to be trusted
+- [ ] Automation Risk — blast radius, approval gates, and the kill switch
+- [ ] From Script to Service — handover, ownership, and retirement
+
+### TRACK AD — Apple, Android & Cross-Platform Endpoint  (→ `endpoint`)
+
+~4 waves, ~20 cards. Fleets are not all Windows; the site currently assumes they are.
+
+**Wave AD1 — macOS Administration**
+- [ ] macOS for Windows Admins — the translation table for every concept
+- [ ] macOS Security Model — Gatekeeper, notarization, TCC, SIP, XProtect
+- [ ] Configuration Profiles — the `.mobileconfig` model and its payloads
+- [ ] macOS Update Management — deferrals, enforcement, and Apple's timing
+- [ ] macOS Troubleshooting — logs, `profiles`, `mdmclient`, and the console
+
+**Wave AD2 — Apple Fleet Management**
+- [ ] Apple Business Manager — ADE, VPP, Managed Apple IDs
+- [ ] Jamf Pro Concepts — smart groups, policies, patch management
+- [ ] Intune for macOS — what it covers, and where it still falls short
+- [ ] Apple Device Enrolment Flows — ADE vs user enrolment vs BYOD
+- [ ] FileVault & Escrow — encryption and recovery keys on Apple hardware
+
+**Wave AD3 — Mobile**
+- [ ] iOS Management — supervised vs unsupervised, the supervision-only capabilities
+- [ ] Android Enterprise — work profile, fully managed, dedicated devices
+- [ ] Mobile App Management Without Enrolment — protecting data on personal phones
+- [ ] Certificates & Wi-Fi/VPN on Mobile — SCEP/PKCS profiles that actually deploy
+- [ ] Mobile Troubleshooting — enrolment failures, push, and the vendor-specific traps
+
+**Wave AD4 — Cross-Platform Reality**
+- [ ] Multi-Platform Policy Design — one intent, four implementations
+- [ ] Linux Desktop Management — the enterprise-Linux endpoint story
+- [ ] ChromeOS in the Enterprise — where it wins, and its management model
+- [ ] Kiosks, Shared & Frontline Devices — shared sign-in, autologin, lockdown
+- [ ] Choosing a UEM — evaluation criteria that are not a vendor feature matrix
+
+---
+
+## PART 3 — SPECIALIST & EMERGING
+
+### TRACK AE — Regulated, OT & Specialist Environments
+
+~4 waves, ~20 cards. Where the generic answer is the wrong answer.
+
+**Wave AE1 — Operational Technology & ICS**
+- [ ] OT vs IT — different priorities, different consequences, different clocks
+- [ ] The Purdue Model — levels, and where the boundaries really sit today
+- [ ] ICS Protocols — Modbus, DNP3, OPC UA and their security assumptions
+- [ ] Securing OT Without Breaking It — passive monitoring, segmentation, patch reality
+- [ ] OT Incident Response — safety first, and why you may not pull the plug
+
+**Wave AE2 — Regulated Industries**
+- [ ] Healthcare IT — HIPAA in operations, clinical systems, medical device gotchas
+- [ ] Financial Services IT — SOX, PCI DSS in practice, change control expectations
+- [ ] Government & Defense IT — CMMC, STIGs, ATO packages, air-gapped realities
+- [ ] Education IT — FERPA, 1:1 device programs, seasonal load, tiny budgets
+- [ ] Legal Hold & Discovery for IT — what "preserve everything" means operationally
+
+**Wave AE3 — Scale Extremes**
+- [ ] IT for Very Small Organisations — one person, no budget, and what to prioritise
+- [ ] IT for the Very Large — federation, delegation, and standardising across business units
+- [ ] MSP Operations — multi-tenant tooling, onboarding, and the support model
+- [ ] Remote & Distributed Workforces — provisioning, support and security without an office
+- [ ] Mergers, Acquisitions & Divestitures — the IT workstream nobody staffs properly
+
+**Wave AE4 — Sustainability, Accessibility & Ethics in Operations**
+- [ ] Green IT — power, cooling, hardware lifespan, and the honest carbon maths
+- [ ] Accessible IT — assistive technology, procurement, and testing your own tools
+- [ ] E-Waste & Secure Disposal — data destruction standards and chain of custody
+- [ ] Surveillance vs Monitoring — where legitimate telemetry becomes something else
+- [ ] Professional Ethics Under Pressure — the situations that actually come up
+
+### TRACK AF — Working With AI as an IT Professional
+
+~4 waves, ~20 cards. Complements Track O (building AI) with *using* AI at work,
+and defending against its misuse.
+
+**Wave AF1 — Using AI Well**
+- [ ] What LLMs Are Good and Bad At — a calibrated mental model for daily work
+- [ ] Prompting for Technical Work — context, constraints, and verification loops
+- [ ] AI-Assisted Scripting — generating, reviewing and testing code you did not write
+- [ ] AI for Log & Error Analysis — where it accelerates triage, where it invents
+- [ ] Verification Discipline — never shipping an unverified AI answer
+
+**Wave AF2 — AI in the Enterprise**
+- [ ] Copilot & Assistant Deployment — licensing, data boundaries, admin controls
+- [ ] Data Governance for AI — what the assistant can see, and oversharing at scale
+- [ ] Shadow AI — discovering it, and giving people a sanctioned path instead
+- [ ] AI Acceptable Use Policy — a policy people will actually follow
+- [ ] Measuring Whether It Helped — beyond vendor-supplied productivity claims
+
+**Wave AF3 — AI-Enabled Attacks & Defence**
+- [ ] AI-Assisted Phishing & Deepfakes — what changed, and what did not
+- [ ] Voice & Video Impersonation — verification procedures that resist it
+- [ ] Prompt Injection Against Your Own Tools — the agent that reads attacker text
+- [ ] Detecting Automated Attacks — behavioural signals that scale
+- [ ] Tabletop: An AI-Assisted Incident — running the exercise
+
+**Wave AF4 — Career Effects**
+- [ ] What AI Changes About IT Roles — honestly, by role, with the parts it cannot do
+- [ ] Skills That Appreciate — judgement, systems thinking, verification, communication
+- [ ] Building AI Into a Workflow — one real workflow, before and after
+- [ ] Interviewing in an AI World — what employers now test for
+- [ ] Staying Current Without Drowning — a sustainable information diet
+
+---
+
+## PART 4 — THE SITE AS A STUDY PLATFORM (engineering, not content)
+
+These change code, not `data/*.html`. Each is a normal commit with a headless
+smoke check; none of them should regress `file://` support.
+
+### TRACK AG — Study Tooling
+
+The study FAB already has **flashcards, an auto-generated quiz, a study list and
+a quick-jump palette**. This track makes them into a system rather than four
+separate toys.
+
+- [ ] **Spaced repetition** — an SM-2-style scheduler over the existing
+  `known:` / `bookmark:` state, so flashcards resurface on a schedule instead of
+  randomly. Store `{id, ease, interval, due}` in `localStorage`; add a "due
+  today" count to the FAB.
+- [ ] **Acronym quiz mode** — generate questions directly from
+  `data/acronyms.json` (expansion → acronym and back). It is the highest-quality
+  question source on the site because the answers are already structured, and
+  the current MCQ generator has to guess distractors from topic titles.
+- [ ] **Better distractors** — pick wrong answers from the *same domain* and,
+  where available, the same subject area, so questions stop being trivially
+  guessable.
+- [ ] **Exam mode** — timed, fixed question count, no feedback until the end,
+  then a scored report broken down by domain with links to the weak topics.
+- [ ] **Learning paths** — an ordered sequence of existing topic IDs
+  (`paths.json`) rendered as a checklist: "Net+ in 30 topics", "First 90 days as
+  a UEM engineer", "SOC analyst starter". Pure data over existing content.
+- [ ] **Progress dashboard** — reviewed / bookmarked / known per domain over
+  time, plus a streak. All from `localStorage`, no backend.
+- [ ] **Export & import progress** — a JSON download and restore, so clearing
+  browser data is not a catastrophe. Also the only realistic cross-device path.
+- [ ] **Per-topic notes** — extend the notepad to attach a note to a topic ID and
+  surface it inline when that topic is open.
+
+### TRACK AH — Findability & Navigation
+
+- [ ] **Acronym-aware search** — expand the query through `acronyms.json` so
+  searching "Unified Endpoint Management" finds UEM cards and vice versa.
+  The data already exists; the search does not use it.
+- [ ] **Expansion density toggle** — a header control for the inline acronym
+  expansions: *always* (today) / *first use per domain* / *hover only* /
+  *off*. Purely a CSS class on `<body>` plus a `localStorage` preference.
+  Addresses the one real cost of the acronym feature — density in tables.
+- [ ] **Related topics** — a small "see also" strip per topic, driven by a
+  hand-curated `related.json` keyed on topic ID, with a script that suggests
+  candidates by shared acronyms and title terms.
+- [ ] **Domain landing cards** — an intro card at the top of each domain: what it
+  covers, who it is for, where to start, what to read next.
+- [ ] **Search operators** — `domain:net`, `badge:beginner`, quoted phrases.
+- [ ] **Recently viewed** — the last ten topics, in the quick-jump palette.
+- [ ] **Deep-link to a card, not just a topic** — anchor IDs on `concept-card`s
+  for precise sharing.
+
+### TRACK AJ — Quality Gates & Tooling
+
+*(No "TRACK AI" — the letters would collide with the AI domain.)*
+
+- [ ] **Markup validator in CI** — parse every `data/*.html` with a real HTML
+  parser and fail on unclosed or stray tags. A one-off parse run showed the
+  markup is currently clean; this keeps it that way.
+- [ ] **Content linter** — enforce `CONTRIBUTING.md` mechanically: every
+  `.topic` has a `.topic-name`, `.topic-chev` (never `topic-chevron`),
+  `ref-table` over `ai-table` for new content, no hard-coded hex colours, no
+  inline `style="color:…"`.
+- [ ] **Duplicate-slug guard** — fail the build if two topics slugify to the same
+  id, since `script.js` silently suffixes them and permalinks shift.
+- [ ] **Accessibility CI** — run axe against the built page; enforce contrast,
+  landmark and `aria-expanded` correctness on the accordions.
+- [ ] **Link & anchor checker** — every `#slug` referenced in prose resolves to a
+  real topic; every external link is alive.
+- [ ] **Performance budget** — fail if `index.html` grows beyond an agreed size
+  without a deliberate bump (it is ~3.2 MB today).
+- [ ] **Visual regression** — headless screenshots of a few representative
+  topics in both themes, diffed on PRs.
+- [ ] **Acronym drift report** — list capitalised tokens appearing in content
+  that are *not* in `acronyms.json`, as a to-do queue for the dictionary.
+
+### TRACK AK — Delivery, Performance & Reach
+
+- [ ] **Lazy domain loading (server build only)** — `index.html` is ~3.2 MB of
+  HTML; every visitor downloads all 20 domains to read one. Emit per-domain
+  fragments plus a shell that fetches on expand, **while keeping the current
+  single-file build for `file://`**. Two outputs from one `build.py`, selected
+  by a flag. This is the single biggest performance win available, and also the
+  riskiest change on this list — it must not break offline or the PWA.
+- [ ] **Print packs** — a print stylesheet variant that outputs one domain, or
+  one learning path, as a clean revision handout.
+- [ ] **Markdown export** — dump any topic or domain as Markdown for notes apps.
+- [ ] **PWA polish** — an update prompt when a new `CACHE_VERSION` is available,
+  and precache the fragments if lazy loading ships.
+- [ ] **Share cards** — generated OG images per domain for link previews.
+- [ ] **Reading time & size hints** — per domain, so a study session can be
+  planned realistically.
+
+---
+
+## Content debt register
+
+Measured, not guessed. None of it is urgent; all of it is cheap to fix while
+touching a file for other reasons.
+
+| Item | Count | Notes |
+|---|---:|---|
+| Topics with no `.topic-name` | 90 | `script.js` falls back to the header's full text, so their slugs include the badge and icon text. Concentrated in the older "Beginner" waves. |
+| Inline `style="…"` attributes | 1,918 | `CONTRIBUTING.md` says use the `c-*` utility classes; the light theme is where this shows. |
+| Hard-coded hex colours in content | 148 | Same problem, worse: these do not track the theme at all. |
+| `ai-table` vs `ref-table` | 361 vs 615 | `CONTRIBUTING.md` prefers `ref-table` for new content; the split is historical. |
+| Old `topo-svg` diagrams | 5 | In `net.html`, hard-coded dark-theme strokes — invisible-ish in light mode. The two new SVGs use theme variables and should be the pattern. |
+| `patches/` | ~1.7 MB | 50+ already-applied one-shot scripts. Archive to a tag or a branch and delete from `main`. |
+| `index.html` | ~3.2 MB | See Track AK. |
+
+**Markup health:** a full parse of every `data/*.html` found **no unclosed or
+stray tags**. Raw `<span` vs `</span>` counts differ only because the formatter
+splits closing tags across lines (`</span\n>`), which is valid — worth knowing
+before someone "fixes" a bug that does not exist.
+
+---
+
+## Suggested execution order (Phase 4)
+
+Interleave with the outstanding Phase-3 tracks; do not block on them.
+
+| Slot | Tracks | Theme | Rough size |
+|---|---|---|---|
+| 58 | AG (spaced repetition, acronym quiz) + AH (acronym-aware search, density toggle) | Make what exists better before adding more | code only |
+| 59–62 | scaffold `infra` + V1–V4 | Windows Server, AD DS, Group Policy, identity ops | ~20 cards |
+| 63–64 | V5–V7 | DNS/DHCP/files, AD CS, server troubleshooting | ~15 cards |
+| 65–68 | Y1–Y4 | Intune policy & apps, servicing, provisioning | ~20 cards |
+| 69–71 | Y5–Y8 | endpoint security, compliance, MECM depth, analytics | ~20 cards |
+| 72–74 | scaffold `m365` + W1–W6 | tenant, Exchange, SharePoint, Teams, Purview, ops | ~30 cards |
+| 75–77 | Z1–Z5 | hypervisors, storage, backup, DR | ~25 cards |
+| 78–79 | scaffold `itsm` + AA1–AA5 | the support trade, done seriously | ~25 cards |
+| 80–82 | AB1–AB5 | Cisco, firewalls, wireless, netops, physical | ~25 cards |
+| 83–84 | AC1–AC5 | PowerShell and automation for admins | ~25 cards |
+| 85–86 | AD1–AD4 | macOS, Apple fleet, mobile, cross-platform | ~20 cards |
+| 87–88 | AE1–AE4, AF1–AF4 | OT/regulated/scale; AI at work | ~40 cards |
+| 89–90 | AJ + AK | quality gates, then lazy loading and print packs | code only |
+
+**Phase 4 total: 10 content tracks, 53 waves, 265 cards, 3 new domains**,
+taking the site from 900 → ~1,165 topics across 23 domains — plus ~29
+engineering items that make those topics easier to find, study and trust.
+
+Combined with the outstanding Phase-3 depth tracks (J–U, ~201 cards), the full
+remaining backlog is **466 cards**.
+
+## Definition of done for a wave
+
+Unchanged from earlier phases, restated so it is in one place:
+
+1. Content lives in `data/{domain}.html` and follows `CONTRIBUTING.md`.
+2. `python3 tools/annotate_acronyms.py` — add any new acronyms to
+   `data/acronyms.json` first, with a `byDomain` override if the term is
+   ambiguous in that domain.
+3. `python3 tools/gen_acronym_domain.py` if the dictionary changed.
+4. `python3 build.py`, then a headless load of `index.html`: zero console
+   errors, the new topic reachable by permalink, search finds it.
+5. One commit per wave, CI green.
+6. Offensive content keeps the authorized-use framing and pairs with detection.
+
+## Ideas considered and deliberately rejected
+
+Recorded so they do not get re-proposed every planning round.
+
+- **A `product` domain** (agile, roadmapping, stakeholder management) — real
+  subject, wrong site. It has no operational surface and would sit unread next
+  to twenty technical domains. The parts that matter to engineers already live
+  in `eng` and `lifestyle`.
+- **A `mobile` app-development domain** — distinct from mobile *device
+  management*, which Track AD covers. App development is a whole career the site
+  does not otherwise touch; adding it would stretch the premise past breaking.
+- **User accounts and a backend** — the site's defining property is that it is
+  static, works from `file://`, and stores nothing about anyone. Cross-device
+  sync is worth wanting, but export/import (Track AG) buys most of the value at
+  none of the cost.
+- **A comments or contributions layer** — moderation burden, no audience for it.
+- **Splitting the acronym dictionary into its own site** — the inline expansions
+  are the feature; separating the data from the content it annotates would
+  remove the reason it works.
+- **Translating the site** — the vocabulary is English-native (every acronym,
+  every certification, every vendor console). Translation would be a permanent
+  maintenance tax on a solo project. Track AK's exports are the pragmatic
+  substitute.
