@@ -23,13 +23,13 @@ jump to what you need:
 | **Improvement Plan** (P1–P5) | The original repo review — performance, security, UX, hygiene | ✅ applied |
 | **Content Roadmap — Next Waves** (Tracks R/B/C/X) | Red team, blue team, cloud, rounding out existing domains | ✅ shipped |
 | **Architecture, Engineering & DevOps** (Tracks E/F/G) | Software architecture, DevOps, developer environment | ✅ shipped |
-| **Phase 3 — Depth, Breadth & New Domains** (Tracks H–U) | `data` and `web` domains shipped; depth tracks **J–U outstanding (201 cards)** | 🔶 half done |
+| **Phase 3 — Depth, Breadth & New Domains** (Tracks H–U) | `data` and `web` domains shipped; depth tracks **J–U outstanding (207 cards)** | 🔶 half done |
 | **Phase 4 — The Enterprise Estate & the Study Platform** (Tracks V–AK) | Windows Server, M365, endpoint depth, virtualization, ITSM, vendor networking, automation, Apple/mobile, OT/regulated, AI at work + study tooling | ⬜ planned |
 | **Phase 5 — Foundations, Frontiers & the Business of IT** (Tracks AL–AY) | CS & mathematics, hardware/embedded, post-quantum, emerging platforms, physical security, IT finance, leadership, enablement, consulting + content-trust tooling | ⬜ planned |
 | **Phase 6 — Specialisms, and How This Gets Written** (Tracks BA–BJ) | Detection engineering, purple teaming, Kubernetes security, API/identity security, supply chain, privacy engineering, platform engineering, observability, resilience — **plus the card pattern library, authoring rules, risk register and success measures, written out rather than planned** | ⬜ planned |
 | **Execution Handbook** | Ordering constraints, per-domain queue, a concrete first-ten-sessions schedule, three waves specified to the point of transcription, and reusable checklists | 📘 reference |
 
-**Remaining backlog: 891 content cards and 44 engineering items** across
+**Remaining backlog: 897 content cards and 44 engineering items** across
 Phases 3–6, which would take the site from 900 topics / 20 domains to roughly
 1,800 topics / 26 domains — about 180 working sessions.
 
@@ -1192,7 +1192,9 @@ progress / keyboard-a11y automatically.
 
 ## TRACK T — Military, Leadership & Decision-Making Depth  (→ `military`)
 
-~2 waves, ~11 cards. Frameworks that transfer directly to tech leadership & IR.
+~3 waves, ~17 cards. Frameworks that transfer directly to tech leadership & IR,
+plus the classified-information handling an IT professional on a cleared
+contract is expected to know on day one.
 
 **Wave T1 — Planning & Operations**
 - [ ] The Military Decision-Making Process (MDMP) — full planning cycle
@@ -1207,6 +1209,28 @@ progress / keyboard-a11y automatically.
 - [ ] Building Cohesive Teams — trust, shared hardship, morale
 - [ ] Red Teaming as a Discipline — structured contrarian thinking, premortems
 - [ ] Small-Unit Leadership Lessons for Tech Leads — direct parallels to eng teams
+
+**Wave T3 — Classified Information Handling &amp; the SF Series**
+
+The Standard Form series is the physical protocol around classified material,
+and it is colour-coded on purpose: the colour is the control. Anyone working
+on a cleared contract meets these forms before they meet a system. Written as
+reference, US-specific, and explicitly *about* the forms — no classified
+content, only the public handling procedure.
+
+- [ ] Classification Levels &amp; Markings — Top Secret / Secret / Confidential, the damage standard behind each, plus CUI; banner lines, portion marking, classification authority blocks, declassification instructions
+- [ ] Cover Sheets — SF 703 / 704 / 705 — the colour code (**SF 703 Top Secret = orange**, **SF 704 Secret = red**, **SF 705 Confidential = blue**), what a cover sheet is for, when it attaches and when it comes off, and why the top sheet always matches the highest classification in the stack
+- [ ] Media &amp; Equipment Labels — SF 706–712 — SF 706 Top Secret (orange), SF 707 Secret (red), SF 708 Confidential (blue), SF 709 Classified (purple, pending determination), SF 710 Unclassified (green, for mixed environments), SF 711 Data Descriptor, SF 712 Classified SCI (yellow); labelling drives, removable media and systems
+- [ ] Container &amp; End-of-Day Forms — SF 700 (security container information), SF 701 (activity security checklist), SF 702 (security container check sheet); who signs what, when, and what a missed check actually triggers
+- [ ] Clearance Paperwork — SF 312 nondisclosure agreement, SF 86 questionnaire, SF 714 financial disclosure; the adjudicative guidelines, reinvestigation, continuous evaluation — and what a clearance is *not* (it is not need-to-know)
+- [ ] Spills, Sanitisation &amp; Reporting — classified message incidents, what to do in the first ten minutes, why you do not delete it yourself, media sanitisation standards, and the reporting chain
+
+**Why this belongs on this site:** the `endpoint`, `blueteam` and `grc`
+domains already cover DISA STIGs, CMMC and media destruction. This is the
+human-procedure half of the same job, and it is the part that gets people
+walked out of the building. Cross-link the SF 706–712 card to the media
+sanitisation material in `ops`, and the SF 312 card to the insider-threat
+material planned in Track AR.
 
 ---
 
@@ -1277,7 +1301,7 @@ every card inherits search / permalinks / progress / keyboard-a11y automatically
 > **Added on request — "make more plan."** Written August 2026 against a measured
 > snapshot of the repo, not from memory. Phase 3's *new-domain* half shipped
 > (Tracks H and I are complete — `data` and `web` exist); its *depth* half
-> (Tracks J–U, ~201 cards) is still open and **remains the priority queue**.
+> (Tracks J–U, 207 cards) is still open and **remains the priority queue**.
 > Phase 4 is deliberately about ground Phase 3 never covers: the **enterprise
 > estate an IT professional actually operates**, the **operational trades**, and
 > turning the site from a reference into a **study platform**.
@@ -1912,7 +1936,7 @@ Interleave with the outstanding Phase-3 tracks; do not block on them.
 taking the site from 900 → ~1,165 topics across 23 domains — plus ~29
 engineering items that make those topics easier to find, study and trust.
 
-Combined with the outstanding Phase-3 depth tracks (J–U, ~201 cards), the full
+Combined with the outstanding Phase-3 depth tracks (J–U, 207 cards), the full
 remaining backlog is **466 cards**.
 
 ## Definition of done for a wave
@@ -2487,11 +2511,11 @@ exception noted below.
 | | Topics | Domains |
 |---|---:|---:|
 | Today | 900 | 20 |
-| + Phase 3 outstanding (J–U) | 1,101 | 20 |
-| + Phase 4 | 1,366 | 23 |
-| + Phase 5 | 1,601 | 26 |
+| + Phase 3 outstanding (J–U) | 1,107 | 20 |
+| + Phase 4 | 1,372 | 23 |
+| + Phase 5 | 1,607 | 26 |
 
-**Total remaining backlog across all three phases: 701 cards and 44 engineering
+**Total remaining backlog across all three phases: 707 cards and 44 engineering
 items.** At one wave (~5 cards) per working session that is roughly 140 sessions
 — which is the point at which the honest advice is: *do not treat this as a
 queue to finish*. Treat it as a menu. Ship the tracks that match what you are
@@ -2525,7 +2549,7 @@ site as it stands today:
 > interview loops. The second is not a plan at all — it is the **authoring
 > craft, pattern library, risk register and success measures written out now**,
 > because after five phases the constraint on this project is no longer *what to
-> write* (745 open items) but *how to write 745 cards that are worth reading*.
+> write* (751 open items) but *how to write 751 cards that are worth reading*.
 
 ## No new domains
 
@@ -2860,7 +2884,7 @@ have not thought of yet.
 ## PART 3 — WRITTEN NOW, NOT PLANNED
 
 Everything above is a list. This part is the material itself, because the
-binding constraint on this project has changed: there are now 745 planned cards
+binding constraint on this project has changed: there are now 751 planned cards
 and one person. Quality per card matters more than another list.
 
 ### The card pattern library
@@ -2946,7 +2970,7 @@ mitigated by work in this repo; the rest are open.
 | Risk | Likelihood | Impact | Mitigation | State |
 |---|---|---|---|---|
 | **Content goes stale** — vendor renames, dead consoles, changed limits | High | High | Phase-5 Track AX: freshness metadata, volatility tags, rename registry | Planned |
-| **Scope paralysis** — 745 open items is demotivating rather than motivating | High | Medium | Treat the plan as a menu; the "actual priority" list at the end of Phase 5 | Partly |
+| **Scope paralysis** — 751 open items is demotivating rather than motivating | High | Medium | Treat the plan as a menu; the "actual priority" list at the end of Phase 5 | Partly |
 | **Progress data loss** — everything is `localStorage`; clearing the browser wipes it | Medium | Medium | Phase-4 Track AG: export/import | Planned |
 | **Page weight** — `index.html` is 3.2 MB and grows with every wave | Medium | Medium | Phase-4 Track AK: lazy per-domain loading, performance budget in CI | Planned |
 | **Generated-file drift** — `acronym.html` / `index.html` committed stale | Medium | Low | CI already rebuilds and fails on drift; `--check` mode on the annotator | **Mitigated** |
@@ -2994,12 +3018,12 @@ directly.
 | | Topics | Domains |
 |---|---:|---:|
 | Today | 900 | 20 |
-| + Phase 3 outstanding | 1,101 | 20 |
-| + Phase 4 | 1,366 | 23 |
-| + Phase 5 | 1,601 | 26 |
-| + Phase 6 | 1,791 | 26 |
+| + Phase 3 outstanding | 1,107 | 20 |
+| + Phase 4 | 1,372 | 23 |
+| + Phase 5 | 1,607 | 26 |
+| + Phase 6 | 1,797 | 26 |
 
-**Total remaining backlog: 891 content cards and 44 engineering items.**
+**Total remaining backlog: 897 content cards and 44 engineering items.**
 
 That number is now large enough to be its own risk, which is why it is in the
 register above. The plan is finished; the correct next move is not to plan
@@ -3008,12 +3032,12 @@ of Phase 5.
 
 ---
 
-# Execution Handbook — turning 891 cards into shipped work
+# Execution Handbook — turning 897 cards into shipped work
 
 > **This is not Phase 7.** Phase 6 closed by saying the subject planning is
 > finished and the next move is to ship a wave, and that still holds — another
 > list of card titles would be padding. What the plan genuinely lacks is the
-> layer between "891 items" and "a commit": the ordering constraints, a
+> layer between "897 items" and "a commit": the ordering constraints, a
 > per-domain view, and at least one wave specified in enough detail that it can
 > be executed without re-deciding anything. That is what this section is.
 
@@ -3058,7 +3082,7 @@ cards evenly across the domains it names.
 | `linux` | 56 | 15 | 71 | N |
 | `cloud` | 49 | 12 | 61 | BC |
 | `pentest` | 29 | 10 | 39 | M |
-| `military` | 23 | 10 | 33 | T |
+| `military` | 23 | 16 | 39 | T |
 | `web` | 35 | 10 | 45 | BD |
 | `shortcut` | 37 | **0** | 37 | — |
 | `data` | 40 | **0** | 40 | — |
@@ -3276,7 +3300,7 @@ card or two folded into an existing track if it ever matters.
 The plan is done. Three phases of subject roadmap, one handbook, and a register
 of what could go wrong. The remaining risk is not that something was left
 unplanned — it is that planning is more comfortable than writing, and this file
-is now 891 unwritten cards long.
+is now 897 unwritten cards long.
 
 **Session one is a two-hour job: group the chips.** Start there.
 
