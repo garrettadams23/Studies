@@ -2971,13 +2971,13 @@ mitigated by work in this repo; the rest are open.
 |---|---|---|---|---|
 | **Content goes stale** — vendor renames, dead consoles, changed limits | High | High | Phase-5 Track AX: freshness metadata, volatility tags, rename registry | Planned |
 | **Scope paralysis** — 751 open items is demotivating rather than motivating | High | Medium | Treat the plan as a menu; the "actual priority" list at the end of Phase 5 | Partly |
-| **Progress data loss** — everything is `localStorage`; clearing the browser wipes it | Medium | Medium | Phase-4 Track AG: export/import | Planned |
+| **Progress data loss** — everything is `localStorage`; clearing the browser wipes it | Medium | Medium | Phase-4 Track AG: export/import | **Mitigated** — session 10 shipped export/import with merge, replace and preview |
 | **Page weight** — `index.html` is 3.2 MB and grows with every wave | Medium | Medium | Phase-4 Track AK: lazy per-domain loading, performance budget in CI | Planned |
 | **Generated-file drift** — `acronym.html` / `index.html` committed stale | Medium | Low | CI already rebuilds and fails on drift; `--check` mode on the annotator | **Mitigated** |
 | **Slug churn** — renaming a topic silently breaks permalinks and progress | Medium | Medium | Phase-5 Track AY: ID stability contract and alias map | Planned |
 | **Accuracy drift** — a confident wrong card is worse than no card | Medium | High | Authoring rule 6; Phase-5 fact-anchor comments | Partly |
 | **Bus factor of one** — one maintainer holds all the context | Medium | High | The plan itself, `CONTRIBUTING.md`, and tooling that encodes conventions | Partly |
-| **Markup rot** — inconsistent classes and inline styles accumulate | Medium | Low | Phase-4 Track AJ content linter | Planned |
+| **Markup rot** — inconsistent classes and inline styles accumulate | Medium | Low | Phase-4 Track AJ content linter | **Mitigated** — `tools/lint_content.py` runs in CI and tracks a warning trend |
 | **Burnout** — a 140-session backlog written by someone with a day job | Medium | High | Ship what matches current work; no deadline; the menu framing | Open |
 | **Hosting/domain lapse** | Low | High | Static site, works from `file://`, in Git — recoverable by design | **Mitigated** |
 | **Tooling single point of failure** — the acronym pipeline is now load-bearing | Low | Medium | Idempotent, `--check` mode, CI-verified, documented in README | **Mitigated** |
@@ -3574,3 +3574,102 @@ exist because they are *next*, not because specs are inherently valuable.
 The rule to carry forward: **spec one session ahead, not ten.** When session 10
 is done, spec session 11 from whichever track matches the work in front of you,
 using §4 as the template.
+
+---
+
+## Sessions 1–10 — what actually shipped
+
+Recorded so the next person does not re-plan work that exists. Each line is one
+commit on `claude/acronym-definitions-it-dictionary-mcqw8h`.
+
+| # | Shipped | Evidence |
+|---|---|---|
+| 1 | Chips regrouped into five `.chip-group` blocks; mobile kept as one scrolling row | Sticky bar was 474 px tall on a phone before the mobile revert; 50 px after |
+| 2 | `tools/stamp_freshness.py` — `data-reviewed="YYYY-MM"` on 862 topics, `--check` in CI | Mechanical commits detected by normalisation and passed to `--ignore-rev`, or every topic would read as reviewed today |
+| 3 | `tools/lint_content.py` — errors block, warnings tracked as a TREND line | Found a real duplicate slug: `script.html` and `web.html` both titled a card "GraphQL — Ask for Exactly What You Need" |
+| 4 | Wave Y1 — Intune policy, 5 cards | `endpoint` 13 → 18 |
+| 5 | Wave Y2 — Intune applications, 5 cards | `endpoint` 18 → 23 |
+| 6 | AG-1 spaced repetition — reduced SM-2 in `srs:<id>`, due badge on the FAB | Scheduling maths exercised directly in headless Chromium |
+| 7 | AG-2 acronym quiz, generated from `acronyms.json` at build time | Dictionary inlined as compact JSON: 52 KB, not the 112 KB source |
+| 8 | AH-2 acronym-aware search + three-state expansion density toggle | Searching `RBAC` and `role-based access control` return the same topics |
+| 9 | Wave Y3 — Windows servicing and updates, 5 cards | `endpoint` 23 → 28 |
+| 10 | AG-3 export / import progress | Round-trip byte-exact; merge keeps the later due date; four malformed files rejected with readable messages and zero writes |
+
+Two register risks moved to **Mitigated**: progress data loss (session 10) and
+markup rot (session 3).
+
+**One thing session 10 turned up that was not on any list.** The study modal was
+unreadable in light theme — `#st-modal` painted `var(--card, #0f1830)` and
+`--card` was never defined, so the panel stayed dark navy while the text
+inherited the light theme's near-black `--text`. Seven `var(--fg, …)` fallbacks
+had the same shape: a variable that does not exist, papered over by a dark
+default. `--card` is now defined in both themes and the dead `--fg` fallbacks
+point at `--text`. The lesson generalises: **a `var()` fallback that renders
+correctly is indistinguishable from a variable that works**, and only the second
+theme tells them apart. Grep for fallbacks on undefined names before trusting a
+theme.
+
+## Session 11 — AJ-2 / AY, legacy topic headers and the alias map
+
+Specified because it is next, and because session 10 walked into the symptom:
+a quiz option rendered as *"Beginner Password Attacks 101 – Cracking, Spraying,
+and Why MFA Matters ★ ✓ 🔗"*.
+
+**The defect.** 90 topics carry their title as a bare text node in
+`.topic-header` instead of inside `.topic-name`. `stIndex()` falls back to the
+header's own `textContent`, which swallows the `.topic-badge` word and the
+injected tool buttons. Every flashcard, quiz option and study-list row for those
+90 topics is wrong. Distribution:
+
+| File | Count | | File | Count |
+|---|---|---|---|---|
+| `grc` | 11 | | `pentest` | 6 |
+| `linux` | 10 | | `military` | 5 |
+| `net` | 10 | | `threat` | 5 |
+| `script` | 10 | | `shortcut` | 2 |
+| `sec` | 10 | | `lifestyle` | 8 |
+| `ops` | 7 | | `ai` | 6 |
+
+**Why it is not a five-minute fix.** No topic in `data/*.html` carries an `id`
+attribute — all 916 slugs are derived at runtime from the header text. Wrapping
+those titles changes the derived slug for **all 90**, measured:
+
+```
+beginner-ml-pipeline-from-raw-data-to-a-serving-model
+  -> ml-pipeline-from-raw-data-to-a-serving-model
+beginner-prompt-injection-the-sql-injection-of-the-ai-world
+  -> prompt-injection-the-sql-injection-of-the-ai-world
+```
+
+That breaks every shared permalink and every `reviewed:` / `bookmark:` /
+`known:` / `srs:` key those topics own. This is the **slug churn** risk in the
+register arriving in person, so close it properly rather than around it.
+
+**Do it in this order.**
+
+1. **Write `tools/fix_topic_names.py`** — wrap the bare title of a legacy header
+   in `<span class="topic-name">`, leaving the badge outside it. Idempotent, and
+   it emits the old → new slug pair for each topic it touches.
+2. **Emit an alias map**, `data/slug-aliases.json`, `{old: new}`, committed. The
+   script writes it; it is not hand-maintained.
+3. **Inline it at build time** the way the acronym payload already is, as
+   `<script type="application/json" id="slug-aliases">`.
+4. **Teach `openHashTarget` the map**: an unknown hash that matches an alias
+   resolves to the new id and replaces the hash via `history.replaceState`, so
+   the address bar self-heals and the old link keeps working forever.
+5. **Migrate storage once.** On load, for each alias with data under the old key
+   and none under the new, move it. Guard with a `migrated:slug-aliases-v1` flag
+   so it runs once and re-running is a no-op.
+6. **Add a lint error, not a warning:** a `.topic-header` with a bare text-node
+   title is now an error. The warning existed for two sessions and nobody acted
+   on it — the count only became interesting when it produced a visible bug.
+
+**Done when:** `topic without .topic-name` reads 0; a permalink captured before
+the change still lands on the right card and rewrites itself; a topic marked
+reviewed under an old slug is still reviewed after; and the quiz shows no
+stray ★ ✓ 🔗.
+
+**Watch for.** `stamp_freshness.py` will see 90 rewritten headers — run it with
+the wrapping commit in `--ignore-rev` or every one of those topics will claim it
+was reviewed this month. That is the same trap session 2 built the mechanism
+for; use it.

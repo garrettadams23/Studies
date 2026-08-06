@@ -1514,6 +1514,292 @@ function stRefreshStudyList() {
   if (host && _stOverlay && !_stOverlay.hidden) stRenderStudyList(host);
 }
 
+// ── BACKUP (export / import progress) ───────────────────────────────────────
+// There is no backend, so the only honest cross-device path is a file the user
+// carries themselves. Everything below is local: a Blob download and a
+// FileReader, both of which work over file:// as well as https.
+
+const BK_FORMAT = "techref-progress";
+const BK_VERSION = 1;
+
+/** Which bucket a localStorage key belongs to, or null if we do not own it. */
+function bkCategory(key) {
+  if (key.startsWith(REVIEWED_PREFIX)) return "reviewed";
+  if (key.startsWith(BOOKMARK_PREFIX)) return "bookmark";
+  if (key.startsWith(KNOWN_PREFIX)) return "known";
+  if (key.startsWith(SRS_PREFIX)) return "srs";
+  if (key === NP_STORE_KEY || key === NP_AUTHOR_KEY) return "notes";
+  return null;
+}
+
+/** Keys whose stored value is itself JSON — exported parsed, so the file reads. */
+function bkIsJson(key) { return key.startsWith(SRS_PREFIX) || key === NP_STORE_KEY; }
+
+function bkParse(raw) { try { return JSON.parse(raw); } catch { return null; } }
+
+/** Every key we own, with JSON values expanded. */
+function bkCollect() {
+  const data = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k || !bkCategory(k)) continue;
+    const raw = localStorage.getItem(k);
+    if (raw === null) continue;
+    const parsed = bkIsJson(k) ? bkParse(raw) : null;
+    data[k] = parsed === null ? raw : parsed;
+  }
+  return data;
+}
+
+function bkCounts(data) {
+  const c = { reviewed: 0, bookmark: 0, known: 0, srs: 0, notes: 0 };
+  Object.keys(data).forEach(k => {
+    const cat = bkCategory(k);
+    if (!cat) return;
+    if (cat === "notes") {
+      if (k === NP_STORE_KEY) c.notes += Array.isArray(data[k]) ? data[k].length : 0;
+    } else c[cat]++;
+  });
+  return c;
+}
+
+function bkExport() {
+  const data = bkCollect();
+  const payload = {
+    format: BK_FORMAT,
+    version: BK_VERSION,
+    exported: new Date().toISOString(),
+    counts: bkCounts(data),
+    data
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `techref-progress-${srsToday()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  return payload;
+}
+
+/**
+ * Parse and vet a file before anything touches storage. Throws with a message
+ * meant to be read by a person, not a console.
+ */
+function bkValidate(text) {
+  let obj;
+  try { obj = JSON.parse(text); }
+  catch { throw new Error("That file is not valid JSON — it may have been edited or truncated."); }
+  if (!obj || typeof obj !== "object" || Array.isArray(obj))
+    throw new Error("That file does not contain a progress object.");
+  if (obj.format !== BK_FORMAT)
+    throw new Error(`Not a study-progress file. Expected "format": "${BK_FORMAT}".`);
+  if (obj.version !== BK_VERSION)
+    throw new Error(`This file says version ${JSON.stringify(obj.version)}; this page understands version ${BK_VERSION} only.`);
+  if (!obj.data || typeof obj.data !== "object" || Array.isArray(obj.data))
+    throw new Error('That file has no "data" section.');
+  return obj;
+}
+
+/**
+ * Turn one imported entry into the exact string localStorage should hold, or
+ * null to drop it. This is the gate that stops a hand-edited file from writing
+ * arbitrary keys or arbitrary shapes.
+ */
+function bkSerialise(key, v) {
+  if (key.startsWith(SRS_PREFIX)) {
+    const r = typeof v === "string" ? bkParse(v) : v;
+    if (!r || typeof r !== "object" || Array.isArray(r)) return null;
+    if (typeof r.d !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(r.d)) return null;
+    const e = Number(r.e), i = Number(r.i), n = Number(r.n);
+    return JSON.stringify({
+      e: Number.isFinite(e) ? Math.min(4, Math.max(1.3, e)) : 2.5,
+      i: Number.isFinite(i) && i > 0 ? Math.round(i) : 1,
+      d: r.d,
+      n: Number.isFinite(n) && n >= 0 ? Math.round(n) : 0
+    });
+  }
+  if (key === NP_STORE_KEY) {
+    const a = typeof v === "string" ? bkParse(v) : v;
+    return Array.isArray(a) ? JSON.stringify(a) : null;
+  }
+  if (key === NP_AUTHOR_KEY) return typeof v === "string" ? v.slice(0, 80) : null;
+  // reviewed / bookmark / known are plain flags
+  return (v === "1" || v === 1 || v === true) ? "1" : null;
+}
+
+/** Split an imported data block into what we will write and what we refused. */
+function bkSanitise(data) {
+  const kept = {};
+  let skipped = 0;
+  Object.keys(data).forEach(k => {
+    if (!bkCategory(k)) { skipped++; return; }
+    const s = bkSerialise(k, data[k]);
+    if (s === null) { skipped++; return; }
+    kept[k] = s;
+  });
+  return { kept, skipped };
+}
+
+/** Keys we own that are in storage right now — the blast radius of "replace". */
+function bkOwnedKeys() {
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && bkCategory(k)) keys.push(k);
+  }
+  return keys;
+}
+
+/**
+ * What an import would change, without changing it. `merge` reports the
+ * scheduling entries it would leave alone, which is the number people actually
+ * want to see before they commit.
+ */
+function bkDiff(kept, mode) {
+  const d = { add: 0, overwrite: 0, keepLocal: 0, remove: 0 };
+  if (mode === "replace") d.remove = bkOwnedKeys().filter(k => !(k in kept)).length;
+  Object.keys(kept).forEach(k => {
+    const mine = localStorage.getItem(k);
+    if (mine === null) { d.add++; return; }
+    if (mode === "merge" && k.startsWith(SRS_PREFIX)) {
+      const a = bkParse(mine), b = bkParse(kept[k]);
+      if (a && b && typeof a.d === "string" && a.d > b.d) { d.keepLocal++; return; }
+    }
+    if (mine === kept[k]) d.keepLocal++; else d.overwrite++;
+  });
+  return d;
+}
+
+/**
+ * Write the vetted keys.
+ *   merge   — union; for a topic scheduled on both sides the later due date
+ *             wins, so importing can never pull a card forward unexpectedly.
+ *   replace — drop everything we own first, then write the file verbatim.
+ */
+function bkApply(kept, mode) {
+  if (mode === "replace") bkOwnedKeys().forEach(k => localStorage.removeItem(k));
+  Object.keys(kept).forEach(k => {
+    if (mode === "merge" && k.startsWith(SRS_PREFIX)) {
+      const mine = localStorage.getItem(k);
+      if (mine) {
+        const a = bkParse(mine), b = bkParse(kept[k]);
+        if (a && b && typeof a.d === "string" && a.d > b.d) return;   // local is later
+      }
+    }
+    try { localStorage.setItem(k, kept[k]); } catch { /* quota — skip the rest of this key */ }
+  });
+}
+
+/** Re-read storage into the page so an import is visible without a reload. */
+function bkRefreshUI() {
+  document.querySelectorAll(".topic[id]").forEach(t => {
+    t.classList.toggle("reviewed", localStorage.getItem(REVIEWED_PREFIX + t.id) === "1");
+    t.classList.toggle("bookmarked", localStorage.getItem(BOOKMARK_PREFIX + t.id) === "1");
+  });
+  document.querySelectorAll(".domain-section").forEach(d => updateDomainProgress(d));
+  srsUpdateBadge();
+  if (typeof stRefreshStudyList === "function") stRefreshStudyList();
+}
+
+function bkCountLine(c) {
+  return `${c.reviewed} reviewed · ${c.bookmark} starred · ${c.known} known · ${c.srs} scheduled · ${c.notes} note${c.notes === 1 ? "" : "s"}`;
+}
+
+function stOpenBackup() {
+  stOpen(body => {
+    const here = bkCounts(bkCollect());
+    body.innerHTML =
+      '<h2 class="st-h">💾 Back up &amp; restore</h2>' +
+      '<p class="st-bk-lead">Progress lives in this browser only. Export a file to move it to another ' +
+      'device — or to keep it before clearing site data.</p>' +
+      `<div class="st-bk-block"><div class="st-bk-head">On this device</div>` +
+      `<p class="st-bk-now">${esc(bkCountLine(here))}</p>` +
+      '<button id="st-bk-export" class="st-btn st-btn-primary">Export to file</button></div>' +
+      '<div class="st-bk-block"><div class="st-bk-head">Restore from a file</div>' +
+      '<div class="st-toolbar"><label class="st-lbl" for="st-bk-mode">Mode</label>' +
+      '<select id="st-bk-mode" class="st-select">' +
+        '<option value="merge">Merge — keep both, later review date wins</option>' +
+        '<option value="replace">Replace — wipe local progress first</option>' +
+        '<option value="preview">Preview — show what would change, write nothing</option>' +
+      '</select></div>' +
+      '<input id="st-bk-file" class="st-bk-file" type="file" accept="application/json,.json" />' +
+      '<div id="st-bk-out" class="st-bk-out" role="status" aria-live="polite"></div></div>';
+
+    const out = body.querySelector("#st-bk-out");
+    const mode = body.querySelector("#st-bk-mode");
+    const file = body.querySelector("#st-bk-file");
+
+    body.querySelector("#st-bk-export").addEventListener("click", () => {
+      const p = bkExport();
+      out.className = "st-bk-out st-bk-ok";
+      out.textContent = `Exported ${bkCountLine(p.counts)} — check your downloads.`;
+    });
+
+    let pending = null;   // { kept, skipped, payload } waiting on a confirm click
+
+    const readFile = f => {
+      const reader = new FileReader();
+      reader.onerror = () => {
+        out.className = "st-bk-out st-bk-err";
+        out.textContent = "Could not read that file.";
+      };
+      reader.onload = () => {
+        let payload;
+        try { payload = bkValidate(String(reader.result)); }
+        catch (err) {
+          pending = null;
+          out.className = "st-bk-out st-bk-err";
+          out.textContent = err.message;
+          return;
+        }
+        const { kept, skipped } = bkSanitise(payload.data);
+        const m = mode.value;
+        const diff = bkDiff(kept, m);
+        pending = { kept, mode: m };
+
+        const rows = [
+          ["In the file", bkCountLine(bkCounts(payload.data))],
+          ["New entries", String(diff.add)],
+          [m === "merge" ? "Overwritten" : "Changed", String(diff.overwrite)],
+          ["Left as-is", String(diff.keepLocal)]
+        ];
+        if (m === "replace") rows.push(["Deleted from this device", String(diff.remove)]);
+        if (skipped) rows.push(["Ignored (unknown key or bad shape)", String(skipped)]);
+
+        out.className = "st-bk-out";
+        out.innerHTML =
+          '<dl class="st-bk-diff">' + rows.map(([k, v]) =>
+            `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("") + "</dl>" +
+          (m === "preview"
+            ? '<p class="st-hint">Preview only — nothing has been written.</p>'
+            : `<button id="st-bk-go" class="st-btn ${m === "replace" ? "st-btn-again" : "st-btn-primary"}">` +
+              `${m === "replace" ? "Replace my progress" : "Merge into this device"}</button>`);
+
+        out.querySelector("#st-bk-go")?.addEventListener("click", () => {
+          if (!pending) return;
+          // The notepad renders from a closure, so only it needs a reload.
+          const touchedNotes = NP_STORE_KEY in pending.kept;
+          bkApply(pending.kept, pending.mode);
+          bkRefreshUI();
+          pending = null;
+          out.className = "st-bk-out st-bk-ok";
+          out.innerHTML = `Restored. This device now holds ${esc(bkCountLine(bkCounts(bkCollect())))}.` +
+            (touchedNotes ? ' <button id="st-bk-reload" class="st-link">Reload to refresh notes</button>' : "");
+          out.querySelector("#st-bk-reload")?.addEventListener("click", () => location.reload());
+        });
+      };
+      reader.readAsText(f);
+    };
+
+    file.addEventListener("change", () => { if (file.files && file.files[0]) readFile(file.files[0]); });
+    // Changing the mode after picking a file should re-cost the same file.
+    mode.addEventListener("change", () => { if (file.files && file.files[0]) readFile(file.files[0]); });
+  });
+}
+
 // ── LAUNCHER (FAB + menu) + keyboard shortcut ───────────────────────────────
 function initStudyTools() {
   const fab = document.createElement("div");
@@ -1526,6 +1812,7 @@ function initStudyTools() {
       '<button class="study-mi" data-act="quiz"><span>❓</span> Quiz</button>' +
       '<button class="study-mi" data-act="acro"><span>🔤</span> Acronym quiz</button>' +
       '<button class="study-mi" data-act="list"><span>★</span> Study list</button>' +
+      '<button class="study-mi" data-act="backup"><span>💾</span> Back up &amp; restore</button>' +
     '</div>' +
     '<button id="study-fab" title="Study tools" aria-label="Study tools" aria-haspopup="true" aria-expanded="false">' +
       '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
@@ -1549,7 +1836,7 @@ function initStudyTools() {
     const mi = e.target.closest(".study-mi"); if (!mi) return;
     closeMenu();
     ({ jump: stOpenJump, cards: stOpenFlashcards, due: stOpenDue, quiz: stOpenQuiz,
-       acro: stOpenAcroQuiz, list: stOpenStudyList }[mi.dataset.act])();
+       acro: stOpenAcroQuiz, list: stOpenStudyList, backup: stOpenBackup }[mi.dataset.act])();
   });
   document.addEventListener("click", e => { if (!fab.contains(e.target) && !menu.hidden) closeMenu(); });
 
