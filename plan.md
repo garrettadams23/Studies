@@ -3812,3 +3812,54 @@ The honest ordering: **AX volatility consumers**, because the measurement exists
 and is unused, and unused measurement is the cheapest thing in the plan to
 mistake for progress.
 
+### Session 13 — outcome, including the recommendation that did not survive contact
+
+**AX volatility was the recommendation above, and it was wrong.** Running
+`stamp_freshness.py --report` before building anything: 182 of 915 topics match
+`VOLATILE_HINTS`, and **the oldest is two months old**. Nothing is stale. A
+"needs review" queue built on this today would render an empty list, and a badge
+would either never appear or appear on a fifth of the site at once.
+
+Two things follow, and the second matters more than the first:
+
+- **`VOLATILE_HINTS` is too broad to act on.** It matches `portal`, `licence`,
+  `version \d` and `tier`, which is a fifth of the corpus. Before anything
+  consumes this signal it needs to be a property of the *claim* — a console path,
+  a price, a limit — not of the prose containing a word. That is a content
+  convention, not a script.
+- **The signal needs age before a consumer is worth building.** The measurement
+  is six weeks old on a corpus written this year. Come back when something is
+  actually a year stale, and design the consumer against real rows.
+
+Recording this rather than quietly dropping it: the plan told me to build a
+consumer for measurement that exists, and checking the measurement first was
+what stopped it. **Read the data before designing the thing that reads the
+data.**
+
+**What shipped instead: the `<h3>`-in-header cleanup.** Session 11 put every
+title inside `.topic-name`, which made a second inconsistency visible — 45 of
+those titles also sat inside an `<h3>` and rendered a size larger and heavier
+than every neighbouring card. All 915 topic names now compute to 14px; before,
+45 did not. A heading tag inside `.topic-header` is now a lint error, and
+`normalise()` strips heading tags so the unwrap read as markup rather than as 45
+cards reviewed this month.
+
+Worth being explicit about what was *not* done: making all 915 titles real
+headings is a defensible change with accessibility implications worth thinking
+about properly. Making 45 of them headings and 870 spans was not a decision
+anyone made, and that is the only part this fixes.
+
+## Session 14 — candidates
+
+| Candidate | Why it might be next | Why it might not |
+|---|---|---|
+| **AK page weight** — 3.4 MB, 21 domains | The last Planned risk with a number that grows on its own | Measure a real phone load first; the answer may be "fine", and that is a valid outcome |
+| **A volatility convention** — mark the *claim*, not the prose | Session 13 showed the current heuristic cannot be acted on | Authoring conventions only stick if the linter can check them; design that first |
+| **`devops` content waves** | 36 cards, no wave written for it as its own domain | Freshly reorganised; a wave written now would be written against a domain nobody has read yet |
+| **Study-tools decks per domain** | 21 domains now; the deck picker was designed for 19 | Small, and nothing is visibly broken |
+
+**AK page weight**, and specifically: measure before optimising. The plan has
+carried "3.2 MB and growing" as a risk since Phase 4 without anyone timing a
+load. Session 13's lesson applies directly — read the data before designing the
+thing that acts on it.
+
