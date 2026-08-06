@@ -2765,3 +2765,45 @@ th .acro-exp,
 @media print {
   .study-badge { display: none; }
 }
+
+/* ── Acronym expansion density ─────────────────────────────────────────────
+   Three modes on <body>, set by the header control. The expansions are the
+   feature; their one real cost is density inside tables, so this is the
+   escape hatch — no rebuild, and tools/annotate_acronyms.py is untouched. */
+.acro-off .acro-exp { display: none; }
+
+.acro-hover .acro-exp {
+  display: none;
+}
+
+/* Reveal on hover or keyboard focus of the surrounding cell, heading or
+   paragraph — the smallest container that reliably wraps an expansion. */
+.acro-hover td:hover .acro-exp,
+.acro-hover th:hover .acro-exp,
+.acro-hover li:hover .acro-exp,
+.acro-hover p:hover .acro-exp,
+.acro-hover h3:hover .acro-exp,
+.acro-hover h4:hover .acro-exp,
+.acro-hover .concept-desc:hover .acro-exp,
+.acro-hover .concept-title:hover .acro-exp,
+.acro-hover .concept-label:hover .acro-exp,
+.acro-hover .topic-name:hover .acro-exp,
+.acro-hover .g-desc:hover .acro-exp,
+.acro-hover .g-name:hover .acro-exp,
+.acro-hover .dw:hover .acro-exp,
+.acro-hover .dt:hover .acro-exp,
+.acro-hover *:focus-within > .acro-exp {
+  display: inline;
+}
+
+/* A touch device has no hover, so "hover" would mean "never". Fall back to
+   always showing them rather than silently hiding information. */
+@media (hover: none) {
+  .acro-hover .acro-exp { display: inline; }
+}
+
+/* Print the expansions unless they were deliberately turned off — paper has
+   no hover either. */
+@media print {
+  .acro-hover .acro-exp { display: inline; }
+}

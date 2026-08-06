@@ -128,6 +128,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("hdr-theme-btn")?.addEventListener("click", toggleTheme);
   document.getElementById("hdr-expand-btn")?.addEventListener("click", toggleAll);
   document.getElementById("hdr-random-btn")?.addEventListener("click", jumpToRandomTopic);
+  document.getElementById("hdr-acro-btn")?.addEventListener("click", cycleAcroMode);
+  applyAcroMode(acroMode());
 
   // Search + notepad + URL codec — wired here (not inline) so the CSP can stay
   // script-src 'self' with no 'unsafe-inline'.
@@ -146,6 +148,38 @@ document.addEventListener("DOMContentLoaded", () => {
   initBackToTop();
   initStudyTools();
 });
+
+// ── ACRONYM EXPANSION DENSITY ────────────────────────────────────────────────
+// The inline expansions are the point of the acronym feature, and their one
+// real cost is density inside tables. Three modes, a class on <body>, and a
+// stored preference — no rebuild, and the annotator is untouched.
+const ACRO_MODES = ["always", "hover", "off"];
+const ACRO_KEY = "acro-density";
+
+function acroMode() {
+  const m = localStorage.getItem(ACRO_KEY);
+  return ACRO_MODES.includes(m) ? m : "always";
+}
+
+function applyAcroMode(mode) {
+  document.body.classList.remove("acro-hover", "acro-off");
+  if (mode !== "always") document.body.classList.add("acro-" + mode);
+  const btn = document.getElementById("hdr-acro-btn");
+  const label = document.getElementById("hdr-acro-label");
+  if (label) label.textContent = mode.toUpperCase();
+  if (btn) {
+    btn.setAttribute("aria-label",
+      mode === "always" ? "Acronym expansions: always shown"
+      : mode === "hover" ? "Acronym expansions: shown on hover"
+      : "Acronym expansions: hidden");
+  }
+}
+
+function cycleAcroMode() {
+  const next = ACRO_MODES[(ACRO_MODES.indexOf(acroMode()) + 1) % ACRO_MODES.length];
+  localStorage.setItem(ACRO_KEY, next);
+  applyAcroMode(next);
+}
 
 // ── RANDOM TOPIC ─────────────────────────────────────────────────────────────
 // Open a random topic (and its domain), update the hash, and scroll to it.
@@ -186,6 +220,7 @@ function handleGlobalKeys(e) {
       { const si = document.getElementById("search-input");
         if (si) { e.preventDefault(); si.focus(); si.select?.(); } }
       break;
+    case "a": case "A": e.preventDefault(); cycleAcroMode(); break;
     case "e": case "E": e.preventDefault(); toggleAll(); break;
     case "t": case "T": e.preventDefault(); toggleTheme(); break;
     case "r": case "R": e.preventDefault(); jumpToRandomTopic(); break;
@@ -565,6 +600,38 @@ function highlightIn(el, term) {
  * Immediate search runner. Prefer the debounced onSearchInput() for keystrokes.
  * @param {string} raw - Current value of the search input.
  */
+// Acronym <-> expansion lookup, built once from the block build.py inlines.
+// Searching "Unified Endpoint Management" should find the UEM cards even
+// where the page only says UEM, and vice versa.
+let _acroSearchMap = null;
+function acroSearchMap() {
+  if (_acroSearchMap) return _acroSearchMap;
+  const m = new Map();
+  const add = (key, val) => {
+    const k = key.toLowerCase();
+    if (!m.has(k)) m.set(k, new Set());
+    m.get(k).add(val);
+  };
+  (typeof acroData === "function" ? acroData() : []).forEach(([a, exps]) => {
+    exps.forEach(e => { add(a, e); add(e, a); });
+  });
+  _acroSearchMap = m;
+  return m;
+}
+
+/**
+ * The query plus anything the dictionary says is the same thing.
+ * Exact lookup only — a substring match would make "IP" pull in every
+ * expansion containing the word "internet".
+ */
+function searchTerms(term) {
+  const terms = [term];
+  (acroSearchMap().get(term.toLowerCase()) || []).forEach(alt => {
+    if (alt.toLowerCase() !== term.toLowerCase()) terms.push(alt);
+  });
+  return terms;
+}
+
 function runSearch(raw) {
   const term = raw.trim();
   const clearBtn = document.getElementById("search-clear");
@@ -582,14 +649,16 @@ function runSearch(raw) {
     return;
   }
 
-  const termLower = term.toLowerCase();
+  const terms = searchTerms(term);
+  const lowered = terms.map(t => t.toLowerCase());
   let matchCount = 0;
 
   domainSections().forEach(domain => {
     let domainHasMatch = false;
 
     domain.querySelectorAll(".topic").forEach(topic => {
-      if (topicSearchText(topic).includes(termLower)) {
+      const hay = topicSearchText(topic);
+      if (lowered.some(t => hay.includes(t))) {
         domainHasMatch = true;
         matchCount++;
 
@@ -602,7 +671,7 @@ function runSearch(raw) {
         // Highlight only the text-bearing nodes of matched topics
         topic.querySelectorAll(
           ".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, .code-block"
-        ).forEach(n => highlightIn(n, term));
+        ).forEach(n => terms.forEach(t => highlightIn(n, t)));
       } else {
         topic.classList.add("search-hidden");
       }
@@ -611,7 +680,12 @@ function runSearch(raw) {
     if (!domainHasMatch) domain.classList.add("search-hidden");
   });
 
-  if (countEl) countEl.textContent = matchCount ? `${matchCount} match${matchCount !== 1 ? "es" : ""}` : "no matches";
+  if (countEl) {
+    const via = terms.length > 1 ? ` · also matching ${terms.slice(1).map(t => `“${t}”`).join(", ")}` : "";
+    countEl.textContent = matchCount
+      ? `${matchCount} match${matchCount !== 1 ? "es" : ""}${via}`
+      : "no matches";
+  }
 }
 
 /** Debounced entry point wired to the search box's oninput. */
