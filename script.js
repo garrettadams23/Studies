@@ -1139,9 +1139,14 @@ function esc(s) { return (s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<":
 // ── Scope selector (All / a domain / Bookmarks) ─────────────────────────────
 function stScopeOptions() {
   const doms = [];
-  const seen = new Set();
+  const seen = new Map();
   stIndex().forEach(t => {
-    if (!seen.has(t.domainId)) { seen.add(t.domainId); doms.push({ id: t.domainId, title: t.domainTitle, icon: t.domainIcon }); }
+    if (!seen.has(t.domainId)) {
+      const d = { id: t.domainId, title: t.domainTitle, icon: t.domainIcon, n: 0 };
+      seen.set(t.domainId, d);
+      doms.push(d);
+    }
+    seen.get(t.domainId).n++;
   });
   return doms;
 }
@@ -1157,7 +1162,14 @@ function stScopeSelectHTML(id) {
   const opts = ['<option value="__all">◈ All domains</option>',
     '<option value="__bookmarks">★ My study list</option>',
     `<option value="__due">⏰ Due today${dueN ? ` (${dueN})` : ""}</option>`]
-    .concat(stScopeOptions().map(d => `<option value="${esc(d.id)}">${esc(d.icon)} ${esc(d.domainTitle)}</option>`));
+    // d.title, not d.domainTitle — the latter is the key on an stIndex row, not
+    // on what stScopeOptions returns, and reading it left every deck in the list
+    // showing an icon and no name. Two domains share the 🌐 icon, so two of the
+    // options were literally identical.
+    .concat(stScopeOptions().map(d =>
+      // Parentheses, not a dash: some domain titles already contain an em dash
+      // ("Endpoint Management — Intune · MECM") and a second one read as a typo.
+      `<option value="${esc(d.id)}">${esc(d.icon)} ${esc(d.title)} (${d.n})</option>`));
   return `<select id="${id}" class="st-select">${opts.join("")}</select>`;
 }
 
