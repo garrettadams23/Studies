@@ -183,9 +183,46 @@ header p {
 }
 .filter-inner {
   display: flex;
-  gap: 8px;
-  flex-wrap: nowrap;
-  min-width: max-content;
+  align-items: flex-start;
+  gap: 8px 18px;
+  flex-wrap: wrap;
+}
+
+/* ── Chip groups ───────────────────────────────────────────────────────────
+   The bar held 21 chips in one nowrap row and the roadmap adds six more
+   domains. Chips keep their class and data-domain, so filter() and the
+   delegated click handler are untouched — this is markup and CSS only. */
+.chip-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 10px;
+  border-left: 1px solid var(--border);
+}
+
+.chip-group-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  padding-right: 2px;
+  user-select: none;
+}
+
+/* On a phone the bar is sticky, so height matters more than scanability:
+   fall back to the original single scrolling row, with the group labels
+   acting as inline signposts while you swipe. */
+@media (max-width: 900px) {
+  .filter-bar { padding: 10px 14px; }
+  .filter-inner {
+    flex-wrap: nowrap;
+    min-width: max-content;
+    gap: 6px;
+    align-items: center;
+  }
+  .chip-group { flex-wrap: nowrap; }
 }
 
 .chip {
@@ -2677,3 +2714,96 @@ th .acro-exp,
 .acs-alt-term { font-family: var(--mono); font-size: 18px; fill: var(--amber); }
 .acs-alt      { font-family: var(--sans); font-size: 15px; fill: var(--text); }
 .acs-alt-dim  { font-family: var(--mono); font-size: 12.5px; fill: var(--muted); }
+
+/* ── Spaced repetition: grade buttons and the due badge ────────────────────
+   Four grades instead of a binary "got it", each captioned with the interval
+   it would schedule, so the choice is informed rather than a guess. */
+.st-grades {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.st-grade {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  min-width: 72px;
+  line-height: 1.2;
+}
+
+.st-grade-when {
+  font-family: var(--mono);
+  font-size: 10px;
+  opacity: 0.65;
+}
+
+.st-grade-again { color: var(--red);    border-color: var(--red); }
+.st-grade-hard  { color: var(--amber);  border-color: var(--amber); }
+.st-grade-good  { color: var(--green);  border-color: var(--green); }
+.st-grade-easy  { color: var(--cyan);   border-color: var(--cyan); }
+
+#study-fab { position: relative; }
+
+.study-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 20px;
+  text-align: center;
+  pointer-events: none;
+}
+
+@media print {
+  .study-badge { display: none; }
+}
+
+/* ── Acronym expansion density ─────────────────────────────────────────────
+   Three modes on <body>, set by the header control. The expansions are the
+   feature; their one real cost is density inside tables, so this is the
+   escape hatch — no rebuild, and tools/annotate_acronyms.py is untouched. */
+.acro-off .acro-exp { display: none; }
+
+.acro-hover .acro-exp {
+  display: none;
+}
+
+/* Reveal on hover or keyboard focus of the surrounding cell, heading or
+   paragraph — the smallest container that reliably wraps an expansion. */
+.acro-hover td:hover .acro-exp,
+.acro-hover th:hover .acro-exp,
+.acro-hover li:hover .acro-exp,
+.acro-hover p:hover .acro-exp,
+.acro-hover h3:hover .acro-exp,
+.acro-hover h4:hover .acro-exp,
+.acro-hover .concept-desc:hover .acro-exp,
+.acro-hover .concept-title:hover .acro-exp,
+.acro-hover .concept-label:hover .acro-exp,
+.acro-hover .topic-name:hover .acro-exp,
+.acro-hover .g-desc:hover .acro-exp,
+.acro-hover .g-name:hover .acro-exp,
+.acro-hover .dw:hover .acro-exp,
+.acro-hover .dt:hover .acro-exp,
+.acro-hover *:focus-within > .acro-exp {
+  display: inline;
+}
+
+/* A touch device has no hover, so "hover" would mean "never". Fall back to
+   always showing them rather than silently hiding information. */
+@media (hover: none) {
+  .acro-hover .acro-exp { display: inline; }
+}
+
+/* Print the expansions unless they were deliberately turned off — paper has
+   no hover either. */
+@media print {
+  .acro-hover .acro-exp { display: inline; }
+}

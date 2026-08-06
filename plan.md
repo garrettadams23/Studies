@@ -3315,14 +3315,20 @@ Six groups, mapping every current and planned domain:
 
 | Group | Domains |
 |---|---|
-| Core IT | `net`, `linux`, `endpoint`, `shortcut`, *`infra`*, *`m365`*, *`itsm`*, *`hw`* |
+| Core IT | `net`, `linux`, `endpoint`, `cloud`, `shortcut`, *`infra`*, *`m365`*, *`itsm`*, *`hw`* |
 | Security | `sec`, `threat`, `grc`, `ops`, `pentest`, `redteam`, `blueteam` |
 | Engineering | `eng`, `script`, `web`, `data`, `ai` |
-| Cloud | `cloud` |
-| Foundations | `acronym`, *`cs`* |
 | Human | `lifestyle`, `military`, *`biz`* |
+| Reference | `acronym`, *`cs`* |
 
 (*italic* = planned, not yet scaffolded.)
+
+> **Shipped as five groups, not six.** `cloud` went into Core IT rather than
+> standing alone — a one-chip group looked like a mistake. And the mobile
+> fallback is the original single scrolling row rather than a `<details>`
+> collapse: wrapping into five labelled rows made the *sticky* bar 474 px tall
+> on a 390 px-wide phone, which is worse than swiping. Desktop is three tidy
+> rows at 127 px and no horizontal scroll.
 
 **CSS.** `.filter-inner` becomes `flex-wrap: wrap` with `row-gap: 10px`;
 `.chip-group` is a flex row with its own `gap: 6px` and a small uppercase

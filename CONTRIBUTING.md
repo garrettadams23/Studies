@@ -80,6 +80,25 @@ Two things the tool will not touch, by design: anything inside `<pre>`, `<code>`
 or `<kbd>`, and badges/chips/icons. So an acronym that only appears in a command
 example never gets expanded inline — mention it in prose if it needs explaining.
 
+## Freshness stamps
+
+Every `.topic` carries `data-reviewed="YYYY-MM"`, written by
+`tools/stamp_freshness.py` from git history. Never edit it by hand — run the
+script, or let CI tell you it is stale.
+
+**The convention it depends on: run mechanical passes as their own commit.**
+The stamper works out which commits were purely mechanical by normalising the
+annotator's `.acro-exp` spans and its own `data-reviewed` attributes away and
+comparing against the parent. A commit that does that *and* adds real content
+cannot be classified, so the annotated lines will read as freshly reviewed when
+they were not. Keeping `python3 tools/annotate_acronyms.py` in a separate commit
+from the content it annotates keeps the dates honest.
+
+A topic that tracks something changeable — a vendor console, a price, a product
+name — should also carry `data-volatile="true"`. Only volatile topics appear in
+`--report`; stable ones (the OSI model, the TCP handshake) are excluded on
+purpose, so the report stays a to-do list rather than a source of guilt.
+
 ## Adding a domain
 
 Add an entry to `data/domains.json` (`id`, `colorClass`, `icon`, `title`,

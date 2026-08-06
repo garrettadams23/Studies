@@ -128,6 +128,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("hdr-theme-btn")?.addEventListener("click", toggleTheme);
   document.getElementById("hdr-expand-btn")?.addEventListener("click", toggleAll);
   document.getElementById("hdr-random-btn")?.addEventListener("click", jumpToRandomTopic);
+  document.getElementById("hdr-acro-btn")?.addEventListener("click", cycleAcroMode);
+  applyAcroMode(acroMode());
 
   // Search + notepad + URL codec — wired here (not inline) so the CSP can stay
   // script-src 'self' with no 'unsafe-inline'.
@@ -146,6 +148,38 @@ document.addEventListener("DOMContentLoaded", () => {
   initBackToTop();
   initStudyTools();
 });
+
+// ── ACRONYM EXPANSION DENSITY ────────────────────────────────────────────────
+// The inline expansions are the point of the acronym feature, and their one
+// real cost is density inside tables. Three modes, a class on <body>, and a
+// stored preference — no rebuild, and the annotator is untouched.
+const ACRO_MODES = ["always", "hover", "off"];
+const ACRO_KEY = "acro-density";
+
+function acroMode() {
+  const m = localStorage.getItem(ACRO_KEY);
+  return ACRO_MODES.includes(m) ? m : "always";
+}
+
+function applyAcroMode(mode) {
+  document.body.classList.remove("acro-hover", "acro-off");
+  if (mode !== "always") document.body.classList.add("acro-" + mode);
+  const btn = document.getElementById("hdr-acro-btn");
+  const label = document.getElementById("hdr-acro-label");
+  if (label) label.textContent = mode.toUpperCase();
+  if (btn) {
+    btn.setAttribute("aria-label",
+      mode === "always" ? "Acronym expansions: always shown"
+      : mode === "hover" ? "Acronym expansions: shown on hover"
+      : "Acronym expansions: hidden");
+  }
+}
+
+function cycleAcroMode() {
+  const next = ACRO_MODES[(ACRO_MODES.indexOf(acroMode()) + 1) % ACRO_MODES.length];
+  localStorage.setItem(ACRO_KEY, next);
+  applyAcroMode(next);
+}
 
 // ── RANDOM TOPIC ─────────────────────────────────────────────────────────────
 // Open a random topic (and its domain), update the hash, and scroll to it.
@@ -186,6 +220,7 @@ function handleGlobalKeys(e) {
       { const si = document.getElementById("search-input");
         if (si) { e.preventDefault(); si.focus(); si.select?.(); } }
       break;
+    case "a": case "A": e.preventDefault(); cycleAcroMode(); break;
     case "e": case "E": e.preventDefault(); toggleAll(); break;
     case "t": case "T": e.preventDefault(); toggleTheme(); break;
     case "r": case "R": e.preventDefault(); jumpToRandomTopic(); break;
@@ -565,6 +600,38 @@ function highlightIn(el, term) {
  * Immediate search runner. Prefer the debounced onSearchInput() for keystrokes.
  * @param {string} raw - Current value of the search input.
  */
+// Acronym <-> expansion lookup, built once from the block build.py inlines.
+// Searching "Unified Endpoint Management" should find the UEM cards even
+// where the page only says UEM, and vice versa.
+let _acroSearchMap = null;
+function acroSearchMap() {
+  if (_acroSearchMap) return _acroSearchMap;
+  const m = new Map();
+  const add = (key, val) => {
+    const k = key.toLowerCase();
+    if (!m.has(k)) m.set(k, new Set());
+    m.get(k).add(val);
+  };
+  (typeof acroData === "function" ? acroData() : []).forEach(([a, exps]) => {
+    exps.forEach(e => { add(a, e); add(e, a); });
+  });
+  _acroSearchMap = m;
+  return m;
+}
+
+/**
+ * The query plus anything the dictionary says is the same thing.
+ * Exact lookup only — a substring match would make "IP" pull in every
+ * expansion containing the word "internet".
+ */
+function searchTerms(term) {
+  const terms = [term];
+  (acroSearchMap().get(term.toLowerCase()) || []).forEach(alt => {
+    if (alt.toLowerCase() !== term.toLowerCase()) terms.push(alt);
+  });
+  return terms;
+}
+
 function runSearch(raw) {
   const term = raw.trim();
   const clearBtn = document.getElementById("search-clear");
@@ -582,14 +649,16 @@ function runSearch(raw) {
     return;
   }
 
-  const termLower = term.toLowerCase();
+  const terms = searchTerms(term);
+  const lowered = terms.map(t => t.toLowerCase());
   let matchCount = 0;
 
   domainSections().forEach(domain => {
     let domainHasMatch = false;
 
     domain.querySelectorAll(".topic").forEach(topic => {
-      if (topicSearchText(topic).includes(termLower)) {
+      const hay = topicSearchText(topic);
+      if (lowered.some(t => hay.includes(t))) {
         domainHasMatch = true;
         matchCount++;
 
@@ -602,7 +671,7 @@ function runSearch(raw) {
         // Highlight only the text-bearing nodes of matched topics
         topic.querySelectorAll(
           ".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, .code-block"
-        ).forEach(n => highlightIn(n, term));
+        ).forEach(n => terms.forEach(t => highlightIn(n, t)));
       } else {
         topic.classList.add("search-hidden");
       }
@@ -611,7 +680,12 @@ function runSearch(raw) {
     if (!domainHasMatch) domain.classList.add("search-hidden");
   });
 
-  if (countEl) countEl.textContent = matchCount ? `${matchCount} match${matchCount !== 1 ? "es" : ""}` : "no matches";
+  if (countEl) {
+    const via = terms.length > 1 ? ` · also matching ${terms.slice(1).map(t => `“${t}”`).join(", ")}` : "";
+    countEl.textContent = matchCount
+      ? `${matchCount} match${matchCount !== 1 ? "es" : ""}${via}`
+      : "no matches";
+  }
 }
 
 /** Debounced entry point wired to the search box's oninput. */
@@ -867,6 +941,83 @@ function mountNotepad(root) {
 
 const BOOKMARK_PREFIX = "bookmark:";
 const KNOWN_PREFIX = "known:";
+const SRS_PREFIX = "srs:";
+
+// ── SPACED REPETITION ───────────────────────────────────────────────────────
+// A reduced SM-2 over the topics the flashcards already know about. One record
+// per topic: e = ease, i = interval in days, d = due date, n = repetition
+// count. A topic with no record is simply new — nothing to migrate.
+
+/** Local YYYY-MM-DD. Not toISOString(), which would shift the day by timezone. */
+function srsToday(offsetDays = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function srsGet(id) {
+  try {
+    const raw = localStorage.getItem(SRS_PREFIX + id);
+    if (!raw) return null;
+    const r = JSON.parse(raw);
+    return (typeof r === "object" && r) ? r : null;
+  } catch { return null; }        // a corrupt record is treated as "new"
+}
+
+function srsIsDue(id) {
+  const r = srsGet(id);
+  return !r || r.d <= srsToday();
+}
+
+/** How many topics are waiting today — drives the badge on the study button. */
+function srsDueCount() {
+  let due = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k || !k.startsWith(SRS_PREFIX)) continue;
+    const r = srsGet(k.slice(SRS_PREFIX.length));
+    if (r && r.d <= srsToday()) due++;
+  }
+  return due;
+}
+
+/**
+ * Grade a card and schedule the next sight of it.
+ *   again → back to day 1, ease down       hard → small step, ease down
+ *   good  → 1, 6, then interval x ease     easy → a longer step, ease up
+ * Ease is floored at 1.3, as in SM-2, or a card you keep failing collapses to
+ * being shown every session forever.
+ */
+function srsGrade(id, grade) {
+  const r = srsGet(id) || { e: 2.5, i: 1, n: 0 };
+  let { e, i, n } = r;
+  if (grade === "again")      { n = 0; i = 1;                          e = Math.max(1.3, e - 0.20); }
+  else if (grade === "hard")  { n += 1; i = Math.max(1, Math.round(i * 1.2)); e = Math.max(1.3, e - 0.15); }
+  else if (grade === "good")  { n += 1; i = n === 1 ? 1 : n === 2 ? 6 : Math.round(i * e); }
+  else                        { n += 1; i = Math.max(4, Math.round(i * e * 1.3)); e = e + 0.15; }
+  const rec = { e: Math.round(e * 100) / 100, i, d: srsToday(i), n };
+  try { localStorage.setItem(SRS_PREFIX + id, JSON.stringify(rec)); } catch { /* quota */ }
+  if (grade !== "again") localStorage.setItem(KNOWN_PREFIX + id, "1");
+  srsUpdateBadge();
+  return rec;
+}
+
+/** Reflect the due count on the study launcher, or clear it when zero. */
+function srsUpdateBadge() {
+  const btn = document.getElementById("study-fab");
+  if (!btn) return;
+  const n = srsDueCount();
+  let b = btn.querySelector(".study-badge");
+  if (!n) { b?.remove(); btn.removeAttribute("data-due"); return; }
+  if (!b) {
+    b = document.createElement("span");
+    b.className = "study-badge";
+    btn.appendChild(b);
+  }
+  b.textContent = n > 99 ? "99+" : String(n);
+  btn.setAttribute("data-due", String(n));
+  btn.setAttribute("aria-label", `Study tools — ${n} card${n === 1 ? "" : "s"} due`);
+}
 let _stIndex = null;
 
 /** Build a flat index of every topic on the page (once). */
@@ -942,11 +1093,14 @@ function stTopicsForScope(scope) {
   const all = stIndex();
   if (scope === "__all") return all.slice();
   if (scope === "__bookmarks") return all.filter(t => stIsBookmarked(t.id));
+  if (scope === "__due") return all.filter(t => srsGet(t.id) && srsIsDue(t.id));
   return all.filter(t => t.domainId === scope);
 }
 function stScopeSelectHTML(id) {
+  const dueN = srsDueCount();
   const opts = ['<option value="__all">◈ All domains</option>',
-    '<option value="__bookmarks">★ My study list</option>']
+    '<option value="__bookmarks">★ My study list</option>',
+    `<option value="__due">⏰ Due today${dueN ? ` (${dueN})` : ""}</option>`]
     .concat(stScopeOptions().map(d => `<option value="${esc(d.id)}">${esc(d.icon)} ${esc(d.domainTitle)}</option>`));
   return `<select id="${id}" class="st-select">${opts.join("")}</select>`;
 }
@@ -1006,24 +1160,48 @@ function stOpenJump() {
 
 // ── FLASHCARDS ──────────────────────────────────────────────────────────────
 let _stCardState = null;
-function stOpenFlashcards() {
+function stOpenFlashcards(initialScope) {
   stOpen(body => {
+    const due = srsDueCount();
     body.innerHTML =
       '<h2 class="st-h">Flashcards</h2>' +
       '<div class="st-toolbar"><label class="st-lbl">Deck</label>' + stScopeSelectHTML("st-fc-scope") +
       '<button id="st-fc-start" class="st-btn st-btn-primary">Start</button></div>' +
+      (due ? `<p class="st-hint">⏰ ${due} card${due === 1 ? "" : "s"} due for review today.</p>` : "") +
       '<div id="st-fc-stage"></div>';
     const scope = body.querySelector("#st-fc-scope");
+    if (initialScope) scope.value = initialScope;
     body.querySelector("#st-fc-start").addEventListener("click", () => stStartFlashcards(scope.value, body.querySelector("#st-fc-stage")));
     stStartFlashcards(scope.value, body.querySelector("#st-fc-stage"));
   });
 }
+
+/** Flashcards, opened straight onto the cards the scheduler says are due. */
+function stOpenDue() { stOpenFlashcards("__due"); }
 function stStartFlashcards(scope, stage) {
   let deck = shuffle(stTopicsForScope(scope));
-  if (!deck.length) { stage.innerHTML = '<p class="st-empty">No cards in this deck. Star some topics with ★, or pick another deck.</p>'; return; }
+  if (!deck.length) {
+    stage.innerHTML = scope === "__due"
+      ? '<p class="st-empty">Nothing due. Grade some cards from another deck and they will come back here on a schedule.</p>'
+      : '<p class="st-empty">No cards in this deck. Star some topics with ★, or pick another deck.</p>';
+    return;
+  }
   _stCardState = { deck, i: 0, flipped: false, total: deck.length, done: 0 };
   stRenderCard(stage);
 }
+/** One grade button, captioned with the interval that choice would schedule. */
+function stGradeBtn(grade, label, id) {
+  const r = srsGet(id) || { e: 2.5, i: 1, n: 0 };
+  let days;
+  if (grade === "again") days = 1;
+  else if (grade === "hard") days = Math.max(1, Math.round(r.i * 1.2));
+  else if (grade === "good") days = r.n === 0 ? 1 : r.n === 1 ? 6 : Math.round(r.i * r.e);
+  else days = Math.max(4, Math.round(r.i * r.e * 1.3));
+  const when = days === 1 ? "1d" : days < 30 ? days + "d" : Math.round(days / 30) + "mo";
+  return `<button class="st-btn st-grade st-grade-${grade}" data-grade="${grade}">` +
+         `${label}<span class="st-grade-when">${when}</span></button>`;
+}
+
 function stRenderCard(stage) {
   const s = _stCardState; if (!s) return;
   if (s.i >= s.deck.length) {
@@ -1042,8 +1220,9 @@ function stRenderCard(stage) {
         `<span class="st-card-desc">${esc(t.desc || "(open the topic for details)")}</span></div>` +
     `</div>` +
     (s.flipped
-      ? '<div class="st-card-actions"><button id="st-again" class="st-btn st-btn-again">↻ Again</button>' +
-        '<button id="st-good" class="st-btn st-btn-good">✓ Got it</button>' +
+      ? '<div class="st-card-actions st-grades">' +
+        stGradeBtn("again", "↻ Again", t.id) + stGradeBtn("hard", "Hard", t.id) +
+        stGradeBtn("good", "Good", t.id) + stGradeBtn("easy", "Easy", t.id) +
         '<button id="st-open" class="st-btn">Open topic ↗</button></div>'
       : '<div class="st-card-actions"><button id="st-flip" class="st-btn st-btn-primary">Flip</button></div>');
 
@@ -1052,8 +1231,13 @@ function stRenderCard(stage) {
   card.addEventListener("click", flip);
   card.addEventListener("keydown", e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); } });
   stage.querySelector("#st-flip")?.addEventListener("click", flip);
-  stage.querySelector("#st-again")?.addEventListener("click", () => { s.deck.push(t); s.flipped = false; s.i++; stRenderCard(stage); });
-  stage.querySelector("#st-good")?.addEventListener("click", () => { localStorage.setItem(KNOWN_PREFIX + t.id, "1"); s.done++; s.flipped = false; s.i++; stRenderCard(stage); });
+  stage.querySelectorAll(".st-grade").forEach(b => b.addEventListener("click", () => {
+    srsGrade(t.id, b.dataset.grade);
+    // "Again" also puts the card back in this session's deck — a card you just
+    // failed should come round again now, not only tomorrow.
+    if (b.dataset.grade === "again") s.deck.push(t); else s.done++;
+    s.flipped = false; s.i++; stRenderCard(stage);
+  }));
   stage.querySelector("#st-open")?.addEventListener("click", () => { stClose(); stGoToTopic(t.id); });
   setTimeout(() => card.focus(), 20);
 }
@@ -1124,6 +1308,171 @@ function stRestartQuizSame(stage) {
   s.i = 0; s.score = 0; stRenderQuestion(stage);
 }
 
+// ── ACRONYM QUIZ ────────────────────────────────────────────────────────────
+// Questions built from the dictionary rather than from topic titles. The
+// answers are already structured, so distractors can be chosen honestly
+// instead of guessed — which is the weakness of the topic quiz.
+
+let _acroData = null;
+
+/** The compact dictionary inlined by build.py: [acronym, [expansions], area]. */
+function acroData() {
+  if (_acroData) return _acroData;
+  const el = document.getElementById("acronym-data");
+  try {
+    _acroData = el ? JSON.parse(el.textContent) : [];
+  } catch { _acroData = []; }
+  return _acroData;
+}
+
+/** Group by subject area, so a distractor is never a giveaway from elsewhere. */
+function acroByArea() {
+  const byArea = new Map();
+  acroData().forEach(e => {
+    if (!byArea.has(e[2])) byArea.set(e[2], []);
+    byArea.get(e[2]).push(e);
+  });
+  return byArea;
+}
+
+function acroAreas() {
+  return [...acroByArea().keys()].sort();
+}
+
+/** Three wrong answers from the same area, falling back to the whole set. */
+function acroDistractors(entry, pick, n) {
+  const byArea = acroByArea();
+  const sameArea = (byArea.get(entry[2]) || []).filter(e => e[0] !== entry[0]);
+  const pool = sameArea.length >= n ? sameArea : acroData().filter(e => e[0] !== entry[0]);
+  const out = [];
+  const seen = new Set([pick(entry).toLowerCase()]);
+  for (const cand of shuffle(pool.slice())) {
+    // Two acronyms that differ only in case (IoC / IOC) make a typography
+    // question, not a knowledge one.
+    if (cand[0].toLowerCase() === entry[0].toLowerCase()) continue;
+    const v = pick(cand);
+    if (!v || seen.has(v.toLowerCase())) continue;
+    seen.add(v.toLowerCase());
+    out.push(v);
+    if (out.length === n) break;
+  }
+  return out;
+}
+
+function acroQuestions(area, count) {
+  const all = acroData().filter(e => area === "__all" || e[2] === area);
+  const single = all.filter(e => e[1].length === 1);
+  const multi = all.filter(e => e[1].length > 1);
+  const qs = [];
+
+  shuffle(single.slice()).forEach(e => {
+    if (qs.length >= count) return;
+    if (Math.random() < 0.5) {
+      // Expand: acronym -> what it stands for
+      const wrong = acroDistractors(e, x => x[1][0], 3);
+      if (wrong.length < 3) return;
+      qs.push({ q: `<strong>${esc(e[0])}</strong> stands for…`, area: e[2],
+                answer: e[1][0], options: shuffle([e[1][0], ...wrong]) });
+    } else {
+      // Contract: expansion -> which acronym
+      const wrong = acroDistractors(e, x => x[0], 3);
+      if (wrong.length < 3) return;
+      qs.push({ q: `Which acronym means <em>${esc(e[1][0])}</em>?`, area: e[2],
+                answer: e[0], options: shuffle([e[0], ...wrong]) });
+    }
+  });
+
+  // Disambiguation is the only place a multi-meaning entry is fair: the other
+  // meanings of the same acronym are the distractors, which is the actual skill.
+  shuffle(multi.slice()).slice(0, Math.max(1, Math.round(count * 0.2))).forEach(e => {
+    const answer = e[1][0];
+    const others = e[1].slice(1);
+    const wrong = others.concat(acroDistractors(e, x => x[1][0], 3 - others.length));
+    if (wrong.length < 3) return;
+    qs.push({ q: `<strong>${esc(e[0])}</strong> has more than one meaning. In a ` +
+                 `<strong>${esc(e[2])}</strong> context, which one applies?`, area: e[2],
+              answer, options: shuffle([answer, ...wrong.slice(0, 3)]) });
+  });
+
+  return shuffle(qs).slice(0, count);
+}
+
+let _acroQuizState = null;
+
+function stOpenAcroQuiz() {
+  stOpen(body => {
+    if (!acroData().length) {
+      body.innerHTML = '<h2 class="st-h">Acronym quiz</h2>' +
+        '<p class="st-empty">The acronym dictionary was not found on this page. ' +
+        'Rebuild with <code>python3 build.py</code>.</p>';
+      return;
+    }
+    const areas = acroAreas().map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join("");
+    body.innerHTML =
+      '<h2 class="st-h">Acronym quiz</h2>' +
+      '<div class="st-toolbar"><label class="st-lbl">Area</label>' +
+      `<select id="st-aq-area" class="st-select"><option value="__all">◈ All areas</option>${areas}</select>` +
+      '<button id="st-aq-start" class="st-btn st-btn-primary">Start</button></div>' +
+      `<p class="st-hint">${acroData().length} acronyms in the dictionary.</p>` +
+      '<div id="st-aq-stage"></div>';
+    const sel = body.querySelector("#st-aq-area");
+    const stage = body.querySelector("#st-aq-stage");
+    body.querySelector("#st-aq-start").addEventListener("click", () => stStartAcroQuiz(sel.value, stage));
+    stStartAcroQuiz(sel.value, stage);
+  });
+}
+
+function stStartAcroQuiz(area, stage) {
+  const questions = acroQuestions(area, 10);
+  if (questions.length < 4) {
+    stage.innerHTML = '<p class="st-empty">Not enough acronyms in that area to build a quiz. Pick a broader one.</p>';
+    return;
+  }
+  _acroQuizState = { area, questions, i: 0, score: 0, answered: false };
+  stRenderAcroQuestion(stage);
+}
+
+function stRenderAcroQuestion(stage) {
+  const s = _acroQuizState; if (!s) return;
+  if (s.i >= s.questions.length) {
+    const pct = Math.round((s.score / s.questions.length) * 100);
+    stage.innerHTML = `<div class="st-result"><div class="st-result-big">${pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "📚"}</div>` +
+      `<p>Score: <strong>${s.score} / ${s.questions.length}</strong> (${pct}%)</p>` +
+      '<button id="st-aq-retry" class="st-btn st-btn-primary">New quiz</button></div>';
+    stage.querySelector("#st-aq-retry").addEventListener("click", () => stStartAcroQuiz(s.area, stage));
+    return;
+  }
+  const q = s.questions[s.i];
+  // Reuses the topic quiz's markup and styling — same component, new source.
+  stage.innerHTML =
+    `<div class="st-progress">Question ${s.i + 1} / ${s.questions.length} · Score ${s.score}</div>` +
+    `<div class="st-q-prompt"><span class="st-q-label">${esc(q.area)}</span>${q.q}</div>` +
+    '<ul class="st-q-options">' +
+    q.options.map((o, n) => `<li><button class="st-q-opt" data-n="${n}">${esc(o)}</button></li>`).join("") +
+    '</ul><div id="st-q-feedback" class="st-q-feedback"></div>';
+
+  s.answered = false;
+  stage.querySelectorAll(".st-q-opt").forEach(btn => btn.addEventListener("click", () => {
+    if (s.answered) return;
+    s.answered = true;
+    const right = q.options[Number(btn.dataset.n)] === q.answer;
+    if (right) s.score++;
+    stage.querySelectorAll(".st-q-opt").forEach(b => {
+      if (q.options[Number(b.dataset.n)] === q.answer) b.classList.add("correct");
+      else if (b === btn) b.classList.add("wrong");
+      b.disabled = true;
+    });
+    const fb = stage.querySelector("#st-q-feedback");
+    fb.innerHTML = (right ? '<span class="st-ok">Correct!</span> ' : '<span class="st-no">Not quite.</span> ') +
+      `Answer: <strong>${esc(q.answer)}</strong>` +
+      ' <button class="st-btn st-next" id="st-aq-next">Next →</button>';
+    fb.querySelector("#st-aq-next").addEventListener("click", () => {
+      s.i++; s.answered = false; stRenderAcroQuestion(stage);
+    });
+    fb.querySelector("#st-aq-next").focus();
+  }));
+}
+
 // ── STUDY LIST (bookmarks) ──────────────────────────────────────────────────
 function stOpenStudyList() {
   stOpen(body => {
@@ -1173,7 +1522,9 @@ function initStudyTools() {
     '<div id="study-menu" hidden>' +
       '<button class="study-mi" data-act="jump"><span>⌘K</span> Quick jump</button>' +
       '<button class="study-mi" data-act="cards"><span>🃏</span> Flashcards</button>' +
+      '<button class="study-mi" data-act="due"><span>⏰</span> Review due</button>' +
       '<button class="study-mi" data-act="quiz"><span>❓</span> Quiz</button>' +
+      '<button class="study-mi" data-act="acro"><span>🔤</span> Acronym quiz</button>' +
       '<button class="study-mi" data-act="list"><span>★</span> Study list</button>' +
     '</div>' +
     '<button id="study-fab" title="Study tools" aria-label="Study tools" aria-haspopup="true" aria-expanded="false">' +
@@ -1197,9 +1548,14 @@ function initStudyTools() {
   menu.addEventListener("click", e => {
     const mi = e.target.closest(".study-mi"); if (!mi) return;
     closeMenu();
-    ({ jump: stOpenJump, cards: stOpenFlashcards, quiz: stOpenQuiz, list: stOpenStudyList }[mi.dataset.act])();
+    ({ jump: stOpenJump, cards: stOpenFlashcards, due: stOpenDue, quiz: stOpenQuiz,
+       acro: stOpenAcroQuiz, list: stOpenStudyList }[mi.dataset.act])();
   });
   document.addEventListener("click", e => { if (!fab.contains(e.target) && !menu.hidden) closeMenu(); });
+
+  srsUpdateBadge();
+  // Another tab grading a card should update this one's badge too.
+  window.addEventListener("storage", e => { if (e.key && e.key.startsWith(SRS_PREFIX)) srsUpdateBadge(); });
 
   // Global keyboard shortcuts
   document.addEventListener("keydown", e => {

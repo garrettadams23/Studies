@@ -13,6 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # stamp_freshness.py reads git history, so a shallow clone will not do
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -28,8 +31,14 @@ jobs:
             exit 1
           fi
 
+      - name: Lint content conventions
+        run: python tools/lint_content.py
+
       - name: Check inline acronym expansions
         run: python tools/annotate_acronyms.py --check
+
+      - name: Check topic freshness stamps
+        run: python tools/stamp_freshness.py --check
 
       - name: Rebuild index.html
         run: python build.py
