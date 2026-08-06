@@ -84,18 +84,50 @@ def normalise(text):
     return REVIEWED_ATTR_RE.sub("", text)
 
 
-def mechanical_revs(rel_path):
-    """Commits whose change to this file was purely mechanical markup."""
-    revs = git("log", "--format=%H", "--", rel_path).stdout.split()
+def is_mechanical(sha, rel_path):
+    after = git("show", f"{sha}:{rel_path}")
+    parent = git("show", f"{sha}^:{rel_path}")
+    if after.returncode != 0 or parent.returncode != 0:
+        return False                        # added or deleted, not a markup pass
+    return normalise(after.stdout) == normalise(parent.stdout)
+
+
+_GLOBAL_PASSES = None
+
+
+def global_markup_passes():
+    """Commits that changed nothing real in *any* domain file they touched.
+
+    The annotator, the freshness stamp and the `.topic-name` wrap all sweep
+    every file at once. Such a commit is safe to ignore when blaming any file,
+    which matters once content moves between files: after a domain split, a
+    card's history lives in the file it came from, and a per-path scan of the
+    new file cannot see the sweeps that touched the old one. Blame follows the
+    content with -C; the ignore list has to follow it too.
+    """
+    global _GLOBAL_PASSES
+    if _GLOBAL_PASSES is not None:
+        return _GLOBAL_PASSES
     out = []
-    for sha in revs:
-        after = git("show", f"{sha}:{rel_path}").stdout
-        parent = git("show", f"{sha}^:{rel_path}")
-        if parent.returncode != 0:          # the commit that added the file
-            continue
-        if normalise(after) == normalise(parent.stdout):
+    for sha in git("log", "--format=%H", "--", "data").stdout.split():
+        touched = [f for f in git("show", "--name-only", "--format=", sha).stdout.split()
+                   if f.startswith("data/") and f.endswith(".html")
+                   and f.rsplit("/", 1)[-1] not in EXCLUDE]
+        if touched and all(is_mechanical(sha, f) for f in touched):
             out.append(sha)
+    _GLOBAL_PASSES = out
     return out
+
+
+def mechanical_revs(rel_path):
+    """Commits to ignore when blaming this file.
+
+    Its own mechanical commits, plus every whole-tree markup pass — a rev that
+    never touched this path costs nothing to list.
+    """
+    own = [sha for sha in git("log", "--format=%H", "--", rel_path).stdout.split()
+           if is_mechanical(sha, rel_path)]
+    return sorted(set(own) | set(global_markup_passes()))
 
 
 def blame_times(rel_path, ignore, worktree_text):
@@ -123,6 +155,12 @@ def blame_times(rel_path, ignore, worktree_text):
     # which took this script from seconds to minutes across 21 files and buys
     # nothing — a domain split modifies both files in the one commit.
     cmd = ["blame", "--line-porcelain", "-C", "-C"]
+    # The conventional escape hatch, for the commits this script cannot infer:
+    # -C finds most of a relocated card, but git's copy detection has a minimum
+    # block size, so a few short runs still blame the move. Listing the commit
+    # here is how git itself expects that to be handled.
+    if (ROOT / ".git-blame-ignore-revs").exists():
+        cmd += ["--ignore-revs-file", ".git-blame-ignore-revs"]
     for sha in ignore:
         cmd += ["--ignore-rev", sha]
     cmd += (["HEAD"] if use_head else []) + ["--", rel_path]
@@ -131,7 +169,14 @@ def blame_times(rel_path, ignore, worktree_text):
         # A file git has never seen — a domain being split out, before the
         # commit that creates it. Keep whatever stamps the markup already
         # carries; the next run, once it is committed, will confirm them.
-        return {}
+        #
+        # Narrow on purpose. A blanket except here once swallowed a malformed
+        # .git-blame-ignore-revs and silently reported "0 topics stamped"
+        # instead of failing, which is the worst way for a freshness tool to
+        # be wrong: quietly.
+        if "no such path" in result.stderr or "does not exist" in result.stderr:
+            return {}
+        raise SystemExit(f"git blame failed for {rel_path}:\n{result.stderr}")
 
     times, line_no, pending = {}, 0, None
     for line in result.stdout.splitlines():
