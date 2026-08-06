@@ -2972,7 +2972,7 @@ mitigated by work in this repo; the rest are open.
 | **Content goes stale** — vendor renames, dead consoles, changed limits | High | High | Phase-5 Track AX: freshness metadata, volatility tags, rename registry | Planned |
 | **Scope paralysis** — 751 open items is demotivating rather than motivating | High | Medium | Treat the plan as a menu; the "actual priority" list at the end of Phase 5 | Partly |
 | **Progress data loss** — everything is `localStorage`; clearing the browser wipes it | Medium | Medium | Phase-4 Track AG: export/import | **Mitigated** — session 10 shipped export/import with merge, replace and preview |
-| **Page weight** — `index.html` is 3.2 MB and grows with every wave | Medium | Medium | Phase-4 Track AK: lazy per-domain loading, performance budget in CI | Planned |
+| **Page weight** — `index.html` is 3.4 MB and grows with every wave | Medium | Medium | Measured in session 14 — it is not slow. `tools/page_budget.py` enforces size and element budgets in CI; lazy loading stays unbuilt until a budget is hit | **Mitigated** |
 | **Generated-file drift** — `acronym.html` / `index.html` committed stale | Medium | Low | CI already rebuilds and fails on drift; `--check` mode on the annotator | **Mitigated** |
 | **Slug churn** — renaming a topic silently breaks permalinks and progress | Medium | Medium | Phase-5 Track AY: ID stability contract and alias map | Planned |
 | **Accuracy drift** — a confident wrong card is worse than no card | Medium | High | Authoring rule 6; Phase-5 fact-anchor comments | Partly |
@@ -3862,4 +3862,56 @@ anyone made, and that is the only part this fixes.
 carried "3.2 MB and growing" as a risk since Phase 4 without anyone timing a
 load. Session 13's lesson applies directly — read the data before designing the
 thing that acts on it.
+
+### Session 14 — outcome: the numbers, and a budget instead of a rewrite
+
+Measured before writing a line of optimisation:
+
+| | desktop | phone (4× CPU throttle) |
+|---|---|---|
+| First contentful paint | 160 ms | 336 ms |
+| Load event | 308 ms | 1,284 ms |
+| Chip filter | 28 ms | 50 ms |
+| Over the wire | \multicolumn — 836 KB gzipped, 24% of 3.3 MB raw | |
+| Elements | 78,819 live · 75,063 static | |
+
+**The page is not slow.** Lazy per-domain loading — the planned mitigation since
+Phase 4 — would have traded a working offline-first single document for
+machinery aimed at a problem that has not arrived. Second time in two sessions
+that reading the measurement first changed what got built.
+
+What the page *is* is **unbounded**: every wave adds to it and nothing pushes
+back. So the mitigation is a budget, not a rewrite. `tools/page_budget.py`
+checks gzipped size, raw size and static element count against budgets ~25%
+above today, and runs in CI after the build. A normal wave passes; a doubling
+does not. When a budget is hit, *that* is the moment for the lazy-loading
+conversation — with a number in hand, and with the budget moved deliberately in
+its own commit if the growth is worth it.
+
+The register's **Page weight** risk moves to **Mitigated**: not because the page
+got smaller, but because it can no longer grow unnoticed.
+
+One detail kept honest in the tool rather than glossed: the budgeted element
+count is *static markup*. The live DOM runs ~4,400 higher, almost entirely the
+four-element tool cluster `script.js` injects into each of 915 topics. CI cannot
+run a browser, so it budgets what a content wave actually changes — and the file
+states both numbers so neither is mistaken for the other.
+
+### Where the register stands after sessions 10–14
+
+| Risk | State |
+|---|---|
+| Progress data loss | **Mitigated** — session 10 |
+| Markup rot | **Mitigated** — session 3, extended by 11 and 13 |
+| Slug churn | **Mitigated** — session 11: alias map, self-healing links, storage migration |
+| Generated-file drift | **Mitigated** — CI |
+| Page weight | **Mitigated** — session 14: measured, budgeted |
+| Content goes stale | **Partly** — stamps exist; session 13 showed the volatility heuristic is not yet actionable |
+| Accuracy drift · Bus factor · Scope paralysis | **Partly** — as before |
+
+Six of nine mitigated. The three that remain are the ones that cannot be closed
+by tooling: whether the content is right, whether one person holds all the
+context, and whether the list is too long to be motivating. Those are answered
+by writing cards and by keeping this file honest, which is what the last five
+sessions have been for.
 
