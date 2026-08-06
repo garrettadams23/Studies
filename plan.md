@@ -1210,7 +1210,7 @@ contract is expected to know on day one.
 - [ ] Red Teaming as a Discipline — structured contrarian thinking, premortems
 - [ ] Small-Unit Leadership Lessons for Tech Leads — direct parallels to eng teams
 
-**Wave T3 — Classified Information Handling &amp; the SF Series**
+**Wave T3 — Classified Information Handling &amp; the SF Series** ✅ **SHIPPED**
 
 The Standard Form series is the physical protocol around classified material,
 and it is colour-coded on purpose: the colour is the control. Anyone working
@@ -1218,12 +1218,12 @@ on a cleared contract meets these forms before they meet a system. Written as
 reference, US-specific, and explicitly *about* the forms — no classified
 content, only the public handling procedure.
 
-- [ ] Classification Levels &amp; Markings — Top Secret / Secret / Confidential, the damage standard behind each, plus CUI; banner lines, portion marking, classification authority blocks, declassification instructions
-- [ ] Cover Sheets — SF 703 / 704 / 705 — the colour code (**SF 703 Top Secret = orange**, **SF 704 Secret = red**, **SF 705 Confidential = blue**), what a cover sheet is for, when it attaches and when it comes off, and why the top sheet always matches the highest classification in the stack
-- [ ] Media &amp; Equipment Labels — SF 706–712 — SF 706 Top Secret (orange), SF 707 Secret (red), SF 708 Confidential (blue), SF 709 Classified (purple, pending determination), SF 710 Unclassified (green, for mixed environments), SF 711 Data Descriptor, SF 712 Classified SCI (yellow); labelling drives, removable media and systems
-- [ ] Container &amp; End-of-Day Forms — SF 700 (security container information), SF 701 (activity security checklist), SF 702 (security container check sheet); who signs what, when, and what a missed check actually triggers
-- [ ] Clearance Paperwork — SF 312 nondisclosure agreement, SF 86 questionnaire, SF 714 financial disclosure; the adjudicative guidelines, reinvestigation, continuous evaluation — and what a clearance is *not* (it is not need-to-know)
-- [ ] Spills, Sanitisation &amp; Reporting — classified message incidents, what to do in the first ten minutes, why you do not delete it yourself, media sanitisation standards, and the reporting chain
+- [x] Classification Levels &amp; Markings — Top Secret / Secret / Confidential, the damage standard behind each, plus CUI; banner lines, portion marking, classification authority blocks, declassification instructions
+- [x] Cover Sheets — SF 703 / 704 / 705 — the colour code (**SF 703 Top Secret = orange**, **SF 704 Secret = red**, **SF 705 Confidential = blue**), what a cover sheet is for, when it attaches and when it comes off, and why the top sheet always matches the highest classification in the stack
+- [x] Media &amp; Equipment Labels — SF 706–712 — SF 706 Top Secret (orange), SF 707 Secret (red), SF 708 Confidential (blue), SF 709 Classified (purple, pending determination), SF 710 Unclassified (green, for mixed environments), SF 711 Data Descriptor, SF 712 Classified SCI (yellow); labelling drives, removable media and systems
+- [x] Container &amp; End-of-Day Forms — SF 700 (security container information), SF 701 (activity security checklist), SF 702 (security container check sheet); who signs what, when, and what a missed check actually triggers
+- [x] Clearance Paperwork — SF 312 nondisclosure agreement, SF 86 questionnaire, SF 714 financial disclosure; the adjudicative guidelines, reinvestigation, continuous evaluation — and what a clearance is *not* (it is not need-to-know)
+- [x] Spills, Sanitisation &amp; Reporting — classified message incidents, what to do in the first ten minutes, why you do not delete it yourself, media sanitisation standards, and the reporting chain
 
 **Why this belongs on this site:** the `endpoint`, `blueteam` and `grc`
 domains already cover DISA STIGs, CMMC and media destruction. This is the
@@ -3919,6 +3919,38 @@ volatility consumer was not worth building (data too young), the lazy-loading
 rewrite was not worth building (page not slow), and the deck picker was not
 "nothing visibly broken" (broken since it was written). A plan is a hypothesis.
 Check it against the artifact before you spend a session on it.
+
+### Session 16 — Wave T3, the wave you actually asked for
+
+Everything since session 10 has been tooling and structure. This one is content,
+and it is the item you named directly: **SF 703 Top Secret (orange), SF 704
+Secret (red), SF 705 Confidential (blue), and all other SF.** Six cards in
+`military`, taking it 23 → 29.
+
+Written as reference about the forms and the public handling procedure — no
+classified content, only the protocol. Each card names the trap rather than only
+the rule; the three worth remembering:
+
+- **The SF numbers ascend as the classification descends.** 703 is Top Secret,
+  705 is Confidential. Everyone guesses it the other way round the first time.
+- **SF 710 green exists so that "no label" means something.** In a mixed
+  environment where only classified media is labelled, an unlabelled drive is
+  ambiguous. Label everything and an unlabelled drive becomes an anomaly.
+- **Concealing a spill is a different act from causing one.** Accidental spills
+  are common and survivable; the deletion is what ends careers.
+
+The dictionary gained `SF`, `SCI`, `SAP`, `NISPOM` and `DCSA`. `SAP` is
+disambiguated — Special Access Program in `military`, the ERP suite elsewhere —
+and carries `noAnnotate`, so it expands only where a domain says which is meant.
+That mechanism was built in session 1 for exactly this and has now paid for
+itself several times.
+
+**A note on ordering, honestly.** Six sessions of tooling ran before this card
+got written, and it was requested before any of them. The tooling was not wasted
+— this wave inherited permalinks, progress, freshness stamping, acronym
+expansion, search, flashcards and a page budget without a line of work — but the
+ordering was mine, not yours. Worth stating plainly rather than presenting the
+sequence as if it had been optimal.
 
 ### Where the register stands after sessions 10–14
 
