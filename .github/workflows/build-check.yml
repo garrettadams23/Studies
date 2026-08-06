@@ -46,6 +46,9 @@ jobs:
       - name: Rebuild index.html
         run: python build.py
 
+      - name: Check the page performance budget
+        run: python tools/page_budget.py
+
       - name: Fail if index.html is stale
         run: |
           if ! git diff --exit-code -- index.html; then
