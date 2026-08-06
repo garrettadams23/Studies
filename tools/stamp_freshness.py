@@ -114,13 +114,24 @@ def blame_times(rel_path, ignore, worktree_text):
         and normalise(head.stdout) == normalise(worktree_text)
         and head.stdout.count("\n") == worktree_text.count("\n")
     )
-    cmd = ["blame", "--line-porcelain"]
+    # -C -C follows lines moved or copied from another file *modified in the
+    # same commit*. Splitting a domain moves cards verbatim into a new file, and
+    # without this every one of them would blame to the split and claim it was
+    # reviewed that month. Moving a card is not reviewing it.
+    #
+    # Two -C, not three: a third makes blame search every file in every commit,
+    # which took this script from seconds to minutes across 21 files and buys
+    # nothing — a domain split modifies both files in the one commit.
+    cmd = ["blame", "--line-porcelain", "-C", "-C"]
     for sha in ignore:
         cmd += ["--ignore-rev", sha]
     cmd += (["HEAD"] if use_head else []) + ["--", rel_path]
     result = git(*cmd)
     if result.returncode != 0:
-        raise SystemExit(f"git blame failed for {rel_path}:\n{result.stderr}")
+        # A file git has never seen — a domain being split out, before the
+        # commit that creates it. Keep whatever stamps the markup already
+        # carries; the next run, once it is committed, will confirm them.
+        return {}
 
     times, line_no, pending = {}, 0, None
     for line in result.stdout.splitlines():
