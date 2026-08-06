@@ -3872,8 +3872,9 @@ Measured before writing a line of optimisation:
 | First contentful paint | 160 ms | 336 ms |
 | Load event | 308 ms | 1,284 ms |
 | Chip filter | 28 ms | 50 ms |
-| Over the wire | \multicolumn — 836 KB gzipped, 24% of 3.3 MB raw | |
-| Elements | 78,819 live · 75,063 static | |
+
+Transfer and size, which do not vary by device: **836 KB gzipped**, 24% of
+3.3 MB raw; **78,819 elements** live, 75,063 of them static markup.
 
 **The page is not slow.** Lazy per-domain loading — the planned mitigation since
 Phase 4 — would have traded a working offline-first single document for
