@@ -3673,3 +3673,68 @@ stray ★ ✓ 🔗.
 the wrapping commit in `--ignore-rev` or every one of those topics will claim it
 was reviewed this month. That is the same trap session 2 built the mechanism
 for; use it.
+
+### Session 11 — outcome
+
+Shipped as two commits, in that order, because the sequencing turned out to
+matter:
+
+1. **`Rename a duplicate title: Container Security 101`.** The wrap surfaced a
+   collision that had been hiding in plain sight: `sec.html` and `ops.html` both
+   carried a card called "Container Security — Hardening Docker & Images". They
+   never collided because the `sec.html` one is a legacy header, so its slug
+   carried the badge word — `beginner-container-security-…`. Take the badge out
+   of the label and the two become the same slug, with the second silently
+   taking `-2`. The beginner card was retitled to what it actually covers.
+2. **`Wrap 90 legacy topic titles in .topic-name`.** The wrap, the 91-entry
+   alias map, the runtime that reads it, and the lint promotion.
+
+**What the tooling learned.** Three decisions came out of things that went
+wrong on the first attempt, and each is worth keeping:
+
+- **Compare against `HEAD`, not the working tree.** The first run computed
+  "before" from the files on disk, so a rename made in the same change as the
+  wrap was already present in the baseline and its old permalink went
+  unrecorded. Edit order should never decide whether a link survives.
+  `committed_texts()` now reads `git show HEAD:…`.
+- **`--check` must not re-derive the map.** The alias map is an append-only
+  record of links we have published; nothing in the tree can regenerate it.
+  CI checks the three things it *can* check: no legacy header remains, no alias
+  points at a slug that no longer exists, and no slug moves without an alias.
+- **Aliases compose, so runtime never needs two hops.** The rename moved a slug
+  and the wrap moved it again. `compose_aliases()` re-points existing entries
+  through the current run's moves, so the oldest published link still resolves
+  in a single lookup. Verified: `#beginner-container-security-hardening-docker-images`
+  lands on `#container-security-101-why-an-image-is-not-a-sandbox`.
+
+**And one that would have quietly poisoned the freshness data.** The wrapping
+commit is not a content edit, but `git blame` cannot tell. Rather than passing
+the commit to `--ignore-rev` by hand — which works once and is forgotten
+forever after — `stamp_freshness.normalise()` now strips the `.topic-name`
+wrapper the same way it strips acronym spans, so the commit classifies itself
+as mechanical. The regex substitutes `\1`, keeping the title: a *retitled* card
+is a real edit and still dates as one. That is why `sec.html`'s renamed topic
+moved to `2026-08` while the other 89 wrapped topics kept their dates.
+
+**Measured.** 91 aliases, 0 dangling, 0 shadowed by a live id; 915 topics in the
+study index with 0 labels carrying a badge word or a ★ ✓ 🔗 glyph; a stale
+permalink lands, opens the card and rewrites its own hash; progress stored under
+an old slug migrates once, never clobbers data already under the new id, and a
+second load does not resurrect keys the user has since cleared.
+
+## Session 12 — candidates
+
+Nothing here is spec'd yet, deliberately: **spec one session ahead, not ten.**
+Pick from the register, not from appetite.
+
+| Candidate | Why it might be next | Why it might not |
+|---|---|---|
+| **AK page weight** — `index.html` is 3.4 MB and every wave adds to it | The only **Planned** risk with a number attached that keeps growing on its own | Nobody has complained; measure real load time on a phone before optimising |
+| **AX volatility tags** — mark cards whose facts expire (portal names, SKUs, limits) | `stamp_freshness.py` already knows which topics *look* volatile (`VOLATILE_HINTS`); the report exists and nothing consumes it | Half-built already, so the remaining value is smaller than it looks |
+| **The `ops` split** — 68 cards and six tracks pointed at it | The plan's own rule says decide **before** 72 cards land, and it is at 68 | It is a rename of many slugs; the alias machinery is now in place, which makes it cheaper than it was yesterday |
+| **The `<h3>`-in-header inconsistency** | 46 wrapped headers carry an `<h3>` and render a size larger than their neighbours | Cosmetic, and the linter does not flag it — add the rule first, then decide |
+
+The `ops` split is the one whose cost just dropped: session 11 built exactly the
+machinery a large rename needs. If it is going to happen, it is cheaper now than
+it will be at 90 cards.
+

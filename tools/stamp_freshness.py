@@ -43,6 +43,10 @@ EXCLUDE = {"acronym.html"}
 TOPIC_OPEN_RE = re.compile(r'<div class="topic"((?:\s+[^>]*?)?)>')
 REVIEWED_ATTR_RE = re.compile(r'\s+data-reviewed="\d{4}-\d{2}"')
 ACRO_SPAN_RE = re.compile(r'\s*<span class="acro-exp">\([^<]*?\)</span\s*>')
+# Only the wrapper, never the title inside it — a retitled card is a real edit
+# and must keep showing up as one. Safe to match non-greedily because ACRO_SPAN_RE
+# has already removed the only spans that nest inside a topic name.
+TOPIC_NAME_TAG_RE = re.compile(r'<span\b[^>]*class="topic-name"[^>]*>(.*?)</span\s*>', re.S)
 
 # Prettier splits tags across lines — `<span class="topic-name"\n  >` and
 # `</span\n>` are both valid and both appear in data/*.html. Every pattern that
@@ -67,8 +71,16 @@ def git(*args, **kw):
 
 
 def normalise(text):
-    """Strip markup that mechanical passes own, so real edits can be spotted."""
+    """Strip markup that mechanical passes own, so real edits can be spotted.
+
+    The `.topic-name` wrapper counts as mechanical: tools/fix_topic_names.py
+    adds it around a title that was already there, and nobody re-read those
+    cards. Detecting it here is what stops the wrapping commit from claiming
+    ninety topics were reviewed the month it ran — the same trap the acronym
+    annotator set, solved the same way.
+    """
     text = ACRO_SPAN_RE.sub("", text)
+    text = TOPIC_NAME_TAG_RE.sub(r"\1", text)
     return REVIEWED_ATTR_RE.sub("", text)
 
 

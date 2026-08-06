@@ -96,6 +96,22 @@ def build_acronym_payload():
     return payload.replace("</", "<\\/")
 
 
+def build_slug_aliases():
+    """Old topic slug -> current one, so a shared permalink never rots.
+
+    Written by tools/fix_topic_names.py whenever a rename moves a slug. The page
+    uses it to redirect a stale hash and to migrate the progress stored under
+    the old id.
+    """
+    path = DATA / "slug-aliases.json"
+    if not path.exists():
+        return "{}"
+    aliases = json.loads(path.read_text(encoding="utf-8"))
+    payload = json.dumps(aliases, separators=(",", ":"), ensure_ascii=False)
+    print(f"  + slug aliases ({len(payload):,} chars, {len(aliases)} entries)")
+    return payload.replace("</", "<\\/")
+
+
 def main():
     shell_path = ROOT / "index-shell.html"
     domains_path = DATA / "domains.json"
@@ -123,6 +139,7 @@ def main():
     domains_html = "\n\n".join(sections)
     output = shell.replace("<!-- DOMAINS_CONTENT -->", domains_html)
     output = output.replace("<!-- ACRONYM_DATA -->", build_acronym_payload())
+    output = output.replace("<!-- SLUG_ALIASES -->", build_slug_aliases())
 
     if MINIFY:
         raw_len = len(output)

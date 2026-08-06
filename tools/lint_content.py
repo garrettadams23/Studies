@@ -125,7 +125,15 @@ def main():
         for line_no, block in topic_blocks(text):
             label, has_name = topic_label(block)
             if not has_name:
-                warns["topic without .topic-name"] += 1
+                # Was a warning for two sessions and nobody acted on it. It only
+                # became interesting once it produced a visible bug: the label
+                # falls back to the header's textContent, which swallows the
+                # badge word and the injected ★ ✓ 🔗 buttons, so the flashcard,
+                # the quiz option and the study-list row all read wrong.
+                errors.append(
+                    f"{name}:{line_no}: topic title is a bare text node — wrap it in "
+                    f'<span class="topic-name">. Run: python tools/fix_topic_names.py'
+                )
             if not label:
                 errors.append(f"{name}:{line_no}: topic has no usable title")
                 continue

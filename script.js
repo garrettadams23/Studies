@@ -320,6 +320,10 @@ function slugify(s) {
  * permalink + "mark reviewed" tools. Runs once at load.
  */
 function initAccessibilityAndTools() {
+  // Before any stored state is read, so a renamed topic shows the progress the
+  // user earned under its old id.
+  migrateAliasedProgress();
+
   // Make every accordion header focusable and announce its state
   document.querySelectorAll(".domain-header, .topic-header").forEach(h => {
     h.setAttribute("tabindex", "0");
@@ -442,9 +446,61 @@ function updateTopicHash(topic) {
 }
 
 /** Expand and scroll to the topic named in location.hash, if any. */
+// ── SLUG ALIASES ────────────────────────────────────────────────────────────
+// Topic ids are derived from the title, so renaming a card silently breaks
+// every permalink anyone shared and orphans the progress stored under the old
+// id. tools/fix_topic_names.py records each move; build.py inlines the map.
+
+const ALIAS_MIGRATED_KEY = "migrated:slug-aliases-v1";
+let _slugAliases = null;
+
+function slugAliases() {
+  if (_slugAliases) return _slugAliases;
+  const el = document.getElementById("slug-aliases");
+  try {
+    const o = el ? JSON.parse(el.textContent) : {};
+    _slugAliases = (o && typeof o === "object" && !Array.isArray(o)) ? o : {};
+  } catch { _slugAliases = {}; }
+  return _slugAliases;
+}
+
+/**
+ * Move progress from renamed topics onto their current ids, once.
+ *
+ * Only where the new id has no data of its own — a device that has already
+ * studied the renamed card keeps what it did there. The flag makes a second
+ * run a no-op, so this cannot keep resurrecting keys the user has since
+ * cleared.
+ */
+function migrateAliasedProgress() {
+  if (localStorage.getItem(ALIAS_MIGRATED_KEY)) return 0;
+  const aliases = slugAliases();
+  let moved = 0;
+  Object.keys(aliases).forEach(old => {
+    const now = aliases[old];
+    [REVIEWED_PREFIX, BOOKMARK_PREFIX, KNOWN_PREFIX, SRS_PREFIX].forEach(p => {
+      const from = localStorage.getItem(p + old);
+      if (from === null) return;
+      if (localStorage.getItem(p + now) === null) {
+        try { localStorage.setItem(p + now, from); moved++; } catch { return; }
+      }
+      localStorage.removeItem(p + old);
+    });
+  });
+  try { localStorage.setItem(ALIAS_MIGRATED_KEY, "1"); } catch { /* quota */ }
+  return moved;
+}
+
 function openHashTarget() {
-  const id = decodeURIComponent(location.hash.slice(1));
+  let id = decodeURIComponent(location.hash.slice(1));
   if (!id) return;
+  // A stale link resolves through the alias map, then rewrites itself so the
+  // address bar — and anything copied out of it — carries the current id.
+  if (!document.getElementById(id) && slugAliases()[id]) {
+    id = slugAliases()[id];
+    if (history.replaceState) history.replaceState(null, "", `#${id}`);
+    else location.hash = id;
+  }
   const topic = document.getElementById(id);
   if (!topic || !topic.classList.contains("topic")) return;
   const domain = topic.closest(".domain-section");
