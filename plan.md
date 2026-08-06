@@ -3898,6 +3898,28 @@ four-element tool cluster `script.js` injects into each of 915 topics. CI cannot
 run a browser, so it budgets what a content wave actually changes — and the file
 states both numbers so neither is mistaken for the other.
 
+### Session 15 — a bug the reorganisation walked into
+
+Session 14's candidate list had "study-tools decks per domain" with *"small, and
+nothing is visibly broken."* That was wrong, and only checking made it obvious:
+the flashcard and quiz deck pickers listed all twenty-one domains as a **bare
+emoji with no name**. `stScopeSelectHTML` read `d.domainTitle` off the objects
+`stScopeOptions` returns, which carry `title` — `domainTitle` is the key on an
+`stIndex` row, not on a scope option. Undefined for every entry, silently, since
+the picker was written. Networking and Web share the 🌐 icon, so two options
+were byte-identical.
+
+Fixed, and each deck now carries its size — `🌐 Networking (55)` — because the
+first question about a deck is how long it will take, and the picker already
+walks the index to build the list.
+
+**The pattern worth naming:** three sessions running, the plan's own judgement
+about what was worth doing was corrected by spending two minutes looking. The
+volatility consumer was not worth building (data too young), the lazy-loading
+rewrite was not worth building (page not slow), and the deck picker was not
+"nothing visibly broken" (broken since it was written). A plan is a hypothesis.
+Check it against the artifact before you spend a session on it.
+
 ### Where the register stands after sessions 10–14
 
 | Risk | State |
