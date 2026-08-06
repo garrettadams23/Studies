@@ -3738,3 +3738,77 @@ The `ops` split is the one whose cost just dropped: session 11 built exactly the
 machinery a large rename needs. If it is going to happen, it is cheaper now than
 it will be at 90 cards.
 
+### Session 12 — outcome: the `ops` split
+
+Done. `ops` was at 68 cards with six tracks still pointing at it, and the plan
+set the decision point at 72.
+
+**The seam is a job description, not a topic list.**
+
+| Domain | Keeps | Cards |
+|---|---|---|
+| `ops` — IT & Security Operations | Service desk troubleshooting, SOC, incident response and command, forensics, SIEM/SOAR, vulnerability management, BCP/DR, ITIL, runbooks, postmortems, on-call — and the observability and SRE material those roles work inside | 32 |
+| `devops` — DevOps, Platform & Delivery | CI/CD, IaC, containers and Kubernetes, GitOps, secrets, supply chain, config management, deployment strategies, plus the architecture cards that only make sense beside them (queues, caching, serverless, object storage, CAP, FinOps) | 36 |
+
+Both clear the Phase-4 bar: 15+ cards, own tooling, a job title you can hire for.
+An SRE/observability third domain was considered and rejected — 12 cards, under
+the bar. **The observability block is the seam most likely to want revisiting**;
+if it grows past 15 it should probably leave `ops` for a domain of its own.
+
+**Slugs did not move.** They derive from the title, not the domain, so the whole
+split needed no aliases and no migration — `fix_topic_names.py --check`
+confirmed zero unrecorded moves. That is worth remembering before the next
+reorganisation: moving a card between domains is free, renaming one is not.
+
+**Two things the move surfaced, both worth keeping.**
+
+- **A `byDomain` acronym override is keyed to a domain, so moving a card can
+  silently change what an acronym expands to.** `SCP` became "Secure Copy
+  Protocol" in a card about AWS Organizations guardrails, because the override
+  that made it "Service Control Policy" was keyed on `ops`. Audit every
+  multi-meaning acronym in a file after moving cards into it — there were four
+  in the new file, and one was wrong.
+- **Dating content requires following it, not the file it lives in.** The split
+  first marked all 36 moved cards as reviewed this month. Fixing it properly
+  took three changes to `stamp_freshness.py`, and two of them were general
+  bugs that the split merely exposed:
+
+  1. `git blame -C -C`, so a line moved from a file modified in the same commit
+     keeps its original date. This also corrected 42 topics in `linux`,
+     `script` and `sec` that had been dated by an in-file move — all of them
+     backwards, to when the content actually landed. Two `-C` and not three:
+     the third searches every file in every commit and takes minutes.
+  2. **The ignore list has to follow the content the way blame does.**
+     Mechanical commits were found per path, so a file created by a split could
+     not see the whole-tree markup passes that had swept the file its cards came
+     from. They are now identified globally — a commit that changed nothing real
+     in *any* domain file it touched. That alone took 36 wrong dates down to 3.
+  3. `.git-blame-ignore-revs`, with its limitation written into the file:
+     `--ignore-rev` reattributes a line to whatever touched it *before*, so a
+     line the ignored commit created stays put.
+
+  Three cards still date to the split. Copy detection catches the long runs of a
+  relocated card and misses the short ones. Three cards reading one month newer
+  in a month-granularity signal is a documented imprecision, not a reason to
+  build a relocation detector.
+
+**And one near-miss worth naming.** The "file git has never seen" fallback was
+written as a blanket `return {}`. It then swallowed a malformed
+`.git-blame-ignore-revs` and cheerfully reported *"0 topics stamped"* — a
+freshness tool reporting success while measuring nothing. Narrowed to the two
+error strings it was meant for. **A fallback that cannot fail is not robust, it
+is silent.**
+
+## Session 13 — candidates
+
+| Candidate | Why it might be next | Why it might not |
+|---|---|---|
+| **AK page weight** — 3.4 MB and growing | Still the only Planned risk with a number that grows on its own; now 21 domains | Measure a real phone load first; the answer may be "fine" |
+| **AX volatility consumers** — `stamp_freshness.py --report` finds volatile+stale cards and nothing reads it | The data already exists; surfacing it in the page is small | Needs a design decision: a badge on the card, or a review queue in the study tools? |
+| **`devops` content waves** | A new domain at 36 cards with no wave written specifically for it | It was just reorganised; let it settle before adding |
+| **The `<h3>`-in-header inconsistency** — 46 wrapped headers render a size larger | Now visible side by side with their neighbours after session 11 | Cosmetic; add the lint rule first, then decide |
+
+The honest ordering: **AX volatility consumers**, because the measurement exists
+and is unused, and unused measurement is the cheapest thing in the plan to
+mistake for progress.
+
