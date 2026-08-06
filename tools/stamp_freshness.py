@@ -47,6 +47,9 @@ ACRO_SPAN_RE = re.compile(r'\s*<span class="acro-exp">\([^<]*?\)</span\s*>')
 # and must keep showing up as one. Safe to match non-greedily because ACRO_SPAN_RE
 # has already removed the only spans that nest inside a topic name.
 TOPIC_NAME_TAG_RE = re.compile(r'<span\b[^>]*class="topic-name"[^>]*>(.*?)</span\s*>', re.S)
+# Unwrapping a stray <h3> around a title is markup, not a rewrite. Safe to strip
+# the tags anywhere: a heading whose text changed still differs after the strip.
+HEADER_H_TAG_RE = re.compile(r"</?h[1-6]\b[^>]*>")
 
 # Prettier splits tags across lines — `<span class="topic-name"\n  >` and
 # `</span\n>` are both valid and both appear in data/*.html. Every pattern that
@@ -81,6 +84,7 @@ def normalise(text):
     """
     text = ACRO_SPAN_RE.sub("", text)
     text = TOPIC_NAME_TAG_RE.sub(r"\1", text)
+    text = HEADER_H_TAG_RE.sub("", text)
     return REVIEWED_ATTR_RE.sub("", text)
 
 
