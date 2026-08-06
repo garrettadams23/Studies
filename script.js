@@ -867,6 +867,83 @@ function mountNotepad(root) {
 
 const BOOKMARK_PREFIX = "bookmark:";
 const KNOWN_PREFIX = "known:";
+const SRS_PREFIX = "srs:";
+
+// ── SPACED REPETITION ───────────────────────────────────────────────────────
+// A reduced SM-2 over the topics the flashcards already know about. One record
+// per topic: e = ease, i = interval in days, d = due date, n = repetition
+// count. A topic with no record is simply new — nothing to migrate.
+
+/** Local YYYY-MM-DD. Not toISOString(), which would shift the day by timezone. */
+function srsToday(offsetDays = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function srsGet(id) {
+  try {
+    const raw = localStorage.getItem(SRS_PREFIX + id);
+    if (!raw) return null;
+    const r = JSON.parse(raw);
+    return (typeof r === "object" && r) ? r : null;
+  } catch { return null; }        // a corrupt record is treated as "new"
+}
+
+function srsIsDue(id) {
+  const r = srsGet(id);
+  return !r || r.d <= srsToday();
+}
+
+/** How many topics are waiting today — drives the badge on the study button. */
+function srsDueCount() {
+  let due = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k || !k.startsWith(SRS_PREFIX)) continue;
+    const r = srsGet(k.slice(SRS_PREFIX.length));
+    if (r && r.d <= srsToday()) due++;
+  }
+  return due;
+}
+
+/**
+ * Grade a card and schedule the next sight of it.
+ *   again → back to day 1, ease down       hard → small step, ease down
+ *   good  → 1, 6, then interval x ease     easy → a longer step, ease up
+ * Ease is floored at 1.3, as in SM-2, or a card you keep failing collapses to
+ * being shown every session forever.
+ */
+function srsGrade(id, grade) {
+  const r = srsGet(id) || { e: 2.5, i: 1, n: 0 };
+  let { e, i, n } = r;
+  if (grade === "again")      { n = 0; i = 1;                          e = Math.max(1.3, e - 0.20); }
+  else if (grade === "hard")  { n += 1; i = Math.max(1, Math.round(i * 1.2)); e = Math.max(1.3, e - 0.15); }
+  else if (grade === "good")  { n += 1; i = n === 1 ? 1 : n === 2 ? 6 : Math.round(i * e); }
+  else                        { n += 1; i = Math.max(4, Math.round(i * e * 1.3)); e = e + 0.15; }
+  const rec = { e: Math.round(e * 100) / 100, i, d: srsToday(i), n };
+  try { localStorage.setItem(SRS_PREFIX + id, JSON.stringify(rec)); } catch { /* quota */ }
+  if (grade !== "again") localStorage.setItem(KNOWN_PREFIX + id, "1");
+  srsUpdateBadge();
+  return rec;
+}
+
+/** Reflect the due count on the study launcher, or clear it when zero. */
+function srsUpdateBadge() {
+  const btn = document.getElementById("study-fab");
+  if (!btn) return;
+  const n = srsDueCount();
+  let b = btn.querySelector(".study-badge");
+  if (!n) { b?.remove(); btn.removeAttribute("data-due"); return; }
+  if (!b) {
+    b = document.createElement("span");
+    b.className = "study-badge";
+    btn.appendChild(b);
+  }
+  b.textContent = n > 99 ? "99+" : String(n);
+  btn.setAttribute("data-due", String(n));
+  btn.setAttribute("aria-label", `Study tools — ${n} card${n === 1 ? "" : "s"} due`);
+}
 let _stIndex = null;
 
 /** Build a flat index of every topic on the page (once). */
@@ -942,11 +1019,14 @@ function stTopicsForScope(scope) {
   const all = stIndex();
   if (scope === "__all") return all.slice();
   if (scope === "__bookmarks") return all.filter(t => stIsBookmarked(t.id));
+  if (scope === "__due") return all.filter(t => srsGet(t.id) && srsIsDue(t.id));
   return all.filter(t => t.domainId === scope);
 }
 function stScopeSelectHTML(id) {
+  const dueN = srsDueCount();
   const opts = ['<option value="__all">◈ All domains</option>',
-    '<option value="__bookmarks">★ My study list</option>']
+    '<option value="__bookmarks">★ My study list</option>',
+    `<option value="__due">⏰ Due today${dueN ? ` (${dueN})` : ""}</option>`]
     .concat(stScopeOptions().map(d => `<option value="${esc(d.id)}">${esc(d.icon)} ${esc(d.domainTitle)}</option>`));
   return `<select id="${id}" class="st-select">${opts.join("")}</select>`;
 }
@@ -1006,24 +1086,48 @@ function stOpenJump() {
 
 // ── FLASHCARDS ──────────────────────────────────────────────────────────────
 let _stCardState = null;
-function stOpenFlashcards() {
+function stOpenFlashcards(initialScope) {
   stOpen(body => {
+    const due = srsDueCount();
     body.innerHTML =
       '<h2 class="st-h">Flashcards</h2>' +
       '<div class="st-toolbar"><label class="st-lbl">Deck</label>' + stScopeSelectHTML("st-fc-scope") +
       '<button id="st-fc-start" class="st-btn st-btn-primary">Start</button></div>' +
+      (due ? `<p class="st-hint">⏰ ${due} card${due === 1 ? "" : "s"} due for review today.</p>` : "") +
       '<div id="st-fc-stage"></div>';
     const scope = body.querySelector("#st-fc-scope");
+    if (initialScope) scope.value = initialScope;
     body.querySelector("#st-fc-start").addEventListener("click", () => stStartFlashcards(scope.value, body.querySelector("#st-fc-stage")));
     stStartFlashcards(scope.value, body.querySelector("#st-fc-stage"));
   });
 }
+
+/** Flashcards, opened straight onto the cards the scheduler says are due. */
+function stOpenDue() { stOpenFlashcards("__due"); }
 function stStartFlashcards(scope, stage) {
   let deck = shuffle(stTopicsForScope(scope));
-  if (!deck.length) { stage.innerHTML = '<p class="st-empty">No cards in this deck. Star some topics with ★, or pick another deck.</p>'; return; }
+  if (!deck.length) {
+    stage.innerHTML = scope === "__due"
+      ? '<p class="st-empty">Nothing due. Grade some cards from another deck and they will come back here on a schedule.</p>'
+      : '<p class="st-empty">No cards in this deck. Star some topics with ★, or pick another deck.</p>';
+    return;
+  }
   _stCardState = { deck, i: 0, flipped: false, total: deck.length, done: 0 };
   stRenderCard(stage);
 }
+/** One grade button, captioned with the interval that choice would schedule. */
+function stGradeBtn(grade, label, id) {
+  const r = srsGet(id) || { e: 2.5, i: 1, n: 0 };
+  let days;
+  if (grade === "again") days = 1;
+  else if (grade === "hard") days = Math.max(1, Math.round(r.i * 1.2));
+  else if (grade === "good") days = r.n === 0 ? 1 : r.n === 1 ? 6 : Math.round(r.i * r.e);
+  else days = Math.max(4, Math.round(r.i * r.e * 1.3));
+  const when = days === 1 ? "1d" : days < 30 ? days + "d" : Math.round(days / 30) + "mo";
+  return `<button class="st-btn st-grade st-grade-${grade}" data-grade="${grade}">` +
+         `${label}<span class="st-grade-when">${when}</span></button>`;
+}
+
 function stRenderCard(stage) {
   const s = _stCardState; if (!s) return;
   if (s.i >= s.deck.length) {
@@ -1042,8 +1146,9 @@ function stRenderCard(stage) {
         `<span class="st-card-desc">${esc(t.desc || "(open the topic for details)")}</span></div>` +
     `</div>` +
     (s.flipped
-      ? '<div class="st-card-actions"><button id="st-again" class="st-btn st-btn-again">↻ Again</button>' +
-        '<button id="st-good" class="st-btn st-btn-good">✓ Got it</button>' +
+      ? '<div class="st-card-actions st-grades">' +
+        stGradeBtn("again", "↻ Again", t.id) + stGradeBtn("hard", "Hard", t.id) +
+        stGradeBtn("good", "Good", t.id) + stGradeBtn("easy", "Easy", t.id) +
         '<button id="st-open" class="st-btn">Open topic ↗</button></div>'
       : '<div class="st-card-actions"><button id="st-flip" class="st-btn st-btn-primary">Flip</button></div>');
 
@@ -1052,8 +1157,13 @@ function stRenderCard(stage) {
   card.addEventListener("click", flip);
   card.addEventListener("keydown", e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); } });
   stage.querySelector("#st-flip")?.addEventListener("click", flip);
-  stage.querySelector("#st-again")?.addEventListener("click", () => { s.deck.push(t); s.flipped = false; s.i++; stRenderCard(stage); });
-  stage.querySelector("#st-good")?.addEventListener("click", () => { localStorage.setItem(KNOWN_PREFIX + t.id, "1"); s.done++; s.flipped = false; s.i++; stRenderCard(stage); });
+  stage.querySelectorAll(".st-grade").forEach(b => b.addEventListener("click", () => {
+    srsGrade(t.id, b.dataset.grade);
+    // "Again" also puts the card back in this session's deck — a card you just
+    // failed should come round again now, not only tomorrow.
+    if (b.dataset.grade === "again") s.deck.push(t); else s.done++;
+    s.flipped = false; s.i++; stRenderCard(stage);
+  }));
   stage.querySelector("#st-open")?.addEventListener("click", () => { stClose(); stGoToTopic(t.id); });
   setTimeout(() => card.focus(), 20);
 }
@@ -1173,6 +1283,7 @@ function initStudyTools() {
     '<div id="study-menu" hidden>' +
       '<button class="study-mi" data-act="jump"><span>⌘K</span> Quick jump</button>' +
       '<button class="study-mi" data-act="cards"><span>🃏</span> Flashcards</button>' +
+      '<button class="study-mi" data-act="due"><span>⏰</span> Review due</button>' +
       '<button class="study-mi" data-act="quiz"><span>❓</span> Quiz</button>' +
       '<button class="study-mi" data-act="list"><span>★</span> Study list</button>' +
     '</div>' +
@@ -1197,9 +1308,14 @@ function initStudyTools() {
   menu.addEventListener("click", e => {
     const mi = e.target.closest(".study-mi"); if (!mi) return;
     closeMenu();
-    ({ jump: stOpenJump, cards: stOpenFlashcards, quiz: stOpenQuiz, list: stOpenStudyList }[mi.dataset.act])();
+    ({ jump: stOpenJump, cards: stOpenFlashcards, due: stOpenDue, quiz: stOpenQuiz,
+       list: stOpenStudyList }[mi.dataset.act])();
   });
   document.addEventListener("click", e => { if (!fab.contains(e.target) && !menu.hidden) closeMenu(); });
+
+  srsUpdateBadge();
+  // Another tab grading a card should update this one's badge too.
+  window.addEventListener("storage", e => { if (e.key && e.key.startsWith(SRS_PREFIX)) srsUpdateBadge(); });
 
   // Global keyboard shortcuts
   document.addEventListener("keydown", e => {
