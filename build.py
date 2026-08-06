@@ -78,6 +78,24 @@ def build_domain_section(domain, body_content):
       </div>"""
 
 
+def build_acronym_payload():
+    """The dictionary, compacted for the quiz and the acronym-aware search.
+
+    Only what those two need — acronym, its expansions, and its subject area.
+    Notes and per-domain overrides are dropped, which halves the payload
+    against shipping acronyms.json verbatim.
+    """
+    path = DATA / "acronyms.json"
+    if not path.exists():
+        return "[]"
+    entries = json.loads(path.read_text(encoding="utf-8"))["entries"]
+    compact = [[e["a"], [m["e"] for m in e["m"]], e["m"][0]["c"]] for e in entries]
+    payload = json.dumps(compact, separators=(",", ":"), ensure_ascii=False)
+    # A JSON block ends at the first "</script>" the parser sees, wherever it is.
+    print(f"  + acronym payload ({len(payload):,} chars, {len(entries)} entries)")
+    return payload.replace("</", "<\\/")
+
+
 def main():
     shell_path = ROOT / "index-shell.html"
     domains_path = DATA / "domains.json"
@@ -104,6 +122,7 @@ def main():
 
     domains_html = "\n\n".join(sections)
     output = shell.replace("<!-- DOMAINS_CONTENT -->", domains_html)
+    output = output.replace("<!-- ACRONYM_DATA -->", build_acronym_payload())
 
     if MINIFY:
         raw_len = len(output)

@@ -1234,6 +1234,171 @@ function stRestartQuizSame(stage) {
   s.i = 0; s.score = 0; stRenderQuestion(stage);
 }
 
+// ── ACRONYM QUIZ ────────────────────────────────────────────────────────────
+// Questions built from the dictionary rather than from topic titles. The
+// answers are already structured, so distractors can be chosen honestly
+// instead of guessed — which is the weakness of the topic quiz.
+
+let _acroData = null;
+
+/** The compact dictionary inlined by build.py: [acronym, [expansions], area]. */
+function acroData() {
+  if (_acroData) return _acroData;
+  const el = document.getElementById("acronym-data");
+  try {
+    _acroData = el ? JSON.parse(el.textContent) : [];
+  } catch { _acroData = []; }
+  return _acroData;
+}
+
+/** Group by subject area, so a distractor is never a giveaway from elsewhere. */
+function acroByArea() {
+  const byArea = new Map();
+  acroData().forEach(e => {
+    if (!byArea.has(e[2])) byArea.set(e[2], []);
+    byArea.get(e[2]).push(e);
+  });
+  return byArea;
+}
+
+function acroAreas() {
+  return [...acroByArea().keys()].sort();
+}
+
+/** Three wrong answers from the same area, falling back to the whole set. */
+function acroDistractors(entry, pick, n) {
+  const byArea = acroByArea();
+  const sameArea = (byArea.get(entry[2]) || []).filter(e => e[0] !== entry[0]);
+  const pool = sameArea.length >= n ? sameArea : acroData().filter(e => e[0] !== entry[0]);
+  const out = [];
+  const seen = new Set([pick(entry).toLowerCase()]);
+  for (const cand of shuffle(pool.slice())) {
+    // Two acronyms that differ only in case (IoC / IOC) make a typography
+    // question, not a knowledge one.
+    if (cand[0].toLowerCase() === entry[0].toLowerCase()) continue;
+    const v = pick(cand);
+    if (!v || seen.has(v.toLowerCase())) continue;
+    seen.add(v.toLowerCase());
+    out.push(v);
+    if (out.length === n) break;
+  }
+  return out;
+}
+
+function acroQuestions(area, count) {
+  const all = acroData().filter(e => area === "__all" || e[2] === area);
+  const single = all.filter(e => e[1].length === 1);
+  const multi = all.filter(e => e[1].length > 1);
+  const qs = [];
+
+  shuffle(single.slice()).forEach(e => {
+    if (qs.length >= count) return;
+    if (Math.random() < 0.5) {
+      // Expand: acronym -> what it stands for
+      const wrong = acroDistractors(e, x => x[1][0], 3);
+      if (wrong.length < 3) return;
+      qs.push({ q: `<strong>${esc(e[0])}</strong> stands for…`, area: e[2],
+                answer: e[1][0], options: shuffle([e[1][0], ...wrong]) });
+    } else {
+      // Contract: expansion -> which acronym
+      const wrong = acroDistractors(e, x => x[0], 3);
+      if (wrong.length < 3) return;
+      qs.push({ q: `Which acronym means <em>${esc(e[1][0])}</em>?`, area: e[2],
+                answer: e[0], options: shuffle([e[0], ...wrong]) });
+    }
+  });
+
+  // Disambiguation is the only place a multi-meaning entry is fair: the other
+  // meanings of the same acronym are the distractors, which is the actual skill.
+  shuffle(multi.slice()).slice(0, Math.max(1, Math.round(count * 0.2))).forEach(e => {
+    const answer = e[1][0];
+    const others = e[1].slice(1);
+    const wrong = others.concat(acroDistractors(e, x => x[1][0], 3 - others.length));
+    if (wrong.length < 3) return;
+    qs.push({ q: `<strong>${esc(e[0])}</strong> has more than one meaning. In a ` +
+                 `<strong>${esc(e[2])}</strong> context, which one applies?`, area: e[2],
+              answer, options: shuffle([answer, ...wrong.slice(0, 3)]) });
+  });
+
+  return shuffle(qs).slice(0, count);
+}
+
+let _acroQuizState = null;
+
+function stOpenAcroQuiz() {
+  stOpen(body => {
+    if (!acroData().length) {
+      body.innerHTML = '<h2 class="st-h">Acronym quiz</h2>' +
+        '<p class="st-empty">The acronym dictionary was not found on this page. ' +
+        'Rebuild with <code>python3 build.py</code>.</p>';
+      return;
+    }
+    const areas = acroAreas().map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join("");
+    body.innerHTML =
+      '<h2 class="st-h">Acronym quiz</h2>' +
+      '<div class="st-toolbar"><label class="st-lbl">Area</label>' +
+      `<select id="st-aq-area" class="st-select"><option value="__all">◈ All areas</option>${areas}</select>` +
+      '<button id="st-aq-start" class="st-btn st-btn-primary">Start</button></div>' +
+      `<p class="st-hint">${acroData().length} acronyms in the dictionary.</p>` +
+      '<div id="st-aq-stage"></div>';
+    const sel = body.querySelector("#st-aq-area");
+    const stage = body.querySelector("#st-aq-stage");
+    body.querySelector("#st-aq-start").addEventListener("click", () => stStartAcroQuiz(sel.value, stage));
+    stStartAcroQuiz(sel.value, stage);
+  });
+}
+
+function stStartAcroQuiz(area, stage) {
+  const questions = acroQuestions(area, 10);
+  if (questions.length < 4) {
+    stage.innerHTML = '<p class="st-empty">Not enough acronyms in that area to build a quiz. Pick a broader one.</p>';
+    return;
+  }
+  _acroQuizState = { area, questions, i: 0, score: 0, answered: false };
+  stRenderAcroQuestion(stage);
+}
+
+function stRenderAcroQuestion(stage) {
+  const s = _acroQuizState; if (!s) return;
+  if (s.i >= s.questions.length) {
+    const pct = Math.round((s.score / s.questions.length) * 100);
+    stage.innerHTML = `<div class="st-result"><div class="st-result-big">${pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "📚"}</div>` +
+      `<p>Score: <strong>${s.score} / ${s.questions.length}</strong> (${pct}%)</p>` +
+      '<button id="st-aq-retry" class="st-btn st-btn-primary">New quiz</button></div>';
+    stage.querySelector("#st-aq-retry").addEventListener("click", () => stStartAcroQuiz(s.area, stage));
+    return;
+  }
+  const q = s.questions[s.i];
+  // Reuses the topic quiz's markup and styling — same component, new source.
+  stage.innerHTML =
+    `<div class="st-progress">Question ${s.i + 1} / ${s.questions.length} · Score ${s.score}</div>` +
+    `<div class="st-q-prompt"><span class="st-q-label">${esc(q.area)}</span>${q.q}</div>` +
+    '<ul class="st-q-options">' +
+    q.options.map((o, n) => `<li><button class="st-q-opt" data-n="${n}">${esc(o)}</button></li>`).join("") +
+    '</ul><div id="st-q-feedback" class="st-q-feedback"></div>';
+
+  s.answered = false;
+  stage.querySelectorAll(".st-q-opt").forEach(btn => btn.addEventListener("click", () => {
+    if (s.answered) return;
+    s.answered = true;
+    const right = q.options[Number(btn.dataset.n)] === q.answer;
+    if (right) s.score++;
+    stage.querySelectorAll(".st-q-opt").forEach(b => {
+      if (q.options[Number(b.dataset.n)] === q.answer) b.classList.add("correct");
+      else if (b === btn) b.classList.add("wrong");
+      b.disabled = true;
+    });
+    const fb = stage.querySelector("#st-q-feedback");
+    fb.innerHTML = (right ? '<span class="st-ok">Correct!</span> ' : '<span class="st-no">Not quite.</span> ') +
+      `Answer: <strong>${esc(q.answer)}</strong>` +
+      ' <button class="st-btn st-next" id="st-aq-next">Next →</button>';
+    fb.querySelector("#st-aq-next").addEventListener("click", () => {
+      s.i++; s.answered = false; stRenderAcroQuestion(stage);
+    });
+    fb.querySelector("#st-aq-next").focus();
+  }));
+}
+
 // ── STUDY LIST (bookmarks) ──────────────────────────────────────────────────
 function stOpenStudyList() {
   stOpen(body => {
@@ -1285,6 +1450,7 @@ function initStudyTools() {
       '<button class="study-mi" data-act="cards"><span>🃏</span> Flashcards</button>' +
       '<button class="study-mi" data-act="due"><span>⏰</span> Review due</button>' +
       '<button class="study-mi" data-act="quiz"><span>❓</span> Quiz</button>' +
+      '<button class="study-mi" data-act="acro"><span>🔤</span> Acronym quiz</button>' +
       '<button class="study-mi" data-act="list"><span>★</span> Study list</button>' +
     '</div>' +
     '<button id="study-fab" title="Study tools" aria-label="Study tools" aria-haspopup="true" aria-expanded="false">' +
@@ -1309,7 +1475,7 @@ function initStudyTools() {
     const mi = e.target.closest(".study-mi"); if (!mi) return;
     closeMenu();
     ({ jump: stOpenJump, cards: stOpenFlashcards, due: stOpenDue, quiz: stOpenQuiz,
-       list: stOpenStudyList }[mi.dataset.act])();
+       acro: stOpenAcroQuiz, list: stOpenStudyList }[mi.dataset.act])();
   });
   document.addEventListener("click", e => { if (!fab.contains(e.target) && !menu.hidden) closeMenu(); });
 
