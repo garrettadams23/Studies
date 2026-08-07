@@ -40,8 +40,12 @@ jobs:
       - name: Check inline acronym expansions
         run: python tools/annotate_acronyms.py --check
 
+      # --verify, not --check. --check re-derives every stamp from `git blame`,
+      # and blame heuristics differ between git releases: this repo passed
+      # --check under git 2.43 and failed it under 2.54 on a runner, with no
+      # content change involved. --verify uses no git at all.
       - name: Check topic freshness stamps
-        run: python tools/stamp_freshness.py --check
+        run: python tools/stamp_freshness.py --verify
 
       - name: Rebuild index.html
         run: python build.py
