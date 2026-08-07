@@ -23,8 +23,15 @@ maintain by hand.
 
 Usage:
     python3 tools/stamp_freshness.py            # stamp in place
-    python3 tools/stamp_freshness.py --check     # report drift, write nothing
-    python3 tools/stamp_freshness.py --report    # oldest volatile topics
+    python3 tools/stamp_freshness.py --verify   # CI gate: are the stamps valid?
+    python3 tools/stamp_freshness.py --check    # report drift, write nothing
+    python3 tools/stamp_freshness.py --report   # oldest volatile topics
+
+--verify and --check are not the same question. --verify asks whether every
+topic carries a plausible stamp, using no git at all, so its answer does not
+depend on the git version running it. --check re-derives every stamp from
+`git blame` and reports any that would move — useful locally, unsuitable as a
+build gate, because blame heuristics differ between git releases.
 """
 
 import re
@@ -204,6 +211,51 @@ def topic_spans(lines):
     return spans
 
 
+def verify():
+    """The invariants a build can actually be failed on.
+
+    Not the exact month. `--check` re-derives every stamp from `git blame`, and
+    blame is a heuristic whose answers move between git versions: this file
+    passed --check under git 2.43 and failed it under 2.54 on a GitHub runner,
+    because -C copy detection and --ignore-rev reassignment disagreed about
+    lines an <h3> unwrap had rewritten. Nothing about the content had changed.
+
+    A gate that flips when the runner image upgrades is noise, and it reports
+    nothing about whether a card is stale. So CI checks what is objectively
+    true and version-independent — every topic carries a plausible stamp — and
+    --check stays a local tool for refreshing them.
+    """
+    now = datetime.now(timezone.utc)
+    horizon = f"{now.year}-{now.month:02d}"
+    problems, seen = [], 0
+    for path in sorted(DATA.glob("*.html")):
+        if path.name in EXCLUDE:
+            continue
+        lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
+        for start, _ in topic_spans(lines):
+            seen += 1
+            m = re.search(r'data-reviewed="(\d{4})-(\d{2})"', lines[start - 1])
+            if not m:
+                problems.append(f"{path.name}:{start}: topic has no data-reviewed stamp")
+                continue
+            year, month = int(m.group(1)), int(m.group(2))
+            if not 1 <= month <= 12:
+                problems.append(f"{path.name}:{start}: month {month:02d} is not a month")
+            elif f"{year}-{month:02d}" > horizon:
+                problems.append(f"{path.name}:{start}: stamped {m.group(0)}, which is in the future")
+            elif year < 2024:
+                problems.append(f"{path.name}:{start}: stamped {m.group(0)}, before this site existed")
+
+    for p in problems:
+        print(f"error: {p}", file=sys.stderr)
+    if problems:
+        print(f"\n{len(problems)} bad stamp(s). Run 'python tools/stamp_freshness.py' and commit.",
+              file=sys.stderr)
+        return 1
+    print(f"{seen} topics carry a valid freshness stamp (newest allowed: {horizon}).")
+    return 0
+
+
 def stamp(check_only=False):
     changed, stamped = [], 0
     for path in sorted(DATA.glob("*.html")):
@@ -280,6 +332,8 @@ def report(limit=50):
 
 
 if __name__ == "__main__":
+    if "--verify" in sys.argv:
+        sys.exit(verify())
     if "--report" in sys.argv:
         sys.exit(report())
     sys.exit(stamp(check_only="--check" in sys.argv))
