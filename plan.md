@@ -23,13 +23,13 @@ jump to what you need:
 | **Improvement Plan** (P1–P5) | The original repo review — performance, security, UX, hygiene | ✅ applied |
 | **Content Roadmap — Next Waves** (Tracks R/B/C/X) | Red team, blue team, cloud, rounding out existing domains | ✅ shipped |
 | **Architecture, Engineering & DevOps** (Tracks E/F/G) | Software architecture, DevOps, developer environment | ✅ shipped |
-| **Phase 3 — Depth, Breadth & New Domains** (Tracks H–U) | `data` and `web` domains shipped; depth tracks **J–U outstanding (201 cards)** | 🔶 half done |
+| **Phase 3 — Depth, Breadth & New Domains** (Tracks H–U) | `data` and `web` domains shipped; depth tracks **J–U outstanding (207 cards)** | 🔶 half done |
 | **Phase 4 — The Enterprise Estate & the Study Platform** (Tracks V–AK) | Windows Server, M365, endpoint depth, virtualization, ITSM, vendor networking, automation, Apple/mobile, OT/regulated, AI at work + study tooling | ⬜ planned |
 | **Phase 5 — Foundations, Frontiers & the Business of IT** (Tracks AL–AY) | CS & mathematics, hardware/embedded, post-quantum, emerging platforms, physical security, IT finance, leadership, enablement, consulting + content-trust tooling | ⬜ planned |
 | **Phase 6 — Specialisms, and How This Gets Written** (Tracks BA–BJ) | Detection engineering, purple teaming, Kubernetes security, API/identity security, supply chain, privacy engineering, platform engineering, observability, resilience — **plus the card pattern library, authoring rules, risk register and success measures, written out rather than planned** | ⬜ planned |
 | **Execution Handbook** | Ordering constraints, per-domain queue, a concrete first-ten-sessions schedule, three waves specified to the point of transcription, and reusable checklists | 📘 reference |
 
-**Remaining backlog: 891 content cards and 44 engineering items** across
+**Remaining backlog: 897 content cards and 44 engineering items** across
 Phases 3–6, which would take the site from 900 topics / 20 domains to roughly
 1,800 topics / 26 domains — about 180 working sessions.
 
@@ -1192,7 +1192,9 @@ progress / keyboard-a11y automatically.
 
 ## TRACK T — Military, Leadership & Decision-Making Depth  (→ `military`)
 
-~2 waves, ~11 cards. Frameworks that transfer directly to tech leadership & IR.
+~3 waves, ~17 cards. Frameworks that transfer directly to tech leadership & IR,
+plus the classified-information handling an IT professional on a cleared
+contract is expected to know on day one.
 
 **Wave T1 — Planning & Operations**
 - [ ] The Military Decision-Making Process (MDMP) — full planning cycle
@@ -1207,6 +1209,28 @@ progress / keyboard-a11y automatically.
 - [ ] Building Cohesive Teams — trust, shared hardship, morale
 - [ ] Red Teaming as a Discipline — structured contrarian thinking, premortems
 - [ ] Small-Unit Leadership Lessons for Tech Leads — direct parallels to eng teams
+
+**Wave T3 — Classified Information Handling &amp; the SF Series** ✅ **SHIPPED**
+
+The Standard Form series is the physical protocol around classified material,
+and it is colour-coded on purpose: the colour is the control. Anyone working
+on a cleared contract meets these forms before they meet a system. Written as
+reference, US-specific, and explicitly *about* the forms — no classified
+content, only the public handling procedure.
+
+- [x] Classification Levels &amp; Markings — Top Secret / Secret / Confidential, the damage standard behind each, plus CUI; banner lines, portion marking, classification authority blocks, declassification instructions
+- [x] Cover Sheets — SF 703 / 704 / 705 — the colour code (**SF 703 Top Secret = orange**, **SF 704 Secret = red**, **SF 705 Confidential = blue**), what a cover sheet is for, when it attaches and when it comes off, and why the top sheet always matches the highest classification in the stack
+- [x] Media &amp; Equipment Labels — SF 706–712 — SF 706 Top Secret (orange), SF 707 Secret (red), SF 708 Confidential (blue), SF 709 Classified (purple, pending determination), SF 710 Unclassified (green, for mixed environments), SF 711 Data Descriptor, SF 712 Classified SCI (yellow); labelling drives, removable media and systems
+- [x] Container &amp; End-of-Day Forms — SF 700 (security container information), SF 701 (activity security checklist), SF 702 (security container check sheet); who signs what, when, and what a missed check actually triggers
+- [x] Clearance Paperwork — SF 312 nondisclosure agreement, SF 86 questionnaire, SF 714 financial disclosure; the adjudicative guidelines, reinvestigation, continuous evaluation — and what a clearance is *not* (it is not need-to-know)
+- [x] Spills, Sanitisation &amp; Reporting — classified message incidents, what to do in the first ten minutes, why you do not delete it yourself, media sanitisation standards, and the reporting chain
+
+**Why this belongs on this site:** the `endpoint`, `blueteam` and `grc`
+domains already cover DISA STIGs, CMMC and media destruction. This is the
+human-procedure half of the same job, and it is the part that gets people
+walked out of the building. Cross-link the SF 706–712 card to the media
+sanitisation material in `ops`, and the SF 312 card to the insider-threat
+material planned in Track AR.
 
 ---
 
@@ -1277,7 +1301,7 @@ every card inherits search / permalinks / progress / keyboard-a11y automatically
 > **Added on request — "make more plan."** Written August 2026 against a measured
 > snapshot of the repo, not from memory. Phase 3's *new-domain* half shipped
 > (Tracks H and I are complete — `data` and `web` exist); its *depth* half
-> (Tracks J–U, ~201 cards) is still open and **remains the priority queue**.
+> (Tracks J–U, 207 cards) is still open and **remains the priority queue**.
 > Phase 4 is deliberately about ground Phase 3 never covers: the **enterprise
 > estate an IT professional actually operates**, the **operational trades**, and
 > turning the site from a reference into a **study platform**.
@@ -1912,7 +1936,7 @@ Interleave with the outstanding Phase-3 tracks; do not block on them.
 taking the site from 900 → ~1,165 topics across 23 domains — plus ~29
 engineering items that make those topics easier to find, study and trust.
 
-Combined with the outstanding Phase-3 depth tracks (J–U, ~201 cards), the full
+Combined with the outstanding Phase-3 depth tracks (J–U, 207 cards), the full
 remaining backlog is **466 cards**.
 
 ## Definition of done for a wave
@@ -2487,11 +2511,11 @@ exception noted below.
 | | Topics | Domains |
 |---|---:|---:|
 | Today | 900 | 20 |
-| + Phase 3 outstanding (J–U) | 1,101 | 20 |
-| + Phase 4 | 1,366 | 23 |
-| + Phase 5 | 1,601 | 26 |
+| + Phase 3 outstanding (J–U) | 1,107 | 20 |
+| + Phase 4 | 1,372 | 23 |
+| + Phase 5 | 1,607 | 26 |
 
-**Total remaining backlog across all three phases: 701 cards and 44 engineering
+**Total remaining backlog across all three phases: 707 cards and 44 engineering
 items.** At one wave (~5 cards) per working session that is roughly 140 sessions
 — which is the point at which the honest advice is: *do not treat this as a
 queue to finish*. Treat it as a menu. Ship the tracks that match what you are
@@ -2525,7 +2549,7 @@ site as it stands today:
 > interview loops. The second is not a plan at all — it is the **authoring
 > craft, pattern library, risk register and success measures written out now**,
 > because after five phases the constraint on this project is no longer *what to
-> write* (745 open items) but *how to write 745 cards that are worth reading*.
+> write* (751 open items) but *how to write 751 cards that are worth reading*.
 
 ## No new domains
 
@@ -2860,7 +2884,7 @@ have not thought of yet.
 ## PART 3 — WRITTEN NOW, NOT PLANNED
 
 Everything above is a list. This part is the material itself, because the
-binding constraint on this project has changed: there are now 745 planned cards
+binding constraint on this project has changed: there are now 751 planned cards
 and one person. Quality per card matters more than another list.
 
 ### The card pattern library
@@ -2946,14 +2970,14 @@ mitigated by work in this repo; the rest are open.
 | Risk | Likelihood | Impact | Mitigation | State |
 |---|---|---|---|---|
 | **Content goes stale** — vendor renames, dead consoles, changed limits | High | High | Phase-5 Track AX: freshness metadata, volatility tags, rename registry | Planned |
-| **Scope paralysis** — 745 open items is demotivating rather than motivating | High | Medium | Treat the plan as a menu; the "actual priority" list at the end of Phase 5 | Partly |
-| **Progress data loss** — everything is `localStorage`; clearing the browser wipes it | Medium | Medium | Phase-4 Track AG: export/import | Planned |
-| **Page weight** — `index.html` is 3.2 MB and grows with every wave | Medium | Medium | Phase-4 Track AK: lazy per-domain loading, performance budget in CI | Planned |
+| **Scope paralysis** — 751 open items is demotivating rather than motivating | High | Medium | Treat the plan as a menu; the "actual priority" list at the end of Phase 5 | Partly |
+| **Progress data loss** — everything is `localStorage`; clearing the browser wipes it | Medium | Medium | Phase-4 Track AG: export/import | **Mitigated** — session 10 shipped export/import with merge, replace and preview |
+| **Page weight** — `index.html` is 3.4 MB and grows with every wave | Medium | Medium | Measured in session 14 — it is not slow. `tools/page_budget.py` enforces size and element budgets in CI; lazy loading stays unbuilt until a budget is hit | **Mitigated** |
 | **Generated-file drift** — `acronym.html` / `index.html` committed stale | Medium | Low | CI already rebuilds and fails on drift; `--check` mode on the annotator | **Mitigated** |
 | **Slug churn** — renaming a topic silently breaks permalinks and progress | Medium | Medium | Phase-5 Track AY: ID stability contract and alias map | Planned |
 | **Accuracy drift** — a confident wrong card is worse than no card | Medium | High | Authoring rule 6; Phase-5 fact-anchor comments | Partly |
 | **Bus factor of one** — one maintainer holds all the context | Medium | High | The plan itself, `CONTRIBUTING.md`, and tooling that encodes conventions | Partly |
-| **Markup rot** — inconsistent classes and inline styles accumulate | Medium | Low | Phase-4 Track AJ content linter | Planned |
+| **Markup rot** — inconsistent classes and inline styles accumulate | Medium | Low | Phase-4 Track AJ content linter | **Mitigated** — `tools/lint_content.py` runs in CI and tracks a warning trend |
 | **Burnout** — a 140-session backlog written by someone with a day job | Medium | High | Ship what matches current work; no deadline; the menu framing | Open |
 | **Hosting/domain lapse** | Low | High | Static site, works from `file://`, in Git — recoverable by design | **Mitigated** |
 | **Tooling single point of failure** — the acronym pipeline is now load-bearing | Low | Medium | Idempotent, `--check` mode, CI-verified, documented in README | **Mitigated** |
@@ -2994,12 +3018,12 @@ directly.
 | | Topics | Domains |
 |---|---:|---:|
 | Today | 900 | 20 |
-| + Phase 3 outstanding | 1,101 | 20 |
-| + Phase 4 | 1,366 | 23 |
-| + Phase 5 | 1,601 | 26 |
-| + Phase 6 | 1,791 | 26 |
+| + Phase 3 outstanding | 1,107 | 20 |
+| + Phase 4 | 1,372 | 23 |
+| + Phase 5 | 1,607 | 26 |
+| + Phase 6 | 1,797 | 26 |
 
-**Total remaining backlog: 891 content cards and 44 engineering items.**
+**Total remaining backlog: 897 content cards and 44 engineering items.**
 
 That number is now large enough to be its own risk, which is why it is in the
 register above. The plan is finished; the correct next move is not to plan
@@ -3008,12 +3032,12 @@ of Phase 5.
 
 ---
 
-# Execution Handbook — turning 891 cards into shipped work
+# Execution Handbook — turning 897 cards into shipped work
 
 > **This is not Phase 7.** Phase 6 closed by saying the subject planning is
 > finished and the next move is to ship a wave, and that still holds — another
 > list of card titles would be padding. What the plan genuinely lacks is the
-> layer between "891 items" and "a commit": the ordering constraints, a
+> layer between "897 items" and "a commit": the ordering constraints, a
 > per-domain view, and at least one wave specified in enough detail that it can
 > be executed without re-deciding anything. That is what this section is.
 
@@ -3058,7 +3082,7 @@ cards evenly across the domains it names.
 | `linux` | 56 | 15 | 71 | N |
 | `cloud` | 49 | 12 | 61 | BC |
 | `pentest` | 29 | 10 | 39 | M |
-| `military` | 23 | 10 | 33 | T |
+| `military` | 23 | 16 | 39 | T |
 | `web` | 35 | 10 | 45 | BD |
 | `shortcut` | 37 | **0** | 37 | — |
 | `data` | 40 | **0** | 40 | — |
@@ -3276,7 +3300,7 @@ card or two folded into an existing track if it ever matters.
 The plan is done. Three phases of subject roadmap, one handbook, and a register
 of what could go wrong. The remaining risk is not that something was left
 unplanned — it is that planning is more comfortable than writing, and this file
-is now 891 unwritten cards long.
+is now 897 unwritten cards long.
 
 **Session one is a two-hour job: group the chips.** Start there.
 
@@ -3550,3 +3574,417 @@ exist because they are *next*, not because specs are inherently valuable.
 The rule to carry forward: **spec one session ahead, not ten.** When session 10
 is done, spec session 11 from whichever track matches the work in front of you,
 using §4 as the template.
+
+---
+
+## Sessions 1–10 — what actually shipped
+
+Recorded so the next person does not re-plan work that exists. Each line is one
+commit on `claude/acronym-definitions-it-dictionary-mcqw8h`.
+
+| # | Shipped | Evidence |
+|---|---|---|
+| 1 | Chips regrouped into five `.chip-group` blocks; mobile kept as one scrolling row | Sticky bar was 474 px tall on a phone before the mobile revert; 50 px after |
+| 2 | `tools/stamp_freshness.py` — `data-reviewed="YYYY-MM"` on 862 topics, `--check` in CI | Mechanical commits detected by normalisation and passed to `--ignore-rev`, or every topic would read as reviewed today |
+| 3 | `tools/lint_content.py` — errors block, warnings tracked as a TREND line | Found a real duplicate slug: `script.html` and `web.html` both titled a card "GraphQL — Ask for Exactly What You Need" |
+| 4 | Wave Y1 — Intune policy, 5 cards | `endpoint` 13 → 18 |
+| 5 | Wave Y2 — Intune applications, 5 cards | `endpoint` 18 → 23 |
+| 6 | AG-1 spaced repetition — reduced SM-2 in `srs:<id>`, due badge on the FAB | Scheduling maths exercised directly in headless Chromium |
+| 7 | AG-2 acronym quiz, generated from `acronyms.json` at build time | Dictionary inlined as compact JSON: 52 KB, not the 112 KB source |
+| 8 | AH-2 acronym-aware search + three-state expansion density toggle | Searching `RBAC` and `role-based access control` return the same topics |
+| 9 | Wave Y3 — Windows servicing and updates, 5 cards | `endpoint` 23 → 28 |
+| 10 | AG-3 export / import progress | Round-trip byte-exact; merge keeps the later due date; four malformed files rejected with readable messages and zero writes |
+
+Two register risks moved to **Mitigated**: progress data loss (session 10) and
+markup rot (session 3).
+
+**One thing session 10 turned up that was not on any list.** The study modal was
+unreadable in light theme — `#st-modal` painted `var(--card, #0f1830)` and
+`--card` was never defined, so the panel stayed dark navy while the text
+inherited the light theme's near-black `--text`. Seven `var(--fg, …)` fallbacks
+had the same shape: a variable that does not exist, papered over by a dark
+default. `--card` is now defined in both themes and the dead `--fg` fallbacks
+point at `--text`. The lesson generalises: **a `var()` fallback that renders
+correctly is indistinguishable from a variable that works**, and only the second
+theme tells them apart. Grep for fallbacks on undefined names before trusting a
+theme.
+
+## Session 11 — AJ-2 / AY, legacy topic headers and the alias map
+
+Specified because it is next, and because session 10 walked into the symptom:
+a quiz option rendered as *"Beginner Password Attacks 101 – Cracking, Spraying,
+and Why MFA Matters ★ ✓ 🔗"*.
+
+**The defect.** 90 topics carry their title as a bare text node in
+`.topic-header` instead of inside `.topic-name`. `stIndex()` falls back to the
+header's own `textContent`, which swallows the `.topic-badge` word and the
+injected tool buttons. Every flashcard, quiz option and study-list row for those
+90 topics is wrong. Distribution:
+
+| File | Count | | File | Count |
+|---|---|---|---|---|
+| `grc` | 11 | | `pentest` | 6 |
+| `linux` | 10 | | `military` | 5 |
+| `net` | 10 | | `threat` | 5 |
+| `script` | 10 | | `shortcut` | 2 |
+| `sec` | 10 | | `lifestyle` | 8 |
+| `ops` | 7 | | `ai` | 6 |
+
+**Why it is not a five-minute fix.** No topic in `data/*.html` carries an `id`
+attribute — all 916 slugs are derived at runtime from the header text. Wrapping
+those titles changes the derived slug for **all 90**, measured:
+
+```
+beginner-ml-pipeline-from-raw-data-to-a-serving-model
+  -> ml-pipeline-from-raw-data-to-a-serving-model
+beginner-prompt-injection-the-sql-injection-of-the-ai-world
+  -> prompt-injection-the-sql-injection-of-the-ai-world
+```
+
+That breaks every shared permalink and every `reviewed:` / `bookmark:` /
+`known:` / `srs:` key those topics own. This is the **slug churn** risk in the
+register arriving in person, so close it properly rather than around it.
+
+**Do it in this order.**
+
+1. **Write `tools/fix_topic_names.py`** — wrap the bare title of a legacy header
+   in `<span class="topic-name">`, leaving the badge outside it. Idempotent, and
+   it emits the old → new slug pair for each topic it touches.
+2. **Emit an alias map**, `data/slug-aliases.json`, `{old: new}`, committed. The
+   script writes it; it is not hand-maintained.
+3. **Inline it at build time** the way the acronym payload already is, as
+   `<script type="application/json" id="slug-aliases">`.
+4. **Teach `openHashTarget` the map**: an unknown hash that matches an alias
+   resolves to the new id and replaces the hash via `history.replaceState`, so
+   the address bar self-heals and the old link keeps working forever.
+5. **Migrate storage once.** On load, for each alias with data under the old key
+   and none under the new, move it. Guard with a `migrated:slug-aliases-v1` flag
+   so it runs once and re-running is a no-op.
+6. **Add a lint error, not a warning:** a `.topic-header` with a bare text-node
+   title is now an error. The warning existed for two sessions and nobody acted
+   on it — the count only became interesting when it produced a visible bug.
+
+**Done when:** `topic without .topic-name` reads 0; a permalink captured before
+the change still lands on the right card and rewrites itself; a topic marked
+reviewed under an old slug is still reviewed after; and the quiz shows no
+stray ★ ✓ 🔗.
+
+**Watch for.** `stamp_freshness.py` will see 90 rewritten headers — run it with
+the wrapping commit in `--ignore-rev` or every one of those topics will claim it
+was reviewed this month. That is the same trap session 2 built the mechanism
+for; use it.
+
+### Session 11 — outcome
+
+Shipped as two commits, in that order, because the sequencing turned out to
+matter:
+
+1. **`Rename a duplicate title: Container Security 101`.** The wrap surfaced a
+   collision that had been hiding in plain sight: `sec.html` and `ops.html` both
+   carried a card called "Container Security — Hardening Docker & Images". They
+   never collided because the `sec.html` one is a legacy header, so its slug
+   carried the badge word — `beginner-container-security-…`. Take the badge out
+   of the label and the two become the same slug, with the second silently
+   taking `-2`. The beginner card was retitled to what it actually covers.
+2. **`Wrap 90 legacy topic titles in .topic-name`.** The wrap, the 91-entry
+   alias map, the runtime that reads it, and the lint promotion.
+
+**What the tooling learned.** Three decisions came out of things that went
+wrong on the first attempt, and each is worth keeping:
+
+- **Compare against `HEAD`, not the working tree.** The first run computed
+  "before" from the files on disk, so a rename made in the same change as the
+  wrap was already present in the baseline and its old permalink went
+  unrecorded. Edit order should never decide whether a link survives.
+  `committed_texts()` now reads `git show HEAD:…`.
+- **`--check` must not re-derive the map.** The alias map is an append-only
+  record of links we have published; nothing in the tree can regenerate it.
+  CI checks the three things it *can* check: no legacy header remains, no alias
+  points at a slug that no longer exists, and no slug moves without an alias.
+- **Aliases compose, so runtime never needs two hops.** The rename moved a slug
+  and the wrap moved it again. `compose_aliases()` re-points existing entries
+  through the current run's moves, so the oldest published link still resolves
+  in a single lookup. Verified: `#beginner-container-security-hardening-docker-images`
+  lands on `#container-security-101-why-an-image-is-not-a-sandbox`.
+
+**And one that would have quietly poisoned the freshness data.** The wrapping
+commit is not a content edit, but `git blame` cannot tell. Rather than passing
+the commit to `--ignore-rev` by hand — which works once and is forgotten
+forever after — `stamp_freshness.normalise()` now strips the `.topic-name`
+wrapper the same way it strips acronym spans, so the commit classifies itself
+as mechanical. The regex substitutes `\1`, keeping the title: a *retitled* card
+is a real edit and still dates as one. That is why `sec.html`'s renamed topic
+moved to `2026-08` while the other 89 wrapped topics kept their dates.
+
+**Measured.** 91 aliases, 0 dangling, 0 shadowed by a live id; 915 topics in the
+study index with 0 labels carrying a badge word or a ★ ✓ 🔗 glyph; a stale
+permalink lands, opens the card and rewrites its own hash; progress stored under
+an old slug migrates once, never clobbers data already under the new id, and a
+second load does not resurrect keys the user has since cleared.
+
+## Session 12 — candidates
+
+Nothing here is spec'd yet, deliberately: **spec one session ahead, not ten.**
+Pick from the register, not from appetite.
+
+| Candidate | Why it might be next | Why it might not |
+|---|---|---|
+| **AK page weight** — `index.html` is 3.4 MB and every wave adds to it | The only **Planned** risk with a number attached that keeps growing on its own | Nobody has complained; measure real load time on a phone before optimising |
+| **AX volatility tags** — mark cards whose facts expire (portal names, SKUs, limits) | `stamp_freshness.py` already knows which topics *look* volatile (`VOLATILE_HINTS`); the report exists and nothing consumes it | Half-built already, so the remaining value is smaller than it looks |
+| **The `ops` split** — 68 cards and six tracks pointed at it | The plan's own rule says decide **before** 72 cards land, and it is at 68 | It is a rename of many slugs; the alias machinery is now in place, which makes it cheaper than it was yesterday |
+| **The `<h3>`-in-header inconsistency** | 46 wrapped headers carry an `<h3>` and render a size larger than their neighbours | Cosmetic, and the linter does not flag it — add the rule first, then decide |
+
+The `ops` split is the one whose cost just dropped: session 11 built exactly the
+machinery a large rename needs. If it is going to happen, it is cheaper now than
+it will be at 90 cards.
+
+### Session 12 — outcome: the `ops` split
+
+Done. `ops` was at 68 cards with six tracks still pointing at it, and the plan
+set the decision point at 72.
+
+**The seam is a job description, not a topic list.**
+
+| Domain | Keeps | Cards |
+|---|---|---|
+| `ops` — IT & Security Operations | Service desk troubleshooting, SOC, incident response and command, forensics, SIEM/SOAR, vulnerability management, BCP/DR, ITIL, runbooks, postmortems, on-call — and the observability and SRE material those roles work inside | 32 |
+| `devops` — DevOps, Platform & Delivery | CI/CD, IaC, containers and Kubernetes, GitOps, secrets, supply chain, config management, deployment strategies, plus the architecture cards that only make sense beside them (queues, caching, serverless, object storage, CAP, FinOps) | 36 |
+
+Both clear the Phase-4 bar: 15+ cards, own tooling, a job title you can hire for.
+An SRE/observability third domain was considered and rejected — 12 cards, under
+the bar. **The observability block is the seam most likely to want revisiting**;
+if it grows past 15 it should probably leave `ops` for a domain of its own.
+
+**Slugs did not move.** They derive from the title, not the domain, so the whole
+split needed no aliases and no migration — `fix_topic_names.py --check`
+confirmed zero unrecorded moves. That is worth remembering before the next
+reorganisation: moving a card between domains is free, renaming one is not.
+
+**Two things the move surfaced, both worth keeping.**
+
+- **A `byDomain` acronym override is keyed to a domain, so moving a card can
+  silently change what an acronym expands to.** `SCP` became "Secure Copy
+  Protocol" in a card about AWS Organizations guardrails, because the override
+  that made it "Service Control Policy" was keyed on `ops`. Audit every
+  multi-meaning acronym in a file after moving cards into it — there were four
+  in the new file, and one was wrong.
+- **Dating content requires following it, not the file it lives in.** The split
+  first marked all 36 moved cards as reviewed this month. Fixing it properly
+  took three changes to `stamp_freshness.py`, and two of them were general
+  bugs that the split merely exposed:
+
+  1. `git blame -C -C`, so a line moved from a file modified in the same commit
+     keeps its original date. This also corrected 42 topics in `linux`,
+     `script` and `sec` that had been dated by an in-file move — all of them
+     backwards, to when the content actually landed. Two `-C` and not three:
+     the third searches every file in every commit and takes minutes.
+  2. **The ignore list has to follow the content the way blame does.**
+     Mechanical commits were found per path, so a file created by a split could
+     not see the whole-tree markup passes that had swept the file its cards came
+     from. They are now identified globally — a commit that changed nothing real
+     in *any* domain file it touched. That alone took 36 wrong dates down to 3.
+  3. `.git-blame-ignore-revs`, with its limitation written into the file:
+     `--ignore-rev` reattributes a line to whatever touched it *before*, so a
+     line the ignored commit created stays put.
+
+  Three cards still date to the split. Copy detection catches the long runs of a
+  relocated card and misses the short ones. Three cards reading one month newer
+  in a month-granularity signal is a documented imprecision, not a reason to
+  build a relocation detector.
+
+**And one near-miss worth naming.** The "file git has never seen" fallback was
+written as a blanket `return {}`. It then swallowed a malformed
+`.git-blame-ignore-revs` and cheerfully reported *"0 topics stamped"* — a
+freshness tool reporting success while measuring nothing. Narrowed to the two
+error strings it was meant for. **A fallback that cannot fail is not robust, it
+is silent.**
+
+## Session 13 — candidates
+
+| Candidate | Why it might be next | Why it might not |
+|---|---|---|
+| **AK page weight** — 3.4 MB and growing | Still the only Planned risk with a number that grows on its own; now 21 domains | Measure a real phone load first; the answer may be "fine" |
+| **AX volatility consumers** — `stamp_freshness.py --report` finds volatile+stale cards and nothing reads it | The data already exists; surfacing it in the page is small | Needs a design decision: a badge on the card, or a review queue in the study tools? |
+| **`devops` content waves** | A new domain at 36 cards with no wave written specifically for it | It was just reorganised; let it settle before adding |
+| **The `<h3>`-in-header inconsistency** — 46 wrapped headers render a size larger | Now visible side by side with their neighbours after session 11 | Cosmetic; add the lint rule first, then decide |
+
+The honest ordering: **AX volatility consumers**, because the measurement exists
+and is unused, and unused measurement is the cheapest thing in the plan to
+mistake for progress.
+
+### Session 13 — outcome, including the recommendation that did not survive contact
+
+**AX volatility was the recommendation above, and it was wrong.** Running
+`stamp_freshness.py --report` before building anything: 182 of 915 topics match
+`VOLATILE_HINTS`, and **the oldest is two months old**. Nothing is stale. A
+"needs review" queue built on this today would render an empty list, and a badge
+would either never appear or appear on a fifth of the site at once.
+
+Two things follow, and the second matters more than the first:
+
+- **`VOLATILE_HINTS` is too broad to act on.** It matches `portal`, `licence`,
+  `version \d` and `tier`, which is a fifth of the corpus. Before anything
+  consumes this signal it needs to be a property of the *claim* — a console path,
+  a price, a limit — not of the prose containing a word. That is a content
+  convention, not a script.
+- **The signal needs age before a consumer is worth building.** The measurement
+  is six weeks old on a corpus written this year. Come back when something is
+  actually a year stale, and design the consumer against real rows.
+
+Recording this rather than quietly dropping it: the plan told me to build a
+consumer for measurement that exists, and checking the measurement first was
+what stopped it. **Read the data before designing the thing that reads the
+data.**
+
+**What shipped instead: the `<h3>`-in-header cleanup.** Session 11 put every
+title inside `.topic-name`, which made a second inconsistency visible — 45 of
+those titles also sat inside an `<h3>` and rendered a size larger and heavier
+than every neighbouring card. All 915 topic names now compute to 14px; before,
+45 did not. A heading tag inside `.topic-header` is now a lint error, and
+`normalise()` strips heading tags so the unwrap read as markup rather than as 45
+cards reviewed this month.
+
+Worth being explicit about what was *not* done: making all 915 titles real
+headings is a defensible change with accessibility implications worth thinking
+about properly. Making 45 of them headings and 870 spans was not a decision
+anyone made, and that is the only part this fixes.
+
+## Session 14 — candidates
+
+| Candidate | Why it might be next | Why it might not |
+|---|---|---|
+| **AK page weight** — 3.4 MB, 21 domains | The last Planned risk with a number that grows on its own | Measure a real phone load first; the answer may be "fine", and that is a valid outcome |
+| **A volatility convention** — mark the *claim*, not the prose | Session 13 showed the current heuristic cannot be acted on | Authoring conventions only stick if the linter can check them; design that first |
+| **`devops` content waves** | 36 cards, no wave written for it as its own domain | Freshly reorganised; a wave written now would be written against a domain nobody has read yet |
+| **Study-tools decks per domain** | 21 domains now; the deck picker was designed for 19 | Small, and nothing is visibly broken |
+
+**AK page weight**, and specifically: measure before optimising. The plan has
+carried "3.2 MB and growing" as a risk since Phase 4 without anyone timing a
+load. Session 13's lesson applies directly — read the data before designing the
+thing that acts on it.
+
+### Session 14 — outcome: the numbers, and a budget instead of a rewrite
+
+Measured before writing a line of optimisation:
+
+| | desktop | phone (4× CPU throttle) |
+|---|---|---|
+| First contentful paint | 160 ms | 336 ms |
+| Load event | 308 ms | 1,284 ms |
+| Chip filter | 28 ms | 50 ms |
+
+Transfer and size, which do not vary by device: **836 KB gzipped**, 24% of
+3.3 MB raw; **78,819 elements** live, 75,063 of them static markup.
+
+**The page is not slow.** Lazy per-domain loading — the planned mitigation since
+Phase 4 — would have traded a working offline-first single document for
+machinery aimed at a problem that has not arrived. Second time in two sessions
+that reading the measurement first changed what got built.
+
+What the page *is* is **unbounded**: every wave adds to it and nothing pushes
+back. So the mitigation is a budget, not a rewrite. `tools/page_budget.py`
+checks gzipped size, raw size and static element count against budgets ~25%
+above today, and runs in CI after the build. A normal wave passes; a doubling
+does not. When a budget is hit, *that* is the moment for the lazy-loading
+conversation — with a number in hand, and with the budget moved deliberately in
+its own commit if the growth is worth it.
+
+The register's **Page weight** risk moves to **Mitigated**: not because the page
+got smaller, but because it can no longer grow unnoticed.
+
+One detail kept honest in the tool rather than glossed: the budgeted element
+count is *static markup*. The live DOM runs ~4,400 higher, almost entirely the
+four-element tool cluster `script.js` injects into each of 915 topics. CI cannot
+run a browser, so it budgets what a content wave actually changes — and the file
+states both numbers so neither is mistaken for the other.
+
+### Session 15 — a bug the reorganisation walked into
+
+Session 14's candidate list had "study-tools decks per domain" with *"small, and
+nothing is visibly broken."* That was wrong, and only checking made it obvious:
+the flashcard and quiz deck pickers listed all twenty-one domains as a **bare
+emoji with no name**. `stScopeSelectHTML` read `d.domainTitle` off the objects
+`stScopeOptions` returns, which carry `title` — `domainTitle` is the key on an
+`stIndex` row, not on a scope option. Undefined for every entry, silently, since
+the picker was written. Networking and Web share the 🌐 icon, so two options
+were byte-identical.
+
+Fixed, and each deck now carries its size — `🌐 Networking (55)` — because the
+first question about a deck is how long it will take, and the picker already
+walks the index to build the list.
+
+**The pattern worth naming:** three sessions running, the plan's own judgement
+about what was worth doing was corrected by spending two minutes looking. The
+volatility consumer was not worth building (data too young), the lazy-loading
+rewrite was not worth building (page not slow), and the deck picker was not
+"nothing visibly broken" (broken since it was written). A plan is a hypothesis.
+Check it against the artifact before you spend a session on it.
+
+### Session 16 — Wave T3, the wave you actually asked for
+
+Everything since session 10 has been tooling and structure. This one is content,
+and it is the item you named directly: **SF 703 Top Secret (orange), SF 704
+Secret (red), SF 705 Confidential (blue), and all other SF.** Six cards in
+`military`, taking it 23 → 29.
+
+Written as reference about the forms and the public handling procedure — no
+classified content, only the protocol. Each card names the trap rather than only
+the rule; the three worth remembering:
+
+- **The SF numbers ascend as the classification descends.** 703 is Top Secret,
+  705 is Confidential. Everyone guesses it the other way round the first time.
+- **SF 710 green exists so that "no label" means something.** In a mixed
+  environment where only classified media is labelled, an unlabelled drive is
+  ambiguous. Label everything and an unlabelled drive becomes an anomaly.
+- **Concealing a spill is a different act from causing one.** Accidental spills
+  are common and survivable; the deletion is what ends careers.
+
+The dictionary gained `SF`, `SCI`, `SAP`, `NISPOM` and `DCSA`. `SAP` is
+disambiguated — Special Access Program in `military`, the ERP suite elsewhere —
+and carries `noAnnotate`, so it expands only where a domain says which is meant.
+That mechanism was built in session 1 for exactly this and has now paid for
+itself several times.
+
+**A note on ordering, honestly.** Six sessions of tooling ran before this card
+got written, and it was requested before any of them. The tooling was not wasted
+— this wave inherited permalinks, progress, freshness stamping, acronym
+expansion, search, flashcards and a page budget without a line of work — but the
+ordering was mine, not yours. Worth stating plainly rather than presenting the
+sequence as if it had been optimal.
+
+### Session 17 — the acronym dictionary was in the wrong decks
+
+Following the same habit as the last four sessions: before adding anything,
+look at what is there. The flashcard and quiz decks included the acronym
+dictionary, whose 54 "topics" are A–Z index sections. As a flashcard the front
+read *"A — 75 acronyms"*; as a quiz question the distractors were *"Acronyms —
+B"* and *"Acronyms — C"*. Fifty-four of them, 6% of the All-domains deck.
+
+The material is fine — it is a different question, and the dedicated 🔤 acronym
+quiz already asks it, generated from `acronyms.json` rather than from the page.
+Excluded from the domain list and from All-domains; **not** from bookmarks or
+due-today, because starring a section and grading a card are deliberate acts and
+a deck built from the user's own choices should honour them.
+
+`ST_NOT_STUDYABLE` is a one-entry set rather than a special case, so the next
+index-style domain — a glossary, a cheat-sheet hub, the Track U reference
+sheets — has an obvious place to be listed.
+
+### Where the register stands after sessions 10–14
+
+| Risk | State |
+|---|---|
+| Progress data loss | **Mitigated** — session 10 |
+| Markup rot | **Mitigated** — session 3, extended by 11 and 13 |
+| Slug churn | **Mitigated** — session 11: alias map, self-healing links, storage migration |
+| Generated-file drift | **Mitigated** — CI |
+| Page weight | **Mitigated** — session 14: measured, budgeted |
+| Content goes stale | **Partly** — stamps exist; session 13 showed the volatility heuristic is not yet actionable |
+| Accuracy drift · Bus factor · Scope paralysis | **Partly** — as before |
+
+Six of nine mitigated. The three that remain are the ones that cannot be closed
+by tooling: whether the content is right, whether one person holds all the
+context, and whether the list is too long to be motivating. Those are answered
+by writing cards and by keeping this file honest, which is what the last five
+sessions have been for.
+

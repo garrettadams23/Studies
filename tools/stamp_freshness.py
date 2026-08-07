@@ -43,6 +43,13 @@ EXCLUDE = {"acronym.html"}
 TOPIC_OPEN_RE = re.compile(r'<div class="topic"((?:\s+[^>]*?)?)>')
 REVIEWED_ATTR_RE = re.compile(r'\s+data-reviewed="\d{4}-\d{2}"')
 ACRO_SPAN_RE = re.compile(r'\s*<span class="acro-exp">\([^<]*?\)</span\s*>')
+# Only the wrapper, never the title inside it — a retitled card is a real edit
+# and must keep showing up as one. Safe to match non-greedily because ACRO_SPAN_RE
+# has already removed the only spans that nest inside a topic name.
+TOPIC_NAME_TAG_RE = re.compile(r'<span\b[^>]*class="topic-name"[^>]*>(.*?)</span\s*>', re.S)
+# Unwrapping a stray <h3> around a title is markup, not a rewrite. Safe to strip
+# the tags anywhere: a heading whose text changed still differs after the strip.
+HEADER_H_TAG_RE = re.compile(r"</?h[1-6]\b[^>]*>")
 
 # Prettier splits tags across lines — `<span class="topic-name"\n  >` and
 # `</span\n>` are both valid and both appear in data/*.html. Every pattern that
@@ -67,23 +74,64 @@ def git(*args, **kw):
 
 
 def normalise(text):
-    """Strip markup that mechanical passes own, so real edits can be spotted."""
+    """Strip markup that mechanical passes own, so real edits can be spotted.
+
+    The `.topic-name` wrapper counts as mechanical: tools/fix_topic_names.py
+    adds it around a title that was already there, and nobody re-read those
+    cards. Detecting it here is what stops the wrapping commit from claiming
+    ninety topics were reviewed the month it ran — the same trap the acronym
+    annotator set, solved the same way.
+    """
     text = ACRO_SPAN_RE.sub("", text)
+    text = TOPIC_NAME_TAG_RE.sub(r"\1", text)
+    text = HEADER_H_TAG_RE.sub("", text)
     return REVIEWED_ATTR_RE.sub("", text)
 
 
-def mechanical_revs(rel_path):
-    """Commits whose change to this file was purely mechanical markup."""
-    revs = git("log", "--format=%H", "--", rel_path).stdout.split()
+def is_mechanical(sha, rel_path):
+    after = git("show", f"{sha}:{rel_path}")
+    parent = git("show", f"{sha}^:{rel_path}")
+    if after.returncode != 0 or parent.returncode != 0:
+        return False                        # added or deleted, not a markup pass
+    return normalise(after.stdout) == normalise(parent.stdout)
+
+
+_GLOBAL_PASSES = None
+
+
+def global_markup_passes():
+    """Commits that changed nothing real in *any* domain file they touched.
+
+    The annotator, the freshness stamp and the `.topic-name` wrap all sweep
+    every file at once. Such a commit is safe to ignore when blaming any file,
+    which matters once content moves between files: after a domain split, a
+    card's history lives in the file it came from, and a per-path scan of the
+    new file cannot see the sweeps that touched the old one. Blame follows the
+    content with -C; the ignore list has to follow it too.
+    """
+    global _GLOBAL_PASSES
+    if _GLOBAL_PASSES is not None:
+        return _GLOBAL_PASSES
     out = []
-    for sha in revs:
-        after = git("show", f"{sha}:{rel_path}").stdout
-        parent = git("show", f"{sha}^:{rel_path}")
-        if parent.returncode != 0:          # the commit that added the file
-            continue
-        if normalise(after) == normalise(parent.stdout):
+    for sha in git("log", "--format=%H", "--", "data").stdout.split():
+        touched = [f for f in git("show", "--name-only", "--format=", sha).stdout.split()
+                   if f.startswith("data/") and f.endswith(".html")
+                   and f.rsplit("/", 1)[-1] not in EXCLUDE]
+        if touched and all(is_mechanical(sha, f) for f in touched):
             out.append(sha)
+    _GLOBAL_PASSES = out
     return out
+
+
+def mechanical_revs(rel_path):
+    """Commits to ignore when blaming this file.
+
+    Its own mechanical commits, plus every whole-tree markup pass — a rev that
+    never touched this path costs nothing to list.
+    """
+    own = [sha for sha in git("log", "--format=%H", "--", rel_path).stdout.split()
+           if is_mechanical(sha, rel_path)]
+    return sorted(set(own) | set(global_markup_passes()))
 
 
 def blame_times(rel_path, ignore, worktree_text):
@@ -102,12 +150,36 @@ def blame_times(rel_path, ignore, worktree_text):
         and normalise(head.stdout) == normalise(worktree_text)
         and head.stdout.count("\n") == worktree_text.count("\n")
     )
-    cmd = ["blame", "--line-porcelain"]
+    # -C -C follows lines moved or copied from another file *modified in the
+    # same commit*. Splitting a domain moves cards verbatim into a new file, and
+    # without this every one of them would blame to the split and claim it was
+    # reviewed that month. Moving a card is not reviewing it.
+    #
+    # Two -C, not three: a third makes blame search every file in every commit,
+    # which took this script from seconds to minutes across 21 files and buys
+    # nothing — a domain split modifies both files in the one commit.
+    cmd = ["blame", "--line-porcelain", "-C", "-C"]
+    # The conventional escape hatch, for the commits this script cannot infer:
+    # -C finds most of a relocated card, but git's copy detection has a minimum
+    # block size, so a few short runs still blame the move. Listing the commit
+    # here is how git itself expects that to be handled.
+    if (ROOT / ".git-blame-ignore-revs").exists():
+        cmd += ["--ignore-revs-file", ".git-blame-ignore-revs"]
     for sha in ignore:
         cmd += ["--ignore-rev", sha]
     cmd += (["HEAD"] if use_head else []) + ["--", rel_path]
     result = git(*cmd)
     if result.returncode != 0:
+        # A file git has never seen — a domain being split out, before the
+        # commit that creates it. Keep whatever stamps the markup already
+        # carries; the next run, once it is committed, will confirm them.
+        #
+        # Narrow on purpose. A blanket except here once swallowed a malformed
+        # .git-blame-ignore-revs and silently reported "0 topics stamped"
+        # instead of failing, which is the worst way for a freshness tool to
+        # be wrong: quietly.
+        if "no such path" in result.stderr or "does not exist" in result.stderr:
+            return {}
         raise SystemExit(f"git blame failed for {rel_path}:\n{result.stderr}")
 
     times, line_no, pending = {}, 0, None

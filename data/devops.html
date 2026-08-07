@@ -1,0 +1,2088 @@
+<!-- BEGINNER12-OPS v1 -->
+<!-- ── TOPIC: CI/CD CONCEPTS ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-icon">🔄</span>
+    <span class="topic-name">CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> — Automate the Path From Code to Production</span>
+    <span class="topic-badge">OPS • DevOps</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS CI/CD</div>
+      <div class="concept-title">Continuous Integration / Continuous Delivery</div>
+      <div class="concept-desc"><strong>CI (Continuous Integration)</strong>: every code change is automatically built and tested. Developers merge frequently; the pipeline catches bugs within minutes.<br>
+      <strong>CD (Continuous Delivery)</strong>: every successful build is automatically deployable to production (but a human approves the push).<br>
+      <strong>CD (Continuous Deployment)</strong>: every successful build is automatically pushed to production without human approval. Used by companies doing many deploys per day.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">TYPICAL PIPELINE STAGES</div>
+      <div class="concept-title">Code → Test → Build → Deploy</div>
+      <table class="ai-table">
+        <thead><tr><th>Stage</th><th>What Happens</th><th>Tool Examples</th></tr></thead>
+        <tbody>
+          <tr><td>Source</td><td>Code pushed to repo triggers pipeline</td><td>GitHub, GitLab, Bitbucket</td></tr>
+          <tr><td>Lint &amp; Static Analysis</td><td>Code style, type checks, SAST <span class="acro-exp">(Static Application Security Testing)</span></td><td>flake8, mypy, SonarQube, Semgrep</td></tr>
+          <tr><td>Unit Tests</td><td>Test individual functions</td><td>pytest, JUnit, Jest</td></tr>
+          <tr><td>Integration Tests</td><td>Test components together</td><td>pytest with test DBs, Postman</td></tr>
+          <tr><td>Build / Package</td><td>Compile, build Docker image, package</td><td>Docker, maven, npm build</td></tr>
+          <tr><td>Security Scan</td><td>Dependency vulnerabilities, image scan</td><td>Trivy, Snyk, pip-audit</td></tr>
+          <tr><td>Deploy to Staging</td><td>Deploy to production-like env</td><td>Kubernetes, Terraform, Ansible</td></tr>
+          <tr><td>E2E Tests</td><td>Test full user workflows</td><td>Playwright, Selenium, Cypress</td></tr>
+          <tr><td>Deploy to Production</td><td>Roll out to real users</td><td>k8s rolling update, blue/green</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">GITHUB ACTIONS</div>
+      <div class="concept-title">Basic CI Workflow</div>
+      <div class="code-block"><span class="com"># .github/workflows/ci.yml</span>
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: <span class="str">"3.12"</span>
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run tests
+        run: pytest --cov=src --cov-report=xml
+
+      - name: Security scan
+        run: pip-audit</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DEVSECOPS</div>
+      <div class="concept-title">Security Shifted Left</div>
+      <div class="concept-desc">DevSecOps integrates security checks into every stage of the CI/CD pipeline — not as a gate at the end ("is this ready to ship?") but as automated checks throughout:<br>
+      • <strong>SAST</strong> (Static Application Security Testing) — analyze code for vulnerabilities<br>
+      • <strong>DAST</strong> (Dynamic Application Security Testing) — attack the running app<br>
+      • <strong>SCA</strong> (Software Composition Analysis) — scan dependencies for CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span><br>
+      • <strong>IaC <span class="acro-exp">(Infrastructure as Code)</span> scanning</strong> — check Terraform/CloudFormation for misconfigurations<br>
+      "Shift left" = catch vulnerabilities when they're cheap to fix (in development), not expensive (in production).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: KUBERNETES FUNDAMENTALS ────────────────────── -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-icon">☸️</span>
+    <span class="topic-name">Kubernetes — Container Orchestration at Scale</span>
+    <span class="topic-badge">OPS • Cloud Native</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">WHAT IS KUBERNETES</div>
+      <div class="concept-title">Run, Scale, and Heal Containers Automatically</div>
+      <div class="concept-desc">Kubernetes (k8s) is a container orchestration platform. You tell it "I want 5 replicas of my web container running at all times." k8s does the scheduling (which node to run it on), restarts failed containers, scales up/down based on load, and manages networking between services. Originally from Google; now the de-facto cloud standard.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">CORE OBJECTS</div>
+      <div class="concept-title">Pod → Deployment → Service → Ingress</div>
+      <div class="concept-desc"><strong>Pod</strong> — smallest deployable unit; one or more containers sharing a network namespace and storage. Ephemeral — can die and be replaced.<br>
+      <strong>Deployment</strong> — manages N replicas of a Pod; handles rolling updates and rollbacks.<br>
+      <strong>Service</strong> — stable network endpoint that load-balances traffic to pods (pods have dynamic IPs; Services don't change).<br>
+      <strong>Ingress</strong> — HTTP/HTTPS routing: <code>example.com/api → api-service, example.com/ → frontend-service</code>.<br>
+      <strong>ConfigMap / Secret</strong> — inject config and secrets into pods as env vars or files.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">KUBECTL BASICS</div>
+      <div class="concept-title">The k8s CLI <span class="acro-exp">(Command Line Interface)</span></div>
+      <div class="code-block"><span class="com"># See what's running</span>
+kubectl get pods
+kubectl get pods -n kube-system     <span class="com"># in a specific namespace</span>
+kubectl get all                     <span class="com"># pods, services, deployments</span>
+
+<span class="com"># Inspect resources</span>
+kubectl describe pod my-pod-abc123
+kubectl logs my-pod-abc123
+kubectl logs -f my-pod-abc123       <span class="com"># follow</span>
+
+<span class="com"># Get a shell in a running pod</span>
+kubectl exec -it my-pod-abc123 -- bash
+
+<span class="com"># Apply a manifest file</span>
+kubectl apply -f deployment.yaml
+
+<span class="com"># Scale</span>
+kubectl scale deployment myapp --replicas=5
+
+<span class="com"># Rolling update</span>
+kubectl set image deployment/myapp myapp=myimage:v2
+
+<span class="com"># Rollback</span>
+kubectl rollout undo deployment/myapp</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">WHEN TO USE K8S</div>
+      <div class="concept-title">It's Powerful But Complex</div>
+      <div class="concept-desc">Kubernetes adds significant operational complexity. For a small startup with one app: Docker Compose or a single managed service (Heroku, Railway, Fly.io) is simpler and faster to operate. k8s shines when you have: many services, need to scale services independently, have a team to manage it, or require advanced deployment strategies (canary, blue/green). "Kubernetes because it's cool" is not a good reason.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGINNER15-OPS v1 -->
+<!-- ── TOPIC: INFRASTRUCTURE AS CODE ─────────────────────── -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-icon">🏗️</span>
+    <span class="topic-name">Infrastructure as Code — Servers You Define in Text Files</span>
+    <span class="topic-badge">OPS • Modern</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">THE BIG IDEA</div>
+      <div class="concept-title">Stop Clicking, Start Declaring</div>
+      <div class="concept-desc">The old way: log into a server, click through setup wizards, run commands manually, hope you remember what you did. The problem? It's not repeatable, not documented, and "works on my server" becomes a nightmare. Infrastructure as Code (IaC) means defining your servers, networks, and configs in version-controlled text files. Run the file → get identical infrastructure every time. This is the foundation of modern operations.</div>
+      <table class="ai-table">
+        <thead><tr><th>Manual (Old Way)</th><th>IaC (Modern Way)</th></tr></thead>
+        <tbody>
+          <tr><td>Click through cloud console</td><td>Define in code, run once</td></tr>
+          <tr><td>"How did we set this up?" — nobody knows</td><td>The code IS the documentation</td></tr>
+          <tr><td>Snowflake servers (each unique)</td><td>Identical, reproducible environments</td></tr>
+          <tr><td>Disaster recovery = panic</td><td>Disaster recovery = re-run the code</td></tr>
+          <tr><td>No change history</td><td>Git history of every infra change</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DECLARATIVE VS IMPERATIVE</div>
+      <div class="concept-title">Describe the Destination, Not the Route</div>
+      <div class="concept-desc"><strong>Imperative</strong>: list every step ("install nginx, then edit config, then start service"). <strong>Declarative</strong>: describe the desired end state ("nginx should be installed and running"), and the tool figures out how to get there. Declarative is idempotent — running it 100 times produces the same result as running it once. Most modern IaC is declarative.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE TOOL LANDSCAPE</div>
+      <div class="concept-title">Common IaC and Config Management Tools</div>
+      <table class="ai-table">
+        <thead><tr><th>Tool</th><th>Category</th><th>Language</th><th>Best For</th></tr></thead>
+        <tbody>
+          <tr><td>Terraform / OpenTofu</td><td>Provisioning</td><td>HCL (declarative)</td><td>Creating cloud resources (VMs, networks, DBs)</td></tr>
+          <tr><td>Ansible</td><td>Config management</td><td>YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> (declarative)</td><td>Configuring servers, app deployment (agentless)</td></tr>
+          <tr><td>Puppet</td><td>Config management</td><td>Puppet DSL <span class="acro-exp">(Domain-Specific Language)</span></td><td>Large fleets, enforced desired state (agent)</td></tr>
+          <tr><td>Chef</td><td>Config management</td><td>Ruby</td><td>Complex config (agent-based)</td></tr>
+          <tr><td>CloudFormation</td><td>Provisioning</td><td>YAML/JSON</td><td>AWS-native infrastructure</td></tr>
+          <tr><td>Pulumi</td><td>Provisioning</td><td>Python/TS/Go</td><td>Teams who prefer real programming languages</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ANSIBLE BASICS</div>
+      <div class="concept-title">The Most Beginner-Friendly IaC Tool</div>
+      <div class="concept-desc">Ansible is popular for beginners because it's agentless (just needs SSH), uses readable YAML, and requires nothing installed on target machines. A "playbook" describes the desired state of a set of hosts.</div>
+      <div class="code-block"><span class="com"># inventory.ini — define your hosts</span>
+[webservers]
+web1.example.com
+web2.example.com
+
+[dbservers]
+db1.example.com
+
+<span class="com"># ─────────────────────────────────────────────────────</span>
+<span class="com"># playbook.yml — describe desired state</span>
+- name: Configure web servers
+  hosts: webservers
+  become: yes              <span class="com"># use sudo</span>
+  tasks:
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present     <span class="com"># declarative — "should exist"</span>
+
+    - name: Start and enable nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Deploy config file
+      copy:
+        src: ./nginx.conf
+        dest: /etc/nginx/nginx.conf
+      notify: Restart nginx   <span class="com"># trigger handler if changed</span>
+
+  handlers:
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+<span class="com"># Run it</span>
+ansible-playbook -i inventory.ini playbook.yml</div>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER25-OPS v1 -->
+<!-- ── TOPIC: CONTAINER SECURITY ─────────────────────────── -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-icon">🐳</span>
+    <span class="topic-name">Container Security — Hardening Docker &amp; Images</span>
+    <span class="topic-badge">OPS • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">CONTAINERS AREN'T VMs <span class="acro-exp">(Virtual Machine)</span></div>
+      <div class="concept-title">Shared Kernel = Shared Risk</div>
+      <div class="concept-desc">Containers share the host's kernel (unlike VMs, which each have their own). That makes them lightweight and fast — but it also means a container escape can potentially compromise the host and every other container. Container security is about reducing what a compromised container can reach and do.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">IMAGE SECURITY</div>
+      <div class="concept-title">Start From a Clean, Minimal Base</div>
+      <table class="ai-table">
+        <thead><tr><th>Practice</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Use minimal base images</td><td>Alpine/distroless = smaller attack surface, fewer CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span></td></tr>
+          <tr><td>Pin image versions (digests)</td><td><code>python:3.12</code> not <code>python:latest</code> — reproducible, no surprise updates</td></tr>
+          <tr><td>Scan images for vulnerabilities</td><td>Trivy, Grype, Clair find known CVEs in layers</td></tr>
+          <tr><td>Don't bake in secrets</td><td>Secrets in image layers persist even if "deleted" later</td></tr>
+          <tr><td>Use trusted sources</td><td>Official images; verify signatures (cosign/Sigstore)</td></tr>
+          <tr><td>Multi-stage builds</td><td>Don't ship build tools/source in the final image</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block"><span class="com"># Scan an image for known vulnerabilities</span>
+trivy image python:3.12
+grype nginx:latest
+
+<span class="com"># Multi-stage build — final image has only what it needs</span>
+<span class="com"># FROM golang:1.22 AS build</span>
+<span class="com"># ... compile ...</span>
+<span class="com"># FROM gcr.io/distroless/static   # tiny, no shell, no package mgr</span>
+<span class="com"># COPY --from=build /app /app</span></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RUNTIME HARDENING</div>
+      <div class="concept-title">Limit What a Container Can Do</div>
+      <table class="ai-table">
+        <thead><tr><th>Control</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td>Don't run as root</td><td><code>USER appuser</code> in Dockerfile; <code>--user 1000</code></td></tr>
+          <tr><td>Read-only filesystem</td><td><code>--read-only</code> — malware can't write</td></tr>
+          <tr><td>Drop capabilities</td><td><code>--cap-drop ALL</code> then add only what's needed</td></tr>
+          <tr><td>No new privileges</td><td><code>--security-opt no-new-privileges</code></td></tr>
+          <tr><td>Limit resources</td><td><code>--memory --cpus</code> — contain DoS <span class="acro-exp">(Denial of Service)</span> / runaway</td></tr>
+          <tr><td>Don't mount the Docker socket</td><td><code>/var/run/docker.sock</code> inside = root on host</td></tr>
+          <tr><td>Network segmentation</td><td>Custom networks; don't expose ports you don't need</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">THE 4 Cs</div>
+      <div class="concept-title">Cloud Native Security Layers</div>
+      <div class="concept-desc">Container security is layered — each layer depends on the one outside it. Weakness in an outer layer undermines all the inner ones.</div>
+      <table class="ai-table">
+        <thead><tr><th>Layer</th><th>Secure By</th></tr></thead>
+        <tbody>
+          <tr><td><strong>C</strong>loud / infrastructure</td><td>Hardened hosts, IAM <span class="acro-exp">(Identity and Access Management)</span>, network policy</td></tr>
+          <tr><td><strong>C</strong>luster</td><td>RBAC <span class="acro-exp">(Role-Based Access Control)</span>, network policies, admission control</td></tr>
+          <tr><td><strong>C</strong>ontainer</td><td>Minimal images, scanning, no root</td></tr>
+          <tr><td><strong>C</strong>ode</td><td>Secure coding, dependency hygiene, secrets management</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER31-OPS v1 -->
+<!-- ── TOPIC: Kubernetes for Beginners ───────────────────────── -->
+<div class="topic" data-reviewed="2026-06">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <span class="topic-name">Kubernetes – Container Orchestration Fundamentals</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Kubernetes Exists</div>
+      <div class="concept-desc">
+        Docker runs one container on one machine. When you need to run
+        hundreds of containers across dozens of machines, you need an
+        <em>orchestrator</em>. <strong>Kubernetes (K8s)</strong> handles:<br><br>
+        &bull; <strong>Scheduling</strong> — decides which machine runs which
+          container.<br>
+        &bull; <strong>Self-healing</strong> — restarts crashed containers
+          automatically.<br>
+        &bull; <strong>Scaling</strong> — adds/removes container replicas based
+          on load.<br>
+        &bull; <strong>Rolling updates</strong> — deploys new versions with zero
+          downtime.<br>
+        &bull; <strong>Service discovery</strong> — containers find each other
+          by name, not IP <span class="acro-exp">(Internet Protocol)</span>.<br><br>
+        <em>"Not my circus, not my monkey"</em> — the control plane (API
+        server, etcd, scheduler) is managed for you on EKS/GKE/AKS. Your
+        job is to manage your workloads, not the cluster control plane.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Key Objects</div>
+      <div class="concept-title">The K8s Object Hierarchy</div>
+      <div class="concept-desc">
+        Everything in Kubernetes is a YAML-defined <em>object</em>:
+        <br><br>
+        <strong>Pod</strong> — the smallest unit; one or more containers
+        that share a network namespace. Pods are ephemeral — don't store
+        state in them.<br><br>
+        <strong>Deployment</strong> — manages a set of identical Pod replicas;
+        handles rolling updates and rollbacks.<br><br>
+        <strong>Service</strong> — a stable network endpoint (IP + DNS name)
+        that load-balances across matching Pods.<br><br>
+        <strong>ConfigMap / Secret</strong> — inject configuration or
+        credentials into Pods without baking them into the image.<br><br>
+        <strong>Namespace</strong> — a virtual cluster inside a cluster; used
+        to separate teams or environments.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">kubectl</div>
+      <div class="concept-title">Essential kubectl Commands</div>
+      <div class="concept-desc">
+        <code>kubectl</code> is the CLI <span class="acro-exp">(Command Line Interface)</span> to interact with a Kubernetes cluster.
+        Master these first.
+      </div>
+      <div class="code-block">
+<span class="com"># Show cluster nodes</span>
+kubectl get nodes
+
+<span class="com"># Show all pods in a namespace</span>
+kubectl get pods -n production
+
+<span class="com"># Describe a pod (events, resource usage, errors)</span>
+kubectl describe pod myapp-7d9f8c-xkz9p -n production
+
+<span class="com"># View logs (last 100 lines)</span>
+kubectl logs myapp-7d9f8c-xkz9p -n production --tail=100
+
+<span class="com"># Follow logs in real time (like tail -f)</span>
+kubectl logs -f deployment/myapp -n production
+
+<span class="com"># Exec into a running container (interactive shell)</span>
+kubectl exec -it myapp-7d9f8c-xkz9p -n production -- /bin/sh
+
+<span class="com"># Apply a YAML manifest</span>
+kubectl apply -f deployment.yaml
+
+<span class="com"># Scale a deployment</span>
+kubectl scale deployment myapp --replicas=<span class="num">5</span> -n production
+
+<span class="com"># Roll back to the previous version</span>
+kubectl rollout undo deployment/myapp -n production
+
+<span class="com"># Check rollout status</span>
+kubectl rollout status deployment/myapp -n production
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> Example</div>
+      <div class="concept-title">A Minimal Deployment + Service</div>
+      <div class="concept-desc">
+        This is the smallest production-style Kubernetes manifest —
+        a Deployment (runs the app) and a Service (exposes it):
+      </div>
+      <div class="code-block">
+<span class="com"># deployment.yaml</span>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+  namespace: production
+spec:
+  replicas: <span class="num">3</span>
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: myregistry/myapp:<span class="num">1.2</span>.<span class="num">3</span>
+        ports:
+        - containerPort: <span class="num">8080</span>
+        resources:
+          requests: { cpu: <span class="str">"100m"</span>, memory: <span class="str">"128Mi"</span> }
+          limits:   { cpu: <span class="str">"500m"</span>, memory: <span class="str">"256Mi"</span> }
+        readinessProbe:
+          httpGet:   { path: /healthz, port: <span class="num">8080</span> }
+          initialDelaySeconds: <span class="num">5</span>
+---
+<span class="com"># service.yaml (ClusterIP = internal only)</span>
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+  namespace: production
+spec:
+  selector:
+    app: myapp          <span class="com"># matches pods with label app=myapp</span>
+  ports:
+  - port: <span class="num">80</span>
+    targetPort: <span class="num">8080</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER35-OPS v1 -->
+<!-- ── TOPIC: CI/CD Pipeline Fundamentals ────────────────────── -->
+<div class="topic" data-reviewed="2026-06">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <span class="topic-name">CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> Pipelines – From Commit to Production Automatically</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What CI/CD Actually Means</div>
+      <div class="concept-desc">
+        <strong>Continuous Integration (CI)</strong> — every code change is
+        automatically built and tested the moment it's pushed. Catches bugs
+        within minutes instead of weeks.<br><br>
+        <strong>Continuous Delivery (CD)</strong> — every change that passes
+        CI is automatically packaged and ready to deploy (a human clicks
+        "go").<br><br>
+        <strong>Continuous Deployment</strong> — every change that passes CI
+        is automatically deployed to production with no human in the loop.<br><br>
+        <strong>The pipeline stages (typical order):</strong><br>
+        1. Checkout code → 2. Install dependencies → 3. Lint/static analysis
+        → 4. Unit tests → 5. Build artifact (binary, container image) →
+        6. Integration tests → 7. Security scan → 8. Deploy to staging →
+        9. Smoke tests → 10. Deploy to production.<br><br>
+        <em>"Not my circus, not my monkey"</em> — if your pipeline is red,
+        do not merge more changes on top of it. Fix the pipeline first;
+        a broken main branch blocks everyone.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">GitHub Actions</div>
+      <div class="concept-title">A Real CI/CD Pipeline in YAML <span class="acro-exp">(YAML Ain't Markup Language)</span></div>
+      <div class="concept-desc">
+        GitHub Actions is one of the most common CI/CD tools — config
+        lives in <code>.github/workflows/*.yml</code> right alongside your
+        code.
+      </div>
+      <div class="code-block">
+<span class="com"># .github/workflows/ci.yml</span>
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: <span class="str">"3.12"</span>
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Run tests with coverage
+        run: pytest --cov=src --cov-report=xml --cov-fail-under=<span class="num">80</span>
+
+      - name: Security scan
+        run: |
+          pip install bandit
+          bandit -r src/ -ll
+
+  build-and-push:
+    needs: test               <span class="com"># only runs if 'test' job passes</span>
+    runs-on: ubuntu-latest
+    if: github.ref == <span class="str">'refs/heads/main'</span>
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build container image
+        run: docker build -t myapp:${{ github.sha }} .
+      - name: Scan image
+        run: trivy image --exit-code 1 --severity CRITICAL myapp:${{ github.sha }}
+      - name: Push to registry
+        run: |
+          echo ${{ secrets.REGISTRY_TOKEN }} | docker login -u user --password-stdin
+          docker push myapp:${{ github.sha }}
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Deployment Strategies</div>
+      <div class="concept-title">How to Ship Without Breaking Things</div>
+      <div class="concept-desc">
+        How you roll out a new version matters as much as the code itself:<br><br>
+        &bull; <strong>Rolling update</strong> — replace instances one at a
+          time; if health checks fail, stop and roll back. Default in
+          Kubernetes.<br>
+        &bull; <strong>Blue-green deployment</strong> — run two identical
+          environments ("blue" = current, "green" = new); switch traffic
+          instantly; instant rollback by switching back.<br>
+        &bull; <strong>Canary release</strong> — send 5% of traffic to the
+          new version, watch metrics, gradually increase to 100% (or roll
+          back if errors spike).<br>
+        &bull; <strong>Feature flags</strong> — deploy code "dark" (disabled),
+          then turn it on for specific users without a new deployment.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        deploy "should be fine" because it worked in staging. Staging never
+        perfectly mirrors production load, data, and integrations.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure Recovery</div>
+      <div class="concept-title">When the Pipeline Ships a Bad Release</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — a teammate's bad commit will reach
+        production eventually. Your safety net matters more than
+        prevention alone.<br><br>
+        <strong>Build these into every pipeline:</strong><br>
+        &bull; <strong>Automated rollback</strong> — if health checks fail
+          post-deploy, automatically revert to the last known-good version.<br>
+        &bull; <strong>Deployment markers</strong> — send an event to your
+          monitoring system on every deploy, so spikes can be correlated
+          instantly: "errors started 90 seconds after deploy #4521."<br>
+        &bull; <strong>Fast rollback path</strong> — rolling back should
+          take seconds, not the same time as a forward deploy.<br>
+        &bull; <strong>Post-incident review</strong> — every bad release
+          gets a blameless writeup: what broke, why CI didn't catch it,
+          what test or gate would have.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🌍</span>
+              <span class="topic-name">Terraform — Infrastructure as Code in Practice</span>
+              <span class="topic-badge">IaC</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Declare Infrastructure, Don't Click It</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Terraform</strong> lets you define cloud
+                  infrastructure — servers, networks, databases, DNS <span class="acro-exp">(Domain Name System)</span> — as text files, then
+                  creates or changes it to match. You describe the <em>desired end state</em>
+                  in HCL (HashiCorp Configuration Language); Terraform figures out the steps
+                  to get there. Because it's declarative and version-controlled, your whole
+                  environment becomes reviewable, repeatable, and rebuildable — no more
+                  "click 40 things in the console and pray you remember them next time."
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">A Minimal Configuration</div>
+                <div class="dw">
+                  <div class="code-label">main.tf</div>
+<pre class="code-block"><span class="com"># Which provider (cloud) and version to use</span>
+<span class="kw">terraform</span> {
+  <span class="var">required_providers</span> {
+    <span class="var">aws</span> = { <span class="var">source</span> = <span class="str">"hashicorp/aws"</span>, <span class="var">version</span> = <span class="str">"~> 5.0"</span> }
+  }
+}
+
+<span class="kw">provider</span> <span class="str">"aws"</span> {
+  <span class="var">region</span> = <span class="str">"us-east-1"</span>
+}
+
+<span class="com"># A resource — Terraform will create/manage this</span>
+<span class="kw">resource</span> <span class="str">"aws_instance"</span> <span class="str">"web"</span> {
+  <span class="var">ami</span>           = <span class="str">"ami-0abcd1234"</span>
+  <span class="var">instance_type</span> = <span class="var">var</span>.<span class="var">size</span>          <span class="com"># from a variable</span>
+  <span class="var">tags</span>          = { <span class="var">Name</span> = <span class="str">"web-server"</span> }
+}
+
+<span class="kw">variable</span> <span class="str">"size"</span> { <span class="var">default</span> = <span class="str">"t3.micro"</span> }
+
+<span class="kw">output</span> <span class="str">"public_ip"</span> {
+  <span class="var">value</span> = <span class="var">aws_instance</span>.<span class="var">web</span>.<span class="var">public_ip</span>   <span class="com"># print after apply</span>
+}</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Core Workflow</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Command</th><th>What It Does</th></tr>
+                    <tr><td><code>terraform init</code></td><td>Download providers &amp; set up the working dir (run first)</td></tr>
+                    <tr><td><code>terraform fmt</code></td><td>Auto-format your <code>.tf</code> files</td></tr>
+                    <tr><td><code>terraform validate</code></td><td>Check the config for syntax/type errors</td></tr>
+                    <tr><td><code>terraform plan</code></td><td><strong class="c-cyan">Preview</strong> what will change — nothing is applied</td></tr>
+                    <tr><td><code>terraform apply</code></td><td>Make reality match the config (prompts to confirm)</td></tr>
+                    <tr><td><code>terraform destroy</code></td><td>Tear down everything this config manages</td></tr>
+                    <tr><td><code>terraform state list</code></td><td>List the resources Terraform is tracking</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The golden habit: <strong>always read the <code>plan</code> before you
+                    <code>apply</code></strong>. It shows adds (<span class="c-green">+</span>),
+                    changes (<span class="c-amber">~</span>), and destroys
+                    (<span class="c-red">-</span>) so nothing surprises you.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Key Ideas</div>
+                <div class="concept-title">State, Plan &amp; Idempotence</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Why It Matters</th></tr>
+                    <tr><td class="c-cyan">State file</td><td>Terraform records what it created in <code>terraform.tfstate</code>. It's the source of truth for "what exists" — store it remotely (S3, Terraform Cloud) so a team shares one, and lock it to prevent concurrent applies.</td></tr>
+                    <tr><td class="c-cyan">Desired vs actual</td><td><code>plan</code> diffs your config against state and the real world, then computes the minimal change set.</td></tr>
+                    <tr><td class="c-cyan">Idempotence</td><td>Running <code>apply</code> twice with no config change does nothing the second time — the end state is what's declared, not a pile of commands.</td></tr>
+                    <tr><td class="c-cyan">Modules</td><td>Reusable bundles of resources with inputs/outputs — package a "VPC <span class="acro-exp">(Virtual Private Cloud)</span>" or "web app" once, use it everywhere.</td></tr>
+                    <tr><td class="c-red">Never edit state by hand</td><td>Use <code>terraform state</code> subcommands; hand-editing the JSON <span class="acro-exp">(JavaScript Object Notation)</span> corrupts tracking.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">📬</span>
+              <span class="topic-name">Message Queues &amp; Event-Driven Architecture</span>
+              <span class="topic-badge">Architecture</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Decouple With a Buffer in the Middle</div>
+                <div class="concept-desc">
+                  When service A calls service B directly, A waits for B and breaks if B is
+                  down. A <strong class="c-cyan">message queue</strong> puts a durable buffer
+                  between them: A drops a message and moves on; B picks it up when ready.
+                  This <strong class="c-amber">decouples</strong> producers from consumers —
+                  they can scale, fail, and deploy independently. It's the backbone of
+                  event-driven systems, where components react to things that
+                  <em>happened</em> rather than calling each other in lockstep.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Queue vs Pub/Sub &amp; Key Terms</div>
+                <div class="dw">
+                  <div class="dt">▸ TWO MESSAGING SHAPES</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Pattern</th><th>Delivery</th><th>Example</th></tr>
+                    <tr><td class="c-green">Queue (point-to-point)</td><td>Each message goes to <em>one</em> consumer in a pool — spreads work</td><td>Task/job processing (RabbitMQ, SQS)</td></tr>
+                    <tr><td class="c-green">Pub/Sub (topic)</td><td>Each message goes to <em>every</em> subscriber — fan-out</td><td>Event broadcasting (Kafka, SNS, Redis)</td></tr>
+                  </table>
+                  <div class="dt">▸ VOCABULARY</div>
+                  <table class="ref-table">
+                    <tr><th>Term</th><th>Meaning</th></tr>
+                    <tr><td class="c-cyan">Producer</td><td>Publishes messages</td></tr>
+                    <tr><td class="c-cyan">Consumer</td><td>Reads and processes them</td></tr>
+                    <tr><td class="c-cyan">Broker</td><td>The queue/log system in the middle (Kafka, RabbitMQ)</td></tr>
+                    <tr><td class="c-cyan">Ack</td><td>Consumer confirms "done" so the broker can drop the message</td></tr>
+                    <tr><td class="c-cyan">Dead-letter queue</td><td>Where messages go after repeated processing failures</td></tr>
+                    <tr><td class="c-cyan">Backpressure</td><td>The queue absorbs bursts so a slow consumer isn't overwhelmed</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Delivery</div>
+                <div class="concept-title">Guarantees &amp; Idempotence</div>
+                <div class="concept-desc">
+                  Distributed messaging can't cheaply promise "exactly once," so you pick a
+                  guarantee and design around it:
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Guarantee</th><th>Meaning</th></tr>
+                    <tr><td class="c-red">At-most-once</td><td>Fast, but a message can be lost. Fine for disposable telemetry.</td></tr>
+                    <tr><td class="c-green">At-least-once</td><td>Never lost, but may be <em>redelivered</em>. The common default.</td></tr>
+                    <tr><td class="c-amber">Exactly-once</td><td>Ideal but expensive/limited — usually emulated via dedup.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Because at-least-once means duplicates happen, make consumers
+                    <strong class="c-cyan">idempotent</strong> — processing the same message
+                    twice has the same effect as once (e.g. key writes on a unique message
+                    ID). This is the single most important habit in event-driven systems.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Trade-offs</div>
+                <div class="concept-title">What You Gain and Pay</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Detail</th></tr>
+                    <tr><td class="c-green">Gain: resilience</td><td>A consumer can crash or deploy; messages wait in the queue.</td></tr>
+                    <tr><td class="c-green">Gain: elastic scale</td><td>Add consumers to drain a backlog faster; smooth out traffic spikes.</td></tr>
+                    <tr><td class="c-green">Gain: decoupling</td><td>Producers don't know or care who consumes — add new consumers freely.</td></tr>
+                    <tr><td class="c-red">Cost: complexity</td><td>Another system to run/monitor; harder to trace a request end-to-end.</td></tr>
+                    <tr><td class="c-red">Cost: eventual consistency</td><td>Work happens asynchronously — the result isn't ready the instant you publish.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">⚡</span>
+              <span class="topic-name">Caching Strategies — From App to CDN <span class="acro-exp">(Content Delivery Network)</span></span>
+              <span class="topic-badge">Performance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Store the Answer, Skip the Work</div>
+                <div class="concept-desc">
+                  A cache keeps a copy of expensive-to-compute or slow-to-fetch data
+                  somewhere fast, so repeated requests don't redo the work. Done right, it's
+                  the single biggest performance lever you have. The catch is the famous one:
+                  <em>"There are only two hard things in computer science — cache invalidation
+                  and naming things."</em> A stale cache serves wrong data; the art is
+                  knowing <strong>when to trust the copy and when to refresh it</strong>.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Where Caches Live (the Layers)</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Layer</th><th>Example</th><th>Caches</th></tr>
+                    <tr><td class="c-cyan">Browser</td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> cache</td><td>Static assets on the user's device</td></tr>
+                    <tr><td class="c-cyan">CDN / edge</td><td>Cloudflare, CloudFront</td><td>Content served near the user, globally</td></tr>
+                    <tr><td class="c-cyan">App / in-memory</td><td>Redis, Memcached</td><td>Query results, sessions, computed values</td></tr>
+                    <tr><td class="c-cyan">Database</td><td>Query &amp; buffer cache</td><td>Hot pages &amp; plans in RAM <span class="acro-exp">(Random Access Memory)</span></td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The closer to the user a cache sits, the faster and cheaper the hit — but
+                    the harder it is to invalidate. Each layer is a trade of speed vs freshness.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Patterns</div>
+                <div class="concept-title">Read &amp; Write Strategies</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pattern</th><th>How It Works</th></tr>
+                    <tr><td class="c-green">Cache-aside (lazy)</td><td>App checks cache; on a miss, reads the DB and populates the cache. Most common.</td></tr>
+                    <tr><td class="c-green">Read-through</td><td>The cache itself loads from the DB on a miss — app only talks to the cache.</td></tr>
+                    <tr><td class="c-green">Write-through</td><td>Writes go to cache <em>and</em> DB together — always fresh, slightly slower writes.</td></tr>
+                    <tr><td class="c-amber">Write-back</td><td>Write to cache now, flush to DB later — fast, but risks loss on crash.</td></tr>
+                  </table>
+                  <div class="dt" style="margin-top:12px">▸ CACHE-ASIDE IN CODE</div>
+<pre class="code-block"><span class="kw">function</span> <span class="fn">getUser</span>(<span class="var">id</span>) {
+  <span class="kw">let</span> <span class="var">u</span> = <span class="var">cache</span>.<span class="fn">get</span>(<span class="str">`user:</span>${<span class="var">id</span>}<span class="str">`</span>);
+  <span class="kw">if</span> (<span class="var">u</span>) <span class="kw">return</span> <span class="var">u</span>;                 <span class="com">// hit</span>
+  <span class="var">u</span> = <span class="var">db</span>.<span class="fn">query</span>(<span class="str">"SELECT ..."</span>, <span class="var">id</span>);  <span class="com">// miss → load</span>
+  <span class="var">cache</span>.<span class="fn">set</span>(<span class="str">`user:</span>${<span class="var">id</span>}<span class="str">`</span>, <span class="var">u</span>, { <span class="var">ttl</span>: <span class="num">300</span> }); <span class="com">// store 5 min</span>
+  <span class="kw">return</span> <span class="var">u</span>;
+}</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Invalidation</div>
+                <div class="concept-title">Keeping Copies Honest</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>What It Does</th></tr>
+                    <tr><td class="c-cyan">TTL <span class="acro-exp">(Time To Live)</span> (expiry)</td><td>Data auto-expires after N seconds. Simple; tolerates brief staleness.</td></tr>
+                    <tr><td class="c-cyan">Explicit purge</td><td>Delete the key when the source changes. Precise; needs write-path hooks.</td></tr>
+                    <tr><td class="c-cyan">Versioned keys</td><td>Bake a version/hash into the key (<code>user:42:v3</code>); old keys just age out.</td></tr>
+                    <tr><td class="c-cyan">Cache-Control headers</td><td>For HTTP/CDN: <code>max-age</code>, <code>no-store</code>, <code>ETag</code> for revalidation.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Watch for the <strong class="c-red">thundering herd / stampede</strong>: when
+                    a hot key expires, thousands of requests miss at once and hammer the DB.
+                    Mitigate with a short lock, request coalescing, or staggered TTLs.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">☁️</span>
+              <span class="topic-name">Serverless &amp; FaaS <span class="acro-exp">(Function as a Service)</span> — Code Without Managing Servers</span>
+              <span class="topic-badge">Cloud</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">There Are Still Servers — You Just Don't Touch Them</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Serverless</strong> means you deploy code and the
+                  cloud runs it on demand — provisioning, scaling, patching, and capacity are
+                  the provider's problem. The flagship form is
+                  <strong class="c-amber">Functions as a Service (FaaS)</strong>: you upload a
+                  single function that runs in response to an <em>event</em> (an HTTP request,
+                  a file upload, a queue message) and you're billed only for the milliseconds
+                  it executes. Idle costs nothing. It's the far end of the "managed" spectrum
+                  beyond containers.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">A Function That Runs on an Event</div>
+                <div class="dw">
+                  <div class="code-label">AN HTTP-TRIGGERED FUNCTION (NODE)</div>
+<pre class="code-block"><span class="com">// The cloud invokes this on each request; no server to run</span>
+<span class="kw">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fn">handler</span>(<span class="var">event</span>) {
+  <span class="kw">const</span> <span class="var">name</span> = <span class="var">event</span>.<span class="var">queryStringParameters</span>?.<span class="var">name</span> ?? <span class="str">"world"</span>;
+  <span class="kw">return</span> {
+    <span class="var">statusCode</span>: <span class="num">200</span>,
+    <span class="var">body</span>: <span class="fn">JSON.stringify</span>({ <span class="var">message</span>: <span class="str">`Hello, </span>${<span class="var">name</span>}<span class="str">`</span> }),
+  };
+}</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Deploy it, wire a trigger (API Gateway, a bucket event, a cron schedule),
+                    and it scales from zero to thousands of concurrent invocations
+                    automatically — each request gets its own isolated run.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Providers &amp; the Compute Spectrum</div>
+                <div class="dw">
+                  <div class="dt">▸ THE BIG FaaS PLATFORMS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Provider</th><th>Service</th></tr>
+                    <tr><td>AWS <span class="acro-exp">(Amazon Web Services)</span></td><td>Lambda</td></tr>
+                    <tr><td>Azure</td><td>Functions</td></tr>
+                    <tr><td>Google Cloud</td><td>Cloud Functions / Cloud Run</td></tr>
+                    <tr><td>Edge</td><td>Cloudflare Workers, Netlify/Vercel Functions</td></tr>
+                  </table>
+                  <div class="dt">▸ HOW MUCH DO YOU MANAGE?</div>
+                  <table class="ref-table">
+                    <tr><th>Model</th><th>You Manage</th></tr>
+                    <tr><td>On-prem</td><td class="c-red">Everything — hardware to app</td></tr>
+                    <tr><td>IaaS <span class="acro-exp">(Infrastructure as a Service)</span> (VMs)</td><td>OS <span class="acro-exp">(Operating System)</span> + runtime + app</td></tr>
+                    <tr><td>Containers</td><td>The image + app</td></tr>
+                    <tr><td>Serverless / FaaS</td><td class="c-green">Just the code</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Trade-offs</div>
+                <div class="concept-title">Where Serverless Shines — and Bites</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Detail</th></tr>
+                    <tr><td class="c-green">Scale to zero</td><td>No traffic = no cost. Great for spiky or unpredictable load.</td></tr>
+                    <tr><td class="c-green">No ops</td><td>No servers to patch or capacity-plan; ship features faster.</td></tr>
+                    <tr><td class="c-red">Cold starts</td><td>An idle function takes extra time to spin up on the first request — latency-sensitive paths feel it.</td></tr>
+                    <tr><td class="c-red">Stateless &amp; time-limited</td><td>Functions keep no memory between runs and have a max duration — long jobs and in-memory state don't fit.</td></tr>
+                    <tr><td class="c-amber">Vendor lock-in</td><td>Triggers and runtimes are provider-specific; portability takes effort.</td></tr>
+                    <tr><td class="c-amber">Harder local debugging</td><td>The event-driven, managed environment is tricky to reproduce on your laptop.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🪣</span>
+              <span class="topic-name">Object Storage — S3 <span class="acro-exp">(Simple Storage Service)</span> &amp; the Cloud Storage Model</span>
+              <span class="topic-badge">Cloud</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Different Way to Store Data</div>
+                <div class="concept-desc">
+                  Traditional storage is <strong>files</strong> (a tree of folders) or
+                  <strong>blocks</strong> (raw disk a filesystem sits on).
+                  <strong class="c-cyan">Object storage</strong> is a third model: every piece
+                  of data is an <em>object</em> — the bytes plus metadata plus a unique key —
+                  living in a flat <strong class="c-amber">bucket</strong>, retrieved over
+                  HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>. There are no real folders (the "path" in a key is just a naming
+                  convention), and you can't edit part of an object — you replace the whole
+                  thing. Amazon <strong>S3</strong> defined the model; Azure Blob, Google Cloud
+                  Storage, and MinIO all speak a similar API <span class="acro-exp">(Application Programming Interface)</span>.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Comparison</div>
+                <div class="concept-title">Object vs File vs Block</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Object</th><th>File</th><th>Block</th></tr>
+                    <tr><td>Unit</td><td>Object + key</td><td>File in folders</td><td>Raw blocks</td></tr>
+                    <tr><td>Access</td><td>HTTP API</td><td>NFS/SMB</td><td>Attached disk</td></tr>
+                    <tr><td>Edit in place</td><td class="c-red">No — replace whole</td><td class="c-green">Yes</td><td class="c-green">Yes</td></tr>
+                    <tr><td>Scales to</td><td class="c-green">Effectively unlimited</td><td class="c-amber">Limited</td><td class="c-amber">Limited</td></tr>
+                    <tr><td>Best for</td><td>Media, backups, data lakes, static sites</td><td>Shared docs</td><td>Databases, VMs <span class="acro-exp">(Virtual Machine)</span></td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Key Features You'll Use</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Feature</th><th>What It Does</th></tr>
+                    <tr><td class="c-cyan">Storage classes</td><td>Trade price for access speed: hot (Standard) → cool → cold archive (Glacier). Cheaper to store, pricier/slower to retrieve.</td></tr>
+                    <tr><td class="c-cyan">Lifecycle rules</td><td>Auto-move objects to colder tiers or delete them after N days.</td></tr>
+                    <tr><td class="c-cyan">Versioning</td><td>Keep old copies so an overwrite/delete is recoverable.</td></tr>
+                    <tr><td class="c-cyan">Presigned URLs <span class="acro-exp">(Uniform Resource Locator)</span></td><td>A time-limited link that grants temporary access to one object without exposing credentials.</td></tr>
+                    <tr><td class="c-cyan">Static website hosting</td><td>Serve a bucket of HTML/JS directly — often fronted by a CDN <span class="acro-exp">(Content Delivery Network)</span>.</td></tr>
+                    <tr><td class="c-cyan">Durability</td><td>Providers replicate objects across facilities — S3 advertises 99.999999999% ("11 nines") durability.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Commands</div>
+                <div class="concept-title">Working With a Bucket (AWS CLI)</div>
+                <div class="dw">
+<pre class="code-block"><span class="fn">aws</span> s3 mb s3://my-bucket                 <span class="com"># make bucket</span>
+<span class="fn">aws</span> s3 cp report.pdf s3://my-bucket/       <span class="com"># upload an object</span>
+<span class="fn">aws</span> s3 ls s3://my-bucket/                  <span class="com"># list objects</span>
+<span class="fn">aws</span> s3 sync ./site s3://my-bucket/         <span class="com"># upload a whole folder</span>
+<span class="fn">aws</span> s3 presign s3://my-bucket/report.pdf   <span class="com"># temp shareable URL</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-red">Security note:</strong> the classic cloud breach is a
+                    bucket left <em>public</em>. Keep buckets private by default, use IAM <span class="acro-exp">(Identity and Access Management)</span>
+                    policies for access, and reach for presigned URLs when you need to share a
+                    single object.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🎚️</span>
+              <span class="topic-name">Deployment Strategies — Blue-Green, Canary &amp; Rolling</span>
+              <span class="topic-badge">Reliability</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Shipping New Code Without Taking the Site Down</div>
+                <div class="concept-desc">
+                  The naive deploy — stop the app, swap the code, start it — means downtime
+                  and a scary all-or-nothing cutover. Modern strategies release new versions
+                  <strong class="c-cyan">gradually and reversibly</strong>, so you can catch a
+                  bad release before it reaches everyone and roll back in seconds instead of
+                  scrambling. The common thread: never bet all your traffic on an unproven
+                  version at once.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Main Strategies</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Strategy</th><th>How It Works</th></tr>
+                    <tr><td class="c-cyan">Rolling</td><td>Replace instances a few at a time until all run the new version. No extra capacity needed; rollback is slow (roll the other way).</td></tr>
+                    <tr><td class="c-cyan">Blue-Green</td><td>Run two full environments. Blue serves live; deploy to idle Green, test it, then flip all traffic. Instant rollback = flip back. Costs 2× capacity during the switch.</td></tr>
+                    <tr><td class="c-cyan">Canary</td><td>Send a small % of traffic to the new version, watch metrics, then ramp up. Limits blast radius; needs good monitoring.</td></tr>
+                    <tr><td class="c-cyan">Feature flags</td><td>Ship code dark, then toggle it on for cohorts at runtime — decouples <em>deploy</em> from <em>release</em>.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Trade-offs</div>
+                <div class="concept-title">Choosing One</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>If you want…</th><th>Use</th></tr>
+                    <tr><td>Instant rollback, simple cutover</td><td class="c-green">Blue-Green</td></tr>
+                    <tr><td>To catch bad releases with real traffic</td><td class="c-green">Canary</td></tr>
+                    <tr><td>Zero extra infrastructure cost</td><td class="c-green">Rolling</td></tr>
+                    <tr><td>To release to specific users / A-B test</td><td class="c-green">Feature flags</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    They combine: canary-deploy behind a feature flag on rolling
+                    infrastructure. Kubernetes and load balancers make traffic-splitting easy,
+                    which is why these went mainstream.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Prerequisites</div>
+                <div class="concept-title">What Makes Safe Deploys Possible</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Requirement</th><th>Why</th></tr>
+                    <tr><td class="c-amber">Backward-compatible changes</td><td>Old and new versions run at once — the DB schema and APIs <span class="acro-exp">(Application Programming Interface)</span> must serve both. Use expand-then-contract migrations.</td></tr>
+                    <tr><td class="c-amber">Health checks</td><td>The orchestrator must know a new instance is actually ready before sending it traffic.</td></tr>
+                    <tr><td class="c-amber">Good metrics/alerts</td><td>Canary is blind without error-rate and latency dashboards to compare versions.</td></tr>
+                    <tr><td class="c-amber">Automated rollback</td><td>A deploy that can't auto-revert on failing metrics isn't really safe.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🔺</span>
+              <span class="topic-name">CAP Theorem &amp; Consistency Models</span>
+              <span class="topic-badge">Architecture</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Pick Two — the Fundamental Trade-off</div>
+                <div class="concept-desc">
+                  The <strong class="c-cyan">CAP theorem</strong> says a distributed data
+                  store can guarantee at most two of three properties:
+                  <strong>Consistency</strong> (every read sees the latest write),
+                  <strong>Availability</strong> (every request gets a response), and
+                  <strong>Partition tolerance</strong> (it keeps working when the network
+                  splits). Since networks <em>will</em> partition, partition tolerance isn't
+                  optional in practice — so the real choice, <em>during a partition</em>, is
+                  <strong class="c-amber">consistency vs availability</strong>.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Three Letters</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Letter</th><th>Guarantee</th></tr>
+                    <tr><td class="c-cyan">Consistency</td><td>All nodes return the same, most-recent data. A read never sees stale values.</td></tr>
+                    <tr><td class="c-cyan">Availability</td><td>Every request gets a (non-error) response, even if some nodes are down.</td></tr>
+                    <tr><td class="c-cyan">Partition tolerance</td><td>The system keeps operating even when nodes can't talk to each other.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Note: CAP's "Consistency" is stricter than ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span>'s — it means
+                    <em>linearizability</em> (one up-to-date copy), not "constraints hold."
+                    Different word, different guarantee.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">In Practice</div>
+                <div class="concept-title">CP vs AP — What You Choose During a Split</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>CP (consistency)</th><th>AP (availability)</th></tr>
+                    <tr><td>During a partition</td><td>Refuse/blocks writes to stay correct</td><td>Keep serving, reconcile later</td></tr>
+                    <tr><td>Read might be</td><td class="c-green">Always current</td><td class="c-amber">Stale for a moment</td></tr>
+                    <tr><td>Good for</td><td>Banking, inventory, bookings</td><td>Feeds, carts, social, DNS <span class="acro-exp">(Domain Name System)</span></td></tr>
+                    <tr><td>Examples</td><td>etcd, ZooKeeper, HBase</td><td>Cassandra, DynamoDB, Riak</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Most real systems aren't purely one or the other — they tune per-operation
+                    (a shopping cart is AP; the final checkout is CP).
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Beyond CAP</div>
+                <div class="concept-title">Consistency Is a Spectrum</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Model</th><th>Promise</th></tr>
+                    <tr><td class="c-green">Strong / linearizable</td><td>Reads always see the latest write — as if one copy existed.</td></tr>
+                    <tr><td class="c-amber">Eventual</td><td>Given no new writes, all replicas <em>eventually</em> converge. Cheap &amp; available.</td></tr>
+                    <tr><td class="c-amber">Read-your-writes</td><td>You always see your own updates (even if others lag).</td></tr>
+                    <tr><td class="c-amber">Causal</td><td>Related events are seen in order; unrelated ones may not be.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    A related lens, <strong>PACELC</strong>, extends CAP: even when there's no
+                    partition (<strong>E</strong>lse), you still trade
+                    <strong>L</strong>atency vs <strong>C</strong>onsistency — stronger
+                    guarantees cost round-trips. There's no free lunch in distributed data.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🕸️</span>
+              <span class="topic-name">Service Mesh — Istio, Linkerd &amp; the Sidecar Pattern</span>
+              <span class="topic-badge">Cloud Native</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Move Networking Concerns Out of Your Code</div>
+                <div class="concept-desc">
+                  When one app becomes 50 microservices, every service needs retries,
+                  timeouts, TLS <span class="acro-exp">(Transport Layer Security)</span>, load balancing, and metrics for its calls to the others.
+                  Building that into each service — in every language — is repetitive and
+                  inconsistent. A <strong class="c-cyan">service mesh</strong> extracts all of
+                  it into the infrastructure: a proxy runs alongside each service and handles
+                  service-to-service traffic, so your application code just makes a plain
+                  request and the mesh does the hard parts.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Architecture</div>
+                <div class="concept-title">Sidecars &amp; the Two Planes</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Piece</th><th>Role</th></tr>
+                    <tr><td class="c-cyan">Sidecar proxy</td><td>A proxy (often Envoy) deployed next to <em>every</em> service instance. All traffic in/out flows through it — the app is unaware.</td></tr>
+                    <tr><td class="c-cyan">Data plane</td><td>The collection of all sidecars actually moving the traffic.</td></tr>
+                    <tr><td class="c-cyan">Control plane</td><td>The brain (e.g. Istio's istiod) that configures every sidecar with routing rules, certs, and policy.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    You change behavior by updating the control plane; it pushes config to the
+                    sidecars. Newer meshes offer a "sidecar-less" (per-node) mode to cut the
+                    per-pod overhead.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What a Mesh Gives You</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Capability</th><th>Detail</th></tr>
+                    <tr><td class="c-green">mTLS <span class="acro-exp">(Mutual Transport Layer Security)</span> everywhere</td><td>Automatic mutual-TLS encryption + identity between services — zero app changes.</td></tr>
+                    <tr><td class="c-green">Traffic control</td><td>Canary/blue-green by shifting % of traffic; retries, timeouts, circuit breaking.</td></tr>
+                    <tr><td class="c-green">Observability</td><td>Uniform metrics, logs, and traces for every call, for free.</td></tr>
+                    <tr><td class="c-green">Policy</td><td>Who may call whom (authorization), rate limits, fault injection for testing.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Trade-offs</div>
+                <div class="concept-title">Do You Actually Need One?</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Detail</th></tr>
+                    <tr><td class="c-green">Worth it when</td><td>Many services, multiple languages, strict security/compliance, and you need uniform mTLS + observability.</td></tr>
+                    <tr><td class="c-red">Overkill when</td><td>A handful of services — the operational complexity and latency/resource overhead outweigh the benefit.</td></tr>
+                    <tr><td class="c-cyan">Options</td><td>Istio (powerful, complex), Linkerd (lightweight, simpler), Cilium (eBPF-based), Consul.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    A mesh solves the same problems an API <span class="acro-exp">(Application Programming Interface)</span> gateway does <em>between</em> internal
+                    services — the gateway is the front door for outside traffic; the mesh is
+                    the internal road network.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔃</span>
+              <span class="topic-name">GitOps — Git as the Source of Truth for Operations</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">If It's Not in Git, It Doesn't Exist</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">GitOps</strong> applies the software workflow you
+                  already know — pull requests, review, merge, history — to
+                  <em>infrastructure and deployments</em>. The desired state of your whole
+                  system lives in a Git repo as declarative config; an automated agent
+                  continuously makes the real cluster match it. You never <code>kubectl apply</code>
+                  by hand — you change a file, open a PR, and merging <em>is</em> the deploy.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">How It Works</div>
+                <div class="concept-title">Push vs Pull Deployment</div>
+                <div class="concept-desc">
+                  Traditional CI <strong>pushes</strong> changes into the cluster (the pipeline
+                  has cluster credentials and runs <code>apply</code>). GitOps flips it: an
+                  agent <em>inside</em> the cluster <strong class="c-amber">pulls</strong> the
+                  desired state from Git and reconciles continuously.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>What Happens</th></tr>
+                    <tr><td class="c-green">1. Declare</td><td>Desired state (Kubernetes manifests, Helm, Terraform) is committed to Git.</td></tr>
+                    <tr><td class="c-green">2. Observe</td><td>An in-cluster agent (Argo CD, Flux) watches the repo.</td></tr>
+                    <tr><td class="c-green">3. Diff</td><td>It compares Git (desired) against the live cluster (actual).</td></tr>
+                    <tr><td class="c-green">4. Reconcile</td><td>It applies changes to close the gap — automatically and continuously.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Why Teams Adopt It</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Benefit</th><th>Detail</th></tr>
+                    <tr><td class="c-green">Git is the audit log</td><td>Every change is a reviewed, attributed, revertible commit. Rollback = <code>git revert</code>.</td></tr>
+                    <tr><td class="c-green">No config drift</td><td>The agent fixes manual/out-of-band changes automatically — the cluster can't silently diverge.</td></tr>
+                    <tr><td class="c-green">Better security</td><td>CI no longer needs cluster credentials; the pull agent lives inside and reaches out.</td></tr>
+                    <tr><td class="c-green">Reproducible</td><td>Rebuild an entire environment from the repo — great for DR and new clusters.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Practical</div>
+                <div class="concept-title">Tools &amp; Gotchas</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Point</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">Tools</td><td>Argo CD and Flux are the two dominant Kubernetes GitOps agents.</td></tr>
+                    <tr><td class="c-amber">Secrets</td><td>You can't commit plaintext secrets — use Sealed Secrets, SOPS, or an external secrets operator.</td></tr>
+                    <tr><td class="c-amber">Repo layout</td><td>Common pattern: separate app-code repos from a <em>config</em> repo; a merge to config triggers the deploy.</td></tr>
+                    <tr><td class="c-amber">Fits declarative best</td><td>GitOps assumes a system that reconciles to a declared state (Kubernetes shines); imperative steps fit less cleanly.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">💰</span>
+              <span class="topic-name">FinOps — Cloud Cost Management</span>
+              <span class="topic-badge">Cloud</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Cloud Bill Is a Team Sport</div>
+                <div class="concept-desc">
+                  In the data-center era, capacity was a big upfront purchase the finance team
+                  controlled. In the cloud, <em>any</em> engineer can spin up expensive
+                  resources in seconds — and the bill is pay-as-you-go and variable.
+                  <strong class="c-cyan">FinOps</strong> is the practice of bringing financial
+                  accountability to that model: giving engineers cost visibility, so the people
+                  who create spend can make informed trade-offs between speed, quality, and
+                  cost. It's a culture, not just a dashboard.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Framework</div>
+                <div class="concept-title">Inform → Optimize → Operate</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Phase</th><th>What You Do</th></tr>
+                    <tr><td class="c-green">Inform</td><td>Make cost visible &amp; attributable — tag resources, allocate spend to teams/products, show dashboards.</td></tr>
+                    <tr><td class="c-green">Optimize</td><td>Cut waste — rightsize, delete idle resources, buy commitments, pick cheaper options.</td></tr>
+                    <tr><td class="c-green">Operate</td><td>Make it continuous — budgets, alerts, and cost as a normal engineering metric.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Where the Savings Are</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Lever</th><th>What It Means</th></tr>
+                    <tr><td class="c-cyan">Rightsizing</td><td>Match instance size to real usage — most VMs <span class="acro-exp">(Virtual Machine)</span> are wildly overprovisioned.</td></tr>
+                    <tr><td class="c-cyan">Kill idle / zombies</td><td>Unattached disks, idle load balancers, forgotten dev environments burn money 24/7.</td></tr>
+                    <tr><td class="c-cyan">Commitments</td><td>Reserved Instances / Savings Plans trade a 1–3 yr commitment for ~30–70% off steady workloads.</td></tr>
+                    <tr><td class="c-cyan">Spot instances</td><td>Spare capacity at up to ~90% off — for fault-tolerant, interruptible jobs.</td></tr>
+                    <tr><td class="c-cyan">Autoscaling</td><td>Scale to demand (and to zero) instead of provisioning for peak always-on.</td></tr>
+                    <tr><td class="c-cyan">Storage tiering</td><td>Move cold data to cheaper classes; set lifecycle rules.</td></tr>
+                    <tr><td class="c-cyan">Egress awareness</td><td>Data transfer <em>out</em> is a sneaky cost — cross-region/cross-cloud traffic adds up.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Habits That Keep Costs Sane</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Habit</th><th>Why</th></tr>
+                    <tr><td class="c-green">Tag everything</td><td>Without tags for team/env/product, you can't attribute spend or find waste.</td></tr>
+                    <tr><td class="c-green">Budgets &amp; anomaly alerts</td><td>Catch a runaway job or a misconfigured autoscaler before the invoice does.</td></tr>
+                    <tr><td class="c-green">Unit economics</td><td>Track <em>cost per customer / per request</em>, not just the total — growth should scale efficiently.</td></tr>
+                    <tr><td class="c-amber">Right time to optimize</td><td>Don't micro-optimize a tiny bill; focus effort where spend is largest.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">♾️</span>
+              <span class="topic-name">What DevOps Actually Is — Culture Over Tools</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Breaking the Wall Between Dev and Ops</div>
+                <div class="concept-desc">
+                  DevOps isn't a job title or a toolchain — it's a <strong class="c-cyan">culture</strong>
+                  that removes the traditional wall between developers (who want to ship change) and
+                  operations (who want stability). The mantra is
+                  <strong class="c-amber">"you build it, you run it"</strong>: the team that writes
+                  the code also operates it, so quality and reliability become everyone's job, not a
+                  handoff. Tools (CI/CD, IaC, containers) <em>enable</em> it, but adopting them
+                  without the culture just automates the old dysfunction faster.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ CALMS — THE FIVE PILLARS</div>
+                  <table class="ref-table">
+                    <tr><th>Pillar</th><th>Means</th></tr>
+                    <tr><td class="c-cyan">Culture</td><td>Shared ownership, blameless learning, collaboration over silos</td></tr>
+                    <tr><td class="c-cyan">Automation</td><td>Automate the repetitive path (build, test, deploy, infra)</td></tr>
+                    <tr><td class="c-cyan">Lean</td><td>Small batches, remove waste, optimize flow end-to-end</td></tr>
+                    <tr><td class="c-cyan">Measurement</td><td>Instrument everything; decide with data (see DORA)</td></tr>
+                    <tr><td class="c-cyan">Sharing</td><td>Open knowledge, feedback, and tooling across teams</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🔁</span>
+              <span class="topic-name">The Three Ways — Flow, Feedback, Learning</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Principles Behind DevOps (The DevOps Handbook)</div>
+                <div class="concept-desc">
+                  The Three Ways are the underlying principles all DevOps practices derive from —
+                  a useful lens for judging <em>why</em> a practice helps.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Way</th><th>Principle</th><th>Practices</th></tr>
+                    <tr><td class="c-cyan">1. Flow</td><td>Speed work left→right (dev→prod)</td><td>Small batches, CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span>, limit WIP, remove bottlenecks</td></tr>
+                    <tr><td class="c-cyan">2. Feedback</td><td>Fast signal right→left</td><td>Monitoring, automated tests, alerting, stop-the-line on failure</td></tr>
+                    <tr><td class="c-cyan">3. Learning</td><td>Continual experimentation</td><td>Blameless postmortems, chaos drills, psychological safety</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Flow gets change out fast; feedback catches problems fast; learning makes the
+                    system better over time. Skip feedback and you ship bugs faster; skip learning
+                    and you repeat incidents.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">📊</span>
+              <span class="topic-name">DORA <span class="acro-exp">(DevOps Research and Assessment)</span> Metrics — Measuring Delivery Performance</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Four Numbers That Predict Elite Teams</div>
+                <div class="concept-desc">
+                  The DORA (DevOps Research &amp; Assessment) research found four metrics that
+                  correlate with high-performing organizations. Crucially, speed and stability
+                  <strong class="c-green">rise together</strong> — elite teams deploy more often
+                  <em>and</em> break less. If you measure one thing about delivery, measure these.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Metric</th><th>Question</th><th>Elite</th></tr>
+                    <tr><td class="c-cyan">Deploy frequency</td><td>How often do you ship?</td><td>On-demand / many per day</td></tr>
+                    <tr><td class="c-cyan">Lead time for change</td><td>Commit → production?</td><td>&lt; 1 day</td></tr>
+                    <tr><td class="c-cyan">Change failure rate</td><td>% of deploys causing a problem</td><td>0–15%</td></tr>
+                    <tr><td class="c-cyan">MTTR <span class="acro-exp">(Mean Time To Repair)</span></td><td>Time to restore after an incident</td><td>&lt; 1 hour</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    First two = <strong>throughput</strong>; last two = <strong>stability</strong>.
+                    (A fifth, <em>reliability</em>, was later added.) Use them as a trend, not a
+                    stick — gaming "deploy frequency" by shipping trivial changes helps no one.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🗺️</span>
+              <span class="topic-name">Value Stream Mapping — Find the Bottleneck</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Where Does the Time Actually Go?</div>
+                <div class="concept-desc">
+                  A value stream map traces every step from idea to production, recording for each:
+                  <strong class="c-cyan">process time</strong> (actual work) vs
+                  <strong class="c-amber">wait time</strong> (queued, waiting for approval/review/
+                  environment). The revelation is almost always that <em>waiting</em> dwarfs
+                  working — a code change might take 2 hours to write and 2 weeks to ship, stuck in
+                  queues. You improve flow by attacking the biggest wait, not by making developers
+                  type faster.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    <strong>%C/A</strong> (percent complete &amp; accurate) at each step reveals
+                    rework loops — if QA <span class="acro-exp">(Quality Assurance)</span> sends 40% back, that handoff is your real problem. Map it,
+                    find the fattest wait/rework, fix that, remap. It's the Lean tool DevOps
+                    borrowed to make "optimize flow" concrete.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🛝</span>
+              <span class="topic-name">Platform Engineering &amp; the Internal Developer Platform</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Paving a Golden Path So Every Team Doesn't Reinvent It</div>
+                <div class="concept-desc">
+                  "You build it, you run it" can overload product teams with infra complexity —
+                  Kubernetes, pipelines, secrets, observability, all per team.
+                  <strong class="c-cyan">Platform engineering</strong> answers this by building an
+                  <strong class="c-amber">Internal Developer Platform (IDP)</strong>: a self-service
+                  layer that packages the infra into <strong>golden paths</strong>, so a developer
+                  can provision a service, database, and pipeline with a form or a CLI <span class="acro-exp">(Command Line Interface)</span> command —
+                  without becoming a cloud expert.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Principle</th><th>Detail</th></tr>
+                    <tr><td class="c-green">Self-service</td><td>Developers get what they need without filing tickets</td></tr>
+                    <tr><td class="c-green">Golden paths</td><td>Paved, opinionated defaults that are easy to follow and secure by default</td></tr>
+                    <tr><td class="c-green">Product mindset</td><td>The platform team treats developers as customers (adoption, not mandate)</td></tr>
+                    <tr><td class="c-amber">Not a rename of ops</td><td>It's a product, not a gatekeeper — paved roads, not roadblocks</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Tools in the space: Backstage (developer portal), Crossplane/Terraform
+                    (provisioning), Port/Humanitec (IDP orchestration).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🏭</span>
+              <span class="topic-name">CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> Pipeline Design — Stages, Gates &amp; Artifacts</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Assembly Line From Commit to Production</div>
+                <div class="concept-desc">
+                  A pipeline runs a series of <strong class="c-cyan">stages</strong> on every change,
+                  each a quality <strong class="c-amber">gate</strong> that must pass before the next.
+                  Build <strong>once</strong>, produce an immutable <strong>artifact</strong>, and
+                  promote that same artifact through environments — never rebuild per stage, or
+                  you're testing something different than you ship.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Stage</th><th>Gate</th></tr>
+                    <tr><td class="c-cyan">Build</td><td>Compiles; produces the artifact (jar, image)</td></tr>
+                    <tr><td class="c-cyan">Test</td><td>Unit + integration pass; coverage threshold</td></tr>
+                    <tr><td class="c-cyan">Scan</td><td>SAST/SCA/secrets clean (fail on high sev)</td></tr>
+                    <tr><td class="c-cyan">Deploy → staging</td><td>Smoke/e2e tests green</td></tr>
+                    <tr><td class="c-cyan">Deploy → prod</td><td>Manual approval or automated canary</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">CI</strong> = integrate + test every change automatically.
+                    <strong class="c-green">CD</strong> = that artifact is always deployable
+                    (Continuous Delivery) or actually auto-deployed (Continuous Deployment). Keep
+                    pipelines fast — a 40-minute pipeline kills the feedback loop.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🎬</span>
+              <span class="topic-name">GitHub Actions — Workflows, Jobs &amp; Secrets</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> Built Into Your Repo</div>
+                <div class="concept-desc">
+                  GitHub Actions runs YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> <strong class="c-cyan">workflows</strong> in
+                  <code>.github/workflows/</code> triggered by events (push, PR, schedule). A
+                  workflow has <strong>jobs</strong> (run in parallel by default) made of
+                  <strong>steps</strong> (shell commands or reusable <strong>actions</strong>).
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="var">name</span>: CI
+<span class="var">on</span>: [push, pull_request]
+<span class="var">jobs</span>:
+  <span class="var">test</span>:
+    <span class="var">runs-on</span>: ubuntu-latest
+    <span class="var">strategy</span>:
+      <span class="var">matrix</span>: { node: [<span class="num">18</span>, <span class="num">20</span>] }   <span class="com"># test on multiple versions</span>
+    <span class="var">steps</span>:
+      - <span class="var">uses</span>: actions/checkout@v4
+      - <span class="var">uses</span>: actions/setup-node@v4
+        <span class="var">with</span>: { node-version: <span class="str">'${{ matrix.node }}'</span> }
+      - <span class="var">run</span>: npm ci &amp;&amp; npm test
+      - <span class="var">run</span>: deploy.sh
+        <span class="var">env</span>: { TOKEN: <span class="str">'${{ secrets.DEPLOY_TOKEN }}'</span> }</pre>
+                  <table class="ref-table" style="margin-top:10px">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td>Matrix</td><td>Run the job across a combination of versions/OSes</td></tr>
+                    <tr><td>Secrets</td><td><code>${{ secrets.X }}</code> — never hard-code creds</td></tr>
+                    <tr><td>Reusable/composite</td><td>Factor shared steps into called workflows/actions</td></tr>
+                    <tr><td>OIDC <span class="acro-exp">(OpenID Connect)</span></td><td>Assume a cloud role with no stored keys (ties to IAM)</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🔧</span>
+              <span class="topic-name">Jenkins · GitLab CI · CircleCI — The Landscape</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Which CI Tool, and Why</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Character</th></tr>
+                    <tr><td class="c-cyan">GitHub Actions</td><td>Native to GitHub, huge marketplace — the default for GitHub repos</td></tr>
+                    <tr><td class="c-cyan">GitLab CI</td><td>Deeply integrated with GitLab; one <code>.gitlab-ci.yml</code>; strong self-hosted story</td></tr>
+                    <tr><td class="c-cyan">Jenkins</td><td>The veteran — infinitely pluggable, self-hosted, but you maintain it (Jenkinsfile/Groovy)</td></tr>
+                    <tr><td class="c-cyan">CircleCI / Travis / Drone</td><td>Hosted CI, config-as-YAML, fast setup</td></tr>
+                    <tr><td class="c-cyan">Argo / Tekton</td><td>Kubernetes-native pipelines (GitOps-friendly)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    They all share the model — YAML/DSL pipeline, runners/agents, stages, artifacts,
+                    secrets. Learn the concepts once; the syntax is a lookup. Pick by where your code
+                    lives and whether you want hosted vs self-managed.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🌿</span>
+              <span class="topic-name">Branching Strategies — Trunk vs GitHub Flow vs GitFlow</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">How Your Team Moves Code to Main</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Strategy</th><th>How</th><th>Fits</th></tr>
+                    <tr><td class="c-green">Trunk-based</td><td>Everyone commits to main behind feature flags; tiny short-lived branches</td><td>High-velocity CD; elite DORA <span class="acro-exp">(DevOps Research and Assessment)</span> teams</td></tr>
+                    <tr><td class="c-cyan">GitHub Flow</td><td>Branch → PR → review → merge → deploy main</td><td>Most web teams; simple &amp; effective</td></tr>
+                    <tr><td class="c-amber">GitFlow</td><td>Long-lived develop/release/hotfix branches</td><td>Versioned/released software; heavier</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">The trend is toward trunk-based:</strong> long-lived
+                    branches cause painful merges and delay integration (the opposite of "continuous
+                    integration"). Short-lived branches + feature flags let you merge constantly and
+                    release independently of deploy.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🚦</span>
+              <span class="topic-name">Progressive Delivery — Flags + Canary in the Pipeline</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Release ≠ Deploy</div>
+                <div class="concept-desc">
+                  Progressive delivery separates <strong class="c-cyan">deploy</strong> (code is on
+                  the servers) from <strong class="c-amber">release</strong> (users see it), and
+                  ramps exposure gradually so a bad change hits few people. It stitches together
+                  patterns you already know into the pipeline.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>Role</th></tr>
+                    <tr><td class="c-green">Feature flags</td><td>Ship code dark; toggle on for cohorts at runtime</td></tr>
+                    <tr><td class="c-green">Canary</td><td>Route 1% → 10% → 100% while watching metrics</td></tr>
+                    <tr><td class="c-green">Blue-green</td><td>Instant switch + instant rollback</td></tr>
+                    <tr><td class="c-green">Automated rollback</td><td>Bad canary metrics → pipeline reverts automatically</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Tools: LaunchDarkly/Unleash/Flagsmith (flags), Argo Rollouts/Flagger (automated
+                    canary on Kubernetes). This is how elite teams deploy dozens of times a day with
+                    a low change-failure rate — the two DORA <span class="acro-exp">(DevOps Research and Assessment)</span> goals reconciled.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🐳</span>
+              <span class="topic-name">Docker Deep — Multi-Stage Builds &amp; Image Slimming</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">How-To</div>
+                <div class="concept-title">Small, Fast, Secure Images</div>
+                <div class="concept-desc">
+                  A naive Dockerfile produces bloated, slow, insecure images. Two techniques fix
+                  most of it: <strong class="c-cyan">multi-stage builds</strong> (build in a fat
+                  image, copy only the artifact into a tiny final image) and
+                  <strong class="c-cyan">layer caching</strong> (order instructions so dependencies
+                  cache across builds).
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="com"># Stage 1: build</span>
+<span class="kw">FROM</span> golang:1.22 <span class="kw">AS</span> build
+<span class="kw">WORKDIR</span> /src
+<span class="kw">COPY</span> go.* ./
+<span class="kw">RUN</span> go mod download        <span class="com"># cached unless go.* changes</span>
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> go build -o /app
+
+<span class="com"># Stage 2: tiny runtime — just the binary</span>
+<span class="kw">FROM</span> gcr.io/distroless/base
+<span class="kw">COPY</span> --from=build /app /app
+<span class="kw">ENTRYPOINT</span> [<span class="str">"/app"</span>]</pre>
+                  <table class="ref-table" style="margin-top:10px">
+                    <tr><th>Technique</th><th>Win</th></tr>
+                    <tr><td>Multi-stage</td><td>MB-sized final image, no build tools shipped</td></tr>
+                    <tr><td>Distroless / Alpine</td><td>Minimal base = smaller attack surface</td></tr>
+                    <tr><td>Layer order</td><td>Copy deps before source → fast rebuilds</td></tr>
+                    <tr><td>Non-root USER</td><td>Don't run containers as root</td></tr>
+                    <tr><td>.dockerignore</td><td>Keep secrets/junk out of the build context</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">☸️</span>
+              <span class="topic-name">Kubernetes Objects — The Ones You Actually Use</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Building Blocks of a Deployment</div>
+                <div class="concept-desc">
+                  Kubernetes has dozens of object types, but day-to-day you use a handful. They
+                  compose: a Deployment manages Pods; a Service gives them a stable address; an
+                  Ingress routes external traffic in.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Object</th><th>Role</th></tr>
+                    <tr><td class="c-cyan">Pod</td><td>The smallest unit — one or more containers sharing network/storage</td></tr>
+                    <tr><td class="c-cyan">Deployment</td><td>Manages a replicated, self-healing set of Pods + rolling updates</td></tr>
+                    <tr><td class="c-cyan">Service</td><td>Stable virtual IP/DNS load-balancing to a set of Pods</td></tr>
+                    <tr><td class="c-cyan">Ingress</td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>(S) routing from outside into Services</td></tr>
+                    <tr><td class="c-cyan">ConfigMap / Secret</td><td>Config &amp; credentials injected into Pods</td></tr>
+                    <tr><td class="c-cyan">StatefulSet</td><td>Pods with stable identity/storage (databases)</td></tr>
+                    <tr><td class="c-cyan">Namespace</td><td>Virtual cluster for isolation/multi-tenancy</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Everything is <strong class="c-green">declarative YAML <span class="acro-exp">(YAML Ain't Markup Language)</span></strong> reconciled to
+                    desired state — you describe what you want; the controllers make it so
+                    (<code>kubectl apply -f</code>).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">⎈</span>
+              <span class="topic-name">Helm &amp; Kustomize — Packaging Manifests</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Stop Copy-Pasting YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> Per Environment</div>
+                <div class="concept-desc">
+                  Raw manifests don't scale across dev/staging/prod. Two tools solve it differently:
+                  <strong class="c-cyan">Helm</strong> templates manifests with variables into
+                  reusable "charts" (the K8s package manager); <strong class="c-cyan">Kustomize</strong>
+                  layers <em>overlays</em> that patch a common base — no templating language.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Helm</th><th>Kustomize</th></tr>
+                    <tr><td>Approach</td><td>Templating + values.yaml</td><td>Base + overlay patches</td></tr>
+                    <tr><td>Packaging</td><td class="c-green">Charts, repos, releases, rollback</td><td>No packaging</td></tr>
+                    <tr><td>Complexity</td><td>Powerful but templating can get gnarly</td><td class="c-green">Simple, YAML-native (built into kubectl)</td></tr>
+                    <tr><td>Best for</td><td>Distributing apps (Postgres, nginx)</td><td>Your own app across environments</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🔒</span>
+              <span class="topic-name">Kubernetes Security — RBAC <span class="acro-exp">(Role-Based Access Control)</span>, Network Policies &amp; Pod Security</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">A Cluster Is Insecure by Default</div>
+                <div class="concept-desc">
+                  Out of the box, K8s <span class="acro-exp">(Kubernetes)</span> is permissive — pods can talk to everything, run as root, and
+                  service accounts may be over-privileged. Hardening is a checklist every production
+                  cluster needs.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Control</th><th>Does</th></tr>
+                    <tr><td class="c-green">RBAC</td><td>Least-privilege for users &amp; service accounts (who can do what)</td></tr>
+                    <tr><td class="c-green">Network Policies</td><td>Default-deny pod-to-pod traffic; allow only what's needed</td></tr>
+                    <tr><td class="c-green">Pod Security Standards</td><td>Block root, privileged, host mounts (restricted profile)</td></tr>
+                    <tr><td class="c-green">Admission control</td><td>OPA/Gatekeeper, Kyverno enforce policy at deploy time</td></tr>
+                    <tr><td class="c-green">Image scanning</td><td>Trivy/Grype in CI; only signed images (see supply chain)</td></tr>
+                    <tr><td class="c-green">Secrets</td><td>Encrypt at rest (etcd); external secrets operators</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    This is where the Red Team's "Kubernetes attacks" meet defense — RBAC abuse and
+                    container escape are exactly what these controls stop.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">⚙️</span>
+              <span class="topic-name">Configuration Management — Ansible &amp; the Alternatives</span>
+              <span class="topic-badge">Config Mgmt</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Make Servers Match a Desired State</div>
+                <div class="concept-desc">
+                  Config management enforces <em>how a server is set up</em> — packages, files,
+                  services, users — declaratively and repeatably. <strong class="c-cyan">Ansible</strong>
+                  dominates because it's <strong class="c-green">agentless</strong> (just SSH + Python)
+                  and its YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> playbooks are readable.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># A tiny playbook: install &amp; start nginx, idempotently</span>
+<span class="var">- hosts:</span> web
+  <span class="var">become:</span> <span class="kw">true</span>
+  <span class="var">tasks:</span>
+    <span class="var">- name:</span> Install nginx
+      <span class="fn">ansible.builtin.apt:</span> { name: nginx, state: present }
+    <span class="var">- name:</span> Ensure it is running
+      <span class="fn">ansible.builtin.service:</span> { name: nginx, state: started, enabled: <span class="kw">true</span> }</pre>
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Model</th></tr>
+                    <tr><td class="c-cyan">Ansible</td><td>Agentless, push, YAML — easiest to adopt</td></tr>
+                    <tr><td class="c-cyan">Puppet / Chef</td><td>Agent-based, pull, mature at large scale</td></tr>
+                    <tr><td class="c-cyan">Salt</td><td>Agent or agentless; very fast event bus</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Idempotency</strong> is the whole point: run it 100 times,
+                    the box ends in the same state. Config management handles <em>mutable</em> servers;
+                    it complements Terraform (which <em>provisions</em> the infra) — ties to the IaC <span class="acro-exp">(Infrastructure as Code)</span> card.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🔐</span>
+              <span class="topic-name">Secrets Management — Vault &amp; Kubernetes Secrets</span>
+              <span class="topic-badge">Secrets</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Stop Putting Passwords in Git</div>
+                <div class="concept-desc">
+                  Hardcoded credentials are one of the most common breach causes. A secrets manager
+                  stores them centrally, encrypted, with access control and audit — and the best
+                  systems issue <strong class="c-green">short-lived, dynamic</strong> creds so a leak
+                  expires on its own.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Approach</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">HashiCorp Vault</td><td>Central secrets + dynamic DB/cloud creds + encryption-as-a-service</td></tr>
+                    <tr><td class="c-cyan">Cloud-native</td><td>AWS <span class="acro-exp">(Amazon Web Services)</span> Secrets Manager, GCP <span class="acro-exp">(Google Cloud Platform)</span> Secret Manager, Azure Key Vault</td></tr>
+                    <tr><td class="c-cyan">External Secrets Operator</td><td>Sync a manager's secrets into K8s <span class="acro-exp">(Kubernetes)</span> Secrets</td></tr>
+                    <tr><td class="c-cyan">Sealed Secrets / SOPS</td><td>Encrypt secrets so they're safe to commit to Git (GitOps)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-red">Note:</strong> plain Kubernetes Secrets are only
+                    base64-encoded, not encrypted at rest by default — enable encryption providers and
+                    prefer a real manager. Dynamic short-TTL creds beat static ones every time.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🔗</span>
+              <span class="topic-name">Software Supply Chain Security — SBOM <span class="acro-exp">(Software Bill of Materials)</span>, SLSA &amp; Sigstore</span>
+              <span class="topic-badge">Supply Chain</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Know &amp; Trust What You Ship</div>
+                <div class="concept-desc">
+                  After SolarWinds and Log4Shell, securing the build pipeline itself is a first-class
+                  concern. The goal: know every component in your artifact, and prove the artifact came
+                  from your pipeline unmodified.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Standard / Tool</th><th>Answers</th></tr>
+                    <tr><td class="c-cyan">SBOM</td><td>"What's inside?" — a bill of materials (SPDX/CycloneDX)</td></tr>
+                    <tr><td class="c-cyan">SLSA</td><td>"How was it built?" — build-integrity levels &amp; provenance</td></tr>
+                    <tr><td class="c-cyan">Sigstore / cosign</td><td>"Is it really ours?" — keyless signing of artifacts</td></tr>
+                    <tr><td class="c-cyan">Dependency scanning</td><td>Trivy, Grype, Dependabot — find vulnerable deps (SCA)</td></tr>
+                  </table>
+                  <pre class="code-block"><span class="com"># Generate an SBOM and sign an image (keyless, via OIDC)</span>
+syft myimage:1.0 <span class="var">-o</span> cyclonedx-json &gt; sbom.json
+cosign sign myimage:1.0
+cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Then enforce it: an admission controller can <strong class="c-green">reject
+                    unsigned images</strong> at deploy time — provenance you actually check, not just
+                    generate.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">📜</span>
+              <span class="topic-name">Policy as Code — OPA/Rego &amp; Kyverno</span>
+              <span class="topic-badge">Governance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Guardrails That Enforce Themselves</div>
+                <div class="concept-desc">
+                  Instead of a wiki page saying "don't deploy public S3 <span class="acro-exp">(Simple Storage Service)</span> buckets," policy-as-code makes
+                  the rule executable — checked automatically in CI or blocked at admission. Governance
+                  becomes a test that fails, not a review someone forgets.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">OPA / Rego</td><td>General policy engine; Gatekeeper enforces it on K8s <span class="acro-exp">(Kubernetes)</span></td></tr>
+                    <tr><td class="c-cyan">Kyverno</td><td>K8s-native policy in YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> (no new language to learn)</td></tr>
+                    <tr><td class="c-cyan">Conftest</td><td>Run OPA policies against Terraform/JSON/YAML in CI</td></tr>
+                    <tr><td class="c-cyan">Cloud-native</td><td>AWS <span class="acro-exp">(Amazon Web Services)</span> SCPs <span class="acro-exp">(Service Control Policy)</span>, GCP <span class="acro-exp">(Google Cloud Platform)</span> Org Policy, Azure Policy</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Where to enforce:</strong> shift left (CI catches it before
+                    merge) <em>and</em> defense in depth (admission control catches it at runtime).
+                    Ties directly to the CIS <span class="acro-exp">(Center for Internet Security)</span> Benchmarks and cloud-security cards.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">🗄️</span>
+              <span class="topic-name">Artifact &amp; Registry Management</span>
+              <span class="topic-badge">Delivery</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Where Build Outputs Live</div>
+                <div class="concept-desc">
+                  A pipeline builds artifacts — container images, jars, npm packages — that need a
+                  trusted, versioned home between build and deploy. Registries provide storage, access
+                  control, scanning, and immutability.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Registry</th><th>Stores</th></tr>
+                    <tr><td class="c-cyan">Harbor</td><td>Self-hosted container registry + scanning + signing</td></tr>
+                    <tr><td class="c-cyan">Artifactory / Nexus</td><td>Universal (Docker, Maven, npm, PyPI…) </td></tr>
+                    <tr><td class="c-cyan">GHCR / ECR <span class="acro-exp">(Elastic Container Registry)</span> / Artifact Registry</td><td>Cloud/platform-native registries</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Practices:</strong> immutable tags (never re-push
+                    <code>:v1.2.3</code>), retention policies to prune old images, scan on push, and
+                    promote the <em>same</em> digest through dev→staging→prod rather than rebuilding —
+                    build once, promote everywhere.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🕸️</span>
+              <span class="topic-name">Kubernetes Networking &amp; Storage — CNI &amp; CSI</span>
+              <span class="topic-badge">Kubernetes</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">How Pods Talk and Where Data Lives</div>
+                <div class="concept-desc">
+                  Kubernetes defers networking and storage to pluggable interfaces, so the cluster
+                  works the same whether you run on AWS <span class="acro-exp">(Amazon Web Services)</span>, bare metal, or a laptop.
+                  <strong class="c-cyan">CNI</strong> wires up pod networking;
+                  <strong class="c-cyan">CSI</strong> attaches persistent storage.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Layer</th><th>Detail</th></tr>
+                    <tr><td class="c-cyan">CNI plugin</td><td>Calico, Cilium, Flannel — gives every pod an IP <span class="acro-exp">(Internet Protocol)</span>; enforces NetworkPolicy</td></tr>
+                    <tr><td class="c-cyan">Service &amp; kube-proxy</td><td>Stable virtual IP + load-balancing across pod replicas</td></tr>
+                    <tr><td class="c-cyan">Ingress controller</td><td>NGINX, Traefik — HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> routing &amp; TLS <span class="acro-exp">(Transport Layer Security)</span> into the cluster</td></tr>
+                    <tr><td class="c-cyan">CSI driver</td><td>Provisions PersistentVolumes from EBS/PD/etc. via a PVC</td></tr>
+                    <tr><td class="c-cyan">StorageClass</td><td>Defines a tier (ssd, standard) for dynamic provisioning</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Cilium</strong> (eBPF-based) is increasingly the default —
+                    it does networking, NetworkPolicy, and observability in one. Storage: a
+                    <code>PVC</code> requests, the <code>StorageClass</code> + CSI driver fulfill it.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+<!-- /domain-body devops -->

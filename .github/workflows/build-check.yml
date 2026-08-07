@@ -31,6 +31,9 @@ jobs:
             exit 1
           fi
 
+      - name: Check topic names and the slug alias map
+        run: python tools/fix_topic_names.py --check
+
       - name: Lint content conventions
         run: python tools/lint_content.py
 
@@ -42,6 +45,9 @@ jobs:
 
       - name: Rebuild index.html
         run: python build.py
+
+      - name: Check the page performance budget
+        run: python tools/page_budget.py
 
       - name: Fail if index.html is stale
         run: |

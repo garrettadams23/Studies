@@ -119,13 +119,30 @@ def main():
         for tag, line in parser.stray:
             errors.append(f"{name}:{line}: stray </{tag}>")
 
+        for m in TOPIC_HEADER_RE.finditer(text):
+            if re.search(r"<h[1-6]\b", m.group(1)):
+                line = text[: m.start()].count("\n") + 1
+                errors.append(
+                    f"{name}:{line}: heading tag inside .topic-header — the title is "
+                    f"styled by .topic-name; a nested <h3> renders a size larger than "
+                    f"every neighbouring card"
+                )
+
         if "topic-chevron" in text:
             errors.append(f"{name}: uses banned class 'topic-chevron' (use 'topic-chev')")
 
         for line_no, block in topic_blocks(text):
             label, has_name = topic_label(block)
             if not has_name:
-                warns["topic without .topic-name"] += 1
+                # Was a warning for two sessions and nobody acted on it. It only
+                # became interesting once it produced a visible bug: the label
+                # falls back to the header's textContent, which swallows the
+                # badge word and the injected ★ ✓ 🔗 buttons, so the flashcard,
+                # the quiz option and the study-list row all read wrong.
+                errors.append(
+                    f"{name}:{line_no}: topic title is a bare text node — wrap it in "
+                    f'<span class="topic-name">. Run: python tools/fix_topic_names.py'
+                )
             if not label:
                 errors.append(f"{name}:{line_no}: topic has no usable title")
                 continue

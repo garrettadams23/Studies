@@ -1765,4 +1765,238 @@ Restart-Service IntuneManagementExtension</pre>
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE Y3 — WINDOWS SERVICING & UPDATES
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: WINDOWS UPDATE FOR BUSINESS ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔄</span>
+    <span class="topic-name">Windows Update for Business — Rings, Deferrals &amp; Deadlines</span>
+    <span class="topic-badge">Intune • Servicing</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">Four Rings, and the Setting Everyone Forgets</div>
+      <div class="concept-desc">
+        Update rings are a deferral policy, not a deployment. Windows fetches updates
+        itself; the ring decides how long it waits, when it stops waiting, and how much
+        warning the user gets before a reboot happens anyway.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Ring</th><th>Who</th><th>Quality deferral</th><th>Deadline</th><th>Grace</th></tr></thead>
+          <tbody>
+            <tr><td class="c-cyan">0 — Canary</td><td>IT, a handful of devices</td><td>0 days</td><td>2 days</td><td>1 day</td></tr>
+            <tr><td class="c-cyan">1 — Early</td><td>Volunteers, ~5%</td><td>2 days</td><td>3 days</td><td>2 days</td></tr>
+            <tr><td class="c-cyan">2 — Broad</td><td>Most of the fleet</td><td>5 days</td><td>5 days</td><td>2 days</td></tr>
+            <tr><td class="c-cyan">3 — Critical</td><td>Executives, clinical, production floor</td><td>9 days</td><td>7 days</td><td>3 days</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">The grace period is the whole user experience.</strong>
+          A deadline with no grace period reboots someone mid-meeting, and you will hear
+          about it for a year. The deadline says "you can no longer defer"; the grace
+          period says "and you have this long to pick your moment". Set both, always.
+        </div>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-green">Deferral and deadline are measured from different
+          points:</strong> deferral counts from the day the update was published,
+          deadline counts from the day it became applicable to that device. A machine
+          that was off for a fortnight starts its deadline clock when it comes back, not
+          retroactively — which is why "everyone is patched by day 7" is a claim about
+          machines that were switched on.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: THREE UPDATE PIPELINES ─────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧩</span>
+    <span class="topic-name">Feature vs Quality vs Driver Updates</span>
+    <span class="topic-badge">Intune • Servicing</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Comparison</div>
+      <div class="concept-title">Three Pipelines, Three Risk Profiles, Three Sets of Controls</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Feature</th><th>Quality</th><th>Driver</th></tr></thead>
+          <tbody>
+            <tr><td>What it is</td><td>A new Windows version</td><td>Monthly cumulative fixes</td><td>Hardware and firmware from vendors</td></tr>
+            <tr><td>Cadence</td><td>Annual</td><td>Second Tuesday, plus out-of-band</td><td>Continuous, vendor-driven</td></tr>
+            <tr><td>Risk</td><td>High — app compatibility</td><td>Moderate — regressions happen</td><td class="c-red">Underrated — a bad driver is a brick</td></tr>
+            <tr><td>Rollback</td><td>10 days by default</td><td>Uninstall the LCU <span class="acro-exp">(Latest Cumulative Update)</span>, not the SSU <span class="acro-exp">(Servicing Stack Update)</span></td><td>Roll back in Device Manager, or block the update</td></tr>
+            <tr><td>Controlled by</td><td>Target version, deferral</td><td>Deferral, deadline, pause</td><td>Separate driver policy — or Autopatch</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-red">They are independent.</strong> Pausing quality updates
+          does not pause drivers, and a feature-update deferral says nothing about either.
+          The commonest version of this mistake is an incident where someone "paused
+          updates" and a driver shipped anyway.
+        </div>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">SSU and LCU travel together and do not come apart.</strong>
+          Since they were combined into one package, the servicing stack update cannot be
+          uninstalled — only the cumulative part can. "We will just roll it back" is a
+          plan that works for the LCU and not for the SSU underneath it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: WINDOWS AUTOPATCH ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🤖</span>
+    <span class="topic-name">Windows Autopatch — What It Takes Over</span>
+    <span class="topic-badge">Intune • Servicing</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Handing the Rings to Microsoft</div>
+      <div class="concept-desc">
+        Autopatch runs the update rings for you: it builds the ring population, progresses
+        deployments, watches the signals, and halts a rollout that is going wrong. The
+        trade is real and worth stating plainly — you gain a service that does the
+        babysitting, and you lose your rings as the source of truth.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Concern</th><th>Autopatch owns</th><th>Still yours</th></tr></thead>
+          <tbody>
+            <tr><td>Ring membership</td><td class="c-green">Builds and balances it</td><td>Which devices are registered at all</td></tr>
+            <tr><td>Progression</td><td class="c-green">Advances and halts automatically</td><td>Deciding to pause the whole thing</td></tr>
+            <tr><td>Quality updates</td><td class="c-green">Yes</td><td>—</td></tr>
+            <tr><td>Feature updates</td><td class="c-green">Target version and cadence</td><td>App compatibility testing</td></tr>
+            <tr><td>Drivers &amp; firmware</td><td class="c-green">Optional, per policy</td><td>Vendor-specific exceptions</td></tr>
+            <tr><td>Third-party apps</td><td class="c-red">No</td><td>All of it</td></tr>
+            <tr><td>Exceptions</td><td class="c-red">Limited</td><td>Anything genuinely bespoke</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">Have the exit path before you enrol.</strong> Coming back
+          out means rebuilding rings, deferrals and deadlines by hand — the policies you
+          used to have are not waiting for you. Export the current ring configuration
+          first; it costs ten minutes and it is the difference between a decision and a
+          one-way door.
+        </div>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-green">Good fit:</strong> a fleet of reasonably standard
+          devices where update babysitting is eating a person.
+          <strong class="c-red">Poor fit:</strong> heavily regulated change windows,
+          machines pinned to a validated OS <span class="acro-exp">(Operating System)</span> build, or anywhere "we patch when the plant is
+          down" is a real constraint.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: UPDATE COMPLIANCE REPORTING ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📊</span>
+    <span class="topic-name">Update Compliance Reporting — Where the Truth Lives</span>
+    <span class="topic-badge">Intune • Servicing</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Artifact Map</div>
+      <div class="concept-title">Four Sources, and What Each One Actually Knows</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Source</th><th>Knows</th><th>Does not know</th></tr></thead>
+          <tbody>
+            <tr><td class="c-cyan">Intune ▸ Reports ▸ Windows updates</td><td>Ring assignment and per-device update state</td><td>Anything about a device that has not checked in</td></tr>
+            <tr><td class="c-cyan">Windows Update for Business reports</td><td>Deployment progress and failure reasons at fleet scale</td><td>Devices not sending diagnostic data</td></tr>
+            <tr><td class="c-cyan">The device's own update history</td><td>The ground truth for that one machine</td><td>Everything else</td></tr>
+            <tr><td class="c-cyan">Defender / vulnerability management</td><td>Whether the CVE <span class="acro-exp">(Common Vulnerabilities and Exposures)</span> is actually still exploitable here</td><td>Why the patch did not apply</td></tr>
+          </tbody>
+        </table>
+<pre class="code-block"><span class="com"># Ground truth on a single device — what is installed, and when</span>
+Get-HotFix | Sort-Object InstalledOn -Descending | Select-Object -First 10
+
+<span class="com"># The full update history including failures, which Get-HotFix hides</span>
+Get-WinEvent -LogName <span class="str">'Microsoft-Windows-WindowsUpdateClient/Operational'</span> -MaxEvents 40 |
+  Select-Object TimeCreated, Id, Message
+
+<span class="com"># Build number and revision — "patched" is a revision, not a version</span>
+Get-ComputerInfo -Property OsName, OsVersion, OsBuildNumber, WindowsVersion</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-red">"Not applicable" and "unknown" are not compliant.</strong>
+          Most dashboards blur three different states into one green number: patched,
+          not-applicable (the update never targeted this device), and unknown (nobody has
+          heard from it). Report them separately or the figure you give leadership is
+          higher than the truth — and the unknown bucket is exactly where the compromised
+          machine lives.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: EMERGENCY PATCHING ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🚨</span>
+    <span class="topic-name">Emergency Patching — Advisory to Verified</span>
+    <span class="topic-badge">Intune • Servicing</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">Six Steps, Starting Before You Touch a Console</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>#</th><th>Step</th><th>The question it answers</th></tr></thead>
+          <tbody>
+            <tr><td class="c-cyan">1</td><td>Triage the advisory</td><td>Does it affect us — the product, the version, the configuration? Is it on CISA <span class="acro-exp">(Cybersecurity and Infrastructure Security Agency)</span>'s exploited list?</td></tr>
+            <tr><td class="c-cyan">2</td><td>Count the exposure</td><td>How many devices, and are any of them internet-facing or high-value?</td></tr>
+            <tr><td class="c-cyan">3</td><td>Pick the vehicle</td><td>Expedited quality update, a Win32 app, a remediation script, or a configuration change as a stopgap</td></tr>
+            <tr><td class="c-amber">4</td><td>Decide about rings</td><td>Skip to broad only if exploitation is active <em>and</em> the patch is low-risk. Otherwise canary first, even now</td></tr>
+            <tr><td class="c-cyan">5</td><td>Deploy and watch</td><td>Failure rate in the first hour, and one named person watching it</td></tr>
+            <tr><td class="c-green">6</td><td>Verify</td><td>Query the fleet for the actual build or file version — not the deployment's success percentage</td></tr>
+          </tbody>
+        </table>
+<pre class="code-block"><span class="com"># Verification is a query about the device, not about the deployment.</span>
+<span class="com"># CMPivot, or the same idea via a proactive remediation:</span>
+OperatingSystem
+| <span class="kw">summarize</span> count() <span class="kw">by</span> Version
+
+<span class="com"># Or check the specific patched binary, which survives version ambiguity</span>
+File(<span class="str">'C:\\Windows\\System32\\example.dll'</span>)
+| <span class="kw">summarize</span> count() <span class="kw">by</span> Version</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-red">Skipping rings in a real emergency is defensible.
+          Skipping verification never is.</strong> A deployment reporting 98% success is a
+          claim about what the agent believes it did. The only statement worth putting in
+          the incident record is a query result showing what the devices actually run.
+        </div>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-green">Write the comms before the deployment,</strong> not
+          during. Who is told, what they are told, when the reboot lands, and who they
+          contact if it breaks something. Two paragraphs, drafted while you are calm,
+          saves the hour you will not have later.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body endpoint -->

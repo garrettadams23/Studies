@@ -1,0 +1,18 @@
+# Commits that reformatted markup without changing what a card says.
+#
+# tools/stamp_freshness.py passes this file to `git blame`, so a topic touched
+# only by a commit listed here keeps the review date it earned rather than the
+# date of the reformat. The script infers most such commits itself — see
+# global_markup_passes() — and this file is for the ones it cannot.
+#
+# What it cannot fix: a line that a listed commit *created*. `--ignore-rev`
+# reattributes a line to whatever touched it before; a line with no "before"
+# stays put. That is why splitting a domain still leaves a few cards dated by
+# the split — git's copy detection catches the long runs and misses the short
+# ones, and there is nothing earlier in that file to fall back to.
+#
+# Configure your own blame the same way with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Split data/ops.html into ops + devops. Cards moved verbatim; none were edited.
+a5f941f2ebe144e238942f0a9237aa4f07083db3

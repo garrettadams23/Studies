@@ -14,6 +14,7 @@
   --red: #ff4d6d;
   --purple: #a855f7;
   --text: #cdd9f0;
+  --card: #0f1830;
   --muted: #5a6e8a;
   --mono: "Share Tech Mono", monospace;
   --sans: "Outfit", sans-serif;
@@ -24,6 +25,7 @@
   --bg3: #e8edf4;
   --border: #c5d0de;
   --text: #0f172a;
+  --card: #ffffff;
   --muted: #475569;
   --cyan: #0284c7;
   --green: #059669;
@@ -2305,7 +2307,7 @@ mark.sh {
 .study-mi {
   display: flex; align-items: center; gap: 10px;
   padding: 9px 12px; border: none; border-radius: 8px;
-  background: none; color: var(--fg, #e8eef7); cursor: pointer;
+  background: none; color: var(--text); cursor: pointer;
   font-family: var(--mono); font-size: 13px; text-align: left;
 }
 .study-mi span { width: 26px; text-align: center; font-size: 14px; }
@@ -2333,7 +2335,7 @@ body.st-lock { overflow: hidden; }
   border: 1px solid var(--border); background: none;
   color: var(--muted); font-size: 15px; cursor: pointer;
 }
-#st-close:hover { color: var(--fg, #fff); border-color: var(--cyan); }
+#st-close:hover { color: var(--text); border-color: var(--cyan); }
 .st-h { font-family: var(--mono); font-size: 18px; margin: 0 0 14px; color: var(--cyan); }
 .st-hint { font-size: 11px; color: var(--muted); margin: 10px 0 0; font-family: var(--mono); }
 .st-empty { color: var(--muted); padding: 20px 0; text-align: center; }
@@ -2342,7 +2344,7 @@ body.st-lock { overflow: hidden; }
 .st-input, .st-select {
   width: 100%; padding: 10px 12px; border-radius: 10px;
   border: 1px solid var(--border); background: var(--bg, #0a1122);
-  color: var(--fg, #e8eef7); font-size: 14px; font-family: inherit;
+  color: var(--text); font-size: 14px; font-family: inherit;
 }
 .st-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
 .st-toolbar .st-select { width: auto; flex: 1; min-width: 150px; }
@@ -2350,7 +2352,7 @@ body.st-lock { overflow: hidden; }
 .st-count { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-right: auto; }
 .st-btn {
   padding: 9px 14px; border-radius: 9px; border: 1px solid var(--border);
-  background: none; color: var(--fg, #e8eef7); cursor: pointer;
+  background: none; color: var(--text); cursor: pointer;
   font-family: var(--mono); font-size: 13px; transition: background 0.15s, border-color 0.15s;
 }
 .st-btn:hover { border-color: var(--cyan); }
@@ -2390,7 +2392,7 @@ body.st-lock { overflow: hidden; }
 .st-card-q { font-size: 21px; font-weight: 700; line-height: 1.3; }
 .st-card-tap { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 6px; }
 .st-card-title { font-size: 17px; font-weight: 700; color: var(--cyan); }
-.st-card-desc { font-size: 14px; line-height: 1.5; color: var(--fg, #cfd8e6); }
+.st-card-desc { font-size: 14px; line-height: 1.5; color: var(--text); }
 .st-card-actions { display: flex; gap: 10px; margin-top: 16px; justify-content: center; flex-wrap: wrap; }
 
 /* Quiz */
@@ -2403,7 +2405,7 @@ body.st-lock { overflow: hidden; }
 .st-q-options { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .st-q-opt {
   width: 100%; text-align: left; padding: 12px 14px; border-radius: 10px;
-  border: 1px solid var(--border); background: none; color: var(--fg, #e8eef7);
+  border: 1px solid var(--border); background: none; color: var(--text);
   cursor: pointer; font-size: 14px; transition: background 0.12s, border-color 0.12s;
 }
 .st-q-opt:hover:not(:disabled) { border-color: var(--cyan); background: color-mix(in srgb, var(--cyan) 10%, transparent); }
@@ -2424,15 +2426,65 @@ body.st-lock { overflow: hidden; }
 .st-list { list-style: none; margin: 0; padding: 0; }
 .st-list-dom { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.04em; }
 .st-list-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
-.st-list-link { flex: 1; text-align: left; background: none; border: none; color: var(--fg, #e8eef7); cursor: pointer; font-size: 14px; padding: 6px 4px; border-radius: 6px; }
+.st-list-link { flex: 1; text-align: left; background: none; border: none; color: var(--text); cursor: pointer; font-size: 14px; padding: 6px 4px; border-radius: 6px; }
 .st-list-link:hover { color: var(--cyan); }
 .st-list-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; padding: 4px 6px; }
 .st-list-remove:hover { color: var(--red, #ff5470); }
+
+/* Backup / restore */
+.st-bk-lead { font-size: 13px; line-height: 1.6; color: var(--muted); margin: 0 0 16px; }
+.st-bk-block {
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+  border-radius: 10px;
+  padding: 14px 14px 16px;
+  margin-bottom: 14px;
+}
+.st-bk-head {
+  font-family: var(--mono); font-size: 11px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;
+}
+.st-bk-now { font-family: var(--mono); font-size: 12px; margin: 0 0 12px; }
+.st-bk-file {
+  display: block; width: 100%; font-size: 12px; color: var(--muted);
+  font-family: var(--mono); cursor: pointer;
+}
+.st-bk-file::file-selector-button {
+  font: inherit; margin-right: 10px; padding: 7px 12px; cursor: pointer;
+  border-radius: 8px; border: 1px solid var(--border, rgba(255, 255, 255, 0.18));
+  background: transparent; color: var(--cyan);
+}
+.st-bk-out:empty { display: none; }
+.st-bk-out { margin-top: 14px; font-size: 13px; line-height: 1.6; }
+.st-bk-ok { color: var(--green); }
+.st-bk-err { color: var(--red, #ff5470); }
+.st-bk-diff {
+  display: grid; grid-template-columns: 1fr auto; gap: 4px 14px;
+  margin: 0 0 12px; font-family: var(--mono); font-size: 12px;
+}
+.st-bk-diff dt { color: var(--muted); }
+.st-bk-diff dd { margin: 0; text-align: right; min-width: 0; overflow-wrap: anywhere; }
 
 @media (max-width: 640px) {
   #st-modal { padding: 18px 16px 22px; max-height: 88vh; }
   #study-fab-wrap { right: 12px; bottom: 12px; }
   #st-overlay { padding-top: 4vh; }
+  /* Two columns cannot hold a long summary on a phone — stack label over value */
+  .st-bk-diff { grid-template-columns: 1fr; gap: 0; }
+  .st-bk-diff dt { margin-top: 8px; }
+  .st-bk-diff dd { text-align: left; }
+}
+
+/* domain: devops — split out of ops when it passed 30 cards of its own */
+.chip.c-devops {
+  color: #14b8a6;
+  border-color: rgba(20, 184, 166, 0.35);
+}
+.chip.c-devops.active,
+.chip.c-devops:hover {
+  background: rgba(20, 184, 166, 0.12);
+}
+.domain-devops {
+  --accent: #14b8a6;
 }
 
 /* domain: endpoint (scaffolded) */
