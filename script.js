@@ -1137,10 +1137,17 @@ function stClose() {
 function esc(s) { return (s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 
 // ── Scope selector (All / a domain / Bookmarks) ─────────────────────────────
+// The acronym dictionary's "topics" are A–Z index sections, not concepts. As a
+// flashcard the front reads "A — 75 acronyms"; as a quiz the distractors are
+// "Acronyms — B" and "Acronyms — C". It has its own quiz (🔤 Acronym quiz),
+// which asks the question this material can actually answer.
+const ST_NOT_STUDYABLE = new Set(["acronym"]);
+function stIsStudyable(t) { return !ST_NOT_STUDYABLE.has(t.domainId); }
+
 function stScopeOptions() {
   const doms = [];
   const seen = new Map();
-  stIndex().forEach(t => {
+  stIndex().filter(stIsStudyable).forEach(t => {
     if (!seen.has(t.domainId)) {
       const d = { id: t.domainId, title: t.domainTitle, icon: t.domainIcon, n: 0 };
       seen.set(t.domainId, d);
@@ -1152,7 +1159,9 @@ function stScopeOptions() {
 }
 function stTopicsForScope(scope) {
   const all = stIndex();
-  if (scope === "__all") return all.slice();
+  if (scope === "__all") return all.filter(stIsStudyable);
+  // Starring and grading are deliberate acts, so those two decks honour the
+  // user's choice even for a section the domain list would not offer.
   if (scope === "__bookmarks") return all.filter(t => stIsBookmarked(t.id));
   if (scope === "__due") return all.filter(t => srsGet(t.id) && srsIsDue(t.id));
   return all.filter(t => t.domainId === scope);
