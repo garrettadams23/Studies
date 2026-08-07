@@ -3952,6 +3952,24 @@ expansion, search, flashcards and a page budget without a line of work — but t
 ordering was mine, not yours. Worth stating plainly rather than presenting the
 sequence as if it had been optimal.
 
+### Session 17 — the acronym dictionary was in the wrong decks
+
+Following the same habit as the last four sessions: before adding anything,
+look at what is there. The flashcard and quiz decks included the acronym
+dictionary, whose 54 "topics" are A–Z index sections. As a flashcard the front
+read *"A — 75 acronyms"*; as a quiz question the distractors were *"Acronyms —
+B"* and *"Acronyms — C"*. Fifty-four of them, 6% of the All-domains deck.
+
+The material is fine — it is a different question, and the dedicated 🔤 acronym
+quiz already asks it, generated from `acronyms.json` rather than from the page.
+Excluded from the domain list and from All-domains; **not** from bookmarks or
+due-today, because starring a section and grading a card are deliberate acts and
+a deck built from the user's own choices should honour them.
+
+`ST_NOT_STUDYABLE` is a one-entry set rather than a special case, so the next
+index-style domain — a glossary, a cheat-sheet hub, the Track U reference
+sheets — has an obvious place to be listed.
+
 ### Where the register stands after sessions 10–14
 
 | Risk | State |
