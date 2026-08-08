@@ -4233,4 +4233,143 @@ WAS: tracing why the VLAN 40 hosts can't reach the gateway.
 
   </div>
 </div>
+<!-- ── TOPIC: NOTE-TAKING FOR LEARNING ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📝</span>
+    <span class="topic-name">Note-Taking for Learning — Notes You Never Reopen Are Theatre</span>
+    <span class="topic-badge">LIFE • Learning Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">A note does two jobs, and most people only ever get one</h4>
+      <p class="concept-desc">Writing a note has an <strong>encoding</strong> function — the act of
+      deciding what matters and putting it in your own words is itself the learning — and a
+      <strong>storage</strong> function, where the note is a record you come back to. Both are real.
+      The failure is that almost everyone optimises for storage, produces beautiful complete notes,
+      and never reopens them. That gets you neither: the transcription was too shallow to teach you
+      anything, and the archive is never read.</p>
+      <p class="concept-desc">The single test worth applying to any note-taking system:
+      <strong>does it force me to process the material, and does it produce something I will
+      actually use later?</strong> If the answer to either is no, it is a hobby.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">The trap</span>
+      <h4 class="concept-title">The collector's fallacy</h4>
+      <p class="concept-desc">Highlighting, saving, bookmarking and copying all feel like progress and
+      produce almost none. The feeling comes from the effort and the visible output — 200 Kindle
+      highlights, a tidy folder, a page of clean notes — and it is uncoupled from whether you know
+      anything. Rereading has the same problem: it is the most popular study method and among the
+      least effective, precisely because familiarity feels like knowledge.</p>
+      <p class="concept-desc">The uncomfortable diagnostic: <strong>if you cannot remember roughly
+      what is in a set of notes without opening them, they have not taught you anything yet.</strong>
+      That is not an argument against notes — it is an argument that the note is the raw material and
+      not the result.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Reference</span>
+      <h4 class="concept-title">Two kinds of note, and conflating them ruins both</h4>
+      <p class="concept-desc">This is the most useful distinction in the whole topic, and it matters
+      especially in IT because so much of the material is commands.</p>
+      <table class="ref-table">
+        <tr><th></th><th>Reference notes</th><th>Learning notes</th></tr>
+        <tr><td>Purpose</td><td>Find it again at 03:00 under pressure</td><td>Build understanding you carry without the note</td></tr>
+        <tr><td>Should be</td><td><strong>Verbatim, complete, exact</strong> — flags, paths, versions</td><td><strong>Paraphrased, sparse, in your own words</strong></td></tr>
+        <tr><td>Success looks like</td><td>You grep it and it works first time</td><td>You never need to open it again</td></tr>
+        <tr><td>Example</td><td>The exact <code>tcpdump</code> incantation that captured the thing</td><td>Why a SYN <span class="acro-exp">(Synchronize)</span> flood exhausts the backlog queue</td></tr>
+        <tr><td>Failure mode</td><td>Paraphrasing it, so the command is subtly wrong when you need it</td><td>Transcribing it, so you wrote it down instead of understanding it</td></tr>
+      </table>
+      <p class="concept-desc">Keep them in different places, or at minimum different sections. A
+      runbook that has been "summarised in your own words" is dangerous. A conceptual note that is a
+      verbatim copy of a paragraph is useless. Most people's notes are an unhelpful average of the
+      two.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Reference</span>
+      <h4 class="concept-title">The three systems worth knowing</h4>
+      <table class="ref-table">
+        <tr><th>System</th><th>How it works</th><th>Best for</th></tr>
+        <tr><td><strong>Cornell</strong><br>Walter Pauk, Cornell University, 1950s</td><td>Split the page: a narrow <em>cue column</em> on the left, notes on the right, a summary across the bottom. Fill the notes while learning; write the cue column <em>afterwards</em> as questions; cover the notes and answer from the cues</td><td><strong>Learning.</strong> It is the only one of the three with retrieval practice designed into the page — the cue column turns notes into a self-test by default rather than by discipline</td></tr>
+        <tr><td><strong>Zettelkasten</strong><br>Niklas Luhmann's slip-box</td><td>One idea per note, each in your own words, each explicitly linked to related notes. Value accumulates in the <em>links</em>, not the count</td><td>Long-horizon work where you are building a body of understanding and want to find non-obvious connections. Overkill for passing an exam in six weeks</td></tr>
+        <tr><td><strong>Progressive summarisation</strong><br>layered highlighting</td><td>Keep the source, then highlight within it, then bold within the highlights, then summarise — each pass only on what survived</td><td>Long documents you will genuinely revisit. Note this is a popular practice rather than a research finding — treat it as a sensible workflow, not an evidenced method</td></tr>
+      </table>
+      <p class="concept-desc">If you adopt one thing from this card, adopt the <strong>Cornell cue
+      column</strong>. Not the paper layout — the habit of converting every note into a question the
+      same day you take it.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">The cue column, applied to something on this site</h4>
+      <pre class="code-block"><span class="com"># NOTES column - written while reading the OSPF card</span>
+Areas limit LSA flooding. Area 0 is the backbone; every
+other area must touch it. ABR sits between areas and
+summarises. Non-backbone areas reach each other THROUGH 0.
+Virtual link = a bodge to reattach an orphaned area.
+
+<span class="com"># CUE column - written AFTERWARDS, as questions.
+# This is the part that does the work. Ten questions beats
+# ten more paragraphs of notes.</span>
+Q: What problem do OSPF areas solve?
+Q: What must every non-backbone area connect to, and why?
+Q: What does an ABR do?
+Q: If two areas can't reach area 0, what's the fix - and
+   why is it a smell rather than a design?
+
+<span class="com"># SUMMARY - one or two lines, from memory, notes covered.
+# If you can't write this, you did not learn it yet, and
+# that is worth knowing NOW rather than in an exam.</span>
+OSPF scales by splitting the flooding domain into areas
+that all hang off a mandatory backbone.
+
+<span class="com"># Then: cover the notes. Answer the cues out loud.
+# Anything you fail becomes a flashcard, not a re-read.</span></pre>
+      <p class="concept-desc">Notice the asymmetry in effort. The notes column took two minutes and
+      taught you a little. The cue column took two minutes and is where nearly all the value is,
+      because writing a good question about material requires knowing what the material is
+      <em>for</em>.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Honest limits</span>
+      <h4 class="concept-title">On handwriting versus typing</h4>
+      <p class="concept-desc">You will have heard that handwriting notes beats typing them. That comes
+      from a well-known 2014 study (Mueller and Oppenheimer, "The Pen Is Mightier Than the Keyboard"),
+      which found longhand note-takers did better on conceptual questions. <strong>It has since had a
+      mixed replication record</strong> — later attempts, including a larger 2019 study, did not
+      reproduce the key effects. So do not treat "always use paper" as settled.</p>
+      <p class="concept-desc">What survives is the proposed <em>mechanism</em>, and it is the part
+      worth acting on: <strong>typing makes verbatim transcription easy, and transcription is shallow
+      processing.</strong> Handwriting helps only because it is too slow to transcribe, forcing you to
+      select and paraphrase. If you type but deliberately refuse to transcribe — paraphrase, compress,
+      write questions — you get the benefit without the wrist ache. If you handwrite but copy the slide
+      word for word, the paper does not save you.</p>
+      <p class="concept-desc">The medium is not the variable. <strong>Paraphrasing is the
+      variable.</strong></p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">In practice</span>
+      <h4 class="concept-title">Using this with the site's own tools</h4>
+      <table class="ref-table">
+        <tr><th>Step</th><th>Where</th></tr>
+        <tr><td>Learning notes, in your own words, one topic at a time</td><td>The notepad. Not a copy of the card — the card is already saved and does not need duplicating</td></tr>
+        <tr><td>Turn each note into a question the same day</td><td>The notepad, as a cue list. This is the Cornell column and the single highest-value habit here</td></tr>
+        <tr><td>Anything you fail on the cues</td><td>★ the topic so it lands in your study list, then grade it in flashcards — that is what the scheduler is for</td></tr>
+        <tr><td>Reference notes — exact commands and flags</td><td>Keep separately from the above, verbatim. A personal runbook is a different artifact with different rules</td></tr>
+        <tr><td>End-of-session review</td><td>Fold the cue answers into the Hansei prompts — see <strong>Hansei — The 15 Minutes That Beat 15 More</strong></td></tr>
+      </table>
+      <p class="concept-desc">The through-line across every card in this group: <strong>the output of
+      studying should be a question you can answer, not a document you can show.</strong> Notes are
+      how you get there, and they are not the destination.</p>
+    </div>
+
+  </div>
+</div>
 <!-- /domain-body lifestyle -->
