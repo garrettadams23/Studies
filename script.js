@@ -11,23 +11,23 @@
 let allExpanded = false;
 
 const QUOTES = [
-  "The obstacle is the way. — Marcus Aurelius",
-  "An unexamined life is not worth living. — Socrates",
-  "Simplicity is the ultimate sophistication. — Leonardo da Vinci",
+  "What stands in the way becomes the way. — Marcus Aurelius, Meditations 5.20",
+  "The unexamined life is not worth living. — Socrates, in Plato's Apology",
+  "Simplicity is the ultimate sophistication. — widely quoted, source unknown",
   "He who has a why can bear almost any how. — Nietzsche",
   "The Tao that can be told is not the eternal Tao. — Lao Tzu",
-  "One must imagine Sisyphus happy. — Albert Camus",
-  "We suffer more in imagination than in reality. — Seneca",
+  "One must imagine Sisyphus happy. — Camus, The Myth of Sisyphus",
+  "We suffer more often in imagination than in reality. — Seneca, Letters 13",
   "Before enlightenment, chop wood, carry water. — Zen proverb",
   "You have power over your mind, not outside events. — Marcus Aurelius",
   "The quieter you become, the more you can hear. — Ram Dass",
   "Amor fati — love your fate. — Nietzsche",
   "Water is the softest thing, yet it overcomes the hardest. — Lao Tzu",
-  "To know yourself is the beginning of all wisdom. — Aristotle",
+  "Know thyself. — inscribed at Delphi",
   "Security comes not from having things, but from releasing the need to control. — Epictetus",
-  "In the middle of difficulty lies opportunity. — Albert Einstein",
-  "Do not seek for things to happen the way you want them to. — Epictetus",
-  "Peace comes from within. Do not seek it without. — Buddha",
+  "In the middle of difficulty lies opportunity. — widely quoted, source unknown",
+  "Do not seek to have events happen as you want them to, but want them to happen as they do. — Epictetus, Enchiridion 8",
+  "Peace comes from within. Do not seek it without. — modern aphorism",
   "The present moment always will have been. — Marcus Aurelius"
 ];
 
