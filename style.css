@@ -2474,6 +2474,56 @@ body.st-lock { overflow: hidden; }
   .st-bk-diff dd { text-align: left; }
 }
 
+/* Math diagrams — theme-aware, printable, hidden on very small screens */
+.math-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 520px;
+  margin: 6px 0 2px;
+}
+.msv-circle { fill: none; stroke: var(--cyan); stroke-width: 2; opacity: 0.9; }
+.msv-axis   { stroke: var(--muted); stroke-width: 1.5; }
+.msv-spoke  { stroke: var(--border); stroke-width: 1; }
+.msv-dot    { fill: var(--cyan); }
+.msv-dot2   { fill: var(--amber); }
+.msv-curve  { fill: none; stroke: var(--cyan); stroke-width: 2.5; }
+.msv-secant { stroke: var(--amber); stroke-width: 2; }
+.msv-tangent{ stroke: var(--green); stroke-width: 2.5; }
+.msv-dash   { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 4 4; }
+.msv-bar    { fill: var(--cyan); fill-opacity: 0.16; stroke: var(--cyan); stroke-width: 1; }
+.msv-rad, .msv-co, .msv-ax, .msv-lbl, .msv-lbl2, .msv-key, .msv-cap, .msv-cap2 {
+  font-family: var(--mono);
+  text-anchor: middle;
+}
+.msv-rad  { font-size: 13px; fill: var(--text); font-weight: 600; }
+.msv-co   { font-size: 9.5px; fill: var(--muted); }
+.msv-ax   { font-size: 14px; fill: var(--muted); }
+.msv-lbl  { font-size: 13px; fill: var(--amber); }
+.msv-lbl2 { font-size: 13px; fill: var(--muted); }
+.msv-key  { font-size: 12px; text-anchor: start; }
+.msv-k-sec { fill: var(--amber); }
+.msv-k-tan { fill: var(--green); }
+.msv-cap  { font-size: 15px; fill: var(--cyan); font-weight: 700; }
+.msv-cap2 { font-size: 11.5px; fill: var(--muted); }
+
+@media (max-width: 460px) {
+  .msv-co { display: none; }
+}
+
+/* domain: math */
+.chip.c-math {
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.35);
+}
+.chip.c-math.active,
+.chip.c-math:hover {
+  background: rgba(56, 189, 248, 0.12);
+}
+.domain-math {
+  --accent: #38bdf8;
+}
+
 /* domain: quotes */
 .chip.c-quotes {
   color: #eab308;
