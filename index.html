@@ -57336,6 +57336,8 @@ take absolute values.</p>
 <tr><td>Point-slope form</td><td><code>y − y₁ = m(x − x₁)</code> — the form every tangent-line answer takes</td></tr>
 <tr><td>Distance</td><td><code>d = √((x₂ − x₁)² + (y₂ − y₁)²)</code></td></tr>
 <tr><td>Midpoint</td><td><code>((x₁ + x₂)/2, (y₁ + y₂)/2)</code></td></tr>
+<tr><td>Circle (centre h,k)</td><td><code>(x − h)² + (y − k)² = r²</code>; the unit circle is <code>x² + y² = 1</code></td></tr>
+<tr><td>Ellipse ("oval")</td><td><code>(x − h)²/a² + (y − k)²/b² = 1</code> — a circle stretched by <code>a</code> and <code>b</code></td></tr>
 </table>
 </div>
 <div class="concept-card">
@@ -57468,6 +57470,7 @@ outside the shape, which surprises people the first time.</p>
 <tr><td>Cylinder</td><td><code>V = πr²h</code></td><td><code>SA = 2πr² + 2πrh</code></td></tr>
 <tr><td>Cone</td><td><code>V = ⅓πr²h</code></td><td><code>SA = πr² + πrl</code>, slant <code>l = √(r² + h²)</code></td></tr>
 <tr><td>Sphere</td><td><code>V = ⁴⁄₃πr³</code></td><td><code>SA = 4πr²</code></td></tr>
+<tr><td>Hemisphere</td><td><code>V = ⅔πr³</code></td><td><code>SA = 3πr²</code> (curved + flat face)</td></tr>
 <tr><td>Pyramid</td><td><code>V = ⅓ · (base area) · h</code></td><td>Base + the triangular faces</td></tr>
 </table>
 <p class="concept-desc">The cone's surface area uses the <strong>slant height</strong>
@@ -57854,6 +57857,309 @@ it is the identity that turns the radical into something without a root.</p>
 <code>sin</code> and <code>cos</code> always land in <code>[−1, 1]</code>, so a sine of 1.4 is an
 arithmetic error. <code>sec</code> and <code>csc</code> are the opposite — they never fall
 <em>between</em> −1 and 1, because they are 1 over something no bigger than 1.</p>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: IMPLICIT DIFFERENTIATION ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🔗</span>
+<span class="topic-name">Implicit Differentiation &amp; Choosing Which Rule First</span>
+<span class="topic-badge">MATH • Ch 8 Technique</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<span class="concept-label">Core Concept</span>
+<h4 class="concept-title">Choosing the rule: look at the outermost operation</h4>
+<p class="concept-desc">Before you differentiate anything, ask <strong>what is the last thing
+that happens</strong> if you evaluated this at a number. That operation names the rule.</p>
+<table class="ref-table">
+<tr><th>Outermost operation</th><th>Rule</th><th>Example</th></tr>
+<tr><td>Addition / subtraction</td><td>Differentiate term by term</td><td><code>x³ + sin x</code></td></tr>
+<tr><td>A product of two functions</td><td><strong>Product rule</strong></td><td><code>x²·sin x</code></td></tr>
+<tr><td>A quotient</td><td><strong>Quotient rule</strong></td><td><code>(x+1)/(x²−3)</code></td></tr>
+<tr><td>A function wrapped around another</td><td><strong>Chain rule</strong></td><td><code>sin(x²)</code> — the sine happens last</td></tr>
+<tr><td>A constant times something</td><td>Pull the constant out</td><td><code>5·tan x</code></td></tr>
+</table>
+<p class="concept-desc"><code>sin(x²)</code> and <code>sin²x</code> look similar and need
+different first moves. In <code>sin(x²)</code> the <em>sine</em> is outermost, so chain rule with
+inner <code>x²</code>. In <code>sin²x = (sin x)²</code> the <em>squaring</em> is outermost, so
+chain rule with inner <code>sin x</code>. Getting the order right is most of the work.</p>
+</div>
+<div class="concept-card">
+<span class="concept-label">Concept</span>
+<h4 class="concept-title">The chain rule, said once, properly</h4>
+<p class="concept-desc"><code>d/dx f(g(x)) = f′(g(x)) · g′(x)</code> — differentiate the outer
+function <strong>leaving the inner one untouched</strong>, then multiply by the derivative of the
+inner. The universal mistake is stopping before that multiplication.</p>
+<pre class="code-block"><span class="com"># Underline the inside before you start. It is the whole trick.</span>
+   d/dx sin(3x²)  ->  cos(3x²) · 6x        <span class="com"># not just cos(3x²)</span>
+   d/dx (x³+1)⁵   ->  5(x³+1)⁴ · 3x²
+   d/dx e^(2x)    ->  e^(2x) · 2
+   d/dx ln(5x)    ->  (1/5x) · 5  =  1/x
+
+<span class="com"># Nested twice? Peel one layer at a time, outside in.</span>
+   d/dx sin(cos(x²))
+     = cos(cos(x²)) · d/dx[cos(x²)]
+     = cos(cos(x²)) · (−sin(x²)) · 2x</pre>
+</div>
+<div class="concept-card">
+<span class="concept-label">Hands-on</span>
+<h4 class="concept-title">Implicit differentiation — the mechanical version</h4>
+<p class="concept-desc">When <code>y</code> is not solved for, differentiate both sides with
+respect to <code>x</code> and write <code>dy/dx</code> every time you differentiate a
+<code>y</code>. That is the chain rule doing its job: <code>y</code> is a function of
+<code>x</code>, so <code>d/dx[y³] = 3y²·dy/dx</code>.</p>
+<pre class="code-block"><span class="com"># x² + y² = 25</span>
+   2x + 2y·(dy/dx) = 0
+   dy/dx = −x/y
+
+<span class="com"># THE FOUR STEPS, every time:
+#   1. d/dx both sides
+#   2. every y gives a dy/dx  (chain rule)
+#   3. get all dy/dx terms on ONE side, everything else on the other
+#   4. factor out dy/dx and divide</span></pre>
+</div>
+<div class="concept-card">
+<span class="concept-label">Hands-on</span>
+<h4 class="concept-title">The hard case: product rule and chain rule together</h4>
+<pre class="code-block"><span class="com"># x·sin(y) = 5y + 2x        <- the shape your review guide names</span>
+
+<span class="com"># LEFT side is a PRODUCT of x and sin(y):</span>
+   d/dx[x·sin(y)] = (1)·sin(y) + x·cos(y)·(dy/dx)
+                     ^^^^^^^^^^   ^^^^^^^^^^^^^^^^
+                     d/dx[x]·sin(y)   x·d/dx[sin(y)], chain rule
+                                      because y depends on x
+
+<span class="com"># RIGHT side:</span>
+   d/dx[5y + 2x] = 5·(dy/dx) + 2
+
+<span class="com"># Set them equal and GROUP the dy/dx terms:</span>
+   sin(y) + x·cos(y)·(dy/dx) = 5·(dy/dx) + 2
+
+   x·cos(y)·(dy/dx) − 5·(dy/dx) = 2 − sin(y)      <span class="com"># step 3</span>
+   (dy/dx)·[x·cos(y) − 5]       = 2 − sin(y)      <span class="com"># step 4: factor</span>
+
+   dy/dx = (2 − sin(y)) / (x·cos(y) − 5)
+
+<span class="com"># The answer contains BOTH x and y. That is normal and correct
+# for implicit differentiation - do not try to eliminate y.</span></pre>
+</div>
+<div class="concept-card">
+<span class="concept-label">Reference</span>
+<h4 class="concept-title">Inverse trig derivatives — all six</h4>
+<table class="ref-table">
+<tr><th>f(x)</th><th>f′(x)</th><th>f(x)</th><th>f′(x)</th></tr>
+<tr><td><code>arcsin x</code></td><td><code>1/√(1 − x²)</code></td><td><code>arccos x</code></td><td><code>−1/√(1 − x²)</code></td></tr>
+<tr><td><code>arctan x</code></td><td><code>1/(1 + x²)</code></td><td><code>arccot x</code></td><td><code>−1/(1 + x²)</code></td></tr>
+<tr><td><code>arcsec x</code></td><td><code>1/(|x|·√(x² − 1))</code></td><td><code>arccsc x</code></td><td><code>−1/(|x|·√(x² − 1))</code></td></tr>
+</table>
+<p class="concept-desc">Learn the left column and negate for the right — <strong>each co-inverse
+is the negative of its partner</strong>, so three facts cover six. Note the absolute value in the
+arcsec pair; it is not decoration, it is what keeps the derivative positive on both branches.</p>
+<p class="concept-desc">These almost always arrive wrapped in a chain rule:
+<code>d/dx arctan(3x) = 1/(1 + (3x)²) · 3 = 3/(1 + 9x²)</code>.</p>
+</div>
+<div class="concept-card">
+<span class="concept-label">Reference</span>
+<h4 class="concept-title">Higher-order derivatives, and going backwards</h4>
+<table class="ref-table">
+<tr><th>Notation</th><th>Meaning</th></tr>
+<tr><td><code>f″(x)</code>, <code>d²y/dx²</code></td><td>Rate of change of the rate of change — concavity, and acceleration from position</td></tr>
+<tr><td><code>f‴</code>, <code>f⁽⁴⁾</code></td><td>Keep differentiating. Beyond the third, the superscript goes in parentheses</td></tr>
+<tr><td><strong>Antiderivative</strong></td><td>The power rule in reverse: <strong>add one to the exponent, divide by the new exponent</strong>. <code>x³ → x⁴/4</code>. Always <code>+ C</code></td></tr>
+</table>
+<p class="concept-desc">A quick check that costs nothing: <strong>differentiate your
+antiderivative</strong>. If it does not return the original, you have made an error, and you
+will know immediately rather than at the end of a three-step problem.</p>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: NUMERICAL INTEGRATION ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📶</span>
+<span class="topic-name">Numerical Integration — Trapezoidal Rule, Midpoint &amp; Simpson's</span>
+<span class="topic-badge">MATH • Ch 12 Approximation</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<span class="concept-label">Diagram</span>
+<h4 class="concept-title">Why trapezoids beat rectangles</h4>
+<svg class="math-svg" viewBox="0 0 560 300" role="img" aria-label="A curve with six trapezoids beneath it between a and b, each trapezoid top joining two points on the curve, illustrating the trapezoidal rule">
+<line class="msv-axis" x1="30" y1="260" x2="540" y2="260"/>
+<line class="msv-axis" x1="60" y1="285" x2="60" y2="30"/>
+<polygon class="msv-bar" points="110.0,260 110.0,248.6 165.0,242.3 165.0,260"/>
+<polygon class="msv-bar" points="165.0,260 165.0,242.3 220.0,230.9 220.0,260"/>
+<polygon class="msv-bar" points="220.0,260 220.0,230.9 275.0,214.3 275.0,260"/>
+<polygon class="msv-bar" points="275.0,260 275.0,214.3 330.0,192.5 330.0,260"/>
+<polygon class="msv-bar" points="330.0,260 330.0,192.5 385.0,165.7 385.0,260"/>
+<polygon class="msv-bar" points="385.0,260 385.0,165.7 440.0,133.6 440.0,260"/>
+<line class="msv-dash" x1="110.0" y1="260" x2="110.0" y2="248.6"/>
+<circle class="msv-dot" cx="110.0" cy="248.6" r="3.5"/>
+<line class="msv-dash" x1="165.0" y1="260" x2="165.0" y2="242.3"/>
+<circle class="msv-dot" cx="165.0" cy="242.3" r="3.5"/>
+<line class="msv-dash" x1="220.0" y1="260" x2="220.0" y2="230.9"/>
+<circle class="msv-dot" cx="220.0" cy="230.9" r="3.5"/>
+<line class="msv-dash" x1="275.0" y1="260" x2="275.0" y2="214.3"/>
+<circle class="msv-dot" cx="275.0" cy="214.3" r="3.5"/>
+<line class="msv-dash" x1="330.0" y1="260" x2="330.0" y2="192.5"/>
+<circle class="msv-dot" cx="330.0" cy="192.5" r="3.5"/>
+<line class="msv-dash" x1="385.0" y1="260" x2="385.0" y2="165.7"/>
+<circle class="msv-dot" cx="385.0" cy="165.7" r="3.5"/>
+<line class="msv-dash" x1="440.0" y1="260" x2="440.0" y2="133.6"/>
+<circle class="msv-dot" cx="440.0" cy="133.6" r="3.5"/>
+<polyline class="msv-curve" points="70,250.0 74,250.0 78,249.9 82,249.9 86,249.8 90,249.7 94,249.5 98,249.3 102,249.1 106,248.9 110,248.6 114,248.4 118,248.0 122,247.7 126,247.3 130,246.9 134,246.5 138,246.1 142,245.6 146,245.1 150,244.6 154,244.0 158,243.4 162,242.8 166,242.2 170,241.5 174,240.8 178,240.1 182,239.3 186,238.6 190,237.8 194,236.9 198,236.1 202,235.2 206,234.3 210,233.3 214,232.4 218,231.4 222,230.4 226,229.3 230,228.2 234,227.1 238,226.0 242,224.9 246,223.7 250,222.5 254,221.2 258,220.0 262,218.7 266,217.3 270,216.0 274,214.6 278,213.2 282,211.8 286,210.3 290,208.9 294,207.4 298,205.8 302,204.2 306,202.7 310,201.0 314,199.4 318,197.7 322,196.0 326,194.3 330,192.5 334,190.8 338,188.9 342,187.1 346,185.3 350,183.4 354,181.4 358,179.5 362,177.5 366,175.5 370,173.5 374,171.4 378,169.4 382,167.3 386,165.1 390,163.0 394,160.8 398,158.6 402,156.3 406,154.0 410,151.7 414,149.4 418,147.1 422,144.7 426,142.3 430,139.8 434,137.4 438,134.9 442,132.4 446,129.8 450,127.3 454,124.7 458,122.0 462,119.4 466,116.7 470,114.0 474,111.3 478,108.5"/>
+<text class="msv-lbl2" x="110" y="278">a</text>
+<text class="msv-lbl2" x="440" y="278">b</text>
+<text class="msv-lbl" x="138" y="253">Δx</text>
+<text class="msv-key msv-k-tan" x="455" y="212">y = f(x)</text>
+<text class="msv-cap" x="270" y="88">trapezoids, not rectangles</text>
+<text class="msv-cap2" x="270" y="288">each top follows the curve between two points</text>
+</svg>
+<p class="concept-desc">A rectangle's flat top is wrong almost everywhere — it matches the curve
+at one point and misses either side. A <strong>trapezoid's slanted top joins two points on the
+curve</strong>, so it tracks the function instead of approximating it with a step. Same number of
+slices, much less error, and it is why the Trapezoidal Rule exists.</p>
+</div>
+<div class="concept-card">
+<span class="concept-label">Reference</span>
+<h4 class="concept-title">The three formulas</h4>
+<table class="ref-table">
+<tr><th>Rule</th><th>Formula, with <code>Δx = (b − a)/n</code></th></tr>
+<tr><td><strong>Trapezoidal</strong></td><td><code>(Δx/2)·[f(x₀) + 2f(x₁) + 2f(x₂) + … + 2f(x<sub>n−1</sub>) + f(x<sub>n</sub>)]</code></td></tr>
+<tr><td><strong>Midpoint</strong></td><td><code>Δx·[f(m₁) + f(m₂) + … + f(m<sub>n</sub>)]</code>, where each <code>m</code> is the centre of its slice</td></tr>
+<tr><td><strong>Simpson's</strong></td><td><code>(Δx/3)·[f(x₀) + 4f(x₁) + 2f(x₂) + 4f(x₃) + … + 4f(x<sub>n−1</sub>) + f(x<sub>n</sub>)]</code></td></tr>
+</table>
+<p class="concept-desc">The coefficient pattern is the thing to memorise, and each is different.
+Trapezoid: <strong>1, 2, 2, …, 2, 1</strong>. Simpson's: <strong>1, 4, 2, 4, 2, …, 4, 1</strong> —
+ends are 1, then alternate 4 and 2, always <em>ending</em> on a 4 before the final 1.</p>
+<p class="concept-desc"><strong>Simpson's requires <code>n</code> to be even.</strong> It fits a
+parabola through each <em>pair</em> of slices, so an odd number leaves one stranded. If a problem
+gives you <code>n = 5</code> and asks for Simpson's, re-read it — something is wrong.</p>
+</div>
+<div class="concept-card">
+<span class="concept-label">The trap</span>
+<h4 class="concept-title">Which way each one is wrong</h4>
+<table class="ref-table">
+<tr><th>Curve is…</th><th>Trapezoid</th><th>Midpoint</th></tr>
+<tr><td>Concave <strong>up</strong></td><td><strong>Over</strong>estimates — the chord sits above the curve</td><td><strong>Under</strong>estimates</td></tr>
+<tr><td>Concave <strong>down</strong></td><td><strong>Under</strong>estimates</td><td><strong>Over</strong>estimates</td></tr>
+</table>
+<p class="concept-desc">Derive it rather than memorise it: on a concave-up curve the straight
+chord joining two points lies <em>above</em> the arc between them, so trapezoids include area
+that is not there. Midpoint errs the other way for the mirror-image reason. Questions asking
+"is this an over- or under-estimate?" are asking about concavity, which means they are asking
+about <code>f″</code>.</p>
+<p class="concept-desc"><strong>Simpson's is exact for any polynomial of degree 3 or
+lower.</strong> That surprises people — it fits parabolas, yet handles cubics perfectly, because
+the cubic error terms cancel between the pairs. If a problem asks you to approximate
+<code>∫x³dx</code> by Simpson's and compare with the exact value, the answer is that they match.</p>
+</div>
+<div class="concept-card">
+<span class="concept-label">In practice</span>
+<h4 class="concept-title">When you actually use these</h4>
+<p class="concept-desc">Numerical rules are not a fallback for weak algebra — they are the only
+option when there is <strong>no elementary antiderivative</strong>. <code>∫e^(−x²)dx</code> is
+the standard example: it is central to statistics and has no answer in elementary functions, so
+every value of it anyone has ever used was computed numerically.</p>
+<p class="concept-desc">They are also how you integrate <strong>data</strong> rather than a
+formula. Given a table of speed readings every 10 seconds, the distance travelled is a
+trapezoidal sum — there is no function to antidifferentiate. That is the form these questions
+usually take on a test.</p>
+<p class="concept-desc">On a TI-84, <code>fnInt(</code> does this for you numerically, so it is a
+good check on a hand computation — see <strong>TI-84 Plus CE</strong>. But the exam wants the
+hand version with the coefficient pattern shown.</p>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: SERIES BATTERY ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">➗</span>
+<span class="topic-name">Series — Choosing a Test, and Radius of Convergence</span>
+<span class="topic-badge">MATH • Ch 11 Deep</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<span class="concept-label">Core Concept</span>
+<h4 class="concept-title">Sequence versus series — the distinction everything rests on</h4>
+<table class="ref-table">
+<tr><th></th><th>Sequence <code>{a<sub>n</sub>}</code></th><th>Series <code>Σa<sub>n</sub></code></th></tr>
+<tr><td>Is</td><td>A list of terms</td><td>The <em>sum</em> of that list</td></tr>
+<tr><td>Converges when</td><td>The terms approach a limit</td><td>The <strong>partial sums</strong> approach a limit</td></tr>
+<tr><td>Example</td><td><code>1/n → 0</code>, converges</td><td><code>Σ1/n</code> <strong>diverges</strong> — the harmonic series</td></tr>
+</table>
+<p class="concept-desc">That last row is the single most important fact in the chapter. Terms
+going to zero is <strong>necessary but not sufficient</strong> — the harmonic series has terms
+shrinking to nothing and still sums to infinity. Every test below exists because that one check
+is not enough.</p>
+</div>
+<div class="concept-card">
+<span class="concept-label">Reference</span>
+<h4 class="concept-title">The full battery, in the order to try them</h4>
+<table class="ref-table">
+<tr><th>#</th><th>Test</th><th>Statement</th><th>Reach for it when</th></tr>
+<tr><td>1</td><td><strong>nth-term</strong></td><td>If <code>lim a<sub>n</sub> ≠ 0</code>, diverges. Limit 0 proves nothing</td><td>Always first — it is one line</td></tr>
+<tr><td>2</td><td><strong>Geometric</strong></td><td><code>Σar<sup>n</sup></code> converges iff <code>|r| &lt; 1</code>, to <code>a/(1−r)</code></td><td>A constant ratio between terms</td></tr>
+<tr><td>3</td><td><strong>p-series</strong></td><td><code>Σ1/n<sup>p</sup></code> converges iff <code>p &gt; 1</code></td><td>A plain power of n on the bottom</td></tr>
+<tr><td>4</td><td><strong>Integral</strong></td><td>If <code>f</code> is positive, continuous and decreasing with <code>a<sub>n</sub> = f(n)</code>, then <code>Σa<sub>n</sub></code> and <code>∫<sub>1</sub><sup>∞</sup>f</code> do the same thing</td><td>The term is something you can actually integrate</td></tr>
+<tr><td>5</td><td><strong>Direct comparison</strong></td><td><code>0 ≤ a<sub>n</sub> ≤ b<sub>n</sub></code> and <code>Σb<sub>n</sub></code> converges ⇒ <code>Σa<sub>n</sub></code> converges. Bigger diverges ⇒ smaller may still converge, so pick the direction carefully</td><td>The term is <em>almost</em> a p-series or geometric</td></tr>
+<tr><td>6</td><td><strong>Limit comparison</strong></td><td><code>lim a<sub>n</sub>/b<sub>n</sub> = L</code> with <code>0 &lt; L &lt; ∞</code> ⇒ both do the same thing</td><td>Comparison is obviously right but the inequality is awkward. Usually easier than #5</td></tr>
+<tr><td>7</td><td><strong>Ratio</strong></td><td><code>L = lim|a<sub>n+1</sub>/a<sub>n</sub>|</code>. <code>&lt;1</code> converges, <code>&gt;1</code> diverges, <code>=1</code> inconclusive</td><td><strong>Factorials</strong> or <code>n</code> in an exponent — they cancel beautifully</td></tr>
+<tr><td>8</td><td><strong>Root</strong></td><td><code>L = lim <sup>n</sup>√|a<sub>n</sub>|</code>, same verdicts</td><td>The whole term is raised to the <code>n</code></td></tr>
+<tr><td>9</td><td><strong>Alternating</strong></td><td>Converges if terms decrease in magnitude <em>and</em> → 0</td><td><code>(−1)<sup>n</sup></code> present</td></tr>
+</table>
+<p class="concept-desc">Tests 7 and 8 both return "inconclusive" at <code>L = 1</code>, and that
+is a real answer, not a failure — it means try another test. The ratio test is inconclusive on
+every p-series, which is why #3 exists separately.</p>
+</div>
+<div class="concept-card">
+<span class="concept-label">Concept</span>
+<h4 class="concept-title">Absolute versus conditional convergence</h4>
+<table class="ref-table">
+<tr><th>Term</th><th>Means</th><th>Example</th></tr>
+<tr><td><strong>Absolutely convergent</strong></td><td><code>Σ|a<sub>n</sub>|</code> converges. This is the strong kind — it implies <code>Σa<sub>n</sub></code> converges too</td><td><code>Σ(−1)<sup>n</sup>/n²</code></td></tr>
+<tr><td><strong>Conditionally convergent</strong></td><td><code>Σa<sub>n</sub></code> converges but <code>Σ|a<sub>n</sub>|</code> does not</td><td><code>Σ(−1)<sup>n</sup>/n</code> — the alternating harmonic series</td></tr>
+</table>
+<p class="concept-desc">The standard exam move: given an alternating series, <strong>test the
+absolute version first</strong>. If <code>Σ|a<sub>n</sub>|</code> converges you are finished and
+the answer is "absolutely". Only if it diverges do you run the alternating series test to decide
+between conditional and divergent.</p>
+<p class="concept-desc">Useful bonus for alternating series: the error from stopping after
+<code>n</code> terms is <strong>no bigger than the first term you left out</strong>. That single
+fact answers every "how many terms for accuracy 0.01?" question.</p>
+</div>
+<div class="concept-card">
+<span class="concept-label">Hands-on</span>
+<h4 class="concept-title">Radius and interval of convergence</h4>
+<pre class="code-block"><span class="com"># A power series Σ cₙ(x − a)ⁿ converges on an interval centred
+# at a. Find it with the RATIO TEST on the whole term.</span>
+
+<span class="com"># Example: Σ (x − 2)ⁿ / (n · 3ⁿ)</span>
+
+   |aₙ₊₁/aₙ| = |(x−2)ⁿ⁺¹ / ((n+1)·3ⁿ⁺¹)| · |(n·3ⁿ) / (x−2)ⁿ|
+             = |x−2|/3 · n/(n+1)
+   limit      = |x−2| / 3
+
+   Converges when  |x−2|/3 &lt; 1   ->   |x − 2| &lt; 3
+   RADIUS  R = 3
+   so far: 2 − 3 &lt; x &lt; 2 + 3   ->   (−1, 5)
+
+<span class="com"># NOW CHECK BOTH ENDPOINTS SEPARATELY. The ratio test says
+# nothing at |x−2| = 3, so substitute each one back in.</span>
+
+   x = 5:  Σ 3ⁿ/(n·3ⁿ) = Σ 1/n        -> harmonic, DIVERGES
+   x = −1: Σ (−3)ⁿ/(n·3ⁿ) = Σ (−1)ⁿ/n -> alternating harmonic,
+                                          CONVERGES
+
+   INTERVAL of convergence:  [−1, 5)
+
+<span class="com"># Endpoints are where the marks are. The radius is one line of
+# algebra; forgetting to test the two ends is the usual error.</span></pre>
 </div>
 </div>
 </div>
