@@ -3988,3 +3988,117 @@ context, and whether the list is too long to be motivating. Those are answered
 by writing cards and by keeping this file honest, which is what the last five
 sessions have been for.
 
+---
+
+# CALCULUS TRACK — Math 104 study plan, gaps and tooling
+
+Added from the course's own requirements screen, the Study.com "Math 104: Calculus
+Formulas & Properties" reference, and the review guide below. This section is a
+live study plan rather than a roadmap item: it tracks what the course tests,
+what the site already covers, and what is still missing.
+
+## 1. The review guide
+
+### 1.1 Limits and Continuity
+- **Evaluating limits** — basic algebraic limits, and limits of trigonometric functions
+- **One-sided limits** — from the left and right, using piecewise functions and graphs
+- **Limits at infinity** — behaviour as x approaches ±∞
+- **Limit laws** — the limit of a sum is the sum of the limits, and the rest of the algebra
+- **Existence** — a limit does not exist when the left- and right-hand limits disagree
+
+### 1.2 Derivatives and Rates of Change
+- **Advanced implicit differentiation** — relationships mixing x with trig functions of y,
+  such as `x·sin(y) = 5y + 2x`, needing the product rule *and* the chain rule, then
+  grouping the `dy/dx` terms to solve
+- **Derivatives of inverse trigonometric functions** — the standard formulas, memorised
+- **Implicit differentiation** — where y is not solved for explicitly; apply `dy/dx`
+  every time a y is differentiated
+- **Choosing the first rule** — identify the *outermost* operation to know which rule
+  applies first. This is the skill that makes the others usable
+- **The chain rule** — differentiate the outer function keeping the inner intact, then
+  multiply by the derivative of the inner
+- **Antiderivatives** — working backwards by applying the power rule in reverse
+- **Higher-order derivatives** — how rates of change themselves change
+- **Graphing the difference quotient** — reading `f(a + Δx)` off a graph at a horizontal
+  distance Δx from a base point a
+- **Graphical rate of change** — the slope between two points, `m = (y₂ − y₁)/(x₂ − x₁)`,
+  as the constant rate over that interval
+- **The limit definition** — `f′(x) = lim(h→0) [f(x+h) − f(x)] / h`
+- **Defining the derivative** — the instantaneous rate of change
+- **Kinematics** — constant velocity means position changes at a constant rate;
+  acceleration is the second derivative of position `s(t)`
+- **Related rates** — the chain rule against time, given one rate to find another
+
+### 1.3 Core Calculus Theorems
+- **Rolle's Theorem** — continuous on `[a,b]`, differentiable on `(a,b)`, and
+  `f(a) = f(b)` gives some `c` with `f′(c) = 0`. For an interval like `[0,3]` it is
+  **mandatory** that `f(0) = f(3)` before the theorem may be used at all
+- **Mean Value Theorem** — average rate over the interval equals instantaneous rate at
+  some interior point. Applies to real scenarios: proving a driver exceeded a limit by
+  comparing average speed over a known distance against the posted minimum
+
+## 2. Gaps this turned up
+
+The Study.com formula list names things the Math domain does not yet cover. Checked
+against the site rather than assumed:
+
+| Missing | Where it belongs | Note |
+|---|---|---|
+| **Trapezoidal Rule** | Unit 3 / cheat sheet | Numerical integration — the course lists it explicitly and the site has nothing. Highest-value gap |
+| **Right-triangle trig** (SOH-CAH-TOA) | Trigonometry card | The site defines sin/cos/tan from the unit circle only. The course defines all six as side ratios. Students meet both and courses rarely reconcile them |
+| **Volume of a hemisphere** | Shape formulas | One row |
+| **Equation of an ellipse / "oval"** | Algebra & Geometry | Listed by the course; absent here |
+| **Inverse trig derivatives** | Cheat sheet has three | arcsec, arccsc, arccot are not listed. Add for completeness |
+| **Series depth** | Unit 3 | Still open from the earlier audit — integral, comparison, limit comparison and root tests; radius and interval of convergence |
+
+## 3. Tooling idea — a Python TI-84 trainer
+
+**The problem.** Ch 5 is a required chapter test on using a scientific calculator, and
+the TI-84 Plus CE card on this site is a *reference*. Reading key sequences is not the
+same as being able to produce them under time pressure, and the calculator itself is a
+poor practice environment because it gives no feedback on whether you used it well.
+
+**The idea.** A small Python program that drills the calculator rather than emulating it.
+Not a TI-84 simulator — that is a large project with no learning payoff. A **key-sequence
+trainer**:
+
+```
+$ python tools/ti84_trainer.py
+
+  Find the derivative of x² at x = 3.
+  What do you type?
+  > MATH 8 nDeriv(X²,X,3)
+  ✔  Correct. Answer: 6
+
+  You need sin(π) to read 0, not 0.0548. What is wrong and how do you fix it?
+  > mode is degrees, press MODE and select RADIAN
+  ✔
+
+  ERR: INVALID DIM appears when you press GRAPH. Most likely cause?
+  > stat plot left on
+  ✔  2nd Y= turns the plots off.
+```
+
+**Why Python and why here.** The site already generates content from data
+(`acronyms.json` → the dictionary, the SVG generators). A trainer fits the same shape: a
+JSON file of prompts and accepted answers, a small runner, and — because the answers are
+deterministic — the same file can generate the flashcards for the calculator card, so the
+drill and the reference cannot drift apart.
+
+**Scope, deliberately small.**
+
+| In | Out |
+|---|---|
+| Key-sequence prompts with fuzzy answer matching | Emulating the screen or the keypad |
+| The numeric functions: `nDeriv`, `fnInt`, `Σ`, `logBASE` | Any attempt at symbolic algebra |
+| The CALC menu items and what each asks for | Graphing |
+| The error messages and their usual causes | Programs, matrices, statistics |
+| Verifying the *answer* with Python's own maths, so the drill states the right number | Being a calculator you would actually use |
+
+**Done when:** a run of twenty prompts covers mode setup, the four numeric functions, the
+CALC menu, and the five common errors — and every stated answer is computed by Python
+rather than typed in by hand, so the drill cannot be wrong about arithmetic.
+
+**Worth building only if** Ch 5 turns out to be harder than it looks. The reference card
+may be enough on its own; check the chapter test first. That is the same lesson as
+sessions 13–15 — read the data before designing the thing that reads the data.
