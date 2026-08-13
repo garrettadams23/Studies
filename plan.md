@@ -4102,3 +4102,29 @@ rather than typed in by hand, so the drill cannot be wrong about arithmetic.
 **Worth building only if** Ch 5 turns out to be harder than it looks. The reference card
 may be enough on its own; check the chapter test first. That is the same lesson as
 sessions 13–15 — read the data before designing the thing that reads the data.
+
+### Outcome — built
+
+Shipped as `tools/ti84_trainer.py` + `data/ti84_drills.json`, 27 drills across the four
+areas the spec named: mode setup, the numeric functions, the CALC menu, and the errors.
+
+The design rule held: **every number the program states is computed at run time.** Ten
+drills carry a `compute` expression evaluated in a namespace with no builtins, so the
+drill cannot be wrong about arithmetic even if someone edits the bank carelessly.
+`--verify` evaluates all of them plus checks structure, and is wired into
+`build-check.yml`.
+
+One decision worth recording. `nderiv()` in the trainer is a **symmetric difference
+quotient**, not an exact derivative — deliberately, because that is what the TI-84 does,
+and it is why `nDeriv(abs(X),X,0)` returns a confident `0` where no derivative exists.
+Using an exact derivative would have made the trainer disagree with the machine it is
+teaching, and the drill about that specific lie would have been unable to demonstrate it.
+
+**Note on the gate above:** it said to check the Ch 5 test first. That check did not
+happen — the build was requested directly. The gate was right in principle and the
+trainer may turn out to be more than Ch 5 needs; it cost little and the CI check keeps it
+honest, but this is recorded as a spec whose own precondition was skipped.
+
+The remaining half of the idea — generating the calculator card's flashcards from the
+same JSON so drill and reference cannot drift — is **not built**. For now the card
+cross-references the trainer in prose, which is weaker: the two can still diverge.

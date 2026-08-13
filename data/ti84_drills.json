@@ -1,0 +1,215 @@
+{
+  "_comment": "Drill bank for tools/ti84_trainer.py. Every drill whose answer is a number carries a `compute` expression, evaluated by the trainer with Python's own maths, so the drill can never state a wrong number. See plan.md, CALCULUS TRACK section 3.",
+  "drills": [
+    {
+      "id": "mode-radian",
+      "area": "mode",
+      "prompt": "Your first move in every test. What do you press, and what must the screen say?",
+      "accept": ["mode", "radian", "mode radian"],
+      "answer": "MODE, then select RADIAN. Also check FUNCTION and MATHPRINT.",
+      "note": "Degree mode silently produces wrong answers rather than an error."
+    },
+    {
+      "id": "mode-verify",
+      "area": "mode",
+      "prompt": "One keystroke to prove you are in radian mode. What do you type, and what should it show?",
+      "accept": ["sin(pi)", "sin pi", "sin(π)"],
+      "answer": "sin(π) — should read 0 (or ~-3E-13).",
+      "compute": "math.sin(math.pi)",
+      "note": "0.0548 means you are in DEGREE mode. Fix it before question 1."
+    },
+    {
+      "id": "mode-tiny",
+      "area": "mode",
+      "prompt": "sin(π) returns -3E-13 instead of 0. Is the calculator broken?",
+      "accept": ["no", "floating point", "rounding", "precision", "no it is fine"],
+      "answer": "No — π is stored to finite precision, so read -3E-13 as zero."
+    },
+    {
+      "id": "quit",
+      "area": "mode",
+      "prompt": "You are lost in a menu. How do you get back to the home screen?",
+      "accept": ["2nd mode", "2nd + mode", "quit", "2nd quit"],
+      "answer": "2nd then MODE, which is QUIT."
+    },
+
+    {
+      "id": "nderiv-basic",
+      "area": "numeric",
+      "prompt": "Find the derivative of x² at x = 3. What do you type?",
+      "accept": ["nderiv(x2,x,3)", "nderiv(x^2,x,3)", "math 8", "nderiv"],
+      "answer": "MATH → 8: nDeriv(X²,X,3)",
+      "compute": "nderiv(lambda x: x**2, 3)"
+    },
+    {
+      "id": "nderiv-syntax",
+      "area": "numeric",
+      "prompt": "What are the three arguments of nDeriv(, in order?",
+      "accept": ["expression variable value", "function variable point", "expr var val"],
+      "answer": "nDeriv(expression, variable, value)"
+    },
+    {
+      "id": "nderiv-trig",
+      "area": "numeric",
+      "prompt": "Derivative of sin(x) at x = 0, on the calculator.",
+      "accept": ["nderiv(sin(x),x,0)", "nderiv"],
+      "answer": "nDeriv(sin(X),X,0)",
+      "compute": "nderiv(math.sin, 0)"
+    },
+    {
+      "id": "fnint-basic",
+      "area": "numeric",
+      "prompt": "Evaluate the definite integral of x² from 0 to 2. What do you type?",
+      "accept": ["fnint(x2,x,0,2)", "fnint(x^2,x,0,2)", "math 9", "fnint"],
+      "answer": "MATH → 9: fnInt(X²,X,0,2)",
+      "compute": "fnint(lambda x: x**2, 0, 2)"
+    },
+    {
+      "id": "fnint-syntax",
+      "area": "numeric",
+      "prompt": "What are the four arguments of fnInt(, in order?",
+      "accept": ["expression variable lower upper", "expr var a b", "function variable lower upper"],
+      "answer": "fnInt(expression, variable, lower limit, upper limit)"
+    },
+    {
+      "id": "fnint-trig",
+      "area": "numeric",
+      "prompt": "Integral of sin(x) from 0 to π.",
+      "accept": ["fnint(sin(x),x,0,pi)", "fnint(sin(x),x,0,π)", "fnint"],
+      "answer": "fnInt(sin(X),X,0,π)",
+      "compute": "fnint(math.sin, 0, math.pi)"
+    },
+    {
+      "id": "sigma",
+      "area": "numeric",
+      "prompt": "Add up 1/n² for n from 1 to 100 — a partial sum for a series question.",
+      "accept": ["sigma", "summation", "math 0", "Σ(1/n2,n,1,100)", "Σ"],
+      "answer": "MATH → 0: Σ(1/N²,N,1,100)",
+      "compute": "sum(1.0/n**2 for n in range(1, 101))",
+      "note": "Approaches π²/6 ≈ 1.6449."
+    },
+    {
+      "id": "logbase",
+      "area": "numeric",
+      "prompt": "Compute log base 7 of 200. Two ways — name either.",
+      "accept": ["logbase(200,7)", "math a", "ln(200)/ln(7)", "log(200)/log(7)", "change of base"],
+      "answer": "MATH → A: logBASE(200,7), or ln(200)/ln(7) by change of base",
+      "compute": "math.log(200)/math.log(7)"
+    },
+    {
+      "id": "frac",
+      "area": "numeric",
+      "prompt": "Your answer reads .6666666667 and you want it as a fraction. What do you press?",
+      "accept": ["math 1", "frac", "math enter", "▶frac"],
+      "answer": "MATH → 1: ▶Frac"
+    },
+
+    {
+      "id": "calc-menu",
+      "area": "calc",
+      "prompt": "How do you open the CALC menu from a graph?",
+      "accept": ["2nd trace", "2nd + trace", "2nd calc"],
+      "answer": "2nd then TRACE."
+    },
+    {
+      "id": "calc-zero",
+      "area": "calc",
+      "prompt": "Which CALC item finds a root, and what does it ask you for?",
+      "accept": ["2 zero", "zero", "2: zero"],
+      "answer": "2: zero — it asks for a Left Bound, a Right Bound, then a Guess.",
+      "note": "It only searches inside the bracket you give it."
+    },
+    {
+      "id": "calc-intersect",
+      "area": "calc",
+      "prompt": "You need to solve f(x) = g(x) graphically. Which CALC item?",
+      "accept": ["5 intersect", "intersect", "5: intersect"],
+      "answer": "5: intersect — enter both curves in Y= first."
+    },
+    {
+      "id": "calc-derivative",
+      "area": "calc",
+      "prompt": "Which CALC item gives the derivative at a point straight off the graph?",
+      "accept": ["6 dy/dx", "dy/dx", "6: dy/dx", "6"],
+      "answer": "6: dy/dx"
+    },
+    {
+      "id": "calc-integral",
+      "area": "calc",
+      "prompt": "Which CALC item shades and evaluates a definite integral?",
+      "accept": ["7", "7: ∫f(x)dx", "integral", "∫f(x)dx"],
+      "answer": "7: ∫f(x)dx"
+    },
+    {
+      "id": "calc-limit",
+      "area": "calc",
+      "prompt": "There is no limit key. How do you investigate a limit on this calculator?",
+      "accept": ["table", "2nd graph", "tblset", "use the table"],
+      "answer": "Use the TABLE: 2nd WINDOW to set TblStart just below the value and ΔTbl small, then 2nd GRAPH."
+    },
+    {
+      "id": "zoom-standard",
+      "area": "calc",
+      "prompt": "Your graph is blank. What is the fastest thing to try?",
+      "accept": ["zoom 6", "zstandard", "zoom6", "zoom 6 then zoom 0"],
+      "answer": "ZOOM 6 (ZStandard), then ZOOM 0 (ZoomFit) if it is still off-screen.",
+      "note": "A blank graph is almost always the window, not the function."
+    },
+
+    {
+      "id": "err-negative",
+      "area": "errors",
+      "prompt": "You typed -5 and got ERR: SYNTAX. What went wrong?",
+      "accept": ["wrong minus", "used subtraction key", "(-) key", "negative key", "minus vs negative"],
+      "answer": "You used the subtraction key. Negation is the (-) key next to ENTER.",
+      "note": "Two different keys. This is the most common TI-84 error there is."
+    },
+    {
+      "id": "err-invalid-dim",
+      "area": "errors",
+      "prompt": "ERR: INVALID DIM when you press GRAPH. Most likely cause and fix?",
+      "accept": ["stat plot", "plot is on", "2nd y=", "statplot on"],
+      "answer": "A stat plot is switched on. 2nd then Y=, turn all Plots off."
+    },
+    {
+      "id": "err-window",
+      "area": "errors",
+      "prompt": "ERR: WINDOW RANGE. What is wrong?",
+      "accept": ["xmin >= xmax", "xmin bigger", "window backwards", "ymin >= ymax", "min greater than max"],
+      "answer": "Xmin ≥ Xmax (or Ymin ≥ Ymax). Press ZOOM 6 to reset."
+    },
+    {
+      "id": "err-negsquare",
+      "area": "errors",
+      "prompt": "You expect 4 but -2² gives -4. Why, and how do you type what you meant?",
+      "accept": ["(-2)^2", "parentheses", "(-2)2", "precedence", "square binds tighter"],
+      "answer": "The square binds tighter than the negation. Type (-2)².",
+      "compute": "(-2)**2"
+    },
+    {
+      "id": "err-denominator",
+      "area": "errors",
+      "prompt": "You want 1 divided by (2+3). You typed 1/2+3 and got 3.5. What should you type?",
+      "accept": ["1/(2+3)", "parentheses", "1/(2+3)="],
+      "answer": "1/(2+3) — parenthesise the whole denominator.",
+      "compute": "1/(2+3)"
+    },
+    {
+      "id": "no-cas",
+      "area": "errors",
+      "prompt": "You ask the TI-84 for the derivative of x² and want '2x'. What will it actually give you?",
+      "accept": ["a number", "number", "no cas", "cannot", "only a value", "numeric"],
+      "answer": "Only a number at a point — the TI-84 has no CAS. nDeriv(X²,X,3) gives 6, never 2x.",
+      "note": "Symbolic work is the TI-89 or Nspire CAS. Do the algebra by hand and check the number here."
+    },
+    {
+      "id": "nderiv-lies",
+      "area": "errors",
+      "prompt": "nDeriv(abs(X),X,0) returns 0. Is the derivative of |x| at 0 equal to 0?",
+      "accept": ["no", "does not exist", "undefined", "no it does not exist", "corner"],
+      "answer": "No — it does not exist. There is a corner at 0; nDeriv uses a symmetric difference and cannot tell.",
+      "compute": "nderiv(abs, 0)",
+      "note": "The calculator answers confidently when it should not. Know where it lies."
+    }
+  ]
+}
