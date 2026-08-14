@@ -8,7 +8,15 @@ The data/<id>.html content file must already exist.
 
 Usage:
   python3 scaffold_domain.py <id> <icon> <title> <chip_label> \
-      <chip_color> <accent> <sub> [certTag_cls:certTag_text ...]
+      <chip_color> <accent> <sub> [--group "Core IT domains"] \
+      [certTag_cls:certTag_text ...]
+
+<chip_label> is the complete chip text including its icon, e.g. "🏢 WINDOWS SERVER".
+--group is the aria-label of the .chip-group to insert into; without it the chip
+lands after the last chip in the file, which is the Reference group.
+
+The domain is appended to domains.json, which is also the page's section order —
+move it if the new domain belongs beside a related one.
 """
 import json
 import re
@@ -26,6 +34,11 @@ def hexrgba(h, a):
 
 def main():
     a = sys.argv[1:]
+    group = None
+    if "--group" in a:
+        i = a.index("--group")
+        group = a[i + 1]
+        del a[i:i + 2]
     did, icon, title, chip_label, chip_color, accent, sub = a[:7]
     certs = []
     for tok in a[7:]:
@@ -49,18 +62,32 @@ def main():
         dj.write_text(json.dumps(domains, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         print(f"  domains.json: added {did}")
 
-    # 2. filter chip in index-shell.html (after the last existing chip)
+    # 2. filter chip in index-shell.html
     shell = (ROOT / "index-shell.html").read_text(encoding="utf-8")
-    chip = f'        <div class="chip c-{did}"           data-domain="{did}">{icon} {chip_label}</div>\n'
+    # chip_label is the full label. It used to be prefixed with `icon`, which
+    # produced "🏢 🏢 WINDOWS SERVER" whenever a caller included the icon — and
+    # every caller does, because every existing chip in the file has one.
+    chip = f'          <div class="chip c-{did}"    data-domain="{did}">{chip_label}</div>\n'
     if f'data-domain="{did}"' in shell:
         print(f"  index-shell.html: chip {did} already present")
     else:
-        # insert right before the closing </div> of .filter-inner: the last chip line
-        m = list(re.finditer(r'^.*data-domain="[^"]+".*$\n', shell, re.MULTILINE))
-        last = m[-1]
-        shell = shell[:last.end()] + chip + shell[last.end():]
+        # Land it in a named chip group when one is given, rather than after the
+        # last chip in the file — which is the Reference group, where a new
+        # domain almost never belongs.
+        anchor = None
+        if group:
+            gm = re.search(
+                rf'<div class="chip-group"[^>]*aria-label="{re.escape(group)}"[^>]*>.*?\n(?=\s*</div>)',
+                shell, re.S)
+            if gm:
+                anchor = gm.end()
+            else:
+                print(f"  index-shell.html: no chip group '{group}' — appending instead")
+        if anchor is None:
+            anchor = list(re.finditer(r'^.*data-domain="[^"]+".*$\n', shell, re.MULTILINE))[-1].end()
+        shell = shell[:anchor] + chip + shell[anchor:]
         (ROOT / "index-shell.html").write_text(shell, encoding="utf-8")
-        print(f"  index-shell.html: added chip {did}")
+        print(f"  index-shell.html: added chip {did}" + (f" to '{group}'" if group else ""))
 
     # 3. style.css — chip color + domain accent
     css = (ROOT / "style.css").read_text(encoding="utf-8")

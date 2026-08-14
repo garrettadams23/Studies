@@ -30,9 +30,9 @@ jump to what you need:
 | **Execution Handbook** | Ordering constraints, per-domain queue, a concrete first-ten-sessions schedule, three waves specified to the point of transcription, and reusable checklists | 📘 reference |
 | **What is actually outstanding** | An audit of the repo as it really is — defects, the lint trend, undersized domains, content age. **Start here.** | ✅ short list cleared, session 18 |
 
-**Remaining backlog: 897 content cards and 44 engineering items** across
-Phases 3–6, which would take the site from 943 topics / 27 domains to roughly
-1,800 topics / 26 domains — about 180 working sessions.
+**Remaining backlog: 882 content cards and 44 engineering items** across
+Phases 3–6, which would take the site from **961 topics / 28 domains** to roughly
+1,800 topics — about 175 working sessions.
 
 **If you read only two things:** *"What is actually outstanding"* at the very end
 of this file, and *Part 3 of Phase 6* (how to write a card, the pattern library,
@@ -1374,26 +1374,40 @@ they deepen domains that already exist and already have an audience.
 ~7 waves, ~35 cards. The on-prem backbone almost every organisation still runs.
 Pairs directly with the `redteam` AD-attack cards — same objects, defender's view.
 
+> **✅ V1–V3 shipped (session 18) — `infra` exists and holds 15 cards.** That is the
+> ≥15 bar exactly, which is why the priority shortlist grouped these three rather than
+> starting with one. V4–V7 (identity operations, on-prem network services, certificate
+> services, server operations) remain: 20 cards, and the domain now clears the bar
+> without them, so they are optional rather than owed.
+>
+> The pairing above turned out to need care rather than assumption. `sec` already holds
+> *Active Directory — Structure, Objects & Attacks*, which covers forest/domain/OU and
+> Kerberos; writing an "AD DS Architecture" card would have been the duplicate rule 10
+> exists to prevent. V2 opens by pointing at that card and answers the administrator's
+> question instead — which boundary to reach for, and what each costs. **Check the
+> neighbouring domain before writing the overview card; the gap is usually narrower than
+> the track list implies.**
+
 **Wave V1 — Windows Server Foundations**
-- [ ] Windows Server Editions & Licensing — Standard vs Datacenter, CALs, Core vs Desktop Experience
-- [ ] Server Core & Administration at Scale — why no GUI, and how you manage it anyway
-- [ ] Server Manager, RSAT & Windows Admin Center — the three consoles and when each wins
-- [ ] Roles & Features — what installing a role actually changes
-- [ ] Server Hardening Baseline — LAPS, no browsing, minimal roles, audit policy
+- [x] Windows Server Editions & Licensing — Standard vs Datacenter, CALs, Core vs Desktop Experience
+- [x] Server Core & Administration at Scale — why no GUI, and how you manage it anyway
+- [x] Server Manager, RSAT & Windows Admin Center — the three consoles and when each wins
+- [x] Roles & Features — what installing a role actually changes
+- [x] Server Hardening Baseline — LAPS, no browsing, minimal roles, audit policy
 
 **Wave V2 — Active Directory Domain Services**
-- [ ] AD DS Architecture — forest, domain, tree, OU, site; what each boundary really means
-- [ ] Domain Controllers & FSMO Roles — the five roles, who holds them, seizing vs transferring
-- [ ] AD Replication — multi-master, USN, tombstones, `repadmin` triage
-- [ ] Trusts — forest/external/shortcut, direction vs transitivity, SID filtering
-- [ ] Sites, Subnets & Site Links — why clients authenticate against the wrong DC
+- [x] AD DS Architecture — forest, domain, tree, OU, site; what each boundary really means
+- [x] Domain Controllers & FSMO Roles — the five roles, who holds them, seizing vs transferring
+- [x] AD Replication — multi-master, USN, tombstones, `repadmin` triage
+- [x] Trusts — forest/external/shortcut, direction vs transitivity, SID filtering
+- [x] Sites, Subnets & Site Links — why clients authenticate against the wrong DC
 
 **Wave V3 — Group Policy in Practice**
-- [ ] Group Policy Architecture — GPO, GPC/GPT, SYSVOL, where settings actually live
-- [ ] Processing Order & Precedence — LSDOU, enforcement, blocking, loopback
-- [ ] Filtering — security filtering vs WMI filtering vs item-level targeting
-- [ ] Group Policy Preferences — the half of GPO people forget exists
-- [ ] GPO Troubleshooting — `gpresult /h`, RSoP, `gpupdate /force`, and reading the Group Policy operational log
+- [x] Group Policy Architecture — GPO, GPC/GPT, SYSVOL, where settings actually live
+- [x] Processing Order & Precedence — LSDOU, enforcement, blocking, loopback
+- [x] Filtering — security filtering vs WMI filtering vs item-level targeting
+- [x] Group Policy Preferences — the half of GPO people forget exists
+- [x] GPO Troubleshooting — `gpresult /h`, RSoP, `gpupdate /force`, and reading the Group Policy operational log
 
 **Wave V4 — Identity Operations**
 - [ ] Users, Groups & Nesting Strategy — AGDLP, and why nested groups become a mess
@@ -2533,8 +2547,8 @@ site as it stands today:
 2. **AG spaced repetition + acronym quiz** — turns 900 topics of reference into
    something you revise from, using data that already exists.
 3. **AX freshness metadata** — cheapest now, impossible later.
-4. **V1–V3 (Windows Server, AD DS, Group Policy)** — the largest genuine subject
-   gap on the site.
+4. ~~**V1–V3 (Windows Server, AD DS, Group Policy)**~~ — ✅ shipped session 18.
+   `infra`, 15 cards.
 5. **AL1–AL3 (complexity, data structures, algorithms)** — the most-requested
    interview material, and it is nowhere yet.
 6. **AY split of `data/script.html`** — 719 KB in one file is the single biggest
@@ -4475,6 +4489,36 @@ That is the fourth instance this session of the same thing, and the sharpest, be
 happened to a tool built specifically to avoid it: **a check that can quietly stop
 checking is worse than no check**, since it also reports success. Worth re-reading before
 adding a counter, a lint rule, or an assertion to this repo.
+
+### First content off the backlog — Track V1–V3
+
+With the audit clear, the shortlist's remaining content item was V1–V3, "the largest
+genuine subject gap on the site". Shipped: `infra`, 15 cards over three waves, one
+commit each. Site is now **961 topics / 28 domains**.
+
+Four things worth carrying into the next wave:
+
+- **Check the neighbouring domain before writing the overview card.** `sec` already
+  covered AD structure. The planned "AD DS Architecture" card would have been a
+  duplicate, so V2 links to it and answers the operational question instead. The
+  track list was written before that card existed and does not know about it — no
+  track list does.
+- **`scaffold_domain.py` had two bugs, now fixed.** It appended the chip to the *last*
+  chip group regardless of fit and prefixed the icon to the chip label, so `infra`
+  arrived as "🏢 🏢 WINDOWS SERVER" under *Reference*. Corrected by hand for this wave,
+  then fixed in the script: `chip_label` is now the complete label, and `--group
+  "Core IT domains"` picks the destination group. `m365`, `itsm`, `cs`, `hw` and `biz`
+  would each have hit it. Section order still follows `domains.json`, which the script
+  appends to — move the entry by hand if the domain belongs next to a relative.
+- **`data/acronyms.json` is sorted by raw string**, so uppercase entries precede
+  lowercase-initial ones (`mTLS`, `osquery`, `gMSA`). Sorting with a
+  case-insensitive key rewrites 566 lines for no reason. Insert, then sort with
+  `key=lambda e: e['a']`.
+- **A wave can cost the lint counters nothing.** The 313 existing
+  `style="margin-top:10px"` verdict paragraphs now have a name —
+  `.concept-desc.verdict` — so 28 new ones added zero to the inline-style count.
+  Converting the other 313 is still the unsafe-blind change described above; a new
+  wave choosing the class is free.
 
 ### On this session's method
 
