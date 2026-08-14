@@ -51767,6 +51767,198 @@ optional.
 </div>
 </div>
 </div>
+<!-- ══════════════════════════════════════════════════════════════
+WAVE AL5 (PARTIAL) — COMPUTER ARCHITECTURE
+══════════════════════════════════════════════════════════════ -->
+<!-- ── TOPIC: MEMORY HIERARCHY ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🏔️</span>
+<span class="topic-name">Caches &amp; the Memory Hierarchy — The Numbers Every Engineer Should Know</span>
+<span class="topic-badge">CS • Architecture</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">The numbers</div>
+<div class="concept-title">Six Orders of Magnitude, and Where Your Latency Actually Went</div>
+<div class="concept-desc">
+Storage is a hierarchy: small and fast at the top, enormous and slow at the bottom.
+The gaps are not incremental — they span six orders of magnitude, and knowing roughly
+where each level sits explains more production latency than any profiler.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Level</th><th>Roughly</th><th>Scaled to 1 second = 1 ns</th></tr></thead>
+<tbody>
+<tr><td>L1 cache</td><td>~1 ns</td><td>1 second</td></tr>
+<tr><td>L2 cache</td><td>~4 ns</td><td>4 seconds</td></tr>
+<tr><td>Main memory</td><td>~100 ns</td><td>2 minutes</td></tr>
+<tr><td>NVMe <span class="acro-exp">(Non-Volatile Memory Express)</span> read</td><td>~100 µs</td><td class="c-amber">1 day</td></tr>
+<tr><td>Same-datacentre round trip</td><td>~0.5 ms</td><td class="c-amber">6 days</td></tr>
+<tr><td>Cross-continent round trip</td><td>~150 ms</td><td class="c-red">5 years</td></tr>
+</tbody>
+</table>
+</div>
+<div class="concept-desc verdict">
+<strong>These are order-of-magnitude figures, not benchmarks</strong> — they shift with
+hardware, and the ratios matter far more than the values. The practical conclusion is
+blunt: no amount of algorithmic cleverness recovers a network round trip you did not
+need. Remove the trip before optimising the loop.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Consequence</div>
+<div class="concept-title">Cache Lines Explain False Sharing</div>
+<div class="concept-desc">
+Memory moves in 64-byte lines, and cache coherency operates on whole lines. Two threads
+writing to <em>different</em> variables that happen to share a line will invalidate each
+other's caches on every write — the code is correct, contends on nothing logically, and
+runs several times slower than the single-threaded version.
+</div>
+<div class="concept-desc verdict">
+This is <strong>false sharing</strong>, and it is the standard explanation for
+parallel code that gets slower as you add threads. The fix is padding hot per-thread
+counters onto separate lines. Diagnose it by suspicion rather than by profiler: the
+signature is negative scaling with thread count on a workload that should be
+embarrassingly parallel. See
+<span class="xref">Memory Layout &amp; Cache Locality — Why Arrays Beat Linked Lists</span>
+for the single-threaded side of the same mechanism.
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: NUMBER REPRESENTATION ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🔢</span>
+<span class="topic-name">Number Representation — Two's Complement, IEEE-754 &amp; the Bugs Each Causes</span>
+<span class="topic-badge">CS • Architecture</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Integers</div>
+<div class="concept-title">Overflow Is Silent, and the Minimum Has No Positive Twin</div>
+<div class="concept-desc">
+Two's complement represents negatives by inverting and adding one, which is why addition
+and subtraction need no special cases — and why the range is asymmetric. A 32-bit int
+spans −2,147,483,648 to 2,147,483,647: one more negative than positive.
+</div>
+<div class="concept-desc verdict">
+So <code>abs(INT_MIN)</code> is negative. Negating the minimum overflows, and in C that
+is undefined behaviour the optimiser may assume cannot happen. The classic exploitable
+form is a length check passing because an attacker-supplied size overflowed to negative,
+and the subsequent allocation being far too small.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Floats</div>
+<div class="concept-title">0.1 + 0.2 Is Not 0.3, and Money Is Not a Float</div>
+<div class="concept-desc">
+IEEE-754 stores a sign, an exponent and a fraction in base two. Tenths are not
+representable in base two any more than a third is in base ten, so the stored value is
+the nearest representable one and the error compounds across operations.
+</div>
+<pre class="code-block"><span class="com"># Not a language quirk — the hardware representation, everywhere</span>
+&gt;&gt;&gt; <span class="m">0.1</span> + <span class="m">0.2</span> == <span class="m">0.3</span>
+<span class="kw">False</span>
+&gt;&gt;&gt; <span class="kw">from</span> decimal <span class="kw">import</span> Decimal
+&gt;&gt;&gt; Decimal(<span class="m">"0.1"</span>) + Decimal(<span class="m">"0.2"</span>) == Decimal(<span class="m">"0.3"</span>)
+<span class="kw">True</span></pre>
+<div class="concept-desc verdict">
+<strong>Store money as integer minor units, or as a decimal type.</strong> Never as a
+float. And never compare floats with <code>==</code> — compare against a tolerance
+appropriate to the magnitudes involved, because a fixed epsilon is wrong at both ends of
+the range.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Failure mode</div>
+<div class="concept-title">The Special Values That Propagate Silently</div>
+<div class="concept-desc">
+IEEE-754 defines infinities, two zeros, and NaN <span class="acro-exp">(Not a Number)</span>. NaN is the dangerous one: it is
+<em>not equal to itself</em>, so a single NaN entering a pipeline propagates through
+every arithmetic operation and survives most validity checks written as comparisons.
+</div>
+<div class="concept-desc verdict">
+A metric that reads NaN on a dashboard usually entered as a division by zero many steps
+upstream. Check with the language's dedicated predicate — <code>math.isnan()</code>,
+not <code>x == float('nan')</code>, which is always false. And note that
+<code>x != x</code> being true is the portable NaN test, which looks like a bug and is
+not.
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: SPECULATIVE EXECUTION ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">👻</span>
+<span class="topic-name">Speculative Execution &amp; Its Security Cost — Spectre and Meltdown</span>
+<span class="topic-badge">CS • Architecture</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Why processors guess</div>
+<div class="concept-title">Waiting for a Branch Wastes a Hundred Cycles, So the CPU <span class="acro-exp">(Central Processing Unit)</span> Does Not Wait</div>
+<div class="concept-desc">
+Instructions execute in a pipeline, several in flight at once. A conditional branch
+stalls it — the processor cannot know which way to go until the condition resolves, and
+if that depends on memory, resolving may take hundreds of cycles.
+</div>
+<div class="concept-desc">
+So it predicts, and executes ahead speculatively. If the guess was right, the work is
+already done. If wrong, the architectural results are discarded. Modern prediction
+accuracy is well above 95%, and this is a large part of why processors are fast.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The flaw</div>
+<div class="concept-title">Discarded Work Leaves Traces in the Cache</div>
+<div class="concept-desc">
+Speculation discards <em>architectural</em> state — registers, memory. It does not undo
+<em>microarchitectural</em> state: data loaded during a mis-speculation stays in the
+cache. An attacker who can time cache access can therefore learn something about
+speculatively-read memory they were never permitted to read.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th></th><th>Meltdown</th><th>Spectre</th></tr></thead>
+<tbody>
+<tr><td>Abuses</td><td>Out-of-order execution past a permission check</td><td>Branch prediction, trained by the attacker</td></tr>
+<tr><td>Reads</td><td>Kernel memory from user space</td><td>Memory within the victim's own address space</td></tr>
+<tr><td>Fixable in software</td><td class="c-green">Yes — page table isolation</td><td class="c-red">Not generally; it is mitigated, not fixed</td></tr>
+</tbody>
+</table>
+</div>
+<div class="concept-desc verdict">
+<strong>Spectre is the one that matters, because it is a property of speculation
+itself.</strong> Meltdown was an implementation bug and was fixed. Spectre is mitigated
+per-pattern — compiler barriers, index masking, isolating untrusted code in its own
+process — and new variants keep arriving, because the underlying optimisation is not
+going away.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">What it means for you</div>
+<div class="concept-title">Process Isolation Stopped Being Paranoia</div>
+<div class="concept-desc">
+Practical consequences most engineers actually meet: browsers reduced timer precision
+and put each site in its own process; cloud providers stopped co-locating untrusted
+tenants on one physical core; and mitigations cost real performance — single-digit to
+low-double-digit percentages on system-call-heavy workloads.
+</div>
+<div class="concept-desc verdict">
+The transferable lesson is broader than these vulnerabilities: <strong>an abstraction
+that is correct architecturally can still leak through its implementation.</strong>
+Timing, cache state and power draw are all side channels, and none of them appear in
+the model the code was written against.
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body cs -->
 </div>
 </div>

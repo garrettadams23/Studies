@@ -30,8 +30,8 @@ jump to what you need:
 | **Execution Handbook** | Ordering constraints, per-domain queue, a concrete first-ten-sessions schedule, three waves specified to the point of transcription, and reusable checklists | 📘 reference |
 | **What is actually outstanding** | An audit of the repo as it really is — defects, the lint trend, undersized domains, content age. **Start here.** | ✅ short list cleared, session 18 |
 
-**Remaining backlog: ~840 content cards and 44 engineering items** across
-Phases 3–6, which would take the site from **998 topics / 29 domains** to roughly
+**Remaining backlog: ~835 content cards and 44 engineering items** across
+Phases 3–6, which would take the site from **1,001 topics / 29 domains** to roughly
 1,800 topics — about 165 working sessions.
 
 **If you read only two things:** *"What is actually outstanding"* at the very end
@@ -2113,9 +2113,9 @@ reviews and design arguments — taught for practitioners, not for a degree.
 
 **Wave AL5 — Computer Architecture**
 - [ ] Instruction Execution — fetch/decode/execute, pipelining, branch prediction
-- [ ] Caches & the Memory Hierarchy — L1 to disk, and the numbers every engineer should know
-- [ ] Speculative Execution & Its Security Cost — Spectre/Meltdown, explained properly
-- [ ] Number Representation — two's complement, IEEE-754, and the bugs each causes
+- [x] Caches & the Memory Hierarchy — L1 to disk, and the numbers every engineer should know
+- [x] Speculative Execution & Its Security Cost — Spectre/Meltdown, explained properly
+- [x] Number Representation — two's complement, IEEE-754, and the bugs each causes
 - [ ] Instruction Sets — x86-64 vs ARM64 vs RISC-V, and why the shift is happening
 
 **Wave AL6 — Languages, Compilers & Runtimes**
