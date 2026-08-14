@@ -30,9 +30,9 @@ jump to what you need:
 | **Execution Handbook** | Ordering constraints, per-domain queue, a concrete first-ten-sessions schedule, three waves specified to the point of transcription, and reusable checklists | 📘 reference |
 | **What is actually outstanding** | An audit of the repo as it really is — defects, the lint trend, undersized domains, content age. **Start here.** | ✅ short list cleared, session 18 |
 
-**Remaining backlog: 859 content cards and 44 engineering items** across
-Phases 3–6, which would take the site from **985 topics / 29 domains** to roughly
-1,800 topics — about 170 working sessions.
+**Remaining backlog: ~840 content cards and 44 engineering items** across
+Phases 3–6, which would take the site from **998 topics / 29 domains** to roughly
+1,800 topics — about 165 working sessions.
 
 **If you read only two things:** *"What is actually outstanding"* at the very end
 of this file, and *Part 3 of Phase 6* (how to write a card, the pattern library,
@@ -4525,13 +4525,21 @@ Both remaining content items on the Phase-5 priority shortlist are done, plus tw
 further `infra` waves: **43 cards, eight commits**, two new domains each landing on
 exactly the 15-card bar. Site 943 → **985 topics, 27 → 29 domains**.
 
-| Wave | Domain | Cards |
-|---|---|---:|
-| V1–V3 | `infra` (new) | 15 |
-| AL1–AL3 | `cs` (new) | 15 |
-| V4 identity operations | `infra` | 5 |
-| V5 on-prem network services | `infra` | 3 of 5 — two cut, see below |
-| **Total** | | **38 written, 43 counting the two domains' scaffolding work** |
+| Wave | Domain | Cards written | Specced |
+|---|---|---:|---:|
+| V1–V3 Windows Server, AD DS, Group Policy | `infra` (new) | 15 | 15 |
+| AL1–AL3 complexity, structures, algorithms | `cs` (new) | 15 | 15 |
+| V4 identity operations | `infra` | 5 | 5 |
+| V5 on-prem network services | `infra` | 3 | 5 |
+| V6 certificate services | `infra` | 3 | 5 |
+| V7 server operations | `infra` | 2 | 5 |
+| AL4 operating system theory | `cs` | 5 | 5 |
+| AL7 clocks, consensus, failure detection | `cs` | 3 | 5 |
+| **Total** | | **51** | **60** |
+
+**Track V is complete at 28 cards against a 35-card spec, and nine cards across the
+session were cut rather than written.** Every cut is marked `- [~]` in the track lists
+with the reason in its wave commit. `infra` 28, `cs` 23 — both well clear of the bar.
 
 Every wave held the lint counters flat: `TREND ai-table=361 inline=1946` before the
 first card and after the last, because the verdict paragraphs use a class.
@@ -4553,6 +4561,24 @@ python3 -c "import re,json,pathlib; [print(d,n) for d in [x['id'] for x in
 Grep it for the subject before writing. Where a card already exists, either write the
 depth above it and link down — which is what both domains do — or cut the card. Do not
 write the second introduction.
+
+**Nine of sixty specced cards were cut.** That is 15%, and it is the number worth
+carrying forward: a track list written against a subject rather than a site
+over-specifies by roughly that much. Where the duplication concentrated:
+
+| Cut | Already covered by |
+|---|---|
+| AD DS Architecture | `sec` Active Directory — Structure, Objects & Attacks |
+| Big-O in Practice (as specced), Arrays & Lists, Choosing a Structure | `script`, six cards |
+| Time Sync | folded into V4's Kerberos card, where the failure mode belongs |
+| IPAM | nothing — cut as filler, one idea and no failure mode |
+| Windows Event Log Triage | `blueteam` Windows Event Logs — The IDs That Matter |
+| Windows Patching Strategy | `endpoint` Windows Autopatch, Emergency Patching |
+| PerfMon & Resource Monitor | `ops` Performance & Capacity, Monitoring & Observability |
+| Consistency Models, Idempotency & Exactly-Once | `devops` CAP Theorem; `eng` Idempotency, Sagas, Quorums |
+
+**V7 was 60% already written.** A whole wave, three of five cards, sitting in three
+other domains. Nothing in the track list could have told you that.
 
 **Cutting is part of writing a wave, not a failure to finish one.** V5 shipped three of
 its five specced cards: *Time Sync* because it is already the third section of V4's
