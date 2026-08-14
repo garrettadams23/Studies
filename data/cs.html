@@ -2040,4 +2040,213 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
   </div>
 </div>
 
+
+<!-- ── TOPIC: TYPE SYSTEMS ────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏷️</span>
+    <span class="topic-name">Type Systems — Static, Dynamic, and What Types Actually Buy You</span>
+    <span class="topic-badge">CS • Languages</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Two axes</div>
+      <div class="concept-title">Static vs Dynamic Is Not Strong vs Weak</div>
+      <div class="concept-desc">
+        These get conflated constantly and they are independent.
+        <strong>Static/dynamic</strong> is <em>when</em> types are checked — compile time or run
+        time. <strong>Strong/weak</strong> is <em>how much</em> the language will silently
+        convert for you.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Strong</th><th>Weak</th></tr></thead>
+          <tbody>
+            <tr><td>Static</td><td>Rust, Java, Go</td><td>C — an int is a pointer if you insist</td></tr>
+            <tr><td>Dynamic</td><td>Python — <code>"1" + 1</code> raises</td><td>JavaScript — <code>"1" + 1</code> is <code>"11"</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        Python is dynamically <em>and</em> strongly typed, which surprises people who assume
+        dynamic means permissive. The bug class that hurts is weak typing, not dynamic typing:
+        a silent coercion produces a plausible wrong answer, where a raised error produces a
+        stack trace.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">What they buy</div>
+      <div class="concept-title">Types Are a Machine-Checked Subset of the Documentation</div>
+      <div class="concept-desc">
+        A type signature states what a function accepts and returns, and unlike a comment it
+        cannot drift — the compiler rejects it when it stops being true. That is the durable
+        argument for static types, and it strengthens as a codebase outlives the people who
+        wrote it.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>What types do not buy is correctness.</strong> A function returning
+        <code>int</code> can return the wrong int. Types eliminate a category of error —
+        roughly, "this value is not the shape you expected" — and leave the logic entirely to
+        you. Teams that expect more from them are the ones disappointed by them.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Practicalities</div>
+      <div class="concept-title">Gradual Typing, and the Boundary That Lies</div>
+      <div class="concept-desc">
+        TypeScript, Python's annotations and similar systems add optional static checking to
+        dynamic languages. They are genuinely valuable and share one sharp edge: the types are
+        erased before running, so nothing enforces them at the boundary. A value arriving from
+        JSON <span class="acro-exp">(JavaScript Object Notation)</span>, a database or an untyped library is whatever it actually is, regardless of the
+        annotation.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Validate at the boundary and trust the types inside it.</strong> A parse step
+        that checks incoming data against a schema is what makes the annotations true; without
+        one, a wrong assumption propagates deep into typed code that the checker has already
+        certified as safe. See
+        <span class="xref">Data Validation — Never Trust Input</span> in the Scripting domain.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: GARBAGE COLLECTION ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">♻️</span>
+    <span class="topic-name">Garbage Collection — Generational Collectors, Pauses &amp; Tuning</span>
+    <span class="topic-badge">CS • Runtimes</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The core idea</div>
+      <div class="concept-title">Most Objects Die Young, and Collectors Are Built Around That</div>
+      <div class="concept-desc">
+        The generational hypothesis is an empirical observation: the overwhelming majority of
+        allocations become garbage almost immediately. Collectors exploit it by splitting the
+        heap — new objects in a small young generation collected frequently and cheaply,
+        survivors promoted to an old generation collected rarely.
+      </div>
+      <div class="concept-desc">
+        A young collection is fast because it costs time proportional to the objects that
+        <em>survived</em>, not to the garbage. Allocating a million short-lived objects is
+        nearly free to collect; keeping a million alive is what costs.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Pauses</div>
+      <div class="concept-title">Reference Counting Has No Pauses and a Different Problem</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Tracing (JVM, Go, .NET)</th><th>Reference counting (CPython, Swift)</th></tr></thead>
+          <tbody>
+            <tr><td>Cost timing</td><td class="c-amber">Bursty — pauses</td><td class="c-green">Spread continuously</td></tr>
+            <tr><td>Cycles</td><td class="c-green">Collected</td><td class="c-red">Leaked without a cycle detector</td></tr>
+            <tr><td>Throughput</td><td class="c-green">Higher</td><td>Lower — every assignment updates a count</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        Neither is free; they place the cost differently. Reference counting is why CPython
+        frees most objects the instant the last name goes away — and why two objects referring
+        to each other need <code>gc</code> to notice.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Tuning the Collector When the Problem Is the Allocation Rate</div>
+      <div class="concept-desc">
+        The instinct on seeing GC pauses is to change collector flags. That is almost always the
+        wrong first move: pause frequency is driven by how fast the application produces
+        garbage, and by how much survives. Reducing allocation in a hot path fixes the cause;
+        flags redistribute the symptom.
+      </div>
+      <div class="concept-desc verdict">
+        The one tuning decision that reliably matters is <strong>heap size</strong>, and it
+        trades against pause length: a bigger heap collects less often and takes longer each
+        time. Decide from the service's latency target — and note that a memory
+        <em>leak</em> in a managed language is nearly always an unintended reference, most often
+        a cache or a listener list nobody removes from. See
+        <span class="xref">Amortized Analysis — Why a Dynamic Array Is O(1) "On Average"</span>
+        for the same latency-versus-throughput trade in another form.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MEMORY SAFETY ───────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💥</span>
+    <span class="topic-name">Undefined Behaviour &amp; Memory Safety — The Class Behind Most CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span></span>
+    <span class="topic-badge">CS • Languages</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The category</div>
+      <div class="concept-title">Roughly Two Thirds of Serious Vulnerabilities Are One Bug Class</div>
+      <div class="concept-desc">
+        Buffer overflows, use-after-free, double-free and uninitialised reads share a root:
+        languages where the programmer manually guarantees that memory access is valid.
+        Microsoft and Google have each reported that around 70% of their high-severity
+        vulnerabilities are memory-safety issues — a figure worth treating as an order of
+        magnitude rather than a precise number.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Bug</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td>Buffer overflow</td><td>Write past an allocation, corrupting adjacent memory</td></tr>
+            <tr><td>Use-after-free</td><td>Access memory already returned — an attacker may control what is there now</td></tr>
+            <tr><td>Double free</td><td>Corrupts the allocator's own bookkeeping</td></tr>
+            <tr><td>Uninitialised read</td><td>Reads whatever the previous occupant left</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Undefined behaviour</div>
+      <div class="concept-title">The Compiler Is Allowed to Assume It Never Happens</div>
+      <div class="concept-desc">
+        In C and C++, undefined behaviour does not mean "unpredictable result" — it means the
+        standard imposes no requirement at all, so the optimiser may assume it cannot occur and
+        reason from there. This is why a null check <em>after</em> a dereference can be deleted:
+        the dereference already implied the pointer was non-null.
+      </div>
+      <pre class="code-block"><span class="com">// The dereference tells the optimiser p cannot be null,</span>
+<span class="com">// so the check below is dead code and may be removed.</span>
+<span class="kw">int</span> v = *p;
+<span class="kw">if</span> (p == NULL) <span class="kw">return</span> ERROR;   <span class="com">// deleted at -O2</span></pre>
+      <div class="concept-desc verdict">
+        <strong>Undefined behaviour is not a runtime concept.</strong> It changes what the
+        compiler emits, which is why a bug can appear only at higher optimisation levels, or
+        only after a compiler upgrade, and why "it works in debug" proves nothing.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">What to do</div>
+      <div class="concept-title">Sanitisers Now, Safer Languages at the Boundary</div>
+      <div class="concept-desc">
+        Rewriting a working C codebase is rarely justified. The standard advice — from the same
+        organisations that published the 70% figure — is to write <em>new</em> code in a
+        memory-safe language and prioritise the parts that parse untrusted input, which is where
+        the exploitable bugs concentrate.
+      </div>
+      <pre class="code-block"><span class="com"># Catch it in CI rather than in a CVE. Both are cheap to enable.</span>
+clang -fsanitize=address,undefined -g -O1 prog.c
+valgrind --leak-check=full ./prog</pre>
+      <div class="concept-desc verdict">
+        Sanitisers find these bugs only on code paths your tests actually execute — so their
+        value is bounded by coverage, and pairing them with fuzzing is what makes the
+        combination effective. Rust's guarantee is stronger precisely because it is a property
+        of the type system rather than of the tests.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body cs -->

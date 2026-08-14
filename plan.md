@@ -30,8 +30,8 @@ jump to what you need:
 | **Execution Handbook** | Ordering constraints, per-domain queue, a concrete first-ten-sessions schedule, three waves specified to the point of transcription, and reusable checklists | 📘 reference |
 | **What is actually outstanding** | An audit of the repo as it really is — defects, the lint trend, undersized domains, content age. **Start here.** | ✅ short list cleared, session 18 |
 
-**Remaining backlog: ~831 content cards and 44 engineering items** across
-Phases 3–6, which would take the site from **1,005 topics / 29 domains** to roughly
+**Remaining backlog: ~828 content cards and 44 engineering items** across
+Phases 3–6, which would take the site from **1,008 topics / 29 domains** to roughly
 1,800 topics — about 165 working sessions.
 
 **If you read only two things:** *"What is actually outstanding"* at the very end
@@ -2121,9 +2121,9 @@ reviews and design arguments — taught for practitioners, not for a degree.
 **Wave AL6 — Languages, Compilers & Runtimes**
 - [x] How a Compiler Works — lexing, parsing, IR, optimisation, codegen
 - [x] Interpreters, Bytecode & JIT — the spectrum from Python to the JVM
-- [ ] Type Systems — static/dynamic, strong/weak, inference, and what types buy you
-- [ ] Garbage Collection Deep — mark-sweep, generational, pauses, tuning
-- [ ] Undefined Behaviour & Memory Safety — the class of bug behind most CVEs
+- [x] Type Systems — static/dynamic, strong/weak, inference, and what types buy you
+- [x] Garbage Collection Deep — mark-sweep, generational, pauses, tuning
+- [x] Undefined Behaviour & Memory Safety — the class of bug behind most CVEs
 
 **Wave AL7 — Distributed Systems Theory**
 - [x] Time in Distributed Systems — clocks, causality, Lamport and vector clocks
