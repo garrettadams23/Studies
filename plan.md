@@ -2126,11 +2126,11 @@ reviews and design arguments — taught for practitioners, not for a degree.
 - [ ] Undefined Behaviour & Memory Safety — the class of bug behind most CVEs
 
 **Wave AL7 — Distributed Systems Theory**
-- [ ] Time in Distributed Systems — clocks, causality, Lamport and vector clocks
-- [ ] Consensus — Paxos and Raft, explained without the paper
-- [ ] Consistency Models — linearizable, sequential, causal, eventual
-- [ ] Failure Detection & the FLP Result — why "is it down?" has no perfect answer
-- [ ] Idempotency, Exactly-Once & the Truth — what is actually achievable
+- [x] Time in Distributed Systems — clocks, causality, Lamport and vector clocks
+- [x] Consensus — Paxos and Raft, explained without the paper
+- [~] Consistency Models — linearizable, sequential, causal, eventual
+- [x] Failure Detection & the FLP Result — why "is it down?" has no perfect answer
+- [~] Idempotency, Exactly-Once & the Truth — what is actually achievable
 
 ### TRACK AM — Mathematics for IT, Security & AI  (→ `cs`)
 

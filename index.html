@@ -51594,6 +51594,179 @@ behind a well-known class of "my config file was empty after a power cut".
 </div>
 </div>
 </div>
+<!-- ══════════════════════════════════════════════════════════════
+WAVE AL7 (PARTIAL) — DISTRIBUTED SYSTEMS THEORY
+Consistency models and idempotency are already covered in
+`devops` and `eng`; only these three were genuine gaps.
+══════════════════════════════════════════════════════════════ -->
+<!-- ── TOPIC: TIME ────────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🕰️</span>
+<span class="topic-name">Time in Distributed Systems — Why Timestamps Cannot Order Events</span>
+<span class="topic-badge">CS • Distributed</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">The problem</div>
+<div class="concept-title">Two Clocks Never Agree, and One of Them Runs Backwards</div>
+<div class="concept-desc">
+Ordering events across machines by wall-clock timestamp is the most common distributed
+systems mistake, because it looks like it works. Clocks drift, and NTP <span class="acro-exp">(Network Time Protocol)</span> corrects them by
+stepping — which means a timestamp can go <em>backwards</em>, and two events can carry
+identical times.
+</div>
+<div class="concept-desc">
+The consequences are real: last-write-wins silently discards the wrong update, log
+correlation across services shows effects before causes, and a certificate can appear
+expired on one host and valid on another.
+</div>
+<div class="concept-desc verdict">
+<strong>Use a monotonic clock for durations and a wall clock only for display.</strong>
+Measuring elapsed time by subtracting two wall-clock readings is a bug that surfaces
+rarely and confusingly — every mainstream language offers a monotonic source precisely
+for this.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The alternative</div>
+<div class="concept-title">Logical Clocks Count Causality Instead of Seconds</div>
+<div class="concept-desc">
+A <strong>Lamport clock</strong> is a counter each node increments on every event and
+sends with every message; a receiver takes the maximum of its own and the sender's, plus
+one. This guarantees that if A caused B then A's number is lower — but not the reverse,
+so a lower number does not prove causality.
+</div>
+<div class="concept-desc">
+A <strong>vector clock</strong> carries one counter per node, which does capture the
+reverse: comparing two vectors tells you that one happened before the other, or that
+they are genuinely <em>concurrent</em> — neither caused the other.
+</div>
+<div class="concept-desc verdict">
+Detecting concurrency is the point. Concurrent writes are a real conflict, and a system
+that knows this can surface both versions and ask, rather than silently picking the one
+with the larger timestamp. The cost is a vector that grows with the number of nodes,
+which is why production systems bound it or use hybrid logical clocks instead.
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: CONSENSUS ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🤝</span>
+<span class="topic-name">Consensus — Raft and Paxos, Without the Paper</span>
+<span class="topic-badge">CS • Distributed</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">The problem</div>
+<div class="concept-title">Getting a Group of Machines to Agree on One Value</div>
+<div class="concept-desc">
+Consensus is how a cluster decides who the leader is, whether a transaction committed,
+or what the current configuration is — with machines failing and messages being lost or
+delayed. Every strongly consistent distributed system has one of these at its core:
+etcd and Kubernetes, Consul, ZooKeeper, most modern databases.
+</div>
+<div class="concept-desc">
+Raft is the one to learn, because it was explicitly designed to be understandable and
+the mechanism is three ideas: elect a leader, replicate an ordered log from that leader,
+and commit an entry once a majority has stored it.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Majorities</div>
+<div class="concept-title">Quorum Is Why Cluster Sizes Are Odd</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Nodes</th><th>Majority</th><th>Failures tolerated</th></tr></thead>
+<tbody>
+<tr><td>3</td><td>2</td><td class="c-green">1</td></tr>
+<tr><td>4</td><td>3</td><td class="c-amber">1 — no better than 3</td></tr>
+<tr><td>5</td><td>3</td><td class="c-green">2</td></tr>
+</tbody>
+</table>
+</div>
+<div class="concept-desc verdict">
+<strong>Four nodes tolerate no more failures than three and cost more to coordinate.</strong>
+That is the entire reason clusters are 3, 5 or 7. Requiring a majority also makes
+split-brain impossible: two halves of a partitioned network cannot both hold a majority,
+so at most one side stays writable.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Failure mode</div>
+<div class="concept-title">Losing Quorum Is Correct Behaviour, and It Looks Like an Outage</div>
+<div class="concept-desc">
+When enough nodes fail that no majority remains, the cluster stops accepting writes. It
+is not broken — it is refusing to risk divergence. Under CAP it has chosen consistency
+over availability, deliberately.
+</div>
+<div class="concept-desc verdict">
+The operational trap is forcing a new configuration to "get it back up". That can commit
+a state the old majority never agreed, and when the missing nodes return the histories
+conflict. Restore the nodes if there is any chance of it; forcing quorum is a
+data-loss decision and should be recorded as one. See <em>CAP Theorem &amp; Consistency
+Models</em> in the DevOps domain for the trade-off this sits inside.
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: FAILURE DETECTION ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📡</span>
+<span class="topic-name">Failure Detection &amp; FLP — Why "Is It Down?" Has No Perfect Answer</span>
+<span class="topic-badge">CS • Distributed</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">The result</div>
+<div class="concept-title">A Slow Node and a Dead Node Are Indistinguishable</div>
+<div class="concept-desc">
+If a node has not replied, it may be dead, or overloaded, or the network may have
+dropped the reply. From the outside these are identical, and no amount of waiting
+resolves the ambiguity — waiting longer only reduces how often you are wrong.
+</div>
+<div class="concept-desc">
+The <strong>FLP result</strong> proves this is fundamental: in an asynchronous system
+where even one node may fail, no algorithm can guarantee consensus in bounded time. Real
+systems get around it not by beating the proof but by adding timeouts — accepting that
+they will occasionally declare a live node dead.
+</div>
+<div class="concept-desc verdict">
+<strong>Every timeout is a guess about the network.</strong> Too short and you evict
+healthy nodes during a traffic spike, causing the outage you were detecting. Too long
+and real failures go unnoticed. There is no correct value — only one tuned to your
+network's actual latency distribution.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Consequences</div>
+<div class="concept-title">Fencing, Because the Old Leader May Not Know It Was Replaced</div>
+<div class="concept-desc">
+A node declared dead and replaced may still be running — paused by garbage collection,
+or on the far side of a partition. When it resumes it believes it is still the leader and
+may write. That is split-brain, and it corrupts data rather than causing downtime.
+</div>
+<div class="concept-desc">
+The standard defence is a <strong>fencing token</strong>: every leadership term carries
+a monotonically increasing number, and the storage layer rejects any write bearing a
+number lower than the highest it has seen. The stale leader's writes are refused by the
+resource itself rather than by agreement it cannot participate in.
+</div>
+<div class="concept-desc verdict">
+This is why distributed locks are harder than they look. A lock with a lease and no
+fencing is not safe — the lease can expire while the holder is paused, and the holder has
+no way to notice before it writes. If you are implementing one, the token is not
+optional.
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body cs -->
 </div>
 </div>
