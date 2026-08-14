@@ -4128,3 +4128,105 @@ honest, but this is recorded as a spec whose own precondition was skipped.
 The remaining half of the idea — generating the calculator card's flashcards from the
 same JSON so drill and reference cannot drift — is **not built**. For now the card
 cross-references the trainer in prose, which is weaker: the two can still diverge.
+
+---
+
+# WHAT IS ACTUALLY OUTSTANDING
+
+An audit rather than a wish list. Everything below was checked against the repo on
+2026-08-13, not recalled — the counts come from `lint_content.py`, `git grep` and the
+domain files themselves. Ordered by how much it costs to leave undone.
+
+## 1. Things that are wrong right now
+
+These are defects, not missing features. Each is small.
+
+| Item | Evidence | Fix |
+|---|---|---|
+| **`CALCULUS-CHEAT-SHEET.md` is stale and overclaims** | 7 sections in the file, 16 cards in the Math domain. Its header says "Generated from the Math domain", which is no longer true — it was generated from one card | Re-run the generator over all cards, or narrow the header to what it actually covers |
+| **`Windows Administration Fundamentals` is in `lifestyle`** | `grep -l` finds it in `data/lifestyle.html`. It is technical Windows content sitting in Life Admin | Move to `endpoint`. Slugs derive from titles, so nothing breaks — proven twice |
+| **The TI-84 drill and its card can drift** | The card cross-references `ti84_trainer.py` in prose only. The spec called for the card's flashcards to be generated from `ti84_drills.json` | Generate them, or accept the drift and say so in the card |
+
+## 2. The lint TREND, which has not moved
+
+`lint_content.py` has tracked these as warnings for fourteen sessions and none has gone
+down:
+
+```
+1946  inline style attribute
+ 361  ai-table (prefer ref-table)
+ 148  hard-coded hex colour
+```
+
+**This is the honest problem with tracked warnings: a number nobody is accountable for
+is decoration.** Three options, and picking one matters more than which:
+
+1. **Fix a slice per session** — say 200 inline styles — and let the TREND line show it falling.
+2. **Promote one to an error** at its current count as a ratchet, so it can only improve.
+3. **Delete the counters** and stop pretending they are being managed.
+
+The hard-coded hex count is the one with real consequence: those colours do not follow the
+light/dark theme, which is exactly the class of bug that made the study modal unreadable in
+light mode.
+
+## 3. New domains with no plan behind them
+
+The `lifestyle` split created five domains and the Math work added one more. **None of them
+has a wave spec'd**, and the plan's own Phase-4 rule says a domain needs ≥15 cards to
+justify existing:
+
+| Domain | Cards | Against the ≥15 rule |
+|---|---|---|
+| `spirit` | 3 | **Well under.** Either grow it or fold it back into `philosophy` |
+| `quotes` | 5 | Under, but it is a reference domain like `acronym`, so the rule may not apply |
+| `lifestyle` | 5 | Under. It is the residue after the split — check whether it still earns a chip |
+| `philosophy` | 10 | Under; plausibly fine, it is a coherent subject |
+| `productivity` | 10 | Under, but actively growing |
+| `mind` | 11 | Under, but actively growing |
+| `math` | 16 | Clears it |
+| `career` · `devops` | 18 · 36 | Clear it comfortably |
+
+**Decide `spirit` first.** Three cards is not a domain; it is a chip that dilutes the bar.
+
+## 4. Content age
+
+274 topics still carry `data-reviewed="2026-06"`, the oldest stamp in the repo. Nothing is
+stale by any reasonable standard yet — the site is months old, not years — but this is the
+number to watch, and the freshness tooling exists precisely so it can be watched rather
+than guessed at.
+
+Related and still unresolved from session 13: **`VOLATILE_HINTS` is too broad to act on.**
+182 of 943 topics match it. Before anything consumes that signal it needs to mark the
+*claim* — a console path, a price, a limit — not prose containing a word like "portal".
+That is a content convention, and conventions only stick if the linter can check them, so
+design the check first.
+
+## 5. Unknowns I cannot resolve alone
+
+| Question | Why it is blocking | What would settle it |
+|---|---|---|
+| Does Calculus Ch 3 cover **parametric and polar**? | If it does, that is a real hole in the Math domain. "Vectors in Calculus" does not say | A screenshot of Ch 3's lesson list |
+| Is Ch 5 (the calculator test) actually hard? | The TI-84 trainer was built with its own precondition unchecked. If Ch 5 is easy, that tool was over-build | Take the chapter test |
+| More BetterU material? | `betteru.live` is blocked by this environment's egress policy. The `/sources/` pages are the mineable ones — they carry the claims and citations | Save them as `.mhtml` and attach, as with the Japanese mastery page |
+
+## 6. Backlog reality check
+
+`plan.md` currently holds **935 unchecked items against 331 checked**. That ratio has not
+improved much, and it will not, because the file has been used as a place to record ideas
+faster than they can be built.
+
+That is not a failure — a backlog is a menu, and the "Scope paralysis" risk in the register
+says exactly this. But it is worth being honest that **most of those 935 will never be
+built**, and the useful part of this file is the last two hundred lines, not the first three
+thousand. If it ever becomes discouraging, delete a track wholesale rather than carrying it
+as debt.
+
+## The honest short list
+
+If only three things get done, do these:
+
+1. **Regenerate the cheat sheet** — it is wrong right now and someone might print it.
+2. **Decide `spirit`** — three cards is not a domain.
+3. **Pick one lint counter and actually move it**, or stop tracking all three.
+
+Everything else is optional, and saying so is the point of this section.
