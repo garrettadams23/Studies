@@ -50971,6 +50971,351 @@ is not.
 </div>
 </div>
 </div>
+<!-- ══════════════════════════════════════════════════════════════
+WAVE AL3 — ALGORITHMS WORTH KNOWING
+══════════════════════════════════════════════════════════════ -->
+<!-- ── TOPIC: SORTING ─────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🔤</span>
+<span class="topic-name">Sorting &amp; Searching — Why Your Language Picked the One It Did</span>
+<span class="topic-badge">CS • Algorithms</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">The real question</div>
+<div class="concept-title">You Will Never Write a Sort; You Will Choose One By Accident</div>
+<div class="concept-desc">
+Implementing a sort is an interview exercise. The decision that matters in real code is
+which one your runtime already calls, because that choice determines whether your sort
+is stable, how it behaves on nearly-sorted data, and whether an adversary can push it
+into its worst case.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead>
+<tr><th>Used by</th><th>Algorithm</th><th>Stable</th><th>Chosen because</th></tr>
+</thead>
+<tbody>
+<tr><td>Python, Java objects</td><td>Timsort</td><td class="c-green">Yes</td><td>Real data arrives partly sorted; Timsort finds and merges existing runs</td></tr>
+<tr><td>C++ <code>std::sort</code></td><td>Introsort</td><td class="c-red">No</td><td>Quicksort speed, switching to heapsort to cap the worst case at O(n log n)</td></tr>
+<tr><td>Rust <code>sort_unstable</code></td><td>Pattern-defeating quicksort</td><td class="c-red">No</td><td>Fastest in place; the stable version is offered separately and costs memory</td></tr>
+<tr><td>Databases</td><td>External merge sort</td><td class="c-green">Usually</td><td>The data does not fit in memory, which changes the problem entirely</td></tr>
+</tbody>
+</table>
+</div>
+<div class="concept-desc verdict">
+<strong>Stability is the property that bites.</strong> A stable sort keeps equal
+elements in their original relative order, which is what makes "sort by date, then sort
+by name" produce what users expect. Do that with an unstable sort and the second pass
+silently scrambles the first — a bug that looks like a data problem.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Searching</div>
+<div class="concept-title">Binary Search Is Easy to Describe and Famously Easy to Get Wrong</div>
+<div class="concept-desc">
+Binary search was published in 1946 and the first correct published implementation
+appeared in 1962. The standard Java version carried an overflow bug for nine years. The
+lesson is not that it is hard, but that off-by-one boundaries deserve real care —
+so call your standard library's version.
+</div>
+<pre class="code-block"><span class="com"># The classic bug: lo + hi overflows on large arrays in fixed-width ints.</span>
+mid = (lo + hi) // <span class="m">2</span>          <span class="com"># overflows in C/Java</span>
+mid = lo + (hi - lo) // <span class="m">2</span>     <span class="com"># does not</span>
+
+<span class="com"># Python: use the library. bisect returns an insertion point,</span>
+<span class="com"># which is more useful than a found/not-found boolean.</span>
+<span class="kw">from</span> bisect <span class="kw">import</span> bisect_left
+i = bisect_left(sorted_items, target)
+found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == target</pre>
+<div class="concept-desc verdict">
+Sorting to enable one binary search is a losing trade: O(n log n) to save O(n). It pays
+only when you will search the same data many times — which is exactly the argument for a
+database index.
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: STRATEGIES ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🗝️</span>
+<span class="topic-name">Divide &amp; Conquer, Greedy, Dynamic Programming — Recognising Which Applies</span>
+<span class="topic-badge">CS • Algorithms</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Recognising</div>
+<div class="concept-title">Three Strategies, and the Question That Separates Them</div>
+<div class="concept-desc">
+These are not interchangeable techniques to try in turn. Each requires a specific
+property of the problem, and applying one whose property does not hold produces an
+answer that is confidently wrong rather than slow.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead>
+<tr><th>Strategy</th><th>Requires</th><th>Fails how</th></tr>
+</thead>
+<tbody>
+<tr><td>Divide &amp; conquer</td><td>Independent subproblems that recombine</td><td>Recombination is harder than the split</td></tr>
+<tr><td>Greedy</td><td class="c-amber">A locally best choice is always globally safe</td><td class="c-red">Silently returns a suboptimal answer</td></tr>
+<tr><td>Dynamic programming</td><td>Overlapping subproblems, optimal substructure</td><td>State explosion — memory, not correctness</td></tr>
+</tbody>
+</table>
+</div>
+<div class="concept-desc verdict">
+<strong>Greedy is the dangerous one.</strong> It is easy to write, usually plausible, and
+wrong in a way no test catches unless someone knew the optimum independently. Making
+change with coins of 1, 3 and 4: greedy takes 4+1+1 for six, while the optimum is 3+3.
+Before shipping a greedy algorithm, either prove the exchange argument or say plainly
+that the result is approximate.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">DP in practice</div>
+<div class="concept-title">Memoise the Recursion; Do Not Start With the Table</div>
+<div class="concept-desc">
+Dynamic programming is taught bottom-up, with a table and indices, which is why it has a
+reputation for being impenetrable. The practical route is the opposite: write the naive
+recursion, confirm it is correct, then add a cache. The result is the same complexity
+with none of the index arithmetic.
+</div>
+<pre class="code-block"><span class="kw">from</span> functools <span class="kw">import</span> lru_cache
+
+<span class="com"># Naive recursion: correct, exponential, obviously right.</span>
+<span class="com"># One decorator makes it linear. That is the whole technique.</span>
+<span class="nd">@lru_cache</span>(maxsize=<span class="m">None</span>)
+<span class="kw">def</span> <span class="fn">ways</span>(n):
+    <span class="kw">if</span> n &lt; <span class="m">0</span>: <span class="kw">return</span> <span class="m">0</span>
+    <span class="kw">if</span> n == <span class="m">0</span>: <span class="kw">return</span> <span class="m">1</span>
+    <span class="kw">return</span> ways(n - <span class="m">1</span>) + ways(n - <span class="m">2</span>)</pre>
+<div class="concept-desc verdict">
+Convert to a bottom-up table only when you need it — to avoid recursion depth, or to
+drop memory from O(n) to O(1) by keeping just the rows still in use. Both are
+optimisations of a working solution, not the starting point.
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: STRING ALGORITHMS ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🔡</span>
+<span class="topic-name">String Algorithms — Matching, Edit Distance &amp; Where Regex Fits</span>
+<span class="topic-badge">CS • Algorithms</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Matching</div>
+<div class="concept-title">Naive Search Is Usually Fine, Until the Data Is Adversarial</div>
+<div class="concept-desc">
+Checking a pattern at every position is O(n·m) worst case and close to O(n) on natural
+text, because mismatches happen early. Real substring search in a standard library is
+already better than naive, and the classic algorithms matter mainly for knowing why the
+worst case exists.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead>
+<tr><th>Algorithm</th><th>Idea</th><th>Good for</th></tr>
+</thead>
+<tbody>
+<tr><td>Knuth-Morris-Pratt</td><td>Precompute how far to skip after a mismatch</td><td>Guaranteed O(n + m), streaming input</td></tr>
+<tr><td>Boyer-Moore</td><td>Match right to left, skip ahead on a bad character</td><td>Long patterns — often sublinear in practice</td></tr>
+<tr><td>Rabin-Karp</td><td>Rolling hash, compare hashes not characters</td><td>Searching many patterns at once; plagiarism detection</td></tr>
+<tr><td>Aho-Corasick</td><td>A trie of all patterns, matched in one pass</td><td>Thousands of patterns — intrusion detection, filters</td></tr>
+</tbody>
+</table>
+</div>
+<div class="concept-desc verdict">
+Aho-Corasick is the one worth recognising operationally: it is how a signature engine
+scans traffic for ten thousand indicators in a single pass rather than ten thousand.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Failure mode</div>
+<div class="concept-title">Catastrophic Backtracking — When a Regex Becomes a Denial of Service</div>
+<div class="concept-desc">
+A regular expression describing a regular language can be matched in linear time. Most
+production engines — Python, Java, JavaScript, PCRE — instead use backtracking, because
+it supports backreferences and lookaround. On a pattern with nested quantifiers, that
+backtracking can be exponential.
+</div>
+<pre class="code-block"><span class="com"># Nested quantifier over overlapping alternatives. Add one character</span>
+<span class="com"># to the input and the match time roughly doubles.</span>
+pattern = <span class="m">r"^(a+)+$"</span>
+subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="m">"!"</span>        <span class="com"># no match, and it will take a while</span>
+
+<span class="com"># Mitigations, in order of preference:</span>
+<span class="com">#  1. Avoid nested quantifiers and overlapping alternations</span>
+<span class="com">#  2. Anchor, and make quantifiers possessive/atomic where supported</span>
+<span class="com">#  3. Use a linear-time engine (RE2, Rust regex) for untrusted patterns</span>
+<span class="com">#  4. Impose a timeout — the last resort, not the design</span></pre>
+<div class="concept-desc verdict">
+<strong>Never run a user-supplied regular expression on a backtracking engine.</strong>
+This is a real and regularly exploited class of outage, and it has taken down major
+services. If users must supply patterns, use an engine with linear-time guarantees.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Edit distance</div>
+<div class="concept-title">Levenshtein Is Dynamic Programming You Will Actually Use</div>
+<div class="concept-desc">
+Edit distance counts the insertions, deletions and substitutions needed to turn one
+string into another. It powers spelling suggestions, "did you mean", fuzzy record
+matching and command-line typo correction, and it is the clearest small example of
+dynamic programming — a table where each cell depends on three neighbours.
+</div>
+<div class="concept-desc verdict">
+It costs O(n·m) time and memory, so it does not scale to comparing one string against
+millions. The standard approach is to narrow candidates cheaply first — a prefix index,
+a trie, or blocking on a key — and compute edit distance only within the shortlist.
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: RANDOMISED ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🎰</span>
+<span class="topic-name">Randomised Algorithms — Sampling, Reservoirs &amp; Monte Carlo</span>
+<span class="topic-badge">CS • Algorithms</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Why randomise</div>
+<div class="concept-title">Randomness Removes the Adversary's Advantage</div>
+<div class="concept-desc">
+A deterministic algorithm has a worst case, and anything that can choose your input can
+find it. Randomising a choice the algorithm makes means no fixed input is reliably bad —
+the same reasoning behind hash seed randomisation, and behind picking a random pivot in
+quicksort.
+</div>
+<div class="concept-desc">
+Two families worth telling apart: <strong>Las Vegas</strong> algorithms are always
+correct and take a random amount of time (randomised quicksort). <strong>Monte
+Carlo</strong> algorithms take bounded time and are occasionally wrong, with a
+probability you choose (primality testing).
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reservoir sampling</div>
+<div class="concept-title">A Fair Sample From a Stream of Unknown Length</div>
+<div class="concept-desc">
+Take k items uniformly at random from a stream you cannot buffer and whose length you do
+not know in advance — log lines, telemetry, a large file. Keep the first k, then for
+item i replace a random one with probability k/i. Every item ends equally likely, in
+O(k) memory and one pass.
+</div>
+<pre class="code-block"><span class="kw">import</span> random
+
+<span class="kw">def</span> <span class="fn">reservoir</span>(stream, k):
+    keep = []
+    <span class="kw">for</span> i, item <span class="kw">in</span> enumerate(stream):
+        <span class="kw">if</span> i &lt; k:
+            keep.append(item)
+        <span class="kw">else</span>:
+            j = random.randint(<span class="m">0</span>, i)     <span class="com"># inclusive</span>
+            <span class="kw">if</span> j &lt; k:
+                keep[j] = item
+    <span class="kw">return</span> keep</pre>
+<div class="concept-desc verdict">
+This is how sampled logging and distributed tracing keep a representative slice without
+knowing the request volume ahead of time. The alternative people reach for — "keep every
+hundredth" — is not a uniform sample and correlates badly with periodic traffic.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Failure mode</div>
+<div class="concept-title">The Wrong Random Number Generator</div>
+<div class="concept-desc">
+A default generator is built for speed and statistical quality, not unpredictability.
+Its output is reproducible from its seed, which is a feature for simulation and a
+vulnerability for anything security-relevant.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead>
+<tr><th>Use</th><th>Python</th><th>Never use for</th></tr>
+</thead>
+<tbody>
+<tr><td>Simulation, sampling, shuffling display order</td><td><code>random</code></td><td class="c-red">Tokens, passwords, keys, session IDs</td></tr>
+<tr><td>Anything an attacker benefits from predicting</td><td><code>secrets</code></td><td>—</td></tr>
+</tbody>
+</table>
+</div>
+<div class="concept-desc verdict">
+Predictable password-reset tokens are a recurring real-world breach, and the code that
+produced them looked entirely reasonable. If the value protects something, use the
+cryptographic generator — it costs nothing here.
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: INTERVIEW PATTERNS ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🎯</span>
+<span class="topic-name">Algorithm Interview Patterns — The Eight That Cover Most Questions</span>
+<span class="topic-badge">CS • Interview</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">The patterns</div>
+<div class="concept-title">Recognition Beats Recall</div>
+<div class="concept-desc">
+Interview questions are drawn from a small set of shapes. Memorising solutions does not
+transfer; recognising the shape does, because the shape tells you the data structure and
+the data structure writes most of the code.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead>
+<tr><th>Signal in the question</th><th>Reach for</th></tr>
+</thead>
+<tbody>
+<tr><td>Sorted array, find a pair or triple</td><td>Two pointers from both ends</td></tr>
+<tr><td>Longest/shortest contiguous run meeting a condition</td><td>Sliding window</td></tr>
+<tr><td>Top k, or a running median</td><td>Heap — two heaps for the median</td></tr>
+<tr><td>"Have I seen this before", counting, grouping</td><td>Hash map</td></tr>
+<tr><td>Shortest path in an unweighted graph or grid</td><td>Breadth-first search</td></tr>
+<tr><td>All combinations, permutations, board placements</td><td>Backtracking</td></tr>
+<tr><td>Count the ways, or best value under a limit</td><td>Dynamic programming</td></tr>
+<tr><td>Ordering with dependencies</td><td>Topological sort</td></tr>
+</tbody>
+</table>
+</div>
+<div class="concept-desc verdict">
+<strong>Sliding window and two pointers cover a surprising share alone.</strong> Both
+turn an O(n²) nested loop into O(n) by never re-examining what the window already
+summarised — and both are far easier to derive live than to remember.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Method</div>
+<div class="concept-title">State the Brute Force First — It Is Worth Marks, Not Lost Ones</div>
+<div class="concept-desc">
+Candidates routinely stay silent hunting for the clever answer. Saying "the brute force
+is O(n²) — I check every pair; let me see whether I can avoid re-scanning" establishes a
+correct baseline, shows the analysis, and frequently leads to the optimisation. It also
+leaves something working if time runs out.
+</div>
+<div class="concept-desc">
+Then: clarify input constraints before coding, say the complexity of what you are about
+to write, and test on an empty input and a single element. Most failed submissions are
+edge cases, not algorithms. See <em>Coding Interviews</em> in the Career domain for the
+surrounding process.
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body cs -->
 </div>
 </div>
