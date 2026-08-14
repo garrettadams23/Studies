@@ -68,3 +68,31 @@ jobs:
             echo "::error::index.html is out of date. Run 'python build.py' and commit the result."
             exit 1
           fi
+
+  # Separate job: it needs Node and a browser, and none of the checks above do.
+  # Kept out of verify-build so a markup typo still fails in seconds rather than
+  # waiting on a Chromium download.
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Playwright and Chromium
+        run: npm install playwright && npx playwright install --with-deps chromium
+
+      - name: Build the page
+        run: python build.py
+
+      # Drives the real page: permalinks, per-domain study decks, progress
+      # persistence, theming and keyboard navigation. plan.md has claimed this
+      # verification since the first review; this is what makes the claim true.
+      - name: Smoke-test the built page
+        run: node tools/smoke_test.mjs

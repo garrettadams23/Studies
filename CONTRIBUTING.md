@@ -70,6 +70,25 @@ in `:root` in `style.css`: `--cyan` `--green` `--amber` `--red` `--purple` `--mu
 `--rose` `--fuchsia` `--lime`, plus dimmed `--amber-2/-3`, `--green-2/-3` and `--cyan-2`
 for three-tone ladders. Add a variable there rather than a literal here.
 
+## Before you push
+
+`python build.py` regenerates `index.html`; CI fails if you forgot. Then:
+
+```
+node tools/smoke_test.mjs      # drives the built page in a real browser
+```
+
+It checks the things a structural change quietly breaks — a chip without its
+domain section, a permalink that no longer expands its card, a study deck that
+lost its domain, progress that stops persisting, a diagram that stopped
+following the theme. Needs `npm install playwright` once. CI runs it too, as a
+separate job so a markup typo still fails in seconds.
+
+If you add a feature worth protecting, add a check. One rule, learned the hard
+way: **assert the element is there before asserting how it behaves.** A check
+that quietly disappears along with its selector turns a broken page into a
+passing run.
+
 ## Claims that go out of date
 
 Most of this site is conceptual and does not rot — how BGP works, what Zero Trust means,

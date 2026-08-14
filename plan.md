@@ -4418,6 +4418,7 @@ theme through it: **every one of them was a claim nobody was checking.**
 | `spirit` is a domain | 3 cards | Folded; the ≥15 rule applied for the first time |
 | Windows Admin is Life Admin | Mis-filed since the split | In `endpoint` |
 | `class="c-cyan"` colours a cell | Dead in 1614 first cells | Removed; lint errors on the position |
+| "Verified headless (Chromium)" | Re-derived by hand each session | `tools/smoke_test.mjs`, 21 checks, in CI |
 
 CI grew two gates and lost a warning. The generators matter more than the fixes: a
 regenerated cheat sheet is worth one session, but a cheat sheet that *cannot go stale*
@@ -4442,3 +4443,48 @@ One correction to the audit above, found by doing it: §1 said to "re-run the ge
 for the cheat sheet. There was no generator to re-run. The file had been written by hand
 and given a header that described an intention. Worth remembering when reading the rest
 of this file — a stated capability is not evidence of one.
+
+### The headline claim, made checkable
+
+This file's own header has said **"Verified headless (Chromium)"** since the first
+review. It was true each time somebody wrote it, and never afterwards: every session that
+changed structure re-derived a throwaway script, and between sessions nothing checked it.
+Same shape as the cheat sheet header.
+
+`tools/smoke_test.mjs` is now that check — 21 assertions, run in CI as its own job. It
+tests what a *structural* change breaks, not pixels:
+
+- every filter chip has a domain section, and every section has a chip (a half-finished
+  fold is silent otherwise)
+- every topic has a unique id, and a cold-loaded permalink expands its card
+- one study deck per studyable domain, none for a domain that is gone, and none empty
+- reviewed state survives a reload
+- body, diagrams and volatile marks all change colour with the theme
+- no raw hex in a style attribute; Enter opens a domain and a topic; no console errors;
+  no off-site requests
+
+**The harness had the bug it exists to catch.** Renaming `.topo-svg` in a deliberately
+broken copy should have failed it. Instead the theme loop skipped the now-missing
+selectors and reported **19/19 passed** — a page with its diagrams destroyed, green.
+Fixed by asserting presence separately from behaviour, and re-tested against four broken
+copies: a deleted chip, a reintroduced literal, the renamed class, and the script tag
+pointed at nothing. All four now fail, and the last one fails *readably* rather than
+dying on a 30-second timeout.
+
+That is the fourth instance this session of the same thing, and the sharpest, because it
+happened to a tool built specifically to avoid it: **a check that can quietly stop
+checking is worse than no check**, since it also reports success. Worth re-reading before
+adding a counter, a lint rule, or an assertion to this repo.
+
+### On this session's method
+
+Four verification failures in this session turned out to be broken *tests*, not broken
+code: a `.topic.open` selector that script.js never sets, a progress probe searching the
+wrong storage key, a notepad treated as a textarea when it is a compose-and-post list,
+and three "broken" page copies that were merely missing their sibling `script.js`
+(`index.html` is not self-contained — `build.py`'s docstring calls it that, and means
+"needs no server"). Every one looked like a finding for a minute.
+
+The habit that caught them all was cheap: **run the control.** Test the thing you did not
+change, and if it fails too, the test is wrong. It cost four extra runs and prevented
+four wrong entries in this file.
