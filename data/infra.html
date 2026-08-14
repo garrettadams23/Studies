@@ -965,4 +965,369 @@ New-ADReplicationSubnet <span class="kw">-Name</span> "10.30.7.0/24" <span class
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE V3 — GROUP POLICY IN PRACTICE
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: GPO ARCHITECTURE ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📜</span>
+    <span class="topic-name">Group Policy Architecture — Where the Settings Actually Live</span>
+    <span class="topic-badge">Group Policy • Internals</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Two halves</div>
+      <div class="concept-title">A GPO Is a Directory Object Plus a Folder, and They Can Disagree</div>
+      <div class="concept-desc">
+        What looks like one object in the management console is stored in two places. The
+        <strong>container</strong> lives in Active Directory and holds the metadata — version
+        numbers, status, which client-side extensions are involved. The
+        <strong>template</strong> is a folder in SYSVOL <span class="acro-exp">(System Volume)</span> holding the actual settings files.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Group Policy container</th><th>Group Policy template</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Lives in</td><td>The AD <span class="acro-exp">(Active Directory)</span> database</td><td>The SYSVOL share, named by GUID <span class="acro-exp">(Globally Unique Identifier)</span></td></tr>
+            <tr><td>Holds</td><td>Version, status, extension list</td><td>Registry.pol, scripts, preferences XML <span class="acro-exp">(eXtensible Markup Language)</span></td></tr>
+            <tr><td>Replicated by</td><td>AD replication</td><td>DFSR <span class="acro-exp">(Distributed File System Replication)</span></td></tr>
+            <tr><td>Fails as</td><td class="c-amber">Missing GPO in the console</td><td class="c-red">GPO applies inconsistently by site</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> these replicate over two independent mechanisms, so they
+        can fall out of step. A policy that works in one office and not another, with no error
+        anywhere, is the signature of SYSVOL replication being behind — not of a policy problem.
+        Check DFSR before re-reading the GPO.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">What it writes</div>
+      <div class="concept-title">Most of Group Policy Is Just Registry Keys With Rules About Them</div>
+      <div class="concept-desc">
+        Administrative template settings compile down to registry values in
+        <code>Registry.pol</code>. What makes them <em>policy</em> rather than configuration is
+        where they land: the four policy branches of the registry, which ordinary applications
+        and users cannot write to, and which are re-applied on a schedule.
+      </div>
+      <div class="concept-desc">
+        This is exactly why a true policy setting cannot be permanently changed by the user —
+        the next refresh puts it back — and why a preference can. It is also why an
+        <code>.admx</code> file is only a description of a setting: it tells the console what to
+        show and which key to write, and installing one changes nothing on its own.
+      </div>
+      <pre class="code-block"><span class="com"># The central store — one copy of the templates for the whole domain,</span>
+<span class="com"># so every admin console shows the same settings</span>
+\\corp.example.com\SYSVOL\corp.example.com\Policies\PolicyDefinitions\
+
+<span class="com"># Without it, each console uses its own local C:\Windows\PolicyDefinitions,</span>
+<span class="com"># and settings appear or vanish depending on who opened the editor</span></pre>
+      <div class="concept-desc verdict">
+        Create the central store early. Its absence produces one of the most confusing symptoms
+        in Group Policy: a colleague cannot find the setting you just configured, because their
+        console does not know it exists.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: PROCESSING ORDER ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔢</span>
+    <span class="topic-name">Processing Order &amp; Precedence — LSDOU <span class="acro-exp">(Local, Site, Domain, Organisational Unit)</span>, Enforcement &amp; Loopback</span>
+    <span class="topic-badge">Group Policy • Precedence</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The order</div>
+      <div class="concept-title">Last Writer Wins, and the Order Is LSDOU</div>
+      <div class="concept-desc">
+        Policies apply in a fixed sequence — <strong>L</strong>ocal, <strong>S</strong>ite,
+        <strong>D</strong>omain, <strong>OU</strong> — and each pass overwrites conflicting
+        settings from the one before. The nearest OU therefore wins by default, which matches
+        the instinct that specific beats general. Multiple GPOs <span class="acro-exp">(Group Policy Object)</span> linked to the same container
+        are applied by link order, lowest number last, so <em>link order 1 wins</em>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Modifier</th><th>Effect</th><th>Beats</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Enforced (on a link)</td><td>Cannot be overridden by anything more specific</td><td class="c-green">Everything below it, and Block Inheritance</td></tr>
+            <tr><td>Block Inheritance (on an OU)</td><td>Stops policies from above reaching this OU</td><td class="c-amber">Everything above — except Enforced links</td></tr>
+            <tr><td>Link order</td><td>Orders GPOs on one container</td><td>Only its peers on that container</td></tr>
+            <tr><td>Link disabled</td><td>The GPO exists but does nothing here</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> Enforced and Block Inheritance are both escape hatches
+        that make precedence hard to reason about, and they interact — Enforced wins over a
+        block. Use them sparingly and document each one, because the person debugging the
+        resulting behaviour in two years will not guess why they are there.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Two halves again</div>
+      <div class="concept-title">Computer Settings and User Settings Follow Different Objects</div>
+      <div class="concept-desc">
+        Every GPO has a computer half and a user half, and they are evaluated against
+        <strong>different objects in different places</strong>. The computer half applies based
+        on where the <em>computer</em> account sits; the user half based on where the
+        <em>user</em> account sits. Linking a GPO with user settings to an OU full of computers
+        does exactly nothing, and reports no error.
+      </div>
+      <div class="concept-desc">
+        Timing differs too: computer policy applies at startup, user policy at sign-in, and both
+        refresh in the background roughly every 90 minutes with a random offset so that an
+        estate does not stampede a DC <span class="acro-exp">(Domain Controller)</span>. Some settings — drive maps, folder redirection, software
+        installation — only take effect at the full startup or logon event, which is why a
+        change sometimes needs a reboot rather than a refresh.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Loopback</div>
+      <div class="concept-title">The Setting for "This Machine, Whoever Signs In"</div>
+      <div class="concept-desc">
+        Sometimes user settings should depend on the machine rather than the person: a kiosk, a
+        shared clinical workstation, a terminal server. Loopback processing tells the computer to
+        apply the <em>user</em> half of the GPOs linked to the <strong>computer's</strong> OU.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Mode</th><th>What the user gets</th><th>Use when</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Merge</td><td>Their own user policy, then the machine's user policy on top</td><td>Mostly normal machine, a few local overrides</td></tr>
+            <tr><td>Replace</td><td class="c-amber">Only the machine's user policy; theirs is discarded</td><td>Kiosk or locked-down shared terminal</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        Loopback is the correct tool for a real requirement and a common cause of "why did this
+        user's settings vanish on that one machine". If a user behaves differently on a
+        particular device and nowhere else, check the device's OU for loopback before anything
+        else.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: FILTERING ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧪</span>
+    <span class="topic-name">Filtering — Security Groups, WMI <span class="acro-exp">(Windows Management Instrumentation)</span> &amp; Item-Level Targeting</span>
+    <span class="topic-badge">Group Policy • Scoping</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Three tools</div>
+      <div class="concept-title">Narrowing a GPO <span class="acro-exp">(Group Policy Object)</span> Below the OU It Is Linked To</div>
+      <div class="concept-desc">
+        A link scopes a policy to a container. When that is still too broad, there are three
+        ways to narrow it — and they differ enormously in cost, because two are evaluated on
+        every single client at every refresh.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Security filtering</th><th>WMI filtering</th><th>Item-level targeting</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Granularity</td><td>Whole GPO</td><td>Whole GPO</td><td class="c-green">A single preference item</td></tr>
+            <tr><td>Cost</td><td class="c-green">Effectively free</td><td class="c-red">A WMI query per client, per refresh</td><td class="c-green">Cheap</td></tr>
+            <tr><td>Works for</td><td>Users and computers by group</td><td>Anything WMI can express</td><td>Preferences only</td></tr>
+            <tr><td>Debuggability</td><td class="c-green">Obvious in the console</td><td class="c-amber">Invisible until you test the query</td><td class="c-amber">Buried in item properties</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> reach for security filtering first — it is free, visible,
+        and understood by everyone. Use item-level targeting when only one drive map or shortcut
+        needs the condition. Treat WMI filtering as a last resort: it is the standard answer to
+        "apply only to laptops", and it is also a per-client query on every refresh that slows
+        logons across the estate.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Security Filtering Change That Broke Everything in 2016</div>
+      <div class="concept-desc">
+        For a GPO to apply to a user or computer, that object needs <strong>both</strong> Read
+        and Apply Group Policy. Removing Authenticated Users from security filtering and adding
+        a specific group used to be the standard technique — until a security update made
+        computers require Read access via the computer account itself.
+      </div>
+      <div class="concept-desc">
+        The result: policies that had worked for years silently stopped applying. The fix is to
+        leave <strong>Authenticated Users with Read</strong> on the delegation tab while
+        restricting <em>Apply</em> to the target group. It looks redundant and it is load-bearing.
+      </div>
+      <pre class="code-block"><span class="com"># Check what a GPO is actually scoped to</span>
+Get-GPPermission <span class="kw">-Name</span> "Laptop Power Settings" <span class="kw">-All</span> |
+    Select-Object @{n='Who';e={$_.Trustee.Name}}, Permission
+
+<span class="com"># Restore the Read that the 2016 change made mandatory</span>
+Set-GPPermission <span class="kw">-Name</span> "Laptop Power Settings" <span class="kw">-TargetName</span> "Authenticated Users" `
+    <span class="kw">-TargetType</span> Group <span class="kw">-PermissionLevel</span> GpoRead</pre>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: PREFERENCES ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎛️</span>
+    <span class="topic-name">Group Policy Preferences — The Half People Forget Exists</span>
+    <span class="topic-badge">Group Policy • Preferences</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The distinction</div>
+      <div class="concept-title">Policies Are Enforced; Preferences Are Set and Let Go</div>
+      <div class="concept-desc">
+        A policy setting is re-applied on every refresh and the interface for it is greyed out.
+        A preference writes an ordinary value that the user can then change — and, depending on
+        the action you chose, it may never be written again.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Action</th><th>Behaviour</th><th>Use for</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Create</td><td>Write only if absent; never touch again</td><td>A default the user may override</td></tr>
+            <tr><td>Replace</td><td>Delete and recreate every refresh</td><td>Settings you need to stay correct</td></tr>
+            <tr><td>Update</td><td>Create if absent, amend if present</td><td>The usual choice</td></tr>
+            <tr><td>Delete</td><td>Remove it</td><td>Cleaning up a previous mistake</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> "the drive map is not updating" is nearly always
+        <em>Create</em> where <em>Update</em> or <em>Replace</em> was meant. Create fires once
+        and then stays silent forever, which looks exactly like a broken policy.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Security</div>
+      <div class="concept-title">Never Set Passwords Through Preferences — MS14-025</div>
+      <div class="concept-desc">
+        Preferences could once set local account passwords. The password was stored in the
+        preferences XML <span class="acro-exp">(eXtensible Markup Language)</span> in SYSVOL <span class="acro-exp">(System Volume)</span>, encrypted with a key <strong>Microsoft published in its own
+        documentation</strong> — so any domain user who could read SYSVOL, which is every domain
+        user, could decrypt it.
+      </div>
+      <div class="concept-desc">
+        Microsoft removed the ability to create these in 2014, but <strong>did not remove
+        existing ones</strong>. They persist in SYSVOL until someone deletes them, and finding
+        them is a standard early step in an intrusion. Check now; it takes one command:
+      </div>
+      <pre class="code-block"><span class="com"># Any cpassword left in SYSVOL is a live credential leak to every domain user</span>
+Get-ChildItem <span class="kw">-Path</span> "\\corp.example.com\SYSVOL" <span class="kw">-Recurse</span> <span class="kw">-Include</span> *.xml <span class="kw">-ErrorAction</span> SilentlyContinue |
+    Select-String <span class="kw">-Pattern</span> "cpassword" | Select-Object Path, LineNumber</pre>
+      <div class="concept-desc verdict">
+        If that returns anything: treat those credentials as compromised, rotate them, and delete
+        the preference. Use LAPS for local administrator passwords — that is the control this
+        anti-pattern was replaced by.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: TROUBLESHOOTING ─────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔍</span>
+    <span class="topic-name">GPO <span class="acro-exp">(Group Policy Object)</span> Troubleshooting — Proving What a Machine Actually Received</span>
+    <span class="topic-badge">Group Policy • Troubleshooting</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Method</div>
+      <div class="concept-title">Ask the Client, Not the Console</div>
+      <div class="concept-desc">
+        The management console shows what you <em>configured</em>. Only the client can tell you
+        what it <em>received</em>, and the gap between those two is where every Group Policy
+        problem lives. Start at the machine, and read the denied entries rather than the applied
+        ones — the reason a GPO was filtered out is the answer.
+      </div>
+      <pre class="code-block"><span class="com"># The single most useful command: a full report with denied GPOs and reasons</span>
+gpresult /h C:\rsop.html /f
+
+<span class="com"># Another user's result, from your own session</span>
+gpresult /scope:user /user corp\jdoe /r
+
+<span class="com"># Force a refresh; add /boot or /logoff if the extension needs it</span>
+gpupdate /force
+
+<span class="com"># The operational log — timings, slow extensions, real errors</span>
+Get-WinEvent <span class="kw">-LogName</span> "Microsoft-Windows-GroupPolicy/Operational" <span class="kw">-MaxEvents</span> 40 |
+    Format-Table TimeCreated, Id, Message <span class="kw">-Wrap</span></pre>
+      <div class="concept-desc verdict">
+        <code>gpupdate /force</code> is not a diagnosis. It re-applies everything and often
+        masks the problem for one cycle, which is why the fault returns tomorrow. Read the report
+        first.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Checklist</div>
+      <div class="concept-title">Why a GPO Did Not Apply, in the Order Worth Checking</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Check</th><th>Symptom when this is the cause</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Is the object in the OU the GPO is linked to?</td><td>Object was moved, or landed in the default container</td></tr>
+            <tr><td>Right half of the GPO for the object type?</td><td>User settings linked to a computer OU — no error, no effect</td></tr>
+            <tr><td>Security filtering — Read <em>and</em> Apply?</td><td>Applied until 2016, then stopped for no visible reason</td></tr>
+            <tr><td>WMI <span class="acro-exp">(Windows Management Instrumentation)</span> filter actually true on this client?</td><td>Applies to some hardware and not others</td></tr>
+            <tr><td>Block Inheritance or a more specific GPO?</td><td>Correct in the console, absent on the machine</td></tr>
+            <tr><td>Has the client refreshed since the change?</td><td>Works after a reboot, not before</td></tr>
+            <tr><td>Is SYSVOL <span class="acro-exp">(System Volume)</span> replicating?</td><td>Works in one site, not another</td></tr>
+            <tr><td>Slow link detection?</td><td>Fails only on VPN <span class="acro-exp">(Virtual Private Network)</span> or a branch link</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> work down this list rather than re-reading the policy. Six
+        of these eight produce no error message anywhere — the policy is simply absent — so the
+        absence of an error tells you nothing about which one you are looking at.
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- /domain-body infra -->
