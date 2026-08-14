@@ -1874,4 +1874,333 @@ New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw"
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE V6 — CERTIFICATE SERVICES
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: AD CS DESIGN ────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📜</span>
+    <span class="topic-name">AD CS <span class="acro-exp">(Active Directory Certificate Services)</span> Design — Offline Roots, Issuing CAs <span class="acro-exp">(Certificate Authority)</span> &amp; Publishing</span>
+    <span class="topic-badge">Infra • PKI</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">The Theory Is Covered; This Is the Deployment You Have to Live With</div>
+      <div class="concept-desc">
+        <strong>PKI <span class="acro-exp">(Public Key Infrastructure)</span></strong> in the Security domain covers chains of trust, certificates and
+        revocation as concepts. This card is about the internal certificate authority you
+        actually run — a system whose design decisions are effectively permanent, because
+        rebuilding a root means re-issuing every certificate it ever signed.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Structure</div>
+      <div class="concept-title">Two Tiers, and the Root Stays Switched Off</div>
+      <div class="concept-desc">
+        The standard design is a <strong>standalone offline root</strong> that signs one thing —
+        the issuing CA's certificate — and is then powered off and stored securely. An
+        <strong>enterprise issuing CA</strong>, domain-joined, does all day-to-day work.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Offline root</th><th>Issuing CA</th></tr></thead>
+          <tbody>
+            <tr><td>Domain-joined</td><td class="c-red">No — standalone, deliberately</td><td class="c-green">Yes, for templates and auto-enrolment</td></tr>
+            <tr><td>Powered on</td><td>Only to sign or re-publish a CRL <span class="acro-exp">(Certificate Revocation List)</span></td><td>Always</td></tr>
+            <tr><td>Compromise means</td><td class="c-red">Rebuild the entire PKI</td><td class="c-amber">Revoke its certificate, stand up a new one</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> the offline root exists so that the worst realistic
+        incident is recoverable. A single online enterprise root is simpler to build and turns
+        one compromised server into a full trust rebuild across every device — which is why the
+        two-tier design is worth the extra afternoon.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Offline Root's CRL Expires, and Everything Stops</div>
+      <div class="concept-desc">
+        A certificate revocation list has a validity period. When a client cannot fetch a
+        current CRL for any CA in the chain, strict validation fails — so an offline root whose
+        CRL quietly expired invalidates every certificate beneath it. The root is switched off,
+        so nothing warns you, and the failure arrives all at once.
+      </div>
+      <div class="concept-desc">
+        Set the offline root's CRL validity long — a year or more — publish it to a location
+        that stays reachable, and put the renewal in a calendar owned by a team rather than a
+        person. Check that the published locations resolve from a normal client, not from the CA:
+      </div>
+      <pre class="code-block"><span class="com"># Validate the whole chain and every revocation URL a client would use</span>
+certutil -verify -urlfetch cert.cer
+
+<span class="com"># What the CA publishes, and when the current CRL expires</span>
+certutil -getreg CA\CRLPublicationURLs
+certutil -CRL                       <span class="com"># force a fresh CRL now</span></pre>
+      <div class="concept-desc verdict">
+        The distribution points are baked into every certificate at issuance. Changing the URL <span class="acro-exp">(Uniform Resource Locator)</span>
+        later does not fix already-issued certificates — they carry the old address until they
+        expire. Get the publishing addresses right before issuing anything.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TEMPLATES ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧾</span>
+    <span class="topic-name">Certificate Templates — The Settings That Matter, and the Ones That Get You Owned</span>
+    <span class="topic-badge">Infra • PKI</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">What a template is</div>
+      <div class="concept-title">A Template Is a Standing Offer to Issue Certificates</div>
+      <div class="concept-desc">
+        A template defines what a certificate will contain, who may request one, and whether a
+        human approves it. Publishing a template to a CA <span class="acro-exp">(Certificate Authority)</span> is not configuration — it is an
+        <strong>authorisation decision</strong>, standing until revoked, and it is the part
+        people treat casually.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Setting</th><th>Safe</th><th>Dangerous</th></tr></thead>
+          <tbody>
+            <tr><td>Subject name</td><td class="c-green">Built from AD <span class="acro-exp">(Active Directory)</span></td><td class="c-red">Supplied in the request</td></tr>
+            <tr><td>Enrolment rights</td><td>A specific group</td><td class="c-red">Domain Users / Domain Computers</td></tr>
+            <tr><td>Manager approval</td><td>Required for anything privileged</td><td>Disabled everywhere</td></tr>
+            <tr><td>Extended key usage</td><td>Narrow — server auth only</td><td class="c-red">Client authentication, or Any Purpose</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The right-hand column is one finding, not four.</strong> A template that lets
+        the requester choose the subject, allows client authentication, and can be enrolled by
+        any domain user is a request for a certificate that authenticates as anyone — including
+        a Domain Admin. That is ESC1, and it is a configuration mistake rather than a software
+        vulnerability.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Defender's view</div>
+      <div class="concept-title">ESC1–ESC8 Are Your Audit Checklist</div>
+      <div class="concept-desc">
+        <strong>ADCS Abuse — Certipy &amp; the ESC Techniques</strong> in the Red Team domain
+        covers exploitation. The defensive point is that these are named, enumerable
+        misconfigurations — so the same tooling that finds them for an attacker finds them for
+        you, faster than reading template properties by hand.
+      </div>
+      <pre class="code-block"><span class="com"># Enumerate templates and CA settings, flagging the known ESC patterns.</span>
+<span class="com"># Run this against your own PKI as routine defensive work.</span>
+certipy find -u user@corp.example.com -p <span class="m">'...'</span> -dc-ip <span class="m">10.0.0.10</span> -vulnerable
+
+<span class="com"># Native equivalents for spot checks</span>
+certutil -TCAInfo
+Get-CATemplate</pre>
+      <div class="concept-desc verdict">
+        Two settings deserve a standing audit: any template where the requester supplies the
+        subject, and <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> on the CA itself — the latter
+        lets <em>any</em> request specify an alternative name, which turns every template into
+        an impersonation primitive.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LIFECYCLE ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔄</span>
+    <span class="topic-name">Certificate Lifecycle — Auto-Enrolment and the Expiry Nobody Scheduled</span>
+    <span class="topic-badge">Infra • PKI</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Auto-enrolment</div>
+      <div class="concept-title">Getting Certificates Onto Devices Without Touching Them</div>
+      <div class="concept-desc">
+        Auto-enrolment issues and renews certificates automatically for accounts that have the
+        rights. It needs three things aligned: <strong>Autoenroll</strong> permission on the
+        template, the template published to an issuing CA <span class="acro-exp">(Certificate Authority)</span>, and a Group Policy setting enabling
+        auto-enrolment for the computer or user.
+      </div>
+      <div class="concept-desc verdict">
+        All three, or nothing happens and nothing complains. That silence is the whole
+        troubleshooting difficulty — check the three in order rather than re-reading the
+        template, and confirm on a client with
+        <code>certutil -pulse</code> followed by the CertificateServicesClient operational log.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Expiry Is the Outage That Is Fully Predictable and Still Happens</div>
+      <div class="concept-desc">
+        Every certificate carries the date it will break. Expiry outages are therefore unique:
+        entirely foreseeable, scheduled by you, and still among the most common causes of
+        self-inflicted downtime. They happen because nobody owns the inventory — the
+        certificate was installed during a project, by someone who has moved on.
+      </div>
+      <pre class="code-block"><span class="com"># Everything the CA issued that expires in the next 60 days</span>
+certutil -view -restrict <span class="m">"NotAfter&lt;=now+60:00:00,Disposition=20"</span> `
+    -out <span class="m">"CommonName,NotAfter,RequesterName"</span>
+
+<span class="com"># Local store on a server</span>
+Get-ChildItem Cert:\LocalMachine\My |
+    Where-Object NotAfter -lt (Get-Date).AddDays(<span class="m">60</span>) |
+    Select-Object Subject, NotAfter, Thumbprint</pre>
+      <div class="concept-desc verdict">
+        <strong>Monitor expiry from outside, on the live endpoint.</strong> A CA report misses
+        every certificate not issued by that CA — the public ones, the appliance ones, the one a
+        vendor installed. The check that catches all of them connects to the port and reads what
+        is actually being served.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE V7 — SERVER OPERATIONS
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: DC RECOVERY ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🚑</span>
+    <span class="topic-name">Domain Controller Recovery — Authoritative vs Non-Authoritative Restore</span>
+    <span class="topic-badge">AD DS • Recovery</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The distinction</div>
+      <div class="concept-title">Two Restores That Look Identical and Do Opposite Things</div>
+      <div class="concept-desc">
+        Restoring a domain controller is not like restoring a file server, because the data is
+        replicated and the other copies are still running. The question is whether the restored
+        data should <em>win</em>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Non-authoritative</th><th>Authoritative</th></tr></thead>
+          <tbody>
+            <tr><td>After restore</td><td>Catches up from its partners</td><td class="c-amber">Overwrites its partners</td></tr>
+            <tr><td>Use for</td><td class="c-green">A failed DC <span class="acro-exp">(Domain Controller)</span> — almost always this one</td><td>Recovering objects deleted everywhere</td></tr>
+            <tr><td>Risk</td><td>Low</td><td class="c-red">Reintroduces everything else from that backup too</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Reach for the Recycle Bin before either.</strong> If the AD <span class="acro-exp">(Active Directory)</span> Recycle Bin is
+        enabled, deleted objects are restorable in place with their group memberships intact —
+        no backup, no downtime, no restore. Enable it now if it is not on; it is a one-way switch
+        and costs nothing.
+      </div>
+      <pre class="code-block"><span class="com"># Is it on? If not, turn it on — irreversible, and you want it</span>
+Get-ADOptionalFeature <span class="kw">-Filter</span> <span class="m">'name -like "Recycle Bin*"'</span>
+
+<span class="com"># Restore a deleted user, memberships intact</span>
+Get-ADObject <span class="kw">-Filter</span> <span class="m">'Name -like "*jdoe*"'</span> <span class="kw">-IncludeDeletedObjects</span> |
+    Restore-ADObject</pre>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">USN Rollback — Why You Never Snapshot a Domain Controller</div>
+      <div class="concept-desc">
+        Reverting a DC to a virtual machine snapshot rewinds its update sequence numbers.
+        Partners have already seen higher numbers from it, so they ignore everything it sends —
+        the DC believes it is replicating and is silently isolated, diverging from the domain
+        until someone notices weeks later.
+      </div>
+      <div class="concept-desc">
+        Modern Windows and hypervisors support VM-GenerationID, which detects the rollback and
+        recovers safely. Do not rely on it: restore a DC with a supported system-state backup,
+        or demote and rebuild. Rebuilding a DC is genuinely routine — promote a new one, let it
+        replicate, remove the old.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Test the restore, not the backup.</strong> A backup job reporting success proves
+        a file was written. The forest recovery procedure is long, involves seizing FSMO <span class="acro-exp">(Flexible Single Master Operations)</span> roles
+        and resetting the KRBTGT <span class="acro-exp">(Kerberos Ticket Granting Ticket account)</span> account twice, and reading it for the first time during an
+        incident is how a bad day becomes a bad month.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DECOMMISSIONING ─────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗑️</span>
+    <span class="topic-name">Decommissioning a Server Properly — The Checklist That Prevents Next Year's Outage</span>
+    <span class="topic-badge">Infra • Lifecycle</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Method</div>
+      <div class="concept-title">Power Off Is Not Decommissioned</div>
+      <div class="concept-desc">
+        A server switched off and left in the rack is the origin of a specific recurring
+        incident: eighteen months later someone reclaims the address or the name, and something
+        nobody knew depended on it breaks. The fix is a sequence with a waiting period, not a
+        single action.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Why this order</th></tr></thead>
+          <tbody>
+            <tr><td>Find what still talks to it</td><td>Firewall logs and DNS <span class="acro-exp">(Domain Name System)</span> query logs, not the documentation</td></tr>
+            <tr><td>Lower the DNS record's time-to-live</td><td>So the later removal propagates in minutes, not a day</td></tr>
+            <tr><td>Stop the services, leave the host up</td><td>Failures now name the server; after a shutdown they do not</td></tr>
+            <tr><td>Wait a full business cycle</td><td>A quarter, so quarterly jobs get their chance to fail</td></tr>
+            <tr><td>Power off, keep the record and the object</td><td>Still trivially reversible</td></tr>
+            <tr><td>After another cycle: remove DNS, AD <span class="acro-exp">(Active Directory)</span> object, monitoring, backup job, licence</td><td>The list nobody finishes</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Stopping the services while the host stays up is the step that earns the
+        most.</strong> A dependency that fails against a running server produces a connection
+        refused naming the host. The same dependency after a shutdown produces a timeout
+        somewhere else entirely, and nobody connects it to the decommissioning.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Domain Controllers and File Servers Do Not Just Get Switched Off</div>
+      <div class="concept-desc">
+        A domain controller must be <strong>demoted</strong>, which removes its metadata,
+        transfers any FSMO <span class="acro-exp">(Flexible Single Master Operations)</span> roles it holds and cleans up its service records. Powering one off
+        instead leaves records advertising a DC that no longer answers, and clients will keep
+        trying it — producing slow logons that survive every other fix.
+      </div>
+      <div class="concept-desc">
+        If the DC is already gone and cannot be demoted, clean the metadata explicitly. Do not
+        leave it: replication partners keep attempting it, and the errors mask real faults.
+      </div>
+      <pre class="code-block"><span class="com"># Graceful, on the DC itself</span>
+Uninstall-ADDSDomainController <span class="kw">-DemoteOperationMasterRole</span> <span class="kw">-ForceRemoval</span>:$<span class="m">false</span>
+
+<span class="com"># The DC is gone for good — remove it from the directory</span>
+ntdsutil "metadata cleanup" "remove selected server DC03" quit quit
+Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "computer"'</span> <span class="kw">-SearchBase</span> `
+    <span class="m">"OU=Domain Controllers,DC=corp,DC=example,DC=com"</span></pre>
+      <div class="concept-desc verdict">
+        The same applies to a file server behind a DFS <span class="acro-exp">(Dynamic Frequency Selection)</span> namespace: remove the folder target
+        first and let clients move, then decommission. Reversing those two steps is a
+        user-visible outage instead of a silent migration.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body infra -->
