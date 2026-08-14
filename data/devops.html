@@ -671,11 +671,11 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Concept</th><th>Why It Matters</th></tr>
-                    <tr><td class="c-cyan">State file</td><td>Terraform records what it created in <code>terraform.tfstate</code>. It's the source of truth for "what exists" — store it remotely (S3, Terraform Cloud) so a team shares one, and lock it to prevent concurrent applies.</td></tr>
-                    <tr><td class="c-cyan">Desired vs actual</td><td><code>plan</code> diffs your config against state and the real world, then computes the minimal change set.</td></tr>
-                    <tr><td class="c-cyan">Idempotence</td><td>Running <code>apply</code> twice with no config change does nothing the second time — the end state is what's declared, not a pile of commands.</td></tr>
-                    <tr><td class="c-cyan">Modules</td><td>Reusable bundles of resources with inputs/outputs — package a "VPC <span class="acro-exp">(Virtual Private Cloud)</span>" or "web app" once, use it everywhere.</td></tr>
-                    <tr><td class="c-red">Never edit state by hand</td><td>Use <code>terraform state</code> subcommands; hand-editing the JSON <span class="acro-exp">(JavaScript Object Notation)</span> corrupts tracking.</td></tr>
+                    <tr><td>State file</td><td>Terraform records what it created in <code>terraform.tfstate</code>. It's the source of truth for "what exists" — store it remotely (S3, Terraform Cloud) so a team shares one, and lock it to prevent concurrent applies.</td></tr>
+                    <tr><td>Desired vs actual</td><td><code>plan</code> diffs your config against state and the real world, then computes the minimal change set.</td></tr>
+                    <tr><td>Idempotence</td><td>Running <code>apply</code> twice with no config change does nothing the second time — the end state is what's declared, not a pile of commands.</td></tr>
+                    <tr><td>Modules</td><td>Reusable bundles of resources with inputs/outputs — package a "VPC <span class="acro-exp">(Virtual Private Cloud)</span>" or "web app" once, use it everywhere.</td></tr>
+                    <tr><td>Never edit state by hand</td><td>Use <code>terraform state</code> subcommands; hand-editing the JSON <span class="acro-exp">(JavaScript Object Notation)</span> corrupts tracking.</td></tr>
                   </table>
                 </div>
               </div>
@@ -711,18 +711,18 @@ jobs:
                   <div class="dt">▸ TWO MESSAGING SHAPES</div>
                   <table class="ref-table" style="margin-bottom:14px">
                     <tr><th>Pattern</th><th>Delivery</th><th>Example</th></tr>
-                    <tr><td class="c-green">Queue (point-to-point)</td><td>Each message goes to <em>one</em> consumer in a pool — spreads work</td><td>Task/job processing (RabbitMQ, SQS)</td></tr>
-                    <tr><td class="c-green">Pub/Sub (topic)</td><td>Each message goes to <em>every</em> subscriber — fan-out</td><td>Event broadcasting (Kafka, SNS, Redis)</td></tr>
+                    <tr><td>Queue (point-to-point)</td><td>Each message goes to <em>one</em> consumer in a pool — spreads work</td><td>Task/job processing (RabbitMQ, SQS)</td></tr>
+                    <tr><td>Pub/Sub (topic)</td><td>Each message goes to <em>every</em> subscriber — fan-out</td><td>Event broadcasting (Kafka, SNS, Redis)</td></tr>
                   </table>
                   <div class="dt">▸ VOCABULARY</div>
                   <table class="ref-table">
                     <tr><th>Term</th><th>Meaning</th></tr>
-                    <tr><td class="c-cyan">Producer</td><td>Publishes messages</td></tr>
-                    <tr><td class="c-cyan">Consumer</td><td>Reads and processes them</td></tr>
-                    <tr><td class="c-cyan">Broker</td><td>The queue/log system in the middle (Kafka, RabbitMQ)</td></tr>
-                    <tr><td class="c-cyan">Ack</td><td>Consumer confirms "done" so the broker can drop the message</td></tr>
-                    <tr><td class="c-cyan">Dead-letter queue</td><td>Where messages go after repeated processing failures</td></tr>
-                    <tr><td class="c-cyan">Backpressure</td><td>The queue absorbs bursts so a slow consumer isn't overwhelmed</td></tr>
+                    <tr><td>Producer</td><td>Publishes messages</td></tr>
+                    <tr><td>Consumer</td><td>Reads and processes them</td></tr>
+                    <tr><td>Broker</td><td>The queue/log system in the middle (Kafka, RabbitMQ)</td></tr>
+                    <tr><td>Ack</td><td>Consumer confirms "done" so the broker can drop the message</td></tr>
+                    <tr><td>Dead-letter queue</td><td>Where messages go after repeated processing failures</td></tr>
+                    <tr><td>Backpressure</td><td>The queue absorbs bursts so a slow consumer isn't overwhelmed</td></tr>
                   </table>
                 </div>
               </div>
@@ -737,9 +737,9 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Guarantee</th><th>Meaning</th></tr>
-                    <tr><td class="c-red">At-most-once</td><td>Fast, but a message can be lost. Fine for disposable telemetry.</td></tr>
-                    <tr><td class="c-green">At-least-once</td><td>Never lost, but may be <em>redelivered</em>. The common default.</td></tr>
-                    <tr><td class="c-amber">Exactly-once</td><td>Ideal but expensive/limited — usually emulated via dedup.</td></tr>
+                    <tr><td>At-most-once</td><td>Fast, but a message can be lost. Fine for disposable telemetry.</td></tr>
+                    <tr><td>At-least-once</td><td>Never lost, but may be <em>redelivered</em>. The common default.</td></tr>
+                    <tr><td>Exactly-once</td><td>Ideal but expensive/limited — usually emulated via dedup.</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Because at-least-once means duplicates happen, make consumers
@@ -756,11 +756,11 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th></th><th>Detail</th></tr>
-                    <tr><td class="c-green">Gain: resilience</td><td>A consumer can crash or deploy; messages wait in the queue.</td></tr>
-                    <tr><td class="c-green">Gain: elastic scale</td><td>Add consumers to drain a backlog faster; smooth out traffic spikes.</td></tr>
-                    <tr><td class="c-green">Gain: decoupling</td><td>Producers don't know or care who consumes — add new consumers freely.</td></tr>
-                    <tr><td class="c-red">Cost: complexity</td><td>Another system to run/monitor; harder to trace a request end-to-end.</td></tr>
-                    <tr><td class="c-red">Cost: eventual consistency</td><td>Work happens asynchronously — the result isn't ready the instant you publish.</td></tr>
+                    <tr><td>Gain: resilience</td><td>A consumer can crash or deploy; messages wait in the queue.</td></tr>
+                    <tr><td>Gain: elastic scale</td><td>Add consumers to drain a backlog faster; smooth out traffic spikes.</td></tr>
+                    <tr><td>Gain: decoupling</td><td>Producers don't know or care who consumes — add new consumers freely.</td></tr>
+                    <tr><td>Cost: complexity</td><td>Another system to run/monitor; harder to trace a request end-to-end.</td></tr>
+                    <tr><td>Cost: eventual consistency</td><td>Work happens asynchronously — the result isn't ready the instant you publish.</td></tr>
                   </table>
                 </div>
               </div>
@@ -794,10 +794,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Layer</th><th>Example</th><th>Caches</th></tr>
-                    <tr><td class="c-cyan">Browser</td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> cache</td><td>Static assets on the user's device</td></tr>
-                    <tr><td class="c-cyan">CDN / edge</td><td>Cloudflare, CloudFront</td><td>Content served near the user, globally</td></tr>
-                    <tr><td class="c-cyan">App / in-memory</td><td>Redis, Memcached</td><td>Query results, sessions, computed values</td></tr>
-                    <tr><td class="c-cyan">Database</td><td>Query &amp; buffer cache</td><td>Hot pages &amp; plans in RAM <span class="acro-exp">(Random Access Memory)</span></td></tr>
+                    <tr><td>Browser</td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> cache</td><td>Static assets on the user's device</td></tr>
+                    <tr><td>CDN / edge</td><td>Cloudflare, CloudFront</td><td>Content served near the user, globally</td></tr>
+                    <tr><td>App / in-memory</td><td>Redis, Memcached</td><td>Query results, sessions, computed values</td></tr>
+                    <tr><td>Database</td><td>Query &amp; buffer cache</td><td>Hot pages &amp; plans in RAM <span class="acro-exp">(Random Access Memory)</span></td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     The closer to the user a cache sits, the faster and cheaper the hit — but
@@ -812,10 +812,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Pattern</th><th>How It Works</th></tr>
-                    <tr><td class="c-green">Cache-aside (lazy)</td><td>App checks cache; on a miss, reads the DB and populates the cache. Most common.</td></tr>
-                    <tr><td class="c-green">Read-through</td><td>The cache itself loads from the DB on a miss — app only talks to the cache.</td></tr>
-                    <tr><td class="c-green">Write-through</td><td>Writes go to cache <em>and</em> DB together — always fresh, slightly slower writes.</td></tr>
-                    <tr><td class="c-amber">Write-back</td><td>Write to cache now, flush to DB later — fast, but risks loss on crash.</td></tr>
+                    <tr><td>Cache-aside (lazy)</td><td>App checks cache; on a miss, reads the DB and populates the cache. Most common.</td></tr>
+                    <tr><td>Read-through</td><td>The cache itself loads from the DB on a miss — app only talks to the cache.</td></tr>
+                    <tr><td>Write-through</td><td>Writes go to cache <em>and</em> DB together — always fresh, slightly slower writes.</td></tr>
+                    <tr><td>Write-back</td><td>Write to cache now, flush to DB later — fast, but risks loss on crash.</td></tr>
                   </table>
                   <div class="dt" style="margin-top:12px">▸ CACHE-ASIDE IN CODE</div>
 <pre class="code-block"><span class="kw">function</span> <span class="fn">getUser</span>(<span class="var">id</span>) {
@@ -834,10 +834,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Technique</th><th>What It Does</th></tr>
-                    <tr><td class="c-cyan">TTL <span class="acro-exp">(Time To Live)</span> (expiry)</td><td>Data auto-expires after N seconds. Simple; tolerates brief staleness.</td></tr>
-                    <tr><td class="c-cyan">Explicit purge</td><td>Delete the key when the source changes. Precise; needs write-path hooks.</td></tr>
-                    <tr><td class="c-cyan">Versioned keys</td><td>Bake a version/hash into the key (<code>user:42:v3</code>); old keys just age out.</td></tr>
-                    <tr><td class="c-cyan">Cache-Control headers</td><td>For HTTP/CDN: <code>max-age</code>, <code>no-store</code>, <code>ETag</code> for revalidation.</td></tr>
+                    <tr><td>TTL <span class="acro-exp">(Time To Live)</span> (expiry)</td><td>Data auto-expires after N seconds. Simple; tolerates brief staleness.</td></tr>
+                    <tr><td>Explicit purge</td><td>Delete the key when the source changes. Precise; needs write-path hooks.</td></tr>
+                    <tr><td>Versioned keys</td><td>Bake a version/hash into the key (<code>user:42:v3</code>); old keys just age out.</td></tr>
+                    <tr><td>Cache-Control headers</td><td>For HTTP/CDN: <code>max-age</code>, <code>no-store</code>, <code>ETag</code> for revalidation.</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Watch for the <strong class="c-red">thundering herd / stampede</strong>: when
@@ -922,12 +922,12 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th></th><th>Detail</th></tr>
-                    <tr><td class="c-green">Scale to zero</td><td>No traffic = no cost. Great for spiky or unpredictable load.</td></tr>
-                    <tr><td class="c-green">No ops</td><td>No servers to patch or capacity-plan; ship features faster.</td></tr>
-                    <tr><td class="c-red">Cold starts</td><td>An idle function takes extra time to spin up on the first request — latency-sensitive paths feel it.</td></tr>
-                    <tr><td class="c-red">Stateless &amp; time-limited</td><td>Functions keep no memory between runs and have a max duration — long jobs and in-memory state don't fit.</td></tr>
-                    <tr><td class="c-amber">Vendor lock-in</td><td>Triggers and runtimes are provider-specific; portability takes effort.</td></tr>
-                    <tr><td class="c-amber">Harder local debugging</td><td>The event-driven, managed environment is tricky to reproduce on your laptop.</td></tr>
+                    <tr><td>Scale to zero</td><td>No traffic = no cost. Great for spiky or unpredictable load.</td></tr>
+                    <tr><td>No ops</td><td>No servers to patch or capacity-plan; ship features faster.</td></tr>
+                    <tr><td>Cold starts</td><td>An idle function takes extra time to spin up on the first request — latency-sensitive paths feel it.</td></tr>
+                    <tr><td>Stateless &amp; time-limited</td><td>Functions keep no memory between runs and have a max duration — long jobs and in-memory state don't fit.</td></tr>
+                    <tr><td>Vendor lock-in</td><td>Triggers and runtimes are provider-specific; portability takes effort.</td></tr>
+                    <tr><td>Harder local debugging</td><td>The event-driven, managed environment is tricky to reproduce on your laptop.</td></tr>
                   </table>
                 </div>
               </div>
@@ -979,12 +979,12 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Feature</th><th>What It Does</th></tr>
-                    <tr><td class="c-cyan">Storage classes</td><td>Trade price for access speed: hot (Standard) → cool → cold archive (Glacier). Cheaper to store, pricier/slower to retrieve.</td></tr>
-                    <tr><td class="c-cyan">Lifecycle rules</td><td>Auto-move objects to colder tiers or delete them after N days.</td></tr>
-                    <tr><td class="c-cyan">Versioning</td><td>Keep old copies so an overwrite/delete is recoverable.</td></tr>
-                    <tr><td class="c-cyan">Presigned URLs <span class="acro-exp">(Uniform Resource Locator)</span></td><td>A time-limited link that grants temporary access to one object without exposing credentials.</td></tr>
-                    <tr><td class="c-cyan">Static website hosting</td><td>Serve a bucket of HTML/JS directly — often fronted by a CDN <span class="acro-exp">(Content Delivery Network)</span>.</td></tr>
-                    <tr><td class="c-cyan">Durability</td><td>Providers replicate objects across facilities — S3 advertises 99.999999999% ("11 nines") durability.</td></tr>
+                    <tr><td>Storage classes</td><td>Trade price for access speed: hot (Standard) → cool → cold archive (Glacier). Cheaper to store, pricier/slower to retrieve.</td></tr>
+                    <tr><td>Lifecycle rules</td><td>Auto-move objects to colder tiers or delete them after N days.</td></tr>
+                    <tr><td>Versioning</td><td>Keep old copies so an overwrite/delete is recoverable.</td></tr>
+                    <tr><td>Presigned URLs <span class="acro-exp">(Uniform Resource Locator)</span></td><td>A time-limited link that grants temporary access to one object without exposing credentials.</td></tr>
+                    <tr><td>Static website hosting</td><td>Serve a bucket of HTML/JS directly — often fronted by a CDN <span class="acro-exp">(Content Delivery Network)</span>.</td></tr>
+                    <tr><td>Durability</td><td>Providers replicate objects across facilities — S3 advertises 99.999999999% ("11 nines") durability.</td></tr>
                   </table>
                 </div>
               </div>
@@ -1036,10 +1036,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Strategy</th><th>How It Works</th></tr>
-                    <tr><td class="c-cyan">Rolling</td><td>Replace instances a few at a time until all run the new version. No extra capacity needed; rollback is slow (roll the other way).</td></tr>
-                    <tr><td class="c-cyan">Blue-Green</td><td>Run two full environments. Blue serves live; deploy to idle Green, test it, then flip all traffic. Instant rollback = flip back. Costs 2× capacity during the switch.</td></tr>
-                    <tr><td class="c-cyan">Canary</td><td>Send a small % of traffic to the new version, watch metrics, then ramp up. Limits blast radius; needs good monitoring.</td></tr>
-                    <tr><td class="c-cyan">Feature flags</td><td>Ship code dark, then toggle it on for cohorts at runtime — decouples <em>deploy</em> from <em>release</em>.</td></tr>
+                    <tr><td>Rolling</td><td>Replace instances a few at a time until all run the new version. No extra capacity needed; rollback is slow (roll the other way).</td></tr>
+                    <tr><td>Blue-Green</td><td>Run two full environments. Blue serves live; deploy to idle Green, test it, then flip all traffic. Instant rollback = flip back. Costs 2× capacity during the switch.</td></tr>
+                    <tr><td>Canary</td><td>Send a small % of traffic to the new version, watch metrics, then ramp up. Limits blast radius; needs good monitoring.</td></tr>
+                    <tr><td>Feature flags</td><td>Ship code dark, then toggle it on for cohorts at runtime — decouples <em>deploy</em> from <em>release</em>.</td></tr>
                   </table>
                 </div>
               </div>
@@ -1069,10 +1069,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Requirement</th><th>Why</th></tr>
-                    <tr><td class="c-amber">Backward-compatible changes</td><td>Old and new versions run at once — the DB schema and APIs <span class="acro-exp">(Application Programming Interface)</span> must serve both. Use expand-then-contract migrations.</td></tr>
-                    <tr><td class="c-amber">Health checks</td><td>The orchestrator must know a new instance is actually ready before sending it traffic.</td></tr>
-                    <tr><td class="c-amber">Good metrics/alerts</td><td>Canary is blind without error-rate and latency dashboards to compare versions.</td></tr>
-                    <tr><td class="c-amber">Automated rollback</td><td>A deploy that can't auto-revert on failing metrics isn't really safe.</td></tr>
+                    <tr><td>Backward-compatible changes</td><td>Old and new versions run at once — the DB schema and APIs <span class="acro-exp">(Application Programming Interface)</span> must serve both. Use expand-then-contract migrations.</td></tr>
+                    <tr><td>Health checks</td><td>The orchestrator must know a new instance is actually ready before sending it traffic.</td></tr>
+                    <tr><td>Good metrics/alerts</td><td>Canary is blind without error-rate and latency dashboards to compare versions.</td></tr>
+                    <tr><td>Automated rollback</td><td>A deploy that can't auto-revert on failing metrics isn't really safe.</td></tr>
                   </table>
                 </div>
               </div>
@@ -1108,9 +1108,9 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Letter</th><th>Guarantee</th></tr>
-                    <tr><td class="c-cyan">Consistency</td><td>All nodes return the same, most-recent data. A read never sees stale values.</td></tr>
-                    <tr><td class="c-cyan">Availability</td><td>Every request gets a (non-error) response, even if some nodes are down.</td></tr>
-                    <tr><td class="c-cyan">Partition tolerance</td><td>The system keeps operating even when nodes can't talk to each other.</td></tr>
+                    <tr><td>Consistency</td><td>All nodes return the same, most-recent data. A read never sees stale values.</td></tr>
+                    <tr><td>Availability</td><td>Every request gets a (non-error) response, even if some nodes are down.</td></tr>
+                    <tr><td>Partition tolerance</td><td>The system keeps operating even when nodes can't talk to each other.</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Note: CAP's "Consistency" is stricter than ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span>'s — it means
@@ -1144,10 +1144,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Model</th><th>Promise</th></tr>
-                    <tr><td class="c-green">Strong / linearizable</td><td>Reads always see the latest write — as if one copy existed.</td></tr>
-                    <tr><td class="c-amber">Eventual</td><td>Given no new writes, all replicas <em>eventually</em> converge. Cheap &amp; available.</td></tr>
-                    <tr><td class="c-amber">Read-your-writes</td><td>You always see your own updates (even if others lag).</td></tr>
-                    <tr><td class="c-amber">Causal</td><td>Related events are seen in order; unrelated ones may not be.</td></tr>
+                    <tr><td>Strong / linearizable</td><td>Reads always see the latest write — as if one copy existed.</td></tr>
+                    <tr><td>Eventual</td><td>Given no new writes, all replicas <em>eventually</em> converge. Cheap &amp; available.</td></tr>
+                    <tr><td>Read-your-writes</td><td>You always see your own updates (even if others lag).</td></tr>
+                    <tr><td>Causal</td><td>Related events are seen in order; unrelated ones may not be.</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     A related lens, <strong>PACELC</strong>, extends CAP: even when there's no
@@ -1188,9 +1188,9 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Piece</th><th>Role</th></tr>
-                    <tr><td class="c-cyan">Sidecar proxy</td><td>A proxy (often Envoy) deployed next to <em>every</em> service instance. All traffic in/out flows through it — the app is unaware.</td></tr>
-                    <tr><td class="c-cyan">Data plane</td><td>The collection of all sidecars actually moving the traffic.</td></tr>
-                    <tr><td class="c-cyan">Control plane</td><td>The brain (e.g. Istio's istiod) that configures every sidecar with routing rules, certs, and policy.</td></tr>
+                    <tr><td>Sidecar proxy</td><td>A proxy (often Envoy) deployed next to <em>every</em> service instance. All traffic in/out flows through it — the app is unaware.</td></tr>
+                    <tr><td>Data plane</td><td>The collection of all sidecars actually moving the traffic.</td></tr>
+                    <tr><td>Control plane</td><td>The brain (e.g. Istio's istiod) that configures every sidecar with routing rules, certs, and policy.</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     You change behavior by updating the control plane; it pushes config to the
@@ -1206,10 +1206,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Capability</th><th>Detail</th></tr>
-                    <tr><td class="c-green">mTLS <span class="acro-exp">(Mutual Transport Layer Security)</span> everywhere</td><td>Automatic mutual-TLS encryption + identity between services — zero app changes.</td></tr>
-                    <tr><td class="c-green">Traffic control</td><td>Canary/blue-green by shifting % of traffic; retries, timeouts, circuit breaking.</td></tr>
-                    <tr><td class="c-green">Observability</td><td>Uniform metrics, logs, and traces for every call, for free.</td></tr>
-                    <tr><td class="c-green">Policy</td><td>Who may call whom (authorization), rate limits, fault injection for testing.</td></tr>
+                    <tr><td>mTLS <span class="acro-exp">(Mutual Transport Layer Security)</span> everywhere</td><td>Automatic mutual-TLS encryption + identity between services — zero app changes.</td></tr>
+                    <tr><td>Traffic control</td><td>Canary/blue-green by shifting % of traffic; retries, timeouts, circuit breaking.</td></tr>
+                    <tr><td>Observability</td><td>Uniform metrics, logs, and traces for every call, for free.</td></tr>
+                    <tr><td>Policy</td><td>Who may call whom (authorization), rate limits, fault injection for testing.</td></tr>
                   </table>
                 </div>
               </div>
@@ -1220,9 +1220,9 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th></th><th>Detail</th></tr>
-                    <tr><td class="c-green">Worth it when</td><td>Many services, multiple languages, strict security/compliance, and you need uniform mTLS + observability.</td></tr>
-                    <tr><td class="c-red">Overkill when</td><td>A handful of services — the operational complexity and latency/resource overhead outweigh the benefit.</td></tr>
-                    <tr><td class="c-cyan">Options</td><td>Istio (powerful, complex), Linkerd (lightweight, simpler), Cilium (eBPF-based), Consul.</td></tr>
+                    <tr><td>Worth it when</td><td>Many services, multiple languages, strict security/compliance, and you need uniform mTLS + observability.</td></tr>
+                    <tr><td>Overkill when</td><td>A handful of services — the operational complexity and latency/resource overhead outweigh the benefit.</td></tr>
+                    <tr><td>Options</td><td>Istio (powerful, complex), Linkerd (lightweight, simpler), Cilium (eBPF-based), Consul.</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     A mesh solves the same problems an API <span class="acro-exp">(Application Programming Interface)</span> gateway does <em>between</em> internal
@@ -1267,10 +1267,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Step</th><th>What Happens</th></tr>
-                    <tr><td class="c-green">1. Declare</td><td>Desired state (Kubernetes manifests, Helm, Terraform) is committed to Git.</td></tr>
-                    <tr><td class="c-green">2. Observe</td><td>An in-cluster agent (Argo CD, Flux) watches the repo.</td></tr>
-                    <tr><td class="c-green">3. Diff</td><td>It compares Git (desired) against the live cluster (actual).</td></tr>
-                    <tr><td class="c-green">4. Reconcile</td><td>It applies changes to close the gap — automatically and continuously.</td></tr>
+                    <tr><td>1. Declare</td><td>Desired state (Kubernetes manifests, Helm, Terraform) is committed to Git.</td></tr>
+                    <tr><td>2. Observe</td><td>An in-cluster agent (Argo CD, Flux) watches the repo.</td></tr>
+                    <tr><td>3. Diff</td><td>It compares Git (desired) against the live cluster (actual).</td></tr>
+                    <tr><td>4. Reconcile</td><td>It applies changes to close the gap — automatically and continuously.</td></tr>
                   </table>
                 </div>
               </div>
@@ -1281,10 +1281,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Benefit</th><th>Detail</th></tr>
-                    <tr><td class="c-green">Git is the audit log</td><td>Every change is a reviewed, attributed, revertible commit. Rollback = <code>git revert</code>.</td></tr>
-                    <tr><td class="c-green">No config drift</td><td>The agent fixes manual/out-of-band changes automatically — the cluster can't silently diverge.</td></tr>
-                    <tr><td class="c-green">Better security</td><td>CI no longer needs cluster credentials; the pull agent lives inside and reaches out.</td></tr>
-                    <tr><td class="c-green">Reproducible</td><td>Rebuild an entire environment from the repo — great for DR and new clusters.</td></tr>
+                    <tr><td>Git is the audit log</td><td>Every change is a reviewed, attributed, revertible commit. Rollback = <code>git revert</code>.</td></tr>
+                    <tr><td>No config drift</td><td>The agent fixes manual/out-of-band changes automatically — the cluster can't silently diverge.</td></tr>
+                    <tr><td>Better security</td><td>CI no longer needs cluster credentials; the pull agent lives inside and reaches out.</td></tr>
+                    <tr><td>Reproducible</td><td>Rebuild an entire environment from the repo — great for DR and new clusters.</td></tr>
                   </table>
                 </div>
               </div>
@@ -1295,10 +1295,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Point</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Tools</td><td>Argo CD and Flux are the two dominant Kubernetes GitOps agents.</td></tr>
-                    <tr><td class="c-amber">Secrets</td><td>You can't commit plaintext secrets — use Sealed Secrets, SOPS, or an external secrets operator.</td></tr>
-                    <tr><td class="c-amber">Repo layout</td><td>Common pattern: separate app-code repos from a <em>config</em> repo; a merge to config triggers the deploy.</td></tr>
-                    <tr><td class="c-amber">Fits declarative best</td><td>GitOps assumes a system that reconciles to a declared state (Kubernetes shines); imperative steps fit less cleanly.</td></tr>
+                    <tr><td>Tools</td><td>Argo CD and Flux are the two dominant Kubernetes GitOps agents.</td></tr>
+                    <tr><td>Secrets</td><td>You can't commit plaintext secrets — use Sealed Secrets, SOPS, or an external secrets operator.</td></tr>
+                    <tr><td>Repo layout</td><td>Common pattern: separate app-code repos from a <em>config</em> repo; a merge to config triggers the deploy.</td></tr>
+                    <tr><td>Fits declarative best</td><td>GitOps assumes a system that reconciles to a declared state (Kubernetes shines); imperative steps fit less cleanly.</td></tr>
                   </table>
                 </div>
               </div>
@@ -1333,9 +1333,9 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Phase</th><th>What You Do</th></tr>
-                    <tr><td class="c-green">Inform</td><td>Make cost visible &amp; attributable — tag resources, allocate spend to teams/products, show dashboards.</td></tr>
-                    <tr><td class="c-green">Optimize</td><td>Cut waste — rightsize, delete idle resources, buy commitments, pick cheaper options.</td></tr>
-                    <tr><td class="c-green">Operate</td><td>Make it continuous — budgets, alerts, and cost as a normal engineering metric.</td></tr>
+                    <tr><td>Inform</td><td>Make cost visible &amp; attributable — tag resources, allocate spend to teams/products, show dashboards.</td></tr>
+                    <tr><td>Optimize</td><td>Cut waste — rightsize, delete idle resources, buy commitments, pick cheaper options.</td></tr>
+                    <tr><td>Operate</td><td>Make it continuous — budgets, alerts, and cost as a normal engineering metric.</td></tr>
                   </table>
                 </div>
               </div>
@@ -1346,13 +1346,13 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Lever</th><th>What It Means</th></tr>
-                    <tr><td class="c-cyan">Rightsizing</td><td>Match instance size to real usage — most VMs <span class="acro-exp">(Virtual Machine)</span> are wildly overprovisioned.</td></tr>
-                    <tr><td class="c-cyan">Kill idle / zombies</td><td>Unattached disks, idle load balancers, forgotten dev environments burn money 24/7.</td></tr>
-                    <tr><td class="c-cyan">Commitments</td><td>Reserved Instances / Savings Plans trade a 1–3 yr commitment for ~30–70% off steady workloads.</td></tr>
-                    <tr><td class="c-cyan">Spot instances</td><td>Spare capacity at up to ~90% off — for fault-tolerant, interruptible jobs.</td></tr>
-                    <tr><td class="c-cyan">Autoscaling</td><td>Scale to demand (and to zero) instead of provisioning for peak always-on.</td></tr>
-                    <tr><td class="c-cyan">Storage tiering</td><td>Move cold data to cheaper classes; set lifecycle rules.</td></tr>
-                    <tr><td class="c-cyan">Egress awareness</td><td>Data transfer <em>out</em> is a sneaky cost — cross-region/cross-cloud traffic adds up.</td></tr>
+                    <tr><td>Rightsizing</td><td>Match instance size to real usage — most VMs <span class="acro-exp">(Virtual Machine)</span> are wildly overprovisioned.</td></tr>
+                    <tr><td>Kill idle / zombies</td><td>Unattached disks, idle load balancers, forgotten dev environments burn money 24/7.</td></tr>
+                    <tr><td>Commitments</td><td>Reserved Instances / Savings Plans trade a 1–3 yr commitment for ~30–70% off steady workloads.</td></tr>
+                    <tr><td>Spot instances</td><td>Spare capacity at up to ~90% off — for fault-tolerant, interruptible jobs.</td></tr>
+                    <tr><td>Autoscaling</td><td>Scale to demand (and to zero) instead of provisioning for peak always-on.</td></tr>
+                    <tr><td>Storage tiering</td><td>Move cold data to cheaper classes; set lifecycle rules.</td></tr>
+                    <tr><td>Egress awareness</td><td>Data transfer <em>out</em> is a sneaky cost — cross-region/cross-cloud traffic adds up.</td></tr>
                   </table>
                 </div>
               </div>
@@ -1363,10 +1363,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Habit</th><th>Why</th></tr>
-                    <tr><td class="c-green">Tag everything</td><td>Without tags for team/env/product, you can't attribute spend or find waste.</td></tr>
-                    <tr><td class="c-green">Budgets &amp; anomaly alerts</td><td>Catch a runaway job or a misconfigured autoscaler before the invoice does.</td></tr>
-                    <tr><td class="c-green">Unit economics</td><td>Track <em>cost per customer / per request</em>, not just the total — growth should scale efficiently.</td></tr>
-                    <tr><td class="c-amber">Right time to optimize</td><td>Don't micro-optimize a tiny bill; focus effort where spend is largest.</td></tr>
+                    <tr><td>Tag everything</td><td>Without tags for team/env/product, you can't attribute spend or find waste.</td></tr>
+                    <tr><td>Budgets &amp; anomaly alerts</td><td>Catch a runaway job or a misconfigured autoscaler before the invoice does.</td></tr>
+                    <tr><td>Unit economics</td><td>Track <em>cost per customer / per request</em>, not just the total — growth should scale efficiently.</td></tr>
+                    <tr><td>Right time to optimize</td><td>Don't micro-optimize a tiny bill; focus effort where spend is largest.</td></tr>
                   </table>
                 </div>
               </div>
@@ -1397,11 +1397,11 @@ jobs:
                   <div class="dt">▸ CALMS — THE FIVE PILLARS</div>
                   <table class="ref-table">
                     <tr><th>Pillar</th><th>Means</th></tr>
-                    <tr><td class="c-cyan">Culture</td><td>Shared ownership, blameless learning, collaboration over silos</td></tr>
-                    <tr><td class="c-cyan">Automation</td><td>Automate the repetitive path (build, test, deploy, infra)</td></tr>
-                    <tr><td class="c-cyan">Lean</td><td>Small batches, remove waste, optimize flow end-to-end</td></tr>
-                    <tr><td class="c-cyan">Measurement</td><td>Instrument everything; decide with data (see DORA)</td></tr>
-                    <tr><td class="c-cyan">Sharing</td><td>Open knowledge, feedback, and tooling across teams</td></tr>
+                    <tr><td>Culture</td><td>Shared ownership, blameless learning, collaboration over silos</td></tr>
+                    <tr><td>Automation</td><td>Automate the repetitive path (build, test, deploy, infra)</td></tr>
+                    <tr><td>Lean</td><td>Small batches, remove waste, optimize flow end-to-end</td></tr>
+                    <tr><td>Measurement</td><td>Instrument everything; decide with data (see DORA)</td></tr>
+                    <tr><td>Sharing</td><td>Open knowledge, feedback, and tooling across teams</td></tr>
                   </table>
                 </div>
               </div>
@@ -1426,9 +1426,9 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Way</th><th>Principle</th><th>Practices</th></tr>
-                    <tr><td class="c-cyan">1. Flow</td><td>Speed work left→right (dev→prod)</td><td>Small batches, CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span>, limit WIP, remove bottlenecks</td></tr>
-                    <tr><td class="c-cyan">2. Feedback</td><td>Fast signal right→left</td><td>Monitoring, automated tests, alerting, stop-the-line on failure</td></tr>
-                    <tr><td class="c-cyan">3. Learning</td><td>Continual experimentation</td><td>Blameless postmortems, chaos drills, psychological safety</td></tr>
+                    <tr><td>1. Flow</td><td>Speed work left→right (dev→prod)</td><td>Small batches, CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span>, limit WIP, remove bottlenecks</td></tr>
+                    <tr><td>2. Feedback</td><td>Fast signal right→left</td><td>Monitoring, automated tests, alerting, stop-the-line on failure</td></tr>
+                    <tr><td>3. Learning</td><td>Continual experimentation</td><td>Blameless postmortems, chaos drills, psychological safety</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Flow gets change out fast; feedback catches problems fast; learning makes the
@@ -1460,10 +1460,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Metric</th><th>Question</th><th>Elite</th></tr>
-                    <tr><td class="c-cyan">Deploy frequency</td><td>How often do you ship?</td><td>On-demand / many per day</td></tr>
-                    <tr><td class="c-cyan">Lead time for change</td><td>Commit → production?</td><td>&lt; 1 day</td></tr>
-                    <tr><td class="c-cyan">Change failure rate</td><td>% of deploys causing a problem</td><td>0–15%</td></tr>
-                    <tr><td class="c-cyan">MTTR <span class="acro-exp">(Mean Time To Repair)</span></td><td>Time to restore after an incident</td><td>&lt; 1 hour</td></tr>
+                    <tr><td>Deploy frequency</td><td>How often do you ship?</td><td>On-demand / many per day</td></tr>
+                    <tr><td>Lead time for change</td><td>Commit → production?</td><td>&lt; 1 day</td></tr>
+                    <tr><td>Change failure rate</td><td>% of deploys causing a problem</td><td>0–15%</td></tr>
+                    <tr><td>MTTR <span class="acro-exp">(Mean Time To Repair)</span></td><td>Time to restore after an incident</td><td>&lt; 1 hour</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     First two = <strong>throughput</strong>; last two = <strong>stability</strong>.
@@ -1530,10 +1530,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Principle</th><th>Detail</th></tr>
-                    <tr><td class="c-green">Self-service</td><td>Developers get what they need without filing tickets</td></tr>
-                    <tr><td class="c-green">Golden paths</td><td>Paved, opinionated defaults that are easy to follow and secure by default</td></tr>
-                    <tr><td class="c-green">Product mindset</td><td>The platform team treats developers as customers (adoption, not mandate)</td></tr>
-                    <tr><td class="c-amber">Not a rename of ops</td><td>It's a product, not a gatekeeper — paved roads, not roadblocks</td></tr>
+                    <tr><td>Self-service</td><td>Developers get what they need without filing tickets</td></tr>
+                    <tr><td>Golden paths</td><td>Paved, opinionated defaults that are easy to follow and secure by default</td></tr>
+                    <tr><td>Product mindset</td><td>The platform team treats developers as customers (adoption, not mandate)</td></tr>
+                    <tr><td>Not a rename of ops</td><td>It's a product, not a gatekeeper — paved roads, not roadblocks</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Tools in the space: Backstage (developer portal), Crossplane/Terraform
@@ -1565,11 +1565,11 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Stage</th><th>Gate</th></tr>
-                    <tr><td class="c-cyan">Build</td><td>Compiles; produces the artifact (jar, image)</td></tr>
-                    <tr><td class="c-cyan">Test</td><td>Unit + integration pass; coverage threshold</td></tr>
-                    <tr><td class="c-cyan">Scan</td><td>SAST/SCA/secrets clean (fail on high sev)</td></tr>
-                    <tr><td class="c-cyan">Deploy → staging</td><td>Smoke/e2e tests green</td></tr>
-                    <tr><td class="c-cyan">Deploy → prod</td><td>Manual approval or automated canary</td></tr>
+                    <tr><td>Build</td><td>Compiles; produces the artifact (jar, image)</td></tr>
+                    <tr><td>Test</td><td>Unit + integration pass; coverage threshold</td></tr>
+                    <tr><td>Scan</td><td>SAST/SCA/secrets clean (fail on high sev)</td></tr>
+                    <tr><td>Deploy → staging</td><td>Smoke/e2e tests green</td></tr>
+                    <tr><td>Deploy → prod</td><td>Manual approval or automated canary</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">CI</strong> = integrate + test every change automatically.
@@ -1640,11 +1640,11 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Tool</th><th>Character</th></tr>
-                    <tr><td class="c-cyan">GitHub Actions</td><td>Native to GitHub, huge marketplace — the default for GitHub repos</td></tr>
-                    <tr><td class="c-cyan">GitLab CI</td><td>Deeply integrated with GitLab; one <code>.gitlab-ci.yml</code>; strong self-hosted story</td></tr>
-                    <tr><td class="c-cyan">Jenkins</td><td>The veteran — infinitely pluggable, self-hosted, but you maintain it (Jenkinsfile/Groovy)</td></tr>
-                    <tr><td class="c-cyan">CircleCI / Travis / Drone</td><td>Hosted CI, config-as-YAML, fast setup</td></tr>
-                    <tr><td class="c-cyan">Argo / Tekton</td><td>Kubernetes-native pipelines (GitOps-friendly)</td></tr>
+                    <tr><td>GitHub Actions</td><td>Native to GitHub, huge marketplace — the default for GitHub repos</td></tr>
+                    <tr><td>GitLab CI</td><td>Deeply integrated with GitLab; one <code>.gitlab-ci.yml</code>; strong self-hosted story</td></tr>
+                    <tr><td>Jenkins</td><td>The veteran — infinitely pluggable, self-hosted, but you maintain it (Jenkinsfile/Groovy)</td></tr>
+                    <tr><td>CircleCI / Travis / Drone</td><td>Hosted CI, config-as-YAML, fast setup</td></tr>
+                    <tr><td>Argo / Tekton</td><td>Kubernetes-native pipelines (GitOps-friendly)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     They all share the model — YAML/DSL pipeline, runners/agents, stages, artifacts,
@@ -1670,9 +1670,9 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Strategy</th><th>How</th><th>Fits</th></tr>
-                    <tr><td class="c-green">Trunk-based</td><td>Everyone commits to main behind feature flags; tiny short-lived branches</td><td>High-velocity CD; elite DORA <span class="acro-exp">(DevOps Research and Assessment)</span> teams</td></tr>
-                    <tr><td class="c-cyan">GitHub Flow</td><td>Branch → PR → review → merge → deploy main</td><td>Most web teams; simple &amp; effective</td></tr>
-                    <tr><td class="c-amber">GitFlow</td><td>Long-lived develop/release/hotfix branches</td><td>Versioned/released software; heavier</td></tr>
+                    <tr><td>Trunk-based</td><td>Everyone commits to main behind feature flags; tiny short-lived branches</td><td>High-velocity CD; elite DORA <span class="acro-exp">(DevOps Research and Assessment)</span> teams</td></tr>
+                    <tr><td>GitHub Flow</td><td>Branch → PR → review → merge → deploy main</td><td>Most web teams; simple &amp; effective</td></tr>
+                    <tr><td>GitFlow</td><td>Long-lived develop/release/hotfix branches</td><td>Versioned/released software; heavier</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">The trend is toward trunk-based:</strong> long-lived
@@ -1705,10 +1705,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Technique</th><th>Role</th></tr>
-                    <tr><td class="c-green">Feature flags</td><td>Ship code dark; toggle on for cohorts at runtime</td></tr>
-                    <tr><td class="c-green">Canary</td><td>Route 1% → 10% → 100% while watching metrics</td></tr>
-                    <tr><td class="c-green">Blue-green</td><td>Instant switch + instant rollback</td></tr>
-                    <tr><td class="c-green">Automated rollback</td><td>Bad canary metrics → pipeline reverts automatically</td></tr>
+                    <tr><td>Feature flags</td><td>Ship code dark; toggle on for cohorts at runtime</td></tr>
+                    <tr><td>Canary</td><td>Route 1% → 10% → 100% while watching metrics</td></tr>
+                    <tr><td>Blue-green</td><td>Instant switch + instant rollback</td></tr>
+                    <tr><td>Automated rollback</td><td>Bad canary metrics → pipeline reverts automatically</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Tools: LaunchDarkly/Unleash/Flagsmith (flags), Argo Rollouts/Flagger (automated
@@ -1783,13 +1783,13 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Object</th><th>Role</th></tr>
-                    <tr><td class="c-cyan">Pod</td><td>The smallest unit — one or more containers sharing network/storage</td></tr>
-                    <tr><td class="c-cyan">Deployment</td><td>Manages a replicated, self-healing set of Pods + rolling updates</td></tr>
-                    <tr><td class="c-cyan">Service</td><td>Stable virtual IP/DNS load-balancing to a set of Pods</td></tr>
-                    <tr><td class="c-cyan">Ingress</td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>(S) routing from outside into Services</td></tr>
-                    <tr><td class="c-cyan">ConfigMap / Secret</td><td>Config &amp; credentials injected into Pods</td></tr>
-                    <tr><td class="c-cyan">StatefulSet</td><td>Pods with stable identity/storage (databases)</td></tr>
-                    <tr><td class="c-cyan">Namespace</td><td>Virtual cluster for isolation/multi-tenancy</td></tr>
+                    <tr><td>Pod</td><td>The smallest unit — one or more containers sharing network/storage</td></tr>
+                    <tr><td>Deployment</td><td>Manages a replicated, self-healing set of Pods + rolling updates</td></tr>
+                    <tr><td>Service</td><td>Stable virtual IP/DNS load-balancing to a set of Pods</td></tr>
+                    <tr><td>Ingress</td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>(S) routing from outside into Services</td></tr>
+                    <tr><td>ConfigMap / Secret</td><td>Config &amp; credentials injected into Pods</td></tr>
+                    <tr><td>StatefulSet</td><td>Pods with stable identity/storage (databases)</td></tr>
+                    <tr><td>Namespace</td><td>Virtual cluster for isolation/multi-tenancy</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     Everything is <strong class="c-green">declarative YAML <span class="acro-exp">(YAML Ain't Markup Language)</span></strong> reconciled to
@@ -1850,12 +1850,12 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Control</th><th>Does</th></tr>
-                    <tr><td class="c-green">RBAC</td><td>Least-privilege for users &amp; service accounts (who can do what)</td></tr>
-                    <tr><td class="c-green">Network Policies</td><td>Default-deny pod-to-pod traffic; allow only what's needed</td></tr>
-                    <tr><td class="c-green">Pod Security Standards</td><td>Block root, privileged, host mounts (restricted profile)</td></tr>
-                    <tr><td class="c-green">Admission control</td><td>OPA/Gatekeeper, Kyverno enforce policy at deploy time</td></tr>
-                    <tr><td class="c-green">Image scanning</td><td>Trivy/Grype in CI; only signed images (see supply chain)</td></tr>
-                    <tr><td class="c-green">Secrets</td><td>Encrypt at rest (etcd); external secrets operators</td></tr>
+                    <tr><td>RBAC</td><td>Least-privilege for users &amp; service accounts (who can do what)</td></tr>
+                    <tr><td>Network Policies</td><td>Default-deny pod-to-pod traffic; allow only what's needed</td></tr>
+                    <tr><td>Pod Security Standards</td><td>Block root, privileged, host mounts (restricted profile)</td></tr>
+                    <tr><td>Admission control</td><td>OPA/Gatekeeper, Kyverno enforce policy at deploy time</td></tr>
+                    <tr><td>Image scanning</td><td>Trivy/Grype in CI; only signed images (see supply chain)</td></tr>
+                    <tr><td>Secrets</td><td>Encrypt at rest (etcd); external secrets operators</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     This is where the Red Team's "Kubernetes attacks" meet defense — RBAC abuse and
@@ -1894,9 +1894,9 @@ jobs:
       <span class="fn">ansible.builtin.service:</span> { name: nginx, state: started, enabled: <span class="kw">true</span> }</pre>
                   <table class="ref-table">
                     <tr><th>Tool</th><th>Model</th></tr>
-                    <tr><td class="c-cyan">Ansible</td><td>Agentless, push, YAML — easiest to adopt</td></tr>
-                    <tr><td class="c-cyan">Puppet / Chef</td><td>Agent-based, pull, mature at large scale</td></tr>
-                    <tr><td class="c-cyan">Salt</td><td>Agent or agentless; very fast event bus</td></tr>
+                    <tr><td>Ansible</td><td>Agentless, push, YAML — easiest to adopt</td></tr>
+                    <tr><td>Puppet / Chef</td><td>Agent-based, pull, mature at large scale</td></tr>
+                    <tr><td>Salt</td><td>Agent or agentless; very fast event bus</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Idempotency</strong> is the whole point: run it 100 times,
@@ -1928,10 +1928,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Approach</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">HashiCorp Vault</td><td>Central secrets + dynamic DB/cloud creds + encryption-as-a-service</td></tr>
-                    <tr><td class="c-cyan">Cloud-native</td><td>AWS <span class="acro-exp">(Amazon Web Services)</span> Secrets Manager, GCP <span class="acro-exp">(Google Cloud Platform)</span> Secret Manager, Azure Key Vault</td></tr>
-                    <tr><td class="c-cyan">External Secrets Operator</td><td>Sync a manager's secrets into K8s <span class="acro-exp">(Kubernetes)</span> Secrets</td></tr>
-                    <tr><td class="c-cyan">Sealed Secrets / SOPS</td><td>Encrypt secrets so they're safe to commit to Git (GitOps)</td></tr>
+                    <tr><td>HashiCorp Vault</td><td>Central secrets + dynamic DB/cloud creds + encryption-as-a-service</td></tr>
+                    <tr><td>Cloud-native</td><td>AWS <span class="acro-exp">(Amazon Web Services)</span> Secrets Manager, GCP <span class="acro-exp">(Google Cloud Platform)</span> Secret Manager, Azure Key Vault</td></tr>
+                    <tr><td>External Secrets Operator</td><td>Sync a manager's secrets into K8s <span class="acro-exp">(Kubernetes)</span> Secrets</td></tr>
+                    <tr><td>Sealed Secrets / SOPS</td><td>Encrypt secrets so they're safe to commit to Git (GitOps)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-red">Note:</strong> plain Kubernetes Secrets are only
@@ -1962,10 +1962,10 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Standard / Tool</th><th>Answers</th></tr>
-                    <tr><td class="c-cyan">SBOM</td><td>"What's inside?" — a bill of materials (SPDX/CycloneDX)</td></tr>
-                    <tr><td class="c-cyan">SLSA</td><td>"How was it built?" — build-integrity levels &amp; provenance</td></tr>
-                    <tr><td class="c-cyan">Sigstore / cosign</td><td>"Is it really ours?" — keyless signing of artifacts</td></tr>
-                    <tr><td class="c-cyan">Dependency scanning</td><td>Trivy, Grype, Dependabot — find vulnerable deps (SCA)</td></tr>
+                    <tr><td>SBOM</td><td>"What's inside?" — a bill of materials (SPDX/CycloneDX)</td></tr>
+                    <tr><td>SLSA</td><td>"How was it built?" — build-integrity levels &amp; provenance</td></tr>
+                    <tr><td>Sigstore / cosign</td><td>"Is it really ours?" — keyless signing of artifacts</td></tr>
+                    <tr><td>Dependency scanning</td><td>Trivy, Grype, Dependabot — find vulnerable deps (SCA)</td></tr>
                   </table>
                   <pre class="code-block"><span class="com"># Generate an SBOM and sign an image (keyless, via OIDC)</span>
 syft myimage:1.0 <span class="var">-o</span> cyclonedx-json &gt; sbom.json
@@ -2000,10 +2000,10 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Tool</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">OPA / Rego</td><td>General policy engine; Gatekeeper enforces it on K8s <span class="acro-exp">(Kubernetes)</span></td></tr>
-                    <tr><td class="c-cyan">Kyverno</td><td>K8s-native policy in YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> (no new language to learn)</td></tr>
-                    <tr><td class="c-cyan">Conftest</td><td>Run OPA policies against Terraform/JSON/YAML in CI</td></tr>
-                    <tr><td class="c-cyan">Cloud-native</td><td>AWS <span class="acro-exp">(Amazon Web Services)</span> SCPs <span class="acro-exp">(Service Control Policy)</span>, GCP <span class="acro-exp">(Google Cloud Platform)</span> Org Policy, Azure Policy</td></tr>
+                    <tr><td>OPA / Rego</td><td>General policy engine; Gatekeeper enforces it on K8s <span class="acro-exp">(Kubernetes)</span></td></tr>
+                    <tr><td>Kyverno</td><td>K8s-native policy in YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> (no new language to learn)</td></tr>
+                    <tr><td>Conftest</td><td>Run OPA policies against Terraform/JSON/YAML in CI</td></tr>
+                    <tr><td>Cloud-native</td><td>AWS <span class="acro-exp">(Amazon Web Services)</span> SCPs <span class="acro-exp">(Service Control Policy)</span>, GCP <span class="acro-exp">(Google Cloud Platform)</span> Org Policy, Azure Policy</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Where to enforce:</strong> shift left (CI catches it before
@@ -2034,9 +2034,9 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Registry</th><th>Stores</th></tr>
-                    <tr><td class="c-cyan">Harbor</td><td>Self-hosted container registry + scanning + signing</td></tr>
-                    <tr><td class="c-cyan">Artifactory / Nexus</td><td>Universal (Docker, Maven, npm, PyPI…) </td></tr>
-                    <tr><td class="c-cyan">GHCR / ECR <span class="acro-exp">(Elastic Container Registry)</span> / Artifact Registry</td><td>Cloud/platform-native registries</td></tr>
+                    <tr><td>Harbor</td><td>Self-hosted container registry + scanning + signing</td></tr>
+                    <tr><td>Artifactory / Nexus</td><td>Universal (Docker, Maven, npm, PyPI…) </td></tr>
+                    <tr><td>GHCR / ECR <span class="acro-exp">(Elastic Container Registry)</span> / Artifact Registry</td><td>Cloud/platform-native registries</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Practices:</strong> immutable tags (never re-push
@@ -2069,11 +2069,11 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Layer</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">CNI plugin</td><td>Calico, Cilium, Flannel — gives every pod an IP <span class="acro-exp">(Internet Protocol)</span>; enforces NetworkPolicy</td></tr>
-                    <tr><td class="c-cyan">Service &amp; kube-proxy</td><td>Stable virtual IP + load-balancing across pod replicas</td></tr>
-                    <tr><td class="c-cyan">Ingress controller</td><td>NGINX, Traefik — HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> routing &amp; TLS <span class="acro-exp">(Transport Layer Security)</span> into the cluster</td></tr>
-                    <tr><td class="c-cyan">CSI driver</td><td>Provisions PersistentVolumes from EBS/PD/etc. via a PVC</td></tr>
-                    <tr><td class="c-cyan">StorageClass</td><td>Defines a tier (ssd, standard) for dynamic provisioning</td></tr>
+                    <tr><td>CNI plugin</td><td>Calico, Cilium, Flannel — gives every pod an IP <span class="acro-exp">(Internet Protocol)</span>; enforces NetworkPolicy</td></tr>
+                    <tr><td>Service &amp; kube-proxy</td><td>Stable virtual IP + load-balancing across pod replicas</td></tr>
+                    <tr><td>Ingress controller</td><td>NGINX, Traefik — HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> routing &amp; TLS <span class="acro-exp">(Transport Layer Security)</span> into the cluster</td></tr>
+                    <tr><td>CSI driver</td><td>Provisions PersistentVolumes from EBS/PD/etc. via a PVC</td></tr>
+                    <tr><td>StorageClass</td><td>Defines a tier (ssd, standard) for dynamic provisioning</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Cilium</strong> (eBPF-based) is increasingly the default —

@@ -2067,11 +2067,11 @@ Why #5: Why isn't that part of the standard testing process?
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Step</th><th>What You Do</th></tr>
-                    <tr><td class="c-cyan">1. Steady state</td><td>Define a measurable "healthy" metric (e.g. checkout success rate &gt; 99%).</td></tr>
-                    <tr><td class="c-cyan">2. Hypothesis</td><td>"If we kill one payment node, checkout success stays above 99%."</td></tr>
-                    <tr><td class="c-cyan">3. Blast radius</td><td>Start tiny — one instance, small % of traffic — to limit harm.</td></tr>
-                    <tr><td class="c-cyan">4. Inject &amp; observe</td><td>Introduce the failure; watch the metric and your alerts.</td></tr>
-                    <tr><td class="c-cyan">5. Learn &amp; fix</td><td>If the hypothesis breaks, you found a real weakness — fix it, then re-run.</td></tr>
+                    <tr><td>1. Steady state</td><td>Define a measurable "healthy" metric (e.g. checkout success rate &gt; 99%).</td></tr>
+                    <tr><td>2. Hypothesis</td><td>"If we kill one payment node, checkout success stays above 99%."</td></tr>
+                    <tr><td>3. Blast radius</td><td>Start tiny — one instance, small % of traffic — to limit harm.</td></tr>
+                    <tr><td>4. Inject &amp; observe</td><td>Introduce the failure; watch the metric and your alerts.</td></tr>
+                    <tr><td>5. Learn &amp; fix</td><td>If the hypothesis breaks, you found a real weakness — fix it, then re-run.</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Always have an <strong class="c-red">abort switch</strong> to stop the
@@ -2087,11 +2087,11 @@ Why #5: Why isn't that part of the standard testing process?
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Failure</th><th>Tests Whether…</th></tr>
-                    <tr><td class="c-green">Kill an instance</td><td>Load balancing &amp; auto-healing actually replace it</td></tr>
-                    <tr><td class="c-green">Add network latency</td><td>Timeouts &amp; retries are tuned; slow ≠ down</td></tr>
-                    <tr><td class="c-green">Drop a dependency</td><td>Circuit breakers &amp; fallbacks kick in (graceful degradation)</td></tr>
-                    <tr><td class="c-green">Fill the disk / CPU <span class="acro-exp">(Central Processing Unit)</span></td><td>Resource limits &amp; alerts fire before a crash</td></tr>
-                    <tr><td class="c-green">Zone/region outage</td><td>Failover to another region works end-to-end</td></tr>
+                    <tr><td>Kill an instance</td><td>Load balancing &amp; auto-healing actually replace it</td></tr>
+                    <tr><td>Add network latency</td><td>Timeouts &amp; retries are tuned; slow ≠ down</td></tr>
+                    <tr><td>Drop a dependency</td><td>Circuit breakers &amp; fallbacks kick in (graceful degradation)</td></tr>
+                    <tr><td>Fill the disk / CPU <span class="acro-exp">(Central Processing Unit)</span></td><td>Resource limits &amp; alerts fire before a crash</td></tr>
+                    <tr><td>Zone/region outage</td><td>Failover to another region works end-to-end</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Tooling: <strong>Chaos Monkey</strong> / Simian Army, <strong>Gremlin</strong>,
@@ -2142,10 +2142,10 @@ Why #5: Why isn't that part of the standard testing process?
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Term</th><th>Meaning</th></tr>
-                    <tr><td class="c-cyan">Trace</td><td>The whole journey of one request, identified by a <code>trace_id</code>.</td></tr>
-                    <tr><td class="c-cyan">Span</td><td>One unit of work within the trace (an HTTP call, a DB query) — with a start, duration, and metadata.</td></tr>
-                    <tr><td class="c-cyan">Parent/child</td><td>Spans nest — a service call's span contains the spans of what it triggered.</td></tr>
-                    <tr><td class="c-cyan">Context propagation</td><td>The <code>trace_id</code> + span info passed between services (via headers like W3C <code>traceparent</code>) so the trace stays connected.</td></tr>
+                    <tr><td>Trace</td><td>The whole journey of one request, identified by a <code>trace_id</code>.</td></tr>
+                    <tr><td>Span</td><td>One unit of work within the trace (an HTTP call, a DB query) — with a start, duration, and metadata.</td></tr>
+                    <tr><td>Parent/child</td><td>Spans nest — a service call's span contains the spans of what it triggered.</td></tr>
+                    <tr><td>Context propagation</td><td>The <code>trace_id</code> + span info passed between services (via headers like W3C <code>traceparent</code>) so the trace stays connected.</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Rendered as a waterfall, a trace shows each span as a bar — one long bar
@@ -2160,9 +2160,9 @@ Why #5: Why isn't that part of the standard testing process?
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Pillar</th><th>Answers</th></tr>
-                    <tr><td class="c-green">Metrics</td><td>"Is something wrong?" — aggregate numbers, cheap, great for alerts.</td></tr>
-                    <tr><td class="c-green">Logs</td><td>"What happened here?" — detailed events from one component.</td></tr>
-                    <tr><td class="c-green">Traces</td><td>"Where is it slow / failing?" — the request's path across services.</td></tr>
+                    <tr><td>Metrics</td><td>"Is something wrong?" — aggregate numbers, cheap, great for alerts.</td></tr>
+                    <tr><td>Logs</td><td>"What happened here?" — detailed events from one component.</td></tr>
+                    <tr><td>Traces</td><td>"Where is it slow / failing?" — the request's path across services.</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     You use all three together: a metric alerts you, a trace localizes the slow
@@ -2185,8 +2185,8 @@ Why #5: Why isn't that part of the standard testing process?
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Practical note</th><th>Detail</th></tr>
-                    <tr><td class="c-amber">Sampling</td><td>Tracing everything is expensive at scale — sample a fraction (head or tail sampling) while keeping error traces.</td></tr>
-                    <tr><td class="c-amber">Collector</td><td>The OTel Collector receives, batches, and routes telemetry so apps don't talk to backends directly.</td></tr>
+                    <tr><td>Sampling</td><td>Tracing everything is expensive at scale — sample a fraction (head or tail sampling) while keeping error traces.</td></tr>
+                    <tr><td>Collector</td><td>The OTel Collector receives, batches, and routes telemetry so apps don't talk to backends directly.</td></tr>
                   </table>
                 </div>
               </div>
@@ -2221,9 +2221,9 @@ Why #5: Why isn't that part of the standard testing process?
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Capability</th><th>What It Does</th></tr>
-                    <tr><td class="c-cyan">Orchestration</td><td>Connect all your security tools (SIEM, EDR, firewall, threat intel, ticketing) so they act together via APIs <span class="acro-exp">(Application Programming Interface)</span>.</td></tr>
-                    <tr><td class="c-cyan">Automation</td><td>Run response steps without a human — enrich an alert, block an IP, disable an account.</td></tr>
-                    <tr><td class="c-cyan">Response</td><td>Manage the incident end to end — case tracking, timelines, and collaboration.</td></tr>
+                    <tr><td>Orchestration</td><td>Connect all your security tools (SIEM, EDR, firewall, threat intel, ticketing) so they act together via APIs <span class="acro-exp">(Application Programming Interface)</span>.</td></tr>
+                    <tr><td>Automation</td><td>Run response steps without a human — enrich an alert, block an IP, disable an account.</td></tr>
+                    <tr><td>Response</td><td>Manage the incident end to end — case tracking, timelines, and collaboration.</td></tr>
                   </table>
                 </div>
               </div>
@@ -2255,10 +2255,10 @@ Why #5: Why isn't that part of the standard testing process?
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th></th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">SIEM finds</td><td>Collects &amp; correlates logs to <em>detect</em> and alert.</td></tr>
-                    <tr><td class="c-cyan">SOAR acts</td><td>Takes those alerts and <em>responds</em> via playbooks. They're complementary — SIEM feeds SOAR.</td></tr>
-                    <tr><td class="c-green">Payoff</td><td>Lower MTTR <span class="acro-exp">(Mean Time To Repair)</span> (mean time to respond), consistent handling, less analyst burnout.</td></tr>
-                    <tr><td class="c-red">Watch out</td><td>Automating a bad decision at machine speed scales the mistake. Start with enrichment, gate containment, and test playbooks carefully.</td></tr>
+                    <tr><td>SIEM finds</td><td>Collects &amp; correlates logs to <em>detect</em> and alert.</td></tr>
+                    <tr><td>SOAR acts</td><td>Takes those alerts and <em>responds</em> via playbooks. They're complementary — SIEM feeds SOAR.</td></tr>
+                    <tr><td>Payoff</td><td>Lower MTTR <span class="acro-exp">(Mean Time To Repair)</span> (mean time to respond), consistent handling, less analyst burnout.</td></tr>
+                    <tr><td>Watch out</td><td>Automating a bad decision at machine speed scales the mistake. Start with enrichment, gate containment, and test playbooks carefully.</td></tr>
                   </table>
                 </div>
               </div>
@@ -2292,11 +2292,11 @@ Why #5: Why isn't that part of the standard testing process?
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Test</th><th>Question It Answers</th></tr>
-                    <tr><td class="c-cyan">Load</td><td>How does it behave at <em>expected</em> peak traffic?</td></tr>
-                    <tr><td class="c-cyan">Stress</td><td>Where does it break, and how? (Push past capacity.)</td></tr>
-                    <tr><td class="c-cyan">Spike</td><td>Can it survive a sudden traffic surge (a launch, a link going viral)?</td></tr>
-                    <tr><td class="c-cyan">Soak / endurance</td><td>Does it degrade over hours/days? (Catches memory leaks, resource exhaustion.)</td></tr>
-                    <tr><td class="c-cyan">Scalability</td><td>Does adding servers actually increase throughput linearly?</td></tr>
+                    <tr><td>Load</td><td>How does it behave at <em>expected</em> peak traffic?</td></tr>
+                    <tr><td>Stress</td><td>Where does it break, and how? (Push past capacity.)</td></tr>
+                    <tr><td>Spike</td><td>Can it survive a sudden traffic surge (a launch, a link going viral)?</td></tr>
+                    <tr><td>Soak / endurance</td><td>Does it degrade over hours/days? (Catches memory leaks, resource exhaustion.)</td></tr>
+                    <tr><td>Scalability</td><td>Does adding servers actually increase throughput linearly?</td></tr>
                   </table>
                 </div>
               </div>
@@ -2312,10 +2312,10 @@ Why #5: Why isn't that part of the standard testing process?
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Metric</th><th>Meaning</th></tr>
-                    <tr><td class="c-green">Throughput</td><td>Requests/sec the system handles (RPS).</td></tr>
-                    <tr><td class="c-green">Latency p50 / p95 / p99</td><td>The value below which 50/95/99% of requests fall. p99 = your unluckiest 1%.</td></tr>
-                    <tr><td class="c-green">Error rate</td><td>% of failed requests — watch it climb as load rises.</td></tr>
-                    <tr><td class="c-green">Saturation</td><td>How full the resources are (CPU, memory, connections) — the leading indicator of trouble.</td></tr>
+                    <tr><td>Throughput</td><td>Requests/sec the system handles (RPS).</td></tr>
+                    <tr><td>Latency p50 / p95 / p99</td><td>The value below which 50/95/99% of requests fall. p99 = your unluckiest 1%.</td></tr>
+                    <tr><td>Error rate</td><td>% of failed requests — watch it climb as load rises.</td></tr>
+                    <tr><td>Saturation</td><td>How full the resources are (CPU, memory, connections) — the leading indicator of trouble.</td></tr>
                   </table>
                 </div>
               </div>
@@ -2326,11 +2326,11 @@ Why #5: Why isn't that part of the standard testing process?
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Guideline</th><th>Why</th></tr>
-                    <tr><td class="c-green">Test like production</td><td>Realistic data volumes and traffic mix — a test on an empty DB lies.</td></tr>
-                    <tr><td class="c-green">Ramp up gradually</td><td>Increase load in steps to see where metrics bend, not just where they snap.</td></tr>
-                    <tr><td class="c-green">Watch the whole stack</td><td>Correlate the test with server metrics/traces to find <em>which</em> component is the bottleneck.</td></tr>
-                    <tr><td class="c-amber">Mind the environment</td><td>A scaled-down staging env gives relative, not absolute, numbers. Note the difference.</td></tr>
-                    <tr><td class="c-cyan">Tools</td><td>k6, JMeter, Gatling, Locust generate the traffic; pair with your observability stack.</td></tr>
+                    <tr><td>Test like production</td><td>Realistic data volumes and traffic mix — a test on an empty DB lies.</td></tr>
+                    <tr><td>Ramp up gradually</td><td>Increase load in steps to see where metrics bend, not just where they snap.</td></tr>
+                    <tr><td>Watch the whole stack</td><td>Correlate the test with server metrics/traces to find <em>which</em> component is the bottleneck.</td></tr>
+                    <tr><td>Mind the environment</td><td>A scaled-down staging env gives relative, not absolute, numbers. Note the difference.</td></tr>
+                    <tr><td>Tools</td><td>k6, JMeter, Gatling, Locust generate the traffic; pair with your observability stack.</td></tr>
                   </table>
                 </div>
               </div>
@@ -2360,10 +2360,10 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
   / sum by (service) (rate(http_requests_total[5m]))</pre>
                   <table class="ref-table">
                     <tr><th>Piece</th><th>Role</th></tr>
-                    <tr><td class="c-cyan">Prometheus</td><td>Pull-based scraping + TSDB + PromQL</td></tr>
-                    <tr><td class="c-cyan">Exporters</td><td>node_exporter, cAdvisor — expose metrics to scrape</td></tr>
-                    <tr><td class="c-cyan">Alertmanager</td><td>Dedup, group &amp; route alerts to Slack/PagerDuty</td></tr>
-                    <tr><td class="c-cyan">Grafana</td><td>Dashboards over Prometheus, Loki, and more</td></tr>
+                    <tr><td>Prometheus</td><td>Pull-based scraping + TSDB + PromQL</td></tr>
+                    <tr><td>Exporters</td><td>node_exporter, cAdvisor — expose metrics to scrape</td></tr>
+                    <tr><td>Alertmanager</td><td>Dedup, group &amp; route alerts to Slack/PagerDuty</td></tr>
+                    <tr><td>Grafana</td><td>Dashboards over Prometheus, Loki, and more</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Scale note:</strong> Prometheus is single-node by design;
@@ -2394,9 +2394,9 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Framework</th><th>Measure</th><th>Best for</th></tr>
-                    <tr><td class="c-cyan">Golden Signals</td><td>Latency, Traffic, Errors, Saturation</td><td>Any service (Google SRE)</td></tr>
-                    <tr><td class="c-cyan">RED</td><td>Rate, Errors, Duration</td><td>Request-driven services</td></tr>
-                    <tr><td class="c-cyan">USE</td><td>Utilization, Saturation, Errors</td><td>Resources (CPU, disk, queues)</td></tr>
+                    <tr><td>Golden Signals</td><td>Latency, Traffic, Errors, Saturation</td><td>Any service (Google SRE)</td></tr>
+                    <tr><td>RED</td><td>Rate, Errors, Duration</td><td>Request-driven services</td></tr>
+                    <tr><td>USE</td><td>Utilization, Saturation, Errors</td><td>Resources (CPU, disk, queues)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Rule of thumb:</strong> alert on <em>symptoms</em> users
@@ -2427,10 +2427,10 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Term</th><th>Meaning</th></tr>
-                    <tr><td class="c-cyan">SLI</td><td>The measurement — e.g. % of requests &lt; 300ms &amp; 2xx</td></tr>
-                    <tr><td class="c-cyan">SLO</td><td>The target for that SLI — e.g. 99.9% over 30 days</td></tr>
-                    <tr><td class="c-cyan">Error budget</td><td>1 − SLO = allowed unreliability (0.1% ≈ 43 min/month)</td></tr>
-                    <tr><td class="c-cyan">SLA <span class="acro-exp">(Service Level Agreement)</span></td><td>The contractual promise (with penalties) — looser than the SLO</td></tr>
+                    <tr><td>SLI</td><td>The measurement — e.g. % of requests &lt; 300ms &amp; 2xx</td></tr>
+                    <tr><td>SLO</td><td>The target for that SLI — e.g. 99.9% over 30 days</td></tr>
+                    <tr><td>Error budget</td><td>1 − SLO = allowed unreliability (0.1% ≈ 43 min/month)</td></tr>
+                    <tr><td>SLA <span class="acro-exp">(Service Level Agreement)</span></td><td>The contractual promise (with penalties) — looser than the SLO</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">The policy:</strong> budget left → ship fast; budget
@@ -2466,9 +2466,9 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
  <span class="str">"src_ip"</span>:<span class="str">"1.2.3.4"</span>,<span class="str">"trace_id"</span>:<span class="str">"abc123"</span>}</pre>
                   <table class="ref-table">
                     <tr><th>Piece</th><th>Role</th></tr>
-                    <tr><td class="c-cyan">Correlation / trace ID</td><td>Follow one request across every service &amp; log</td></tr>
-                    <tr><td class="c-cyan">Collector</td><td>Fluent Bit / Vector / OTel <span class="acro-exp">(OpenTelemetry)</span> Collector ship &amp; enrich logs</td></tr>
-                    <tr><td class="c-cyan">Store</td><td>Loki, Elasticsearch, or a cloud logging service</td></tr>
+                    <tr><td>Correlation / trace ID</td><td>Follow one request across every service &amp; log</td></tr>
+                    <tr><td>Collector</td><td>Fluent Bit / Vector / OTel <span class="acro-exp">(OpenTelemetry)</span> Collector ship &amp; enrich logs</td></tr>
+                    <tr><td>Store</td><td>Loki, Elasticsearch, or a cloud logging service</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Structured logs feed both ops <em>and</em> security (SIEM) — the same pipeline that
@@ -2499,11 +2499,11 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Practice</th><th>Detail</th></tr>
-                    <tr><td class="c-green">Actionable alerts only</td><td>If a human can't act on it, it's a dashboard, not a page</td></tr>
-                    <tr><td class="c-green">Runbooks</td><td>Every alert links to "what to check &amp; do"</td></tr>
-                    <tr><td class="c-green">Sane rotations</td><td>Follow-the-sun or weekly; comp time; not the same 2 people</td></tr>
-                    <tr><td class="c-green">Blameless postmortems</td><td>Blame systems, not people — psychological safety fixes more</td></tr>
-                    <tr><td class="c-green">Toil budget</td><td>Cap manual work; automate what pages you repeatedly</td></tr>
+                    <tr><td>Actionable alerts only</td><td>If a human can't act on it, it's a dashboard, not a page</td></tr>
+                    <tr><td>Runbooks</td><td>Every alert links to "what to check &amp; do"</td></tr>
+                    <tr><td>Sane rotations</td><td>Follow-the-sun or weekly; comp time; not the same 2 people</td></tr>
+                    <tr><td>Blameless postmortems</td><td>Blame systems, not people — psychological safety fixes more</td></tr>
+                    <tr><td>Toil budget</td><td>Cap manual work; automate what pages you repeatedly</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     The feedback loop that matters: every real page should make the <em>next</em> one

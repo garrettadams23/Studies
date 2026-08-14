@@ -116,6 +116,29 @@ def hex_colours(text):
         yield text[: m.start()].count("\n") + 1, m.group(1)
 
 
+# `.ref-table td:first-child` sets colour at specificity (0,2,1); a `c-*` utility
+# class is (0,1,0) and loses. 1614 first cells carried one that had never once
+# rendered — boilerplate applied to a column the design already styles. They were
+# removed, so this guards the count at zero rather than letting it creep back.
+REF_TABLE_RE = re.compile(r'<table\b[^>]*class="ref-table"[^>]*>.*?</table\s*>', re.S)
+ROW_RE = re.compile(r"<tr\b[^>]*>.*?</tr\s*>", re.S)
+FIRST_CELL_RE = re.compile(r"<(td|th)\b([^>]*)>")
+COLOUR_CLASS_RE = re.compile(r"\bc-(?:cyan|green|amber|red|purple|muted)\b")
+
+
+def dead_first_cell_classes(text):
+    """(line_number, class) for colour classes that cannot render."""
+    for table in REF_TABLE_RE.finditer(text):
+        for row in ROW_RE.finditer(table.group(0)):
+            cell = FIRST_CELL_RE.search(row.group(0))
+            if not cell or cell.group(1) != "td":
+                continue
+            hit = COLOUR_CLASS_RE.search(cell.group(2) or "")
+            if hit:
+                at = table.start() + row.start() + cell.start()
+                yield text[:at].count("\n") + 1, hit.group(0)
+
+
 def topic_label(block):
     """What script.js would use as the slug source, expansions removed."""
     plain = ACRO_SPAN_RE.sub("", block)
@@ -202,6 +225,14 @@ def main():
                 f"dark-mode value in light mode. Use a theme variable from "
                 f":root in style.css, e.g. var(--sky), or style the element "
                 f"with a class"
+            )
+
+        for line_no, cls in dead_first_cell_classes(text):
+            errors.append(
+                f"{name}:{line_no}: '{cls}' on the first cell of a .ref-table row "
+                f"never renders — .ref-table td:first-child outranks it. Drop the "
+                f"class (the column is already styled), or use "
+                f"style=\"color: var(--…)\" if it genuinely needs a different colour"
             )
 
         warns["inline style attribute"] += len(re.findall(r'\bstyle="', text))

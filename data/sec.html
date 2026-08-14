@@ -3185,9 +3185,9 @@ curl -sI https://example.com | grep -iE &quot;strict-transport|content-security|
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th></th><th>Answers</th><th>Format</th><th>Best For</th></tr>
-                    <tr><td class="c-cyan">OAuth 2.0</td><td>"Can this app do X for me?"</td><td>JSON <span class="acro-exp">(JavaScript Object Notation)</span> + tokens</td><td>API <span class="acro-exp">(Application Programming Interface)</span> access delegation</td></tr>
-                    <tr><td class="c-amber">OIDC</td><td>"Who is this user?"</td><td>JSON + JWT (ID token)</td><td>Modern app / mobile login</td></tr>
-                    <tr><td class="c-green">SAML 2.0</td><td>"Who is this user?"</td><td>XML assertions</td><td>Enterprise SSO (Okta, ADFS)</td></tr>
+                    <tr><td>OAuth 2.0</td><td>"Can this app do X for me?"</td><td>JSON <span class="acro-exp">(JavaScript Object Notation)</span> + tokens</td><td>API <span class="acro-exp">(Application Programming Interface)</span> access delegation</td></tr>
+                    <tr><td>OIDC</td><td>"Who is this user?"</td><td>JSON + JWT (ID token)</td><td>Modern app / mobile login</td></tr>
+                    <tr><td>SAML 2.0</td><td>"Who is this user?"</td><td>XML assertions</td><td>Enterprise SSO (Okta, ADFS)</td></tr>
                   </table>
                 </div>
               </div>
@@ -3248,11 +3248,11 @@ POST https://auth.example.com/token
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Pitfall</th><th>Defense</th></tr>
-                    <tr><td class="c-red">Implicit flow (tokens in URL)</td><td>Deprecated — use Authorization Code + PKCE instead.</td></tr>
-                    <tr><td class="c-red">Open redirect on redirect_uri</td><td>Exact-match allow-list of redirect URIs <span class="acro-exp">(Uniform Resource Identifier)</span>; never wildcard.</td></tr>
-                    <tr><td class="c-red">Not validating the JWT signature</td><td>Verify signature, <code>iss</code>, <code>aud</code>, and <code>exp</code> on every ID token.</td></tr>
-                    <tr><td class="c-red">Missing <code>state</code> parameter</td><td>Use <code>state</code> to bind the request and block CSRF <span class="acro-exp">(Cross-Site Request Forgery)</span> on the callback.</td></tr>
-                    <tr><td class="c-red">SAML XML signature wrapping</td><td>Validate the signature covers the whole assertion; use a hardened library.</td></tr>
+                    <tr><td>Implicit flow (tokens in URL)</td><td>Deprecated — use Authorization Code + PKCE instead.</td></tr>
+                    <tr><td>Open redirect on redirect_uri</td><td>Exact-match allow-list of redirect URIs <span class="acro-exp">(Uniform Resource Identifier)</span>; never wildcard.</td></tr>
+                    <tr><td>Not validating the JWT signature</td><td>Verify signature, <code>iss</code>, <code>aud</code>, and <code>exp</code> on every ID token.</td></tr>
+                    <tr><td>Missing <code>state</code> parameter</td><td>Use <code>state</code> to bind the request and block CSRF <span class="acro-exp">(Cross-Site Request Forgery)</span> on the callback.</td></tr>
+                    <tr><td>SAML XML signature wrapping</td><td>Validate the signature covers the whole assertion; use a hardened library.</td></tr>
                   </table>
                 </div>
               </div>
@@ -3401,10 +3401,10 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Flag</th><th>What It Does</th></tr>
-                    <tr><td class="c-green">HttpOnly</td><td>JavaScript can't read the cookie — blocks token theft via XSS <span class="acro-exp">(Cross-Site Scripting)</span>. Essential for auth cookies.</td></tr>
-                    <tr><td class="c-green">Secure</td><td>Cookie sent only over HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span> — never leaks on plain HTTP.</td></tr>
-                    <tr><td class="c-green">SameSite</td><td><code>Lax</code>/<code>Strict</code> stop the cookie riding along on cross-site requests — the core CSRF defense.</td></tr>
-                    <tr><td class="c-cyan">Max-Age / Expires</td><td>Controls how long the cookie lives; pair with short token expiry.</td></tr>
+                    <tr><td>HttpOnly</td><td>JavaScript can't read the cookie — blocks token theft via XSS <span class="acro-exp">(Cross-Site Scripting)</span>. Essential for auth cookies.</td></tr>
+                    <tr><td>Secure</td><td>Cookie sent only over HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span> — never leaks on plain HTTP.</td></tr>
+                    <tr><td>SameSite</td><td><code>Lax</code>/<code>Strict</code> stop the cookie riding along on cross-site requests — the core CSRF defense.</td></tr>
+                    <tr><td>Max-Age / Expires</td><td>Controls how long the cookie lives; pair with short token expiry.</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong>The access + refresh pattern:</strong> issue a short-lived access
@@ -3481,9 +3481,9 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Watch out for</th><th>Detail</th></tr>
-                    <tr><td class="c-red">Alert fatigue</td><td>Noisy false positives get ignored. Tune rules and triage severity, or the whole program is tuned out.</td></tr>
-                    <tr><td class="c-amber">Coverage gaps</td><td>Scanners find <em>known</em> patterns. Business-logic flaws (e.g. bypassing a checkout step) still need a human.</td></tr>
-                    <tr><td class="c-green">Defense in depth</td><td>Automated scanning complements — not replaces — code review, threat modeling, and periodic pentests.</td></tr>
+                    <tr><td>Alert fatigue</td><td>Noisy false positives get ignored. Tune rules and triage severity, or the whole program is tuned out.</td></tr>
+                    <tr><td>Coverage gaps</td><td>Scanners find <em>known</em> patterns. Business-logic flaws (e.g. bypassing a checkout step) still need a human.</td></tr>
+                    <tr><td>Defense in depth</td><td>Automated scanning complements — not replaces — code review, threat modeling, and periodic pentests.</td></tr>
                   </table>
                 </div>
               </div>
@@ -3517,8 +3517,8 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Model</th><th>How It Works</th><th>Trade-off</th></tr>
-                    <tr><td class="c-green">Negative (blocklist)</td><td>Block requests matching known-bad patterns/signatures</td><td>Easy to start; misses novel attacks; the common default</td></tr>
-                    <tr><td class="c-green">Positive (allowlist)</td><td>Only permit requests matching known-good shapes</td><td>Very strong; high effort to build &amp; maintain</td></tr>
+                    <tr><td>Negative (blocklist)</td><td>Block requests matching known-bad patterns/signatures</td><td>Easy to start; misses novel attacks; the common default</td></tr>
+                    <tr><td>Positive (allowlist)</td><td>Only permit requests matching known-good shapes</td><td>Very strong; high effort to build &amp; maintain</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Many WAFs ship the <strong>OWASP <span class="acro-exp">(Open Worldwide Application Security Project)</span> Core Rule Set (CRS)</strong> — a curated
@@ -3533,9 +3533,9 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Type</th><th>Example</th></tr>
-                    <tr><td class="c-cyan">Cloud / CDN-based</td><td>Cloudflare, AWS <span class="acro-exp">(Amazon Web Services)</span> WAF, Azure — easiest; scrubs traffic at the edge</td></tr>
-                    <tr><td class="c-cyan">Reverse-proxy module</td><td>ModSecurity on nginx/Apache — self-hosted, full control</td></tr>
-                    <tr><td class="c-cyan">Host-based</td><td>Runs on the app server itself</td></tr>
+                    <tr><td>Cloud / CDN-based</td><td>Cloudflare, AWS <span class="acro-exp">(Amazon Web Services)</span> WAF, Azure — easiest; scrubs traffic at the edge</td></tr>
+                    <tr><td>Reverse-proxy module</td><td>ModSecurity on nginx/Apache — self-hosted, full control</td></tr>
+                    <tr><td>Host-based</td><td>Runs on the app server itself</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Most WAFs also bundle <strong>rate limiting, bot mitigation, and DDoS <span class="acro-exp">(Distributed Denial of Service)</span>
@@ -3551,10 +3551,10 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Point</th><th>Detail</th></tr>
-                    <tr><td class="c-amber">Start in detect mode</td><td>Run in log-only/monitor first so you see what it <em>would</em> block before it breaks real users.</td></tr>
-                    <tr><td class="c-red">False positives</td><td>Aggressive rules block legitimate requests (a comment containing SQL keywords). Tune per-app.</td></tr>
-                    <tr><td class="c-red">Not a fix for bad code</td><td>A WAF is defense-in-depth — it can be bypassed with clever encoding. Fix the vulnerability too.</td></tr>
-                    <tr><td class="c-amber">Business logic is invisible</td><td>A WAF can't tell that a valid-looking request abuses your workflow (e.g. skipping a payment step).</td></tr>
+                    <tr><td>Start in detect mode</td><td>Run in log-only/monitor first so you see what it <em>would</em> block before it breaks real users.</td></tr>
+                    <tr><td>False positives</td><td>Aggressive rules block legitimate requests (a comment containing SQL keywords). Tune per-app.</td></tr>
+                    <tr><td>Not a fix for bad code</td><td>A WAF is defense-in-depth — it can be bypassed with clever encoding. Fix the vulnerability too.</td></tr>
+                    <tr><td>Business logic is invisible</td><td>A WAF can't tell that a valid-looking request abuses your workflow (e.g. skipping a payment step).</td></tr>
                   </table>
                 </div>
               </div>

@@ -2235,12 +2235,12 @@ mark.sh {
 .c-red    { color: var(--red); }
 .c-purple { color: var(--purple); }
 .c-muted  { color: var(--muted); }
-/* No utility class was added for the accents in :root above. These six are
-   overridden by table rules in 2,196 places on the page already — measured, not
-   guessed — because a class loses to the `.ref-table td` colour that an inline
-   style used to beat. Content therefore reaches an accent with
-   style="color: var(--…)", which is theme-correct even where a class would not
-   survive. See plan.md, session 18. */
+/* No utility class was added for the accents in :root above, deliberately.
+   These six lose to `.ref-table td:first-child` (0,2,1 against 0,1,0), and 1614
+   first cells had accumulated a class that never rendered because of it — since
+   removed, and now a lint error. Content reaches the other accents with
+   style="color: var(--…)", which is theme-correct and wins everywhere.
+   See plan.md, session 18. */
 
 /* domain: redteam (scaffolded) */
 .chip.c-redteam {

@@ -4230,29 +4230,50 @@ nothing else. `CONTRIBUTING.md` already forbids exactly this, in a table, in fav
 
 It was tried in this session, on all 866 that a naive match caught, and **reverted**.
 Inline `style` beats any class on specificity; `.c-cyan` does not. Converting moves the
-element from "wins everything" to "loses to any rule with a class in it", and the page
-has plenty:
+element from "wins everything" to "loses to any rule that outranks a bare class", and
+the page has one that matters: `.ref-table td:first-child`, at (0,2,1).
+
+The counter is real, but the substitution is not safe to do blind. Every conversion has
+to know whether a table rule will eat it — which is exactly what happened to the 866,
+and why they went back.
+
+### The dead utility classes — measured, then removed
+
+Chasing the above turned up something better. **1614 elements carried a `c-*` class that
+had never once rendered**, all of them the first cell of a `.ref-table` row:
 
 ```
-elements carrying a c-* class:                    9166
-…whose computed colour is NOT that class's value: 2196   (they render white —
-                                                          .ref-table td wins)
+elements carrying a c-* colour class:  8300
+…rendering that colour:                6686
+…overridden:                           1614   ← every one a .ref-table td:first-child
 ```
 
-Those 2196 are pre-existing: the six utility classes are *already* silently dead
-wherever they land in a table cell. That is a real bug worth its own session, and it is
-also the reason the substitution cannot be mechanical — every conversion needs to know
-whether a table rule is going to eat it.
+The first read of this was "1614 cells are the wrong colour" — a live rendering bug.
+**That was wrong, and the correction is the interesting part.** `.ref-table
+td:first-child { font-weight: 600; color: #fff }` is deliberate: the key column is
+styled bold and prominent on purpose, and has looked that way since it was written. The
+classes were boilerplate — in `net.html`, 12 ref-tables carry `c-cyan` on *every* first
+cell and 9 carry none, never a mix. Nobody was choosing cyan per-cell; a habit was being
+applied to a column the design already handled.
 
-Two consequences, both recorded rather than acted on:
+So the site was never rendering wrongly. The markup was just claiming something it could
+not deliver. The fix is to delete the claim, not to honour it — making all 1614 live
+would be a 1614-cell redesign nobody asked for, and would undo the point of the
+key-column rule.
 
-1. **`CONTRIBUTING.md`'s advice is wrong as written** for table content, which is most
-   content. Either the utility classes need enough specificity to win
-   (`.ref-table td.c-cyan`, or a `:where()` reset on the table rules), or the guidance
-   needs a carve-out. Fix the CSS before touching the 1069.
-2. **A counter can be honest and still not be a to-do list.** The hex counter came down
-   because the fix was semantically neutral. This one is not, and the difference is
-   worth more than the 1069 would have been.
+Removed, and verified as a no-op the only way worth trusting: computed `color`,
+`font-weight` and `background-color` for **all 83,344 elements**, in both themes, before
+and after. Zero differences. (15 elements differed in light mode until two runs of the
+*same* build showed the same 15 — a theme transition still in flight, not the change.)
+
+`lint_content.py` now errors on a colour class in that position, so the 1614 cannot
+creep back. `CONTRIBUTING.md` says where the classes do and do not work.
+
+**The lesson worth keeping is the misdiagnosis, not the cleanup.** "2196 elements render
+the wrong colour" and "1614 elements carry a class that does nothing" describe the same
+measurement and imply opposite actions — one a visual bug to fix, one dead markup to
+delete. The number was right both times. Only reading the *design intent* behind the
+overriding rule told them apart, and that is not something a linter can do.
 
 ## 3. New domains with no plan behind them
 
@@ -4350,6 +4371,7 @@ theme through it: **every one of them was a claim nobody was checking.**
 | `148 hard-coded hex colour` | 8 of them were not colours | Check narrowed to real paint contexts; error at 0 |
 | `spirit` is a domain | 3 cards | Folded; the ≥15 rule applied for the first time |
 | Windows Admin is Life Admin | Mis-filed since the split | In `endpoint` |
+| `class="c-cyan"` colours a cell | Dead in 1614 first cells | Removed; lint errors on the position |
 
 CI grew two gates and lost a warning. The generators matter more than the fixes: a
 regenerated cheat sheet is worth one session, but a cheat sheet that *cannot go stale*
@@ -4359,10 +4381,10 @@ between the work above and the fourteen sessions where the TREND line did not mo
 **Three things surfaced that are worth carrying forward.** All are recorded above rather
 than fixed:
 
-- **The six `c-*` utility classes are dead in table cells** — 2196 elements on the page
-  carry one and render a different colour, because `.ref-table td` outranks them. This is
-  the highest-value thing found this session and nothing was done about it. §2 has the
-  measurement and the two candidate fixes.
+- **The 1069 colour-only inline styles still cannot be mechanically converted** to `c-*`
+  classes, and `CONTRIBUTING.md` now says why. Worth doing eventually, one component at a
+  time, with the before/after computed-style diff used above as the gate. Not worth doing
+  blind.
 - `lifestyle` is now the weakest chip at 4 cards, and inherits the question `spirit` just
   answered.
 - The lint fix is a worked example of the §4 `VOLATILE_HINTS` problem — a signal too

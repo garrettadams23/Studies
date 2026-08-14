@@ -140,11 +140,11 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Technique</th><th>What It Buys</th></tr>
-                    <tr><td class="c-green">Redundancy (N+1)</td><td>No single point of failure — replicate across AZs <span class="acro-exp">(Availability Zone)</span></td></tr>
-                    <tr><td class="c-green">Health checks + failover</td><td>Route away from dead instances automatically</td></tr>
-                    <tr><td class="c-green">Bulkheads</td><td>Isolate resources so one overloaded feature can't sink the rest</td></tr>
-                    <tr><td class="c-green">Graceful degradation</td><td>Serve a cached/limited response instead of an error (show stale prices, hide recommendations)</td></tr>
-                    <tr><td class="c-green">Blast-radius limits</td><td>Cell-based / sharded design so an outage hits 5% of users, not 100%</td></tr>
+                    <tr><td>Redundancy (N+1)</td><td>No single point of failure — replicate across AZs <span class="acro-exp">(Availability Zone)</span></td></tr>
+                    <tr><td>Health checks + failover</td><td>Route away from dead instances automatically</td></tr>
+                    <tr><td>Bulkheads</td><td>Isolate resources so one overloaded feature can't sink the rest</td></tr>
+                    <tr><td>Graceful degradation</td><td>Serve a cached/limited response instead of an error (show stale prices, hide recommendations)</td></tr>
+                    <tr><td>Blast-radius limits</td><td>Cell-based / sharded design so an outage hits 5% of users, not 100%</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Pair with the resilience patterns (circuit breaker, retry-with-backoff,
@@ -175,13 +175,13 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Step</th><th>Do</th></tr>
-                    <tr><td class="c-cyan">1. Clarify</td><td>Nail functional + non-functional requirements. Who uses it? Read/write ratio? Consistency vs availability?</td></tr>
-                    <tr><td class="c-cyan">2. Estimate</td><td>QPS <span class="acro-exp">(Queries Per Second)</span>, storage, bandwidth — back-of-envelope (previous card). Sets the scale.</td></tr>
-                    <tr><td class="c-cyan">3. API <span class="acro-exp">(Application Programming Interface)</span></td><td>Define the core endpoints/contract — forces concreteness.</td></tr>
-                    <tr><td class="c-cyan">4. Data model</td><td>Entities, access patterns → SQL <span class="acro-exp">(Structured Query Language)</span> vs NoSQL choice.</td></tr>
-                    <tr><td class="c-cyan">5. High-level design</td><td>Boxes &amp; arrows: clients → LB → services → DB/cache/queue.</td></tr>
-                    <tr><td class="c-cyan">6. Scale &amp; deepen</td><td>Find bottlenecks; add caching, sharding, replicas, CDN <span class="acro-exp">(Content Delivery Network)</span>, async queues.</td></tr>
-                    <tr><td class="c-cyan">7. Trade-offs</td><td>Name what you gave up. There is no perfect design — only fit-for-purpose.</td></tr>
+                    <tr><td>1. Clarify</td><td>Nail functional + non-functional requirements. Who uses it? Read/write ratio? Consistency vs availability?</td></tr>
+                    <tr><td>2. Estimate</td><td>QPS <span class="acro-exp">(Queries Per Second)</span>, storage, bandwidth — back-of-envelope (previous card). Sets the scale.</td></tr>
+                    <tr><td>3. API <span class="acro-exp">(Application Programming Interface)</span></td><td>Define the core endpoints/contract — forces concreteness.</td></tr>
+                    <tr><td>4. Data model</td><td>Entities, access patterns → SQL <span class="acro-exp">(Structured Query Language)</span> vs NoSQL choice.</td></tr>
+                    <tr><td>5. High-level design</td><td>Boxes &amp; arrows: clients → LB → services → DB/cache/queue.</td></tr>
+                    <tr><td>6. Scale &amp; deepen</td><td>Find bottlenecks; add caching, sharding, replicas, CDN <span class="acro-exp">(Content Delivery Network)</span>, async queues.</td></tr>
+                    <tr><td>7. Trade-offs</td><td>Name what you gave up. There is no perfect design — only fit-for-purpose.</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     The senior signal is <strong class="c-green">talking trade-offs out loud</strong>
@@ -255,8 +255,8 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Style</th><th>How</th><th>Trade-off</th></tr>
-                    <tr><td class="c-cyan">Choreography</td><td>Each service reacts to events independently</td><td>Loose coupling; flow is emergent/hard to trace</td></tr>
-                    <tr><td class="c-cyan">Orchestration</td><td>A coordinator directs the steps</td><td>Clear flow; the orchestrator is a coupling point</td></tr>
+                    <tr><td>Choreography</td><td>Each service reacts to events independently</td><td>Loose coupling; flow is emergent/hard to trace</td></tr>
+                    <tr><td>Orchestration</td><td>A coordinator directs the steps</td><td>Clear flow; the orchestrator is a coupling point</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Watch for: event ordering, duplicate delivery (make consumers idempotent), and
@@ -298,9 +298,9 @@
                   </div>
                   <table class="ref-table" style="margin-top:10px">
                     <tr><th>Layer</th><th>Contains</th></tr>
-                    <tr><td class="c-cyan">Entities / Domain</td><td>Core business rules (no dependencies)</td></tr>
-                    <tr><td class="c-cyan">Use cases</td><td>Application-specific orchestration</td></tr>
-                    <tr><td class="c-cyan">Adapters</td><td>DB, web, external APIs <span class="acro-exp">(Application Programming Interface)</span> — the replaceable edge</td></tr>
+                    <tr><td>Entities / Domain</td><td>Core business rules (no dependencies)</td></tr>
+                    <tr><td>Use cases</td><td>Application-specific orchestration</td></tr>
+                    <tr><td>Adapters</td><td>DB, web, external APIs <span class="acro-exp">(Application Programming Interface)</span> — the replaceable edge</td></tr>
                   </table>
                 </div>
               </div>
@@ -329,8 +329,8 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Pattern</th><th>Gain</th><th>Cost</th></tr>
-                    <tr><td class="c-cyan">CQRS</td><td>Independent read/write scaling &amp; models</td><td>Two models to keep in sync (eventual consistency)</td></tr>
-                    <tr><td class="c-cyan">Event Sourcing</td><td>Full audit trail; time-travel; rebuild any view</td><td>Complexity; schema/versioning; snapshots for speed</td></tr>
+                    <tr><td>CQRS</td><td>Independent read/write scaling &amp; models</td><td>Two models to keep in sync (eventual consistency)</td></tr>
+                    <tr><td>Event Sourcing</td><td>Full audit trail; time-travel; rebuild any view</td><td>Complexity; schema/versioning; snapshots for speed</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Powerful together, but <strong class="c-red">not free</strong> — they add real
@@ -361,13 +361,13 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Factor</th><th>Rule</th></tr>
-                    <tr><td class="c-cyan">Config</td><td>Store config in the environment, never in code</td></tr>
-                    <tr><td class="c-cyan">Backing services</td><td>Treat DBs/queues as attachable resources (via URL)</td></tr>
-                    <tr><td class="c-cyan">Processes</td><td>Stateless &amp; share-nothing — state goes to a backing service</td></tr>
-                    <tr><td class="c-cyan">Port binding</td><td>Export services via a port; self-contained</td></tr>
-                    <tr><td class="c-cyan">Disposability</td><td>Fast startup / graceful shutdown (scale &amp; recover fast)</td></tr>
-                    <tr><td class="c-cyan">Dev/prod parity</td><td>Keep environments as similar as possible</td></tr>
-                    <tr><td class="c-cyan">Logs</td><td>Treat logs as event streams to stdout — the platform routes them</td></tr>
+                    <tr><td>Config</td><td>Store config in the environment, never in code</td></tr>
+                    <tr><td>Backing services</td><td>Treat DBs/queues as attachable resources (via URL)</td></tr>
+                    <tr><td>Processes</td><td>Stateless &amp; share-nothing — state goes to a backing service</td></tr>
+                    <tr><td>Port binding</td><td>Export services via a port; self-contained</td></tr>
+                    <tr><td>Disposability</td><td>Fast startup / graceful shutdown (scale &amp; recover fast)</td></tr>
+                    <tr><td>Dev/prod parity</td><td>Keep environments as similar as possible</td></tr>
+                    <tr><td>Logs</td><td>Treat logs as event streams to stdout — the platform routes them</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Follow these and your app runs the same on a laptop, in a container, or across
@@ -401,11 +401,11 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Concept</th><th>Meaning</th></tr>
-                    <tr><td class="c-cyan">Bounded context</td><td>A boundary where a model &amp; language are consistent (often → a service)</td></tr>
-                    <tr><td class="c-cyan">Ubiquitous language</td><td>Shared vocabulary used identically by experts &amp; code</td></tr>
-                    <tr><td class="c-cyan">Entity</td><td>Object with identity that persists over time (a User)</td></tr>
-                    <tr><td class="c-cyan">Value object</td><td>Defined only by its attributes, immutable (an Address, Money)</td></tr>
-                    <tr><td class="c-cyan">Aggregate</td><td>A cluster of objects with one root that guards invariants</td></tr>
+                    <tr><td>Bounded context</td><td>A boundary where a model &amp; language are consistent (often → a service)</td></tr>
+                    <tr><td>Ubiquitous language</td><td>Shared vocabulary used identically by experts &amp; code</td></tr>
+                    <tr><td>Entity</td><td>Object with identity that persists over time (a User)</td></tr>
+                    <tr><td>Value object</td><td>Defined only by its attributes, immutable (an Address, Money)</td></tr>
+                    <tr><td>Aggregate</td><td>A cluster of objects with one root that guards invariants</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Bounded contexts are why DDD and microservices pair so well — a well-drawn
@@ -436,11 +436,11 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th></th><th>Principle</th><th>Means</th></tr>
-                    <tr><td class="c-cyan">S</td><td>Single Responsibility</td><td>A class has one reason to change</td></tr>
-                    <tr><td class="c-cyan">O</td><td>Open/Closed</td><td>Open to extension, closed to modification</td></tr>
-                    <tr><td class="c-cyan">L</td><td>Liskov Substitution</td><td>Subtypes must be usable as their base type</td></tr>
-                    <tr><td class="c-cyan">I</td><td>Interface Segregation</td><td>Many small interfaces &gt; one fat one</td></tr>
-                    <tr><td class="c-cyan">D</td><td>Dependency Inversion</td><td>Depend on abstractions, not concretions</td></tr>
+                    <tr><td>S</td><td>Single Responsibility</td><td>A class has one reason to change</td></tr>
+                    <tr><td>O</td><td>Open/Closed</td><td>Open to extension, closed to modification</td></tr>
+                    <tr><td>L</td><td>Liskov Substitution</td><td>Subtypes must be usable as their base type</td></tr>
+                    <tr><td>I</td><td>Interface Segregation</td><td>Many small interfaces &gt; one fat one</td></tr>
+                    <tr><td>D</td><td>Dependency Inversion</td><td>Depend on abstractions, not concretions</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     The throughline is <strong class="c-green">manage dependencies</strong>: isolate
@@ -508,10 +508,10 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Benefit</th><th>Detail</th></tr>
-                    <tr><td class="c-green">Parallel work</td><td>Teams build against the spec + a mock, not a finished server</td></tr>
-                    <tr><td class="c-green">Codegen</td><td>Clients, server stubs, docs, validation from one spec</td></tr>
-                    <tr><td class="c-green">Consumer-driven contracts</td><td>Consumers publish expectations; a broken change fails CI (Pact)</td></tr>
-                    <tr><td class="c-amber">Governance</td><td>Consistent conventions, versioning, and review across APIs</td></tr>
+                    <tr><td>Parallel work</td><td>Teams build against the spec + a mock, not a finished server</td></tr>
+                    <tr><td>Codegen</td><td>Clients, server stubs, docs, validation from one spec</td></tr>
+                    <tr><td>Consumer-driven contracts</td><td>Consumers publish expectations; a broken change fails CI (Pact)</td></tr>
+                    <tr><td>Governance</td><td>Consistent conventions, versioning, and review across APIs</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     This is what makes microservices and public platforms manageable — the contract
@@ -543,10 +543,10 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Technique</th><th>How</th></tr>
-                    <tr><td class="c-green">Idempotency key</td><td>Client sends a unique ID; server dedupes and returns the original result</td></tr>
-                    <tr><td class="c-green">Natural idempotency</td><td>Design ops as "set to X" (absolute) not "add X" (relative)</td></tr>
-                    <tr><td class="c-green">Dedup store</td><td>Track processed message IDs; skip repeats</td></tr>
-                    <tr><td class="c-amber">Outbox pattern</td><td>Atomically write state + the event to publish, so neither is lost</td></tr>
+                    <tr><td>Idempotency key</td><td>Client sends a unique ID; server dedupes and returns the original result</td></tr>
+                    <tr><td>Natural idempotency</td><td>Design ops as "set to X" (absolute) not "add X" (relative)</td></tr>
+                    <tr><td>Dedup store</td><td>Track processed message IDs; skip repeats</td></tr>
+                    <tr><td>Outbox pattern</td><td>Atomically write state + the event to publish, so neither is lost</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     True "exactly-once" delivery is famously near-impossible; the practical answer is
@@ -578,11 +578,11 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Principle</th><th>Detail</th></tr>
-                    <tr><td class="c-green">Intention-revealing names</td><td><code>elapsedDays</code> &gt; <code>d</code>; say what it is</td></tr>
-                    <tr><td class="c-green">Small functions</td><td>Do one thing; a screenful is a smell</td></tr>
-                    <tr><td class="c-green">Few arguments</td><td>0–2 ideal; many args hint at a missing object</td></tr>
-                    <tr><td class="c-green">No surprises</td><td>A function does exactly what its name says, nothing hidden</td></tr>
-                    <tr><td class="c-amber">Comments explain why</td><td>Not what — the code shows what; comments justify the non-obvious</td></tr>
+                    <tr><td>Intention-revealing names</td><td><code>elapsedDays</code> &gt; <code>d</code>; say what it is</td></tr>
+                    <tr><td>Small functions</td><td>Do one thing; a screenful is a smell</td></tr>
+                    <tr><td>Few arguments</td><td>0–2 ideal; many args hint at a missing object</td></tr>
+                    <tr><td>No surprises</td><td>A function does exactly what its name says, nothing hidden</td></tr>
+                    <tr><td>Comments explain why</td><td>Not what — the code shows what; comments justify the non-obvious</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     The <strong class="c-green">Boy Scout Rule</strong>: leave the code a little
@@ -612,11 +612,11 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>As reviewer</th><th>As author</th></tr>
-                    <tr><td class="c-green">Review promptly (unblock people)</td><td>Keep PRs small &amp; focused</td></tr>
-                    <tr><td class="c-green">Comment on the code, not the person</td><td>Explain the "why" in the description</td></tr>
-                    <tr><td class="c-green">Distinguish must-fix from nit (label it)</td><td>Respond to every comment</td></tr>
-                    <tr><td class="c-green">Ask questions, don't demand</td><td>Don't take feedback personally</td></tr>
-                    <tr><td class="c-green">Approve when good enough, not perfect</td><td>Let the machine catch style (linters)</td></tr>
+                    <tr><td>Review promptly (unblock people)</td><td>Keep PRs small &amp; focused</td></tr>
+                    <tr><td>Comment on the code, not the person</td><td>Explain the "why" in the description</td></tr>
+                    <tr><td>Distinguish must-fix from nit (label it)</td><td>Respond to every comment</td></tr>
+                    <tr><td>Ask questions, don't demand</td><td>Don't take feedback personally</td></tr>
+                    <tr><td>Approve when good enough, not perfect</td><td>Let the machine catch style (linters)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Automate the boring parts (formatting, lint, tests in CI) so humans review what
@@ -647,9 +647,9 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Level</th><th>Tests</th><th>Trait</th></tr>
-                    <tr><td class="c-green">Unit (many)</td><td>One function/class in isolation</td><td>Fast, precise, cheap</td></tr>
-                    <tr><td class="c-cyan">Integration (some)</td><td>Components together (DB, API)</td><td>Slower, more realistic</td></tr>
-                    <tr><td class="c-amber">E2E (few)</td><td>The whole system as a user</td><td>Slow, flaky, high-value paths only</td></tr>
+                    <tr><td>Unit (many)</td><td>One function/class in isolation</td><td>Fast, precise, cheap</td></tr>
+                    <tr><td>Integration (some)</td><td>Components together (DB, API)</td><td>Slower, more realistic</td></tr>
+                    <tr><td>E2E (few)</td><td>The whole system as a user</td><td>Slow, flaky, high-value paths only</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">TDD <span class="acro-exp">(Test-Driven Development)</span></strong> (write the test first) drives better design
@@ -682,9 +682,9 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Type</th><th>Example</th></tr>
-                    <tr><td class="c-amber">Deliberate</td><td>"We'll hardcode this to hit the deadline" (fine, if tracked)</td></tr>
-                    <tr><td class="c-red">Accidental</td><td>Learned a better design too late; code lagging behind understanding</td></tr>
-                    <tr><td class="c-red">Bit rot</td><td>Dependencies age, the world changes, code decays</td></tr>
+                    <tr><td>Deliberate</td><td>"We'll hardcode this to hit the deadline" (fine, if tracked)</td></tr>
+                    <tr><td>Accidental</td><td>Learned a better design too late; code lagging behind understanding</td></tr>
+                    <tr><td>Bit rot</td><td>Dependencies age, the world changes, code decays</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Manage it:</strong> make it visible (a backlog, not
@@ -718,9 +718,9 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Artifact</th><th>Purpose</th></tr>
-                    <tr><td class="c-cyan">ADR</td><td>1-page record of a single decision (context/options/decision/consequences)</td></tr>
-                    <tr><td class="c-cyan">Design doc / RFC <span class="acro-exp">(Request for Comments)</span></td><td>Propose &amp; get feedback before building; align the team</td></tr>
-                    <tr><td class="c-cyan">C4 model</td><td>Diagrams at 4 zoom levels: Context, Container, Component, Code</td></tr>
+                    <tr><td>ADR</td><td>1-page record of a single decision (context/options/decision/consequences)</td></tr>
+                    <tr><td>Design doc / RFC <span class="acro-exp">(Request for Comments)</span></td><td>Propose &amp; get feedback before building; align the team</td></tr>
+                    <tr><td>C4 model</td><td>Diagrams at 4 zoom levels: Context, Container, Component, Code</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Keep them short and in the repo (version-controlled next to the code). The value
@@ -751,11 +751,11 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Pattern</th><th>Protects against</th></tr>
-                    <tr><td class="c-cyan">Timeout</td><td>Waiting forever on a hung dependency</td></tr>
-                    <tr><td class="c-cyan">Retry + backoff + jitter</td><td>Transient blips — but back off so you don't stampede</td></tr>
-                    <tr><td class="c-cyan">Circuit breaker</td><td>A failing dependency — "trip open" and fail fast instead of hammering it</td></tr>
-                    <tr><td class="c-cyan">Bulkhead</td><td>One overloaded feature sinking the rest (isolate resource pools)</td></tr>
-                    <tr><td class="c-cyan">Fallback</td><td>Degrade gracefully — cached/default response over an error</td></tr>
+                    <tr><td>Timeout</td><td>Waiting forever on a hung dependency</td></tr>
+                    <tr><td>Retry + backoff + jitter</td><td>Transient blips — but back off so you don't stampede</td></tr>
+                    <tr><td>Circuit breaker</td><td>A failing dependency — "trip open" and fail fast instead of hammering it</td></tr>
+                    <tr><td>Bulkhead</td><td>One overloaded feature sinking the rest (isolate resource pools)</td></tr>
+                    <tr><td>Fallback</td><td>Degrade gracefully — cached/default response over an error</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-red">Careful with retries:</strong> naive retries during an
@@ -787,9 +787,9 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Pattern</th><th>How</th></tr>
-                    <tr><td class="c-cyan">Saga</td><td>A sequence of local transactions; on failure, run <strong>compensating</strong> actions to undo</td></tr>
-                    <tr><td class="c-cyan">Outbox</td><td>Write state + the "event to publish" in one local transaction, so the event can't be lost</td></tr>
-                    <tr><td class="c-red">2PC</td><td>Coordinator locks all participants to commit atomically — avoided at scale (blocking, SPOF)</td></tr>
+                    <tr><td>Saga</td><td>A sequence of local transactions; on failure, run <strong>compensating</strong> actions to undo</td></tr>
+                    <tr><td>Outbox</td><td>Write state + the "event to publish" in one local transaction, so the event can't be lost</td></tr>
+                    <tr><td>2PC</td><td>Coordinator locks all participants to commit atomically — avoided at scale (blocking, SPOF)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Sagas trade atomicity for availability: the system is briefly inconsistent, then
@@ -821,10 +821,10 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Technique</th><th>Detail</th></tr>
-                    <tr><td class="c-green">Bounded queues</td><td>Fixed size; reject/block when full instead of growing forever</td></tr>
-                    <tr><td class="c-green">Load shedding</td><td>Drop low-priority work under overload (protect the core)</td></tr>
-                    <tr><td class="c-green">Rate limiting</td><td>Cap intake at a sustainable rate (token bucket)</td></tr>
-                    <tr><td class="c-green">Reactive streams</td><td>Consumer signals demand to the producer (pull, not push)</td></tr>
+                    <tr><td>Bounded queues</td><td>Fixed size; reject/block when full instead of growing forever</td></tr>
+                    <tr><td>Load shedding</td><td>Drop low-priority work under overload (protect the core)</td></tr>
+                    <tr><td>Rate limiting</td><td>Cap intake at a sustainable rate (token bucket)</td></tr>
+                    <tr><td>Reactive streams</td><td>Consumer signals demand to the producer (pull, not push)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     The counter-intuitive lesson: a system that <strong class="c-green">rejects</strong>
@@ -856,10 +856,10 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Term</th><th>Meaning</th></tr>
-                    <tr><td class="c-cyan">N / W / R</td><td>Replicas / write acks required / read acks required</td></tr>
-                    <tr><td class="c-green">W + R &gt; N</td><td>Guarantees a read sees the latest write (strong)</td></tr>
-                    <tr><td class="c-amber">Low W, low R</td><td>Fast + available, but reads may be stale (eventual)</td></tr>
-                    <tr><td class="c-cyan">Read repair / anti-entropy</td><td>Replicas reconcile in the background</td></tr>
+                    <tr><td>N / W / R</td><td>Replicas / write acks required / read acks required</td></tr>
+                    <tr><td>W + R &gt; N</td><td>Guarantees a read sees the latest write (strong)</td></tr>
+                    <tr><td>Low W, low R</td><td>Fast + available, but reads may be stale (eventual)</td></tr>
+                    <tr><td>Read repair / anti-entropy</td><td>Replicas reconcile in the background</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     So a shopping-cart read can be fast-and-eventual (low R) while the final
@@ -890,11 +890,11 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Level</th><th>Scope</th></tr>
-                    <tr><td class="c-cyan">Junior</td><td>Completes well-defined tasks with guidance</td></tr>
-                    <tr><td class="c-cyan">Mid</td><td>Owns features end-to-end independently</td></tr>
-                    <tr><td class="c-cyan">Senior</td><td>Owns systems; mentors; handles ambiguity within a team</td></tr>
-                    <tr><td class="c-cyan">Staff</td><td>Impact across multiple teams; sets technical direction</td></tr>
-                    <tr><td class="c-cyan">Principal+</td><td>Org/company-wide technical strategy</td></tr>
+                    <tr><td>Junior</td><td>Completes well-defined tasks with guidance</td></tr>
+                    <tr><td>Mid</td><td>Owns features end-to-end independently</td></tr>
+                    <tr><td>Senior</td><td>Owns systems; mentors; handles ambiguity within a team</td></tr>
+                    <tr><td>Staff</td><td>Impact across multiple teams; sets technical direction</td></tr>
+                    <tr><td>Principal+</td><td>Org/company-wide technical strategy</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     The shift from senior → staff is the big one: from "I solve hard problems" to
@@ -924,10 +924,10 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Archetype</th><th>Does</th></tr>
-                    <tr><td class="c-cyan">Tech Lead</td><td>Guides a team's execution on a specific area</td></tr>
-                    <tr><td class="c-cyan">Architect</td><td>Owns direction for a critical domain across teams</td></tr>
-                    <tr><td class="c-cyan">Solver</td><td>Parachutes into the gnarliest problems</td></tr>
-                    <tr><td class="c-cyan">Right Hand</td><td>Extends a senior leader's reach across the org</td></tr>
+                    <tr><td>Tech Lead</td><td>Guides a team's execution on a specific area</td></tr>
+                    <tr><td>Architect</td><td>Owns direction for a critical domain across teams</td></tr>
+                    <tr><td>Solver</td><td>Parachutes into the gnarliest problems</td></tr>
+                    <tr><td>Right Hand</td><td>Extends a senior leader's reach across the org</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     All four share the staff-level core: technical judgment, cross-team influence,
@@ -989,11 +989,11 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Lever</th><th>Detail</th></tr>
-                    <tr><td class="c-green">Write it down</td><td>An RFC/design doc scales your idea &amp; invites input</td></tr>
-                    <tr><td class="c-green">Build credibility</td><td>Ship, help others, be right consistently</td></tr>
-                    <tr><td class="c-green">Frame in their terms</td><td>Tie your proposal to what stakeholders care about</td></tr>
-                    <tr><td class="c-green">Disagree &amp; commit</td><td>Argue hard, then support the decision fully</td></tr>
-                    <tr><td class="c-green">Give credit</td><td>Trust compounds; hoarding credit destroys it</td></tr>
+                    <tr><td>Write it down</td><td>An RFC/design doc scales your idea &amp; invites input</td></tr>
+                    <tr><td>Build credibility</td><td>Ship, help others, be right consistently</td></tr>
+                    <tr><td>Frame in their terms</td><td>Tie your proposal to what stakeholders care about</td></tr>
+                    <tr><td>Disagree &amp; commit</td><td>Argue hard, then support the decision fully</td></tr>
+                    <tr><td>Give credit</td><td>Trust compounds; hoarding credit destroys it</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     The best technical idea loses to a well-communicated mediocre one. Learning to
@@ -1022,12 +1022,12 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Track</th><th>Path</th></tr>
-                    <tr><td class="c-cyan">IT foundations</td><td>A+ → Network+ → Security+</td></tr>
-                    <tr><td class="c-cyan">Blue team</td><td>Security+ → CySA+ → (GCIH/GCIA) → CISSP <span class="acro-exp">(Certified Information Systems Security Professional)</span></td></tr>
-                    <tr><td class="c-cyan">Red team</td><td>Security+ → PenTest+ → OSCP <span class="acro-exp">(Offensive Security Certified Professional)</span> → (OSEP/CRTO)</td></tr>
-                    <tr><td class="c-cyan">Cloud (AWS)</td><td>Cloud Practitioner → Solutions Architect Assoc → Security Specialty</td></tr>
-                    <tr><td class="c-cyan">Cloud (GCP)</td><td>Cloud Digital Leader → Associate Cloud Engineer → Professional Architect</td></tr>
-                    <tr><td class="c-cyan">Management</td><td>PMP <span class="acro-exp">(Project Management Professional)</span> / CISM <span class="acro-exp">(Certified Information Security Manager)</span> for leadership tracks</td></tr>
+                    <tr><td>IT foundations</td><td>A+ → Network+ → Security+</td></tr>
+                    <tr><td>Blue team</td><td>Security+ → CySA+ → (GCIH/GCIA) → CISSP <span class="acro-exp">(Certified Information Systems Security Professional)</span></td></tr>
+                    <tr><td>Red team</td><td>Security+ → PenTest+ → OSCP <span class="acro-exp">(Offensive Security Certified Professional)</span> → (OSEP/CRTO)</td></tr>
+                    <tr><td>Cloud (AWS)</td><td>Cloud Practitioner → Solutions Architect Assoc → Security Specialty</td></tr>
+                    <tr><td>Cloud (GCP)</td><td>Cloud Digital Leader → Associate Cloud Engineer → Professional Architect</td></tr>
+                    <tr><td>Management</td><td>PMP <span class="acro-exp">(Project Management Professional)</span> / CISM <span class="acro-exp">(Certified Information Security Manager)</span> for leadership tracks</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     The whole site maps to these — this reference domain (Red/Blue/Cloud/Engineering)
@@ -1057,11 +1057,11 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Pattern</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Managed-service-first</td><td>Prefer a queue/DB/auth service over running your own</td></tr>
-                    <tr><td class="c-cyan">Event-driven / FaaS</td><td>Functions triggered by events; scale per-event</td></tr>
-                    <tr><td class="c-cyan">Strangler Fig</td><td>Incrementally replace a monolith by routing slices to new services</td></tr>
-                    <tr><td class="c-cyan">BFF</td><td>Backend-for-frontend: a tailored API <span class="acro-exp">(Application Programming Interface)</span> per client type</td></tr>
-                    <tr><td class="c-red">Cold starts / limits</td><td>Serverless trade-offs: latency spikes, timeouts, statelessness</td></tr>
+                    <tr><td>Managed-service-first</td><td>Prefer a queue/DB/auth service over running your own</td></tr>
+                    <tr><td>Event-driven / FaaS</td><td>Functions triggered by events; scale per-event</td></tr>
+                    <tr><td>Strangler Fig</td><td>Incrementally replace a monolith by routing slices to new services</td></tr>
+                    <tr><td>BFF</td><td>Backend-for-frontend: a tailored API <span class="acro-exp">(Application Programming Interface)</span> per client type</td></tr>
+                    <tr><td>Cold starts / limits</td><td>Serverless trade-offs: latency spikes, timeouts, statelessness</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Trade-off:</strong> serverless minimizes ops and cost at
@@ -1094,11 +1094,11 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Choice</th><th>Trade-off</th></tr>
-                    <tr><td class="c-cyan">Normalization (3NF)</td><td>No duplication, integrity — but more joins</td></tr>
-                    <tr><td class="c-cyan">Denormalization</td><td>Fast reads, fewer joins — but update anomalies</td></tr>
-                    <tr><td class="c-cyan">NoSQL single-table</td><td>Model around access patterns (DynamoDB style)</td></tr>
-                    <tr><td class="c-cyan">Polyglot persistence</td><td>Right store per job: relational + doc + cache + search</td></tr>
-                    <tr><td class="c-cyan">Star / snowflake</td><td>Dimensional modeling for analytics warehouses</td></tr>
+                    <tr><td>Normalization (3NF)</td><td>No duplication, integrity — but more joins</td></tr>
+                    <tr><td>Denormalization</td><td>Fast reads, fewer joins — but update anomalies</td></tr>
+                    <tr><td>NoSQL single-table</td><td>Model around access patterns (DynamoDB style)</td></tr>
+                    <tr><td>Polyglot persistence</td><td>Right store per job: relational + doc + cache + search</td></tr>
+                    <tr><td>Star / snowflake</td><td>Dimensional modeling for analytics warehouses</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Rule:</strong> normalize until it hurts, denormalize until
@@ -1129,11 +1129,11 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Idea</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Story points</td><td>Relative size (complexity/effort/uncertainty), not hours</td></tr>
-                    <tr><td class="c-cyan">Velocity</td><td>Points/sprint historically — forecast, don't commit to it</td></tr>
-                    <tr><td class="c-cyan">Planning poker</td><td>Estimate together to surface hidden complexity</td></tr>
-                    <tr><td class="c-cyan">Cone of uncertainty</td><td>Estimates tighten as you learn — re-estimate</td></tr>
-                    <tr><td class="c-cyan">Ranges &amp; buffers</td><td>Give "2–4 weeks", not "3 weeks"; account for the unknown</td></tr>
+                    <tr><td>Story points</td><td>Relative size (complexity/effort/uncertainty), not hours</td></tr>
+                    <tr><td>Velocity</td><td>Points/sprint historically — forecast, don't commit to it</td></tr>
+                    <tr><td>Planning poker</td><td>Estimate together to surface hidden complexity</td></tr>
+                    <tr><td>Cone of uncertainty</td><td>Estimates tighten as you learn — re-estimate</td></tr>
+                    <tr><td>Ranges &amp; buffers</td><td>Give "2–4 weeks", not "3 weeks"; account for the unknown</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Senior move:</strong> break big work into small,
@@ -1164,10 +1164,10 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Interview stage</th><th>Prep</th></tr>
-                    <tr><td class="c-cyan">Coding</td><td>Data structures &amp; algorithms; think aloud, test your code (LeetCode-style)</td></tr>
-                    <tr><td class="c-cyan">System design</td><td>Use the framework: requirements → estimate → API <span class="acro-exp">(Application Programming Interface)</span> → data → scale → trade-offs</td></tr>
-                    <tr><td class="c-cyan">Behavioral</td><td>STAR <span class="acro-exp">(Situation, Task, Action, Result)</span> stories tied to the level's expectations (scope, impact)</td></tr>
-                    <tr><td class="c-cyan">Take-home / practical</td><td>Clean, tested, documented — treat it like real work</td></tr>
+                    <tr><td>Coding</td><td>Data structures &amp; algorithms; think aloud, test your code (LeetCode-style)</td></tr>
+                    <tr><td>System design</td><td>Use the framework: requirements → estimate → API <span class="acro-exp">(Application Programming Interface)</span> → data → scale → trade-offs</td></tr>
+                    <tr><td>Behavioral</td><td>STAR <span class="acro-exp">(Situation, Task, Action, Result)</span> stories tied to the level's expectations (scope, impact)</td></tr>
+                    <tr><td>Take-home / practical</td><td>Clean, tested, documented — treat it like real work</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">For promotion:</strong> operate at the next level
@@ -1336,25 +1336,25 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td class="c-green">Coder</td>
+                        <td>Coder</td>
                         <td>"How do I express this in the language?"</td>
                         <td>Syntax, idiom, working code against a clear spec</td>
                         <td>The spec is vague — there is nothing to translate</td>
                       </tr>
                       <tr>
-                        <td class="c-amber">Programmer</td>
+                        <td>Programmer</td>
                         <td>"What is the right solution?"</td>
                         <td>Algorithms, data structures, business logic, what to do first</td>
                         <td>The solution is right but doesn't fit the surrounding systems</td>
                       </tr>
                       <tr>
-                        <td class="c-cyan">Architect</td>
+                        <td>Architect</td>
                         <td>"How should the whole thing be shaped?"</td>
                         <td>Boundaries, integration, scalability, security, trade-offs</td>
                         <td>The design is elegant but nobody asked for it or can pay for it</td>
                       </tr>
                       <tr>
-                        <td class="c-purple">Developer</td>
+                        <td>Developer</td>
                         <td>"Are we solving the right problem?"</td>
                         <td>Requirements, planning, budget, delivery, users</td>
                         <td>The plan is sound but the implementation never lands</td>
@@ -1399,103 +1399,103 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td class="c-purple">Software engineer / developer</td>
+                        <td>Software engineer / developer</td>
                         <td>The application itself — features, correctness, its tests</td>
                         <td>Language toolchain, Git, CI, IDE <span class="acro-exp">(Integrated Development Environment)</span></td>
                         <td>Everyone below, by non-technical managers</td>
                       </tr>
                       <tr>
-                        <td class="c-purple">DevOps engineer</td>
+                        <td>DevOps engineer</td>
                         <td>The path from commit to production, and the tooling on it</td>
                         <td>CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span>, Terraform, containers, Kubernetes</td>
                         <td>SRE <span class="acro-exp">(Site Reliability Engineering)</span>, platform engineer, build engineer</td>
                       </tr>
                       <tr>
-                        <td class="c-purple">Site reliability engineer</td>
+                        <td>Site reliability engineer</td>
                         <td>Whether the service meets its SLOs <span class="acro-exp">(Service Level Objective)</span>, and the error budget</td>
                         <td>Observability, incident tooling, automation</td>
                         <td>DevOps — the difference is SLOs and on-call ownership</td>
                       </tr>
                       <tr>
-                        <td class="c-purple">Platform engineer</td>
+                        <td>Platform engineer</td>
                         <td>The internal product other engineers build on</td>
                         <td>Kubernetes, internal developer portals, golden paths</td>
                         <td>DevOps, infrastructure engineer</td>
                       </tr>
                       <tr>
-                        <td class="c-cyan">Systems administrator</td>
+                        <td>Systems administrator</td>
                         <td>Servers and services staying up, patched and backed up</td>
                         <td>Windows Server, Linux, Ansible, monitoring</td>
                         <td>Infrastructure engineer, UEM <span class="acro-exp">(Unified Endpoint Management)</span> engineer</td>
                       </tr>
                       <tr>
-                        <td class="c-cyan">Cloud engineer</td>
+                        <td>Cloud engineer</td>
                         <td>Cloud accounts, landing zones, cost and cloud services</td>
                         <td>AWS <span class="acro-exp">(Amazon Web Services)</span> / Azure / GCP <span class="acro-exp">(Google Cloud Platform)</span>, IaC <span class="acro-exp">(Infrastructure as Code)</span>, cloud IAM <span class="acro-exp">(Identity and Access Management)</span></td>
                         <td>DevOps, cloud architect</td>
                       </tr>
                       <tr>
-                        <td class="c-cyan">Network engineer</td>
+                        <td>Network engineer</td>
                         <td>Packets getting where they should — and nowhere else</td>
                         <td>Routers, switches, firewalls, SD-WAN <span class="acro-exp">(Software Defined Wide Area Network)</span>, VPN <span class="acro-exp">(Virtual Private Network)</span></td>
                         <td>Network security engineer</td>
                       </tr>
                       <tr>
-                        <td class="c-green">UEM engineer</td>
+                        <td>UEM engineer</td>
                         <td>Every end-user device: enrolled, configured, compliant, patched</td>
                         <td>Intune, MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span>, Jamf, Workspace ONE, Autopilot</td>
                         <td>Sysadmin, desktop support, IAM engineer</td>
                       </tr>
                       <tr>
-                        <td class="c-green">IAM engineer</td>
+                        <td>IAM engineer</td>
                         <td>Who can access what, and how that is proven</td>
                         <td>Entra ID, Okta, SAML/OIDC, SCIM <span class="acro-exp">(System for Cross-domain Identity Management)</span>, PAM <span class="acro-exp">(Privileged Access Management)</span> tooling</td>
                         <td>UEM engineer (device trust overlaps), security engineer</td>
                       </tr>
                       <tr>
-                        <td class="c-green">Service desk / desktop support</td>
+                        <td>Service desk / desktop support</td>
                         <td>The individual human who is blocked right now</td>
                         <td>Ticketing, remote assistance, imaging, knowledge base</td>
                         <td>UEM engineer — support consumes what UEM builds</td>
                       </tr>
                       <tr>
-                        <td class="c-red">Security engineer</td>
+                        <td>Security engineer</td>
                         <td>Controls that prevent and detect attacks</td>
                         <td>EDR <span class="acro-exp">(Endpoint Detection and Response)</span>, SIEM <span class="acro-exp">(Security Information and Event Management)</span>, WAF <span class="acro-exp">(Web Application Firewall)</span>, hardening baselines</td>
                         <td>SOC <span class="acro-exp">(Security Operations Center)</span> analyst, security architect</td>
                       </tr>
                       <tr>
-                        <td class="c-red">SOC analyst</td>
+                        <td>SOC analyst</td>
                         <td>Alerts triaged, incidents investigated and escalated</td>
                         <td>SIEM, EDR, threat intel, playbooks</td>
                         <td>Security engineer — analyst operates, engineer builds</td>
                       </tr>
                       <tr>
-                        <td class="c-red">Penetration tester</td>
+                        <td>Penetration tester</td>
                         <td>Finding exploitable weaknesses before an attacker does</td>
                         <td>Burp, nmap, C2 <span class="acro-exp">(Command and Control)</span> frameworks, custom tooling</td>
                         <td>Red teamer — scope and objective differ, not skill</td>
                       </tr>
                       <tr>
-                        <td class="c-red">GRC <span class="acro-exp">(Governance, Risk, and Compliance)</span> analyst</td>
+                        <td>GRC <span class="acro-exp">(Governance, Risk, and Compliance)</span> analyst</td>
                         <td>Evidence that controls exist and work, for auditors</td>
                         <td>Policy, risk register, control frameworks, audits</td>
                         <td>Security engineer — GRC proves, engineering builds</td>
                       </tr>
                       <tr>
-                        <td class="c-amber">Data engineer</td>
+                        <td>Data engineer</td>
                         <td>Pipelines delivering trustworthy data on time</td>
                         <td>SQL <span class="acro-exp">(Structured Query Language)</span>, Spark, orchestration, warehouses</td>
                         <td>Data analyst, ML <span class="acro-exp">(Machine Learning)</span> engineer, DBA</td>
                       </tr>
                       <tr>
-                        <td class="c-amber">Database administrator</td>
+                        <td>Database administrator</td>
                         <td>The database staying fast, consistent and recoverable</td>
                         <td>Query plans, backups, replication, tuning</td>
                         <td>Data engineer, sysadmin</td>
                       </tr>
                       <tr>
-                        <td class="c-amber">QA <span class="acro-exp">(Quality Assurance)</span> / test engineer</td>
+                        <td>QA <span class="acro-exp">(Quality Assurance)</span> / test engineer</td>
                         <td>Whether the thing actually works before users find out</td>
                         <td>Test frameworks, automation, exploratory testing</td>
                         <td>SDET <span class="acro-exp">(Software Development Engineer in Test)</span>, release engineer</td>
@@ -1538,10 +1538,10 @@
                   <table class="ref-table">
                     <thead><tr><th>Term</th><th>What it covers</th></tr></thead>
                     <tbody>
-                      <tr><td class="c-cyan">MDM <span class="acro-exp">(Mobile Device Management)</span></td><td>Enrolment, configuration profiles, remote wipe — device-level control</td></tr>
-                      <tr><td class="c-cyan">MAM <span class="acro-exp">(Mobile Application Management)</span></td><td>Policy applied to the app and its data, on devices you do not own (BYOD)</td></tr>
-                      <tr><td class="c-cyan">EMM <span class="acro-exp">(Enterprise Mobility Management)</span></td><td>MDM + MAM + identity and content — the mobile-era bundle</td></tr>
-                      <tr><td class="c-green">UEM</td><td>EMM merged with traditional desktop management, so mobile and PC are one estate</td></tr>
+                      <tr><td>MDM <span class="acro-exp">(Mobile Device Management)</span></td><td>Enrolment, configuration profiles, remote wipe — device-level control</td></tr>
+                      <tr><td>MAM <span class="acro-exp">(Mobile Application Management)</span></td><td>Policy applied to the app and its data, on devices you do not own (BYOD)</td></tr>
+                      <tr><td>EMM <span class="acro-exp">(Enterprise Mobility Management)</span></td><td>MDM + MAM + identity and content — the mobile-era bundle</td></tr>
+                      <tr><td>UEM</td><td>EMM merged with traditional desktop management, so mobile and PC are one estate</td></tr>
                     </tbody>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
@@ -1559,15 +1559,15 @@
                   <table class="ref-table">
                     <thead><tr><th>Area</th><th>Concretely</th></tr></thead>
                     <tbody>
-                      <tr><td class="c-cyan">Enrolment &amp; provisioning</td><td>Autopilot / ABM <span class="acro-exp">(Apple Business Manager)</span> / Android Enterprise zero-touch, ESP <span class="acro-exp">(Enrollment Status Page)</span>, join type, naming</td></tr>
-                      <tr><td class="c-cyan">Configuration</td><td>Baselines, CSP <span class="acro-exp">(Configuration Service Provider)</span> and OMA-URI <span class="acro-exp">(Open Mobile Alliance Uniform Resource Identifier)</span> policy, GPO-to-Intune migration, Wi-Fi/VPN/certificate profiles</td></tr>
-                      <tr><td class="c-cyan">Application delivery</td><td>Win32 packaging, MSI <span class="acro-exp">(Microsoft Installer)</span>, LOB <span class="acro-exp">(Line of Business)</span> and store apps, dependencies, detection rules, uninstall paths</td></tr>
-                      <tr><td class="c-cyan">Patch &amp; update rings</td><td>WUfB <span class="acro-exp">(Windows Update for Business)</span>, update rings, deferrals, macOS/iOS update policy, emergency out-of-band pushes</td></tr>
-                      <tr><td class="c-cyan">Compliance &amp; device trust</td><td>Compliance policies feeding Conditional Access, encryption, TPM/Secure Boot, attestation</td></tr>
-                      <tr><td class="c-cyan">Hardening</td><td>CIS/STIG-aligned baselines, ASR <span class="acro-exp">(Attack Surface Reduction)</span> rules, LAPS <span class="acro-exp">(Local Administrator Password Solution)</span>, removable-media and firewall policy</td></tr>
-                      <tr><td class="c-cyan">Automation</td><td>PowerShell and shell remediation scripts, proactive remediations, Graph API <span class="acro-exp">(Application Programming Interface)</span> reporting</td></tr>
-                      <tr><td class="c-cyan">Lifecycle</td><td>Refresh cycles, retire/wipe, stale-device cleanup, licence reclaim, offboarding</td></tr>
-                      <tr><td class="c-red">Firefighting</td><td>Why did this policy apply to 400 machines it shouldn't have — and how fast can it be pulled</td></tr>
+                      <tr><td>Enrolment &amp; provisioning</td><td>Autopilot / ABM <span class="acro-exp">(Apple Business Manager)</span> / Android Enterprise zero-touch, ESP <span class="acro-exp">(Enrollment Status Page)</span>, join type, naming</td></tr>
+                      <tr><td>Configuration</td><td>Baselines, CSP <span class="acro-exp">(Configuration Service Provider)</span> and OMA-URI <span class="acro-exp">(Open Mobile Alliance Uniform Resource Identifier)</span> policy, GPO-to-Intune migration, Wi-Fi/VPN/certificate profiles</td></tr>
+                      <tr><td>Application delivery</td><td>Win32 packaging, MSI <span class="acro-exp">(Microsoft Installer)</span>, LOB <span class="acro-exp">(Line of Business)</span> and store apps, dependencies, detection rules, uninstall paths</td></tr>
+                      <tr><td>Patch &amp; update rings</td><td>WUfB <span class="acro-exp">(Windows Update for Business)</span>, update rings, deferrals, macOS/iOS update policy, emergency out-of-band pushes</td></tr>
+                      <tr><td>Compliance &amp; device trust</td><td>Compliance policies feeding Conditional Access, encryption, TPM/Secure Boot, attestation</td></tr>
+                      <tr><td>Hardening</td><td>CIS/STIG-aligned baselines, ASR <span class="acro-exp">(Attack Surface Reduction)</span> rules, LAPS <span class="acro-exp">(Local Administrator Password Solution)</span>, removable-media and firewall policy</td></tr>
+                      <tr><td>Automation</td><td>PowerShell and shell remediation scripts, proactive remediations, Graph API <span class="acro-exp">(Application Programming Interface)</span> reporting</td></tr>
+                      <tr><td>Lifecycle</td><td>Refresh cycles, retire/wipe, stale-device cleanup, licence reclaim, offboarding</td></tr>
+                      <tr><td>Firefighting</td><td>Why did this policy apply to 400 machines it shouldn't have — and how fast can it be pulled</td></tr>
                     </tbody>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
@@ -1587,33 +1587,33 @@
                     <thead><tr><th>Neighbour</th><th>Where the line sits</th></tr></thead>
                     <tbody>
                       <tr>
-                        <td class="c-cyan">Desktop support</td>
+                        <td>Desktop support</td>
                         <td>Support fixes <em>this</em> device for <em>this</em> person; UEM changes
                             the policy so that class of problem stops happening. Support is the
                             most common entry path into UEM.</td>
                       </tr>
                       <tr>
-                        <td class="c-cyan">Systems administrator</td>
+                        <td>Systems administrator</td>
                         <td>Sysadmin owns servers and back-end services; UEM owns the end-user
                             estate. They overlap on directory, certificates and patching.</td>
                       </tr>
                       <tr>
-                        <td class="c-cyan">IAM <span class="acro-exp">(Identity and Access Management)</span> engineer</td>
+                        <td>IAM <span class="acro-exp">(Identity and Access Management)</span> engineer</td>
                         <td>IAM owns identity and Conditional Access policy; UEM owns the device
                             signal those policies trust. Device compliance is the seam between them.</td>
                       </tr>
                       <tr>
-                        <td class="c-cyan">Security engineer</td>
+                        <td>Security engineer</td>
                         <td>Security defines the required control; UEM is usually the mechanism that
                             actually delivers it to every endpoint — and reports which ones drifted.</td>
                       </tr>
                       <tr>
-                        <td class="c-cyan">DevOps engineer</td>
+                        <td>DevOps engineer</td>
                         <td>Same instincts — declarative config, staged rollout, automation — pointed
                             at laptops instead of servers. The skills transfer in both directions.</td>
                       </tr>
                       <tr>
-                        <td class="c-cyan">Software engineer</td>
+                        <td>Software engineer</td>
                         <td>UEM writes glue code, not products: PowerShell, Bash, Graph API calls,
                             packaging wrappers. Scripting is essential; software design is not.</td>
                       </tr>
@@ -1629,13 +1629,13 @@
                   <table class="ref-table">
                     <thead><tr><th>Bucket</th><th>What to have</th></tr></thead>
                     <tbody>
-                      <tr><td class="c-green">Platforms</td><td>Microsoft Intune and MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span>, Jamf Pro, Workspace ONE, Google Endpoint Management</td></tr>
-                      <tr><td class="c-green">Identity</td><td>Entra ID, Conditional Access, certificates and SCEP <span class="acro-exp">(Simple Certificate Enrollment Protocol)</span>, Kerberos and Group Policy fundamentals</td></tr>
-                      <tr><td class="c-green">Scripting</td><td>PowerShell first, then Bash and a little Python; Graph API for anything at scale</td></tr>
-                      <tr><td class="c-green">OS <span class="acro-exp">(Operating System)</span> internals</td><td>Windows servicing and registry, macOS profiles and notarization, iOS/Android enterprise models</td></tr>
-                      <tr><td class="c-green">Packaging</td><td>MSI/Win32 app authoring, detection and requirement rules, silent installs, PKG on macOS</td></tr>
-                      <tr><td class="c-green">Certs</td><td>CompTIA <span class="acro-exp">(Computing Technology Industry Association)</span> A+ as a base, then MD-102 <span class="acro-exp">(Microsoft Endpoint Administrator Associate)</span> (Endpoint Administrator); Jamf Certified Tech for Apple estates</td></tr>
-                      <tr><td class="c-green">Habits</td><td>Test rings, documented rollback, change control, and reading the compliance report before declaring victory</td></tr>
+                      <tr><td>Platforms</td><td>Microsoft Intune and MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span>, Jamf Pro, Workspace ONE, Google Endpoint Management</td></tr>
+                      <tr><td>Identity</td><td>Entra ID, Conditional Access, certificates and SCEP <span class="acro-exp">(Simple Certificate Enrollment Protocol)</span>, Kerberos and Group Policy fundamentals</td></tr>
+                      <tr><td>Scripting</td><td>PowerShell first, then Bash and a little Python; Graph API for anything at scale</td></tr>
+                      <tr><td>OS <span class="acro-exp">(Operating System)</span> internals</td><td>Windows servicing and registry, macOS profiles and notarization, iOS/Android enterprise models</td></tr>
+                      <tr><td>Packaging</td><td>MSI/Win32 app authoring, detection and requirement rules, silent installs, PKG on macOS</td></tr>
+                      <tr><td>Certs</td><td>CompTIA <span class="acro-exp">(Computing Technology Industry Association)</span> A+ as a base, then MD-102 <span class="acro-exp">(Microsoft Endpoint Administrator Associate)</span> (Endpoint Administrator); Jamf Certified Tech for Apple estates</td></tr>
+                      <tr><td>Habits</td><td>Test rings, documented rollback, change control, and reading the compliance report before declaring victory</td></tr>
                     </tbody>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">

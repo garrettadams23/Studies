@@ -58,19 +58,17 @@ Reach for a colour one of two ways:
 
 `c-cyan` · `c-green` · `c-amber` · `c-red` · `c-purple` · `c-muted`
 
-**outside a table** — these utility classes track the theme and keep the markup clean.
+These track the theme and work everywhere **except the first cell of a `.ref-table`
+row**, where `.ref-table td:first-child` sets the colour at a higher specificity and
+wins. That column is already styled bold-and-prominent by design, so it does not need a
+class — and the linter now fails the build on one, because 1614 of them had accumulated
+without ever rendering.
 
-`style="color: var(--sky)"` **inside a table cell**, and for any accent without a class.
-This looks like it contradicts the line above, and it is worth knowing why it does not:
-`.ref-table td` sets a colour, and a class loses to it while an inline style wins. 2196
-elements on the page already carry a `c-*` class that is doing nothing for this reason.
-Until that is fixed (see `plan.md`, session 18), a class in a table cell is a silent no-op.
-
-The full accent palette lives in `:root` in `style.css`: `--cyan` `--green` `--amber`
-`--red` `--purple` `--muted` `--text` `--sky` `--orange` `--pink` `--yellow` `--emerald`
-`--indigo` `--violet` `--rose` `--fuchsia` `--lime`, plus dimmed `--amber-2/-3`,
-`--green-2/-3` and `--cyan-2` for three-tone ladders. Add a variable there rather than a
-literal here.
+`style="color: var(--…)"` for any accent that has no utility class. The full palette is
+in `:root` in `style.css`: `--cyan` `--green` `--amber` `--red` `--purple` `--muted`
+`--text` `--sky` `--orange` `--pink` `--yellow` `--emerald` `--indigo` `--violet`
+`--rose` `--fuchsia` `--lime`, plus dimmed `--amber-2/-3`, `--green-2/-3` and `--cyan-2`
+for three-tone ladders. Add a variable there rather than a literal here.
 
 For repeated SVG diagram colours, style the shapes from a class on the `<svg>` instead —
 `.topo-svg line { stroke: var(--sky); }` and `math.html`'s `msv-*` set are the pattern.
