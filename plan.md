@@ -1424,18 +1424,18 @@ Pairs directly with the `redteam` AD-attack cards — same objects, defender's v
 - [x] File Services — shares, NTFS vs share permissions, DFS-N/DFS-R, quotas
 
 **Wave V6 — Certificate Services**
-- [ ] AD CS Design — root vs issuing CA, offline roots, CRL/OCSP publishing
-- [ ] Certificate Templates — the settings that matter, and the ones that get you owned
-- [ ] Auto-enrolment — getting certificates onto devices without touching them
-- [ ] Certificate Lifecycle Ops — renewal, revocation, the expiry outage nobody schedules
-- [ ] ADCS Misconfiguration — ESC1–ESC8 from the defender's side (pairs with `redteam`)
+- [x] AD CS Design — root vs issuing CA, offline roots, CRL/OCSP publishing
+- [x] Certificate Templates — the settings that matter, and the ones that get you owned
+- [x] Auto-enrolment — getting certificates onto devices without touching them
+- [x] Certificate Lifecycle Ops — renewal, revocation, the expiry outage nobody schedules
+- [x] ADCS Misconfiguration — ESC1–ESC8 from the defender's side (pairs with `redteam`)
 
 **Wave V7 — Server Operations & Troubleshooting**
-- [ ] Windows Event Log Triage — the channels worth watching, and building a useful filter
-- [ ] Performance Monitor & Resource Monitor — counters that actually diagnose
-- [ ] Windows Patching Strategy — rings, maintenance windows, reboot coordination
-- [ ] Domain Controller Recovery — authoritative vs non-authoritative restore, DSRM
-- [ ] Decommissioning a Server Properly — the checklist that prevents next year's mystery outage
+- [~] Windows Event Log Triage — the channels worth watching, and building a useful filter
+- [~] Performance Monitor & Resource Monitor — counters that actually diagnose
+- [~] Windows Patching Strategy — rings, maintenance windows, reboot coordination
+- [x] Domain Controller Recovery — authoritative vs non-authoritative restore, DSRM
+- [x] Decommissioning a Server Properly — the checklist that prevents next year's mystery outage
 
 ### TRACK W — Microsoft 365 & Collaboration  (→ new `m365` domain)
 
@@ -2075,8 +2075,11 @@ reviews and design arguments — taught for practitioners, not for a degree.
 > different act from adding it and deserves its own session. It is the strongest
 > remaining candidate in that domain, ahead of anything on the AL4–AL7 list.
 >
-> AL4–AL7 (operating systems, architecture, compilers, distributed systems) remain:
-> 20 cards, all genuinely absent from the site.
+> **✅ AL4 also shipped — `cs` is at 20 cards.** AL5 and AL6 (architecture, compilers)
+> remain and are genuinely absent. **AL7 is mostly not** — `devops` has *CAP Theorem &
+> Consistency Models*, and `eng` has *Idempotency & Exactly-Once*, *Distributed
+> Transactions* and *Consistency in Practice*. Only three AL7 cards are real gaps:
+> clocks and causality, consensus (Paxos/Raft), and failure detection with FLP.
 
 *(`- [~]` marks a card deliberately cut rather than deferred — see the wave note.)*
 
@@ -2102,11 +2105,11 @@ reviews and design arguments — taught for practitioners, not for a degree.
 - [x] Algorithm Interview Patterns — mapped to the site's coding-interview card
 
 **Wave AL4 — Operating System Theory**
-- [ ] Processes, Threads & Scheduling — context switches and what they cost
-- [ ] Virtual Memory — paging, TLB, page faults, and swap's bad reputation
-- [ ] Concurrency Primitives — mutexes, semaphores, condition variables, atomics
-- [ ] Deadlock & Livelock — the four conditions, detection, prevention
-- [ ] Filesystems From the Inside — inodes, journaling, and crash consistency
+- [x] Processes, Threads & Scheduling — context switches and what they cost
+- [x] Virtual Memory — paging, TLB, page faults, and swap's bad reputation
+- [x] Concurrency Primitives — mutexes, semaphores, condition variables, atomics
+- [x] Deadlock & Livelock — the four conditions, detection, prevention
+- [x] Filesystems From the Inside — inodes, journaling, and crash consistency
 
 **Wave AL5 — Computer Architecture**
 - [ ] Instruction Execution — fetch/decode/execute, pipelining, branch prediction

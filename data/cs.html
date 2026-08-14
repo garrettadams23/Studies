@@ -1144,4 +1144,289 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE AL4 — OPERATING SYSTEM THEORY
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: SCHEDULING ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⏱️</span>
+    <span class="topic-name">Processes, Threads &amp; Scheduling — What a Context Switch Costs</span>
+    <span class="topic-badge">CS • Operating Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">Linux Covers the Commands; This Is Why the Numbers Come Out That Way</div>
+      <div class="concept-desc">
+        <strong>Processes &amp; Signals</strong> and <strong>Process Management</strong> in the
+        Linux domain cover finding and controlling processes. This card is the model underneath:
+        what the kernel is actually choosing between, and why adding threads so often fails to
+        make anything faster.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Process</th><th>Thread</th></tr></thead>
+          <tbody>
+            <tr><td>Address space</td><td class="c-green">Its own — isolated</td><td class="c-amber">Shared with siblings</td></tr>
+            <tr><td>Crash blast radius</td><td class="c-green">Itself</td><td class="c-red">The whole process</td></tr>
+            <tr><td>Communication</td><td>Pipes, sockets, shared memory — explicit</td><td>Ordinary variables — and therefore races</td></tr>
+            <tr><td>Switch cost</td><td>Higher — address space changes</td><td>Lower, but not free</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> the choice is about failure isolation more than
+        performance. Threads share memory, which makes communication trivial and makes every
+        shared variable a correctness problem. Processes make you say what you are sharing —
+        which is why browsers and web servers put untrusted work in separate processes.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The cost</div>
+      <div class="concept-title">A Context Switch Is Cheap Directly and Expensive Indirectly</div>
+      <div class="concept-desc">
+        The direct cost — saving registers, swapping page tables — is on the order of a
+        microsecond. The real cost is that the new task arrives to a cache full of the previous
+        task's data, so it runs slowly until the cache refills. That indirect cost is invisible
+        to every timer and can dominate.
+      </div>
+      <div class="concept-desc">
+        This is why running far more runnable threads than cores makes throughput
+        <em>worse</em>, and why thread-pool sizing is roughly core-count for CPU-bound work but
+        much higher for I/O-bound work, where threads are blocked rather than competing.
+      </div>
+      <div class="concept-desc verdict">
+        Measure switches directly before theorising: <code>vmstat 1</code> reports context
+        switches per second in the <code>cs</code> column, and <code>pidstat -w</code> attributes
+        them per process. A high <em>voluntary</em> switch count means blocking on I/O <span class="acro-exp">(Input/Output)</span>; a high
+        <em>involuntary</em> count means CPU <span class="acro-exp">(Central Processing Unit)</span> contention. Those two point at opposite fixes.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: VIRTUAL MEMORY ──────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗺️</span>
+    <span class="topic-name">Virtual Memory — Paging, the TLB <span class="acro-exp">(Translation Lookaside Buffer)</span> &amp; Swap's Bad Reputation</span>
+    <span class="topic-badge">CS • Operating Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The mechanism</div>
+      <div class="concept-title">Every Address Your Program Uses Is a Lie the Kernel Maintains</div>
+      <div class="concept-desc">
+        Programs address virtual memory; hardware translates each access to a physical address
+        through page tables. That indirection buys isolation between processes, memory that can
+        be larger than RAM <span class="acro-exp">(Random Access Memory)</span>, and shared read-only pages — one copy of a library serving every
+        process using it.
+      </div>
+      <div class="concept-desc">
+        Translation itself would be ruinously slow if performed every access, so the processor
+        caches recent translations in the <strong>TLB</strong>. A TLB miss costs a page-table
+        walk; this is why large pages exist, and why a workload with a scattered access pattern
+        can be slow for reasons no profiler attributes to memory.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reputation</div>
+      <div class="concept-title">Swap Is Not the Problem — Thrashing Is</div>
+      <div class="concept-desc">
+        "Disable swap for performance" is common advice and mostly wrong. Swap lets the kernel
+        evict pages that are genuinely never touched — initialisation code, an idle daemon —
+        and use the reclaimed memory as cache. A system with swap and no swapping is healthier
+        than one without swap.
+      </div>
+      <div class="concept-desc">
+        The pathology is <strong>thrashing</strong>: the working set exceeds RAM, so pages are
+        evicted and immediately faulted back. Throughput collapses because every access waits on
+        storage. Disabling swap does not fix that — it converts a slow system into one where the
+        out-of-memory killer terminates something instead.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Watch the paging rate, not the swap usage.</strong> Used swap is a historical
+        fact and often harmless; <code>si</code>/<code>so</code> in <code>vmstat</code> staying
+        non-zero is the live problem. The two get confused constantly, and only the second is an
+        incident.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CONCURRENCY PRIMITIVES ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔐</span>
+    <span class="topic-name">Concurrency Primitives — Mutexes, Semaphores, Conditions &amp; Atomics</span>
+    <span class="topic-badge">CS • Operating Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Four Tools, and They Are Not Interchangeable</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Primitive</th><th>Answers</th><th>Typical misuse</th></tr></thead>
+          <tbody>
+            <tr><td>Mutex</td><td>Only one at a time in here</td><td>Held across an I/O <span class="acro-exp">(Input/Output)</span> call, serialising everything</td></tr>
+            <tr><td>Semaphore</td><td>At most N at a time</td><td>Used as a mutex, losing the "who owns it" check</td></tr>
+            <tr><td>Condition variable</td><td>Wait until something is true</td><td>Waiting without a loop — spurious wakeups are real</td></tr>
+            <tr><td>Atomic</td><td>This one operation is indivisible</td><td>Assuming two atomics compose atomically</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The last one is the subtle one.</strong> Two atomic operations are not an atomic
+        pair: an atomic read followed by an atomic write is a race, because something can
+        intervene between them. That is why compare-and-swap exists — it makes read-check-write
+        a single indivisible step.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Lock You Held for Too Long</div>
+      <div class="concept-desc">
+        The most common concurrency bug in production is not a race — it is a mutex held across
+        something slow. A lock held during a network call or a disk write turns a concurrent
+        service into a serial one, and the symptom is latency that climbs with load while CPU <span class="acro-exp">(Central Processing Unit)</span>
+        stays low.
+      </div>
+      <pre class="code-block"><span class="com"># Serialises every caller behind one network round trip</span>
+<span class="kw">with</span> lock:
+    row = db.fetch(key)          <span class="com"># slow, and holding the lock</span>
+    cache[key] = transform(row)
+
+<span class="com"># Do the slow work outside; hold the lock only for the shared state</span>
+row = db.fetch(key)
+value = transform(row)
+<span class="kw">with</span> lock:
+    cache[key] = value           <span class="com"># may overwrite a concurrent write — usually fine</span></pre>
+      <div class="concept-desc verdict">
+        The second version can do duplicate work under contention. That is nearly always the
+        right trade: duplicated computation is cheap, and a serialised service is not. Decide
+        deliberately rather than by where the <code>with</code> happened to go.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DEADLOCK ────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔒</span>
+    <span class="topic-name">Deadlock &amp; Livelock — The Four Conditions, and Which One to Break</span>
+    <span class="topic-badge">CS • Operating Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Diagnosis</div>
+      <div class="concept-title">Deadlock Needs All Four; Removing Any One Prevents It</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Condition</th><th>Break it by</th></tr></thead>
+          <tbody>
+            <tr><td>Mutual exclusion</td><td>Using immutable data or per-thread copies</td></tr>
+            <tr><td>Hold and wait</td><td>Acquiring everything at once, or nothing</td></tr>
+            <tr><td>No pre-emption</td><td>Timeouts — take the lock or give up and retry</td></tr>
+            <tr><td>Circular wait</td><td class="c-green">A global lock ordering — the usual answer</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Lock ordering is the practical fix.</strong> Define an order — by address, by
+        identifier, by name — and require every code path to acquire in that order. The classic
+        deadlock is two account transfers running in opposite directions; ordering by account
+        number removes it entirely, and costs one comparison.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Livelock</div>
+      <div class="concept-title">Everything Is Running and Nothing Is Progressing</div>
+      <div class="concept-desc">
+        Livelock is deadlock's harder-to-spot relative: threads are not blocked, they are busy
+        responding to each other and never advancing. Two people stepping aside in a corridor,
+        repeatedly. It is worse than deadlock diagnostically, because CPU <span class="acro-exp">(Central Processing Unit)</span> is busy and every
+        thread looks alive.
+      </div>
+      <div class="concept-desc">
+        The usual cause is a naive retry: detect a conflict, back off, retry immediately, collide
+        again. Fix it the same way networks did — <strong>exponential backoff with
+        jitter</strong>. Without jitter, retries stay synchronised and collide in lockstep
+        forever.
+      </div>
+      <div class="concept-desc verdict">
+        Database deadlocks are normal and expected. The engine detects a cycle and aborts one
+        transaction with a retryable error — so application code that talks to a database
+        <em>must</em> handle deadlock as a retry case, not as a fatal exception. Code that does
+        not is the source of the intermittent failures nobody can reproduce.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: FILESYSTEMS ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💾</span>
+    <span class="topic-name">Filesystems From the Inside — Inodes, Journaling &amp; Crash Consistency</span>
+    <span class="topic-badge">CS • Operating Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Structure</div>
+      <div class="concept-title">A Filename Is a Pointer, Not the File</div>
+      <div class="concept-desc">
+        The file is the <strong>inode</strong>: metadata plus the location of its data. A
+        directory entry is just a name pointing at an inode number. Several names may point at
+        the same inode — hard links — and the data survives until the last one is removed.
+      </div>
+      <div class="concept-desc verdict">
+        Two consequences that explain real behaviour. Deleting a file being held open by a
+        process frees no space, because the descriptor is still a reference — which is why a
+        disk can stay full after deleting a log, until the writer is restarted. And "disk full"
+        with free space showing means <strong>inode</strong> exhaustion: millions of tiny files,
+        checkable with <code>df -i</code>, which almost nobody runs first.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Crash consistency</div>
+      <div class="concept-title">Journaling Protects the Filesystem, Not Your Data</div>
+      <div class="concept-desc">
+        A write touches several structures — the data, the inode, the free-space map. Interrupted
+        halfway, the filesystem is inconsistent. A journal records the intent first, so recovery
+        replays or discards the whole operation and the <em>structure</em> is always valid.
+      </div>
+      <div class="concept-desc">
+        The default mode journals metadata only, because journaling data as well halves write
+        throughput. So after a crash the filesystem mounts cleanly and a file may still contain
+        garbage or an old version: <strong>the guarantee is about the filesystem, not the file
+        contents</strong>, and that distinction disappoints people at the worst moment.
+      </div>
+      <pre class="code-block"><span class="com"># The durability sequence applications must actually perform</span>
+<span class="com"># A write() is in the page cache, not on the device.</span>
+fd = os.open(path, os.O_WRONLY | os.O_CREAT)
+os.write(fd, data)
+os.fsync(fd)                     <span class="com"># the file's data is now durable</span>
+os.close(fd)
+dir_fd = os.open(os.path.dirname(path), os.O_RDONLY)
+os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable too</span></pre>
+      <div class="concept-desc verdict">
+        <strong>The second fsync is the one everybody omits.</strong> Renaming a temporary file
+        into place is atomic, but the directory entry itself is buffered — crash before that is
+        flushed and the file is durable under a name that no longer exists. This is the bug
+        behind a well-known class of "my config file was empty after a power cut".
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body cs -->
