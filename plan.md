@@ -4618,6 +4618,37 @@ Four things worth carrying into the next wave:
   Converting the other 313 is still the unsafe-blind change described above; a new
   wave choosing the class is free.
 
+### The cross-reference check — a fourth ratchet, and a fourth misdiagnosis
+
+Writing 51 cards meant writing cross-references, and the habit of this session made the
+obvious question available: *is anything checking those?* Nothing was, and four were
+wrong — one naming a card that has never existed, two naming cards that had been
+retitled, and one naming a card I referenced from AL1 and then never wrote.
+
+`<span class="xref">Exact Topic Title</span>` is now the convention; `lint_content.py`
+resolves every reference against real titles and suggests the nearest match on a miss.
+Third ratchet at zero, after topic names and hard-coded colours.
+
+Two things fell out of converting the sixteen references, both worth keeping:
+
+- **The acronym annotator was rewriting the quoted titles.** It injected expansions
+  inside the `xref` span, so a reference that was correct when written would fail the
+  check the next time the annotator ran. `xref` is now in `SKIP_CLASSES`. Any future
+  convention that quotes exact text needs the same treatment — the annotator touches
+  everything it is not told to leave alone.
+- **The linter was right and I was wrong, twice, about the same two strings.** I
+  "corrected" two references to `DNS (Domain Name System)` and `PKI (Public Key
+  Infrastructure)` using titles from a throwaway probe whose non-greedy regex had
+  spliced an acronym expansion into the captured title. The real titles are *DNS Deep
+  Dive — Records, Resolution & Security* and *PKI & Certificate Lifecycle*. Only
+  calling `topic_label()` — the function the linter itself uses — got the right answer.
+
+**Write the probe against the tool, not alongside it.** Four times this session a
+throwaway script disagreed with a checked one, and the throwaway was wrong every time:
+a `.topic.open` selector script.js never sets, a storage key that did not exist, a
+notepad treated as a textarea, and now a title regex. The habit that costs least is to
+import the module that already knows.
+
 ### On this session's method
 
 Four verification failures in this session turned out to be broken *tests*, not broken
