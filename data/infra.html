@@ -1,0 +1,511 @@
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE V1 — WINDOWS SERVER FOUNDATIONS
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: EDITIONS & LICENSING ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧾</span>
+    <span class="topic-name">Windows Server Editions &amp; Licensing — What You Are Actually Buying</span>
+    <span class="topic-badge">Server • Licensing</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The decision</div>
+      <div class="concept-title">Standard vs Datacenter Is a Virtualisation Question, Not a Feature Question</div>
+      <div class="concept-desc">
+        People assume Datacenter is "the one with the good features". For almost every role
+        that matters — AD DS <span class="acro-exp">(Active Directory Domain Services)</span>, DNS <span class="acro-exp">(Domain Name System)</span>, DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span>, file services — the two editions are identical.
+        What you are buying is <strong>how many Windows virtual machines that hardware may
+        run</strong>. Choose on VM density, then check the handful of features that genuinely differ.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Standard</th><th>Datacenter</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Virtual instances per licensed host</td>
+              <td>2</td>
+              <td class="c-green">Unlimited</td>
+            </tr>
+            <tr>
+              <td>AD DS, DNS, DHCP, file, print</td>
+              <td class="c-green">Yes</td>
+              <td class="c-green">Yes</td>
+            </tr>
+            <tr>
+              <td>Storage Spaces Direct</td>
+              <td class="c-red">No</td>
+              <td class="c-green">Yes</td>
+            </tr>
+            <tr>
+              <td>Software-defined networking</td>
+              <td class="c-red">No</td>
+              <td class="c-green">Yes</td>
+            </tr>
+            <tr>
+              <td>Typical fit</td>
+              <td>Physical box, or a host running one or two VMs</td>
+              <td>A virtualisation host, or anything hyper-converged</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> if a host will ever run more than about four Windows VMs,
+        Datacenter usually costs less than stacking Standard licences — and you stop having to
+        count. Below that, Standard. Get this wrong in the direction of Standard and you are
+        not merely under-licensed, you are under-licensed <em>retroactively</em>, which is how
+        licensing turns into an audit finding.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Core counting</div>
+      <div class="concept-title">Licensing Follows Cores, and There Is a Floor</div>
+      <div class="concept-desc">
+        Windows Server is licensed per physical core, with minimums that catch people out: you
+        license <strong>every physical core in the host</strong>, at least 8 per processor and
+        at least 16 per server, regardless of how few you use. A 2× 6-core host is still billed
+        as 16 cores. Licences are sold in 2-core packs, so the arithmetic is always even.
+      </div>
+      <div class="concept-desc">
+        The trap is hardware refresh. Moving a workload from an 8-core box to a 32-core box does
+        not carry the licence with it — the new host needs double the core licences before the
+        first VM boots. Price the licence alongside the tin, not after it.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The forgotten half</div>
+      <div class="concept-title">CALs <span class="acro-exp">(Client Access License)</span> — Licensing the Connection, Not the Server</div>
+      <div class="concept-desc">
+        Core licences let the server <em>run</em>. CALs let something <em>connect to it</em>.
+        They are bought separately, they are frequently forgotten, and they are the single most
+        common finding in a Microsoft licensing review.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Model</th><th>Buy one per</th><th>Cheaper when</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>User CAL</td><td>Named person, any number of devices</td><td>People have a laptop, a phone and a desktop</td></tr>
+            <tr><td>Device CAL</td><td>Named device, any number of users</td><td>Shift workers share a terminal or a shop-floor PC</td></tr>
+            <tr><td>External connector</td><td>Server, for unlimited external users</td><td>Anonymous or public-facing access</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> count your CALs by whichever number is smaller — people or
+        devices — and remember that Remote Desktop Services needs <em>its own</em> CAL on top of
+        the Windows Server CAL. Two separate purchases for one session.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Evaluation Media That Quietly Expires</div>
+      <div class="concept-desc">
+        Evaluation installs run for 180 days and then begin shutting down hourly. It is a
+        reliable source of a mystifying outage roughly six months after someone stood up a
+        "temporary" server. Check what you are running before it tells you:
+      </div>
+      <pre class="code-block"><span class="com"># Which edition and how many days are left?</span>
+slmgr /dlv
+
+<span class="com"># Evaluation to full: list targets, then convert (needs a reboot)</span>
+DISM /Online /Get-TargetEditions
+DISM /Online /Set-Edition:ServerStandard /ProductKey:XXXXX-XXXXX-XXXXX-XXXXX-XXXXX /AcceptEula</pre>
+      <div class="concept-desc verdict">
+        A domain controller <strong>cannot</strong> be edition-converted in place. If the
+        expiring server is a DC, you promote a replacement, transfer the roles, and demote the
+        old one — which is a far longer evening than the one you were planning.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: SERVER CORE ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⬛</span>
+    <span class="topic-name">Server Core — Why You Would Remove the GUI <span class="acro-exp">(Graphical User Interface)</span>, and How You Manage It Anyway</span>
+    <span class="topic-badge">Server • Installation</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The trade</div>
+      <div class="concept-title">A Smaller Server Is a Smaller Target and a Shorter Patch Queue</div>
+      <div class="concept-desc">
+        Server Core is Windows Server without the desktop shell, Explorer, Edge, or most of the
+        management consoles. The argument for it is not disk space. It is that
+        <strong>code you did not install cannot be exploited and does not need patching</strong> —
+        fewer components means fewer monthly reboots and a materially smaller attack surface.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Server Core</th><th>Desktop Experience</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Local management</td><td>Command line, <code>sconfig</code></td><td>Full GUI</td></tr>
+            <tr><td>Attack surface</td><td class="c-green">Smaller</td><td class="c-amber">Larger</td></tr>
+            <tr><td>Patch/reboot frequency</td><td class="c-green">Lower</td><td class="c-amber">Higher</td></tr>
+            <tr><td>Vendor agent support</td><td class="c-amber">Check first — some installers need a GUI</td><td class="c-green">Assumed</td></tr>
+            <tr><td>Good fit</td><td>DC <span class="acro-exp">(Domain Controller)</span>, DNS <span class="acro-exp">(Domain Name System)</span>, DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span>, file, Hyper-V host</td><td>Anything with a vendor GUI console</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> infrastructure roles that you administer remotely anyway
+        are the easy yes. The blocker is almost never Windows — it is a third-party agent,
+        backup client or line-of-business installer that assumes a desktop. Test the agents
+        before committing the estate.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">One-way door</div>
+      <div class="concept-title">You Cannot Switch Between Them After Installation</div>
+      <div class="concept-desc">
+        In Windows Server 2012 and 2012 R2 you could add and remove the GUI at will. That was
+        removed in 2016 and has not returned. On any currently supported release, choosing Core
+        or Desktop Experience at install time is <strong>permanent</strong> — changing your mind
+        means a rebuild.
+      </div>
+      <div class="concept-desc">
+        This is worth treating as a genuine one-way door: decide per role, write the decision
+        into the build documentation, and default to Desktop Experience only where an agent
+        actually requires it.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Local admin</div>
+      <div class="concept-title"><code>sconfig</code>, and the Handful of Commands Worth Memorising</div>
+      <div class="concept-desc">
+        A freshly built Core box needs enough local configuration to become remotely
+        manageable — then you never sign in locally again. <code>sconfig</code> is a menu that
+        covers most of it.
+      </div>
+      <pre class="code-block"><span class="com"># The menu that covers naming, domain join, networking, updates, remote management</span>
+sconfig
+
+<span class="com"># Or do it directly in PowerShell</span>
+Rename-Computer <span class="kw">-NewName</span> DC03 <span class="kw">-Restart</span>
+Add-Computer <span class="kw">-DomainName</span> corp.example.com <span class="kw">-Restart</span>
+Enable-PSRemoting <span class="kw">-Force</span>
+
+<span class="com"># Lost the command prompt entirely? This brings it back.</span>
+<span class="com"># (Task Manager -> File -> Run new task -> cmd)</span></pre>
+      <div class="concept-desc verdict">
+        The last one is not a joke. Closing the only console window on a Core box leaves you
+        staring at a blank blue screen with no way in, and it is the first thing that happens
+        to everyone exactly once.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Remote by default</div>
+      <div class="concept-title">Manage It From Somewhere Else — That Was Always the Point</div>
+      <div class="concept-desc">
+        Server Core is not "harder to manage". It is a server you manage the way you should
+        have been managing the others: remotely, from an administrative workstation, over
+        PowerShell remoting or with the graphical consoles pointed at it.
+      </div>
+      <pre class="code-block"><span class="com"># Interactive session on the remote server</span>
+Enter-PSSession <span class="kw">-ComputerName</span> DC03
+
+<span class="com"># Fan out one command across many servers at once</span>
+Invoke-Command <span class="kw">-ComputerName</span> DC01,DC02,DC03 <span class="kw">-ScriptBlock</span> {
+    Get-Service ADWS | Select-Object PSComputerName, Status
+}</pre>
+      <div class="concept-desc verdict">
+        Once every server is administered this way, the presence or absence of a local GUI stops
+        being a meaningful distinction — which is the actual argument for Core, and the reason
+        it reads as difficult only to teams still signing in at the console.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: THE THREE CONSOLES ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🛠️</span>
+    <span class="topic-name">Server Manager, RSAT <span class="acro-exp">(Remote Server Administration Tools)</span> &amp; Windows Admin Center — Which Console Wins</span>
+    <span class="topic-badge">Server • Tooling</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Three Overlapping Tools, Each Best at One Thing</div>
+      <div class="concept-desc">
+        These are not generations of the same product, and the newest does not replace the
+        others. They overlap awkwardly, and knowing which to reach for saves more time than
+        knowing any one of them deeply.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Server Manager</th><th>RSAT</th><th>Windows Admin Center</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>What it is</td>
+              <td>Built-in role and server dashboard</td>
+              <td>The classic MMC <span class="acro-exp">(Microsoft Management Console)</span> snap-ins, installed on your workstation</td>
+              <td>Browser-based gateway to many servers</td>
+            </tr>
+            <tr>
+              <td>Best at</td>
+              <td>Adding roles; a quick health glance</td>
+              <td>Deep object work — AD <span class="acro-exp">(Active Directory)</span> users, DNS <span class="acro-exp">(Domain Name System)</span> zones, GPOs <span class="acro-exp">(Group Policy Object)</span></td>
+              <td>Day-to-day ops across a fleet; managing Core</td>
+            </tr>
+            <tr>
+              <td>Weak at</td>
+              <td class="c-amber">Anything at scale</td>
+              <td class="c-amber">Fleet views; needs a domain-joined workstation</td>
+              <td class="c-amber">Niche AD tasks the classic snap-ins still own</td>
+            </tr>
+            <tr>
+              <td>Runs on</td>
+              <td>The server, or your workstation</td>
+              <td>Your workstation only</td>
+              <td>A gateway server or your workstation</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> install RSAT on your admin workstation and use it for AD,
+        DNS and Group Policy work — the snap-ins remain the most complete tools for those
+        objects. Use Windows Admin Center for everything fleet-shaped: patching status,
+        certificates, event logs, remote PowerShell, and anything on Server Core. Use Server
+        Manager to install a role and then close it.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Getting RSAT</div>
+      <div class="concept-title">RSAT Ships With Windows Now — Stop Downloading It</div>
+      <div class="concept-desc">
+        RSAT used to be a separate download matched to your exact Windows build. Since Windows
+        10 1809 it is a Feature on Demand built into the OS <span class="acro-exp">(Operating System)</span>, which means no download, no
+        version mismatch, and one command.
+      </div>
+      <pre class="code-block"><span class="com"># See what is available and what is already installed</span>
+Get-WindowsCapability <span class="kw">-Name</span> RSAT* <span class="kw">-Online</span> | Select-Object Name, State
+
+<span class="com"># The three most people actually want</span>
+Add-WindowsCapability <span class="kw">-Online</span> <span class="kw">-Name</span> Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0
+Add-WindowsCapability <span class="kw">-Online</span> <span class="kw">-Name</span> Rsat.GroupPolicy.Management.Tools~~~~0.0.1.0
+Add-WindowsCapability <span class="kw">-Online</span> <span class="kw">-Name</span> Rsat.Dns.Tools~~~~0.0.1.0</pre>
+      <div class="concept-desc verdict">
+        In a managed estate this is frequently blocked, because Features on Demand are pulled
+        from Windows Update and the policy points at an internal update server that does not
+        carry them. If the command fails with an <code>0x800f0954</code>, that is the cause —
+        the fix is a policy exception, not a download.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Admin Workstation Is the Real Attack Surface</div>
+      <div class="concept-desc">
+        Every one of these tools concentrates domain-wide authority onto whatever machine you
+        installed it on. A workstation that reads email, browses the web and holds Domain Admin
+        tooling is the single most valuable target in the estate, and compromising it skips
+        every other step of an intrusion.
+      </div>
+      <div class="concept-desc">
+        The standard mitigation is a <strong>privileged access workstation</strong>: a separate,
+        hardened machine with no mail client and no general browsing, used only for
+        administration. Where that is not affordable, the minimum is a separate admin account
+        that never signs in to a daily-driver machine. See
+        <em>Tiered Administration</em> in the Security domain for the model this belongs to.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: ROLES & FEATURES ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧩</span>
+    <span class="topic-name">Roles &amp; Features — What Installing a Role Actually Changes</span>
+    <span class="topic-badge">Server • Configuration</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The distinction</div>
+      <div class="concept-title">A Role Is a Job; a Feature Is a Capability</div>
+      <div class="concept-desc">
+        A <strong>role</strong> is what the server is for — domain controller, DNS <span class="acro-exp">(Domain Name System)</span> server, file
+        server. A <strong>feature</strong> supports a role or the administrator: failover
+        clustering, .NET, the management tools. The practical difference is that roles usually
+        open ports and start listening, and features usually do not.
+      </div>
+      <div class="concept-desc">
+        Adding a role is therefore never only a software install. It typically creates service
+        accounts, opens firewall rules, registers service principal names, writes new event log
+        channels, and may add a scheduled task. That is why "just add the role to see" is a poor
+        instinct on a production box — removing it afterwards does not reliably undo all of it.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Doing it</div>
+      <div class="concept-title">Install It in PowerShell So It Is Repeatable</div>
+      <pre class="code-block"><span class="com"># What is installed, and what could be?</span>
+Get-WindowsFeature | Where-Object Installed
+
+<span class="com"># Install a role with its management tools (omit the switch on a server</span>
+<span class="com"># you manage remotely — the tools belong on your workstation, not here)</span>
+Install-WindowsFeature <span class="kw">-Name</span> AD-Domain-Services <span class="kw">-IncludeManagementTools</span>
+
+<span class="com"># Capture a known-good server's feature set, then reproduce it elsewhere</span>
+Get-WindowsFeature | Where-Object Installed | Export-Clixml .\baseline.xml
+Install-WindowsFeature <span class="kw">-ConfigurationFilePath</span> .\baseline.xml</pre>
+      <div class="concept-desc verdict">
+        The GUI <span class="acro-exp">(Graphical User Interface)</span> and the cmdlet do the same work, but only one of them leaves a record you can
+        diff, review and re-run. Build servers from a script even when you build them once —
+        the second server always arrives eventually.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Role Creep, and the Server Nobody Dares Reboot</div>
+      <div class="concept-desc">
+        Servers accumulate roles because adding one to an existing box is faster than building a
+        new one. The result is the machine that is somehow a domain controller, a file server, a
+        print server and a licensing server — and therefore cannot be patched without scheduling
+        four separate teams.
+      </div>
+      <div class="concept-desc">
+        <strong>Keep domain controllers doing one job.</strong> A DC holds every password hash
+        in the domain; every additional role on it is another way in, and every additional
+        service is another reason someone objects to the reboot. If a server needs an
+        explanation of what it does, it has too many roles.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: HARDENING BASELINE ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🛡️</span>
+    <span class="topic-name">Server Hardening Baseline — The Short List That Removes Most Risk</span>
+    <span class="topic-badge">Server • Hardening</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Priorities</div>
+      <div class="concept-title">Six Things, Roughly in Order of Return</div>
+      <div class="concept-desc">
+        Hardening guides run to hundreds of settings and are mostly ignored because of it. This
+        is the short list — the items that remove the most attacker options per hour spent. Do
+        these before opening a benchmark document.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Do this</th><th>Because</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Deploy LAPS</td>
+              <td>Randomises the local administrator password per machine. Kills lateral movement by reused local credentials, which is the most common way one compromised host becomes all of them</td>
+            </tr>
+            <tr>
+              <td>Never browse or read mail from a server</td>
+              <td>Free, and removes the two most common initial-access paths in one decision</td>
+            </tr>
+            <tr>
+              <td>Install only the roles the server needs</td>
+              <td>Every role is listening code and another patch dependency</td>
+            </tr>
+            <tr>
+              <td>Turn on an audit policy that logs something useful</td>
+              <td>Default auditing will not tell you what happened. Logon events, account management, and process creation with command line are the minimum</td>
+            </tr>
+            <tr>
+              <td>Separate admin accounts from daily-driver accounts</td>
+              <td>Stops a phished user session from being a domain-admin session</td>
+            </tr>
+            <tr>
+              <td>Patch on a schedule you actually keep</td>
+              <td>A predictable monthly window beats an ambitious weekly one that slips</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> LAPS first. It is the cheapest single control here and it
+        breaks the technique that turns one workstation into the whole domain.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Baselines</div>
+      <div class="concept-title">Do Not Write Your Own — Start From a Published One</div>
+      <div class="concept-desc">
+        Microsoft's Security Compliance Toolkit and the CIS <span class="acro-exp">(Center for Internet Security)</span> Benchmarks both publish server
+        baselines as importable GPO <span class="acro-exp">(Group Policy Object)</span> backups. Starting from one and documenting your exceptions
+        is far better than assembling settings by hand, because the exceptions become the thing
+        you review rather than the whole configuration.
+      </div>
+      <div class="concept-desc">
+        Apply a baseline to a <strong>pilot OU</strong> first. Baselines routinely break older
+        line-of-business applications by disabling legacy protocols and weak ciphers — which is
+        the point of them, and also why they need a controlled rollout rather than a domain-wide
+        link on a Friday.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Hardening That Was Never Verified</div>
+      <div class="concept-desc">
+        A baseline linked at the domain root is not evidence that it applied. Group Policy can be
+        blocked, filtered out by a missing security group, or beaten by a more specific GPO — and
+        none of that reports itself. Verify on a real machine:
+      </div>
+      <pre class="code-block"><span class="com"># What did this machine actually receive? Read the "Denied" reasons, not just Applied.</span>
+gpresult /h C:\rsop.html /f
+
+<span class="com"># Is auditing on where you think it is?</span>
+auditpol /get /category:*
+
+<span class="com"># Is LAPS actually storing a password for this computer object?</span>
+Get-LapsADPassword <span class="kw">-Identity</span> SRV01 <span class="kw">-AsPlainText</span></pre>
+      <div class="concept-desc verdict">
+        This is the same lesson as any other control: the configuration you intended and the
+        configuration in force are different claims, and only the second one protects anything.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- /domain-body infra -->
