@@ -1330,4 +1330,319 @@ Get-WinEvent <span class="kw">-LogName</span> "Microsoft-Windows-GroupPolicy/Ope
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE V4 — IDENTITY OPERATIONS
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: GROUP STRATEGY ──────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">👥</span>
+    <span class="topic-name">Group Nesting Strategy — AGDLP, and Why Nested Groups Become a Mess</span>
+    <span class="topic-badge">AD DS • Identity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The convention</div>
+      <div class="concept-title">AGDLP — Accounts, Global, Domain Local, Permissions</div>
+      <div class="concept-desc">
+        Put <strong>A</strong>ccounts into <strong>G</strong>lobal groups by who people are
+        ("Finance Staff"), put those global groups into <strong>D</strong>omain
+        <strong>L</strong>ocal groups by what is being accessed ("Ledger Share — Modify"), and
+        grant <strong>P</strong>ermissions only to the domain local group.
+      </div>
+      <div class="concept-desc">
+        The payoff is that the two things change independently. People move between roles
+        constantly; resources change permissions rarely. One membership edit moves a person's
+        entire access, and no access control list is ever touched.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The rule that makes it work: never grant a permission to a user, and never to a
+        global group.</strong> The moment someone shortcuts it, the resource stops describing
+        its own access and you can no longer answer "who can read this?" from the group model.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Token Bloat — When Group Membership Breaks Logon</div>
+      <div class="concept-desc">
+        Every group a user belongs to adds a security identifier to their Kerberos ticket. Past
+        roughly 1,000 groups the ticket exceeds default buffer sizes and authentication fails —
+        often as an HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> 400 from a web application rather than anything mentioning Kerberos,
+        which makes it a genuinely difficult diagnosis.
+      </div>
+      <div class="concept-desc">
+        Deep nesting is the usual cause, because membership is transitive and nobody counts the
+        indirect ones. Check the effective total, not the direct list:
+      </div>
+      <pre class="code-block"><span class="com"># Transitive group count — the number that matters</span>
+(Get-ADUser jdoe <span class="kw">-Properties</span> TokenGroups).TokenGroups.Count
+
+<span class="com"># Users closest to the limit, worst first</span>
+Get-ADUser <span class="kw">-Filter</span> * <span class="kw">-Properties</span> TokenGroups |
+    Select-Object Name, @{n='Groups';e={$_.TokenGroups.Count}} |
+    Sort-Object Groups <span class="kw">-Descending</span> | Select-Object <span class="kw">-First</span> <span class="m">20</span></pre>
+      <div class="concept-desc verdict">
+        Keep nesting to two levels — the depth AGDLP implies and no more. Every extra level
+        makes membership harder to audit and pushes users toward a limit whose symptom does not
+        name its cause.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SERVICE ACCOUNTS ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🤖</span>
+    <span class="topic-name">Service Accounts — gMSA <span class="acro-exp">(group Managed Service Account)</span> and Retiring the Shared Password</span>
+    <span class="topic-badge">AD DS • Identity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The problem</div>
+      <div class="concept-title">A Password Nobody Can Change Is a Password Nobody Controls</div>
+      <div class="concept-desc">
+        The classic service account has a password set years ago, typed into several servers,
+        recorded in a spreadsheet, and never rotated because nobody knows everything that uses
+        it. It usually has more privilege than it needs, and it never expires — which is exactly
+        the profile of the account an intruder wants.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Option</th><th>Password managed by</th><th>Works across servers</th></tr></thead>
+          <tbody>
+            <tr><td>User account as a service</td><td class="c-red">A human, in theory</td><td>Yes</td></tr>
+            <tr><td>Managed service account</td><td class="c-green">Active Directory</td><td class="c-red">One host only</td></tr>
+            <tr><td>Group managed service account</td><td class="c-green">Active Directory</td><td class="c-green">Yes — clusters and farms</td></tr>
+            <tr><td>Built-in virtual accounts</td><td class="c-green">Nothing to manage</td><td>Local only</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> gMSA is the default answer for a domain service. AD <span class="acro-exp">(Active Directory)</span>
+        generates a 240-character password, rotates it every 30 days, and the servers authorised
+        to use it retrieve it themselves. Nobody ever knows it, so nobody can leak it.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Doing it</div>
+      <div class="concept-title">One-Time Forest Setup, Then One Object Per Service</div>
+      <pre class="code-block"><span class="com"># Once per forest — creates the root key. Wait 10 hours, or force</span>
+<span class="com"># the effective time backwards in a lab that has a single DC.</span>
+Add-KdsRootKey <span class="kw">-EffectiveImmediately</span>
+
+<span class="com"># Per service: who may retrieve the password</span>
+New-ADServiceAccount <span class="kw">-Name</span> svc-webapp <span class="kw">-DNSHostName</span> svc-webapp.corp.example.com `
+    <span class="kw">-PrincipalsAllowedToRetrieveManagedPassword</span> "WebFarm-Servers"
+
+<span class="com"># On each server that runs it</span>
+Install-ADServiceAccount <span class="kw">-Identity</span> svc-webapp
+Test-ADServiceAccount <span class="kw">-Identity</span> svc-webapp
+
+<span class="com"># In services.msc the account is CORP\svc-webapp$ with a BLANK password</span></pre>
+      <div class="concept-desc verdict">
+        The trailing <code>$</code> and the empty password field are correct and are the two
+        things people undo when they assume it is broken. If the service will not start, check
+        that the server is in the retrieval group and reboot it — group membership on a computer
+        account needs a new ticket.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: KERBEROS OPS ────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎫</span>
+    <span class="topic-name">Kerberos in Operations — SPNs <span class="acro-exp">(Service Principal Name)</span>, Delegation &amp; Clock Skew</span>
+    <span class="topic-badge">AD DS • Troubleshooting</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">The Flow Is Covered; These Are the Three Things That Break It</div>
+      <div class="concept-desc">
+        <strong>Kerberos Authentication Flow</strong> in the Security domain explains the ticket
+        exchange, and <strong>Kerberos Attacks</strong> in Red Team covers abuse. Operationally,
+        almost every Kerberos incident is one of three causes: a service principal name that is
+        missing or duplicated, delegation configured too broadly, or clocks that have drifted.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SPNs</div>
+      <div class="concept-title">A Duplicate SPN Breaks Authentication for Everyone</div>
+      <div class="concept-desc">
+        A service principal name maps a service on a host to the account running it. If it is
+        <em>missing</em>, clients silently fall back to NTLM <span class="acro-exp">(NT LAN Manager)</span> — which usually still works, so the
+        symptom is "Kerberos is not being used" found during an audit rather than an outage. If
+        it is <em>duplicated</em> across two accounts, the domain controller cannot decide which
+        key to encrypt with and authentication fails outright.
+      </div>
+      <pre class="code-block"><span class="com"># Duplicates across the whole forest — run this before blaming the app</span>
+setspn -X
+
+<span class="com"># What is registered for a given account, and adding one</span>
+setspn -L CORP\svc-webapp
+setspn -S HTTP/app.corp.example.com CORP\svc-webapp</pre>
+      <div class="concept-desc verdict">
+        Use <code>-S</code> rather than <code>-A</code>: it refuses to create a duplicate.
+        <code>-A</code> adds blindly and is how most duplicate-SPN outages are created, usually
+        by someone fixing a different problem.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Five Minutes of Drift and Nobody Logs In</div>
+      <div class="concept-desc">
+        Kerberos timestamps tickets to prevent replay, and rejects anything outside a tolerance
+        of five minutes by default. Beyond that, authentication fails across the estate at once,
+        and the error text does not mention time.
+      </div>
+      <div class="concept-desc">
+        The domain's time hierarchy is strict: every member syncs from a DC <span class="acro-exp">(Domain Controller)</span>, every DC from the
+        PDC <span class="acro-exp">(Primary Domain Controller)</span> emulator, and the PDC emulator from an external source. The classic incident is a
+        virtualised PDC emulator syncing from its hypervisor host <em>and</em> an external
+        source, and oscillating between them.
+      </div>
+      <pre class="code-block">w32tm /query /status              <span class="com"># what am I syncing from?</span>
+w32tm /monitor                    <span class="com"># offsets across all DCs</span>
+w32tm /stripchart /computer:dc01 /samples:5 /dataonly</pre>
+      <div class="concept-desc verdict">
+        <strong>Disable host time sync on a virtualised PDC emulator.</strong> One authority
+        only. Two sources of truth for time is the same class of mistake as two sources of truth
+        for data, and it fails more visibly.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: HYBRID IDENTITY ─────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">☁️</span>
+    <span class="topic-name">Entra Connect &amp; Hybrid Identity — Choosing How Passwords Are Checked</span>
+    <span class="topic-badge">Identity • Hybrid</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The decision</div>
+      <div class="concept-title">Three Ways to Authenticate a Synced User</div>
+      <div class="concept-desc">
+        Directory synchronisation copies objects to the cloud. Authentication is a separate
+        choice, and it is the one with operational consequences — it decides what happens to
+        cloud sign-in when the on-premises directory is unreachable.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Password hash sync</th><th>Pass-through auth</th><th>Federation</th></tr></thead>
+          <tbody>
+            <tr><td>Where the password is checked</td><td>Cloud</td><td>On-premises, via an agent</td><td>On-premises, by AD FS <span class="acro-exp">(Active Directory Federation Services)</span></td></tr>
+            <tr><td>Survives a site outage</td><td class="c-green">Yes</td><td class="c-red">No</td><td class="c-red">No</td></tr>
+            <tr><td>Infrastructure to run</td><td class="c-green">None</td><td>Lightweight agents</td><td class="c-red">A farm, plus certificates</td></tr>
+            <tr><td>Leaked-credential detection</td><td class="c-green">Yes</td><td class="c-red">No</td><td class="c-red">No</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> password hash sync unless a written requirement forbids
+        it. It is the only option that keeps people working when the on-premises environment is
+        down — which is precisely when they most need email. It syncs a hash of a hash, not the
+        password, and it is what makes leaked-credential reporting possible at all.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Sync Account and the Deletion Threshold</div>
+      <div class="concept-desc">
+        Sync runs as a highly privileged account that can write to both directories, and it is
+        frequently excluded from the tiering model on the grounds that it is "just sync". It is
+        a full path from the on-premises directory into the tenant, and should be treated as
+        tier 0.
+      </div>
+      <div class="concept-desc">
+        The related operational risk is an accidental mass deletion — someone moves an OU out of
+        sync scope and the objects are deleted in the cloud. Accidental deletion prevention stops
+        this by default at 500 objects per run; know the threshold exists before you meet it.
+      </div>
+      <pre class="code-block">Get-ADSyncExportDeletionThreshold
+Get-ADSyncScheduler                 <span class="com"># is sync even running?</span>
+Start-ADSyncSyncCycle <span class="kw">-PolicyType</span> Delta</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LEGACY CLEANUP ──────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧹</span>
+    <span class="topic-name">Cleaning Up a Legacy Directory — Stale Objects &amp; Over-Permissive ACLs <span class="acro-exp">(Access Control List)</span></span>
+    <span class="topic-badge">AD DS • Hygiene</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Method</div>
+      <div class="concept-title">Disable, Wait, Then Delete — Never Delete First</div>
+      <div class="concept-desc">
+        Every inherited directory contains accounts for people who left years ago and computers
+        that were decommissioned. Each is a credential nobody is watching. The cleanup is easy;
+        doing it safely is the part that needs a method, because deleting an account that turns
+        out to run a nightly job is a worse outcome than leaving it.
+      </div>
+      <div class="concept-desc">
+        Disable, move to a quarantine OU, and wait a full business cycle — a quarter, so that
+        anything quarterly has had its chance to fail loudly. Then delete. The disable is
+        instantly reversible; the delete is not.
+      </div>
+      <pre class="code-block"><span class="com"># Accounts unused for 90 days, still enabled</span>
+Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-TimeSpan</span> <span class="m">90</span>.00:00:00 <span class="kw">-UsersOnly</span> |
+    Where-Object Enabled | Select-Object Name, LastLogonDate
+
+<span class="com"># Computers the same, then disable and park them</span>
+Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-TimeSpan</span> <span class="m">90</span>.00:00:00 <span class="kw">-ComputersOnly</span> |
+    Disable-ADAccount <span class="kw">-PassThru</span> |
+    Move-ADObject <span class="kw">-TargetPath</span> "OU=Quarantine,DC=corp,DC=example,DC=com"</pre>
+      <div class="concept-desc verdict">
+        <code>LastLogonDate</code> derives from a replicated attribute that is deliberately
+        imprecise — it can lag by up to two weeks. That is fine for a 90-day threshold and wrong
+        for a 7-day one. Do not tighten the window without switching to a per-DC attribute.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The bigger risk</div>
+      <div class="concept-title">Permissions Nobody Granted Deliberately</div>
+      <div class="concept-desc">
+        Stale accounts are the visible debt. The dangerous debt is delegation: rights granted on
+        an OU during a project a decade ago, still held by a group that now contains the whole
+        service desk. These do not appear in any account review, because no account looks unusual
+        — the permission does.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Look for</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td>Non-admins with Reset Password on an OU</td><td>Take over any account in it</td></tr>
+            <tr><td>Write to <code>member</code> on a privileged group</td><td>Self-service Domain Admin</td></tr>
+            <tr><td>GenericAll or WriteDACL anywhere</td><td>Effectively ownership</td></tr>
+            <tr><td>Unconstrained delegation on a non-DC</td><td>Compromise the host, capture any ticket sent to it</td></tr>
+            <tr><td>Accounts with adminCount=1 no longer privileged</td><td>Inheritance stays broken after removal</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Enumerate this with the attacker's tooling.</strong> BloodHound — see
+        <em>BloodHound &amp; SharpHound</em> in Red Team — computes exactly these paths and is
+        the fastest honest answer to "who can become Domain Admin?". Running it against your own
+        directory before someone else does is ordinary defensive work.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body infra -->
