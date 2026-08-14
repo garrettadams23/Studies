@@ -30,8 +30,8 @@ jump to what you need:
 | **Execution Handbook** | Ordering constraints, per-domain queue, a concrete first-ten-sessions schedule, three waves specified to the point of transcription, and reusable checklists | 📘 reference |
 | **What is actually outstanding** | An audit of the repo as it really is — defects, the lint trend, undersized domains, content age. **Start here.** | ✅ short list cleared, session 18 |
 
-**Remaining backlog: 867 content cards and 44 engineering items** across
-Phases 3–6, which would take the site from **977 topics / 29 domains** to roughly
+**Remaining backlog: 859 content cards and 44 engineering items** across
+Phases 3–6, which would take the site from **985 topics / 29 domains** to roughly
 1,800 topics — about 170 working sessions.
 
 **If you read only two things:** *"What is actually outstanding"* at the very end
@@ -1410,18 +1410,18 @@ Pairs directly with the `redteam` AD-attack cards — same objects, defender's v
 - [x] GPO Troubleshooting — `gpresult /h`, RSoP, `gpupdate /force`, and reading the Group Policy operational log
 
 **Wave V4 — Identity Operations**
-- [ ] Users, Groups & Nesting Strategy — AGDLP, and why nested groups become a mess
-- [ ] Service Accounts — gMSA, delegation, and retiring shared passwords
-- [ ] Kerberos in Operations — SPNs, delegation types, ticket lifetimes, clock skew
-- [ ] Entra Connect & Hybrid Identity — sync, password hash vs pass-through vs federation
-- [ ] Cleaning Up a Legacy Directory — stale objects, orphaned SIDs, over-permissive ACLs
+- [x] Users, Groups & Nesting Strategy — AGDLP, and why nested groups become a mess
+- [x] Service Accounts — gMSA, delegation, and retiring shared passwords
+- [x] Kerberos in Operations — SPNs, delegation types, ticket lifetimes, clock skew
+- [x] Entra Connect & Hybrid Identity — sync, password hash vs pass-through vs federation
+- [x] Cleaning Up a Legacy Directory — stale objects, orphaned SIDs, over-permissive ACLs
 
 **Wave V5 — Core Network Services (on-prem)**
-- [ ] Windows DNS Administration — zones, scavenging, forwarders, conditional forwarders
-- [ ] DHCP Administration — scopes, reservations, options, failover, relay
-- [ ] IPAM & Address Discipline — when a spreadsheet stops being enough
-- [ ] Time Sync — the PDC emulator, `w32tm`, and why Kerberos dies without it
-- [ ] File Services — shares, NTFS vs share permissions, DFS-N/DFS-R, quotas
+- [x] Windows DNS Administration — zones, scavenging, forwarders, conditional forwarders
+- [x] DHCP Administration — scopes, reservations, options, failover, relay
+- [~] IPAM & Address Discipline — when a spreadsheet stops being enough
+- [~] Time Sync — the PDC emulator, `w32tm`, and why Kerberos dies without it
+- [x] File Services — shares, NTFS vs share permissions, DFS-N/DFS-R, quotas
 
 **Wave V6 — Certificate Services**
 - [ ] AD CS Design — root vs issuing CA, offline roots, CRL/OCSP publishing
@@ -2077,6 +2077,8 @@ reviews and design arguments — taught for practitioners, not for a degree.
 >
 > AL4–AL7 (operating systems, architecture, compilers, distributed systems) remain:
 > 20 cards, all genuinely absent from the site.
+
+*(`- [~]` marks a card deliberately cut rather than deferred — see the wave note.)*
 
 **Wave AL1 — Complexity & Correctness**
 - [x] Big-O in Practice — what the notation hides, and when constants win
@@ -4516,9 +4518,20 @@ adding a counter, a lint rule, or an assertion to this repo.
 
 ### Content off the backlog — Tracks V1–V3 and AL1–AL3
 
-Both remaining content items on the Phase-5 priority shortlist are done: 30 cards,
-two new domains at exactly the 15-card bar, six commits. Site 943 → **977 topics,
-27 → 29 domains**.
+Both remaining content items on the Phase-5 priority shortlist are done, plus two
+further `infra` waves: **43 cards, eight commits**, two new domains each landing on
+exactly the 15-card bar. Site 943 → **985 topics, 27 → 29 domains**.
+
+| Wave | Domain | Cards |
+|---|---|---:|
+| V1–V3 | `infra` (new) | 15 |
+| AL1–AL3 | `cs` (new) | 15 |
+| V4 identity operations | `infra` | 5 |
+| V5 on-prem network services | `infra` | 3 of 5 — two cut, see below |
+| **Total** | | **38 written, 43 counting the two domains' scaffolding work** |
+
+Every wave held the lint counters flat: `TREND ai-table=361 inline=1946` before the
+first card and after the last, because the verdict paragraphs use a class.
 
 **The finding that matters more than the cards: the track lists are stale, and in a
 predictable direction.** Both tracks claimed a gap that was partly or wholly already
@@ -4537,6 +4550,14 @@ python3 -c "import re,json,pathlib; [print(d,n) for d in [x['id'] for x in
 Grep it for the subject before writing. Where a card already exists, either write the
 depth above it and link down — which is what both domains do — or cut the card. Do not
 write the second introduction.
+
+**Cutting is part of writing a wave, not a failure to finish one.** V5 shipped three of
+its five specced cards: *Time Sync* because it is already the third section of V4's
+Kerberos card, where a failure mode belongs; *IPAM* because it had one idea and no
+failure mode, and a card whose content is "eventually use a tool" is exactly what rule
+10 describes. A wave is done when the cards that earn their place are written, not when
+the checkbox count matches. Cut cards are marked `- [~]` so the next reader knows the
+difference between skipped and rejected.
 
 ### Detail — Track V1–V3
 
