@@ -508,4 +508,461 @@ Get-LapsADPassword <span class="kw">-Identity</span> SRV01 <span class="kw">-AsP
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE V2 — ACTIVE DIRECTORY DOMAIN SERVICES
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: BOUNDARIES ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧱</span>
+    <span class="topic-name">AD DS <span class="acro-exp">(Active Directory Domain Services)</span> Boundaries — When to Add an OU, a Domain, or a Forest</span>
+    <span class="topic-badge">AD DS • Design</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">The Objects Are Covered Elsewhere; This Is the Decision</div>
+      <div class="concept-desc">
+        What a forest, domain and OU <em>are</em> — and how they are attacked — is in
+        <strong>Active Directory: Structure, Objects &amp; Attacks</strong> in the Security
+        domain. This card answers the question that actually lands on an administrator:
+        something needs to be separated, so <strong>which boundary do you reach for?</strong>
+        Almost always the answer is the cheapest one, and almost always people pick a more
+        expensive one than they need.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Boundary</th><th>What it actually separates</th><th>Cost to run</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Organisational unit</td>
+              <td>Policy targets and delegated administration</td>
+              <td class="c-green">Free — make as many as you need</td>
+            </tr>
+            <tr>
+              <td>Domain</td>
+              <td>Replication scope, password policy scope, some legacy defaults</td>
+              <td class="c-amber">Its own DCs <span class="acro-exp">(Domain Controller)</span>, its own trusts, its own backups</td>
+            </tr>
+            <tr>
+              <td>Forest</td>
+              <td class="c-green">Security. This is the only real security boundary</td>
+              <td class="c-red">A parallel directory in every respect</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> a domain is <em>not</em> a security boundary — a Domain
+        Admin in any domain of a forest can reach every other domain in that forest. If the
+        requirement is "these administrators must never be able to touch that", the answer is a
+        separate forest, and nothing cheaper will do. If the requirement is "different policy"
+        or "different people administer it", the answer is an OU.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Design</div>
+      <div class="concept-title">Structure the Directory for Delegation and Policy, Not the Org Chart</div>
+      <div class="concept-desc">
+        The most common OU design mirrors the company's departments, and it is the wrong one,
+        because reorganisations then force directory work that has no technical reason to
+        happen. Structure instead by <strong>what you do to objects</strong>: the two things an
+        OU exists for are attaching Group Policy and delegating rights.
+      </div>
+      <div class="concept-desc">
+        A structure that survives reorganisation usually separates by object type first
+        (workstations, servers, users, service accounts), then by whatever genuinely drives
+        different policy — region, build standard, or regulatory scope. Keep it shallow. Deep
+        nesting makes precedence hard to reason about and gains nothing that a well-named
+        security group could not do.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Default Containers Are Not OUs</div>
+      <div class="concept-desc">
+        <code>CN=Users</code> and <code>CN=Computers</code> are containers, not organisational
+        units, and <strong>Group Policy cannot be linked to them</strong>. Anything created
+        without a specified location lands there — which is where every new machine goes when
+        someone joins it to the domain in a hurry.
+      </div>
+      <div class="concept-desc">
+        The result is a machine that silently receives none of your workstation policy. Redirect
+        the defaults once, at build time, and the problem stops existing:
+      </div>
+      <pre class="code-block"><span class="com"># Point the default containers at real OUs you control</span>
+redircmp "OU=Workstations,DC=corp,DC=example,DC=com"
+redirusr "OU=Staff,DC=corp,DC=example,DC=com"
+
+<span class="com"># Find the machines already stranded in the default container</span>
+Get-ADComputer <span class="kw">-SearchBase</span> "CN=Computers,DC=corp,DC=example,DC=com" <span class="kw">-Filter</span> * |
+    Select-Object Name, Created</pre>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: FSMO ────────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">👑</span>
+    <span class="topic-name">FSMO <span class="acro-exp">(Flexible Single Master Operations)</span> Roles — The Five Jobs That Cannot Be Done by Everyone</span>
+    <span class="topic-badge">AD DS • Operations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Why they exist</div>
+      <div class="concept-title">Multi-Master Replication Has Five Exceptions</div>
+      <div class="concept-desc">
+        Active Directory is multi-master: change an object on any domain controller and the
+        change replicates outward. That model breaks for operations where two simultaneous
+        answers would corrupt the directory — handing out the same identifier twice, or two
+        DCs disagreeing about the schema. Those five operations are pinned to a single holder.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Role</th><th>Scope</th><th>Does what</th><th>If it is down</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Schema master</td><td>Forest</td>
+              <td>Owns schema changes</td>
+              <td class="c-green">Nothing, until you extend the schema</td>
+            </tr>
+            <tr>
+              <td>Domain naming master</td><td>Forest</td>
+              <td>Adds and removes domains</td>
+              <td class="c-green">Nothing, until you add a domain</td>
+            </tr>
+            <tr>
+              <td>RID <span class="acro-exp">(Relative Identifier)</span> master</td><td>Domain</td>
+              <td>Issues pools of identifiers for new objects</td>
+              <td class="c-amber">New object creation stops once DCs exhaust their pool</td>
+            </tr>
+            <tr>
+              <td>PDC <span class="acro-exp">(Primary Domain Controller)</span> emulator</td><td>Domain</td>
+              <td>Time authority, password-change target, lockout processing, GPO <span class="acro-exp">(Group Policy Object)</span> edit target</td>
+              <td class="c-red">Noticed within the hour — this is the one that hurts</td>
+            </tr>
+            <tr>
+              <td>Infrastructure master</td><td>Domain</td>
+              <td>Fixes cross-domain object references</td>
+              <td class="c-amber">Stale names in cross-domain group memberships</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> four of the five can be offline for days without anyone
+        noticing. The PDC emulator cannot — it anchors domain time, and Kerberos rejects tickets
+        once clocks drift past the tolerance. When someone reports "nobody can log in", check
+        the PDC emulator and check time.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The one that matters</div>
+      <div class="concept-title">Transfer Is Routine; Seize Is a Decision You Cannot Undo</div>
+      <div class="concept-desc">
+        <strong>Transfer</strong> is a graceful handover between two running DCs — use it for
+        maintenance and decommissioning, and it is entirely routine. <strong>Seizing</strong> is
+        for a holder that is never coming back. It tells the forest a role has moved without the
+        old holder's agreement.
+      </div>
+      <div class="concept-desc">
+        The rule after a seizure is absolute: <strong>the old holder must never be brought back
+        online.</strong> Two DCs believing they hold the same role produces divergence that is
+        far worse than the outage you were fixing. Wipe it, do not boot it.
+      </div>
+      <pre class="code-block"><span class="com"># Who holds what, right now</span>
+netdom query fsmo
+Get-ADDomain | Select-Object PDCEmulator, RIDMaster, InfrastructureMaster
+Get-ADForest | Select-Object SchemaMaster, DomainNamingMaster
+
+<span class="com"># Graceful transfer</span>
+Move-ADDirectoryServerOperationMasterRole <span class="kw">-Identity</span> DC02 <span class="kw">-OperationMasterRole</span> PDCEmulator
+
+<span class="com"># Seizure — only when the old holder is gone for good</span>
+Move-ADDirectoryServerOperationMasterRole <span class="kw">-Identity</span> DC02 <span class="kw">-OperationMasterRole</span> PDCEmulator <span class="kw">-Force</span></pre>
+      <div class="concept-desc verdict">
+        Note that the same cmdlet does both, and the only difference is
+        <code>-Force</code>. Read the command twice before running it.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Placement</div>
+      <div class="concept-title">Where to Put Them, and the RID Pool Nobody Watches</div>
+      <div class="concept-desc">
+        For most organisations the defaults are fine: leave the roles where the first DC put
+        them, keep the two forest roles together, and put the PDC emulator on a well-connected
+        DC in the main site. Complexity here buys very little.
+      </div>
+      <div class="concept-desc">
+        The one number worth monitoring is the RID pool. Each domain has a finite supply of
+        relative identifiers, and while exhaustion is rare, it is unrecoverable in the sense
+        that the fix is a domain migration. Scripted account creation that runs in a loop is
+        the usual cause of a sudden jump.
+      </div>
+      <pre class="code-block"><span class="com"># How much of the RID space has been issued?</span>
+dcdiag /test:ridmanager /v | Select-String "Available RID Pool"</pre>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: REPLICATION ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔄</span>
+    <span class="topic-name">AD <span class="acro-exp">(Active Directory)</span> Replication — How Changes Travel, and Triage When They Stop</span>
+    <span class="topic-badge">AD DS • Troubleshooting</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The model</div>
+      <div class="concept-title">Nothing Is Pushed Immediately, and That Is by Design</div>
+      <div class="concept-desc">
+        Each DC <span class="acro-exp">(Domain Controller)</span> tracks a monotonic update sequence number per partition. A partner asks "what
+        has changed since the number I last saw from you?", and receives only that delta. This
+        makes replication cheap, and it means <strong>a change is never instantly everywhere</strong>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Where</th><th>Normal delay</th><th>Planned by</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Within a site</td><td>Seconds — change notification, no schedule</td><td>The KCC <span class="acro-exp">(Knowledge Consistency Checker)</span>, automatically</td></tr>
+            <tr><td>Between sites</td><td>15 minutes by default, and compressed</td><td>Site links you configure</td></tr>
+            <tr><td>Urgent changes</td><td>Immediate, regardless of schedule</td><td>Account lockout, password changes to the PDC <span class="acro-exp">(Primary Domain Controller)</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> "the change has not appeared yet" is usually correct
+        behaviour rather than a fault. Before troubleshooting, confirm enough time has passed
+        for the path involved — and remember a user's password change reaches the PDC emulator
+        immediately even when everything else waits.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Triage</div>
+      <div class="concept-title">Three Commands, in This Order</div>
+      <div class="concept-desc">
+        Replication problems produce vague symptoms — a group membership that will not take, a
+        password that works on one site and not another. Start broad and narrow:
+      </div>
+      <pre class="code-block"><span class="com"># 1. One-line summary of every partner link. Look at the failure columns first.</span>
+repadmin /replsummary
+
+<span class="com"># 2. Which partition is failing, between which pair, and with what error?</span>
+repadmin /showrepl * /csv &gt; repl.csv
+
+<span class="com"># 3. Broad DC health — DNS, services, roles, the SYSVOL share</span>
+dcdiag /v /c /e
+
+<span class="com"># Force a sync when you have fixed the cause and want to confirm</span>
+repadmin /syncall /AdeP</pre>
+      <div class="concept-desc verdict">
+        In practice the root cause is <strong>DNS <span class="acro-exp">(Domain Name System)</span></strong> far more often than replication
+        itself. A DC that cannot resolve its partners' service records cannot replicate with
+        them, and the error it reports describes the symptom rather than the cause.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Tombstone Lifetime, and the DC You Left Switched Off</div>
+      <div class="concept-desc">
+        Deletions replicate as tombstones — markers that persist for a fixed lifetime, 180 days
+        on any modern domain. A DC that is offline longer than that has missed the window in
+        which it could learn about those deletions, and Active Directory will
+        <strong>refuse to replicate with it</strong> rather than resurrect deleted objects.
+      </div>
+      <div class="concept-desc">
+        There is no supported way to talk it round. A DC offline past the tombstone lifetime
+        must be forcibly demoted, its metadata cleaned from the directory, and the server
+        rebuilt and re-promoted. The practical rule: <strong>a domain controller is either in
+        service or decommissioned.</strong> "Powered off for a while" is not a state AD
+        supports, and the lab DC someone shut down in spring is the usual victim.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: TRUSTS ──────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🤝</span>
+    <span class="topic-name">Trusts — Direction, Transitivity &amp; Why They Are Backwards</span>
+    <span class="topic-badge">AD DS • Identity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The confusing part</div>
+      <div class="concept-title">Trust Direction Is the Opposite of Access Direction</div>
+      <div class="concept-desc">
+        This trips up nearly everyone, including people who have configured trusts before. If
+        domain <strong>A trusts B</strong>, then <strong>users in B can access resources in
+        A</strong>. Access flows <em>against</em> the arrow. The trusting side is the one giving
+        something up.
+      </div>
+      <div class="concept-desc">
+        Read it as a sentence about credentials rather than a diagram: "A is willing to accept
+        that B has authenticated someone." Whenever a trust seems to be working the wrong way
+        round, it is almost always working correctly and being read backwards.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Types</div>
+      <div class="concept-title">Four You Will Meet, and What Each Is For</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Type</th><th>Between</th><th>Transitive</th><th>Reach for it when</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Parent–child</td><td>Domains in one forest</td><td class="c-green">Yes, automatic</td><td>Never — it is created for you</td></tr>
+            <tr><td>Forest</td><td>Two forest roots</td><td class="c-green">Yes</td><td>A merger, or a permanent partnership</td></tr>
+            <tr><td>External</td><td>Two specific domains</td><td class="c-red">No</td><td>One domain needs access, and only that one</td></tr>
+            <tr><td>Shortcut</td><td>Two domains in one forest</td><td class="c-green">Yes</td><td>Authentication is slow across a long referral path</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> prefer external and one-way whenever the requirement
+        allows it. A forest trust is transitive and two-way by default, which means it grants
+        far more than most projects actually asked for — and trusts are rarely revisited once
+        the project that needed them is closed.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">SID Filtering Is the Control That Keeps a Trust Survivable</div>
+      <div class="concept-desc">
+        A Kerberos ticket carries the account's security identifiers, including a history field
+        used during migrations. Without filtering, a compromised administrator in a trusted
+        domain can inject an identifier belonging to a privileged group in
+        <em>your</em> domain, and your DCs <span class="acro-exp">(Domain Controller)</span> will honour it. That turns a trust into a full
+        privilege path between organisations.
+      </div>
+      <div class="concept-desc">
+        SID filtering discards identifiers that did not originate in the trusted domain, and it
+        is enabled by default on external and forest trusts. It gets disabled during migrations,
+        because SID history is exactly what migrations rely on — and then not re-enabled, which
+        is the failure worth checking for.
+      </div>
+      <pre class="code-block"><span class="com"># List trusts and their properties</span>
+Get-ADTrust <span class="kw">-Filter</span> * | Select-Object Name, Direction, ForestTransitive, SIDFilteringQuarantined
+
+<span class="com"># Inspect and re-enable filtering (quarantine) on a named trust</span>
+netdom trust corp.example.com /domain:partner.example.net /quarantine
+netdom trust corp.example.com /domain:partner.example.net /quarantine:yes</pre>
+      <div class="concept-desc verdict">
+        Audit trusts on a schedule. They outlive the projects that created them, nobody owns
+        them afterwards, and each one is a path into your directory that your own controls do
+        not govern.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: SITES ───────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗺️</span>
+    <span class="topic-name">Sites &amp; Subnets — Why Clients Authenticate Against the Wrong DC <span class="acro-exp">(Domain Controller)</span></span>
+    <span class="topic-badge">AD DS • Topology</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The mechanism</div>
+      <div class="concept-title">A Site Is a Subnet List, and That Is How Clients Find a Nearby DC</div>
+      <div class="concept-desc">
+        Active Directory has no map of your network. It knows only what you told it: a site is a
+        named object, and subnets are associated with sites. When a client starts up it looks up
+        its own address, learns which site it is in, and asks for a domain controller
+        <em>in that site</em>.
+      </div>
+      <div class="concept-desc">
+        Sites drive three things: which DC a client authenticates against, how replication is
+        scheduled between locations, and which distributed file system targets a client prefers.
+        All three degrade the same way when the subnet list is wrong.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">A Missing Subnet Sends Branch Offices Across the Country</div>
+      <div class="concept-desc">
+        If a client's address matches no defined subnet, AD <span class="acro-exp">(Active Directory)</span> cannot place it in a site — so it
+        hands back <em>any</em> domain controller. A new branch office whose subnet nobody added
+        will authenticate against a DC on another continent, and the symptom is not an error but
+        slow logons, slow group policy, and file shares that mysteriously prefer the wrong
+        server.
+      </div>
+      <div class="concept-desc">
+        This is self-diagnosing if you know where to look. Every unmatched client is logged on
+        the domain controller that served it:
+      </div>
+      <pre class="code-block"><span class="com"># Clients whose subnet is not defined — NETLOGON logs every one</span>
+Get-Content C:\Windows\debug
+etlogon.log | Select-String "NO_CLIENT_SITE"
+
+<span class="com"># Which site does this machine think it is in?</span>
+nltest /dsgetsite
+dcdiag /test:DCGetDcName
+
+<span class="com"># Add the missing subnet</span>
+New-ADReplicationSubnet <span class="kw">-Name</span> "10.30.7.0/24" <span class="kw">-Site</span> "Branch-Leeds"</pre>
+      <div class="concept-desc verdict">
+        <strong>Make the NETLOGON check routine.</strong> It is the cheapest health check in
+        Active Directory, it costs nothing to run, and it silently accumulates every network
+        change nobody told the directory about.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Design</div>
+      <div class="concept-title">Site Links Describe Cost, Not Bandwidth</div>
+      <div class="concept-desc">
+        A site link says which sites replicate with each other, how often, and at what
+        <strong>cost</strong> — an arbitrary number where lower means more preferred. It is not
+        measured in anything; it exists so you can express "prefer this path" when more than one
+        route exists. Consistency matters more than the values.
+      </div>
+      <div class="concept-desc">
+        Keep the topology as simple as the network allows. The Knowledge Consistency Checker
+        builds and repairs the replication topology automatically, and hand-crafted connection
+        objects stop it doing that — so they survive as fossils long after the link they were
+        working around was upgraded.
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- /domain-body infra -->
