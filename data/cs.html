@@ -1,0 +1,385 @@
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE AL1 — COMPLEXITY & CORRECTNESS
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: BIG-O IN PRACTICE ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📉</span>
+    <span class="topic-name">Big-O in Practice — What the Notation Hides</span>
+    <span class="topic-badge">CS • Complexity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">You Already Know What Big-O Measures; This Is Where It Misleads</div>
+      <div class="concept-desc">
+        <strong>Big O Notation — Measuring Algorithm Efficiency</strong> in the Scripting
+        domain covers the notation itself. This card is the follow-up nobody gets taught:
+        Big-O deliberately discards information, and the discarded information is what
+        decides which code is faster on the machine you actually own.
+      </div>
+      <div class="concept-desc">
+        The definition throws away constant factors and lower-order terms because it describes
+        behaviour as <em>n</em> grows without bound. Real inputs are finite, often small, and
+        run on hardware with a memory hierarchy that the model does not represent at all.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Where it breaks</div>
+      <div class="concept-title">Four Ways the Better Complexity Loses</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Situation</th><th>What actually happens</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Small n</td>
+              <td>Insertion sort beats quicksort below roughly 10–20 elements, which is why real sort implementations switch to it for small partitions rather than recursing further</td>
+            </tr>
+            <tr>
+              <td>Constant factors</td>
+              <td>A linear scan of a contiguous array frequently beats a hash lookup for a few dozen items — no hashing, no pointer chasing, and the whole array is in cache</td>
+            </tr>
+            <tr>
+              <td>Memory layout</td>
+              <td>A linked list and an array are both O(n) to traverse. The array can be an order of magnitude faster, because Big-O counts operations and cannot see cache misses</td>
+            </tr>
+            <tr>
+              <td>Worst vs typical</td>
+              <td>Quicksort is O(n²) worst case and the usual default anyway, because that case is rare and its typical constant is excellent</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> use Big-O to reject algorithms that will not survive
+        growth, which is what it is genuinely good at. Do not use it to choose between two
+        survivors — measure those, on representative data.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Optimising the Term That Was Never the Problem</div>
+      <div class="concept-desc">
+        The most common waste in performance work is improving an O(n²) loop over 200 items —
+        microseconds — inside a request that spends 40 milliseconds waiting on a database. The
+        complexity analysis was correct and the work was pointless.
+      </div>
+      <div class="concept-desc">
+        Before optimising an algorithm, establish that computation is the cost. In most
+        application code it is not: input/output dominates, and the useful numbers are the ones
+        in <em>Caches &amp; the Memory Hierarchy</em> — roughly nanoseconds for memory,
+        microseconds for local storage, milliseconds for a network round trip. Those three
+        orders of magnitude decide more than an exponent usually does.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: AMORTIZED ANALYSIS ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📊</span>
+    <span class="topic-name">Amortized Analysis — Why a Dynamic Array Is O(1) "On Average"</span>
+    <span class="topic-badge">CS • Complexity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The idea</div>
+      <div class="concept-title">Averaging an Expensive Operation Across the Cheap Ones That Earned It</div>
+      <div class="concept-desc">
+        Appending to a dynamic array — a Python list, a Go slice, a C++ vector — is usually
+        writing one value: O(1). Occasionally the backing store is full, and the whole thing is
+        copied to a larger one: O(n). Calling append O(n) because of that would be true and
+        useless.
+      </div>
+      <div class="concept-desc">
+        Amortized analysis asks what a <em>sequence</em> of operations costs. Because the array
+        grows by a constant <strong>factor</strong> — typically doubling — each resize is twice
+        as expensive as the last but happens half as often. The copying work across n appends
+        sums to less than 2n, so the average cost per append is constant.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The load-bearing detail is "by a factor".</strong> Growing by a fixed
+        <em>amount</em> instead — 10 more slots each time — makes appending O(n) amortized,
+        because resizes stop becoming rarer. This is a real bug people write when implementing
+        their own buffer.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Distinction</div>
+      <div class="concept-title">Amortized Is Not Average-Case</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Means</th><th>Guarantee</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Average-case</td><td>Expected cost over a distribution of inputs</td><td class="c-amber">Probabilistic — a bad input can defeat it</td></tr>
+            <tr><td>Amortized</td><td>Worst-case cost of a sequence, divided by its length</td><td class="c-green">Guaranteed — no input sequence beats it</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        Amortized is the stronger claim. Hash table lookup is <em>average-case</em> O(1), and an
+        adversary who can choose keys can force collisions — see <em>Hash Tables</em>. Dynamic
+        array append is <em>amortized</em> O(1), and no sequence of appends can make it worse.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Where the Average Is the Wrong Thing to Care About</div>
+      <div class="concept-desc">
+        Amortized guarantees say nothing about <em>when</em> the expensive operation lands. In a
+        real-time or latency-sensitive path, the occasional O(n) resize is a latency spike, and
+        "it averages out" is no comfort to the request that hit it. The same argument applies to
+        garbage collection pauses.
+      </div>
+      <div class="concept-desc">
+        The mitigations are the same in both cases: pre-size the structure if you know roughly
+        how large it will get, or choose an implementation with worse average throughput and
+        better worst-case bounds. Latency and throughput are different goals, and amortized
+        analysis only speaks to the second.
+      </div>
+      <pre class="code-block"><span class="com"># Pre-sizing removes the resizes entirely when the size is known</span>
+buf = [<span class="m">None</span>] * n_expected          <span class="com"># Python</span>
+buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected)     <span class="com"># Go: length 0, capacity reserved</span></pre>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: TIME VS SPACE ───────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚖️</span>
+    <span class="topic-name">Time vs Space Trade-offs — What Caching Actually Costs</span>
+    <span class="topic-badge">CS • Complexity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The pattern</div>
+      <div class="concept-title">Nearly Every Speed-Up Is Memory You Agreed to Spend</div>
+      <div class="concept-desc">
+        Precomputation, indexes, memoisation, lookup tables and caches are one idea in different
+        clothes: store an answer so you do not compute it twice. The cost is memory, and — far
+        more often the real problem — the obligation to keep the stored answer correct.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Technique</th><th>Buys</th><th>Costs</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Memoisation</td><td>Repeated calls become free</td><td>Unbounded growth unless evicted; wrong if the function is not pure</td></tr>
+            <tr><td>Database index</td><td>Lookups go from scan to seek</td><td>Slower writes, more disk, and a planner that may ignore it</td></tr>
+            <tr><td>Lookup table</td><td>Arithmetic becomes an array read</td><td>Only wins if the table stays in cache</td></tr>
+            <tr><td>Denormalised copy</td><td>No join at read time</td><td>Two sources of truth to reconcile</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> the memory is the advertised cost and rarely the one that
+        hurts. <strong>Invalidation is the real price</strong> — every cache is a claim that
+        stored data still matches its source, and nothing enforces that claim for you.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">A Lookup Table Bigger Than the Cache Is Slower Than the Maths</div>
+      <div class="concept-desc">
+        Replacing computation with a table assumes the read is cheap. Once the table exceeds
+        the processor's cache, each read is a main-memory access of roughly a hundred
+        nanoseconds — enough time to have executed hundreds of arithmetic instructions.
+      </div>
+      <div class="concept-desc">
+        Modern processors are fast enough that recomputing a small value frequently beats
+        looking it up. This is a genuine reversal from older guidance, and it is why
+        <em>measure</em> is the whole answer here rather than a hedge.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: RECURSION ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔁</span>
+    <span class="topic-name">Recursion &amp; Induction — Trusting a Function That Calls Itself</span>
+    <span class="topic-badge">CS • Correctness</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The method</div>
+      <div class="concept-title">Do Not Trace It — Prove It</div>
+      <div class="concept-desc">
+        The reason recursion feels hard is that people try to simulate it mentally, unwinding
+        each call. That does not scale past two levels. The working technique is induction, and
+        it needs exactly three checks:
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Check</th><th>Ask</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Base case</td><td>Is there an input that returns without recursing, and is its answer right?</td></tr>
+            <tr><td>Inductive step</td><td>Assuming the call on a smaller input is correct, is my answer correct?</td></tr>
+            <tr><td>Progress</td><td>Does every call move strictly toward the base case?</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Assume the recursive call works.</strong> That is not a cheat — it is the
+        inductive hypothesis, and it is the entire reason the technique exists. If all three
+        checks hold, the function is correct, and you never traced a single call.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Progress Is the Check People Skip</div>
+      <div class="concept-desc">
+        Base case and inductive step are usually obvious. Progress is where real bugs live:
+        recursing on <code>n</code> instead of <code>n - 1</code> on one branch, or on a
+        sub-list that is only sometimes smaller. The result is a stack overflow on a specific
+        input rather than a wrong answer on all of them, which makes it a production bug rather
+        than a test failure.
+      </div>
+      <pre class="code-block"><span class="com"># Progress fails when the pivot is the smallest element: the right</span>
+<span class="com"># partition never shrinks and the recursion never terminates.</span>
+<span class="kw">def</span> <span class="fn">quicksort</span>(a, lo, hi):
+    <span class="kw">if</span> lo &gt;= hi: <span class="kw">return</span>              <span class="com"># base case</span>
+    p = partition(a, lo, hi)
+    quicksort(a, lo, p)              <span class="com"># BUG: should be p - 1</span>
+    quicksort(a, p + <span class="m">1</span>, hi)</pre>
+      <div class="concept-desc verdict">
+        Python defaults to a recursion limit near 1000 frames, which turns unbounded recursion
+        into a clean exception. C and C++ have no such courtesy: the stack simply runs out, and
+        a deep recursion on attacker-controlled input is a denial-of-service bug.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Practicalities</div>
+      <div class="concept-title">Tail Calls, and Why Python Will Not Help You</div>
+      <div class="concept-desc">
+        A tail call is a recursive call that is the last thing a function does. Some languages —
+        Scheme, and most functional languages — are required to reuse the stack frame, making
+        such recursion equivalent to a loop. Others, notably Python and CPython-adjacent
+        runtimes, deliberately do not, because keeping the frames makes tracebacks readable.
+      </div>
+      <div class="concept-desc">
+        The practical rule: recursion is the clearer expression for genuinely tree-shaped
+        problems — parsing, directory walks, divide and conquer. For linear problems, write the
+        loop. Where depth is bounded by data you do not control, convert to an explicit stack so
+        the limit is memory you can measure rather than a frame count you cannot.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: P VS NP ─────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧩</span>
+    <span class="topic-name">P, NP &amp; Knowing When to Stop Looking for an Exact Answer</span>
+    <span class="topic-badge">CS • Tractability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The distinction</div>
+      <div class="concept-title">Easy to Check Is Not the Same as Easy to Find</div>
+      <div class="concept-desc">
+        <strong>P</strong> is the set of problems solvable in polynomial time.
+        <strong>NP</strong> is the set whose <em>proposed answers</em> can be
+        <em>verified</em> in polynomial time. Every problem in P is in NP — checking is never
+        harder than solving — and whether the reverse holds is the open question.
+      </div>
+      <div class="concept-desc">
+        A useful example: given a schedule for 300 staff, confirming it satisfies every
+        constraint takes seconds. Finding an optimal one may take longer than the age of the
+        universe. Nothing about the checking speed implies anything about the finding speed, and
+        that gap is the entire subject.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Why you care</div>
+      <div class="concept-title">Recognising One Saves You From Promising a Delivery Date</div>
+      <div class="concept-desc">
+        <strong>NP-complete</strong> problems are the hardest in NP: solve one efficiently and
+        you have solved all of them. Nobody has, in over fifty years of trying. The practical
+        consequence is that recognising your problem as one of them is a
+        <em>result</em>, not a defeat — it tells you to stop searching for an exact efficient
+        algorithm and change what you are promising.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Shows up as</th><th>Classic name</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Fitting jobs onto machines or VMs <span class="acro-exp">(Virtual Machine)</span> onto hosts</td><td>Bin packing</td></tr>
+            <tr><td>Rostering staff or timetabling rooms</td><td>Graph colouring</td></tr>
+            <tr><td>Routing a vehicle through many stops</td><td>Travelling salesman</td></tr>
+            <tr><td>Choosing what fits in a fixed budget</td><td>Knapsack</td></tr>
+            <tr><td>Dependency resolution with version constraints</td><td>Boolean satisfiability</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> that last row is why package managers occasionally hang
+        for a very long time. Dependency resolution is genuinely NP-complete, and the resolver
+        is not badly written — it is running a solver on a hard instance.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">What to do instead</div>
+      <div class="concept-title">Four Honest Exits</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Exit</th><th>Give up</th><th>Good when</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Approximation</td><td>Optimality — take within 5% of best</td><td>Nearly always. Most businesses cannot tell optimal from good</td></tr>
+            <tr><td>Heuristic</td><td>Any guarantee at all</td><td>Instances look alike and you can measure results</td></tr>
+            <tr><td>Constrain the input</td><td>Generality</td><td>The hard cases do not occur in your data</td></tr>
+            <tr><td>Off-the-shelf solver</td><td>Writing it yourself</td><td>Always try this first — solvers beat hand-rolled search badly</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        The failure mode is not choosing an exit: an exact algorithm ships, works on the test
+        data, and hangs eighteen months later when a customer's input crosses a threshold
+        nobody documented. Decide which guarantee you are dropping, and write it down where the
+        next person will find it.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- /domain-body cs -->
