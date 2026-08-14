@@ -59247,6 +59247,230 @@ directory before someone else does is ordinary defensive work.
 </div>
 </div>
 </div>
+<!-- ══════════════════════════════════════════════════════════════
+WAVE V5 — CORE NETWORK SERVICES (ON-PREM)
+══════════════════════════════════════════════════════════════ -->
+<!-- ── TOPIC: WINDOWS DNS ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🧭</span>
+<span class="topic-name">Windows DNS <span class="acro-exp">(Domain Name System)</span> Administration — Zones, Scavenging &amp; Forwarders</span>
+<span class="topic-badge">Infra • Name Resolution</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Orientation</div>
+<div class="concept-title">The Protocol Is Covered; This Is the Service AD <span class="acro-exp">(Active Directory)</span> Cannot Live Without</div>
+<div class="concept-desc">
+<strong>DNS</strong> in the Networking domain covers records, resolution and DNSSEC <span class="acro-exp">(Domain Name System Security Extensions)</span>.
+This card is about running Microsoft's DNS as the directory's locator service — because
+in an AD environment, DNS is not a supporting service. It is how every client finds a
+domain controller, and almost every "Active Directory is broken" incident is DNS.
+</div>
+<div class="concept-desc">
+Domain controllers register service records announcing which DCs serve which site and
+role. Clients query those records to find one. Break DNS and nothing authenticates, no
+policy applies, and replication stops — all reporting errors that describe symptoms
+rather than the cause.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Zone storage</div>
+<div class="concept-title">AD-Integrated Zones Replicate Themselves</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th></th><th>AD-integrated</th><th>Standard primary/secondary</th></tr></thead>
+<tbody>
+<tr><td>Stored in</td><td>The directory</td><td>A text file on one server</td></tr>
+<tr><td>Replication</td><td class="c-green">AD multi-master — any DC accepts writes</td><td>Zone transfer from one master</td></tr>
+<tr><td>Secure dynamic updates</td><td class="c-green">Available</td><td class="c-red">Not available</td></tr>
+<tr><td>Single point of failure</td><td class="c-green">None</td><td class="c-amber">The primary</td></tr>
+</tbody>
+</table>
+</div>
+<div class="concept-desc verdict">
+<strong>Use AD-integrated zones with secure-only dynamic updates.</strong> Non-secure
+updates let any host on the network overwrite any record — including a domain
+controller's — which is a straightforward path to intercepting authentication.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Failure mode</div>
+<div class="concept-title">Scavenging: Off Means Stale Records, On Wrongly Means Deleted Ones</div>
+<div class="concept-desc">
+Dynamic registration creates records; nothing removes them when a machine leaves. Over
+years the zone fills with stale entries and clients connect to addresses now belonging to
+something else. Scavenging deletes records that have not refreshed — and it is the single
+most dangerous switch in Windows DNS, because enabling it wrongly deletes live records.
+</div>
+<div class="concept-desc">
+Two intervals govern it. During <strong>no-refresh</strong> a record cannot update its
+timestamp; during <strong>refresh</strong> it can; after both elapse without a refresh
+it becomes eligible. Both default to seven days, so a record survives at least 14 days
+of silence. The trap is a static record with a timestamp — it will be scavenged.
+</div>
+<pre class="code-block"><span class="com"># Check before enabling anything</span>
+Get-DnsServerScavenging <span class="kw">-ComputerName</span> dc01
+
+<span class="com"># Static records must have NO timestamp, or scavenging eats them</span>
+Get-DnsServerResourceRecord <span class="kw">-ZoneName</span> corp.example.com <span class="kw">-RRType</span> A |
+    Where-Object { $_.Timestamp -ne $<span class="m">null</span> -and $_.HostName -match <span class="m">'^(vpn|printer|nas)'</span> }</pre>
+<div class="concept-desc verdict">
+Enable it on one zone, leave it a month, and read what it removed before enabling it
+everywhere. An aggressive interval on a site whose laptops are away for three weeks is
+an outage waiting for the holidays.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Resolution path</div>
+<div class="concept-title">Conditional Forwarders Beat Stub Zones for Partner Domains</div>
+<div class="concept-desc">
+A <strong>forwarder</strong> sends everything unresolved to an upstream server. A
+<strong>conditional forwarder</strong> sends only queries for a named domain, which is
+the right tool for resolving a partner or acquisition domain across a trust. Root hints
+are the fallback when no forwarder answers.
+</div>
+<div class="concept-desc verdict">
+<strong>Never point a domain controller's own client DNS settings at a public
+resolver.</strong> It must resolve the directory's records first — pointing it at
+8.8.8.8 as a "backup" produces intermittent, extremely confusing replication failures,
+because sometimes the public server answers first and knows nothing about your domain.
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: DHCP ADMIN ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📮</span>
+<span class="topic-name">DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span> Administration — Scopes, Reservations, Failover &amp; Relay</span>
+<span class="topic-badge">Infra • Addressing</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Design</div>
+<div class="concept-title">Lease Length Is the Only Setting With Real Consequences</div>
+<div class="concept-desc">
+Most DHCP configuration is mechanical. Lease duration is the judgement call, and it
+trades address availability against churn: too long and a guest network exhausts its
+pool, too short and clients renew constantly and a server outage bites within hours.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Network</th><th>Typical lease</th><th>Reason</th></tr></thead>
+<tbody>
+<tr><td>Wired office</td><td>8 days</td><td>Stable devices; renewal traffic is wasted work</td></tr>
+<tr><td>Wireless corporate</td><td>1 day</td><td>Devices come and go; addresses must return</td></tr>
+<tr><td>Guest or conference</td><td>2–4 hours</td><td>High churn, small pool</td></tr>
+<tr><td>VoIP <span class="acro-exp">(Voice over Internet Protocol)</span> handsets</td><td class="c-amber">Long, or reserve</td><td>Address changes disrupt call routing</td></tr>
+</tbody>
+</table>
+</div>
+<div class="concept-desc verdict">
+Clients renew at half the lease, so an 8-day lease means a server can be down for four
+days before anyone notices. That is resilience, and also why nobody discovers DHCP has
+been broken until the following week.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Resilience</div>
+<div class="concept-title">Failover Modes, and the Relay Everyone Forgets</div>
+<div class="concept-desc">
+Built-in failover replaces the old trick of splitting a scope 80/20 across two servers.
+<strong>Load balance</strong> shares requests between two servers in one site;
+<strong>hot standby</strong> keeps one passive for a remote site. Both replicate lease
+state, so a client keeps its address through a failure.
+</div>
+<div class="concept-desc">
+DHCP discovery is a broadcast and does not cross a router. Every subnet without a local
+server needs an <strong>IP <span class="acro-exp">(Internet Protocol)</span> helper</strong> on its gateway pointing at the servers — and
+this is the thing forgotten when a new VLAN <span class="acro-exp">(Virtual Local Area Network)</span> is created, producing "the new subnet does
+not work" with everything on the Windows side configured correctly.
+</div>
+<pre class="code-block">Add-DhcpServerv4Failover <span class="kw">-ComputerName</span> dhcp01 <span class="kw">-PartnerServer</span> dhcp02 `
+    <span class="kw">-Name</span> "Site-A" <span class="kw">-ScopeId</span> <span class="m">10.10.0.0</span> <span class="kw">-LoadBalancePercent</span> <span class="m">50</span>
+
+Get-DhcpServerv4ScopeStatistics <span class="kw">-ComputerName</span> dhcp01   <span class="com"># pool exhaustion</span>
+Get-DhcpServerInDC                                       <span class="com"># authorised servers</span></pre>
+<div class="concept-desc verdict">
+<strong>Authorisation is a real control worth knowing.</strong> A Windows DHCP server
+refuses to serve leases until authorised in AD <span class="acro-exp">(Active Directory)</span>, which prevents a lab server from
+handing out addresses on production. It does nothing about a non-Windows rogue server —
+that needs DHCP snooping on the switches.
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: FILE SERVICES ───────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📁</span>
+<span class="topic-name">File Services — Share vs NTFS <span class="acro-exp">(New Technology File System)</span> Permissions, DFS <span class="acro-exp">(Dynamic Frequency Selection)</span> &amp; Quotas</span>
+<span class="topic-badge">Infra • Storage</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">The classic confusion</div>
+<div class="concept-title">Two Permission Sets, and the Effective Right Is the Lesser</div>
+<div class="concept-desc">
+A file reached over the network passes two checks: the <strong>share</strong>
+permission and the <strong>NTFS</strong> permission. The effective access is the
+<em>more restrictive</em> of the two. Reached locally, only NTFS applies — which is why
+a permission problem can vanish when you test by signing in to the server.
+</div>
+<div class="concept-desc verdict">
+<strong>The convention that removes the confusion entirely: set the share to Everyone
+— Full Control, and do all real work in NTFS.</strong> One place to look, one place to
+audit. Share permissions predate NTFS having any, and maintaining both is a way to
+create a puzzle for your successor.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">DFS</div>
+<div class="concept-title">Namespaces Buy You the Right to Move Data Later</div>
+<div class="concept-desc">
+A DFS namespace gives users a stable path — <code>\\corp\shares\finance</code> —
+that points at whichever server actually holds the data. Migrate the data, repoint the
+target, and no mapped drive, script or shortcut anywhere needs changing.
+</div>
+<div class="concept-desc">
+DFS <strong>replication</strong> is separate and keeps copies in sync. The pairing is
+powerful and has one sharp edge: DFSR <span class="acro-exp">(Distributed File System Replication)</span> resolves a conflicting edit as last-writer-wins,
+moving the loser to a hidden ConflictAndDeleted folder. It is <em>not</em> a
+multi-master file system, and using it for a shared working folder across sites will
+lose someone's work.
+</div>
+<div class="concept-desc verdict">
+Deploy the namespace even for a single file server. It costs almost nothing now and is
+the difference between a weekend migration and a transparent one.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Failure mode</div>
+<div class="concept-title">The Share That Filled the System Drive</div>
+<div class="concept-desc">
+Without quotas, one user's export fills the volume, and if the share lives on the system
+drive the server stops — event logs cannot write, and the failure cascades well beyond
+the share. Two separate mechanisms exist and people configure the wrong one: NTFS quotas
+are per user per volume; File Server Resource Manager quotas are per folder and are the
+useful ones.
+</div>
+<pre class="code-block"><span class="com"># Soft quota — warn at 80%, do not block. Start here.</span>
+New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw">-Size</span> <span class="m">100</span>GB <span class="kw">-SoftLimit</span> `
+    <span class="kw">-Threshold</span> (New-FsrmQuotaThreshold <span class="kw">-Percentage</span> <span class="m">80</span>)
+
+<span class="com"># And keep shares off the system volume in the first place</span></pre>
+<div class="concept-desc verdict">
+Start with soft quotas and reporting. A hard limit imposed without warning produces a
+support queue and a workaround culture — people start saving to their desktops, which is
+worse than the disk usage you were managing.
+</div>
+</div>
+</div>
+</div>
 <!-- /domain-body infra -->
 </div>
 </div>
