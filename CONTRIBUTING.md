@@ -46,15 +46,34 @@ Notes:
 |--------------------|-------------------------|-----------------------------------------|
 | Topic chevron      | `topic-chev`            | ~~`topic-chevron`~~                      |
 | Reference table    | `ref-table`             | prefer over `ai-table` for new content  |
-| Colored text       | `class="c-cyan"` etc.   | ~~`style="color:var(--cyan)"`~~          |
+| Colored text       | see below — it depends  | ~~a hex literal, anywhere~~             |
 
-### Text-color utility classes
+### Colours
 
-Prefer these over inline `style="color:…"`:
+**Never write a hex literal in content.** `lint_content.py` fails the build on one in a
+`style` attribute or an SVG paint attribute. Hard-coded colours keep their dark-mode
+value in light mode, which is how a `#fff` label ended up invisible on a white card.
+
+Reach for a colour one of two ways:
 
 `c-cyan` · `c-green` · `c-amber` · `c-red` · `c-purple` · `c-muted`
 
-They already track the light/dark theme via CSS variables.
+**outside a table** — these utility classes track the theme and keep the markup clean.
+
+`style="color: var(--sky)"` **inside a table cell**, and for any accent without a class.
+This looks like it contradicts the line above, and it is worth knowing why it does not:
+`.ref-table td` sets a colour, and a class loses to it while an inline style wins. 2196
+elements on the page already carry a `c-*` class that is doing nothing for this reason.
+Until that is fixed (see `plan.md`, session 18), a class in a table cell is a silent no-op.
+
+The full accent palette lives in `:root` in `style.css`: `--cyan` `--green` `--amber`
+`--red` `--purple` `--muted` `--text` `--sky` `--orange` `--pink` `--yellow` `--emerald`
+`--indigo` `--violet` `--rose` `--fuchsia` `--lime`, plus dimmed `--amber-2/-3`,
+`--green-2/-3` and `--cyan-2` for three-tone ladders. Add a variable there rather than a
+literal here.
+
+For repeated SVG diagram colours, style the shapes from a class on the `<svg>` instead —
+`.topo-svg line { stroke: var(--sky); }` and `math.html`'s `msv-*` set are the pattern.
 
 ## Code blocks
 

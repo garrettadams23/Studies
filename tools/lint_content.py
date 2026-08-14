@@ -3,8 +3,17 @@
 lint_content.py — Enforces CONTRIBUTING.md mechanically.
 
 Errors fail the build. Warnings are counted and printed as a single trend line,
-so historical debt (90 topics with no `.topic-name`, 148 hard-coded colours)
-gets tracked rather than either blocking work or being quietly forgotten.
+so historical debt gets tracked rather than either blocking work or being
+quietly forgotten.
+
+A warning is only worth tracking if someone is accountable for the number. Two
+have graduated to errors once their count reached zero, which turns them into
+ratchets — they can no longer regress:
+
+  * topics with no `.topic-name` (was 90)
+  * hard-coded colours (was 148, of which 8 were never colours at all)
+
+`inline style attribute` and `ai-table` are still counted, not enforced.
 
 Usage:
     python3 tools/lint_content.py             # errors fail, warnings reported
@@ -82,6 +91,29 @@ def topic_blocks(text):
     for n, i in enumerate(starts):
         end = starts[n + 1] if n + 1 < len(starts) else len(lines)
         yield i + 1, "".join(lines[i:end])
+
+
+# A colour literal only matters where it is actually used as a colour. The old
+# check was a bare `#[0-9a-fA-F]{3,6}` sweep, which also counted "deploy #4521",
+# "invoice #4471" and every CSS sample that teaches hex notation — 8 of the 148
+# it reported were not colours at all. A counter nobody can drive to zero is
+# decoration, so this matches the claim instead: a literal in a style attribute
+# or in an SVG paint attribute.
+STYLE_ATTR_RE = re.compile(r'\bstyle="([^"]*)"', re.S)
+PAINT_ATTR_RE = re.compile(
+    r'\b(?:fill|stroke|stop-color|flood-color|lighting-color|bgcolor|color)\s*=\s*'
+    r'"(#[0-9a-fA-F]{3,8})"'
+)
+HEX_RE = re.compile(r"#[0-9a-fA-F]{3,8}\b")
+
+
+def hex_colours(text):
+    """(line_number, literal) for each hex used as a colour."""
+    for m in STYLE_ATTR_RE.finditer(text):
+        for h in HEX_RE.finditer(m.group(1)):
+            yield text[: m.start()].count("\n") + 1, h.group(0)
+    for m in PAINT_ATTR_RE.finditer(text):
+        yield text[: m.start()].count("\n") + 1, m.group(1)
 
 
 def topic_label(block):
@@ -164,7 +196,14 @@ def main():
         for m in re.finditer(r'<span class="acro-exp">', text):
             pass  # presence is fine — they are generated; see --check on the annotator
 
-        warns["hard-coded hex colour"] += len(re.findall(r"#[0-9a-fA-F]{3,6}\b", text))
+        for line_no, literal in hex_colours(text):
+            errors.append(
+                f"{name}:{line_no}: hard-coded colour {literal} — it keeps its "
+                f"dark-mode value in light mode. Use a theme variable from "
+                f":root in style.css, e.g. var(--sky), or style the element "
+                f"with a class"
+            )
+
         warns["inline style attribute"] += len(re.findall(r'\bstyle="', text))
         warns["ai-table (prefer ref-table)"] += text.count('class="ai-table"')
 

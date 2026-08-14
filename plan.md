@@ -28,15 +28,16 @@ jump to what you need:
 | **Phase 5 — Foundations, Frontiers & the Business of IT** (Tracks AL–AY) | CS & mathematics, hardware/embedded, post-quantum, emerging platforms, physical security, IT finance, leadership, enablement, consulting + content-trust tooling | ⬜ planned |
 | **Phase 6 — Specialisms, and How This Gets Written** (Tracks BA–BJ) | Detection engineering, purple teaming, Kubernetes security, API/identity security, supply chain, privacy engineering, platform engineering, observability, resilience — **plus the card pattern library, authoring rules, risk register and success measures, written out rather than planned** | ⬜ planned |
 | **Execution Handbook** | Ordering constraints, per-domain queue, a concrete first-ten-sessions schedule, three waves specified to the point of transcription, and reusable checklists | 📘 reference |
+| **What is actually outstanding** | An audit of the repo as it really is — defects, the lint trend, undersized domains, content age. **Start here.** | ✅ short list cleared, session 18 |
 
 **Remaining backlog: 897 content cards and 44 engineering items** across
-Phases 3–6, which would take the site from 900 topics / 20 domains to roughly
+Phases 3–6, which would take the site from 943 topics / 27 domains to roughly
 1,800 topics / 26 domains — about 180 working sessions.
 
-**If you read only two things:** the *"Suggested actual priority"* shortlist at
-the end of Phase 5, and *Part 3 of Phase 6* (how to write a card, the pattern
-library, the risk register). The backlog is a menu, not a queue — and at this
-size, how well each card is written matters more than how many remain.
+**If you read only two things:** *"What is actually outstanding"* at the very end
+of this file, and *Part 3 of Phase 6* (how to write a card, the pattern library,
+the risk register). The backlog is a menu, not a queue — and at this size, how
+well each card is written matters more than how many remain.
 
 ---
 
@@ -4126,8 +4127,7 @@ trainer may turn out to be more than Ch 5 needs; it cost little and the CI check
 honest, but this is recorded as a spec whose own precondition was skipped.
 
 The remaining half of the idea — generating the calculator card's flashcards from the
-same JSON so drill and reference cannot drift — is **not built**. For now the card
-cross-references the trainer in prose, which is weaker: the two can still diverge.
+same JSON so drill and reference cannot drift — was **built in session 18**; see below.
 
 ---
 
@@ -4137,15 +4137,19 @@ An audit rather than a wish list. Everything below was checked against the repo 
 2026-08-13, not recalled — the counts come from `lint_content.py`, `git grep` and the
 domain files themselves. Ordered by how much it costs to leave undone.
 
+> **Session 18 (2026-08-14) closed the honest short list — all three items.**
+> Each entry below is annotated with what happened. The section is kept rather
+> than deleted, because the reasoning is what makes the next audit cheap.
+
 ## 1. Things that are wrong right now
 
 These are defects, not missing features. Each is small.
 
-| Item | Evidence | Fix |
-|---|---|---|
-| **`CALCULUS-CHEAT-SHEET.md` is stale and overclaims** | 7 sections in the file, 16 cards in the Math domain. Its header says "Generated from the Math domain", which is no longer true — it was generated from one card | Re-run the generator over all cards, or narrow the header to what it actually covers |
-| **`Windows Administration Fundamentals` is in `lifestyle`** | `grep -l` finds it in `data/lifestyle.html`. It is technical Windows content sitting in Life Admin | Move to `endpoint`. Slugs derive from titles, so nothing breaks — proven twice |
-| **The TI-84 drill and its card can drift** | The card cross-references `ti84_trainer.py` in prose only. The spec called for the card's flashcards to be generated from `ti84_drills.json` | Generate them, or accept the drift and say so in the card |
+| Item | Evidence | Fix | State |
+|---|---|---|---|
+| **`CALCULUS-CHEAT-SHEET.md` is stale and overclaims** | 7 sections in the file, 16 cards in the Math domain. Its header says "Generated from the Math domain", which is no longer true — it was generated from one card | Re-run the generator over all cards, or narrow the header to what it actually covers | ✅ **Fixed.** There was no generator — the claim was aspirational. `tools/gen_cheatsheet.py` now walks all 16 cards (65 sections, 933 lines) and `--check` is a CI gate |
+| **`Windows Administration Fundamentals` is in `lifestyle`** | `grep -l` finds it in `data/lifestyle.html`. It is technical Windows content sitting in Life Admin | Move to `endpoint`. Slugs derive from titles, so nothing breaks — proven twice | ✅ **Moved.** `endpoint` 28 → 29 cards, `lifestyle` 5 → 4. Both subtitles updated; permalink unchanged, as predicted |
+| **The TI-84 drill and its card can drift** | The card cross-references `ti84_trainer.py` in prose only. The spec called for the card's flashcards to be generated from `ti84_drills.json` | Generate them, or accept the drift and say so in the card | ✅ **Generated.** The prose had already drifted — it named 2 of the 4 areas. The card's drill index is now emitted by `--sync-card` between markers and gated by `--check-card` |
 
 ## 2. The lint TREND, which has not moved
 
@@ -4169,6 +4173,87 @@ The hard-coded hex count is the one with real consequence: those colours do not 
 light/dark theme, which is exactly the class of bug that made the study modal unreadable in
 light mode.
 
+### ✅ Session 18 — the hex counter, closed by doing 1 and 2 together
+
+```
+TREND ai-table=361 hard-coded=148 inline=1946     before
+TREND ai-table=361 inline=1946                    after
+```
+
+Picking the counter turned out to be the easy half. The instructive part was that
+**8 of the 148 were never colours at all.** The check was a bare
+`#[0-9a-fA-F]{3,6}` sweep, so it counted `"deploy #4521"`, `"invoice #4471"`, and
+five CSS samples in `script`/`web` that exist precisely to *teach* hex notation.
+A counter with an unreachable floor cannot be driven to zero, which is a decent
+explanation for why nobody tried for fourteen sessions.
+
+So the check was narrowed to the claim — a literal inside a `style="…"` value or an
+SVG paint attribute — which is the same lesson `VOLATILE_HINTS` is still waiting for
+in §4: *design the check before you ask anyone to act on the number.*
+
+The remaining 140 were real, and fell into two shapes:
+
+- **89 in `net`'s five topology diagrams**, as `stroke="#38bdf8"` / `fill="#0d1120"` on
+  every line and circle. `fill="#0d1120"` is `--bg2` — the *dark page background* — so in
+  light mode every node was painted a near-black disc on a white card. Replaced with
+  `.topo-svg line|circle|text` rules, the same class-based pattern `math.html` already
+  uses for its `msv-*` diagrams and the reason that file has never had a literal in it.
+- **51 as `style="color: #…"`** across nine domains. `military.html` was already mixing
+  `var(--purple)` and `#38bdf8` in adjacent `<th>`s, so the convention existed; it just
+  was not applied. The worst of these was `pentest`'s `style="color: #fff"` on three
+  `<strong>`s — white text, on a white light-mode card, invisible.
+
+Both needed somewhere to point at, so `:root` gained a themed accent palette — `--sky`,
+`--orange`, `--pink`, `--yellow`, `--emerald`, `--indigo`, `--violet`, `--rose`,
+`--fuchsia`, `--lime`, plus dimmed `--amber-2/-3`, `--green-2/-3`, `--cyan-2` for the
+three-tone severity ladders in `ops` and `linux` — each with a light counterpart.
+`.topo-name`'s `color: #fff` in `style.css` went the same way.
+
+Verified in headless Chromium by toggling `data-theme` and reading computed styles:
+every affected element now changes colour with the theme, `0` elements carry a raw hex
+in a `style` attribute, no console errors, no off-site requests.
+
+**The counter is now an error, not a warning** — a ratchet at zero, with a message that
+names the palette. Regression tested by reintroducing one literal: CI fails.
+
+`inline style attribute` (1946) and `ai-table` (361) are deliberately still warnings.
+Two ratchets are enough to hold the line; a third would block content work, which is
+the thing the site is actually for.
+
+### The inline-style counter, and why the obvious fix is wrong
+
+Worth writing down, because it looks like a free win and is not.
+
+**1069 of the 1946** inline styles are colour-only — `style="color: var(--cyan)"` and
+nothing else. `CONTRIBUTING.md` already forbids exactly this, in a table, in favour of
+`class="c-cyan"`. So the counter looks halvable by one mechanical substitution.
+
+It was tried in this session, on all 866 that a naive match caught, and **reverted**.
+Inline `style` beats any class on specificity; `.c-cyan` does not. Converting moves the
+element from "wins everything" to "loses to any rule with a class in it", and the page
+has plenty:
+
+```
+elements carrying a c-* class:                    9166
+…whose computed colour is NOT that class's value: 2196   (they render white —
+                                                          .ref-table td wins)
+```
+
+Those 2196 are pre-existing: the six utility classes are *already* silently dead
+wherever they land in a table cell. That is a real bug worth its own session, and it is
+also the reason the substitution cannot be mechanical — every conversion needs to know
+whether a table rule is going to eat it.
+
+Two consequences, both recorded rather than acted on:
+
+1. **`CONTRIBUTING.md`'s advice is wrong as written** for table content, which is most
+   content. Either the utility classes need enough specificity to win
+   (`.ref-table td.c-cyan`, or a `:where()` reset on the table rules), or the guidance
+   needs a carve-out. Fix the CSS before touching the 1069.
+2. **A counter can be honest and still not be a to-do list.** The hex counter came down
+   because the fix was semantically neutral. This one is not, and the difference is
+   worth more than the 1069 would have been.
+
 ## 3. New domains with no plan behind them
 
 The `lifestyle` split created five domains and the Math work added one more. **None of them
@@ -4177,16 +4262,34 @@ justify existing:
 
 | Domain | Cards | Against the ≥15 rule |
 |---|---|---|
-| `spirit` | 3 | **Well under.** Either grow it or fold it back into `philosophy` |
+| ~~`spirit`~~ | ~~3~~ | ✅ **Folded into `philosophy`** — session 18 |
 | `quotes` | 5 | Under, but it is a reference domain like `acronym`, so the rule may not apply |
-| `lifestyle` | 5 | Under. It is the residue after the split — check whether it still earns a chip |
-| `philosophy` | 10 | Under; plausibly fine, it is a coherent subject |
+| `lifestyle` | 4 | Under, and one lower after the Windows card left. It is the residue after the split — check whether it still earns a chip |
+| `philosophy` | 13 | Under; plausibly fine, it is a coherent subject, and now the home for the `spirit` cards |
 | `productivity` | 10 | Under, but actively growing |
 | `mind` | 11 | Under, but actively growing |
 | `math` | 16 | Clears it |
 | `career` · `devops` | 18 · 36 | Clear it comfortably |
 
 **Decide `spirit` first.** Three cards is not a domain; it is a chip that dilutes the bar.
+
+### ✅ Session 18 — decided: folded
+
+Wicca, Paganism and Druidism moved into `philosophy`, which already carried Buddhism
+under a `SPIRITUAL PHILOSOPHY` badge and Taoism under `CHINESE PHILOSOPHY` — so the
+domain was already doing this job, and `spirit` was a second chip for the same shelf.
+Re-badged to `EARTH-BASED PRACTICE` / `EARTH-BASED TRADITION` to match how the other
+traditions there are labelled.
+
+Removed with it: the chip in `index-shell.html`, the `.c-spirit` / `.domain-spirit`
+rules in `style.css`, the entry in `domains.json`, and a dead `byDomain.spirit` key in
+`acronyms.json` (an `AD` suppression — `philosophy` already carried the same rule).
+28 domains → **27 domains, with the topic count still 943**: nothing was lost in the
+move, which is the number worth checking after a fold. Permalinks survive because slugs derive from
+titles, not domains — third time that has held.
+
+The rule earned its keep here. `lifestyle` at 4 is now the weakest chip on the bar and
+is the next one to answer for itself; the honest options are the same two.
 
 ## 4. Content age
 
@@ -4225,8 +4328,48 @@ as debt.
 
 If only three things get done, do these:
 
-1. **Regenerate the cheat sheet** — it is wrong right now and someone might print it.
-2. **Decide `spirit`** — three cards is not a domain.
-3. **Pick one lint counter and actually move it**, or stop tracking all three.
+1. ~~**Regenerate the cheat sheet**~~ — ✅ session 18. A generator now exists; the header
+   is true and CI keeps it true.
+2. ~~**Decide `spirit`**~~ — ✅ session 18. Folded into `philosophy`.
+3. ~~**Pick one lint counter and actually move it**~~ — ✅ session 18. `hard-coded hex`:
+   148 → 0, and promoted to an error so it stays there.
 
 Everything else is optional, and saying so is the point of this section.
+
+---
+
+## Session 18 — what shipped, and what it cost
+
+All three short-list items, plus the two remaining defects in §1, in one pass. The
+theme through it: **every one of them was a claim nobody was checking.**
+
+| Claim | Was | Now |
+|---|---|---|
+| "Generated from the Math domain" | Hand-written from 1 of 16 cards | `tools/gen_cheatsheet.py`, gated by `--check` |
+| "There is a drill for this card" | Prose naming 2 of 4 areas | Generated block, gated by `--check-card` |
+| `148 hard-coded hex colour` | 8 of them were not colours | Check narrowed to real paint contexts; error at 0 |
+| `spirit` is a domain | 3 cards | Folded; the ≥15 rule applied for the first time |
+| Windows Admin is Life Admin | Mis-filed since the split | In `endpoint` |
+
+CI grew two gates and lost a warning. The generators matter more than the fixes: a
+regenerated cheat sheet is worth one session, but a cheat sheet that *cannot go stale*
+is worth every session after it. Same for the drill index. That is the difference
+between the work above and the fourteen sessions where the TREND line did not move.
+
+**Three things surfaced that are worth carrying forward.** All are recorded above rather
+than fixed:
+
+- **The six `c-*` utility classes are dead in table cells** — 2196 elements on the page
+  carry one and render a different colour, because `.ref-table td` outranks them. This is
+  the highest-value thing found this session and nothing was done about it. §2 has the
+  measurement and the two candidate fixes.
+- `lifestyle` is now the weakest chip at 4 cards, and inherits the question `spirit` just
+  answered.
+- The lint fix is a worked example of the §4 `VOLATILE_HINTS` problem — a signal too
+  broad to act on becomes actionable only once the check marks the claim. `VOLATILE_HINTS`
+  still matches 182 of 943 topics and still needs exactly that treatment.
+
+One correction to the audit above, found by doing it: §1 said to "re-run the generator"
+for the cheat sheet. There was no generator to re-run. The file had been written by hand
+and given a header that described an intention. Worth remembering when reading the rest
+of this file — a stated capability is not evidence of one.

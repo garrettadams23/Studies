@@ -18,6 +18,27 @@
   --muted: #5a6e8a;
   --mono: "Share Tech Mono", monospace;
   --sans: "Outfit", sans-serif;
+
+  /* Accent palette. Content used to hard-code these as literals, which meant
+     they kept their dark-mode value in light mode — a #38bdf8 label on white,
+     or a #fff one that vanished entirely. Every accent a card can reach for
+     lives here and has a light counterpart below. */
+  --sky: #38bdf8;
+  --orange: #fb923c;
+  --pink: #f472b6;
+  --yellow: #facc15;
+  --emerald: #34d399;
+  --indigo: #818cf8;
+  --violet: #c084f5;
+  --rose: #f87171;
+  --fuchsia: #e879f9;
+  --lime: #84cc16;
+  /* Dimmed steps, for the severity/phase ladders that need three tones of one hue. */
+  --amber-2: #e09030;
+  --amber-3: #c08020;
+  --green-2: #00cc77;
+  --green-3: #00aa55;
+  --cyan-2: #00a0cc;
 }
 [data-theme="light"] {
   --bg: #f0f4f8;
@@ -32,6 +53,22 @@
   --amber: #b45309;
   --red: #dc2626;
   --purple: #7c3aed;
+
+  --sky: #0369a1;
+  --orange: #c2410c;
+  --pink: #be185d;
+  --yellow: #a16207;
+  --emerald: #047857;
+  --indigo: #4338ca;
+  --violet: #7e22ce;
+  --rose: #b91c1c;
+  --fuchsia: #a21caf;
+  --lime: #4d7c0f;
+  --amber-2: #92400e;
+  --amber-3: #78350f;
+  --green-2: #047857;
+  --green-3: #065f46;
+  --cyan-2: #0369a1;
 }
 
 /* ── 2. BASE & RESET ────────────────────────────────────────────────────── */
@@ -842,10 +879,30 @@ header p {
   width: 100%;
   height: 80px;
 }
+/* The topology diagrams used to carry their colours as fill="…"/stroke="…"
+   attributes on every line and circle — 89 literals that stayed dark-mode blue
+   on a white card, with node interiors painted the dark page background. The
+   roles are styled here instead, so they follow the theme. */
+.topo-svg line {
+  stroke: var(--sky);
+}
+.topo-svg circle {
+  fill: var(--bg2);
+  stroke: var(--sky);
+}
+.topo-svg circle.topo-hot {
+  stroke: var(--cyan);
+}
+.topo-svg circle.topo-ring {
+  fill: none;
+}
+.topo-svg text {
+  fill: var(--cyan);
+}
 .topo-name {
   font-size: 12px;
   font-weight: 700;
-  color: #fff;
+  color: var(--text);
   margin-top: 6px;
 }
 .topo-desc {
@@ -2178,6 +2235,12 @@ mark.sh {
 .c-red    { color: var(--red); }
 .c-purple { color: var(--purple); }
 .c-muted  { color: var(--muted); }
+/* No utility class was added for the accents in :root above. These six are
+   overridden by table rules in 2,196 places on the page already — measured, not
+   guessed — because a class loses to the `.ref-table td` colour that an inline
+   style used to beat. Content therefore reaches an accent with
+   style="color: var(--…)", which is theme-correct even where a class would not
+   survive. See plan.md, session 18. */
 
 /* domain: redteam (scaffolded) */
 .chip.c-redteam {
@@ -2571,18 +2634,9 @@ body.st-lock { overflow: hidden; }
   --accent: #c084fc;
 }
 
-/* domain: spirit — split out of lifestyle */
-.chip.c-spirit {
-  color: #8b5cf6;
-  border-color: rgba(139, 92, 246, 0.35);
-}
-.chip.c-spirit.active,
-.chip.c-spirit:hover {
-  background: rgba(139, 92, 246, 0.12);
-}
-.domain-spirit {
-  --accent: #8b5cf6;
-}
+/* domain: spirit — folded back into philosophy; Wicca, Paganism and Druidism
+   never reached the >=15-card bar, and they read as traditions alongside
+   Buddhism and Taoism. Rules removed with the chip. */
 
 /* domain: productivity — split out of lifestyle */
 .chip.c-productivity {
