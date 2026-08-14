@@ -382,4 +382,397 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE AL2 — DATA STRUCTURES FROM FIRST PRINCIPLES
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: MEMORY LAYOUT ───────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧱</span>
+    <span class="topic-name">Memory Layout &amp; Cache Locality — Why Arrays Beat Linked Lists</span>
+    <span class="topic-badge">CS • Data Structures</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">Which Structure to Pick Is Covered; This Is Why the Table Lies</div>
+      <div class="concept-desc">
+        <strong>Choosing the Right Data Structure</strong> in the Scripting domain has the
+        operation-cost table. This card explains why that table mispredicts real performance so
+        often: it counts operations, and the machine charges for <em>memory access patterns</em>.
+      </div>
+      <div class="concept-desc">
+        Memory does not arrive one byte at a time. It arrives in <strong>cache lines</strong>,
+        typically 64 bytes. Reading one integer from main memory fetches its fifteen neighbours
+        whether you want them or not — so a structure whose elements sit next to each other gets
+        the next fifteen reads nearly free.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The consequence</div>
+      <div class="concept-title">Same Big-O, Order-of-Magnitude Difference</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Array</th><th>Linked list</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Traversal complexity</td><td>O(n)</td><td>O(n)</td></tr>
+            <tr><td>Elements per memory fetch</td><td class="c-green">~16 (64-byte line, 4-byte ints)</td><td class="c-red">1, plus a pointer to chase</td></tr>
+            <tr><td>Prefetcher can help</td><td class="c-green">Yes — the stride is predictable</td><td class="c-red">No — the next address is unknown until arrival</td></tr>
+            <tr><td>Memory overhead</td><td class="c-green">None</td><td class="c-amber">A pointer per element, often doubling the size</td></tr>
+            <tr><td>Genuinely better at</td><td>Everything you iterate</td><td>Splicing when you already hold the node</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> linked lists are taught early and used rarely. Unless you
+        need stable references to elements or O(1) splice with a node already in hand, an array
+        or dynamic array wins — including for insert-in-the-middle at small sizes, because
+        memmove of a contiguous block is extremely fast.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Applying it</div>
+      <div class="concept-title">Struct of Arrays, and Why Databases Went Columnar</div>
+      <div class="concept-desc">
+        If you process one field across many records, storing an array per field beats an array
+        of records: the fetched cache lines contain only data you asked for. This is the same
+        insight behind columnar storage — see <em>Columnar Storage</em> in the Data domain — and
+        behind why a scan over a column store outruns a row store on analytics by so much.
+      </div>
+      <pre class="code-block"><span class="com"># Array of structs: summing one field drags every other field into cache</span>
+<span class="kw">struct</span> P { <span class="kw">float</span> x, y, z; <span class="kw">char</span> name[<span class="m">64</span>]; };
+P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes per line</span>
+
+<span class="com"># Struct of arrays: the summed field is contiguous</span>
+<span class="kw">float</span> xs[N], ys[N], zs[N];
+<span class="kw">char</span> names[N][<span class="m">64</span>];        <span class="com"># every fetched line is all x values</span></pre>
+      <div class="concept-desc verdict">
+        Do not reach for this by default — it makes code harder to read and only pays where a
+        hot loop touches a subset of fields over many records. It is a profiling result, not a
+        style.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: HASH TABLES ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">#️⃣</span>
+    <span class="topic-name">Hash Tables — Collisions, Load Factor &amp; the DoS <span class="acro-exp">(Denial of Service)</span> That Exploits Them</span>
+    <span class="topic-badge">CS • Data Structures</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Mechanism</div>
+      <div class="concept-title">O(1) Is a Statement About Luck, Not a Guarantee</div>
+      <div class="concept-desc">
+        A hash function maps a key to a bucket index. Two keys landing in the same bucket is a
+        <strong>collision</strong>, and it is not an edge case — by the birthday argument,
+        collisions begin appearing once the table holds roughly the square root of its capacity
+        in items. Every real implementation is mostly collision-handling machinery.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Strategy</th><th>How</th><th>Weakness</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Chaining</td><td>Each bucket holds a list</td><td>Pointer chasing; degrades to a list under attack</td></tr>
+            <tr><td>Linear probing</td><td>Try the next slot along</td><td>Clustering, but excellent cache behaviour</td></tr>
+            <tr><td>Robin Hood</td><td>Probe, stealing slots from luckier keys</td><td>Complex deletion; very even probe lengths</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Load factor</strong> — items divided by buckets — is the number that governs
+        all of them. Beyond roughly 0.7 for open addressing, probe sequences lengthen sharply,
+        so tables resize and rehash to stay under it. That resize is the same amortized cost
+        described in <em>Amortized Analysis</em>, and the same latency spike.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Hash Flooding — Turning O(1) Into O(n) On Purpose</div>
+      <div class="concept-desc">
+        If the hash function is deterministic and public, an attacker can compute thousands of
+        distinct keys that collide into one bucket. Every lookup then walks a long chain, and a
+        single HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> request with a crafted form body or JSON <span class="acro-exp">(JavaScript Object Notation)</span> object consumes seconds of CPU <span class="acro-exp">(Central Processing Unit)</span>.
+        One request, one core, no authentication needed.
+      </div>
+      <div class="concept-desc">
+        This broke essentially every web framework simultaneously in 2011, because they all
+        parsed request parameters straight into a hash table. The fix is
+        <strong>hash randomisation</strong>: seed the hash function per process, so an attacker
+        cannot precompute colliding keys.
+      </div>
+      <pre class="code-block"><span class="com"># Python randomises string hashing per process by default since 3.3.</span>
+<span class="com"># Same string, two processes, two hashes — that is the mitigation working.</span>
+$ python3 -c <span class="m">"print(hash('collide'))"</span>
+$ python3 -c <span class="m">"print(hash('collide'))"</span>
+
+<span class="com"># PYTHONHASHSEED=0 disables it. Only ever for reproducing a bug.</span></pre>
+      <div class="concept-desc verdict">
+        <strong>Never hard-code a hash seed in production, and never rely on iteration order.</strong>
+        If you need a stable order, sort explicitly. Code that depends on dictionary ordering
+        works until the day someone enables randomisation, and then fails somewhere unrelated.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Practicalities</div>
+      <div class="concept-title">Mutable Keys, and Equality That Disagrees With Hashing</div>
+      <div class="concept-desc">
+        A hash table's contract is that equal objects hash equally, and that a key's hash never
+        changes while it is stored. Break either and entries become unreachable — present in
+        memory, invisible to lookup, and undetectable by reading the calling code.
+      </div>
+      <div class="concept-desc">
+        This is why Python refuses to hash a list, and why overriding equality without
+        overriding hashing is a bug in Java, C# and Python alike. If you write one, write both,
+        from the same fields, and make those fields immutable.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: TREES ───────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🌳</span>
+    <span class="topic-name">Trees — BST <span class="acro-exp">(Binary Search Tree)</span>, Balanced, Heap &amp; Trie, and What Each Is Actually For</span>
+    <span class="topic-badge">CS • Data Structures</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Four Trees, Four Different Jobs</div>
+      <div class="concept-desc">
+        "Tree" is not one structure. These four solve genuinely different problems, and
+        confusing them is the usual reason someone reaches for the wrong one.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Structure</th><th>Answers</th><th>Reach for it when</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>BST / balanced tree</td><td>Ordered lookup, range queries, predecessor</td><td>You need sorted order as well as lookup</td></tr>
+            <tr><td>Heap</td><td class="c-green">Only "what is the minimum?"</td><td>Priority queues, scheduling, top-k</td></tr>
+            <tr><td>Trie</td><td>Prefix matching, autocomplete</td><td>Keys are strings sharing prefixes</td></tr>
+            <tr><td>B-tree</td><td>Ordered lookup with few disk reads</td><td>The data is on disk — this is your database index</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> if you only need "is this present?", a hash table beats
+        all of them. Trees earn their place when <em>order</em> matters — range scans, nearest
+        neighbours, or reading everything sorted without a sort.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Why balance</div>
+      <div class="concept-title">An Unbalanced BST Is a Linked List With Extra Steps</div>
+      <div class="concept-desc">
+        A plain BST built from already-sorted input degenerates completely: every insert goes
+        right, and lookup becomes O(n). Since sorted input is extremely common — importing
+        records by ID, replaying a log — this is the normal case rather than the pathological
+        one.
+      </div>
+      <div class="concept-desc">
+        Self-balancing variants (red-black, AVL) rotate on insert to keep depth logarithmic. You
+        will rarely implement one; you should know that your language's ordered map is one, and
+        that a hand-rolled BST in production code is a latent O(n).
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Disk</div>
+      <div class="concept-title">B-trees Exist Because a Disk Read Is Enormous</div>
+      <div class="concept-desc">
+        A balanced binary tree over a million keys is about 20 levels deep. On disk that is 20
+        seeks, and a seek costs roughly a hundred thousand times a memory access. B-trees fix
+        this by making each node hold hundreds of keys — one page — so the same million keys sit
+        three levels deep and cost three reads.
+      </div>
+      <div class="concept-desc verdict">
+        This is the single most important structure in databases, and <em>Indexes Explained —
+        B-tree, Hash &amp; Covering</em> in the Data domain covers the query-planning side. The
+        theory answer to "why not a binary tree on disk?" is: the memory hierarchy has a cliff
+        in it, and B-trees are shaped around the cliff.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: GRAPHS ──────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🕸️</span>
+    <span class="topic-name">Graphs — Representation, Traversal &amp; the Four Algorithms Worth Knowing</span>
+    <span class="topic-badge">CS • Data Structures</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Recognising one</div>
+      <div class="concept-title">Most Hard Problems Are Graph Problems Wearing a Costume</div>
+      <div class="concept-desc">
+        Package dependencies, network topology, permission inheritance, build pipelines, service
+        call chains, Active Directory attack paths — all graphs. Recognising the shape is most
+        of the work, because the algorithms are standard once you have.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Question</th><th>Algorithm</th><th>Cost</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Fewest hops from here to there?</td><td>Breadth-first search</td><td>O(V + E)</td></tr>
+            <tr><td>Is there a cycle? What order can I build in?</td><td>Topological sort</td><td>O(V + E)</td></tr>
+            <tr><td>Cheapest path with weights?</td><td>Dijkstra</td><td>O(E log V)</td></tr>
+            <tr><td>Cheapest path, some weights negative?</td><td>Bellman-Ford</td><td class="c-amber">O(V·E) — slower, but Dijkstra is simply wrong here</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Dijkstra with negative weights does not produce a slightly worse answer — it
+        produces a wrong one</strong>, because it finalises a node's distance on first visit and
+        a negative edge can invalidate that later. This is a genuine trap: the code runs, returns
+        a path, and the path is not shortest.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Representation</div>
+      <div class="concept-title">Adjacency List Unless the Graph Is Dense</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Adjacency list</th><th>Adjacency matrix</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Space</td><td class="c-green">O(V + E)</td><td class="c-red">O(V²) regardless of edges</td></tr>
+            <tr><td>"Is there an edge u→v?"</td><td>O(degree)</td><td class="c-green">O(1)</td></tr>
+            <tr><td>Iterate a node's neighbours</td><td class="c-green">Optimal</td><td>O(V) even for one neighbour</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        Real graphs are overwhelmingly sparse — a machine has a handful of neighbours, not
+        thousands — so adjacency lists win almost always. A matrix over 100,000 nodes is 10
+        billion entries for a graph that probably has a few hundred thousand edges.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Traversal Without a Visited Set</div>
+      <div class="concept-desc">
+        Any graph with a cycle will loop forever if traversal does not record visited nodes.
+        The same bug in a slightly different form — marking visited on <em>dequeue</em> rather
+        than on <em>enqueue</em> — lets a node enter the queue many times, quietly turning a
+        linear traversal into something far worse on dense graphs.
+      </div>
+      <pre class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">bfs</span>(adj, start):
+    seen = {start}                     <span class="com"># mark on ENQUEUE, not on dequeue</span>
+    q = deque([start])
+    <span class="kw">while</span> q:
+        node = q.popleft()
+        <span class="kw">yield</span> node
+        <span class="kw">for</span> nxt <span class="kw">in</span> adj[node]:
+            <span class="kw">if</span> nxt <span class="kw">not in</span> seen:
+                seen.add(nxt)
+                q.append(nxt)</pre>
+      <div class="concept-desc verdict">
+        Cycles also make "dependency resolution" fail in the field: a build system reporting a
+        cycle is doing topological sort correctly, and the cycle is real. Fix the dependencies,
+        not the tool.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: PROBABILISTIC STRUCTURES ────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎲</span>
+    <span class="topic-name">Probabilistic Structures — Bloom Filters, HyperLogLog &amp; Sketches</span>
+    <span class="topic-badge">CS • Data Structures</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The trade</div>
+      <div class="concept-title">Give Up Exactness, Get Constant Memory</div>
+      <div class="concept-desc">
+        These structures answer questions about enormous sets in kilobytes, by being wrong in a
+        bounded and known direction. That last part is what makes them engineering tools rather
+        than approximations: the error is one-sided, so you can build correct systems on top.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Structure</th><th>Answers</th><th>Wrong how</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Bloom filter</td><td>Have I seen this?</td><td class="c-amber">False positives only — never a false negative</td></tr>
+            <tr><td>HyperLogLog</td><td>How many distinct?</td><td>~2% error in ~12 KB, for billions of items</td></tr>
+            <tr><td>Count-min sketch</td><td>How often did this appear?</td><td class="c-amber">Overestimates only — never under</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The one-sidedness is the design.</strong> A Bloom filter saying "no" is
+        definitive, so it is used as a cheap gate in front of an expensive check: databases
+        consult one before reading a disk block, and a "no" skips the read entirely.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Bloom filters</div>
+      <div class="concept-title">A Bit Array, k Hashes, and No Deletion</div>
+      <div class="concept-desc">
+        Insert by hashing an item k ways and setting those k bits. Query by checking the same k
+        bits: any zero means definitely absent; all ones means probably present. Nothing stores
+        the item itself, which is why memory does not grow with item size.
+      </div>
+      <div class="concept-desc">
+        <strong>You cannot delete.</strong> Clearing a bit would also delete every other item
+        sharing it. The false-positive rate is fixed by bits-per-item and k, so the size must be
+        chosen from the expected item count in advance — roughly 10 bits per item gives about 1%.
+        Over-fill it and the rate climbs until every answer is "probably present".
+      </div>
+      <div class="concept-desc verdict">
+        Use one when a false positive costs only a wasted lookup, never where it costs
+        correctness or safety. "Probably breached password" is a fine use; "probably authorised"
+        is not.
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- /domain-body cs -->
