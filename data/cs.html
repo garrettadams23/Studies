@@ -1804,4 +1804,240 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
   </div>
 </div>
 
+
+<!-- ── TOPIC: INSTRUCTION EXECUTION ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚙️</span>
+    <span class="topic-name">Instruction Execution — Pipelining, Superscalar &amp; Why Branches Are Expensive</span>
+    <span class="topic-badge">CS • Architecture</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The model</div>
+      <div class="concept-title">A Processor Is an Assembly Line, Not a Loop</div>
+      <div class="concept-desc">
+        The textbook cycle — fetch, decode, execute, write back — describes one instruction.
+        Real processors overlap them, so while one instruction executes, the next is decoding
+        and a third is being fetched. Throughput approaches one instruction per cycle even
+        though each takes several.
+      </div>
+      <div class="concept-desc">
+        Superscalar designs go further and issue several instructions per cycle across
+        duplicated units, and out-of-order execution reorders them around stalls. The
+        consequence worth internalising: <strong>instruction count is a poor predictor of
+        speed</strong>. What matters is whether the pipeline stays full.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Stalls</div>
+      <div class="concept-title">Three Ways to Empty the Pipeline</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Hazard</th><th>Cause</th><th>Mitigated by</th></tr></thead>
+          <tbody>
+            <tr><td>Data</td><td>An instruction needs a result not yet produced</td><td>Forwarding; reordering</td></tr>
+            <tr><td>Control</td><td>A branch — which instruction comes next is unknown</td><td class="c-amber">Prediction, and speculation</td></tr>
+            <tr><td>Structural</td><td>Two instructions want the same unit</td><td>Duplicating units</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>A mispredicted branch costs 15–20 cycles</strong> — the pipeline is flushed and
+        refilled. Prediction is well above 95% accurate on typical code, which is exactly why
+        <em>unpredictable</em> branches are so costly: a condition that is genuinely random
+        defeats the predictor every other time.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Applying it</div>
+      <div class="concept-title">Sorting the Input Made the Loop Faster — and It Is Not a Trick</div>
+      <div class="concept-desc">
+        The famous demonstration: a loop summing values above a threshold runs several times
+        faster over sorted data than unsorted, with identical instruction counts. Sorted input
+        makes the branch predictable — long runs of taken, then long runs of not-taken — and the
+        predictor gets it right almost every time.
+      </div>
+      <div class="concept-desc verdict">
+        The engineering lesson is not "sort your data". It is that <strong>branchless code can
+        beat branching code</strong> where the condition is unpredictable: a conditional move,
+        arithmetic on the comparison result, or a lookup table has no branch to mispredict.
+        Worth reaching for only in a measured hot loop — it is harder to read, and the compiler
+        often does it already.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: INSTRUCTION SETS ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧬</span>
+    <span class="topic-name">Instruction Sets — x86-64, ARM64, RISC-V &amp; Why the Shift Is Happening</span>
+    <span class="topic-badge">CS • Architecture</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The comparison</div>
+      <div class="concept-title">The RISC-vs-CISC Argument Is Over; the Licensing One Is Not</div>
+      <div class="concept-desc">
+        The old distinction — few simple instructions versus many complex ones — has largely
+        dissolved. Modern x86 decodes its complex instructions into simple internal operations,
+        so internally it looks much like a RISC <span class="acro-exp">(Reduced Instruction Set Computer)</span> machine. What still differs is instruction
+        encoding, memory ordering, and who is allowed to build one.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>x86-64</th><th>ARM64</th><th>RISC-V</th></tr></thead>
+          <tbody>
+            <tr><td>Instruction length</td><td>Variable, 1–15 bytes</td><td class="c-green">Fixed 4 bytes</td><td class="c-green">Fixed, with extensions</td></tr>
+            <tr><td>Memory model</td><td class="c-green">Strong — mostly ordered</td><td class="c-amber">Weak — reordering allowed</td><td class="c-amber">Weak</td></tr>
+            <tr><td>Licensing</td><td>Two vendors</td><td>Licensed from Arm</td><td class="c-green">Open, royalty-free</td></tr>
+            <tr><td>Where you meet it</td><td>Desktops, most servers</td><td>Phones, Apple silicon, cloud instances</td><td>Embedded, and growing</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Variable-length encoding is the real cost.</strong> Finding where each
+        instruction ends is itself work, which makes wide parallel decode harder — one of the
+        structural reasons ARM <span class="acro-exp">(Advanced RISC Machines)</span> designs reach high instruction throughput more easily.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Memory Model Is the Bug You Only See After Porting</div>
+      <div class="concept-desc">
+        x86 has a strong memory model: writes become visible in roughly program order. ARM does
+        not — it may reorder freely unless told otherwise. Concurrent code that relies on
+        incidental ordering therefore works on x86 for years and fails on ARM, intermittently.
+      </div>
+      <div class="concept-desc">
+        The code was always wrong; x86 was hiding it. This became a widespread discovery when
+        Apple silicon and ARM cloud instances arrived, and it is why the correct primitives —
+        atomics with explicit ordering, or the language's memory model — are not optional
+        pedantry. See
+        <span class="xref">Concurrency Primitives — Mutexes, Semaphores, Conditions &amp; Atomics</span>.
+      </div>
+      <div class="concept-desc verdict">
+        Practical consequence for operations: a container image is built for an architecture.
+        <code>exec format error</code> on an ARM node means an amd64 image; multi-architecture
+        images exist precisely for this, and forgetting them is the most common ARM migration
+        incident.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE AL6 (PARTIAL) — LANGUAGES, COMPILERS & RUNTIMES
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: COMPILERS ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏗️</span>
+    <span class="topic-name">How a Compiler Works — Lexing, Parsing, IR <span class="acro-exp">(Incident Response)</span> &amp; Codegen</span>
+    <span class="topic-badge">CS • Compilers</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The pipeline</div>
+      <div class="concept-title">Four Stages, and Knowing Which One Failed</div>
+      <div class="concept-desc">
+        A compiler is a pipeline of translations, each producing a form easier to work with than
+        the last. The practical value in knowing the stages is diagnostic: the stage that failed
+        tells you what kind of mistake you made.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stage</th><th>Produces</th><th>Error looks like</th></tr></thead>
+          <tbody>
+            <tr><td>Lexing</td><td>Tokens</td><td>Unterminated string; stray character</td></tr>
+            <tr><td>Parsing</td><td>A syntax tree</td><td>"Unexpected token" — grammar broken</td></tr>
+            <tr><td>Semantic analysis</td><td>A checked, typed tree</td><td>Undefined name; type mismatch</td></tr>
+            <tr><td>Optimise &amp; generate</td><td>Machine code</td><td class="c-amber">Rarely an error — usually a slow binary or a miscompile</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>A parse error's reported line is where the parser gave up, not where you went
+        wrong.</strong> A missing closing brace is usually reported many lines later, at the
+        first construct that cannot follow. Look upward from the reported line, not at it.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Why IR</div>
+      <div class="concept-title">An Intermediate Representation Turns N×M Into N+M</div>
+      <div class="concept-desc">
+        Supporting N languages on M targets needs N×M compilers written directly — or N
+        front-ends and M back-ends sharing one intermediate representation. That is the whole
+        architecture of LLVM, and the reason a new language can target every processor by
+        emitting one IR.
+      </div>
+      <div class="concept-desc verdict">
+        It also explains a practical asymmetry: optimisations written once in the middle benefit
+        every language using it. A new front-end inherits decades of optimisation work for free,
+        which is why modern languages start faster than their authors could have made them
+        alone.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: RUNTIMES ────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔥</span>
+    <span class="topic-name">Interpreters, Bytecode &amp; JIT <span class="acro-exp">(Just-In-Time)</span> — The Spectrum From Python to the JVM</span>
+    <span class="topic-badge">CS • Runtimes</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The spectrum</div>
+      <div class="concept-title">"Compiled vs Interpreted" Is a Property of Implementations, Not Languages</div>
+      <div class="concept-desc">
+        There is no interpreted language, only interpreted implementations. C has interpreters;
+        Python compiles to bytecode. The real question is <em>when</em> translation to machine
+        code happens, and how much run-time information is available when it does.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Approach</th><th>Translates</th><th>Trade</th></tr></thead>
+          <tbody>
+            <tr><td>Ahead-of-time</td><td>Before running</td><td class="c-green">Fast start, predictable; no run-time knowledge</td></tr>
+            <tr><td>Bytecode interpreter</td><td>To bytecode, then walks it</td><td>Portable, simple, slower</td></tr>
+            <tr><td>JIT</td><td>Hot paths, while running</td><td class="c-amber">Peak speed, slow warm-up, memory cost</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>A JIT can beat ahead-of-time compilation</strong>, which surprises people. It
+        observes what actually happens — which branch is taken, which concrete type flows
+        through — and specialises for it, then de-optimises if the assumption breaks. That
+        information does not exist at build time.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Warm-Up Invalidates Your Benchmark and Your Health Check</div>
+      <div class="concept-desc">
+        A JIT-compiled service is slow for its first seconds or minutes, then several times
+        faster. Two consequences bite in production: a benchmark that measures the first
+        thousand iterations measures the interpreter, and an instance added to a load balancer
+        the moment its health check passes receives full traffic while still cold.
+      </div>
+      <div class="concept-desc verdict">
+        Hence warm-up requests before accepting traffic, and gradual ramping rather than an
+        instant share. This is also why autoscaling a JIT runtime for a traffic spike helps
+        later than expected — the new instances need time to become fast, and the spike may be
+        over before they are.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body cs -->
