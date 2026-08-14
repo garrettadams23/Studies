@@ -30,9 +30,9 @@ jump to what you need:
 | **Execution Handbook** | Ordering constraints, per-domain queue, a concrete first-ten-sessions schedule, three waves specified to the point of transcription, and reusable checklists | 📘 reference |
 | **What is actually outstanding** | An audit of the repo as it really is — defects, the lint trend, undersized domains, content age. **Start here.** | ✅ short list cleared, session 18 |
 
-**Remaining backlog: 882 content cards and 44 engineering items** across
-Phases 3–6, which would take the site from **961 topics / 28 domains** to roughly
-1,800 topics — about 175 working sessions.
+**Remaining backlog: 867 content cards and 44 engineering items** across
+Phases 3–6, which would take the site from **977 topics / 29 domains** to roughly
+1,800 topics — about 170 working sessions.
 
 **If you read only two things:** *"What is actually outstanding"* at the very end
 of this file, and *Part 3 of Phase 6* (how to write a card, the pattern library,
@@ -2054,26 +2054,50 @@ became duplicate tracks:
 ~7 waves, ~35 cards. The theory that keeps turning up in interviews, incident
 reviews and design arguments — taught for practitioners, not for a degree.
 
+> **✅ AL1–AL3 shipped (session 18) — `cs` exists and holds 15 cards.**
+>
+> **The shortlist's claim that this material "is nowhere yet" was false.** `script`
+> already carried six cards on it — *Big O Notation*, *Big O & Algorithms*, three on
+> data structures, and *Thinking in Algorithms* — at beginner-to-intermediate depth,
+> and duplicating each other. Writing AL1's "Big-O in Practice" and AL2's "Arrays,
+> Lists & Memory Layout" as specified would have produced a third Big-O card and a
+> fourth data-structures card.
+>
+> `cs` therefore holds the depth that genuinely was missing and cross-references
+> `script` for the basics — the boundary V2 drew against `sec`, drawn twice more here.
+> Cards skipped as duplicates: the Big-O introduction, the arrays/lists introduction,
+> and the container-choosing card. Cards written instead: what Big-O hides, amortized
+> analysis, hash flooding, trees beyond BST, graphs, probabilistic structures,
+> catastrophic backtracking, reservoir sampling.
+>
+> **`script` still duplicates itself** — two Big-O cards and three data-structure
+> cards, at overlapping depth. Not touched here, because merging content is a
+> different act from adding it and deserves its own session. It is the strongest
+> remaining candidate in that domain, ahead of anything on the AL4–AL7 list.
+>
+> AL4–AL7 (operating systems, architecture, compilers, distributed systems) remain:
+> 20 cards, all genuinely absent from the site.
+
 **Wave AL1 — Complexity & Correctness**
-- [ ] Big-O in Practice — what the notation hides, and when constants win
-- [ ] Time vs Space Trade-offs — caching, precomputation, and the memory you pay
-- [ ] Amortized Analysis — why a dynamic array is O(1) "on average"
-- [ ] Recursion & Induction — reasoning about a function that calls itself
-- [ ] P, NP & Why It Matters to You — intractability, approximation, and knowing when to stop
+- [x] Big-O in Practice — what the notation hides, and when constants win
+- [x] Time vs Space Trade-offs — caching, precomputation, and the memory you pay
+- [x] Amortized Analysis — why a dynamic array is O(1) "on average"
+- [x] Recursion & Induction — reasoning about a function that calls itself
+- [x] P, NP & Why It Matters to You — intractability, approximation, and knowing when to stop
 
 **Wave AL2 — Data Structures From First Principles**
-- [ ] Arrays, Lists & Memory Layout — cache lines, locality, and why arrays win
-- [ ] Hash Tables — hashing, collisions, load factor, and the DoS that exploits them
-- [ ] Trees — BST, balanced trees, tries, heaps, and what each is actually for
-- [ ] Graphs — representations, traversal, shortest path, topological sort
-- [ ] Probabilistic Structures — Bloom filters, HyperLogLog, count-min sketch
+- [x] Arrays, Lists & Memory Layout — cache lines, locality, and why arrays win
+- [x] Hash Tables — hashing, collisions, load factor, and the DoS that exploits them
+- [x] Trees — BST, balanced trees, tries, heaps, and what each is actually for
+- [x] Graphs — representations, traversal, shortest path, topological sort
+- [x] Probabilistic Structures — Bloom filters, HyperLogLog, count-min sketch
 
 **Wave AL3 — Algorithms Worth Knowing**
-- [ ] Sorting & Searching — the classics, and why your language picked the one it did
-- [ ] Divide & Conquer, Greedy, Dynamic Programming — recognising which applies
-- [ ] String Algorithms — matching, edit distance, and where regex fits
-- [ ] Randomised Algorithms — sampling, reservoir sampling, Monte Carlo
-- [ ] Algorithm Interview Patterns — mapped to the site's coding-interview card
+- [x] Sorting & Searching — the classics, and why your language picked the one it did
+- [x] Divide & Conquer, Greedy, Dynamic Programming — recognising which applies
+- [x] String Algorithms — matching, edit distance, and where regex fits
+- [x] Randomised Algorithms — sampling, reservoir sampling, Monte Carlo
+- [x] Algorithm Interview Patterns — mapped to the site's coding-interview card
 
 **Wave AL4 — Operating System Theory**
 - [ ] Processes, Threads & Scheduling — context switches and what they cost
@@ -2549,8 +2573,8 @@ site as it stands today:
 3. **AX freshness metadata** — cheapest now, impossible later.
 4. ~~**V1–V3 (Windows Server, AD DS, Group Policy)**~~ — ✅ shipped session 18.
    `infra`, 15 cards.
-5. **AL1–AL3 (complexity, data structures, algorithms)** — the most-requested
-   interview material, and it is nowhere yet.
+5. ~~**AL1–AL3 (complexity, data structures, algorithms)**~~ — ✅ shipped session 18
+   as `cs`, 15 cards. **"It is nowhere yet" was wrong** — see the note under Track AL.
 6. **AY split of `data/script.html`** — 719 KB in one file is the single biggest
    drag on actually doing any of the above.
 
@@ -4490,7 +4514,31 @@ happened to a tool built specifically to avoid it: **a check that can quietly st
 checking is worse than no check**, since it also reports success. Worth re-reading before
 adding a counter, a lint rule, or an assertion to this repo.
 
-### First content off the backlog — Track V1–V3
+### Content off the backlog — Tracks V1–V3 and AL1–AL3
+
+Both remaining content items on the Phase-5 priority shortlist are done: 30 cards,
+two new domains at exactly the 15-card bar, six commits. Site 943 → **977 topics,
+27 → 29 domains**.
+
+**The finding that matters more than the cards: the track lists are stale, and in a
+predictable direction.** Both tracks claimed a gap that was partly or wholly already
+filled — Track V by `sec`'s Active Directory card, Track AL by six cards in `script`
+including a claim that the material "is nowhere yet". Every track in this file was
+written by looking at the *subject*, not at the *site*, and the site has moved since.
+
+The habit that fixes it costs one command before each wave:
+
+```
+python3 -c "import re,json,pathlib; [print(d,n) for d in [x['id'] for x in
+  json.load(open('data/domains.json'))] for n in re.findall(
+  r'class=\"topic-name\"[^>]*>(.*?)</span', pathlib.Path(f'data/{d}.html').read_text(), re.S)]"
+```
+
+Grep it for the subject before writing. Where a card already exists, either write the
+depth above it and link down — which is what both domains do — or cut the card. Do not
+write the second introduction.
+
+### Detail — Track V1–V3
 
 With the audit clear, the shortlist's remaining content item was V1–V3, "the largest
 genuine subject gap on the site". Shipped: `infra`, 15 cards over three waves, one
