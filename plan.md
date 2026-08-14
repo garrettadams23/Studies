@@ -4325,6 +4325,52 @@ Related and still unresolved from session 13: **`VOLATILE_HINTS` is too broad to
 That is a content convention, and conventions only stick if the linter can check them, so
 design the check first.
 
+### ✅ Session 18 — the check, and a surprise about the content
+
+Built as specified: the claim is marked where it sits.
+
+```html
+Used enterprise mini PC (<span class="volatile" data-checked="2026-08">~$80-150</span>)
+```
+
+`data-checked` is when the *claim* was verified, deliberately distinct from the card's
+`data-reviewed` — rewording a paragraph is not the same act as confirming a price. The
+reader gets a dotted underline and the date on hover, inline in print; that matters,
+because a convention that only feeds a linter gets abandoned, and this one pays the
+reader back.
+
+`lint_content.py` errors on all four ways to get it wrong: a mark with no date, a
+malformed month, a date in the future, and `data-checked` on something not marked
+volatile. `stamp_freshness.py --report` now lists **claims**, oldest first, naming the
+claim and its topic. The old keyword sweep moved to `--candidates` and prints a warning
+about what it is.
+
+**The surprise: there is almost nothing to mark.** Going looking for real volatile
+claims across 888 topics turned up:
+
+| Looked for | Found |
+|---|---|
+| `as of <year>` dated claims | **0** |
+| Console breadcrumbs (`A > B > C`) | `project > folder > org` (a GCP concept), `TimeGenerated > ago` (a KQL operator), `db > myapp` (shell redirection) — **0 real ones** |
+| Prices | 4 genuine ones, all home-lab hardware in `career` |
+| Service limits | none stated as a number |
+
+So the 184 flagged topics were essentially **all** false positives, and the freshness
+anxiety behind §4 was misplaced. This site is conceptual — how BGP works, what Zero
+Trust means, which key opens DevTools. That does not rot. Four claims are marked, which
+is not a token sample; it is the population.
+
+That reframes the content-age worry above. 274 topics carrying `2026-06` is not a debt,
+because almost none of them assert anything that can become false. The number to watch
+is `--report`, and it currently has four rows.
+
+A third instance of the same lesson, after the hex counter and the dead classes: **the
+heuristic was not just noisy, it was measuring a problem that did not exist.** Matching
+claim *shape* instead of product names halved the flags, and was still wrong — it cannot
+separate "Settings &gt; Devices &gt; Enrol" from "Python → Bash → PowerShell", because
+the difference is meaning. Only a human marking the claim can carry that, which is why
+the convention is the answer and no regex was ever going to be.
+
 ## 5. Unknowns I cannot resolve alone
 
 | Question | Why it is blocking | What would settle it |
@@ -4387,9 +4433,10 @@ than fixed:
   blind.
 - `lifestyle` is now the weakest chip at 4 cards, and inherits the question `spirit` just
   answered.
-- The lint fix is a worked example of the §4 `VOLATILE_HINTS` problem — a signal too
-  broad to act on becomes actionable only once the check marks the claim. `VOLATILE_HINTS`
-  still matches 182 of 943 topics and still needs exactly that treatment.
+- ~~`VOLATILE_HINTS` still needs the same treatment~~ — ✅ done, see §4. The convention,
+  the linter check and the report all exist. The finding underneath is the useful part:
+  the site has four volatile claims in total, so content age was never the risk it looked
+  like.
 
 One correction to the audit above, found by doing it: §1 said to "re-run the generator"
 for the cheat sheet. There was no generator to re-run. The file had been written by hand

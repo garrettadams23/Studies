@@ -2226,6 +2226,42 @@ mark.sh {
   .domain-section { break-inside: avoid; }
   .note, .concept-card, table { break-inside: avoid; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  /* Paper has no hover, so the check date goes inline. */
+  .volatile::after { content: " [checked " attr(data-checked) "]"; font-size: 0.85em; color: #555; }
+}
+
+/* ── Volatile claims ────────────────────────────────────────────────────────
+   A console path, a price, a limit — the specific things that go out of date,
+   marked at the claim rather than guessed at the topic. `data-checked` is when
+   the claim was last verified, which is not the same as when the card was last
+   edited, and that difference is the whole point.
+
+       <span class="volatile" data-checked="2026-08">Devices &gt; Enrol</span>
+
+   tools/lint_content.py enforces the shape; tools/stamp_freshness.py --report
+   consumes it. See CONTRIBUTING.md. */
+.volatile {
+  border-bottom: 1px dotted var(--muted);
+  cursor: help;
+  position: relative;
+}
+.volatile:hover::after,
+.volatile:focus-visible::after {
+  content: "checked " attr(data-checked);
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  z-index: 20;
+  white-space: nowrap;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  pointer-events: none;
 }
 
 /* ── Utility text-color classes (prefer these over inline style="color:…") ── */

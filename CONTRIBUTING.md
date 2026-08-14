@@ -70,6 +70,29 @@ in `:root` in `style.css`: `--cyan` `--green` `--amber` `--red` `--purple` `--mu
 `--rose` `--fuchsia` `--lime`, plus dimmed `--amber-2/-3`, `--green-2/-3` and `--cyan-2`
 for three-tone ladders. Add a variable there rather than a literal here.
 
+## Claims that go out of date
+
+Most of this site is conceptual and does not rot — how BGP works, what Zero Trust means,
+a keyboard shortcut. A few things do: a console path, a street price, a service limit, a
+version number. Mark those **at the claim**, not on the card:
+
+```html
+Used enterprise mini PC (<span class="volatile" data-checked="2026-08">~$80-150</span>)
+```
+
+`data-checked` is the month the claim was last *verified*, which is deliberately not the
+card's `data-reviewed` — rewording a paragraph is not the same act as confirming a price
+is still right. The reader gets a dotted underline and the date on hover; in print it
+appears inline.
+
+`python tools/stamp_freshness.py --report` then lists claims oldest-first, by claim
+rather than by topic. `--candidates` runs a keyword guess to help you find things worth
+marking — treat it as a prompt to read the card, never as a finding: it flags one topic
+in five, including keyboard-shortcut cards, because a word like "console" in prose tells
+you nothing.
+
+Do not mark something that is not going to move. `$0` stays free.
+
 For repeated SVG diagram colours, style the shapes from a class on the `<svg>` instead —
 `.topo-svg line { stroke: var(--sky); }` and `math.html`'s `msv-*` set are the pattern.
 

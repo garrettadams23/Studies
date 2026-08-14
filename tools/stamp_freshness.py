@@ -63,9 +63,26 @@ HEADER_H_TAG_RE = re.compile(r"</?h[1-6]\b[^>]*>")
 # matches markup here has to tolerate that, or it silently under-reports.
 TOPIC_NAME_RE = re.compile(r'<span\b[^>]*class="topic-name"[^>]*>(.*?)</span\s*>', re.S)
 
-# Terms that mark a topic as tracking something that moves: vendor consoles,
-# product names, prices, versions. Only these need periodic review — the OSI
-# model does not. Used to *suggest* `data-volatile`, never to apply it.
+# A marked claim: <span class="volatile" data-checked="YYYY-MM">…</span>.
+# This is what --report reads. The claim carries its own verification date,
+# which is deliberately not the card's `data-reviewed`: rewording a card is not
+# the same act as re-checking that a console path still exists.
+VOLATILE_CLAIM_RE = re.compile(
+    r'<(\w+)\b[^>]*\bclass="[^"]*\bvolatile\b[^"]*"[^>]*'
+    r'\bdata-checked="(\d{4}-\d{2})"[^>]*>(.*?)</\1\s*>',
+    re.S,
+)
+
+# Terms that *might* indicate something that moves. Kept only to help an author
+# find claims worth marking — never as the report itself.
+#
+# It was the report, and it was not good enough: 184 of 888 topics, 20% of the
+# site, including "Google Chrome — Keyboard Shortcuts" and "Access Control
+# Models". `console` alone was the sole trigger for 25 of them. Matching the
+# *shape* of a claim instead (breadcrumbs, prices, versions) halves the noise
+# and still cannot tell "Settings > Devices > Enrol" from the comparison
+# "Python → Bash → PowerShell", because the difference is meaning, not form.
+# Hence the explicit mark; this is now a candidate finder, under --candidates.
 VOLATILE_HINTS = re.compile(
     r"\b(Intune|MECM|SCCM|Entra|Azure|AWS|GCP|Jamf|Workspace ONE|Autopilot|"
     r"portal|console|admin center|pricing|price|licen[cs]e|SKU|tier|"
@@ -294,8 +311,56 @@ def stamp(check_only=False):
     return 1 if (check_only and changed) else 0
 
 
+def months_since(stamp):
+    y, m = int(stamp[:4]), int(stamp[5:7])
+    now = datetime.now(timezone.utc)
+    return (now.year - y) * 12 + (now.month - m)
+
+
 def report(limit=50):
-    """Oldest topics that look like they track something that moves."""
+    """Oldest *claims* that have been explicitly marked volatile.
+
+    Reports the claim, not the topic, because "this card mentions Intune" is not
+    something anyone can act on, whereas "this console path was last checked in
+    June" is.
+    """
+    rows = []
+    for path in sorted(DATA.glob("*.html")):
+        if path.name in EXCLUDE:
+            continue
+        text = path.read_text(encoding="utf-8")
+        lines = text.splitlines(keepends=True)
+        spans = list(topic_spans(lines))
+        for m in VOLATILE_CLAIM_RE.finditer(text):
+            line = text[: m.start()].count("\n") + 1
+            topic = "(outside a topic)"
+            for start, end in spans:
+                if start <= line <= end:
+                    plain = ACRO_SPAN_RE.sub("", "".join(lines[start - 1:end]))
+                    got = TOPIC_NAME_RE.search(plain)
+                    if got:
+                        topic = unescape(re.sub(r"<[^>]+>|\s+", " ", got.group(1))).strip()
+                    break
+            claim = unescape(re.sub(r"<[^>]+>|\s+", " ", m.group(3))).strip()
+            rows.append((months_since(m.group(2)), m.group(2), path.stem, topic, claim))
+
+    if not rows:
+        print("No claims are marked volatile yet.\n")
+        print('Mark one with <span class="volatile" data-checked="YYYY-MM">…</span>')
+        print("around the specific thing that goes out of date — a console path, a")
+        print("price, a limit. `--candidates` suggests topics worth looking at.")
+        return 0
+
+    rows.sort(reverse=True)
+    print(f"{len(rows)} marked claims. Oldest {min(limit, len(rows))}:\n")
+    print(f"{'age':>4}  {'checked':<9} {'domain':<10} {'topic':<38} claim")
+    for age, when, dom, topic, claim in rows[:limit]:
+        print(f"{age:>3}m  {when:<9} {dom:<10} {topic[:36]:<38} {claim[:44]}")
+    return 0
+
+
+def candidates(limit=50):
+    """Topics whose prose *might* contain a claim worth marking. A guess."""
     rows = []
     for path in sorted(DATA.glob("*.html")):
         if path.name in EXCLUDE:
@@ -316,15 +381,22 @@ def report(limit=50):
                 name = unescape(re.sub(r"<[^>]+>|\s+", " ", name.group(1))).strip()
             else:
                 name = "(no .topic-name — see the content linter)"
-            volatile = 'data-volatile="true"' in lines[start - 1] or bool(VOLATILE_HINTS.search(head))
-            if not volatile:
+            if not VOLATILE_HINTS.search(head):
+                continue
+            # Already marked up? Then it is not a candidate; it is in --report.
+            if VOLATILE_CLAIM_RE.search(head):
                 continue
             age = (datetime.now(timezone.utc) - datetime(int(m.group(1)), int(m.group(2)), 1,
                                                          tzinfo=timezone.utc)).days // 30
             rows.append((age, path.stem, name, f"{m.group(1)}-{m.group(2)}"))
 
     rows.sort(reverse=True)
-    print(f"{len(rows)} topics look volatile. Oldest {min(limit, len(rows))}:\n")
+    print(f"{len(rows)} topics mention something that may move, and have no marked "
+          f"claim. Oldest {min(limit, len(rows))}:\n")
+    print("This is a keyword guess, not a finding — it flags 1 topic in 5, and it")
+    print("cannot tell a console path from prose. Read the card, wrap the specific")
+    print('claim in <span class="volatile" data-checked="YYYY-MM">, and it moves to')
+    print("--report where it can actually be tracked.\n")
     print(f"{'age':>4}  {'reviewed':<9} {'domain':<10} topic")
     for age, dom, name, when in rows[:limit]:
         print(f"{age:>3}m  {when:<9} {dom:<10} {name[:62]}")
@@ -336,4 +408,6 @@ if __name__ == "__main__":
         sys.exit(verify())
     if "--report" in sys.argv:
         sys.exit(report())
+    if "--candidates" in sys.argv:
+        sys.exit(candidates())
     sys.exit(stamp(check_only="--check" in sys.argv))

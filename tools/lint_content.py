@@ -23,6 +23,7 @@ Usage:
 import collections
 import re
 import sys
+from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -139,6 +140,39 @@ def dead_first_cell_classes(text):
                 yield text[:at].count("\n") + 1, hit.group(0)
 
 
+# A volatile claim is marked where the claim is, not where the topic is. The
+# keyword heuristic this replaces flagged 184 of 888 topics — including "Google
+# Chrome — Keyboard Shortcuts" and "Access Control Models" — because prose
+# mentioned "console" or "tier". A convention only sticks if it can be checked,
+# so the shape is enforced here before anything is asked to rely on it.
+VOLATILE_RE = re.compile(r'<(\w+)\b([^>]*\bclass="[^"]*\bvolatile\b[^"]*"[^>]*)>')
+CHECKED_RE = re.compile(r'\bdata-checked="([^"]*)"')
+STRAY_CHECKED_RE = re.compile(r'<(\w+)\b([^>]*\bdata-checked="[^"]*"[^>]*)>')
+
+
+def volatile_problems(text, today):
+    """(line_number, message) for malformed volatile-claim markup."""
+    for m in VOLATILE_RE.finditer(text):
+        line = text[: m.start()].count("\n") + 1
+        got = CHECKED_RE.search(m.group(2))
+        if not got:
+            yield line, ('class="volatile" without data-checked — the mark is '
+                         'only useful if it says when the claim was verified')
+            continue
+        stamp = got.group(1)
+        if not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", stamp):
+            yield line, f'data-checked="{stamp}" is not a YYYY-MM month'
+        elif stamp > today:
+            yield line, f'data-checked="{stamp}" is in the future (now {today})'
+
+    for m in STRAY_CHECKED_RE.finditer(text):
+        if "volatile" in m.group(2):
+            continue
+        line = text[: m.start()].count("\n") + 1
+        yield line, ('data-checked without class="volatile" — nothing reads it, '
+                     'so the claim will not appear in the freshness report')
+
+
 def topic_label(block):
     """What script.js would use as the slug source, expansions removed."""
     plain = ACRO_SPAN_RE.sub("", block)
@@ -156,6 +190,7 @@ def main():
     strict = "--strict" in sys.argv
     errors, warns = [], collections.Counter()
     seen_slugs = {}
+    today = datetime.now(timezone.utc).strftime("%Y-%m")
 
     # Domain order matters: script.js walks .domain-section in document order,
     # so a collision is only real if it survives that ordering.
@@ -226,6 +261,9 @@ def main():
                 f":root in style.css, e.g. var(--sky), or style the element "
                 f"with a class"
             )
+
+        for line_no, msg in volatile_problems(text, today):
+            errors.append(f"{name}:{line_no}: {msg}")
 
         for line_no, cls in dead_first_cell_classes(text):
             errors.append(
