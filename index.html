@@ -50261,7 +50261,7 @@ WAVE AL1 — COMPLEXITY & CORRECTNESS
 <div class="concept-label">Orientation</div>
 <div class="concept-title">You Already Know What Big-O Measures; This Is Where It Misleads</div>
 <div class="concept-desc">
-<strong>Big O Notation — Measuring Algorithm Efficiency</strong> in the Scripting
+<span class="xref">Big O Notation — Measuring Algorithm Efficiency</span> in the Scripting
 domain covers the notation itself. This card is the follow-up nobody gets taught:
 Big-O deliberately discards information, and the discarded information is what
 decides which code is faster on the machine you actually own.
@@ -50316,9 +50316,10 @@ complexity analysis was correct and the work was pointless.
 </div>
 <div class="concept-desc">
 Before optimising an algorithm, establish that computation is the cost. In most
-application code it is not: input/output dominates, and the useful numbers are the ones
-in <em>Caches &amp; the Memory Hierarchy</em> — roughly nanoseconds for memory,
-microseconds for local storage, milliseconds for a network round trip. Those three
+application code it is not: input/output dominates, and the useful numbers are the ones in
+<span class="xref">Memory Layout &amp; Cache Locality — Why Arrays Beat Linked Lists</span> —
+roughly nanoseconds for memory, microseconds for local storage, milliseconds for a
+network round trip. Those three
 orders of magnitude decide more than an exponent usually does.
 </div>
 </div>
@@ -50620,7 +50621,7 @@ WAVE AL2 — DATA STRUCTURES FROM FIRST PRINCIPLES
 <div class="concept-label">Orientation</div>
 <div class="concept-title">Which Structure to Pick Is Covered; This Is Why the Table Lies</div>
 <div class="concept-desc">
-<strong>Choosing the Right Data Structure</strong> in the Scripting domain has the
+<span class="xref">Choosing the Right Data Structure</span> in the Scripting domain has the
 operation-cost table. This card explains why that table mispredicts real performance so
 often: it counts operations, and the machine charges for <em>memory access patterns</em>.
 </div>
@@ -50661,8 +50662,8 @@ memmove of a contiguous block is extremely fast.
 <div class="concept-desc">
 If you process one field across many records, storing an array per field beats an array
 of records: the fetched cache lines contain only data you asked for. This is the same
-insight behind columnar storage — see <em>Columnar Storage</em> in the Data domain — and
-behind why a scan over a column store outruns a row store on analytics by so much.
+insight behind columnar storage — see <span class="xref">Columnar Engines — Parquet, DuckDB &amp; ClickHouse</span> in the Data domain —
+and behind why a scan over a column store outruns a row store on analytics by so much.
 </div>
 <pre class="code-block"><span class="com"># Array of structs: summing one field drags every other field into cache</span>
 <span class="kw">struct</span> P { <span class="kw">float</span> x, y, z; <span class="kw">char</span> name[<span class="m">64</span>]; };
@@ -50819,8 +50820,7 @@ this by making each node hold hundreds of keys — one page — so the same mill
 three levels deep and cost three reads.
 </div>
 <div class="concept-desc verdict">
-This is the single most important structure in databases, and <em>Indexes Explained —
-B-tree, Hash &amp; Covering</em> in the Data domain covers the query-planning side. The
+This is the single most important structure in databases, and <span class="xref">Indexes Explained — B-tree, Hash &amp; Covering</span> in the Data domain covers the query-planning side. The
 theory answer to "why not a binary tree on disk?" is: the memory hierarchy has a cliff
 in it, and B-trees are shaped around the cliff.
 </div>
@@ -51310,8 +51310,8 @@ leaves something working if time runs out.
 <div class="concept-desc">
 Then: clarify input constraints before coding, say the complexity of what you are about
 to write, and test on an empty input and a single element. Most failed submissions are
-edge cases, not algorithms. See <em>Coding Interviews</em> in the Career domain for the
-surrounding process.
+edge cases, not algorithms. See <span class="xref">Interview Preparation — Getting the Job</span> in the Career domain
+for the surrounding process.
 </div>
 </div>
 </div>
@@ -51332,7 +51332,8 @@ WAVE AL4 — OPERATING SYSTEM THEORY
 <div class="concept-label">Orientation</div>
 <div class="concept-title">Linux Covers the Commands; This Is Why the Numbers Come Out That Way</div>
 <div class="concept-desc">
-<strong>Processes &amp; Signals</strong> and <strong>Process Management</strong> in the
+<span class="xref">Processes &amp; Signals — Running Programs in Linux</span> and
+<span class="xref">Process Management – Finding and Taming Runaway Processes</span> in the
 Linux domain cover finding and controlling processes. This card is the model underneath:
 what the kernel is actually choosing between, and why adding threads so often fails to
 make anything faster.
@@ -51708,8 +51709,7 @@ over availability, deliberately.
 The operational trap is forcing a new configuration to "get it back up". That can commit
 a state the old majority never agreed, and when the missing nodes return the histories
 conflict. Restore the nodes if there is any chance of it; forcing quorum is a
-data-loss decision and should be recorded as one. See <em>CAP Theorem &amp; Consistency
-Models</em> in the DevOps domain for the trade-off this sits inside.
+data-loss decision and should be recorded as one. See <span class="xref">CAP Theorem &amp; Consistency Models</span> in the DevOps domain for the trade-off this sits inside.
 </div>
 </div>
 </div>
@@ -58456,8 +58456,8 @@ every other step of an intrusion.
 The standard mitigation is a <strong>privileged access workstation</strong>: a separate,
 hardened machine with no mail client and no general browsing, used only for
 administration. Where that is not affordable, the minimum is a separate admin account
-that never signs in to a daily-driver machine. See
-<em>Tiered Administration</em> in the Security domain for the model this belongs to.
+that never signs in to a daily-driver machine — the smallest useful version of the
+tiered-administration model.
 </div>
 </div>
 </div>
@@ -58635,7 +58635,7 @@ WAVE V2 — ACTIVE DIRECTORY DOMAIN SERVICES
 <div class="concept-title">The Objects Are Covered Elsewhere; This Is the Decision</div>
 <div class="concept-desc">
 What a forest, domain and OU <em>are</em> — and how they are attacked — is in
-<strong>Active Directory: Structure, Objects &amp; Attacks</strong> in the Security
+<span class="xref">Active Directory — Structure, Objects &amp; Attacks</span> in the Security
 domain. This card answers the question that actually lands on an administrator:
 something needs to be separated, so <strong>which boundary do you reach for?</strong>
 Almost always the answer is the cheapest one, and almost always people pick a more
@@ -59523,8 +59523,8 @@ account needs a new ticket.
 <div class="concept-label">Orientation</div>
 <div class="concept-title">The Flow Is Covered; These Are the Three Things That Break It</div>
 <div class="concept-desc">
-<strong>Kerberos Authentication Flow</strong> in the Security domain explains the ticket
-exchange, and <strong>Kerberos Attacks</strong> in Red Team covers abuse. Operationally,
+<span class="xref">Kerberos Authentication Flow</span> in the Security domain explains the ticket
+exchange, and <span class="xref">Kerberos Attacks — Rubeus &amp; Kerbrute</span> in Red Team covers abuse. Operationally,
 almost every Kerberos incident is one of three causes: a service principal name that is
 missing or duplicated, delegation configured too broadly, or clocks that have drifted.
 </div>
@@ -59691,7 +59691,7 @@ service desk. These do not appear in any account review, because no account look
 </div>
 <div class="concept-desc verdict">
 <strong>Enumerate this with the attacker's tooling.</strong> BloodHound — see
-<em>BloodHound &amp; SharpHound</em> in Red Team — computes exactly these paths and is
+<span class="xref">BloodHound &amp; SharpHound — Attack-Path Graphing</span> in Red Team — computes exactly these paths and is
 the fastest honest answer to "who can become Domain Admin?". Running it against your own
 directory before someone else does is ordinary defensive work.
 </div>
@@ -59714,7 +59714,7 @@ WAVE V5 — CORE NETWORK SERVICES (ON-PREM)
 <div class="concept-label">Orientation</div>
 <div class="concept-title">The Protocol Is Covered; This Is the Service AD <span class="acro-exp">(Active Directory)</span> Cannot Live Without</div>
 <div class="concept-desc">
-<strong>DNS</strong> in the Networking domain covers records, resolution and DNSSEC <span class="acro-exp">(Domain Name System Security Extensions)</span>.
+<span class="xref">DNS Deep Dive — Records, Resolution &amp; Security</span> in the Networking domain covers records, resolution and DNSSEC <span class="acro-exp">(Domain Name System Security Extensions)</span>.
 This card is about running Microsoft's DNS as the directory's locator service — because
 in an AD environment, DNS is not a supporting service. It is how every client finds a
 domain controller, and almost every "Active Directory is broken" incident is DNS.
@@ -59938,7 +59938,7 @@ WAVE V6 — CERTIFICATE SERVICES
 <div class="concept-label">Orientation</div>
 <div class="concept-title">The Theory Is Covered; This Is the Deployment You Have to Live With</div>
 <div class="concept-desc">
-<strong>PKI <span class="acro-exp">(Public Key Infrastructure)</span></strong> in the Security domain covers chains of trust, certificates and
+<span class="xref">PKI &amp; Certificate Lifecycle</span> in the Security domain covers chains of trust, certificates and
 revocation as concepts. This card is about the internal certificate authority you
 actually run — a system whose design decisions are effectively permanent, because
 rebuilding a root means re-issuing every certificate it ever signed.
@@ -59958,7 +59958,7 @@ the issuing CA's certificate — and is then powered off and stored securely. An
 <tbody>
 <tr><td>Domain-joined</td><td class="c-red">No — standalone, deliberately</td><td class="c-green">Yes, for templates and auto-enrolment</td></tr>
 <tr><td>Powered on</td><td>Only to sign or re-publish a CRL <span class="acro-exp">(Certificate Revocation List)</span></td><td>Always</td></tr>
-<tr><td>Compromise means</td><td class="c-red">Rebuild the entire PKI</td><td class="c-amber">Revoke its certificate, stand up a new one</td></tr>
+<tr><td>Compromise means</td><td class="c-red">Rebuild the entire PKI <span class="acro-exp">(Public Key Infrastructure)</span></td><td class="c-amber">Revoke its certificate, stand up a new one</td></tr>
 </tbody>
 </table>
 </div>
@@ -60038,7 +60038,7 @@ vulnerability.
 <div class="concept-label">Defender's view</div>
 <div class="concept-title">ESC1–ESC8 Are Your Audit Checklist</div>
 <div class="concept-desc">
-<strong>ADCS Abuse — Certipy &amp; the ESC Techniques</strong> in the Red Team domain
+<span class="xref">ADCS Abuse — Certipy &amp; the ESC Techniques</span> in the Red Team domain
 covers exploitation. The defensive point is that these are named, enumerable
 misconfigurations — so the same tooling that finds them for an attacker finds them for
 you, faster than reading template properties by hand.

@@ -334,8 +334,8 @@ Add-WindowsCapability <span class="kw">-Online</span> <span class="kw">-Name</sp
         The standard mitigation is a <strong>privileged access workstation</strong>: a separate,
         hardened machine with no mail client and no general browsing, used only for
         administration. Where that is not affordable, the minimum is a separate admin account
-        that never signs in to a daily-driver machine. See
-        <em>Tiered Administration</em> in the Security domain for the model this belongs to.
+        that never signs in to a daily-driver machine — the smallest useful version of the
+        tiered-administration model.
       </div>
     </div>
 
@@ -528,7 +528,7 @@ Get-LapsADPassword <span class="kw">-Identity</span> SRV01 <span class="kw">-AsP
       <div class="concept-title">The Objects Are Covered Elsewhere; This Is the Decision</div>
       <div class="concept-desc">
         What a forest, domain and OU <em>are</em> — and how they are attacked — is in
-        <strong>Active Directory: Structure, Objects &amp; Attacks</strong> in the Security
+        <span class="xref">Active Directory — Structure, Objects &amp; Attacks</span> in the Security
         domain. This card answers the question that actually lands on an administrator:
         something needs to be separated, so <strong>which boundary do you reach for?</strong>
         Almost always the answer is the cheapest one, and almost always people pick a more
@@ -1467,8 +1467,8 @@ Test-ADServiceAccount <span class="kw">-Identity</span> svc-webapp
       <div class="concept-label">Orientation</div>
       <div class="concept-title">The Flow Is Covered; These Are the Three Things That Break It</div>
       <div class="concept-desc">
-        <strong>Kerberos Authentication Flow</strong> in the Security domain explains the ticket
-        exchange, and <strong>Kerberos Attacks</strong> in Red Team covers abuse. Operationally,
+        <span class="xref">Kerberos Authentication Flow</span> in the Security domain explains the ticket
+        exchange, and <span class="xref">Kerberos Attacks — Rubeus &amp; Kerbrute</span> in Red Team covers abuse. Operationally,
         almost every Kerberos incident is one of three causes: a service principal name that is
         missing or duplicated, delegation configured too broadly, or clocks that have drifted.
       </div>
@@ -1637,7 +1637,7 @@ Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-Time
       </div>
       <div class="concept-desc verdict">
         <strong>Enumerate this with the attacker's tooling.</strong> BloodHound — see
-        <em>BloodHound &amp; SharpHound</em> in Red Team — computes exactly these paths and is
+        <span class="xref">BloodHound &amp; SharpHound — Attack-Path Graphing</span> in Red Team — computes exactly these paths and is
         the fastest honest answer to "who can become Domain Admin?". Running it against your own
         directory before someone else does is ordinary defensive work.
       </div>
@@ -1663,7 +1663,7 @@ Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-Time
       <div class="concept-label">Orientation</div>
       <div class="concept-title">The Protocol Is Covered; This Is the Service AD <span class="acro-exp">(Active Directory)</span> Cannot Live Without</div>
       <div class="concept-desc">
-        <strong>DNS</strong> in the Networking domain covers records, resolution and DNSSEC <span class="acro-exp">(Domain Name System Security Extensions)</span>.
+        <span class="xref">DNS Deep Dive — Records, Resolution &amp; Security</span> in the Networking domain covers records, resolution and DNSSEC <span class="acro-exp">(Domain Name System Security Extensions)</span>.
         This card is about running Microsoft's DNS as the directory's locator service — because
         in an AD environment, DNS is not a supporting service. It is how every client finds a
         domain controller, and almost every "Active Directory is broken" incident is DNS.
@@ -1892,7 +1892,7 @@ New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw"
       <div class="concept-label">Orientation</div>
       <div class="concept-title">The Theory Is Covered; This Is the Deployment You Have to Live With</div>
       <div class="concept-desc">
-        <strong>PKI <span class="acro-exp">(Public Key Infrastructure)</span></strong> in the Security domain covers chains of trust, certificates and
+        <span class="xref">PKI &amp; Certificate Lifecycle</span> in the Security domain covers chains of trust, certificates and
         revocation as concepts. This card is about the internal certificate authority you
         actually run — a system whose design decisions are effectively permanent, because
         rebuilding a root means re-issuing every certificate it ever signed.
@@ -1912,7 +1912,7 @@ New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw"
           <tbody>
             <tr><td>Domain-joined</td><td class="c-red">No — standalone, deliberately</td><td class="c-green">Yes, for templates and auto-enrolment</td></tr>
             <tr><td>Powered on</td><td>Only to sign or re-publish a CRL <span class="acro-exp">(Certificate Revocation List)</span></td><td>Always</td></tr>
-            <tr><td>Compromise means</td><td class="c-red">Rebuild the entire PKI</td><td class="c-amber">Revoke its certificate, stand up a new one</td></tr>
+            <tr><td>Compromise means</td><td class="c-red">Rebuild the entire PKI <span class="acro-exp">(Public Key Infrastructure)</span></td><td class="c-amber">Revoke its certificate, stand up a new one</td></tr>
           </tbody>
         </table>
       </div>
@@ -1993,7 +1993,7 @@ certutil -CRL                       <span class="com"># force a fresh CRL now</s
       <div class="concept-label">Defender's view</div>
       <div class="concept-title">ESC1–ESC8 Are Your Audit Checklist</div>
       <div class="concept-desc">
-        <strong>ADCS Abuse — Certipy &amp; the ESC Techniques</strong> in the Red Team domain
+        <span class="xref">ADCS Abuse — Certipy &amp; the ESC Techniques</span> in the Red Team domain
         covers exploitation. The defensive point is that these are named, enumerable
         misconfigurations — so the same tooling that finds them for an attacker finds them for
         you, faster than reading template properties by hand.

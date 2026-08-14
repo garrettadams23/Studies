@@ -89,6 +89,23 @@ way: **assert the element is there before asserting how it behaves.** A check
 that quietly disappears along with its selector turns a broken page into a
 passing run.
 
+## Pointing at another card
+
+Quote the target's **exact title** in an `xref` span:
+
+```html
+<span class="xref">Kerberos Authentication Flow</span> in the Security domain
+explains the ticket exchange.
+```
+
+`lint_content.py` fails the build if the title matches no card, and suggests the
+nearest one when it can. Four references were already dangling when the check was
+added — two naming cards that had been retitled, one naming a card that never
+existed, and one that a passing acronym annotation had quietly rewritten.
+
+Do not write the reference as plain prose or as `<em>`; nothing can check those. The
+annotator skips `.xref`, so the quoted title stays byte-identical to the card it names.
+
 ## Claims that go out of date
 
 Most of this site is conceptual and does not rot — how BGP works, what Zero Trust means,

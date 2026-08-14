@@ -24,6 +24,7 @@ import collections
 import re
 import sys
 from datetime import datetime, timezone
+from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -173,6 +174,26 @@ def volatile_problems(text, today):
                      'so the claim will not appear in the freshness report')
 
 
+# A card that says "see X in the Security domain" is making a claim about the
+# site, and prose cannot be checked — four such references were already dangling
+# when this was written, two of them naming cards that had been retitled and one
+# naming a card that never existed. Cross-references use an explicit span so the
+# target can be verified:
+#
+#     <span class="xref">Exact Topic Title</span>
+XREF_RE = re.compile(r'<span class="xref">(.*?)</span\s*>', re.S)
+
+
+def xref_targets(text):
+    """(line_number, title) for each cross-reference in a file."""
+    for m in XREF_RE.finditer(text):
+        # The acronym annotator injects expansions inside any element, this span
+        # included, so strip them exactly as topic_label() does — otherwise a
+        # reference breaks the first time the annotator runs over it.
+        title = unescape(re.sub(r"<[^>]+>", "", ACRO_SPAN_RE.sub("", m.group(1))))
+        yield text[: m.start()].count("\n") + 1, re.sub(r"\s+", " ", title).strip()
+
+
 def topic_label(block):
     """What script.js would use as the slug source, expansions removed."""
     plain = ACRO_SPAN_RE.sub("", block)
@@ -182,7 +203,6 @@ def topic_label(block):
     else:
         h = TOPIC_HEADER_RE.search(plain)
         raw = h.group(1) if h else ""
-    from html import unescape
     return unescape(re.sub(r"<[^>]+>", "", raw)).strip(), bool(m)
 
 
@@ -191,6 +211,7 @@ def main():
     errors, warns = [], collections.Counter()
     seen_slugs = {}
     today = datetime.now(timezone.utc).strftime("%Y-%m")
+    all_titles, xrefs = set(), []
 
     # Domain order matters: script.js walks .domain-section in document order,
     # so a collision is only real if it survives that ordering.
@@ -249,6 +270,7 @@ def main():
                     f"— permalinks shift; rename one of them"
                 )
             seen_slugs[slug] = f"{name}:{line_no}"
+            all_titles.add(label)
 
         # The annotator owns this class; hand-written ones get stripped silently.
         for m in re.finditer(r'<span class="acro-exp">', text):
@@ -265,6 +287,9 @@ def main():
         for line_no, msg in volatile_problems(text, today):
             errors.append(f"{name}:{line_no}: {msg}")
 
+        # Resolved after every file is read — a card may reference any domain.
+        xrefs.extend((name, ln, title) for ln, title in xref_targets(text))
+
         for line_no, cls in dead_first_cell_classes(text):
             errors.append(
                 f"{name}:{line_no}: '{cls}' on the first cell of a .ref-table row "
@@ -276,7 +301,19 @@ def main():
         warns["inline style attribute"] += len(re.findall(r'\bstyle="', text))
         warns["ai-table (prefer ref-table)"] += text.count('class="ai-table"')
 
-    print(f"Linted {len(files)} domain files, {len(seen_slugs)} topics.\n")
+    # Cross-references, once every title is known.
+    lowered = {t.lower() for t in all_titles}
+    for name, line_no, title in xrefs:
+        if title.lower() not in lowered:
+            near = [t for t in all_titles if title.lower()[:18] in t.lower()]
+            hint = f" Did you mean '{near[0]}'?" if near else ""
+            errors.append(
+                f"{name}:{line_no}: cross-reference to '{title}' matches no topic "
+                f"title on the site.{hint}"
+            )
+
+    print(f"Linted {len(files)} domain files, {len(seen_slugs)} topics, "
+          f"{len(xrefs)} cross-references.\n")
     if errors:
         print(f"ERRORS ({len(errors)}):")
         for e in errors[:40]:

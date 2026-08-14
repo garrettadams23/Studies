@@ -16,7 +16,7 @@
       <div class="concept-label">Orientation</div>
       <div class="concept-title">You Already Know What Big-O Measures; This Is Where It Misleads</div>
       <div class="concept-desc">
-        <strong>Big O Notation — Measuring Algorithm Efficiency</strong> in the Scripting
+        <span class="xref">Big O Notation — Measuring Algorithm Efficiency</span> in the Scripting
         domain covers the notation itself. This card is the follow-up nobody gets taught:
         Big-O deliberately discards information, and the discarded information is what
         decides which code is faster on the machine you actually own.
@@ -73,9 +73,10 @@
       </div>
       <div class="concept-desc">
         Before optimising an algorithm, establish that computation is the cost. In most
-        application code it is not: input/output dominates, and the useful numbers are the ones
-        in <em>Caches &amp; the Memory Hierarchy</em> — roughly nanoseconds for memory,
-        microseconds for local storage, milliseconds for a network round trip. Those three
+        application code it is not: input/output dominates, and the useful numbers are the ones in
+        <span class="xref">Memory Layout &amp; Cache Locality — Why Arrays Beat Linked Lists</span> —
+        roughly nanoseconds for memory, microseconds for local storage, milliseconds for a
+        network round trip. Those three
         orders of magnitude decide more than an exponent usually does.
       </div>
     </div>
@@ -401,7 +402,7 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
       <div class="concept-label">Orientation</div>
       <div class="concept-title">Which Structure to Pick Is Covered; This Is Why the Table Lies</div>
       <div class="concept-desc">
-        <strong>Choosing the Right Data Structure</strong> in the Scripting domain has the
+        <span class="xref">Choosing the Right Data Structure</span> in the Scripting domain has the
         operation-cost table. This card explains why that table mispredicts real performance so
         often: it counts operations, and the machine charges for <em>memory access patterns</em>.
       </div>
@@ -444,8 +445,8 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
       <div class="concept-desc">
         If you process one field across many records, storing an array per field beats an array
         of records: the fetched cache lines contain only data you asked for. This is the same
-        insight behind columnar storage — see <em>Columnar Storage</em> in the Data domain — and
-        behind why a scan over a column store outruns a row store on analytics by so much.
+        insight behind columnar storage — see <span class="xref">Columnar Engines — Parquet, DuckDB &amp; ClickHouse</span> in the Data domain —
+        and behind why a scan over a column store outruns a row store on analytics by so much.
       </div>
       <pre class="code-block"><span class="com"># Array of structs: summing one field drags every other field into cache</span>
 <span class="kw">struct</span> P { <span class="kw">float</span> x, y, z; <span class="kw">char</span> name[<span class="m">64</span>]; };
@@ -612,8 +613,7 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
         three levels deep and cost three reads.
       </div>
       <div class="concept-desc verdict">
-        This is the single most important structure in databases, and <em>Indexes Explained —
-        B-tree, Hash &amp; Covering</em> in the Data domain covers the query-planning side. The
+        This is the single most important structure in databases, and <span class="xref">Indexes Explained — B-tree, Hash &amp; Covering</span> in the Data domain covers the query-planning side. The
         theory answer to "why not a binary tree on disk?" is: the memory hierarchy has a cliff
         in it, and B-trees are shaped around the cliff.
       </div>
@@ -1136,8 +1136,8 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
       <div class="concept-desc">
         Then: clarify input constraints before coding, say the complexity of what you are about
         to write, and test on an empty input and a single element. Most failed submissions are
-        edge cases, not algorithms. See <em>Coding Interviews</em> in the Career domain for the
-        surrounding process.
+        edge cases, not algorithms. See <span class="xref">Interview Preparation — Getting the Job</span> in the Career domain
+        for the surrounding process.
       </div>
     </div>
 
@@ -1162,7 +1162,8 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
       <div class="concept-label">Orientation</div>
       <div class="concept-title">Linux Covers the Commands; This Is Why the Numbers Come Out That Way</div>
       <div class="concept-desc">
-        <strong>Processes &amp; Signals</strong> and <strong>Process Management</strong> in the
+        <span class="xref">Processes &amp; Signals — Running Programs in Linux</span> and
+        <span class="xref">Process Management – Finding and Taming Runaway Processes</span> in the
         Linux domain cover finding and controlling processes. This card is the model underneath:
         what the kernel is actually choosing between, and why adding threads so often fails to
         make anything faster.
@@ -1546,8 +1547,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
         The operational trap is forcing a new configuration to "get it back up". That can commit
         a state the old majority never agreed, and when the missing nodes return the histories
         conflict. Restore the nodes if there is any chance of it; forcing quorum is a
-        data-loss decision and should be recorded as one. See <em>CAP Theorem &amp; Consistency
-        Models</em> in the DevOps domain for the trade-off this sits inside.
+        data-loss decision and should be recorded as one. See <span class="xref">CAP Theorem &amp; Consistency Models</span> in the DevOps domain for the trade-off this sits inside.
       </div>
     </div>
   </div>
