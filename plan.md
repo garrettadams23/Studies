@@ -4530,7 +4530,41 @@ Cheaper things to do first, in order:
 3. **Lazy-load only the biggest domains.** `script` alone is 4h 15m of reading; a handful
    of fragments gets much of the 23% without a whole-site rewrite.
 
-Until one of those is chosen, **the honest position is that the budget ceiling limits the
+### The decision, taken in session 19: keep full-text search, do not lazy-load yet
+
+Two more measurements settled it.
+
+**Lazy loading's real benefit is DOM size, not bytes.** Simulated by emptying every
+domain body except three, in the DOM, on a 4× throttled phone:
+
+```
+full page        87,489 elements   chip filter  60 ms
+3 of 29 loaded   14,208 elements   chip filter  14 ms
+                 84% fewer         4.3× faster
+```
+
+That is a better argument than the byte one — a search index shipped as JSON is not
+DOM, so the interaction win survives even while keeping full-text search. Track AK
+never made this argument; it argued from download size, where the case is weak.
+
+**But the page is not slow.** Re-measured at 1,007 topics: 819 ms load on desktop,
+1,615 ms on a 4× throttled phone, 60 ms to filter, search in the same range. Nothing
+here is painful, and the ceiling is ~160 cards away.
+
+**So: keep full-text search, do not lazy-load now.** The byte saving is 23%, the
+interaction is already acceptable, and the change breaks five features and needs a
+verification path that does not exist. Revisit when *either* the throttled load passes
+roughly 3 s *or* `page_budget.py` actually fails — and when revisiting, build it for the
+DOM-size argument with the 164 KB middle-tier index, not for the byte argument.
+
+**One correction worth carrying.** The first attempt at these numbers timed the chip
+filter through `page.click()` and reported 677 ms, which reads as a serious regression
+and would have justified the rewrite on the spot. Timed with `performance.now()` inside
+the page it is 60 ms — the rest was the test driver's round trip. **Measure interaction
+inside the page.** That is now in `page_budget.py`'s docstring, next to the numbers it
+would have corrupted.
+
+Until this is revisited, **the honest position is that the budget ceiling limits the
 backlog and no cheap fix exists.** That is worth knowing before another 160 cards are
 written against an assumption that lazy loading will rescue it.
 
