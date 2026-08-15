@@ -923,10 +923,22 @@ progress / keyboard-a11y automatically.
 > a tier and a redundancy look identical from the index.** Read the badges before
 > believing the count.
 >
-> Spot-checking the rest of the track against the site before starting: J3's hashing card
-> duplicates *Passwords & Hashing*, J5's IAM and passkeys cards duplicate *Identity &
-> Access Control* and *Passkeys & WebAuthn*, and J5's Zero Trust card duplicates three
-> things at once. **Expect Track J to yield well under its 28.**
+> **Waves J2–J5 then checked properly, all 20 cards at once: 16 already covered, 4 gaps.**
+> An 80% duplicate rate — far above the ~15% seen in Tracks V and AL, and the clearest
+> demonstration yet of the stale-track problem. `sec` is the site's oldest large domain,
+> so a track written against the *subject* of applied security was always going to
+> collide with it.
+>
+> Written: **Post-Quantum Cryptography**, **Data Loss Prevention**, **Network Security
+> Architecture**, **Privileged Access Management**. Everything else in J2–J5 is marked
+> `- [~]`.
+>
+> **Track J total: 7 written of 25 specced.** One caveat recorded honestly — several
+> "COVERED" matches are fundamentals cards where the track specced a *Deep* version
+> (*Encryption Fundamentals* against *Symmetric Crypto Deep — AES modes, nonces, AEAD*).
+> Those may justify a depth card later, the way `cs` earned its place above `script`. That
+> needs the existing cards read rather than their titles matched, and is not a
+> title-check decision.
 
 **Wave J1 — Application Security**
 - [~] OWASP Top 10 Deep — one card walking every category with fixes
@@ -936,32 +948,32 @@ progress / keyboard-a11y automatically.
 - [~] Secure SDLC & Threat Modeling — STRIDE, abuse cases, security gates
 
 **Wave J2 — API & Cloud-Native Security**
-- [ ] API Security — OWASP API Top 10, BOLA, rate limiting, API gateways
-- [ ] OAuth/OIDC Security Deep — PKCE, token types, common flow mistakes
-- [ ] Container Security Deep — image scanning, runtime, capabilities, seccomp
-- [ ] Kubernetes Security Deep — pod security, admission control, RBAC pitfalls
-- [ ] DevSecOps — shifting left, SAST/DAST/SCA in CI, policy gates
+- [~] API Security — OWASP API Top 10, BOLA, rate limiting, API gateways
+- [~] OAuth/OIDC Security Deep — PKCE, token types, common flow mistakes
+- [~] Container Security Deep — image scanning, runtime, capabilities, seccomp
+- [~] Kubernetes Security Deep — pod security, admission control, RBAC pitfalls
+- [~] DevSecOps — shifting left, SAST/DAST/SCA in CI, policy gates
 
 **Wave J3 — Cryptography Engineering**
-- [ ] Symmetric Crypto Deep — AES modes (GCM/CBC/CTR), nonces, AEAD
-- [ ] Asymmetric & Key Exchange — RSA vs ECC, Diffie-Hellman, forward secrecy
-- [ ] Hashing & Password Storage — bcrypt/scrypt/Argon2, salts, HMAC
-- [ ] Crypto in Practice — what to use (libsodium), what never to roll yourself
-- [ ] Post-Quantum Cryptography — why it matters, ML-KEM/ML-DSA, the migration
+- [~] Symmetric Crypto Deep — AES modes (GCM/CBC/CTR), nonces, AEAD
+- [~] Asymmetric & Key Exchange — RSA vs ECC, Diffie-Hellman, forward secrecy
+- [~] Hashing & Password Storage — bcrypt/scrypt/Argon2, salts, HMAC
+- [~] Crypto in Practice — what to use (libsodium), what never to roll yourself
+- [x] Post-Quantum Cryptography — why it matters, ML-KEM/ML-DSA, the migration
 
 **Wave J4 — Detection & Defensive Engineering**
-- [ ] Data Loss Prevention (DLP) — classification, egress controls, insider risk
-- [ ] Network Security Architecture — segmentation, microseg, DMZ, egress filtering
-- [ ] Web App Firewalls & RASP — where they help and where they don't
-- [ ] Secrets & Key Management Deep — HSMs, KMS envelope encryption, rotation
-- [ ] Security Logging Strategy — what to log, retention, the audit trail
+- [x] Data Loss Prevention (DLP) — classification, egress controls, insider risk
+- [x] Network Security Architecture — segmentation, microseg, DMZ, egress filtering
+- [~] Web App Firewalls & RASP — where they help and where they don't
+- [~] Secrets & Key Management Deep — HSMs, KMS envelope encryption, rotation
+- [~] Security Logging Strategy — what to log, retention, the audit trail
 
 **Wave J5 — Identity & Modern Auth**
-- [ ] Modern IAM Architecture — IdP, SSO, SCIM provisioning, lifecycle
-- [ ] Zero Trust Implementation — beyond the buzzword: policy, device trust, ZTNA
-- [ ] Privileged Access Management (PAM) — vaulting, JIT access, session recording
-- [ ] Federation Deep — SAML vs OIDC assertions, trust chains, common attacks
-- [ ] Passwordless & Passkeys Deep — FIDO2/WebAuthn ceremony, attestation
+- [~] Modern IAM Architecture — IdP, SSO, SCIM provisioning, lifecycle
+- [~] Zero Trust Implementation — beyond the buzzword: policy, device trust, ZTNA
+- [x] Privileged Access Management (PAM) — vaulting, JIT access, session recording
+- [~] Federation Deep — SAML vs OIDC assertions, trust chains, common attacks
+- [~] Passwordless & Passkeys Deep — FIDO2/WebAuthn ceremony, attestation
 
 ---
 
