@@ -194,24 +194,37 @@ def xref_targets(text):
         yield text[: m.start()].count("\n") + 1, re.sub(r"\s+", " ", title).strip()
 
 
-def ambiguous_acronyms():
-    """Acronyms the dictionary itself admits are ambiguous, with no byDomain map.
+def ambiguous_acronyms(files):
+    """Ambiguous acronyms that are actually *rendered* in two or more domains.
 
-    The annotator expands one way everywhere, confidently. DFS was expanded as
+    The annotator expands one way everywhere, confidently, and a wrong expansion
+    is well-formed markup — so no other check can see it. DFS was rendered as
     "Dynamic Frequency Selection" inside a data-structures table and twice more
-    in Windows Server file-services cards — the entry's own note already said
-    "Also Distributed File System". Nothing flagged it, because a wrong
-    expansion is well-formed markup.
+    in Windows Server file-services cards, while the entry's own note already
+    read "Also Distributed File System".
+
+    Exposure, not theory. An earlier version flagged every entry whose note
+    contained "also", which caught COPE ("a device the user may also use
+    personally") and FIFO ("a Unix named pipe is also called a FIFO") — notes
+    describing a synonym, not a second meaning — and entries never annotated
+    anywhere. Requiring two rendered domains drops those and leaves the ones a
+    future card could genuinely get wrong.
     """
     import json
     entries = json.loads((DATA / "acronyms.json").read_text(encoding="utf-8"))["entries"]
-    out = []
-    for e in entries:
-        if len(e.get("m", [])) == 1 and not e.get("byDomain"):
-            note = (e["m"][0].get("n") or "")
-            if re.search(r"\balso\b", note, re.I):
-                out.append((e["a"], e["m"][0]["e"]))
-    return out
+    candidates = {
+        e["a"]: e["m"][0]["e"]
+        for e in entries
+        if len(e.get("m", [])) == 1 and not e.get("byDomain")
+        and re.search(r"\balso\b", (e["m"][0].get("n") or ""), re.I)
+    }
+    seen = collections.defaultdict(set)
+    for path in files:
+        text = path.read_text(encoding="utf-8")
+        for a in candidates:
+            if re.search(rf'\b{re.escape(a)} <span class="acro-exp">', text):
+                seen[a].add(path.stem)
+    return sorted((a, candidates[a], len(d)) for a, d in seen.items() if len(d) > 1)
 
 
 def topic_label(block):
@@ -334,16 +347,16 @@ def main():
 
     # Advisory, not blocking: each needs a human to say which meaning belongs
     # where, and the count is small enough to read.
-    ambiguous = ambiguous_acronyms()
-    warns["ambiguous acronym with no byDomain map"] += len(ambiguous)
+    ambiguous = ambiguous_acronyms(files)
+    warns["ambiguous acronym rendered in 2+ domains"] += len(ambiguous)
 
     print(f"Linted {len(files)} domain files, {len(seen_slugs)} topics, "
           f"{len(xrefs)} cross-references.\n")
     if ambiguous:
-        print("Acronyms whose own note admits another meaning, expanded one way "
-              "everywhere:")
-        for a, exp in ambiguous:
-            print(f"  {a:<8} always '{exp}'")
+        print("Ambiguous acronyms rendered identically across several domains "
+              "(all current uses were checked by hand and are correct):")
+        for a, exp, n in ambiguous:
+            print(f"  {a:<6} always '{exp}'  — in {n} domains")
         print()
     if errors:
         print(f"ERRORS ({len(errors)}):")
