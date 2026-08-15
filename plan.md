@@ -4338,12 +4338,32 @@ justify existing:
 |---|---|---|
 | ~~`spirit`~~ | ~~3~~ | ✅ **Folded into `philosophy`** — session 18 |
 | `quotes` | 5 | Under, but it is a reference domain like `acronym`, so the rule may not apply |
-| `lifestyle` | 4 | Under, and one lower after the Windows card left. It is the residue after the split — check whether it still earns a chip |
-| `philosophy` | 13 | Under; plausibly fine, it is a coherent subject, and now the home for the `spirit` cards |
+| ~~`lifestyle`~~ | ~~4~~ | ✅ **Folded, session 19.** Split three ways — see below |
+| `philosophy` | 14 | Under; plausibly fine, it is a coherent subject, and now the home for the `spirit` cards and minimalism |
 | `productivity` | 10 | Under, but actively growing |
 | `mind` | 11 | Under, but actively growing |
 | `math` | 16 | Clears it |
-| `career` · `devops` | 18 · 36 | Clear it comfortably |
+| `career` · `devops` | 21 · 36 | Clear it comfortably |
+
+### ✅ Session 19 — `lifestyle` folded, and why it took a decision rather than a fold
+
+`spirit` had one obvious home. `lifestyle` had none, which is why it sat unresolved after
+`spirit` was settled: its four cards do not belong together and never did.
+
+| Card | To | Why |
+|---|---|---|
+| Money & Adulting Basics | `career` | Personal finance for a working person; `career` already holds offer negotiation and home-lab budgets |
+| Financial Basics for IT Workers | `career` | Says so in the title |
+| Remote Work — Working Well From Anywhere | `career` | Professional practice, beside the soft-skills cards |
+| Minimalism & Intentional Living | `philosophy` | A values card. It belongs beside Stoicism and Taoism, not beside interview prep |
+
+29 → **28 domains**, topic count unchanged. All four permalinks verified in a browser.
+
+**The general point:** the ≥15 bar asks whether a domain earns a chip, but the useful
+question when it does not is *where does each card actually belong*. Three of these four
+had a clear home and one needed a judgement; none of them wanted the same one. A domain
+that cannot be folded in one move is usually a bag rather than a subject, and that is the
+signal to look at the cards individually.
 
 **Decide `spirit` first.** Three cards is not a domain; it is a chip that dilutes the bar.
 
