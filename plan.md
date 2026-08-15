@@ -1307,6 +1307,43 @@ material planned in Track AR.
 
 ---
 
+## How much of Phase 3 is actually left — measured three times, and honestly unknown
+
+Three tracks have now had a proper per-card site check before writing:
+
+| Track | Specced | Already on the site | Written |
+|---|---:|---:|---:|
+| V — Windows Server | 35 | 7 (20%) | 28 |
+| AL — CS fundamentals | 35 | 5 (14%) | 30 |
+| J — Applied security | 25 | 18 (72%) | 7 |
+
+**Track J's rate is the outlier and the reason is structural:** `sec` is the site's oldest
+large domain, so a track written against the *subject* of applied security collides with
+it almost everywhere. `infra` and `cs` were new domains, so nothing collided.
+
+**A bulk check over the remaining tracks K–U was attempted and is not trustworthy.** A
+three-keyword title match reported 24% covered across 176 cards, but inspection shows it
+matching *"Security Program Building"* against *"Cryptography Fundamentals — The Building
+Blocks of Security"* on the word "building". It will over-report coverage on coincidental
+words and under-report it wherever a card is titled differently from its subject. Both
+directions, so the 24% is not a number to plan with.
+
+**What can be said honestly:**
+
+- Tracks pointing at **established domains** — K (`threat`), L (`grc`), M (`redteam`/
+  `pentest`), N (`linux`), P (`script`), Q (`net`) — should be expected to behave like J,
+  not like V. Those six are ~85 of the remaining cards and may yield a third of that.
+- Tracks pointing at **thinner or newer ground** — O (`ai`), S (`career`/`mind`),
+  U (cross-cutting study aids) — should behave more like V.
+- **The only reliable method is the per-card check, run at the start of the wave.** It
+  cost about ten minutes per track and has now saved 24 cards of duplicate writing across
+  three tracks.
+
+So the backlog's true size is unknown, and the estimate in this file's header — ~825
+cards — is an upper bound that is probably substantially wrong. That is a better position
+than the confident number it replaced, and the way to improve it is one track at a time,
+not another heuristic.
+
 ## Suggested execution order (Phase 3)
 
 | Phase | Tracks | Theme | Rough size |
