@@ -5020,7 +5020,7 @@
 <!-- ═══════════════════════════════════════════════════
      TOPIC: Big O Notation
 ═══════════════════════════════════════════════════ -->
-<div class="topic" data-reviewed="2026-06">
+<div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">📈</span>
     <span class="topic-name">Big O Notation — Measuring Algorithm Efficiency</span>
@@ -5110,6 +5110,32 @@
 
       </div>
     </div>
+  
+    <!-- merged from the duplicate "Big O &amp; Algorithms" card -->
+<div class="concept-card">
+      <div class="concept-label">THE CLASSIC MISTAKE</div>
+      <div class="concept-title">Hidden O(n²) — and the Fix</div>
+      <div class="code-block"><span class="com"># SLOW — O(n²): checking membership in a list inside a loop</span>
+<span class="kw">def</span> <span class="fn">find_dupes_slow</span>(items):
+    dupes = []
+    <span class="kw">for</span> x <span class="kw">in</span> items:
+        <span class="kw">if</span> items.count(x) &gt; <span class="num">1</span>:    <span class="com"># .count scans the WHOLE list each time</span>
+            dupes.append(x)
+    <span class="kw">return</span> dupes
+<span class="com"># 1M items → ~1 trillion operations → hangs forever</span>
+
+<span class="com"># FAST — O(n): use a set/dict for O(1) lookups</span>
+<span class="kw">def</span> <span class="fn">find_dupes_fast</span>(items):
+    seen, dupes = <span class="fn">set</span>(), <span class="fn">set</span>()
+    <span class="kw">for</span> x <span class="kw">in</span> items:
+        <span class="kw">if</span> x <span class="kw">in</span> seen:       <span class="com"># set lookup is O(1)</span>
+            dupes.add(x)
+        seen.add(x)
+    <span class="kw">return</span> dupes
+<span class="com"># 1M items → ~1M operations → instant</span></div>
+      <div class="concept-desc"><strong>The #1 practical lesson:</strong> when you need fast lookups, use a <code>set</code> or <code>dict</code> (hash-based, O(1)) instead of repeatedly scanning a <code>list</code> (O(n)). This single insight fixes a huge fraction of slow code.</div>
+    </div>
+
   </div>
 </div>
 
@@ -5491,12 +5517,36 @@ query = <span class='str'>"SELECT * FROM users WHERE name = ?"</span></pre></div
 <span class='fn'>cat</span> app.log | <span class='fn'>grep</span> error | <span class='fn'>wc</span> -l
 <span class='com'># save the matches to a file</span>
 <span class='fn'>grep</span> error app.log &gt; errors.txt</pre></div><div class="concept-card"><div class="concept-label">TIP</div><div class="concept-title">Tab Completion &amp; History</div><div class="concept-desc">Two habits that make the terminal feel fast: press Tab to auto-finish file names (fewer typos), and press the Up arrow to recall commands you already ran. Lazy is efficient here.</div></div></div></div>
-<div class="topic" data-reviewed="2026-07"><div class="topic-header"><span class="topic-icon">🧩</span><span class="topic-name">Thinking in Algorithms</span><span class="topic-badge">Beginner • Problem-Solving</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">PLAIN</div><div class="concept-title">An Algorithm Is Just a Plan</div><div class="concept-desc">An algorithm is a clear, finite list of steps to get a result — a recipe, directions to a friend’s house, the steps to make tea. Coding is mostly writing the plan precisely enough that a literal machine can follow it.</div></div><div class="concept-card"><div class="concept-label">WORKED EXAMPLE</div><div class="concept-title">Find the Biggest Number</div><div class="concept-desc">Watch how a vague goal becomes steps: assume the first item is the biggest, look at each remaining item, and whenever you see a bigger one, remember it instead. At the end, you’re holding the biggest. That’s an algorithm.</div><pre class="code-block"><span class='com'># pseudocode</span>
+<div class="topic" data-reviewed="2026-08"><div class="topic-header"><span class="topic-icon">🧩</span><span class="topic-name">Thinking in Algorithms</span><span class="topic-badge">Beginner • Problem-Solving</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">PLAIN</div><div class="concept-title">An Algorithm Is Just a Plan</div><div class="concept-desc">An algorithm is a clear, finite list of steps to get a result — a recipe, directions to a friend’s house, the steps to make tea. Coding is mostly writing the plan precisely enough that a literal machine can follow it.</div></div><div class="concept-card"><div class="concept-label">WORKED EXAMPLE</div><div class="concept-title">Find the Biggest Number</div><div class="concept-desc">Watch how a vague goal becomes steps: assume the first item is the biggest, look at each remaining item, and whenever you see a bigger one, remember it instead. At the end, you’re holding the biggest. That’s an algorithm.</div><pre class="code-block"><span class='com'># pseudocode</span>
 biggest = first item
 <span class='kw'>for</span> each item in list:
     <span class='kw'>if</span> item &gt; biggest:
         biggest = item
-<span class='kw'>return</span> biggest</pre></div><div class="concept-card"><div class="concept-label">WHY IT MATTERS</div><div class="concept-title">Some Plans Are Faster</div><div class="concept-desc">Finding a name in a shuffled pile means checking every card; in a sorted phone book you can flip to the middle and halve the search each time. Same goal, wildly different speed — that idea (Big-O) is why algorithm choice matters as data grows.</div></div></div></div>
+<span class='kw'>return</span> biggest</pre></div><div class="concept-card"><div class="concept-label">WHY IT MATTERS</div><div class="concept-title">Some Plans Are Faster</div><div class="concept-desc">Finding a name in a shuffled pile means checking every card; in a sorted phone book you can flip to the middle and halve the search each time. Same goal, wildly different speed — that idea (Big-O) is why algorithm choice matters as data grows.</div></div>
+    <!-- merged from the duplicate "Big O &amp; Algorithms" card -->
+<div class="concept-card">
+      <div class="concept-label">RECURSION</div>
+      <div class="concept-title">A Function That Calls Itself</div>
+      <div class="concept-desc">Recursion solves a problem by breaking it into smaller versions of itself. Every recursion needs a <strong>base case</strong> (when to stop) — forget it and you get infinite recursion (stack overflow). Great for tree/nested structures; for simple counting, a loop is usually clearer and faster.</div>
+      <div class="code-block"><span class="com"># Walk a nested folder structure (natural fit for recursion)</span>
+<span class="kw">def</span> <span class="fn">total_size</span>(path):
+    <span class="kw">if</span> path.is_file():              <span class="com"># BASE CASE</span>
+        <span class="kw">return</span> path.stat().st_size
+    <span class="kw">return</span> <span class="fn">sum</span>(total_size(child)    <span class="com"># RECURSE into each child</span>
+               <span class="kw">for</span> child <span class="kw">in</span> path.iterdir())
+
+<span class="com"># Binary search — O(log n), a recursive classic</span>
+<span class="kw">def</span> <span class="fn">bsearch</span>(arr, target, lo=<span class="num">0</span>, hi=<span class="kw">None</span>):
+    <span class="kw">if</span> hi <span class="kw">is</span> <span class="kw">None</span>: hi = <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="kw">if</span> lo &gt; hi: <span class="kw">return</span> -<span class="num">1</span>          <span class="com"># BASE CASE: not found</span>
+    mid = (lo + hi) // <span class="num">2</span>
+    <span class="kw">if</span> arr[mid] == target: <span class="kw">return</span> mid
+    <span class="kw">if</span> arr[mid] &lt; target:
+        <span class="kw">return</span> bsearch(arr, target, mid+<span class="num">1</span>, hi)
+    <span class="kw">return</span> bsearch(arr, target, lo, mid-<span class="num">1</span>)</div>
+    </div>
+
+  </div></div>
 <div class="topic" data-reviewed="2026-07"><div class="topic-header"><span class="topic-icon">🏛️</span><span class="topic-name">Programming Paradigms (Gently)</span><span class="topic-badge">Beginner • Concepts</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">DON'T PANIC</div><div class="concept-title">Different Styles, Same Goal</div><div class="concept-desc">A paradigm is just a style of organizing code. You’ll hear scary words — they describe how people keep big programs tidy. As a beginner you’ll mostly write procedural code (step by step) and that’s perfectly fine.</div></div><div class="concept-card"><div class="concept-label">OBJECTS</div><div class="concept-title">What ‘Object-Oriented’ Means</div><div class="concept-desc">OOP <span class="acro-exp">(Object-Oriented Programming)</span> bundles data with the actions on it into ‘objects’ — nouns that can do verbs. A Car object holds its speed and color (data) and can drive() or brake() (actions). It mirrors how we already think about things in the world.</div></div><table class="ai-table"><thead><tr><th>Paradigm</th><th>The Idea</th><th>One Line</th></tr></thead><tbody><tr><td>Procedural</td><td>Steps in order</td><td>Do this, then this, then this</td></tr><tr><td>Object-oriented</td><td>Bundled nouns</td><td>Objects hold data + actions</td></tr><tr><td>Functional</td><td>Pure functions</td><td>Inputs in, outputs out, no surprises</td></tr><tr><td>Event-driven</td><td>React to events</td><td>When clicked, do this</td></tr></tbody></table></div></div>
 <div class="topic" data-reviewed="2026-07"><div class="topic-header"><span class="topic-icon">🧪</span><span class="topic-name">Testing Your Code</span><span class="topic-badge">Beginner • Quality</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">WHY</div><div class="concept-title">Tests Catch Tomorrow’s Bug</div><div class="concept-desc">A test is code that checks your code still works. It feels like extra effort until the day a ‘small fix’ silently breaks something across the project — and a test catches it in one second instead of a customer catching it later.</div></div><div class="concept-card"><div class="concept-label">THE SHAPE</div><div class="concept-title">Arrange, Act, Assert</div><div class="concept-desc">Most tests follow three beats: set up the inputs (arrange), run the thing (act), and check the result is what you expected (assert). If the assertion fails, you found a bug — on purpose, in private.</div><pre class="code-block"><span class='com'>// a tiny test of add(a,b)</span>
 <span class='kw'>let</span> result = <span class='fn'>add</span>(<span class='num'>2</span>, <span class='num'>3</span>);   <span class='com'>// act</span>
@@ -5910,7 +5960,7 @@ animals = [<span class="fn">Dog</span>(<span class="str">"Rex"</span>), <span cl
 </div>
 
 <!-- ── TOPIC: DATA STRUCTURES — WHICH TO PICK ──────────────── -->
-<div class="topic" data-reviewed="2026-06">
+<div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🗂️</span>
     <span class="topic-name">Choosing the Right Data Structure</span>
@@ -5977,6 +6027,23 @@ a | b   <span class="com"># {1,2,3,4} union</span>
 a - b   <span class="com"># {1}      difference</span>
 a ^ b   <span class="com"># {1, 4}  symmetric difference</span></div>
     </div>
+  
+    <!-- merged from the duplicate "Big O &amp; Algorithms" card -->
+<div class="concept-card">
+      <div class="concept-label">DATA STRUCTURE COSTS</div>
+      <div class="concept-title">Pick the Right Tool</div>
+      <table class="ai-table">
+        <thead><tr><th>Structure</th><th>Lookup</th><th>Insert</th><th>Best For</th></tr></thead>
+        <tbody>
+          <tr><td>list (array)</td><td>O(n) search / O(1) index</td><td>O(1) append</td><td>Ordered sequence, iteration</td></tr>
+          <tr><td>dict (hash map)</td><td>O(1)</td><td>O(1)</td><td>Key → value lookups</td></tr>
+          <tr><td>set (hash)</td><td>O(1)</td><td>O(1)</td><td>Membership tests, dedup</td></tr>
+          <tr><td>deque</td><td>O(n)</td><td>O(1) both ends</td><td>Queues, sliding windows</td></tr>
+          <tr><td>heap (priority queue)</td><td>O(1) min</td><td>O(log n)</td><td>"Top N", schedulers</td></tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </div>
 
@@ -8474,93 +8541,6 @@ s3 = boto3.client(<span class="str">"s3"</span>)
 
 <!-- BEGINNER25-SCRIPT v1 -->
 <!-- ── TOPIC: BIG O & ALGORITHMS ─────────────────────────── -->
-<div class="topic" data-reviewed="2026-06">
-  <div class="topic-header">
-    <span class="topic-icon">📈</span>
-    <span class="topic-name">Big O &amp; Algorithms — Will Your Code Survive Real Data?</span>
-    <span class="topic-badge">SCRIPT • CS Foundation</span>
-    <span class="topic-chev">▶</span>
-  </div>
-  <div class="topic-body">
-    <div class="concept-card">
-      <div class="concept-label">WHAT BIG O MEASURES</div>
-      <div class="concept-title">How Cost Grows as Input Grows</div>
-      <div class="concept-desc">Big O notation describes how an algorithm's time (or memory) scales as the input size (n) grows. It ignores constants and small terms to focus on the <em>growth rate</em>. Why care? Code that works fine on 100 items can hang forever on 10 million. Understanding Big O helps you spot the difference between "fast enough" and "will melt in production."</div>
-      <table class="ai-table">
-        <thead><tr><th>Big O</th><th>Name</th><th>n=10</th><th>n=1,000,000</th><th>Example</th></tr></thead>
-        <tbody>
-          <tr><td>O(1)</td><td>Constant</td><td>1</td><td>1</td><td>Dict/hash lookup, array index</td></tr>
-          <tr><td>O(log n)</td><td>Logarithmic</td><td>~3</td><td>~20</td><td>Binary search</td></tr>
-          <tr><td>O(n)</td><td>Linear</td><td>10</td><td>1,000,000</td><td>Loop through a list once</td></tr>
-          <tr><td>O(n log n)</td><td>Linearithmic</td><td>~33</td><td>~20M</td><td>Good sorting (merge/quick)</td></tr>
-          <tr><td>O(n²)</td><td>Quadratic</td><td>100</td><td>10¹²</td><td>Nested loops (the danger zone)</td></tr>
-          <tr><td>O(2ⁿ)</td><td>Exponential</td><td>1,024</td><td>astronomical</td><td>Brute-force, naive recursion</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">THE CLASSIC MISTAKE</div>
-      <div class="concept-title">Hidden O(n²) — and the Fix</div>
-      <div class="code-block"><span class="com"># SLOW — O(n²): checking membership in a list inside a loop</span>
-<span class="kw">def</span> <span class="fn">find_dupes_slow</span>(items):
-    dupes = []
-    <span class="kw">for</span> x <span class="kw">in</span> items:
-        <span class="kw">if</span> items.count(x) &gt; <span class="num">1</span>:    <span class="com"># .count scans the WHOLE list each time</span>
-            dupes.append(x)
-    <span class="kw">return</span> dupes
-<span class="com"># 1M items → ~1 trillion operations → hangs forever</span>
-
-<span class="com"># FAST — O(n): use a set/dict for O(1) lookups</span>
-<span class="kw">def</span> <span class="fn">find_dupes_fast</span>(items):
-    seen, dupes = <span class="fn">set</span>(), <span class="fn">set</span>()
-    <span class="kw">for</span> x <span class="kw">in</span> items:
-        <span class="kw">if</span> x <span class="kw">in</span> seen:       <span class="com"># set lookup is O(1)</span>
-            dupes.add(x)
-        seen.add(x)
-    <span class="kw">return</span> dupes
-<span class="com"># 1M items → ~1M operations → instant</span></div>
-      <div class="concept-desc"><strong>The #1 practical lesson:</strong> when you need fast lookups, use a <code>set</code> or <code>dict</code> (hash-based, O(1)) instead of repeatedly scanning a <code>list</code> (O(n)). This single insight fixes a huge fraction of slow code.</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">DATA STRUCTURE COSTS</div>
-      <div class="concept-title">Pick the Right Tool</div>
-      <table class="ai-table">
-        <thead><tr><th>Structure</th><th>Lookup</th><th>Insert</th><th>Best For</th></tr></thead>
-        <tbody>
-          <tr><td>list (array)</td><td>O(n) search / O(1) index</td><td>O(1) append</td><td>Ordered sequence, iteration</td></tr>
-          <tr><td>dict (hash map)</td><td>O(1)</td><td>O(1)</td><td>Key → value lookups</td></tr>
-          <tr><td>set (hash)</td><td>O(1)</td><td>O(1)</td><td>Membership tests, dedup</td></tr>
-          <tr><td>deque</td><td>O(n)</td><td>O(1) both ends</td><td>Queues, sliding windows</td></tr>
-          <tr><td>heap (priority queue)</td><td>O(1) min</td><td>O(log n)</td><td>"Top N", schedulers</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">RECURSION</div>
-      <div class="concept-title">A Function That Calls Itself</div>
-      <div class="concept-desc">Recursion solves a problem by breaking it into smaller versions of itself. Every recursion needs a <strong>base case</strong> (when to stop) — forget it and you get infinite recursion (stack overflow). Great for tree/nested structures; for simple counting, a loop is usually clearer and faster.</div>
-      <div class="code-block"><span class="com"># Walk a nested folder structure (natural fit for recursion)</span>
-<span class="kw">def</span> <span class="fn">total_size</span>(path):
-    <span class="kw">if</span> path.is_file():              <span class="com"># BASE CASE</span>
-        <span class="kw">return</span> path.stat().st_size
-    <span class="kw">return</span> <span class="fn">sum</span>(total_size(child)    <span class="com"># RECURSE into each child</span>
-               <span class="kw">for</span> child <span class="kw">in</span> path.iterdir())
-
-<span class="com"># Binary search — O(log n), a recursive classic</span>
-<span class="kw">def</span> <span class="fn">bsearch</span>(arr, target, lo=<span class="num">0</span>, hi=<span class="kw">None</span>):
-    <span class="kw">if</span> hi <span class="kw">is</span> <span class="kw">None</span>: hi = <span class="fn">len</span>(arr) - <span class="num">1</span>
-    <span class="kw">if</span> lo &gt; hi: <span class="kw">return</span> -<span class="num">1</span>          <span class="com"># BASE CASE: not found</span>
-    mid = (lo + hi) // <span class="num">2</span>
-    <span class="kw">if</span> arr[mid] == target: <span class="kw">return</span> mid
-    <span class="kw">if</span> arr[mid] &lt; target:
-        <span class="kw">return</span> bsearch(arr, target, mid+<span class="num">1</span>, hi)
-    <span class="kw">return</span> bsearch(arr, target, lo, mid-<span class="num">1</span>)</div>
-    </div>
-  </div>
-</div>
-
-<!-- BEGINNER26-SCRIPT v1 -->
-<!-- ── TOPIC: DATA VALIDATION ────────────────────────────── -->
 <div class="topic" data-reviewed="2026-06">
   <div class="topic-header">
     <span class="topic-icon">✅</span>
