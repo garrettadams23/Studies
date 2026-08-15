@@ -18,6 +18,27 @@
   --muted: #5a6e8a;
   --mono: "Share Tech Mono", monospace;
   --sans: "Outfit", sans-serif;
+
+  /* Accent palette. Content used to hard-code these as literals, which meant
+     they kept their dark-mode value in light mode — a #38bdf8 label on white,
+     or a #fff one that vanished entirely. Every accent a card can reach for
+     lives here and has a light counterpart below. */
+  --sky: #38bdf8;
+  --orange: #fb923c;
+  --pink: #f472b6;
+  --yellow: #facc15;
+  --emerald: #34d399;
+  --indigo: #818cf8;
+  --violet: #c084f5;
+  --rose: #f87171;
+  --fuchsia: #e879f9;
+  --lime: #84cc16;
+  /* Dimmed steps, for the severity/phase ladders that need three tones of one hue. */
+  --amber-2: #e09030;
+  --amber-3: #c08020;
+  --green-2: #00cc77;
+  --green-3: #00aa55;
+  --cyan-2: #00a0cc;
 }
 [data-theme="light"] {
   --bg: #f0f4f8;
@@ -32,6 +53,22 @@
   --amber: #b45309;
   --red: #dc2626;
   --purple: #7c3aed;
+
+  --sky: #0369a1;
+  --orange: #c2410c;
+  --pink: #be185d;
+  --yellow: #a16207;
+  --emerald: #047857;
+  --indigo: #4338ca;
+  --violet: #7e22ce;
+  --rose: #b91c1c;
+  --fuchsia: #a21caf;
+  --lime: #4d7c0f;
+  --amber-2: #92400e;
+  --amber-3: #78350f;
+  --green-2: #047857;
+  --green-3: #065f46;
+  --cyan-2: #0369a1;
 }
 
 /* ── 2. BASE & RESET ────────────────────────────────────────────────────── */
@@ -677,6 +714,13 @@ header p {
   color: var(--muted);
   line-height: 1.75;
 }
+/* The judgement sentence that follows a table — "every table gets a verdict".
+   Content wrote this as style="margin-top:10px" 313 times before it had a name;
+   new cards use the class. Must stay after .concept-desc: equal specificity, so
+   source order decides. */
+.concept-desc.verdict {
+  margin-top: 10px;
+}
 .dw {
   padding: 0 18px 18px;
 }
@@ -842,10 +886,30 @@ header p {
   width: 100%;
   height: 80px;
 }
+/* The topology diagrams used to carry their colours as fill="…"/stroke="…"
+   attributes on every line and circle — 89 literals that stayed dark-mode blue
+   on a white card, with node interiors painted the dark page background. The
+   roles are styled here instead, so they follow the theme. */
+.topo-svg line {
+  stroke: var(--sky);
+}
+.topo-svg circle {
+  fill: var(--bg2);
+  stroke: var(--sky);
+}
+.topo-svg circle.topo-hot {
+  stroke: var(--cyan);
+}
+.topo-svg circle.topo-ring {
+  fill: none;
+}
+.topo-svg text {
+  fill: var(--cyan);
+}
 .topo-name {
   font-size: 12px;
   font-weight: 700;
-  color: #fff;
+  color: var(--text);
   margin-top: 6px;
 }
 .topo-desc {
@@ -2169,6 +2233,52 @@ mark.sh {
   .domain-section { break-inside: avoid; }
   .note, .concept-card, table { break-inside: avoid; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  /* Paper has no hover, so the check date goes inline. */
+  .volatile::after { content: " [checked " attr(data-checked) "]"; font-size: 0.85em; color: #555; }
+}
+
+/* ── Volatile claims ────────────────────────────────────────────────────────
+   A console path, a price, a limit — the specific things that go out of date,
+   marked at the claim rather than guessed at the topic. `data-checked` is when
+   the claim was last verified, which is not the same as when the card was last
+   edited, and that difference is the whole point.
+
+       <span class="volatile" data-checked="2026-08">Devices &gt; Enrol</span>
+
+   tools/lint_content.py enforces the shape; tools/stamp_freshness.py --report
+   consumes it. See CONTRIBUTING.md. */
+/* ── Cross-references ───────────────────────────────────────────────────────
+   Quotes another card's exact title, so tools/lint_content.py can verify the
+   target exists — four references were dangling before the check existed. The
+   acronym annotator skips this class, because annotating inside one rewrites
+   the quoted title. */
+.xref {
+  font-style: italic;
+  color: var(--text);
+}
+
+.volatile {
+  border-bottom: 1px dotted var(--muted);
+  cursor: help;
+  position: relative;
+}
+.volatile:hover::after,
+.volatile:focus-visible::after {
+  content: "checked " attr(data-checked);
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  z-index: 20;
+  white-space: nowrap;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  pointer-events: none;
 }
 
 /* ── Utility text-color classes (prefer these over inline style="color:…") ── */
@@ -2178,6 +2288,12 @@ mark.sh {
 .c-red    { color: var(--red); }
 .c-purple { color: var(--purple); }
 .c-muted  { color: var(--muted); }
+/* No utility class was added for the accents in :root above, deliberately.
+   These six lose to `.ref-table td:first-child` (0,2,1 against 0,1,0), and 1614
+   first cells had accumulated a class that never rendered because of it — since
+   removed, and now a lint error. Content reaches the other accents with
+   style="color: var(--…)", which is theme-correct and wins everywhere.
+   See plan.md, session 18. */
 
 /* domain: redteam (scaffolded) */
 .chip.c-redteam {
@@ -2571,18 +2687,9 @@ body.st-lock { overflow: hidden; }
   --accent: #c084fc;
 }
 
-/* domain: spirit — split out of lifestyle */
-.chip.c-spirit {
-  color: #8b5cf6;
-  border-color: rgba(139, 92, 246, 0.35);
-}
-.chip.c-spirit.active,
-.chip.c-spirit:hover {
-  background: rgba(139, 92, 246, 0.12);
-}
-.domain-spirit {
-  --accent: #8b5cf6;
-}
+/* domain: spirit — folded back into philosophy; Wicca, Paganism and Druidism
+   never reached the >=15-card bar, and they read as traditions alongside
+   Buddhism and Taoism. Rules removed with the chip. */
 
 /* domain: productivity — split out of lifestyle */
 .chip.c-productivity {
@@ -3007,4 +3114,30 @@ th .acro-exp,
    no hover either. */
 @media print {
   .acro-hover .acro-exp { display: inline; }
+}
+
+/* domain: infra (scaffolded) */
+.chip.c-infra {
+  color: #a78bfa;
+  border-color: rgba(167, 139, 250, 0.35);
+}
+.chip.c-infra.active,
+.chip.c-infra:hover {
+  background: rgba(167, 139, 250, 0.12);
+}
+.domain-infra {
+  --accent: #a78bfa;
+}
+
+/* domain: cs (scaffolded) */
+.chip.c-cs {
+  color: #5eead4;
+  border-color: rgba(94, 234, 212, 0.35);
+}
+.chip.c-cs.active,
+.chip.c-cs:hover {
+  background: rgba(94, 234, 212, 0.12);
+}
+.domain-cs {
+  --accent: #5eead4;
 }

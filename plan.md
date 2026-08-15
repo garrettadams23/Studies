@@ -28,15 +28,16 @@ jump to what you need:
 | **Phase 5 — Foundations, Frontiers & the Business of IT** (Tracks AL–AY) | CS & mathematics, hardware/embedded, post-quantum, emerging platforms, physical security, IT finance, leadership, enablement, consulting + content-trust tooling | ⬜ planned |
 | **Phase 6 — Specialisms, and How This Gets Written** (Tracks BA–BJ) | Detection engineering, purple teaming, Kubernetes security, API/identity security, supply chain, privacy engineering, platform engineering, observability, resilience — **plus the card pattern library, authoring rules, risk register and success measures, written out rather than planned** | ⬜ planned |
 | **Execution Handbook** | Ordering constraints, per-domain queue, a concrete first-ten-sessions schedule, three waves specified to the point of transcription, and reusable checklists | 📘 reference |
+| **What is actually outstanding** | An audit of the repo as it really is — defects, the lint trend, undersized domains, content age. **Start here.** | ✅ short list cleared, session 18 |
 
-**Remaining backlog: 897 content cards and 44 engineering items** across
-Phases 3–6, which would take the site from 900 topics / 20 domains to roughly
-1,800 topics / 26 domains — about 180 working sessions.
+**Remaining backlog: ~828 content cards and 44 engineering items** across
+Phases 3–6, which would take the site from **1,008 topics / 29 domains** to roughly
+1,800 topics — about 165 working sessions.
 
-**If you read only two things:** the *"Suggested actual priority"* shortlist at
-the end of Phase 5, and *Part 3 of Phase 6* (how to write a card, the pattern
-library, the risk register). The backlog is a menu, not a queue — and at this
-size, how well each card is written matters more than how many remain.
+**If you read only two things:** *"What is actually outstanding"* at the very end
+of this file, and *Part 3 of Phase 6* (how to write a card, the pattern library,
+the risk register). The backlog is a menu, not a queue — and at this size, how
+well each card is written matters more than how many remain.
 
 ---
 
@@ -1373,54 +1374,68 @@ they deepen domains that already exist and already have an audience.
 ~7 waves, ~35 cards. The on-prem backbone almost every organisation still runs.
 Pairs directly with the `redteam` AD-attack cards — same objects, defender's view.
 
+> **✅ V1–V3 shipped (session 18) — `infra` exists and holds 15 cards.** That is the
+> ≥15 bar exactly, which is why the priority shortlist grouped these three rather than
+> starting with one. V4–V7 (identity operations, on-prem network services, certificate
+> services, server operations) remain: 20 cards, and the domain now clears the bar
+> without them, so they are optional rather than owed.
+>
+> The pairing above turned out to need care rather than assumption. `sec` already holds
+> *Active Directory — Structure, Objects & Attacks*, which covers forest/domain/OU and
+> Kerberos; writing an "AD DS Architecture" card would have been the duplicate rule 10
+> exists to prevent. V2 opens by pointing at that card and answers the administrator's
+> question instead — which boundary to reach for, and what each costs. **Check the
+> neighbouring domain before writing the overview card; the gap is usually narrower than
+> the track list implies.**
+
 **Wave V1 — Windows Server Foundations**
-- [ ] Windows Server Editions & Licensing — Standard vs Datacenter, CALs, Core vs Desktop Experience
-- [ ] Server Core & Administration at Scale — why no GUI, and how you manage it anyway
-- [ ] Server Manager, RSAT & Windows Admin Center — the three consoles and when each wins
-- [ ] Roles & Features — what installing a role actually changes
-- [ ] Server Hardening Baseline — LAPS, no browsing, minimal roles, audit policy
+- [x] Windows Server Editions & Licensing — Standard vs Datacenter, CALs, Core vs Desktop Experience
+- [x] Server Core & Administration at Scale — why no GUI, and how you manage it anyway
+- [x] Server Manager, RSAT & Windows Admin Center — the three consoles and when each wins
+- [x] Roles & Features — what installing a role actually changes
+- [x] Server Hardening Baseline — LAPS, no browsing, minimal roles, audit policy
 
 **Wave V2 — Active Directory Domain Services**
-- [ ] AD DS Architecture — forest, domain, tree, OU, site; what each boundary really means
-- [ ] Domain Controllers & FSMO Roles — the five roles, who holds them, seizing vs transferring
-- [ ] AD Replication — multi-master, USN, tombstones, `repadmin` triage
-- [ ] Trusts — forest/external/shortcut, direction vs transitivity, SID filtering
-- [ ] Sites, Subnets & Site Links — why clients authenticate against the wrong DC
+- [x] AD DS Architecture — forest, domain, tree, OU, site; what each boundary really means
+- [x] Domain Controllers & FSMO Roles — the five roles, who holds them, seizing vs transferring
+- [x] AD Replication — multi-master, USN, tombstones, `repadmin` triage
+- [x] Trusts — forest/external/shortcut, direction vs transitivity, SID filtering
+- [x] Sites, Subnets & Site Links — why clients authenticate against the wrong DC
 
 **Wave V3 — Group Policy in Practice**
-- [ ] Group Policy Architecture — GPO, GPC/GPT, SYSVOL, where settings actually live
-- [ ] Processing Order & Precedence — LSDOU, enforcement, blocking, loopback
-- [ ] Filtering — security filtering vs WMI filtering vs item-level targeting
-- [ ] Group Policy Preferences — the half of GPO people forget exists
-- [ ] GPO Troubleshooting — `gpresult /h`, RSoP, `gpupdate /force`, and reading the Group Policy operational log
+- [x] Group Policy Architecture — GPO, GPC/GPT, SYSVOL, where settings actually live
+- [x] Processing Order & Precedence — LSDOU, enforcement, blocking, loopback
+- [x] Filtering — security filtering vs WMI filtering vs item-level targeting
+- [x] Group Policy Preferences — the half of GPO people forget exists
+- [x] GPO Troubleshooting — `gpresult /h`, RSoP, `gpupdate /force`, and reading the Group Policy operational log
 
 **Wave V4 — Identity Operations**
-- [ ] Users, Groups & Nesting Strategy — AGDLP, and why nested groups become a mess
-- [ ] Service Accounts — gMSA, delegation, and retiring shared passwords
-- [ ] Kerberos in Operations — SPNs, delegation types, ticket lifetimes, clock skew
-- [ ] Entra Connect & Hybrid Identity — sync, password hash vs pass-through vs federation
-- [ ] Cleaning Up a Legacy Directory — stale objects, orphaned SIDs, over-permissive ACLs
+- [x] Users, Groups & Nesting Strategy — AGDLP, and why nested groups become a mess
+- [x] Service Accounts — gMSA, delegation, and retiring shared passwords
+- [x] Kerberos in Operations — SPNs, delegation types, ticket lifetimes, clock skew
+- [x] Entra Connect & Hybrid Identity — sync, password hash vs pass-through vs federation
+- [x] Cleaning Up a Legacy Directory — stale objects, orphaned SIDs, over-permissive ACLs
 
 **Wave V5 — Core Network Services (on-prem)**
-- [ ] Windows DNS Administration — zones, scavenging, forwarders, conditional forwarders
-- [ ] DHCP Administration — scopes, reservations, options, failover, relay
-- [ ] IPAM & Address Discipline — when a spreadsheet stops being enough
-- [ ] Time Sync — the PDC emulator, `w32tm`, and why Kerberos dies without it
-- [ ] File Services — shares, NTFS vs share permissions, DFS-N/DFS-R, quotas
+- [x] Windows DNS Administration — zones, scavenging, forwarders, conditional forwarders
+- [x] DHCP Administration — scopes, reservations, options, failover, relay
+- [~] IPAM & Address Discipline — when a spreadsheet stops being enough
+- [~] Time Sync — the PDC emulator, `w32tm`, and why Kerberos dies without it
+- [x] File Services — shares, NTFS vs share permissions, DFS-N/DFS-R, quotas
 
 **Wave V6 — Certificate Services**
-- [ ] AD CS Design — root vs issuing CA, offline roots, CRL/OCSP publishing
-- [ ] Certificate Templates — the settings that matter, and the ones that get you owned
-- [ ] Auto-enrolment — getting certificates onto devices without touching them
-- [ ] Certificate Lifecycle Ops — renewal, revocation, the expiry outage nobody schedules
-- [ ] ADCS Misconfiguration — ESC1–ESC8 from the defender's side (pairs with `redteam`)
+- [x] AD CS Design — root vs issuing CA, offline roots, CRL/OCSP publishing
+- [x] Certificate Templates — the settings that matter, and the ones that get you owned
+- [x] Auto-enrolment — getting certificates onto devices without touching them
+- [x] Certificate Lifecycle Ops — renewal, revocation, the expiry outage nobody schedules
+- [x] ADCS Misconfiguration — ESC1–ESC8 from the defender's side (pairs with `redteam`)
 
 **Wave V7 — Server Operations & Troubleshooting**
-- [ ] Windows Event Log Triage — the channels worth watching, and building a useful filter
-- [ ] Performance Monitor & Resource Monitor — counters that actually diagnose
-- [ ] Windows Patching Strategy — rings, maintenance windows, reboot coordination
-- [ ] Domain Controller Recovery — authoritative vs non-authoritative restore, DSRM
-- [ ] Decommissioning a Server Properly — the checklist that prevents next year's mystery outage
+- [~] Windows Event Log Triage — the channels worth watching, and building a useful filter
+- [~] Performance Monitor & Resource Monitor — counters that actually diagnose
+- [~] Windows Patching Strategy — rings, maintenance windows, reboot coordination
+- [x] Domain Controller Recovery — authoritative vs non-authoritative restore, DSRM
+- [x] Decommissioning a Server Properly — the checklist that prevents next year's mystery outage
 
 ### TRACK W — Microsoft 365 & Collaboration  (→ new `m365` domain)
 
@@ -2039,54 +2054,83 @@ became duplicate tracks:
 ~7 waves, ~35 cards. The theory that keeps turning up in interviews, incident
 reviews and design arguments — taught for practitioners, not for a degree.
 
+> **✅ AL1–AL3 shipped (session 18) — `cs` exists and holds 15 cards.**
+>
+> **The shortlist's claim that this material "is nowhere yet" was false.** `script`
+> already carried six cards on it — *Big O Notation*, *Big O & Algorithms*, three on
+> data structures, and *Thinking in Algorithms* — at beginner-to-intermediate depth,
+> and duplicating each other. Writing AL1's "Big-O in Practice" and AL2's "Arrays,
+> Lists & Memory Layout" as specified would have produced a third Big-O card and a
+> fourth data-structures card.
+>
+> `cs` therefore holds the depth that genuinely was missing and cross-references
+> `script` for the basics — the boundary V2 drew against `sec`, drawn twice more here.
+> Cards skipped as duplicates: the Big-O introduction, the arrays/lists introduction,
+> and the container-choosing card. Cards written instead: what Big-O hides, amortized
+> analysis, hash flooding, trees beyond BST, graphs, probabilistic structures,
+> catastrophic backtracking, reservoir sampling.
+>
+> **`script` still duplicates itself** — two Big-O cards and three data-structure
+> cards, at overlapping depth. Not touched here, because merging content is a
+> different act from adding it and deserves its own session. It is the strongest
+> remaining candidate in that domain, ahead of anything on the AL4–AL7 list.
+>
+> **✅ AL4 also shipped — `cs` is at 20 cards.** AL5 and AL6 (architecture, compilers)
+> remain and are genuinely absent. **AL7 is mostly not** — `devops` has *CAP Theorem &
+> Consistency Models*, and `eng` has *Idempotency & Exactly-Once*, *Distributed
+> Transactions* and *Consistency in Practice*. Only three AL7 cards are real gaps:
+> clocks and causality, consensus (Paxos/Raft), and failure detection with FLP.
+
+*(`- [~]` marks a card deliberately cut rather than deferred — see the wave note.)*
+
 **Wave AL1 — Complexity & Correctness**
-- [ ] Big-O in Practice — what the notation hides, and when constants win
-- [ ] Time vs Space Trade-offs — caching, precomputation, and the memory you pay
-- [ ] Amortized Analysis — why a dynamic array is O(1) "on average"
-- [ ] Recursion & Induction — reasoning about a function that calls itself
-- [ ] P, NP & Why It Matters to You — intractability, approximation, and knowing when to stop
+- [x] Big-O in Practice — what the notation hides, and when constants win
+- [x] Time vs Space Trade-offs — caching, precomputation, and the memory you pay
+- [x] Amortized Analysis — why a dynamic array is O(1) "on average"
+- [x] Recursion & Induction — reasoning about a function that calls itself
+- [x] P, NP & Why It Matters to You — intractability, approximation, and knowing when to stop
 
 **Wave AL2 — Data Structures From First Principles**
-- [ ] Arrays, Lists & Memory Layout — cache lines, locality, and why arrays win
-- [ ] Hash Tables — hashing, collisions, load factor, and the DoS that exploits them
-- [ ] Trees — BST, balanced trees, tries, heaps, and what each is actually for
-- [ ] Graphs — representations, traversal, shortest path, topological sort
-- [ ] Probabilistic Structures — Bloom filters, HyperLogLog, count-min sketch
+- [x] Arrays, Lists & Memory Layout — cache lines, locality, and why arrays win
+- [x] Hash Tables — hashing, collisions, load factor, and the DoS that exploits them
+- [x] Trees — BST, balanced trees, tries, heaps, and what each is actually for
+- [x] Graphs — representations, traversal, shortest path, topological sort
+- [x] Probabilistic Structures — Bloom filters, HyperLogLog, count-min sketch
 
 **Wave AL3 — Algorithms Worth Knowing**
-- [ ] Sorting & Searching — the classics, and why your language picked the one it did
-- [ ] Divide & Conquer, Greedy, Dynamic Programming — recognising which applies
-- [ ] String Algorithms — matching, edit distance, and where regex fits
-- [ ] Randomised Algorithms — sampling, reservoir sampling, Monte Carlo
-- [ ] Algorithm Interview Patterns — mapped to the site's coding-interview card
+- [x] Sorting & Searching — the classics, and why your language picked the one it did
+- [x] Divide & Conquer, Greedy, Dynamic Programming — recognising which applies
+- [x] String Algorithms — matching, edit distance, and where regex fits
+- [x] Randomised Algorithms — sampling, reservoir sampling, Monte Carlo
+- [x] Algorithm Interview Patterns — mapped to the site's coding-interview card
 
 **Wave AL4 — Operating System Theory**
-- [ ] Processes, Threads & Scheduling — context switches and what they cost
-- [ ] Virtual Memory — paging, TLB, page faults, and swap's bad reputation
-- [ ] Concurrency Primitives — mutexes, semaphores, condition variables, atomics
-- [ ] Deadlock & Livelock — the four conditions, detection, prevention
-- [ ] Filesystems From the Inside — inodes, journaling, and crash consistency
+- [x] Processes, Threads & Scheduling — context switches and what they cost
+- [x] Virtual Memory — paging, TLB, page faults, and swap's bad reputation
+- [x] Concurrency Primitives — mutexes, semaphores, condition variables, atomics
+- [x] Deadlock & Livelock — the four conditions, detection, prevention
+- [x] Filesystems From the Inside — inodes, journaling, and crash consistency
 
 **Wave AL5 — Computer Architecture**
-- [ ] Instruction Execution — fetch/decode/execute, pipelining, branch prediction
-- [ ] Caches & the Memory Hierarchy — L1 to disk, and the numbers every engineer should know
-- [ ] Speculative Execution & Its Security Cost — Spectre/Meltdown, explained properly
-- [ ] Number Representation — two's complement, IEEE-754, and the bugs each causes
-- [ ] Instruction Sets — x86-64 vs ARM64 vs RISC-V, and why the shift is happening
+- [x] Instruction Execution — fetch/decode/execute, pipelining, branch prediction
+- [x] Caches & the Memory Hierarchy — L1 to disk, and the numbers every engineer should know
+- [x] Speculative Execution & Its Security Cost — Spectre/Meltdown, explained properly
+- [x] Number Representation — two's complement, IEEE-754, and the bugs each causes
+- [x] Instruction Sets — x86-64 vs ARM64 vs RISC-V, and why the shift is happening
 
 **Wave AL6 — Languages, Compilers & Runtimes**
-- [ ] How a Compiler Works — lexing, parsing, IR, optimisation, codegen
-- [ ] Interpreters, Bytecode & JIT — the spectrum from Python to the JVM
-- [ ] Type Systems — static/dynamic, strong/weak, inference, and what types buy you
-- [ ] Garbage Collection Deep — mark-sweep, generational, pauses, tuning
-- [ ] Undefined Behaviour & Memory Safety — the class of bug behind most CVEs
+- [x] How a Compiler Works — lexing, parsing, IR, optimisation, codegen
+- [x] Interpreters, Bytecode & JIT — the spectrum from Python to the JVM
+- [x] Type Systems — static/dynamic, strong/weak, inference, and what types buy you
+- [x] Garbage Collection Deep — mark-sweep, generational, pauses, tuning
+- [x] Undefined Behaviour & Memory Safety — the class of bug behind most CVEs
 
 **Wave AL7 — Distributed Systems Theory**
-- [ ] Time in Distributed Systems — clocks, causality, Lamport and vector clocks
-- [ ] Consensus — Paxos and Raft, explained without the paper
-- [ ] Consistency Models — linearizable, sequential, causal, eventual
-- [ ] Failure Detection & the FLP Result — why "is it down?" has no perfect answer
-- [ ] Idempotency, Exactly-Once & the Truth — what is actually achievable
+- [x] Time in Distributed Systems — clocks, causality, Lamport and vector clocks
+- [x] Consensus — Paxos and Raft, explained without the paper
+- [~] Consistency Models — linearizable, sequential, causal, eventual
+- [x] Failure Detection & the FLP Result — why "is it down?" has no perfect answer
+- [~] Idempotency, Exactly-Once & the Truth — what is actually achievable
 
 ### TRACK AM — Mathematics for IT, Security & AI  (→ `cs`)
 
@@ -2532,10 +2576,10 @@ site as it stands today:
 2. **AG spaced repetition + acronym quiz** — turns 900 topics of reference into
    something you revise from, using data that already exists.
 3. **AX freshness metadata** — cheapest now, impossible later.
-4. **V1–V3 (Windows Server, AD DS, Group Policy)** — the largest genuine subject
-   gap on the site.
-5. **AL1–AL3 (complexity, data structures, algorithms)** — the most-requested
-   interview material, and it is nowhere yet.
+4. ~~**V1–V3 (Windows Server, AD DS, Group Policy)**~~ — ✅ shipped session 18.
+   `infra`, 15 cards.
+5. ~~**AL1–AL3 (complexity, data structures, algorithms)**~~ — ✅ shipped session 18
+   as `cs`, 15 cards. **"It is nowhere yet" was wrong** — see the note under Track AL.
 6. **AY split of `data/script.html`** — 719 KB in one file is the single biggest
    drag on actually doing any of the above.
 
@@ -4126,8 +4170,7 @@ trainer may turn out to be more than Ch 5 needs; it cost little and the CI check
 honest, but this is recorded as a spec whose own precondition was skipped.
 
 The remaining half of the idea — generating the calculator card's flashcards from the
-same JSON so drill and reference cannot drift — is **not built**. For now the card
-cross-references the trainer in prose, which is weaker: the two can still diverge.
+same JSON so drill and reference cannot drift — was **built in session 18**; see below.
 
 ---
 
@@ -4137,15 +4180,19 @@ An audit rather than a wish list. Everything below was checked against the repo 
 2026-08-13, not recalled — the counts come from `lint_content.py`, `git grep` and the
 domain files themselves. Ordered by how much it costs to leave undone.
 
+> **Session 18 (2026-08-14) closed the honest short list — all three items.**
+> Each entry below is annotated with what happened. The section is kept rather
+> than deleted, because the reasoning is what makes the next audit cheap.
+
 ## 1. Things that are wrong right now
 
 These are defects, not missing features. Each is small.
 
-| Item | Evidence | Fix |
-|---|---|---|
-| **`CALCULUS-CHEAT-SHEET.md` is stale and overclaims** | 7 sections in the file, 16 cards in the Math domain. Its header says "Generated from the Math domain", which is no longer true — it was generated from one card | Re-run the generator over all cards, or narrow the header to what it actually covers |
-| **`Windows Administration Fundamentals` is in `lifestyle`** | `grep -l` finds it in `data/lifestyle.html`. It is technical Windows content sitting in Life Admin | Move to `endpoint`. Slugs derive from titles, so nothing breaks — proven twice |
-| **The TI-84 drill and its card can drift** | The card cross-references `ti84_trainer.py` in prose only. The spec called for the card's flashcards to be generated from `ti84_drills.json` | Generate them, or accept the drift and say so in the card |
+| Item | Evidence | Fix | State |
+|---|---|---|---|
+| **`CALCULUS-CHEAT-SHEET.md` is stale and overclaims** | 7 sections in the file, 16 cards in the Math domain. Its header says "Generated from the Math domain", which is no longer true — it was generated from one card | Re-run the generator over all cards, or narrow the header to what it actually covers | ✅ **Fixed.** There was no generator — the claim was aspirational. `tools/gen_cheatsheet.py` now walks all 16 cards (65 sections, 933 lines) and `--check` is a CI gate |
+| **`Windows Administration Fundamentals` is in `lifestyle`** | `grep -l` finds it in `data/lifestyle.html`. It is technical Windows content sitting in Life Admin | Move to `endpoint`. Slugs derive from titles, so nothing breaks — proven twice | ✅ **Moved.** `endpoint` 28 → 29 cards, `lifestyle` 5 → 4. Both subtitles updated; permalink unchanged, as predicted |
+| **The TI-84 drill and its card can drift** | The card cross-references `ti84_trainer.py` in prose only. The spec called for the card's flashcards to be generated from `ti84_drills.json` | Generate them, or accept the drift and say so in the card | ✅ **Generated.** The prose had already drifted — it named 2 of the 4 areas. The card's drill index is now emitted by `--sync-card` between markers and gated by `--check-card` |
 
 ## 2. The lint TREND, which has not moved
 
@@ -4169,6 +4216,108 @@ The hard-coded hex count is the one with real consequence: those colours do not 
 light/dark theme, which is exactly the class of bug that made the study modal unreadable in
 light mode.
 
+### ✅ Session 18 — the hex counter, closed by doing 1 and 2 together
+
+```
+TREND ai-table=361 hard-coded=148 inline=1946     before
+TREND ai-table=361 inline=1946                    after
+```
+
+Picking the counter turned out to be the easy half. The instructive part was that
+**8 of the 148 were never colours at all.** The check was a bare
+`#[0-9a-fA-F]{3,6}` sweep, so it counted `"deploy #4521"`, `"invoice #4471"`, and
+five CSS samples in `script`/`web` that exist precisely to *teach* hex notation.
+A counter with an unreachable floor cannot be driven to zero, which is a decent
+explanation for why nobody tried for fourteen sessions.
+
+So the check was narrowed to the claim — a literal inside a `style="…"` value or an
+SVG paint attribute — which is the same lesson `VOLATILE_HINTS` is still waiting for
+in §4: *design the check before you ask anyone to act on the number.*
+
+The remaining 140 were real, and fell into two shapes:
+
+- **89 in `net`'s five topology diagrams**, as `stroke="#38bdf8"` / `fill="#0d1120"` on
+  every line and circle. `fill="#0d1120"` is `--bg2` — the *dark page background* — so in
+  light mode every node was painted a near-black disc on a white card. Replaced with
+  `.topo-svg line|circle|text` rules, the same class-based pattern `math.html` already
+  uses for its `msv-*` diagrams and the reason that file has never had a literal in it.
+- **51 as `style="color: #…"`** across nine domains. `military.html` was already mixing
+  `var(--purple)` and `#38bdf8` in adjacent `<th>`s, so the convention existed; it just
+  was not applied. The worst of these was `pentest`'s `style="color: #fff"` on three
+  `<strong>`s — white text, on a white light-mode card, invisible.
+
+Both needed somewhere to point at, so `:root` gained a themed accent palette — `--sky`,
+`--orange`, `--pink`, `--yellow`, `--emerald`, `--indigo`, `--violet`, `--rose`,
+`--fuchsia`, `--lime`, plus dimmed `--amber-2/-3`, `--green-2/-3`, `--cyan-2` for the
+three-tone severity ladders in `ops` and `linux` — each with a light counterpart.
+`.topo-name`'s `color: #fff` in `style.css` went the same way.
+
+Verified in headless Chromium by toggling `data-theme` and reading computed styles:
+every affected element now changes colour with the theme, `0` elements carry a raw hex
+in a `style` attribute, no console errors, no off-site requests.
+
+**The counter is now an error, not a warning** — a ratchet at zero, with a message that
+names the palette. Regression tested by reintroducing one literal: CI fails.
+
+`inline style attribute` (1946) and `ai-table` (361) are deliberately still warnings.
+Two ratchets are enough to hold the line; a third would block content work, which is
+the thing the site is actually for.
+
+### The inline-style counter, and why the obvious fix is wrong
+
+Worth writing down, because it looks like a free win and is not.
+
+**1069 of the 1946** inline styles are colour-only — `style="color: var(--cyan)"` and
+nothing else. `CONTRIBUTING.md` already forbids exactly this, in a table, in favour of
+`class="c-cyan"`. So the counter looks halvable by one mechanical substitution.
+
+It was tried in this session, on all 866 that a naive match caught, and **reverted**.
+Inline `style` beats any class on specificity; `.c-cyan` does not. Converting moves the
+element from "wins everything" to "loses to any rule that outranks a bare class", and
+the page has one that matters: `.ref-table td:first-child`, at (0,2,1).
+
+The counter is real, but the substitution is not safe to do blind. Every conversion has
+to know whether a table rule will eat it — which is exactly what happened to the 866,
+and why they went back.
+
+### The dead utility classes — measured, then removed
+
+Chasing the above turned up something better. **1614 elements carried a `c-*` class that
+had never once rendered**, all of them the first cell of a `.ref-table` row:
+
+```
+elements carrying a c-* colour class:  8300
+…rendering that colour:                6686
+…overridden:                           1614   ← every one a .ref-table td:first-child
+```
+
+The first read of this was "1614 cells are the wrong colour" — a live rendering bug.
+**That was wrong, and the correction is the interesting part.** `.ref-table
+td:first-child { font-weight: 600; color: #fff }` is deliberate: the key column is
+styled bold and prominent on purpose, and has looked that way since it was written. The
+classes were boilerplate — in `net.html`, 12 ref-tables carry `c-cyan` on *every* first
+cell and 9 carry none, never a mix. Nobody was choosing cyan per-cell; a habit was being
+applied to a column the design already handled.
+
+So the site was never rendering wrongly. The markup was just claiming something it could
+not deliver. The fix is to delete the claim, not to honour it — making all 1614 live
+would be a 1614-cell redesign nobody asked for, and would undo the point of the
+key-column rule.
+
+Removed, and verified as a no-op the only way worth trusting: computed `color`,
+`font-weight` and `background-color` for **all 83,344 elements**, in both themes, before
+and after. Zero differences. (15 elements differed in light mode until two runs of the
+*same* build showed the same 15 — a theme transition still in flight, not the change.)
+
+`lint_content.py` now errors on a colour class in that position, so the 1614 cannot
+creep back. `CONTRIBUTING.md` says where the classes do and do not work.
+
+**The lesson worth keeping is the misdiagnosis, not the cleanup.** "2196 elements render
+the wrong colour" and "1614 elements carry a class that does nothing" describe the same
+measurement and imply opposite actions — one a visual bug to fix, one dead markup to
+delete. The number was right both times. Only reading the *design intent* behind the
+overriding rule told them apart, and that is not something a linter can do.
+
 ## 3. New domains with no plan behind them
 
 The `lifestyle` split created five domains and the Math work added one more. **None of them
@@ -4177,16 +4326,34 @@ justify existing:
 
 | Domain | Cards | Against the ≥15 rule |
 |---|---|---|
-| `spirit` | 3 | **Well under.** Either grow it or fold it back into `philosophy` |
+| ~~`spirit`~~ | ~~3~~ | ✅ **Folded into `philosophy`** — session 18 |
 | `quotes` | 5 | Under, but it is a reference domain like `acronym`, so the rule may not apply |
-| `lifestyle` | 5 | Under. It is the residue after the split — check whether it still earns a chip |
-| `philosophy` | 10 | Under; plausibly fine, it is a coherent subject |
+| `lifestyle` | 4 | Under, and one lower after the Windows card left. It is the residue after the split — check whether it still earns a chip |
+| `philosophy` | 13 | Under; plausibly fine, it is a coherent subject, and now the home for the `spirit` cards |
 | `productivity` | 10 | Under, but actively growing |
 | `mind` | 11 | Under, but actively growing |
 | `math` | 16 | Clears it |
 | `career` · `devops` | 18 · 36 | Clear it comfortably |
 
 **Decide `spirit` first.** Three cards is not a domain; it is a chip that dilutes the bar.
+
+### ✅ Session 18 — decided: folded
+
+Wicca, Paganism and Druidism moved into `philosophy`, which already carried Buddhism
+under a `SPIRITUAL PHILOSOPHY` badge and Taoism under `CHINESE PHILOSOPHY` — so the
+domain was already doing this job, and `spirit` was a second chip for the same shelf.
+Re-badged to `EARTH-BASED PRACTICE` / `EARTH-BASED TRADITION` to match how the other
+traditions there are labelled.
+
+Removed with it: the chip in `index-shell.html`, the `.c-spirit` / `.domain-spirit`
+rules in `style.css`, the entry in `domains.json`, and a dead `byDomain.spirit` key in
+`acronyms.json` (an `AD` suppression — `philosophy` already carried the same rule).
+28 domains → **27 domains, with the topic count still 943**: nothing was lost in the
+move, which is the number worth checking after a fold. Permalinks survive because slugs derive from
+titles, not domains — third time that has held.
+
+The rule earned its keep here. `lifestyle` at 4 is now the weakest chip on the bar and
+is the next one to answer for itself; the honest options are the same two.
 
 ## 4. Content age
 
@@ -4200,6 +4367,88 @@ Related and still unresolved from session 13: **`VOLATILE_HINTS` is too broad to
 *claim* — a console path, a price, a limit — not prose containing a word like "portal".
 That is a content convention, and conventions only stick if the linter can check them, so
 design the check first.
+
+### ✅ Session 18 — the check, and a surprise about the content
+
+Built as specified: the claim is marked where it sits.
+
+```html
+Used enterprise mini PC (<span class="volatile" data-checked="2026-08">~$80-150</span>)
+```
+
+`data-checked` is when the *claim* was verified, deliberately distinct from the card's
+`data-reviewed` — rewording a paragraph is not the same act as confirming a price. The
+reader gets a dotted underline and the date on hover, inline in print; that matters,
+because a convention that only feeds a linter gets abandoned, and this one pays the
+reader back.
+
+`lint_content.py` errors on all four ways to get it wrong: a mark with no date, a
+malformed month, a date in the future, and `data-checked` on something not marked
+volatile. `stamp_freshness.py --report` now lists **claims**, oldest first, naming the
+claim and its topic. The old keyword sweep moved to `--candidates` and prints a warning
+about what it is.
+
+**The surprise: there is almost nothing to mark.** Going looking for real volatile
+claims across 888 topics turned up:
+
+| Looked for | Found |
+|---|---|
+| `as of <year>` dated claims | **0** |
+| Console breadcrumbs (`A > B > C`) | `project > folder > org` (a GCP concept), `TimeGenerated > ago` (a KQL operator), `db > myapp` (shell redirection) — **0 real ones** |
+| Prices | 4 genuine ones, all home-lab hardware in `career` |
+| Service limits | none stated as a number |
+
+So the 184 flagged topics were essentially **all** false positives, and the freshness
+anxiety behind §4 was misplaced. This site is conceptual — how BGP works, what Zero
+Trust means, which key opens DevTools. That does not rot. Four claims are marked, which
+is not a token sample; it is the population.
+
+That reframes the content-age worry above. 274 topics carrying `2026-06` is not a debt,
+because almost none of them assert anything that can become false. The number to watch
+is `--report`, and it currently has four rows.
+
+A third instance of the same lesson, after the hex counter and the dead classes: **the
+heuristic was not just noisy, it was measuring a problem that did not exist.** Matching
+claim *shape* instead of product names halved the flags, and was still wrong — it cannot
+separate "Settings &gt; Devices &gt; Enrol" from "Python → Bash → PowerShell", because
+the difference is meaning. Only a human marking the claim can carry that, which is why
+the convention is the answer and no regex was ever going to be.
+
+## 4b. The page budget stops the backlog at about 20% of it
+
+Found by checking what this session's 61 cards actually cost, rather than by
+reading the card counts.
+
+```
+                     session start      now       budget
+elements                  78,780      82,646      93,000
+headroom                     15%         11%
+```
+
+**63 elements per card**, measured over 61 cards. That leaves ~10,300 elements, so
+**about 163 more cards fit before `page_budget.py` fails the build.** The backlog is
+~828 cards.
+
+This is the real constraint on `plan.md`, and it is not the one the file describes.
+The header talks about ~165 working sessions; the honest statement is that the page
+hits a hard ceiling roughly a fifth of the way through the backlog, and every wave
+from here spends about 0.6% of what remains.
+
+Three consequences:
+
+1. **Track AK's lazy loading is no longer a "later" item.** It was deliberately gated
+   on a measurement — `page_budget.py`'s own docstring says hitting a budget "is the
+   moment to have the lazy-loading conversation, with a measurement in hand". That
+   moment is now visible and close. AK should be re-read as a prerequisite for the
+   second half of the content backlog, not as polish.
+2. **The 15% duplicate rate found this session helps twice.** A card not written costs
+   nothing in elements. If the rest of the backlog duplicates at a similar rate, the
+   real runway is longer than 163 — which is an argument for running the site check
+   before every wave, not just a tidiness one.
+3. **Raising the budget is not the fix.** The numbers were set from a real
+   measurement — 836 KB over the wire, 336 ms first paint on a throttled phone. Moving
+   the ceiling without re-measuring would turn the one honest number in this file back
+   into a feeling.
 
 ## 5. Unknowns I cannot resolve alone
 
@@ -4225,8 +4474,226 @@ as debt.
 
 If only three things get done, do these:
 
-1. **Regenerate the cheat sheet** — it is wrong right now and someone might print it.
-2. **Decide `spirit`** — three cards is not a domain.
-3. **Pick one lint counter and actually move it**, or stop tracking all three.
+1. ~~**Regenerate the cheat sheet**~~ — ✅ session 18. A generator now exists; the header
+   is true and CI keeps it true.
+2. ~~**Decide `spirit`**~~ — ✅ session 18. Folded into `philosophy`.
+3. ~~**Pick one lint counter and actually move it**~~ — ✅ session 18. `hard-coded hex`:
+   148 → 0, and promoted to an error so it stays there.
 
 Everything else is optional, and saying so is the point of this section.
+
+---
+
+## Session 18 — what shipped, and what it cost
+
+All three short-list items, plus the two remaining defects in §1, in one pass. The
+theme through it: **every one of them was a claim nobody was checking.**
+
+| Claim | Was | Now |
+|---|---|---|
+| "Generated from the Math domain" | Hand-written from 1 of 16 cards | `tools/gen_cheatsheet.py`, gated by `--check` |
+| "There is a drill for this card" | Prose naming 2 of 4 areas | Generated block, gated by `--check-card` |
+| `148 hard-coded hex colour` | 8 of them were not colours | Check narrowed to real paint contexts; error at 0 |
+| `spirit` is a domain | 3 cards | Folded; the ≥15 rule applied for the first time |
+| Windows Admin is Life Admin | Mis-filed since the split | In `endpoint` |
+| `class="c-cyan"` colours a cell | Dead in 1614 first cells | Removed; lint errors on the position |
+| "Verified headless (Chromium)" | Re-derived by hand each session | `tools/smoke_test.mjs`, 21 checks, in CI |
+
+CI grew two gates and lost a warning. The generators matter more than the fixes: a
+regenerated cheat sheet is worth one session, but a cheat sheet that *cannot go stale*
+is worth every session after it. Same for the drill index. That is the difference
+between the work above and the fourteen sessions where the TREND line did not move.
+
+**Three things surfaced that are worth carrying forward.** All are recorded above rather
+than fixed:
+
+- **The 1069 colour-only inline styles still cannot be mechanically converted** to `c-*`
+  classes, and `CONTRIBUTING.md` now says why. Worth doing eventually, one component at a
+  time, with the before/after computed-style diff used above as the gate. Not worth doing
+  blind.
+- `lifestyle` is now the weakest chip at 4 cards, and inherits the question `spirit` just
+  answered.
+- ~~`VOLATILE_HINTS` still needs the same treatment~~ — ✅ done, see §4. The convention,
+  the linter check and the report all exist. The finding underneath is the useful part:
+  the site has four volatile claims in total, so content age was never the risk it looked
+  like.
+
+One correction to the audit above, found by doing it: §1 said to "re-run the generator"
+for the cheat sheet. There was no generator to re-run. The file had been written by hand
+and given a header that described an intention. Worth remembering when reading the rest
+of this file — a stated capability is not evidence of one.
+
+### The headline claim, made checkable
+
+This file's own header has said **"Verified headless (Chromium)"** since the first
+review. It was true each time somebody wrote it, and never afterwards: every session that
+changed structure re-derived a throwaway script, and between sessions nothing checked it.
+Same shape as the cheat sheet header.
+
+`tools/smoke_test.mjs` is now that check — 21 assertions, run in CI as its own job. It
+tests what a *structural* change breaks, not pixels:
+
+- every filter chip has a domain section, and every section has a chip (a half-finished
+  fold is silent otherwise)
+- every topic has a unique id, and a cold-loaded permalink expands its card
+- one study deck per studyable domain, none for a domain that is gone, and none empty
+- reviewed state survives a reload
+- body, diagrams and volatile marks all change colour with the theme
+- no raw hex in a style attribute; Enter opens a domain and a topic; no console errors;
+  no off-site requests
+
+**The harness had the bug it exists to catch.** Renaming `.topo-svg` in a deliberately
+broken copy should have failed it. Instead the theme loop skipped the now-missing
+selectors and reported **19/19 passed** — a page with its diagrams destroyed, green.
+Fixed by asserting presence separately from behaviour, and re-tested against four broken
+copies: a deleted chip, a reintroduced literal, the renamed class, and the script tag
+pointed at nothing. All four now fail, and the last one fails *readably* rather than
+dying on a 30-second timeout.
+
+That is the fourth instance this session of the same thing, and the sharpest, because it
+happened to a tool built specifically to avoid it: **a check that can quietly stop
+checking is worse than no check**, since it also reports success. Worth re-reading before
+adding a counter, a lint rule, or an assertion to this repo.
+
+### Content off the backlog — Tracks V1–V3 and AL1–AL3
+
+Both remaining content items on the Phase-5 priority shortlist are done, plus two
+further `infra` waves: **43 cards, eight commits**, two new domains each landing on
+exactly the 15-card bar. Site 943 → **985 topics, 27 → 29 domains**.
+
+| Wave | Domain | Cards written | Specced |
+|---|---|---:|---:|
+| V1–V3 Windows Server, AD DS, Group Policy | `infra` (new) | 15 | 15 |
+| AL1–AL3 complexity, structures, algorithms | `cs` (new) | 15 | 15 |
+| V4 identity operations | `infra` | 5 | 5 |
+| V5 on-prem network services | `infra` | 3 | 5 |
+| V6 certificate services | `infra` | 3 | 5 |
+| V7 server operations | `infra` | 2 | 5 |
+| AL4 operating system theory | `cs` | 5 | 5 |
+| AL7 clocks, consensus, failure detection | `cs` | 3 | 5 |
+| **Total** | | **51** | **60** |
+
+**Track V is complete at 28 cards against a 35-card spec, and nine cards across the
+session were cut rather than written.** Every cut is marked `- [~]` in the track lists
+with the reason in its wave commit. `infra` 28, `cs` 23 — both well clear of the bar.
+
+Every wave held the lint counters flat: `TREND ai-table=361 inline=1946` before the
+first card and after the last, because the verdict paragraphs use a class.
+
+**The finding that matters more than the cards: the track lists are stale, and in a
+predictable direction.** Both tracks claimed a gap that was partly or wholly already
+filled — Track V by `sec`'s Active Directory card, Track AL by six cards in `script`
+including a claim that the material "is nowhere yet". Every track in this file was
+written by looking at the *subject*, not at the *site*, and the site has moved since.
+
+The habit that fixes it costs one command before each wave:
+
+```
+python3 -c "import re,json,pathlib; [print(d,n) for d in [x['id'] for x in
+  json.load(open('data/domains.json'))] for n in re.findall(
+  r'class=\"topic-name\"[^>]*>(.*?)</span', pathlib.Path(f'data/{d}.html').read_text(), re.S)]"
+```
+
+Grep it for the subject before writing. Where a card already exists, either write the
+depth above it and link down — which is what both domains do — or cut the card. Do not
+write the second introduction.
+
+**Nine of sixty specced cards were cut.** That is 15%, and it is the number worth
+carrying forward: a track list written against a subject rather than a site
+over-specifies by roughly that much. Where the duplication concentrated:
+
+| Cut | Already covered by |
+|---|---|
+| AD DS Architecture | `sec` Active Directory — Structure, Objects & Attacks |
+| Big-O in Practice (as specced), Arrays & Lists, Choosing a Structure | `script`, six cards |
+| Time Sync | folded into V4's Kerberos card, where the failure mode belongs |
+| IPAM | nothing — cut as filler, one idea and no failure mode |
+| Windows Event Log Triage | `blueteam` Windows Event Logs — The IDs That Matter |
+| Windows Patching Strategy | `endpoint` Windows Autopatch, Emergency Patching |
+| PerfMon & Resource Monitor | `ops` Performance & Capacity, Monitoring & Observability |
+| Consistency Models, Idempotency & Exactly-Once | `devops` CAP Theorem; `eng` Idempotency, Sagas, Quorums |
+
+**V7 was 60% already written.** A whole wave, three of five cards, sitting in three
+other domains. Nothing in the track list could have told you that.
+
+**Cutting is part of writing a wave, not a failure to finish one.** V5 shipped three of
+its five specced cards: *Time Sync* because it is already the third section of V4's
+Kerberos card, where a failure mode belongs; *IPAM* because it had one idea and no
+failure mode, and a card whose content is "eventually use a tool" is exactly what rule
+10 describes. A wave is done when the cards that earn their place are written, not when
+the checkbox count matches. Cut cards are marked `- [~]` so the next reader knows the
+difference between skipped and rejected.
+
+### Detail — Track V1–V3
+
+With the audit clear, the shortlist's remaining content item was V1–V3, "the largest
+genuine subject gap on the site". Shipped: `infra`, 15 cards over three waves, one
+commit each. Site is now **961 topics / 28 domains**.
+
+Four things worth carrying into the next wave:
+
+- **Check the neighbouring domain before writing the overview card.** `sec` already
+  covered AD structure. The planned "AD DS Architecture" card would have been a
+  duplicate, so V2 links to it and answers the operational question instead. The
+  track list was written before that card existed and does not know about it — no
+  track list does.
+- **`scaffold_domain.py` had two bugs, now fixed.** It appended the chip to the *last*
+  chip group regardless of fit and prefixed the icon to the chip label, so `infra`
+  arrived as "🏢 🏢 WINDOWS SERVER" under *Reference*. Corrected by hand for this wave,
+  then fixed in the script: `chip_label` is now the complete label, and `--group
+  "Core IT domains"` picks the destination group. `m365`, `itsm`, `cs`, `hw` and `biz`
+  would each have hit it. Section order still follows `domains.json`, which the script
+  appends to — move the entry by hand if the domain belongs next to a relative.
+- **`data/acronyms.json` is sorted by raw string**, so uppercase entries precede
+  lowercase-initial ones (`mTLS`, `osquery`, `gMSA`). Sorting with a
+  case-insensitive key rewrites 566 lines for no reason. Insert, then sort with
+  `key=lambda e: e['a']`.
+- **A wave can cost the lint counters nothing.** The 313 existing
+  `style="margin-top:10px"` verdict paragraphs now have a name —
+  `.concept-desc.verdict` — so 28 new ones added zero to the inline-style count.
+  Converting the other 313 is still the unsafe-blind change described above; a new
+  wave choosing the class is free.
+
+### The cross-reference check — a fourth ratchet, and a fourth misdiagnosis
+
+Writing 51 cards meant writing cross-references, and the habit of this session made the
+obvious question available: *is anything checking those?* Nothing was, and four were
+wrong — one naming a card that has never existed, two naming cards that had been
+retitled, and one naming a card I referenced from AL1 and then never wrote.
+
+`<span class="xref">Exact Topic Title</span>` is now the convention; `lint_content.py`
+resolves every reference against real titles and suggests the nearest match on a miss.
+Third ratchet at zero, after topic names and hard-coded colours.
+
+Two things fell out of converting the sixteen references, both worth keeping:
+
+- **The acronym annotator was rewriting the quoted titles.** It injected expansions
+  inside the `xref` span, so a reference that was correct when written would fail the
+  check the next time the annotator ran. `xref` is now in `SKIP_CLASSES`. Any future
+  convention that quotes exact text needs the same treatment — the annotator touches
+  everything it is not told to leave alone.
+- **The linter was right and I was wrong, twice, about the same two strings.** I
+  "corrected" two references to `DNS (Domain Name System)` and `PKI (Public Key
+  Infrastructure)` using titles from a throwaway probe whose non-greedy regex had
+  spliced an acronym expansion into the captured title. The real titles are *DNS Deep
+  Dive — Records, Resolution & Security* and *PKI & Certificate Lifecycle*. Only
+  calling `topic_label()` — the function the linter itself uses — got the right answer.
+
+**Write the probe against the tool, not alongside it.** Four times this session a
+throwaway script disagreed with a checked one, and the throwaway was wrong every time:
+a `.topic.open` selector script.js never sets, a storage key that did not exist, a
+notepad treated as a textarea, and now a title regex. The habit that costs least is to
+import the module that already knows.
+
+### On this session's method
+
+Four verification failures in this session turned out to be broken *tests*, not broken
+code: a `.topic.open` selector that script.js never sets, a progress probe searching the
+wrong storage key, a notepad treated as a textarea when it is a compose-and-post list,
+and three "broken" page copies that were merely missing their sibling `script.js`
+(`index.html` is not self-contained — `build.py`'s docstring calls it that, and means
+"needs no server"). Every one looked like a finding for a minute.
+
+The habit that caught them all was cheap: **run the control.** Test the thing you did not
+change, and if it fails too, the test is wrong. It cost four extra runs and prevented
+four wrong entries in this file.

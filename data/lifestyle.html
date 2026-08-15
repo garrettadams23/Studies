@@ -1,5 +1,5 @@
           <!-- ── TOPIC: MINIMALISM & INTENTIONAL LIVING ──────────────── -->
-          <div class="topic" data-reviewed="2026-06">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">⬜</span>
               <span class="topic-name"
@@ -142,7 +142,7 @@
 
 <!-- BEGINNER12-LIFE v1 -->
 <!-- ── TOPIC: FINANCIAL BASICS FOR IT WORKERS ────────────── -->
-<div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">💰</span>
     <span class="topic-name">Financial Basics for IT Workers — Build While You Build a Career</span>
@@ -183,7 +183,7 @@
 </div>
 
 <!-- ── TOPIC: REMOTE WORK & WORK-LIFE BALANCE ─────────────── -->
-<div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🏡</span>
     <span class="topic-name">Remote Work — Working Well From Anywhere</span>
@@ -220,125 +220,4 @@
 
 <!-- BEGINNER30-LIFESTYLE v1 -->
 <!-- ── TOPIC: Windows Admin Fundamentals ─────────────────────────── -->
-<div class="topic" data-reviewed="2026-06">
-  <div class="topic-header">
-    <span class="topic-badge">Beginner</span>
-    <span class="topic-name">Windows Administration Fundamentals</span>
-  </div>
-  <div class="topic-body">
-
-    <div class="concept-card">
-      <div class="concept-label">Core Concept</div>
-      <div class="concept-title">The Windows Admin Toolkit</div>
-      <div class="concept-desc">
-        Enterprise Windows administration revolves around a handful of tools.
-        Learn these early — they show up in every IT job that involves Windows:<br><br>
-        <strong>GUI <span class="acro-exp">(Graphical User Interface)</span> Tools (MMC Snap-ins):</strong><br>
-        &bull; <code>dsa.msc</code> — Active Directory Users &amp; Computers (ADUC).<br>
-        &bull; <code>gpmc.msc</code> — Group Policy Management Console.<br>
-        &bull; <code>compmgmt.msc</code> — Computer Management (local users, disks, services).<br>
-        &bull; <code>eventvwr.msc</code> — Event Viewer (logs for everything).<br>
-        &bull; <code>services.msc</code> — Start/stop/configure Windows services.<br><br>
-        <strong>Command-line:</strong><br>
-        &bull; <code>cmd.exe</code> — the classic command prompt (legacy but everywhere).<br>
-        &bull; <code>powershell.exe</code> / <code>pwsh.exe</code> — the modern admin shell.<br>
-        &bull; <code>wmic</code> / <code>winrm</code> — remote management from CLI <span class="acro-exp">(Command Line Interface)</span>.
-      </div>
-    </div>
-
-    <div class="concept-card">
-      <div class="concept-label">User Management</div>
-      <div class="concept-title">Managing Users in Active Directory</div>
-      <div class="concept-desc">
-        Common day-one helpdesk tasks in Active Directory Users &amp; Computers (ADUC):
-      </div>
-      <div class="code-block">
-<span class="com">-- Open ADUC: Win+R → dsa.msc</span>
-<span class="com">-- Or via PowerShell (if RSAT tools installed):</span>
-
-<span class="com"># Create a new AD user</span>
-New-ADUser `
-  -Name <span class="str">"Bob Jones"</span> `
-  -SamAccountName <span class="str">"bjones"</span> `
-  -UserPrincipalName <span class="str">"bjones@corp.example.com"</span> `
-  -AccountPassword (ConvertTo-SecureString <span class="str">"TempP@ss1"</span> -AsPlainText -Force) `
-  -ChangePasswordAtLogon $true `
-  -Enabled $true `
-  -Path <span class="str">"OU=Finance,DC=corp,DC=example,DC=com"</span>
-
-<span class="com"># Unlock a locked-out account</span>
-Unlock-ADAccount -Identity bjones
-
-<span class="com"># Reset a password</span>
-Set-ADAccountPassword bjones `
-  -NewPassword (ConvertTo-SecureString <span class="str">"NewP@ss99"</span> -AsPlainText -Force) `
-  -Reset
-
-<span class="com"># Disable an account (departing employee)</span>
-Disable-ADAccount -Identity bjones
-
-<span class="com"># Find all disabled accounts in an OU</span>
-Search-ADAccount -SearchBase <span class="str">"OU=Finance,DC=corp,DC=example,DC=com"</span> `
-                 -AccountDisabled | Select Name, SamAccountName
-      </div>
-    </div>
-
-    <div class="concept-card">
-      <div class="concept-label">Group Policy</div>
-      <div class="concept-title">Group Policy Objects (GPOs) Explained</div>
-      <div class="concept-desc">
-        A <strong>GPO</strong> is a collection of settings pushed from the domain
-        controller to computers and users automatically. Examples of what GPOs
-        control:<br><br>
-        &bull; Password complexity requirements.<br>
-        &bull; Screen lock after N minutes of inactivity.<br>
-        &bull; Mapped drives (e.g. <code>H:</code> = home folder on file server).<br>
-        &bull; Software deployment (install apps on logon).<br>
-        &bull; Firewall rules, browser settings, USB <span class="acro-exp">(Universal Serial Bus)</span> restrictions.<br><br>
-        GPOs apply in order: <strong>Local → Site → Domain → OU</strong> (LSDOU).
-        Later policies win unless "Enforced" is set. Use
-        <code>gpresult /r</code> on a PC to see which GPOs actually applied.
-        <br><br>
-        <em>You can't make someone make the right choice, yet you can pick up
-        the pieces afterwards</em> — GPOs don't stop a determined user
-        completely, but they raise the barrier and give you an audit trail
-        when something goes wrong.
-      </div>
-    </div>
-
-    <div class="concept-card">
-      <div class="concept-label">Remote Access</div>
-      <div class="concept-title">Remote Desktop &amp; PowerShell Remoting</div>
-      <div class="concept-desc">
-        Two primary ways to manage remote Windows machines:
-      </div>
-      <div class="code-block">
-<span class="com"># ── Remote Desktop (RDP) ──</span>
-<span class="com"># From Linux: install freerdp2</span>
-xfreerdp /v:workstation01.corp.example.com /u:alice /d:CORP
-
-<span class="com"># From Windows: mstsc.exe</span>
-mstsc /v:workstation01.corp.example.com
-
-<span class="com"># ── PowerShell Remoting (WinRM) ──</span>
-<span class="com"># Enable on the target machine (run as admin once):</span>
-Enable-PSRemoting -Force
-
-<span class="com"># Connect to a remote session</span>
-Enter-PSSession -ComputerName workstation01 -Credential CORPlice
-
-<span class="com"># Run a command on multiple machines at once</span>
-Invoke-Command -ComputerName srv01, srv02, srv03 `
-  -ScriptBlock { Get-Service -Name Spooler | Select Name, Status }
-
-<span class="com"># Copy a file to a remote machine</span>
-$s = New-PSSession -ComputerName srv01 -Credential CORPlice
-Copy-Item -Path C:\patch.msi -Destination C:\Temp\ -ToSession $s
-Remove-PSSession $s
-      </div>
-    </div>
-
-  </div>
-</div>
-
 <!-- /domain-body lifestyle -->

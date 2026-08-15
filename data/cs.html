@@ -1,0 +1,2252 @@
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE AL1 — COMPLEXITY & CORRECTNESS
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: BIG-O IN PRACTICE ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📉</span>
+    <span class="topic-name">Big-O in Practice — What the Notation Hides</span>
+    <span class="topic-badge">CS • Complexity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">You Already Know What Big-O Measures; This Is Where It Misleads</div>
+      <div class="concept-desc">
+        <span class="xref">Big O Notation — Measuring Algorithm Efficiency</span> in the Scripting
+        domain covers the notation itself. This card is the follow-up nobody gets taught:
+        Big-O deliberately discards information, and the discarded information is what
+        decides which code is faster on the machine you actually own.
+      </div>
+      <div class="concept-desc">
+        The definition throws away constant factors and lower-order terms because it describes
+        behaviour as <em>n</em> grows without bound. Real inputs are finite, often small, and
+        run on hardware with a memory hierarchy that the model does not represent at all.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Where it breaks</div>
+      <div class="concept-title">Four Ways the Better Complexity Loses</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Situation</th><th>What actually happens</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Small n</td>
+              <td>Insertion sort beats quicksort below roughly 10–20 elements, which is why real sort implementations switch to it for small partitions rather than recursing further</td>
+            </tr>
+            <tr>
+              <td>Constant factors</td>
+              <td>A linear scan of a contiguous array frequently beats a hash lookup for a few dozen items — no hashing, no pointer chasing, and the whole array is in cache</td>
+            </tr>
+            <tr>
+              <td>Memory layout</td>
+              <td>A linked list and an array are both O(n) to traverse. The array can be an order of magnitude faster, because Big-O counts operations and cannot see cache misses</td>
+            </tr>
+            <tr>
+              <td>Worst vs typical</td>
+              <td>Quicksort is O(n²) worst case and the usual default anyway, because that case is rare and its typical constant is excellent</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> use Big-O to reject algorithms that will not survive
+        growth, which is what it is genuinely good at. Do not use it to choose between two
+        survivors — measure those, on representative data.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Optimising the Term That Was Never the Problem</div>
+      <div class="concept-desc">
+        The most common waste in performance work is improving an O(n²) loop over 200 items —
+        microseconds — inside a request that spends 40 milliseconds waiting on a database. The
+        complexity analysis was correct and the work was pointless.
+      </div>
+      <div class="concept-desc">
+        Before optimising an algorithm, establish that computation is the cost. In most
+        application code it is not: input/output dominates, and the useful numbers are the ones in
+        <span class="xref">Memory Layout &amp; Cache Locality — Why Arrays Beat Linked Lists</span> —
+        roughly nanoseconds for memory, microseconds for local storage, milliseconds for a
+        network round trip. Those three
+        orders of magnitude decide more than an exponent usually does.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: AMORTIZED ANALYSIS ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📊</span>
+    <span class="topic-name">Amortized Analysis — Why a Dynamic Array Is O(1) "On Average"</span>
+    <span class="topic-badge">CS • Complexity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The idea</div>
+      <div class="concept-title">Averaging an Expensive Operation Across the Cheap Ones That Earned It</div>
+      <div class="concept-desc">
+        Appending to a dynamic array — a Python list, a Go slice, a C++ vector — is usually
+        writing one value: O(1). Occasionally the backing store is full, and the whole thing is
+        copied to a larger one: O(n). Calling append O(n) because of that would be true and
+        useless.
+      </div>
+      <div class="concept-desc">
+        Amortized analysis asks what a <em>sequence</em> of operations costs. Because the array
+        grows by a constant <strong>factor</strong> — typically doubling — each resize is twice
+        as expensive as the last but happens half as often. The copying work across n appends
+        sums to less than 2n, so the average cost per append is constant.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The load-bearing detail is "by a factor".</strong> Growing by a fixed
+        <em>amount</em> instead — 10 more slots each time — makes appending O(n) amortized,
+        because resizes stop becoming rarer. This is a real bug people write when implementing
+        their own buffer.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Distinction</div>
+      <div class="concept-title">Amortized Is Not Average-Case</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Means</th><th>Guarantee</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Average-case</td><td>Expected cost over a distribution of inputs</td><td class="c-amber">Probabilistic — a bad input can defeat it</td></tr>
+            <tr><td>Amortized</td><td>Worst-case cost of a sequence, divided by its length</td><td class="c-green">Guaranteed — no input sequence beats it</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        Amortized is the stronger claim. Hash table lookup is <em>average-case</em> O(1), and an
+        adversary who can choose keys can force collisions — see <em>Hash Tables</em>. Dynamic
+        array append is <em>amortized</em> O(1), and no sequence of appends can make it worse.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Where the Average Is the Wrong Thing to Care About</div>
+      <div class="concept-desc">
+        Amortized guarantees say nothing about <em>when</em> the expensive operation lands. In a
+        real-time or latency-sensitive path, the occasional O(n) resize is a latency spike, and
+        "it averages out" is no comfort to the request that hit it. The same argument applies to
+        garbage collection pauses.
+      </div>
+      <div class="concept-desc">
+        The mitigations are the same in both cases: pre-size the structure if you know roughly
+        how large it will get, or choose an implementation with worse average throughput and
+        better worst-case bounds. Latency and throughput are different goals, and amortized
+        analysis only speaks to the second.
+      </div>
+      <pre class="code-block"><span class="com"># Pre-sizing removes the resizes entirely when the size is known</span>
+buf = [<span class="m">None</span>] * n_expected          <span class="com"># Python</span>
+buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected)     <span class="com"># Go: length 0, capacity reserved</span></pre>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: TIME VS SPACE ───────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚖️</span>
+    <span class="topic-name">Time vs Space Trade-offs — What Caching Actually Costs</span>
+    <span class="topic-badge">CS • Complexity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The pattern</div>
+      <div class="concept-title">Nearly Every Speed-Up Is Memory You Agreed to Spend</div>
+      <div class="concept-desc">
+        Precomputation, indexes, memoisation, lookup tables and caches are one idea in different
+        clothes: store an answer so you do not compute it twice. The cost is memory, and — far
+        more often the real problem — the obligation to keep the stored answer correct.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Technique</th><th>Buys</th><th>Costs</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Memoisation</td><td>Repeated calls become free</td><td>Unbounded growth unless evicted; wrong if the function is not pure</td></tr>
+            <tr><td>Database index</td><td>Lookups go from scan to seek</td><td>Slower writes, more disk, and a planner that may ignore it</td></tr>
+            <tr><td>Lookup table</td><td>Arithmetic becomes an array read</td><td>Only wins if the table stays in cache</td></tr>
+            <tr><td>Denormalised copy</td><td>No join at read time</td><td>Two sources of truth to reconcile</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> the memory is the advertised cost and rarely the one that
+        hurts. <strong>Invalidation is the real price</strong> — every cache is a claim that
+        stored data still matches its source, and nothing enforces that claim for you.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">A Lookup Table Bigger Than the Cache Is Slower Than the Maths</div>
+      <div class="concept-desc">
+        Replacing computation with a table assumes the read is cheap. Once the table exceeds
+        the processor's cache, each read is a main-memory access of roughly a hundred
+        nanoseconds — enough time to have executed hundreds of arithmetic instructions.
+      </div>
+      <div class="concept-desc">
+        Modern processors are fast enough that recomputing a small value frequently beats
+        looking it up. This is a genuine reversal from older guidance, and it is why
+        <em>measure</em> is the whole answer here rather than a hedge.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: RECURSION ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔁</span>
+    <span class="topic-name">Recursion &amp; Induction — Trusting a Function That Calls Itself</span>
+    <span class="topic-badge">CS • Correctness</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The method</div>
+      <div class="concept-title">Do Not Trace It — Prove It</div>
+      <div class="concept-desc">
+        The reason recursion feels hard is that people try to simulate it mentally, unwinding
+        each call. That does not scale past two levels. The working technique is induction, and
+        it needs exactly three checks:
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Check</th><th>Ask</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Base case</td><td>Is there an input that returns without recursing, and is its answer right?</td></tr>
+            <tr><td>Inductive step</td><td>Assuming the call on a smaller input is correct, is my answer correct?</td></tr>
+            <tr><td>Progress</td><td>Does every call move strictly toward the base case?</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Assume the recursive call works.</strong> That is not a cheat — it is the
+        inductive hypothesis, and it is the entire reason the technique exists. If all three
+        checks hold, the function is correct, and you never traced a single call.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Progress Is the Check People Skip</div>
+      <div class="concept-desc">
+        Base case and inductive step are usually obvious. Progress is where real bugs live:
+        recursing on <code>n</code> instead of <code>n - 1</code> on one branch, or on a
+        sub-list that is only sometimes smaller. The result is a stack overflow on a specific
+        input rather than a wrong answer on all of them, which makes it a production bug rather
+        than a test failure.
+      </div>
+      <pre class="code-block"><span class="com"># Progress fails when the pivot is the smallest element: the right</span>
+<span class="com"># partition never shrinks and the recursion never terminates.</span>
+<span class="kw">def</span> <span class="fn">quicksort</span>(a, lo, hi):
+    <span class="kw">if</span> lo &gt;= hi: <span class="kw">return</span>              <span class="com"># base case</span>
+    p = partition(a, lo, hi)
+    quicksort(a, lo, p)              <span class="com"># BUG: should be p - 1</span>
+    quicksort(a, p + <span class="m">1</span>, hi)</pre>
+      <div class="concept-desc verdict">
+        Python defaults to a recursion limit near 1000 frames, which turns unbounded recursion
+        into a clean exception. C and C++ have no such courtesy: the stack simply runs out, and
+        a deep recursion on attacker-controlled input is a denial-of-service bug.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Practicalities</div>
+      <div class="concept-title">Tail Calls, and Why Python Will Not Help You</div>
+      <div class="concept-desc">
+        A tail call is a recursive call that is the last thing a function does. Some languages —
+        Scheme, and most functional languages — are required to reuse the stack frame, making
+        such recursion equivalent to a loop. Others, notably Python and CPython-adjacent
+        runtimes, deliberately do not, because keeping the frames makes tracebacks readable.
+      </div>
+      <div class="concept-desc">
+        The practical rule: recursion is the clearer expression for genuinely tree-shaped
+        problems — parsing, directory walks, divide and conquer. For linear problems, write the
+        loop. Where depth is bounded by data you do not control, convert to an explicit stack so
+        the limit is memory you can measure rather than a frame count you cannot.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: P VS NP ─────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧩</span>
+    <span class="topic-name">P, NP &amp; Knowing When to Stop Looking for an Exact Answer</span>
+    <span class="topic-badge">CS • Tractability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The distinction</div>
+      <div class="concept-title">Easy to Check Is Not the Same as Easy to Find</div>
+      <div class="concept-desc">
+        <strong>P</strong> is the set of problems solvable in polynomial time.
+        <strong>NP</strong> is the set whose <em>proposed answers</em> can be
+        <em>verified</em> in polynomial time. Every problem in P is in NP — checking is never
+        harder than solving — and whether the reverse holds is the open question.
+      </div>
+      <div class="concept-desc">
+        A useful example: given a schedule for 300 staff, confirming it satisfies every
+        constraint takes seconds. Finding an optimal one may take longer than the age of the
+        universe. Nothing about the checking speed implies anything about the finding speed, and
+        that gap is the entire subject.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Why you care</div>
+      <div class="concept-title">Recognising One Saves You From Promising a Delivery Date</div>
+      <div class="concept-desc">
+        <strong>NP-complete</strong> problems are the hardest in NP: solve one efficiently and
+        you have solved all of them. Nobody has, in over fifty years of trying. The practical
+        consequence is that recognising your problem as one of them is a
+        <em>result</em>, not a defeat — it tells you to stop searching for an exact efficient
+        algorithm and change what you are promising.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Shows up as</th><th>Classic name</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Fitting jobs onto machines or VMs <span class="acro-exp">(Virtual Machine)</span> onto hosts</td><td>Bin packing</td></tr>
+            <tr><td>Rostering staff or timetabling rooms</td><td>Graph colouring</td></tr>
+            <tr><td>Routing a vehicle through many stops</td><td>Travelling salesman</td></tr>
+            <tr><td>Choosing what fits in a fixed budget</td><td>Knapsack</td></tr>
+            <tr><td>Dependency resolution with version constraints</td><td>Boolean satisfiability</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> that last row is why package managers occasionally hang
+        for a very long time. Dependency resolution is genuinely NP-complete, and the resolver
+        is not badly written — it is running a solver on a hard instance.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">What to do instead</div>
+      <div class="concept-title">Four Honest Exits</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Exit</th><th>Give up</th><th>Good when</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Approximation</td><td>Optimality — take within 5% of best</td><td>Nearly always. Most businesses cannot tell optimal from good</td></tr>
+            <tr><td>Heuristic</td><td>Any guarantee at all</td><td>Instances look alike and you can measure results</td></tr>
+            <tr><td>Constrain the input</td><td>Generality</td><td>The hard cases do not occur in your data</td></tr>
+            <tr><td>Off-the-shelf solver</td><td>Writing it yourself</td><td>Always try this first — solvers beat hand-rolled search badly</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        The failure mode is not choosing an exit: an exact algorithm ships, works on the test
+        data, and hangs eighteen months later when a customer's input crosses a threshold
+        nobody documented. Decide which guarantee you are dropping, and write it down where the
+        next person will find it.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE AL2 — DATA STRUCTURES FROM FIRST PRINCIPLES
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: MEMORY LAYOUT ───────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧱</span>
+    <span class="topic-name">Memory Layout &amp; Cache Locality — Why Arrays Beat Linked Lists</span>
+    <span class="topic-badge">CS • Data Structures</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">Which Structure to Pick Is Covered; This Is Why the Table Lies</div>
+      <div class="concept-desc">
+        <span class="xref">Choosing the Right Data Structure</span> in the Scripting domain has the
+        operation-cost table. This card explains why that table mispredicts real performance so
+        often: it counts operations, and the machine charges for <em>memory access patterns</em>.
+      </div>
+      <div class="concept-desc">
+        Memory does not arrive one byte at a time. It arrives in <strong>cache lines</strong>,
+        typically 64 bytes. Reading one integer from main memory fetches its fifteen neighbours
+        whether you want them or not — so a structure whose elements sit next to each other gets
+        the next fifteen reads nearly free.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The consequence</div>
+      <div class="concept-title">Same Big-O, Order-of-Magnitude Difference</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Array</th><th>Linked list</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Traversal complexity</td><td>O(n)</td><td>O(n)</td></tr>
+            <tr><td>Elements per memory fetch</td><td class="c-green">~16 (64-byte line, 4-byte ints)</td><td class="c-red">1, plus a pointer to chase</td></tr>
+            <tr><td>Prefetcher can help</td><td class="c-green">Yes — the stride is predictable</td><td class="c-red">No — the next address is unknown until arrival</td></tr>
+            <tr><td>Memory overhead</td><td class="c-green">None</td><td class="c-amber">A pointer per element, often doubling the size</td></tr>
+            <tr><td>Genuinely better at</td><td>Everything you iterate</td><td>Splicing when you already hold the node</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> linked lists are taught early and used rarely. Unless you
+        need stable references to elements or O(1) splice with a node already in hand, an array
+        or dynamic array wins — including for insert-in-the-middle at small sizes, because
+        memmove of a contiguous block is extremely fast.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Applying it</div>
+      <div class="concept-title">Struct of Arrays, and Why Databases Went Columnar</div>
+      <div class="concept-desc">
+        If you process one field across many records, storing an array per field beats an array
+        of records: the fetched cache lines contain only data you asked for. This is the same
+        insight behind columnar storage — see <span class="xref">Columnar Engines — Parquet, DuckDB &amp; ClickHouse</span> in the Data domain —
+        and behind why a scan over a column store outruns a row store on analytics by so much.
+      </div>
+      <pre class="code-block"><span class="com"># Array of structs: summing one field drags every other field into cache</span>
+<span class="kw">struct</span> P { <span class="kw">float</span> x, y, z; <span class="kw">char</span> name[<span class="m">64</span>]; };
+P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes per line</span>
+
+<span class="com"># Struct of arrays: the summed field is contiguous</span>
+<span class="kw">float</span> xs[N], ys[N], zs[N];
+<span class="kw">char</span> names[N][<span class="m">64</span>];        <span class="com"># every fetched line is all x values</span></pre>
+      <div class="concept-desc verdict">
+        Do not reach for this by default — it makes code harder to read and only pays where a
+        hot loop touches a subset of fields over many records. It is a profiling result, not a
+        style.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: HASH TABLES ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">#️⃣</span>
+    <span class="topic-name">Hash Tables — Collisions, Load Factor &amp; the DoS <span class="acro-exp">(Denial of Service)</span> That Exploits Them</span>
+    <span class="topic-badge">CS • Data Structures</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Mechanism</div>
+      <div class="concept-title">O(1) Is a Statement About Luck, Not a Guarantee</div>
+      <div class="concept-desc">
+        A hash function maps a key to a bucket index. Two keys landing in the same bucket is a
+        <strong>collision</strong>, and it is not an edge case — by the birthday argument,
+        collisions begin appearing once the table holds roughly the square root of its capacity
+        in items. Every real implementation is mostly collision-handling machinery.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Strategy</th><th>How</th><th>Weakness</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Chaining</td><td>Each bucket holds a list</td><td>Pointer chasing; degrades to a list under attack</td></tr>
+            <tr><td>Linear probing</td><td>Try the next slot along</td><td>Clustering, but excellent cache behaviour</td></tr>
+            <tr><td>Robin Hood</td><td>Probe, stealing slots from luckier keys</td><td>Complex deletion; very even probe lengths</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Load factor</strong> — items divided by buckets — is the number that governs
+        all of them. Beyond roughly 0.7 for open addressing, probe sequences lengthen sharply,
+        so tables resize and rehash to stay under it. That resize is the same amortized cost
+        described in <em>Amortized Analysis</em>, and the same latency spike.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Hash Flooding — Turning O(1) Into O(n) On Purpose</div>
+      <div class="concept-desc">
+        If the hash function is deterministic and public, an attacker can compute thousands of
+        distinct keys that collide into one bucket. Every lookup then walks a long chain, and a
+        single HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> request with a crafted form body or JSON <span class="acro-exp">(JavaScript Object Notation)</span> object consumes seconds of CPU <span class="acro-exp">(Central Processing Unit)</span>.
+        One request, one core, no authentication needed.
+      </div>
+      <div class="concept-desc">
+        This broke essentially every web framework simultaneously in 2011, because they all
+        parsed request parameters straight into a hash table. The fix is
+        <strong>hash randomisation</strong>: seed the hash function per process, so an attacker
+        cannot precompute colliding keys.
+      </div>
+      <pre class="code-block"><span class="com"># Python randomises string hashing per process by default since 3.3.</span>
+<span class="com"># Same string, two processes, two hashes — that is the mitigation working.</span>
+$ python3 -c <span class="m">"print(hash('collide'))"</span>
+$ python3 -c <span class="m">"print(hash('collide'))"</span>
+
+<span class="com"># PYTHONHASHSEED=0 disables it. Only ever for reproducing a bug.</span></pre>
+      <div class="concept-desc verdict">
+        <strong>Never hard-code a hash seed in production, and never rely on iteration order.</strong>
+        If you need a stable order, sort explicitly. Code that depends on dictionary ordering
+        works until the day someone enables randomisation, and then fails somewhere unrelated.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Practicalities</div>
+      <div class="concept-title">Mutable Keys, and Equality That Disagrees With Hashing</div>
+      <div class="concept-desc">
+        A hash table's contract is that equal objects hash equally, and that a key's hash never
+        changes while it is stored. Break either and entries become unreachable — present in
+        memory, invisible to lookup, and undetectable by reading the calling code.
+      </div>
+      <div class="concept-desc">
+        This is why Python refuses to hash a list, and why overriding equality without
+        overriding hashing is a bug in Java, C# and Python alike. If you write one, write both,
+        from the same fields, and make those fields immutable.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: TREES ───────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🌳</span>
+    <span class="topic-name">Trees — BST <span class="acro-exp">(Binary Search Tree)</span>, Balanced, Heap &amp; Trie, and What Each Is Actually For</span>
+    <span class="topic-badge">CS • Data Structures</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Four Trees, Four Different Jobs</div>
+      <div class="concept-desc">
+        "Tree" is not one structure. These four solve genuinely different problems, and
+        confusing them is the usual reason someone reaches for the wrong one.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Structure</th><th>Answers</th><th>Reach for it when</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>BST / balanced tree</td><td>Ordered lookup, range queries, predecessor</td><td>You need sorted order as well as lookup</td></tr>
+            <tr><td>Heap</td><td class="c-green">Only "what is the minimum?"</td><td>Priority queues, scheduling, top-k</td></tr>
+            <tr><td>Trie</td><td>Prefix matching, autocomplete</td><td>Keys are strings sharing prefixes</td></tr>
+            <tr><td>B-tree</td><td>Ordered lookup with few disk reads</td><td>The data is on disk — this is your database index</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> if you only need "is this present?", a hash table beats
+        all of them. Trees earn their place when <em>order</em> matters — range scans, nearest
+        neighbours, or reading everything sorted without a sort.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Why balance</div>
+      <div class="concept-title">An Unbalanced BST Is a Linked List With Extra Steps</div>
+      <div class="concept-desc">
+        A plain BST built from already-sorted input degenerates completely: every insert goes
+        right, and lookup becomes O(n). Since sorted input is extremely common — importing
+        records by ID, replaying a log — this is the normal case rather than the pathological
+        one.
+      </div>
+      <div class="concept-desc">
+        Self-balancing variants (red-black, AVL) rotate on insert to keep depth logarithmic. You
+        will rarely implement one; you should know that your language's ordered map is one, and
+        that a hand-rolled BST in production code is a latent O(n).
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Disk</div>
+      <div class="concept-title">B-trees Exist Because a Disk Read Is Enormous</div>
+      <div class="concept-desc">
+        A balanced binary tree over a million keys is about 20 levels deep. On disk that is 20
+        seeks, and a seek costs roughly a hundred thousand times a memory access. B-trees fix
+        this by making each node hold hundreds of keys — one page — so the same million keys sit
+        three levels deep and cost three reads.
+      </div>
+      <div class="concept-desc verdict">
+        This is the single most important structure in databases, and <span class="xref">Indexes Explained — B-tree, Hash &amp; Covering</span> in the Data domain covers the query-planning side. The
+        theory answer to "why not a binary tree on disk?" is: the memory hierarchy has a cliff
+        in it, and B-trees are shaped around the cliff.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: GRAPHS ──────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🕸️</span>
+    <span class="topic-name">Graphs — Representation, Traversal &amp; the Four Algorithms Worth Knowing</span>
+    <span class="topic-badge">CS • Data Structures</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Recognising one</div>
+      <div class="concept-title">Most Hard Problems Are Graph Problems Wearing a Costume</div>
+      <div class="concept-desc">
+        Package dependencies, network topology, permission inheritance, build pipelines, service
+        call chains, Active Directory attack paths — all graphs. Recognising the shape is most
+        of the work, because the algorithms are standard once you have.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Question</th><th>Algorithm</th><th>Cost</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Fewest hops from here to there?</td><td>Breadth-first search</td><td>O(V + E)</td></tr>
+            <tr><td>Is there a cycle? What order can I build in?</td><td>Topological sort</td><td>O(V + E)</td></tr>
+            <tr><td>Cheapest path with weights?</td><td>Dijkstra</td><td>O(E log V)</td></tr>
+            <tr><td>Cheapest path, some weights negative?</td><td>Bellman-Ford</td><td class="c-amber">O(V·E) — slower, but Dijkstra is simply wrong here</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Dijkstra with negative weights does not produce a slightly worse answer — it
+        produces a wrong one</strong>, because it finalises a node's distance on first visit and
+        a negative edge can invalidate that later. This is a genuine trap: the code runs, returns
+        a path, and the path is not shortest.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Representation</div>
+      <div class="concept-title">Adjacency List Unless the Graph Is Dense</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Adjacency list</th><th>Adjacency matrix</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Space</td><td class="c-green">O(V + E)</td><td class="c-red">O(V²) regardless of edges</td></tr>
+            <tr><td>"Is there an edge u→v?"</td><td>O(degree)</td><td class="c-green">O(1)</td></tr>
+            <tr><td>Iterate a node's neighbours</td><td class="c-green">Optimal</td><td>O(V) even for one neighbour</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        Real graphs are overwhelmingly sparse — a machine has a handful of neighbours, not
+        thousands — so adjacency lists win almost always. A matrix over 100,000 nodes is 10
+        billion entries for a graph that probably has a few hundred thousand edges.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Traversal Without a Visited Set</div>
+      <div class="concept-desc">
+        Any graph with a cycle will loop forever if traversal does not record visited nodes.
+        The same bug in a slightly different form — marking visited on <em>dequeue</em> rather
+        than on <em>enqueue</em> — lets a node enter the queue many times, quietly turning a
+        linear traversal into something far worse on dense graphs.
+      </div>
+      <pre class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">bfs</span>(adj, start):
+    seen = {start}                     <span class="com"># mark on ENQUEUE, not on dequeue</span>
+    q = deque([start])
+    <span class="kw">while</span> q:
+        node = q.popleft()
+        <span class="kw">yield</span> node
+        <span class="kw">for</span> nxt <span class="kw">in</span> adj[node]:
+            <span class="kw">if</span> nxt <span class="kw">not in</span> seen:
+                seen.add(nxt)
+                q.append(nxt)</pre>
+      <div class="concept-desc verdict">
+        Cycles also make "dependency resolution" fail in the field: a build system reporting a
+        cycle is doing topological sort correctly, and the cycle is real. Fix the dependencies,
+        not the tool.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: PROBABILISTIC STRUCTURES ────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎲</span>
+    <span class="topic-name">Probabilistic Structures — Bloom Filters, HyperLogLog &amp; Sketches</span>
+    <span class="topic-badge">CS • Data Structures</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The trade</div>
+      <div class="concept-title">Give Up Exactness, Get Constant Memory</div>
+      <div class="concept-desc">
+        These structures answer questions about enormous sets in kilobytes, by being wrong in a
+        bounded and known direction. That last part is what makes them engineering tools rather
+        than approximations: the error is one-sided, so you can build correct systems on top.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Structure</th><th>Answers</th><th>Wrong how</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Bloom filter</td><td>Have I seen this?</td><td class="c-amber">False positives only — never a false negative</td></tr>
+            <tr><td>HyperLogLog</td><td>How many distinct?</td><td>~2% error in ~12 KB, for billions of items</td></tr>
+            <tr><td>Count-min sketch</td><td>How often did this appear?</td><td class="c-amber">Overestimates only — never under</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The one-sidedness is the design.</strong> A Bloom filter saying "no" is
+        definitive, so it is used as a cheap gate in front of an expensive check: databases
+        consult one before reading a disk block, and a "no" skips the read entirely.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Bloom filters</div>
+      <div class="concept-title">A Bit Array, k Hashes, and No Deletion</div>
+      <div class="concept-desc">
+        Insert by hashing an item k ways and setting those k bits. Query by checking the same k
+        bits: any zero means definitely absent; all ones means probably present. Nothing stores
+        the item itself, which is why memory does not grow with item size.
+      </div>
+      <div class="concept-desc">
+        <strong>You cannot delete.</strong> Clearing a bit would also delete every other item
+        sharing it. The false-positive rate is fixed by bits-per-item and k, so the size must be
+        chosen from the expected item count in advance — roughly 10 bits per item gives about 1%.
+        Over-fill it and the rate climbs until every answer is "probably present".
+      </div>
+      <div class="concept-desc verdict">
+        Use one when a false positive costs only a wasted lookup, never where it costs
+        correctness or safety. "Probably breached password" is a fine use; "probably authorised"
+        is not.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE AL3 — ALGORITHMS WORTH KNOWING
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: SORTING ─────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔤</span>
+    <span class="topic-name">Sorting &amp; Searching — Why Your Language Picked the One It Did</span>
+    <span class="topic-badge">CS • Algorithms</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The real question</div>
+      <div class="concept-title">You Will Never Write a Sort; You Will Choose One By Accident</div>
+      <div class="concept-desc">
+        Implementing a sort is an interview exercise. The decision that matters in real code is
+        which one your runtime already calls, because that choice determines whether your sort
+        is stable, how it behaves on nearly-sorted data, and whether an adversary can push it
+        into its worst case.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Used by</th><th>Algorithm</th><th>Stable</th><th>Chosen because</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Python, Java objects</td><td>Timsort</td><td class="c-green">Yes</td><td>Real data arrives partly sorted; Timsort finds and merges existing runs</td></tr>
+            <tr><td>C++ <code>std::sort</code></td><td>Introsort</td><td class="c-red">No</td><td>Quicksort speed, switching to heapsort to cap the worst case at O(n log n)</td></tr>
+            <tr><td>Rust <code>sort_unstable</code></td><td>Pattern-defeating quicksort</td><td class="c-red">No</td><td>Fastest in place; the stable version is offered separately and costs memory</td></tr>
+            <tr><td>Databases</td><td>External merge sort</td><td class="c-green">Usually</td><td>The data does not fit in memory, which changes the problem entirely</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Stability is the property that bites.</strong> A stable sort keeps equal
+        elements in their original relative order, which is what makes "sort by date, then sort
+        by name" produce what users expect. Do that with an unstable sort and the second pass
+        silently scrambles the first — a bug that looks like a data problem.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Searching</div>
+      <div class="concept-title">Binary Search Is Easy to Describe and Famously Easy to Get Wrong</div>
+      <div class="concept-desc">
+        Binary search was published in 1946 and the first correct published implementation
+        appeared in 1962. The standard Java version carried an overflow bug for nine years. The
+        lesson is not that it is hard, but that off-by-one boundaries deserve real care —
+        so call your standard library's version.
+      </div>
+      <pre class="code-block"><span class="com"># The classic bug: lo + hi overflows on large arrays in fixed-width ints.</span>
+mid = (lo + hi) // <span class="m">2</span>          <span class="com"># overflows in C/Java</span>
+mid = lo + (hi - lo) // <span class="m">2</span>     <span class="com"># does not</span>
+
+<span class="com"># Python: use the library. bisect returns an insertion point,</span>
+<span class="com"># which is more useful than a found/not-found boolean.</span>
+<span class="kw">from</span> bisect <span class="kw">import</span> bisect_left
+i = bisect_left(sorted_items, target)
+found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == target</pre>
+      <div class="concept-desc verdict">
+        Sorting to enable one binary search is a losing trade: O(n log n) to save O(n). It pays
+        only when you will search the same data many times — which is exactly the argument for a
+        database index.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: STRATEGIES ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗝️</span>
+    <span class="topic-name">Divide &amp; Conquer, Greedy, Dynamic Programming — Recognising Which Applies</span>
+    <span class="topic-badge">CS • Algorithms</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Recognising</div>
+      <div class="concept-title">Three Strategies, and the Question That Separates Them</div>
+      <div class="concept-desc">
+        These are not interchangeable techniques to try in turn. Each requires a specific
+        property of the problem, and applying one whose property does not hold produces an
+        answer that is confidently wrong rather than slow.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Strategy</th><th>Requires</th><th>Fails how</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Divide &amp; conquer</td><td>Independent subproblems that recombine</td><td>Recombination is harder than the split</td></tr>
+            <tr><td>Greedy</td><td class="c-amber">A locally best choice is always globally safe</td><td class="c-red">Silently returns a suboptimal answer</td></tr>
+            <tr><td>Dynamic programming</td><td>Overlapping subproblems, optimal substructure</td><td>State explosion — memory, not correctness</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Greedy is the dangerous one.</strong> It is easy to write, usually plausible, and
+        wrong in a way no test catches unless someone knew the optimum independently. Making
+        change with coins of 1, 3 and 4: greedy takes 4+1+1 for six, while the optimum is 3+3.
+        Before shipping a greedy algorithm, either prove the exchange argument or say plainly
+        that the result is approximate.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">DP in practice</div>
+      <div class="concept-title">Memoise the Recursion; Do Not Start With the Table</div>
+      <div class="concept-desc">
+        Dynamic programming is taught bottom-up, with a table and indices, which is why it has a
+        reputation for being impenetrable. The practical route is the opposite: write the naive
+        recursion, confirm it is correct, then add a cache. The result is the same complexity
+        with none of the index arithmetic.
+      </div>
+      <pre class="code-block"><span class="kw">from</span> functools <span class="kw">import</span> lru_cache
+
+<span class="com"># Naive recursion: correct, exponential, obviously right.</span>
+<span class="com"># One decorator makes it linear. That is the whole technique.</span>
+<span class="nd">@lru_cache</span>(maxsize=<span class="m">None</span>)
+<span class="kw">def</span> <span class="fn">ways</span>(n):
+    <span class="kw">if</span> n &lt; <span class="m">0</span>: <span class="kw">return</span> <span class="m">0</span>
+    <span class="kw">if</span> n == <span class="m">0</span>: <span class="kw">return</span> <span class="m">1</span>
+    <span class="kw">return</span> ways(n - <span class="m">1</span>) + ways(n - <span class="m">2</span>)</pre>
+      <div class="concept-desc verdict">
+        Convert to a bottom-up table only when you need it — to avoid recursion depth, or to
+        drop memory from O(n) to O(1) by keeping just the rows still in use. Both are
+        optimisations of a working solution, not the starting point.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: STRING ALGORITHMS ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔡</span>
+    <span class="topic-name">String Algorithms — Matching, Edit Distance &amp; Where Regex Fits</span>
+    <span class="topic-badge">CS • Algorithms</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Matching</div>
+      <div class="concept-title">Naive Search Is Usually Fine, Until the Data Is Adversarial</div>
+      <div class="concept-desc">
+        Checking a pattern at every position is O(n·m) worst case and close to O(n) on natural
+        text, because mismatches happen early. Real substring search in a standard library is
+        already better than naive, and the classic algorithms matter mainly for knowing why the
+        worst case exists.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Algorithm</th><th>Idea</th><th>Good for</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Knuth-Morris-Pratt</td><td>Precompute how far to skip after a mismatch</td><td>Guaranteed O(n + m), streaming input</td></tr>
+            <tr><td>Boyer-Moore</td><td>Match right to left, skip ahead on a bad character</td><td>Long patterns — often sublinear in practice</td></tr>
+            <tr><td>Rabin-Karp</td><td>Rolling hash, compare hashes not characters</td><td>Searching many patterns at once; plagiarism detection</td></tr>
+            <tr><td>Aho-Corasick</td><td>A trie of all patterns, matched in one pass</td><td>Thousands of patterns — intrusion detection, filters</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        Aho-Corasick is the one worth recognising operationally: it is how a signature engine
+        scans traffic for ten thousand indicators in a single pass rather than ten thousand.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Catastrophic Backtracking — When a Regex Becomes a Denial of Service</div>
+      <div class="concept-desc">
+        A regular expression describing a regular language can be matched in linear time. Most
+        production engines — Python, Java, JavaScript, PCRE — instead use backtracking, because
+        it supports backreferences and lookaround. On a pattern with nested quantifiers, that
+        backtracking can be exponential.
+      </div>
+      <pre class="code-block"><span class="com"># Nested quantifier over overlapping alternatives. Add one character</span>
+<span class="com"># to the input and the match time roughly doubles.</span>
+pattern = <span class="m">r"^(a+)+$"</span>
+subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="m">"!"</span>        <span class="com"># no match, and it will take a while</span>
+
+<span class="com"># Mitigations, in order of preference:</span>
+<span class="com">#  1. Avoid nested quantifiers and overlapping alternations</span>
+<span class="com">#  2. Anchor, and make quantifiers possessive/atomic where supported</span>
+<span class="com">#  3. Use a linear-time engine (RE2, Rust regex) for untrusted patterns</span>
+<span class="com">#  4. Impose a timeout — the last resort, not the design</span></pre>
+      <div class="concept-desc verdict">
+        <strong>Never run a user-supplied regular expression on a backtracking engine.</strong>
+        This is a real and regularly exploited class of outage, and it has taken down major
+        services. If users must supply patterns, use an engine with linear-time guarantees.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Edit distance</div>
+      <div class="concept-title">Levenshtein Is Dynamic Programming You Will Actually Use</div>
+      <div class="concept-desc">
+        Edit distance counts the insertions, deletions and substitutions needed to turn one
+        string into another. It powers spelling suggestions, "did you mean", fuzzy record
+        matching and command-line typo correction, and it is the clearest small example of
+        dynamic programming — a table where each cell depends on three neighbours.
+      </div>
+      <div class="concept-desc verdict">
+        It costs O(n·m) time and memory, so it does not scale to comparing one string against
+        millions. The standard approach is to narrow candidates cheaply first — a prefix index,
+        a trie, or blocking on a key — and compute edit distance only within the shortlist.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: RANDOMISED ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎰</span>
+    <span class="topic-name">Randomised Algorithms — Sampling, Reservoirs &amp; Monte Carlo</span>
+    <span class="topic-badge">CS • Algorithms</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Why randomise</div>
+      <div class="concept-title">Randomness Removes the Adversary's Advantage</div>
+      <div class="concept-desc">
+        A deterministic algorithm has a worst case, and anything that can choose your input can
+        find it. Randomising a choice the algorithm makes means no fixed input is reliably bad —
+        the same reasoning behind hash seed randomisation, and behind picking a random pivot in
+        quicksort.
+      </div>
+      <div class="concept-desc">
+        Two families worth telling apart: <strong>Las Vegas</strong> algorithms are always
+        correct and take a random amount of time (randomised quicksort). <strong>Monte
+        Carlo</strong> algorithms take bounded time and are occasionally wrong, with a
+        probability you choose (primality testing).
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reservoir sampling</div>
+      <div class="concept-title">A Fair Sample From a Stream of Unknown Length</div>
+      <div class="concept-desc">
+        Take k items uniformly at random from a stream you cannot buffer and whose length you do
+        not know in advance — log lines, telemetry, a large file. Keep the first k, then for
+        item i replace a random one with probability k/i. Every item ends equally likely, in
+        O(k) memory and one pass.
+      </div>
+      <pre class="code-block"><span class="kw">import</span> random
+
+<span class="kw">def</span> <span class="fn">reservoir</span>(stream, k):
+    keep = []
+    <span class="kw">for</span> i, item <span class="kw">in</span> enumerate(stream):
+        <span class="kw">if</span> i &lt; k:
+            keep.append(item)
+        <span class="kw">else</span>:
+            j = random.randint(<span class="m">0</span>, i)     <span class="com"># inclusive</span>
+            <span class="kw">if</span> j &lt; k:
+                keep[j] = item
+    <span class="kw">return</span> keep</pre>
+      <div class="concept-desc verdict">
+        This is how sampled logging and distributed tracing keep a representative slice without
+        knowing the request volume ahead of time. The alternative people reach for — "keep every
+        hundredth" — is not a uniform sample and correlates badly with periodic traffic.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Wrong Random Number Generator</div>
+      <div class="concept-desc">
+        A default generator is built for speed and statistical quality, not unpredictability.
+        Its output is reproducible from its seed, which is a feature for simulation and a
+        vulnerability for anything security-relevant.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Use</th><th>Python</th><th>Never use for</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Simulation, sampling, shuffling display order</td><td><code>random</code></td><td class="c-red">Tokens, passwords, keys, session IDs</td></tr>
+            <tr><td>Anything an attacker benefits from predicting</td><td><code>secrets</code></td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        Predictable password-reset tokens are a recurring real-world breach, and the code that
+        produced them looked entirely reasonable. If the value protects something, use the
+        cryptographic generator — it costs nothing here.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: INTERVIEW PATTERNS ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎯</span>
+    <span class="topic-name">Algorithm Interview Patterns — The Eight That Cover Most Questions</span>
+    <span class="topic-badge">CS • Interview</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The patterns</div>
+      <div class="concept-title">Recognition Beats Recall</div>
+      <div class="concept-desc">
+        Interview questions are drawn from a small set of shapes. Memorising solutions does not
+        transfer; recognising the shape does, because the shape tells you the data structure and
+        the data structure writes most of the code.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Signal in the question</th><th>Reach for</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Sorted array, find a pair or triple</td><td>Two pointers from both ends</td></tr>
+            <tr><td>Longest/shortest contiguous run meeting a condition</td><td>Sliding window</td></tr>
+            <tr><td>Top k, or a running median</td><td>Heap — two heaps for the median</td></tr>
+            <tr><td>"Have I seen this before", counting, grouping</td><td>Hash map</td></tr>
+            <tr><td>Shortest path in an unweighted graph or grid</td><td>Breadth-first search</td></tr>
+            <tr><td>All combinations, permutations, board placements</td><td>Backtracking</td></tr>
+            <tr><td>Count the ways, or best value under a limit</td><td>Dynamic programming</td></tr>
+            <tr><td>Ordering with dependencies</td><td>Topological sort</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Sliding window and two pointers cover a surprising share alone.</strong> Both
+        turn an O(n²) nested loop into O(n) by never re-examining what the window already
+        summarised — and both are far easier to derive live than to remember.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Method</div>
+      <div class="concept-title">State the Brute Force First — It Is Worth Marks, Not Lost Ones</div>
+      <div class="concept-desc">
+        Candidates routinely stay silent hunting for the clever answer. Saying "the brute force
+        is O(n²) — I check every pair; let me see whether I can avoid re-scanning" establishes a
+        correct baseline, shows the analysis, and frequently leads to the optimisation. It also
+        leaves something working if time runs out.
+      </div>
+      <div class="concept-desc">
+        Then: clarify input constraints before coding, say the complexity of what you are about
+        to write, and test on an empty input and a single element. Most failed submissions are
+        edge cases, not algorithms. See <span class="xref">Interview Preparation — Getting the Job</span> in the Career domain
+        for the surrounding process.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE AL4 — OPERATING SYSTEM THEORY
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: SCHEDULING ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⏱️</span>
+    <span class="topic-name">Processes, Threads &amp; Scheduling — What a Context Switch Costs</span>
+    <span class="topic-badge">CS • Operating Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">Linux Covers the Commands; This Is Why the Numbers Come Out That Way</div>
+      <div class="concept-desc">
+        <span class="xref">Processes &amp; Signals — Running Programs in Linux</span> and
+        <span class="xref">Process Management – Finding and Taming Runaway Processes</span> in the
+        Linux domain cover finding and controlling processes. This card is the model underneath:
+        what the kernel is actually choosing between, and why adding threads so often fails to
+        make anything faster.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Process</th><th>Thread</th></tr></thead>
+          <tbody>
+            <tr><td>Address space</td><td class="c-green">Its own — isolated</td><td class="c-amber">Shared with siblings</td></tr>
+            <tr><td>Crash blast radius</td><td class="c-green">Itself</td><td class="c-red">The whole process</td></tr>
+            <tr><td>Communication</td><td>Pipes, sockets, shared memory — explicit</td><td>Ordinary variables — and therefore races</td></tr>
+            <tr><td>Switch cost</td><td>Higher — address space changes</td><td>Lower, but not free</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> the choice is about failure isolation more than
+        performance. Threads share memory, which makes communication trivial and makes every
+        shared variable a correctness problem. Processes make you say what you are sharing —
+        which is why browsers and web servers put untrusted work in separate processes.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The cost</div>
+      <div class="concept-title">A Context Switch Is Cheap Directly and Expensive Indirectly</div>
+      <div class="concept-desc">
+        The direct cost — saving registers, swapping page tables — is on the order of a
+        microsecond. The real cost is that the new task arrives to a cache full of the previous
+        task's data, so it runs slowly until the cache refills. That indirect cost is invisible
+        to every timer and can dominate.
+      </div>
+      <div class="concept-desc">
+        This is why running far more runnable threads than cores makes throughput
+        <em>worse</em>, and why thread-pool sizing is roughly core-count for CPU-bound work but
+        much higher for I/O-bound work, where threads are blocked rather than competing.
+      </div>
+      <div class="concept-desc verdict">
+        Measure switches directly before theorising: <code>vmstat 1</code> reports context
+        switches per second in the <code>cs</code> column, and <code>pidstat -w</code> attributes
+        them per process. A high <em>voluntary</em> switch count means blocking on I/O <span class="acro-exp">(Input/Output)</span>; a high
+        <em>involuntary</em> count means CPU <span class="acro-exp">(Central Processing Unit)</span> contention. Those two point at opposite fixes.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: VIRTUAL MEMORY ──────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗺️</span>
+    <span class="topic-name">Virtual Memory — Paging, the TLB <span class="acro-exp">(Translation Lookaside Buffer)</span> &amp; Swap's Bad Reputation</span>
+    <span class="topic-badge">CS • Operating Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The mechanism</div>
+      <div class="concept-title">Every Address Your Program Uses Is a Lie the Kernel Maintains</div>
+      <div class="concept-desc">
+        Programs address virtual memory; hardware translates each access to a physical address
+        through page tables. That indirection buys isolation between processes, memory that can
+        be larger than RAM <span class="acro-exp">(Random Access Memory)</span>, and shared read-only pages — one copy of a library serving every
+        process using it.
+      </div>
+      <div class="concept-desc">
+        Translation itself would be ruinously slow if performed every access, so the processor
+        caches recent translations in the <strong>TLB</strong>. A TLB miss costs a page-table
+        walk; this is why large pages exist, and why a workload with a scattered access pattern
+        can be slow for reasons no profiler attributes to memory.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reputation</div>
+      <div class="concept-title">Swap Is Not the Problem — Thrashing Is</div>
+      <div class="concept-desc">
+        "Disable swap for performance" is common advice and mostly wrong. Swap lets the kernel
+        evict pages that are genuinely never touched — initialisation code, an idle daemon —
+        and use the reclaimed memory as cache. A system with swap and no swapping is healthier
+        than one without swap.
+      </div>
+      <div class="concept-desc">
+        The pathology is <strong>thrashing</strong>: the working set exceeds RAM, so pages are
+        evicted and immediately faulted back. Throughput collapses because every access waits on
+        storage. Disabling swap does not fix that — it converts a slow system into one where the
+        out-of-memory killer terminates something instead.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Watch the paging rate, not the swap usage.</strong> Used swap is a historical
+        fact and often harmless; <code>si</code>/<code>so</code> in <code>vmstat</code> staying
+        non-zero is the live problem. The two get confused constantly, and only the second is an
+        incident.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CONCURRENCY PRIMITIVES ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔐</span>
+    <span class="topic-name">Concurrency Primitives — Mutexes, Semaphores, Conditions &amp; Atomics</span>
+    <span class="topic-badge">CS • Operating Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Four Tools, and They Are Not Interchangeable</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Primitive</th><th>Answers</th><th>Typical misuse</th></tr></thead>
+          <tbody>
+            <tr><td>Mutex</td><td>Only one at a time in here</td><td>Held across an I/O <span class="acro-exp">(Input/Output)</span> call, serialising everything</td></tr>
+            <tr><td>Semaphore</td><td>At most N at a time</td><td>Used as a mutex, losing the "who owns it" check</td></tr>
+            <tr><td>Condition variable</td><td>Wait until something is true</td><td>Waiting without a loop — spurious wakeups are real</td></tr>
+            <tr><td>Atomic</td><td>This one operation is indivisible</td><td>Assuming two atomics compose atomically</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The last one is the subtle one.</strong> Two atomic operations are not an atomic
+        pair: an atomic read followed by an atomic write is a race, because something can
+        intervene between them. That is why compare-and-swap exists — it makes read-check-write
+        a single indivisible step.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Lock You Held for Too Long</div>
+      <div class="concept-desc">
+        The most common concurrency bug in production is not a race — it is a mutex held across
+        something slow. A lock held during a network call or a disk write turns a concurrent
+        service into a serial one, and the symptom is latency that climbs with load while CPU <span class="acro-exp">(Central Processing Unit)</span>
+        stays low.
+      </div>
+      <pre class="code-block"><span class="com"># Serialises every caller behind one network round trip</span>
+<span class="kw">with</span> lock:
+    row = db.fetch(key)          <span class="com"># slow, and holding the lock</span>
+    cache[key] = transform(row)
+
+<span class="com"># Do the slow work outside; hold the lock only for the shared state</span>
+row = db.fetch(key)
+value = transform(row)
+<span class="kw">with</span> lock:
+    cache[key] = value           <span class="com"># may overwrite a concurrent write — usually fine</span></pre>
+      <div class="concept-desc verdict">
+        The second version can do duplicate work under contention. That is nearly always the
+        right trade: duplicated computation is cheap, and a serialised service is not. Decide
+        deliberately rather than by where the <code>with</code> happened to go.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DEADLOCK ────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔒</span>
+    <span class="topic-name">Deadlock &amp; Livelock — The Four Conditions, and Which One to Break</span>
+    <span class="topic-badge">CS • Operating Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Diagnosis</div>
+      <div class="concept-title">Deadlock Needs All Four; Removing Any One Prevents It</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Condition</th><th>Break it by</th></tr></thead>
+          <tbody>
+            <tr><td>Mutual exclusion</td><td>Using immutable data or per-thread copies</td></tr>
+            <tr><td>Hold and wait</td><td>Acquiring everything at once, or nothing</td></tr>
+            <tr><td>No pre-emption</td><td>Timeouts — take the lock or give up and retry</td></tr>
+            <tr><td>Circular wait</td><td class="c-green">A global lock ordering — the usual answer</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Lock ordering is the practical fix.</strong> Define an order — by address, by
+        identifier, by name — and require every code path to acquire in that order. The classic
+        deadlock is two account transfers running in opposite directions; ordering by account
+        number removes it entirely, and costs one comparison.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Livelock</div>
+      <div class="concept-title">Everything Is Running and Nothing Is Progressing</div>
+      <div class="concept-desc">
+        Livelock is deadlock's harder-to-spot relative: threads are not blocked, they are busy
+        responding to each other and never advancing. Two people stepping aside in a corridor,
+        repeatedly. It is worse than deadlock diagnostically, because CPU <span class="acro-exp">(Central Processing Unit)</span> is busy and every
+        thread looks alive.
+      </div>
+      <div class="concept-desc">
+        The usual cause is a naive retry: detect a conflict, back off, retry immediately, collide
+        again. Fix it the same way networks did — <strong>exponential backoff with
+        jitter</strong>. Without jitter, retries stay synchronised and collide in lockstep
+        forever.
+      </div>
+      <div class="concept-desc verdict">
+        Database deadlocks are normal and expected. The engine detects a cycle and aborts one
+        transaction with a retryable error — so application code that talks to a database
+        <em>must</em> handle deadlock as a retry case, not as a fatal exception. Code that does
+        not is the source of the intermittent failures nobody can reproduce.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: FILESYSTEMS ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💾</span>
+    <span class="topic-name">Filesystems From the Inside — Inodes, Journaling &amp; Crash Consistency</span>
+    <span class="topic-badge">CS • Operating Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Structure</div>
+      <div class="concept-title">A Filename Is a Pointer, Not the File</div>
+      <div class="concept-desc">
+        The file is the <strong>inode</strong>: metadata plus the location of its data. A
+        directory entry is just a name pointing at an inode number. Several names may point at
+        the same inode — hard links — and the data survives until the last one is removed.
+      </div>
+      <div class="concept-desc verdict">
+        Two consequences that explain real behaviour. Deleting a file being held open by a
+        process frees no space, because the descriptor is still a reference — which is why a
+        disk can stay full after deleting a log, until the writer is restarted. And "disk full"
+        with free space showing means <strong>inode</strong> exhaustion: millions of tiny files,
+        checkable with <code>df -i</code>, which almost nobody runs first.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Crash consistency</div>
+      <div class="concept-title">Journaling Protects the Filesystem, Not Your Data</div>
+      <div class="concept-desc">
+        A write touches several structures — the data, the inode, the free-space map. Interrupted
+        halfway, the filesystem is inconsistent. A journal records the intent first, so recovery
+        replays or discards the whole operation and the <em>structure</em> is always valid.
+      </div>
+      <div class="concept-desc">
+        The default mode journals metadata only, because journaling data as well halves write
+        throughput. So after a crash the filesystem mounts cleanly and a file may still contain
+        garbage or an old version: <strong>the guarantee is about the filesystem, not the file
+        contents</strong>, and that distinction disappoints people at the worst moment.
+      </div>
+      <pre class="code-block"><span class="com"># The durability sequence applications must actually perform</span>
+<span class="com"># A write() is in the page cache, not on the device.</span>
+fd = os.open(path, os.O_WRONLY | os.O_CREAT)
+os.write(fd, data)
+os.fsync(fd)                     <span class="com"># the file's data is now durable</span>
+os.close(fd)
+dir_fd = os.open(os.path.dirname(path), os.O_RDONLY)
+os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable too</span></pre>
+      <div class="concept-desc verdict">
+        <strong>The second fsync is the one everybody omits.</strong> Renaming a temporary file
+        into place is atomic, but the directory entry itself is buffered — crash before that is
+        flushed and the file is durable under a name that no longer exists. This is the bug
+        behind a well-known class of "my config file was empty after a power cut".
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE AL7 (PARTIAL) — DISTRIBUTED SYSTEMS THEORY
+     Consistency models and idempotency are already covered in
+     `devops` and `eng`; only these three were genuine gaps.
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: TIME ────────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🕰️</span>
+    <span class="topic-name">Time in Distributed Systems — Why Timestamps Cannot Order Events</span>
+    <span class="topic-badge">CS • Distributed</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The problem</div>
+      <div class="concept-title">Two Clocks Never Agree, and One of Them Runs Backwards</div>
+      <div class="concept-desc">
+        Ordering events across machines by wall-clock timestamp is the most common distributed
+        systems mistake, because it looks like it works. Clocks drift, and NTP <span class="acro-exp">(Network Time Protocol)</span> corrects them by
+        stepping — which means a timestamp can go <em>backwards</em>, and two events can carry
+        identical times.
+      </div>
+      <div class="concept-desc">
+        The consequences are real: last-write-wins silently discards the wrong update, log
+        correlation across services shows effects before causes, and a certificate can appear
+        expired on one host and valid on another.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Use a monotonic clock for durations and a wall clock only for display.</strong>
+        Measuring elapsed time by subtracting two wall-clock readings is a bug that surfaces
+        rarely and confusingly — every mainstream language offers a monotonic source precisely
+        for this.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The alternative</div>
+      <div class="concept-title">Logical Clocks Count Causality Instead of Seconds</div>
+      <div class="concept-desc">
+        A <strong>Lamport clock</strong> is a counter each node increments on every event and
+        sends with every message; a receiver takes the maximum of its own and the sender's, plus
+        one. This guarantees that if A caused B then A's number is lower — but not the reverse,
+        so a lower number does not prove causality.
+      </div>
+      <div class="concept-desc">
+        A <strong>vector clock</strong> carries one counter per node, which does capture the
+        reverse: comparing two vectors tells you that one happened before the other, or that
+        they are genuinely <em>concurrent</em> — neither caused the other.
+      </div>
+      <div class="concept-desc verdict">
+        Detecting concurrency is the point. Concurrent writes are a real conflict, and a system
+        that knows this can surface both versions and ask, rather than silently picking the one
+        with the larger timestamp. The cost is a vector that grows with the number of nodes,
+        which is why production systems bound it or use hybrid logical clocks instead.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CONSENSUS ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🤝</span>
+    <span class="topic-name">Consensus — Raft and Paxos, Without the Paper</span>
+    <span class="topic-badge">CS • Distributed</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The problem</div>
+      <div class="concept-title">Getting a Group of Machines to Agree on One Value</div>
+      <div class="concept-desc">
+        Consensus is how a cluster decides who the leader is, whether a transaction committed,
+        or what the current configuration is — with machines failing and messages being lost or
+        delayed. Every strongly consistent distributed system has one of these at its core:
+        etcd and Kubernetes, Consul, ZooKeeper, most modern databases.
+      </div>
+      <div class="concept-desc">
+        Raft is the one to learn, because it was explicitly designed to be understandable and
+        the mechanism is three ideas: elect a leader, replicate an ordered log from that leader,
+        and commit an entry once a majority has stored it.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Majorities</div>
+      <div class="concept-title">Quorum Is Why Cluster Sizes Are Odd</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Nodes</th><th>Majority</th><th>Failures tolerated</th></tr></thead>
+          <tbody>
+            <tr><td>3</td><td>2</td><td class="c-green">1</td></tr>
+            <tr><td>4</td><td>3</td><td class="c-amber">1 — no better than 3</td></tr>
+            <tr><td>5</td><td>3</td><td class="c-green">2</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Four nodes tolerate no more failures than three and cost more to coordinate.</strong>
+        That is the entire reason clusters are 3, 5 or 7. Requiring a majority also makes
+        split-brain impossible: two halves of a partitioned network cannot both hold a majority,
+        so at most one side stays writable.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Losing Quorum Is Correct Behaviour, and It Looks Like an Outage</div>
+      <div class="concept-desc">
+        When enough nodes fail that no majority remains, the cluster stops accepting writes. It
+        is not broken — it is refusing to risk divergence. Under CAP it has chosen consistency
+        over availability, deliberately.
+      </div>
+      <div class="concept-desc verdict">
+        The operational trap is forcing a new configuration to "get it back up". That can commit
+        a state the old majority never agreed, and when the missing nodes return the histories
+        conflict. Restore the nodes if there is any chance of it; forcing quorum is a
+        data-loss decision and should be recorded as one. See <span class="xref">CAP Theorem &amp; Consistency Models</span> in the DevOps domain for the trade-off this sits inside.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: FAILURE DETECTION ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📡</span>
+    <span class="topic-name">Failure Detection &amp; FLP — Why "Is It Down?" Has No Perfect Answer</span>
+    <span class="topic-badge">CS • Distributed</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The result</div>
+      <div class="concept-title">A Slow Node and a Dead Node Are Indistinguishable</div>
+      <div class="concept-desc">
+        If a node has not replied, it may be dead, or overloaded, or the network may have
+        dropped the reply. From the outside these are identical, and no amount of waiting
+        resolves the ambiguity — waiting longer only reduces how often you are wrong.
+      </div>
+      <div class="concept-desc">
+        The <strong>FLP result</strong> proves this is fundamental: in an asynchronous system
+        where even one node may fail, no algorithm can guarantee consensus in bounded time. Real
+        systems get around it not by beating the proof but by adding timeouts — accepting that
+        they will occasionally declare a live node dead.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Every timeout is a guess about the network.</strong> Too short and you evict
+        healthy nodes during a traffic spike, causing the outage you were detecting. Too long
+        and real failures go unnoticed. There is no correct value — only one tuned to your
+        network's actual latency distribution.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Consequences</div>
+      <div class="concept-title">Fencing, Because the Old Leader May Not Know It Was Replaced</div>
+      <div class="concept-desc">
+        A node declared dead and replaced may still be running — paused by garbage collection,
+        or on the far side of a partition. When it resumes it believes it is still the leader and
+        may write. That is split-brain, and it corrupts data rather than causing downtime.
+      </div>
+      <div class="concept-desc">
+        The standard defence is a <strong>fencing token</strong>: every leadership term carries
+        a monotonically increasing number, and the storage layer rejects any write bearing a
+        number lower than the highest it has seen. The stale leader's writes are refused by the
+        resource itself rather than by agreement it cannot participate in.
+      </div>
+      <div class="concept-desc verdict">
+        This is why distributed locks are harder than they look. A lock with a lease and no
+        fencing is not safe — the lease can expire while the holder is paused, and the holder has
+        no way to notice before it writes. If you are implementing one, the token is not
+        optional.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE AL5 (PARTIAL) — COMPUTER ARCHITECTURE
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: MEMORY HIERARCHY ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏔️</span>
+    <span class="topic-name">Caches &amp; the Memory Hierarchy — The Numbers Every Engineer Should Know</span>
+    <span class="topic-badge">CS • Architecture</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The numbers</div>
+      <div class="concept-title">Six Orders of Magnitude, and Where Your Latency Actually Went</div>
+      <div class="concept-desc">
+        Storage is a hierarchy: small and fast at the top, enormous and slow at the bottom.
+        The gaps are not incremental — they span six orders of magnitude, and knowing roughly
+        where each level sits explains more production latency than any profiler.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Level</th><th>Roughly</th><th>Scaled to 1 second = 1 ns</th></tr></thead>
+          <tbody>
+            <tr><td>L1 cache</td><td>~1 ns</td><td>1 second</td></tr>
+            <tr><td>L2 cache</td><td>~4 ns</td><td>4 seconds</td></tr>
+            <tr><td>Main memory</td><td>~100 ns</td><td>2 minutes</td></tr>
+            <tr><td>NVMe <span class="acro-exp">(Non-Volatile Memory Express)</span> read</td><td>~100 µs</td><td class="c-amber">1 day</td></tr>
+            <tr><td>Same-datacentre round trip</td><td>~0.5 ms</td><td class="c-amber">6 days</td></tr>
+            <tr><td>Cross-continent round trip</td><td>~150 ms</td><td class="c-red">5 years</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>These are order-of-magnitude figures, not benchmarks</strong> — they shift with
+        hardware, and the ratios matter far more than the values. The practical conclusion is
+        blunt: no amount of algorithmic cleverness recovers a network round trip you did not
+        need. Remove the trip before optimising the loop.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Consequence</div>
+      <div class="concept-title">Cache Lines Explain False Sharing</div>
+      <div class="concept-desc">
+        Memory moves in 64-byte lines, and cache coherency operates on whole lines. Two threads
+        writing to <em>different</em> variables that happen to share a line will invalidate each
+        other's caches on every write — the code is correct, contends on nothing logically, and
+        runs several times slower than the single-threaded version.
+      </div>
+      <div class="concept-desc verdict">
+        This is <strong>false sharing</strong>, and it is the standard explanation for
+        parallel code that gets slower as you add threads. The fix is padding hot per-thread
+        counters onto separate lines. Diagnose it by suspicion rather than by profiler: the
+        signature is negative scaling with thread count on a workload that should be
+        embarrassingly parallel. See
+        <span class="xref">Memory Layout &amp; Cache Locality — Why Arrays Beat Linked Lists</span>
+        for the single-threaded side of the same mechanism.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: NUMBER REPRESENTATION ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔢</span>
+    <span class="topic-name">Number Representation — Two's Complement, IEEE-754 &amp; the Bugs Each Causes</span>
+    <span class="topic-badge">CS • Architecture</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Integers</div>
+      <div class="concept-title">Overflow Is Silent, and the Minimum Has No Positive Twin</div>
+      <div class="concept-desc">
+        Two's complement represents negatives by inverting and adding one, which is why addition
+        and subtraction need no special cases — and why the range is asymmetric. A 32-bit int
+        spans −2,147,483,648 to 2,147,483,647: one more negative than positive.
+      </div>
+      <div class="concept-desc verdict">
+        So <code>abs(INT_MIN)</code> is negative. Negating the minimum overflows, and in C that
+        is undefined behaviour the optimiser may assume cannot happen. The classic exploitable
+        form is a length check passing because an attacker-supplied size overflowed to negative,
+        and the subsequent allocation being far too small.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Floats</div>
+      <div class="concept-title">0.1 + 0.2 Is Not 0.3, and Money Is Not a Float</div>
+      <div class="concept-desc">
+        IEEE-754 stores a sign, an exponent and a fraction in base two. Tenths are not
+        representable in base two any more than a third is in base ten, so the stored value is
+        the nearest representable one and the error compounds across operations.
+      </div>
+      <pre class="code-block"><span class="com"># Not a language quirk — the hardware representation, everywhere</span>
+&gt;&gt;&gt; <span class="m">0.1</span> + <span class="m">0.2</span> == <span class="m">0.3</span>
+<span class="kw">False</span>
+&gt;&gt;&gt; <span class="kw">from</span> decimal <span class="kw">import</span> Decimal
+&gt;&gt;&gt; Decimal(<span class="m">"0.1"</span>) + Decimal(<span class="m">"0.2"</span>) == Decimal(<span class="m">"0.3"</span>)
+<span class="kw">True</span></pre>
+      <div class="concept-desc verdict">
+        <strong>Store money as integer minor units, or as a decimal type.</strong> Never as a
+        float. And never compare floats with <code>==</code> — compare against a tolerance
+        appropriate to the magnitudes involved, because a fixed epsilon is wrong at both ends of
+        the range.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Special Values That Propagate Silently</div>
+      <div class="concept-desc">
+        IEEE-754 defines infinities, two zeros, and NaN <span class="acro-exp">(Not a Number)</span>. NaN is the dangerous one: it is
+        <em>not equal to itself</em>, so a single NaN entering a pipeline propagates through
+        every arithmetic operation and survives most validity checks written as comparisons.
+      </div>
+      <div class="concept-desc verdict">
+        A metric that reads NaN on a dashboard usually entered as a division by zero many steps
+        upstream. Check with the language's dedicated predicate — <code>math.isnan()</code>,
+        not <code>x == float('nan')</code>, which is always false. And note that
+        <code>x != x</code> being true is the portable NaN test, which looks like a bug and is
+        not.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SPECULATIVE EXECUTION ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">👻</span>
+    <span class="topic-name">Speculative Execution &amp; Its Security Cost — Spectre and Meltdown</span>
+    <span class="topic-badge">CS • Architecture</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Why processors guess</div>
+      <div class="concept-title">Waiting for a Branch Wastes a Hundred Cycles, So the CPU <span class="acro-exp">(Central Processing Unit)</span> Does Not Wait</div>
+      <div class="concept-desc">
+        Instructions execute in a pipeline, several in flight at once. A conditional branch
+        stalls it — the processor cannot know which way to go until the condition resolves, and
+        if that depends on memory, resolving may take hundreds of cycles.
+      </div>
+      <div class="concept-desc">
+        So it predicts, and executes ahead speculatively. If the guess was right, the work is
+        already done. If wrong, the architectural results are discarded. Modern prediction
+        accuracy is well above 95%, and this is a large part of why processors are fast.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The flaw</div>
+      <div class="concept-title">Discarded Work Leaves Traces in the Cache</div>
+      <div class="concept-desc">
+        Speculation discards <em>architectural</em> state — registers, memory. It does not undo
+        <em>microarchitectural</em> state: data loaded during a mis-speculation stays in the
+        cache. An attacker who can time cache access can therefore learn something about
+        speculatively-read memory they were never permitted to read.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Meltdown</th><th>Spectre</th></tr></thead>
+          <tbody>
+            <tr><td>Abuses</td><td>Out-of-order execution past a permission check</td><td>Branch prediction, trained by the attacker</td></tr>
+            <tr><td>Reads</td><td>Kernel memory from user space</td><td>Memory within the victim's own address space</td></tr>
+            <tr><td>Fixable in software</td><td class="c-green">Yes — page table isolation</td><td class="c-red">Not generally; it is mitigated, not fixed</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Spectre is the one that matters, because it is a property of speculation
+        itself.</strong> Meltdown was an implementation bug and was fixed. Spectre is mitigated
+        per-pattern — compiler barriers, index masking, isolating untrusted code in its own
+        process — and new variants keep arriving, because the underlying optimisation is not
+        going away.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">What it means for you</div>
+      <div class="concept-title">Process Isolation Stopped Being Paranoia</div>
+      <div class="concept-desc">
+        Practical consequences most engineers actually meet: browsers reduced timer precision
+        and put each site in its own process; cloud providers stopped co-locating untrusted
+        tenants on one physical core; and mitigations cost real performance — single-digit to
+        low-double-digit percentages on system-call-heavy workloads.
+      </div>
+      <div class="concept-desc verdict">
+        The transferable lesson is broader than these vulnerabilities: <strong>an abstraction
+        that is correct architecturally can still leak through its implementation.</strong>
+        Timing, cache state and power draw are all side channels, and none of them appear in
+        the model the code was written against.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── TOPIC: INSTRUCTION EXECUTION ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚙️</span>
+    <span class="topic-name">Instruction Execution — Pipelining, Superscalar &amp; Why Branches Are Expensive</span>
+    <span class="topic-badge">CS • Architecture</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The model</div>
+      <div class="concept-title">A Processor Is an Assembly Line, Not a Loop</div>
+      <div class="concept-desc">
+        The textbook cycle — fetch, decode, execute, write back — describes one instruction.
+        Real processors overlap them, so while one instruction executes, the next is decoding
+        and a third is being fetched. Throughput approaches one instruction per cycle even
+        though each takes several.
+      </div>
+      <div class="concept-desc">
+        Superscalar designs go further and issue several instructions per cycle across
+        duplicated units, and out-of-order execution reorders them around stalls. The
+        consequence worth internalising: <strong>instruction count is a poor predictor of
+        speed</strong>. What matters is whether the pipeline stays full.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Stalls</div>
+      <div class="concept-title">Three Ways to Empty the Pipeline</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Hazard</th><th>Cause</th><th>Mitigated by</th></tr></thead>
+          <tbody>
+            <tr><td>Data</td><td>An instruction needs a result not yet produced</td><td>Forwarding; reordering</td></tr>
+            <tr><td>Control</td><td>A branch — which instruction comes next is unknown</td><td class="c-amber">Prediction, and speculation</td></tr>
+            <tr><td>Structural</td><td>Two instructions want the same unit</td><td>Duplicating units</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>A mispredicted branch costs 15–20 cycles</strong> — the pipeline is flushed and
+        refilled. Prediction is well above 95% accurate on typical code, which is exactly why
+        <em>unpredictable</em> branches are so costly: a condition that is genuinely random
+        defeats the predictor every other time.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Applying it</div>
+      <div class="concept-title">Sorting the Input Made the Loop Faster — and It Is Not a Trick</div>
+      <div class="concept-desc">
+        The famous demonstration: a loop summing values above a threshold runs several times
+        faster over sorted data than unsorted, with identical instruction counts. Sorted input
+        makes the branch predictable — long runs of taken, then long runs of not-taken — and the
+        predictor gets it right almost every time.
+      </div>
+      <div class="concept-desc verdict">
+        The engineering lesson is not "sort your data". It is that <strong>branchless code can
+        beat branching code</strong> where the condition is unpredictable: a conditional move,
+        arithmetic on the comparison result, or a lookup table has no branch to mispredict.
+        Worth reaching for only in a measured hot loop — it is harder to read, and the compiler
+        often does it already.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: INSTRUCTION SETS ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧬</span>
+    <span class="topic-name">Instruction Sets — x86-64, ARM64, RISC-V &amp; Why the Shift Is Happening</span>
+    <span class="topic-badge">CS • Architecture</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The comparison</div>
+      <div class="concept-title">The RISC-vs-CISC Argument Is Over; the Licensing One Is Not</div>
+      <div class="concept-desc">
+        The old distinction — few simple instructions versus many complex ones — has largely
+        dissolved. Modern x86 decodes its complex instructions into simple internal operations,
+        so internally it looks much like a RISC <span class="acro-exp">(Reduced Instruction Set Computer)</span> machine. What still differs is instruction
+        encoding, memory ordering, and who is allowed to build one.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>x86-64</th><th>ARM64</th><th>RISC-V</th></tr></thead>
+          <tbody>
+            <tr><td>Instruction length</td><td>Variable, 1–15 bytes</td><td class="c-green">Fixed 4 bytes</td><td class="c-green">Fixed, with extensions</td></tr>
+            <tr><td>Memory model</td><td class="c-green">Strong — mostly ordered</td><td class="c-amber">Weak — reordering allowed</td><td class="c-amber">Weak</td></tr>
+            <tr><td>Licensing</td><td>Two vendors</td><td>Licensed from Arm</td><td class="c-green">Open, royalty-free</td></tr>
+            <tr><td>Where you meet it</td><td>Desktops, most servers</td><td>Phones, Apple silicon, cloud instances</td><td>Embedded, and growing</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Variable-length encoding is the real cost.</strong> Finding where each
+        instruction ends is itself work, which makes wide parallel decode harder — one of the
+        structural reasons ARM <span class="acro-exp">(Advanced RISC Machines)</span> designs reach high instruction throughput more easily.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Memory Model Is the Bug You Only See After Porting</div>
+      <div class="concept-desc">
+        x86 has a strong memory model: writes become visible in roughly program order. ARM does
+        not — it may reorder freely unless told otherwise. Concurrent code that relies on
+        incidental ordering therefore works on x86 for years and fails on ARM, intermittently.
+      </div>
+      <div class="concept-desc">
+        The code was always wrong; x86 was hiding it. This became a widespread discovery when
+        Apple silicon and ARM cloud instances arrived, and it is why the correct primitives —
+        atomics with explicit ordering, or the language's memory model — are not optional
+        pedantry. See
+        <span class="xref">Concurrency Primitives — Mutexes, Semaphores, Conditions &amp; Atomics</span>.
+      </div>
+      <div class="concept-desc verdict">
+        Practical consequence for operations: a container image is built for an architecture.
+        <code>exec format error</code> on an ARM node means an amd64 image; multi-architecture
+        images exist precisely for this, and forgetting them is the most common ARM migration
+        incident.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE AL6 (PARTIAL) — LANGUAGES, COMPILERS & RUNTIMES
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: COMPILERS ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏗️</span>
+    <span class="topic-name">How a Compiler Works — Lexing, Parsing, IR <span class="acro-exp">(Incident Response)</span> &amp; Codegen</span>
+    <span class="topic-badge">CS • Compilers</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The pipeline</div>
+      <div class="concept-title">Four Stages, and Knowing Which One Failed</div>
+      <div class="concept-desc">
+        A compiler is a pipeline of translations, each producing a form easier to work with than
+        the last. The practical value in knowing the stages is diagnostic: the stage that failed
+        tells you what kind of mistake you made.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stage</th><th>Produces</th><th>Error looks like</th></tr></thead>
+          <tbody>
+            <tr><td>Lexing</td><td>Tokens</td><td>Unterminated string; stray character</td></tr>
+            <tr><td>Parsing</td><td>A syntax tree</td><td>"Unexpected token" — grammar broken</td></tr>
+            <tr><td>Semantic analysis</td><td>A checked, typed tree</td><td>Undefined name; type mismatch</td></tr>
+            <tr><td>Optimise &amp; generate</td><td>Machine code</td><td class="c-amber">Rarely an error — usually a slow binary or a miscompile</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>A parse error's reported line is where the parser gave up, not where you went
+        wrong.</strong> A missing closing brace is usually reported many lines later, at the
+        first construct that cannot follow. Look upward from the reported line, not at it.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Why IR</div>
+      <div class="concept-title">An Intermediate Representation Turns N×M Into N+M</div>
+      <div class="concept-desc">
+        Supporting N languages on M targets needs N×M compilers written directly — or N
+        front-ends and M back-ends sharing one intermediate representation. That is the whole
+        architecture of LLVM, and the reason a new language can target every processor by
+        emitting one IR.
+      </div>
+      <div class="concept-desc verdict">
+        It also explains a practical asymmetry: optimisations written once in the middle benefit
+        every language using it. A new front-end inherits decades of optimisation work for free,
+        which is why modern languages start faster than their authors could have made them
+        alone.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: RUNTIMES ────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔥</span>
+    <span class="topic-name">Interpreters, Bytecode &amp; JIT <span class="acro-exp">(Just-In-Time)</span> — The Spectrum From Python to the JVM</span>
+    <span class="topic-badge">CS • Runtimes</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The spectrum</div>
+      <div class="concept-title">"Compiled vs Interpreted" Is a Property of Implementations, Not Languages</div>
+      <div class="concept-desc">
+        There is no interpreted language, only interpreted implementations. C has interpreters;
+        Python compiles to bytecode. The real question is <em>when</em> translation to machine
+        code happens, and how much run-time information is available when it does.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Approach</th><th>Translates</th><th>Trade</th></tr></thead>
+          <tbody>
+            <tr><td>Ahead-of-time</td><td>Before running</td><td class="c-green">Fast start, predictable; no run-time knowledge</td></tr>
+            <tr><td>Bytecode interpreter</td><td>To bytecode, then walks it</td><td>Portable, simple, slower</td></tr>
+            <tr><td>JIT</td><td>Hot paths, while running</td><td class="c-amber">Peak speed, slow warm-up, memory cost</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>A JIT can beat ahead-of-time compilation</strong>, which surprises people. It
+        observes what actually happens — which branch is taken, which concrete type flows
+        through — and specialises for it, then de-optimises if the assumption breaks. That
+        information does not exist at build time.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Warm-Up Invalidates Your Benchmark and Your Health Check</div>
+      <div class="concept-desc">
+        A JIT-compiled service is slow for its first seconds or minutes, then several times
+        faster. Two consequences bite in production: a benchmark that measures the first
+        thousand iterations measures the interpreter, and an instance added to a load balancer
+        the moment its health check passes receives full traffic while still cold.
+      </div>
+      <div class="concept-desc verdict">
+        Hence warm-up requests before accepting traffic, and gradual ramping rather than an
+        instant share. This is also why autoscaling a JIT runtime for a traffic spike helps
+        later than expected — the new instances need time to become fast, and the spike may be
+        over before they are.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── TOPIC: TYPE SYSTEMS ────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏷️</span>
+    <span class="topic-name">Type Systems — Static, Dynamic, and What Types Actually Buy You</span>
+    <span class="topic-badge">CS • Languages</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Two axes</div>
+      <div class="concept-title">Static vs Dynamic Is Not Strong vs Weak</div>
+      <div class="concept-desc">
+        These get conflated constantly and they are independent.
+        <strong>Static/dynamic</strong> is <em>when</em> types are checked — compile time or run
+        time. <strong>Strong/weak</strong> is <em>how much</em> the language will silently
+        convert for you.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Strong</th><th>Weak</th></tr></thead>
+          <tbody>
+            <tr><td>Static</td><td>Rust, Java, Go</td><td>C — an int is a pointer if you insist</td></tr>
+            <tr><td>Dynamic</td><td>Python — <code>"1" + 1</code> raises</td><td>JavaScript — <code>"1" + 1</code> is <code>"11"</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        Python is dynamically <em>and</em> strongly typed, which surprises people who assume
+        dynamic means permissive. The bug class that hurts is weak typing, not dynamic typing:
+        a silent coercion produces a plausible wrong answer, where a raised error produces a
+        stack trace.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">What they buy</div>
+      <div class="concept-title">Types Are a Machine-Checked Subset of the Documentation</div>
+      <div class="concept-desc">
+        A type signature states what a function accepts and returns, and unlike a comment it
+        cannot drift — the compiler rejects it when it stops being true. That is the durable
+        argument for static types, and it strengthens as a codebase outlives the people who
+        wrote it.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>What types do not buy is correctness.</strong> A function returning
+        <code>int</code> can return the wrong int. Types eliminate a category of error —
+        roughly, "this value is not the shape you expected" — and leave the logic entirely to
+        you. Teams that expect more from them are the ones disappointed by them.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Practicalities</div>
+      <div class="concept-title">Gradual Typing, and the Boundary That Lies</div>
+      <div class="concept-desc">
+        TypeScript, Python's annotations and similar systems add optional static checking to
+        dynamic languages. They are genuinely valuable and share one sharp edge: the types are
+        erased before running, so nothing enforces them at the boundary. A value arriving from
+        JSON <span class="acro-exp">(JavaScript Object Notation)</span>, a database or an untyped library is whatever it actually is, regardless of the
+        annotation.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Validate at the boundary and trust the types inside it.</strong> A parse step
+        that checks incoming data against a schema is what makes the annotations true; without
+        one, a wrong assumption propagates deep into typed code that the checker has already
+        certified as safe. See
+        <span class="xref">Data Validation — Never Trust Input</span> in the Scripting domain.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: GARBAGE COLLECTION ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">♻️</span>
+    <span class="topic-name">Garbage Collection — Generational Collectors, Pauses &amp; Tuning</span>
+    <span class="topic-badge">CS • Runtimes</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The core idea</div>
+      <div class="concept-title">Most Objects Die Young, and Collectors Are Built Around That</div>
+      <div class="concept-desc">
+        The generational hypothesis is an empirical observation: the overwhelming majority of
+        allocations become garbage almost immediately. Collectors exploit it by splitting the
+        heap — new objects in a small young generation collected frequently and cheaply,
+        survivors promoted to an old generation collected rarely.
+      </div>
+      <div class="concept-desc">
+        A young collection is fast because it costs time proportional to the objects that
+        <em>survived</em>, not to the garbage. Allocating a million short-lived objects is
+        nearly free to collect; keeping a million alive is what costs.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Pauses</div>
+      <div class="concept-title">Reference Counting Has No Pauses and a Different Problem</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Tracing (JVM, Go, .NET)</th><th>Reference counting (CPython, Swift)</th></tr></thead>
+          <tbody>
+            <tr><td>Cost timing</td><td class="c-amber">Bursty — pauses</td><td class="c-green">Spread continuously</td></tr>
+            <tr><td>Cycles</td><td class="c-green">Collected</td><td class="c-red">Leaked without a cycle detector</td></tr>
+            <tr><td>Throughput</td><td class="c-green">Higher</td><td>Lower — every assignment updates a count</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        Neither is free; they place the cost differently. Reference counting is why CPython
+        frees most objects the instant the last name goes away — and why two objects referring
+        to each other need <code>gc</code> to notice.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Tuning the Collector When the Problem Is the Allocation Rate</div>
+      <div class="concept-desc">
+        The instinct on seeing GC pauses is to change collector flags. That is almost always the
+        wrong first move: pause frequency is driven by how fast the application produces
+        garbage, and by how much survives. Reducing allocation in a hot path fixes the cause;
+        flags redistribute the symptom.
+      </div>
+      <div class="concept-desc verdict">
+        The one tuning decision that reliably matters is <strong>heap size</strong>, and it
+        trades against pause length: a bigger heap collects less often and takes longer each
+        time. Decide from the service's latency target — and note that a memory
+        <em>leak</em> in a managed language is nearly always an unintended reference, most often
+        a cache or a listener list nobody removes from. See
+        <span class="xref">Amortized Analysis — Why a Dynamic Array Is O(1) "On Average"</span>
+        for the same latency-versus-throughput trade in another form.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MEMORY SAFETY ───────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💥</span>
+    <span class="topic-name">Undefined Behaviour &amp; Memory Safety — The Class Behind Most CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span></span>
+    <span class="topic-badge">CS • Languages</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The category</div>
+      <div class="concept-title">Roughly Two Thirds of Serious Vulnerabilities Are One Bug Class</div>
+      <div class="concept-desc">
+        Buffer overflows, use-after-free, double-free and uninitialised reads share a root:
+        languages where the programmer manually guarantees that memory access is valid.
+        Microsoft and Google have each reported that around 70% of their high-severity
+        vulnerabilities are memory-safety issues — a figure worth treating as an order of
+        magnitude rather than a precise number.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Bug</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td>Buffer overflow</td><td>Write past an allocation, corrupting adjacent memory</td></tr>
+            <tr><td>Use-after-free</td><td>Access memory already returned — an attacker may control what is there now</td></tr>
+            <tr><td>Double free</td><td>Corrupts the allocator's own bookkeeping</td></tr>
+            <tr><td>Uninitialised read</td><td>Reads whatever the previous occupant left</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Undefined behaviour</div>
+      <div class="concept-title">The Compiler Is Allowed to Assume It Never Happens</div>
+      <div class="concept-desc">
+        In C and C++, undefined behaviour does not mean "unpredictable result" — it means the
+        standard imposes no requirement at all, so the optimiser may assume it cannot occur and
+        reason from there. This is why a null check <em>after</em> a dereference can be deleted:
+        the dereference already implied the pointer was non-null.
+      </div>
+      <pre class="code-block"><span class="com">// The dereference tells the optimiser p cannot be null,</span>
+<span class="com">// so the check below is dead code and may be removed.</span>
+<span class="kw">int</span> v = *p;
+<span class="kw">if</span> (p == NULL) <span class="kw">return</span> ERROR;   <span class="com">// deleted at -O2</span></pre>
+      <div class="concept-desc verdict">
+        <strong>Undefined behaviour is not a runtime concept.</strong> It changes what the
+        compiler emits, which is why a bug can appear only at higher optimisation levels, or
+        only after a compiler upgrade, and why "it works in debug" proves nothing.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">What to do</div>
+      <div class="concept-title">Sanitisers Now, Safer Languages at the Boundary</div>
+      <div class="concept-desc">
+        Rewriting a working C codebase is rarely justified. The standard advice — from the same
+        organisations that published the 70% figure — is to write <em>new</em> code in a
+        memory-safe language and prioritise the parts that parse untrusted input, which is where
+        the exploitable bugs concentrate.
+      </div>
+      <pre class="code-block"><span class="com"># Catch it in CI rather than in a CVE. Both are cheap to enable.</span>
+clang -fsanitize=address,undefined -g -O1 prog.c
+valgrind --leak-check=full ./prog</pre>
+      <div class="concept-desc verdict">
+        Sanitisers find these bugs only on code paths your tests actually execute — so their
+        value is bounded by coverage, and pairing them with fuzzing is what makes the
+        combination effective. Rust's guarantee is stronger precisely because it is a property
+        of the type system rather than of the tests.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body cs -->

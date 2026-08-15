@@ -1,4 +1,4 @@
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">⚙️</span>
               <span class="topic-name">How a Database Actually Works</span>
@@ -19,10 +19,10 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Component</th><th>Job</th></tr>
-                    <tr><td class="c-cyan">Storage engine</td><td>Reads/writes pages, manages indexes (InnoDB, Postgres heap)</td></tr>
-                    <tr><td class="c-cyan">Buffer pool</td><td>In-memory page cache — the #1 performance factor</td></tr>
-                    <tr><td class="c-cyan">WAL / redo log</td><td>Append every change <em>before</em> the data page — crash recovery</td></tr>
-                    <tr><td class="c-cyan">Checkpoint</td><td>Flush dirty pages to disk; trim the log</td></tr>
+                    <tr><td>Storage engine</td><td>Reads/writes pages, manages indexes (InnoDB, Postgres heap)</td></tr>
+                    <tr><td>Buffer pool</td><td>In-memory page cache — the #1 performance factor</td></tr>
+                    <tr><td>WAL / redo log</td><td>Append every change <em>before</em> the data page — crash recovery</td></tr>
+                    <tr><td>Checkpoint</td><td>Flush dirty pages to disk; trim the log</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Why WAL:</strong> writing a tiny sequential log entry is
@@ -35,7 +35,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧮</span>
               <span class="topic-name">The Relational Model — Keys &amp; Integrity</span>
@@ -55,10 +55,10 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Term</th><th>Meaning</th></tr>
-                    <tr><td class="c-cyan">Primary key</td><td>Uniquely identifies a row; not null</td></tr>
-                    <tr><td class="c-cyan">Foreign key</td><td>References a PK elsewhere — enforces referential integrity</td></tr>
-                    <tr><td class="c-cyan">Unique / Check</td><td>Column-level rules the DB guarantees</td></tr>
-                    <tr><td class="c-cyan">Candidate / composite key</td><td>Other unique columns; keys spanning multiple columns</td></tr>
+                    <tr><td>Primary key</td><td>Uniquely identifies a row; not null</td></tr>
+                    <tr><td>Foreign key</td><td>References a PK elsewhere — enforces referential integrity</td></tr>
+                    <tr><td>Unique / Check</td><td>Column-level rules the DB guarantees</td></tr>
+                    <tr><td>Candidate / composite key</td><td>Other unique columns; keys spanning multiple columns</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">The NULL trap:</strong> <code>NULL</code> means "unknown,"
@@ -72,7 +72,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📐</span>
               <span class="topic-name">Normalization — 1NF Through BCNF</span>
@@ -91,10 +91,10 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Form</th><th>Rule</th></tr>
-                    <tr><td class="c-cyan">1NF</td><td>Atomic values — no repeating groups or lists in a cell</td></tr>
-                    <tr><td class="c-cyan">2NF</td><td>No partial dependency on part of a composite key</td></tr>
-                    <tr><td class="c-cyan">3NF</td><td>No transitive dependency (non-key → non-key)</td></tr>
-                    <tr><td class="c-cyan">BCNF</td><td>Every determinant is a candidate key (stricter 3NF)</td></tr>
+                    <tr><td>1NF</td><td>Atomic values — no repeating groups or lists in a cell</td></tr>
+                    <tr><td>2NF</td><td>No partial dependency on part of a composite key</td></tr>
+                    <tr><td>3NF</td><td>No transitive dependency (non-key → non-key)</td></tr>
+                    <tr><td>BCNF</td><td>Every determinant is a candidate key (stricter 3NF)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Rule of thumb:</strong> normalize to 3NF for
@@ -108,7 +108,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔒</span>
               <span class="topic-name">ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span> &amp; Transactions — Isolation Levels</span>
@@ -129,10 +129,10 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Isolation level</th><th>Prevents</th></tr>
-                    <tr><td class="c-cyan">Read Uncommitted</td><td>nothing — can read dirty (uncommitted) data</td></tr>
-                    <tr><td class="c-cyan">Read Committed</td><td>dirty reads (Postgres default)</td></tr>
-                    <tr><td class="c-cyan">Repeatable Read</td><td>+ non-repeatable reads (MySQL default)</td></tr>
-                    <tr><td class="c-cyan">Serializable</td><td>+ phantom reads — as if txns ran one at a time</td></tr>
+                    <tr><td>Read Uncommitted</td><td>nothing — can read dirty (uncommitted) data</td></tr>
+                    <tr><td>Read Committed</td><td>dirty reads (Postgres default)</td></tr>
+                    <tr><td>Repeatable Read</td><td>+ non-repeatable reads (MySQL default)</td></tr>
+                    <tr><td>Serializable</td><td>+ phantom reads — as if txns ran one at a time</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">The trade-off:</strong> stricter isolation = more correct
@@ -145,7 +145,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🕸️</span>
               <span class="topic-name">ER Modeling — Designing the Schema</span>
@@ -166,9 +166,9 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Relationship</th><th>Implemented as</th></tr>
-                    <tr><td class="c-cyan">One-to-many</td><td>FK on the "many" side (most common)</td></tr>
-                    <tr><td class="c-cyan">Many-to-many</td><td>A junction/join table with two FKs</td></tr>
-                    <tr><td class="c-cyan">One-to-one</td><td>Shared/unique FK — often a sign to merge tables</td></tr>
+                    <tr><td>One-to-many</td><td>FK on the "many" side (most common)</td></tr>
+                    <tr><td>Many-to-many</td><td>A junction/join table with two FKs</td></tr>
+                    <tr><td>One-to-one</td><td>Shared/unique FK — often a sign to merge tables</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Crow's-foot</strong> marks each end with cardinality
@@ -181,7 +181,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔗</span>
               <span class="topic-name">SQL <span class="acro-exp">(Structured Query Language)</span> Joins — Every Type, and the NULL Traps</span>
@@ -202,11 +202,11 @@
 <span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> o.user_id = u.id;   <span class="com">-- keeps users with no orders</span></pre>
                   <table class="ref-table">
                     <tr><th>Join</th><th>Returns</th></tr>
-                    <tr><td class="c-cyan">INNER</td><td>Only rows that match in both tables</td></tr>
-                    <tr><td class="c-cyan">LEFT / RIGHT</td><td>All rows from one side; NULLs where no match</td></tr>
-                    <tr><td class="c-cyan">FULL OUTER</td><td>All rows from both; NULLs on either side</td></tr>
-                    <tr><td class="c-cyan">CROSS</td><td>Cartesian product (every combo) — usually a mistake</td></tr>
-                    <tr><td class="c-cyan">SELF</td><td>A table joined to itself (hierarchies, pairs)</td></tr>
+                    <tr><td>INNER</td><td>Only rows that match in both tables</td></tr>
+                    <tr><td>LEFT / RIGHT</td><td>All rows from one side; NULLs where no match</td></tr>
+                    <tr><td>FULL OUTER</td><td>All rows from both; NULLs on either side</td></tr>
+                    <tr><td>CROSS</td><td>Cartesian product (every combo) — usually a mistake</td></tr>
+                    <tr><td>SELF</td><td>A table joined to itself (hierarchies, pairs)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Traps:</strong> putting a filter on the outer table in
@@ -220,7 +220,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🪟</span>
               <span class="topic-name">Window Functions — Analytics Without Collapsing Rows</span>
@@ -243,10 +243,10 @@
 <span class="kw">FROM</span> employees;</pre>
                   <table class="ref-table">
                     <tr><th>Function</th><th>Use</th></tr>
-                    <tr><td class="c-cyan">ROW_NUMBER / RANK / DENSE_RANK</td><td>Ordering &amp; top-N per group</td></tr>
-                    <tr><td class="c-cyan">LAG / LEAD</td><td>Compare to the previous/next row (deltas, growth)</td></tr>
-                    <tr><td class="c-cyan">SUM/AVG OVER</td><td>Running totals &amp; moving averages</td></tr>
-                    <tr><td class="c-cyan">NTILE</td><td>Buckets/percentiles</td></tr>
+                    <tr><td>ROW_NUMBER / RANK / DENSE_RANK</td><td>Ordering &amp; top-N per group</td></tr>
+                    <tr><td>LAG / LEAD</td><td>Compare to the previous/next row (deltas, growth)</td></tr>
+                    <tr><td>SUM/AVG OVER</td><td>Running totals &amp; moving averages</td></tr>
+                    <tr><td>NTILE</td><td>Buckets/percentiles</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Killer use:</strong> "top 3 earners per department" or
@@ -293,7 +293,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">Σ</span>
               <span class="topic-name">Aggregation — GROUP BY, HAVING &amp; ROLLUP</span>
@@ -319,10 +319,10 @@
 <span class="kw">ORDER BY</span> rev <span class="kw">DESC</span>;</pre>
                   <table class="ref-table">
                     <tr><th>Feature</th><th>Does</th></tr>
-                    <tr><td class="c-cyan">COUNT(*) vs COUNT(col)</td><td>All rows vs non-NULL values only</td></tr>
-                    <tr><td class="c-cyan">COUNT(DISTINCT …)</td><td>Unique values</td></tr>
-                    <tr><td class="c-cyan">ROLLUP / CUBE / GROUPING SETS</td><td>Subtotals &amp; grand totals in one pass</td></tr>
-                    <tr><td class="c-cyan">FILTER (WHERE …)</td><td>Conditional aggregates (Postgres)</td></tr>
+                    <tr><td>COUNT(*) vs COUNT(col)</td><td>All rows vs non-NULL values only</td></tr>
+                    <tr><td>COUNT(DISTINCT …)</td><td>Unique values</td></tr>
+                    <tr><td>ROLLUP / CUBE / GROUPING SETS</td><td>Subtotals &amp; grand totals in one pass</td></tr>
+                    <tr><td>FILTER (WHERE …)</td><td>Conditional aggregates (Postgres)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-red">Classic error:</strong> selecting a non-aggregated column
@@ -334,7 +334,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🎯</span>
               <span class="topic-name">Subqueries, EXISTS &amp; Set Operations</span>
@@ -356,10 +356,10 @@
 <span class="kw">WHERE EXISTS</span> (<span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> orders o <span class="kw">WHERE</span> o.user_id = u.id);</pre>
                   <table class="ref-table">
                     <tr><th>Tool</th><th>Use</th></tr>
-                    <tr><td class="c-cyan">IN / NOT IN</td><td>Membership — but <code>NOT IN</code> + NULLs = no rows (trap!)</td></tr>
-                    <tr><td class="c-cyan">EXISTS / NOT EXISTS</td><td>Existence check — NULL-safe, often faster</td></tr>
-                    <tr><td class="c-cyan">UNION / UNION ALL</td><td>Stack result sets (ALL keeps duplicates &amp; is faster)</td></tr>
-                    <tr><td class="c-cyan">INTERSECT / EXCEPT</td><td>Rows in both / in one but not the other</td></tr>
+                    <tr><td>IN / NOT IN</td><td>Membership — but <code>NOT IN</code> + NULLs = no rows (trap!)</td></tr>
+                    <tr><td>EXISTS / NOT EXISTS</td><td>Existence check — NULL-safe, often faster</td></tr>
+                    <tr><td>UNION / UNION ALL</td><td>Stack result sets (ALL keeps duplicates &amp; is faster)</td></tr>
+                    <tr><td>INTERSECT / EXCEPT</td><td>Rows in both / in one but not the other</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Prefer <code>EXISTS</code> over <code>NOT IN</code></strong>
@@ -372,7 +372,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📇</span>
               <span class="topic-name">Indexes Explained — B-tree, Hash &amp; Covering</span>
@@ -391,11 +391,11 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Type</th><th>Best for</th></tr>
-                    <tr><td class="c-cyan">B-tree</td><td>The default — equality &amp; range (<code>=</code>, <code>&lt;</code>, <code>BETWEEN</code>, <code>ORDER BY</code>)</td></tr>
-                    <tr><td class="c-cyan">Hash</td><td>Equality only, very fast</td></tr>
-                    <tr><td class="c-cyan">GIN / GiST</td><td>Full-text, JSONB, arrays, geospatial (Postgres)</td></tr>
-                    <tr><td class="c-cyan">Composite</td><td>Multi-column — order matters (leftmost-prefix rule)</td></tr>
-                    <tr><td class="c-cyan">Covering</td><td>Includes all columns a query needs → index-only scan</td></tr>
+                    <tr><td>B-tree</td><td>The default — equality &amp; range (<code>=</code>, <code>&lt;</code>, <code>BETWEEN</code>, <code>ORDER BY</code>)</td></tr>
+                    <tr><td>Hash</td><td>Equality only, very fast</td></tr>
+                    <tr><td>GIN / GiST</td><td>Full-text, JSONB, arrays, geospatial (Postgres)</td></tr>
+                    <tr><td>Composite</td><td>Multi-column — order matters (leftmost-prefix rule)</td></tr>
+                    <tr><td>Covering</td><td>Includes all columns a query needs → index-only scan</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Composite key order:</strong> an index on
@@ -408,7 +408,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔍</span>
               <span class="topic-name">Reading Query Plans — EXPLAIN ANALYZE</span>
@@ -429,10 +429,10 @@
 <span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> user_id = <span class="num">42</span>;</pre>
                   <table class="ref-table">
                     <tr><th>See</th><th>Means</th></tr>
-                    <tr><td class="c-red">Seq Scan</td><td>Reading the whole table — often a missing index</td></tr>
-                    <tr><td class="c-green">Index Scan / Index-Only</td><td>Using an index (good)</td></tr>
-                    <tr><td class="c-cyan">Nested Loop / Hash / Merge Join</td><td>The three join strategies</td></tr>
-                    <tr><td class="c-amber">Rows estimated vs actual</td><td>Big mismatch = stale statistics → bad plan</td></tr>
+                    <tr><td>Seq Scan</td><td>Reading the whole table — often a missing index</td></tr>
+                    <tr><td>Index Scan / Index-Only</td><td>Using an index (good)</td></tr>
+                    <tr><td>Nested Loop / Hash / Merge Join</td><td>The three join strategies</td></tr>
+                    <tr><td>Rows estimated vs actual</td><td>Big mismatch = stale statistics → bad plan</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Workflow:</strong> find the node eating the most time,
@@ -444,7 +444,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🚀</span>
               <span class="topic-name">Query Optimization — Sargability &amp; N+1</span>
@@ -467,10 +467,10 @@
 <span class="kw">WHERE</span> created_at &gt;= <span class="str">'2026-01-01'</span> <span class="kw">AND</span> created_at &lt; <span class="str">'2026-01-02'</span></pre>
                   <table class="ref-table">
                     <tr><th>Anti-pattern</th><th>Fix</th></tr>
-                    <tr><td class="c-red"><code>func(col) = x</code></td><td>Rewrite as a range, or index the expression</td></tr>
-                    <tr><td class="c-red"><code>LIKE '%foo'</code></td><td>Leading wildcard can't use B-tree — use full-text</td></tr>
-                    <tr><td class="c-red">The N+1 query</td><td>1 query + N per-row queries → JOIN or batch (IN)</td></tr>
-                    <tr><td class="c-red"><code>SELECT *</code></td><td>Fetch only needed columns → enables covering indexes</td></tr>
+                    <tr><td><code>func(col) = x</code></td><td>Rewrite as a range, or index the expression</td></tr>
+                    <tr><td><code>LIKE '%foo'</code></td><td>Leading wildcard can't use B-tree — use full-text</td></tr>
+                    <tr><td>The N+1 query</td><td>1 query + N per-row queries → JOIN or batch (IN)</td></tr>
+                    <tr><td><code>SELECT *</code></td><td>Fetch only needed columns → enables covering indexes</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">The N+1 problem</strong> is the #1 app-layer DB killer
@@ -482,7 +482,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🚦</span>
               <span class="topic-name">Locking &amp; MVCC — Concurrency Without Chaos</span>
@@ -503,10 +503,10 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Concept</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Row versions</td><td>Old versions kept until no txn needs them</td></tr>
-                    <tr><td class="c-cyan">VACUUM (Postgres)</td><td>Cleans up dead tuples — neglect it and the table bloats</td></tr>
-                    <tr><td class="c-cyan">Row vs table locks</td><td><code>FOR UPDATE</code> locks specific rows for a write</td></tr>
-                    <tr><td class="c-red">Deadlock</td><td>Two txns wait on each other — DB kills one; retry it</td></tr>
+                    <tr><td>Row versions</td><td>Old versions kept until no txn needs them</td></tr>
+                    <tr><td>VACUUM (Postgres)</td><td>Cleans up dead tuples — neglect it and the table bloats</td></tr>
+                    <tr><td>Row vs table locks</td><td><code>FOR UPDATE</code> locks specific rows for a write</td></tr>
+                    <tr><td>Deadlock</td><td>Two txns wait on each other — DB kills one; retry it</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Avoiding deadlocks:</strong> acquire locks in a consistent
@@ -518,7 +518,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🍰</span>
               <span class="topic-name">Partitioning &amp; Sharding — Scaling One Big Table</span>
@@ -538,10 +538,10 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Technique</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Range partition</td><td>By date — drop last month in one command (time-series)</td></tr>
-                    <tr><td class="c-cyan">Hash partition</td><td>Even spread by a key's hash</td></tr>
-                    <tr><td class="c-cyan">Shard key</td><td>Chooses which server a row lives on — pick carefully</td></tr>
-                    <tr><td class="c-red">Cross-shard queries/joins</td><td>The hard part — slow, complex; avoid by design</td></tr>
+                    <tr><td>Range partition</td><td>By date — drop last month in one command (time-series)</td></tr>
+                    <tr><td>Hash partition</td><td>Even spread by a key's hash</td></tr>
+                    <tr><td>Shard key</td><td>Chooses which server a row lives on — pick carefully</td></tr>
+                    <tr><td>Cross-shard queries/joins</td><td>The hard part — slow, complex; avoid by design</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Order of escalation:</strong> optimize queries &amp;
@@ -553,7 +553,7 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🐘</span>
               <span class="topic-name">PostgreSQL — The Default Choice</span>
@@ -578,17 +578,17 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
 \timing on       <span class="com"># show query durations</span></pre>
                   <table class="ref-table">
                     <tr><th>Concept</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Roles</td><td>Users &amp; groups are both "roles"; grant privileges</td></tr>
-                    <tr><td class="c-cyan">Schemas</td><td>Namespaces within a database (<code>public</code> by default)</td></tr>
-                    <tr><td class="c-cyan">Extensions</td><td><code>CREATE EXTENSION</code> — pgvector, PostGIS, pg_stat_statements</td></tr>
-                    <tr><td class="c-cyan">MVCC + VACUUM</td><td>Autovacuum reclaims dead rows; monitor bloat</td></tr>
+                    <tr><td>Roles</td><td>Users &amp; groups are both "roles"; grant privileges</td></tr>
+                    <tr><td>Schemas</td><td>Namespaces within a database (<code>public</code> by default)</td></tr>
+                    <tr><td>Extensions</td><td><code>CREATE EXTENSION</code> — pgvector, PostGIS, pg_stat_statements</td></tr>
+                    <tr><td>MVCC + VACUUM</td><td>Autovacuum reclaims dead rows; monitor bloat</td></tr>
                   </table>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧰</span>
               <span class="topic-name">Postgres Power Features — JSONB &amp; Full-Text</span>
@@ -612,11 +612,11 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
 <span class="kw">WHERE</span> to_tsvector(body) @@ to_tsquery(<span class="str">'postgres &amp; index'</span>);</pre>
                   <table class="ref-table">
                     <tr><th>Feature</th><th>Use</th></tr>
-                    <tr><td class="c-cyan">JSONB</td><td>Semi-structured data, indexed with GIN; <code>@&gt;</code>, <code>-&gt;&gt;</code></td></tr>
-                    <tr><td class="c-cyan">Arrays</td><td>Native array columns &amp; operators</td></tr>
-                    <tr><td class="c-cyan">Full-text search</td><td>tsvector/tsquery, ranking — no Elasticsearch needed for many apps</td></tr>
-                    <tr><td class="c-cyan">LISTEN/NOTIFY</td><td>Built-in pub/sub for lightweight eventing</td></tr>
-                    <tr><td class="c-cyan">pgvector</td><td>Store embeddings &amp; do similarity search (AI apps)</td></tr>
+                    <tr><td>JSONB</td><td>Semi-structured data, indexed with GIN; <code>@&gt;</code>, <code>-&gt;&gt;</code></td></tr>
+                    <tr><td>Arrays</td><td>Native array columns &amp; operators</td></tr>
+                    <tr><td>Full-text search</td><td>tsvector/tsquery, ranking — no Elasticsearch needed for many apps</td></tr>
+                    <tr><td>LISTEN/NOTIFY</td><td>Built-in pub/sub for lightweight eventing</td></tr>
+                    <tr><td>pgvector</td><td>Store embeddings &amp; do similarity search (AI apps)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Rule:</strong> use JSONB for genuinely variable data, not
@@ -628,7 +628,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🐬</span>
               <span class="topic-name">MySQL / MariaDB — The Other Giant</span>
@@ -648,10 +648,10 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Thing to know</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">InnoDB engine</td><td>The default — transactional, row-locking, FKs</td></tr>
-                    <tr><td class="c-cyan">Default isolation</td><td>Repeatable Read (Postgres uses Read Committed)</td></tr>
-                    <tr><td class="c-amber">Collation/charset</td><td>Use <code>utf8mb4</code> — plain <code>utf8</code> is a 3-byte trap</td></tr>
-                    <tr><td class="c-amber">Looser SQL <span class="acro-exp">(Structured Query Language)</span></td><td>Historically permissive; enable strict mode</td></tr>
+                    <tr><td>InnoDB engine</td><td>The default — transactional, row-locking, FKs</td></tr>
+                    <tr><td>Default isolation</td><td>Repeatable Read (Postgres uses Read Committed)</td></tr>
+                    <tr><td>Collation/charset</td><td>Use <code>utf8mb4</code> — plain <code>utf8</code> is a 3-byte trap</td></tr>
+                    <tr><td>Looser SQL <span class="acro-exp">(Structured Query Language)</span></td><td>Historically permissive; enable strict mode</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Choosing:</strong> Postgres for richer features &amp;
@@ -663,7 +663,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📦</span>
               <span class="topic-name">SQLite — The Database That's Everywhere</span>
@@ -682,9 +682,9 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Great for</th><th>Not for</th></tr>
-                    <tr><td class="c-green">App/local storage, mobile, edge</td><td class="c-red">High write concurrency (single-writer)</td></tr>
-                    <tr><td class="c-green">Tests &amp; prototypes</td><td class="c-red">Multiple app servers sharing it</td></tr>
-                    <tr><td class="c-green">Analytics on a file (with extensions)</td><td class="c-red">Network access by many clients</td></tr>
+                    <tr><td>App/local storage, mobile, edge</td><td class="c-red">High write concurrency (single-writer)</td></tr>
+                    <tr><td>Tests &amp; prototypes</td><td class="c-red">Multiple app servers sharing it</td></tr>
+                    <tr><td>Analytics on a file (with extensions)</td><td class="c-red">Network access by many clients</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Don't dismiss it:</strong> "SQLite is not a toy" — for
@@ -697,7 +697,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🌊</span>
               <span class="topic-name">Connection Pooling — Surviving Many Clients</span>
@@ -717,9 +717,9 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Layer</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">App-side pool</td><td>HikariCP, pgx, SQLAlchemy — reuse connections per app</td></tr>
-                    <tr><td class="c-cyan">PgBouncer</td><td>External pooler; transaction mode multiplexes many clients</td></tr>
-                    <tr><td class="c-cyan">Serverless</td><td>Functions × requests = connection storm → use a pooler/proxy</td></tr>
+                    <tr><td>App-side pool</td><td>HikariCP, pgx, SQLAlchemy — reuse connections per app</td></tr>
+                    <tr><td>PgBouncer</td><td>External pooler; transaction mode multiplexes many clients</td></tr>
+                    <tr><td>Serverless</td><td>Functions × requests = connection storm → use a pooler/proxy</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Sizing:</strong> more connections isn't faster — past a
@@ -732,7 +732,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🗂️</span>
               <span class="topic-name">The NoSQL Landscape — Four Families</span>
@@ -751,10 +751,10 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Family</th><th>Model</th><th>Example</th></tr>
-                    <tr><td class="c-cyan">Key-Value</td><td>Simple map — fastest lookups</td><td>Redis, DynamoDB</td></tr>
-                    <tr><td class="c-cyan">Document</td><td>JSON-like docs, flexible schema</td><td>MongoDB, Couchbase</td></tr>
-                    <tr><td class="c-cyan">Wide-Column</td><td>Rows with dynamic columns, huge scale</td><td>Cassandra, Bigtable</td></tr>
-                    <tr><td class="c-cyan">Graph</td><td>Nodes &amp; edges — relationships first</td><td>Neo4j</td></tr>
+                    <tr><td>Key-Value</td><td>Simple map — fastest lookups</td><td>Redis, DynamoDB</td></tr>
+                    <tr><td>Document</td><td>JSON-like docs, flexible schema</td><td>MongoDB, Couchbase</td></tr>
+                    <tr><td>Wide-Column</td><td>Rows with dynamic columns, huge scale</td><td>Cassandra, Bigtable</td></tr>
+                    <tr><td>Graph</td><td>Nodes &amp; edges — relationships first</td><td>Neo4j</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Choosing:</strong> pick NoSQL for a <em>specific</em>
@@ -806,7 +806,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">⚡</span>
               <span class="topic-name">Redis — The In-Memory Multi-Tool</span>
@@ -825,11 +825,11 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Structure</th><th>Use</th></tr>
-                    <tr><td class="c-cyan">String / counter</td><td>Cache values, rate limits (<code>INCR</code>)</td></tr>
-                    <tr><td class="c-cyan">Hash</td><td>Store objects (session, user)</td></tr>
-                    <tr><td class="c-cyan">Sorted Set</td><td>Leaderboards, time-ordered queues</td></tr>
-                    <tr><td class="c-cyan">List / Stream</td><td>Queues &amp; event logs</td></tr>
-                    <tr><td class="c-cyan">Pub/Sub</td><td>Lightweight messaging</td></tr>
+                    <tr><td>String / counter</td><td>Cache values, rate limits (<code>INCR</code>)</td></tr>
+                    <tr><td>Hash</td><td>Store objects (session, user)</td></tr>
+                    <tr><td>Sorted Set</td><td>Leaderboards, time-ordered queues</td></tr>
+                    <tr><td>List / Stream</td><td>Queues &amp; event logs</td></tr>
+                    <tr><td>Pub/Sub</td><td>Lightweight messaging</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Caching patterns:</strong> cache-aside (check Redis, miss →
@@ -842,7 +842,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🏛️</span>
               <span class="topic-name">Cassandra &amp; DynamoDB — Wide-Column at Scale</span>
@@ -862,10 +862,10 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Concept</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Partition key</td><td>Decides which node stores the row — even distribution is critical</td></tr>
-                    <tr><td class="c-cyan">Sort/clustering key</td><td>Orders rows within a partition</td></tr>
-                    <tr><td class="c-cyan">Single-table design</td><td>DynamoDB: model many entities in one table by key design</td></tr>
-                    <tr><td class="c-red">Hot partition</td><td>A bad key funnels traffic to one node — throttling</td></tr>
+                    <tr><td>Partition key</td><td>Decides which node stores the row — even distribution is critical</td></tr>
+                    <tr><td>Sort/clustering key</td><td>Orders rows within a partition</td></tr>
+                    <tr><td>Single-table design</td><td>DynamoDB: model many entities in one table by key design</td></tr>
+                    <tr><td>Hot partition</td><td>A bad key funnels traffic to one node — throttling</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Tunable consistency</strong> (quorums) lets you dial
@@ -878,7 +878,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🕸️</span>
               <span class="topic-name">Graph Databases — When Relationships Are the Data</span>
@@ -902,9 +902,9 @@ db.orders.<span class="fn">aggregate</span>([
 <span class="kw">RETURN</span> fof.name, <span class="fn">count</span>(*) <span class="kw">ORDER BY</span> <span class="fn">count</span>(*) <span class="kw">DESC</span></pre>
                   <table class="ref-table">
                     <tr><th>Great for</th><th>Example</th></tr>
-                    <tr><td class="c-cyan">Networks</td><td>Social graphs, org charts</td></tr>
-                    <tr><td class="c-cyan">Recommendations</td><td>"People who bought… also…"</td></tr>
-                    <tr><td class="c-cyan">Fraud / security</td><td>Attack-path &amp; ring detection (cf. BloodHound)</td></tr>
+                    <tr><td>Networks</td><td>Social graphs, org charts</td></tr>
+                    <tr><td>Recommendations</td><td>"People who bought… also…"</td></tr>
+                    <tr><td>Fraud / security</td><td>Attack-path &amp; ring detection (cf. BloodHound)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     The relationship is stored directly, so a traversal is a pointer-hop, not a join —
@@ -952,7 +952,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧊</span>
               <span class="topic-name">Columnar Engines — Parquet, DuckDB &amp; ClickHouse</span>
@@ -971,10 +971,10 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Tool</th><th>Role</th></tr>
-                    <tr><td class="c-cyan">Parquet</td><td>Columnar file format — the lingua franca of data lakes</td></tr>
-                    <tr><td class="c-cyan">DuckDB</td><td>"SQLite for analytics" — query Parquet/CSV locally, blazing fast</td></tr>
-                    <tr><td class="c-cyan">ClickHouse</td><td>Real-time columnar DB for huge event volumes</td></tr>
-                    <tr><td class="c-cyan">Apache Arrow</td><td>In-memory columnar standard that ties them together</td></tr>
+                    <tr><td>Parquet</td><td>Columnar file format — the lingua franca of data lakes</td></tr>
+                    <tr><td>DuckDB</td><td>"SQLite for analytics" — query Parquet/CSV locally, blazing fast</td></tr>
+                    <tr><td>ClickHouse</td><td>Real-time columnar DB for huge event volumes</td></tr>
+                    <tr><td>Apache Arrow</td><td>In-memory columnar standard that ties them together</td></tr>
                   </table>
                   <pre class="code-block"><span class="com">-- DuckDB: query a Parquet file directly, no loading</span>
 <span class="kw">SELECT</span> country, <span class="fn">count</span>(*) <span class="kw">FROM</span> <span class="str">'events/*.parquet'</span> <span class="kw">GROUP BY</span> <span class="num">1</span>;</pre>
@@ -988,7 +988,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🏞️</span>
               <span class="topic-name">Warehouse vs Lake vs Lakehouse</span>
@@ -1006,9 +1006,9 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Approach</th><th>What it is</th></tr>
-                    <tr><td class="c-cyan">Data Warehouse</td><td>Structured, schema-on-write, SQL <span class="acro-exp">(Structured Query Language)</span> — Snowflake, BigQuery, Redshift</td></tr>
-                    <tr><td class="c-cyan">Data Lake</td><td>Raw files (Parquet) in object storage, schema-on-read — cheap, flexible, messy</td></tr>
-                    <tr><td class="c-cyan">Lakehouse</td><td>Lake storage + warehouse features (ACID, tables) via Delta/Iceberg/Hudi</td></tr>
+                    <tr><td>Data Warehouse</td><td>Structured, schema-on-write, SQL <span class="acro-exp">(Structured Query Language)</span> — Snowflake, BigQuery, Redshift</td></tr>
+                    <tr><td>Data Lake</td><td>Raw files (Parquet) in object storage, schema-on-read — cheap, flexible, messy</td></tr>
+                    <tr><td>Lakehouse</td><td>Lake storage + warehouse features (ACID, tables) via Delta/Iceberg/Hudi</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Table formats</strong> (Apache Iceberg, Delta Lake) are the
@@ -1021,7 +1021,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📊</span>
               <span class="topic-name">The Semantic Layer &amp; Metrics</span>
@@ -1041,10 +1041,10 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Piece</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Metric definition</td><td>The canonical formula for a KPI <span class="acro-exp">(Key Performance Indicator)</span>, version-controlled</td></tr>
-                    <tr><td class="c-cyan">Dimensions</td><td>How you slice it (time, region, plan)</td></tr>
-                    <tr><td class="c-cyan">Governance</td><td>Certified vs experimental metrics</td></tr>
-                    <tr><td class="c-cyan">Tools</td><td>dbt Semantic Layer, Cube, LookML</td></tr>
+                    <tr><td>Metric definition</td><td>The canonical formula for a KPI <span class="acro-exp">(Key Performance Indicator)</span>, version-controlled</td></tr>
+                    <tr><td>Dimensions</td><td>How you slice it (time, region, plan)</td></tr>
+                    <tr><td>Governance</td><td>Certified vs experimental metrics</td></tr>
+                    <tr><td>Tools</td><td>dbt Semantic Layer, Cube, LookML</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     The payoff: a single source of truth for business logic that BI <span class="acro-exp">(Business Intelligence)</span> tools, notebooks,
@@ -1056,7 +1056,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">✅</span>
               <span class="topic-name">Data Quality &amp; Observability</span>
@@ -1075,11 +1075,11 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Dimension</th><th>Check</th></tr>
-                    <tr><td class="c-cyan">Freshness</td><td>Did the data arrive on time?</td></tr>
-                    <tr><td class="c-cyan">Volume</td><td>Row count in the expected range?</td></tr>
-                    <tr><td class="c-cyan">Schema</td><td>Did columns/types change upstream?</td></tr>
-                    <tr><td class="c-cyan">Distribution</td><td>Nulls/values within normal bounds?</td></tr>
-                    <tr><td class="c-cyan">Lineage</td><td>What feeds this, and what breaks if it fails?</td></tr>
+                    <tr><td>Freshness</td><td>Did the data arrive on time?</td></tr>
+                    <tr><td>Volume</td><td>Row count in the expected range?</td></tr>
+                    <tr><td>Schema</td><td>Did columns/types change upstream?</td></tr>
+                    <tr><td>Distribution</td><td>Nulls/values within normal bounds?</td></tr>
+                    <tr><td>Lineage</td><td>What feeds this, and what breaks if it fails?</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Tools:</strong> dbt tests &amp; contracts, Great
@@ -1092,7 +1092,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">💾</span>
               <span class="topic-name">Backups &amp; Point-in-Time Recovery</span>
@@ -1111,10 +1111,10 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Type</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Logical dump</td><td><code>pg_dump</code>/<code>mysqldump</code> — portable, slow to restore, per-DB</td></tr>
-                    <tr><td class="c-cyan">Physical backup</td><td>File-level (pgBackRest, Percona) — fast, whole cluster</td></tr>
-                    <tr><td class="c-cyan">PITR</td><td>Base backup + WAL <span class="acro-exp">(Write-Ahead Log)</span> archive → restore to an exact second</td></tr>
-                    <tr><td class="c-cyan">Snapshots</td><td>Cloud volume snapshots — fast but check consistency</td></tr>
+                    <tr><td>Logical dump</td><td><code>pg_dump</code>/<code>mysqldump</code> — portable, slow to restore, per-DB</td></tr>
+                    <tr><td>Physical backup</td><td>File-level (pgBackRest, Percona) — fast, whole cluster</td></tr>
+                    <tr><td>PITR</td><td>Base backup + WAL <span class="acro-exp">(Write-Ahead Log)</span> archive → restore to an exact second</td></tr>
+                    <tr><td>Snapshots</td><td>Cloud volume snapshots — fast but check consistency</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">RPO/RPO drive design:</strong> continuous WAL archiving
@@ -1127,7 +1127,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">👯</span>
               <span class="topic-name">Replication &amp; High Availability</span>
@@ -1146,11 +1146,11 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Concept</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Async replication</td><td>Fast writes, but replicas lag → possible stale reads/data loss on failover</td></tr>
-                    <tr><td class="c-cyan">Sync replication</td><td>No data loss, higher write latency</td></tr>
-                    <tr><td class="c-cyan">Read replicas</td><td>Offload reporting/read traffic</td></tr>
-                    <tr><td class="c-cyan">Automatic failover</td><td>Patroni/orchestrator promote a replica on primary death</td></tr>
-                    <tr><td class="c-red">Split-brain</td><td>Two primaries accept writes — data divergence; fencing prevents it</td></tr>
+                    <tr><td>Async replication</td><td>Fast writes, but replicas lag → possible stale reads/data loss on failover</td></tr>
+                    <tr><td>Sync replication</td><td>No data loss, higher write latency</td></tr>
+                    <tr><td>Read replicas</td><td>Offload reporting/read traffic</td></tr>
+                    <tr><td>Automatic failover</td><td>Patroni/orchestrator promote a replica on primary death</td></tr>
+                    <tr><td>Split-brain</td><td>Two primaries accept writes — data divergence; fencing prevents it</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Replication lag</strong> means "read your own write" can
@@ -1162,7 +1162,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔀</span>
               <span class="topic-name">Schema Migrations — Zero-Downtime Change</span>
@@ -1181,10 +1181,10 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Tool / Idea</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Migration tools</td><td>Flyway, Liquibase, Alembic, Rails — versioned, ordered scripts</td></tr>
-                    <tr><td class="c-cyan">Expand/contract</td><td>Add new → backfill → switch → remove old (multi-deploy)</td></tr>
-                    <tr><td class="c-red">Locking DDL <span class="acro-exp">(Data Definition Language)</span></td><td>Some <code>ALTER</code>s rewrite/lock the table — check first</td></tr>
-                    <tr><td class="c-green">Online tools</td><td>gh-ost, pt-online-schema-change for big MySQL tables</td></tr>
+                    <tr><td>Migration tools</td><td>Flyway, Liquibase, Alembic, Rails — versioned, ordered scripts</td></tr>
+                    <tr><td>Expand/contract</td><td>Add new → backfill → switch → remove old (multi-deploy)</td></tr>
+                    <tr><td>Locking DDL <span class="acro-exp">(Data Definition Language)</span></td><td>Some <code>ALTER</code>s rewrite/lock the table — check first</td></tr>
+                    <tr><td>Online tools</td><td>gh-ost, pt-online-schema-change for big MySQL tables</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Golden rule:</strong> every migration must be
@@ -1197,7 +1197,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🛡️</span>
               <span class="topic-name">Database Security — Least Privilege &amp; RLS</span>
@@ -1216,11 +1216,11 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Control</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Least-privilege roles</td><td>App user ≠ superuser; separate read/write/migration roles</td></tr>
-                    <tr><td class="c-cyan">Row-Level Security</td><td>Postgres RLS — rows filtered by policy (multi-tenant isolation)</td></tr>
-                    <tr><td class="c-cyan">Encryption</td><td>TLS <span class="acro-exp">(Transport Layer Security)</span> in transit; TDE <span class="acro-exp">(Transparent Data Encryption)</span> / disk encryption at rest</td></tr>
-                    <tr><td class="c-cyan">Secrets</td><td>Rotate credentials via Vault/IAM; never hardcode</td></tr>
-                    <tr><td class="c-cyan">Auditing</td><td>Log privileged actions &amp; access to sensitive tables</td></tr>
+                    <tr><td>Least-privilege roles</td><td>App user ≠ superuser; separate read/write/migration roles</td></tr>
+                    <tr><td>Row-Level Security</td><td>Postgres RLS — rows filtered by policy (multi-tenant isolation)</td></tr>
+                    <tr><td>Encryption</td><td>TLS <span class="acro-exp">(Transport Layer Security)</span> in transit; TDE <span class="acro-exp">(Transparent Data Encryption)</span> / disk encryption at rest</td></tr>
+                    <tr><td>Secrets</td><td>Rotate credentials via Vault/IAM; never hardcode</td></tr>
+                    <tr><td>Auditing</td><td>Log privileged actions &amp; access to sensitive tables</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-red">And of course:</strong> parameterized queries to stop SQL <span class="acro-exp">(Structured Query Language)</span>
@@ -1232,7 +1232,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📟</span>
               <span class="topic-name">Monitoring a Database — What to Watch</span>
@@ -1251,12 +1251,12 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Signal</th><th>Why</th></tr>
-                    <tr><td class="c-cyan">Slow-query log</td><td>Find the queries actually hurting — start here</td></tr>
-                    <tr><td class="c-cyan">Connections / saturation</td><td>Nearing <code>max_connections</code> → pool it</td></tr>
-                    <tr><td class="c-cyan">Cache hit ratio</td><td>Low buffer-pool hits → more RAM <span class="acro-exp">(Random Access Memory)</span> or better indexes</td></tr>
-                    <tr><td class="c-cyan">Replication lag</td><td>Rising lag → stale reads, failover risk</td></tr>
-                    <tr><td class="c-cyan">Bloat / vacuum (PG)</td><td>Dead tuples piling up → autovacuum tuning</td></tr>
-                    <tr><td class="c-cyan">Disk &amp; IOPS <span class="acro-exp">(Input/Output Operations Per Second)</span></td><td>Running out of space is a hard outage</td></tr>
+                    <tr><td>Slow-query log</td><td>Find the queries actually hurting — start here</td></tr>
+                    <tr><td>Connections / saturation</td><td>Nearing <code>max_connections</code> → pool it</td></tr>
+                    <tr><td>Cache hit ratio</td><td>Low buffer-pool hits → more RAM <span class="acro-exp">(Random Access Memory)</span> or better indexes</td></tr>
+                    <tr><td>Replication lag</td><td>Rising lag → stale reads, failover risk</td></tr>
+                    <tr><td>Bloat / vacuum (PG)</td><td>Dead tuples piling up → autovacuum tuning</td></tr>
+                    <tr><td>Disk &amp; IOPS <span class="acro-exp">(Input/Output Operations Per Second)</span></td><td>Running out of space is a hard outage</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:8px">
                     <code>pg_stat_statements</code> (Postgres) and the Performance Schema (MySQL)
@@ -1267,7 +1267,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧑‍💼</span>
               <span class="topic-name">Data Roles — Who Does What</span>
@@ -1285,12 +1285,12 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Role</th><th>Owns</th></tr>
-                    <tr><td class="c-cyan">Data Analyst</td><td>SQL <span class="acro-exp">(Structured Query Language)</span> + BI <span class="acro-exp">(Business Intelligence)</span> dashboards; answers business questions</td></tr>
-                    <tr><td class="c-cyan">Analytics Engineer</td><td>dbt models &amp; the semantic layer (analyst + SWE practices)</td></tr>
-                    <tr><td class="c-cyan">Data Engineer</td><td>Pipelines, ingestion, warehouses, infra (Kafka/Spark/Airflow)</td></tr>
-                    <tr><td class="c-cyan">Data Scientist</td><td>Statistics, experiments, ML <span class="acro-exp">(Machine Learning)</span> models</td></tr>
-                    <tr><td class="c-cyan">ML Engineer</td><td>Productionizing models (MLOps)</td></tr>
-                    <tr><td class="c-cyan">DBA</td><td>Runs &amp; tunes the operational databases</td></tr>
+                    <tr><td>Data Analyst</td><td>SQL <span class="acro-exp">(Structured Query Language)</span> + BI <span class="acro-exp">(Business Intelligence)</span> dashboards; answers business questions</td></tr>
+                    <tr><td>Analytics Engineer</td><td>dbt models &amp; the semantic layer (analyst + SWE practices)</td></tr>
+                    <tr><td>Data Engineer</td><td>Pipelines, ingestion, warehouses, infra (Kafka/Spark/Airflow)</td></tr>
+                    <tr><td>Data Scientist</td><td>Statistics, experiments, ML <span class="acro-exp">(Machine Learning)</span> models</td></tr>
+                    <tr><td>ML Engineer</td><td>Productionizing models (MLOps)</td></tr>
+                    <tr><td>DBA</td><td>Runs &amp; tunes the operational databases</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">The modern stack</strong> blurred these: analytics
@@ -1302,7 +1302,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🏗️</span>
               <span class="topic-name">Designing a Schema From Requirements</span>
@@ -1320,12 +1320,12 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Step</th><th>Do</th></tr>
-                    <tr><td class="c-cyan">1. Find nouns</td><td>Customer, Product, Order, OrderItem, Payment → entities</td></tr>
-                    <tr><td class="c-cyan">2. Relationships</td><td>Order has many OrderItems; OrderItem → one Product</td></tr>
-                    <tr><td class="c-cyan">3. Keys &amp; types</td><td>PKs, FKs, pick types &amp; constraints (money as decimal!)</td></tr>
-                    <tr><td class="c-cyan">4. Normalize to 3NF</td><td>Each fact once; no update anomalies</td></tr>
-                    <tr><td class="c-cyan">5. Index for access</td><td>Add indexes for the real queries</td></tr>
-                    <tr><td class="c-cyan">6. OLAP <span class="acro-exp">(Online Analytical Processing)</span> later</td><td>Star schema in the warehouse for reporting</td></tr>
+                    <tr><td>1. Find nouns</td><td>Customer, Product, Order, OrderItem, Payment → entities</td></tr>
+                    <tr><td>2. Relationships</td><td>Order has many OrderItems; OrderItem → one Product</td></tr>
+                    <tr><td>3. Keys &amp; types</td><td>PKs, FKs, pick types &amp; constraints (money as decimal!)</td></tr>
+                    <tr><td>4. Normalize to 3NF</td><td>Each fact once; no update anomalies</td></tr>
+                    <tr><td>5. Index for access</td><td>Add indexes for the real queries</td></tr>
+                    <tr><td>6. OLAP <span class="acro-exp">(Online Analytical Processing)</span> later</td><td>Star schema in the warehouse for reporting</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Snapshot the price:</strong> an <code>OrderItem</code>
@@ -1337,7 +1337,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">⏱️</span>
               <span class="topic-name">Time-Series &amp; Event Data</span>
@@ -1356,10 +1356,10 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Technique</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Time partitioning</td><td>Chunk by day/week; drop old chunks instantly</td></tr>
-                    <tr><td class="c-cyan">Downsampling / rollups</td><td>Keep 1s data briefly, 1m/1h aggregates long-term</td></tr>
-                    <tr><td class="c-cyan">Retention policies</td><td>Auto-expire raw data past N days</td></tr>
-                    <tr><td class="c-cyan">Tools</td><td>TimescaleDB, InfluxDB, Prometheus, ClickHouse</td></tr>
+                    <tr><td>Time partitioning</td><td>Chunk by day/week; drop old chunks instantly</td></tr>
+                    <tr><td>Downsampling / rollups</td><td>Keep 1s data briefly, 1m/1h aggregates long-term</td></tr>
+                    <tr><td>Retention policies</td><td>Auto-expire raw data past N days</td></tr>
+                    <tr><td>Tools</td><td>TimescaleDB, InfluxDB, Prometheus, ClickHouse</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     The pattern that makes it sustainable: <strong class="c-green">high-resolution
@@ -1372,7 +1372,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧭</span>
               <span class="topic-name">Vector Databases — Embeddings &amp; Similarity Search</span>
@@ -1392,10 +1392,10 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Concept</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Embedding</td><td>A model maps content → a high-dimensional vector</td></tr>
-                    <tr><td class="c-cyan">ANN <span class="acro-exp">(Artificial Neural Network)</span> index</td><td>HNSW/IVF — approximate nearest-neighbor for speed</td></tr>
-                    <tr><td class="c-cyan">Similarity</td><td>Cosine / dot product ranks "closeness"</td></tr>
-                    <tr><td class="c-cyan">Options</td><td>pgvector, Pinecone, Weaviate, Qdrant, Milvus</td></tr>
+                    <tr><td>Embedding</td><td>A model maps content → a high-dimensional vector</td></tr>
+                    <tr><td>ANN <span class="acro-exp">(Artificial Neural Network)</span> index</td><td>HNSW/IVF — approximate nearest-neighbor for speed</td></tr>
+                    <tr><td>Similarity</td><td>Cosine / dot product ranks "closeness"</td></tr>
+                    <tr><td>Options</td><td>pgvector, Pinecone, Weaviate, Qdrant, Milvus</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Start simple:</strong> <code>pgvector</code> adds vector
@@ -1408,7 +1408,7 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🎓</span>
               <span class="topic-name">The Data Interview</span>
@@ -1426,11 +1426,11 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Round</th><th>Prep</th></tr>
-                    <tr><td class="c-cyan">SQL <span class="acro-exp">(Structured Query Language)</span></td><td>Joins, window functions, group-by, "second highest salary"-style puzzles</td></tr>
-                    <tr><td class="c-cyan">Data modeling</td><td>Design a schema for X; normalize; star schema for analytics</td></tr>
-                    <tr><td class="c-cyan">Pipeline / system design</td><td>Ingest → store → transform → serve; batch vs streaming</td></tr>
-                    <tr><td class="c-cyan">Warehousing</td><td>OLTP <span class="acro-exp">(Online Transaction Processing)</span> vs OLAP <span class="acro-exp">(Online Analytical Processing)</span>, SCDs, dbt, incremental models</td></tr>
-                    <tr><td class="c-cyan">Case / product sense</td><td>Define a metric, debug a dashboard drop</td></tr>
+                    <tr><td>SQL <span class="acro-exp">(Structured Query Language)</span></td><td>Joins, window functions, group-by, "second highest salary"-style puzzles</td></tr>
+                    <tr><td>Data modeling</td><td>Design a schema for X; normalize; star schema for analytics</td></tr>
+                    <tr><td>Pipeline / system design</td><td>Ingest → store → transform → serve; batch vs streaming</td></tr>
+                    <tr><td>Warehousing</td><td>OLTP <span class="acro-exp">(Online Transaction Processing)</span> vs OLAP <span class="acro-exp">(Online Analytical Processing)</span>, SCDs, dbt, incremental models</td></tr>
+                    <tr><td>Case / product sense</td><td>Define a metric, debug a dashboard drop</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Highest-leverage prep:</strong> window functions and the

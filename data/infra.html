@@ -1,0 +1,2206 @@
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE V1 — WINDOWS SERVER FOUNDATIONS
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: EDITIONS & LICENSING ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧾</span>
+    <span class="topic-name">Windows Server Editions &amp; Licensing — What You Are Actually Buying</span>
+    <span class="topic-badge">Server • Licensing</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The decision</div>
+      <div class="concept-title">Standard vs Datacenter Is a Virtualisation Question, Not a Feature Question</div>
+      <div class="concept-desc">
+        People assume Datacenter is "the one with the good features". For almost every role
+        that matters — AD DS <span class="acro-exp">(Active Directory Domain Services)</span>, DNS <span class="acro-exp">(Domain Name System)</span>, DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span>, file services — the two editions are identical.
+        What you are buying is <strong>how many Windows virtual machines that hardware may
+        run</strong>. Choose on VM density, then check the handful of features that genuinely differ.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Standard</th><th>Datacenter</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Virtual instances per licensed host</td>
+              <td>2</td>
+              <td class="c-green">Unlimited</td>
+            </tr>
+            <tr>
+              <td>AD DS, DNS, DHCP, file, print</td>
+              <td class="c-green">Yes</td>
+              <td class="c-green">Yes</td>
+            </tr>
+            <tr>
+              <td>Storage Spaces Direct</td>
+              <td class="c-red">No</td>
+              <td class="c-green">Yes</td>
+            </tr>
+            <tr>
+              <td>Software-defined networking</td>
+              <td class="c-red">No</td>
+              <td class="c-green">Yes</td>
+            </tr>
+            <tr>
+              <td>Typical fit</td>
+              <td>Physical box, or a host running one or two VMs</td>
+              <td>A virtualisation host, or anything hyper-converged</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> if a host will ever run more than about four Windows VMs,
+        Datacenter usually costs less than stacking Standard licences — and you stop having to
+        count. Below that, Standard. Get this wrong in the direction of Standard and you are
+        not merely under-licensed, you are under-licensed <em>retroactively</em>, which is how
+        licensing turns into an audit finding.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Core counting</div>
+      <div class="concept-title">Licensing Follows Cores, and There Is a Floor</div>
+      <div class="concept-desc">
+        Windows Server is licensed per physical core, with minimums that catch people out: you
+        license <strong>every physical core in the host</strong>, at least 8 per processor and
+        at least 16 per server, regardless of how few you use. A 2× 6-core host is still billed
+        as 16 cores. Licences are sold in 2-core packs, so the arithmetic is always even.
+      </div>
+      <div class="concept-desc">
+        The trap is hardware refresh. Moving a workload from an 8-core box to a 32-core box does
+        not carry the licence with it — the new host needs double the core licences before the
+        first VM boots. Price the licence alongside the tin, not after it.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The forgotten half</div>
+      <div class="concept-title">CALs <span class="acro-exp">(Client Access License)</span> — Licensing the Connection, Not the Server</div>
+      <div class="concept-desc">
+        Core licences let the server <em>run</em>. CALs let something <em>connect to it</em>.
+        They are bought separately, they are frequently forgotten, and they are the single most
+        common finding in a Microsoft licensing review.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Model</th><th>Buy one per</th><th>Cheaper when</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>User CAL</td><td>Named person, any number of devices</td><td>People have a laptop, a phone and a desktop</td></tr>
+            <tr><td>Device CAL</td><td>Named device, any number of users</td><td>Shift workers share a terminal or a shop-floor PC</td></tr>
+            <tr><td>External connector</td><td>Server, for unlimited external users</td><td>Anonymous or public-facing access</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> count your CALs by whichever number is smaller — people or
+        devices — and remember that Remote Desktop Services needs <em>its own</em> CAL on top of
+        the Windows Server CAL. Two separate purchases for one session.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Evaluation Media That Quietly Expires</div>
+      <div class="concept-desc">
+        Evaluation installs run for 180 days and then begin shutting down hourly. It is a
+        reliable source of a mystifying outage roughly six months after someone stood up a
+        "temporary" server. Check what you are running before it tells you:
+      </div>
+      <pre class="code-block"><span class="com"># Which edition and how many days are left?</span>
+slmgr /dlv
+
+<span class="com"># Evaluation to full: list targets, then convert (needs a reboot)</span>
+DISM /Online /Get-TargetEditions
+DISM /Online /Set-Edition:ServerStandard /ProductKey:XXXXX-XXXXX-XXXXX-XXXXX-XXXXX /AcceptEula</pre>
+      <div class="concept-desc verdict">
+        A domain controller <strong>cannot</strong> be edition-converted in place. If the
+        expiring server is a DC, you promote a replacement, transfer the roles, and demote the
+        old one — which is a far longer evening than the one you were planning.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: SERVER CORE ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⬛</span>
+    <span class="topic-name">Server Core — Why You Would Remove the GUI <span class="acro-exp">(Graphical User Interface)</span>, and How You Manage It Anyway</span>
+    <span class="topic-badge">Server • Installation</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The trade</div>
+      <div class="concept-title">A Smaller Server Is a Smaller Target and a Shorter Patch Queue</div>
+      <div class="concept-desc">
+        Server Core is Windows Server without the desktop shell, Explorer, Edge, or most of the
+        management consoles. The argument for it is not disk space. It is that
+        <strong>code you did not install cannot be exploited and does not need patching</strong> —
+        fewer components means fewer monthly reboots and a materially smaller attack surface.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Server Core</th><th>Desktop Experience</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Local management</td><td>Command line, <code>sconfig</code></td><td>Full GUI</td></tr>
+            <tr><td>Attack surface</td><td class="c-green">Smaller</td><td class="c-amber">Larger</td></tr>
+            <tr><td>Patch/reboot frequency</td><td class="c-green">Lower</td><td class="c-amber">Higher</td></tr>
+            <tr><td>Vendor agent support</td><td class="c-amber">Check first — some installers need a GUI</td><td class="c-green">Assumed</td></tr>
+            <tr><td>Good fit</td><td>DC <span class="acro-exp">(Domain Controller)</span>, DNS <span class="acro-exp">(Domain Name System)</span>, DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span>, file, Hyper-V host</td><td>Anything with a vendor GUI console</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> infrastructure roles that you administer remotely anyway
+        are the easy yes. The blocker is almost never Windows — it is a third-party agent,
+        backup client or line-of-business installer that assumes a desktop. Test the agents
+        before committing the estate.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">One-way door</div>
+      <div class="concept-title">You Cannot Switch Between Them After Installation</div>
+      <div class="concept-desc">
+        In Windows Server 2012 and 2012 R2 you could add and remove the GUI at will. That was
+        removed in 2016 and has not returned. On any currently supported release, choosing Core
+        or Desktop Experience at install time is <strong>permanent</strong> — changing your mind
+        means a rebuild.
+      </div>
+      <div class="concept-desc">
+        This is worth treating as a genuine one-way door: decide per role, write the decision
+        into the build documentation, and default to Desktop Experience only where an agent
+        actually requires it.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Local admin</div>
+      <div class="concept-title"><code>sconfig</code>, and the Handful of Commands Worth Memorising</div>
+      <div class="concept-desc">
+        A freshly built Core box needs enough local configuration to become remotely
+        manageable — then you never sign in locally again. <code>sconfig</code> is a menu that
+        covers most of it.
+      </div>
+      <pre class="code-block"><span class="com"># The menu that covers naming, domain join, networking, updates, remote management</span>
+sconfig
+
+<span class="com"># Or do it directly in PowerShell</span>
+Rename-Computer <span class="kw">-NewName</span> DC03 <span class="kw">-Restart</span>
+Add-Computer <span class="kw">-DomainName</span> corp.example.com <span class="kw">-Restart</span>
+Enable-PSRemoting <span class="kw">-Force</span>
+
+<span class="com"># Lost the command prompt entirely? This brings it back.</span>
+<span class="com"># (Task Manager -> File -> Run new task -> cmd)</span></pre>
+      <div class="concept-desc verdict">
+        The last one is not a joke. Closing the only console window on a Core box leaves you
+        staring at a blank blue screen with no way in, and it is the first thing that happens
+        to everyone exactly once.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Remote by default</div>
+      <div class="concept-title">Manage It From Somewhere Else — That Was Always the Point</div>
+      <div class="concept-desc">
+        Server Core is not "harder to manage". It is a server you manage the way you should
+        have been managing the others: remotely, from an administrative workstation, over
+        PowerShell remoting or with the graphical consoles pointed at it.
+      </div>
+      <pre class="code-block"><span class="com"># Interactive session on the remote server</span>
+Enter-PSSession <span class="kw">-ComputerName</span> DC03
+
+<span class="com"># Fan out one command across many servers at once</span>
+Invoke-Command <span class="kw">-ComputerName</span> DC01,DC02,DC03 <span class="kw">-ScriptBlock</span> {
+    Get-Service ADWS | Select-Object PSComputerName, Status
+}</pre>
+      <div class="concept-desc verdict">
+        Once every server is administered this way, the presence or absence of a local GUI stops
+        being a meaningful distinction — which is the actual argument for Core, and the reason
+        it reads as difficult only to teams still signing in at the console.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: THE THREE CONSOLES ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🛠️</span>
+    <span class="topic-name">Server Manager, RSAT <span class="acro-exp">(Remote Server Administration Tools)</span> &amp; Windows Admin Center — Which Console Wins</span>
+    <span class="topic-badge">Server • Tooling</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Three Overlapping Tools, Each Best at One Thing</div>
+      <div class="concept-desc">
+        These are not generations of the same product, and the newest does not replace the
+        others. They overlap awkwardly, and knowing which to reach for saves more time than
+        knowing any one of them deeply.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Server Manager</th><th>RSAT</th><th>Windows Admin Center</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>What it is</td>
+              <td>Built-in role and server dashboard</td>
+              <td>The classic MMC <span class="acro-exp">(Microsoft Management Console)</span> snap-ins, installed on your workstation</td>
+              <td>Browser-based gateway to many servers</td>
+            </tr>
+            <tr>
+              <td>Best at</td>
+              <td>Adding roles; a quick health glance</td>
+              <td>Deep object work — AD <span class="acro-exp">(Active Directory)</span> users, DNS <span class="acro-exp">(Domain Name System)</span> zones, GPOs <span class="acro-exp">(Group Policy Object)</span></td>
+              <td>Day-to-day ops across a fleet; managing Core</td>
+            </tr>
+            <tr>
+              <td>Weak at</td>
+              <td class="c-amber">Anything at scale</td>
+              <td class="c-amber">Fleet views; needs a domain-joined workstation</td>
+              <td class="c-amber">Niche AD tasks the classic snap-ins still own</td>
+            </tr>
+            <tr>
+              <td>Runs on</td>
+              <td>The server, or your workstation</td>
+              <td>Your workstation only</td>
+              <td>A gateway server or your workstation</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> install RSAT on your admin workstation and use it for AD,
+        DNS and Group Policy work — the snap-ins remain the most complete tools for those
+        objects. Use Windows Admin Center for everything fleet-shaped: patching status,
+        certificates, event logs, remote PowerShell, and anything on Server Core. Use Server
+        Manager to install a role and then close it.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Getting RSAT</div>
+      <div class="concept-title">RSAT Ships With Windows Now — Stop Downloading It</div>
+      <div class="concept-desc">
+        RSAT used to be a separate download matched to your exact Windows build. Since Windows
+        10 1809 it is a Feature on Demand built into the OS <span class="acro-exp">(Operating System)</span>, which means no download, no
+        version mismatch, and one command.
+      </div>
+      <pre class="code-block"><span class="com"># See what is available and what is already installed</span>
+Get-WindowsCapability <span class="kw">-Name</span> RSAT* <span class="kw">-Online</span> | Select-Object Name, State
+
+<span class="com"># The three most people actually want</span>
+Add-WindowsCapability <span class="kw">-Online</span> <span class="kw">-Name</span> Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0
+Add-WindowsCapability <span class="kw">-Online</span> <span class="kw">-Name</span> Rsat.GroupPolicy.Management.Tools~~~~0.0.1.0
+Add-WindowsCapability <span class="kw">-Online</span> <span class="kw">-Name</span> Rsat.Dns.Tools~~~~0.0.1.0</pre>
+      <div class="concept-desc verdict">
+        In a managed estate this is frequently blocked, because Features on Demand are pulled
+        from Windows Update and the policy points at an internal update server that does not
+        carry them. If the command fails with an <code>0x800f0954</code>, that is the cause —
+        the fix is a policy exception, not a download.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Admin Workstation Is the Real Attack Surface</div>
+      <div class="concept-desc">
+        Every one of these tools concentrates domain-wide authority onto whatever machine you
+        installed it on. A workstation that reads email, browses the web and holds Domain Admin
+        tooling is the single most valuable target in the estate, and compromising it skips
+        every other step of an intrusion.
+      </div>
+      <div class="concept-desc">
+        The standard mitigation is a <strong>privileged access workstation</strong>: a separate,
+        hardened machine with no mail client and no general browsing, used only for
+        administration. Where that is not affordable, the minimum is a separate admin account
+        that never signs in to a daily-driver machine — the smallest useful version of the
+        tiered-administration model.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: ROLES & FEATURES ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧩</span>
+    <span class="topic-name">Roles &amp; Features — What Installing a Role Actually Changes</span>
+    <span class="topic-badge">Server • Configuration</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The distinction</div>
+      <div class="concept-title">A Role Is a Job; a Feature Is a Capability</div>
+      <div class="concept-desc">
+        A <strong>role</strong> is what the server is for — domain controller, DNS <span class="acro-exp">(Domain Name System)</span> server, file
+        server. A <strong>feature</strong> supports a role or the administrator: failover
+        clustering, .NET, the management tools. The practical difference is that roles usually
+        open ports and start listening, and features usually do not.
+      </div>
+      <div class="concept-desc">
+        Adding a role is therefore never only a software install. It typically creates service
+        accounts, opens firewall rules, registers service principal names, writes new event log
+        channels, and may add a scheduled task. That is why "just add the role to see" is a poor
+        instinct on a production box — removing it afterwards does not reliably undo all of it.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Doing it</div>
+      <div class="concept-title">Install It in PowerShell So It Is Repeatable</div>
+      <pre class="code-block"><span class="com"># What is installed, and what could be?</span>
+Get-WindowsFeature | Where-Object Installed
+
+<span class="com"># Install a role with its management tools (omit the switch on a server</span>
+<span class="com"># you manage remotely — the tools belong on your workstation, not here)</span>
+Install-WindowsFeature <span class="kw">-Name</span> AD-Domain-Services <span class="kw">-IncludeManagementTools</span>
+
+<span class="com"># Capture a known-good server's feature set, then reproduce it elsewhere</span>
+Get-WindowsFeature | Where-Object Installed | Export-Clixml .\baseline.xml
+Install-WindowsFeature <span class="kw">-ConfigurationFilePath</span> .\baseline.xml</pre>
+      <div class="concept-desc verdict">
+        The GUI <span class="acro-exp">(Graphical User Interface)</span> and the cmdlet do the same work, but only one of them leaves a record you can
+        diff, review and re-run. Build servers from a script even when you build them once —
+        the second server always arrives eventually.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Role Creep, and the Server Nobody Dares Reboot</div>
+      <div class="concept-desc">
+        Servers accumulate roles because adding one to an existing box is faster than building a
+        new one. The result is the machine that is somehow a domain controller, a file server, a
+        print server and a licensing server — and therefore cannot be patched without scheduling
+        four separate teams.
+      </div>
+      <div class="concept-desc">
+        <strong>Keep domain controllers doing one job.</strong> A DC holds every password hash
+        in the domain; every additional role on it is another way in, and every additional
+        service is another reason someone objects to the reboot. If a server needs an
+        explanation of what it does, it has too many roles.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: HARDENING BASELINE ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🛡️</span>
+    <span class="topic-name">Server Hardening Baseline — The Short List That Removes Most Risk</span>
+    <span class="topic-badge">Server • Hardening</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Priorities</div>
+      <div class="concept-title">Six Things, Roughly in Order of Return</div>
+      <div class="concept-desc">
+        Hardening guides run to hundreds of settings and are mostly ignored because of it. This
+        is the short list — the items that remove the most attacker options per hour spent. Do
+        these before opening a benchmark document.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Do this</th><th>Because</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Deploy LAPS</td>
+              <td>Randomises the local administrator password per machine. Kills lateral movement by reused local credentials, which is the most common way one compromised host becomes all of them</td>
+            </tr>
+            <tr>
+              <td>Never browse or read mail from a server</td>
+              <td>Free, and removes the two most common initial-access paths in one decision</td>
+            </tr>
+            <tr>
+              <td>Install only the roles the server needs</td>
+              <td>Every role is listening code and another patch dependency</td>
+            </tr>
+            <tr>
+              <td>Turn on an audit policy that logs something useful</td>
+              <td>Default auditing will not tell you what happened. Logon events, account management, and process creation with command line are the minimum</td>
+            </tr>
+            <tr>
+              <td>Separate admin accounts from daily-driver accounts</td>
+              <td>Stops a phished user session from being a domain-admin session</td>
+            </tr>
+            <tr>
+              <td>Patch on a schedule you actually keep</td>
+              <td>A predictable monthly window beats an ambitious weekly one that slips</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> LAPS first. It is the cheapest single control here and it
+        breaks the technique that turns one workstation into the whole domain.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Baselines</div>
+      <div class="concept-title">Do Not Write Your Own — Start From a Published One</div>
+      <div class="concept-desc">
+        Microsoft's Security Compliance Toolkit and the CIS <span class="acro-exp">(Center for Internet Security)</span> Benchmarks both publish server
+        baselines as importable GPO <span class="acro-exp">(Group Policy Object)</span> backups. Starting from one and documenting your exceptions
+        is far better than assembling settings by hand, because the exceptions become the thing
+        you review rather than the whole configuration.
+      </div>
+      <div class="concept-desc">
+        Apply a baseline to a <strong>pilot OU</strong> first. Baselines routinely break older
+        line-of-business applications by disabling legacy protocols and weak ciphers — which is
+        the point of them, and also why they need a controlled rollout rather than a domain-wide
+        link on a Friday.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Hardening That Was Never Verified</div>
+      <div class="concept-desc">
+        A baseline linked at the domain root is not evidence that it applied. Group Policy can be
+        blocked, filtered out by a missing security group, or beaten by a more specific GPO — and
+        none of that reports itself. Verify on a real machine:
+      </div>
+      <pre class="code-block"><span class="com"># What did this machine actually receive? Read the "Denied" reasons, not just Applied.</span>
+gpresult /h C:\rsop.html /f
+
+<span class="com"># Is auditing on where you think it is?</span>
+auditpol /get /category:*
+
+<span class="com"># Is LAPS actually storing a password for this computer object?</span>
+Get-LapsADPassword <span class="kw">-Identity</span> SRV01 <span class="kw">-AsPlainText</span></pre>
+      <div class="concept-desc verdict">
+        This is the same lesson as any other control: the configuration you intended and the
+        configuration in force are different claims, and only the second one protects anything.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE V2 — ACTIVE DIRECTORY DOMAIN SERVICES
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: BOUNDARIES ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧱</span>
+    <span class="topic-name">AD DS <span class="acro-exp">(Active Directory Domain Services)</span> Boundaries — When to Add an OU, a Domain, or a Forest</span>
+    <span class="topic-badge">AD DS • Design</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">The Objects Are Covered Elsewhere; This Is the Decision</div>
+      <div class="concept-desc">
+        What a forest, domain and OU <em>are</em> — and how they are attacked — is in
+        <span class="xref">Active Directory — Structure, Objects &amp; Attacks</span> in the Security
+        domain. This card answers the question that actually lands on an administrator:
+        something needs to be separated, so <strong>which boundary do you reach for?</strong>
+        Almost always the answer is the cheapest one, and almost always people pick a more
+        expensive one than they need.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Boundary</th><th>What it actually separates</th><th>Cost to run</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Organisational unit</td>
+              <td>Policy targets and delegated administration</td>
+              <td class="c-green">Free — make as many as you need</td>
+            </tr>
+            <tr>
+              <td>Domain</td>
+              <td>Replication scope, password policy scope, some legacy defaults</td>
+              <td class="c-amber">Its own DCs <span class="acro-exp">(Domain Controller)</span>, its own trusts, its own backups</td>
+            </tr>
+            <tr>
+              <td>Forest</td>
+              <td class="c-green">Security. This is the only real security boundary</td>
+              <td class="c-red">A parallel directory in every respect</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> a domain is <em>not</em> a security boundary — a Domain
+        Admin in any domain of a forest can reach every other domain in that forest. If the
+        requirement is "these administrators must never be able to touch that", the answer is a
+        separate forest, and nothing cheaper will do. If the requirement is "different policy"
+        or "different people administer it", the answer is an OU.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Design</div>
+      <div class="concept-title">Structure the Directory for Delegation and Policy, Not the Org Chart</div>
+      <div class="concept-desc">
+        The most common OU design mirrors the company's departments, and it is the wrong one,
+        because reorganisations then force directory work that has no technical reason to
+        happen. Structure instead by <strong>what you do to objects</strong>: the two things an
+        OU exists for are attaching Group Policy and delegating rights.
+      </div>
+      <div class="concept-desc">
+        A structure that survives reorganisation usually separates by object type first
+        (workstations, servers, users, service accounts), then by whatever genuinely drives
+        different policy — region, build standard, or regulatory scope. Keep it shallow. Deep
+        nesting makes precedence hard to reason about and gains nothing that a well-named
+        security group could not do.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Default Containers Are Not OUs</div>
+      <div class="concept-desc">
+        <code>CN=Users</code> and <code>CN=Computers</code> are containers, not organisational
+        units, and <strong>Group Policy cannot be linked to them</strong>. Anything created
+        without a specified location lands there — which is where every new machine goes when
+        someone joins it to the domain in a hurry.
+      </div>
+      <div class="concept-desc">
+        The result is a machine that silently receives none of your workstation policy. Redirect
+        the defaults once, at build time, and the problem stops existing:
+      </div>
+      <pre class="code-block"><span class="com"># Point the default containers at real OUs you control</span>
+redircmp "OU=Workstations,DC=corp,DC=example,DC=com"
+redirusr "OU=Staff,DC=corp,DC=example,DC=com"
+
+<span class="com"># Find the machines already stranded in the default container</span>
+Get-ADComputer <span class="kw">-SearchBase</span> "CN=Computers,DC=corp,DC=example,DC=com" <span class="kw">-Filter</span> * |
+    Select-Object Name, Created</pre>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: FSMO ────────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">👑</span>
+    <span class="topic-name">FSMO <span class="acro-exp">(Flexible Single Master Operations)</span> Roles — The Five Jobs That Cannot Be Done by Everyone</span>
+    <span class="topic-badge">AD DS • Operations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Why they exist</div>
+      <div class="concept-title">Multi-Master Replication Has Five Exceptions</div>
+      <div class="concept-desc">
+        Active Directory is multi-master: change an object on any domain controller and the
+        change replicates outward. That model breaks for operations where two simultaneous
+        answers would corrupt the directory — handing out the same identifier twice, or two
+        DCs disagreeing about the schema. Those five operations are pinned to a single holder.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Role</th><th>Scope</th><th>Does what</th><th>If it is down</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Schema master</td><td>Forest</td>
+              <td>Owns schema changes</td>
+              <td class="c-green">Nothing, until you extend the schema</td>
+            </tr>
+            <tr>
+              <td>Domain naming master</td><td>Forest</td>
+              <td>Adds and removes domains</td>
+              <td class="c-green">Nothing, until you add a domain</td>
+            </tr>
+            <tr>
+              <td>RID <span class="acro-exp">(Relative Identifier)</span> master</td><td>Domain</td>
+              <td>Issues pools of identifiers for new objects</td>
+              <td class="c-amber">New object creation stops once DCs exhaust their pool</td>
+            </tr>
+            <tr>
+              <td>PDC <span class="acro-exp">(Primary Domain Controller)</span> emulator</td><td>Domain</td>
+              <td>Time authority, password-change target, lockout processing, GPO <span class="acro-exp">(Group Policy Object)</span> edit target</td>
+              <td class="c-red">Noticed within the hour — this is the one that hurts</td>
+            </tr>
+            <tr>
+              <td>Infrastructure master</td><td>Domain</td>
+              <td>Fixes cross-domain object references</td>
+              <td class="c-amber">Stale names in cross-domain group memberships</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> four of the five can be offline for days without anyone
+        noticing. The PDC emulator cannot — it anchors domain time, and Kerberos rejects tickets
+        once clocks drift past the tolerance. When someone reports "nobody can log in", check
+        the PDC emulator and check time.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The one that matters</div>
+      <div class="concept-title">Transfer Is Routine; Seize Is a Decision You Cannot Undo</div>
+      <div class="concept-desc">
+        <strong>Transfer</strong> is a graceful handover between two running DCs — use it for
+        maintenance and decommissioning, and it is entirely routine. <strong>Seizing</strong> is
+        for a holder that is never coming back. It tells the forest a role has moved without the
+        old holder's agreement.
+      </div>
+      <div class="concept-desc">
+        The rule after a seizure is absolute: <strong>the old holder must never be brought back
+        online.</strong> Two DCs believing they hold the same role produces divergence that is
+        far worse than the outage you were fixing. Wipe it, do not boot it.
+      </div>
+      <pre class="code-block"><span class="com"># Who holds what, right now</span>
+netdom query fsmo
+Get-ADDomain | Select-Object PDCEmulator, RIDMaster, InfrastructureMaster
+Get-ADForest | Select-Object SchemaMaster, DomainNamingMaster
+
+<span class="com"># Graceful transfer</span>
+Move-ADDirectoryServerOperationMasterRole <span class="kw">-Identity</span> DC02 <span class="kw">-OperationMasterRole</span> PDCEmulator
+
+<span class="com"># Seizure — only when the old holder is gone for good</span>
+Move-ADDirectoryServerOperationMasterRole <span class="kw">-Identity</span> DC02 <span class="kw">-OperationMasterRole</span> PDCEmulator <span class="kw">-Force</span></pre>
+      <div class="concept-desc verdict">
+        Note that the same cmdlet does both, and the only difference is
+        <code>-Force</code>. Read the command twice before running it.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Placement</div>
+      <div class="concept-title">Where to Put Them, and the RID Pool Nobody Watches</div>
+      <div class="concept-desc">
+        For most organisations the defaults are fine: leave the roles where the first DC put
+        them, keep the two forest roles together, and put the PDC emulator on a well-connected
+        DC in the main site. Complexity here buys very little.
+      </div>
+      <div class="concept-desc">
+        The one number worth monitoring is the RID pool. Each domain has a finite supply of
+        relative identifiers, and while exhaustion is rare, it is unrecoverable in the sense
+        that the fix is a domain migration. Scripted account creation that runs in a loop is
+        the usual cause of a sudden jump.
+      </div>
+      <pre class="code-block"><span class="com"># How much of the RID space has been issued?</span>
+dcdiag /test:ridmanager /v | Select-String "Available RID Pool"</pre>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: REPLICATION ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔄</span>
+    <span class="topic-name">AD <span class="acro-exp">(Active Directory)</span> Replication — How Changes Travel, and Triage When They Stop</span>
+    <span class="topic-badge">AD DS • Troubleshooting</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The model</div>
+      <div class="concept-title">Nothing Is Pushed Immediately, and That Is by Design</div>
+      <div class="concept-desc">
+        Each DC <span class="acro-exp">(Domain Controller)</span> tracks a monotonic update sequence number per partition. A partner asks "what
+        has changed since the number I last saw from you?", and receives only that delta. This
+        makes replication cheap, and it means <strong>a change is never instantly everywhere</strong>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Where</th><th>Normal delay</th><th>Planned by</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Within a site</td><td>Seconds — change notification, no schedule</td><td>The KCC <span class="acro-exp">(Knowledge Consistency Checker)</span>, automatically</td></tr>
+            <tr><td>Between sites</td><td>15 minutes by default, and compressed</td><td>Site links you configure</td></tr>
+            <tr><td>Urgent changes</td><td>Immediate, regardless of schedule</td><td>Account lockout, password changes to the PDC <span class="acro-exp">(Primary Domain Controller)</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> "the change has not appeared yet" is usually correct
+        behaviour rather than a fault. Before troubleshooting, confirm enough time has passed
+        for the path involved — and remember a user's password change reaches the PDC emulator
+        immediately even when everything else waits.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Triage</div>
+      <div class="concept-title">Three Commands, in This Order</div>
+      <div class="concept-desc">
+        Replication problems produce vague symptoms — a group membership that will not take, a
+        password that works on one site and not another. Start broad and narrow:
+      </div>
+      <pre class="code-block"><span class="com"># 1. One-line summary of every partner link. Look at the failure columns first.</span>
+repadmin /replsummary
+
+<span class="com"># 2. Which partition is failing, between which pair, and with what error?</span>
+repadmin /showrepl * /csv &gt; repl.csv
+
+<span class="com"># 3. Broad DC health — DNS, services, roles, the SYSVOL share</span>
+dcdiag /v /c /e
+
+<span class="com"># Force a sync when you have fixed the cause and want to confirm</span>
+repadmin /syncall /AdeP</pre>
+      <div class="concept-desc verdict">
+        In practice the root cause is <strong>DNS <span class="acro-exp">(Domain Name System)</span></strong> far more often than replication
+        itself. A DC that cannot resolve its partners' service records cannot replicate with
+        them, and the error it reports describes the symptom rather than the cause.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Tombstone Lifetime, and the DC You Left Switched Off</div>
+      <div class="concept-desc">
+        Deletions replicate as tombstones — markers that persist for a fixed lifetime, 180 days
+        on any modern domain. A DC that is offline longer than that has missed the window in
+        which it could learn about those deletions, and Active Directory will
+        <strong>refuse to replicate with it</strong> rather than resurrect deleted objects.
+      </div>
+      <div class="concept-desc">
+        There is no supported way to talk it round. A DC offline past the tombstone lifetime
+        must be forcibly demoted, its metadata cleaned from the directory, and the server
+        rebuilt and re-promoted. The practical rule: <strong>a domain controller is either in
+        service or decommissioned.</strong> "Powered off for a while" is not a state AD
+        supports, and the lab DC someone shut down in spring is the usual victim.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: TRUSTS ──────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🤝</span>
+    <span class="topic-name">Trusts — Direction, Transitivity &amp; Why They Are Backwards</span>
+    <span class="topic-badge">AD DS • Identity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The confusing part</div>
+      <div class="concept-title">Trust Direction Is the Opposite of Access Direction</div>
+      <div class="concept-desc">
+        This trips up nearly everyone, including people who have configured trusts before. If
+        domain <strong>A trusts B</strong>, then <strong>users in B can access resources in
+        A</strong>. Access flows <em>against</em> the arrow. The trusting side is the one giving
+        something up.
+      </div>
+      <div class="concept-desc">
+        Read it as a sentence about credentials rather than a diagram: "A is willing to accept
+        that B has authenticated someone." Whenever a trust seems to be working the wrong way
+        round, it is almost always working correctly and being read backwards.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Types</div>
+      <div class="concept-title">Four You Will Meet, and What Each Is For</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Type</th><th>Between</th><th>Transitive</th><th>Reach for it when</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Parent–child</td><td>Domains in one forest</td><td class="c-green">Yes, automatic</td><td>Never — it is created for you</td></tr>
+            <tr><td>Forest</td><td>Two forest roots</td><td class="c-green">Yes</td><td>A merger, or a permanent partnership</td></tr>
+            <tr><td>External</td><td>Two specific domains</td><td class="c-red">No</td><td>One domain needs access, and only that one</td></tr>
+            <tr><td>Shortcut</td><td>Two domains in one forest</td><td class="c-green">Yes</td><td>Authentication is slow across a long referral path</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> prefer external and one-way whenever the requirement
+        allows it. A forest trust is transitive and two-way by default, which means it grants
+        far more than most projects actually asked for — and trusts are rarely revisited once
+        the project that needed them is closed.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">SID Filtering Is the Control That Keeps a Trust Survivable</div>
+      <div class="concept-desc">
+        A Kerberos ticket carries the account's security identifiers, including a history field
+        used during migrations. Without filtering, a compromised administrator in a trusted
+        domain can inject an identifier belonging to a privileged group in
+        <em>your</em> domain, and your DCs <span class="acro-exp">(Domain Controller)</span> will honour it. That turns a trust into a full
+        privilege path between organisations.
+      </div>
+      <div class="concept-desc">
+        SID filtering discards identifiers that did not originate in the trusted domain, and it
+        is enabled by default on external and forest trusts. It gets disabled during migrations,
+        because SID history is exactly what migrations rely on — and then not re-enabled, which
+        is the failure worth checking for.
+      </div>
+      <pre class="code-block"><span class="com"># List trusts and their properties</span>
+Get-ADTrust <span class="kw">-Filter</span> * | Select-Object Name, Direction, ForestTransitive, SIDFilteringQuarantined
+
+<span class="com"># Inspect and re-enable filtering (quarantine) on a named trust</span>
+netdom trust corp.example.com /domain:partner.example.net /quarantine
+netdom trust corp.example.com /domain:partner.example.net /quarantine:yes</pre>
+      <div class="concept-desc verdict">
+        Audit trusts on a schedule. They outlive the projects that created them, nobody owns
+        them afterwards, and each one is a path into your directory that your own controls do
+        not govern.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: SITES ───────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗺️</span>
+    <span class="topic-name">Sites &amp; Subnets — Why Clients Authenticate Against the Wrong DC <span class="acro-exp">(Domain Controller)</span></span>
+    <span class="topic-badge">AD DS • Topology</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The mechanism</div>
+      <div class="concept-title">A Site Is a Subnet List, and That Is How Clients Find a Nearby DC</div>
+      <div class="concept-desc">
+        Active Directory has no map of your network. It knows only what you told it: a site is a
+        named object, and subnets are associated with sites. When a client starts up it looks up
+        its own address, learns which site it is in, and asks for a domain controller
+        <em>in that site</em>.
+      </div>
+      <div class="concept-desc">
+        Sites drive three things: which DC a client authenticates against, how replication is
+        scheduled between locations, and which distributed file system targets a client prefers.
+        All three degrade the same way when the subnet list is wrong.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">A Missing Subnet Sends Branch Offices Across the Country</div>
+      <div class="concept-desc">
+        If a client's address matches no defined subnet, AD <span class="acro-exp">(Active Directory)</span> cannot place it in a site — so it
+        hands back <em>any</em> domain controller. A new branch office whose subnet nobody added
+        will authenticate against a DC on another continent, and the symptom is not an error but
+        slow logons, slow group policy, and file shares that mysteriously prefer the wrong
+        server.
+      </div>
+      <div class="concept-desc">
+        This is self-diagnosing if you know where to look. Every unmatched client is logged on
+        the domain controller that served it:
+      </div>
+      <pre class="code-block"><span class="com"># Clients whose subnet is not defined — NETLOGON logs every one</span>
+Get-Content C:\Windows\debug
+etlogon.log | Select-String "NO_CLIENT_SITE"
+
+<span class="com"># Which site does this machine think it is in?</span>
+nltest /dsgetsite
+dcdiag /test:DCGetDcName
+
+<span class="com"># Add the missing subnet</span>
+New-ADReplicationSubnet <span class="kw">-Name</span> "10.30.7.0/24" <span class="kw">-Site</span> "Branch-Leeds"</pre>
+      <div class="concept-desc verdict">
+        <strong>Make the NETLOGON check routine.</strong> It is the cheapest health check in
+        Active Directory, it costs nothing to run, and it silently accumulates every network
+        change nobody told the directory about.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Design</div>
+      <div class="concept-title">Site Links Describe Cost, Not Bandwidth</div>
+      <div class="concept-desc">
+        A site link says which sites replicate with each other, how often, and at what
+        <strong>cost</strong> — an arbitrary number where lower means more preferred. It is not
+        measured in anything; it exists so you can express "prefer this path" when more than one
+        route exists. Consistency matters more than the values.
+      </div>
+      <div class="concept-desc">
+        Keep the topology as simple as the network allows. The Knowledge Consistency Checker
+        builds and repairs the replication topology automatically, and hand-crafted connection
+        objects stop it doing that — so they survive as fossils long after the link they were
+        working around was upgraded.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE V3 — GROUP POLICY IN PRACTICE
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: GPO ARCHITECTURE ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📜</span>
+    <span class="topic-name">Group Policy Architecture — Where the Settings Actually Live</span>
+    <span class="topic-badge">Group Policy • Internals</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Two halves</div>
+      <div class="concept-title">A GPO Is a Directory Object Plus a Folder, and They Can Disagree</div>
+      <div class="concept-desc">
+        What looks like one object in the management console is stored in two places. The
+        <strong>container</strong> lives in Active Directory and holds the metadata — version
+        numbers, status, which client-side extensions are involved. The
+        <strong>template</strong> is a folder in SYSVOL <span class="acro-exp">(System Volume)</span> holding the actual settings files.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Group Policy container</th><th>Group Policy template</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Lives in</td><td>The AD <span class="acro-exp">(Active Directory)</span> database</td><td>The SYSVOL share, named by GUID <span class="acro-exp">(Globally Unique Identifier)</span></td></tr>
+            <tr><td>Holds</td><td>Version, status, extension list</td><td>Registry.pol, scripts, preferences XML <span class="acro-exp">(eXtensible Markup Language)</span></td></tr>
+            <tr><td>Replicated by</td><td>AD replication</td><td>DFSR <span class="acro-exp">(Distributed File System Replication)</span></td></tr>
+            <tr><td>Fails as</td><td class="c-amber">Missing GPO in the console</td><td class="c-red">GPO applies inconsistently by site</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> these replicate over two independent mechanisms, so they
+        can fall out of step. A policy that works in one office and not another, with no error
+        anywhere, is the signature of SYSVOL replication being behind — not of a policy problem.
+        Check DFSR before re-reading the GPO.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">What it writes</div>
+      <div class="concept-title">Most of Group Policy Is Just Registry Keys With Rules About Them</div>
+      <div class="concept-desc">
+        Administrative template settings compile down to registry values in
+        <code>Registry.pol</code>. What makes them <em>policy</em> rather than configuration is
+        where they land: the four policy branches of the registry, which ordinary applications
+        and users cannot write to, and which are re-applied on a schedule.
+      </div>
+      <div class="concept-desc">
+        This is exactly why a true policy setting cannot be permanently changed by the user —
+        the next refresh puts it back — and why a preference can. It is also why an
+        <code>.admx</code> file is only a description of a setting: it tells the console what to
+        show and which key to write, and installing one changes nothing on its own.
+      </div>
+      <pre class="code-block"><span class="com"># The central store — one copy of the templates for the whole domain,</span>
+<span class="com"># so every admin console shows the same settings</span>
+\\corp.example.com\SYSVOL\corp.example.com\Policies\PolicyDefinitions\
+
+<span class="com"># Without it, each console uses its own local C:\Windows\PolicyDefinitions,</span>
+<span class="com"># and settings appear or vanish depending on who opened the editor</span></pre>
+      <div class="concept-desc verdict">
+        Create the central store early. Its absence produces one of the most confusing symptoms
+        in Group Policy: a colleague cannot find the setting you just configured, because their
+        console does not know it exists.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: PROCESSING ORDER ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔢</span>
+    <span class="topic-name">Processing Order &amp; Precedence — LSDOU <span class="acro-exp">(Local, Site, Domain, Organisational Unit)</span>, Enforcement &amp; Loopback</span>
+    <span class="topic-badge">Group Policy • Precedence</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The order</div>
+      <div class="concept-title">Last Writer Wins, and the Order Is LSDOU</div>
+      <div class="concept-desc">
+        Policies apply in a fixed sequence — <strong>L</strong>ocal, <strong>S</strong>ite,
+        <strong>D</strong>omain, <strong>OU</strong> — and each pass overwrites conflicting
+        settings from the one before. The nearest OU therefore wins by default, which matches
+        the instinct that specific beats general. Multiple GPOs <span class="acro-exp">(Group Policy Object)</span> linked to the same container
+        are applied by link order, lowest number last, so <em>link order 1 wins</em>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Modifier</th><th>Effect</th><th>Beats</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Enforced (on a link)</td><td>Cannot be overridden by anything more specific</td><td class="c-green">Everything below it, and Block Inheritance</td></tr>
+            <tr><td>Block Inheritance (on an OU)</td><td>Stops policies from above reaching this OU</td><td class="c-amber">Everything above — except Enforced links</td></tr>
+            <tr><td>Link order</td><td>Orders GPOs on one container</td><td>Only its peers on that container</td></tr>
+            <tr><td>Link disabled</td><td>The GPO exists but does nothing here</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> Enforced and Block Inheritance are both escape hatches
+        that make precedence hard to reason about, and they interact — Enforced wins over a
+        block. Use them sparingly and document each one, because the person debugging the
+        resulting behaviour in two years will not guess why they are there.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Two halves again</div>
+      <div class="concept-title">Computer Settings and User Settings Follow Different Objects</div>
+      <div class="concept-desc">
+        Every GPO has a computer half and a user half, and they are evaluated against
+        <strong>different objects in different places</strong>. The computer half applies based
+        on where the <em>computer</em> account sits; the user half based on where the
+        <em>user</em> account sits. Linking a GPO with user settings to an OU full of computers
+        does exactly nothing, and reports no error.
+      </div>
+      <div class="concept-desc">
+        Timing differs too: computer policy applies at startup, user policy at sign-in, and both
+        refresh in the background roughly every 90 minutes with a random offset so that an
+        estate does not stampede a DC <span class="acro-exp">(Domain Controller)</span>. Some settings — drive maps, folder redirection, software
+        installation — only take effect at the full startup or logon event, which is why a
+        change sometimes needs a reboot rather than a refresh.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Loopback</div>
+      <div class="concept-title">The Setting for "This Machine, Whoever Signs In"</div>
+      <div class="concept-desc">
+        Sometimes user settings should depend on the machine rather than the person: a kiosk, a
+        shared clinical workstation, a terminal server. Loopback processing tells the computer to
+        apply the <em>user</em> half of the GPOs linked to the <strong>computer's</strong> OU.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Mode</th><th>What the user gets</th><th>Use when</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Merge</td><td>Their own user policy, then the machine's user policy on top</td><td>Mostly normal machine, a few local overrides</td></tr>
+            <tr><td>Replace</td><td class="c-amber">Only the machine's user policy; theirs is discarded</td><td>Kiosk or locked-down shared terminal</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        Loopback is the correct tool for a real requirement and a common cause of "why did this
+        user's settings vanish on that one machine". If a user behaves differently on a
+        particular device and nowhere else, check the device's OU for loopback before anything
+        else.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: FILTERING ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧪</span>
+    <span class="topic-name">Filtering — Security Groups, WMI <span class="acro-exp">(Windows Management Instrumentation)</span> &amp; Item-Level Targeting</span>
+    <span class="topic-badge">Group Policy • Scoping</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Three tools</div>
+      <div class="concept-title">Narrowing a GPO <span class="acro-exp">(Group Policy Object)</span> Below the OU It Is Linked To</div>
+      <div class="concept-desc">
+        A link scopes a policy to a container. When that is still too broad, there are three
+        ways to narrow it — and they differ enormously in cost, because two are evaluated on
+        every single client at every refresh.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th></th><th>Security filtering</th><th>WMI filtering</th><th>Item-level targeting</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Granularity</td><td>Whole GPO</td><td>Whole GPO</td><td class="c-green">A single preference item</td></tr>
+            <tr><td>Cost</td><td class="c-green">Effectively free</td><td class="c-red">A WMI query per client, per refresh</td><td class="c-green">Cheap</td></tr>
+            <tr><td>Works for</td><td>Users and computers by group</td><td>Anything WMI can express</td><td>Preferences only</td></tr>
+            <tr><td>Debuggability</td><td class="c-green">Obvious in the console</td><td class="c-amber">Invisible until you test the query</td><td class="c-amber">Buried in item properties</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> reach for security filtering first — it is free, visible,
+        and understood by everyone. Use item-level targeting when only one drive map or shortcut
+        needs the condition. Treat WMI filtering as a last resort: it is the standard answer to
+        "apply only to laptops", and it is also a per-client query on every refresh that slows
+        logons across the estate.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Security Filtering Change That Broke Everything in 2016</div>
+      <div class="concept-desc">
+        For a GPO to apply to a user or computer, that object needs <strong>both</strong> Read
+        and Apply Group Policy. Removing Authenticated Users from security filtering and adding
+        a specific group used to be the standard technique — until a security update made
+        computers require Read access via the computer account itself.
+      </div>
+      <div class="concept-desc">
+        The result: policies that had worked for years silently stopped applying. The fix is to
+        leave <strong>Authenticated Users with Read</strong> on the delegation tab while
+        restricting <em>Apply</em> to the target group. It looks redundant and it is load-bearing.
+      </div>
+      <pre class="code-block"><span class="com"># Check what a GPO is actually scoped to</span>
+Get-GPPermission <span class="kw">-Name</span> "Laptop Power Settings" <span class="kw">-All</span> |
+    Select-Object @{n='Who';e={$_.Trustee.Name}}, Permission
+
+<span class="com"># Restore the Read that the 2016 change made mandatory</span>
+Set-GPPermission <span class="kw">-Name</span> "Laptop Power Settings" <span class="kw">-TargetName</span> "Authenticated Users" `
+    <span class="kw">-TargetType</span> Group <span class="kw">-PermissionLevel</span> GpoRead</pre>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: PREFERENCES ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎛️</span>
+    <span class="topic-name">Group Policy Preferences — The Half People Forget Exists</span>
+    <span class="topic-badge">Group Policy • Preferences</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The distinction</div>
+      <div class="concept-title">Policies Are Enforced; Preferences Are Set and Let Go</div>
+      <div class="concept-desc">
+        A policy setting is re-applied on every refresh and the interface for it is greyed out.
+        A preference writes an ordinary value that the user can then change — and, depending on
+        the action you chose, it may never be written again.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Action</th><th>Behaviour</th><th>Use for</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Create</td><td>Write only if absent; never touch again</td><td>A default the user may override</td></tr>
+            <tr><td>Replace</td><td>Delete and recreate every refresh</td><td>Settings you need to stay correct</td></tr>
+            <tr><td>Update</td><td>Create if absent, amend if present</td><td>The usual choice</td></tr>
+            <tr><td>Delete</td><td>Remove it</td><td>Cleaning up a previous mistake</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> "the drive map is not updating" is nearly always
+        <em>Create</em> where <em>Update</em> or <em>Replace</em> was meant. Create fires once
+        and then stays silent forever, which looks exactly like a broken policy.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Security</div>
+      <div class="concept-title">Never Set Passwords Through Preferences — MS14-025</div>
+      <div class="concept-desc">
+        Preferences could once set local account passwords. The password was stored in the
+        preferences XML <span class="acro-exp">(eXtensible Markup Language)</span> in SYSVOL <span class="acro-exp">(System Volume)</span>, encrypted with a key <strong>Microsoft published in its own
+        documentation</strong> — so any domain user who could read SYSVOL, which is every domain
+        user, could decrypt it.
+      </div>
+      <div class="concept-desc">
+        Microsoft removed the ability to create these in 2014, but <strong>did not remove
+        existing ones</strong>. They persist in SYSVOL until someone deletes them, and finding
+        them is a standard early step in an intrusion. Check now; it takes one command:
+      </div>
+      <pre class="code-block"><span class="com"># Any cpassword left in SYSVOL is a live credential leak to every domain user</span>
+Get-ChildItem <span class="kw">-Path</span> "\\corp.example.com\SYSVOL" <span class="kw">-Recurse</span> <span class="kw">-Include</span> *.xml <span class="kw">-ErrorAction</span> SilentlyContinue |
+    Select-String <span class="kw">-Pattern</span> "cpassword" | Select-Object Path, LineNumber</pre>
+      <div class="concept-desc verdict">
+        If that returns anything: treat those credentials as compromised, rotate them, and delete
+        the preference. Use LAPS for local administrator passwords — that is the control this
+        anti-pattern was replaced by.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: TROUBLESHOOTING ─────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔍</span>
+    <span class="topic-name">GPO <span class="acro-exp">(Group Policy Object)</span> Troubleshooting — Proving What a Machine Actually Received</span>
+    <span class="topic-badge">Group Policy • Troubleshooting</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Method</div>
+      <div class="concept-title">Ask the Client, Not the Console</div>
+      <div class="concept-desc">
+        The management console shows what you <em>configured</em>. Only the client can tell you
+        what it <em>received</em>, and the gap between those two is where every Group Policy
+        problem lives. Start at the machine, and read the denied entries rather than the applied
+        ones — the reason a GPO was filtered out is the answer.
+      </div>
+      <pre class="code-block"><span class="com"># The single most useful command: a full report with denied GPOs and reasons</span>
+gpresult /h C:\rsop.html /f
+
+<span class="com"># Another user's result, from your own session</span>
+gpresult /scope:user /user corp\jdoe /r
+
+<span class="com"># Force a refresh; add /boot or /logoff if the extension needs it</span>
+gpupdate /force
+
+<span class="com"># The operational log — timings, slow extensions, real errors</span>
+Get-WinEvent <span class="kw">-LogName</span> "Microsoft-Windows-GroupPolicy/Operational" <span class="kw">-MaxEvents</span> 40 |
+    Format-Table TimeCreated, Id, Message <span class="kw">-Wrap</span></pre>
+      <div class="concept-desc verdict">
+        <code>gpupdate /force</code> is not a diagnosis. It re-applies everything and often
+        masks the problem for one cycle, which is why the fault returns tomorrow. Read the report
+        first.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Checklist</div>
+      <div class="concept-title">Why a GPO Did Not Apply, in the Order Worth Checking</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Check</th><th>Symptom when this is the cause</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Is the object in the OU the GPO is linked to?</td><td>Object was moved, or landed in the default container</td></tr>
+            <tr><td>Right half of the GPO for the object type?</td><td>User settings linked to a computer OU — no error, no effect</td></tr>
+            <tr><td>Security filtering — Read <em>and</em> Apply?</td><td>Applied until 2016, then stopped for no visible reason</td></tr>
+            <tr><td>WMI <span class="acro-exp">(Windows Management Instrumentation)</span> filter actually true on this client?</td><td>Applies to some hardware and not others</td></tr>
+            <tr><td>Block Inheritance or a more specific GPO?</td><td>Correct in the console, absent on the machine</td></tr>
+            <tr><td>Has the client refreshed since the change?</td><td>Works after a reboot, not before</td></tr>
+            <tr><td>Is SYSVOL <span class="acro-exp">(System Volume)</span> replicating?</td><td>Works in one site, not another</td></tr>
+            <tr><td>Slow link detection?</td><td>Fails only on VPN <span class="acro-exp">(Virtual Private Network)</span> or a branch link</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> work down this list rather than re-reading the policy. Six
+        of these eight produce no error message anywhere — the policy is simply absent — so the
+        absence of an error tells you nothing about which one you are looking at.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE V4 — IDENTITY OPERATIONS
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: GROUP STRATEGY ──────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">👥</span>
+    <span class="topic-name">Group Nesting Strategy — AGDLP, and Why Nested Groups Become a Mess</span>
+    <span class="topic-badge">AD DS • Identity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The convention</div>
+      <div class="concept-title">AGDLP — Accounts, Global, Domain Local, Permissions</div>
+      <div class="concept-desc">
+        Put <strong>A</strong>ccounts into <strong>G</strong>lobal groups by who people are
+        ("Finance Staff"), put those global groups into <strong>D</strong>omain
+        <strong>L</strong>ocal groups by what is being accessed ("Ledger Share — Modify"), and
+        grant <strong>P</strong>ermissions only to the domain local group.
+      </div>
+      <div class="concept-desc">
+        The payoff is that the two things change independently. People move between roles
+        constantly; resources change permissions rarely. One membership edit moves a person's
+        entire access, and no access control list is ever touched.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The rule that makes it work: never grant a permission to a user, and never to a
+        global group.</strong> The moment someone shortcuts it, the resource stops describing
+        its own access and you can no longer answer "who can read this?" from the group model.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Token Bloat — When Group Membership Breaks Logon</div>
+      <div class="concept-desc">
+        Every group a user belongs to adds a security identifier to their Kerberos ticket. Past
+        roughly 1,000 groups the ticket exceeds default buffer sizes and authentication fails —
+        often as an HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> 400 from a web application rather than anything mentioning Kerberos,
+        which makes it a genuinely difficult diagnosis.
+      </div>
+      <div class="concept-desc">
+        Deep nesting is the usual cause, because membership is transitive and nobody counts the
+        indirect ones. Check the effective total, not the direct list:
+      </div>
+      <pre class="code-block"><span class="com"># Transitive group count — the number that matters</span>
+(Get-ADUser jdoe <span class="kw">-Properties</span> TokenGroups).TokenGroups.Count
+
+<span class="com"># Users closest to the limit, worst first</span>
+Get-ADUser <span class="kw">-Filter</span> * <span class="kw">-Properties</span> TokenGroups |
+    Select-Object Name, @{n='Groups';e={$_.TokenGroups.Count}} |
+    Sort-Object Groups <span class="kw">-Descending</span> | Select-Object <span class="kw">-First</span> <span class="m">20</span></pre>
+      <div class="concept-desc verdict">
+        Keep nesting to two levels — the depth AGDLP implies and no more. Every extra level
+        makes membership harder to audit and pushes users toward a limit whose symptom does not
+        name its cause.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SERVICE ACCOUNTS ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🤖</span>
+    <span class="topic-name">Service Accounts — gMSA <span class="acro-exp">(group Managed Service Account)</span> and Retiring the Shared Password</span>
+    <span class="topic-badge">AD DS • Identity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The problem</div>
+      <div class="concept-title">A Password Nobody Can Change Is a Password Nobody Controls</div>
+      <div class="concept-desc">
+        The classic service account has a password set years ago, typed into several servers,
+        recorded in a spreadsheet, and never rotated because nobody knows everything that uses
+        it. It usually has more privilege than it needs, and it never expires — which is exactly
+        the profile of the account an intruder wants.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Option</th><th>Password managed by</th><th>Works across servers</th></tr></thead>
+          <tbody>
+            <tr><td>User account as a service</td><td class="c-red">A human, in theory</td><td>Yes</td></tr>
+            <tr><td>Managed service account</td><td class="c-green">Active Directory</td><td class="c-red">One host only</td></tr>
+            <tr><td>Group managed service account</td><td class="c-green">Active Directory</td><td class="c-green">Yes — clusters and farms</td></tr>
+            <tr><td>Built-in virtual accounts</td><td class="c-green">Nothing to manage</td><td>Local only</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> gMSA is the default answer for a domain service. AD <span class="acro-exp">(Active Directory)</span>
+        generates a 240-character password, rotates it every 30 days, and the servers authorised
+        to use it retrieve it themselves. Nobody ever knows it, so nobody can leak it.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Doing it</div>
+      <div class="concept-title">One-Time Forest Setup, Then One Object Per Service</div>
+      <pre class="code-block"><span class="com"># Once per forest — creates the root key. Wait 10 hours, or force</span>
+<span class="com"># the effective time backwards in a lab that has a single DC.</span>
+Add-KdsRootKey <span class="kw">-EffectiveImmediately</span>
+
+<span class="com"># Per service: who may retrieve the password</span>
+New-ADServiceAccount <span class="kw">-Name</span> svc-webapp <span class="kw">-DNSHostName</span> svc-webapp.corp.example.com `
+    <span class="kw">-PrincipalsAllowedToRetrieveManagedPassword</span> "WebFarm-Servers"
+
+<span class="com"># On each server that runs it</span>
+Install-ADServiceAccount <span class="kw">-Identity</span> svc-webapp
+Test-ADServiceAccount <span class="kw">-Identity</span> svc-webapp
+
+<span class="com"># In services.msc the account is CORP\svc-webapp$ with a BLANK password</span></pre>
+      <div class="concept-desc verdict">
+        The trailing <code>$</code> and the empty password field are correct and are the two
+        things people undo when they assume it is broken. If the service will not start, check
+        that the server is in the retrieval group and reboot it — group membership on a computer
+        account needs a new ticket.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: KERBEROS OPS ────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎫</span>
+    <span class="topic-name">Kerberos in Operations — SPNs <span class="acro-exp">(Service Principal Name)</span>, Delegation &amp; Clock Skew</span>
+    <span class="topic-badge">AD DS • Troubleshooting</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">The Flow Is Covered; These Are the Three Things That Break It</div>
+      <div class="concept-desc">
+        <span class="xref">Kerberos Authentication Flow</span> in the Security domain explains the ticket
+        exchange, and <span class="xref">Kerberos Attacks — Rubeus &amp; Kerbrute</span> in Red Team covers abuse. Operationally,
+        almost every Kerberos incident is one of three causes: a service principal name that is
+        missing or duplicated, delegation configured too broadly, or clocks that have drifted.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SPNs</div>
+      <div class="concept-title">A Duplicate SPN Breaks Authentication for Everyone</div>
+      <div class="concept-desc">
+        A service principal name maps a service on a host to the account running it. If it is
+        <em>missing</em>, clients silently fall back to NTLM <span class="acro-exp">(NT LAN Manager)</span> — which usually still works, so the
+        symptom is "Kerberos is not being used" found during an audit rather than an outage. If
+        it is <em>duplicated</em> across two accounts, the domain controller cannot decide which
+        key to encrypt with and authentication fails outright.
+      </div>
+      <pre class="code-block"><span class="com"># Duplicates across the whole forest — run this before blaming the app</span>
+setspn -X
+
+<span class="com"># What is registered for a given account, and adding one</span>
+setspn -L CORP\svc-webapp
+setspn -S HTTP/app.corp.example.com CORP\svc-webapp</pre>
+      <div class="concept-desc verdict">
+        Use <code>-S</code> rather than <code>-A</code>: it refuses to create a duplicate.
+        <code>-A</code> adds blindly and is how most duplicate-SPN outages are created, usually
+        by someone fixing a different problem.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Five Minutes of Drift and Nobody Logs In</div>
+      <div class="concept-desc">
+        Kerberos timestamps tickets to prevent replay, and rejects anything outside a tolerance
+        of five minutes by default. Beyond that, authentication fails across the estate at once,
+        and the error text does not mention time.
+      </div>
+      <div class="concept-desc">
+        The domain's time hierarchy is strict: every member syncs from a DC <span class="acro-exp">(Domain Controller)</span>, every DC from the
+        PDC <span class="acro-exp">(Primary Domain Controller)</span> emulator, and the PDC emulator from an external source. The classic incident is a
+        virtualised PDC emulator syncing from its hypervisor host <em>and</em> an external
+        source, and oscillating between them.
+      </div>
+      <pre class="code-block">w32tm /query /status              <span class="com"># what am I syncing from?</span>
+w32tm /monitor                    <span class="com"># offsets across all DCs</span>
+w32tm /stripchart /computer:dc01 /samples:5 /dataonly</pre>
+      <div class="concept-desc verdict">
+        <strong>Disable host time sync on a virtualised PDC emulator.</strong> One authority
+        only. Two sources of truth for time is the same class of mistake as two sources of truth
+        for data, and it fails more visibly.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: HYBRID IDENTITY ─────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">☁️</span>
+    <span class="topic-name">Entra Connect &amp; Hybrid Identity — Choosing How Passwords Are Checked</span>
+    <span class="topic-badge">Identity • Hybrid</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The decision</div>
+      <div class="concept-title">Three Ways to Authenticate a Synced User</div>
+      <div class="concept-desc">
+        Directory synchronisation copies objects to the cloud. Authentication is a separate
+        choice, and it is the one with operational consequences — it decides what happens to
+        cloud sign-in when the on-premises directory is unreachable.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Password hash sync</th><th>Pass-through auth</th><th>Federation</th></tr></thead>
+          <tbody>
+            <tr><td>Where the password is checked</td><td>Cloud</td><td>On-premises, via an agent</td><td>On-premises, by AD FS <span class="acro-exp">(Active Directory Federation Services)</span></td></tr>
+            <tr><td>Survives a site outage</td><td class="c-green">Yes</td><td class="c-red">No</td><td class="c-red">No</td></tr>
+            <tr><td>Infrastructure to run</td><td class="c-green">None</td><td>Lightweight agents</td><td class="c-red">A farm, plus certificates</td></tr>
+            <tr><td>Leaked-credential detection</td><td class="c-green">Yes</td><td class="c-red">No</td><td class="c-red">No</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> password hash sync unless a written requirement forbids
+        it. It is the only option that keeps people working when the on-premises environment is
+        down — which is precisely when they most need email. It syncs a hash of a hash, not the
+        password, and it is what makes leaked-credential reporting possible at all.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Sync Account and the Deletion Threshold</div>
+      <div class="concept-desc">
+        Sync runs as a highly privileged account that can write to both directories, and it is
+        frequently excluded from the tiering model on the grounds that it is "just sync". It is
+        a full path from the on-premises directory into the tenant, and should be treated as
+        tier 0.
+      </div>
+      <div class="concept-desc">
+        The related operational risk is an accidental mass deletion — someone moves an OU out of
+        sync scope and the objects are deleted in the cloud. Accidental deletion prevention stops
+        this by default at 500 objects per run; know the threshold exists before you meet it.
+      </div>
+      <pre class="code-block">Get-ADSyncExportDeletionThreshold
+Get-ADSyncScheduler                 <span class="com"># is sync even running?</span>
+Start-ADSyncSyncCycle <span class="kw">-PolicyType</span> Delta</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LEGACY CLEANUP ──────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧹</span>
+    <span class="topic-name">Cleaning Up a Legacy Directory — Stale Objects &amp; Over-Permissive ACLs <span class="acro-exp">(Access Control List)</span></span>
+    <span class="topic-badge">AD DS • Hygiene</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Method</div>
+      <div class="concept-title">Disable, Wait, Then Delete — Never Delete First</div>
+      <div class="concept-desc">
+        Every inherited directory contains accounts for people who left years ago and computers
+        that were decommissioned. Each is a credential nobody is watching. The cleanup is easy;
+        doing it safely is the part that needs a method, because deleting an account that turns
+        out to run a nightly job is a worse outcome than leaving it.
+      </div>
+      <div class="concept-desc">
+        Disable, move to a quarantine OU, and wait a full business cycle — a quarter, so that
+        anything quarterly has had its chance to fail loudly. Then delete. The disable is
+        instantly reversible; the delete is not.
+      </div>
+      <pre class="code-block"><span class="com"># Accounts unused for 90 days, still enabled</span>
+Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-TimeSpan</span> <span class="m">90</span>.00:00:00 <span class="kw">-UsersOnly</span> |
+    Where-Object Enabled | Select-Object Name, LastLogonDate
+
+<span class="com"># Computers the same, then disable and park them</span>
+Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-TimeSpan</span> <span class="m">90</span>.00:00:00 <span class="kw">-ComputersOnly</span> |
+    Disable-ADAccount <span class="kw">-PassThru</span> |
+    Move-ADObject <span class="kw">-TargetPath</span> "OU=Quarantine,DC=corp,DC=example,DC=com"</pre>
+      <div class="concept-desc verdict">
+        <code>LastLogonDate</code> derives from a replicated attribute that is deliberately
+        imprecise — it can lag by up to two weeks. That is fine for a 90-day threshold and wrong
+        for a 7-day one. Do not tighten the window without switching to a per-DC attribute.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The bigger risk</div>
+      <div class="concept-title">Permissions Nobody Granted Deliberately</div>
+      <div class="concept-desc">
+        Stale accounts are the visible debt. The dangerous debt is delegation: rights granted on
+        an OU during a project a decade ago, still held by a group that now contains the whole
+        service desk. These do not appear in any account review, because no account looks unusual
+        — the permission does.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Look for</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td>Non-admins with Reset Password on an OU</td><td>Take over any account in it</td></tr>
+            <tr><td>Write to <code>member</code> on a privileged group</td><td>Self-service Domain Admin</td></tr>
+            <tr><td>GenericAll or WriteDACL anywhere</td><td>Effectively ownership</td></tr>
+            <tr><td>Unconstrained delegation on a non-DC</td><td>Compromise the host, capture any ticket sent to it</td></tr>
+            <tr><td>Accounts with adminCount=1 no longer privileged</td><td>Inheritance stays broken after removal</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Enumerate this with the attacker's tooling.</strong> BloodHound — see
+        <span class="xref">BloodHound &amp; SharpHound — Attack-Path Graphing</span> in Red Team — computes exactly these paths and is
+        the fastest honest answer to "who can become Domain Admin?". Running it against your own
+        directory before someone else does is ordinary defensive work.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE V5 — CORE NETWORK SERVICES (ON-PREM)
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: WINDOWS DNS ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧭</span>
+    <span class="topic-name">Windows DNS <span class="acro-exp">(Domain Name System)</span> Administration — Zones, Scavenging &amp; Forwarders</span>
+    <span class="topic-badge">Infra • Name Resolution</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">The Protocol Is Covered; This Is the Service AD <span class="acro-exp">(Active Directory)</span> Cannot Live Without</div>
+      <div class="concept-desc">
+        <span class="xref">DNS Deep Dive — Records, Resolution &amp; Security</span> in the Networking domain covers records, resolution and DNSSEC <span class="acro-exp">(Domain Name System Security Extensions)</span>.
+        This card is about running Microsoft's DNS as the directory's locator service — because
+        in an AD environment, DNS is not a supporting service. It is how every client finds a
+        domain controller, and almost every "Active Directory is broken" incident is DNS.
+      </div>
+      <div class="concept-desc">
+        Domain controllers register service records announcing which DCs serve which site and
+        role. Clients query those records to find one. Break DNS and nothing authenticates, no
+        policy applies, and replication stops — all reporting errors that describe symptoms
+        rather than the cause.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Zone storage</div>
+      <div class="concept-title">AD-Integrated Zones Replicate Themselves</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>AD-integrated</th><th>Standard primary/secondary</th></tr></thead>
+          <tbody>
+            <tr><td>Stored in</td><td>The directory</td><td>A text file on one server</td></tr>
+            <tr><td>Replication</td><td class="c-green">AD multi-master — any DC accepts writes</td><td>Zone transfer from one master</td></tr>
+            <tr><td>Secure dynamic updates</td><td class="c-green">Available</td><td class="c-red">Not available</td></tr>
+            <tr><td>Single point of failure</td><td class="c-green">None</td><td class="c-amber">The primary</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Use AD-integrated zones with secure-only dynamic updates.</strong> Non-secure
+        updates let any host on the network overwrite any record — including a domain
+        controller's — which is a straightforward path to intercepting authentication.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Scavenging: Off Means Stale Records, On Wrongly Means Deleted Ones</div>
+      <div class="concept-desc">
+        Dynamic registration creates records; nothing removes them when a machine leaves. Over
+        years the zone fills with stale entries and clients connect to addresses now belonging to
+        something else. Scavenging deletes records that have not refreshed — and it is the single
+        most dangerous switch in Windows DNS, because enabling it wrongly deletes live records.
+      </div>
+      <div class="concept-desc">
+        Two intervals govern it. During <strong>no-refresh</strong> a record cannot update its
+        timestamp; during <strong>refresh</strong> it can; after both elapse without a refresh
+        it becomes eligible. Both default to seven days, so a record survives at least 14 days
+        of silence. The trap is a static record with a timestamp — it will be scavenged.
+      </div>
+      <pre class="code-block"><span class="com"># Check before enabling anything</span>
+Get-DnsServerScavenging <span class="kw">-ComputerName</span> dc01
+
+<span class="com"># Static records must have NO timestamp, or scavenging eats them</span>
+Get-DnsServerResourceRecord <span class="kw">-ZoneName</span> corp.example.com <span class="kw">-RRType</span> A |
+    Where-Object { $_.Timestamp -ne $<span class="m">null</span> -and $_.HostName -match <span class="m">'^(vpn|printer|nas)'</span> }</pre>
+      <div class="concept-desc verdict">
+        Enable it on one zone, leave it a month, and read what it removed before enabling it
+        everywhere. An aggressive interval on a site whose laptops are away for three weeks is
+        an outage waiting for the holidays.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Resolution path</div>
+      <div class="concept-title">Conditional Forwarders Beat Stub Zones for Partner Domains</div>
+      <div class="concept-desc">
+        A <strong>forwarder</strong> sends everything unresolved to an upstream server. A
+        <strong>conditional forwarder</strong> sends only queries for a named domain, which is
+        the right tool for resolving a partner or acquisition domain across a trust. Root hints
+        are the fallback when no forwarder answers.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Never point a domain controller's own client DNS settings at a public
+        resolver.</strong> It must resolve the directory's records first — pointing it at
+        8.8.8.8 as a "backup" produces intermittent, extremely confusing replication failures,
+        because sometimes the public server answers first and knows nothing about your domain.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DHCP ADMIN ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📮</span>
+    <span class="topic-name">DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span> Administration — Scopes, Reservations, Failover &amp; Relay</span>
+    <span class="topic-badge">Infra • Addressing</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Design</div>
+      <div class="concept-title">Lease Length Is the Only Setting With Real Consequences</div>
+      <div class="concept-desc">
+        Most DHCP configuration is mechanical. Lease duration is the judgement call, and it
+        trades address availability against churn: too long and a guest network exhausts its
+        pool, too short and clients renew constantly and a server outage bites within hours.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Network</th><th>Typical lease</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Wired office</td><td>8 days</td><td>Stable devices; renewal traffic is wasted work</td></tr>
+            <tr><td>Wireless corporate</td><td>1 day</td><td>Devices come and go; addresses must return</td></tr>
+            <tr><td>Guest or conference</td><td>2–4 hours</td><td>High churn, small pool</td></tr>
+            <tr><td>VoIP <span class="acro-exp">(Voice over Internet Protocol)</span> handsets</td><td class="c-amber">Long, or reserve</td><td>Address changes disrupt call routing</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        Clients renew at half the lease, so an 8-day lease means a server can be down for four
+        days before anyone notices. That is resilience, and also why nobody discovers DHCP has
+        been broken until the following week.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Resilience</div>
+      <div class="concept-title">Failover Modes, and the Relay Everyone Forgets</div>
+      <div class="concept-desc">
+        Built-in failover replaces the old trick of splitting a scope 80/20 across two servers.
+        <strong>Load balance</strong> shares requests between two servers in one site;
+        <strong>hot standby</strong> keeps one passive for a remote site. Both replicate lease
+        state, so a client keeps its address through a failure.
+      </div>
+      <div class="concept-desc">
+        DHCP discovery is a broadcast and does not cross a router. Every subnet without a local
+        server needs an <strong>IP <span class="acro-exp">(Internet Protocol)</span> helper</strong> on its gateway pointing at the servers — and
+        this is the thing forgotten when a new VLAN <span class="acro-exp">(Virtual Local Area Network)</span> is created, producing "the new subnet does
+        not work" with everything on the Windows side configured correctly.
+      </div>
+      <pre class="code-block">Add-DhcpServerv4Failover <span class="kw">-ComputerName</span> dhcp01 <span class="kw">-PartnerServer</span> dhcp02 `
+    <span class="kw">-Name</span> "Site-A" <span class="kw">-ScopeId</span> <span class="m">10.10.0.0</span> <span class="kw">-LoadBalancePercent</span> <span class="m">50</span>
+
+Get-DhcpServerv4ScopeStatistics <span class="kw">-ComputerName</span> dhcp01   <span class="com"># pool exhaustion</span>
+Get-DhcpServerInDC                                       <span class="com"># authorised servers</span></pre>
+      <div class="concept-desc verdict">
+        <strong>Authorisation is a real control worth knowing.</strong> A Windows DHCP server
+        refuses to serve leases until authorised in AD <span class="acro-exp">(Active Directory)</span>, which prevents a lab server from
+        handing out addresses on production. It does nothing about a non-Windows rogue server —
+        that needs DHCP snooping on the switches.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: FILE SERVICES ───────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📁</span>
+    <span class="topic-name">File Services — Share vs NTFS <span class="acro-exp">(New Technology File System)</span> Permissions, DFS <span class="acro-exp">(Dynamic Frequency Selection)</span> &amp; Quotas</span>
+    <span class="topic-badge">Infra • Storage</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The classic confusion</div>
+      <div class="concept-title">Two Permission Sets, and the Effective Right Is the Lesser</div>
+      <div class="concept-desc">
+        A file reached over the network passes two checks: the <strong>share</strong>
+        permission and the <strong>NTFS</strong> permission. The effective access is the
+        <em>more restrictive</em> of the two. Reached locally, only NTFS applies — which is why
+        a permission problem can vanish when you test by signing in to the server.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The convention that removes the confusion entirely: set the share to Everyone
+        — Full Control, and do all real work in NTFS.</strong> One place to look, one place to
+        audit. Share permissions predate NTFS having any, and maintaining both is a way to
+        create a puzzle for your successor.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DFS</div>
+      <div class="concept-title">Namespaces Buy You the Right to Move Data Later</div>
+      <div class="concept-desc">
+        A DFS namespace gives users a stable path — <code>\\corp\shares\finance</code> —
+        that points at whichever server actually holds the data. Migrate the data, repoint the
+        target, and no mapped drive, script or shortcut anywhere needs changing.
+      </div>
+      <div class="concept-desc">
+        DFS <strong>replication</strong> is separate and keeps copies in sync. The pairing is
+        powerful and has one sharp edge: DFSR <span class="acro-exp">(Distributed File System Replication)</span> resolves a conflicting edit as last-writer-wins,
+        moving the loser to a hidden ConflictAndDeleted folder. It is <em>not</em> a
+        multi-master file system, and using it for a shared working folder across sites will
+        lose someone's work.
+      </div>
+      <div class="concept-desc verdict">
+        Deploy the namespace even for a single file server. It costs almost nothing now and is
+        the difference between a weekend migration and a transparent one.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Share That Filled the System Drive</div>
+      <div class="concept-desc">
+        Without quotas, one user's export fills the volume, and if the share lives on the system
+        drive the server stops — event logs cannot write, and the failure cascades well beyond
+        the share. Two separate mechanisms exist and people configure the wrong one: NTFS quotas
+        are per user per volume; File Server Resource Manager quotas are per folder and are the
+        useful ones.
+      </div>
+      <pre class="code-block"><span class="com"># Soft quota — warn at 80%, do not block. Start here.</span>
+New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw">-Size</span> <span class="m">100</span>GB <span class="kw">-SoftLimit</span> `
+    <span class="kw">-Threshold</span> (New-FsrmQuotaThreshold <span class="kw">-Percentage</span> <span class="m">80</span>)
+
+<span class="com"># And keep shares off the system volume in the first place</span></pre>
+      <div class="concept-desc verdict">
+        Start with soft quotas and reporting. A hard limit imposed without warning produces a
+        support queue and a workaround culture — people start saving to their desktops, which is
+        worse than the disk usage you were managing.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE V6 — CERTIFICATE SERVICES
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: AD CS DESIGN ────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📜</span>
+    <span class="topic-name">AD CS <span class="acro-exp">(Active Directory Certificate Services)</span> Design — Offline Roots, Issuing CAs <span class="acro-exp">(Certificate Authority)</span> &amp; Publishing</span>
+    <span class="topic-badge">Infra • PKI</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">The Theory Is Covered; This Is the Deployment You Have to Live With</div>
+      <div class="concept-desc">
+        <span class="xref">PKI &amp; Certificate Lifecycle</span> in the Security domain covers chains of trust, certificates and
+        revocation as concepts. This card is about the internal certificate authority you
+        actually run — a system whose design decisions are effectively permanent, because
+        rebuilding a root means re-issuing every certificate it ever signed.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Structure</div>
+      <div class="concept-title">Two Tiers, and the Root Stays Switched Off</div>
+      <div class="concept-desc">
+        The standard design is a <strong>standalone offline root</strong> that signs one thing —
+        the issuing CA's certificate — and is then powered off and stored securely. An
+        <strong>enterprise issuing CA</strong>, domain-joined, does all day-to-day work.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Offline root</th><th>Issuing CA</th></tr></thead>
+          <tbody>
+            <tr><td>Domain-joined</td><td class="c-red">No — standalone, deliberately</td><td class="c-green">Yes, for templates and auto-enrolment</td></tr>
+            <tr><td>Powered on</td><td>Only to sign or re-publish a CRL <span class="acro-exp">(Certificate Revocation List)</span></td><td>Always</td></tr>
+            <tr><td>Compromise means</td><td class="c-red">Rebuild the entire PKI <span class="acro-exp">(Public Key Infrastructure)</span></td><td class="c-amber">Revoke its certificate, stand up a new one</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> the offline root exists so that the worst realistic
+        incident is recoverable. A single online enterprise root is simpler to build and turns
+        one compromised server into a full trust rebuild across every device — which is why the
+        two-tier design is worth the extra afternoon.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Offline Root's CRL Expires, and Everything Stops</div>
+      <div class="concept-desc">
+        A certificate revocation list has a validity period. When a client cannot fetch a
+        current CRL for any CA in the chain, strict validation fails — so an offline root whose
+        CRL quietly expired invalidates every certificate beneath it. The root is switched off,
+        so nothing warns you, and the failure arrives all at once.
+      </div>
+      <div class="concept-desc">
+        Set the offline root's CRL validity long — a year or more — publish it to a location
+        that stays reachable, and put the renewal in a calendar owned by a team rather than a
+        person. Check that the published locations resolve from a normal client, not from the CA:
+      </div>
+      <pre class="code-block"><span class="com"># Validate the whole chain and every revocation URL a client would use</span>
+certutil -verify -urlfetch cert.cer
+
+<span class="com"># What the CA publishes, and when the current CRL expires</span>
+certutil -getreg CA\CRLPublicationURLs
+certutil -CRL                       <span class="com"># force a fresh CRL now</span></pre>
+      <div class="concept-desc verdict">
+        The distribution points are baked into every certificate at issuance. Changing the URL <span class="acro-exp">(Uniform Resource Locator)</span>
+        later does not fix already-issued certificates — they carry the old address until they
+        expire. Get the publishing addresses right before issuing anything.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TEMPLATES ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧾</span>
+    <span class="topic-name">Certificate Templates — The Settings That Matter, and the Ones That Get You Owned</span>
+    <span class="topic-badge">Infra • PKI</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">What a template is</div>
+      <div class="concept-title">A Template Is a Standing Offer to Issue Certificates</div>
+      <div class="concept-desc">
+        A template defines what a certificate will contain, who may request one, and whether a
+        human approves it. Publishing a template to a CA <span class="acro-exp">(Certificate Authority)</span> is not configuration — it is an
+        <strong>authorisation decision</strong>, standing until revoked, and it is the part
+        people treat casually.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Setting</th><th>Safe</th><th>Dangerous</th></tr></thead>
+          <tbody>
+            <tr><td>Subject name</td><td class="c-green">Built from AD <span class="acro-exp">(Active Directory)</span></td><td class="c-red">Supplied in the request</td></tr>
+            <tr><td>Enrolment rights</td><td>A specific group</td><td class="c-red">Domain Users / Domain Computers</td></tr>
+            <tr><td>Manager approval</td><td>Required for anything privileged</td><td>Disabled everywhere</td></tr>
+            <tr><td>Extended key usage</td><td>Narrow — server auth only</td><td class="c-red">Client authentication, or Any Purpose</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The right-hand column is one finding, not four.</strong> A template that lets
+        the requester choose the subject, allows client authentication, and can be enrolled by
+        any domain user is a request for a certificate that authenticates as anyone — including
+        a Domain Admin. That is ESC1, and it is a configuration mistake rather than a software
+        vulnerability.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Defender's view</div>
+      <div class="concept-title">ESC1–ESC8 Are Your Audit Checklist</div>
+      <div class="concept-desc">
+        <span class="xref">ADCS Abuse — Certipy &amp; the ESC Techniques</span> in the Red Team domain
+        covers exploitation. The defensive point is that these are named, enumerable
+        misconfigurations — so the same tooling that finds them for an attacker finds them for
+        you, faster than reading template properties by hand.
+      </div>
+      <pre class="code-block"><span class="com"># Enumerate templates and CA settings, flagging the known ESC patterns.</span>
+<span class="com"># Run this against your own PKI as routine defensive work.</span>
+certipy find -u user@corp.example.com -p <span class="m">'...'</span> -dc-ip <span class="m">10.0.0.10</span> -vulnerable
+
+<span class="com"># Native equivalents for spot checks</span>
+certutil -TCAInfo
+Get-CATemplate</pre>
+      <div class="concept-desc verdict">
+        Two settings deserve a standing audit: any template where the requester supplies the
+        subject, and <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> on the CA itself — the latter
+        lets <em>any</em> request specify an alternative name, which turns every template into
+        an impersonation primitive.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LIFECYCLE ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔄</span>
+    <span class="topic-name">Certificate Lifecycle — Auto-Enrolment and the Expiry Nobody Scheduled</span>
+    <span class="topic-badge">Infra • PKI</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Auto-enrolment</div>
+      <div class="concept-title">Getting Certificates Onto Devices Without Touching Them</div>
+      <div class="concept-desc">
+        Auto-enrolment issues and renews certificates automatically for accounts that have the
+        rights. It needs three things aligned: <strong>Autoenroll</strong> permission on the
+        template, the template published to an issuing CA <span class="acro-exp">(Certificate Authority)</span>, and a Group Policy setting enabling
+        auto-enrolment for the computer or user.
+      </div>
+      <div class="concept-desc verdict">
+        All three, or nothing happens and nothing complains. That silence is the whole
+        troubleshooting difficulty — check the three in order rather than re-reading the
+        template, and confirm on a client with
+        <code>certutil -pulse</code> followed by the CertificateServicesClient operational log.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Expiry Is the Outage That Is Fully Predictable and Still Happens</div>
+      <div class="concept-desc">
+        Every certificate carries the date it will break. Expiry outages are therefore unique:
+        entirely foreseeable, scheduled by you, and still among the most common causes of
+        self-inflicted downtime. They happen because nobody owns the inventory — the
+        certificate was installed during a project, by someone who has moved on.
+      </div>
+      <pre class="code-block"><span class="com"># Everything the CA issued that expires in the next 60 days</span>
+certutil -view -restrict <span class="m">"NotAfter&lt;=now+60:00:00,Disposition=20"</span> `
+    -out <span class="m">"CommonName,NotAfter,RequesterName"</span>
+
+<span class="com"># Local store on a server</span>
+Get-ChildItem Cert:\LocalMachine\My |
+    Where-Object NotAfter -lt (Get-Date).AddDays(<span class="m">60</span>) |
+    Select-Object Subject, NotAfter, Thumbprint</pre>
+      <div class="concept-desc verdict">
+        <strong>Monitor expiry from outside, on the live endpoint.</strong> A CA report misses
+        every certificate not issued by that CA — the public ones, the appliance ones, the one a
+        vendor installed. The check that catches all of them connects to the port and reads what
+        is actually being served.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE V7 — SERVER OPERATIONS
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: DC RECOVERY ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🚑</span>
+    <span class="topic-name">Domain Controller Recovery — Authoritative vs Non-Authoritative Restore</span>
+    <span class="topic-badge">AD DS • Recovery</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The distinction</div>
+      <div class="concept-title">Two Restores That Look Identical and Do Opposite Things</div>
+      <div class="concept-desc">
+        Restoring a domain controller is not like restoring a file server, because the data is
+        replicated and the other copies are still running. The question is whether the restored
+        data should <em>win</em>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Non-authoritative</th><th>Authoritative</th></tr></thead>
+          <tbody>
+            <tr><td>After restore</td><td>Catches up from its partners</td><td class="c-amber">Overwrites its partners</td></tr>
+            <tr><td>Use for</td><td class="c-green">A failed DC <span class="acro-exp">(Domain Controller)</span> — almost always this one</td><td>Recovering objects deleted everywhere</td></tr>
+            <tr><td>Risk</td><td>Low</td><td class="c-red">Reintroduces everything else from that backup too</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Reach for the Recycle Bin before either.</strong> If the AD <span class="acro-exp">(Active Directory)</span> Recycle Bin is
+        enabled, deleted objects are restorable in place with their group memberships intact —
+        no backup, no downtime, no restore. Enable it now if it is not on; it is a one-way switch
+        and costs nothing.
+      </div>
+      <pre class="code-block"><span class="com"># Is it on? If not, turn it on — irreversible, and you want it</span>
+Get-ADOptionalFeature <span class="kw">-Filter</span> <span class="m">'name -like "Recycle Bin*"'</span>
+
+<span class="com"># Restore a deleted user, memberships intact</span>
+Get-ADObject <span class="kw">-Filter</span> <span class="m">'Name -like "*jdoe*"'</span> <span class="kw">-IncludeDeletedObjects</span> |
+    Restore-ADObject</pre>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">USN Rollback — Why You Never Snapshot a Domain Controller</div>
+      <div class="concept-desc">
+        Reverting a DC to a virtual machine snapshot rewinds its update sequence numbers.
+        Partners have already seen higher numbers from it, so they ignore everything it sends —
+        the DC believes it is replicating and is silently isolated, diverging from the domain
+        until someone notices weeks later.
+      </div>
+      <div class="concept-desc">
+        Modern Windows and hypervisors support VM-GenerationID, which detects the rollback and
+        recovers safely. Do not rely on it: restore a DC with a supported system-state backup,
+        or demote and rebuild. Rebuilding a DC is genuinely routine — promote a new one, let it
+        replicate, remove the old.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Test the restore, not the backup.</strong> A backup job reporting success proves
+        a file was written. The forest recovery procedure is long, involves seizing FSMO <span class="acro-exp">(Flexible Single Master Operations)</span> roles
+        and resetting the KRBTGT <span class="acro-exp">(Kerberos Ticket Granting Ticket account)</span> account twice, and reading it for the first time during an
+        incident is how a bad day becomes a bad month.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DECOMMISSIONING ─────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗑️</span>
+    <span class="topic-name">Decommissioning a Server Properly — The Checklist That Prevents Next Year's Outage</span>
+    <span class="topic-badge">Infra • Lifecycle</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Method</div>
+      <div class="concept-title">Power Off Is Not Decommissioned</div>
+      <div class="concept-desc">
+        A server switched off and left in the rack is the origin of a specific recurring
+        incident: eighteen months later someone reclaims the address or the name, and something
+        nobody knew depended on it breaks. The fix is a sequence with a waiting period, not a
+        single action.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Why this order</th></tr></thead>
+          <tbody>
+            <tr><td>Find what still talks to it</td><td>Firewall logs and DNS <span class="acro-exp">(Domain Name System)</span> query logs, not the documentation</td></tr>
+            <tr><td>Lower the DNS record's time-to-live</td><td>So the later removal propagates in minutes, not a day</td></tr>
+            <tr><td>Stop the services, leave the host up</td><td>Failures now name the server; after a shutdown they do not</td></tr>
+            <tr><td>Wait a full business cycle</td><td>A quarter, so quarterly jobs get their chance to fail</td></tr>
+            <tr><td>Power off, keep the record and the object</td><td>Still trivially reversible</td></tr>
+            <tr><td>After another cycle: remove DNS, AD <span class="acro-exp">(Active Directory)</span> object, monitoring, backup job, licence</td><td>The list nobody finishes</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Stopping the services while the host stays up is the step that earns the
+        most.</strong> A dependency that fails against a running server produces a connection
+        refused naming the host. The same dependency after a shutdown produces a timeout
+        somewhere else entirely, and nobody connects it to the decommissioning.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Domain Controllers and File Servers Do Not Just Get Switched Off</div>
+      <div class="concept-desc">
+        A domain controller must be <strong>demoted</strong>, which removes its metadata,
+        transfers any FSMO <span class="acro-exp">(Flexible Single Master Operations)</span> roles it holds and cleans up its service records. Powering one off
+        instead leaves records advertising a DC that no longer answers, and clients will keep
+        trying it — producing slow logons that survive every other fix.
+      </div>
+      <div class="concept-desc">
+        If the DC is already gone and cannot be demoted, clean the metadata explicitly. Do not
+        leave it: replication partners keep attempting it, and the errors mask real faults.
+      </div>
+      <pre class="code-block"><span class="com"># Graceful, on the DC itself</span>
+Uninstall-ADDSDomainController <span class="kw">-DemoteOperationMasterRole</span> <span class="kw">-ForceRemoval</span>:$<span class="m">false</span>
+
+<span class="com"># The DC is gone for good — remove it from the directory</span>
+ntdsutil "metadata cleanup" "remove selected server DC03" quit quit
+Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "computer"'</span> <span class="kw">-SearchBase</span> `
+    <span class="m">"OU=Domain Controllers,DC=corp,DC=example,DC=com"</span></pre>
+      <div class="concept-desc verdict">
+        The same applies to a file server behind a DFS <span class="acro-exp">(Dynamic Frequency Selection)</span> namespace: remove the folder target
+        first and let clients move, then decommission. Reversing those two steps is a
+        user-visible outage instead of a silent migration.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- /domain-body infra -->

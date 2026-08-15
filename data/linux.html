@@ -163,7 +163,7 @@
           </div>
 
           <!-- ── TOPIC: FILE PERMISSIONS ────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-06">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔏</span>
               <span class="topic-name">Linux File Permissions Model</span>
@@ -211,7 +211,7 @@
                       class="perm-bit"
                       style="
                         background: rgba(168, 85, 247, 0.08);
-                        color: #a855f7;
+                        color: var(--purple);
                       "
                     >
                       Group<br /><strong>r w x</strong><br /><span
@@ -292,7 +292,7 @@
           </div>
 
           <!-- ── TOPIC: LINUX BOOT PROCESS ──────────────────────────── -->
-          <div class="topic" data-reviewed="2026-06">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🚀</span>
               <span class="topic-name"
@@ -328,7 +328,7 @@
                       class="boot-step"
                       style="
                         border-color: rgba(255, 176, 32, 0.4);
-                        color: #d09020;
+                        color: var(--amber-2);
                       "
                     >
                       <div class="boot-content">
@@ -360,7 +360,7 @@
                       class="boot-step"
                       style="
                         border-color: rgba(0, 212, 255, 0.35);
-                        color: #00a0cc;
+                        color: var(--cyan-2);
                       "
                     >
                       <div class="boot-content">
@@ -390,7 +390,7 @@
                       class="boot-step"
                       style="
                         border-color: rgba(0, 255, 153, 0.35);
-                        color: #00cc77;
+                        color: var(--green-2);
                       "
                     >
                       <div class="boot-content">
@@ -403,7 +403,7 @@
                     </div>
                     <div
                       class="boot-step"
-                      style="border-color: transparent; color: #a855f7"
+                      style="border-color: transparent; color: var(--purple)"
                     >
                       <div class="boot-content">
                         <div class="boot-name">
@@ -1421,7 +1421,7 @@
                NEW TOPIC: CompTIA A+ Hardware Quick Reference
                Source: CompTIA A+ Cheat Sheet PDF
           ═══════════════════════════════════════════════════════════════ -->
-          <div class="topic" data-reviewed="2026-06">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🖥️</span>
               <span class="topic-name"
@@ -1540,7 +1540,7 @@
                       class="boot-step"
                       style="
                         border-color: rgba(255, 176, 32, 0.4);
-                        color: #d09020;
+                        color: var(--amber-2);
                       "
                     >
                       <div class="boot-content">
@@ -1571,7 +1571,7 @@
                       class="boot-step"
                       style="
                         border-color: rgba(0, 212, 255, 0.3);
-                        color: #00a0cc;
+                        color: var(--cyan-2);
                       "
                     >
                       <div class="boot-content">
@@ -1601,7 +1601,7 @@
                       class="boot-step"
                       style="
                         border-color: rgba(0, 255, 153, 0.3);
-                        color: #00cc77;
+                        color: var(--green-2);
                       "
                     >
                       <div class="boot-content">
@@ -1614,7 +1614,7 @@
                     </div>
                     <div
                       class="boot-step"
-                      style="border-color: transparent; color: #a855f7"
+                      style="border-color: transparent; color: var(--purple)"
                     >
                       <div class="boot-content">
                         <div class="boot-name">7 — Cleaning</div>
@@ -4700,7 +4700,7 @@ lsof +L1 2&gt;/dev/null | grep deleted
   </div>
 </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧱</span>
               <span class="topic-name">Linux Firewalls — iptables, nftables &amp; ufw</span>
@@ -4730,9 +4730,9 @@ lsof +L1 2&gt;/dev/null | grep deleted
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Chain</th><th>Handles</th></tr>
-                    <tr><td class="c-cyan">INPUT</td><td>Packets destined for <em>this</em> host (protect your services here)</td></tr>
-                    <tr><td class="c-cyan">OUTPUT</td><td>Packets originating from this host</td></tr>
-                    <tr><td class="c-cyan">FORWARD</td><td>Packets routed <em>through</em> this host (routers, NAT, containers)</td></tr>
+                    <tr><td>INPUT</td><td>Packets destined for <em>this</em> host (protect your services here)</td></tr>
+                    <tr><td>OUTPUT</td><td>Packets originating from this host</td></tr>
+                    <tr><td>FORWARD</td><td>Packets routed <em>through</em> this host (routers, NAT, containers)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Rules in a chain are checked <strong>top to bottom</strong>; the first
@@ -4781,10 +4781,10 @@ lsof +L1 2&gt;/dev/null | grep deleted
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Rule</th><th>Why</th></tr>
-                    <tr><td class="c-red">Allow SSH <span class="acro-exp">(Secure Shell)</span> before default-deny</td><td>Set the DROP policy or run <code>ufw enable</code> without an SSH allow rule and your remote session dies — with no way back in.</td></tr>
-                    <tr><td class="c-green">Allow ESTABLISHED,RELATED</td><td>Without it, replies to your own outbound connections get dropped and everything appears broken.</td></tr>
-                    <tr><td class="c-amber">Rules are not persistent by default</td><td>iptables/nft rules vanish on reboot — save them (<code>netfilter-persistent</code>, <code>nft list ruleset &gt; /etc/nftables.conf</code>) or use ufw, which persists.</td></tr>
-                    <tr><td class="c-amber">Test with a safety net</td><td>Schedule an <code>at</code> job to flush rules in 5 min while you test, so a mistake auto-recovers.</td></tr>
+                    <tr><td>Allow SSH <span class="acro-exp">(Secure Shell)</span> before default-deny</td><td>Set the DROP policy or run <code>ufw enable</code> without an SSH allow rule and your remote session dies — with no way back in.</td></tr>
+                    <tr><td>Allow ESTABLISHED,RELATED</td><td>Without it, replies to your own outbound connections get dropped and everything appears broken.</td></tr>
+                    <tr><td>Rules are not persistent by default</td><td>iptables/nft rules vanish on reboot — save them (<code>netfilter-persistent</code>, <code>nft list ruleset &gt; /etc/nftables.conf</code>) or use ufw, which persists.</td></tr>
+                    <tr><td>Test with a safety net</td><td>Schedule an <code>at</code> job to flush rules in 5 min while you test, so a mistake auto-recovers.</td></tr>
                   </table>
                 </div>
               </div>
@@ -4873,7 +4873,7 @@ lsof +L1 2&gt;/dev/null | grep deleted
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🐝</span>
               <span class="topic-name">eBPF <span class="acro-exp">(Extended Berkeley Packet Filter)</span> — Programmable Kernel Observability &amp; Security</span>
@@ -4902,10 +4902,10 @@ lsof +L1 2&gt;/dev/null | grep deleted
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Step</th><th>What Happens</th></tr>
-                    <tr><td class="c-green">Attach</td><td>Hook a program to an event: kprobes (kernel fns), tracepoints, network hooks (XDP/tc), or user-space (uprobes).</td></tr>
-                    <tr><td class="c-green">Verify</td><td>The kernel verifier proves the program is safe — bounded loops, no bad memory access — before loading.</td></tr>
-                    <tr><td class="c-green">Run</td><td>It executes in-kernel at event time, extremely fast (often JIT-compiled to native code).</td></tr>
-                    <tr><td class="c-green">Report</td><td>Results flow to user space via <strong>maps</strong> (shared key/value structures) or ring buffers.</td></tr>
+                    <tr><td>Attach</td><td>Hook a program to an event: kprobes (kernel fns), tracepoints, network hooks (XDP/tc), or user-space (uprobes).</td></tr>
+                    <tr><td>Verify</td><td>The kernel verifier proves the program is safe — bounded loops, no bad memory access — before loading.</td></tr>
+                    <tr><td>Run</td><td>It executes in-kernel at event time, extremely fast (often JIT-compiled to native code).</td></tr>
+                    <tr><td>Report</td><td>Results flow to user space via <strong>maps</strong> (shared key/value structures) or ring buffers.</td></tr>
                   </table>
                 </div>
               </div>
@@ -4923,10 +4923,10 @@ lsof +L1 2&gt;/dev/null | grep deleted
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Domain</th><th>What eBPF Enables</th></tr>
-                    <tr><td class="c-cyan">Observability</td><td>Trace syscalls, latency, and function calls live (bpftrace, BCC).</td></tr>
-                    <tr><td class="c-cyan">Networking</td><td>Fast packet processing &amp; load balancing at the earliest hook (XDP, Cilium).</td></tr>
-                    <tr><td class="c-cyan">Security</td><td>Runtime detection — flag suspicious syscalls/process behavior (Falco, Tetragon).</td></tr>
-                    <tr><td class="c-cyan">Profiling</td><td>Continuous, low-overhead CPU/off-CPU flame graphs across a fleet.</td></tr>
+                    <tr><td>Observability</td><td>Trace syscalls, latency, and function calls live (bpftrace, BCC).</td></tr>
+                    <tr><td>Networking</td><td>Fast packet processing &amp; load balancing at the earliest hook (XDP, Cilium).</td></tr>
+                    <tr><td>Security</td><td>Runtime detection — flag suspicious syscalls/process behavior (Falco, Tetragon).</td></tr>
+                    <tr><td>Profiling</td><td>Continuous, low-overhead CPU/off-CPU flame graphs across a fleet.</td></tr>
                   </table>
                 </div>
               </div>
@@ -4951,7 +4951,7 @@ lsof +L1 2&gt;/dev/null | grep deleted
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📦</span>
               <span class="topic-name">Podman &amp; Rootless Containers</span>
@@ -4975,10 +4975,10 @@ podman run <span class="var">-d</span> <span class="var">-p</span> 8080:80 nginx
 podman generate systemd <span class="var">--name</span> web   <span class="com"># run containers as systemd services</span></pre>
                   <table class="ref-table">
                     <tr><th>Feature</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Daemonless</td><td>No single root process; better isolation &amp; auditability</td></tr>
-                    <tr><td class="c-cyan">Rootless</td><td>Uses user namespaces — maps container root to your UID <span class="acro-exp">(User Identifier)</span></td></tr>
-                    <tr><td class="c-cyan">Pods</td><td>Group containers (Kubernetes-style) locally</td></tr>
-                    <tr><td class="c-cyan">Buildah / Skopeo</td><td>Companion tools to build &amp; move images</td></tr>
+                    <tr><td>Daemonless</td><td>No single root process; better isolation &amp; auditability</td></tr>
+                    <tr><td>Rootless</td><td>Uses user namespaces — maps container root to your UID <span class="acro-exp">(User Identifier)</span></td></tr>
+                    <tr><td>Pods</td><td>Group containers (Kubernetes-style) locally</td></tr>
+                    <tr><td>Buildah / Skopeo</td><td>Companion tools to build &amp; move images</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     Default on RHEL/Fedora. The security win — no privileged daemon — is why it's
@@ -4989,7 +4989,7 @@ podman generate systemd <span class="var">--name</span> web   <span class="com">
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧩</span>
               <span class="topic-name">systemd Deep — Units, Timers &amp; Journald</span>
@@ -5012,10 +5012,10 @@ journalctl <span class="var">-u</span> nginx <span class="var">-f</span>        
 systemd-analyze blame           <span class="com"># what slowed boot?</span></pre>
                   <table class="ref-table">
                     <tr><th>Unit type</th><th>Purpose</th></tr>
-                    <tr><td class="c-cyan">.service</td><td>A daemon/process to supervise</td></tr>
-                    <tr><td class="c-cyan">.timer</td><td>Cron replacement — schedule a service</td></tr>
-                    <tr><td class="c-cyan">.socket</td><td>Socket-activate a service on demand</td></tr>
-                    <tr><td class="c-cyan">.target</td><td>A group of units (like runlevels)</td></tr>
+                    <tr><td>.service</td><td>A daemon/process to supervise</td></tr>
+                    <tr><td>.timer</td><td>Cron replacement — schedule a service</td></tr>
+                    <tr><td>.socket</td><td>Socket-activate a service on demand</td></tr>
+                    <tr><td>.target</td><td>A group of units (like runlevels)</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-green">Drop-ins</strong> (<code>systemctl edit</code>) override
@@ -5027,7 +5027,7 @@ systemd-analyze blame           <span class="com"># what slowed boot?</span></pr
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🗄️</span>
               <span class="topic-name">ZFS <span class="acro-exp">(Zettabyte File System)</span> &amp; Btrfs — Snapshots &amp; Integrity</span>
@@ -5047,11 +5047,11 @@ systemd-analyze blame           <span class="com"># what slowed boot?</span></pr
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Feature</th><th>Detail</th></tr>
-                    <tr><td class="c-cyan">Copy-on-write</td><td>Never overwrite in place → cheap snapshots, no fsck</td></tr>
-                    <tr><td class="c-cyan">Checksums</td><td>Every block verified → catch bit rot</td></tr>
-                    <tr><td class="c-cyan">Snapshots &amp; clones</td><td>Instant, near-free point-in-time copies</td></tr>
-                    <tr><td class="c-cyan">Subvolumes / datasets</td><td>Independently managed slices of the pool</td></tr>
-                    <tr><td class="c-cyan">RAID-Z / built-in RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span></td><td>Redundancy that can self-heal from checksums</td></tr>
+                    <tr><td>Copy-on-write</td><td>Never overwrite in place → cheap snapshots, no fsck</td></tr>
+                    <tr><td>Checksums</td><td>Every block verified → catch bit rot</td></tr>
+                    <tr><td>Snapshots &amp; clones</td><td>Instant, near-free point-in-time copies</td></tr>
+                    <tr><td>Subvolumes / datasets</td><td>Independently managed slices of the pool</td></tr>
+                    <tr><td>RAID-Z / built-in RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span></td><td>Redundancy that can self-heal from checksums</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Use cases:</strong> NAS/storage servers, snapshot-before-
@@ -5063,7 +5063,7 @@ systemd-analyze blame           <span class="com"># what slowed boot?</span></pr
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🐚</span>
               <span class="topic-name">Advanced Bash — Traps, Expansion &amp; Robust Scripts</span>
@@ -5089,10 +5089,10 @@ name=<span class="str">"${1:-world}"</span>          <span class="com"># default
 base=<span class="str">"${path##*/}"</span>           <span class="com"># strip dir → filename</span></pre>
                   <table class="ref-table">
                     <tr><th>Tool</th><th>Why</th></tr>
-                    <tr><td class="c-cyan"><code>set -euo pipefail</code></td><td>Exit on error/unset var/failed pipe — the safety header</td></tr>
-                    <tr><td class="c-cyan"><code>trap</code></td><td>Run cleanup on EXIT/ERR/signals</td></tr>
-                    <tr><td class="c-cyan">Parameter expansion</td><td><code>${v:-def}</code>, <code>${v##pat}</code>, <code>${v/a/b}</code> — no sed needed</td></tr>
-                    <tr><td class="c-cyan">ShellCheck</td><td>Lints scripts for the bugs everyone writes</td></tr>
+                    <tr><td><code>set -euo pipefail</code></td><td>Exit on error/unset var/failed pipe — the safety header</td></tr>
+                    <tr><td><code>trap</code></td><td>Run cleanup on EXIT/ERR/signals</td></tr>
+                    <tr><td>Parameter expansion</td><td><code>${v:-def}</code>, <code>${v##pat}</code>, <code>${v/a/b}</code> — no sed needed</td></tr>
+                    <tr><td>ShellCheck</td><td>Lints scripts for the bugs everyone writes</td></tr>
                   </table>
                   <div class="concept-desc" style="margin-top:10px">
                     <strong class="c-amber">Golden rules:</strong> quote your variables

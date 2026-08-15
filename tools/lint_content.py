@@ -3,8 +3,17 @@
 lint_content.py — Enforces CONTRIBUTING.md mechanically.
 
 Errors fail the build. Warnings are counted and printed as a single trend line,
-so historical debt (90 topics with no `.topic-name`, 148 hard-coded colours)
-gets tracked rather than either blocking work or being quietly forgotten.
+so historical debt gets tracked rather than either blocking work or being
+quietly forgotten.
+
+A warning is only worth tracking if someone is accountable for the number. Two
+have graduated to errors once their count reached zero, which turns them into
+ratchets — they can no longer regress:
+
+  * topics with no `.topic-name` (was 90)
+  * hard-coded colours (was 148, of which 8 were never colours at all)
+
+`inline style attribute` and `ai-table` are still counted, not enforced.
 
 Usage:
     python3 tools/lint_content.py             # errors fail, warnings reported
@@ -14,6 +23,8 @@ Usage:
 import collections
 import re
 import sys
+from datetime import datetime, timezone
+from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -84,6 +95,105 @@ def topic_blocks(text):
         yield i + 1, "".join(lines[i:end])
 
 
+# A colour literal only matters where it is actually used as a colour. The old
+# check was a bare `#[0-9a-fA-F]{3,6}` sweep, which also counted "deploy #4521",
+# "invoice #4471" and every CSS sample that teaches hex notation — 8 of the 148
+# it reported were not colours at all. A counter nobody can drive to zero is
+# decoration, so this matches the claim instead: a literal in a style attribute
+# or in an SVG paint attribute.
+STYLE_ATTR_RE = re.compile(r'\bstyle="([^"]*)"', re.S)
+PAINT_ATTR_RE = re.compile(
+    r'\b(?:fill|stroke|stop-color|flood-color|lighting-color|bgcolor|color)\s*=\s*'
+    r'"(#[0-9a-fA-F]{3,8})"'
+)
+HEX_RE = re.compile(r"#[0-9a-fA-F]{3,8}\b")
+
+
+def hex_colours(text):
+    """(line_number, literal) for each hex used as a colour."""
+    for m in STYLE_ATTR_RE.finditer(text):
+        for h in HEX_RE.finditer(m.group(1)):
+            yield text[: m.start()].count("\n") + 1, h.group(0)
+    for m in PAINT_ATTR_RE.finditer(text):
+        yield text[: m.start()].count("\n") + 1, m.group(1)
+
+
+# `.ref-table td:first-child` sets colour at specificity (0,2,1); a `c-*` utility
+# class is (0,1,0) and loses. 1614 first cells carried one that had never once
+# rendered — boilerplate applied to a column the design already styles. They were
+# removed, so this guards the count at zero rather than letting it creep back.
+REF_TABLE_RE = re.compile(r'<table\b[^>]*class="ref-table"[^>]*>.*?</table\s*>', re.S)
+ROW_RE = re.compile(r"<tr\b[^>]*>.*?</tr\s*>", re.S)
+FIRST_CELL_RE = re.compile(r"<(td|th)\b([^>]*)>")
+COLOUR_CLASS_RE = re.compile(r"\bc-(?:cyan|green|amber|red|purple|muted)\b")
+
+
+def dead_first_cell_classes(text):
+    """(line_number, class) for colour classes that cannot render."""
+    for table in REF_TABLE_RE.finditer(text):
+        for row in ROW_RE.finditer(table.group(0)):
+            cell = FIRST_CELL_RE.search(row.group(0))
+            if not cell or cell.group(1) != "td":
+                continue
+            hit = COLOUR_CLASS_RE.search(cell.group(2) or "")
+            if hit:
+                at = table.start() + row.start() + cell.start()
+                yield text[:at].count("\n") + 1, hit.group(0)
+
+
+# A volatile claim is marked where the claim is, not where the topic is. The
+# keyword heuristic this replaces flagged 184 of 888 topics — including "Google
+# Chrome — Keyboard Shortcuts" and "Access Control Models" — because prose
+# mentioned "console" or "tier". A convention only sticks if it can be checked,
+# so the shape is enforced here before anything is asked to rely on it.
+VOLATILE_RE = re.compile(r'<(\w+)\b([^>]*\bclass="[^"]*\bvolatile\b[^"]*"[^>]*)>')
+CHECKED_RE = re.compile(r'\bdata-checked="([^"]*)"')
+STRAY_CHECKED_RE = re.compile(r'<(\w+)\b([^>]*\bdata-checked="[^"]*"[^>]*)>')
+
+
+def volatile_problems(text, today):
+    """(line_number, message) for malformed volatile-claim markup."""
+    for m in VOLATILE_RE.finditer(text):
+        line = text[: m.start()].count("\n") + 1
+        got = CHECKED_RE.search(m.group(2))
+        if not got:
+            yield line, ('class="volatile" without data-checked — the mark is '
+                         'only useful if it says when the claim was verified')
+            continue
+        stamp = got.group(1)
+        if not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", stamp):
+            yield line, f'data-checked="{stamp}" is not a YYYY-MM month'
+        elif stamp > today:
+            yield line, f'data-checked="{stamp}" is in the future (now {today})'
+
+    for m in STRAY_CHECKED_RE.finditer(text):
+        if "volatile" in m.group(2):
+            continue
+        line = text[: m.start()].count("\n") + 1
+        yield line, ('data-checked without class="volatile" — nothing reads it, '
+                     'so the claim will not appear in the freshness report')
+
+
+# A card that says "see X in the Security domain" is making a claim about the
+# site, and prose cannot be checked — four such references were already dangling
+# when this was written, two of them naming cards that had been retitled and one
+# naming a card that never existed. Cross-references use an explicit span so the
+# target can be verified:
+#
+#     <span class="xref">Exact Topic Title</span>
+XREF_RE = re.compile(r'<span class="xref">(.*?)</span\s*>', re.S)
+
+
+def xref_targets(text):
+    """(line_number, title) for each cross-reference in a file."""
+    for m in XREF_RE.finditer(text):
+        # The acronym annotator injects expansions inside any element, this span
+        # included, so strip them exactly as topic_label() does — otherwise a
+        # reference breaks the first time the annotator runs over it.
+        title = unescape(re.sub(r"<[^>]+>", "", ACRO_SPAN_RE.sub("", m.group(1))))
+        yield text[: m.start()].count("\n") + 1, re.sub(r"\s+", " ", title).strip()
+
+
 def topic_label(block):
     """What script.js would use as the slug source, expansions removed."""
     plain = ACRO_SPAN_RE.sub("", block)
@@ -93,7 +203,6 @@ def topic_label(block):
     else:
         h = TOPIC_HEADER_RE.search(plain)
         raw = h.group(1) if h else ""
-    from html import unescape
     return unescape(re.sub(r"<[^>]+>", "", raw)).strip(), bool(m)
 
 
@@ -101,6 +210,8 @@ def main():
     strict = "--strict" in sys.argv
     errors, warns = [], collections.Counter()
     seen_slugs = {}
+    today = datetime.now(timezone.utc).strftime("%Y-%m")
+    all_titles, xrefs = set(), []
 
     # Domain order matters: script.js walks .domain-section in document order,
     # so a collision is only real if it survives that ordering.
@@ -159,16 +270,50 @@ def main():
                     f"— permalinks shift; rename one of them"
                 )
             seen_slugs[slug] = f"{name}:{line_no}"
+            all_titles.add(label)
 
         # The annotator owns this class; hand-written ones get stripped silently.
         for m in re.finditer(r'<span class="acro-exp">', text):
             pass  # presence is fine — they are generated; see --check on the annotator
 
-        warns["hard-coded hex colour"] += len(re.findall(r"#[0-9a-fA-F]{3,6}\b", text))
+        for line_no, literal in hex_colours(text):
+            errors.append(
+                f"{name}:{line_no}: hard-coded colour {literal} — it keeps its "
+                f"dark-mode value in light mode. Use a theme variable from "
+                f":root in style.css, e.g. var(--sky), or style the element "
+                f"with a class"
+            )
+
+        for line_no, msg in volatile_problems(text, today):
+            errors.append(f"{name}:{line_no}: {msg}")
+
+        # Resolved after every file is read — a card may reference any domain.
+        xrefs.extend((name, ln, title) for ln, title in xref_targets(text))
+
+        for line_no, cls in dead_first_cell_classes(text):
+            errors.append(
+                f"{name}:{line_no}: '{cls}' on the first cell of a .ref-table row "
+                f"never renders — .ref-table td:first-child outranks it. Drop the "
+                f"class (the column is already styled), or use "
+                f"style=\"color: var(--…)\" if it genuinely needs a different colour"
+            )
+
         warns["inline style attribute"] += len(re.findall(r'\bstyle="', text))
         warns["ai-table (prefer ref-table)"] += text.count('class="ai-table"')
 
-    print(f"Linted {len(files)} domain files, {len(seen_slugs)} topics.\n")
+    # Cross-references, once every title is known.
+    lowered = {t.lower() for t in all_titles}
+    for name, line_no, title in xrefs:
+        if title.lower() not in lowered:
+            near = [t for t in all_titles if title.lower()[:18] in t.lower()]
+            hint = f" Did you mean '{near[0]}'?" if near else ""
+            errors.append(
+                f"{name}:{line_no}: cross-reference to '{title}' matches no topic "
+                f"title on the site.{hint}"
+            )
+
+    print(f"Linted {len(files)} domain files, {len(seen_slugs)} topics, "
+          f"{len(xrefs)} cross-references.\n")
     if errors:
         print(f"ERRORS ({len(errors)}):")
         for e in errors[:40]:

@@ -50,6 +50,10 @@ SKIP_TAGS = {
 SKIP_CLASSES = {
     "topic-badge", "topic-chev", "topic-icon", "domain-icon", "domain-sub",
     "chevron", "ctag", "code-block", "code-label", "acro-exp",
+    # A cross-reference quotes another card's title verbatim. Annotating inside
+    # one rewrites the quoted title, so it stops matching the card it names and
+    # the linter's xref check fails on markup that was correct when written.
+    "xref",
     # syntax-highlighting tokens (normally inside <pre>, but not always)
     "kw", "str", "com", "fn", "var", "num", "tag", "type", "attr", "val",
     "prop", "sel", "oper",
