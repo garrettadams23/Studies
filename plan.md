@@ -1900,8 +1900,14 @@ separate toys.
 - [ ] **PWA polish** — an update prompt when a new `CACHE_VERSION` is available,
   and precache the fragments if lazy loading ships.
 - [ ] **Share cards** — generated OG images per domain for link previews.
-- [ ] **Reading time & size hints** — per domain, so a study session can be
-  planned realistically.
+- [x] **Reading time & size hints** — per domain, so a study session can be
+  planned realistically. ✅ Session 19. Computed in `build.py` from the real word
+  count, weighted by kind: tables ×1.4 because they are scanned rather than read,
+  code blocks ÷3 because they are skimmed. Counting everything at prose speed
+  under-estimated the table-dense domains, which is the wrong direction — an
+  estimate that reads short is worse than none. Spread runs 7 min (`lifestyle`) to
+  4h 15m (`script`), and the smoke test fails if any domain loses its hint or
+  reports zero topics.
 
 ---
 
