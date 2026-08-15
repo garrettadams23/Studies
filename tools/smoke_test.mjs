@@ -118,6 +118,19 @@ for (const id of sample) {
 }
 check("permalinks expand their topic", permalinkFails.length === 0, permalinkFails.join(", "));
 
+// ── per-domain size hints ───────────────────────────────────────────────────
+// build.py computes these from the real word count; a missing or zero-topic
+// meta means the stats function stopped seeing the body it measures.
+const meta = await page.evaluate(() =>
+  [...document.querySelectorAll(".domain-section")].map(s => ({
+    domain: s.dataset.domain,
+    text: s.querySelector(".domain-meta")?.textContent.trim() || null,
+  })));
+const missing = meta.filter(m => !m.text).map(m => m.domain);
+const zero = meta.filter(m => m.text && /^0 topics/.test(m.text)).map(m => m.domain);
+check("every domain has a size hint", missing.length === 0, missing.join(", "));
+check("no domain reports 0 topics", zero.length === 0, zero.join(", "));
+
 // ── search ──────────────────────────────────────────────────────────────────
 await page.goto(PAGE, { waitUntil: "load" });
 await page.fill("#search-input", "kerberos");
