@@ -4414,6 +4414,42 @@ separate "Settings &gt; Devices &gt; Enrol" from "Python → Bash → PowerShell
 the difference is meaning. Only a human marking the claim can carry that, which is why
 the convention is the answer and no regex was ever going to be.
 
+## 4b. The page budget stops the backlog at about 20% of it
+
+Found by checking what this session's 61 cards actually cost, rather than by
+reading the card counts.
+
+```
+                     session start      now       budget
+elements                  78,780      82,646      93,000
+headroom                     15%         11%
+```
+
+**63 elements per card**, measured over 61 cards. That leaves ~10,300 elements, so
+**about 163 more cards fit before `page_budget.py` fails the build.** The backlog is
+~828 cards.
+
+This is the real constraint on `plan.md`, and it is not the one the file describes.
+The header talks about ~165 working sessions; the honest statement is that the page
+hits a hard ceiling roughly a fifth of the way through the backlog, and every wave
+from here spends about 0.6% of what remains.
+
+Three consequences:
+
+1. **Track AK's lazy loading is no longer a "later" item.** It was deliberately gated
+   on a measurement — `page_budget.py`'s own docstring says hitting a budget "is the
+   moment to have the lazy-loading conversation, with a measurement in hand". That
+   moment is now visible and close. AK should be re-read as a prerequisite for the
+   second half of the content backlog, not as polish.
+2. **The 15% duplicate rate found this session helps twice.** A card not written costs
+   nothing in elements. If the rest of the backlog duplicates at a similar rate, the
+   real runway is longer than 163 — which is an argument for running the site check
+   before every wave, not just a tidiness one.
+3. **Raising the budget is not the fix.** The numbers were set from a real
+   measurement — 836 KB over the wire, 336 ms first paint on a throttled phone. Moving
+   the ceiling without re-measuring would turn the one honest number in this file back
+   into a feeling.
+
 ## 5. Unknowns I cannot resolve alone
 
 | Question | Why it is blocking | What would settle it |
