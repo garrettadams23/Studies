@@ -1888,7 +1888,11 @@ separate toys.
 
 ### TRACK AK — Delivery, Performance & Reach
 
-- [ ] **Lazy domain loading (server build only)** — `index.html` is ~3.2 MB of
+- [ ] **Lazy domain loading (server build only)** — ⚠️ **measured in session 19 and
+  the case is much weaker than written here; see §4b-ii before starting.** Keeping
+  today's full-text search means shipping 77% of the page as a search index anyway, so
+  the real saving is ~23%, not ~100%. Five features also read the whole DOM and would
+  silently return partial results. Original note follows. `index.html` is ~3.2 MB of
   HTML; every visitor downloads all 20 domains to read one. Emit per-domain
   fragments plus a shell that fetches on expand, **while keeping the current
   single-file build for `file://`**. Two outputs from one `build.py`, selected
@@ -4455,6 +4459,65 @@ Three consequences:
    measurement — 836 KB over the wire, 336 ms first paint on a throttled phone. Moving
    the ceiling without re-measuring would turn the one honest number in this file back
    into a feeling.
+
+## 4b-ii. Lazy loading is not the win Track AK claims — measured
+
+§4b said the page budget bounds the backlog and pointed at Track AK's lazy domain
+loading as the fix. Before building it, two things were checked. Both change the
+recommendation.
+
+**First: five features read the whole DOM.** Track AK describes the work as "emit
+per-domain fragments plus a shell that fetches on expand", which reads as a build
+change. It is not — these all walk `.domain-section .topic` in the live document and
+would silently return partial results against a lazily-loaded page:
+
+| Feature | Function |
+|---|---|
+| Search | `runSearch` → `domainSections()` |
+| Flashcards, quiz, quick-jump, study list, due-today | `stIndex()` |
+| Domain progress badges (`n/m reviewed`) | `updateDomainProgress` |
+| Expand all | `toggleAll` |
+| Random topic | `jumpToRandomTopic` |
+
+Nothing would error. The decks would just be short and search would miss, which is the
+worst failure mode available — the page looks fine.
+
+**Second, and decisive: the search index is most of the page.** `topicSearchText` indexes
+`topic.textContent`, so keeping today's search behaviour means shipping essentially all
+the text anyway. Measured across 1,007 topics:
+
+```
+built page, gzipped        967 KB
+full-text search index     743 KB   (77% of the page)
+titles only                 17 KB   ( 2% of the page)
+```
+
+So:
+
+- **Lazy shell + today's search → saves ~224 KB, 23%.** A large, risky change for less
+  than a quarter, and it adds a fetch to every first expand.
+- **Lazy shell + titles-only search → saves ~950 KB, 98%** — but search stops finding
+  anything by its content, which on a reference site is most of its value.
+
+**The recommendation flips.** Track AK calls lazy loading "the single biggest performance
+win available". It is not, at the current search behaviour — it is a 23% win. The real
+choice is not *how* to lazy-load; it is **whether full-text client-side search is worth
+77% of the page**, and that is a product decision, not an engineering one.
+
+Cheaper things to do first, in order:
+
+1. **Nothing.** 967 KB gzipped, 336 ms first paint on a throttled phone (measured, §AK).
+   The page is not slow; it is unbounded. Those are different problems and only the
+   second one is real.
+2. **Trim the index, not the page.** Indexing concept titles and the first sentence of
+   each `.concept-desc` rather than all text would cut the 743 KB substantially while
+   keeping search useful. Measure before committing.
+3. **Lazy-load only the biggest domains.** `script` alone is 4h 15m of reading; a handful
+   of fragments gets much of the 23% without a whole-site rewrite.
+
+Until one of those is chosen, **the honest position is that the budget ceiling limits the
+backlog and no cheap fix exists.** That is worth knowing before another 160 cards are
+written against an assumption that lazy loading will rescue it.
 
 ## 4c. Session 19 — the `script` duplication, resolved and partly disproved
 
