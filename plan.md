@@ -902,12 +902,27 @@ progress / keyboard-a11y automatically.
 
 ~5 waves, ~28 cards. Beyond fundamentals — the working security engineer's kit.
 
+> **Session 19: site check run before writing. Wave J1 shipped 3 of 5.** `sec` already
+> holds two OWASP Top 10 cards and a Threat Modeling card, so those two were cut `- [~]`.
+>
+> **The check also found `sec` duplicating itself, worse than `script` did:**
+> **three** Zero Trust cards (*Zero Trust Architecture*, *Zero Trust — Never Trust,
+> Always Verify*, *Zero Trust – "Never Trust, Always Verify" Explained Simply*) and
+> **two** OWASP Top 10 cards. Not merged here — merging is a separate act from adding,
+> and `sec` is the site's largest security domain, so it deserves the same careful
+> treatment the Big-O pair got. **This is now the strongest merge candidate on the site.**
+>
+> Spot-checking the rest of the track against the site before starting: J3's hashing card
+> duplicates *Passwords & Hashing*, J5's IAM and passkeys cards duplicate *Identity &
+> Access Control* and *Passkeys & WebAuthn*, and J5's Zero Trust card duplicates three
+> things at once. **Expect Track J to yield well under its 28.**
+
 **Wave J1 — Application Security**
-- [ ] OWASP Top 10 Deep — one card walking every category with fixes
-- [ ] Injection Family — SQLi, command, LDAP, template, NoSQL injection
-- [ ] Broken Access Control — IDOR, path traversal, privilege escalation in apps
-- [ ] SSRF, XXE & Deserialization — the server-side heavy hitters
-- [ ] Secure SDLC & Threat Modeling — STRIDE, abuse cases, security gates
+- [~] OWASP Top 10 Deep — one card walking every category with fixes
+- [x] Injection Family — SQLi, command, LDAP, template, NoSQL injection
+- [x] Broken Access Control — IDOR, path traversal, privilege escalation in apps
+- [x] SSRF, XXE & Deserialization — the server-side heavy hitters
+- [~] Secure SDLC & Threat Modeling — STRIDE, abuse cases, security gates
 
 **Wave J2 — API & Cloud-Native Security**
 - [ ] API Security — OWASP API Top 10, BOLA, rate limiting, API gateways
@@ -4338,12 +4353,32 @@ justify existing:
 |---|---|---|
 | ~~`spirit`~~ | ~~3~~ | ✅ **Folded into `philosophy`** — session 18 |
 | `quotes` | 5 | Under, but it is a reference domain like `acronym`, so the rule may not apply |
-| `lifestyle` | 4 | Under, and one lower after the Windows card left. It is the residue after the split — check whether it still earns a chip |
-| `philosophy` | 13 | Under; plausibly fine, it is a coherent subject, and now the home for the `spirit` cards |
+| ~~`lifestyle`~~ | ~~4~~ | ✅ **Folded, session 19.** Split three ways — see below |
+| `philosophy` | 14 | Under; plausibly fine, it is a coherent subject, and now the home for the `spirit` cards and minimalism |
 | `productivity` | 10 | Under, but actively growing |
 | `mind` | 11 | Under, but actively growing |
 | `math` | 16 | Clears it |
-| `career` · `devops` | 18 · 36 | Clear it comfortably |
+| `career` · `devops` | 21 · 36 | Clear it comfortably |
+
+### ✅ Session 19 — `lifestyle` folded, and why it took a decision rather than a fold
+
+`spirit` had one obvious home. `lifestyle` had none, which is why it sat unresolved after
+`spirit` was settled: its four cards do not belong together and never did.
+
+| Card | To | Why |
+|---|---|---|
+| Money & Adulting Basics | `career` | Personal finance for a working person; `career` already holds offer negotiation and home-lab budgets |
+| Financial Basics for IT Workers | `career` | Says so in the title |
+| Remote Work — Working Well From Anywhere | `career` | Professional practice, beside the soft-skills cards |
+| Minimalism & Intentional Living | `philosophy` | A values card. It belongs beside Stoicism and Taoism, not beside interview prep |
+
+29 → **28 domains**, topic count unchanged. All four permalinks verified in a browser.
+
+**The general point:** the ≥15 bar asks whether a domain earns a chip, but the useful
+question when it does not is *where does each card actually belong*. Three of these four
+had a clear home and one needed a judgement; none of them wanted the same one. A domain
+that cannot be folded in one move is usually a bag rather than a subject, and that is the
+signal to look at the cards individually.
 
 **Decide `spirit` first.** Three cards is not a domain; it is a chip that dilutes the bar.
 
@@ -4530,7 +4565,41 @@ Cheaper things to do first, in order:
 3. **Lazy-load only the biggest domains.** `script` alone is 4h 15m of reading; a handful
    of fragments gets much of the 23% without a whole-site rewrite.
 
-Until one of those is chosen, **the honest position is that the budget ceiling limits the
+### The decision, taken in session 19: keep full-text search, do not lazy-load yet
+
+Two more measurements settled it.
+
+**Lazy loading's real benefit is DOM size, not bytes.** Simulated by emptying every
+domain body except three, in the DOM, on a 4× throttled phone:
+
+```
+full page        87,489 elements   chip filter  60 ms
+3 of 29 loaded   14,208 elements   chip filter  14 ms
+                 84% fewer         4.3× faster
+```
+
+That is a better argument than the byte one — a search index shipped as JSON is not
+DOM, so the interaction win survives even while keeping full-text search. Track AK
+never made this argument; it argued from download size, where the case is weak.
+
+**But the page is not slow.** Re-measured at 1,007 topics: 819 ms load on desktop,
+1,615 ms on a 4× throttled phone, 60 ms to filter, search in the same range. Nothing
+here is painful, and the ceiling is ~160 cards away.
+
+**So: keep full-text search, do not lazy-load now.** The byte saving is 23%, the
+interaction is already acceptable, and the change breaks five features and needs a
+verification path that does not exist. Revisit when *either* the throttled load passes
+roughly 3 s *or* `page_budget.py` actually fails — and when revisiting, build it for the
+DOM-size argument with the 164 KB middle-tier index, not for the byte argument.
+
+**One correction worth carrying.** The first attempt at these numbers timed the chip
+filter through `page.click()` and reported 677 ms, which reads as a serious regression
+and would have justified the rewrite on the spot. Timed with `performance.now()` inside
+the page it is 60 ms — the rest was the test driver's round trip. **Measure interaction
+inside the page.** That is now in `page_budget.py`'s docstring, next to the numbers it
+would have corrupted.
+
+Until this is revisited, **the honest position is that the budget ceiling limits the
 backlog and no cheap fix exists.** That is worth knowing before another 160 cards are
 written against an assumption that lazy loading will rescue it.
 

@@ -3,17 +3,22 @@
 a feeling and starts being a number CI can fail on.
 
 The risk register carried "3.2 MB and grows with every wave" for months without
-anyone timing a load. Measured, on this build:
+anyone timing a load. Re-measured in session 19, at 1,007 topics:
 
-    over the wire   836 KB gzipped (24% of raw) — what a visitor actually waits for
-    elements        78,819
-    first paint     160 ms desktop · 336 ms on a phone at 4x CPU throttle
-    chip filter     28 ms desktop · 50 ms phone
-    load event      308 ms desktop · 1,284 ms phone
+    over the wire   967 KB gzipped — what a visitor actually waits for
+    elements        82,680 static markup · 87,489 live DOM
+    load event      819 ms desktop · 1,615 ms on a phone at 4x CPU throttle
+    chip filter      60 ms on that same throttled phone (median of 3)
+    search           in the same range
 
-So the page is not slow today, and a lazy-loading rewrite would be optimising
-against a number nobody had looked at. What it *is* is unbounded — every wave
-adds to it and nothing pushes back. This script is the thing that pushes back.
+**Measure interaction inside the page, not from the test driver.** A first pass
+timed the chip filter by wrapping `page.click()` and got 677 ms, which looks
+like a serious regression and is almost entirely Playwright's round trip. Timing
+the same work with `performance.now()` in the page gives 60 ms. One of those
+numbers would have justified a rewrite.
+
+So the page is still not slow. What it *is* is unbounded — every wave adds to it
+and nothing pushes back. This script is the thing that pushes back.
 
 The budgets sit roughly 25% above today's values: a normal content wave passes,
 a doubling does not. When one is hit, that is the moment to have the

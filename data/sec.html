@@ -3561,4 +3561,266 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
             </div>
           </div>
 
+
+<!-- ══════════════════════════════════════════════════════════════
+     WAVE J1 — APPLICATION SECURITY (the three cards not already here)
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: INJECTION FAMILY ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💉</span>
+    <span class="topic-name">The Injection Family — One Bug Class, Six Costumes</span>
+    <span class="topic-badge">AppSec • Defence</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">The shape</div>
+      <div class="concept-title">Every Injection Is Data Being Read as Instructions</div>
+      <div class="concept-desc">
+        SQL <span class="acro-exp">(Structured Query Language)</span>, shell, LDAP <span class="acro-exp">(Lightweight Directory Access Protocol)</span>, template and NoSQL injection look like five vulnerabilities and are
+        one. In each, untrusted input is concatenated into something an interpreter parses, and
+        the interpreter cannot tell which characters came from you and which came from the
+        attacker. Recognising the shape means recognising the fix, which is the same every time.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Flavour</th><th>Interpreter</th><th>The fix that actually works</th></tr></thead>
+          <tbody>
+            <tr><td>SQL</td><td>The database query parser</td><td>Parameterised queries — never string formatting</td></tr>
+            <tr><td>Command</td><td>The shell</td><td>Pass an argument array; do not invoke a shell at all</td></tr>
+            <tr><td>LDAP</td><td>The directory filter parser</td><td>Escape per RFC <span class="acro-exp">(Request for Comments)</span> 4515, or use a filter builder</td></tr>
+            <tr><td>Template</td><td>The template engine</td><td>Never let user input <em>be</em> the template</td></tr>
+            <tr><td>NoSQL</td><td>The document query parser</td><td>Reject non-scalar input where a scalar is expected</td></tr>
+            <tr><td>Prompt</td><td class="c-amber">An LLM <span class="acro-exp">(Large Language Model)</span></td><td class="c-red">No complete fix exists — see the AI <span class="acro-exp">(Artificial Intelligence)</span> domain</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>The verdict:</strong> the answer is always <em>separate the code from the
+        data</em>, never <em>clean the data</em>. Parameterisation moves user input to a channel
+        the parser already knows is data. A blocklist tries to guess every dangerous string, and
+        loses to an encoding you did not think of.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">Parameterising the Values and Formatting the Table Name</div>
+      <div class="concept-desc">
+        Placeholders bind <em>values</em>. They cannot bind identifiers — table names, column
+        names, sort direction — because those change what the query <em>is</em>, not what it
+        operates on. So dynamic sorting and dynamic table selection get built by string
+        formatting, in code that otherwise looks parameterised and safe.
+      </div>
+      <pre class="code-block"><span class="com"># Safe — the value is bound</span>
+cur.execute(<span class="m">"SELECT * FROM users WHERE email = %s"</span>, (email,))
+
+<span class="com"># Injectable — the identifier cannot be bound, so it was formatted</span>
+cur.execute(<span class="m">f"SELECT * FROM users ORDER BY {sort_col} {direction}"</span>)
+
+<span class="com"># The only safe pattern for identifiers: an allow-list you control</span>
+COLS = {<span class="m">"name"</span>, <span class="m">"created_at"</span>, <span class="m">"email"</span>}
+<span class="kw">if</span> sort_col <span class="kw">not in</span> COLS: <span class="kw">raise</span> ValueError(sort_col)
+direction = <span class="m">"DESC"</span> <span class="kw">if</span> direction.upper() == <span class="m">"DESC"</span> <span class="kw">else</span> <span class="m">"ASC"</span></pre>
+      <div class="concept-desc verdict">
+        Same rule for shell commands: arguments can be passed as a list, but the
+        <em>program name</em> and any flags cannot come from user input. If the shape of the
+        command is dynamic, the allow-list is the control.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Detection</div>
+      <div class="concept-title">Second-Order Injection Passes Every Test</div>
+      <div class="concept-desc">
+        The payload is stored safely — parameterised on the way in, so nothing fires — and
+        injected later, when some other code path reads it back out of the database and
+        concatenates it into a query. A profile name saved today; a nightly report built with
+        string formatting tomorrow.
+      </div>
+      <div class="concept-desc verdict">
+        This is why <em>"input is validated at the boundary"</em> is not a complete defence, and
+        why scanners miss it: the request that stores the payload looks harmless and the request
+        that triggers it contains nothing suspicious. Parameterise every query, including the
+        ones reading data you believe you already trust.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: BROKEN ACCESS CONTROL ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🚪</span>
+    <span class="topic-name">Broken Access Control — IDOR, Traversal &amp; the Checks Nobody Ran</span>
+    <span class="topic-badge">AppSec • Defence</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Orientation</div>
+      <div class="concept-title">The Models Are Covered; This Is Where Applications Break Them</div>
+      <div class="concept-desc">
+        <span class="xref">Access Control Models</span> covers the models themselves. This card
+        is the implementation failure — consistently the highest-ranked category in the OWASP <span class="acro-exp">(Open Worldwide Application Security Project)</span>
+        Top 10, and the one least caught by tools, because nothing in the code looks wrong. The
+        vulnerability is an <em>absent</em> check, and absence has no signature.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Failure</th><th>Looks like</th></tr></thead>
+          <tbody>
+            <tr><td>Insecure direct object reference</td><td><code>/invoice/1042</code> returns someone else's invoice when you change the number</td></tr>
+            <tr><td>Path traversal</td><td><code>?file=../../etc/passwd</code> escapes the intended directory</td></tr>
+            <tr><td>Function-level gap</td><td>The admin button is hidden, but <code>POST /admin/delete</code> still works</td></tr>
+            <tr><td>Mass assignment</td><td>A profile update accepts <code>"role": "admin"</code> because the model was bound wholesale</td></tr>
+            <tr><td>Forced browsing</td><td>Guessable URLs <span class="acro-exp">(Uniform Resource Locator)</span> reachable without ever passing the menu that gates them</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Hiding the control is not access control.</strong> A removed button, a
+        client-side role check and an unlinked URL are all presentation. The server must
+        re-answer "may this specific user do this specific thing to this specific object?" on
+        every request, because the client's answer is attacker-controlled.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The fix</div>
+      <div class="concept-title">Deny by Default, and Check Ownership Where the Object Is Loaded</div>
+      <div class="concept-desc">
+        The durable pattern is to make the check impossible to forget: scope the query to the
+        caller rather than fetching by identifier and testing afterwards. If the object is
+        loaded through a filter that already includes ownership, a missing check cannot return
+        someone else's data — it returns nothing.
+      </div>
+      <pre class="code-block"><span class="com"># Fragile: fetch, then remember to check. The second line is optional</span>
+<span class="com"># in the sense that nothing breaks visibly if it is deleted.</span>
+inv = Invoice.get(id)
+<span class="kw">if</span> inv.owner_id != user.id: <span class="kw">raise</span> Forbidden
+
+<span class="com"># Durable: ownership is part of the lookup. Forgetting it is a 404.</span>
+inv = Invoice.filter(id=id, owner_id=user.id).one_or_none()
+<span class="kw">if</span> inv <span class="kw">is</span> <span class="m">None</span>: <span class="kw">raise</span> NotFound</pre>
+      <div class="concept-desc verdict">
+        Returning <strong>404 rather than 403</strong> for an object the caller may not see is
+        deliberate: 403 confirms the record exists, which is itself a disclosure when the
+        identifier is sequential.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Testing</div>
+      <div class="concept-title">Automated Scanners Cannot Find This — People Can</div>
+      <div class="concept-desc">
+        A scanner does not know that invoice 1042 belongs to a different tenant. It sees a
+        200 response and moves on. That is why access control needs a test approach the tooling
+        cannot supply: two accounts, and every object identifier tried across both.
+      </div>
+      <div class="concept-desc verdict">
+        Make it a test suite rather than a pen-test finding. A fixture with two users and a
+        loop over every object-scoped endpoint catches the whole class on every commit — and it
+        is the one security test that repays writing before the feature.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: SSRF, XXE & DESERIALIZATION ─────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🛰️</span>
+    <span class="topic-name">SSRF <span class="acro-exp">(Server-Side Request Forgery)</span>, XXE <span class="acro-exp">(XML External Entity)</span> &amp; Deserialization — The Server-Side Heavy Hitters</span>
+    <span class="topic-badge">AppSec • Defence</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">SSRF</div>
+      <div class="concept-title">Making the Server Fetch Something on the Attacker's Behalf</div>
+      <div class="concept-desc">
+        Any feature that takes a URL <span class="acro-exp">(Uniform Resource Locator)</span> and fetches it — webhook testing, image import, PDF <span class="acro-exp">(Portable Document Format)</span>
+        rendering, link previews — can be pointed inward. The server is inside the network, so
+        it reaches things the attacker cannot: internal admin panels, databases, and cloud
+        instance metadata.
+      </div>
+      <div class="concept-desc">
+        Metadata is the prize. On a cloud instance, one unauthenticated HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> request to a
+        link-local address returns credentials for the instance's role. That is the step that
+        turns "our thumbnail service has a bug" into a breach, and it is the mechanism behind
+        several very large ones.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Defence</th><th>Worth</th></tr></thead>
+          <tbody>
+            <tr><td>Block-list of internal ranges</td><td class="c-red">Weak — DNS <span class="acro-exp">(Domain Name System)</span> rebinding, redirects, IPv6 <span class="acro-exp">(Internet Protocol version 6)</span> and decimal-encoded addresses all bypass it</td></tr>
+            <tr><td>Allow-list of destination hosts</td><td class="c-green">Strong — the only reliable answer when the set is knowable</td></tr>
+            <tr><td>Fetch from an egress proxy with no network access</td><td class="c-green">Strong — architectural, and survives a bypass</td></tr>
+            <tr><td>Require metadata service v2 (session tokens)</td><td class="c-green">Removes the highest-value target</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Validate after resolution, not before.</strong> Checking the hostname then
+        letting the HTTP client resolve it again invites DNS rebinding — the name passes the
+        check and resolves to an internal address a moment later. Resolve once, check the
+        resulting address, connect to that address.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">XXE</div>
+      <div class="concept-title">An XML <span class="acro-exp">(eXtensible Markup Language)</span> Parser Will Fetch Files If You Let It</div>
+      <div class="concept-desc">
+        XML supports external entities: a document can declare an entity whose value is loaded
+        from a URI <span class="acro-exp">(Uniform Resource Identifier)</span>, including <code>file:///etc/passwd</code>. Parsers historically enabled this
+        by default, so an application accepting XML would read local files and make outbound
+        requests on request.
+      </div>
+      <pre class="code-block"><span class="com"># Python: defusedxml, or disable entity resolution explicitly</span>
+<span class="kw">from</span> defusedxml.ElementTree <span class="kw">import</span> parse   <span class="com"># drop-in, safe defaults</span>
+
+<span class="com"># Java: the two features that matter</span>
+factory.setFeature(<span class="m">"http://apache.org/xml/features/disallow-doctype-decl"</span>, <span class="kw">true</span>);
+factory.setXIncludeAware(<span class="kw">false</span>);</pre>
+      <div class="concept-desc verdict">
+        Modern parsers mostly default to safe now, which makes this a legacy-and-dependency
+        problem rather than a new-code one. The exposure is an old service, or a library that
+        parses XML somewhere you did not know it did — SOAP, SVG <span class="acro-exp">(Scalable Vector Graphics)</span> upload, XLSX, SAML <span class="acro-exp">(Security Assertion Markup Language)</span>.
+        <strong>SAML in particular is XML you accept from outside and use for authentication.</strong>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Deserialization</div>
+      <div class="concept-title">Rebuilding an Object Runs Code, by Design</div>
+      <div class="concept-desc">
+        Native deserialization — Python <code>pickle</code>, Java's <code>ObjectInputStream</code>,
+        PHP <code>unserialize</code> — reconstructs arbitrary objects, which means invoking
+        constructors and magic methods that exist in the application's own dependency tree. An
+        attacker who controls the byte stream chains those into remote code execution without
+        needing any vulnerability in your code.
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Never deserialize untrusted data with a native format.</strong> There is no
+        hardening that makes it safe, because the capability is the feature. Use JSON <span class="acro-exp">(JavaScript Object Notation)</span> and build
+        the object yourself, and where a native format is unavoidable, sign the payload and
+        verify the signature before parsing a single byte — see
+        <span class="xref">Secrets Management — Stop Hardcoding Passwords</span> for where that
+        key lives.
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- /domain-body sec -->
