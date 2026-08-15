@@ -902,12 +902,27 @@ progress / keyboard-a11y automatically.
 
 ~5 waves, ~28 cards. Beyond fundamentals — the working security engineer's kit.
 
+> **Session 19: site check run before writing. Wave J1 shipped 3 of 5.** `sec` already
+> holds two OWASP Top 10 cards and a Threat Modeling card, so those two were cut `- [~]`.
+>
+> **The check also found `sec` duplicating itself, worse than `script` did:**
+> **three** Zero Trust cards (*Zero Trust Architecture*, *Zero Trust — Never Trust,
+> Always Verify*, *Zero Trust – "Never Trust, Always Verify" Explained Simply*) and
+> **two** OWASP Top 10 cards. Not merged here — merging is a separate act from adding,
+> and `sec` is the site's largest security domain, so it deserves the same careful
+> treatment the Big-O pair got. **This is now the strongest merge candidate on the site.**
+>
+> Spot-checking the rest of the track against the site before starting: J3's hashing card
+> duplicates *Passwords & Hashing*, J5's IAM and passkeys cards duplicate *Identity &
+> Access Control* and *Passkeys & WebAuthn*, and J5's Zero Trust card duplicates three
+> things at once. **Expect Track J to yield well under its 28.**
+
 **Wave J1 — Application Security**
-- [ ] OWASP Top 10 Deep — one card walking every category with fixes
-- [ ] Injection Family — SQLi, command, LDAP, template, NoSQL injection
-- [ ] Broken Access Control — IDOR, path traversal, privilege escalation in apps
-- [ ] SSRF, XXE & Deserialization — the server-side heavy hitters
-- [ ] Secure SDLC & Threat Modeling — STRIDE, abuse cases, security gates
+- [~] OWASP Top 10 Deep — one card walking every category with fixes
+- [x] Injection Family — SQLi, command, LDAP, template, NoSQL injection
+- [x] Broken Access Control — IDOR, path traversal, privilege escalation in apps
+- [x] SSRF, XXE & Deserialization — the server-side heavy hitters
+- [~] Secure SDLC & Threat Modeling — STRIDE, abuse cases, security gates
 
 **Wave J2 — API & Cloud-Native Security**
 - [ ] API Security — OWASP API Top 10, BOLA, rate limiting, API gateways
