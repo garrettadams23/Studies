@@ -194,6 +194,26 @@ def xref_targets(text):
         yield text[: m.start()].count("\n") + 1, re.sub(r"\s+", " ", title).strip()
 
 
+def ambiguous_acronyms():
+    """Acronyms the dictionary itself admits are ambiguous, with no byDomain map.
+
+    The annotator expands one way everywhere, confidently. DFS was expanded as
+    "Dynamic Frequency Selection" inside a data-structures table and twice more
+    in Windows Server file-services cards — the entry's own note already said
+    "Also Distributed File System". Nothing flagged it, because a wrong
+    expansion is well-formed markup.
+    """
+    import json
+    entries = json.loads((DATA / "acronyms.json").read_text(encoding="utf-8"))["entries"]
+    out = []
+    for e in entries:
+        if len(e.get("m", [])) == 1 and not e.get("byDomain"):
+            note = (e["m"][0].get("n") or "")
+            if re.search(r"\balso\b", note, re.I):
+                out.append((e["a"], e["m"][0]["e"]))
+    return out
+
+
 def topic_label(block):
     """What script.js would use as the slug source, expansions removed."""
     plain = ACRO_SPAN_RE.sub("", block)
@@ -312,8 +332,19 @@ def main():
                 f"title on the site.{hint}"
             )
 
+    # Advisory, not blocking: each needs a human to say which meaning belongs
+    # where, and the count is small enough to read.
+    ambiguous = ambiguous_acronyms()
+    warns["ambiguous acronym with no byDomain map"] += len(ambiguous)
+
     print(f"Linted {len(files)} domain files, {len(seen_slugs)} topics, "
           f"{len(xrefs)} cross-references.\n")
+    if ambiguous:
+        print("Acronyms whose own note admits another meaning, expanded one way "
+              "everywhere:")
+        for a, exp in ambiguous:
+            print(f"  {a:<8} always '{exp}'")
+        print()
     if errors:
         print(f"ERRORS ({len(errors)}):")
         for e in errors[:40]:

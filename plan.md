@@ -4450,6 +4450,48 @@ Three consequences:
    the ceiling without re-measuring would turn the one honest number in this file back
    into a feeling.
 
+## 4c. Session 19 — the `script` duplication, resolved and partly disproved
+
+The previous session named `script` duplicating itself as the strongest remaining item.
+Looked at properly, it was **one duplicate, not five**.
+
+| Pair | Verdict |
+|---|---|
+| Two Big-O cards | **Genuine duplicate — merged.** |
+| *How Data is Organised in Memory* vs *Choosing the Right Data Structure* | **Not a duplicate.** The first is the language-agnostic core eight; the second is Python-specific. Tiering. |
+| *Data Structures — Lists & Key/Value* | **Not a duplicate.** Badged `Beginner • Core`; the site runs a deliberate beginner tier. |
+
+**The merge preserved everything worth keeping.** The removed card's four concept-cards
+were not deleted with it — three were rehoused where each belongs (the hidden-O(n²)
+lesson to the surviving Big-O card, the cost table to *Choosing the Right Data
+Structure*, which had semantics but no complexity column, and the recursion primer to
+*Thinking in Algorithms*). Only the duplicated complexity table was dropped. The old
+permalink resolves through `slug-aliases.json`, verified end to end.
+
+**Lesson for the remaining "duplicate" candidates:** two cards on one subject are
+usually a tier, not a redundancy. Check what each is *for* before merging — the
+Big-O pair genuinely overlapped, and the other four did not.
+
+## 4d. The acronym dictionary expands one way, everywhere
+
+Found inside that work: a graph-traversal row read **"DFS (Dynamic Frequency
+Selection)"**, and two Windows file-services cards had the same wrong expansion where
+they meant Distributed File System. The entry's note already said *"Also Distributed
+File System"* — the information was present and nothing consumed it.
+
+**A wrong expansion is well-formed markup**, so every existing check passed it. This is
+the same shape as the hex counter and the dangling cross-references: correct-looking
+output, no claim being verified.
+
+`lint_content.py` now reports single-meaning entries whose own note admits another
+meaning and which carry no `byDomain` map — **ten**, including `CD`, `SOC`, `VM`,
+`MTTR`, `ICS` and `RPM`. Advisory rather than blocking: each needs a human to decide
+which meaning belongs in which domain, and the list is short enough to read. `SOC` in
+`grc` and `VM` in `blueteam` were checked and are right.
+
+Note the TREND line *gained* a counter here rather than losing one. That is the honest
+direction: the ten were always wrong-in-waiting, and nobody could see them.
+
 ## 5. Unknowns I cannot resolve alone
 
 | Question | Why it is blocking | What would settle it |
