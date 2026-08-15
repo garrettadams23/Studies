@@ -4483,14 +4483,27 @@ File System"* — the information was present and nothing consumed it.
 the same shape as the hex counter and the dangling cross-references: correct-looking
 output, no claim being verified.
 
-`lint_content.py` now reports single-meaning entries whose own note admits another
-meaning and which carry no `byDomain` map — **ten**, including `CD`, `SOC`, `VM`,
-`MTTR`, `ICS` and `RPM`. Advisory rather than blocking: each needs a human to decide
-which meaning belongs in which domain, and the list is short enough to read. `SOC` in
-`grc` and `VM` in `blueteam` were checked and are right.
+`lint_content.py` now reports these, and the first version of the check was **too broad
+in exactly the way the hex counter had been**. It flagged every entry whose note
+contained "also" — which caught `COPE` ("a device the user may *also* use personally")
+and `FIFO` ("a Unix named pipe is *also* called a FIFO"), notes describing a synonym
+rather than a second meaning, plus entries never annotated anywhere.
 
-Note the TREND line *gained* a counter here rather than losing one. That is the honest
-direction: the ten were always wrong-in-waiting, and nobody could see them.
+Narrowed to require the acronym to be **rendered in two or more domains**: ten becomes
+four — `CD`, `SOC`, `VM`, `MTTR`.
+
+**All 49 current annotations of the ten were then checked by hand, and every one is
+correct.** `CD` is always inside "CI/CD"; `SOC` is Security Operations Center in all
+eight domains including `grc`; `VM` is Virtual Machine in all eight including
+`blueteam`'s sandbox cards. DFS was the only live defect.
+
+So the counter measures **exposure, not debt** — four acronyms a future card could
+plausibly get wrong — and the tool now says so in its output, to stop the number being
+read as a backlog.
+
+Getting a check too broad twice in one session, in the same direction, is the note worth
+keeping: **the first version of a check usually matches something that co-occurs with the
+claim rather than the claim itself.** Requiring evidence of real use is what fixed both.
 
 ## 5. Unknowns I cannot resolve alone
 
