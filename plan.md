@@ -905,12 +905,23 @@ progress / keyboard-a11y automatically.
 > **Session 19: site check run before writing. Wave J1 shipped 3 of 5.** `sec` already
 > holds two OWASP Top 10 cards and a Threat Modeling card, so those two were cut `- [~]`.
 >
-> **The check also found `sec` duplicating itself, worse than `script` did:**
-> **three** Zero Trust cards (*Zero Trust Architecture*, *Zero Trust — Never Trust,
-> Always Verify*, *Zero Trust – "Never Trust, Always Verify" Explained Simply*) and
-> **two** OWASP Top 10 cards. Not merged here — merging is a separate act from adding,
-> and `sec` is the site's largest security domain, so it deserves the same careful
-> treatment the Big-O pair got. **This is now the strongest merge candidate on the site.**
+> **On the "sec duplicates itself worse than script" claim — I overstated it, and the
+> correction is the same one the previous session needed.** Counting titles gave three
+> Zero Trust cards and two OWASP cards. Applying this file's own tiering rule:
+>
+> - The **Beginner**-badged Zero Trust and OWASP cards are a deliberate tier, exactly like
+>   `script`'s *Lists & Key/Value*. Not duplicates. Kept.
+> - Of the two architecture-tier Zero Trust cards, one was a **pillars reference**
+>   (Identity · Device · Network · Data · Workload · Visibility) and one was prose. They
+>   overlapped only on the tenets.
+>
+> **So: one merge, not five cards of cleanup.** The pillars block was lifted into the
+> prose card and the thin topic removed, with a slug alias. `sec` 3 → 2 Zero Trust cards.
+>
+> Twice now a "this domain duplicates itself" claim has shrunk on inspection — five cards
+> to one in `script`, five to one here. **Counting titles overcounts duplication, because
+> a tier and a redundancy look identical from the index.** Read the badges before
+> believing the count.
 >
 > Spot-checking the rest of the track against the site before starting: J3's hashing card
 > duplicates *Passwords & Hashing*, J5's IAM and passkeys cards duplicate *Identity &
