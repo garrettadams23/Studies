@@ -4509,9 +4509,24 @@ Cheaper things to do first, in order:
 1. **Nothing.** 967 KB gzipped, 336 ms first paint on a throttled phone (measured, §AK).
    The page is not slow; it is unbounded. Those are different problems and only the
    second one is real.
-2. **Trim the index, not the page.** Indexing concept titles and the first sentence of
-   each `.concept-desc` rather than all text would cut the 743 KB substantially while
-   keeping search useful. Measure before committing.
+2. **Trim the index, not the page — measured, and this is the option worth taking.**
+   Indexing topic names, every concept title, the first sentence of each
+   `.concept-desc`, and table header cells:
+
+   ```
+   full text (today)                                  743 KB   77% of page   lazy saving 23%
+   names + concept titles + 1st sentences + <th>      164 KB   17% of page   lazy saving 83%
+   titles only                                         17 KB    2% of page   lazy saving 98%
+   ```
+
+   **The middle tier gets 83% of the saving for a search that is still substantive** —
+   on a reference site most searches are for a term that appears in a title, a concept
+   heading or a table header, and all three stay indexed. What is lost is finding a word
+   that appears only in the middle of a paragraph.
+
+   That is a real behaviour change and should be a deliberate one, but it is a far better
+   trade than either extreme, and it is the thing to prototype if the ceiling is ever
+   actually reached.
 3. **Lazy-load only the biggest domains.** `script` alone is 4h 15m of reading; a handful
    of fragments gets much of the 23% without a whole-site rewrite.
 
