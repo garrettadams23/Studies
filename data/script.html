@@ -11696,4 +11696,123 @@ send(pid, {:hello, "world"})
             </div>
           </div>
 
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📇</span>
+              <span class="topic-name">Microsoft Graph From PowerShell — The Modern Admin API <span class="acro-exp">(Application Programming Interface)</span></span>
+              <span class="topic-badge">Automation • Admin</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">One API Behind Nearly Every Microsoft 365 Admin Task</div>
+                <div class="concept-desc">
+                  The older service-specific modules (MSOnline, AzureAD) are retired or retiring, and
+                  the single forward path for automating users, groups, devices, Intune and more is
+                  Microsoft Graph. The <code>Microsoft.Graph</code> PowerShell module is a generated
+                  wrapper over the Graph REST <span class="acro-exp">(Representational State Transfer)</span> API, so learning it teaches you the API underneath —
+                  and anything the cmdlets do not expose, you can still call as a raw request.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Connect with least privilege — name only the scopes you need</span>
+Connect-MgGraph -Scopes "User.Read.All","Group.Read.All"
+
+<span class="com"># Cmdlets for the common paths…</span>
+Get-MgUser -Filter "accountEnabled eq false" -All
+
+<span class="com"># …and the escape hatch to raw Graph for anything not wrapped</span>
+Invoke-MgGraphRequest -Method GET `
+  -Uri "https://graph.microsoft.com/v1.0/auditLogs/signIns?`$top=50"</pre>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Four Things That Trip Up Every Graph Script</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Issue</th><th>What to know</th></tr>
+                    <tr><td>Paging</td><td>Graph returns pages, not everything — <code>-All</code> follows @odata.nextLink; without it you silently get the first page only</td></tr>
+                    <tr><td>Throttling</td><td>Heavy loops hit HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> 429 — honour the Retry-After header, add backoff; do not hammer</td></tr>
+                    <tr><td>Permissions &amp; consent</td><td>Delegated (as you) vs application (unattended); the scope must be consented, not just requested</td></tr>
+                    <tr><td>v1.0 vs beta</td><td class="c-red">beta endpoints change without notice — never build a scheduled job on beta</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    For anything scheduled and unattended, authenticate as an <strong class="c-cyan">app
+                    registration with a certificate</strong> or a managed identity — never an
+                    interactive login or a stored password. That path, and its secret handling, is in
+                    <span class="xref">Environment Variables &amp; Configuration — Keep Secrets Out of Code</span>.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Craft</div>
+                <div class="concept-title">Read-Only First, Then a Dry Run</div>
+                <div class="concept-desc">
+                  Graph will happily disable a thousand accounts as fast as it will read them. Develop
+                  every change script against <code>GET</code> until the target set is provably right,
+                  then gate the write behind <code>-WhatIf</code> or an explicit confirmation and a
+                  hard cap on how many objects one run may touch. A filter that was one character off
+                  is a very different event when the next line is a bulk delete — see
+                  <span class="xref">Automation Risk &amp; Discipline — Blast Radius, Approval Gates &amp; the Kill Switch</span>.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🛂</span>
+              <span class="topic-name">JEA — Just Enough Administration &amp; Constrained Remoting</span>
+              <span class="topic-badge">Automation • Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Let Someone Run Three Commands Without Making Them an Admin</div>
+                <div class="concept-desc">
+                  The everyday problem: the help desk needs to restart one service and read a couple of
+                  logs on a server, and the lazy answer is to make them a local admin, which hands them
+                  everything. Just Enough Administration inverts it — a constrained PowerShell endpoint
+                  exposes only the specific cmdlets and parameters a role needs, running under a managed
+                  identity, so the operator can do their three tasks and nothing else. It is least
+                  privilege made concrete for operations.
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">How the Constraint Is Built</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Piece</th><th>Role</th></tr>
+                    <tr><td>Role Capability file</td><td>Declares exactly which cmdlets, functions and parameters a role may use</td></tr>
+                    <tr><td>Session Configuration file</td><td>Maps users/groups to role capabilities and sets the run-as identity</td></tr>
+                    <tr><td>Virtual / managed run-as account</td><td>Commands execute as a privileged identity the user never actually holds</td></tr>
+                    <tr><td>Transcription</td><td>Every session is logged — who ran what, verbatim</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The result: a delegated operator connects to a constrained endpoint, sees only the
+                    handful of commands their role defines, and every keystroke is transcribed. The
+                    privileged credential never lands on their machine or in their token.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Where It Fits</div>
+                <div class="concept-title">The On-Prem Counterpart to Cloud PIM</div>
+                <div class="concept-desc">
+                  JEA does for a Windows server what privileged-identity management does for the cloud
+                  control plane: it removes standing privilege and replaces it with scoped, audited,
+                  task-specific access. It pairs naturally with removing local admin rights on endpoints
+                  — same principle, server side — and with the credential hygiene in
+                  <span class="xref">Service Accounts — gMSA and Retiring the Shared Password</span>.
+                  Reach for it wherever "they only needed to do one thing" currently means "so we gave
+                  them admin."
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body script -->

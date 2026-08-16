@@ -2515,4 +2515,80 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             </div>
           </div>
 
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧨</span>
+    <span class="topic-name">Automation Risk &amp; Discipline — Blast Radius, Approval Gates &amp; the Kill Switch</span>
+    <span class="topic-badge">Ops • Automation</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Automation Multiplies Your Competence and Your Mistakes Equally</div>
+      <div class="concept-desc">
+        The reason to automate a task is that it does the same thing quickly, at scale, without
+        tiring. That is also the reason a broken automation is so much worse than a broken human:
+        a person disabling accounts by hand notices something is wrong around account five; a
+        script notices nothing and finishes all ten thousand. Every automation worth trusting is
+        designed around that asymmetry — the goal is not just to make it work, but to bound what
+        it can do when it goes wrong.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Controls That Bound the Damage</div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Control</th><th>What it prevents</th></tr>
+          <tr><td>Dry run / <code>-WhatIf</code></td><td>Shows what <em>would</em> change before anything does — the cheapest safety there is</td></tr>
+          <tr><td>Sanity cap on scope</td><td class="c-red">"Refuse to act on more than N objects" — the guardrail that stops a bad filter from hitting everything</td></tr>
+          <tr><td>Approval gate</td><td>A human confirms before irreversible or large-scale actions</td></tr>
+          <tr><td>Idempotency</td><td>Safe to re-run; re-running after a partial failure does not double-apply</td></tr>
+          <tr><td>Staged rollout</td><td>Act on a pilot slice, verify, then widen — never the whole fleet at once</td></tr>
+          <tr><td>Kill switch</td><td>A way to stop a running job now, and a known way to halt the next scheduled run</td></tr>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">The sanity cap is the single highest-value line of code.</strong>
+          Most automation disasters are a query that matched far more than intended; a script that
+          aborts when the target set is implausibly large turns a catastrophe into a caught error.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Trust</div>
+      <div class="concept-title">An Automation Nobody Can Audit Is a Liability, Not an Asset</div>
+      <div class="concept-desc">
+        The difference between a trusted automation and a time bomb is whether anyone can answer
+        "what did it do, and why did it do that" after the fact. That answer comes from logging
+        every consequential action with enough context to reconstruct the run — inputs, the set it
+        acted on, the result, and who or what triggered it. An unlogged script that touches
+        production is a decision to fly blind, made silently.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Record</th><th>So you can answer</th></tr>
+          <tr><td>Trigger &amp; identity</td><td>Who or what started this run, and as whom</td></tr>
+          <tr><td>The target set</td><td>Exactly which objects it acted on</td></tr>
+          <tr><td>Outcome per item</td><td>Succeeded, skipped, failed — and why</td></tr>
+          <tr><td>Version / source</td><td>Which revision of the script ran</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Lifecycle</div>
+      <div class="concept-title">From Script to Service — the Part Everyone Skips</div>
+      <div class="concept-desc">
+        A script that started as one person's time-saver quietly becomes load-bearing, and then that
+        person leaves. An automation that touches production has an owner, lives in version control,
+        carries a header that explains what it does and how to stop it, and has a named retirement
+        plan for when it is no longer needed. "It's just a script" is how critical infrastructure
+        ends up depending on a file on someone's desktop that no one else understands — the same
+        shadow-dependency risk, in automation form.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body ops -->

@@ -1837,6 +1837,21 @@ actually touch. Vendor-specific, deliberately.
 
 ~5 waves, ~25 cards. Scripting aimed at the ops trade rather than at developers.
 
+**Mostly built; 3 genuine-gap cards written.** `script` (138 cards) already carries the
+general automation craft — PowerShell references, IT/cloud/network automation, webhooks,
+idempotent scheduling, robust API consumption — so most of AC's craft waves (AC1 pipeline
+basics, AC4 API/glue, AC5 version control/documentation) are covered there. Three items
+had zero coverage and were written: Microsoft Graph from PowerShell (the modern admin
+API; MSOnline/AzureAD are retiring), JEA (constrained, audited delegation — least
+privilege for ops), and automation risk/discipline (blast radius, sanity caps, the kill
+switch). `script` 138→140, `ops` gains the risk card.
+
+- [x] Working With Graph From PowerShell → *Microsoft Graph From PowerShell — The Modern Admin API*
+- [x] Remoting / JEA → *JEA — Just Enough Administration & Constrained Remoting* (plus remoting basics already in the PowerShell cards)
+- [x] Automation Risk + Idempotency + logging/auditability + script-to-service → *Automation Risk & Discipline — Blast Radius, Approval Gates & the Kill Switch* (`ops`)
+- [x] AC1 pipeline/functions/modules, AC4 REST/webhooks/data-wrangling, AC5 Git/docs → already in `script` (*PowerShell*, *IT Automation*, *Consuming APIs Robustly*, *Webhooks & ChatOps*, *Scheduling Scripts the Right Way*, *Git*)
+- [ ] Remaining (narrower): Ansible/DSC config-as-code, Packer golden images, Pester testing, Power Automate/Logic Apps — follow on demand
+
 **Wave AC1 — PowerShell for Real Work**
 - [ ] The Object Pipeline — the thing that makes PowerShell different from Bash
 - [ ] Remoting — WinRM, sessions, `Invoke-Command` fan-out, JEA

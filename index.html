@@ -14661,8 +14661,8 @@ regulator uses.
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">Service Desk · SOC · Incident Response · Vulnerability Mgmt · BCP/DR · Forensics · ITIL · SRE · Observability</span>
-<span class="domain-meta" aria-label="32 topics, about 1h 00m to read"
->32 topics · ~1h 00m</span>
+<span class="domain-meta" aria-label="33 topics, about 1h 00m to read"
+>33 topics · ~1h 00m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body">
@@ -17081,6 +17081,80 @@ The feedback loop that matters: every real page should make the <em>next</em> on
 less likely — via a fix, better alerting, or automation. That's the "Feedback" and
 "Learning" of the Three Ways, applied to operations.
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🧨</span>
+<span class="topic-name">Automation Risk &amp; Discipline — Blast Radius, Approval Gates &amp; the Kill Switch</span>
+<span class="topic-badge">Ops • Automation</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Automation Multiplies Your Competence and Your Mistakes Equally</div>
+<div class="concept-desc">
+The reason to automate a task is that it does the same thing quickly, at scale, without
+tiring. That is also the reason a broken automation is so much worse than a broken human:
+a person disabling accounts by hand notices something is wrong around account five; a
+script notices nothing and finishes all ten thousand. Every automation worth trusting is
+designed around that asymmetry — the goal is not just to make it work, but to bound what
+it can do when it goes wrong.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Controls That Bound the Damage</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Control</th><th>What it prevents</th></tr>
+<tr><td>Dry run / <code>-WhatIf</code></td><td>Shows what <em>would</em> change before anything does — the cheapest safety there is</td></tr>
+<tr><td>Sanity cap on scope</td><td class="c-red">"Refuse to act on more than N objects" — the guardrail that stops a bad filter from hitting everything</td></tr>
+<tr><td>Approval gate</td><td>A human confirms before irreversible or large-scale actions</td></tr>
+<tr><td>Idempotency</td><td>Safe to re-run; re-running after a partial failure does not double-apply</td></tr>
+<tr><td>Staged rollout</td><td>Act on a pilot slice, verify, then widen — never the whole fleet at once</td></tr>
+<tr><td>Kill switch</td><td>A way to stop a running job now, and a known way to halt the next scheduled run</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The sanity cap is the single highest-value line of code.</strong>
+Most automation disasters are a query that matched far more than intended; a script that
+aborts when the target set is implausibly large turns a catastrophe into a caught error.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Trust</div>
+<div class="concept-title">An Automation Nobody Can Audit Is a Liability, Not an Asset</div>
+<div class="concept-desc">
+The difference between a trusted automation and a time bomb is whether anyone can answer
+"what did it do, and why did it do that" after the fact. That answer comes from logging
+every consequential action with enough context to reconstruct the run — inputs, the set it
+acted on, the result, and who or what triggered it. An unlogged script that touches
+production is a decision to fly blind, made silently.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Record</th><th>So you can answer</th></tr>
+<tr><td>Trigger &amp; identity</td><td>Who or what started this run, and as whom</td></tr>
+<tr><td>The target set</td><td>Exactly which objects it acted on</td></tr>
+<tr><td>Outcome per item</td><td>Succeeded, skipped, failed — and why</td></tr>
+<tr><td>Version / source</td><td>Which revision of the script ran</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Lifecycle</div>
+<div class="concept-title">From Script to Service — the Part Everyone Skips</div>
+<div class="concept-desc">
+A script that started as one person's time-saver quietly becomes load-bearing, and then that
+person leaves. An automation that touches production has an owner, lives in version control,
+carries a header that explains what it does and how to stop it, and has a named retirement
+plan for when it is no longer needed. "It's just a script" is how critical infrastructure
+ends up depending on a file on someone's desktop that no one else understands — the same
+shadow-dependency risk, in automation form.
 </div>
 </div>
 </div>
@@ -28051,8 +28125,8 @@ non-negotiable. Run it as a tabletop before it is a real call.
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">Regex · PowerShell · Bash · HTML · CSS · JavaScript · JSON · SQL</span>
-<span class="domain-meta" aria-label="138 topics, about 4h 20m to read"
->138 topics · ~4h 20m</span>
+<span class="domain-meta" aria-label="140 topics, about 4h 25m to read"
+>140 topics · ~4h 25m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body">
@@ -38921,6 +38995,122 @@ general-purpose languages: R for statistics and its plotting, MATLAB for
 matrix-heavy engineering and signal processing. Reach for them when the domain
 is the point, not the software.
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📇</span>
+<span class="topic-name">Microsoft Graph From PowerShell — The Modern Admin API <span class="acro-exp">(Application Programming Interface)</span></span>
+<span class="topic-badge">Automation • Admin</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">One API Behind Nearly Every Microsoft 365 Admin Task</div>
+<div class="concept-desc">
+The older service-specific modules (MSOnline, AzureAD) are retired or retiring, and
+the single forward path for automating users, groups, devices, Intune and more is
+Microsoft Graph. The <code>Microsoft.Graph</code> PowerShell module is a generated
+wrapper over the Graph REST <span class="acro-exp">(Representational State Transfer)</span> API, so learning it teaches you the API underneath —
+and anything the cmdlets do not expose, you can still call as a raw request.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Connect with least privilege — name only the scopes you need</span>
+Connect-MgGraph -Scopes "User.Read.All","Group.Read.All"
+
+<span class="com"># Cmdlets for the common paths…</span>
+Get-MgUser -Filter "accountEnabled eq false" -All
+
+<span class="com"># …and the escape hatch to raw Graph for anything not wrapped</span>
+Invoke-MgGraphRequest -Method GET `
+  -Uri "https://graph.microsoft.com/v1.0/auditLogs/signIns?`$top=50"</pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Four Things That Trip Up Every Graph Script</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Issue</th><th>What to know</th></tr>
+<tr><td>Paging</td><td>Graph returns pages, not everything — <code>-All</code> follows @odata.nextLink; without it you silently get the first page only</td></tr>
+<tr><td>Throttling</td><td>Heavy loops hit HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> 429 — honour the Retry-After header, add backoff; do not hammer</td></tr>
+<tr><td>Permissions &amp; consent</td><td>Delegated (as you) vs application (unattended); the scope must be consented, not just requested</td></tr>
+<tr><td>v1.0 vs beta</td><td class="c-red">beta endpoints change without notice — never build a scheduled job on beta</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+For anything scheduled and unattended, authenticate as an <strong class="c-cyan">app
+registration with a certificate</strong> or a managed identity — never an
+interactive login or a stored password. That path, and its secret handling, is in
+<span class="xref">Environment Variables &amp; Configuration — Keep Secrets Out of Code</span>.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Craft</div>
+<div class="concept-title">Read-Only First, Then a Dry Run</div>
+<div class="concept-desc">
+Graph will happily disable a thousand accounts as fast as it will read them. Develop
+every change script against <code>GET</code> until the target set is provably right,
+then gate the write behind <code>-WhatIf</code> or an explicit confirmation and a
+hard cap on how many objects one run may touch. A filter that was one character off
+is a very different event when the next line is a bulk delete — see
+<span class="xref">Automation Risk &amp; Discipline — Blast Radius, Approval Gates &amp; the Kill Switch</span>.
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🛂</span>
+<span class="topic-name">JEA — Just Enough Administration &amp; Constrained Remoting</span>
+<span class="topic-badge">Automation • Security</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Let Someone Run Three Commands Without Making Them an Admin</div>
+<div class="concept-desc">
+The everyday problem: the help desk needs to restart one service and read a couple of
+logs on a server, and the lazy answer is to make them a local admin, which hands them
+everything. Just Enough Administration inverts it — a constrained PowerShell endpoint
+exposes only the specific cmdlets and parameters a role needs, running under a managed
+identity, so the operator can do their three tasks and nothing else. It is least
+privilege made concrete for operations.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">How the Constraint Is Built</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Piece</th><th>Role</th></tr>
+<tr><td>Role Capability file</td><td>Declares exactly which cmdlets, functions and parameters a role may use</td></tr>
+<tr><td>Session Configuration file</td><td>Maps users/groups to role capabilities and sets the run-as identity</td></tr>
+<tr><td>Virtual / managed run-as account</td><td>Commands execute as a privileged identity the user never actually holds</td></tr>
+<tr><td>Transcription</td><td>Every session is logged — who ran what, verbatim</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The result: a delegated operator connects to a constrained endpoint, sees only the
+handful of commands their role defines, and every keystroke is transcribed. The
+privileged credential never lands on their machine or in their token.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Where It Fits</div>
+<div class="concept-title">The On-Prem Counterpart to Cloud PIM</div>
+<div class="concept-desc">
+JEA does for a Windows server what privileged-identity management does for the cloud
+control plane: it removes standing privilege and replaces it with scoped, audited,
+task-specific access. It pairs naturally with removing local admin rights on endpoints
+— same principle, server side — and with the credential hygiene in
+<span class="xref">Service Accounts — gMSA and Retiring the Shared Password</span>.
+Reach for it wherever "they only needed to do one thing" currently means "so we gave
+them admin."
 </div>
 </div>
 </div>
