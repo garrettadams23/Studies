@@ -9448,8 +9448,8 @@ for the endpoint half of the same argument.
 <span class="ctag ctag-ptplus">PT+</span>
 </div>
 <span class="domain-sub">Kill Chain · MITRE ATT&amp;CK · Diamond Model · Threat Intel · Social Engineering · Malware</span>
-<span class="domain-meta" aria-label="25 topics, about 50 min to read"
->25 topics · ~50 min</span>
+<span class="domain-meta" aria-label="31 topics, about 1h 05m to read"
+>31 topics · ~1h 05m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body">
@@ -11374,6 +11374,384 @@ in incident preparedness, precisely because it sounds like due diligence without
 actually works. A real plan answers harder questions: how long would a full restore actually take (hours? days?
 weeks?), what would you tell customers during that gap, and who makes the call about whether to involve law
 enforcement? Untested assumptions don't reveal themselves until the worst possible moment to discover them.</p>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🔬</span>
+<span class="topic-name">Reverse Engineering &amp; Binary Analysis — Reading Code You Don't Have Source For</span>
+<span class="topic-badge">Malware • SecurityX</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Where It Fits</div>
+<div class="concept-title">The Third Tier of Malware Analysis</div>
+<div class="concept-desc">
+<span class="xref">Malware Analysis — Understanding What the Bad Code Does</span>
+covers the first two tiers: static triage (strings, hashes, imports) and dynamic
+detonation in a sandbox. Reverse engineering is what you do when both come back
+thin — the sample is packed, it refuses to run, or you need the exact decryption
+routine rather than a behavioural summary. It is slow, expensive, and the only
+way to answer questions like "what is the C2 <span class="acro-exp">(Command and Control)</span> protocol" or "can we recover the
+files without paying."
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Toolchain</div>
+<div class="concept-title">Disassembly, Decompilation, Debugging</div>
+<div class="concept-desc">
+A <strong class="c-cyan">disassembler</strong> turns machine code into assembly —
+faithful, and hard going. A <strong class="c-cyan">decompiler</strong> guesses
+C-like source from that assembly — readable, and sometimes wrong, which is the
+trade you are making every time you read its output. A
+<strong class="c-cyan">debugger</strong> runs the sample under your control so you
+can watch a value that only exists at runtime, like a key decrypted in memory.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>Role</th></tr>
+<tr><td>Ghidra</td><td>Free NSA-released disassembler and decompiler; the usual starting point</td></tr>
+<tr><td>IDA Pro / Binary Ninja</td><td>Commercial equivalents; strong analysis and scripting</td></tr>
+<tr><td>x64dbg / GDB</td><td>User-mode debuggers for Windows / Linux</td></tr>
+<tr><td>radare2 / rizin</td><td>Scriptable command-line reversing framework</td></tr>
+<tr><td>PE-bear, readelf, objdump</td><td>Header, section and import inspection before you open anything bigger</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Method</div>
+<div class="concept-title">Anchor First, Then Read Outward</div>
+<div class="concept-desc">
+Nobody reads a binary from the entry point down. You find an anchor — an
+interesting imported API <span class="acro-exp">(Application Programming Interface)</span>, a suspicious string, a network call — and work outward
+from its cross-references until the function's purpose is obvious. Then rename
+it, and repeat. A reversing session is mostly the steady accumulation of names.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Triage before the disassembler: what does it even want?</span>
+file sample.bin                    <span class="com"># architecture, format, stripped?</span>
+readelf -d sample.bin              <span class="com"># ELF: dynamic imports</span>
+objdump -d sample.bin | head -50   <span class="com"># a first look at the code</span>
+
+<span class="com"># Entropy near 8.0 across a section means packed or encrypted —</span>
+<span class="com"># stop and unpack before wasting hours reading noise.</span></pre>
+<div class="concept-desc" style="margin-top:10px">
+Imports are the cheapest signal in the file. <code>CryptEncrypt</code> plus
+directory enumeration says ransomware; <code>SetWindowsHookEx</code> says
+keylogger; a near-empty import table says the real ones are resolved at
+runtime, which is itself a finding.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Legal &amp; Ethical</div>
+<div class="concept-title">Know Your Authorization</div>
+<div class="concept-desc">
+Reversing malware you were sent as a defender is routine. Reversing licensed
+commercial software is a different question, and the answer depends on your
+jurisdiction, the licence, and what you do with the result — interoperability and
+security research carve-outs exist in some places and not others. Work samples in
+an isolated lab, keep custody records if the artefact might become evidence, and
+get the authorization question answered before you start rather than after.
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🎭</span>
+<span class="topic-name">Anti-Analysis Techniques — How Malware Hides, and How Analysts Win Anyway</span>
+<span class="topic-badge">Malware • CySA+</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">The Sample Is Trying to Detect You</div>
+<div class="concept-desc">
+Modern malware assumes it will land in a sandbox before it lands on a victim, so
+it spends its first moments deciding which one it is in. If it concludes it is
+being watched, it does nothing interesting — exits quietly, or runs a decoy
+routine. A clean sandbox report is therefore not evidence the file is safe; it is
+equally consistent with a sample that recognized the sandbox.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Category</th><th>Technique</th><th>Defeat</th></tr>
+<tr><td>Anti-VM</td><td>Checks MAC <span class="acro-exp">(Media Access Control)</span> prefixes, disk size, driver names, CPU <span class="acro-exp">(Central Processing Unit)</span> features</td><td>Harden the VM <span class="acro-exp">(Virtual Machine)</span>; use bare-metal detonation for stubborn samples</td></tr>
+<tr><td>Anti-debug</td><td>IsDebuggerPresent, timing checks, exception tricks, self-checksums</td><td>Debugger hiding plugins; patch the check; breakpoint after it</td></tr>
+<tr><td>Anti-sandbox</td><td>Long sleeps, waits for mouse movement, demands a domain-joined host</td><td>Sleep-patching, simulated user activity, longer detonation</td></tr>
+<tr><td>Packing</td><td>Compressed or encrypted payload unpacked in memory at run time</td><td>Run to the OEP and dump memory; a static-only look is worthless</td></tr>
+<tr><td>Obfuscation</td><td>String encryption, control-flow flattening, junk instructions, API <span class="acro-exp">(Application Programming Interface)</span> hashing</td><td>Emulation, deobfuscation scripts, resolving hashes against known API lists</td></tr>
+<tr><td>Environmental keying</td><td>Payload decrypts only with a key derived from the target's own environment</td><td>Often unbeatable without the victim host — say so rather than guessing</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Detection Angle</div>
+<div class="concept-title">Evasion Is Itself an Indicator</div>
+<div class="concept-desc">
+A defender does not need to defeat every trick. Legitimate software rarely checks
+whether it is being debugged, and almost never sleeps for ten minutes before
+doing anything. High section entropy, a stub import table, timing checks around
+the entry point — these are behaviours to hunt for, not just obstacles to
+overcome. YARA <span class="acro-exp">(Yet Another Recursive Acronym)</span> rules that match packer stubs and evasion patterns catch families
+whose payloads change weekly.
+</div>
+<div class="dw">
+<div class="concept-desc">
+<strong class="c-amber">The reporting discipline:</strong> write "the sample
+did not execute its payload under analysis" rather than "the sample is
+inert." The first is what you observed; the second is a conclusion the evidence
+does not support, and it is the sentence that gets a sample cleared.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📦</span>
+<span class="topic-name">Supply-Chain Attacks — Compromise One, Reach Thousands</span>
+<span class="topic-badge">Threat • SecurityX</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">Attacking the Thing Your Target Already Trusts</div>
+<div class="concept-desc">
+Perimeter defences assume attackers come from outside. A supply-chain attack
+arrives through the front door, signed, inside an update the victim installed on
+purpose. The economics are brutal in the attacker's favour: one compromised
+build server or one popular dependency reaches every downstream consumer at once,
+and every consumer's own controls are aimed at the wrong direction. The defensive
+answer lives in
+<span class="xref">Software Supply Chain Security — SBOM, SLSA &amp; Sigstore</span>;
+this card is the attack side.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Vector</th><th>How it works</th></tr>
+<tr><td>Build-system compromise</td><td>Inject into the pipeline so the malicious artefact is legitimately signed</td></tr>
+<tr><td>Dependency poisoning</td><td>Take over or compromise a package many projects already depend on</td></tr>
+<tr><td>Typosquatting</td><td>Publish a package one keystroke from a popular name and wait</td></tr>
+<tr><td>Dependency confusion</td><td>Publish a public package matching an internal name; resolvers may prefer the higher version</td></tr>
+<tr><td>Maintainer takeover</td><td>Phish or socially engineer commit rights, sometimes over months of "helpful" contributions</td></tr>
+<tr><td>Update-channel abuse</td><td>Compromise the distribution or signing infrastructure rather than the code</td></tr>
+<tr><td>Hardware &amp; firmware</td><td>Interdiction or implant before the device ever reaches the buyer</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Case Pattern</div>
+<div class="concept-title">What the Big Ones Taught</div>
+<div class="concept-desc">
+The headline incidents rhyme. A trusted update mechanism was subverted and the
+malicious code was properly signed, so signature verification passed. Detection
+came from behaviour — unexpected outbound traffic, a process doing something out
+of character — not from the artefact. And discovery took months, in at least one
+case only because someone investigated a performance anomaly that had nothing to
+do with security.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Lesson</th><th>What it means operationally</th></tr>
+<tr><td>Signed is not safe</td><td>Signatures prove origin, never intent; validate behaviour too</td></tr>
+<tr><td>You need an inventory</td><td>An SBOM <span class="acro-exp">(Software Bill of Materials)</span> is how you answer "are we affected" in hours instead of weeks</td></tr>
+<tr><td>Egress control pays off</td><td>Beaconing from a build server should never have reached the internet</td></tr>
+<tr><td>Pin and verify</td><td>Lockfiles, hash pinning, and scoped internal registries close the confusion vector</td></tr>
+<tr><td>Volunteer maintainers are infrastructure</td><td>Critical dependencies are often one exhausted person; treat that as a risk you own</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">💱</span>
+<span class="topic-name">The Criminal Economy — Access Brokers, Affiliates &amp; How Breaches Get Sold</span>
+<span class="topic-badge">Threat Intel</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">Cybercrime Specialized, and That Changed the Threat</div>
+<div class="concept-desc">
+The lone attacker who breaks in, moves laterally, and deploys their own ransomware
+is mostly a training scenario. The real ecosystem is a supply chain of
+specialists: one crew harvests credentials, another sells the access, a third
+operates inside the network, and the ransomware itself is rented software with a
+support portal. This matters defensively because it decouples <em>who got in</em>
+from <em>what eventually happened</em> — and it explains the gap, often weeks or
+months, between the initial compromise and the encryption event.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Role</th><th>What they sell</th></tr>
+<tr><td>Infostealer operators</td><td>Bulk credential and session-cookie logs from infected consumer machines</td></tr>
+<tr><td>Initial access brokers</td><td>Verified footholds — VPN <span class="acro-exp">(Virtual Private Network)</span> accounts, RDP <span class="acro-exp">(Remote Desktop Protocol)</span>, web shells — priced by victim revenue</td></tr>
+<tr><td>RaaS developers</td><td>The encryptor, the leak site and the negotiation portal, for a cut of proceeds</td></tr>
+<tr><td>Affiliates</td><td>The intrusion labour; they buy access and run the operation</td></tr>
+<tr><td>Bulletproof hosting &amp; proxies</td><td>Infrastructure that ignores abuse complaints; residential proxy networks</td></tr>
+<tr><td>Launderers</td><td>Mixers, chain-hopping and cash-out; frequently the arrest point</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Defender's Read</div>
+<div class="concept-title">What the Market Structure Tells You</div>
+<div class="concept-desc">
+Attribution gets harder and matters less: the same access can be resold to
+different operators, so today's actor may have nothing to do with the intrusion.
+Meanwhile stolen session cookies bypass password resets and often MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, which is
+why an infostealer infection on a personal laptop is a corporate incident.
+Double extortion — encrypt <em>and</em> leak — exists precisely because good
+backups killed the original business model, so "we have backups" is now a
+recovery plan, not a negotiation position. See
+<span class="xref">Ransomware — The Defining Threat of the Era</span> for the
+incident side.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Signal</th><th>Why it is worth monitoring</th></tr>
+<tr><td>Your domains in stealer logs</td><td>Credentials and live sessions already for sale</td></tr>
+<tr><td>Access-broker listings</td><td>A description matching your sector, size and revenue band</td></tr>
+<tr><td>Leak-site postings</td><td>Your vendors appearing there is your incident too</td></tr>
+<tr><td>Affiliate tradecraft shifts</td><td>The tooling changes far faster than the underlying playbook</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📐</span>
+<span class="topic-name">Threat Modeling Methodologies — STRIDE vs PASTA vs Attack Trees</span>
+<span class="topic-badge">SecurityX • CISSP</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Where It Fits</div>
+<div class="concept-title">Choosing the Method, Not Just Doing the Exercise</div>
+<div class="concept-desc">
+<span class="xref">Threat Modeling — Finding Flaws Before You Build Them</span>
+covers the practice: draw the system, find the threats, decide what to do. This
+card is the level above — the named methodologies differ in what they optimize
+for, and picking the wrong one is how a threat-modeling programme dies of
+paperwork in its second quarter.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Method</th><th>Anchored on</th><th>Best when</th></tr>
+<tr><td>STRIDE</td><td>Six threat categories per component</td><td>Developer-facing design review; fast, teachable, broad coverage</td></tr>
+<tr><td>PASTA</td><td>Seven risk-centric stages, business impact first</td><td>You must justify spend to executives in money terms</td></tr>
+<tr><td>Attack trees</td><td>One goal, decomposed into paths</td><td>Deep analysis of a single critical asset or scenario</td></tr>
+<tr><td>LINDDUN</td><td>Privacy threat categories</td><td>Personal data is the asset; pairs with a DPIA <span class="acro-exp">(Data Protection Impact Assessment)</span></td></tr>
+<tr><td>Kill chain / ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> mapping</td><td>Real adversary behaviour</td><td>You want threats grounded in what actually happens, not imagination</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">STRIDE, and Its Property Mapping</div>
+<div class="concept-desc">
+STRIDE's durable value is that each category is the violation of one security
+property — which turns "think of threats" into six concrete questions you ask of
+every data flow and every trust boundary.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Threat</th><th>Violates</th><th>Typical control</th></tr>
+<tr><td>Spoofing</td><td>Authentication</td><td>Strong identity, MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, mutual TLS <span class="acro-exp">(Transport Layer Security)</span></td></tr>
+<tr><td>Tampering</td><td>Integrity</td><td>Signing, hashing, input validation</td></tr>
+<tr><td>Repudiation</td><td>Non-repudiation</td><td>Tamper-evident audit logging</td></tr>
+<tr><td>Information disclosure</td><td>Confidentiality</td><td>Encryption, access control, minimization</td></tr>
+<tr><td>Denial of service</td><td>Availability</td><td>Rate limits, quotas, capacity planning</td></tr>
+<tr><td>Elevation of privilege</td><td>Authorization</td><td>Least privilege, sandboxing, authorization checks</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Pitfall</div>
+<div class="concept-title">The Model Nobody Reads Again</div>
+<div class="concept-desc">
+The common failure is not a wrong methodology — it is a beautiful diagram
+produced once, filed, and never revisited while the system changes underneath it.
+Model the thing you are actually building this quarter, cap the session at an
+hour, and end with tracked issues rather than a document. A threat model whose
+output is a to-do list survives; one whose output is a PDF <span class="acro-exp">(Portable Document Format)</span> does not.
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🛡️</span>
+<span class="topic-name">MITRE D3FEND <span class="acro-exp">(Detection, Denial and Disruption Framework Empowering Network Defense)</span> &amp; Engage — Mapping Defenses and Deception to ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span></span>
+<span class="topic-badge">Threat Intel • Blue</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">Three Matrices, Three Questions</div>
+<div class="concept-desc">
+ATT&amp;CK catalogues what adversaries do. It is deliberately silent on what you
+should do about it, which is why coverage conversations stall at "we have 340
+techniques and no idea which controls address them." MITRE's companion knowledge
+bases fill the other two sides.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Knowledge base</th><th>Answers</th><th>Unit</th></tr>
+<tr><td>ATT&amp;CK</td><td>What does the adversary do?</td><td>Tactic → technique → sub-technique</td></tr>
+<tr><td>D3FEND</td><td>What countermeasure addresses it, and how?</td><td>Defensive technique, tied to a digital artifact</td></tr>
+<tr><td>Engage</td><td>How do I deny, direct or deceive them on purpose?</td><td>Adversary-engagement activity</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">D3FEND</div>
+<div class="concept-title">Countermeasures Tied to Artifacts, Not Vendors</div>
+<div class="concept-desc">
+D3FEND's structure is what makes it useful: defensive techniques are linked to
+the concrete <em>digital artifacts</em> they operate on — a process, a file, a
+network session, a credential. That gives you a vendor-neutral vocabulary for
+what a control actually does, and turns "we bought an EDR <span class="acro-exp">(Endpoint Detection and Response)</span>" into a specific claim
+about which techniques are covered by which capability. Its verbs — harden,
+detect, isolate, deceive, evict — are also a sanity check on a portfolio that has
+quietly become all detection and no isolation.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Engage</div>
+<div class="concept-title">Deception, With the Adults in the Room</div>
+<div class="concept-desc">
+Engage reframes deception as a planned operation with goals rather than a
+honeypot someone stood up for fun. You decide first what you want — deny access,
+waste the adversary's time, or collect intelligence on their tooling — because
+those aims conflict. Collecting intelligence means letting them stay, which is a
+decision for the business and legal, not the SOC <span class="acro-exp">(Security Operations Center)</span>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Approach</th><th>Goal</th><th>Cost</th></tr>
+<tr><td>Honeytokens</td><td>High-fidelity alert when something touches a fake credential or file</td><td>Very low — the best value in the category</td></tr>
+<tr><td>Decoy hosts</td><td>Waste time; observe tradecraft</td><td>Moderate; needs realism and upkeep</td></tr>
+<tr><td>Full deception environment</td><td>Sustained intelligence collection</td><td>High; needs legal sign-off and staff attention</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-red">Do not improvise this.</strong> Leaving an adversary in
+place to watch them has regulatory, contractual and disclosure consequences,
+and the decision belongs to counsel and leadership — recorded in advance, not
+made at 2 a.m. by whoever is on call.
+</div>
+</div>
 </div>
 </div>
 </div>

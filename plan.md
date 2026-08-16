@@ -981,33 +981,39 @@ progress / keyboard-a11y automatically.
 
 ~4 waves, ~22 cards.
 
+**COMPLETE — 22 of 22, six cards written and sixteen already built.** `threat` had
+23 cards and the neighbours had more: forensics lives in `blueteam` (Volatility,
+Autopsy, Windows artifacts) and `ops`, the defender's supply-chain view in `devops`
+and `sec`, STRIDE in `sec`. The site check found the same thing Track V and Track AL
+found — the list was written against the subject, not the site. `threat` is now 29.
+
 **Wave K1 — Malware Analysis**
-- [ ] Static Analysis — strings, PE/ELF headers, imports, packing detection
-- [ ] Dynamic Analysis — sandboxing, behavioral indicators, API monitoring
-- [ ] Reverse Engineering Basics — Ghidra/IDA, disassembly, decompilation
-- [ ] Malware Families — loaders, RATs, infostealers, rootkits, wipers
-- [ ] Anti-Analysis Techniques — obfuscation, anti-VM, anti-debug (and defeating them)
+- [x] Static Analysis → *Malware Analysis — Understanding What the Bad Code Does* + `sec`'s *Malware Analysis – Static & Dynamic Analysis Fundamentals*
+- [x] Dynamic Analysis → same two cards
+- [x] Reverse Engineering Basics → *Reverse Engineering & Binary Analysis — Reading Code You Don't Have Source For*
+- [x] Malware Families → *Malware Types Reference*
+- [x] Anti-Analysis Techniques → *Anti-Analysis Techniques — How Malware Hides, and How Analysts Win Anyway*
 
 **Wave K2 — Adversary Knowledge**
-- [ ] APT Case Studies — how nation-state campaigns actually unfolded
-- [ ] Ransomware Deep — RaaS ecosystem, double extortion, negotiation, recovery
-- [ ] Initial Access Brokers & the Criminal Economy — how breaches get sold
-- [ ] Supply-Chain Attacks — SolarWinds, XZ, npm/PyPI poisoning, dependency confusion
-- [ ] Living-off-the-Land at Scale — LOLBins/LOLDrivers from the defender's view
+- [x] APT Case Studies → *Threat Actors — Know Your Adversary* (named-campaign detail deliberately not duplicated; it is the fastest-rotting content on the site)
+- [x] Ransomware Deep → *Ransomware — The Defining Threat of the Era* + the Beginner-tier *Ransomware – How It Spreads*
+- [x] Initial Access Brokers & the Criminal Economy → *The Criminal Economy — Access Brokers, Affiliates & How Breaches Get Sold*
+- [x] Supply-Chain Attacks → *Supply-Chain Attacks — Compromise One, Reach Thousands* (attacker lens; the defender lens is `devops`/`sec`)
+- [x] Living-off-the-Land at Scale → covered in `threat` and `redteam`
 
 **Wave K3 — Frameworks & Modeling**
-- [ ] MITRE ATT&CK Deep — tactics/techniques/procedures, sub-techniques, data sources
-- [ ] MITRE D3FEND & Engage — mapping defenses and deception to ATT&CK
-- [ ] The Diamond Model — adversary/capability/infrastructure/victim
-- [ ] Threat Modeling Methodologies — STRIDE vs PASTA vs attack trees
-- [ ] Cyber Threat Intel Programs — requirements, collection, dissemination, feedback
+- [x] MITRE ATT&CK Deep → *MITRE ATT&CK Framework* + `blueteam`'s *MITRE ATT&CK & Navigator*
+- [x] MITRE D3FEND & Engage → *MITRE D3FEND & Engage — Mapping Defenses and Deception to ATT&CK*
+- [x] The Diamond Model → *Diamond Model of Intrusion Analysis*
+- [x] Threat Modeling Methodologies → *Threat Modeling Methodologies — STRIDE vs PASTA vs Attack Trees*
+- [x] Cyber Threat Intel Programs → *Threat Intelligence Lifecycle* + *Threat Intelligence — Turning Data Into Decisions*
 
 **Wave K4 — Incident Response Deep**
-- [ ] The IR Lifecycle — NIST/SANS phases with concrete playbooks
-- [ ] Containment Strategies — isolate vs monitor, the eradication decision
-- [ ] Forensic Acquisition — order of volatility, imaging, memory capture
-- [ ] Timeline Reconstruction — correlating logs, super-timelines, pivoting
-- [ ] Tabletop Exercises & Postmortems — practicing before the real thing
+- [x] The IR Lifecycle → `ops` and `blueteam` incident-response cards
+- [x] Containment Strategies → same
+- [x] Forensic Acquisition → *Digital Forensics* + `ops`'s *Digital Forensics Process* + `blueteam`'s Volatility card
+- [x] Timeline Reconstruction → `blueteam` super-timeline material
+- [x] Tabletop Exercises & Postmortems → `grc`, `ops` and `military` all carry it
 
 ---
 
