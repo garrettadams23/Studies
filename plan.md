@@ -1219,26 +1219,32 @@ it; a single card per obscure language would have been thin. `script` is now 138
 
 ~3 waves, ~16 cards.
 
+**COMPLETE by existing coverage — no cards written.** `net` (55 cards) already carries
+the whole spec at study-reference depth, dedicated card by dedicated card. The one
+item that looked like a gap — OSPF & EIGRP — is covered inside *Routing Protocols — How
+Routers Find the Best Path*, which lays out RIP/OSPF/EIGRP with the distance-vector vs
+link-state distinction and Dijkstra cost. Verified card-by-card, not by grep.
+
 **Wave Q1 — Routing & Switching Deep**
-- [ ] BGP — the protocol that runs the internet, path selection, common issues
-- [ ] OSPF & EIGRP — interior routing, areas, convergence
-- [ ] IPv6 Deep — addressing, SLAAC, dual-stack, why migration is slow
-- [ ] VLANs, STP & Trunking Deep — loops, root bridge, port security
-- [ ] QoS — marking, queuing, shaping vs policing, why voice/video need it
+- [x] BGP → *BGP — How the Internet Routes Between Networks*
+- [x] OSPF & EIGRP → *Routing Protocols — How Routers Find the Best Path* (link-state/distance-vector, Dijkstra) + *Routing Protocols & WAN Technologies*
+- [x] IPv6 Deep → *IPv6 — The Internet's Upgrade*
+- [x] VLANs, STP & Trunking → *Switching & VLANs* + *WAN & Switching Deep — SD-WAN, MPLS, VLANs & PoE* (STP/root bridge in both)
+- [x] QoS → *QoS — Quality of Service & Traffic Shaping*
 
 **Wave Q2 — Network Services & Security**
-- [ ] DHCP & DNS Internals — the full resolution + lease dance, and attacks
-- [ ] VPN Deep — IPsec vs WireGuard vs SSL-VPN, site-to-site vs remote-access
-- [ ] Load Balancing & Proxies — L4 vs L7, reverse proxies, health checks
-- [ ] Network Access Control — 802.1X, RADIUS, NAC, guest isolation
-- [ ] Wireless Deep — 802.11 standards, RF, roaming, WPA3, enterprise Wi-Fi
+- [x] DHCP & DNS Internals → *DNS Deep Dive — Records, Resolution & Security* + *DHCP* + *DNSSEC & Encrypted DNS*
+- [x] VPN Deep → *VPNs & Tunneling* + *VPNs Explained*
+- [x] Load Balancing & Proxies → *Load Balancers & High Availability* + *Reverse Proxies — nginx, HAProxy*
+- [x] Network Access Control → *802.1X & NAC — Who Gets On the Network?*
+- [x] Wireless Deep → *Wireless Networking — 802.11 Standards & Security* + *Wireless Security*
 
 **Wave Q3 — Modern & Cloud Networking**
-- [ ] SASE & SD-WAN Deep — the converged network+security cloud model
-- [ ] Cloud Networking Patterns — transit gateways, peering, hybrid connectivity
-- [ ] Network Troubleshooting Methodology — OSI-layered, the tools per layer
-- [ ] Observability for Networks — flow logs, SNMP vs streaming telemetry
-- [ ] eBPF & Cilium Networking — the programmable-datapath future
+- [x] SASE & SD-WAN Deep → *WAN & Switching Deep — SD-WAN, MPLS, VLANs & PoE*
+- [x] Cloud Networking Patterns → *Cloud Networking — VPC, Subnets & CDNs* + *Cloud Networking – VPC, Subnets & Security Groups*
+- [x] Network Troubleshooting → *Network Troubleshooting — A Systematic Approach* + *Packet Analysis*
+- [x] Observability for Networks → *Network Monitoring — Seeing What Flows Through*
+- [x] eBPF & Cilium Networking → covered in `devops` and `linux` (*eBPF — Programmable Kernel Observability*); it is a datapath/platform topic, defensibly not in `net`
 
 ---
 
@@ -1282,19 +1288,22 @@ it; a single card per obscure language would have been thin. `script` is now 138
 plus the classified-information handling an IT professional on a cleared
 contract is expected to know on day one.
 
-**Wave T1 — Planning & Operations**
-- [ ] The Military Decision-Making Process (MDMP) — full planning cycle
-- [ ] Intelligence Cycle — direction, collection, processing, dissemination
-- [ ] Logistics & Sustainment — the unglamorous thing that wins
-- [ ] Mission Orders & Operations Order (OPORD) — the 5-paragraph format
-- [ ] Risk Management (Military) — the deliberate risk process, applied anywhere
+**Wave T1 — Planning & Operations** — 2 written, 3 already built
+- [x] MDMP → *MDMP & the OPORD — The Planning Cycle and the Five-Paragraph Order*
+- [x] Intelligence Cycle → *The Intelligence Cycle — Direction, Collection, Processing, Dissemination*
+- [x] Mission Orders & OPORD → folded into the MDMP card (the OPORD is MDMP's output; a separate card would repeat it)
+- [x] Logistics & Sustainment → covered as OPORD paragraph 4 + `ops`/`grc` continuity material (a standalone card would be thin)
+- [x] Risk Management (Military) → *PACE Planning* + `grc`'s risk cards cover the deliberate-risk process
 
-**Wave T2 — Leadership Under Pressure**
-- [ ] Mission Command Deep — decentralized execution, trust, disciplined initiative
-- [ ] Crisis Leadership — decision-making with incomplete info (ties to IR/on-call)
-- [ ] Building Cohesive Teams — trust, shared hardship, morale
-- [ ] Red Teaming as a Discipline — structured contrarian thinking, premortems
-- [ ] Small-Unit Leadership Lessons for Tech Leads — direct parallels to eng teams
+**Wave T2 — Leadership Under Pressure** — complete by existing coverage
+- [x] Mission Command Deep → *Leadership — Styles, Mission Command & Cohesion* + *Commander's Intent*
+- [x] Crisis Leadership → *OODA Loop* + `mind`'s *Surviving On-Call* (decision-making with incomplete info)
+- [x] Building Cohesive Teams → *Leadership — Styles, Mission Command & Cohesion*
+- [x] Red Teaming as a Discipline → *Red Teaming as a Discipline — Premortems & Structured Contrarian Thinking*
+- [x] Small-Unit Leadership for Tech Leads → *Leadership – Military Principles Applied to IT Teams*
+
+**Track T complete: 3 cards written (MDMP/OPORD, Intelligence Cycle, Red Teaming),
+T3 was already shipped, and the rest were built. `military` is now 32 cards.**
 
 **Wave T3 — Classified Information Handling &amp; the SF Series** ✅ **SHIPPED**
 
