@@ -1110,16 +1110,22 @@ progress / keyboard-a11y automatically.
 
 ~4 waves, ~22 cards. From "I use ChatGPT" to building reliable AI systems.
 
+**COMPLETE — 22 of 22, ten cards written and fourteen already built.**
+
 **Checked against the site before writing, and most of this track was already
 built.** `ai` had 34 cards when the wave started; fourteen of the twenty-two specced
-items already had one. Marked `[x]` below with the card that fills it, so the next
-session does not re-derive the same list.
+items already had one. Every item below is marked with the card that fills it, so the
+next session does not re-derive the list. `ai` is now 44 cards.
+
+The framework card is the one to re-read first when this ages: the category table
+(who owns the loop, who owns the hosting) is durable, the product names under it are
+marked volatile on purpose.
 
 **Wave O1 — How Models Actually Work**
 - [x] Neural Networks From Zero → *Neural Networks & Deep Learning*
-- [ ] The Transformer — attention, tokens, embeddings, why it changed everything
-- [ ] Training Pipeline — pretraining, SFT, RLHF/DPO, what each stage does
-- [ ] Inference Internals — the KV cache, context windows, temperature/top-p
+- [x] The Transformer → *The Transformer — Attention and Why It Changed Everything*
+- [x] Training Pipeline → *Training Pipeline — Pretraining, SFT, RLHF & DPO*
+- [x] Inference Internals → *Inference Internals — KV Cache, Context Windows & Sampling*
 - [x] Classic ML Still Matters → *ML Foundations* + *Machine Learning Fundamentals*
 
 **Wave O2 — Building With LLMs**
@@ -1132,9 +1138,9 @@ session does not re-derive the same list.
 **Wave O3 — Agents & Orchestration**
 - [x] AI Agents → *Agentic AI & Orchestration*
 - [x] Model Context Protocol (MCP) → *Model Context Protocol (MCP) — USB-C for AI*
-- [ ] Multi-Agent Systems — orchestration, hand-offs, the coordination cost
-- [ ] Agent Frameworks — LangChain/LlamaIndex/Agent SDKs compared
-- [ ] Agent Safety & Sandboxing — untrusted output, tool permissions, human-in-loop
+- [x] Multi-Agent Systems → *Multi-Agent Systems — Orchestration, Hand-offs & the Coordination Cost*
+- [x] Agent Frameworks → *Agent Frameworks — What They Give You and What They Cost*
+- [x] Agent Safety & Sandboxing → *Agent Safety & Sandboxing — Permissions, Blast Radius & Human-in-the-Loop*
 
 **Wave O4 — Production AI (LLMOps)**
 - [x] Evaluation Deep → *LLM Evaluation, Guardrails & Diffusion Models*

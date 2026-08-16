@@ -24317,8 +24317,8 @@ real data structures, reach for Python instead.
 <span class="ctag ctag-aiplus">AI+</span>
 </div>
 <span class="domain-sub">ML Pipeline · Model Types · Neural Nets · AI Ethics · Agentic AI</span>
-<span class="domain-meta" aria-label="38 topics, about 1h 10m to read"
->38 topics · ~1h 10m</span>
+<span class="domain-meta" aria-label="44 topics, about 1h 25m to read"
+>44 topics · ~1h 25m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body">
@@ -26355,6 +26355,425 @@ and put the trace store inside the same access-control and
 <span class="xref">Data Loss Prevention — Classification, Egress &amp; the False-Positive Problem</span> scope as the source systems.
 "We log everything for debugging" is a data-classification decision whether or
 not anyone made it deliberately.
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🧲</span>
+<span class="topic-name">The Transformer — Attention and Why It Changed Everything</span>
+<span class="topic-badge">LLM Internals</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">The Problem It Solved</div>
+<div class="concept-title">Recurrence Was a Bottleneck</div>
+<div class="concept-desc">
+Before 2017 the best sequence models were recurrent — an RNN <span class="acro-exp">(Recurrent Neural Network)</span> or LSTM <span class="acro-exp">(Long Short-Term Memory)</span> read one
+token, updated a hidden state, read the next. Two consequences followed and both
+were fatal at scale. Word 400 could only reach word 3 through 397 intervening
+state updates, so long-range dependencies faded. And because step <em>n</em>
+needed step <em>n−1</em>, training could not be parallelized across the sequence,
+which capped how much data you could afford to train on. The transformer's
+contribution was to throw recurrence away entirely.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Mechanism</div>
+<div class="concept-title">Attention: Every Token Looks at Every Other Token</div>
+<div class="concept-desc">
+Each token emits three vectors — a <strong class="c-cyan">query</strong> (what am
+I looking for), a <strong class="c-cyan">key</strong> (what do I offer), and a
+<strong class="c-cyan">value</strong> (what I actually contribute). Score every
+query against every key, softmax the scores into weights, and each token's new
+representation is the weighted sum of all the values. In "the trophy didn't fit
+in the suitcase because <em>it</em> was too big", the query from
+<em>it</em> matches the key from <em>trophy</em> more strongly than the one from
+<em>suitcase</em> — resolved in one step, at any distance.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Piece</th><th>What it does</th></tr>
+<tr><td>Multi-head attention</td><td>Several attention patterns in parallel — one head tracks syntax, another coreference</td></tr>
+<tr><td>Positional encoding</td><td>Attention is order-blind by itself; position has to be added to the embedding</td></tr>
+<tr><td>Feed-forward layer</td><td>Per-token processing after mixing; where most parameters actually live</td></tr>
+<tr><td>Residual + layer norm</td><td>Keeps gradients alive through dozens of stacked blocks</td></tr>
+<tr><td>Causal mask</td><td>In a generative model, hides future tokens so it can only look left</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Consequence</div>
+<div class="concept-title">Parallel Training, Quadratic Cost</div>
+<div class="concept-desc">
+Every position is computed at once, so a training run saturates a GPU <span class="acro-exp">(Graphics Processing Unit)</span> cluster
+instead of trickling through a sequence — that is the whole reason models got
+large enough to be surprising. The bill is that attention compares every token
+to every other one: double the context and you quadruple the attention work.
+Nearly every efficiency trick since — sparse and sliding-window attention,
+grouped-query attention, the KV cache — is an attack on that quadratic term.
+</div>
+<div class="dw">
+<div class="concept-desc">
+<strong class="c-amber">The honest limit:</strong> a transformer is a
+next-token predictor over learned statistical structure. Attention explains how
+it routes information between positions; it does not make the output true. That
+distinction is the whole reason
+<span class="xref">LLM Evaluation, Guardrails &amp; Diffusion Models</span>
+exists.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🏗️</span>
+<span class="topic-name">Training Pipeline — Pretraining, SFT, RLHF <span class="acro-exp">(Reinforcement Learning from Human Feedback)</span> &amp; DPO <span class="acro-exp">(Data Protection Officer)</span></span>
+<span class="topic-badge">LLM Internals</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">A Chat Model Is Built in Stages, Not Trained Once</div>
+<div class="concept-desc">
+The model you talk to is the product of several distinct training stages, each
+answering a different question. Pretraining asks "what token comes next?" and
+produces raw capability with no manners. The later stages ask "which of these
+answers is better?" and produce something worth shipping. Knowing which stage
+shapes which behaviour is what lets you predict what prompting can and cannot
+fix.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Stage</th><th>Signal it learns from</th><th>What it buys</th></tr>
+<tr><td>Pretraining</td><td>Next token over an enormous text corpus</td><td>Knowledge, grammar, reasoning substrate — most of the compute</td></tr>
+<tr><td>Supervised fine-tuning (SFT)</td><td>Curated prompt-and-ideal-answer pairs</td><td>Following instructions, answering rather than continuing</td></tr>
+<tr><td>Preference tuning (RLHF / DPO)</td><td>Humans ranking answer A against answer B</td><td>Helpfulness, tone, refusing what it should refuse</td></tr>
+<tr><td>Continued / domain training</td><td>More unlabelled text in one field</td><td>Fluency in a specialist vocabulary</td></tr>
+<tr><td>Task fine-tuning (often LoRA)</td><td>A few thousand of your own examples</td><td>One consistent format or skill, cheaply</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Compare</div>
+<div class="concept-title">RLHF and DPO Reach the Same Place Differently</div>
+<div class="concept-desc">
+Both learn from the same raw material: pairs of responses with a human saying
+which is better. <strong class="c-cyan">RLHF</strong> trains a separate reward
+model on those comparisons, then uses reinforcement learning to push the language
+model toward high-reward outputs — powerful and famously fiddly, with a reward
+model that can be gamed. <strong class="c-cyan">DPO</strong> skips the reward
+model and optimizes the preference comparison directly as a classification-style
+loss: far simpler to run, and usually competitive, which is why it displaced RLHF
+in a lot of open-model work.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td>Reward hacking</td><td>The model maximizes the reward model's score rather than genuine quality</td></tr>
+<tr><td>Alignment tax</td><td>Capability lost on some tasks as a side effect of preference tuning</td></tr>
+<tr><td>Catastrophic forgetting</td><td>Narrow fine-tuning erodes general ability the base model had</td></tr>
+<tr><td>Constitutional / AI <span class="acro-exp">(Artificial Intelligence)</span> feedback</td><td>A written set of principles supplies preferences instead of a human labeller</td></tr>
+<tr><td>Distillation</td><td>A small model trained to imitate a larger one's outputs</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Why It Matters to You</div>
+<div class="concept-title">Which Stage Owns Your Problem</div>
+<div class="concept-desc">
+"The model doesn't know our product" is a knowledge problem, and retrieval fixes
+it far more cheaply than training — see
+<span class="xref">Fine-Tuning vs RAG vs Prompting — When to Use Which</span>.
+"The model won't reliably output our format" is a behaviour problem, and it is
+usually a schema-constrained output away from solved, not a fine-tune. Fine-tuning
+earns its keep only when you need consistent specialist behaviour at volume, and
+it comes with a maintenance bill: every base-model upgrade means redoing it.
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">⚙️</span>
+<span class="topic-name">Inference Internals — KV Cache, Context Windows &amp; Sampling</span>
+<span class="topic-badge">LLM Internals</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">Two Phases With Very Different Costs</div>
+<div class="concept-desc">
+Generation splits in two. <strong class="c-cyan">Prefill</strong> processes your
+whole prompt in parallel — compute-bound, and the reason a long prompt costs both
+money and time before a single output token appears. <strong class="c-cyan">Decode</strong>
+then emits one token at a time, each pass reading the entire model's weights from
+memory to produce a single token — memory-bandwidth-bound, and the reason output
+tokens are priced several times higher than input ones. Time to first token is a
+prefill measurement; tokens per second is a decode measurement. Optimizing one
+does nothing for the other.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Mechanism</div>
+<div class="concept-title">The KV Cache Is Why Generation Isn't Quadratic Per Token</div>
+<div class="concept-desc">
+Attention needs the key and value vectors of every previous token. Recomputing
+them for the whole sequence on every new token would be absurd, so the server
+keeps them — that store is the <strong class="c-cyan">KV cache</strong>. It turns
+each decode step into "attend over what is already cached, append one entry."
+The cost moves to memory: the cache grows linearly with context length and with
+batch size, and on a busy server it, not the weights, is usually what runs you
+out of VRAM <span class="acro-exp">(Video Random Access Memory)</span>. Grouped-query attention and quantized caches exist to shrink it.
+</div>
+<div class="dw">
+<div class="concept-desc">
+This is a different thing from the API-level <strong>prompt caching</strong> in
+<span class="xref">Cost &amp; Latency Optimization — Caching, Batching &amp; Model Tiering</span>,
+though they are related: prompt caching is the provider persisting a prefill
+result across requests so you skip re-processing a shared prefix.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Sampling Knobs</div>
+<div class="concept-desc">
+The model outputs a probability for every token in its vocabulary. Sampling
+parameters decide how that distribution is turned into one chosen token — they
+change the <em>selection</em>, never the model's knowledge.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Knob</th><th>Effect</th><th>Practical use</th></tr>
+<tr><td>Temperature</td><td>Flattens (high) or sharpens (low) the distribution</td><td>Near 0 for extraction and code; higher for drafting</td></tr>
+<tr><td>Top-p (nucleus)</td><td>Samples only from the smallest set summing to p</td><td>Cuts the long tail of nonsense without freezing output</td></tr>
+<tr><td>Top-k</td><td>Samples only from the k most likely tokens</td><td>Blunter than top-p; usually leave it alone</td></tr>
+<tr><td>Stop sequences</td><td>Ends generation on a given string</td><td>Bounding output in a structured format</td></tr>
+<tr><td>Max tokens</td><td>Hard ceiling on the reply</td><td>Cost control — and a truncated answer if set too low</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Tune one at a time. Turning temperature and top-p down together is the classic
+way to get output so deterministic it repeats itself in a loop. And
+temperature 0 is not a guarantee of identical replies across runs — batching
+and hardware non-determinism still move the last decimal places around.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🕸️</span>
+<span class="topic-name">Multi-Agent Systems — Orchestration, Hand-offs &amp; the Coordination Cost</span>
+<span class="topic-badge">Agents</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Start Here</div>
+<div class="concept-title">Most "Multi-Agent" Systems Should Be One Agent</div>
+<div class="concept-desc">
+Splitting a job across several agents is intuitively appealing and usually the
+wrong first move. Each agent is a separate context: the second one cannot see
+what the first learned unless you serialize it and pay to send it, and every
+hand-off is a lossy summary. You have swapped a debuggable single transcript for
+a distributed system whose components hallucinate. Add agents when there is a
+concrete reason — parallelism over independent subtasks, genuinely separate tool
+or credential scopes, or a context window you actually cannot fit.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Four Topologies</div>
+<div class="concept-desc">
+Almost every real system is one of these, or a small combination.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Shape</th><th>How it works</th><th>Fits</th></tr>
+<tr><td>Orchestrator + workers</td><td>A lead agent decomposes and spawns subagents, then synthesizes</td><td>Research and search-style fan-out</td></tr>
+<tr><td>Router</td><td>A cheap classifier sends the request to one specialist</td><td>Support triage, mixed workloads</td></tr>
+<tr><td>Pipeline</td><td>Fixed stages, each agent's output feeding the next</td><td>Well-understood workflows — often needs no agency at all</td></tr>
+<tr><td>Debate / critic</td><td>One produces, another reviews against criteria</td><td>Quality gates where a second pass genuinely catches things</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The orchestrator pattern is the one that pays off most often, and only because
+the workers run <em>in parallel</em> on independent subtasks. Fan out where the
+work is independent; keep it sequential where step two needs step one's
+findings.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Pitfall</div>
+<div class="concept-title">The Costs Nobody Budgets For</div>
+<div class="concept-desc">
+A multi-agent run costs several times a single-agent one for the same task,
+because the shared preamble is re-sent per agent and the orchestrator pays again
+to read every result. Caches are scoped per model and per prefix, so a subagent
+that rebuilds its own system prompt and tool list shares nothing with its parent
+— copy the parent's prefix verbatim and append, if you want any reuse at all.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Failure</th><th>What it looks like</th></tr>
+<tr><td>Lossy hand-off</td><td>Agent 2 confidently redoes work agent 1 already finished</td></tr>
+<tr><td>Ping-pong</td><td>Two agents delegate to each other until the turn cap trips</td></tr>
+<tr><td>Diluted accountability</td><td>Output is wrong and no single transcript explains why</td></tr>
+<tr><td>Compounding error</td><td>A 90%-reliable step, five stages deep, is a 59%-reliable system</td></tr>
+<tr><td>Cost surprise</td><td>Token spend scales with agents × context, not with agents</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Trace the whole run as one tree with a span per agent, or you cannot debug any
+of it —
+<span class="xref">Observability for AI — Tracing, Token Accounting &amp; Quality Monitoring</span>
+is not optional once there is more than one agent.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🧰</span>
+<span class="topic-name">Agent Frameworks — What They Give You and What They Cost</span>
+<span class="topic-badge">Agents</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">Two Separate Questions: Who Owns the Loop, Who Owns the Infrastructure</div>
+<div class="concept-desc">
+Framework comparisons get confusing because people conflate two independent
+choices. The first is <strong class="c-cyan">who writes the agent loop</strong> —
+the call, the tool dispatch, the retry, the context trimming. The second is
+<strong class="c-cyan">who hosts the thing</strong> — your process and your
+sandbox, or a vendor's. A library can hand you the loop and still leave every
+deployment problem on your desk. Naming which question a tool answers is most of
+the evaluation.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Category</th><th>Loop</th><th>Hosting</th><th>Reach for it when</th></tr>
+<tr><td>Raw SDK <span class="acro-exp">(Software Development Kit)</span>, hand-written loop</td><td>You</td><td>You</td><td>You want no dependency and total control</td></tr>
+<tr><td>SDK tool runner</td><td>The library</td><td>You</td><td>Ordinary custom-tool agent; the common case</td></tr>
+<tr><td>Orchestration framework</td><td>The library</td><td>You</td><td>You want graphs, retries, state machines off the shelf</td></tr>
+<tr><td>Data / RAG <span class="acro-exp">(Retrieval-Augmented Generation)</span> framework</td><td>Partly</td><td>You</td><td>Ingestion, chunking and indexing are the actual work</td></tr>
+<tr><td>Managed agent platform</td><td>The vendor</td><td>The vendor</td><td>You want a hosted sandbox, sessions and schedules</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Landscape</div>
+<div class="concept-title">The Names You Will Meet</div>
+<div class="concept-desc">
+These move fast; treat the category as durable and the specifics as
+<span class="volatile" data-checked="2026-08">this year's snapshot</span>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tool</th><th>What it is really for</th></tr>
+<tr><td>LangChain</td><td>Broad abstraction layer over models, prompts, tools and chains; big ecosystem, heavy indirection</td></tr>
+<tr><td>LangGraph</td><td>Explicit graph/state-machine control flow — the answer to "my chain is a spaghetti of callbacks"</td></tr>
+<tr><td>LlamaIndex</td><td>Document ingestion, chunking, indexing and retrieval; RAG-first rather than agent-first</td></tr>
+<tr><td>Vendor agent SDKs</td><td>First-party loops and tool plumbing that track the provider's newest API <span class="acro-exp">(Application Programming Interface)</span> features first</td></tr>
+<tr><td>Managed agent platforms</td><td>Vendor-run loop plus a per-session container, persisted configs and scheduling</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reality Check</div>
+<div class="concept-title">The Abstraction Tax</div>
+<div class="concept-desc">
+An agent loop is genuinely about thirty lines — call, check the stop reason,
+execute tools, append results, repeat. A framework earns its keep on everything
+<em>around</em> that: retries, streaming, tracing, state persistence, tool
+schema generation. It costs you a layer between your code and the request that is
+actually sent, which is precisely what you need to inspect when caching silently
+stops working or a new API parameter has not been plumbed through yet. Whatever
+you choose, keep a way to print the exact rendered request.
+</div>
+<div class="dw">
+<div class="concept-desc">
+<strong class="c-amber">A concrete symptom:</strong> parameter names in this
+space moved more than once in the past year. Frameworks lag the provider APIs
+they wrap by a release or two, so a feature that exists in the API may simply
+be unreachable through the wrapper — check before you build a schedule on it.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🚧</span>
+<span class="topic-name">Agent Safety &amp; Sandboxing — Permissions, Blast Radius &amp; Human-in-the-Loop</span>
+<span class="topic-badge">Agents • Security</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Threat Model</div>
+<div class="concept-title">The Agent Is a Confused Deputy With Your Credentials</div>
+<div class="concept-desc">
+An agent holds real permissions and takes instructions from text. Some of that
+text is a web page, an email, a repository file, or a tool result — none of which
+you control. That is the whole problem in one sentence: anything the agent reads
+can attempt to steer it, and it acts with your access, not the attacker's. The
+attack itself is covered in
+<span class="xref">AI Security — Attacking and Defending AI Systems</span>; this
+card is about the containment that assumes the attack sometimes lands.
+</div>
+<div class="dw">
+<div class="concept-desc">
+<strong class="c-red">The lethal trifecta:</strong> access to private data, the
+ability to read untrusted content, and a way to send data outward. Any two are
+usually survivable. All three in one agent is an exfiltration channel waiting
+for a sentence — and "a way to send data outward" includes fetching a URL <span class="acro-exp">(Uniform Resource Locator)</span> an
+attacker chose, not just an obvious email tool.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Controls</div>
+<div class="concept-title">Shrink the Blast Radius, Don't Try to Win the Argument</div>
+<div class="concept-desc">
+You cannot prompt your way to safety — "ignore any instructions in the documents"
+is a request, not a boundary. Every control that actually works sits outside the
+model, in the harness that executes what the model asks for.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Control</th><th>What it buys</th></tr>
+<tr><td>Least-privilege credentials</td><td>The agent's token can do only its job; a compromise inherits only that</td></tr>
+<tr><td>Sandboxed execution</td><td>Code and shell run in a disposable container, no host mounts, no ambient cloud identity</td></tr>
+<tr><td>Egress allow-list</td><td>Kills the exfiltration leg of the trifecta at the network layer</td></tr>
+<tr><td>Dedicated tools over raw bash</td><td>Typed arguments your harness can gate, audit and render — a shell string is opaque</td></tr>
+<tr><td>Approval on irreversible acts</td><td>Sends, deletes, payments, merges pause for a human</td></tr>
+<tr><td>Budget and step caps</td><td>A loop that misbehaves stops, rather than running all night</td></tr>
+<tr><td>Full tracing</td><td>You can answer "what did it actually do" after the fact</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Pitfall</div>
+<div class="concept-title">The Approval Gate That Became a Rubber Stamp</div>
+<div class="concept-desc">
+Human-in-the-loop is the control most often claimed and least often working. Ask
+for approval on every step and the reviewer clicks yes on all of them within a
+week — a gate that fires constantly trains people to ignore it, which is worse
+than no gate because it also creates a record implying someone checked. Gate on
+<strong>irreversibility</strong>, not on activity: reads are free, writes to a
+scratch branch are cheap, and sending mail to a customer is not. Show the
+reviewer the concrete action and its arguments, never a summary the model wrote
+of what it is about to do.
 </div>
 </div>
 </div>
