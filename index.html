@@ -5520,8 +5520,8 @@ overlays, and security inspection built into the fabric.
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">CIA Triad · AAA · Access Control · PKI · Crypto · Cloud · Zero Trust · Kerberos</span>
-<span class="domain-meta" aria-label="52 topics, about 2h 00m to read"
->52 topics · ~2h 00m</span>
+<span class="domain-meta" aria-label="55 topics, about 2h 05m to read"
+>55 topics · ~2h 05m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body">
@@ -9608,6 +9608,187 @@ to the process if we do."
 containment steps assume you can isolate freely. In OT you cannot; safety and the process
 come first, containment second, and the plant engineer, not the SOC <span class="acro-exp">(Security Operations Center)</span>, has the final call
 on touching a live controller.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: PHYSICAL SECURITY SYSTEMS ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🚪</span>
+<span class="topic-name">Physical Security Systems — Access Control, CCTV &amp; the Facility Layers</span>
+<span class="topic-badge">SecurityX • Physical</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">The Network Control Is Pointless if Someone Can Walk Out With the Drive</div>
+<div class="concept-desc">
+Physical security is the half of the job that does not appear in a SIEM <span class="acro-exp">(Security Information and Event Management)</span>, and it fails the
+same way network security does — at the seams between controls, exploited by a human. The
+goal is defence in depth made physical: layers from the property line inward, so that
+defeating one barrier only lands the intruder in front of the next, and every layer is both
+a deterrent and a detector.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Layer</th><th>Controls</th></tr></thead>
+<tbody>
+<tr><td>Perimeter</td><td>Fencing, lighting, signage, gates — deter and delay</td></tr>
+<tr><td>Building</td><td>Badge readers, reception, visitor control, locked doors</td></tr>
+<tr><td>Interior</td><td>Zoned access, mantraps for sensitive areas, escorts</td></tr>
+<tr><td>Asset</td><td>Locked racks, cable locks, safes, media in a controlled store</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Access Control &amp; Its Two Human Bypasses</div>
+<div class="concept-desc">
+Badge systems are only as strong as the credential and the people using them, and the two
+classic defeats need no technical skill at all.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Weakness</th><th>Fix</th></tr></thead>
+<tbody>
+<tr><td>Tailgating — following someone through a door</td><td>Mantraps and turnstiles at sensitive entries; a culture that challenges strangers</td></tr>
+<tr><td>125 kHz prox cards</td><td><span class="c-red">Clone in seconds</span> — move to encrypted smart credentials; treat old prox as no control at all</td></tr>
+<tr><td>Anti-passback disabled "for convenience"</td><td>Enforce it — one badge in must mean one badge out</td></tr>
+<tr><td>Shared / propped doors</td><td>Door-held alarms and monitoring; make the exception visible</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">CCTV is evidence, not prevention.</strong> It deters and it
+reconstructs, but nobody is watching every camera live. Its value is in retention that
+outlasts discovery, coverage without blind spots at the choke points, and footage of
+evidentiary quality — and it carries real privacy-law duties on what you record and how
+long you keep it. Environmental monitoring (power, cooling, water, fire suppression)
+belongs in the same system: the most common "physical" outage is a failed HVAC or a
+burst pipe, not an intruder.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: INSIDER THREAT ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🎭</span>
+<span class="topic-name">The Insider Threat Programme — Malicious, Negligent &amp; Compromised</span>
+<span class="topic-badge">SecurityX • Insider</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">Three Insiders, Three Different Controls</div>
+<div class="concept-desc">
+"Insider threat" collapses three genuinely different problems that share only a starting
+point — legitimate access. Treating them as one produces a programme that catches none of
+them. The malicious insider intends harm; the negligent one causes it by accident; the
+compromised one is an outsider wearing valid credentials. The control that stops one barely
+touches the others.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Type</th><th>Motivation</th><th>Primary control</th></tr></thead>
+<tbody>
+<tr><td>Malicious</td><td>Grievance, greed, espionage</td><td>Least privilege, separation of duties, monitoring, offboarding</td></tr>
+<tr><td>Negligent</td><td>Carelessness, shortcuts</td><td>Training, guardrails, making the safe path the easy path</td></tr>
+<tr><td>Compromised</td><td>None — it is an attacker</td><td>MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, anomaly detection, credential hygiene</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Behavioural analytics (UEBA) helps across all three by flagging access that does not fit
+the person's pattern — but it watches people, and that is an ethical and legal line, not
+just a technical capability.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Controls That Actually Move the Needle</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Control</th><th>Why it works</th></tr></thead>
+<tbody>
+<tr><td>Least privilege &amp; SoD</td><td>Bounds what any one insider can do alone; no single person owns a whole fraud</td></tr>
+<tr><td>Offboarding as a control</td><td class="c-red">Access that outlives employment is the most common insider gap — revoke on the day, everything, verified</td></tr>
+<tr><td>Joiner-mover-leaver</td><td>Role changes must remove old access, not just add new — privilege creep is a slow insider risk</td></tr>
+<tr><td>A cross-functional programme</td><td>Legal, HR and IT together — IT alone cannot run this, and going solo creates liability</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The ethics are load-bearing, not optional.</strong> Monitoring
+employees has legal limits that vary by jurisdiction, and a programme perceived as
+surveillance destroys the trust it depends on. Define scope, get legal sign-off, be
+transparent about what is monitored, and keep HR in the room. The cleared-environment
+version of this discipline is in
+<span class="xref">Clearance Paperwork — SF 86, SF 312 &amp; SF 714</span>.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: INTERNAL INVESTIGATIONS ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🔍</span>
+<span class="topic-name">Internal Investigations &amp; Evidence Handling — Staying in Your Lane</span>
+<span class="topic-badge">SecurityX • Investigations</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">The Fastest Way to Ruin a Case Is to Investigate It Wrong</div>
+<div class="concept-desc">
+When IT is pulled into a suspected-misconduct or breach investigation, the instinct to dig
+in immediately is exactly the wrong one. Acting without authorization, tipping off the
+subject, or handling evidence carelessly can destroy a case, expose the company to a
+wrongful-action claim, and put the investigator personally at risk. The discipline is to
+move deliberately, under authority, and to know precisely where your lane ends.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Before you touch anything</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Written authorization &amp; scope</td><td>Investigating without it is itself misconduct; scope keeps you legal</td></tr>
+<tr><td>Loop in legal and HR first</td><td>They own the process; IT provides technical support, not verdicts</td></tr>
+<tr><td>Preserve before you analyse</td><td>A legal hold and a forensic image first — analysis on a copy, never the original</td></tr>
+<tr><td>Do not tip off the subject</td><td>Altered permissions or an obvious pull warns them and can trigger destruction</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Evidence That Survives Challenge</div>
+<div class="concept-desc">
+If the matter might reach a tribunal, a court, or a termination that gets contested, the
+evidence has to withstand a hostile review. That means the same forensic rigour the
+<span class="xref">Digital Forensics — Reconstructing What Happened</span> card describes,
+applied from the first minute.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Practice</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td>Chain of custody</td><td>A documented, unbroken record of who held the evidence and when</td></tr>
+<tr><td>Image &amp; hash</td><td>Work on a verified bit-for-bit copy; the hash proves it is unaltered</td></tr>
+<tr><td>Contemporaneous notes</td><td>Write down what you did as you did it — memory is not evidence</td></tr>
+<tr><td>Report the facts, not a verdict</td><td>Findings, evidence and their limits; no speculation, no accusation</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-red">What IT should not do:</strong> conduct accusatory interviews,
+make the disciplinary decision, or contact law enforcement on its own. Those are HR,
+legal and leadership calls. Provide the technical facts, cleanly gathered, and hand off
+at the boundary — overreaching here is how a solid technical case gets thrown out.
 </div>
 </div>
 </div>

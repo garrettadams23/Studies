@@ -2512,6 +2512,17 @@ support if the business bought it tomorrow.
 
 ~4 waves, ~20 cards. The half of security that is not on the network.
 
+**AR1–AR3 core written — 3 consolidated cards into `sec`.** Physical security, insider
+threat and investigations had only passing mentions; no dedicated cards. `sec` 49→52.
+
+- [x] Physical Security Systems (access control, cloning, CCTV, mantraps, environmental) → *Physical Security Systems — Access Control, CCTV & the Facility Layers*
+- [x] The Insider Threat Model + behavioural indicators + SoD + offboarding + programme → *The Insider Threat Programme — Malicious, Negligent & Compromised*
+- [x] Investigations + evidence handling + interviewing + working with legal + report → *Internal Investigations & Evidence Handling — Staying in Your Lane*
+- [x] AR4 OSINT/attack-surface (defensive) → largely covered by `threat`/`redteam` OSINT cards
+- [ ] Remaining (narrower): datacenter facility specifics, credential-cloning deep, CCTV evidentiary detail, insider-programme build-out, interview technique — follow on demand
+
+Cross-linked to the SF-312 clearance card and the digital-forensics card.
+
 **Wave AR1 — Physical Security Systems**
 - [ ] Access Control Systems — badges, readers, controllers, anti-passback, tailgating
 - [ ] Credential Cloning — why 125 kHz prox is not a control, and what to move to
