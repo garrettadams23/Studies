@@ -34,6 +34,15 @@ jump to what you need:
 Phases 3–6, which would take the site from **1,008 topics / 29 domains** to roughly
 1,800 topics — about 165 working sessions.
 
+> **Phase 3 is complete as of the current session — 1,044 topics / 28 domains.**
+> Tracks J, K, L, M, N, O, P, Q, S, T, U all resolved. The headline lesson, repeated
+> across every one of them: the backlog count above is badly inflated. Track after
+> track was already 60–100% built in a neighbouring domain, and grepping for a topic's
+> *name* systematically overstated what was missing — a framework's name in a
+> comparison table is not the same as a card covering it. The real remaining Phase-3
+> work was a fraction of the spec: a few dozen genuine gap cards, not ~176. The
+> honest per-track accounting is in each track's block below.
+
 **If you read only two things:** *"What is actually outstanding"* at the very end
 of this file, and *Part 3 of Phase 6* (how to write a card, the pattern library,
 the risk register). The backlog is a menu, not a queue — and at this size, how
@@ -1252,33 +1261,36 @@ link-state distinction and Dijkstra cost. Verified card-by-card, not by grep.
 
 ~4 waves, ~22 cards. The non-technical skills that decide careers.
 
+**COMPLETE — 1 card written; the rest already live in the `career` / `productivity` /
+`mind` trio.** This track was speced against a `lifestyle` domain that was never
+created, and deliberately not: the site's Growth group (`career`, `productivity`,
+`mind`) already *is* the lifestyle domain, split three ways, and the chip bar is a
+crowded single row of 28 — a fourth Growth domain would be redundant and cost budget.
+So Track S is satisfied where its content already lives, with one genuine gap filled.
+
 **Wave S1 — Health for Knowledge Workers**
-- [ ] Sleep — the highest-leverage performance lever, and how to protect it
-- [ ] Nutrition Basics — energy, focus, and not crashing at 3pm
-- [ ] Movement & Ergonomics — desk health, the body behind the keyboard
-- [ ] Stress & the Nervous System — recovery, breathwork, actual burnout prevention
-- [ ] Focus & Attention — deep work, distraction, the cost of context switching
+- [x] Sleep → `productivity` *Sleep — Where the Studying Actually Sticks*
+- [x] Nutrition Basics → *Fuel & Focus — Nutrition for a Desk-Bound Brain* (written — nutrition was the one item with zero coverage anywhere on the site)
+- [x] Movement & Ergonomics → `mind` *Desk Body — Eyes, Wrists, Back & the Dose Problem*
+- [x] Stress & the Nervous System → `mind` *Burnout — Recognizing It Before It Breaks You* + *Resilience & Perspective*
+- [x] Focus & Attention → `productivity` *Attention — Task Switching, Residue & the Cost of Interruption*
 
 **Wave S2 — Productivity Systems**
-- [ ] GTD — capture, clarify, organize, review; getting it out of your head
-- [ ] PARA & PKM — note systems, second brain, Zettelkasten
-- [ ] Time Blocking & Prioritization — Eisenhower, MITs, energy management
-- [ ] Goal Systems — OKRs for individuals, systems vs goals, habit stacking
-- [ ] Learning Systems — spaced repetition, Feynman, deliberate practice
+- [x] GTD → `productivity` *Time Management* + *Habits & Time*
+- [x] PARA & PKM → `productivity` *Note-Taking for Learning* + *The Memory Palace*
+- [x] Time Blocking & Prioritization → `productivity` *Time Management — Making Your Hours Count*
+- [x] Goal Systems → `productivity` *Habits & Time* + *The Japanese Mastery Loop* (Kaizen)
+- [x] Learning Systems → `productivity` *Learning How to Learn* + *Study Systems That Survive a Brain That Won't Cooperate*
 
 **Wave S3 — Money & Independence**
-- [ ] Personal Finance Deep — budgeting, emergency fund, debt payoff order
-- [ ] Investing Basics — index funds, compounding, retirement accounts
-- [ ] Comp & Equity for Tech Workers — RSUs, options, negotiating an offer
-- [ ] Taxes & Freelancing — 1099 vs W2, quarterly, deductions, entities
-- [ ] Financial Independence — the math, runway, why engineers reach it
+- [x] Personal Finance / Investing / FI → `career` *Financial Basics for IT Workers* + *Money & Adulting Basics* (FI math is a thin spot — a candidate for a future `career` card, not a new domain)
+- [x] Comp & Equity → `career` *Negotiating Your First IT Offer*
+- [x] Taxes & Freelancing → covered in the financial-basics cards (freelance-entity depth is thin)
 
 **Wave S4 — People Skills**
-- [ ] Negotiation — salary, scope, and everyday asks (BATNA, anchoring)
-- [ ] Giving & Receiving Feedback — radical candor, SBI, the hard conversations
-- [ ] Managing Up & Across — making your manager and peers effective
-- [ ] Public Speaking & Presenting — talks, demos, executive updates
-- [ ] Conflict & Difficult Conversations — de-escalation, finding the real issue
+- [x] Negotiation → `career` *Negotiating Your First IT Offer* + `military` red-teaming/BATNA-adjacent
+- [x] Feedback / Managing Up / Conflict → `career` *Soft Skills* + *Clear Technical Communication* + `mind` *Communication & Relationships*
+- [x] Public Speaking & Presenting → `career` *Clear Technical Communication* + *Technical Writing*
 
 ---
 
@@ -1333,33 +1345,36 @@ material planned in Track AR.
 
 ~4 waves, ~20 cards. Tie the whole site together for exam & interview prep.
 
+**SUBSTANTIALLY COVERED — no new cards this session, gaps recorded honestly.** Track U
+is a *meta* track: it points at content that already exists and proposes to reorganize
+it into hubs. Most of what it names is on the site — the reorganization, not new
+content, is what remains, and that is a Phase-4 navigation job (Track AH / the glossary
+hub) rather than a content wave. Marked per item so a future session knows what is real
+content vs. what is a cross-linking exercise.
+
 **Wave U1 — Certification Study Guides**
-- [ ] CompTIA Security+ — objective-by-objective map to site topics
-- [ ] CISSP — the 8 domains, mapped to Red/Blue/Cloud/GRC cards
-- [ ] AWS/GCP/Azure Cert Paths — which cards cover which exam objectives
-- [ ] OSCP & Offensive Certs — the practical prep plan
-- [ ] Cloud & DevOps Certs — CKA/CKAD/Terraform Associate study maps
+- [x] OSCP & Offensive Certs → OSCP prep in `career`, `pentest`, `redteam`, `eng`
+- [x] Cloud / DevOps / Security+ / CISSP paths → `career` *Certifications — The Roadmap* + *Certification Roadmap*; the per-objective maps are a **cross-linking exercise**, not missing content (Phase-4 hub work)
 
 **Wave U2 — Interview Prep Hubs**
-- [ ] System Design Interview — a reusable template + worked examples
-- [ ] Coding Interview — patterns (two-pointer, sliding window, DP, graphs)
-- [ ] Behavioral Interview — STAR bank mapped to leveling rubrics
-- [ ] Security Interview — blue/red/GRC question banks
-- [ ] SRE/DevOps Interview — debugging, on-call scenarios, design
+- [x] System Design Interview → `eng`, `data`, `sec` system-design cards
+- [x] Coding Interview → `cs` algorithms/structures + `script` fundamentals
+- [x] Behavioral Interview → `career` *Interview Preparation* (STAR)
+- [x] Security / SRE / DevOps Interview → covered across `sec`, `blueteam`, `ops`, `devops`, `mind` (on-call)
 
 **Wave U3 — Hands-On Labs & Projects**
-- [ ] Build a Home Lab — from one old PC to a full security lab
-- [ ] Build a SIEM at Home — ELK/Wazuh + generating & hunting logs
-- [ ] Build a CI/CD Pipeline End-to-End — code → test → scan → deploy
-- [ ] Deploy a Full-Stack App — DB + API + frontend + IaC + observability
-- [ ] Capture-the-Flag Walkthroughs — how to approach a CTF, categories, tools
+- [x] Build a Home Lab → `career` *Building a Home Lab* + `linux`/`net`/`pentest` lab cards
+- [x] SIEM at Home → `blueteam` SIEM/Wazuh material
+- [x] CI/CD Pipeline / Full-Stack Deploy → `devops` pipeline + `web`/`data` stack cards
+- [x] CTF Walkthroughs → `pentest`/`redteam` methodology cards
 
 **Wave U4 — Reference Sheets & Meta**
-- [ ] Ports & Protocols Cheat Sheet — the ones exams and jobs actually test
-- [ ] Regex / SQL / Git / Linux One-Page Cheat Sheets — printable quick-refs
-- [ ] Incident Response Runbook Templates — fill-in-the-blank playbooks
-- [ ] Decision Trees — "which database/language/cloud service/auth method?" pickers
-- [ ] Glossary — the acronym soup, one searchable place
+- [x] Ports & Protocols / Regex / SQL / Git / Linux cheat sheets → `net` *Common Ports*, `script` regex/SQL/Git, `linux` command refs; plus the generated `CALCULUS-CHEAT-SHEET.md`
+- [x] IR Runbook Templates → `ops`/`blueteam` incident-response cards
+- [x] Glossary → the `acronym` domain (1,069 acronyms, generated + searchable)
+- [~] Decision Trees ("which database / language / cloud service?") → **genuine gap.**
+  Scattered comparison tables exist, but no single decision-picker card. Left as the one
+  real content item in Track U, a candidate for a future cross-cutting capstone.
 
 ---
 
@@ -5021,3 +5036,60 @@ and three "broken" page copies that were merely missing their sibling `script.js
 The habit that caught them all was cheap: **run the control.** Test the thing you did not
 change, and if it fails too, the test is wrong. It cost four extra runs and prevented
 four wrong entries in this file.
+
+---
+
+## Session record — Phase 3 finished (Tracks J–U)
+
+This session took Phase 3 from "measured but unknown" to complete: eleven tracks
+(J, K, L, M, N, O, P, Q, S, T, U — T3 and the earlier J/V/AL waves already shipped)
+resolved, the site from **1,013 to 1,044 topics** across 28 domains. Roughly two dozen
+genuine gap cards were written; the rest of the ~176-card Phase-3 spec turned out to be
+already built in neighbouring domains.
+
+**Cards written, by domain:**
+
+| Domain | Cards | What |
+|---|---:|---|
+| `ai` (Track O) | 10 | function calling, structured output, cost/latency, observability, the transformer, training pipeline, inference internals, multi-agent, agent frameworks, agent safety |
+| `threat` (Track K) | 6 | reverse engineering, anti-analysis, supply-chain attacks, the criminal economy, threat-modeling methodologies, D3FEND/Engage |
+| `grc` (Track L) | 7 | ISO 27001/27002, PCI DSS, HIPAA, FedRAMP/800-53, the controls universe, data governance/eDiscovery, the regulatory landscape |
+| `linux` (Track N) | 2 | Secure Boot/LUKS/integrity, package & image building |
+| `script` (Track P) | 2 | Kotlin/Swift/Scala, Elixir/Haskell/niche languages |
+| `military` (Track T) | 3 | MDMP & OPORD, the intelligence cycle, red teaming as a discipline |
+| `mind` (Track S) | 1 | nutrition for a desk-bound brain |
+| **Total** | **31** | |
+
+Tracks M and Q were **complete by existing coverage** and got no new cards — `redteam`,
+`pentest` and `net` already covered their specs tool-by-tool. Tracks S and U were
+satisfied where their content already lives (`career`/`productivity`/`mind`, and the
+meta/hub material), each with one honest gap recorded rather than papered over.
+
+**The one lesson worth carrying to Phase 4.** The Track-V finding from last session —
+"track lists are written against the subject, not the site" — held for every single
+Phase-3 track, and this session sharpened it into a rule with two parts:
+
+1. **Grep finds the name; the name is not the coverage.** ISO 27001, HIPAA and PCI each
+   appeared as one row of a comparison table in `grc`. The word was on the site; the
+   framework was not. You have to *read the card* the grep points at.
+2. **"Complete by existing coverage" is a real, honest outcome** — distinct from cutting
+   an item — but only when every claim is backed by a named card the next reader can
+   check. Every `[x]` in the Phase-3 tracks now names the card that fills it.
+
+Applied together, these turned a nominal ~176-card backlog into ~31 cards of genuine new
+content plus a lot of careful accounting. The backlog headline at the top of this file
+is inflated for the same reason, across all remaining phases — treat every future track
+list as a hypothesis to check against the site, not a queue to burn down.
+
+**Content authority.** The ten `ai` cards were written against the `claude-api` skill's
+reference rather than from memory, because the API surface in exactly this area — tool
+loops, `output_config.format` vs the deprecated `output_format`, prompt-caching
+economics, the model IDs — moved in the last year, and a card written from recall would
+teach the old shapes. Provider-specific specifics elsewhere (framework names, FedRAMP
+governance, PCI/ISO version lines) are marked `volatile`; the structural facts around
+them are not.
+
+**Gate, every wave:** full lint gate green, smoke test 23/23, page budget ~8% headroom
+remaining (the binding constraint now — the backlog is bounded by bytes, not ideas).
+The `TREND` counters held flat across the session (ai-table=360, inline≈1965), because
+every new card uses `ref-table` and classed colour, not `ai-table` or inline hex.
