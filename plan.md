@@ -1631,29 +1631,33 @@ Pairs directly with the `redteam` AD-attack cards — same objects, defender's v
 
 ### TRACK Y — Endpoint Engineering Depth  (→ `endpoint`, 13 → ~55)
 
-~8 waves, ~40 cards. The domain closest to the maintainer's day job, and the
-thinnest on the site. Builds on the MECM troubleshooting cards already shipped.
+~8 waves, ~40 cards. The domain closest to the maintainer's day job.
+
+**In progress — Y1–Y3 were already built (endpoint reached 29 cards since this track
+was speced), Y5 shipped this session.** endpoint is now 34. Remaining: Y4 provisioning
+depth, Y6 compliance/CA depth, Y7 MECM site design, Y8 analytics/fleet. `[x]` marks
+the card that fills each item below.
 
 **Wave Y1 — Intune Deep: Policy**
-- [ ] Configuration Profiles — settings catalog vs templates vs custom OMA-URI
-- [ ] Policy Conflicts — how Intune resolves them, and how to prove which one won
-- [ ] Security Baselines — applying them without breaking the fleet
-- [ ] Administrative Templates in Intune — ADMX-backed policy and its limits
-- [ ] Assignment Strategy — user vs device targeting, filters, exclusion groups
+- [x] Configuration Profiles → *Configuration Profiles — Settings Catalog, Templates & Custom*
+- [x] Policy Conflicts → *Policy Conflicts — Proving Which One Won*
+- [x] Security Baselines → *Security Baselines Without Breaking the Fleet*
+- [x] Administrative Templates → *Administrative Templates & ADMX-Backed Policy*
+- [x] Assignment Strategy → *Assignment Strategy — Users, Devices, Filters & Exclusions*
 
 **Wave Y2 — Intune Deep: Applications**
-- [ ] Win32 App Packaging — `.intunewin`, detection, requirements, dependencies, supersedence
-- [ ] Install Contexts — system vs user, and the failures that come from choosing wrong
-- [ ] Store, LOB & Enterprise App Catalog Apps — when each is the right vehicle
-- [ ] App Protection Policies — MAM without enrolment, on unmanaged devices
-- [ ] Application Troubleshooting — reading the IME log like a professional
+- [x] Win32 App Packaging → *Win32 App Packaging — .intunewin End to End*
+- [x] Install Contexts → *Install Contexts — System vs User*
+- [x] Store/LOB/Catalog → *Store, LOB & Enterprise App Catalog Apps*
+- [x] App Protection Policies → *App Protection Policies — MAM Without Enrolment*
+- [x] Application Troubleshooting → *Application Troubleshooting — Reading the IME Log*
 
 **Wave Y3 — Windows Servicing & Updates**
-- [ ] Windows Update for Business — rings, deferrals, deadlines, pause
-- [ ] Feature vs Quality vs Driver Updates — three pipelines with three risk profiles
-- [ ] Windows Autopatch — what it takes over, and what it does not
-- [ ] Update Compliance Reporting — proving the fleet is patched
-- [ ] Emergency Patching — an out-of-band CVE, from advisory to verified deployment
+- [x] Windows Update for Business → *Windows Update for Business — Rings, Deferrals & Deadlines*
+- [x] Feature/Quality/Driver → *Feature vs Quality vs Driver Updates*
+- [x] Windows Autopatch → *Windows Autopatch — What It Takes Over*
+- [x] Update Compliance Reporting → *Update Compliance Reporting — Where the Truth Lives*
+- [x] Emergency Patching → *Emergency Patching — Advisory to Verified*
 
 **Wave Y4 — Provisioning & Imaging**
 - [ ] Autopilot Deep — profiles, hash harvesting, deployment modes, hybrid vs Entra join
@@ -1663,11 +1667,11 @@ thinnest on the site. Builds on the MECM troubleshooting cards already shipped.
 - [ ] Reprovisioning & Device Reuse — wipe, fresh start, retire, and what each actually removes
 
 **Wave Y5 — Endpoint Security**
-- [ ] BitLocker at Scale — silent enablement, key escrow, recovery, TPM attestation
-- [ ] Defender for Endpoint & Intune — onboarding, ASR rules, tamper protection
-- [ ] Local Admin Rights — removing them, and the endpoint privilege management options
-- [ ] Windows LAPS — the modern version, in Entra and in AD
-- [ ] Firewall & Removable Media Policy — the two controls auditors always ask about
+- [x] BitLocker at Scale → *BitLocker at Scale — Silent Enablement, Key Escrow & Recovery* (written)
+- [x] Defender for Endpoint → *Defender for Endpoint & Intune — Onboarding, ASR Rules & Tamper Protection* (written)
+- [x] Local Admin Rights → *Local Admin Rights — Removing Them, and Endpoint Privilege Management* (written)
+- [x] Windows LAPS → *Windows LAPS — Local Admin Password Rotation in Entra and AD* (written)
+- [x] Firewall & Removable Media → *Firewall & Removable Media Policy — The Two Controls Auditors Ask About* (written)
 
 **Wave Y6 — Compliance & Conditional Access**
 - [ ] Compliance Policies Deep — settings, grace periods, and what "non-compliant" costs a user
@@ -1694,6 +1698,22 @@ thinnest on the site. Builds on the MECM troubleshooting cards already shipped.
 
 ~5 waves, ~25 cards. The layer under everything, and the one nobody tests until
 they need it.
+
+**Wave shipped this session — 6 cards covering the core void** (`infra` had no
+virtualization or backup at all). Written as the essential spine rather than all 25
+specced: fundamentals + the two-hypervisor comparison, snapshots-are-not-backups,
+3-2-1-1-0 strategy, ransomware-resilient backup, and restore testing / DR posture. The
+remaining Z items (SAN/fabric depth, storage performance, P2V/V2V, product-specific
+Veeam mechanics) are genuine but narrower and can follow if the estate needs them.
+`infra` is now 34.
+
+- [x] Virtualization Fundamentals → *Virtualization Fundamentals — Hypervisors, Overcommit & the Noisy Neighbour*
+- [x] vSphere / Hyper-V / Proxmox·KVM → *Hyper-V, vSphere & the Open-Source Stack — The Vocabulary That Transfers* (three specced cards consolidated into one comparison — the six shared ideas are the lesson)
+- [x] Snapshots Are Not Backups → *Snapshots Are Not Backups — What They Cost and How They Bite*
+- [x] Backup Strategy → *Backup Strategy — 3-2-1-1-0 and the Schemes That Make Restores Possible*
+- [x] Ransomware-Resilient Backup → *Ransomware-Resilient Backup — Immutability, Isolation & Assuming the Domain Is Lost*
+- [x] Restore Testing + DR Design + DR for Cloud/SaaS → *Restore Testing & DR Design — Turning Backups Into a Recovery Capability*
+- [ ] Remaining: sizing/overcommit deep, VM lifecycle/templates, live migration ops, P2V/V2V, storage fundamentals/SAN/NAS/performance/tiering, backup targets & products, failover/failback drill, tabletop, post-incident review (narrower depth — follow on demand)
 
 **Wave Z1 — Hypervisors**
 - [ ] Virtualization Fundamentals — type 1 vs type 2, paravirtualization, hardware assist
