@@ -2449,4 +2449,237 @@ Remove-PSSession $s
   </div>
 </div>
 
+
+<!-- ── TOPIC: COMPLIANCE POLICIES DEEP ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">✅</span>
+    <span class="topic-name">Compliance Policies Deep — Settings, Grace Periods &amp; What Non-Compliant Costs</span>
+    <span class="topic-badge">Endpoint • Compliance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Compliance Policy Only Bites Through Conditional Access</div>
+      <div class="concept-desc">
+        A compliance policy on its own does nothing but set a flag: compliant or not. It has no
+        teeth until Conditional Access is configured to <em>require</em> compliance for a resource
+        — then a non-compliant device is blocked from mail, files and apps. People routinely
+        deploy compliance policies, see devices marked non-compliant, and wonder why nothing
+        happened. Nothing happened because the enforcement lives in CA, not in the policy.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Common setting</th><th>What it checks</th></tr></thead>
+          <tbody>
+            <tr><td>OS <span class="acro-exp">(Operating System)</span> version floor</td><td>Minimum build — the lever for forcing an update deadline</td></tr>
+            <tr><td>Disk encryption</td><td>BitLocker/FileVault on</td></tr>
+            <tr><td>Secure boot / firmware</td><td>Health-attestation signals on supported hardware</td></tr>
+            <tr><td>Defender / antivirus</td><td>Real-time protection on, signatures current</td></tr>
+            <tr><td>Password / PIN</td><td>Complexity and lock timeout</td></tr>
+            <tr><td>Device risk level</td><td>The Defender for Endpoint risk score, as a threshold</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Grace Period — Warn Before You Block</div>
+      <div class="concept-desc">
+        Marking a device non-compliant the instant it drifts, and blocking it the same second,
+        locks people out over a signature that is four hours stale. The
+        <strong class="c-cyan">grace period</strong> is the humane and operationally sane setting:
+        the device is flagged non-compliant but keeps access for a defined window, during which the
+        user is nudged to fix it before the block lands.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stage</th><th>What the user sees</th></tr></thead>
+          <tbody>
+            <tr><td>Compliant</td><td>Nothing — access as normal</td></tr>
+            <tr><td>Non-compliant, in grace</td><td>A warning and a remediation step; access continues</td></tr>
+            <tr><td>Grace expired</td><td>CA blocks the protected resources until fixed</td></tr>
+            <tr><td>Remediated</td><td>Next check-in flips it back; access restores automatically</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">Set the grace period to the remediation you actually offer.</strong>
+          One day is cruel if the fix is a feature update that takes a maintenance window; a week is
+          negligent for a disabled-antivirus flag. Match the clock to how fast the specific issue
+          can honestly be resolved.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DEVICE TRUST END TO END ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔗</span>
+    <span class="topic-name">Device Trust End to End — Enrolment → Compliance → CA → Access</span>
+    <span class="topic-badge">Endpoint • Compliance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">Four Links, and a Break in Any One Denies Access</div>
+      <div class="concept-desc">
+        "Only healthy, managed devices reach company data" sounds like one control. It is a chain
+        of four, each owned by a different config surface, and a user locked out is almost always a
+        broken link somewhere upstream of where they are complaining. Learning the chain in order is
+        how you triage it in minutes instead of guessing.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Link</th><th>Establishes</th><th>Breaks when</th></tr></thead>
+          <tbody>
+            <tr><td>1 Identity join</td><td>The device has an identity (Entra join / registration)</td><td>Never joined, or registration was cleaned up</td></tr>
+            <tr><td>2 Enrolment / MDM <span class="acro-exp">(Mobile Device Management)</span></td><td>Intune manages it and can evaluate it</td><td>Enrolment failed or was removed</td></tr>
+            <tr><td>3 Compliance</td><td>It meets the policy and reports compliant</td><td>A setting drifted, or the device hasn't checked in</td></tr>
+            <tr><td>4 Conditional Access</td><td>CA grants the resource to a compliant device</td><td>The CA grant, assignment, or an exclusion is wrong</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Read the Chain Backwards From the Denial</div>
+      <div class="concept-desc">
+        The CA sign-in log is the single best triage tool: it names the policy that blocked, and the
+        device state it saw. From there you walk upstream.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom in the sign-in log</th><th>Look upstream at</th></tr></thead>
+          <tbody>
+            <tr><td>"device not compliant"</td><td>Compliance policy — which setting failed, and is it in grace</td></tr>
+            <tr><td>"device not managed / not registered"</td><td>Enrolment and identity join — links 1–2</td></tr>
+            <tr><td>Blocked but device looks compliant</td><td>Stale evaluation — force a sync; the log may predate the fix</td></tr>
+            <tr><td>Only some users affected</td><td>CA assignment / group targeting, not the device at all</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-green">Always keep a break-glass account excluded from device-based CA.</strong>
+          A policy that requires a compliant device to sign in can lock every administrator out of
+          the tenant that would fix it — the classic self-inflicted lockout. The excluded emergency
+          account is how you get back in.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: REPORTING ON DRIFT ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📉</span>
+    <span class="topic-name">Reporting on Drift — Finding Devices That Quietly Stopped Complying</span>
+    <span class="topic-badge">Endpoint • Compliance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Dangerous State Is "Not Evaluated," Not "Non-Compliant"</div>
+      <div class="concept-desc">
+        A non-compliant device is a known problem the system is already acting on. The device that
+        should worry you is the one that stopped checking in — it is not evaluated, so it is neither
+        compliant nor blocked, just invisible. A fleet report that only counts compliant vs
+        non-compliant hides its own blind spot. Report on the third bucket explicitly.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>State</th><th>Means</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Compliant</td><td>Evaluated, passing</td><td>None</td></tr>
+            <tr><td>Non-compliant</td><td>Evaluated, failing a setting</td><td>Remediate the named setting</td></tr>
+            <tr><td>Not evaluated / no grace</td><td class="c-red">Hasn't reported — stale or fallen off management, so neither compliant nor blocked</td><td>Chase check-in; may need re-enrolment</td></tr>
+            <tr><td>In grace period</td><td>Failing but still inside its window</td><td>Nudge before the window closes</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Trend the Rate, Alert on the Slope</div>
+      <div class="concept-desc">
+        A single day's compliance percentage is noise. What tells you something broke is the
+        <em>change</em>: a five-point drop overnight is almost always a policy edit or a bad update
+        ring, not a hundred users independently misbehaving. Watch the trend and the last-check-in
+        distribution, and treat a spike in "not evaluated" as an operational incident — it usually
+        means an agent, an enrolment, or a network path stopped working for a whole segment at once.
+      </div>
+      <div class="dw">
+        <div class="concept-desc">
+          <strong class="c-amber">Tie a sudden compliance drop to what you changed.</strong> The
+          first question on a drift spike is "what deployed in the last 24 hours" — a new baseline,
+          a tightened setting, or an update. Correlating drift with your own change log finds the
+          cause faster than inspecting devices.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: THE IDENTITY/ENDPOINT SEAM ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🪢</span>
+    <span class="topic-name">The Identity/Endpoint Seam — The Failure That Lands Both Teams on the Bridge</span>
+    <span class="topic-badge">Endpoint • Operations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Conditional Access Is Where Two Teams' Configs Collide</div>
+      <div class="concept-desc">
+        Modern access control is a joint venture the org charter rarely acknowledges: the identity
+        team owns Conditional Access and the user/group targeting; the endpoint team owns enrolment
+        and compliance. The device-trust chain runs straight across that seam, so an outage caused
+        by one team's change surfaces as a symptom the other team gets paged for. "Users can't get
+        mail" pulls in endpoint; the cause is an identity-side CA edit — or the reverse. The fix is
+        rarely technical; it is knowing the seam exists and getting both teams on the bridge fast.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Change made by…</th><th>Surfaces as…</th></tr></thead>
+          <tbody>
+            <tr><td>Identity: new CA policy or grant</td><td>A whole population suddenly blocked, devices look fine</td></tr>
+            <tr><td>Endpoint: tightened compliance setting</td><td>A slow bleed of devices going non-compliant</td></tr>
+            <tr><td>Identity: group/assignment change</td><td>The wrong people in or out of scope overnight</td></tr>
+            <tr><td>Endpoint: enrolment/agent break</td><td>A spike in "not evaluated" that reads as an access outage</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Prevention</div>
+      <div class="concept-title">Report-Only Mode, Change Windows &amp; a Shared Sign-In Log</div>
+      <div class="concept-desc">
+        The controls that keep the seam from becoming a shared outage are procedural, and cheap.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Why it works</th></tr></thead>
+          <tbody>
+            <tr><td>CA report-only mode first</td><td>See exactly who a new policy <em>would</em> block, before it blocks them</td></tr>
+            <tr><td>Coordinated change windows</td><td>Neither team edits the chain blind to the other's plans</td></tr>
+            <tr><td>The sign-in log as shared truth</td><td>Both teams read the same evidence instead of blaming across the seam</td></tr>
+            <tr><td>Break-glass excluded from device CA</td><td>A shared way back in when the joint config locks everyone out</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          This is the endpoint-side view of the same boundary
+          <span class="xref">Conditional Access &amp; Device Compliance</span> introduces — read
+          together, they are the identity and endpoint halves of one control.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body endpoint -->

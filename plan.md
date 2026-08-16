@@ -1674,11 +1674,11 @@ the card that fills each item below.
 - [x] Firewall & Removable Media → *Firewall & Removable Media Policy — The Two Controls Auditors Ask About* (written)
 
 **Wave Y6 — Compliance & Conditional Access**
-- [ ] Compliance Policies Deep — settings, grace periods, and what "non-compliant" costs a user
-- [ ] Device Trust End to End — enrolment → compliance → CA → resource access
-- [ ] Filters & Dynamic Groups — targeting that scales past a naming convention
-- [ ] Reporting on Drift — finding the devices that quietly stopped complying
-- [ ] The Identity/Endpoint Seam — the failure mode that lands both teams on the same bridge
+- [x] Compliance Policies Deep → *Compliance Policies Deep — Settings, Grace Periods & What Non-Compliant Costs*
+- [x] Device Trust End to End → *Device Trust End to End — Enrolment → Compliance → CA → Access*
+- [x] Filters & Dynamic Groups → *Assignment Strategy — Users, Devices, Filters & Exclusions* (already built)
+- [x] Reporting on Drift → *Reporting on Drift — Finding Devices That Quietly Stopped Complying*
+- [x] The Identity/Endpoint Seam → *The Identity/Endpoint Seam — The Failure That Lands Both Teams on the Bridge*
 
 **Wave Y7 — MECM Beyond Troubleshooting**
 - [ ] MECM Site Design — CAS, primary, secondary, and when each is justified
