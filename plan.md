@@ -5127,3 +5127,43 @@ them are not.
 remaining (the binding constraint now — the backlog is bounded by bytes, not ideas).
 The `TREND` counters held flat across the session (ai-table=360, inline≈1965), because
 every new card uses `ref-table` and classed colour, not `ai-table` or inline hex.
+
+---
+
+## Session record addendum — Phase 4 opened, and the budget wall reached honestly
+
+After finishing Phase 3, the same session opened Phase 4 with three waves, chosen by the
+Phase-3 rule (audit the site first, fill genuine voids, deepen existing domains rather
+than spin up new ones):
+
+| Wave | Domain | Cards | What it filled |
+|---|---|---:|---|
+| Y5 — Endpoint Security | `endpoint` 29→34 | 5 | BitLocker at scale, Defender/ASR, local-admin removal + EPM, Windows LAPS, firewall/removable-media |
+| Z — Virtualization & Backup | `infra` 28→34 | 6 | the total void: hypervisors, overcommit, snapshots≠backups, 3-2-1-1-0, ransomware-resilient backup, restore testing/DR |
+| AF — AI at Work (governance) | `ai` 44→49 | 5 | assistant deployment, shadow AI, AI acceptable use, data governance for AI, deepfake/impersonation defence |
+
+Track Y1–Y3 were found already built (endpoint had grown to 29 since Phase 4 was
+speced); the AF1 "using AI well" cluster was already in `ai`. Same inflation as Phase 3.
+
+**Where this stops, and why.** The page budget is now at **~7% gzip headroom** (1,026 KB
+of the 1,100 KB ceiling), down from 15% at the start of the session — 47 cards added
+across the whole session. This is exactly the wall §4b and §4b-ii documented, and the
+session-19 decision is explicit: **do not keep writing content against the ceiling on the
+assumption lazy loading will rescue it.** The remaining Phase 4–6 backlog is hundreds of
+cards plus three new domains (`m365`, `itsm`, and the Phase-5/6 domains), and it does not
+fit under the byte ceiling as the site is built today.
+
+**The unblock is known and deliberately not yet built.** §4b-ii's measured recommendation
+is the 164 KB middle-tier search index (names + concept titles + first sentences + table
+headers), which gets 83% of the lazy-loading saving while keeping substantive search —
+but that is a search-*behaviour* change (product decision), and session 19 set the trigger
+to build it as *"when either the throttled load passes ~3 s or `page_budget.py` actually
+fails."* Neither is true yet (throttled load ~1.6 s, budget 7% clear). So the honest
+position, unchanged: **the budget bounds the backlog, the unblock is specified, and it is
+correctly gated on a trigger that has not fired.**
+
+The next session that wants to add substantial content should either (a) build the
+164 KB middle-tier index first and re-measure, or (b) keep doing what this session did —
+surgical, genuine-gap-only waves into existing domains — accepting that the ceiling is now
+close enough that each wave must earn its bytes. What it should **not** do is treat the
+inflated backlog count as a runway; it is not one.
