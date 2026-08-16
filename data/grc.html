@@ -2485,4 +2485,516 @@ THIRD LINE  - Internal audit, reporting directly to the board,
 
   </div>
 </div>
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📗</span>
+              <span class="topic-name">ISO/IEC 27001 &amp; 27002 — The ISMS <span class="acro-exp">(Information Security Management System)</span>, Annex A and Certification</span>
+              <span class="topic-badge">GRC • CISSP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">You Certify a Management System, Not a Product</div>
+                <div class="concept-desc">
+                  The most common misunderstanding about 27001 is that it certifies your security.
+                  It certifies your <strong class="c-cyan">ISMS</strong> — the documented management
+                  system by which you decide what to protect, choose controls, check that they
+                  work, and improve them. An auditor is asking "can you show the system running?"
+                  far more than "is this firewall rule right?" That is also why an organization with
+                  modest controls and excellent discipline passes, and a well-defended one with no
+                  paper trail does not.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Artifact</th><th>What it is</th></tr>
+                    <tr><td>Scope statement</td><td>Which parts of the business the ISMS covers — the single biggest lever on cost</td></tr>
+                    <tr><td>Risk assessment &amp; treatment plan</td><td>Your risks, the decisions made, and who owns each</td></tr>
+                    <tr><td>Statement of Applicability (SoA)</td><td>Every Annex A control, whether it applies, and the justification either way</td></tr>
+                    <tr><td>Internal audit &amp; management review</td><td>Evidence the organization checks itself, not just that the auditor does</td></tr>
+                    <tr><td>Corrective actions</td><td>What you did about the things you found — the part auditors read closest</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">27001 vs 27002, and Annex A</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">27001</strong> is the certifiable standard: requirements
+                  for the management system, plus Annex A as the control reference.
+                  <strong class="c-cyan">27002</strong> is the guidance — how to implement each of
+                  those controls. You are never certified against 27002. The
+                  <span class="volatile" data-checked="2026-08">2022 revision</span> reorganized
+                  Annex A into 93 controls under four themes, replacing the older fourteen-clause
+                  structure, so older mappings and spreadsheets need a crosswalk.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Theme</th><th>Covers</th></tr>
+                    <tr><td>Organizational</td><td>Policies, roles, supplier relationships, incident management, continuity</td></tr>
+                    <tr><td>People</td><td>Screening, terms of employment, awareness, disciplinary process</td></tr>
+                    <tr><td>Physical</td><td>Perimeters, entry, equipment, secure disposal, clear desk</td></tr>
+                    <tr><td>Technological</td><td>Access control, cryptography, logging, secure development, endpoints</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Certification runs Stage 1 (are the documents there?) then Stage 2 (is it
+                    actually happening?), followed by surveillance audits and a recertification on
+                    a multi-year cycle. Excluding a control is allowed — leaving it unjustified in
+                    the SoA is not.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Compare</div>
+                <div class="concept-title">Against SOC 2 <span class="acro-exp">(Service Organization Control 2)</span> and the NIST <span class="acro-exp">(National Institute of Standards and Technology)</span> CSF <span class="acro-exp">(Cybersecurity Framework)</span></div>
+                <div class="concept-desc">
+                  27001 is an international <em>certification</em> of a management system, awarded
+                  by an accredited body. SOC 2 is a US <em>attestation report</em> written by a CPA
+                  firm and read by your customers — see
+                  <span class="xref">Reading a SOC 2 Report Without Falling Asleep</span>.
+                  The NIST CSF is a voluntary framework with no certificate at all. Enterprise deals
+                  usually ask for one of the first two, and which one is a matter of geography and
+                  buyer habit far more than rigour.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">💳</span>
+              <span class="topic-name">PCI DSS <span class="acro-exp">(Payment Card Industry Data Security Standard)</span> — The 12 Requirements, Scope Reduction &amp; SAQ vs ROC <span class="acro-exp">(Receiver Operating Characteristic)</span></span>
+              <span class="topic-badge">GRC • Compliance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Contract Law, Not Statute</div>
+                <div class="concept-desc">
+                  PCI DSS is not a law. It is a contractual standard the card brands impose through
+                  your acquiring bank, and the enforcement is commercial: fines passed down,
+                  increased transaction fees, or losing the ability to take cards at all. It applies
+                  to anyone who stores, processes or transmits cardholder data — and, importantly,
+                  to anyone who can <em>affect the security</em> of that data, which is how a
+                  seemingly unrelated system ends up in scope.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Goal</th><th>Requirements</th></tr>
+                    <tr><td>Build and maintain a secure network</td><td>1 network security controls · 2 secure configurations</td></tr>
+                    <tr><td>Protect account data</td><td>3 protect stored data · 4 encrypt in transit</td></tr>
+                    <tr><td>Maintain a vulnerability management programme</td><td>5 anti-malware · 6 secure systems and software</td></tr>
+                    <tr><td>Implement strong access control</td><td>7 need-to-know · 8 identify and authenticate · 9 physical access</td></tr>
+                    <tr><td>Monitor and test networks</td><td>10 log and monitor · 11 test regularly</td></tr>
+                    <tr><td>Maintain an information security policy</td><td>12 organizational policies and programmes</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Real Lever</div>
+                <div class="concept-title">Shrink the Scope Before You Harden It</div>
+                <div class="concept-desc">
+                  Every system in the cardholder data environment multiplies the cost of compliance
+                  forever. The cheapest PCI programme is the one with the smallest environment, and
+                  the work of reducing it pays back every single year.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>Effect on scope</th></tr>
+                    <tr><td>Network segmentation</td><td>Isolates the CDE so the rest of the estate falls out of scope — must be tested</td></tr>
+                    <tr><td>Tokenization</td><td>Replace the card number with a token; the vault holder carries the risk</td></tr>
+                    <tr><td>Point-to-point encryption (P2PE)</td><td>Validated solutions can take the terminal environment largely out of scope</td></tr>
+                    <tr><td>Redirect / hosted payment page</td><td>The card number never touches your servers</td></tr>
+                    <tr><td>Just don't store it</td><td>Never store the CVV; storing the PAN <span class="acro-exp">(Personal Area Network)</span> at all is a decision to justify</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Validation depends on volume and channel: most merchants complete a
+                    <strong>SAQ</strong> (a self-assessment questionnaire, in several flavours
+                    matched to how you take payment), while the largest complete a
+                    <strong>ROC</strong> — a full on-site assessment by a QSA. Quarterly external
+                    scanning by an ASV applies to most externally-facing environments. The standard
+                    is on a
+                    <span class="volatile" data-checked="2026-08">v4.x</span> revision line; check
+                    the current version and its dated requirements before quoting specifics.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Pitfall</div>
+                <div class="concept-title">Compliant on Assessment Day</div>
+                <div class="concept-desc">
+                  PCI is written as a continuous requirement and assessed as a point-in-time
+                  snapshot, and the breach reports keep finding organizations that were validated
+                  months before they were compromised. Segmentation drifts, a logging agent stops
+                  reporting, a "temporary" firewall rule survives. Treat the assessment as a check
+                  on a programme that runs all year, not as the programme.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🏥</span>
+              <span class="topic-name">HIPAA <span class="acro-exp">(Health Insurance Portability and Accountability Act)</span> — Privacy Rule, Security Rule &amp; Breach Notification</span>
+              <span class="topic-badge">GRC • Compliance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Scope</div>
+                <div class="concept-title">Who It Binds, and to What</div>
+                <div class="concept-desc">
+                  HIPAA governs <strong class="c-cyan">protected health information</strong> held by
+                  <em>covered entities</em> — providers, health plans, clearinghouses — and, since
+                  the Omnibus Rule, directly by their <em>business associates</em>: the vendors who
+                  handle PHI <span class="acro-exp">(Protected Health Information)</span> on their behalf, bound through a Business Associate Agreement and
+                  liable in their own right. This is the detail that puts ordinary SaaS <span class="acro-exp">(Software as a Service)</span> companies
+                  in scope. Note what HIPAA is not: it is not a general US health-privacy law, and
+                  a fitness app selling your data is usually outside it entirely.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Rule</th><th>Governs</th><th>Key idea</th></tr>
+                    <tr><td>Privacy Rule</td><td>Uses and disclosures of PHI</td><td>Minimum necessary; patient rights of access, amendment and accounting</td></tr>
+                    <tr><td>Security Rule</td><td>Electronic PHI specifically</td><td>Administrative, physical and technical safeguards</td></tr>
+                    <tr><td>Breach Notification Rule</td><td>What happens after a loss</td><td>Notify individuals and HHS; large breaches also trigger media notice</td></tr>
+                    <tr><td>Enforcement Rule</td><td>Investigations and penalties</td><td>Tiered by culpability, from unknowing to wilful neglect</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Detail That Trips People</div>
+                <div class="concept-title">"Addressable" Does Not Mean Optional</div>
+                <div class="concept-desc">
+                  Security Rule specifications are marked <strong>required</strong> or
+                  <strong>addressable</strong>. Addressable means: implement it, or document why it
+                  is not reasonable and appropriate for you <em>and</em> implement an equivalent
+                  alternative. Encryption of ePHI <span class="acro-exp">(Electronic Protected Health Information)</span> is the famous example — addressable, routinely
+                  misread as "we decided not to," and then cited in enforcement actions. The rule
+                  is deliberately technology-neutral and scales with your size and risk, which is
+                  freedom and a documentation burden in the same sentence.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    Encryption also drives the breach maths: a loss of properly encrypted ePHI can
+                    fall under the safe harbour and not be a reportable breach at all. That single
+                    control changes an incident from a notification exercise into a footnote.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Operationally</div>
+                <div class="concept-title">What an Audit Actually Asks For</div>
+                <div class="concept-desc">
+                  A risk analysis that is current and covers everywhere ePHI lives; the policies
+                  that follow from it; workforce training records; BAAs <span class="acro-exp">(Business Associate Agreement)</span> with every vendor that
+                  touches PHI; access logs and evidence someone reviews them; and an incident
+                  process with the notification clock written into it. The most common finding in
+                  enforcement summaries is the simplest one — no adequate, current risk analysis.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🏛️</span>
+              <span class="topic-name">FedRAMP <span class="acro-exp">(Federal Risk and Authorization Management Program)</span> &amp; NIST <span class="acro-exp">(National Institute of Standards and Technology)</span> 800-53 — Control Baselines and the ATO <span class="acro-exp">(Authority to Operate)</span></span>
+              <span class="topic-badge">GRC • Federal</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">A Catalog, a Baseline, and a Signature</div>
+                <div class="concept-desc">
+                  Three things get conflated here. <strong class="c-cyan">NIST SP 800-53</strong> is
+                  the control <em>catalog</em> — a large library of controls and enhancements,
+                  organized by family. A <strong class="c-cyan">baseline</strong> is a subset of
+                  that catalog selected for a system's impact level. An
+                  <strong class="c-cyan">ATO</strong> is an authorizing official's signature
+                  accepting the residual risk of operating the system. The catalog is not a
+                  standard you comply with; it is the vocabulary the standards are written in.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>What happens</th></tr>
+                    <tr><td>Categorize</td><td>FIPS <span class="acro-exp">(Federal Information Processing Standards)</span> 199 impact — low, moderate or high — from confidentiality, integrity, availability</td></tr>
+                    <tr><td>Select</td><td>Take the matching baseline; tailor it with justification</td></tr>
+                    <tr><td>Implement</td><td>Build the controls; describe each in the System Security Plan</td></tr>
+                    <tr><td>Assess</td><td>An independent assessor tests; gaps become POA&amp;M items with dates and owners</td></tr>
+                    <tr><td>Authorize</td><td>The authorizing official accepts the residual risk and grants the ATO</td></tr>
+                    <tr><td>Monitor</td><td>Continuous monitoring — scans, reporting, change control; the ATO can be revoked</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">FedRAMP</div>
+                <div class="concept-title">Authorize Once, Reuse Many Times</div>
+                <div class="concept-desc">
+                  FedRAMP applies that process to cloud services with one addition that is the whole
+                  point: the authorization package is reusable, so a service assessed once can be
+                  adopted by other agencies without repeating the assessment. Assessment is
+                  performed by an accredited third party (a 3PAO), and the programme's governance
+                  and authorization routes were
+                  <span class="volatile" data-checked="2026-08">restructured in the past couple of
+                  years</span> — confirm the current paths and timelines with the programme rather
+                  than from any secondhand summary, this card included.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Term</th><th>Meaning</th></tr>
+                    <tr><td>SSP</td><td>System Security Plan — how every control is implemented, in detail</td></tr>
+                    <tr><td>POA&amp;M</td><td>Plan of Action and Milestones — known gaps with owners and dates</td></tr>
+                    <tr><td>3PAO</td><td>Accredited assessment organization; you cannot assess yourself</td></tr>
+                    <tr><td>Inherited controls</td><td>Controls provided by the underlying platform — the shared-responsibility line, on paper</td></tr>
+                    <tr><td>Significant change</td><td>A change big enough to require re-assessment before it ships</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Related regimes reuse the same machinery: CMMC <span class="acro-exp">(Cybersecurity Maturity Model Certification)</span> for defence contractors leans on
+                    NIST SP 800-171, and StateRAMP mirrors FedRAMP for state and local government.
+                    Learning the catalog once pays off across all of them.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reality Check</div>
+                <div class="concept-title">The Cost Is Documentation, and It Never Stops</div>
+                <div class="concept-desc">
+                  Teams budget for the controls and are surprised by the evidence. An SSP runs to
+                  hundreds of pages, continuous monitoring is a monthly deliverable forever, and a
+                  "significant change" can mean an architecture improvement waits on a reassessment.
+                  Plan the compliance work as a permanent function with staff attached, not as a
+                  project with an end date.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧱</span>
+              <span class="topic-name">The Controls Universe — Types, Functions &amp; Mapping Once to Many</span>
+              <span class="topic-badge">GRC • CISSP</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Two Independent Axes</div>
+                <div class="concept-desc">
+                  Exam questions and real audits both classify a control twice: by
+                  <strong class="c-cyan">type</strong> (what kind of thing it is) and by
+                  <strong class="c-cyan">function</strong> (what it does about the risk). A door
+                  lock is physical and preventive; a security awareness programme is administrative
+                  and preventive; a SIEM <span class="acro-exp">(Security Information and Event Management)</span> alert is technical and detective. The axes are independent,
+                  and the classic wrong answer picks a value from the wrong one.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Function</th><th>Acts</th><th>Example</th></tr>
+                    <tr><td>Directive</td><td>Before — tells people what to do</td><td>Policy, standard, signage</td></tr>
+                    <tr><td>Deterrent</td><td>Before — discourages the attempt</td><td>Visible cameras, warning banner</td></tr>
+                    <tr><td>Preventive</td><td>Before — stops it happening</td><td>MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, firewall rule, locked door</td></tr>
+                    <tr><td>Detective</td><td>During or after — notices it</td><td>Log monitoring, IDS <span class="acro-exp">(Intrusion Detection System)</span>, audit</td></tr>
+                    <tr><td>Corrective</td><td>After — fixes the damage</td><td>Restore from backup, patch, quarantine</td></tr>
+                    <tr><td>Recovery</td><td>After — restores operations</td><td>DR site failover, continuity plan</td></tr>
+                    <tr><td>Compensating</td><td>Instead — an alternative of equal strength</td><td>Extra monitoring where a system cannot take MFA</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Types are <strong>administrative</strong> (policy, process, people),
+                    <strong>technical</strong> (implemented in systems) and
+                    <strong>physical</strong> (the tangible world). Some frameworks add
+                    <strong>operational</strong> for human-executed process; treat it as a
+                    subdivision of administrative rather than a fourth thing.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Technique</div>
+                <div class="concept-title">Test Once, Report Many</div>
+                <div class="concept-desc">
+                  An organization carrying SOC 2 <span class="acro-exp">(Service Organization Control 2)</span>, ISO <span class="acro-exp">(International Organization for Standardization)</span> 27001 and a customer questionnaire is being
+                  asked about the same access-review control three times in three vocabularies. A
+                  <strong class="c-cyan">control mapping</strong> — one internal control set,
+                  crosswalked to each framework's identifiers — means you implement and test once
+                  and produce evidence in whichever dialect the auditor speaks. Published crosswalks
+                  and common control frameworks exist so you do not build the matrix from scratch.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Meaning</th></tr>
+                    <tr><td>Control objective</td><td>The outcome you want; the control is one way to get it</td></tr>
+                    <tr><td>Design vs operating effectiveness</td><td>Is it the right control, and did it actually run all year?</td></tr>
+                    <tr><td>Inherent vs residual risk</td><td>Risk before controls, and what remains after</td></tr>
+                    <tr><td>Key control</td><td>The one whose failure the whole objective rests on — test it hardest</td></tr>
+                    <tr><td>Control owner</td><td>A named person; "the security team" is not an owner</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Pitfall</div>
+                <div class="concept-title">Counting Controls Instead of Effectiveness</div>
+                <div class="concept-desc">
+                  "We have 240 controls" says nothing. A control with no owner, no evidence and no
+                  test is a sentence in a spreadsheet, and it is worse than absent because it makes
+                  the risk register look answered. Every control worth listing has someone
+                  accountable, a defined test, a frequency, and a record of the last time it was
+                  performed — that last item is what an auditor asks for first.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🗄️</span>
+              <span class="topic-name">Data Governance, Retention &amp; eDiscovery — Owning Data on Purpose</span>
+              <span class="topic-badge">GRC • Data</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Roles</div>
+                <div class="concept-title">Owner, Steward, Custodian — Three Different Jobs</div>
+                <div class="concept-desc">
+                  Governance falls apart when these blur. The <strong class="c-cyan">owner</strong>
+                  is a business leader accountable for the data and its classification — they decide
+                  who may see it. The <strong class="c-cyan">steward</strong> looks after its
+                  quality, definitions and lifecycle day to day. The
+                  <strong class="c-cyan">custodian</strong> is usually IT: they run the storage,
+                  backups and access mechanics, and they implement decisions rather than make them.
+                  "IT owns the data" is the anti-pattern — it puts the classification decision with
+                  the people least placed to judge business impact.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Capability</th><th>What it answers</th></tr>
+                    <tr><td>Data catalog</td><td>What data do we have, and where does it live?</td></tr>
+                    <tr><td>Lineage</td><td>Where did this field come from and what feeds off it?</td></tr>
+                    <tr><td>Classification</td><td>How sensitive is it, and what handling follows?</td></tr>
+                    <tr><td>Retention schedule</td><td>How long must we keep it, and when must it go?</td></tr>
+                    <tr><td>Quality rules</td><td>What makes a record valid, and who is told when it isn't?</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Retention</div>
+                <div class="concept-title">Keeping Everything Is a Decision, and Usually the Wrong One</div>
+                <div class="concept-desc">
+                  Storage is cheap, so the default is to keep it all — but data you hold is data you
+                  can lose, must produce in litigation, and may have to delete on a subject's
+                  request. A retention schedule sets a defensible period per record type from legal,
+                  regulatory and business need, and then <em>actually deletes</em>. Deletion
+                  performed consistently under a written schedule is defensible; deletion performed
+                  ad hoc, especially once a dispute is foreseeable, is
+                  <strong class="c-red">spoliation</strong> — and courts sanction it.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    <strong class="c-amber">Legal hold beats the schedule, every time.</strong> When
+                    litigation is reasonably anticipated, routine deletion for the affected data
+                    must stop — including automatic mailbox and chat expiry, which is exactly the
+                    mechanism organizations forget they enabled.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">eDiscovery</div>
+                <div class="concept-title">The Stages, and Why IT Is Always in the Room</div>
+                <div class="concept-desc">
+                  Discovery of electronically stored information runs a predictable path:
+                  identify what exists and who held it, preserve it under hold, collect it
+                  defensibly, process and cull, review for relevance and privilege, then produce it
+                  in an agreed format. Every one of those steps needs someone who knows the systems,
+                  which is why eDiscovery lands on IT and security. The cost driver is volume, so
+                  the governance work above — knowing what you have and having already deleted what
+                  you should not keep — is what makes discovery affordable years later.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Meaning</th></tr>
+                    <tr><td>Custodian</td><td>The person whose data is in scope (a different sense from the governance role above)</td></tr>
+                    <tr><td>Chain of custody</td><td>Documented handling, so the evidence survives challenge</td></tr>
+                    <tr><td>Privilege review</td><td>Filtering legally privileged material before production</td></tr>
+                    <tr><td>Defensible deletion</td><td>Disposal under a consistent, documented, followed schedule</td></tr>
+                    <tr><td>Right to erasure</td><td>A privacy obligation that collides with retention — resolve it in the schedule, not per request</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">⚖️</span>
+              <span class="topic-name">The Regulatory Landscape — DORA <span class="acro-exp">(DevOps Research and Assessment)</span>, NIS2 &amp; Cyber Disclosure Rules</span>
+              <span class="topic-badge">GRC • Regulation</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Shift</div>
+                <div class="concept-title">From "Have a Programme" to "Tell Us, Quickly"</div>
+                <div class="concept-desc">
+                  The regulations of the last few years share a direction of travel worth
+                  understanding as a pattern rather than a list. They apply to
+                  <strong>whole sectors</strong> rather than to data types; they push obligations
+                  down the <strong>supply chain</strong> to critical vendors; they put
+                  <strong>management personally on the hook</strong>; and above all they impose
+                  <strong class="c-cyan">short, hard reporting clocks</strong> — hours and days, not
+                  the leisurely timelines of earlier breach laws. Anything specific below is
+                  <span class="volatile" data-checked="2026-08">a 2026 snapshot</span>; treat it as
+                  orientation and read the current text before you rely on it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Regime</th><th>Who</th><th>Distinctive demand</th></tr>
+                    <tr><td>DORA (EU)</td><td>Financial entities and their critical ICT <span class="acro-exp">(Information and Communication Technology)</span> providers</td><td>Operational resilience testing, and an oversight regime reaching the providers themselves</td></tr>
+                    <tr><td>NIS2 (EU)</td><td>Essential and important entities across many sectors</td><td>Sector-wide scope, management accountability, staged incident reporting starting with an early warning</td></tr>
+                    <tr><td>SEC cyber disclosure (US)</td><td>Public companies</td><td>Disclose material incidents promptly, plus annual reporting on governance and process</td></tr>
+                    <tr><td>Sector regulators</td><td>Health, energy, telecom, defence</td><td>Their own overlapping rules — usually earlier and stricter than the general ones</td></tr>
+                    <tr><td>State &amp; national breach laws</td><td>Almost everyone</td><td>The long tail, with inconsistent triggers and deadlines</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Operationally</div>
+                <div class="concept-title">The Clock Starts Before You Understand the Incident</div>
+                <div class="concept-desc">
+                  The hard problem is not the disclosure, it is the
+                  <strong>materiality decision</strong> made at hour three with partial facts. That
+                  is a legal and executive judgement, and the only way it happens fast enough is if
+                  it was rehearsed. Build the trigger into the incident plan: who convenes, what
+                  evidence they need, who signs, and what gets filed. A tabletop that ends at
+                  "containment achieved" has skipped the part with the statutory deadline.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Prepare</th><th>Why</th></tr>
+                    <tr><td>A regulatory register</td><td>Which regimes apply to which entity and system — most firms cannot answer this cold</td></tr>
+                    <tr><td>Named decision-makers</td><td>An out-of-hours reachable list, not a role title</td></tr>
+                    <tr><td>Pre-drafted notification templates</td><td>Per regulator, so the drafting is not done under a clock</td></tr>
+                    <tr><td>Contract clauses with vendors</td><td>Their incident must reach you fast enough to meet your deadline</td></tr>
+                    <tr><td>Evidence retention</td><td>Regulators ask what you knew and when; your logs are the answer</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reality Check</div>
+                <div class="concept-title">Overlapping, Not Nested</div>
+                <div class="concept-desc">
+                  One incident can trigger several regimes with different thresholds, recipients and
+                  deadlines simultaneously, and satisfying the strictest does not satisfy the
+                  others. This is precisely the case for the control mapping in
+                  <span class="xref">The Controls Universe — Types, Functions &amp; Mapping Once to Many</span>:
+                  one set of internal controls and evidence, presented in whichever vocabulary each
+                  regulator uses.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body grc -->

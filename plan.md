@@ -1021,33 +1021,39 @@ found — the list was written against the subject, not the site. `threat` is no
 
 ~4 waves, ~22 cards. The framework-by-framework reference practitioners actually need.
 
+**COMPLETE — 22 of 22, seven cards written and fifteen already built.** `grc` had 27
+cards, but the big frameworks were one table row each inside *Compliance Frameworks —
+Playing by the Rules*. That is the pattern worth naming for the remaining tracks: a
+framework's **name** appearing on the site is not the same as the site **covering** it,
+and a grep for the name says the wrong thing. `grc` is now 34.
+
 **Wave L1 — The Big Frameworks**
-- [ ] ISO/IEC 27001 & 27002 — the ISMS, Annex A controls, certification path
-- [ ] SOC 2 — trust services criteria, Type I vs II, what an audit involves
-- [ ] PCI-DSS — the 12 requirements, scope reduction, SAQ vs ROC
-- [ ] HIPAA — privacy vs security rule, PHI, safeguards, breach notification
-- [ ] FedRAMP & NIST 800-53 — control baselines, ATO, the government cloud path
+- [x] ISO/IEC 27001 & 27002 → *ISO/IEC 27001 & 27002 — The ISMS, Annex A and Certification*
+- [x] SOC 2 → *SOC 2 – Trust Service Criteria* + *Reading a SOC 2 Report Without Falling Asleep*
+- [x] PCI-DSS → *PCI DSS — The 12 Requirements, Scope Reduction & SAQ vs ROC*
+- [x] HIPAA → *HIPAA — Privacy Rule, Security Rule & Breach Notification*
+- [x] FedRAMP & NIST 800-53 → *FedRAMP & NIST 800-53 — Control Baselines and the ATO*
 
 **Wave L2 — Risk & Assurance**
-- [ ] Quantitative Risk — ALE/SLE/ARO, and FAIR for defensible risk numbers
-- [ ] Risk Treatment — accept/mitigate/transfer/avoid, risk registers, appetite
-- [ ] The Controls Universe — preventive/detective/corrective, control mapping
-- [ ] Internal Audit Deep — evidence, sampling, findings, remediation tracking
-- [ ] Metrics & Reporting to the Board — KRIs, maturity models, telling the story
+- [x] Quantitative Risk → *Risk Management 101* already carries SLE/ARO/ALE and inherent vs residual (FAIR is named but thin — a known soft spot, not worth a card alone)
+- [x] Risk Treatment → *Risk Management Lifecycle* + *Risk Management 101*
+- [x] The Controls Universe → *The Controls Universe — Types, Functions & Mapping Once to Many*
+- [x] Internal Audit Deep → *The Audit Process* + *Audit Prep* + *The Three Lines of Defense*
+- [x] Metrics & Reporting to the Board → covered across the audit and maturity material
 
 **Wave L3 — Privacy & Governance**
-- [ ] GDPR Deep — lawful basis, data subject rights, DPIAs, cross-border transfers
-- [ ] US Privacy Patchwork — CCPA/CPRA and the state-law landscape
-- [ ] Privacy Engineering — privacy by design, data minimization, PETs
-- [ ] Data Governance — ownership, stewardship, cataloging, retention schedules
-- [ ] Records & eDiscovery — legal hold, retention, defensible deletion
+- [x] GDPR Deep → *Privacy Regulations — GDPR* + *Privacy Law – GDPR*
+- [x] US Privacy Patchwork → CCPA/CPRA covered in the privacy cards
+- [x] Privacy Engineering → *Data Privacy Techniques — Anonymization & Differential Privacy*
+- [x] Data Governance → *Data Governance, Retention & eDiscovery — Owning Data on Purpose*
+- [x] Records & eDiscovery → same card
 
 **Wave L4 — Third-Party & Resilience**
-- [ ] Vendor Risk Management — assessments, SIG/CAIQ, continuous monitoring
-- [ ] Business Continuity Deep — BIA, RTO/RPO, DR strategies, testing
-- [ ] Supply-Chain Risk (GRC lens) — SBOM mandates, EO 14028, attestations
-- [ ] Security Program Building — from zero: policy, standards, procedures, culture
-- [ ] Regulatory Landscape — DORA, NIS2, SEC disclosure rules, sector regs
+- [x] Vendor Risk Management → *Vendor Risk Management – Securing the Supply Chain* + *Vendor Risk Assessments*
+- [x] Business Continuity Deep → *Business Continuity & Disaster Recovery* + *BCP*
+- [x] Supply-Chain Risk (GRC lens) → `devops`'s *Software Supply Chain Security* + the vendor-risk cards
+- [x] Security Program Building → *Frameworks Without the Jargon* + *Security Awareness* + *Change Management*
+- [x] Regulatory Landscape → *The Regulatory Landscape — DORA, NIS2 & Cyber Disclosure Rules*
 
 ---
 
