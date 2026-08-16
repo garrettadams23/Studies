@@ -2123,4 +2123,767 @@ Remove-PSSession $s
   </div>
 </div>
 
+
+<!-- ── TOPIC: BITLOCKER AT SCALE ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔐</span>
+    <span class="topic-name">BitLocker at Scale — Silent Enablement, Key Escrow &amp; Recovery</span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Only Question That Matters Is "Can You Get the Key Back"</div>
+      <div class="concept-desc">
+        Encrypting the fleet is easy; a policy does it in an afternoon. The part that ends
+        careers is a device that has gone into recovery and a recovery key that was never
+        escrowed anywhere. At scale, BitLocker is a key-management problem wearing an
+        encryption costume — design the escrow first, then turn on encryption, never the
+        other way round.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Piece</th><th>What it is</th></tr></thead>
+          <tbody>
+            <tr><td>TPM <span class="acro-exp">(Trusted Platform Module)</span></td><td>The chip that seals the key to a known-good boot state; unlocks transparently at boot</td></tr>
+            <tr><td>Recovery key</td><td>The 48-digit fallback when the TPM refuses — the thing you must have escrowed</td></tr>
+            <tr><td>Escrow location</td><td>Entra ID for cloud-joined devices, AD <span class="acro-exp">(Active Directory)</span> for hybrid; MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> keeps its own recovery store too</td></tr>
+            <tr><td>Encryption method</td><td>XTS-AES 128 or 256; used space only vs full disk on first encryption</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">Silent Enablement, and the Order It Must Happen In</div>
+      <div class="concept-desc">
+        Silent enablement means the user never sees a prompt — the disk encrypts and the
+        key escrows without interaction. It only works if the prerequisites are already true
+        when the policy lands, and the classic failure is a device that reports "encrypted"
+        with a key that reached nowhere.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Must be true</th></tr></thead>
+          <tbody>
+            <tr><td>1 Prerequisites</td><td>TPM present and ready, UEFI <span class="acro-exp">(Unified Extensible Firmware Interface)</span>, Secure Boot on, no third-party encryption already resident</td></tr>
+            <tr><td>2 Policy applies</td><td>Disk-encryption profile assigned; "allow standard users to enable" set for non-admin devices</td></tr>
+            <tr><td>3 Encrypt</td><td>Kicks off silently; used-space-only is faster on a fresh device</td></tr>
+            <tr><td>4 Escrow</td><td class="c-red">The one to verify — confirm the key is visible in Entra/AD before you call it done</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">A device can be encrypted and unrecoverable at the same time.</strong>
+          Report on <em>escrowed keys</em>, not on encryption status. The two diverge exactly
+          on the devices you will most need to recover.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Why a Device Drops Into Recovery</div>
+      <div class="concept-desc">
+        Recovery is the TPM doing its job — something in the measured boot path changed, so
+        it refused to release the key. Most are benign and self-inflicted, which is why users
+        should never see the recovery screen as a crisis.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Trigger</th><th>Usually</th></tr></thead>
+          <tbody>
+            <tr><td>Firmware/BIOS update</td><td>Changed PCRs; expected — suspend BitLocker before flashing firmware</td></tr>
+            <tr><td>Secure Boot / boot-order change</td><td>Someone changed a UEFI setting</td></tr>
+            <tr><td>Docking / hardware change</td><td>Some configs measure it; re-seal or adjust the PCR profile</td></tr>
+            <tr><td>Repeated recovery on one model</td><td>A driver or firmware bug — a real fleet issue, not a user one</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DEFENDER FOR ENDPOINT & INTUNE ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🛡️</span>
+    <span class="topic-name">Defender for Endpoint &amp; Intune — Onboarding, ASR <span class="acro-exp">(Attack Surface Reduction)</span> Rules &amp; Tamper Protection</span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Two Products, One Connector</div>
+      <div class="concept-desc">
+        Defender for Endpoint is the EDR <span class="acro-exp">(Endpoint Detection and Response)</span> platform; Intune is how you configure it on managed
+        devices. The seam between them is the service-to-service connector — turn it on once,
+        and Intune can onboard devices, ship Defender policy, and consume the device risk
+        score for Conditional Access. Half of "Defender isn't working" tickets are that
+        connector being off or the onboarding blob never landing.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">Onboarding, and How to Know It Worked</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>1 Connect</td><td>Enable the Intune ↔ Defender connector in both consoles</td></tr>
+            <tr><td>2 Onboard</td><td>EDR policy pushes the onboarding package; device registers with the service</td></tr>
+            <tr><td>3 Verify</td><td>Device appears in the Defender portal and the detection test script alerts</td></tr>
+            <tr><td>4 Risk flows</td><td>Device risk level becomes a Conditional Access signal</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">ASR Rules — Audit Before You Block, Always</div>
+      <div class="concept-desc">
+        Attack Surface Reduction rules block whole classes of behaviour malware relies on —
+        Office spawning child processes, credential theft from LSASS <span class="acro-exp">(Local Security Authority Subsystem Service)</span>, script-launched
+        executables. They are high value and high blast radius, because legitimate software
+        does some of these things too. Every ASR rule has an <strong class="c-cyan">audit</strong>
+        mode that logs what it <em>would</em> have blocked; run there first and read the
+        reports, or you will block a line-of-business app on day one.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Mode</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>Audit</td><td>Log only — the mandatory first phase; mine it for false positives</td></tr>
+            <tr><td>Block</td><td>Enforce, once audit is clean for that rule</td></tr>
+            <tr><td>Warn</td><td>User can bypass — a middle ground for rules with legitimate edge cases</td></tr>
+            <tr><td>Per-rule exclusions</td><td>Scalpel, not the off switch — exclude the one path, keep the rule</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">Tamper protection</strong> stops malware — and local admins,
+          and your own scripts — from disabling Defender. Leave it on; when it blocks a
+          legitimate change, make that change through policy, which is the supported path
+          through it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LOCAL ADMIN RIGHTS & EPM ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧑‍💼</span>
+    <span class="topic-name">Local Admin Rights — Removing Them, and Endpoint Privilege Management</span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Standing Local Admin Is the Single Biggest Endpoint Risk You Control</div>
+      <div class="concept-desc">
+        A user who is a local administrator turns every phishing click and every malicious
+        installer into a full device compromise, and defeats most of the controls on the rest
+        of this page. Removing standing admin is the highest-leverage endpoint hardening
+        there is — and the reason it survives everywhere is that removing it naively generates
+        a wall of "I can't do my job" tickets. The work is not deleting the right; it is
+        replacing what people legitimately used it for.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">What Replaces the Right</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>They used admin to…</th><th>Replace with</th></tr></thead>
+          <tbody>
+            <tr><td>Install approved software</td><td>Company Portal self-service; deploy as system-context apps</td></tr>
+            <tr><td>Run one app that demands elevation</td><td>Endpoint Privilege Management — elevate the <em>app</em>, not the user</td></tr>
+            <tr><td>Change a setting IT locked</td><td>A settings-catalog policy exposing exactly that control</td></tr>
+            <tr><td>Genuine developer / IT need</td><td>A time-boxed, audited elevation, or a separate admin account — never their daily login</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Endpoint Privilege Management — Elevate the Task, Not the Person</div>
+      <div class="concept-desc">
+        EPM lets a standard user run a specific, approved action with admin rights while
+        staying a standard user for everything else. The unit of trust moves from the person
+        to the task, which is the whole point.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Model</th><th>How it works</th></tr></thead>
+          <tbody>
+            <tr><td>Automatic rule</td><td>A named, hash-verified app always elevates, silently — for known-good tools</td></tr>
+            <tr><td>User-confirmed</td><td>User clicks through a justification prompt; logged</td></tr>
+            <tr><td>Support-approved</td><td>Request routes to IT for one-time approval — for the long tail</td></tr>
+            <tr><td>Full audit trail</td><td>Every elevation recorded — the evidence that makes admin removal defensible</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-red">Rule on the file's hash or signature, not its name.</strong>
+          A rule that elevates anything called <code>setup.exe</code> is a privilege-escalation
+          primitive you built and handed to an attacker.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: WINDOWS LAPS ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗝️</span>
+    <span class="topic-name">Windows LAPS <span class="acro-exp">(Local Administrator Password Solution)</span> — Local Admin Password Rotation in Entra and AD <span class="acro-exp">(Active Directory)</span></span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Built-In Admin Account Is Still There — LAPS Makes It Safe</div>
+      <div class="concept-desc">
+        Even after you remove user admin rights, every Windows device has a built-in local
+        administrator account, and the historic sin was giving it one shared password across
+        the whole fleet. One machine compromised, that password dumped, and it unlocks every
+        other machine — the textbook lateral-movement path. LAPS sets a unique, random
+        password per device, rotates it on a schedule, and escrows it centrally so support can
+        still get in.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Windows LAPS vs the Legacy One, and Where the Password Lives</div>
+      <div class="concept-desc">
+        "Windows LAPS" is the modern built-in feature, distinct from the old downloadable
+        Microsoft LAPS. It stores the password in the directory the device is joined to, and
+        retrieval is a permission you grant deliberately and audit.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Aspect</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Backup target</td><td>Entra ID for cloud-joined, on-prem AD for hybrid — chosen by policy</td></tr>
+            <tr><td>Configuration</td><td>An Intune policy or GPO <span class="acro-exp">(Group Policy Object)</span>; no agent to deploy on current Windows</td></tr>
+            <tr><td>Retrieval</td><td>Scoped directory permission; every read is logged</td></tr>
+            <tr><td>Rotation</td><td>On a schedule, and automatically right after a password is used</td></tr>
+            <tr><td>Password encryption</td><td>Encrypted in the directory (AD path); readable only by the accounts you authorize</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-green">LAPS and admin-rights removal are a pair.</strong> Removing
+          standing user admin closes the front door; LAPS makes sure the emergency key under
+          the mat is different for every house. Deploy them together, not years apart.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: FIREWALL & REMOVABLE MEDIA ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🚫</span>
+    <span class="topic-name">Firewall &amp; Removable Media Policy — The Two Controls Auditors Ask About</span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Two Small Policies With Outsized Audit Weight</div>
+      <div class="concept-desc">
+        The host firewall and USB <span class="acro-exp">(Universal Serial Bus)</span> storage control are unglamorous, and they are on nearly
+        every compliance checklist because they map directly to a breach story: malware
+        beaconing out, and data walking out on a thumb drive. Both are a single policy to
+        deploy and both have one classic way to lock a fleet out of something it needed —
+        which is why they belong in a late rollout ring, not ring zero.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Host Firewall — Default Deny Inbound, Log Everything</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Setting</th><th>Sensible default</th></tr></thead>
+          <tbody>
+            <tr><td>Profiles</td><td>Domain, Private, Public — all three enabled; Public is the strictest</td></tr>
+            <tr><td>Inbound</td><td>Default deny; allow by explicit rule only</td></tr>
+            <tr><td>Outbound</td><td>Usually allow, but log; outbound-deny is high-maintenance — reserve for high-security fleets</td></tr>
+            <tr><td>Rule merging</td><td class="c-red">Decide whether local admin rules merge with policy — "off" is safer and a common surprise</td></tr>
+            <tr><td>Logging</td><td>On, for dropped packets — the evidence you need when an app breaks</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The trap is <strong class="c-amber">rule merging</strong>: turn it off and every
+          locally-created allow rule vanishes, which is correct for security and will break
+          the one legacy app whose installer added a rule nobody documented. Audit first.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Removable Media — Block, or Allow Read-Only, or Require Encryption</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Posture</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>Block all</td><td>No USB storage at all — cleanest to defend, hardest on legitimate needs</td></tr>
+            <tr><td>Read-only</td><td>Data can come in, nothing walks out — the common compromise</td></tr>
+            <tr><td>Require BitLocker To Go</td><td>Writable only to encrypted media; the removable-drive counterpart to disk encryption</td></tr>
+            <tr><td>Allow by device ID</td><td>Approved hardware only — for hardware tokens and specific peripherals</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Scope by <strong>storage</strong>, not all USB — a policy that blocks "USB devices"
+          rather than "USB mass storage" also kills keyboards, mice and the webcam, and that
+          ticket arrives within the hour.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── TOPIC: COMPLIANCE POLICIES DEEP ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">✅</span>
+    <span class="topic-name">Compliance Policies Deep — Settings, Grace Periods &amp; What Non-Compliant Costs</span>
+    <span class="topic-badge">Endpoint • Compliance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Compliance Policy Only Bites Through Conditional Access</div>
+      <div class="concept-desc">
+        A compliance policy on its own does nothing but set a flag: compliant or not. It has no
+        teeth until Conditional Access is configured to <em>require</em> compliance for a resource
+        — then a non-compliant device is blocked from mail, files and apps. People routinely
+        deploy compliance policies, see devices marked non-compliant, and wonder why nothing
+        happened. Nothing happened because the enforcement lives in CA, not in the policy.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Common setting</th><th>What it checks</th></tr></thead>
+          <tbody>
+            <tr><td>OS <span class="acro-exp">(Operating System)</span> version floor</td><td>Minimum build — the lever for forcing an update deadline</td></tr>
+            <tr><td>Disk encryption</td><td>BitLocker/FileVault on</td></tr>
+            <tr><td>Secure boot / firmware</td><td>Health-attestation signals on supported hardware</td></tr>
+            <tr><td>Defender / antivirus</td><td>Real-time protection on, signatures current</td></tr>
+            <tr><td>Password / PIN</td><td>Complexity and lock timeout</td></tr>
+            <tr><td>Device risk level</td><td>The Defender for Endpoint risk score, as a threshold</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Grace Period — Warn Before You Block</div>
+      <div class="concept-desc">
+        Marking a device non-compliant the instant it drifts, and blocking it the same second,
+        locks people out over a signature that is four hours stale. The
+        <strong class="c-cyan">grace period</strong> is the humane and operationally sane setting:
+        the device is flagged non-compliant but keeps access for a defined window, during which the
+        user is nudged to fix it before the block lands.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stage</th><th>What the user sees</th></tr></thead>
+          <tbody>
+            <tr><td>Compliant</td><td>Nothing — access as normal</td></tr>
+            <tr><td>Non-compliant, in grace</td><td>A warning and a remediation step; access continues</td></tr>
+            <tr><td>Grace expired</td><td>CA blocks the protected resources until fixed</td></tr>
+            <tr><td>Remediated</td><td>Next check-in flips it back; access restores automatically</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">Set the grace period to the remediation you actually offer.</strong>
+          One day is cruel if the fix is a feature update that takes a maintenance window; a week is
+          negligent for a disabled-antivirus flag. Match the clock to how fast the specific issue
+          can honestly be resolved.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DEVICE TRUST END TO END ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔗</span>
+    <span class="topic-name">Device Trust End to End — Enrolment → Compliance → CA → Access</span>
+    <span class="topic-badge">Endpoint • Compliance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">Four Links, and a Break in Any One Denies Access</div>
+      <div class="concept-desc">
+        "Only healthy, managed devices reach company data" sounds like one control. It is a chain
+        of four, each owned by a different config surface, and a user locked out is almost always a
+        broken link somewhere upstream of where they are complaining. Learning the chain in order is
+        how you triage it in minutes instead of guessing.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Link</th><th>Establishes</th><th>Breaks when</th></tr></thead>
+          <tbody>
+            <tr><td>1 Identity join</td><td>The device has an identity (Entra join / registration)</td><td>Never joined, or registration was cleaned up</td></tr>
+            <tr><td>2 Enrolment / MDM <span class="acro-exp">(Mobile Device Management)</span></td><td>Intune manages it and can evaluate it</td><td>Enrolment failed or was removed</td></tr>
+            <tr><td>3 Compliance</td><td>It meets the policy and reports compliant</td><td>A setting drifted, or the device hasn't checked in</td></tr>
+            <tr><td>4 Conditional Access</td><td>CA grants the resource to a compliant device</td><td>The CA grant, assignment, or an exclusion is wrong</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Read the Chain Backwards From the Denial</div>
+      <div class="concept-desc">
+        The CA sign-in log is the single best triage tool: it names the policy that blocked, and the
+        device state it saw. From there you walk upstream.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom in the sign-in log</th><th>Look upstream at</th></tr></thead>
+          <tbody>
+            <tr><td>"device not compliant"</td><td>Compliance policy — which setting failed, and is it in grace</td></tr>
+            <tr><td>"device not managed / not registered"</td><td>Enrolment and identity join — links 1–2</td></tr>
+            <tr><td>Blocked but device looks compliant</td><td>Stale evaluation — force a sync; the log may predate the fix</td></tr>
+            <tr><td>Only some users affected</td><td>CA assignment / group targeting, not the device at all</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-green">Always keep a break-glass account excluded from device-based CA.</strong>
+          A policy that requires a compliant device to sign in can lock every administrator out of
+          the tenant that would fix it — the classic self-inflicted lockout. The excluded emergency
+          account is how you get back in.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: REPORTING ON DRIFT ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📉</span>
+    <span class="topic-name">Reporting on Drift — Finding Devices That Quietly Stopped Complying</span>
+    <span class="topic-badge">Endpoint • Compliance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Dangerous State Is "Not Evaluated," Not "Non-Compliant"</div>
+      <div class="concept-desc">
+        A non-compliant device is a known problem the system is already acting on. The device that
+        should worry you is the one that stopped checking in — it is not evaluated, so it is neither
+        compliant nor blocked, just invisible. A fleet report that only counts compliant vs
+        non-compliant hides its own blind spot. Report on the third bucket explicitly.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>State</th><th>Means</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Compliant</td><td>Evaluated, passing</td><td>None</td></tr>
+            <tr><td>Non-compliant</td><td>Evaluated, failing a setting</td><td>Remediate the named setting</td></tr>
+            <tr><td>Not evaluated / no grace</td><td class="c-red">Hasn't reported — stale or fallen off management, so neither compliant nor blocked</td><td>Chase check-in; may need re-enrolment</td></tr>
+            <tr><td>In grace period</td><td>Failing but still inside its window</td><td>Nudge before the window closes</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Trend the Rate, Alert on the Slope</div>
+      <div class="concept-desc">
+        A single day's compliance percentage is noise. What tells you something broke is the
+        <em>change</em>: a five-point drop overnight is almost always a policy edit or a bad update
+        ring, not a hundred users independently misbehaving. Watch the trend and the last-check-in
+        distribution, and treat a spike in "not evaluated" as an operational incident — it usually
+        means an agent, an enrolment, or a network path stopped working for a whole segment at once.
+      </div>
+      <div class="dw">
+        <div class="concept-desc">
+          <strong class="c-amber">Tie a sudden compliance drop to what you changed.</strong> The
+          first question on a drift spike is "what deployed in the last 24 hours" — a new baseline,
+          a tightened setting, or an update. Correlating drift with your own change log finds the
+          cause faster than inspecting devices.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: THE IDENTITY/ENDPOINT SEAM ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🪢</span>
+    <span class="topic-name">The Identity/Endpoint Seam — The Failure That Lands Both Teams on the Bridge</span>
+    <span class="topic-badge">Endpoint • Operations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Conditional Access Is Where Two Teams' Configs Collide</div>
+      <div class="concept-desc">
+        Modern access control is a joint venture the org charter rarely acknowledges: the identity
+        team owns Conditional Access and the user/group targeting; the endpoint team owns enrolment
+        and compliance. The device-trust chain runs straight across that seam, so an outage caused
+        by one team's change surfaces as a symptom the other team gets paged for. "Users can't get
+        mail" pulls in endpoint; the cause is an identity-side CA edit — or the reverse. The fix is
+        rarely technical; it is knowing the seam exists and getting both teams on the bridge fast.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Change made by…</th><th>Surfaces as…</th></tr></thead>
+          <tbody>
+            <tr><td>Identity: new CA policy or grant</td><td>A whole population suddenly blocked, devices look fine</td></tr>
+            <tr><td>Endpoint: tightened compliance setting</td><td>A slow bleed of devices going non-compliant</td></tr>
+            <tr><td>Identity: group/assignment change</td><td>The wrong people in or out of scope overnight</td></tr>
+            <tr><td>Endpoint: enrolment/agent break</td><td>A spike in "not evaluated" that reads as an access outage</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Prevention</div>
+      <div class="concept-title">Report-Only Mode, Change Windows &amp; a Shared Sign-In Log</div>
+      <div class="concept-desc">
+        The controls that keep the seam from becoming a shared outage are procedural, and cheap.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Why it works</th></tr></thead>
+          <tbody>
+            <tr><td>CA report-only mode first</td><td>See exactly who a new policy <em>would</em> block, before it blocks them</td></tr>
+            <tr><td>Coordinated change windows</td><td>Neither team edits the chain blind to the other's plans</td></tr>
+            <tr><td>The sign-in log as shared truth</td><td>Both teams read the same evidence instead of blaming across the seam</td></tr>
+            <tr><td>Break-glass excluded from device CA</td><td>A shared way back in when the joint config locks everyone out</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          This is the endpoint-side view of the same boundary
+          <span class="xref">Conditional Access &amp; Device Compliance</span> introduces — read
+          together, they are the identity and endpoint halves of one control.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── TOPIC: MACOS FOR WINDOWS ADMINS ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🍏</span>
+    <span class="topic-name">macOS for Windows Admins — The Translation Table &amp; Security Model</span>
+    <span class="topic-badge">Endpoint • Cross-Platform</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Concepts Map; the Assumptions Do Not</div>
+      <div class="concept-desc">
+        Most of what a Windows admin knows transfers to macOS once the names are translated — but
+        the deeper assumption does not. There is no Group Policy applying settings top-down; a Mac
+        is configured by <strong class="c-cyan">configuration profiles</strong> (signed
+        <code>.mobileconfig</code> payloads) delivered by an MDM <span class="acro-exp">(Mobile Device Management)</span>, and much of the security model
+        is the user granting consent, not the admin forcing it. Fighting that model is how macOS
+        management goes wrong.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Windows</th><th>macOS equivalent</th></tr></thead>
+          <tbody>
+            <tr><td>Group Policy / GPO <span class="acro-exp">(Group Policy Object)</span></td><td>Configuration profiles (.mobileconfig) via MDM</td></tr>
+            <tr><td>Registry</td><td>Property lists (plists) + the <code>defaults</code> command</td></tr>
+            <tr><td>MSI <span class="acro-exp">(Microsoft Installer)</span> / Win32 app</td><td>.pkg installer / .dmg / .app bundle</td></tr>
+            <tr><td>Event Viewer</td><td>Console.app and the unified log (<code>log show</code>)</td></tr>
+            <tr><td>Services / Task Scheduler</td><td>launchd — LaunchDaemons &amp; LaunchAgents</td></tr>
+            <tr><td>BitLocker</td><td>FileVault</td></tr>
+            <tr><td>Local admin</td><td>Admin group; <code>sudo</code>; but SIP <span class="acro-exp">(Session Initiation Protocol)</span> limits even root</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Security Model — Layers You Manage Around, Not Through</div>
+      <div class="concept-desc">
+        macOS security is a stack of named protections, several of which even root cannot simply
+        override — a deliberate design that surprises admins used to "administrator can do
+        anything."
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Layer</th><th>Does</th></tr></thead>
+          <tbody>
+            <tr><td>Gatekeeper + notarization</td><td>Blocks apps that aren't signed and notarized by Apple-recognized developers</td></tr>
+            <tr><td>TCC</td><td>Transparency, Consent &amp; Control — the "allow access to Camera/Files?" prompts; grant-able by profile</td></tr>
+            <tr><td>SIP</td><td>System Integrity Protection — protects system files from even root</td></tr>
+            <tr><td>XProtect</td><td>Apple's built-in malware signature scanning</td></tr>
+            <tr><td>Secure Enclave</td><td>Hardware key store; underpins FileVault and Touch ID</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">PPPC — the profile that pre-approves TCC.</strong> Management
+          tools and security agents need access TCC would prompt a user for. A Privacy Preferences
+          Policy Control profile grants it silently from the MDM, and it is the single most common
+          "why won't my agent work on Mac" answer.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: APPLE FLEET MANAGEMENT ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏬</span>
+    <span class="topic-name">Apple Fleet Management — Business Manager, ADE, Jamf vs Intune &amp; FileVault Escrow</span>
+    <span class="topic-badge">Endpoint • Cross-Platform</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Apple Business Manager Is the Root of Trust</div>
+      <div class="concept-desc">
+        Serious Apple management starts with <strong class="c-cyan">Apple Business Manager</strong>,
+        the portal that ties hardware you buy to your MDM <span class="acro-exp">(Mobile Device Management)</span>. Its key power is
+        <strong class="c-cyan">Automated Device Enrolment</strong>: a device bought through your
+        reseller is enrolled and supervised the moment it is switched on, before the user reaches
+        the desktop, and — crucially — the enrolment cannot be removed by wiping it. That is the
+        Apple equivalent of Autopilot, and it is what makes a fleet actually managed rather than
+        opt-in.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>ABM <span class="acro-exp">(Apple Business Manager)</span> piece</th><th>Provides</th></tr></thead>
+          <tbody>
+            <tr><td>Automated Device Enrolment (ADE)</td><td>Zero-touch, supervised, non-removable enrolment from first boot</td></tr>
+            <tr><td>Volume Purchase (VPP)</td><td>Buy and push apps to devices without an Apple ID on each</td></tr>
+            <tr><td>Managed Apple IDs</td><td>Org-owned identities, federated to your Entra/Google directory</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Jamf vs Intune for Apple</div>
+      <div class="concept-desc">
+        Both manage Macs; they are not equivalent. Jamf is Apple-only and typically supports new OS <span class="acro-exp">(Operating System)</span>
+        features on release day. Intune manages Apple alongside Windows in one console and consumes
+        the same Conditional Access, but its Apple feature depth lags a dedicated tool. Many
+        enterprises run both — Intune for compliance and CA, Jamf for deep Mac configuration.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Need</th><th>Leans toward</th></tr></thead>
+          <tbody>
+            <tr><td>Mac-heavy fleet, day-one OS support</td><td>Jamf Pro</td></tr>
+            <tr><td>One console with Windows + CA integration</td><td>Intune</td></tr>
+            <tr><td>Deep Mac config + Microsoft compliance</td><td>Both, integrated</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">FileVault &amp; Key Escrow — the Same Rule as BitLocker</div>
+      <div class="concept-desc">
+        FileVault is Apple's full-disk encryption, and the rule from
+        <span class="xref">BitLocker at Scale — Silent Enablement, Key Escrow &amp; Recovery</span>
+        applies unchanged: enabling encryption is easy, and the only thing that matters is whether
+        the recovery key escrowed. Enforce FileVault by profile, escrow a
+        <strong class="c-cyan">personal recovery key</strong> to your MDM, and confirm the key
+        actually arrived — an encrypted Mac with an un-escrowed key is exactly as unrecoverable as
+        the Windows version.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: IOS & ANDROID ENTERPRISE ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📱</span>
+    <span class="topic-name">iOS &amp; Android Enterprise — Supervision, Work Profiles &amp; MAM <span class="acro-exp">(Mobile Application Management)</span></span>
+    <span class="topic-badge">Endpoint • Mobile</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Who Owns the Device Decides Everything You Can Do</div>
+      <div class="concept-desc">
+        Mobile management forks on one question: is this a company-owned device or the user's own
+        phone? Company-owned devices can be locked down hard; a personal phone must be managed with
+        a scalpel that never touches the owner's photos and messages. Both platforms answer this
+        with a corporate-vs-personal split, and choosing the wrong enrolment type is the root of
+        most mobile-management grief.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Scenario</th><th>iOS</th><th>Android</th></tr></thead>
+          <tbody>
+            <tr><td>Company-owned, locked down</td><td>Supervised (via ADE)</td><td>Fully managed / dedicated</td></tr>
+            <tr><td>Personal phone, corp data</td><td>User enrolment / MAM only</td><td>Work profile (BYOD)</td></tr>
+            <tr><td>Shared / kiosk / frontline</td><td>Supervised + Shared iPad</td><td>Dedicated device</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Supervision and the Work Profile — the Two Levers</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">Supervision</strong> on iOS unlocks the powerful restrictions — the
+        ones that only exist for company-owned, ADE-enrolled devices; you cannot supervise a
+        user's personal phone, by design. Android's <strong class="c-cyan">work profile</strong>
+        creates a cryptographically separated container on a personal device: corporate apps and
+        data live inside it, the user's personal side is invisible to IT, and a "retire" wipes only
+        the work profile. It is the cleanest BYOD <span class="acro-exp">(Bring Your Own Device)</span> story either platform offers.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Capability</th><th>Where it lives</th></tr></thead>
+          <tbody>
+            <tr><td>Deep restrictions, app allow-lists</td><td>iOS supervised / Android fully managed</td></tr>
+            <tr><td>Selective wipe (corp data only)</td><td>Work profile / user enrolment</td></tr>
+            <tr><td>SCEP/PKCS certs for Wi-Fi &amp; VPN <span class="acro-exp">(Virtual Private Network)</span></td><td>Both — the profile that most often silently fails to deploy</td></tr>
+            <tr><td>Data protection without enrolment</td><td>App Protection Policies (MAM)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Where It Fits</div>
+      <div class="concept-title">MAM Without Enrolment — the Personal-Phone Answer</div>
+      <div class="concept-desc">
+        For the contractor or the employee who will not enrol a personal phone, you do not manage
+        the device at all — you manage the <em>app</em>. App Protection Policies wrap the corporate
+        apps so data cannot be copied out to personal apps, require a PIN to open them, and can wipe
+        only the corporate data, all without the device ever being enrolled. This is the same
+        control the endpoint domain describes in
+        <span class="xref">App Protection Policies — MAM Without Enrolment</span>, viewed from the
+        cross-platform side: on mobile it is often the <em>only</em> acceptable option for a device
+        the company does not own.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body endpoint -->

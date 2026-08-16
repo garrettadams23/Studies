@@ -5525,4 +5525,124 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             </div>
           </div>
 
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📡</span>
+              <span class="topic-name">Modern Connectivity — 5G, Private Cellular, Satellite &amp; IoT <span class="acro-exp">(Internet of Things)</span> Radios</span>
+              <span class="topic-badge">Networking • Emerging</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Wi-Fi and Fibre Are No Longer the Only Two Answers</div>
+                <div class="concept-desc">
+                  For a long time "connect the site" meant Wi-Fi inside and a fibre or copper WAN <span class="acro-exp">(Wide Area Network)</span> out.
+                  A cluster of technologies now fills the gaps between — the warehouse Wi-Fi cannot
+                  cover, the remote site fibre will never reach, the thousand battery sensors no Wi-Fi
+                  radio should serve. The operator's job is not to chase the newest one, but to match
+                  the radio to the job: range, power, bandwidth and cost pull against each other, and
+                  no single technology wins all four.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Technology</th><th>Sweet spot</th><th>Watch out for</th></tr></thead>
+                    <tbody>
+                      <tr><td>5G (public)</td><td>Mobile, failover WAN, high bandwidth on the move</td><td>Coverage varies; "5G" spans very different speeds</td></tr>
+                      <tr><td>Private cellular / CBRS</td><td>Large sites, harsh RF <span class="acro-exp">(Radio Frequency)</span>, roaming that Wi-Fi handles badly</td><td>Spectrum, hardware and expertise cost more than an AP</td></tr>
+                      <tr><td>Satellite (LEO)</td><td>Remote sites, ships, disaster recovery, temporary sites</td><td>Latency better than old GEO but above fibre; weather, line of sight</td></tr>
+                      <tr><td>LPWAN (LoRaWAN)</td><td>Long-range, tiny data, years on a battery</td><td>Kilobits, not megabits — telemetry only</td></tr>
+                      <tr><td>Zigbee / Thread / Matter</td><td>Short-range mesh for building &amp; IoT devices</td><td>Ecosystem fragmentation; Matter is the convergence bet</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">When Cellular Beats Wi-Fi, and When Satellite Earns Its Latency</div>
+                <div class="concept-desc">
+                  Two decisions come up repeatedly. <strong class="c-cyan">Private cellular</strong>
+                  wins where Wi-Fi genuinely struggles — sprawling outdoor yards, metal-dense
+                  factories, and fast roaming across a large area where Wi-Fi's hand-off stutters.
+                  Its headline feature, <strong class="c-cyan">network slicing</strong>, lets one 5G
+                  network carve isolated virtual networks with guaranteed characteristics — real, but
+                  more relevant to carriers and large campuses than to a typical office.
+                  <strong class="c-cyan">LEO satellite</strong> earns its place as the connectivity of
+                  last resort that is now actually good: latency low enough for most business apps,
+                  reaching sites a WAN never could, and the natural out-of-band path when the primary
+                  link is down — see <span class="xref">WAN &amp; Switching Deep — SD-WAN, MPLS, VLANs &amp; PoE</span>
+                  for how it slots into a multi-link edge.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌐</span>
+              <span class="topic-name">Edge Computing — What It Is Once the Marketing Is Removed</span>
+              <span class="topic-badge">Networking • Emerging</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Move the Compute to the Data When the Round Trip Is the Problem</div>
+                <div class="concept-desc">
+                  Edge computing is one idea under a lot of marketing: run the processing near where
+                  the data is produced instead of shipping it all to a distant cloud region. It is
+                  worth doing for exactly three reasons, and if none of them applies, centralized
+                  cloud is simpler and you should stay there. The honest test is whether the round
+                  trip to the cloud is actually the constraint — for a great many workloads it is not,
+                  and "edge" adds distributed-systems pain for no gain.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Reason to go to the edge</th><th>Example</th></tr></thead>
+                    <tbody>
+                      <tr><td>Latency — the round trip is too slow</td><td>Machine vision on a production line, AR, robotics</td></tr>
+                      <tr><td>Bandwidth — too much data to ship</td><td>Dozens of camera feeds; process locally, send summaries</td></tr>
+                      <tr><td>Autonomy — must keep running if the link drops</td><td>A remote site, a ship, a store that cannot stop when WAN <span class="acro-exp">(Wide Area Network)</span> fails</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    A lighter form is <strong class="c-cyan">function-at-edge</strong>: running small
+                    logic in a CDN <span class="acro-exp">(Content Delivery Network)</span> point of presence — auth, redirects, personalization — close to the
+                    user without operating any hardware yourself. It is the edge win most teams
+                    actually get.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Operations</div>
+                <div class="concept-title">The Edge Is a Datacenter With None of the Protections</div>
+                <div class="concept-desc">
+                  The reason edge is operationally hard is that you have taken servers out of a
+                  locked, monitored, climate-controlled room and scattered them across closets, poles
+                  and shop floors. Everything the datacenter gave you for free — physical security,
+                  reliable power, a technician down the hall — is now gone, at every one of a hundred
+                  sites at once.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Challenge</th><th>What it demands</th></tr></thead>
+                    <tbody>
+                      <tr><td>Fleet updates &amp; drift</td><td>Remote, staged, rollback-capable updates — no hands on site</td></tr>
+                      <tr><td>Observability without a datacenter</td><td>Push telemetry out; you cannot SSH <span class="acro-exp">(Secure Shell)</span> into a box behind a shop counter</td></tr>
+                      <tr><td>Physical exposure</td><td>Assume the device can be stolen — disk encryption, scoped keys, no domain trust it can leak</td></tr>
+                      <tr><td>Offline-first</td><td>It must do its job with the link down and reconcile later</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The security posture is the one from
+                    <span class="xref">Securing OT Without Breaking It — Segmentation, Access &amp; Safety-First IR</span>:
+                    a physically exposed device on an untrusted network, which must never become a
+                    lateral-movement path back into the core.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body net -->

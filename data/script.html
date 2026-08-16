@@ -11542,4 +11542,277 @@ df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span cl
             </div>
           </div>
 
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📱</span>
+              <span class="topic-name">Kotlin, Swift &amp; Scala — Modern Typed Application Languages</span>
+              <span class="topic-badge">Languages</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Why Together</div>
+                <div class="concept-title">Three Answers to "Fix the Language, Keep the Platform"</div>
+                <div class="concept-desc">
+                  Each of these arrived to replace an entrenched language without leaving its
+                  ecosystem. Kotlin fixes Java while running on the JVM. Swift replaces
+                  Objective-C while keeping the Apple frameworks. Scala brought functional
+                  programming to the JVM. So all three share a family resemblance — strong static
+                  types, null safety, type inference, immutability by default, expressions instead
+                  of statements — because they are all reactions to the same 1990s pain points.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Language</th><th>Runs on</th><th>Replaces / joins</th><th>Home turf</th></tr>
+                    <tr><td>Kotlin</td><td>JVM (also native, JS)</td><td>Java</td><td>Android, increasingly server-side</td></tr>
+                    <tr><td>Swift</td><td>Native (LLVM)</td><td>Objective-C</td><td>iOS/macOS; some server &amp; systems use</td></tr>
+                    <tr><td>Scala</td><td>JVM (also JS, native)</td><td>Joins Java</td><td>Big data (Spark), typed FP shops</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Shared Ideas</div>
+                <div class="concept-title">Null Safety and the Expression Habit</div>
+                <div class="concept-desc">
+                  The one feature to carry away is <strong class="c-cyan">null in the type
+                  system</strong>. A plain <code>String</code> cannot be null; a
+                  <code>String?</code> might be, and the compiler forces you to handle the
+                  difference before you can call a method on it. That single move eliminates the
+                  most common crash in the languages they replaced. The second shared habit is that
+                  almost everything is an expression that returns a value — an <code>if</code>, a
+                  <code>when</code>/<code>match</code> — so you assign its result rather than
+                  mutating a variable inside branches.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com">// Kotlin — null safety and when-as-expression</span>
+val name: String? = user.nickname          <span class="com">// may be null</span>
+val shown = name?.uppercase() ?: "GUEST"    <span class="com">// safe call + default</span>
+
+val tier = when (score) {                    <span class="com">// returns a value</span>
+    in 90..100 -> "A"
+    in 80..89  -> "B"
+    else       -> "C"
+}</pre>
+                  <pre class="code-block"><span class="com">// Swift — optionals are the same idea, different syntax</span>
+let name: String? = user.nickname
+let shown = name?.uppercased() ?? "GUEST"
+if let real = name { greet(real) }          <span class="com">// unwrap safely</span></pre>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Where They Diverge</div>
+                <div class="concept-title">Pragmatic vs Pure</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Kotlin</strong> is deliberately pragmatic — coroutines
+                  make async code read like sequential code, and Java interop is seamless, which is
+                  why Google made it the Android default. <strong class="c-cyan">Swift</strong>
+                  leans on value types (structs copied, not shared) and, rather than a garbage
+                  collector, uses ARC — automatic reference counting decided at compile time, whose
+                  one sharp edge is the retain cycle you break with a <code>weak</code> reference.
+                  <strong class="c-cyan">Scala</strong> is the most powerful and the steepest: a
+                  full functional type system, immutable-first, beloved where correctness is worth
+                  a hard learning curve and easy to overcomplicate where it is not.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">λ</span>
+              <span class="topic-name">Elixir, Haskell &amp; the Functional / Niche Languages</span>
+              <span class="topic-badge">Languages</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Why Learn One</div>
+                <div class="concept-title">A Different Language Rewires How You Think</div>
+                <div class="concept-desc">
+                  You will likely never ship Haskell to production, and that is not the point.
+                  Languages built on ideas your daily one lacks — enforced purity, the actor model,
+                  a type system that proves things — leave habits behind that make your everyday
+                  code better: smaller functions, less shared mutable state, thinking about failure
+                  as data. Each language below is worth a weekend for the idea it forces on you.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Language</th><th>The idea it teaches</th></tr>
+                    <tr><td>Elixir / Erlang</td><td>Fault tolerance through isolated processes and "let it crash"</td></tr>
+                    <tr><td>Haskell</td><td>Purity, laziness, and a type system that carries real proof</td></tr>
+                    <tr><td>Lua</td><td>How small an embeddable language can be</td></tr>
+                    <tr><td>R</td><td>Statistics and data as a first-class, vectorized concern</td></tr>
+                    <tr><td>MATLAB</td><td>Matrix maths as the native datatype (engineering, DSP)</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Elixir &amp; the BEAM</div>
+                <div class="concept-title">"Let It Crash" Is a Design, Not a Shrug</div>
+                <div class="concept-desc">
+                  Elixir runs on the <strong class="c-cyan">BEAM</strong>, Erlang's virtual
+                  machine, built for telephone switches that must not go down. The model: millions
+                  of tiny isolated processes, sharing nothing, communicating only by messages. When
+                  one hits an error it dies cleanly and a supervisor restarts it in a known-good
+                  state — so instead of defensively guarding every edge case, you let a failed
+                  process crash and be reborn. That is how the BEAM reaches nine-nines uptime, and
+                  it is a genuinely different answer to reliability than try/catch everywhere.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Elixir — spawn a process, send it a message</span>
+pid = spawn(fn -&gt; receive do
+  {:hello, name} -&gt; IO.puts("hi #{name}")
+end end)
+send(pid, {:hello, "world"})
+<span class="com"># Pattern matching everywhere; immutability is the default.</span></pre>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Haskell</div>
+                <div class="concept-title">The Compiler as a Proof Checker</div>
+                <div class="concept-desc">
+                  Haskell is <strong class="c-cyan">purely functional</strong>: a function given the
+                  same input always returns the same output and changes nothing else, so anything
+                  with a side effect — I/O, state, randomness — is marked in its type. That sounds
+                  academic until you feel the payoff: "if it compiles, it usually works" is close
+                  to true, because the type system has ruled out whole categories of bug before the
+                  program ever runs. It is also <strong class="c-cyan">lazy</strong> — nothing is
+                  computed until its value is needed, which makes infinite data structures ordinary
+                  and evaluation order occasionally surprising. The vocabulary it makes concrete —
+                  pure functions, immutability, effects as values — is exactly what shows up, gently,
+                  in modern JavaScript, Rust and Kotlin.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    <strong class="c-amber">The others, briefly:</strong> Lua is the go-to embedded
+                    scripting language — game engines, nginx, Redis — because the whole interpreter
+                    is tiny and trivially bound to C. R and MATLAB are domain tools rather than
+                    general-purpose languages: R for statistics and its plotting, MATLAB for
+                    matrix-heavy engineering and signal processing. Reach for them when the domain
+                    is the point, not the software.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📇</span>
+              <span class="topic-name">Microsoft Graph From PowerShell — The Modern Admin API <span class="acro-exp">(Application Programming Interface)</span></span>
+              <span class="topic-badge">Automation • Admin</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">One API Behind Nearly Every Microsoft 365 Admin Task</div>
+                <div class="concept-desc">
+                  The older service-specific modules (MSOnline, AzureAD) are retired or retiring, and
+                  the single forward path for automating users, groups, devices, Intune and more is
+                  Microsoft Graph. The <code>Microsoft.Graph</code> PowerShell module is a generated
+                  wrapper over the Graph REST <span class="acro-exp">(Representational State Transfer)</span> API, so learning it teaches you the API underneath —
+                  and anything the cmdlets do not expose, you can still call as a raw request.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Connect with least privilege — name only the scopes you need</span>
+Connect-MgGraph -Scopes "User.Read.All","Group.Read.All"
+
+<span class="com"># Cmdlets for the common paths…</span>
+Get-MgUser -Filter "accountEnabled eq false" -All
+
+<span class="com"># …and the escape hatch to raw Graph for anything not wrapped</span>
+Invoke-MgGraphRequest -Method GET `
+  -Uri "https://graph.microsoft.com/v1.0/auditLogs/signIns?`$top=50"</pre>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Four Things That Trip Up Every Graph Script</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Issue</th><th>What to know</th></tr>
+                    <tr><td>Paging</td><td>Graph returns pages, not everything — <code>-All</code> follows @odata.nextLink; without it you silently get the first page only</td></tr>
+                    <tr><td>Throttling</td><td>Heavy loops hit HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> 429 — honour the Retry-After header, add backoff; do not hammer</td></tr>
+                    <tr><td>Permissions &amp; consent</td><td>Delegated (as you) vs application (unattended); the scope must be consented, not just requested</td></tr>
+                    <tr><td>v1.0 vs beta</td><td class="c-red">beta endpoints change without notice — never build a scheduled job on beta</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    For anything scheduled and unattended, authenticate as an <strong class="c-cyan">app
+                    registration with a certificate</strong> or a managed identity — never an
+                    interactive login or a stored password. That path, and its secret handling, is in
+                    <span class="xref">Environment Variables &amp; Configuration — Keep Secrets Out of Code</span>.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Craft</div>
+                <div class="concept-title">Read-Only First, Then a Dry Run</div>
+                <div class="concept-desc">
+                  Graph will happily disable a thousand accounts as fast as it will read them. Develop
+                  every change script against <code>GET</code> until the target set is provably right,
+                  then gate the write behind <code>-WhatIf</code> or an explicit confirmation and a
+                  hard cap on how many objects one run may touch. A filter that was one character off
+                  is a very different event when the next line is a bulk delete — see
+                  <span class="xref">Automation Risk &amp; Discipline — Blast Radius, Approval Gates &amp; the Kill Switch</span>.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🛂</span>
+              <span class="topic-name">JEA — Just Enough Administration &amp; Constrained Remoting</span>
+              <span class="topic-badge">Automation • Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Let Someone Run Three Commands Without Making Them an Admin</div>
+                <div class="concept-desc">
+                  The everyday problem: the help desk needs to restart one service and read a couple of
+                  logs on a server, and the lazy answer is to make them a local admin, which hands them
+                  everything. Just Enough Administration inverts it — a constrained PowerShell endpoint
+                  exposes only the specific cmdlets and parameters a role needs, running under a managed
+                  identity, so the operator can do their three tasks and nothing else. It is least
+                  privilege made concrete for operations.
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">How the Constraint Is Built</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Piece</th><th>Role</th></tr>
+                    <tr><td>Role Capability file</td><td>Declares exactly which cmdlets, functions and parameters a role may use</td></tr>
+                    <tr><td>Session Configuration file</td><td>Maps users/groups to role capabilities and sets the run-as identity</td></tr>
+                    <tr><td>Virtual / managed run-as account</td><td>Commands execute as a privileged identity the user never actually holds</td></tr>
+                    <tr><td>Transcription</td><td>Every session is logged — who ran what, verbatim</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The result: a delegated operator connects to a constrained endpoint, sees only the
+                    handful of commands their role defines, and every keystroke is transcribed. The
+                    privileged credential never lands on their machine or in their token.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Where It Fits</div>
+                <div class="concept-title">The On-Prem Counterpart to Cloud PIM</div>
+                <div class="concept-desc">
+                  JEA does for a Windows server what privileged-identity management does for the cloud
+                  control plane: it removes standing privilege and replaces it with scoped, audited,
+                  task-specific access. It pairs naturally with removing local admin rights on endpoints
+                  — same principle, server side — and with the credential hygiene in
+                  <span class="xref">Service Accounts — gMSA and Retiring the Shared Password</span>.
+                  Reach for it wherever "they only needed to do one thing" currently means "so we gave
+                  them admin."
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body script -->

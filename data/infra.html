@@ -2203,4 +2203,361 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
   </div>
 </div>
 
+
+<!-- ── TOPIC: VIRTUALIZATION FUNDAMENTALS ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧱</span>
+    <span class="topic-name">Virtualization Fundamentals — Hypervisors, Overcommit &amp; the Noisy Neighbour</span>
+    <span class="topic-badge">Infra • Virtualization</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">One Physical Host Pretending to Be Many</div>
+      <div class="concept-desc">
+        A hypervisor slices one physical server into many virtual machines, each believing it
+        owns the hardware. That illusion is the foundation the entire enterprise estate — and
+        the cloud — sits on. The single distinction to keep straight is where the hypervisor
+        runs: on the bare metal, or on top of an operating system.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Type</th><th>Runs on</th><th>Examples</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>Type 1 (bare-metal)</td><td>Directly on hardware</td><td>ESXi, Hyper-V, KVM <span class="acro-exp">(Kernel-based Virtual Machine)</span>, Proxmox</td><td>Servers, datacenter, cloud — the real one</td></tr>
+            <tr><td>Type 2 (hosted)</td><td>On top of an OS <span class="acro-exp">(Operating System)</span></td><td>VirtualBox, VMware Workstation</td><td>A lab on your laptop</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Modern CPUs <span class="acro-exp">(Central Processing Unit)</span> have <strong class="c-cyan">hardware-assisted virtualization</strong>
+          (Intel VT-x, AMD-V) so guests run near-native; nested page tables handle the memory
+          translation. It has to be enabled in firmware — a disabled BIOS <span class="acro-exp">(Basic Input/Output System)</span> setting is the
+          classic "Hyper-V won't start" cause.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Overcommit — Selling More Than You Have, on Purpose</div>
+      <div class="concept-desc">
+        Virtualization's economics come from overcommit: assigning more virtual CPU and RAM <span class="acro-exp">(Random Access Memory)</span>
+        than the host physically owns, betting that guests do not all peak at once. The bet is
+        usually right and occasionally catastrophic, and the symptoms are specific enough to
+        name.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Means</th></tr></thead>
+          <tbody>
+            <tr><td>High CPU ready time</td><td>The VM <span class="acro-exp">(Virtual Machine)</span> is ready to run but waiting for a physical core — the truest overcommit signal</td></tr>
+            <tr><td>Memory ballooning</td><td>The host is reclaiming RAM from guests under pressure</td></tr>
+            <tr><td>Swapping at the host</td><td class="c-red">Past ballooning — performance falls off a cliff here</td></tr>
+            <tr><td>Noisy neighbour</td><td>One greedy VM starving its co-tenants on the same host</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">CPU is safer to overcommit than RAM.</strong> A waiting
+          thread just waits; exhausted memory forces host swapping, which punishes every VM on
+          the box. Size RAM close to real need; be generous only with vCPU.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: HYPER-V & VSPHERE ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🖥️</span>
+    <span class="topic-name">Hyper-V, vSphere &amp; the Open-Source Stack — The Vocabulary That Transfers</span>
+    <span class="topic-badge">Infra • Virtualization</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Comparison</div>
+      <div class="concept-title">Different Names, the Same Six Ideas</div>
+      <div class="concept-desc">
+        Every hypervisor platform has a host, a management brain, a clustering feature, a
+        load-balancer, a failover feature and a point-in-time capture. Learn the concepts once
+        and the platform is just a translation table.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Idea</th><th>VMware vSphere</th><th>Microsoft Hyper-V</th><th>Open source</th></tr></thead>
+          <tbody>
+            <tr><td>The host</td><td>ESXi</td><td>Hyper-V host</td><td>KVM <span class="acro-exp">(Kernel-based Virtual Machine)</span> / Proxmox node</td></tr>
+            <tr><td>Central management</td><td>vCenter</td><td>Failover Cluster Mgr / SCVMM</td><td>Proxmox web UI <span class="acro-exp">(User Interface)</span> / oVirt</td></tr>
+            <tr><td>Move a running VM <span class="acro-exp">(Virtual Machine)</span></td><td>vMotion</td><td>Live Migration</td><td>Live migration</td></tr>
+            <tr><td>Auto-balance load</td><td>DRS</td><td>Dynamic Optimization (SCVMM)</td><td>Manual / scripted</td></tr>
+            <tr><td>Restart VM on host death</td><td>vSphere HA</td><td>Failover Clustering</td><td>HA manager</td></tr>
+            <tr><td>Point-in-time capture</td><td>Snapshot</td><td>Checkpoint</td><td>Snapshot</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Which One You Actually End Up Running</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Platform</th><th>Where it wins</th></tr></thead>
+          <tbody>
+            <tr><td>vSphere</td><td>The datacenter default; deepest tooling and ecosystem, licensed accordingly</td></tr>
+            <tr><td>Hyper-V</td><td>Windows shops — the licensing may already be paid, and it integrates with the rest of the estate</td></tr>
+            <tr><td>Proxmox / KVM</td><td>Cost-sensitive, lab, and Linux-first shops; KVM is also what most clouds run underneath</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">Generation matters on Hyper-V:</strong> Generation 2 VMs use
+          UEFI <span class="acro-exp">(Unified Extensible Firmware Interface)</span> and Secure Boot and are the modern default, but you cannot convert a Gen 1 VM to
+          Gen 2 in place — it is a rebuild. Choose correctly when you create the template, in
+          <span class="xref">Windows Server Editions &amp; Licensing — What You Are Actually Buying</span>'s
+          licensing context.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SNAPSHOTS ARE NOT BACKUPS ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📸</span>
+    <span class="topic-name">Snapshots Are Not Backups — What They Cost and How They Bite</span>
+    <span class="topic-badge">Infra • Virtualization</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Snapshot Is a Fragile Dependency, Not a Copy</div>
+      <div class="concept-desc">
+        A VM <span class="acro-exp">(Virtual Machine)</span> snapshot does not copy the disk. It freezes the current disk and writes all new
+        changes to a growing delta file, so the running VM now <em>depends on</em> the original
+        disk plus every delta in the chain. Lose or corrupt any link and the VM is gone. That
+        is the opposite of a backup, which is an independent copy you can restore without the
+        original. Treating one as the other is a classic career-ending mistake.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Property</th><th>Snapshot</th><th>Backup</th></tr></thead>
+          <tbody>
+            <tr><td>Independent of the source?</td><td class="c-red">No — depends on it</td><td class="c-green">Yes</td></tr>
+            <tr><td>Survives the datastore dying?</td><td class="c-red">No</td><td class="c-green">Yes (if off-array)</td></tr>
+            <tr><td>Good for</td><td>A 30-minute "before I patch" undo</td><td>Recovery, retention, compliance</td></tr>
+            <tr><td>Cost over time</td><td>Grows and slows the VM</td><td>Storage on the target</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">How Snapshots Bite</div>
+      <div class="concept-desc">
+        The damage is almost always a snapshot left running far longer than intended.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Failure</th><th>Cause</th></tr></thead>
+          <tbody>
+            <tr><td>Datastore fills up</td><td>A forgotten snapshot delta grew until the whole datastore is full — takes every VM on it down</td></tr>
+            <tr><td>VM crawls</td><td>A long snapshot chain; every read walks the deltas</td></tr>
+            <tr><td>Consolidation takes hours</td><td>Deleting an old, huge snapshot has to merge gigabytes back — plan a window</td></tr>
+            <tr><td>Backup app snapshot stuck</td><td>Your backup uses snapshots under the hood; a failed job can orphan one</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">Rule:</strong> snapshots are measured in hours, not weeks.
+          Take one before a risky change, verify the change, delete the snapshot. Alert on any
+          snapshot older than a day — it is either forgotten or a symptom.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: BACKUP STRATEGY ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💾</span>
+    <span class="topic-name">Backup Strategy — 3-2-1-1-0 and the Schemes That Make Restores Possible</span>
+    <span class="topic-badge">Infra • Backup</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Rule, Extended for the Ransomware Era</div>
+      <div class="concept-desc">
+        The old 3-2-1 rule grew two digits because attackers learned to find and delete
+        backups. It is the one framework worth memorizing, because every part of it maps to a
+        specific way people have lost their data.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Digit</th><th>Means</th><th>Defends against</th></tr></thead>
+          <tbody>
+            <tr><td>3 copies</td><td>Production plus two backups</td><td>A single copy failing</td></tr>
+            <tr><td>2 media</td><td>On two different storage types</td><td>A whole media class failing at once</td></tr>
+            <tr><td>1 off-site</td><td>One copy in another location</td><td>Fire, flood, the whole site lost</td></tr>
+            <tr><td>1 offline/immutable</td><td>Air-gapped or write-once</td><td class="c-red">Ransomware deleting the backups too</td></tr>
+            <tr><td>0 errors</td><td>Verified by test restore</td><td>The backup that never actually worked</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Full, Incremental, Differential — and What Each Costs to Restore</div>
+      <div class="concept-desc">
+        The backup-type choice is a trade between backup-window cost and restore-time cost, and
+        the restore side is the one that matters when it counts.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Type</th><th>Backs up</th><th>Restore needs</th></tr></thead>
+          <tbody>
+            <tr><td>Full</td><td>Everything, every time</td><td>Just the one full — fastest restore, biggest storage</td></tr>
+            <tr><td>Incremental</td><td>Changes since the last <em>any</em> backup</td><td>The full + every incremental since — smallest backups, slowest restore</td></tr>
+            <tr><td>Differential</td><td>Changes since the last <em>full</em></td><td>The full + the latest differential — a middle ground</td></tr>
+            <tr><td>Synthetic full / forever-incremental</td><td>Incrementals merged into a full on the target</td><td>The modern default; small daily jobs, fast restores</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Retention is a separate axis — <strong class="c-cyan">GFS</strong> (grandfather-
+          father-son) keeps dailies for weeks, weeklies for months, monthlies for years, so you
+          can restore last Tuesday <em>and</em> last quarter without keeping every daily forever.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: RANSOMWARE-RESILIENT BACKUP ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧱</span>
+    <span class="topic-name">Ransomware-Resilient Backup — Immutability, Isolation &amp; Assuming the Domain Is Lost</span>
+    <span class="topic-badge">Infra • Backup</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Threat Model</div>
+      <div class="concept-title">Modern Ransomware Hunts the Backups First</div>
+      <div class="concept-desc">
+        A serious intrusion does not encrypt on arrival. It dwells, finds the backup server,
+        deletes or encrypts the backups, and only then triggers — because backups are the one
+        thing that lets you refuse to pay. So a backup design that assumes the attacker already
+        has domain admin is the only honest one. See
+        <span class="xref">The Criminal Economy — Access Brokers, Affiliates &amp; How Breaches Get Sold</span>
+        for why that assumption is realistic.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Controls</div>
+      <div class="concept-title">The Copy the Attacker Cannot Reach</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>Immutability</td><td>Write-once for a retention window — even an admin credential cannot delete it early</td></tr>
+            <tr><td>Air-gap</td><td>A copy physically or logically disconnected — tape, or a target only reachable during the job</td></tr>
+            <tr><td>Separate identity plane</td><td class="c-red">The backup system must NOT authenticate against the AD <span class="acro-exp">(Active Directory)</span> it protects — or one compromise takes both</td></tr>
+            <tr><td>MFA <span class="acro-exp">(Multi-Factor Authentication)</span> + separate credentials</td><td>Backup console admins are not the same accounts as domain admins</td></tr>
+            <tr><td>Alert on deletion / job change</td><td>Mass backup deletion is a high-fidelity intrusion signal in its own right</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">The most common fatal flaw</strong> is a backup server joined
+          to the domain it backs up, with backups on a share that same domain admin can reach.
+          When the domain falls, so do the backups. Break that dependency first — it is the
+          single highest-value change in this card.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Recovery</div>
+      <div class="concept-title">Plan to Rebuild Trust, Not Just Restore Files</div>
+      <div class="concept-desc">
+        Restoring data into a domain the attacker still controls just re-infects it. A real
+        ransomware recovery plan includes a clean-room rebuild of identity, a known-good
+        restore point from <em>before</em> the dwell period, and a verified-clean sequence for
+        bringing systems back. This is where backup meets
+        <span class="xref">Domain Controller Recovery — Authoritative vs Non-Authoritative Restore</span>
+        — the order you bring things back in is itself part of the plan.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: RESTORE TESTING & DR ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔁</span>
+    <span class="topic-name">Restore Testing &amp; DR Design — Turning Backups Into a Recovery Capability</span>
+    <span class="topic-badge">Infra • Continuity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">You Do Not Have Backups; You Have Restores You Have Tested</div>
+      <div class="concept-desc">
+        A backup job reporting success proves the job ran, not that the data comes back. The
+        only thing that proves recovery is a restore actually performed — and the untested
+        backup that fails on the day is one of the oldest disasters in IT. Restore testing is
+        the drill that converts a hopeful backup into a capability you can stake the business
+        on. The two numbers that shape the whole design come from
+        <span class="xref">Business Continuity &amp; Disaster Recovery — Keeping the Lights On</span>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Number</th><th>Question</th><th>Drives</th></tr></thead>
+          <tbody>
+            <tr><td>RPO <span class="acro-exp">(Recovery Point Objective)</span></td><td>How much data can we afford to lose?</td><td>Backup <em>frequency</em></td></tr>
+            <tr><td>RTO <span class="acro-exp">(Recovery Time Objective)</span></td><td>How long can we be down?</td><td>Recovery <em>method</em> and spend</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">DR Posture — Match the Spend to the RTO</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Posture</th><th>Recovery time</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>Backup &amp; restore</td><td>Hours to days</td><td>Lowest — just the backups</td></tr>
+            <tr><td>Cold site</td><td>Days</td><td>Space and hardware, powered off</td></tr>
+            <tr><td>Warm site</td><td>Hours</td><td>Partially running, data lagging</td></tr>
+            <tr><td>Hot site / replication</td><td>Minutes</td><td>Highest — a running duplicate</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">Failback is the forgotten half.</strong> Runbooks lovingly
+          document the failover and stop there; getting production back to primary afterward,
+          without losing the data written while you ran on the DR site, is its own procedure —
+          write it before you need it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reality Check</div>
+      <div class="concept-title">DR for Cloud and SaaS <span class="acro-exp">(Software as a Service)</span> — Read the Shared-Responsibility Line</div>
+      <div class="concept-desc">
+        "It's in the cloud, it's backed up" is an assumption, not a fact. Providers guarantee
+        <em>their</em> infrastructure's durability; they do not guarantee against you or an
+        attacker deleting your data, and most SaaS retention is short by default. Your Microsoft
+        365 mailboxes and files, in particular, are your responsibility to back up — the vendor
+        keeps the lights on, not your recycle bin. Confirm exactly what the provider covers and
+        back up the rest yourself.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body infra -->
