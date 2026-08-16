@@ -2123,4 +2123,330 @@ Remove-PSSession $s
   </div>
 </div>
 
+
+<!-- ── TOPIC: BITLOCKER AT SCALE ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔐</span>
+    <span class="topic-name">BitLocker at Scale — Silent Enablement, Key Escrow &amp; Recovery</span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Only Question That Matters Is "Can You Get the Key Back"</div>
+      <div class="concept-desc">
+        Encrypting the fleet is easy; a policy does it in an afternoon. The part that ends
+        careers is a device that has gone into recovery and a recovery key that was never
+        escrowed anywhere. At scale, BitLocker is a key-management problem wearing an
+        encryption costume — design the escrow first, then turn on encryption, never the
+        other way round.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Piece</th><th>What it is</th></tr></thead>
+          <tbody>
+            <tr><td>TPM <span class="acro-exp">(Trusted Platform Module)</span></td><td>The chip that seals the key to a known-good boot state; unlocks transparently at boot</td></tr>
+            <tr><td>Recovery key</td><td>The 48-digit fallback when the TPM refuses — the thing you must have escrowed</td></tr>
+            <tr><td>Escrow location</td><td>Entra ID for cloud-joined devices, AD <span class="acro-exp">(Active Directory)</span> for hybrid; MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> keeps its own recovery store too</td></tr>
+            <tr><td>Encryption method</td><td>XTS-AES 128 or 256; used space only vs full disk on first encryption</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">Silent Enablement, and the Order It Must Happen In</div>
+      <div class="concept-desc">
+        Silent enablement means the user never sees a prompt — the disk encrypts and the
+        key escrows without interaction. It only works if the prerequisites are already true
+        when the policy lands, and the classic failure is a device that reports "encrypted"
+        with a key that reached nowhere.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Must be true</th></tr></thead>
+          <tbody>
+            <tr><td>1 Prerequisites</td><td>TPM present and ready, UEFI <span class="acro-exp">(Unified Extensible Firmware Interface)</span>, Secure Boot on, no third-party encryption already resident</td></tr>
+            <tr><td>2 Policy applies</td><td>Disk-encryption profile assigned; "allow standard users to enable" set for non-admin devices</td></tr>
+            <tr><td>3 Encrypt</td><td>Kicks off silently; used-space-only is faster on a fresh device</td></tr>
+            <tr><td>4 Escrow</td><td class="c-red">The one to verify — confirm the key is visible in Entra/AD before you call it done</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">A device can be encrypted and unrecoverable at the same time.</strong>
+          Report on <em>escrowed keys</em>, not on encryption status. The two diverge exactly
+          on the devices you will most need to recover.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Why a Device Drops Into Recovery</div>
+      <div class="concept-desc">
+        Recovery is the TPM doing its job — something in the measured boot path changed, so
+        it refused to release the key. Most are benign and self-inflicted, which is why users
+        should never see the recovery screen as a crisis.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Trigger</th><th>Usually</th></tr></thead>
+          <tbody>
+            <tr><td>Firmware/BIOS update</td><td>Changed PCRs; expected — suspend BitLocker before flashing firmware</td></tr>
+            <tr><td>Secure Boot / boot-order change</td><td>Someone changed a UEFI setting</td></tr>
+            <tr><td>Docking / hardware change</td><td>Some configs measure it; re-seal or adjust the PCR profile</td></tr>
+            <tr><td>Repeated recovery on one model</td><td>A driver or firmware bug — a real fleet issue, not a user one</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DEFENDER FOR ENDPOINT & INTUNE ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🛡️</span>
+    <span class="topic-name">Defender for Endpoint &amp; Intune — Onboarding, ASR <span class="acro-exp">(Attack Surface Reduction)</span> Rules &amp; Tamper Protection</span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Two Products, One Connector</div>
+      <div class="concept-desc">
+        Defender for Endpoint is the EDR <span class="acro-exp">(Endpoint Detection and Response)</span> platform; Intune is how you configure it on managed
+        devices. The seam between them is the service-to-service connector — turn it on once,
+        and Intune can onboard devices, ship Defender policy, and consume the device risk
+        score for Conditional Access. Half of "Defender isn't working" tickets are that
+        connector being off or the onboarding blob never landing.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">Onboarding, and How to Know It Worked</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>1 Connect</td><td>Enable the Intune ↔ Defender connector in both consoles</td></tr>
+            <tr><td>2 Onboard</td><td>EDR policy pushes the onboarding package; device registers with the service</td></tr>
+            <tr><td>3 Verify</td><td>Device appears in the Defender portal and the detection test script alerts</td></tr>
+            <tr><td>4 Risk flows</td><td>Device risk level becomes a Conditional Access signal</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">ASR Rules — Audit Before You Block, Always</div>
+      <div class="concept-desc">
+        Attack Surface Reduction rules block whole classes of behaviour malware relies on —
+        Office spawning child processes, credential theft from LSASS <span class="acro-exp">(Local Security Authority Subsystem Service)</span>, script-launched
+        executables. They are high value and high blast radius, because legitimate software
+        does some of these things too. Every ASR rule has an <strong class="c-cyan">audit</strong>
+        mode that logs what it <em>would</em> have blocked; run there first and read the
+        reports, or you will block a line-of-business app on day one.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Mode</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>Audit</td><td>Log only — the mandatory first phase; mine it for false positives</td></tr>
+            <tr><td>Block</td><td>Enforce, once audit is clean for that rule</td></tr>
+            <tr><td>Warn</td><td>User can bypass — a middle ground for rules with legitimate edge cases</td></tr>
+            <tr><td>Per-rule exclusions</td><td>Scalpel, not the off switch — exclude the one path, keep the rule</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">Tamper protection</strong> stops malware — and local admins,
+          and your own scripts — from disabling Defender. Leave it on; when it blocks a
+          legitimate change, make that change through policy, which is the supported path
+          through it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LOCAL ADMIN RIGHTS & EPM ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧑‍💼</span>
+    <span class="topic-name">Local Admin Rights — Removing Them, and Endpoint Privilege Management</span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Standing Local Admin Is the Single Biggest Endpoint Risk You Control</div>
+      <div class="concept-desc">
+        A user who is a local administrator turns every phishing click and every malicious
+        installer into a full device compromise, and defeats most of the controls on the rest
+        of this page. Removing standing admin is the highest-leverage endpoint hardening
+        there is — and the reason it survives everywhere is that removing it naively generates
+        a wall of "I can't do my job" tickets. The work is not deleting the right; it is
+        replacing what people legitimately used it for.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">What Replaces the Right</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>They used admin to…</th><th>Replace with</th></tr></thead>
+          <tbody>
+            <tr><td>Install approved software</td><td>Company Portal self-service; deploy as system-context apps</td></tr>
+            <tr><td>Run one app that demands elevation</td><td>Endpoint Privilege Management — elevate the <em>app</em>, not the user</td></tr>
+            <tr><td>Change a setting IT locked</td><td>A settings-catalog policy exposing exactly that control</td></tr>
+            <tr><td>Genuine developer / IT need</td><td>A time-boxed, audited elevation, or a separate admin account — never their daily login</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Endpoint Privilege Management — Elevate the Task, Not the Person</div>
+      <div class="concept-desc">
+        EPM lets a standard user run a specific, approved action with admin rights while
+        staying a standard user for everything else. The unit of trust moves from the person
+        to the task, which is the whole point.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Model</th><th>How it works</th></tr></thead>
+          <tbody>
+            <tr><td>Automatic rule</td><td>A named, hash-verified app always elevates, silently — for known-good tools</td></tr>
+            <tr><td>User-confirmed</td><td>User clicks through a justification prompt; logged</td></tr>
+            <tr><td>Support-approved</td><td>Request routes to IT for one-time approval — for the long tail</td></tr>
+            <tr><td>Full audit trail</td><td>Every elevation recorded — the evidence that makes admin removal defensible</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-red">Rule on the file's hash or signature, not its name.</strong>
+          A rule that elevates anything called <code>setup.exe</code> is a privilege-escalation
+          primitive you built and handed to an attacker.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: WINDOWS LAPS ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗝️</span>
+    <span class="topic-name">Windows LAPS <span class="acro-exp">(Local Administrator Password Solution)</span> — Local Admin Password Rotation in Entra and AD <span class="acro-exp">(Active Directory)</span></span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Built-In Admin Account Is Still There — LAPS Makes It Safe</div>
+      <div class="concept-desc">
+        Even after you remove user admin rights, every Windows device has a built-in local
+        administrator account, and the historic sin was giving it one shared password across
+        the whole fleet. One machine compromised, that password dumped, and it unlocks every
+        other machine — the textbook lateral-movement path. LAPS sets a unique, random
+        password per device, rotates it on a schedule, and escrows it centrally so support can
+        still get in.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Windows LAPS vs the Legacy One, and Where the Password Lives</div>
+      <div class="concept-desc">
+        "Windows LAPS" is the modern built-in feature, distinct from the old downloadable
+        Microsoft LAPS. It stores the password in the directory the device is joined to, and
+        retrieval is a permission you grant deliberately and audit.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Aspect</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Backup target</td><td>Entra ID for cloud-joined, on-prem AD for hybrid — chosen by policy</td></tr>
+            <tr><td>Configuration</td><td>An Intune policy or GPO <span class="acro-exp">(Group Policy Object)</span>; no agent to deploy on current Windows</td></tr>
+            <tr><td>Retrieval</td><td>Scoped directory permission; every read is logged</td></tr>
+            <tr><td>Rotation</td><td>On a schedule, and automatically right after a password is used</td></tr>
+            <tr><td>Password encryption</td><td>Encrypted in the directory (AD path); readable only by the accounts you authorize</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-green">LAPS and admin-rights removal are a pair.</strong> Removing
+          standing user admin closes the front door; LAPS makes sure the emergency key under
+          the mat is different for every house. Deploy them together, not years apart.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: FIREWALL & REMOVABLE MEDIA ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🚫</span>
+    <span class="topic-name">Firewall &amp; Removable Media Policy — The Two Controls Auditors Ask About</span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Two Small Policies With Outsized Audit Weight</div>
+      <div class="concept-desc">
+        The host firewall and USB <span class="acro-exp">(Universal Serial Bus)</span> storage control are unglamorous, and they are on nearly
+        every compliance checklist because they map directly to a breach story: malware
+        beaconing out, and data walking out on a thumb drive. Both are a single policy to
+        deploy and both have one classic way to lock a fleet out of something it needed —
+        which is why they belong in a late rollout ring, not ring zero.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Host Firewall — Default Deny Inbound, Log Everything</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Setting</th><th>Sensible default</th></tr></thead>
+          <tbody>
+            <tr><td>Profiles</td><td>Domain, Private, Public — all three enabled; Public is the strictest</td></tr>
+            <tr><td>Inbound</td><td>Default deny; allow by explicit rule only</td></tr>
+            <tr><td>Outbound</td><td>Usually allow, but log; outbound-deny is high-maintenance — reserve for high-security fleets</td></tr>
+            <tr><td>Rule merging</td><td class="c-red">Decide whether local admin rules merge with policy — "off" is safer and a common surprise</td></tr>
+            <tr><td>Logging</td><td>On, for dropped packets — the evidence you need when an app breaks</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The trap is <strong class="c-amber">rule merging</strong>: turn it off and every
+          locally-created allow rule vanishes, which is correct for security and will break
+          the one legacy app whose installer added a rule nobody documented. Audit first.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Removable Media — Block, or Allow Read-Only, or Require Encryption</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Posture</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>Block all</td><td>No USB storage at all — cleanest to defend, hardest on legitimate needs</td></tr>
+            <tr><td>Read-only</td><td>Data can come in, nothing walks out — the common compromise</td></tr>
+            <tr><td>Require BitLocker To Go</td><td>Writable only to encrypted media; the removable-drive counterpart to disk encryption</td></tr>
+            <tr><td>Allow by device ID</td><td>Approved hardware only — for hardware tokens and specific peripherals</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Scope by <strong>storage</strong>, not all USB — a policy that blocks "USB devices"
+          rather than "USB mass storage" also kills keyboards, mice and the webcam, and that
+          ticket arrives within the hour.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body endpoint -->
