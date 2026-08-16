@@ -20455,8 +20455,8 @@ that and call you back" is treated as competence, not obstruction.</p>
 <span class="ctag ctag-aplus">A+</span>
 </div>
 <span class="domain-sub">FHS · Permissions · Boot Process · Signals · systemd · RAID · Hardware</span>
-<span class="domain-meta" aria-label="56 topics, about 1h 50m to read"
->56 topics · ~1h 50m</span>
+<span class="domain-meta" aria-label="58 topics, about 1h 55m to read"
+>58 topics · ~1h 55m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body">
@@ -25184,6 +25184,162 @@ base=<span class="str">"${path##*/}"</span>           <span class="com"># strip 
 <strong class="c-amber">Golden rules:</strong> quote your variables
 (<code>"$var"</code>) to survive spaces, and run ShellCheck. Past ~100 lines with
 real data structures, reach for Python instead.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🔒</span>
+<span class="topic-name">Secure Boot, LUKS <span class="acro-exp">(Linux Unified Key Setup)</span> &amp; Integrity — Measured Boot, dm-verity &amp; IMA</span>
+<span class="topic-badge">Linux • Hardening</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">Three Different Trust Questions</div>
+<div class="concept-desc">
+"Is this machine trustworthy" is really three questions, each answered by a
+different mechanism, and conflating them is the usual source of confusion.
+<strong class="c-cyan">Secure Boot</strong> asks: did only signed code run before
+the OS <span class="acro-exp">(Operating System)</span>? <strong class="c-cyan">LUKS</strong> asks: is the data unreadable when the
+disk is at rest? <strong class="c-cyan">Runtime integrity</strong> (dm-verity,
+IMA) asks: has anything been tampered with since? You can have any one without the
+others, and a real hardened build wants all three.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Mechanism</th><th>Protects against</th><th>When it acts</th></tr>
+<tr><td>Secure Boot</td><td>Bootkits, unsigned kernels/drivers</td><td>Power-on to kernel handoff</td></tr>
+<tr><td>Measured boot (TPM)</td><td>Silent tampering with the boot chain</td><td>Records hashes into PCRs as it goes</td></tr>
+<tr><td>LUKS / dm-crypt</td><td>A stolen disk or laptop</td><td>Data at rest, until unlocked</td></tr>
+<tr><td>dm-verity</td><td>Modification of a read-only root</td><td>Every block read, at runtime</td></tr>
+<tr><td>IMA / EVM</td><td>Tampering with files and their metadata</td><td>On file access, against a signed baseline</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Boot Chain</div>
+<div class="concept-title">Secure Boot Verifies; Measured Boot Records</div>
+<div class="concept-desc">
+These get mixed up constantly. <strong class="c-cyan">Secure Boot</strong> is a
+gate: firmware verifies the bootloader's signature against keys in its store, the
+bootloader verifies the kernel, and an unsigned link is refused. On most hardware
+the chain trusts a Microsoft-controlled CA <span class="acro-exp">(Certificate Authority)</span>, which is why Linux distributions ship
+a small signed <em>shim</em> to bootstrap their own keys. <strong class="c-cyan">Measured
+boot</strong> does not gate anything — it hashes each component into TPM <span class="acro-exp">(Trusted Platform Module)</span>
+<strong>PCRs</strong> as it loads, producing evidence you can check afterward.
+</div>
+<div class="dw">
+<div class="concept-desc">
+The two combine in <strong>TPM-sealed LUKS</strong>: seal the disk key to a set
+of PCR values so it releases automatically only when the boot chain is
+unchanged. Tamper with the bootloader and the PCRs differ, the TPM refuses the
+key, and the disk stays locked. The trade is real — a legitimate kernel update
+changes the measurements and you must re-seal, which is the single most common
+way people lock themselves out. Keep the passphrase as a fallback.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Runtime Integrity</div>
+<div class="concept-title">dm-verity for Immutable Roots, IMA for Mutable Ones</div>
+<div class="concept-desc">
+<strong class="c-cyan">dm-verity</strong> puts a hash tree under a read-only block
+device: every block is verified against the tree as it is read, and the tree's
+root hash is signed. Change one byte on disk and the read fails. It is how Android,
+ChromeOS and image-based Linux guarantee the root filesystem — but it assumes the
+filesystem never changes. For a normal writable system you want
+<strong class="c-cyan">IMA/EVM</strong> instead: it measures and appraises files
+against signed reference values on access, and can extend those measurements into
+the TPM for remote attestation.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># LUKS: the at-rest layer, in two commands</span>
+cryptsetup luksFormat /dev/sdb1        <span class="com"># create the encrypted volume</span>
+cryptsetup open /dev/sdb1 secure       <span class="com"># unlock -> /dev/mapper/secure</span>
+
+<span class="com"># Is Secure Boot actually on right now?</span>
+mokutil --sb-state
+bootctl status | grep -i secure</pre>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The honest caveat:</strong> none of this defends a
+running, unlocked machine against someone who already has root — it defends the
+boot path and the data at rest. Pair it with the mandatory access control in
+<span class="xref">SELinux &amp; AppArmor — Mandatory Access Control</span>,
+which is what constrains a process <em>while</em> the system runs.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📀</span>
+<span class="topic-name">Package &amp; Image Building — From rpm/deb to Immutable Linux</span>
+<span class="topic-badge">Linux • Ops</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">The Unit of Deployment Has Been Getting Bigger</div>
+<div class="concept-desc">
+Linux deployment has climbed a ladder of ever-larger units. First the package —
+install software into a shared system. Then the container image — ship the app
+<em>and</em> its dependencies as one artifact. Now the whole OS <span class="acro-exp">(Operating System)</span> as an image,
+updated atomically. Each rung trades flexibility for reproducibility, and the
+higher you go the more "it works on my machine" stops being a sentence anyone
+says.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Packages</div>
+<div class="concept-title">Building an rpm or a deb</div>
+<div class="concept-desc">
+A package is a compressed archive plus metadata: dependencies, version, and
+scripts that run at install and removal time. Building one means declaring what
+goes where and what it needs. The value is the dependency graph and the clean
+uninstall — which is exactly what you throw away when you <code>curl | sudo bash</code>
+a project's install script, and why that habit is worth breaking.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Ecosystem</th><th>Spec</th><th>Tooling</th></tr>
+<tr><td>RPM <span class="acro-exp">(Red Hat Package Manager)</span> (Fedora/RHEL/SUSE)</td><td>A .spec file</td><td>rpmbuild, mock for clean-room builds</td></tr>
+<tr><td>Debian/Ubuntu</td><td>A debian/ directory</td><td>dpkg-buildpackage, sbuild</td></tr>
+<tr><td>Distro-agnostic</td><td>Manifest per tool</td><td>fpm to convert; nfpm in CI pipelines</td></tr>
+<tr><td>Sandboxed apps</td><td>Manifest + runtime</td><td>Flatpak, Snap — bundle deps, isolate the app</td></tr>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Images</div>
+<div class="concept-title">Immutable &amp; Image-Based Operating Systems</div>
+<div class="concept-desc">
+The newest rung ships the OS the way we ship containers: a read-only root you
+replace wholesale rather than patch in place. An update swaps to a new image and
+reboots; if it misbehaves, you roll back to the previous one because it is still
+there. Fleet machines become byte-identical, which kills configuration drift —
+the slow divergence that makes every long-lived server its own unique problem.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Approach</th><th>Idea</th><th>Seen in</th></tr>
+<tr><td>OSTree / bootc</td><td>Git-like versioned, bootable OS trees; "boot a container image"</td><td>Fedora Silverblue, CoreOS, RHEL <span class="acro-exp">(Red Hat Enterprise Linux)</span> image mode</td></tr>
+<tr><td>A/B partitions</td><td>Two roots; update the idle one, switch, keep the old for rollback</td><td>ChromeOS, Android, many IoT/edge builds</td></tr>
+<tr><td>Layered config</td><td>Immutable base + a declared overlay of your changes</td><td>NixOS's declarative generations</td></tr>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The trade is that the old imperative reflexes stop working: you cannot just
+<code>dnf install</code> onto the root, because it is read-only by design.
+Changes move into layered packages, containers for tooling, and a declared
+config — deliberate friction that buys the rollback and the drift-free fleet.
+It also pairs naturally with dm-verity from
+<span class="xref">Secure Boot, LUKS &amp; Integrity — Measured Boot, dm-verity &amp; IMA</span>,
+since a read-only root is exactly what a hash tree can protect.
 </div>
 </div>
 </div>

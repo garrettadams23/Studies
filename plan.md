@@ -1061,33 +1061,43 @@ and a grep for the name says the wrong thing. `grc` is now 34.
 
 ~4 waves, ~22 cards. Authorized-testing framing throughout, paired detections noted.
 
-**Wave M1 — Web & API Exploitation (hands-on lens)**
-- [ ] Burp Suite Pro Workflow — deep: macros, session handling, extensions
-- [ ] Auth & Session Attacks — JWT flaws, OAuth abuse, session fixation
-- [ ] Business-Logic Flaws — the bugs scanners can't find
-- [ ] API Pentesting — enumerating, mass assignment, BOLA/BFLA in practice
-- [ ] Client-Side — DOM XSS, prototype pollution, postMessage, CORS abuse
+**COMPLETE by existing coverage — no cards written.** This is the track the site was
+already deepest on: `redteam` (43 cards) and `pentest` (29) are the two most-built
+security domains, and between them they cover the whole spec, usually
+tool-by-tool with the exact named tools the spec asks for. Writing anything here would
+be the "second introduction" the method warns against. One genuine thin spot recorded
+below rather than papered over.
 
-**Wave M2 — Active Directory Attack Paths (study reference)**
-- [ ] AD Enumeration Methodology — from a foothold to a map
-- [ ] Kerberos Deep — roasting, delegation abuse, golden/silver tickets (+ detections)
-- [ ] ADCS Attack Paths — ESC1–ESC16 overview and the defensive fixes
-- [ ] Lateral Movement Techniques — and the exact telemetry that catches each
-- [ ] Domain Persistence — DCSync/Shadow (concepts) and the blue-team tripwires
+**Wave M1 — Web & API Exploitation**
+- [x] Burp Suite Pro Workflow → `redteam` *Burp Suite — The Web Pentest Workbench*
+- [x] Auth & Session Attacks → JWT/OAuth in `sec`, `web`, `script`; attack lens in `pentest`
+- [x] Business-Logic Flaws → `pentest` and `sec` web-app cards
+- [x] API Pentesting → mass assignment / IDOR in `pentest` (*Finding Your First IDOR*) and `sec`
+- [~] Client-Side — DOM XSS, prototype pollution, postMessage, CORS. **Genuine gap:**
+  prototype pollution and postMessage are nowhere; DOM XSS/CORS are in `web`'s
+  frontend-security card. This is `web`/Track I depth, not offensive tooling — left for
+  a Track I follow-up rather than forced into `redteam`.
 
-**Wave M3 — Cloud & Container Offense (study reference)**
-- [ ] Cloud Pentest Methodology — recon → enum → privesc → impact, per provider
-- [ ] IAM Privilege Escalation — the classic misconfig chains (+ CSPM detections)
-- [ ] Serverless & CI/CD Attacks — poisoned pipelines, OIDC trust abuse
-- [ ] Container Escape Techniques — and the runtime controls that stop them
-- [ ] Kubernetes Attack Paths — RBAC → cluster admin (+ audit-log detections)
+**Wave M2 — Active Directory Attack Paths**
+- [x] AD Enumeration → `redteam` *BloodHound & SharpHound*, *Impacket*
+- [x] Kerberos Deep → `redteam` *Kerberos Attacks — Rubeus & Kerbrute*
+- [x] ADCS Attack Paths → `redteam` *ADCS Abuse — Certipy & the ESC Techniques*
+- [x] Lateral Movement → `redteam` *Responder & NTLM Relay*, *Living off the Land*
+- [x] Domain Persistence → *Mimikatz*, DCSync in `redteam`/`blueteam`/`sec`
+
+**Wave M3 — Cloud & Container Offense**
+- [x] Cloud Pentest Methodology → `redteam` *Pacu*, *CloudFox & enumerate-iam*
+- [x] IAM Privilege Escalation → *CloudFox*, *Cloud Credential Attacks & the Purple-Team Bridge*
+- [x] Serverless & CI/CD Attacks → cloud-credential and purple-team cards (poisoned-pipeline depth is thin — `devops` territory)
+- [x] Container Escape → `redteam` *Kubernetes Attacks — RBAC Abuse & Container Escape*
+- [x] Kubernetes Attack Paths → same card
 
 **Wave M4 — Tradecraft & Professionalism**
-- [ ] Report Writing — findings, risk ratings, exec summary, remediation
-- [ ] Scoping & Rules of Engagement Deep — the legal & safety guardrails
-- [ ] OPSEC for Testers — staying in-scope, safe payloads, cleanup
-- [ ] Purple-Team Playbooks — running technique-by-technique detection validation
-- [ ] The OSCP/Cert Path — how to actually prepare and pass
+- [x] Report Writing → `pentest` *Pentest Reporting — The Skill That Makes or Breaks Your Career*
+- [x] Scoping & Rules of Engagement → `pentest` *Scoping & Rules of Engagement* + `redteam` *Rules of Engagement — Read This First*
+- [x] OPSEC for Testers → covered across the RoE and C2 cards
+- [x] Purple-Team Playbooks → `redteam` *Cloud Credential Attacks & the Purple-Team Bridge*
+- [x] The OSCP/Cert Path → OSCP prep in `career`, `pentest`, `redteam`, `eng`
 
 ---
 
@@ -1095,26 +1105,30 @@ and a grep for the name says the wrong thing. `grc` is now 34.
 
 ~3 waves, ~16 cards.
 
+**COMPLETE — 2 cards written, 14 already built.** `linux` was already the largest
+domain on the site at 56 cards, and it covered all of N1–N3 except two genuine gaps in
+the integrity/imaging area. `linux` is now 58.
+
 **Wave N1 — Linux Security Hardening**
-- [ ] SELinux & AppArmor — mandatory access control, contexts, troubleshooting
-- [ ] Linux Capabilities & Namespaces — the primitives containers are built on
-- [ ] auditd & Hardening — CIS baseline, sudo, PAM, SSH hardening
-- [ ] Firewalling — nftables/iptables, firewalld, ufw in practice
-- [ ] Secure Boot, LUKS & Integrity — disk encryption, IMA, measured boot
+- [x] SELinux & AppArmor → *SELinux & AppArmor — Mandatory Access Control*
+- [x] Capabilities & Namespaces → *Under the Hood — Namespaces & cgroups* + *Container Internals*
+- [x] auditd & Hardening → *Shell, Cron & Hardening* + auditd in `sec`/`blueteam`
+- [x] Firewalling → *Linux Firewalls — iptables, nftables & ufw*
+- [x] Secure Boot, LUKS & Integrity → *Secure Boot, LUKS & Integrity — Measured Boot, dm-verity & IMA* (written — LUKS/Secure Boot were only in `sec`/`eng`/`military`, none of it on `linux` and none of it covering measured boot or runtime integrity)
 
 **Wave N2 — Performance & Troubleshooting**
-- [ ] The USE Method on Linux — a systematic performance-debug workflow
-- [ ] CPU & Memory Tools — top/htop, vmstat, perf, flame graphs, OOM killer
-- [ ] Disk & I/O — iostat, iotop, LVM, RAID, filesystems compared
-- [ ] Network Debugging — ss, tcpdump, ip, nftables tracing, DNS issues
-- [ ] eBPF & Modern Observability — bpftrace, the future of Linux tracing
+- [x] The USE Method → *Performance Debugging — When You Need to Go Deeper* + `ops`
+- [x] CPU & Memory Tools → same, plus *"The Disk Is Full"* and process cards
+- [x] Disk & I/O → *Storage Management — Disks, Partitions, LVM & RAID*
+- [x] Network Debugging → *The ip Command — Modern Linux Networking* + performance card
+- [x] eBPF & Modern Observability → *eBPF — Programmable Kernel Observability & Security*
 
 **Wave N3 — Storage & Ops**
-- [ ] LVM Deep — PVs/VGs/LVs, snapshots, resizing, thin provisioning
-- [ ] Software RAID & mdadm — levels, rebuilds, monitoring
-- [ ] NFS/Samba & Network Storage — sharing files across a network
-- [ ] Package & Image Building — rpm/deb, building images, immutable OSes
-- [ ] Systemd Advanced — cgroups v2, resource limits, hardening directives
+- [x] LVM Deep → *LVM & Storage – Flexible Disk Management* + *Storage Management*
+- [x] Software RAID & mdadm → *RAID Levels Reference* + *Storage Management*
+- [x] NFS/Samba → *NFS & Samba – Sharing Files Across the Network*
+- [x] Package & Image Building → *Package & Image Building — From rpm/deb to Immutable Linux* (written — package install existed, but building packages and image-based/immutable OSes were nowhere)
+- [x] Systemd Advanced → *systemd Deep — Units, Timers & Journald*
 
 ---
 
