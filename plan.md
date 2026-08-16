@@ -1188,27 +1188,30 @@ them, which is what turned a claimed five `sec` duplicates into one real merge.
 
 ~3 waves, ~18 cards.
 
-**Wave P1 — More Languages (one card each)**
-- [ ] Kotlin — modern JVM, coroutines, Android
-- [ ] Swift — iOS/macOS, optionals, value types
-- [ ] Scala & Functional JVM — the FP-on-the-JVM story
-- [ ] Elixir/Erlang — the actor model, fault tolerance, the BEAM
-- [ ] Lua · R · MATLAB — embedded scripting & the scientific/stats niche
-- [ ] Haskell (a taste) — pure FP, why it makes you a better programmer
+**COMPLETE — 2 cards written, the rest already built.** `script` is the biggest domain
+on the site at 136 cards, and it already carried Rust, Java, C#/.NET, Ruby, PHP, C,
+Assembly, Go, TypeScript and Python plus the entire craft and tooling spec. The only
+real gap was the languages in P1 that had no card at all. Two consolidated cards fill
+it; a single card per obscure language would have been thin. `script` is now 138.
+
+**Wave P1 — More Languages**
+- [x] Kotlin / Swift / Scala → *Kotlin, Swift & Scala — Modern Typed Application Languages*
+- [x] Elixir/Erlang / Haskell / Lua·R·MATLAB → *Elixir, Haskell & the Functional / Niche Languages*
+  (six specced language cards consolidated into two — the shared ideas are the point, and one card each would repeat null-safety and immutability five times)
 
 **Wave P2 — Programming Craft**
-- [ ] Functional Programming — immutability, pure functions, map/filter/reduce, monads (gently)
-- [ ] Concurrency & Parallelism — threads, async, actors, locks vs message-passing
-- [ ] Memory Management — stack/heap, GC vs manual vs ownership, leaks
-- [ ] Error Handling Patterns — exceptions vs results, retries, failing well
-- [ ] Testing Deep — TDD, property-based, mutation testing, test doubles
+- [x] Functional Programming → *Programming Paradigms (Gently)* + the new functional-languages card
+- [x] Concurrency & Parallelism → *Concurrency — Doing More Than One Thing at Once* + *Python Async/Await*
+- [x] Memory Management → `cs`'s *Garbage Collection — Generational Collectors, Pauses & Tuning* + Rust ownership in *Rust — Safe Systems Programming*
+- [x] Error Handling Patterns → *Exception Handling* + *Handling Errors Gracefully*
+- [x] Testing Deep → *Testing With pytest*, *Testing Strategy*, *Mocking*
 
 **Wave P3 — Tools & Practices**
-- [ ] Debugging Like a Pro — debuggers, print vs breakpoint, bisecting, rubber-ducking
-- [ ] Build Systems & Package Managers — across ecosystems, monorepos, lockfiles
-- [ ] Regular Expressions Deep — groups, lookaround, backreferences, catastrophic backtracking
-- [ ] API Design Deep — REST maturity, versioning, pagination, idempotency
-- [ ] Code Architecture in the Small — modules, layering, dependency injection
+- [x] Debugging Like a Pro → *Debugging — Finding Out Why Your Code Lies to You*
+- [x] Build Systems & Package Managers → *Semantic Versioning & Dependency Management* + *Reproducible Python Environments*
+- [x] Regular Expressions Deep → multiple regex cards including *A Survival Guide for IT Tasks*
+- [x] API Design Deep → *API Design — Versioning, Pagination, Rate Limits & Idempotency*
+- [x] Code Architecture → *SOLID Principles* + *Design Patterns* + *Refactoring & Clean Code*
 
 ---
 
