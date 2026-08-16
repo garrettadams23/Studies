@@ -5169,22 +5169,34 @@ every new card uses `ref-table` and classed colour, not `ai-table` or inline hex
 
 ## Session record addendum — Phase 4 opened, and the budget wall reached honestly
 
-After finishing Phase 3, the same session opened Phase 4 with three waves, chosen by the
-Phase-3 rule (audit the site first, fill genuine voids, deepen existing domains rather
-than spin up new ones):
+After finishing Phase 3, the same session opened Phase 4 with **seven waves**, chosen by
+the Phase-3 rule (audit the site first, fill genuine voids, deepen existing domains
+rather than spin up new ones):
 
 | Wave | Domain | Cards | What it filled |
 |---|---|---:|---|
 | Y5 — Endpoint Security | `endpoint` 29→34 | 5 | BitLocker at scale, Defender/ASR, local-admin removal + EPM, Windows LAPS, firewall/removable-media |
+| Y6 — Compliance & Conditional Access | `endpoint` 34→38 | 4 | compliance policies deep, device-trust end-to-end, drift reporting, the identity/endpoint seam |
+| AD — Cross-Platform Endpoint | `endpoint` 38→41 | 3 | macOS for Windows admins, Apple fleet mgmt (ABM/ADE/Jamf/FileVault), iOS/Android Enterprise |
 | Z — Virtualization & Backup | `infra` 28→34 | 6 | the total void: hypervisors, overcommit, snapshots≠backups, 3-2-1-1-0, ransomware-resilient backup, restore testing/DR |
 | AF — AI at Work (governance) | `ai` 44→49 | 5 | assistant deployment, shadow AI, AI acceptable use, data governance for AI, deepfake/impersonation defence |
+| AC — Automation for Admins | `script` 138→140, `ops` 32→33 | 3 | Graph from PowerShell, JEA, automation risk/discipline |
+| AE1 — OT/ICS Security | `sec` 46→49 | 3 | OT vs IT + Purdue model, ICS protocols, securing OT + safety-first IR |
 
-Track Y1–Y3 were found already built (endpoint had grown to 29 since Phase 4 was
-speced); the AF1 "using AI well" cluster was already in `ai`. Same inflation as Phase 3.
+**Total this session: 60 cards** (31 Phase 3 + 29 Phase 4), site **1,013 → 1,073 topics**.
+Every wave found the same inflation Phase 3 did — Y1–Y3 already built, the AF1 "using AI
+well" cluster already in `ai`, AC's craft waves already in `script`, AE2's regulated
+industries already in `grc`. The genuine new content was a fraction of the nominal spec.
 
-**Where this stops, and why.** The page budget is now at **~7% gzip headroom** (1,026 KB
-of the 1,100 KB ceiling), down from 15% at the start of the session — 47 cards added
-across the whole session. This is exactly the wall §4b and §4b-ii documented, and the
+**What Phase 4 still needs is now a decision, not more surgical waves.** The high-value
+*existing-domain* voids are filled. What remains is either **new domains** (`m365` for
+Exchange/SharePoint/Teams, `itsm` for the service desk — a chip-bar and architecture
+decision, the bar is already a crowded row of 28) or **narrower depth** items marked
+"follow on demand" in each track above. Track AB (vendor networking) is low-priority —
+`net` is already 55 cards deep and vendor-CLI content ages fastest.
+
+**Where content stops, and why.** The page budget is at **~5.6% gzip headroom** (1,038 KB
+of the 1,100 KB ceiling), down from 15% at the start of the session — 60 cards added. This is exactly the wall §4b and §4b-ii documented, and the
 session-19 decision is explicit: **do not keep writing content against the ceiling on the
 assumption lazy loading will rescue it.** The remaining Phase 4–6 backlog is hundreds of
 cards plus three new domains (`m365`, `itsm`, and the Phase-5/6 domains), and it does not
@@ -5199,8 +5211,17 @@ fails."* Neither is true yet (throttled load ~1.6 s, budget 7% clear). So the ho
 position, unchanged: **the budget bounds the backlog, the unblock is specified, and it is
 correctly gated on a trigger that has not fired.**
 
-The next session that wants to add substantial content should either (a) build the
-164 KB middle-tier index first and re-measure, or (b) keep doing what this session did —
-surgical, genuine-gap-only waves into existing domains — accepting that the ceiling is now
-close enough that each wave must earn its bytes. What it should **not** do is treat the
-inflated backlog count as a runway; it is not one.
+The next session that wants to add substantial content faces a genuine fork, and both
+branches are decisions rather than more of the same:
+
+1. **Build the 164 KB middle-tier search index first, then continue.** Unblocks the whole
+   backlog, but changes search from full-text to substantive-but-partial — a product
+   decision. Build it for the DOM-size argument (§4b-ii), not the byte one, and re-measure.
+2. **Open a new domain** (`m365`, `itsm`) for the enterprise-collaboration and service-desk
+   voids that have no home. Architecture decision — the chip bar is a crowded row of 28.
+3. **Keep doing surgical genuine-gap waves** into existing domains, accepting each must now
+   earn its bytes against a ~5.6% ceiling — perhaps 40–50 cards of runway before the budget
+   actually fails and forces branch 1.
+
+What it should **not** do is treat the inflated backlog count as a runway; it is not one.
+The high-value existing-domain voids this session could reach are now filled.
