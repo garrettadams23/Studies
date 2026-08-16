@@ -2487,6 +2487,14 @@ written — 2 cards into `sec`.** `sec` 52→54.
 ~4 waves, ~20 cards. Kept deliberately practical: what an operator would have to
 support if the business bought it tomorrow.
 
+**AQ1 & AQ2 cores written — 2 cards into `net`.** Edge and modern connectivity were
+absent (5G/satellite/IoT-radios only in passing). AQ3 (AR/VR/spatial) is the most
+speculative and fastest-ageing; left for on-demand. `net` 55→57.
+
+- [x] Modern Connectivity (5G, private cellular/CBRS, satellite/LEO, LPWAN/Zigbee/Thread/Matter) → *Modern Connectivity — 5G, Private Cellular, Satellite & IoT Radios*
+- [x] Edge Computing + CDN function-at-edge + fleet mgmt + offline-first + edge security → *Edge Computing — What It Is Once the Marketing Is Removed*
+- [ ] Remaining (narrower/speculative): AR/VR/XR, headset management, digital twins, spatial-data privacy, frontier-pilot evaluation — follow on demand
+
 **Wave AQ1 — Edge & Distributed Compute**
 - [ ] Edge Computing — what it is once the marketing is removed, and when latency justifies it
 - [ ] CDN Compute & Function-at-Edge — running logic in the POP
