@@ -1891,6 +1891,17 @@ switch). `script` 138→140, `ops` gains the risk card.
 
 ~4 waves, ~20 cards. Fleets are not all Windows; the site currently assumes they are.
 
+**Genuine void — 3 consolidated cards written.** endpoint's 38 cards were entirely
+Windows/Intune/MECM; macOS, iOS and Android had only passing mentions and Apple fleet
+management (ABM/ADE, supervision) was absent. Three cards cover the cross-platform spine;
+the narrower AD4 (ChromeOS, kiosks, UEM selection) can follow. endpoint 38→41.
+
+- [x] macOS for Windows Admins + Security Model → *macOS for Windows Admins — The Translation Table & Security Model* (Gatekeeper/TCC/SIP/XProtect + the PPPC profile)
+- [x] Apple Fleet Management (ABM/ADE/VPP, Jamf vs Intune, FileVault escrow) → *Apple Fleet Management — Business Manager, ADE, Jamf vs Intune & FileVault Escrow*
+- [x] iOS/Android Enterprise + MAM → *iOS & Android Enterprise — Supervision, Work Profiles & MAM*
+- [x] Config profiles / .mobileconfig → in the macOS card; MAM without enrolment cross-linked to the existing App Protection Policies card
+- [ ] Remaining (narrower): Jamf smart-group depth, macOS update timing specifics, multi-platform policy design, Linux desktop, ChromeOS, kiosk/frontline, UEM selection — follow on demand
+
 **Wave AD1 — macOS Administration**
 - [ ] macOS for Windows Admins — the translation table for every concept
 - [ ] macOS Security Model — Gatekeeper, notarization, TCC, SIP, XProtect

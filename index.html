@@ -59899,8 +59899,8 @@ travels and where each concern lives. This domain, plus <code>data</code>,
 <span class="ctag ctag-general">MEM</span>
 </div>
 <span class="domain-sub">MECM · Entra · Intune · Autopilot · ESP · Co-management · Windows Admin · Troubleshooting</span>
-<span class="domain-meta" aria-label="38 topics, about 1h 20m to read"
->38 topics · ~1h 20m</span>
+<span class="domain-meta" aria-label="41 topics, about 1h 25m to read"
+>41 topics · ~1h 25m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body">
@@ -62493,6 +62493,206 @@ This is the endpoint-side view of the same boundary
 <span class="xref">Conditional Access &amp; Device Compliance</span> introduces — read
 together, they are the identity and endpoint halves of one control.
 </div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: MACOS FOR WINDOWS ADMINS ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🍏</span>
+<span class="topic-name">macOS for Windows Admins — The Translation Table &amp; Security Model</span>
+<span class="topic-badge">Endpoint • Cross-Platform</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Concepts Map; the Assumptions Do Not</div>
+<div class="concept-desc">
+Most of what a Windows admin knows transfers to macOS once the names are translated — but
+the deeper assumption does not. There is no Group Policy applying settings top-down; a Mac
+is configured by <strong class="c-cyan">configuration profiles</strong> (signed
+<code>.mobileconfig</code> payloads) delivered by an MDM <span class="acro-exp">(Mobile Device Management)</span>, and much of the security model
+is the user granting consent, not the admin forcing it. Fighting that model is how macOS
+management goes wrong.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Windows</th><th>macOS equivalent</th></tr></thead>
+<tbody>
+<tr><td>Group Policy / GPO <span class="acro-exp">(Group Policy Object)</span></td><td>Configuration profiles (.mobileconfig) via MDM</td></tr>
+<tr><td>Registry</td><td>Property lists (plists) + the <code>defaults</code> command</td></tr>
+<tr><td>MSI <span class="acro-exp">(Microsoft Installer)</span> / Win32 app</td><td>.pkg installer / .dmg / .app bundle</td></tr>
+<tr><td>Event Viewer</td><td>Console.app and the unified log (<code>log show</code>)</td></tr>
+<tr><td>Services / Task Scheduler</td><td>launchd — LaunchDaemons &amp; LaunchAgents</td></tr>
+<tr><td>BitLocker</td><td>FileVault</td></tr>
+<tr><td>Local admin</td><td>Admin group; <code>sudo</code>; but SIP <span class="acro-exp">(Session Initiation Protocol)</span> limits even root</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Security Model — Layers You Manage Around, Not Through</div>
+<div class="concept-desc">
+macOS security is a stack of named protections, several of which even root cannot simply
+override — a deliberate design that surprises admins used to "administrator can do
+anything."
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Layer</th><th>Does</th></tr></thead>
+<tbody>
+<tr><td>Gatekeeper + notarization</td><td>Blocks apps that aren't signed and notarized by Apple-recognized developers</td></tr>
+<tr><td>TCC</td><td>Transparency, Consent &amp; Control — the "allow access to Camera/Files?" prompts; grant-able by profile</td></tr>
+<tr><td>SIP</td><td>System Integrity Protection — protects system files from even root</td></tr>
+<tr><td>XProtect</td><td>Apple's built-in malware signature scanning</td></tr>
+<tr><td>Secure Enclave</td><td>Hardware key store; underpins FileVault and Touch ID</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">PPPC — the profile that pre-approves TCC.</strong> Management
+tools and security agents need access TCC would prompt a user for. A Privacy Preferences
+Policy Control profile grants it silently from the MDM, and it is the single most common
+"why won't my agent work on Mac" answer.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: APPLE FLEET MANAGEMENT ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🏬</span>
+<span class="topic-name">Apple Fleet Management — Business Manager, ADE, Jamf vs Intune &amp; FileVault Escrow</span>
+<span class="topic-badge">Endpoint • Cross-Platform</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Apple Business Manager Is the Root of Trust</div>
+<div class="concept-desc">
+Serious Apple management starts with <strong class="c-cyan">Apple Business Manager</strong>,
+the portal that ties hardware you buy to your MDM <span class="acro-exp">(Mobile Device Management)</span>. Its key power is
+<strong class="c-cyan">Automated Device Enrolment</strong>: a device bought through your
+reseller is enrolled and supervised the moment it is switched on, before the user reaches
+the desktop, and — crucially — the enrolment cannot be removed by wiping it. That is the
+Apple equivalent of Autopilot, and it is what makes a fleet actually managed rather than
+opt-in.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>ABM <span class="acro-exp">(Apple Business Manager)</span> piece</th><th>Provides</th></tr></thead>
+<tbody>
+<tr><td>Automated Device Enrolment (ADE)</td><td>Zero-touch, supervised, non-removable enrolment from first boot</td></tr>
+<tr><td>Volume Purchase (VPP)</td><td>Buy and push apps to devices without an Apple ID on each</td></tr>
+<tr><td>Managed Apple IDs</td><td>Org-owned identities, federated to your Entra/Google directory</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Choosing</div>
+<div class="concept-title">Jamf vs Intune for Apple</div>
+<div class="concept-desc">
+Both manage Macs; they are not equivalent. Jamf is Apple-only and typically supports new OS <span class="acro-exp">(Operating System)</span>
+features on release day. Intune manages Apple alongside Windows in one console and consumes
+the same Conditional Access, but its Apple feature depth lags a dedicated tool. Many
+enterprises run both — Intune for compliance and CA, Jamf for deep Mac configuration.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Need</th><th>Leans toward</th></tr></thead>
+<tbody>
+<tr><td>Mac-heavy fleet, day-one OS support</td><td>Jamf Pro</td></tr>
+<tr><td>One console with Windows + CA integration</td><td>Intune</td></tr>
+<tr><td>Deep Mac config + Microsoft compliance</td><td>Both, integrated</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">FileVault &amp; Key Escrow — the Same Rule as BitLocker</div>
+<div class="concept-desc">
+FileVault is Apple's full-disk encryption, and the rule from
+<span class="xref">BitLocker at Scale — Silent Enablement, Key Escrow &amp; Recovery</span>
+applies unchanged: enabling encryption is easy, and the only thing that matters is whether
+the recovery key escrowed. Enforce FileVault by profile, escrow a
+<strong class="c-cyan">personal recovery key</strong> to your MDM, and confirm the key
+actually arrived — an encrypted Mac with an un-escrowed key is exactly as unrecoverable as
+the Windows version.
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: IOS & ANDROID ENTERPRISE ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📱</span>
+<span class="topic-name">iOS &amp; Android Enterprise — Supervision, Work Profiles &amp; MAM <span class="acro-exp">(Mobile Application Management)</span></span>
+<span class="topic-badge">Endpoint • Mobile</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Who Owns the Device Decides Everything You Can Do</div>
+<div class="concept-desc">
+Mobile management forks on one question: is this a company-owned device or the user's own
+phone? Company-owned devices can be locked down hard; a personal phone must be managed with
+a scalpel that never touches the owner's photos and messages. Both platforms answer this
+with a corporate-vs-personal split, and choosing the wrong enrolment type is the root of
+most mobile-management grief.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Scenario</th><th>iOS</th><th>Android</th></tr></thead>
+<tbody>
+<tr><td>Company-owned, locked down</td><td>Supervised (via ADE)</td><td>Fully managed / dedicated</td></tr>
+<tr><td>Personal phone, corp data</td><td>User enrolment / MAM only</td><td>Work profile (BYOD)</td></tr>
+<tr><td>Shared / kiosk / frontline</td><td>Supervised + Shared iPad</td><td>Dedicated device</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Supervision and the Work Profile — the Two Levers</div>
+<div class="concept-desc">
+<strong class="c-cyan">Supervision</strong> on iOS unlocks the powerful restrictions — the
+ones that only exist for company-owned, ADE-enrolled devices; you cannot supervise a
+user's personal phone, by design. Android's <strong class="c-cyan">work profile</strong>
+creates a cryptographically separated container on a personal device: corporate apps and
+data live inside it, the user's personal side is invisible to IT, and a "retire" wipes only
+the work profile. It is the cleanest BYOD <span class="acro-exp">(Bring Your Own Device)</span> story either platform offers.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Capability</th><th>Where it lives</th></tr></thead>
+<tbody>
+<tr><td>Deep restrictions, app allow-lists</td><td>iOS supervised / Android fully managed</td></tr>
+<tr><td>Selective wipe (corp data only)</td><td>Work profile / user enrolment</td></tr>
+<tr><td>SCEP/PKCS certs for Wi-Fi &amp; VPN <span class="acro-exp">(Virtual Private Network)</span></td><td>Both — the profile that most often silently fails to deploy</td></tr>
+<tr><td>Data protection without enrolment</td><td>App Protection Policies (MAM)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Where It Fits</div>
+<div class="concept-title">MAM Without Enrolment — the Personal-Phone Answer</div>
+<div class="concept-desc">
+For the contractor or the employee who will not enrol a personal phone, you do not manage
+the device at all — you manage the <em>app</em>. App Protection Policies wrap the corporate
+apps so data cannot be copied out to personal apps, require a PIN to open them, and can wipe
+only the corporate data, all without the device ever being enrolled. This is the same
+control the endpoint domain describes in
+<span class="xref">App Protection Policies — MAM Without Enrolment</span>, viewed from the
+cross-platform side: on mobile it is often the <em>only</em> acceptable option for a device
+the company does not own.
 </div>
 </div>
 </div>
