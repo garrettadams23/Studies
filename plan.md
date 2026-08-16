@@ -1110,33 +1110,45 @@ progress / keyboard-a11y automatically.
 
 ~4 waves, ~22 cards. From "I use ChatGPT" to building reliable AI systems.
 
+**Checked against the site before writing, and most of this track was already
+built.** `ai` had 34 cards when the wave started; fourteen of the twenty-two specced
+items already had one. Marked `[x]` below with the card that fills it, so the next
+session does not re-derive the same list.
+
 **Wave O1 — How Models Actually Work**
-- [ ] Neural Networks From Zero — neurons, layers, weights, backprop (gently)
+- [x] Neural Networks From Zero → *Neural Networks & Deep Learning*
 - [ ] The Transformer — attention, tokens, embeddings, why it changed everything
 - [ ] Training Pipeline — pretraining, SFT, RLHF/DPO, what each stage does
 - [ ] Inference Internals — the KV cache, context windows, temperature/top-p
-- [ ] Classic ML Still Matters — regression, trees, clustering, when not to use an LLM
+- [x] Classic ML Still Matters → *ML Foundations* + *Machine Learning Fundamentals*
 
 **Wave O2 — Building With LLMs**
-- [ ] Prompt Engineering Deep — few-shot, chain-of-thought, structured output
-- [ ] RAG Architecture — chunking, embeddings, retrieval, reranking, evaluation
-- [ ] Vector Search Deep — ANN algorithms, hybrid search, pgvector/pinecone
-- [ ] Function Calling & Tools — giving models the ability to act
-- [ ] Structured Output & Validation — JSON mode, schemas, guardrails
+- [x] Prompt Engineering Deep → *Prompt Engineering — Getting Better Answers from AI*
+- [x] RAG Architecture → *Embeddings & RAG*
+- [x] Vector Search Deep → *Vector Databases — Similarity Search at Scale*
+- [x] Function Calling & Tools → *Function Calling & Tools — Letting a Model Act*
+- [x] Structured Output & Validation → *Structured Output & Validation — Getting JSON You Can Trust*
 
 **Wave O3 — Agents & Orchestration**
-- [ ] AI Agents — the loop, planning, memory, when agents beat pipelines
-- [ ] Model Context Protocol (MCP) — connecting models to tools & data
+- [x] AI Agents → *Agentic AI & Orchestration*
+- [x] Model Context Protocol (MCP) → *Model Context Protocol (MCP) — USB-C for AI*
 - [ ] Multi-Agent Systems — orchestration, hand-offs, the coordination cost
 - [ ] Agent Frameworks — LangChain/LlamaIndex/Agent SDKs compared
 - [ ] Agent Safety & Sandboxing — untrusted output, tool permissions, human-in-loop
 
 **Wave O4 — Production AI (LLMOps)**
-- [ ] Evaluation Deep — golden sets, LLM-as-judge, regression testing, drift
-- [ ] Cost & Latency Optimization — caching, routing, batching, model tiering
-- [ ] AI Security — prompt injection, data exfiltration, the OWASP LLM Top 10
-- [ ] Observability for AI — tracing, token accounting, quality monitoring
-- [ ] Responsible AI — bias, privacy, hallucination mitigation, governance
+- [x] Evaluation Deep → *LLM Evaluation, Guardrails & Diffusion Models*
+- [x] Cost & Latency Optimization → *Cost & Latency Optimization — Caching, Batching & Model Tiering*
+- [x] AI Security → *AI Security — Attacking and Defending AI Systems*
+- [x] Observability for AI → *Observability for AI — Tracing, Token Accounting & Quality Monitoring*
+- [x] Responsible AI → *AI Ethics* + *AI Governance & Frameworks*
+
+**`ai` also self-duplicates and this track did not cause it.** Four pairs, all
+predating the wave: *Fine-Tuning vs RAG vs Prompting* / *Fine-Tuning vs. Prompting vs.
+RAG*; *ML Pipeline – From Raw Data* / *Machine Learning Pipeline*; *ML Foundations* /
+*Machine Learning Fundamentals*; and two AI Ethics cards. Some of these are the
+deliberate Beginner tier — apply the tiering rule from Track J before merging any of
+them, which is what turned a claimed five `sec` duplicates into one real merge.
 
 ---
 

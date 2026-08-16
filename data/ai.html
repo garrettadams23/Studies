@@ -1712,4 +1712,392 @@ ollama run llama3.2
             </div>
           </div>
 
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔧</span>
+              <span class="topic-name">Function Calling &amp; Tools — Letting a Model Act</span>
+              <span class="topic-badge">LLM Engineering</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">The Model Never Runs Anything — You Do</div>
+                <div class="concept-desc">
+                  "Function calling" sounds like the model executes your code. It does not.
+                  You send a list of tool definitions (name, description, JSON Schema for the
+                  inputs). If the model decides one is needed, it stops and returns a
+                  <strong class="c-cyan">tool_use</strong> block — the tool's name and a filled-in
+                  arguments object — with <code>stop_reason: "tool_use"</code>. Your code runs the
+                  function, sends the answer back as a <strong class="c-cyan">tool_result</strong>,
+                  and the model continues. The whole thing is a loop you own, which is exactly why
+                  every permission and safety decision is yours too.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># The loop, by hand — Anthropic Python SDK</span>
+messages = [{"role": "user", "content": user_input}]
+
+while True:
+    response = client.messages.create(
+        model="claude-opus-5", max_tokens=16000,
+        tools=tools, messages=messages,
+    )
+    if response.stop_reason == "end_turn":
+        break                      <span class="com"># no tool wanted; we're done</span>
+
+    messages.append({"role": "assistant", "content": response.content})
+
+    results = []
+    for block in response.content:
+        if block.type == "tool_use":
+            results.append({
+                "type": "tool_result",
+                "tool_use_id": block.id,   <span class="com"># must echo the id back</span>
+                "content": execute_tool(block.name, block.input),
+            })
+    messages.append({"role": "user", "content": results})</pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Most SDKs <span class="acro-exp">(Software Development Kit)</span> now ship a <strong class="c-green">tool runner</strong> that drives
+                    this loop for you — you write only the functions and their docstrings, and the
+                    schema is generated from the signature. Reach for the manual loop when you need
+                    a request shape or a transport the runner cannot build.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Controlling When Tools Fire</div>
+                <div class="concept-desc">
+                  A <code>tool_choice</code> setting decides whether the model may, must, or must
+                  not call something. Forcing a specific tool is the trick behind "always return
+                  this shape" workflows, though a schema-constrained output is usually cleaner.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>tool_choice</th><th>Behaviour</th></tr>
+                    <tr><td>auto</td><td>Default — the model decides whether to use a tool at all</td></tr>
+                    <tr><td>any</td><td>It must call at least one tool, but picks which</td></tr>
+                    <tr><td>tool (named)</td><td>It must call the one you name</td></tr>
+                    <tr><td>none</td><td>Tools are visible but off-limits this turn</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Any of these can also carry <code>disable_parallel_tool_use</code>; by default
+                    a single response may request several tool calls at once, and you return all
+                    the results together in one message.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Craft</div>
+                <div class="concept-title">The Description Is the Prompt</div>
+                <div class="concept-desc">
+                  A tool's description is not documentation for you — it is the only thing the
+                  model reads when deciding whether to call it. Be prescriptive about
+                  <em>when</em>, not just what: "Call this when the user asks about current prices
+                  or recent events" measurably beats "Gets prices." Describe every property, use an
+                  <code>enum</code> wherever the values are fixed, and mark only genuinely required
+                  parameters as required.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>Usual cause</th></tr>
+                    <tr><td>Tool never gets called</td><td>Description says what it is, not when to use it</td></tr>
+                    <tr><td>Called with junk arguments</td><td>Properties lack descriptions, or no enum on a fixed set</td></tr>
+                    <tr><td>Called far too often</td><td>Description overlaps another tool's; narrow both</td></tr>
+                    <tr><td>Loop never terminates</td><td>Errors returned as exceptions instead of tool_result text</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Return failures as ordinary tool results ("no such user id") rather than
+                    throwing — the model can recover from a message it can read, and cannot recover
+                    from a stack trace in your process.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Security</div>
+                <div class="concept-title">Excessive Agency Is the Real Risk</div>
+                <div class="concept-desc">
+                  Every tool you attach is a capability an attacker inherits if they can influence
+                  the model's input. Chain a <code>read_email</code> tool with a
+                  <code>send_http_request</code> tool and you have built a data-exfiltration
+                  pipeline that a single injected sentence can drive — see
+                  <span class="xref">AI Security — Attacking and Defending AI Systems</span> for
+                  the attack side. Treat every argument as untrusted input: validate it server-side
+                  exactly as you would a form field, scope credentials to the least the tool needs,
+                  and put a human approval gate in front of anything irreversible.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧾</span>
+              <span class="topic-name">Structured Output &amp; Validation — Getting JSON <span class="acro-exp">(JavaScript Object Notation)</span> You Can Trust</span>
+              <span class="topic-badge">LLM Engineering</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Problem</div>
+                <div class="concept-title">"Reply With Only JSON" Is Not a Contract</div>
+                <div class="concept-desc">
+                  Asking a model in prose for JSON works most of the time, and "most of the time"
+                  is the problem. You get a code fence around it, a friendly sentence before it, a
+                  trailing comma, or a field renamed. Teams then grow a pile of scar tissue —
+                  regex extraction, stop sequences, retry-on-parse-error loops, an assistant-turn
+                  prefill of <code>{</code> to force the shape. All of it is a workaround for a
+                  guarantee the API <span class="acro-exp">(Application Programming Interface)</span> can now give you directly.
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fix</div>
+                <div class="concept-title">Constrain the Output, Don't Ask for It</div>
+                <div class="concept-desc">
+                  Pass a JSON Schema and the response is constrained to match it — the first
+                  content block is text containing valid JSON, no fence, no preamble. In Python the
+                  friendly form hands the SDK <span class="acro-exp">(Software Development Kit)</span> a Pydantic model and gives you back a validated
+                  object; the raw form takes the schema itself.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Pydantic — validated object, no json.loads() and no try/except</span>
+class ContactInfo(BaseModel):
+    name: str
+    email: str
+    interests: list[str]
+    demo_requested: bool
+
+response = client.messages.parse(
+    model="claude-opus-5", max_tokens=16000,
+    messages=[{"role": "user", "content": text}],
+    output_format=ContactInfo,
+)
+contact = response.parsed_output      <span class="com"># a real ContactInfo instance</span>
+
+<span class="com"># Raw schema — the canonical API-level parameter</span>
+response = client.messages.create(
+    model="claude-opus-5", max_tokens=16000,
+    messages=[{"role": "user", "content": text}],
+    output_config={"format": {"type": "json_schema", "schema": {
+        "type": "object",
+        "properties": {"name": {"type": "string"},
+                       "demo_requested": {"type": "boolean"}},
+        "required": ["name", "demo_requested"],
+        "additionalProperties": False,
+    }}},
+)</pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Watch the drift:</strong> the older top-level
+                    <code>output_format</code> parameter on <code>messages.create()</code> is
+                    deprecated in favour of <code>output_config.format</code>, and assistant-turn
+                    prefill — the classic JSON-forcing hack — is rejected outright on recent
+                    frontier models. Code written from memory tends to reach for both.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Two Places Schemas Apply</div>
+                <div class="concept-desc">
+                  Constraining the <em>reply</em> and constraining a <em>tool's arguments</em> are
+                  separate switches, and a real agent usually wants both.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Where</th><th>How</th><th>Guarantees</th></tr>
+                    <tr><td>The response</td><td>output_config.format with a json_schema</td><td>The text block parses and matches the schema</td></tr>
+                    <tr><td>A tool's input</td><td>strict: true on the tool definition</td><td>Arguments arrive typed and complete</td></tr>
+                    <tr><td>Both together</td><td>Set both on the same request</td><td>Structured tool calls and a structured final answer</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Set <code>additionalProperties: false</code> and list your
+                    <code>required</code> fields honestly. A permissive schema validates a reply
+                    that is still missing the field your code indexes into.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reality Check</div>
+                <div class="concept-title">Valid Is Not Correct</div>
+                <div class="concept-desc">
+                  A schema constrains <em>shape</em>, never <em>truth</em>. <code>{"invoice_total":
+                  0.0}</code> is perfectly valid JSON against a numeric field and completely wrong.
+                  Structured output eliminates the parsing failure class and nothing else — you
+                  still need range checks, cross-field consistency rules, and the evaluation set
+                  described in
+                  <span class="xref">LLM Evaluation, Guardrails &amp; Diffusion Models</span>.
+                  Treat the schema as your type system and the eval suite as your tests.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">💸</span>
+              <span class="topic-name">Cost &amp; Latency Optimization — Caching, Batching &amp; Model Tiering</span>
+              <span class="topic-badge">LLMOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Everything Is Priced in Tokens</div>
+                <div class="concept-desc">
+                  An LLM <span class="acro-exp">(Large Language Model)</span> feature's bill and its response time are both roughly proportional to
+                  tokens — in and out. That gives you exactly four levers: send fewer tokens, pay
+                  less per token, wait less for the ones you do send, or don't send the request at
+                  all. Reach for them in that order; prompt surgery is free, and a smaller model is
+                  a capability decision you should make deliberately rather than to save money.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Lever</th><th>What it does</th><th>Typical win</th></tr>
+                    <tr><td>Prompt caching</td><td>Reuse a processed prefix across requests</td><td>Large — cache reads bill around a tenth of input price</td></tr>
+                    <tr><td>Batch processing</td><td>Submit many requests for asynchronous return</td><td>Large discount, but hours not seconds</td></tr>
+                    <tr><td>Model tiering</td><td>Cheap model for easy calls, frontier for hard ones</td><td>Large — the biggest single lever, and the riskiest</td></tr>
+                    <tr><td>Prompt trimming</td><td>Cut boilerplate, few-shot bloat, dead context</td><td>Moderate and free</td></tr>
+                    <tr><td>Streaming</td><td>First token arrives immediately</td><td>No cost win; big perceived-latency win</td></tr>
+                    <tr><td>Not calling the model</td><td>Cache whole answers, route with a rule</td><td>Total — the cheapest call is the one you skip</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Technique</div>
+                <div class="concept-title">Prompt Caching Is a Prefix Match</div>
+                <div class="concept-desc">
+                  This is the one rule everything else follows from: the cache key is the exact
+                  bytes of the prompt up to a breakpoint, and the render order is
+                  <strong class="c-cyan">tools → system → messages</strong>. One changed byte
+                  anywhere in the prefix invalidates everything after it. So a
+                  <code>datetime.now()</code> in your system prompt, a per-user id interpolated
+                  into the header, or a tool list built in a different order each run means nothing
+                  caches — with no error and no warning, just a cache-read count that stays at
+                  zero.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Stable content first, breakpoint at the stability boundary,</span>
+<span class="com"># volatile content after it.</span>
+system = [{"type": "text", "text": BIG_STABLE_PROMPT,
+           "cache_control": {"type": "ephemeral"}}]
+
+<span class="com"># Did it actually work? The usage object is the only honest answer.</span>
+u = response.usage
+print(u.cache_creation_input_tokens,   <span class="com"># written this request</span>
+      u.cache_read_input_tokens,       <span class="com"># served from cache</span>
+      u.input_tokens)                  <span class="com"># uncached remainder ONLY</span></pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Total prompt size is the sum of all three, not <code>input_tokens</code> alone
+                    — an agent that ran for hours and reports 4K input tokens was reading cache for
+                    the rest. Writes carry a premium (roughly 1.25× at the short default TTL, 2× at
+                    the one-hour one), so caching pays off from about the second or third read;
+                    below the model's minimum cacheable prefix nothing is stored at all.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Pitfall</div>
+                <div class="concept-title">Optimizing Before Measuring</div>
+                <div class="concept-desc">
+                  The instinct is to shave the prompt. The bill is usually elsewhere: a retrieval
+                  step stuffing twenty chunks where three would do, a retry loop that silently
+                  doubles every request, an agent re-sending its whole history each turn. Count
+                  tokens per stage before you tune anything — and measure latency where the user
+                  feels it, not from your test harness, whose own overhead can dwarf the thing
+                  you are timing.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Silent invalidator</th><th>Why it costs you</th></tr>
+                    <tr><td>Timestamp in the system prompt</td><td>Prefix differs every request; nothing ever caches</td></tr>
+                    <tr><td>Serializing a dict without sorting keys</td><td>Byte order varies run to run</td></tr>
+                    <tr><td>Tools built per user</td><td>Tools render first, so no cache is shared across users</td></tr>
+                    <tr><td>Switching model mid-conversation</td><td>Caches are model-scoped — full rebuild</td></tr>
+                    <tr><td>A fork that rebuilds system/tools</td><td>Sub-agent misses the parent's prefix entirely</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔭</span>
+              <span class="topic-name">Observability for AI <span class="acro-exp">(Artificial Intelligence)</span> — Tracing, Token Accounting &amp; Quality Monitoring</span>
+              <span class="topic-badge">LLMOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Your Logs Say 200 OK and the Answer Was Wrong</div>
+                <div class="concept-desc">
+                  Ordinary application monitoring cannot see an LLM <span class="acro-exp">(Large Language Model)</span> failure. The request succeeded,
+                  latency was fine, no exception was raised — and the model invented a policy that
+                  does not exist. AI observability exists because the interesting failure modes are
+                  all <em>semantic</em>: wrong, unhelpful, unsafe, or expensive answers that are
+                  structurally indistinguishable from good ones.
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Four Things Worth Recording</div>
+                <div class="concept-desc">
+                  Instrument at the level of a <strong class="c-cyan">trace</strong> — one user
+                  request, with a span per model call, tool call, and retrieval — rather than
+                  logging isolated API <span class="acro-exp">(Application Programming Interface)</span> calls. In an agent, "which of the eleven steps went wrong"
+                  is the entire question, and a flat log cannot answer it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Signal</th><th>Capture</th><th>Answers</th></tr>
+                    <tr><td>Traces</td><td>Prompt, response, tool calls, retrieved chunks, per step</td><td>Where in the chain it went wrong</td></tr>
+                    <tr><td>Token accounting</td><td>Input, output, cache-read and cache-write per call</td><td>What this feature costs, and per user</td></tr>
+                    <tr><td>Latency breakdown</td><td>Time to first token, total, plus non-model time</td><td>Whether the model or your retrieval is slow</td></tr>
+                    <tr><td>Quality</td><td>Automatic scores, thumbs, escalations, refusal rate</td><td>Whether it is getting worse</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Log the <strong>prompt as sent</strong>, fully rendered, not the template plus
+                    variables. Reproducing a bad answer from a template and a hope is the single
+                    most common reason an AI incident cannot be investigated.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Technique</div>
+                <div class="concept-title">Turning "Seems Worse" Into a Number</div>
+                <div class="concept-desc">
+                  Quality drifts without any deploy on your side — a model version changes, your
+                  documents change, your users start asking different questions. Sample real
+                  traffic into a golden set, score it on a schedule with the same evaluators used
+                  in <span class="xref">LLM Evaluation, Guardrails &amp; Diffusion Models</span>,
+                  and alert on the trend rather than any single answer.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Proxy metric</th><th>What a rise usually means</th></tr>
+                    <tr><td>Retry / regenerate rate</td><td>Users are unsatisfied and voting with a click</td></tr>
+                    <tr><td>Escalation to a human</td><td>The feature is failing its actual job</td></tr>
+                    <tr><td>Empty-retrieval rate</td><td>RAG <span class="acro-exp">(Retrieval-Augmented Generation)</span> is answering from thin air</td></tr>
+                    <tr><td>Output length drift</td><td>A prompt or model change landed unannounced</td></tr>
+                    <tr><td>Refusal rate</td><td>Guardrails mis-tuned, or the traffic mix shifted</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Pitfall</div>
+                <div class="concept-title">Your Trace Store Is Now a Data Store</div>
+                <div class="concept-desc">
+                  Full prompt-and-response capture means every secret, support ticket, and piece of
+                  personal data a user pasted is now sitting in your observability platform, often
+                  a third-party SaaS <span class="acro-exp">(Software as a Service)</span>. Redact before it leaves the process, set a retention window,
+                  and put the trace store inside the same access-control and
+                  <span class="xref">Data Loss Prevention — Classification, Egress &amp; the False-Positive Problem</span> scope as the source systems.
+                  "We log everything for debugging" is a data-classification decision whether or
+                  not anyone made it deliberately.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body ai -->
