@@ -5520,8 +5520,8 @@ overlays, and security inspection built into the fabric.
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">CIA Triad · AAA · Access Control · PKI · Crypto · Cloud · Zero Trust · Kerberos</span>
-<span class="domain-meta" aria-label="55 topics, about 2h 05m to read"
->55 topics · ~2h 05m</span>
+<span class="domain-meta" aria-label="57 topics, about 2h 10m to read"
+>57 topics · ~2h 10m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body">
@@ -9789,6 +9789,132 @@ applied from the first minute.
 make the disciplinary decision, or contact law enforcement on its own. Those are HR,
 legal and leadership calls. Provide the technical facts, cleanly gathered, and hand off
 at the boundary — overreaching here is how a solid technical case gets thrown out.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: DOING THE PQC MIGRATION ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🔀</span>
+<span class="topic-name">Doing the PQC <span class="acro-exp">(Post-Quantum Cryptography)</span> Migration — Inventory, Crypto-Agility &amp; the Roadmap</span>
+<span class="topic-badge">SecurityX • Crypto</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">The Hard Part Is Not the Algorithm — It Is Finding Where Crypto Lives</div>
+<div class="concept-desc">
+<span class="xref">Post-Quantum Cryptography — Harvest Now, Decrypt Later</span> covers why
+the migration is urgent and which standards replace what. This card is the operational half:
+actually swapping the algorithms across a real estate. And the first, humbling discovery is
+that you do not know where all your cryptography is — it is embedded in TLS <span class="acro-exp">(Transport Layer Security)</span> configs, in code
+libraries, in hardware modules, in firmware, in protocols you inherited and forgot. You
+cannot migrate what you have not found, so the migration begins as an inventory project, not
+a cryptography project.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Step</th><th>What it involves</th></tr></thead>
+<tbody>
+<tr><td>1 Cryptographic inventory</td><td>Discover every use — libraries, certs, protocols, hardware, embedded; automated scanning plus code review</td></tr>
+<tr><td>2 Prioritise by data lifetime</td><td>Long-lived secrets exposed to harvest-now-decrypt-later go first</td></tr>
+<tr><td>3 Build in crypto-agility</td><td>Abstract the algorithm behind config so the next swap is not another multi-year project</td></tr>
+<tr><td>4 Hybrid deployment</td><td>Run classical + post-quantum together during transition — safe if either holds</td></tr>
+<tr><td>5 Migrate PKI <span class="acro-exp">(Public Key Infrastructure)</span> &amp; the long tail</td><td>Certificate chains, HSMs <span class="acro-exp">(Hardware Security Module)</span>, and the embedded devices that will never update</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Crypto-Agility and the CBOM</div>
+<div class="concept-desc">
+Two ideas make the difference between a one-time scramble and a repeatable capability.
+<strong class="c-cyan">Crypto-agility</strong> is designing systems so the algorithm is a
+configuration choice, not a hard-coded assumption — because there will be a next migration,
+and the organizations that hard-coded RSA <span class="acro-exp">(Rivest-Shamir-Adleman)</span> are learning that lesson now. A
+<strong class="c-cyan">CBOM</strong> (cryptographic bill of materials) is the durable output
+of the inventory: a machine-readable record of what crypto each system uses, the same idea
+as an SBOM <span class="acro-exp">(Software Bill of Materials)</span> but for algorithms, keys and certificates.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Artifact</th><th>Answers</th></tr></thead>
+<tbody>
+<tr><td>Cryptographic inventory</td><td>Where do we use crypto, and which algorithms?</td></tr>
+<tr><td>CBOM</td><td>The inventory as living, machine-readable data — feeds the next audit automatically</td></tr>
+<tr><td>Data-lifetime map</td><td>Which secrets must stay confidential for years, not days</td></tr>
+<tr><td>Agility layer</td><td>Can we swap an algorithm by config, or is it a code change?</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">Sequence by two axes at once:</strong> data lifetime (what an
+attacker gains by harvesting it today) and replaceability (how hard the system is to
+touch). Long-lived data on an easy-to-update system is the first, cheapest win; long-lived
+data on an unpatchable embedded device is the problem you start planning around now,
+because it has the longest lead time.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: ADJACENT CRYPTOGRAPHY ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🧮</span>
+<span class="topic-name">Adjacent Cryptography — ZKPs, Homomorphic Encryption, MPC &amp; Confidential Computing</span>
+<span class="topic-badge">SecurityX • Crypto</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">Cryptography That Does More Than Hide Data</div>
+<div class="concept-desc">
+Classical crypto keeps a secret secret. A newer family lets you <em>compute</em> on secrets
+without exposing them — prove a fact without revealing it, run a calculation on encrypted
+data, or split trust so no single party holds the whole key. These are moving from research
+into real products, unevenly, and the practitioner's job is knowing which are ready and which
+are still expensive science projects, so you neither dismiss a real tool nor build on one
+that will not perform.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Technique</th><th>Lets you</th><th>Maturity</th></tr></thead>
+<tbody>
+<tr><td>Zero-knowledge proof (ZKP)</td><td>Prove a statement true without revealing why</td><td>Real in identity &amp; blockchain; niche in enterprise IT</td></tr>
+<tr><td>Homomorphic encryption</td><td>Compute on ciphertext, get an encrypted result</td><td>Works, but still slow and costly for general use</td></tr>
+<tr><td>Secure multi-party computation</td><td>Jointly compute over private inputs no party shares</td><td>Deployed in specific analytics/finance cases</td></tr>
+<tr><td>Threshold signatures</td><td>Split a signing key so <em>k of n</em> must cooperate</td><td>Mature; used in key custody and wallets</td></tr>
+<tr><td>Confidential computing (TEE)</td><td>Process data in a hardware enclave shielded from the host</td><td>Available on major clouds today</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Confidential Computing — the One You Can Use Now</div>
+<div class="concept-desc">
+Of the family, confidential computing is the most immediately practical. A
+<strong class="c-cyan">trusted execution environment</strong> — a hardware enclave — decrypts
+and processes data inside a region the operating system, hypervisor and cloud operator cannot
+read, then re-encrypts the result. It closes the last gap in the classic trio: you already
+encrypt data at rest and in transit, and this protects it <em>in use</em>. The catch is the
+trust you still extend: you are trusting the chip vendor's enclave and its
+<strong class="c-cyan">attestation</strong> — the proof that your code really is running in a
+genuine, unmodified enclave. Verify the attestation; an enclave you did not attest is just a
+black box you decided to trust.
+</div>
+<div class="dw">
+<div class="concept-desc">
+<strong class="c-amber">The reason these matter for privacy work:</strong> they enable
+computation on data that regulation or contract forbids you from seeing in the clear —
+running analytics for a partner without either side exposing raw records. That is the same
+goal the anonymization and differential-privacy techniques in `grc` pursue, reached by a
+different route: not de-identifying the data, but never decrypting it where it could leak.
 </div>
 </div>
 </div>

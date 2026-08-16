@@ -2454,6 +2454,13 @@ a place it already shows up on the site.
 ~3 waves, ~15 cards. The migration is live now; "harvest now, decrypt later"
 makes it an operational problem, not a research one.
 
+**AP1 was already built (Track J's *Post-Quantum Cryptography* card); AP2 & AP3 core
+written — 2 cards into `sec`.** `sec` 52→54.
+
+- [x] AP1 threat & standards → *Post-Quantum Cryptography — Harvest Now, Decrypt Later* (Track J: Shor/Grover, ML-KEM/ML-DSA, hybrid, what doesn't break)
+- [x] AP2 the migration (inventory, crypto-agility, CBOM, PKI, roadmap) → *Doing the PQC Migration — Inventory, Crypto-Agility & the Roadmap*
+- [x] AP3 adjacent crypto (ZKP, homomorphic, MPC, threshold, confidential computing) → *Adjacent Cryptography — ZKPs, Homomorphic Encryption, MPC & Confidential Computing*
+
 **Wave AP1 — The Threat & the Standards**
 - [ ] Quantum Computing for Security People — qubits, Shor, Grover, and what actually breaks
 - [ ] Harvest Now, Decrypt Later — which of today's data has a long enough shelf life to care
