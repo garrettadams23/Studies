@@ -1943,7 +1943,21 @@ actually touch. Vendor-specific, deliberately.
 ### TRACK AF — Working With AI as an IT Professional
 
 ~4 waves, ~20 cards. Complements Track O (building AI) with *using* AI at work,
-and defending against its misuse.
+and defending against its misuse. Content lands in `ai`.
+
+**Enterprise-governance + impersonation wave shipped this session — 5 cards.** AF1
+(using AI well, prompting, verification) was already covered by `ai`'s *Using AI Well*,
+*AI Tools for IT Work* and *Prompt Engineering* cards; AF3's phishing/deepfake basics
+touch several domains. The genuine void was the **operator/governance** angle, now
+filled:
+
+- [x] Copilot & Assistant Deployment → *Deploying AI Assistants — Copilot, Licensing & Data Boundaries*
+- [x] Shadow AI → *Shadow AI — Finding It, and Offering a Sanctioned Path Instead*
+- [x] AI Acceptable Use Policy → *AI Acceptable Use — A Policy People Will Actually Follow*
+- [x] Data Governance for AI → *Data Governance for AI — Oversharing at the Speed of Search*
+- [x] Voice & Video Impersonation → *Deepfakes & Voice/Video Impersonation — Verification That Resists AI*
+- [x] AF1 "Using AI Well" cluster → already in `ai` (*Using AI Well*, *AI Tools for IT Work*, *Prompt Engineering*)
+- [ ] Remaining (narrower / measurement-y): AI for log analysis, measuring whether it helped, detecting automated attacks, the AI-incident tabletop, and the AF4 career-effects wave — follow on demand
 
 **Wave AF1 — Using AI Well**
 - [ ] What LLMs Are Good and Bad At — a calibrated mental model for daily work
