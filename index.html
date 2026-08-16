@@ -5520,8 +5520,8 @@ overlays, and security inspection built into the fabric.
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">CIA Triad · AAA · Access Control · PKI · Crypto · Cloud · Zero Trust · Kerberos</span>
-<span class="domain-meta" aria-label="49 topics, about 1h 55m to read"
->49 topics · ~1h 55m</span>
+<span class="domain-meta" aria-label="52 topics, about 2h 00m to read"
+>52 topics · ~2h 00m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body">
@@ -9431,6 +9431,184 @@ buying a lock for a door that is not in a wall. Sequence it: tiering and hygiene
 then vaulting and just-in-time for what remains. See
 <span class="xref">Server Hardening Baseline — The Short List That Removes Most Risk</span>
 for the endpoint half of the same argument.
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: OT VS IT & THE PURDUE MODEL ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🏭</span>
+<span class="topic-name">OT vs IT &amp; the Purdue Model — When the Generic Answer Is the Wrong Answer</span>
+<span class="topic-badge">SecurityX • OT</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">Operational Technology Inverts the Priorities You Trust</div>
+<div class="concept-desc">
+IT security ranks confidentiality first; operational technology — the systems that run
+turbines, pumps, assembly lines and power grids — ranks <strong class="c-cyan">availability
+and safety</strong> first, because the failure mode is not a data breach, it is a flooded
+town or a dead worker. That single inversion breaks most IT instincts. You cannot reboot a
+blast furnace controller to apply a patch, you cannot take a leaked credential offline if
+it is authenticating a safety system, and "just update it" can void the certification that
+makes the machine legal to run.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Dimension</th><th>IT</th><th>OT</th></tr></thead>
+<tbody>
+<tr><td>Priority order</td><td>Confidentiality → Integrity → Availability</td><td>Safety → Availability → Integrity → Confidentiality</td></tr>
+<tr><td>Lifespan</td><td>3–5 years</td><td>15–30 years — Windows XP is still out there</td></tr>
+<tr><td>Patch cadence</td><td>Monthly, routine</td><td>Rare, during scheduled plant shutdowns</td></tr>
+<tr><td>Downtime cost</td><td>Inconvenience to lost revenue</td><td>Physical damage, safety, environmental</td></tr>
+<tr><td>A failed change</td><td>Roll back</td><td>May be unrecoverable, or dangerous</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Purdue Model — a Map of Where the Boundaries Go</div>
+<div class="concept-desc">
+The Purdue model layers an industrial environment from the physical process up to the
+business network, and its enduring value is telling you <em>where the segmentation
+belongs</em>. The most important line is between OT and IT, historically enforced by a
+<strong class="c-cyan">DMZ <span class="acro-exp">(Demilitarized Zone)</span></strong> at Level 3.5 — the boundary a well-run plant defends
+hardest.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Level</th><th>What lives there</th></tr></thead>
+<tbody>
+<tr><td>0 — Process</td><td>Sensors and actuators — the physical world</td></tr>
+<tr><td>1 — Control</td><td>PLCs <span class="acro-exp">(Programmable Logic Controller)</span> and controllers reading sensors, driving actuators</td></tr>
+<tr><td>2 — Supervisory</td><td>HMIs and SCADA <span class="acro-exp">(Supervisory Control and Data Acquisition)</span> — operators watching and steering</td></tr>
+<tr><td>3 — Operations</td><td>Plant-wide historians, scheduling, OT management</td></tr>
+<tr><td>3.5 — IT/OT DMZ</td><td class="c-red">The boundary — the line an attacker must cross to reach the process</td></tr>
+<tr><td>4–5 — Enterprise</td><td>Ordinary corporate IT and the internet</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+<strong class="c-amber">The model describes intent, not most real plants.</strong>
+Convergence, remote access and cloud historians have punched holes through the layers
+everywhere. The value of the map is spotting which holes exist in <em>your</em> plant —
+the vendor laptop that dials straight into Level 1 is the finding, and the model is what
+lets you see it.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: ICS PROTOCOLS ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🔌</span>
+<span class="topic-name">ICS <span class="acro-exp">(Industrial Control System)</span> Protocols — Modbus, DNP3, OPC UA and Their Security Assumptions</span>
+<span class="topic-badge">SecurityX • OT</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Core Concept</div>
+<div class="concept-title">Most of Them Were Designed With No Security at All</div>
+<div class="concept-desc">
+Industrial protocols were built for isolated, trusted serial networks decades before anyone
+imagined them on a routable IP <span class="acro-exp">(Internet Protocol)</span> network. The design assumption was physical isolation, so
+most have <strong class="c-cyan">no authentication and no encryption</strong> — a command
+on the wire is obeyed because it arrived, not because it was proven legitimate. That is not
+a bug to patch; it is the protocol working as designed, and it is why segmentation, not
+protocol hardening, is the primary OT control.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Protocol</th><th>Used for</th><th>Security reality</th></tr></thead>
+<tbody>
+<tr><td>Modbus</td><td>The ubiquitous PLC <span class="acro-exp">(Programmable Logic Controller)</span> protocol</td><td>None native — no auth, no encryption; a read is a write away</td></tr>
+<tr><td>DNP3</td><td>Utilities, electric &amp; water SCADA <span class="acro-exp">(Supervisory Control and Data Acquisition)</span></td><td>Plain by default; Secure Authentication exists but is often unused</td></tr>
+<tr><td>OPC UA</td><td>The modern interoperability standard</td><td class="c-green">Designed with security — auth, encryption, signing — when configured on</td></tr>
+<tr><td>EtherNet/IP, PROFINET</td><td>Factory automation</td><td>Largely trust-the-network</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Defence</div>
+<div class="concept-title">You Watch These Protocols; You Rarely Touch Them</div>
+<div class="concept-desc">
+Because you cannot bolt authentication onto Modbus and you cannot risk an active scan
+knocking a controller offline, OT defence is overwhelmingly <strong class="c-cyan">passive</strong>.
+A span/tap port feeds traffic to a monitor that learns the normal command patterns and
+alerts on the abnormal — an engineering-workstation command from an address that has never
+issued one, a firmware write outside a maintenance window. This is the mirror image of IT's
+active-scanning instinct, and using an IT vulnerability scanner on a live OT segment is a
+classic way to cause the very outage you were trying to prevent.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>IT reflex</th><th>OT correction</th></tr></thead>
+<tbody>
+<tr><td>Active vulnerability scan</td><td>Passive monitoring off a tap — an aggressive scan can crash a PLC</td></tr>
+<tr><td>Patch on Tuesday</td><td>Compensating controls until the next plant shutdown window</td></tr>
+<tr><td>Block the suspicious traffic inline</td><td>Alert, don't block — an inline device that fails can stop production</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: SECURING & RESPONDING IN OT ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🦺</span>
+<span class="topic-name">Securing OT Without Breaking It — Segmentation, Access &amp; Safety-First IR <span class="acro-exp">(Incident Response)</span></span>
+<span class="topic-badge">SecurityX • OT</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Controls</div>
+<div class="concept-title">Segmentation Is the Whole Game</div>
+<div class="concept-desc">
+When you cannot patch the endpoints and cannot authenticate the protocols, the control that
+carries the load is keeping the attacker away from them. Every serious OT security programme
+is, at its core, a segmentation and access-control programme — the standards bodies just
+formalize it (IEC 62443's zones and conduits; NERC CIP for the North American power grid).
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Control</th><th>In practice</th></tr></thead>
+<tbody>
+<tr><td>Zones &amp; conduits</td><td>Group assets by risk; every crossing is a controlled, monitored conduit</td></tr>
+<tr><td>The IT/OT DMZ <span class="acro-exp">(Demilitarized Zone)</span></td><td>No direct path enterprise→control; brokered data exchange only</td></tr>
+<tr><td>Remote access done right</td><td>Brokered, MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, session-recorded, time-boxed — the vendor VPN <span class="acro-exp">(Virtual Private Network)</span> is the top OT breach vector</td></tr>
+<tr><td>Removable-media control</td><td>Sanctioned scanning kiosks — USB <span class="acro-exp">(Universal Serial Bus)</span> is how air-gapped plants still get hit</td></tr>
+<tr><td>Unidirectional gateways</td><td>Data diodes let telemetry out while making inbound physically impossible</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Incident Response</div>
+<div class="concept-title">Safety First, and Why You May Not Pull the Plug</div>
+<div class="concept-desc">
+The IT reflex — isolate and power off the compromised system — can be the most dangerous
+possible move in OT. That "system" may be holding a valve in a safe position or keeping a
+process within limits; killing it can cause the physical incident the attacker wanted. OT
+incident response is led by the people who understand the physical process, with security
+advising, and the first question is never "how do we contain the malware" but "what happens
+to the process if we do."
+</div>
+<div class="dw">
+<div class="concept-desc">
+<strong class="c-amber">This is where the site's IR playbooks need an asterisk.</strong>
+<span class="xref">Ransomware — The Defining Threat of the Era</span> and the standard
+containment steps assume you can isolate freely. In OT you cannot; safety and the process
+come first, containment second, and the plant engineer, not the SOC <span class="acro-exp">(Security Operations Center)</span>, has the final call
+on touching a live controller.
+</div>
 </div>
 </div>
 </div>

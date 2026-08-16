@@ -1938,6 +1938,17 @@ the narrower AD4 (ChromeOS, kiosks, UEM selection) can follow. endpoint 38→41.
 
 ~4 waves, ~20 cards. Where the generic answer is the wrong answer.
 
+**AE1 (OT/ICS) written — 3 cards into `sec`, the most distinctive void on the site.**
+Purdue model, Modbus/DNP3/OPC UA and IEC 62443 were entirely absent. AE2 (regulated
+industries) largely overlaps existing `grc` work (HIPAA, PCI, CMMC/STIGs); AE3/AE4 (scale
+extremes, sustainability/accessibility) are narrower and can follow. `sec` 46→49.
+
+- [x] OT vs IT + The Purdue Model → *OT vs IT & the Purdue Model — When the Generic Answer Is the Wrong Answer*
+- [x] ICS Protocols → *ICS Protocols — Modbus, DNP3, OPC UA and Their Security Assumptions*
+- [x] Securing OT Without Breaking It + OT Incident Response → *Securing OT Without Breaking It — Segmentation, Access & Safety-First IR*
+- [x] AE2 regulated industries → HIPAA/PCI/CMMC/STIGs already in `grc`; legal hold in `grc`'s data-governance card
+- [ ] Remaining (narrower): healthcare/finance/gov/edu operational specifics, scale extremes (SMB/enterprise/MSP/M&A), green IT, accessible IT, e-waste, surveillance-vs-monitoring — follow on demand
+
 **Wave AE1 — Operational Technology & ICS**
 - [ ] OT vs IT — different priorities, different consequences, different clocks
 - [ ] The Purdue Model — levels, and where the boundaries really sit today
