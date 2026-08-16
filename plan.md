@@ -5193,11 +5193,11 @@ every new card uses `ref-table` and classed colour, not `ai-table` or inline hex
 
 ---
 
-## Session record addendum — Phase 4 opened, and the budget wall reached honestly
+## Session record addendum — Phases 4 & 5 opened, and the budget wall reached honestly
 
-After finishing Phase 3, the same session opened Phase 4 with **seven waves**, chosen by
-the Phase-3 rule (audit the site first, fill genuine voids, deepen existing domains
-rather than spin up new ones):
+After finishing Phase 3, the same session opened Phase 4 **and** three Phase-5 tracks —
+**ten waves**, all chosen by the Phase-3 rule (audit the site first, fill genuine voids,
+deepen existing domains rather than spin up new ones):
 
 | Wave | Domain | Cards | What it filled |
 |---|---|---:|---|
@@ -5208,21 +5208,26 @@ rather than spin up new ones):
 | AF — AI at Work (governance) | `ai` 44→49 | 5 | assistant deployment, shadow AI, AI acceptable use, data governance for AI, deepfake/impersonation defence |
 | AC — Automation for Admins | `script` 138→140, `ops` 32→33 | 3 | Graph from PowerShell, JEA, automation risk/discipline |
 | AE1 — OT/ICS Security | `sec` 46→49 | 3 | OT vs IT + Purdue model, ICS protocols, securing OT + safety-first IR |
+| AR — Physical Security & Insider Threat | `sec` 49→52 | 3 | physical security systems, the insider-threat programme, internal investigations |
+| AP — PQC Migration & Adjacent Crypto | `sec` 52→54 | 2 | doing the PQC migration (inventory/CBOM/agility), adjacent crypto (ZKP/HE/MPC/TEE) |
+| AQ — Emerging Platforms | `net` 55→57 | 2 | modern connectivity (5G/satellite/IoT radios), edge computing |
 
-**Total this session: 60 cards** (31 Phase 3 + 29 Phase 4), site **1,013 → 1,073 topics**.
+**Total this session: 67 cards** (31 Phase 3 + 36 Phase 4/5), site **1,013 → 1,080 topics**.
 Every wave found the same inflation Phase 3 did — Y1–Y3 already built, the AF1 "using AI
 well" cluster already in `ai`, AC's craft waves already in `script`, AE2's regulated
-industries already in `grc`. The genuine new content was a fraction of the nominal spec.
+industries already in `grc`, AP1's threat/standards already in Track J's PQC card. The
+genuine new content was a fraction of the nominal spec, every time.
 
-**What Phase 4 still needs is now a decision, not more surgical waves.** The high-value
-*existing-domain* voids are filled. What remains is either **new domains** (`m365` for
-Exchange/SharePoint/Teams, `itsm` for the service desk — a chip-bar and architecture
-decision, the bar is already a crowded row of 28) or **narrower depth** items marked
-"follow on demand" in each track above. Track AB (vendor networking) is low-priority —
-`net` is already 55 cards deep and vendor-CLI content ages fastest.
+**What remains is now a decision, not more surgical waves.** The high-value
+*existing-domain* voids across Phases 4 and 5 are filled. What remains is either **new
+domains** (`m365` for Exchange/SharePoint/Teams, `itsm` for the service desk, `hw` for
+hardware/embedded — a chip-bar and architecture decision; the bar is already a crowded
+row of 28) or **narrower depth** items marked "follow on demand" in each track above
+(vendor networking, AR/VR, healthcare/finance operational specifics, the business/
+leadership tracks AS–AV, and the study-platform engineering tracks AG–AK).
 
-**Where content stops, and why.** The page budget is at **~5.6% gzip headroom** (1,038 KB
-of the 1,100 KB ceiling), down from 15% at the start of the session — 60 cards added. This is exactly the wall §4b and §4b-ii documented, and the
+**Where content stops, and why.** The page budget is at **~5% gzip headroom** (1,045 KB
+of the 1,100 KB ceiling), down from 15% at the start of the session — 67 cards added. This is exactly the wall §4b and §4b-ii documented, and the
 session-19 decision is explicit: **do not keep writing content against the ceiling on the
 assumption lazy loading will rescue it.** The remaining Phase 4–6 backlog is hundreds of
 cards plus three new domains (`m365`, `itsm`, and the Phase-5/6 domains), and it does not
