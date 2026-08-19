@@ -1588,46 +1588,46 @@ Pairs directly with the `redteam` AD-attack cards — same objects, defender's v
 ~6 waves, ~30 cards. The tenant most organisations live inside.
 
 **Wave W1 — Tenant Foundations**
-- [ ] M365 Tenant Anatomy — tenant, domains, admin centers, and how they relate to Azure
-- [ ] Licensing Without Tears — E3 vs E5 vs Business, add-ons, group-based licensing
-- [ ] Admin Roles & Least Privilege — the built-in roles worth knowing, and PIM for the rest
-- [ ] Service Health & Message Center — knowing about the outage before the tickets
+- [x] M365 Tenant Anatomy — tenant, domains, admin centers, and how they relate to Azure
+- [x] Licensing Without Tears — E3 vs E5 vs Business, add-ons, group-based licensing
+- [x] Admin Roles & Least Privilege — the built-in roles worth knowing, and PIM for the rest
+- [x] Service Health & Message Center — knowing about the outage before the tickets
 - [ ] Tenant-to-Tenant & Mergers — the migration nobody plans enough time for
 
 **Wave W2 — Exchange Online**
-- [ ] Mail Flow Explained — connectors, transport rules, the path a message actually takes
-- [ ] Mailbox Types — user, shared, room, equipment, and delegation done right
-- [ ] Anti-Spam & Anti-Phish — EOP, Defender for Office, quarantine, safe links/attachments
-- [ ] Message Trace & Header Analysis — proving where a message went, and where it died
+- [x] Mail Flow Explained — connectors, transport rules, the path a message actually takes
+- [x] Mailbox Types — user, shared, room, equipment, and delegation done right
+- [x] Anti-Spam & Anti-Phish — EOP, Defender for Office, quarantine, safe links/attachments
+- [x] Message Trace & Header Analysis — proving where a message went, and where it died
 - [ ] Retention, Litigation Hold & Archiving — legal's requirements in mailbox terms
 
 **Wave W3 — SharePoint & OneDrive**
-- [ ] SharePoint Online Architecture — sites, libraries, lists, and the 400-URL trap
-- [ ] Permissions Model — groups, inheritance, sharing links, and why it sprawls
-- [ ] OneDrive Known Folder Move — redirecting Desktop/Documents without user pain
-- [ ] Sync Client Troubleshooting — the top failure modes and their fixes
-- [ ] External Sharing & Guest Access — B2B collaboration without leaking the tenant
+- [x] SharePoint Online Architecture — sites, libraries, lists, and the 400-URL trap
+- [x] Permissions Model — groups, inheritance, sharing links, and why it sprawls
+- [x] OneDrive Known Folder Move — redirecting Desktop/Documents without user pain
+- [x] Sync Client Troubleshooting — the top failure modes and their fixes
+- [x] External Sharing & Guest Access — B2B collaboration without leaking the tenant
 
 **Wave W4 — Teams**
-- [ ] Teams Architecture — what a team really is (M365 group + SharePoint + Exchange + chat)
+- [x] Teams Architecture — what a team really is (M365 group + SharePoint + Exchange + chat)
 - [ ] Teams Policies — meeting, messaging, app and calling policy packages
 - [ ] Teams Voice Basics — Phone System, calling plans, Direct Routing, SIP at a glance
 - [ ] Teams Call Quality Troubleshooting — CQD, network requirements, the real culprits
-- [ ] Governance & Sprawl — naming policy, expiration, the 4,000-team problem
+- [x] Governance & Sprawl — naming policy, expiration, the 4,000-team problem
 
 **Wave W5 — Purview, Compliance & Data**
 - [ ] Purview Overview — the compliance surface, mapped to what auditors ask for
-- [ ] Sensitivity Labels & DLP — classification that survives contact with users
-- [ ] Retention Policies vs Retention Labels — the distinction that trips everyone
-- [ ] eDiscovery & Content Search — running a legal hold end to end
-- [ ] Insider Risk & Audit Log — what is recorded, for how long, and how to search it
+- [x] Sensitivity Labels & DLP — classification that survives contact with users
+- [x] Retention Policies vs Retention Labels — the distinction that trips everyone
+- [x] eDiscovery & Content Search — running a legal hold end to end
+- [~] Insider Risk & Audit Log — the unified audit log shipped; Insider Risk Management itself did not
 
 **Wave W6 — M365 Operations & Troubleshooting**
 - [ ] The PowerShell Modules — Graph, Exchange Online, Teams; connecting and staying connected
 - [ ] Graph API for Admins — batch operations, permissions, throttling
 - [ ] Reporting & Usage Analytics — adoption data that answers a real question
-- [ ] Backup for M365 — why native retention is not a backup
-- [ ] M365 Troubleshooting Playbook — tenant, identity, licence, policy, client: in that order
+- [x] Backup for M365 — why native retention is not a backup
+- [x] M365 Troubleshooting Playbook — tenant, identity, licence, policy, client: in that order
 
 ### TRACK Y — Endpoint Engineering Depth  (→ `endpoint`, 13 → ~55)
 
@@ -5502,3 +5502,87 @@ A domain three times the size of `script` would open visibly slowly and would pa
 budget in `page_budget.py`. The metric to add, if that becomes a real risk, is the largest
 single domain's element count — not another page-wide total. It is deliberately not added
 now: no domain is close, and an unfired budget is a guess.
+
+---
+
+## Session record — Track W opened: the `m365` domain
+
+The first content wave since the byte ceiling moved (§4b-iv), and the first new domain since
+`infra`. Written to the Phase-3 rule that has held every time since: **audit the site before
+writing a line**, because the backlog count has been inflated in every wave so far.
+
+### The audit, which decided what to build
+
+Probed all 28 existing domains for the four candidate tracks. The result was unusually
+clear-cut, and it is the reason this session opened a domain rather than deepening one:
+
+| Probe | Mentions across the site | Verdict |
+|---|---:|---|
+| `mail flow`, `message trace`, `transport rule`, `shared mailbox` | **0** | genuine void |
+| `purview`, `litigation hold`, `safe links`, `direct routing` | **0** | genuine void |
+| `m365 group`, `files on-demand`, `group-based licensing` | **0** | genuine void |
+| `sharepoint` | 1 (a passing mention in `grc`) | genuine void |
+| `onedrive`, `known folder` | 2 (both in the acronym dictionary) | genuine void |
+| `teams` | 76 — **every one meaning "groups of people"** | genuine void |
+| virtualization, storage, backup/DR | already carded in `infra` | Track Z was right: already built |
+| ITIL, change, on-call, runbooks | already carded in `ops`/`grc`/`mind` | ITSM needs no domain |
+| Autopilot, boundary groups, co-management | already carded in `endpoint` | Track Y depth already there |
+
+So the inflation rule held for three of the four candidate tracks and broke for the fourth.
+Microsoft 365 — the workload most of this site's readers administer daily — had no home.
+
+### What shipped
+
+**`data/m365.html`, 18 cards, ~40 minutes of reading.** Site: 1,080 → **1,098 topics**, 28 → **29
+domains**. The chip sits in Core IT between Windows Server and the reference domains.
+
+| Group | Cards |
+|---|---|
+| Foundations | Tenant anatomy · Licensing &amp; group-based assignment · Admin roles &amp; PIM · Service Health &amp; Message Center |
+| Exchange Online | Mail flow &amp; connectors · Mailbox types &amp; delegation · EOP &amp; Defender for Office · Message trace &amp; headers |
+| SharePoint / OneDrive | Site architecture &amp; the limits that bite · Sharing &amp; permissions sprawl · KFM, Files On-Demand &amp; sync triage |
+| Teams | What a team actually is · Governance, expiry &amp; guests |
+| Purview | Retention policies vs labels · Sensitivity labels &amp; DLP · eDiscovery, content search &amp; audit log |
+| Operations | Backup for M365 · The five-layer troubleshooting playbook |
+
+**21 Track W items are now ticked against 18 cards**, because several specced items are one
+card in practice — KFM and sync troubleshooting are one problem, external sharing and guest
+access are covered where they actually bite. One item was deliberately *un*-ticked after
+review: the unified audit log shipped, Insider Risk Management did not, and marking it done
+would have been the exact failure mode this file keeps warning about.
+
+### What the audit changed about the writing
+
+Every card that could have restated an existing one instead points at it. Thirteen
+cross-references, all resolving: SPF/DKIM/DMARC to `threat`, Conditional Access and Autopilot
+to `endpoint`, Entra Connect and the backup cards to `infra`, governance-level retention to
+`grc`, Copilot licensing and AI oversharing to `ai`, Graph PowerShell to `script`. The Graph
+card in Track W was dropped outright on discovering
+<span>Microsoft Graph From PowerShell — The Modern Admin API</span> already exists.
+
+Eighteen `volatile` marks carry `data-checked="2026-08"` — every portal address, licence tier
+claim, retention window and item limit. This is the most vendor-volatile domain on the site and
+it should be re-checked more often than the others; the marks are what make that possible.
+
+### Two things worth carrying forward
+
+**The ceiling raise was load-bearing, immediately.** This wave took the page to **1,100.2 KB
+gzipped** — which would have failed the old 1,100 KB budget by 0.2 KB. The wave that
+demonstrated the ceiling was binding was the very next one written. Under the new budget it
+sits at 50% headroom, and `raw_mb` is at 4.1 of 8.0.
+
+**`stamp_freshness.py` in write mode rewrote 250 unrelated stamps.** Running it to stamp 18 new
+cards re-derived every stamp on the site from `git blame` and moved ~250 topics from
+`2026-06`/`2026-07` to later months, with no content change behind the move. That is the same
+git-version sensitivity the CI comment already documents for `--check`. The churn was reverted
+and the new cards were stamped directly. **Until that is fixed, do not run the stamper in write
+mode over the whole tree** — it silently inflates the freshness signal the `--report` mode
+exists to keep honest. A `--only <file>` flag would be the obvious repair.
+
+### Track W after this session
+
+Nine items remain, and they are genuinely thinner than the ones shipped: tenant-to-tenant
+migration, litigation hold in mailbox terms, Teams policy packages, Teams voice and call
+quality, a Purview overview, the PowerShell modules, Graph for admins (mostly covered in
+`script`), usage reporting, and Insider Risk Management. A second wave of ~6 cards would close
+the domain; none of them is a foundation the rest depends on.

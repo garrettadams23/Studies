@@ -1,0 +1,1289 @@
+<!-- ── TOPIC: M365 TENANT ANATOMY ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏢</span>
+    <span class="topic-name">M365 Tenant Anatomy — The Tenant, Its Domains &amp; the Admin Centres</span>
+    <span class="topic-badge">M365 • Foundations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">One Tenant, One Directory, Many Front Doors</div>
+      <div class="concept-desc">
+        A Microsoft 365 tenant is not a product — it is a directory with services attached. Underneath
+        every admin centre is the same Entra ID directory holding the same users, groups and devices.
+        Exchange, SharePoint, Teams and Intune are tenants' <em>workloads</em>, each with its own
+        console, its own vocabulary and its own idea of what a "group" is. Almost every confusing
+        M365 problem comes from forgetting that: an object changed in one console and the change
+        being read somewhere else entirely.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Layer</th><th>What lives there</th><th>Changed from</th></tr></thead>
+          <tbody>
+            <tr><td>Directory</td><td>Users, groups, devices, app registrations, roles</td><td>Entra admin centre</td></tr>
+            <tr><td>Subscription</td><td>Licences, service plans, billing</td><td>M365 admin centre</td></tr>
+            <tr><td>Workload</td><td>Mailboxes, sites, teams, policies</td><td>That workload's own console</td></tr>
+            <tr><td>Compliance</td><td>Retention, labels, eDiscovery, audit</td><td>Purview portal</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Consoles, and What Only They Can Do</div>
+      <div class="concept-desc">
+        Portal addresses move around, so the useful thing to memorise is not the URL <span class="acro-exp">(Uniform Resource Locator)</span> but which
+        console owns which object.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Console</th><th>Owns</th><th>Address</th></tr></thead>
+          <tbody>
+            <tr><td>Microsoft 365 admin</td><td>Users, licences, billing, service health</td><td><span class="volatile" data-checked="2026-08">admin.microsoft.com</span></td></tr>
+            <tr><td>Entra admin</td><td>Groups, roles, Conditional Access, app registrations</td><td><span class="volatile" data-checked="2026-08">entra.microsoft.com</span></td></tr>
+            <tr><td>Exchange admin</td><td>Mailboxes, mail flow, connectors, transport rules</td><td><span class="volatile" data-checked="2026-08">admin.exchange.microsoft.com</span></td></tr>
+            <tr><td>SharePoint admin</td><td>Sites, storage, sharing policy</td><td><span class="volatile" data-checked="2026-08">the tenant's -admin.sharepoint.com host</span></td></tr>
+            <tr><td>Teams admin</td><td>Teams policies, voice, meeting settings</td><td><span class="volatile" data-checked="2026-08">admin.teams.microsoft.com</span></td></tr>
+            <tr><td>Purview</td><td>Retention, labels, DLP <span class="acro-exp">(Data Loss Prevention)</span>, eDiscovery, audit</td><td><span class="volatile" data-checked="2026-08">purview.microsoft.com</span></td></tr>
+            <tr><td>Intune</td><td>Devices, compliance, app deployment</td><td><span class="volatile" data-checked="2026-08">intune.microsoft.com</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Three Kinds of Domain Name, Routinely Confused</div>
+      <div class="concept-desc">
+        Every tenant has an unchangeable <code>.onmicrosoft.com</code> name assigned at creation, and
+        usually one or more custom domains verified afterwards. They are not interchangeable, and
+        knowing which is which resolves a whole class of "why is mail going there" tickets.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Name</th><th>Role</th><th>Gotcha</th></tr></thead>
+          <tbody>
+            <tr><td>contoso.onmicrosoft.com</td><td>The tenant's permanent identity; SharePoint hostnames derive from it</td><td>Cannot be renamed after creation — a bad choice is permanent</td></tr>
+            <tr><td>contoso.com (custom)</td><td>What users sign in as and receive mail at</td><td>Must be DNS-verified; can be moved to another tenant only after removal from this one</td></tr>
+            <tr><td>Default domain</td><td>The one new users get unless told otherwise</td><td>Often left as .onmicrosoft.com, quietly creating wrong-looking accounts</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The directory itself, and how on-prem accounts get into it, is covered by
+          <span class="xref">Entra Connect &amp; Hybrid Identity — Choosing How Passwords Are Checked</span>
+          in the Windows Server domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LICENSING ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎫</span>
+    <span class="topic-name">Licensing Without Tears — E3, E5, Business &amp; Group-Based Assignment</span>
+    <span class="topic-badge">M365 • Foundations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Licence Is a Bundle of Service Plans, and the Plans Are What Matter</div>
+      <div class="concept-desc">
+        Admins argue about E3 versus E5 as if they were products. They are bundles: each licence
+        contains a list of individually toggleable <em>service plans</em>, and a feature works or
+        does not work because its service plan is enabled for that user. This is why "they have E5,
+        it should work" is not a diagnosis — someone may have disabled the plan at assignment time,
+        or the feature may live in an add-on that was never bought.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Tier</th><th>Roughly, what it adds</th><th>Bought when</th></tr></thead>
+          <tbody>
+            <tr><td>Business Basic / Standard</td><td>The core services, capped at a small-business seat count</td><td>Under the seat limit and no advanced security need</td></tr>
+            <tr><td>E3</td><td>Full enterprise services, baseline compliance, litigation hold</td><td>The default enterprise floor</td></tr>
+            <tr><td>E5</td><td>Advanced security and compliance, analytics, voice options</td><td>When security or compliance features are the requirement</td></tr>
+            <tr><td>Add-ons</td><td>Individual capabilities bolted onto a lower tier</td><td>When a handful of people need one E5 feature</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Tier contents and names change with Microsoft's packaging — treat the split above as the
+          shape of the decision, <span class="volatile" data-checked="2026-08">not as a current
+          feature list</span>, and check the licensing comparison before quoting it to anyone.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Assign to Groups, Never to People</div>
+      <div class="concept-desc">
+        Group-based licensing makes membership the single source of truth: put a user in the group
+        and the licence lands, remove them and it is reclaimed. Direct per-user assignment looks
+        simpler on day one and becomes an audit problem by month six, because nothing records
+        <em>why</em> a given person has a given SKU <span class="acro-exp">(Stock Keeping Unit)</span>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>One group per licence bundle</td><td>Membership answers "who has E5, and why"</td></tr>
+            <tr><td>Dynamic membership where a rule exists</td><td>Department or job-title rules keep joiners licensed with no ticket</td></tr>
+            <tr><td>Watch for assignment errors</td><td>Conflicting plans and missing prerequisites fail silently per user</td></tr>
+            <tr><td>Never disable plans ad hoc</td><td>A per-user tweak is invisible to the next admin debugging the feature</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">"They Have the Licence and It Still Does Not Work"</div>
+      <div class="concept-desc">
+        Four causes, in the order they are worth checking. The first three are minutes of work; only
+        the fourth is a real problem.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Check</th><th>Looks like</th></tr></thead>
+          <tbody>
+            <tr><td>Service plan disabled in the assignment</td><td>Licence present, one feature absent for one group of people</td></tr>
+            <tr><td>Assignment error on the group</td><td>Some members licensed, others not, no pattern in the console</td></tr>
+            <tr><td>Provisioning not finished</td><td>Brand-new user; mailbox or site not yet created</td></tr>
+            <tr><td>Feature needs an add-on, not the tier</td><td>Documentation says E5 "or" a specific add-on nobody bought</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Copilot in particular is licensed separately and has data-boundary implications of its
+          own — see <span class="xref">Deploying AI Assistants — Copilot, Licensing &amp; Data Boundaries</span>
+          in the AI <span class="acro-exp">(Artificial Intelligence)</span> domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: ADMIN ROLES ────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔑</span>
+    <span class="topic-name">Admin Roles &amp; Least Privilege — The Roles Worth Knowing, and PIM <span class="acro-exp">(Privileged Identity Management)</span> for the Rest</span>
+    <span class="topic-badge">M365 • Identity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Global Admin Is Not an Job Title, It Is a Blast Radius</div>
+      <div class="concept-desc">
+        Global Administrator can read, change and grant everything in the tenant, including making
+        more Global Administrators. Every extra holder is another account whose compromise ends the
+        tenant. The working rule most organisations converge on: a small number of permanent Global
+        Administrators, at least two break-glass accounts that are excluded from Conditional Access
+        and stored offline, and everyone else in the narrowest role that does their actual job.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Role</th><th>Does</th><th>Give it to</th></tr></thead>
+          <tbody>
+            <tr><td>Global Administrator</td><td>Everything, including role assignment</td><td>As few people as the org can tolerate</td></tr>
+            <tr><td>User Administrator</td><td>Create/edit users, reset most passwords</td><td>Service desk</td></tr>
+            <tr><td>Exchange Administrator</td><td>Mailboxes, mail flow, transport rules</td><td>Messaging team</td></tr>
+            <tr><td>SharePoint Administrator</td><td>Sites, storage, sharing policy</td><td>Collaboration team</td></tr>
+            <tr><td>Security Reader</td><td>Read security posture, change nothing</td><td>Auditors, analysts, anyone investigating</td></tr>
+            <tr><td>Global Reader</td><td>Read almost everything, change nothing</td><td>The default for "I just need to look"</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Eligible, Not Assigned — What PIM Actually Buys</div>
+      <div class="concept-desc">
+        Privileged Identity Management converts a standing role into one a person can
+        <em>activate</em> for a bounded window, with justification, approval and an audit trail. The
+        security value is real but often mis-stated: PIM does not stop a compromised session from
+        doing damage during an activation. What it buys is that most accounts are unprivileged most
+        of the time, and that every elevation leaves a record someone can review.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Setting</th><th>Sensible default</th></tr></thead>
+          <tbody>
+            <tr><td>Activation length</td><td>Hours, not days — long enough for the change window</td></tr>
+            <tr><td>Justification required</td><td>Yes; it is what makes the audit log readable later</td></tr>
+            <tr><td>Approval required</td><td>For the highest roles only, or nobody will use it</td></tr>
+            <tr><td>MFA <span class="acro-exp">(Multi-Factor Authentication)</span> on activation</td><td>Always</td></tr>
+            <tr><td>Break-glass accounts</td><td>Permanently assigned, excluded from PIM and Conditional Access, monitored for any sign-in</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The general principle behind all of this is in
+          <span class="xref">Identity &amp; Access Management — Who Can Do What</span> in the
+          Security domain; this card is the M365-specific shape of it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SERVICE HEALTH ─────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📡</span>
+    <span class="topic-name">Service Health &amp; the Message Center — Knowing Before the Tickets Arrive</span>
+    <span class="topic-badge">M365 • Operations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Two Different Feeds, Two Different Jobs</div>
+      <div class="concept-desc">
+        Service Health tells you what is broken now. The Message Center tells you what Microsoft is
+        about to change. Teams that watch only the first spend their lives reacting; the changes
+        that cause the worst days are the announced ones nobody read.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Service Health</th><th>Message Center</th></tr></thead>
+          <tbody>
+            <tr><td>Answers</td><td>Is it us or is it them?</td><td>What changes next month?</td></tr>
+            <tr><td>Cadence</td><td>Live, during an incident</td><td>Continuous, weeks of lead time</td></tr>
+            <tr><td>Who should watch</td><td>Service desk, on call</td><td>Whoever owns each workload</td></tr>
+            <tr><td>Failure mode</td><td>Assuming an outage is local and rebuilding a working server</td><td>A "sudden" behaviour change that was announced 60 days ago</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Turning the Feeds Into an Actual Process</div>
+      <div class="concept-desc">
+        The feeds are free; the discipline is not. Three habits separate teams that get value from
+        them from teams that have merely enabled them.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Habit</th><th>What it prevents</th></tr></thead>
+          <tbody>
+            <tr><td>Check Service Health <em>first</em> on any multi-user report</td><td>Hours spent debugging Microsoft's outage</td></tr>
+            <tr><td>A named owner per workload reading the Message Center weekly</td><td>Changes landing unannounced internally</td></tr>
+            <tr><td>Route relevant posts into the change process</td><td>A vendor change bypassing the review every internal change gets</td></tr>
+            <tr><td>Tell users it is a known incident, early</td><td>The ticket flood that follows silence</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          A Microsoft-announced change is still a change to your environment — it belongs in the
+          process described by <span class="xref">Change Management – The Process That Prevents Self-Inflicted Outages</span>
+          in the Governance domain, even though nobody in your org initiated it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MAIL FLOW ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">✉️</span>
+    <span class="topic-name">Mail Flow — Connectors, Transport Rules &amp; the Path a Message Takes</span>
+    <span class="topic-badge">Exchange Online</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">What Happens Between "Send" and the Inbox</div>
+      <div class="concept-desc">
+        Inbound mail is not handed to a mailbox and inspected afterwards. It runs a pipeline, and
+        knowing the order tells you which control could have stopped a message — and which one
+        cannot be blamed for letting it through.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>#</th><th>Stage</th><th>Decides</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Connection filtering</td><td>Is this sending IP <span class="acro-exp">(Internet Protocol)</span> allowed to talk to us at all?</td></tr>
+            <tr><td>2</td><td>Anti-malware</td><td>Does the payload match known malware?</td></tr>
+            <tr><td>3</td><td>Mail flow (transport) rules</td><td>Your org's own conditions and actions</td></tr>
+            <tr><td>4</td><td>Content filtering</td><td>Spam, phish, spoof and impersonation verdicts</td></tr>
+            <tr><td>5</td><td>Mailbox rules</td><td>The user's own Inbox rules, last of all</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The practical consequence: a transport rule that allows a sender runs <em>before</em> the
+          spam verdict, which is exactly why a well-meant "allow our partner" rule is the most
+          common way a tenant lets phishing straight through.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Connectors — The Four Shapes, and When Each Is Right</div>
+      <div class="concept-desc">
+        A connector is a named exception to "just use DNS <span class="acro-exp">(Domain Name System)</span> and public MX records". Every connector is
+        a standing configuration that someone will inherit without context, so each one should have
+        a written reason.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Shape</th><th>Used for</th><th>Risk if wrong</th></tr></thead>
+          <tbody>
+            <tr><td>Partner → M365 (inbound)</td><td>A gateway or partner that must bypass normal checks</td><td>An open door if scoped by domain rather than by certificate or IP</td></tr>
+            <tr><td>M365 → Partner (outbound)</td><td>Forcing mail for a domain down a specific path</td><td>Silent delivery failures when the far end changes</td></tr>
+            <tr><td>On-prem → M365</td><td>Hybrid: internal servers relaying out</td><td>Becomes an open relay if the scoping IP list drifts</td></tr>
+            <tr><td>Application relay</td><td>Printers, scanners, line-of-business apps</td><td>The single most abused path in most tenants</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Transport Rules — Order Matters, and So Does Stopping</div>
+      <div class="concept-desc">
+        Rules run in priority order, and unless a rule is marked to stop processing, later rules keep
+        applying. Two rules that are individually correct routinely combine into behaviour neither
+        author intended.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Usual cause</th></tr></thead>
+          <tbody>
+            <tr><td>External banner on internal mail</td><td>Rule condition matches the sender domain rather than the message's authentication result</td></tr>
+            <tr><td>Rule "not working"</td><td>An earlier rule stopped processing, or the condition never matched the real header</td></tr>
+            <tr><td>Legitimate mail quarantined despite an allow rule</td><td>The allow was scoped to display name, which anyone can forge</td></tr>
+            <tr><td>Loops or duplicate delivery</td><td>Redirect and forward actions stacked across two rules</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Scope allow-rules to something an attacker cannot set: the authenticated domain, the
+          sending IP, or a shared secret header — never the friendly From name. The mechanics of
+          what "authenticated" means are in
+          <span class="xref">Email Authentication — SPF, DKIM, DMARC</span> in the Threat domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MAILBOX TYPES ──────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📮</span>
+    <span class="topic-name">Mailbox Types &amp; Delegation — User, Shared, Room &amp; Equipment</span>
+    <span class="topic-badge">Exchange Online</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Four Types, One Directory Object Each</div>
+      <div class="concept-desc">
+        Every mailbox has a matching account in the directory, including the ones nobody signs in to.
+        That is the fact behind most shared-mailbox security findings: the account exists, and if it
+        has a password and no sign-in block, it is an unmonitored way into the tenant.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Type</th><th>For</th><th>Licence</th></tr></thead>
+          <tbody>
+            <tr><td>User</td><td>A person</td><td>Yes</td></tr>
+            <tr><td>Shared</td><td>A function — support@, sales@</td><td>Not until it exceeds the size cap or needs a hold</td></tr>
+            <tr><td>Room</td><td>A bookable meeting space</td><td>No</td></tr>
+            <tr><td>Equipment</td><td>A bookable thing — a projector, a vehicle</td><td>No</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Shared mailboxes are free up to a size ceiling and <span class="volatile" data-checked="2026-08">need a
+          licence once they exceed it or are placed on hold</span>; check the current limit before
+          promising finance that a growing archive costs nothing.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Full Access, Send As, Send on Behalf — Three Different Answers</div>
+      <div class="concept-desc">
+        Delegation questions are almost always really about which of these three the requester wants,
+        and they rarely know. The difference is visible to the recipient, which is what makes getting
+        it wrong awkward rather than merely technical.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Permission</th><th>Lets them</th><th>Recipient sees</th></tr></thead>
+          <tbody>
+            <tr><td>Full Access</td><td>Open and read the mailbox</td><td>Nothing — reading leaves no trace to them</td></tr>
+            <tr><td>Send As</td><td>Send as if they were the mailbox</td><td>Only the mailbox</td></tr>
+            <tr><td>Send on Behalf</td><td>Send with attribution</td><td>"Delegate on behalf of Mailbox"</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Executives asking for "access to my assistant's mailbox" nearly always mean Send on Behalf
+          for outbound and Full Access for the calendar — granting Send As instead removes the
+          attribution their correspondents rely on.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Commands Worth Having in Muscle Memory</div>
+      <div class="concept-desc">
+        Delegation is one of the few areas where the console genuinely hides things the shell shows
+        plainly — inherited permissions in particular.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Connect (v3 module; supports modern auth and MFA)</span>
+Connect-ExchangeOnline <span class="var">-UserPrincipalName</span> admin@contoso.com
+
+<span class="com"># Who can open this mailbox? Hide the inherited noise.</span>
+Get-MailboxPermission <span class="var">-Identity</span> <span class="str">"support@contoso.com"</span> |
+  Where-Object { <span class="var">$_</span>.IsInherited <span class="var">-eq</span> <span class="var">$false</span> <span class="var">-and</span> <span class="var">$_</span>.User <span class="var">-notlike</span> <span class="str">"NT AUTHORITY\*"</span> }
+
+<span class="com"># Send As is a *recipient* permission, listed separately — a classic miss</span>
+Get-RecipientPermission <span class="var">-Identity</span> <span class="str">"support@contoso.com"</span>
+
+<span class="com"># Send on Behalf lives on the mailbox object itself</span>
+Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contoso.com"</span> | Select-Object GrantSendOnBehalfTo</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          Three different cmdlets for three permissions on one mailbox is the single most common
+          reason a delegation audit comes back incomplete.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: EOP AND DEFENDER FOR OFFICE ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🛡️</span>
+    <span class="topic-name">EOP &amp; Defender for Office — Anti-Spam, Anti-Phish, Safe Links &amp; Quarantine</span>
+    <span class="topic-badge">Exchange Online • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Two Products, Stacked</div>
+      <div class="concept-desc">
+        Exchange Online Protection is the filtering every tenant gets: connection filtering, malware,
+        spam and spoof intelligence. Defender for Office adds the parts that need detonation and
+        time-of-click evaluation — Safe Attachments, Safe Links, and the investigation tooling. When
+        a vendor asks "do you have Defender for Office", they are asking which of those two layers
+        you are running, not whether you have antivirus.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Capability</th><th>Layer</th><th>Catches</th></tr></thead>
+          <tbody>
+            <tr><td>Connection &amp; spam filtering</td><td>EOP</td><td>Bulk, known-bad senders, obvious spoofing</td></tr>
+            <tr><td>Anti-phish policy</td><td>EOP, deeper with Defender</td><td>Impersonation of your own domains and named users</td></tr>
+            <tr><td>Safe Attachments</td><td>Defender</td><td>Malicious payloads no signature knows yet</td></tr>
+            <tr><td>Safe Links</td><td>Defender</td><td>URLs <span class="acro-exp">(Uniform Resource Locator)</span> weaponised <em>after</em> delivery</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Why Safe Links Exists — the Delayed Weaponisation Problem</div>
+      <div class="concept-desc">
+        A link checked once at delivery is checked at the least useful moment. Attackers send a clean
+        URL, pass every filter, then change what it serves an hour later when the mail is sitting
+        read in an inbox. Safe Links rewrites URLs so the check happens when the user clicks, which
+        is the only time the answer is current. The cost is that every link in the mail now points at
+        a Microsoft host, which breaks naive "hover to check the domain" user training — worth
+        knowing before rolling it out.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Quarantine — Who Can Release, and the Trap in the Answer</div>
+      <div class="concept-desc">
+        Quarantine policy decides whether users can release their own held mail. The tempting setting
+        — let users release everything — undoes the control for exactly the messages it was most
+        right about, because a convincing phish is convincing to its recipient too.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Verdict</th><th>Sensible user permission</th></tr></thead>
+          <tbody>
+            <tr><td>Bulk / spam</td><td>Release themselves — high volume, low harm</td></tr>
+            <tr><td>Phish (high confidence)</td><td>Request release only; an admin decides</td></tr>
+            <tr><td>Malware</td><td>Admin only, always</td></tr>
+            <tr><td>Blocked by a transport rule</td><td>Admin only — the org made this decision deliberately</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Held mail is kept for a bounded window —
+          <span class="volatile" data-checked="2026-08">30 days by default, and configurable
+          downward</span> — after which it is gone rather than delivered. A user who "will get to it
+          next month" will not. The human side of why these messages work at all is covered by
+          <span class="xref">Phishing Beyond Email – Smishing, Vishing, and QR Code Scams</span>
+          in the Security domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MESSAGE TRACE ──────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔎</span>
+    <span class="topic-name">Message Trace &amp; Header Analysis — Proving Where a Message Died</span>
+    <span class="topic-badge">Exchange Online • Troubleshooting</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">The Only Question Worth Asking First: Did It Arrive at the Service?</div>
+      <div class="concept-desc">
+        Every "they never got my email" ticket splits at one point. If the message reached Exchange
+        Online, the trace shows it and the problem is yours to solve. If it never arrived, no amount
+        of tenant configuration matters and the answer lies with the sender, their provider or DNS <span class="acro-exp">(Domain Name System)</span>.
+        Establishing which half you are in takes about a minute and saves the other fifty.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Trace status</th><th>Means</th><th>Next step</th></tr></thead>
+          <tbody>
+            <tr><td>Delivered</td><td>Handed to the mailbox</td><td>Look at Inbox rules, focused inbox, the user's own filters</td></tr>
+            <tr><td>Filtered as spam / phish</td><td>Policy acted on it</td><td>Quarantine, and then the policy that decided</td></tr>
+            <tr><td>Failed</td><td>Rejected with a reason</td><td>Read the enhanced status code; it names the cause</td></tr>
+            <tr><td>Pending / deferred</td><td>Being retried</td><td>Usually the far end; wait before escalating</td></tr>
+            <tr><td>No result at all</td><td>It never reached the service</td><td>Sender side — their outbound logs, your public MX record</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Trace data is retained for a limited window — <span class="volatile" data-checked="2026-08">on
+          the order of days for the detailed real-time view and months for summary search</span> — so
+          a three-month-old dispute may simply be unanswerable. Pull the trace early.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Reading a Header Without Reading All of It</div>
+      <div class="concept-desc">
+        Full internet headers are long and almost entirely irrelevant. Five fields answer nearly
+        every question, and they are the ones an impersonation attempt cannot fake without failing.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Header</th><th>Tells you</th></tr></thead>
+          <tbody>
+            <tr><td>Authentication-Results</td><td>The SPF, DKIM <span class="acro-exp">(DomainKeys Identified Mail)</span> and DMARC <span class="acro-exp">(Domain-based Message Authentication, Reporting and Conformance)</span> verdicts as the service computed them</td></tr>
+            <tr><td>Received (bottom-up)</td><td>The real path; read from the bottom, which is the origin</td></tr>
+            <tr><td>Return-Path</td><td>The envelope sender — what SPF is actually checked against</td></tr>
+            <tr><td>From</td><td>The display sender — what the user sees, and what gets forged</td></tr>
+            <tr><td>X-Forefront-Antispam-Report</td><td>The filtering verdict and why, including the spam confidence level</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The gap between <code>Return-Path</code> and <code>From</code> is the whole of display-name
+          spoofing: SPF can pass perfectly for a domain the user never sees. That is precisely the
+          gap DMARC alignment exists to close.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SHAREPOINT ARCHITECTURE ────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗂️</span>
+    <span class="topic-name">SharePoint Online Architecture — Sites, Libraries &amp; the Limits That Bite</span>
+    <span class="topic-badge">SharePoint • Foundations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Flat Sites, Not a Folder Tree</div>
+      <div class="concept-desc">
+        SharePoint Online is built around many independent site collections joined by hub
+        associations and navigation, not one deep hierarchy. Teams reaching for "a folder structure
+        that mirrors the org chart" are usually building the thing that will be most painful to
+        reorganise, because a site is a permission and lifecycle boundary while a folder is not.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Object</th><th>Is</th><th>Use it for</th></tr></thead>
+          <tbody>
+            <tr><td>Site</td><td>A permission, storage and lifecycle boundary</td><td>A team, project or function that owns its own access</td></tr>
+            <tr><td>Hub</td><td>An association giving several sites shared navigation and search scope</td><td>Grouping without nesting</td></tr>
+            <tr><td>Library</td><td>A container of files with its own versioning and metadata</td><td>Separating things with different retention or approval needs</td></tr>
+            <tr><td>List</td><td>Structured rows, not files</td><td>Anything a spreadsheet is currently doing badly</td></tr>
+            <tr><td>Folder</td><td>Convenience inside a library</td><td>Shallow grouping only — metadata scales, nesting does not</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Limits People Actually Hit</div>
+      <div class="concept-desc">
+        Most SharePoint limits are generous enough to ignore. These four are not, and each one
+        surfaces as a confusing user-facing error rather than a clear "limit reached" message.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Limit</th><th>Surfaces as</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>URL <span class="acro-exp">(Uniform Resource Locator)</span> path length, <span class="volatile" data-checked="2026-08">around 400 characters</span></td><td>Sync failures and unopenable files deep in a tree</td><td>Shorter site and folder names; flatten the nesting</td></tr>
+            <tr><td>List view threshold, <span class="volatile" data-checked="2026-08">5,000 items</span></td><td>Views break while the data is fine</td><td>Index the column, filter the view — not "split the list"</td></tr>
+            <tr><td>Unique permissions per list</td><td>Slow lists and inconsistent access</td><td>Stop breaking inheritance per item</td></tr>
+            <tr><td>Recycle bin retention, <span class="volatile" data-checked="2026-08">93 days across both stages</span></td><td>"Deleted last quarter" being genuinely gone</td><td>Retention policy, not the recycle bin, is the safety net</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The 5,000-item threshold is the most misunderstood of these: it limits what a
+          <em>view</em> can enumerate, not what a list can hold. A list of a million rows is fine if
+          every view is filtered on an indexed column.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SHARING & PERMISSIONS ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔓</span>
+    <span class="topic-name">The Sharing &amp; Permissions Model — Why It Sprawls, and How to Contain It</span>
+    <span class="topic-badge">SharePoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Two Permission Systems Running at Once</div>
+      <div class="concept-desc">
+        Access to a document can come from the site's groups <em>or</em> from a sharing link someone
+        created, and the two are administered in completely different places. That is the whole
+        reason permissions sprawl: the org designs the first system carefully, and users generate
+        thousands of instances of the second in the course of doing their jobs.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Path to access</th><th>Granted by</th><th>Visible in</th></tr></thead>
+          <tbody>
+            <tr><td>Site membership</td><td>Admins, via the site's M365 group or SharePoint groups</td><td>Site permissions — easy to audit</td></tr>
+            <tr><td>Sharing link</td><td>Any user with permission to share</td><td>Per-item "Manage access" — hard to audit at scale</td></tr>
+            <tr><td>Broken inheritance</td><td>Anyone who granted access to one folder</td><td>Nowhere obvious; found only by walking the tree</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Link Types, and the One That Causes Incidents</div>
+      <div class="concept-desc">
+        The default link type is a tenant-level setting, and it is the single highest-leverage
+        sharing control there is — because most users accept whatever the dialog offers.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Link</th><th>Who can open it</th><th>Appropriate when</th></tr></thead>
+          <tbody>
+            <tr><td>Anyone</td><td>Anybody holding the URL <span class="acro-exp">(Uniform Resource Locator)</span>, signed in or not</td><td>Genuinely public material only</td></tr>
+            <tr><td>People in your organisation</td><td>Any authenticated employee</td><td>The sane tenant default</td></tr>
+            <tr><td>People with existing access</td><td>Nobody new</td><td>Sending a pointer, not granting access</td></tr>
+            <tr><td>Specific people</td><td>Named recipients, including guests</td><td>External collaboration done deliberately</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Set expiry on "Anyone" links if you allow them at all — an unexpiring anonymous link is a
+          permanent, unauthenticated door that survives the departure of everyone who knew about it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Containing the Sprawl Without Blocking the Work</div>
+      <div class="concept-desc">
+        Turning sharing off is popular with security teams and lasts about a fortnight, because the
+        work moves to personal accounts and unmanaged services where nobody can see it at all.
+        Constrain the defaults instead.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Tenant default link = organisation-only</td><td>The lazy path becomes the safe path</td></tr>
+            <tr><td>Expiry on anonymous links</td><td>Time-bounds the mistake nobody will remember to undo</td></tr>
+            <tr><td>Per-site external sharing settings</td><td>Sensitive sites locked down without a tenant-wide ban</td></tr>
+            <tr><td>Guest reviews</td><td>Removes the contractors who left two years ago</td></tr>
+            <tr><td>Sensitivity labels on containers</td><td>Ties the sharing rules to the classification, not to memory</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Oversharing has become sharply more consequential now that assistants can search everything
+          a user can reach — <span class="xref">Data Governance for AI — Oversharing at the Speed of Search</span>
+          in the AI <span class="acro-exp">(Artificial Intelligence)</span> domain is the same problem seen from the other end.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: ONEDRIVE ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">☁️</span>
+    <span class="topic-name">OneDrive — Known Folder Move, Files On-Demand &amp; Sync Triage</span>
+    <span class="topic-badge">OneDrive • Endpoint</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Known Folder Move Is a Backup Strategy Disguised as a Sync Feature</div>
+      <div class="concept-desc">
+        Known Folder Move redirects Desktop, Documents and Pictures into OneDrive. The visible
+        benefit is roaming; the real one is that a lost or wiped laptop stops being a data-loss
+        event, which is what makes device replacement and Autopilot reprovisioning routine instead of
+        frightening. Deploy it by policy before you need it, silently, with the user notified rather
+        than asked.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Setting</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Silent account configuration</td><td>Sign-in alone starts the sync; no user action to forget</td></tr>
+            <tr><td>Silent KFM <span class="acro-exp">(Known Folder Move)</span> with notification</td><td>Redirection happens; the user is told, not asked</td></tr>
+            <tr><td>Block opting out</td><td>Otherwise the people with the most local data are the ones who decline</td></tr>
+            <tr><td>Files On-Demand on</td><td>A 2 TB OneDrive on a 256 GB laptop only works this way</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          This is the quiet prerequisite that makes
+          <span class="xref">Windows Autopilot — Zero-Touch Provisioning</span> in the Endpoint
+          domain safe to use on a device someone is already working on.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Files On-Demand — What the Icons Mean</div>
+      <div class="concept-desc">
+        Half of all OneDrive tickets are a user misreading these three states, usually as "my files
+        are gone" when they are online-only, or "my disk is full" when everything has been pinned.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>State</th><th>Icon</th><th>On disk?</th></tr></thead>
+          <tbody>
+            <tr><td>Online-only</td><td>Cloud outline</td><td>No — downloads when opened</td></tr>
+            <tr><td>Locally available</td><td>Green tick outline</td><td>Yes, but may be evicted when space is needed</td></tr>
+            <tr><td>Always keep on this device</td><td>Solid green</td><td>Yes, pinned; never evicted</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          "Always keep on this device" applied to a whole large library is the most common cause of
+          a full disk on an otherwise healthy laptop.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Sync Triage, in Order</div>
+      <div class="concept-desc">
+        Work down this list; each step is cheaper than the one after it, and the reset at the end
+        fixes a surprising share of everything while losing no data — it re-downloads placeholders
+        rather than deleting content.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause worth checking first</th></tr></thead>
+          <tbody>
+            <tr><td>One file stuck</td><td>Illegal character, a lock from an open app, or path too long</td></tr>
+            <tr><td>Whole library stuck</td><td>Item count or storage quota; check the site, not the client</td></tr>
+            <tr><td>Paused constantly</td><td>Metered connection or battery saver</td></tr>
+            <tr><td>Sign-in loop</td><td>Conditional Access or a stale token — check the sign-in logs</td></tr>
+            <tr><td>Everything odd</td><td>Reset the client</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="com"># Reset the sync client — re-syncs metadata, does not delete files</span>
+%localappdata%\Microsoft\OneDrive\onedrive.exe /reset
+
+<span class="com"># If it does not relaunch on its own</span>
+%localappdata%\Microsoft\OneDrive\onedrive.exe</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TEAMS ARCHITECTURE ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">👥</span>
+    <span class="topic-name">Teams Architecture — What a Team Actually Is</span>
+    <span class="topic-badge">Teams • Foundations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Team Is Four Services Wearing One Coat</div>
+      <div class="concept-desc">
+        Creating a team creates a Microsoft 365 group, a SharePoint site, a group mailbox and a chat
+        service, bound together by that group's membership. Nothing about Teams is really stored "in
+        Teams". This single fact explains most Teams administration: files are a SharePoint problem,
+        membership is a group problem, and meeting recordings land wherever the underlying storage
+        says they do.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What the user sees</th><th>Where it actually lives</th></tr></thead>
+          <tbody>
+            <tr><td>Files tab in a channel</td><td>A folder in the team's SharePoint site</td></tr>
+            <tr><td>Team membership</td><td>The M365 group's members and owners</td></tr>
+            <tr><td>Channel conversations</td><td>The chat service, with a compliance copy in the group mailbox</td></tr>
+            <tr><td>1:1 and group chat files</td><td>The <em>sender's</em> OneDrive, not the team</td></tr>
+            <tr><td>Meeting recordings</td><td>OneDrive or the team's site, depending on meeting type</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The fourth row is the one that causes data-loss incidents: files shared in a private chat
+          belong to whoever sent them, and leave with their account.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Channel Types — Three, With Different Storage</div>
+      <div class="concept-desc">
+        Channel choice looks cosmetic and is not: two of the three create additional SharePoint
+        sites, which changes retention, permissions and where anyone looking for the files should
+        look.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Type</th><th>Visible to</th><th>Files live in</th></tr></thead>
+          <tbody>
+            <tr><td>Standard</td><td>All team members</td><td>A folder in the team's site</td></tr>
+            <tr><td>Private</td><td>A subset of members</td><td>Its own separate site</td></tr>
+            <tr><td>Shared</td><td>Members plus named people or teams, including external</td><td>Its own separate site</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          A private channel's site is not visible in the parent team's site, so a retention or
+          eDiscovery scope aimed at the team can miss it entirely unless it was set at the
+          organisation level.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TEAMS GOVERNANCE ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🌱</span>
+    <span class="topic-name">Teams Governance &amp; Sprawl — Naming, Expiry &amp; the Guest Question</span>
+    <span class="topic-badge">Teams • Governance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Sprawl Is the Default Outcome, Not a Failure</div>
+      <div class="concept-desc">
+        If any user can create a team, and creating one takes ten seconds and costs nothing, a
+        thousand-person organisation will produce thousands of teams — most of them abandoned within
+        a quarter, each carrying a SharePoint site, a mailbox and a set of permissions that outlive
+        everyone's memory of why they exist. Nothing is misconfigured when this happens. It is what
+        the defaults do.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>Buys</th><th>Costs</th></tr></thead>
+          <tbody>
+            <tr><td>Restrict creation to a group</td><td>Every team has a reason and an owner</td><td>A request queue someone must actually service</td></tr>
+            <tr><td>Naming policy</td><td>Prefixes and blocked words make the list navigable</td><td>Retro-fitting names to existing teams is painful</td></tr>
+            <tr><td>Group expiration</td><td>Unused teams die on a timer unless an owner renews</td><td>Owners must exist and read mail; ownerless groups need a fallback</td></tr>
+            <tr><td>Two owners minimum</td><td>Renewal and access survive one departure</td><td>Enforcement is a report, not a setting</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Expiration policies commonly run on a
+          <span class="volatile" data-checked="2026-08">30, 90 or 180-day cycle or a custom
+          value</span>, and deleted groups sit recoverable for a grace period before the site and
+          mailbox go with them. Confirm both numbers before enabling it on a live tenant.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Guests: The Three Postures</div>
+      <div class="concept-desc">
+        External collaboration in Teams is a genuine business need and a genuine standing risk, and
+        the decision is a policy one rather than a technical one. Pick deliberately; drifting into
+        the first option by inaction is the common failure.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Posture</th><th>Works when</th><th>Watch for</th></tr></thead>
+          <tbody>
+            <tr><td>Open guest access</td><td>Collaboration-heavy, low-sensitivity work</td><td>Guests accumulating with no review, forever</td></tr>
+            <tr><td>Allow-listed domains</td><td>A stable set of partners</td><td>The list becoming a ticket queue</td></tr>
+            <tr><td>Shared channels only</td><td>Partners need one workstream, not the team</td><td>Both tenants must permit it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Whatever the posture, schedule an access review. A guest list nobody has pruned is a list
+          of people from companies you may no longer work with holding live credentials into your
+          collaboration space.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: RETENTION POLICIES VS LABELS ───────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏷️</span>
+    <span class="topic-name">Retention Policies vs Retention Labels — The Distinction That Trips Everyone</span>
+    <span class="topic-badge">Purview • Compliance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">One Applies to Places, the Other to Things</div>
+      <div class="concept-desc">
+        A retention <em>policy</em> is applied to locations — these mailboxes, these sites, these
+        Teams chats — and quietly governs everything in them. A retention <em>label</em> is applied
+        to an individual item and travels with it. Both can keep content, delete content, or both in
+        sequence. Nearly every retention argument in an organisation is two people using the same
+        word for these two different things.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Retention policy</th><th>Retention label</th></tr></thead>
+          <tbody>
+            <tr><td>Applied to</td><td>Locations (workloads, sites, mailboxes)</td><td>Individual items</td></tr>
+            <tr><td>Applied by</td><td>Admin, invisibly to users</td><td>Admin auto-labelling, or the user</td></tr>
+            <tr><td>Travels with the item</td><td>No</td><td>Yes, including when it moves</td></tr>
+            <tr><td>Good for</td><td>A baseline nobody has to think about</td><td>Records, contracts, anything with its own clock</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Precedence Rules, Which Are Not Intuitive</div>
+      <div class="concept-desc">
+        When several retention settings cover the same item, the outcome is decided by fixed rules
+        rather than by which was configured last. Knowing the order prevents the two commonest
+        surprises: content that will not delete, and content that vanishes early.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>#</th><th>Rule</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Retention beats deletion</td><td>If anything says keep, it is kept</td></tr>
+            <tr><td>2</td><td>The longest retention wins</td><td>Seven years beats one year</td></tr>
+            <tr><td>3</td><td>Explicit beats implicit</td><td>A label on the item outranks a policy on its location</td></tr>
+            <tr><td>4</td><td>The shortest deletion wins</td><td>Among deletions only, once nothing is holding it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The practical reading: retention is a floor, not a ceiling. If users report that deleted
+          material is still discoverable, the answer is almost always rule 1 doing exactly its job —
+          and that is usually what legal asked for.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Where Deleted Content Actually Goes</div>
+      <div class="concept-desc">
+        "Deleted" in M365 usually means "moved somewhere less visible with a clock running". Knowing
+        the stages is what lets you answer a recovery request accurately instead of hopefully.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Workload</th><th>Stages after a user deletes</th></tr></thead>
+          <tbody>
+            <tr><td>Exchange</td><td>Deleted Items → Recoverable Items (user-visible) → Purges (admin-only, held if on hold)</td></tr>
+            <tr><td>SharePoint / OneDrive</td><td>Site recycle bin → second-stage recycle bin → gone, <span class="volatile" data-checked="2026-08">93 days across both</span></td></tr>
+            <tr><td>Teams chat</td><td>Follows the mailbox copy the compliance system keeps</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The governance-level view of why any of this is configured — what legal and regulators are
+          asking for — is in
+          <span class="xref">Data Governance, Retention &amp; eDiscovery — Owning Data on Purpose</span>
+          in the Governance domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SENSITIVITY LABELS & DLP ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔐</span>
+    <span class="topic-name">Sensitivity Labels &amp; DLP <span class="acro-exp">(Data Loss Prevention)</span> — Classification That Survives Contact With Users</span>
+    <span class="topic-badge">Purview • Compliance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Labels Classify. DLP Enforces. They Are Not the Same Control.</div>
+      <div class="concept-desc">
+        A sensitivity label marks content and can apply protection that travels with the file —
+        encryption, a watermark, access restrictions that hold even after the file leaves the tenant.
+        Data Loss Prevention watches actions and blocks or warns on them. Labels answer "what is
+        this?"; DLP answers "should this be leaving?". Deploying either without the other produces
+        the two classic failures: neat classification nobody enforces, or blocking rules that have
+        no idea what they are protecting.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Sensitivity label</th><th>DLP policy</th></tr></thead>
+          <tbody>
+            <tr><td>Acts on</td><td>The item</td><td>The action — send, share, copy, print</td></tr>
+            <tr><td>Persists outside the tenant</td><td>Yes, when it applies encryption</td><td>No</td></tr>
+            <tr><td>User sees</td><td>A label in the app, and any watermark</td><td>A policy tip, warning, or block</td></tr>
+            <tr><td>Fails by</td><td>Being ignored or mis-applied</td><td>False positives, then exemptions, then irrelevance</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">A Label Taxonomy People Will Actually Use</div>
+      <div class="concept-desc">
+        The most reliable predictor of a failed classification programme is the number of labels.
+        Every label is a decision demanded of someone who wants to get on with their work, and the
+        marginal label adds hesitation without adding protection.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Rule</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Four or five labels, maximum</td><td>Beyond that, users pick at random and the data becomes noise</td></tr>
+            <tr><td>Name them by audience, not by sensitivity adjective</td><td>"Anyone", "Employees", "Named recipients" beats "Confidential" vs "Highly Confidential"</td></tr>
+            <tr><td>A default label on everything</td><td>Unlabelled content is the gap, and it is always the biggest bucket</td></tr>
+            <tr><td>Start in audit-only mode</td><td>See what would be blocked before anything is</td></tr>
+            <tr><td>Auto-label the obvious</td><td>Card numbers and national IDs do not need a human decision</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Roll DLP out in stages: audit silently, then tip the user, then warn with an override, and
+          only then block. A policy that blocks on day one is a policy the business will demand
+          exemptions from by day three, and exemptions are permanent.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: EDISCOVERY & AUDIT ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔦</span>
+    <span class="topic-name">eDiscovery, Content Search &amp; the Audit Log — Answering Legal Without Guessing</span>
+    <span class="topic-badge">Purview • Investigations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">Hold First, Search Second — the Order Is Not Negotiable</div>
+      <div class="concept-desc">
+        The instinct on receiving a legal request is to start searching. The correct first move is to
+        preserve, because everything in M365 has a deletion clock and a custodian who does not know
+        a matter exists is still emptying their mailbox. Preservation is cheap and reversible;
+        recovering purged content usually is not possible at all.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>#</th><th>Step</th><th>Point</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Create the case</td><td>Everything from here is scoped and logged to a matter</td></tr>
+            <tr><td>2</td><td>Place custodians on hold</td><td>Stops the clock before anything else happens</td></tr>
+            <tr><td>3</td><td>Search</td><td>Keywords, date ranges, locations — iterate on the estimate</td></tr>
+            <tr><td>4</td><td>Review and refine</td><td>Narrow before export; the first search is always too broad</td></tr>
+            <tr><td>5</td><td>Export</td><td>With the chain of custody the case will be judged on</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Litigation hold and the advanced case features are licence-gated —
+          <span class="volatile" data-checked="2026-08">holds generally require the enterprise tier
+          and the richer review tooling sits above that</span>. Find out which you have before
+          promising counsel a capability.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Audit Log — What It Answers, and Its One Hard Limit</div>
+      <div class="concept-desc">
+        The unified audit log records administrative and user activity across the workloads: who
+        signed in, who accessed a mailbox, who shared a file, who changed a policy. It is the first
+        place to look for "who did this", and its limitation is absolute — it only holds what was
+        recorded, for as long as retention allows, and no investigation can recover a period that
+        aged out.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question</th><th>Answerable from the log?</th></tr></thead>
+          <tbody>
+            <tr><td>Who deleted this mailbox item?</td><td>Yes</td></tr>
+            <tr><td>Who shared this file externally, and when?</td><td>Yes</td></tr>
+            <tr><td>Who changed this Conditional Access policy?</td><td>Yes</td></tr>
+            <tr><td>Did anyone <em>read</em> this document?</td><td>Sometimes — depends on the workload and licence</td></tr>
+            <tr><td>What happened 18 months ago?</td><td>Only if retention was extended beyond the default</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Default audit retention has changed more than once and differs by licence and record type
+          — <span class="volatile" data-checked="2026-08">verify the current default for your tier
+          rather than assuming a year</span>. If an investigation might ever need longer, extend it
+          before you need it; retention cannot be applied retroactively.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: BACKUP FOR M365 ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💾</span>
+    <span class="topic-name">Backup for M365 — Why Native Retention Is Not a Backup</span>
+    <span class="topic-badge">M365 • Resilience</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Microsoft Guarantees the Service, Not Your Data Decisions</div>
+      <div class="concept-desc">
+        The shared responsibility line runs straight through this question. Microsoft keeps the
+        service running and replicated; it does not undertake to give you back what your own users,
+        admins or attackers destroyed. Recycle bins, retention policies and holds are real
+        protections with real limits — they are time-bounded, they are administered from inside the
+        tenant that may itself be compromised, and none of them restores a structure, only content.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Scenario</th><th>Native tooling</th><th>Gap</th></tr></thead>
+          <tbody>
+            <tr><td>User deletes a file last week</td><td>Recycle bin</td><td>None — this case is covered</td></tr>
+            <tr><td>Ransomware encrypts a synced library</td><td>Version history, file restore</td><td>Works if noticed inside the version window</td></tr>
+            <tr><td>Departed user's mailbox deleted six months ago</td><td>Retention, if configured beforehand</td><td>Nothing if it was not</td></tr>
+            <tr><td>Admin account compromised, retention removed</td><td>None</td><td>The attacker had the same console you do</td></tr>
+            <tr><td>Rebuild a whole site's structure and permissions</td><td>None</td><td>Content is not the same as configuration</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Deciding Honestly Whether You Need Third-Party Backup</div>
+      <div class="concept-desc">
+        The vendor pitch and the "Microsoft already does it" reflex are both wrong in the same way:
+        they answer a question about risk with a general claim. Answer it with your own numbers.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Ask</th><th>If the answer is…</th></tr></thead>
+          <tbody>
+            <tr><td>What is our recovery point for a mailbox deleted a year ago?</td><td>"Nothing" — you have found the gap</td></tr>
+            <tr><td>Could a compromised Global Admin remove our retention?</td><td>Yes — native protection shares the tenant's fate</td></tr>
+            <tr><td>Do we need to restore structure, not just files?</td><td>Yes — native tooling does not do this</td></tr>
+            <tr><td>Does a regulator require an independent copy?</td><td>Yes — the decision is already made for you</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The same reasoning applied to on-premises systems, including immutability and assuming the
+          domain is lost, is in
+          <span class="xref">Ransomware-Resilient Backup — Immutability, Isolation &amp; Assuming the Domain Is Lost</span>
+          in the Windows Server domain. And whichever route is chosen, it is not a capability until
+          it has been restored from — see
+          <span class="xref">Restore Testing &amp; DR Design — Turning Backups Into a Recovery Capability</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TROUBLESHOOTING PLAYBOOK ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧭</span>
+    <span class="topic-name">The M365 Troubleshooting Playbook — Tenant, Identity, Licence, Policy, Client</span>
+    <span class="topic-badge">M365 • Troubleshooting</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">Five Layers, Always in This Order</div>
+      <div class="concept-desc">
+        M365 problems are cheap to diagnose and expensive to guess at, because the same symptom
+        arrives from five different layers. Working outside-in costs a few minutes and eliminates
+        whole categories; starting at the client — which is where the user is, and therefore where
+        the instinct points — means rebuilding a profile to fix a licensing problem.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>#</th><th>Layer</th><th>Ask</th><th>Evidence</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Tenant</td><td>Is the service itself healthy?</td><td>Service Health, before anything else</td></tr>
+            <tr><td>2</td><td>Identity</td><td>Did they actually sign in successfully?</td><td>Entra sign-in logs — the failure reason names the policy</td></tr>
+            <tr><td>3</td><td>Licence</td><td>Is the service plan enabled for this user?</td><td>The user's licence detail, plan by plan</td></tr>
+            <tr><td>4</td><td>Policy</td><td>Is something denying this deliberately?</td><td>Conditional Access, DLP <span class="acro-exp">(Data Loss Prevention)</span>, retention, workload policy</td></tr>
+            <tr><td>5</td><td>Client</td><td>Is it this device or app?</td><td>Reproduce in a browser session, on another device</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The single highest-value habit in this list is step 5 last, not first: if it reproduces in
+          a private browser window on another machine, no amount of client repair will help, and you
+          have just saved yourself an afternoon.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Symptom → Layer, for the Common Reports</div>
+      <div class="concept-desc">
+        A quick mapping from what the ticket says to where the cause usually is. "One user" versus
+        "everyone" is the most informative single detail in any M365 report, and it is the one most
+        often missing from the ticket.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Report</th><th>Start at</th></tr></thead>
+          <tbody>
+            <tr><td>Everyone, all at once, no change on your side</td><td>Tenant — Service Health</td></tr>
+            <tr><td>One population, right after a change</td><td>Policy — what shipped, and to whom</td></tr>
+            <tr><td>One user, one feature</td><td>Licence — the service plan</td></tr>
+            <tr><td>One user, everything</td><td>Identity — sign-in logs</td></tr>
+            <tr><td>One device, one app</td><td>Client — and only now</td></tr>
+            <tr><td>Mail specifically</td><td>Message trace, which answers "did it arrive" in a minute</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          For step 2, <span class="xref">Entra ID — Sign-In &amp; Conditional Access Troubleshooting</span>
+          in the Cloud domain reads the sign-in log in detail; the administrative side of these
+          services from the shell is in
+          <span class="xref">Microsoft Graph From PowerShell — The Modern Admin API</span> in the
+          Scripting domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
