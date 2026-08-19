@@ -1287,3 +1287,638 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: TEAMS VOICE ────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📞</span>
+    <span class="topic-name">Teams Voice — Phone System, Calling Plans, Direct Routing &amp; Operator Connect</span>
+    <span class="topic-badge">Teams • Voice</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Two Separate Purchases: the PBX, and the Way Out to the Phone Network</div>
+      <div class="concept-desc">
+        Teams Voice confuses people because it is two decisions wearing one name. Phone System is
+        the PBX — call queues, auto attendants, transfer, voicemail — and it comes with the licence.
+        Getting calls to and from the public telephone network is a separate choice with four
+        options, and that choice is the one with the cost, contract and lead-time implications.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Route to the PSTN</th><th>Who runs the trunk</th><th>Right when</th></tr></thead>
+          <tbody>
+            <tr><td>Microsoft Calling Plans</td><td>Microsoft</td><td>Simple estate, available in your country, no existing carrier relationship worth keeping</td></tr>
+            <tr><td>Operator Connect</td><td>A partner carrier, wired in through the admin centre</td><td>You want your own carrier's rates without running hardware</td></tr>
+            <tr><td>Teams Phone Mobile</td><td>A mobile operator</td><td>The user's mobile number <em>is</em> the work number</td></tr>
+            <tr><td>Direct Routing</td><td>You, via a certified SBC</td><td>Existing telephony contracts, analogue devices, or a country Microsoft does not serve</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Direct Routing — the Four Objects That Route a Call</div>
+      <div class="concept-desc">
+        Direct Routing is the powerful option and the one with a learning cliff, because a call is
+        routed by four objects that must agree. Almost every "calls to that country fail" ticket is
+        one of them missing an entry.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Object</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td>Dial plan</td><td>How do we turn what the user typed into a full E.164 number?</td></tr>
+            <tr><td>Voice route</td><td>Which pattern of numbers goes down which trunk?</td></tr>
+            <tr><td>PSTN usage</td><td>Which routes is this class of user allowed to use?</td></tr>
+            <tr><td>Voice routing policy</td><td>Which usages does this specific user get?</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Read it as a chain: the policy grants usages, usages permit routes, routes select a trunk,
+          and the dial plan decides what the number was in the first place. Debug it in that order
+          and the failure names itself.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Two Things That Bite Every Voice Project</div>
+      <div class="concept-desc">
+        Neither is technical, and both are routinely discovered in the last fortnight of a migration.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Trap</th><th>Reality</th></tr></thead>
+          <tbody>
+            <tr><td>Number porting</td><td>Moving existing numbers between carriers is a paperwork process measured in weeks, not a config change. It gates the cutover date, so start it first, not last.</td></tr>
+            <tr><td>Emergency calling</td><td>Softphones move. Regulators in several jurisdictions require a dispatchable location, which means mapping networks to addresses and keeping that map current — a standing obligation, not a launch task.</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Test emergency calling deliberately, in the way the regulator expects, before go-live. It
+          is the one feature where "we will find out in production" is not an acceptable plan.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TEAMS CALL QUALITY ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📉</span>
+    <span class="topic-name">Teams Call Quality — CQD, the Network Requirements &amp; the Real Culprits</span>
+    <span class="topic-badge">Teams • Troubleshooting</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Two Tools, and Knowing Which Question You Have</div>
+      <div class="concept-desc">
+        "Teams calls are bad" is two different investigations. One user on one call is a per-call
+        problem, answered by the call analytics on that user in the Teams admin centre. "Calls are
+        bad in the Manchester office" is a trend, answered by the Call Quality Dashboard, which
+        aggregates across the tenant and can group by building and subnet — but only if someone
+        uploaded a building map first.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question</th><th>Tool</th><th>Prerequisite</th></tr></thead>
+          <tbody>
+            <tr><td>Why was <em>this</em> call bad?</td><td>Per-user call analytics</td><td>None</td></tr>
+            <tr><td>Which sites are bad, and getting worse?</td><td>Call Quality Dashboard</td><td>A building/subnet map uploaded, or every result reads "unknown"</td></tr>
+            <tr><td>Is it us or the service?</td><td>Service Health first</td><td>None — and it is free</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Three Numbers, and What Each One Means for a Human</div>
+      <div class="concept-desc">
+        Media quality reduces to three measurements. Users describe them in words, and translating
+        the complaint into the metric is most of the diagnosis.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Metric</th><th>User says</th><th>Usually caused by</th></tr></thead>
+          <tbody>
+            <tr><td>Packet loss</td><td>"They cut out"</td><td>Congestion, or Wi-Fi with too many clients</td></tr>
+            <tr><td>Jitter</td><td>"Robotic, warbling"</td><td>Variable queueing — a saturated uplink or a hairpinning VPN <span class="acro-exp">(Virtual Private Network)</span></td></tr>
+            <tr><td>Round-trip time</td><td>"We keep talking over each other"</td><td>Traffic taking a long path — a distant proxy or a backhauled tunnel</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Culprits, in the Order They Are Actually Guilty</div>
+      <div class="concept-desc">
+        Voice problems get blamed on bandwidth, and bandwidth is rarely the cause. Real-time media
+        needs low, <em>consistent</em> latency more than it needs capacity — a call uses very little
+        throughput and cares enormously about how that throughput behaves.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Culprit</th><th>Why it hurts</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Media forced through the VPN</td><td>Every packet detours via a datacentre and back</td><td>Split-tunnel the media endpoints</td></tr>
+            <tr><td>Proxy or TLS <span class="acro-exp">(Transport Layer Security)</span> inspection on media</td><td>Real-time traffic queued behind inspection</td><td>Bypass media; inspect signalling if you must</td></tr>
+            <tr><td>UDP <span class="acro-exp">(User Datagram Protocol)</span> blocked, media falls back to TCP <span class="acro-exp">(Transmission Control Protocol)</span></td><td>Retransmission is the enemy of real time</td><td>Permit the media UDP ports outbound</td></tr>
+            <tr><td>Wi-Fi</td><td>Contention and roaming, not the WAN <span class="acro-exp">(Wide Area Network)</span></td><td>Test wired before blaming the internet link</td></tr>
+            <tr><td>No QoS <span class="acro-exp">(Quality of Service)</span> on a congested link</td><td>Voice queues behind a backup job</td><td>Mark and prioritise, end to end</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The marking and queueing mechanics are in
+          <span class="xref">QoS — Quality of Service &amp; Traffic Shaping</span> in the Networking
+          domain; the point specific to Teams is that a marking scheme only helps on links you
+          control, which does not include the internet.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TEAMS POLICIES ─────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎛️</span>
+    <span class="topic-name">Teams Policies — Meeting, Messaging, App &amp; the Assignment Precedence</span>
+    <span class="topic-badge">Teams • Policy</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">One Policy Type per Question the Business Asks</div>
+      <div class="concept-desc">
+        Teams settings are split into policy types by the kind of decision they encode. Knowing which
+        type owns a behaviour is the whole trick — "can external people join without being admitted"
+        is a meeting policy, "can people delete their own messages" is a messaging policy, and
+        looking in the wrong one is the usual reason a setting "does not exist".
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Policy type</th><th>Decides</th></tr></thead>
+          <tbody>
+            <tr><td>Meeting</td><td>Lobby behaviour, recording, who can present, anonymous join</td></tr>
+            <tr><td>Messaging</td><td>Edit and delete, read receipts, chat with external users, GIFs <span class="acro-exp">(Graphics Interchange Format)</span></td></tr>
+            <tr><td>Calling</td><td>Call forwarding, delegation, voicemail, group call pickup</td></tr>
+            <tr><td>App setup &amp; permission</td><td>Which apps are allowed, and which are pinned in the rail</td></tr>
+            <tr><td>Live events</td><td>Who may broadcast, and to whom</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Precedence — Why the Policy You Assigned Is Not the One in Effect</div>
+      <div class="concept-desc">
+        Every policy type has a Global (org-wide default) instance that applies to everyone who has
+        not been given something else. Layered on top are group assignments and direct user
+        assignments, and they do not merge — one policy wins outright.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>#</th><th>Assignment</th><th>Beats</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Direct to the user</td><td>Everything below</td></tr>
+            <tr><td>2</td><td>Group assignment, by rank</td><td>The global default; ties broken by the rank you set</td></tr>
+            <tr><td>3</td><td>Global (org-wide default)</td><td>Nothing — it is the floor</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The consequence that catches people: a direct assignment made once during a pilot pins that
+          user forever, and no later group change will reach them. If a group rollout skips exactly
+          the people who tested it, this is why — clear the direct assignment.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Packages, Batches &amp; Keeping It Maintainable</div>
+      <div class="concept-desc">
+        A policy package bundles one policy of each type under a role name — an education package for
+        students, a locked-down package for frontline staff — so a role change is one assignment
+        rather than six.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Set the global default to your <em>most</em> restrictive sane baseline</td><td>Anyone missed by a group still lands somewhere defensible</td></tr>
+            <tr><td>Assign to groups, not people</td><td>Same argument as licensing: membership is the audit trail</td></tr>
+            <tr><td>Use packages for roles</td><td>Six policies stay consistent with each other</td></tr>
+            <tr><td>Batch assignment for large populations</td><td>Per-user assignment at scale is slow and rate-limited</td></tr>
+            <tr><td>Record why each custom policy exists</td><td>Otherwise nobody dares delete any of them, ever</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: RETENTION, HOLD & ARCHIVING ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📦</span>
+    <span class="topic-name">Retention, Litigation Hold &amp; Archiving — Legal's Requirements in Mailbox Terms</span>
+    <span class="topic-badge">Exchange Online • Compliance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Archiving and Retention Are Different Jobs Doing Different Work</div>
+      <div class="concept-desc">
+        The online archive is a storage answer: a second mailbox the user can see, into which old
+        mail is moved on a schedule so the primary stays manageable. Retention is a compliance
+        answer: rules about how long things must be kept or when they must go. They are routinely
+        conflated in requirements documents, and the resulting design satisfies neither — an archive
+        does not preserve anything a user can still delete.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Mechanism</th><th>Job</th><th>User sees</th></tr></thead>
+          <tbody>
+            <tr><td>Online archive</td><td>Move old mail out of the primary mailbox</td><td>A second folder tree in their client</td></tr>
+            <tr><td>Auto-expanding archive</td><td>Grow that archive past its initial ceiling</td><td>Nothing — it happens behind them</td></tr>
+            <tr><td>Retention policy</td><td>Keep or delete on a schedule, org-wide</td><td>Nothing, until something will not delete</td></tr>
+            <tr><td>Litigation hold</td><td>Preserve <em>everything</em> for this mailbox</td><td>Nothing at all — deliberately invisible</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">What a Hold Actually Does to a Mailbox</div>
+      <div class="concept-desc">
+        A hold does not stop a user deleting mail. It stops the deletion being final: purged items
+        are retained in a hidden part of Recoverable Items where the user cannot reach them and
+        eDiscovery can. This is what makes holds legally useful and operationally surprising.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Consequence</th><th>What to do about it</th></tr></thead>
+          <tbody>
+            <tr><td>Recoverable Items grows without bound</td><td>Monitor its quota; a full one blocks the user from deleting anything</td></tr>
+            <tr><td>Held mailboxes cannot be truly deleted</td><td>A leaver's mailbox becomes inactive rather than gone — that is the point</td></tr>
+            <tr><td>Licence implications</td><td><span class="volatile" data-checked="2026-08">Holds are gated to the enterprise tiers</span>; verify before promising counsel</td></tr>
+            <tr><td>Releasing a hold is irreversible</td><td>Purged content ages out for real once the hold lifts</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The most common surprise in the table is the first: a mailbox on hold whose Recoverable
+          Items has filled reports a hard delete failure to a confused user, and the fix is a quota
+          change, not a mail problem.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Translating What Legal Asked For</div>
+      <div class="concept-desc">
+        Requirements arrive in legal language and have to become one of four configurations. This
+        mapping is worth having in the room during the conversation, because the difference between
+        rows two and three is the difference between a defensible position and an expensive one.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>They said</th><th>They mean</th></tr></thead>
+          <tbody>
+            <tr><td>"Keep everything for seven years"</td><td>A retention policy with a seven-year keep, applied to locations</td></tr>
+            <tr><td>"Preserve this person's mail, they are under investigation"</td><td>A hold on that mailbox, scoped to a case, invisible to them</td></tr>
+            <tr><td>"Delete anything older than three years"</td><td>A retention policy that deletes — and check nothing else is holding it</td></tr>
+            <tr><td>"The mailbox is full and they will not tidy it"</td><td>An archive with a move policy; this is not a compliance question at all</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Which rule wins when several apply is decided by the precedence in
+          <span class="xref">Retention Policies vs Retention Labels — The Distinction That Trips Everyone</span>,
+          and the workflow for acting on a matter is in
+          <span class="xref">eDiscovery, Content Search &amp; the Audit Log — Answering Legal Without Guessing</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: PURVIEW OVERVIEW ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧿</span>
+    <span class="topic-name">Purview Overview — The Compliance Surface, Mapped to What Auditors Ask</span>
+    <span class="topic-badge">Purview • Foundations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Seven Tools Under One Roof, Only Some of Which You Need</div>
+      <div class="concept-desc">
+        Purview is a portal covering the whole compliance surface, and its breadth is what makes it
+        intimidating: an admin opening it for the first time sees a dozen solutions and no obvious
+        starting point. The useful frame is to ignore the product structure entirely and start from
+        the question an auditor or a regulator actually asked.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Solution</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td>Information protection</td><td>Is sensitive content identified and protected?</td></tr>
+            <tr><td>Data lifecycle management</td><td>Is content kept and disposed of on a schedule?</td></tr>
+            <tr><td>Data loss prevention</td><td>Is it stopped from leaving inappropriately?</td></tr>
+            <tr><td>eDiscovery</td><td>Can you produce what a matter demands?</td></tr>
+            <tr><td>Audit</td><td>Can you show who did what?</td></tr>
+            <tr><td>Insider risk management</td><td>Do you detect risky behaviour from your own people?</td></tr>
+            <tr><td>Communication compliance</td><td>Is regulated communication monitored where required?</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Auditor's Question → Where the Evidence Lives</div>
+      <div class="concept-desc">
+        Audits fail on evidence, not on posture. The gap is nearly always that a control exists and
+        nobody can produce a record of it operating.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>They ask</th><th>You open</th></tr></thead>
+          <tbody>
+            <tr><td>"Show me your data classification scheme."</td><td>Sensitivity labels, plus the auto-labelling rules</td></tr>
+            <tr><td>"How long do you keep email?"</td><td>Retention policies, with their scope and their exceptions</td></tr>
+            <tr><td>"Prove this leaver's data was preserved."</td><td>The hold, and the inactive mailbox behind it</td></tr>
+            <tr><td>"Who accessed this record, and when?"</td><td>The unified audit log, within its retention window</td></tr>
+            <tr><td>"How do you know DLP <span class="acro-exp">(Data Loss Prevention)</span> is working?"</td><td>DLP reports — matches, overrides and false positives over time</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Insider Risk &amp; Communication Compliance — Powerful, and Not Purely Technical</div>
+      <div class="concept-desc">
+        These two solutions watch people rather than data: unusual downloads before a resignation,
+        regulated conversations that must be reviewed. They work, and they are the two features in
+        the suite that must never be switched on by an administrator alone. Both require a defined
+        legal basis, agreement with HR and works councils where they exist, disclosure appropriate to
+        the jurisdiction, and a review workflow with named reviewers who are not the people being
+        watched.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Before enabling</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>Legal basis documented</td><td>Employee monitoring is regulated, and the rules differ sharply by country</td></tr>
+            <tr><td>HR and works council engaged</td><td>In several jurisdictions their agreement is a precondition, not a courtesy</td></tr>
+            <tr><td>Pseudonymisation considered</td><td>Analysts can triage patterns without names attached</td></tr>
+            <tr><td>Reviewer roles scoped narrowly</td><td>The investigators must not be able to investigate everyone</td></tr>
+            <tr><td>An escalation path that ends somewhere</td><td>Alerts nobody is authorised to act on are worse than none</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The programme design these features serve — and the reason it is mostly not a technology
+          problem — is in
+          <span class="xref">The Insider Threat Programme — Malicious, Negligent &amp; Compromised</span>
+          in the Security domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: THE ADMIN MODULES ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔌</span>
+    <span class="topic-name">The Admin Modules — Exchange Online, Teams &amp; Graph From One Console</span>
+    <span class="topic-badge">M365 • Automation</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Three Modules, Three Connects, One Session</div>
+      <div class="concept-desc">
+        M365 administration from the shell is not one API <span class="acro-exp">(Application Programming Interface)</span>. Exchange and Teams keep their own modules
+        for their own object models; Graph covers the directory and most newer surfaces. A working
+        admin session usually has two or three connections open at once, each authenticated
+        separately.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Install once (current user; no elevation needed)</span>
+Install-Module ExchangeOnlineManagement <span class="var">-Scope</span> CurrentUser
+Install-Module MicrosoftTeams          <span class="var">-Scope</span> CurrentUser
+Install-Module Microsoft.Graph         <span class="var">-Scope</span> CurrentUser
+
+<span class="com"># Connect — each is its own auth prompt and its own session</span>
+Connect-ExchangeOnline <span class="var">-UserPrincipalName</span> admin@contoso.com
+Connect-MicrosoftTeams
+Connect-MgGraph <span class="var">-Scopes</span> <span class="str">"User.Read.All"</span>,<span class="str">"Group.Read.All"</span>
+
+<span class="com"># Ask for the least you need: consent is per-scope and it is remembered</span>
+Get-MgContext | Select-Object Account, Scopes</pre>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Automation Means App-Only Auth, Not a Stored Password</div>
+      <div class="concept-desc">
+        Interactive sign-in is right for a person at a keyboard and wrong for anything scheduled. The
+        supported answer is an app registration with a certificate, granted exactly the application
+        permissions the job needs. The temptation — a service account with a password in the script
+        and MFA <span class="acro-exp">(Multi-Factor Authentication)</span> exempted — creates a highly privileged identity that no Conditional Access policy
+        protects, which is precisely the account attackers look for.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Do</th><th>Instead of</th></tr></thead>
+          <tbody>
+            <tr><td>App registration + certificate</td><td>A password in a script or a vault the script can read unattended</td></tr>
+            <tr><td>Application permissions, scoped narrowly</td><td>Global Administrator "so it just works"</td></tr>
+            <tr><td>Scope Exchange app access to specific mailboxes</td><td>Tenant-wide mailbox access for a job that touches twelve</td></tr>
+            <tr><td>Rotate and expire the certificate deliberately</td><td>A credential with a two-year life nobody diarised</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Throttling Is Normal — Write for It</div>
+      <div class="concept-desc">
+        These are shared, multi-tenant services, and they will throttle a script that behaves like a
+        crawler. A throttled response is not an error to retry immediately; it carries a wait time,
+        and honouring it is the difference between a job that finishes and one that is progressively
+        slowed.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Handling</th></tr></thead>
+          <tbody>
+            <tr><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> 429 from Graph</td><td>Sleep for the interval the response names, then retry — do not back off blindly</td></tr>
+            <tr><td>A loop of thousands of single reads</td><td>Batch them; Graph accepts <span class="volatile" data-checked="2026-08">up to 20 requests per batch</span></td></tr>
+            <tr><td>Re-reading data that has not changed</td><td>Use delta queries and ask only for the properties you use</td></tr>
+            <tr><td>Exchange cmdlets slowing over a long session</td><td>Reconnect; long-lived sessions accumulate their own limits</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The Graph API itself — query shape, permissions model and paging — is covered by
+          <span class="xref">Microsoft Graph From PowerShell — The Modern Admin API</span> in the
+          Scripting domain. This card is the M365-specific part: which module owns what, and how to
+          authenticate a job rather than a person.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: REPORTING & USAGE ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📊</span>
+    <span class="topic-name">Reporting &amp; Usage Analytics — Adoption Data That Answers a Real Question</span>
+    <span class="topic-badge">M365 • Operations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Activity Is Not Adoption, and Reporting Both as One Number Misleads</div>
+      <div class="concept-desc">
+        The usage reports count actions: messages sent, files opened, meetings attended. Those are
+        cheap to produce and easy to present, which is why they end up on slides answering questions
+        they cannot answer. A team that moved its work into Teams and a team that opened Teams once a
+        day to check nothing generate similar activity counts. Decide the question first; the metric
+        follows from it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Real question</th><th>Metric that answers it</th></tr></thead>
+          <tbody>
+            <tr><td>Can we retire the file server?</td><td>Share of active users writing to SharePoint or OneDrive weekly</td></tr>
+            <tr><td>Did the training work?</td><td>Change in the specific behaviour taught, before versus after</td></tr>
+            <tr><td>Are we paying for licences nobody uses?</td><td>Assigned licences with no service activity in 90 days</td></tr>
+            <tr><td>Is the rollout stuck anywhere?</td><td>Activity by department or location, not the tenant total</td></tr>
+            <tr><td>Are people working weekends?</td><td>Nothing here — this is a management question wearing a data costume</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Privacy Setting Everyone Meets Eventually</div>
+      <div class="concept-desc">
+        Usage reports can show real names or pseudonymised identifiers, and the tenant-wide setting
+        that controls it exists because in several jurisdictions per-person productivity reporting is
+        restricted, and works councils have a formal say. Turning names on to chase one question is a
+        decision with legal weight, not a reporting preference.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Rule</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Default to concealed names</td><td>Aggregate answers nearly every legitimate question</td></tr>
+            <tr><td>Name a business owner for any de-anonymisation</td><td>It is a decision, and it should have a decider</td></tr>
+            <tr><td>Report by department, not by person</td><td>Deployment problems are structural; individual counts invite misuse</td></tr>
+            <tr><td>Never feed usage data into performance review</td><td>The moment people know, the data measures gaming instead of work</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          For anything beyond the built-in reports, the reporting endpoints in Graph return the same
+          data as CSV <span class="acro-exp">(Comma-Separated Values)</span> for a chosen period — which is how a real answer gets joined to HR or asset
+          data the admin centre has never heard of.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TENANT-TO-TENANT ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔀</span>
+    <span class="topic-name">Tenant-to-Tenant &amp; Mergers — The Migration Nobody Plans Enough Time For</span>
+    <span class="topic-badge">M365 • Projects</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Constraint That Shapes the Whole Project</div>
+      <div class="concept-desc">
+        A verified domain can exist in exactly one tenant. That single fact drives everything else:
+        <code>contoso.com</code> cannot receive mail in both tenants during a transition, so either
+        the cutover is a hard switch for everyone at once, or users are temporarily addressed
+        somewhere else. Every tenant-to-tenant plan is really a plan for working around this, and
+        every timeline that ignores it is wrong.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Constraint</th><th>Consequence for the plan</th></tr></thead>
+          <tbody>
+            <tr><td>One domain, one tenant</td><td>The mail cutover is a single coordinated event</td></tr>
+            <tr><td>Identity does not move</td><td>Accounts are created in the target, not transferred; SIDs <span class="acro-exp">(Security Identifier)</span> and object IDs change</td></tr>
+            <tr><td>Teams is the hardest workload</td><td>Chat history and private channels migrate poorly; set expectations early</td></tr>
+            <tr><td>Devices are re-enrolled</td><td>An Entra-joined device belongs to its tenant; it leaves and rejoins</td></tr>
+            <tr><td>Third-party tooling is normal</td><td>Native tooling covers a fraction; budget for a migration product</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">The Phases, and the One People Skip</div>
+      <div class="concept-desc">
+        The order below is not arbitrary — each phase depends on the one before, and the phase that
+        gets cut for time is always the first, which is also the one that determines whether the
+        estimate was real.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>#</th><th>Phase</th><th>Produces</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Discovery</td><td>What exists: mailbox sizes, sites, teams, apps, devices, and the surprises</td></tr>
+            <tr><td>2</td><td>Coexistence</td><td>Cross-tenant mail routing and free/busy, so the two halves can work together</td></tr>
+            <tr><td>3</td><td>Identity</td><td>Accounts, groups and licences in the target; the sign-in change users will feel</td></tr>
+            <tr><td>4</td><td>Data</td><td>Mailboxes, then OneDrive, then SharePoint — usually in waves by department</td></tr>
+            <tr><td>5</td><td>Cutover</td><td>Domain move and MX change, the one genuinely irreversible hour</td></tr>
+            <tr><td>6</td><td>Devices &amp; cleanup</td><td>Re-enrolment, decommissioning the source, and the long tail of forgotten apps</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Discovery is skipped because it produces no visible progress. It is also where you find the
+          line-of-business app that authenticates against the old tenant, the shared mailbox that
+          finance depends on and nobody owns, and the 400 GB of OneDrive belonging to someone who
+          left. Those are the things that move the date.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">What Makes These Projects Go Well</div>
+      <div class="concept-desc">
+        The technical work is well-trodden and the tooling is mature. What separates a smooth
+        migration from a painful one is almost entirely about sequencing and communication.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Prevents</th></tr></thead>
+          <tbody>
+            <tr><td>Migrate a pilot department end to end first</td><td>Discovering the Teams limitation during the executive wave</td></tr>
+            <tr><td>Pre-stage data, cut over deltas</td><td>A cutover window measured in days</td></tr>
+            <tr><td>Publish what will <em>not</em> come across</td><td>The single largest source of post-migration complaints</td></tr>
+            <tr><td>Freeze changes in the source during the wave</td><td>Content created after the copy and lost at cutover</td></tr>
+            <tr><td>Keep the source tenant readable for a defined period</td><td>The "where did my file go" month that follows every migration</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

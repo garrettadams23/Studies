@@ -62,7 +62,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | 🏛️ Engineering | ARCH, SWE | System Design, Architecture, Craft, Reliability, Career, IT Job Titles |
 | 📊 Data | SQL, DATA | SQL, DB Internals, NoSQL, Warehousing, DBA |
 | 🌐 Web | WEB, JS | Browser, CSS, JS, Frameworks, Performance, A11y |
-| 📧 Microsoft 365 | M365, MS-102 | Tenant anatomy, licensing, admin roles, **Exchange Online** (mail flow, connectors, EOP/Defender, message trace), **SharePoint & OneDrive** (architecture, sharing sprawl, KFM), **Teams** (what a team is, governance), **Purview** (retention, labels, DLP, eDiscovery), backup, troubleshooting playbook |
+| 📧 Microsoft 365 | M365, MS-102 | Tenant anatomy, licensing, admin roles, **Exchange Online** (mail flow, connectors, EOP/Defender, message trace), **SharePoint & OneDrive** (architecture, sharing sprawl, KFM), **Teams** (architecture, governance, policies, voice, call quality), **Purview** (retention, holds, labels, DLP, eDiscovery, insider risk), admin PowerShell, usage reporting, backup, tenant-to-tenant migration, troubleshooting playbook |
 | 🖥️ Endpoint | MD-102, MEM | **MECM** (client health, deployment & content, OSD/task sequences, site & server logs, CMPivot), Intune, Autopilot, ESP, Co-management |
 | 🔤 Acronym Dictionary | REF | 980+ IT acronyms A–Z, plus per-subject indexes (Networking, Security, Cloud, Crypto, Data, AI, …) |
 

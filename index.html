@@ -65811,8 +65811,8 @@ back up the rest yourself.
 <span class="ctag ctag-general">MS-102</span>
 </div>
 <span class="domain-sub">Tenant · Exchange Online · SharePoint · OneDrive · Teams · Purview · Troubleshooting</span>
-<span class="domain-meta" aria-label="18 topics, about 40 min to read"
->18 topics · ~40 min</span>
+<span class="domain-meta" aria-label="26 topics, about 1h 05m to read"
+>26 topics · ~1h 05m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -67085,6 +67085,633 @@ services from the shell is in
 <span class="xref">Microsoft Graph From PowerShell — The Modern Admin API</span> in the
 Scripting domain.
 </div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: TEAMS VOICE ────────────────────────────────────── -->
+<div class="topic" id="teams-voice-phone-system-calling-plans-direct-routing-operat" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📞</span>
+<span class="topic-name">Teams Voice — Phone System, Calling Plans, Direct Routing &amp; Operator Connect</span>
+<span class="topic-badge">Teams • Voice</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Two Separate Purchases: the PBX, and the Way Out to the Phone Network</div>
+<div class="concept-desc">
+Teams Voice confuses people because it is two decisions wearing one name. Phone System is
+the PBX — call queues, auto attendants, transfer, voicemail — and it comes with the licence.
+Getting calls to and from the public telephone network is a separate choice with four
+options, and that choice is the one with the cost, contract and lead-time implications.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Route to the PSTN</th><th>Who runs the trunk</th><th>Right when</th></tr></thead>
+<tbody>
+<tr><td>Microsoft Calling Plans</td><td>Microsoft</td><td>Simple estate, available in your country, no existing carrier relationship worth keeping</td></tr>
+<tr><td>Operator Connect</td><td>A partner carrier, wired in through the admin centre</td><td>You want your own carrier's rates without running hardware</td></tr>
+<tr><td>Teams Phone Mobile</td><td>A mobile operator</td><td>The user's mobile number <em>is</em> the work number</td></tr>
+<tr><td>Direct Routing</td><td>You, via a certified SBC</td><td>Existing telephony contracts, analogue devices, or a country Microsoft does not serve</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Direct Routing — the Four Objects That Route a Call</div>
+<div class="concept-desc">
+Direct Routing is the powerful option and the one with a learning cliff, because a call is
+routed by four objects that must agree. Almost every "calls to that country fail" ticket is
+one of them missing an entry.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Object</th><th>Answers</th></tr></thead>
+<tbody>
+<tr><td>Dial plan</td><td>How do we turn what the user typed into a full E.164 number?</td></tr>
+<tr><td>Voice route</td><td>Which pattern of numbers goes down which trunk?</td></tr>
+<tr><td>PSTN usage</td><td>Which routes is this class of user allowed to use?</td></tr>
+<tr><td>Voice routing policy</td><td>Which usages does this specific user get?</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Read it as a chain: the policy grants usages, usages permit routes, routes select a trunk,
+and the dial plan decides what the number was in the first place. Debug it in that order
+and the failure names itself.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Two Things That Bite Every Voice Project</div>
+<div class="concept-desc">
+Neither is technical, and both are routinely discovered in the last fortnight of a migration.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Trap</th><th>Reality</th></tr></thead>
+<tbody>
+<tr><td>Number porting</td><td>Moving existing numbers between carriers is a paperwork process measured in weeks, not a config change. It gates the cutover date, so start it first, not last.</td></tr>
+<tr><td>Emergency calling</td><td>Softphones move. Regulators in several jurisdictions require a dispatchable location, which means mapping networks to addresses and keeping that map current — a standing obligation, not a launch task.</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Test emergency calling deliberately, in the way the regulator expects, before go-live. It
+is the one feature where "we will find out in production" is not an acceptable plan.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: TEAMS CALL QUALITY ─────────────────────────────── -->
+<div class="topic" id="teams-call-quality-cqd-the-network-requirements-the-real-cul" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📉</span>
+<span class="topic-name">Teams Call Quality — CQD, the Network Requirements &amp; the Real Culprits</span>
+<span class="topic-badge">Teams • Troubleshooting</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Technique</div>
+<div class="concept-title">Two Tools, and Knowing Which Question You Have</div>
+<div class="concept-desc">
+"Teams calls are bad" is two different investigations. One user on one call is a per-call
+problem, answered by the call analytics on that user in the Teams admin centre. "Calls are
+bad in the Manchester office" is a trend, answered by the Call Quality Dashboard, which
+aggregates across the tenant and can group by building and subnet — but only if someone
+uploaded a building map first.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Question</th><th>Tool</th><th>Prerequisite</th></tr></thead>
+<tbody>
+<tr><td>Why was <em>this</em> call bad?</td><td>Per-user call analytics</td><td>None</td></tr>
+<tr><td>Which sites are bad, and getting worse?</td><td>Call Quality Dashboard</td><td>A building/subnet map uploaded, or every result reads "unknown"</td></tr>
+<tr><td>Is it us or the service?</td><td>Service Health first</td><td>None — and it is free</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Three Numbers, and What Each One Means for a Human</div>
+<div class="concept-desc">
+Media quality reduces to three measurements. Users describe them in words, and translating
+the complaint into the metric is most of the diagnosis.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Metric</th><th>User says</th><th>Usually caused by</th></tr></thead>
+<tbody>
+<tr><td>Packet loss</td><td>"They cut out"</td><td>Congestion, or Wi-Fi with too many clients</td></tr>
+<tr><td>Jitter</td><td>"Robotic, warbling"</td><td>Variable queueing — a saturated uplink or a hairpinning VPN <span class="acro-exp">(Virtual Private Network)</span></td></tr>
+<tr><td>Round-trip time</td><td>"We keep talking over each other"</td><td>Traffic taking a long path — a distant proxy or a backhauled tunnel</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Troubleshooting</div>
+<div class="concept-title">The Culprits, in the Order They Are Actually Guilty</div>
+<div class="concept-desc">
+Voice problems get blamed on bandwidth, and bandwidth is rarely the cause. Real-time media
+needs low, <em>consistent</em> latency more than it needs capacity — a call uses very little
+throughput and cares enormously about how that throughput behaves.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Culprit</th><th>Why it hurts</th><th>Fix</th></tr></thead>
+<tbody>
+<tr><td>Media forced through the VPN</td><td>Every packet detours via a datacentre and back</td><td>Split-tunnel the media endpoints</td></tr>
+<tr><td>Proxy or TLS <span class="acro-exp">(Transport Layer Security)</span> inspection on media</td><td>Real-time traffic queued behind inspection</td><td>Bypass media; inspect signalling if you must</td></tr>
+<tr><td>UDP <span class="acro-exp">(User Datagram Protocol)</span> blocked, media falls back to TCP <span class="acro-exp">(Transmission Control Protocol)</span></td><td>Retransmission is the enemy of real time</td><td>Permit the media UDP ports outbound</td></tr>
+<tr><td>Wi-Fi</td><td>Contention and roaming, not the WAN <span class="acro-exp">(Wide Area Network)</span></td><td>Test wired before blaming the internet link</td></tr>
+<tr><td>No QoS <span class="acro-exp">(Quality of Service)</span> on a congested link</td><td>Voice queues behind a backup job</td><td>Mark and prioritise, end to end</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The marking and queueing mechanics are in
+<span class="xref">QoS — Quality of Service &amp; Traffic Shaping</span> in the Networking
+domain; the point specific to Teams is that a marking scheme only helps on links you
+control, which does not include the internet.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: TEAMS POLICIES ─────────────────────────────────── -->
+<div class="topic" id="teams-policies-meeting-messaging-app-the-assignment-preceden" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🎛️</span>
+<span class="topic-name">Teams Policies — Meeting, Messaging, App &amp; the Assignment Precedence</span>
+<span class="topic-badge">Teams • Policy</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">One Policy Type per Question the Business Asks</div>
+<div class="concept-desc">
+Teams settings are split into policy types by the kind of decision they encode. Knowing which
+type owns a behaviour is the whole trick — "can external people join without being admitted"
+is a meeting policy, "can people delete their own messages" is a messaging policy, and
+looking in the wrong one is the usual reason a setting "does not exist".
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Policy type</th><th>Decides</th></tr></thead>
+<tbody>
+<tr><td>Meeting</td><td>Lobby behaviour, recording, who can present, anonymous join</td></tr>
+<tr><td>Messaging</td><td>Edit and delete, read receipts, chat with external users, GIFs <span class="acro-exp">(Graphics Interchange Format)</span></td></tr>
+<tr><td>Calling</td><td>Call forwarding, delegation, voicemail, group call pickup</td></tr>
+<tr><td>App setup &amp; permission</td><td>Which apps are allowed, and which are pinned in the rail</td></tr>
+<tr><td>Live events</td><td>Who may broadcast, and to whom</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Precedence — Why the Policy You Assigned Is Not the One in Effect</div>
+<div class="concept-desc">
+Every policy type has a Global (org-wide default) instance that applies to everyone who has
+not been given something else. Layered on top are group assignments and direct user
+assignments, and they do not merge — one policy wins outright.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>#</th><th>Assignment</th><th>Beats</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Direct to the user</td><td>Everything below</td></tr>
+<tr><td>2</td><td>Group assignment, by rank</td><td>The global default; ties broken by the rank you set</td></tr>
+<tr><td>3</td><td>Global (org-wide default)</td><td>Nothing — it is the floor</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The consequence that catches people: a direct assignment made once during a pilot pins that
+user forever, and no later group change will reach them. If a group rollout skips exactly
+the people who tested it, this is why — clear the direct assignment.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Technique</div>
+<div class="concept-title">Packages, Batches &amp; Keeping It Maintainable</div>
+<div class="concept-desc">
+A policy package bundles one policy of each type under a role name — an education package for
+students, a locked-down package for frontline staff — so a role change is one assignment
+rather than six.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+<tbody>
+<tr><td>Set the global default to your <em>most</em> restrictive sane baseline</td><td>Anyone missed by a group still lands somewhere defensible</td></tr>
+<tr><td>Assign to groups, not people</td><td>Same argument as licensing: membership is the audit trail</td></tr>
+<tr><td>Use packages for roles</td><td>Six policies stay consistent with each other</td></tr>
+<tr><td>Batch assignment for large populations</td><td>Per-user assignment at scale is slow and rate-limited</td></tr>
+<tr><td>Record why each custom policy exists</td><td>Otherwise nobody dares delete any of them, ever</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: RETENTION, HOLD & ARCHIVING ────────────────────── -->
+<div class="topic" id="retention-litigation-hold-archiving-legals-requirements-in-m" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📦</span>
+<span class="topic-name">Retention, Litigation Hold &amp; Archiving — Legal's Requirements in Mailbox Terms</span>
+<span class="topic-badge">Exchange Online • Compliance</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Archiving and Retention Are Different Jobs Doing Different Work</div>
+<div class="concept-desc">
+The online archive is a storage answer: a second mailbox the user can see, into which old
+mail is moved on a schedule so the primary stays manageable. Retention is a compliance
+answer: rules about how long things must be kept or when they must go. They are routinely
+conflated in requirements documents, and the resulting design satisfies neither — an archive
+does not preserve anything a user can still delete.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Mechanism</th><th>Job</th><th>User sees</th></tr></thead>
+<tbody>
+<tr><td>Online archive</td><td>Move old mail out of the primary mailbox</td><td>A second folder tree in their client</td></tr>
+<tr><td>Auto-expanding archive</td><td>Grow that archive past its initial ceiling</td><td>Nothing — it happens behind them</td></tr>
+<tr><td>Retention policy</td><td>Keep or delete on a schedule, org-wide</td><td>Nothing, until something will not delete</td></tr>
+<tr><td>Litigation hold</td><td>Preserve <em>everything</em> for this mailbox</td><td>Nothing at all — deliberately invisible</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">What a Hold Actually Does to a Mailbox</div>
+<div class="concept-desc">
+A hold does not stop a user deleting mail. It stops the deletion being final: purged items
+are retained in a hidden part of Recoverable Items where the user cannot reach them and
+eDiscovery can. This is what makes holds legally useful and operationally surprising.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Consequence</th><th>What to do about it</th></tr></thead>
+<tbody>
+<tr><td>Recoverable Items grows without bound</td><td>Monitor its quota; a full one blocks the user from deleting anything</td></tr>
+<tr><td>Held mailboxes cannot be truly deleted</td><td>A leaver's mailbox becomes inactive rather than gone — that is the point</td></tr>
+<tr><td>Licence implications</td><td><span class="volatile" data-checked="2026-08">Holds are gated to the enterprise tiers</span>; verify before promising counsel</td></tr>
+<tr><td>Releasing a hold is irreversible</td><td>Purged content ages out for real once the hold lifts</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The most common surprise in the table is the first: a mailbox on hold whose Recoverable
+Items has filled reports a hard delete failure to a confused user, and the fix is a quota
+change, not a mail problem.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Choosing</div>
+<div class="concept-title">Translating What Legal Asked For</div>
+<div class="concept-desc">
+Requirements arrive in legal language and have to become one of four configurations. This
+mapping is worth having in the room during the conversation, because the difference between
+rows two and three is the difference between a defensible position and an expensive one.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>They said</th><th>They mean</th></tr></thead>
+<tbody>
+<tr><td>"Keep everything for seven years"</td><td>A retention policy with a seven-year keep, applied to locations</td></tr>
+<tr><td>"Preserve this person's mail, they are under investigation"</td><td>A hold on that mailbox, scoped to a case, invisible to them</td></tr>
+<tr><td>"Delete anything older than three years"</td><td>A retention policy that deletes — and check nothing else is holding it</td></tr>
+<tr><td>"The mailbox is full and they will not tidy it"</td><td>An archive with a move policy; this is not a compliance question at all</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Which rule wins when several apply is decided by the precedence in
+<span class="xref">Retention Policies vs Retention Labels — The Distinction That Trips Everyone</span>,
+and the workflow for acting on a matter is in
+<span class="xref">eDiscovery, Content Search &amp; the Audit Log — Answering Legal Without Guessing</span>.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: PURVIEW OVERVIEW ───────────────────────────────── -->
+<div class="topic" id="purview-overview-the-compliance-surface-mapped-to-what-audit" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🧿</span>
+<span class="topic-name">Purview Overview — The Compliance Surface, Mapped to What Auditors Ask</span>
+<span class="topic-badge">Purview • Foundations</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Seven Tools Under One Roof, Only Some of Which You Need</div>
+<div class="concept-desc">
+Purview is a portal covering the whole compliance surface, and its breadth is what makes it
+intimidating: an admin opening it for the first time sees a dozen solutions and no obvious
+starting point. The useful frame is to ignore the product structure entirely and start from
+the question an auditor or a regulator actually asked.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Solution</th><th>Answers</th></tr></thead>
+<tbody>
+<tr><td>Information protection</td><td>Is sensitive content identified and protected?</td></tr>
+<tr><td>Data lifecycle management</td><td>Is content kept and disposed of on a schedule?</td></tr>
+<tr><td>Data loss prevention</td><td>Is it stopped from leaving inappropriately?</td></tr>
+<tr><td>eDiscovery</td><td>Can you produce what a matter demands?</td></tr>
+<tr><td>Audit</td><td>Can you show who did what?</td></tr>
+<tr><td>Insider risk management</td><td>Do you detect risky behaviour from your own people?</td></tr>
+<tr><td>Communication compliance</td><td>Is regulated communication monitored where required?</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Auditor's Question → Where the Evidence Lives</div>
+<div class="concept-desc">
+Audits fail on evidence, not on posture. The gap is nearly always that a control exists and
+nobody can produce a record of it operating.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>They ask</th><th>You open</th></tr></thead>
+<tbody>
+<tr><td>"Show me your data classification scheme."</td><td>Sensitivity labels, plus the auto-labelling rules</td></tr>
+<tr><td>"How long do you keep email?"</td><td>Retention policies, with their scope and their exceptions</td></tr>
+<tr><td>"Prove this leaver's data was preserved."</td><td>The hold, and the inactive mailbox behind it</td></tr>
+<tr><td>"Who accessed this record, and when?"</td><td>The unified audit log, within its retention window</td></tr>
+<tr><td>"How do you know DLP <span class="acro-exp">(Data Loss Prevention)</span> is working?"</td><td>DLP reports — matches, overrides and false positives over time</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Insider Risk &amp; Communication Compliance — Powerful, and Not Purely Technical</div>
+<div class="concept-desc">
+These two solutions watch people rather than data: unusual downloads before a resignation,
+regulated conversations that must be reviewed. They work, and they are the two features in
+the suite that must never be switched on by an administrator alone. Both require a defined
+legal basis, agreement with HR and works councils where they exist, disclosure appropriate to
+the jurisdiction, and a review workflow with named reviewers who are not the people being
+watched.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Before enabling</th><th>Because</th></tr></thead>
+<tbody>
+<tr><td>Legal basis documented</td><td>Employee monitoring is regulated, and the rules differ sharply by country</td></tr>
+<tr><td>HR and works council engaged</td><td>In several jurisdictions their agreement is a precondition, not a courtesy</td></tr>
+<tr><td>Pseudonymisation considered</td><td>Analysts can triage patterns without names attached</td></tr>
+<tr><td>Reviewer roles scoped narrowly</td><td>The investigators must not be able to investigate everyone</td></tr>
+<tr><td>An escalation path that ends somewhere</td><td>Alerts nobody is authorised to act on are worse than none</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The programme design these features serve — and the reason it is mostly not a technology
+problem — is in
+<span class="xref">The Insider Threat Programme — Malicious, Negligent &amp; Compromised</span>
+in the Security domain.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: THE ADMIN MODULES ──────────────────────────────── -->
+<div class="topic" id="the-admin-modules-exchange-online-teams-graph-from-one-conso" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🔌</span>
+<span class="topic-name">The Admin Modules — Exchange Online, Teams &amp; Graph From One Console</span>
+<span class="topic-badge">M365 • Automation</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Three Modules, Three Connects, One Session</div>
+<div class="concept-desc">
+M365 administration from the shell is not one API <span class="acro-exp">(Application Programming Interface)</span>. Exchange and Teams keep their own modules
+for their own object models; Graph covers the directory and most newer surfaces. A working
+admin session usually has two or three connections open at once, each authenticated
+separately.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># Install once (current user; no elevation needed)</span>
+Install-Module ExchangeOnlineManagement <span class="var">-Scope</span> CurrentUser
+Install-Module MicrosoftTeams          <span class="var">-Scope</span> CurrentUser
+Install-Module Microsoft.Graph         <span class="var">-Scope</span> CurrentUser
+
+<span class="com"># Connect — each is its own auth prompt and its own session</span>
+Connect-ExchangeOnline <span class="var">-UserPrincipalName</span> admin@contoso.com
+Connect-MicrosoftTeams
+Connect-MgGraph <span class="var">-Scopes</span> <span class="str">"User.Read.All"</span>,<span class="str">"Group.Read.All"</span>
+
+<span class="com"># Ask for the least you need: consent is per-scope and it is remembered</span>
+Get-MgContext | Select-Object Account, Scopes</pre>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Technique</div>
+<div class="concept-title">Automation Means App-Only Auth, Not a Stored Password</div>
+<div class="concept-desc">
+Interactive sign-in is right for a person at a keyboard and wrong for anything scheduled. The
+supported answer is an app registration with a certificate, granted exactly the application
+permissions the job needs. The temptation — a service account with a password in the script
+and MFA <span class="acro-exp">(Multi-Factor Authentication)</span> exempted — creates a highly privileged identity that no Conditional Access policy
+protects, which is precisely the account attackers look for.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Do</th><th>Instead of</th></tr></thead>
+<tbody>
+<tr><td>App registration + certificate</td><td>A password in a script or a vault the script can read unattended</td></tr>
+<tr><td>Application permissions, scoped narrowly</td><td>Global Administrator "so it just works"</td></tr>
+<tr><td>Scope Exchange app access to specific mailboxes</td><td>Tenant-wide mailbox access for a job that touches twelve</td></tr>
+<tr><td>Rotate and expire the certificate deliberately</td><td>A credential with a two-year life nobody diarised</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Troubleshooting</div>
+<div class="concept-title">Throttling Is Normal — Write for It</div>
+<div class="concept-desc">
+These are shared, multi-tenant services, and they will throttle a script that behaves like a
+crawler. A throttled response is not an error to retry immediately; it carries a wait time,
+and honouring it is the difference between a job that finishes and one that is progressively
+slowed.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Symptom</th><th>Handling</th></tr></thead>
+<tbody>
+<tr><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> 429 from Graph</td><td>Sleep for the interval the response names, then retry — do not back off blindly</td></tr>
+<tr><td>A loop of thousands of single reads</td><td>Batch them; Graph accepts <span class="volatile" data-checked="2026-08">up to 20 requests per batch</span></td></tr>
+<tr><td>Re-reading data that has not changed</td><td>Use delta queries and ask only for the properties you use</td></tr>
+<tr><td>Exchange cmdlets slowing over a long session</td><td>Reconnect; long-lived sessions accumulate their own limits</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The Graph API itself — query shape, permissions model and paging — is covered by
+<span class="xref">Microsoft Graph From PowerShell — The Modern Admin API</span> in the
+Scripting domain. This card is the M365-specific part: which module owns what, and how to
+authenticate a job rather than a person.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: REPORTING & USAGE ──────────────────────────────── -->
+<div class="topic" id="reporting-usage-analytics-adoption-data-that-answers-a-real-" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📊</span>
+<span class="topic-name">Reporting &amp; Usage Analytics — Adoption Data That Answers a Real Question</span>
+<span class="topic-badge">M365 • Operations</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Activity Is Not Adoption, and Reporting Both as One Number Misleads</div>
+<div class="concept-desc">
+The usage reports count actions: messages sent, files opened, meetings attended. Those are
+cheap to produce and easy to present, which is why they end up on slides answering questions
+they cannot answer. A team that moved its work into Teams and a team that opened Teams once a
+day to check nothing generate similar activity counts. Decide the question first; the metric
+follows from it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Real question</th><th>Metric that answers it</th></tr></thead>
+<tbody>
+<tr><td>Can we retire the file server?</td><td>Share of active users writing to SharePoint or OneDrive weekly</td></tr>
+<tr><td>Did the training work?</td><td>Change in the specific behaviour taught, before versus after</td></tr>
+<tr><td>Are we paying for licences nobody uses?</td><td>Assigned licences with no service activity in 90 days</td></tr>
+<tr><td>Is the rollout stuck anywhere?</td><td>Activity by department or location, not the tenant total</td></tr>
+<tr><td>Are people working weekends?</td><td>Nothing here — this is a management question wearing a data costume</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Privacy Setting Everyone Meets Eventually</div>
+<div class="concept-desc">
+Usage reports can show real names or pseudonymised identifiers, and the tenant-wide setting
+that controls it exists because in several jurisdictions per-person productivity reporting is
+restricted, and works councils have a formal say. Turning names on to chase one question is a
+decision with legal weight, not a reporting preference.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Rule</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Default to concealed names</td><td>Aggregate answers nearly every legitimate question</td></tr>
+<tr><td>Name a business owner for any de-anonymisation</td><td>It is a decision, and it should have a decider</td></tr>
+<tr><td>Report by department, not by person</td><td>Deployment problems are structural; individual counts invite misuse</td></tr>
+<tr><td>Never feed usage data into performance review</td><td>The moment people know, the data measures gaming instead of work</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+For anything beyond the built-in reports, the reporting endpoints in Graph return the same
+data as CSV <span class="acro-exp">(Comma-Separated Values)</span> for a chosen period — which is how a real answer gets joined to HR or asset
+data the admin centre has never heard of.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: TENANT-TO-TENANT ───────────────────────────────── -->
+<div class="topic" id="tenant-to-tenant-mergers-the-migration-nobody-plans-enough-t" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🔀</span>
+<span class="topic-name">Tenant-to-Tenant &amp; Mergers — The Migration Nobody Plans Enough Time For</span>
+<span class="topic-badge">M365 • Projects</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Constraint That Shapes the Whole Project</div>
+<div class="concept-desc">
+A verified domain can exist in exactly one tenant. That single fact drives everything else:
+<code>contoso.com</code> cannot receive mail in both tenants during a transition, so either
+the cutover is a hard switch for everyone at once, or users are temporarily addressed
+somewhere else. Every tenant-to-tenant plan is really a plan for working around this, and
+every timeline that ignores it is wrong.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Constraint</th><th>Consequence for the plan</th></tr></thead>
+<tbody>
+<tr><td>One domain, one tenant</td><td>The mail cutover is a single coordinated event</td></tr>
+<tr><td>Identity does not move</td><td>Accounts are created in the target, not transferred; SIDs <span class="acro-exp">(Security Identifier)</span> and object IDs change</td></tr>
+<tr><td>Teams is the hardest workload</td><td>Chat history and private channels migrate poorly; set expectations early</td></tr>
+<tr><td>Devices are re-enrolled</td><td>An Entra-joined device belongs to its tenant; it leaves and rejoins</td></tr>
+<tr><td>Third-party tooling is normal</td><td>Native tooling covers a fraction; budget for a migration product</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Flow</div>
+<div class="concept-title">The Phases, and the One People Skip</div>
+<div class="concept-desc">
+The order below is not arbitrary — each phase depends on the one before, and the phase that
+gets cut for time is always the first, which is also the one that determines whether the
+estimate was real.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>#</th><th>Phase</th><th>Produces</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Discovery</td><td>What exists: mailbox sizes, sites, teams, apps, devices, and the surprises</td></tr>
+<tr><td>2</td><td>Coexistence</td><td>Cross-tenant mail routing and free/busy, so the two halves can work together</td></tr>
+<tr><td>3</td><td>Identity</td><td>Accounts, groups and licences in the target; the sign-in change users will feel</td></tr>
+<tr><td>4</td><td>Data</td><td>Mailboxes, then OneDrive, then SharePoint — usually in waves by department</td></tr>
+<tr><td>5</td><td>Cutover</td><td>Domain move and MX change, the one genuinely irreversible hour</td></tr>
+<tr><td>6</td><td>Devices &amp; cleanup</td><td>Re-enrolment, decommissioning the source, and the long tail of forgotten apps</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Discovery is skipped because it produces no visible progress. It is also where you find the
+line-of-business app that authenticates against the old tenant, the shared mailbox that
+finance depends on and nobody owns, and the 400 GB of OneDrive belonging to someone who
+left. Those are the things that move the date.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Technique</div>
+<div class="concept-title">What Makes These Projects Go Well</div>
+<div class="concept-desc">
+The technical work is well-trodden and the tooling is mature. What separates a smooth
+migration from a painful one is almost entirely about sequencing and communication.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Practice</th><th>Prevents</th></tr></thead>
+<tbody>
+<tr><td>Migrate a pilot department end to end first</td><td>Discovering the Teams limitation during the executive wave</td></tr>
+<tr><td>Pre-stage data, cut over deltas</td><td>A cutover window measured in days</td></tr>
+<tr><td>Publish what will <em>not</em> come across</td><td>The single largest source of post-migration complaints</td></tr>
+<tr><td>Freeze changes in the source during the wave</td><td>Content created after the copy and lost at cutover</td></tr>
+<tr><td>Keep the source tenant readable for a defined period</td><td>The "where did my file go" month that follows every migration</td></tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -72504,6 +73131,6 @@ stored under the old id is migrated once on load. -->
 card. Only one domain's content is ever in the DOM, so the things that
 used to walk every topic — the n/m progress badges, the random pick, and
 working out which domain a #slug lives in — read this map instead. -->
-<script type="application/json" id="topic-index">{"net":["osi-model-7-layers","tcpip-model-4-layers-vs-osi-mapping","tcp-vs-udp-transport-layer","network-topologies","subnetting-cidr","routing-vlans-network-devices","wireless-80211-standards-security","dhcp-dora-process","common-ports-protocol-reference","dns-record-types","cabling-connectors-ethernet-standards","nmap-scan-types-reference","routing-protocols-wan-technologies","wireless-networking-80211-standards-security","network-device-cli-show-commands","tcpdump-packet-capture-reference","networking-for-absolute-beginners","ip-addresses-subnets-gently","dns-the-internets-phone-book","dhcp-how-devices-get-their-ip-address","wi-fi-basics-80211-bands-and-security","switching-vlans-dividing-your-network-logically","routing-protocols-how-routers-find-the-best-path","firewalls-the-networks-bouncer","load-balancers-high-availability-never-go-down","cloud-networking-vpc-subnets-cdns","network-troubleshooting-a-systematic-approach","ipv6-the-internets-upgrade","common-protocols-whats-actually-happening-on-the-wire","vpns-tunneling-secure-connections-over-untrusted-networks","subnetting-the-math-that-scares-beginners-it-shouldnt","network-design-how-networks-are-structured","dns-deep-dive-records-resolution-security","nat-port-forwarding-how-private-networks-reach-the-internet","8021x-nac-who-gets-on-the-network","http-the-protocol-that-runs-the-web","network-monitoring-seeing-what-flows-through","active-directory-ldap-enterprise-identity-101","cloud-networking-vpc-subnets-security-groups","dns-deep-dive-how-domain-names-actually-work","wireless-security-80211-standards-wi-fi-hardening","packet-analysis-reading-the-networks-mind-with-wireshark","dns-deep-dive-how-name-resolution-really-works","vpns-explained-tunnels-encryption-and-what-they-dont-do","subnetting-without-the-headache-cidr-notation-made-practical","load-balancers-explained-spreading-the-work-around","the-tls-handshake-what-actually-happens-before-https-feels-s","bgp-how-the-internet-routes-between-networks","qos-quality-of-service-traffic-shaping","http2-http3-quic-modern-web-transport","ntp-time-synchronization-why-clocks-matter","reverse-proxies-nginx-haproxy-the-front-door","network-automation-ansible-netmiko-napalm","dnssec-encrypted-dns-doh-dot","wan-switching-deep-sd-wan-mpls-vlans-poe","modern-connectivity-5g-private-cellular-satellite-iot-radios","edge-computing-what-it-is-once-the-marketing-is-removed"],"sec":["cia-triad","aaa-framework","access-control-models","pki-certificate-lifecycle","cryptography-algorithm-reference","cloud-service-deployment-models","password-authentication-attack-types","kerberos-authentication-flow","active-directory-structure-objects-attacks","tls-handshake-cipher-suites-certificate-chain","security-basics-in-plain-english","everyday-security-hygiene","passwords-hashing-how-logins-are-stored-safely","multi-factor-authentication-layers-of-proof","phishing-anatomy-of-a-social-engineering-attack","tls-https-how-secure-connections-work","encryption-fundamentals-symmetric-vs-asymmetric","identity-access-management-who-can-do-what","supply-chain-security-trust-what-you-build-with","owasp-top-10-the-most-critical-web-security-risks","endpoint-security-protecting-the-devices-people-actually-use","secrets-management-stop-hardcoding-passwords","web-security-headers-free-defense-in-a-few-lines","idsips-detection-catching-attacks-on-the-wire","cryptography-fundamentals-the-building-blocks-of-security","zero-trust-never-trust-always-verify","threat-modeling-finding-flaws-before-you-build-them","siem-log-analysis-blue-team-fundamentals","malware-analysis-static-dynamic-analysis-fundamentals","container-security-101-why-an-image-is-not-a-sandbox","social-engineering-defending-the-human-layer","owasp-top-10-the-web-vulnerabilities-everyone-must-know","api-security-oauth2-jwt-token-based-authentication","phishing-beyond-email-smishing-vishing-and-qr-code-scams","encryption-basics-at-rest-in-transit-and-why-its-encrypted-i","zero-trust-never-trust-always-verify-explained-simply","security-headers-the-http-response-fields-that-quietly-prote","oauth-20-oidc-saml-federated-identity","passkeys-webauthn-killing-the-password","sessions-cookies-jwt-managing-web-auth-state","sast-dast-sca-automated-security-testing","web-application-firewalls-waf","the-injection-family-one-bug-class-six-costumes","broken-access-control-idor-traversal-the-checks-nobody-ran","ssrf-xxe-deserialization-the-server-side-heavy-hitters","post-quantum-cryptography-harvest-now-decrypt-later","data-loss-prevention-classification-egress-the-false-positiv","network-security-architecture-segmentation-dmz-egress-filter","privileged-access-management-vaulting-just-in-time-session-r","ot-vs-it-the-purdue-model-when-the-generic-answer-is-the-wro","ics-protocols-modbus-dnp3-opc-ua-and-their-security-assumpti","securing-ot-without-breaking-it-segmentation-access-safety-f","physical-security-systems-access-control-cctv-the-facility-l","the-insider-threat-programme-malicious-negligent-compromised","internal-investigations-evidence-handling-staying-in-your-la","doing-the-pqc-migration-inventory-crypto-agility-the-roadmap","adjacent-cryptography-zkps-homomorphic-encryption-mpc-confid"],"threat":["cyber-kill-chain-lockheed-martin","mitre-attck-framework","diamond-model-of-intrusion-analysis","threat-intelligence-lifecycle","social-engineering-techniques","malware-types-reference","dos-ddos-network-attack-types","threats-explained-simply","anatomy-of-an-attack-step-by-step","how-attacks-actually-work-the-attackers-mindset","social-engineering-people-are-the-attack-surface","vulnerability-management-finding-and-fixing-weaknesses","threat-hunting-proactively-finding-what-slipped-through","digital-forensics-reconstructing-what-happened","ransomware-the-defining-threat-of-the-era","threat-actors-know-your-adversary","email-authentication-spf-dkim-dmarc","osint-for-defenders-see-yourself-as-attackers-do","malware-analysis-understanding-what-the-bad-code-does","threat-intelligence-turning-data-into-decisions","threat-hunting-finding-what-detection-missed","indicators-of-compromise-iocs-what-to-look-for","the-cyber-kill-chain-thinking-like-the-attacker-stage-by-sta","open-source-intelligence-osint-whats-already-public-about-yo","ransomware-how-it-spreads-and-why-backups-arent-the-whole-st","reverse-engineering-binary-analysis-reading-code-you-dont-ha","anti-analysis-techniques-how-malware-hides-and-how-analysts-","supply-chain-attacks-compromise-one-reach-thousands","the-criminal-economy-access-brokers-affiliates-how-breaches-","threat-modeling-methodologies-stride-vs-pasta-vs-attack-tree","mitre-d3fend-engage-mapping-defenses-and-deception-to-attck"],"grc":["risk-management-lifecycle","nist-cybersecurity-framework-20","defense-in-depth-layered-security","legal-regulatory-framework-references","cissp-8-domains-overview","risk-rules-in-plain-english","frameworks-without-the-jargon","risk-management-101-threat-vulnerability-impact","compliance-frameworks-playing-by-the-rules","business-continuity-disaster-recovery-keeping-the-lights-on","data-classification-knowing-what-needs-protecting","third-party-risk-your-security-is-only-as-strong-as-your-ven","security-awareness-turning-people-into-a-defense-layer","nist-csf-the-common-language-of-cybersecurity","the-audit-process-proving-controls-actually-work","privacy-regulations-gdpr-ccpa-data-rights","nist-csf-iso-27001-grc-frameworks-explained","soc-2-trust-service-criteria-for-cloud-service-providers","vendor-risk-management-securing-the-supply-chain","bcp-dr-planning-for-the-day-everything-goes-wrong","privacy-law-gdpr-ccpa-for-it-professionals","audit-prep-surviving-and-thriving-in-a-compliance-audit","change-management-the-process-that-prevents-self-inflicted-o","data-classification-why-just-be-careful-with-data-isnt-a-pol","reading-a-soc-2-report-without-falling-asleep","the-three-lines-of-defense-whos-actually-watching-the-risk","vendor-risk-assessments-why-we-use-a-cloud-provider-isnt-a-s","data-privacy-techniques-anonymization-differential-privacy","section-508-accessibility-as-us-federal-law","isoiec-27001-27002-the-isms-annex-a-and-certification","pci-dss-the-12-requirements-scope-reduction-saq-vs-roc","hipaa-privacy-rule-security-rule-breach-notification","fedramp-nist-800-53-control-baselines-and-the-ato","the-controls-universe-types-functions-mapping-once-to-many","data-governance-retention-ediscovery-owning-data-on-purpose","the-regulatory-landscape-dora-nis2-cyber-disclosure-rules"],"ops":["comptia-troubleshooting-methodology","incident-response-lifecycle-picerl","vulnerability-management-lifecycle","bcp-dr-key-metrics-recovery-strategies","digital-forensics-process","splunk-spl-search-language-reference","security-operations-for-beginners","a-day-in-the-soc","troubleshooting-like-a-pro","siem-log-analysis-finding-signals-in-the-noise","incident-response-what-to-do-when-it-goes-wrong","backup-disaster-recovery-surviving-the-worst-case","monitoring-observability-know-before-users-complain","itil-service-management-how-it-runs-as-a-business","performance-capacity-finding-and-fixing-bottlenecks","observability-knowing-what-your-systems-are-doing","sre-engineering-reliability-with-data-not-heroics","incident-command-running-a-major-incident-without-chaos","postgresql-administration-database-ops-101","web-server-hardening-nginx-apache-tls-done-right","writing-runbooks-that-people-actually-follow","capacity-planning-answering-will-we-run-out-of-room-before-y","writing-a-postmortem-people-actually-learn-from","chaos-engineering-breaking-things-on-purpose","distributed-tracing-opentelemetry","soar-security-orchestration-automation-response","load-performance-testing","prometheus-grafana-metrics-dashboards","golden-signals-red-use-what-to-measure","slis-slos-error-budgets","structured-logging-log-pipelines","on-call-done-humanely","automation-risk-discipline-blast-radius-approval-gates-the-k"],"devops":["cicd-automate-the-path-from-code-to-production","kubernetes-container-orchestration-at-scale","infrastructure-as-code-servers-you-define-in-text-files","container-security-hardening-docker-images","kubernetes-container-orchestration-fundamentals","cicd-pipelines-from-commit-to-production-automatically","terraform-infrastructure-as-code-in-practice","message-queues-event-driven-architecture","caching-strategies-from-app-to-cdn","serverless-faas-code-without-managing-servers","object-storage-s3-the-cloud-storage-model","deployment-strategies-blue-green-canary-rolling","cap-theorem-consistency-models","service-mesh-istio-linkerd-the-sidecar-pattern","gitops-git-as-the-source-of-truth-for-operations","finops-cloud-cost-management","what-devops-actually-is-culture-over-tools","the-three-ways-flow-feedback-learning","dora-metrics-measuring-delivery-performance","value-stream-mapping-find-the-bottleneck","platform-engineering-the-internal-developer-platform","cicd-pipeline-design-stages-gates-artifacts","github-actions-workflows-jobs-secrets","jenkins-gitlab-ci-circleci-the-landscape","branching-strategies-trunk-vs-github-flow-vs-gitflow","progressive-delivery-flags-canary-in-the-pipeline","docker-deep-multi-stage-builds-image-slimming","kubernetes-objects-the-ones-you-actually-use","helm-kustomize-packaging-manifests","kubernetes-security-rbac-network-policies-pod-security","configuration-management-ansible-the-alternatives","secrets-management-vault-kubernetes-secrets","software-supply-chain-security-sbom-slsa-sigstore","policy-as-code-oparego-kyverno","artifact-registry-management","kubernetes-networking-storage-cni-csi"],"pentest":["penetration-testing-phases","owasp-top-10-2021","sqlmap-sql-injection-tool-reference","vulnerability-scanning","kali-linux-arsenal","hak5-gear","hardware-rf-hacking","c2-pivoting","re-cloud-fuzzing","methodology-phases","reconnaissance-osint","scanning-enumeration","exploitation","post-exploitation-privesc","web-wireless-reporting","ethical-hacking-101","scoping-rules-of-engagement","getting-started-in-ethical-hacking-the-right-way","basic-recon-enumeration-know-your-target","web-application-pentesting-hacking-the-web-safely","recon-methodology-intelligence-before-attack","password-attacks-how-credentials-get-cracked","privilege-escalation-from-foothold-to-full-control","privilege-escalation-from-low-user-to-rootadmin","pentest-reporting-the-skill-that-makes-or-breaks-your-career","password-attacks-101-cracking-spraying-and-why-mfa-matters","reading-an-nmap-scan-like-a-pro","web-app-basics-finding-your-first-idor-lab-practice","social-engineering-101-why-pretexting-works-on-smart-people-"],"linux":["linux-filesystem-hierarchy-fhs","linux-file-permissions-model","linux-boot-process-biosuefi-systemd","ssh-commands-keys-tunneling","tmux-terminal-multiplexer","unix-linux-commands-quick-reference","raid-levels-reference","comptia-a-hardware-quick-reference","docker-containers-images-compose","yaml-config-language-reference","kubernetes-container-orchestration-reference","filesystem-navigation","file-ops-text-processing","permissions-ownership","users-groups-privilege","processes-services","package-management","networking-cli","shell-cron-hardening","linux-for-newcomers","permissions-packages-for-newcomers","shell-scripting-automate-repetitive-work","cron-jobs-scheduling-tasks-in-linux","processes-signals-running-programs-in-linux","systemd-managing-linux-services","disk-management-partitions-filesystems-lvm","docker-containers-package-once-run-anywhere","awk-sed-the-text-processing-powerhouses","user-group-management-who-can-do-what-in-linux","package-management-installing-and-managing-software","terminal-text-editors-editing-files-without-a-gui","linux-permissions-who-can-do-what-in-depth","ssh-secure-remote-access-done-right","boot-process-logs-understanding-how-linux-starts-and-speaks","storage-management-disks-partitions-lvm-raid","the-ip-command-modern-linux-networking","robust-bash-scripts-that-dont-silently-destroy-things","under-the-hood-namespaces-cgroups","performance-debugging-when-you-need-to-go-deeper","nfs-samba-sharing-files-across-the-network","advanced-bash-scripting-patterns-for-reliable-scripts","lvm-storage-flexible-disk-management-on-linux","mail-servers-postfix-dovecot-email-plumbing","high-availability-keeping-services-up-when-servers-fail","container-internals-what-docker-is-actually-built-from","systemd-essentials-services-units-and-why-things-start-at-bo","file-permissions-demystified-rwx-octal-notation-and-chmod","process-management-finding-and-taming-runaway-processes","the-disk-is-full-diagnosing-storage-problems-like-a-calm-pro","linux-firewalls-iptables-nftables-ufw","selinux-apparmor-mandatory-access-control","ebpf-programmable-kernel-observability-security","podman-rootless-containers","systemd-deep-units-timers-journald","zfs-btrfs-snapshots-integrity","advanced-bash-traps-expansion-robust-scripts","secure-boot-luks-integrity-measured-boot-dm-verity-ima","package-image-building-from-rpmdeb-to-immutable-linux"],"ai":["machine-learning-pipeline","ml-learning-paradigms","agentic-ai-orchestration","ai-ethics-responsible-ai-nist-ai-rmf","ml-foundations","neural-networks-deep-learning","llms-generative-ai","ai-for-defense-blue-team","adversarial-ai-ai-threats-red-team","ai-governance-frameworks","ai-glossary-quick-reference","ai-ml-for-beginners","using-ai-well-prompting-responsibility","prompt-engineering-getting-better-answers-from-ai","ai-tools-for-it-work-practical-everyday-use","ai-ethics-the-human-side-of-machine-intelligence","building-with-ai-apis-from-prompt-to-production","machine-learning-fundamentals-how-machines-learn","embeddings-rag-giving-ai-access-to-your-own-data","ai-security-attacking-and-defending-ai-systems","ml-pipeline-from-raw-data-to-a-serving-model","retrieval-augmented-generation-rag-explained-simply","tokens-context-windows-and-why-just-paste-the-whole-codebase","prompt-injection-the-sql-injection-of-the-ai-world","fine-tuning-vs-prompting-vs-rag-picking-the-right-tool","bias-in-ai-models-where-it-comes-from-and-why-just-remove-it","model-context-protocol-mcp-usb-c-for-ai","etl-data-pipelines-moving-data-at-scale","vector-databases-similarity-search-at-scale","mlops-shipping-monitoring-models-in-production","fine-tuning-vs-rag-vs-prompting-when-to-use-which","lora-quantization-tokenization-internals","running-local-llms-ollama-llamacpp-lm-studio","llm-evaluation-guardrails-diffusion-models","function-calling-tools-letting-a-model-act","structured-output-validation-getting-json-you-can-trust","cost-latency-optimization-caching-batching-model-tiering","observability-for-ai-tracing-token-accounting-quality-monito","the-transformer-attention-and-why-it-changed-everything","training-pipeline-pretraining-sft-rlhf-dpo","inference-internals-kv-cache-context-windows-sampling","multi-agent-systems-orchestration-hand-offs-the-coordination","agent-frameworks-what-they-give-you-and-what-they-cost","agent-safety-sandboxing-permissions-blast-radius-human-in-th","deploying-ai-assistants-copilot-licensing-data-boundaries","shadow-ai-finding-it-and-offering-a-sanctioned-path-instead","ai-acceptable-use-a-policy-people-will-actually-follow","data-governance-for-ai-oversharing-at-the-speed-of-search","deepfakes-voicevideo-impersonation-verification-that-resists"],"script":["regular-expressions-regex","html-hypertext-markup-language","css-cascading-style-sheets","javascript-es6-through-es2025","json-javascript-object-notation","python-scripting-automation","powershell-windows-automation","bash-bourne-again-shell","zsh-z-shell","go-systems-cloud-language","powershell-scripting-reference","bash-scripting-debian-ubuntu-reference","html-structure-semantic-elements","css-selectors-layout-variables","javascript-es2022-reference","json-jq-data-format-cli-processor","sql-query-reference","url-encoding-percent-encoding-reference","programming-fundamentals-concepts-vocabulary","object-oriented-programming-classes-objects-the-4-pillars","data-structures-how-data-is-organised-in-memory","big-o-notation-measuring-algorithm-efficiency","design-patterns-reusable-solutions-to-common-problems","rest-http-apis-how-the-web-communicates","git-version-control-reference","programming-from-zero-start-here","variables-data-types-storing-information","control-flow-decisions-repetition","functions-reusable-building-blocks","data-structures-lists-keyvalue","errors-debugging-when-things-break","the-workflow-good-habits","version-control-with-git-save-points","apis-data-formats-how-programs-talk","operators-expressions","working-with-text-strings","input-output-talking-to-the-user","scope-where-variables-live","which-language-should-i-learn-first","how-the-web-works-for-coders","secure-coding-basics-beginner","how-computers-think-bits-binary","files-paths-the-command-line","thinking-in-algorithms","programming-paradigms-gently","testing-your-code","setting-up-to-code","learning-to-learn-code","numbers-math-rounding-gotchas","looping-over-data-iteration-patterns","standard-library-packages","handling-errors-gracefully","reading-writing-files","refactoring-clean-code","regex-in-plain-english-gentle-intro","conditionals-deep-dive","truthiness-common-pitfalls","variables-const-let-naming","dates-times-time-zones","a-first-look-at-async","capstone-read-a-whole-tiny-program","apis-http-how-programs-talk-to-each-other","json-the-universal-data-language","modules-packages-pip-using-other-peoples-code","object-oriented-programming-classes-objects","choosing-the-right-data-structure","list-comprehensions-generators-pythonic-power","context-managers-decorators-elegant-python-patterns","building-cli-tools-in-python-argparse-click","type-hints-dataclasses-self-documenting-code","testing-with-pytest-prove-your-code-works","sql-databases-where-data-actually-lives","git-version-control-every-developer-needs","environment-variables-configuration-keep-secrets-out-of-code","logging-stop-using-print-use-logging","reproducible-python-environments-make-it-work-everywhere","async-programming-do-more-without-waiting","web-scraping-extracting-data-from-websites","regular-expressions-pattern-matching-power","string-processing-text-manipulation-toolkit","exception-handling-writing-code-that-doesnt-crash","working-with-files-reading-writing-and-paths","debugging-finding-out-why-your-code-lies-to-you","virtual-environments-isolating-project-dependencies","it-automation-scripting-the-boring-stuff-away","building-a-rest-api-from-zero-to-running-endpoint","dates-times-trickier-than-you-think","data-analysis-with-pandas-spreadsheets-in-code","code-quality-tooling-let-robots-enforce-the-boring-rules","mocking-testing-code-that-talks-to-the-outside-world","concurrency-doing-more-than-one-thing-at-once","sockets-networking-from-first-principles","building-a-real-cli-tool-putting-it-all-together","consuming-apis-robustly-beyond-requestsget","encoding-bytes-text-and-why-it-works-on-my-machine","solid-principles-writing-code-that-survives-change","design-patterns-named-solutions-to-common-problems","cloud-automation-controlling-infrastructure-with-code","data-validation-never-trust-input","webhooks-chatops-event-driven-automation","serialization-saving-objects-without-opening-a-hole","testing-strategy-why-and-how-to-test","powershell-scripting-automate-windows-cross-platform","iot-security-securing-connected-devices","python-asyncawait-concurrent-io-without-threads","regular-expressions-pattern-matching-that-pays-off-forever","git-advanced-workflows-beyond-add-commit-push","network-automation-configuring-switches-routers-with-python","web-scraping-extracting-data-from-websites-with-python","working-with-apis-and-json-in-python","regular-expressions-a-survival-guide-for-it-tasks","scheduling-scripts-the-right-way-cron-timers-and-idempotency","python-the-everything-language","typescript-javascript-that-scales","graphql-ask-for-exactly-what-you-need","databases-relational-vs-nosql-acid-indexing","websockets-sse-real-time-on-the-web","api-design-versioning-pagination-rate-limits-idempotency","grpc-protocol-buffers-high-performance-rpc","oltp-vs-olap-transactional-vs-analytical-data","webassembly-wasm-near-native-speed-in-the-browser","progressive-web-apps-pwa-web-apps-that-feel-native","web-accessibility-a11y-building-for-everyone","rust-safe-systems-programming","java-the-enterprise-workhorse","c-net-microsofts-cross-platform-stack","ruby-optimized-for-developer-happiness","php-the-language-that-runs-the-web","c-close-to-the-metal","assembly-how-programs-actually-run","semantic-versioning-dependency-management","apache-kafka-the-distributed-event-log","apache-spark-big-data-processing","orchestration-airflow-dagster","dbt-the-modern-data-stack","dimensional-modeling-star-snowflake-schemas","kotlin-swift-scala-modern-typed-application-languages","elixir-haskell-the-functional-niche-languages","microsoft-graph-from-powershell-the-modern-admin-api","jea-just-enough-administration-constrained-remoting"],"shortcut":["system-general","microsoft-office-excelword","spotify-media","dod-department-of-defense","windows","macos","terminal-bash","vim","vs-code","tmux-browser","dod-quick-reference","universal-shortcuts-everyone-should-know","text-editing-window-shortcuts","powershell-windows-and-cross-platform-scripting","git-power-user-beyond-add-commit-push","tmux-never-lose-a-session-again","text-processing-mastery-combining-the-classic-tools","intermediate-vim-editing-as-a-language","browser-power-moves-tabs-history-and-devtools-shortcuts","tmux-survival-kit-never-lose-a-terminal-session-again","vs-code-setup-settings-profiles","vs-code-command-palette-keybindings","vs-code-editing-superpowers","vs-code-debugging","vs-code-remote-dev-dev-containers","vs-code-extensions-that-matter","dotfiles-environment-management","shell-terminal-setup","runtime-version-managers","ai-pair-programming-using-it-well","terminal-productivity-work-faster-at-the-command-line","github-codespaces-cloud-dev-environments","live-share-real-time-collaborative-editing","modern-cli-tools-ripgrep-fzf-bat-jq-eza","google-chrome-keyboard-shortcuts","github-git-command-reference","api-keys-gateways-netlify-github-rest"],"philosophy":["stoicism-the-art-of-rational-endurance","machiavellianism-power-realism-strategy","psychology-mind-behavior-biases","philosophy-schools-of-thought","buddhism-the-path-to-liberation","taoism-the-way-of-nature","existentialism-absurdism","mental-models-folk-wisdom","more-models-for-a-clear-head","decision-making","wicca-sabbats-elements-tools","paganism-traditions-core-concepts","druidism-grades-awen-sacred-concepts","minimalism-intentional-living"],"productivity":["habits-time","learning-how-to-learn-build-the-skill-behind-all-skills","time-management-making-your-hours-count","the-japanese-mastery-loop-kata-poka-yoke-hansei-kaizen-shoku","hansei-the-15-minutes-that-beat-15-more","the-memory-palace-method-of-loci-for-ordered-lists","sleep-where-the-studying-actually-sticks","attention-task-switching-residue-the-cost-of-interruption","note-taking-for-learning-notes-you-never-reopen-are-theatre","study-systems-that-survive-a-brain-that-wont-cooperate"],"mind":["communication-relationships","resilience-perspective","imposter-syndrome-you-belong-here","burnout-recognizing-it-before-it-breaks-you","the-compound-effect-small-consistent-actions-build-careers","dealing-with-failure-falling-forward","survival-mindsets-hard-won-wisdom-for-a-long-it-career","surviving-on-call-when-the-pager-owns-your-night","surviving-and-thriving-in-your-first-on-call-rotation","imposter-syndrome-in-it-youre-not-the-only-one-faking-it-a-l","desk-body-eyes-wrists-back-the-dose-problem","fuel-focus-nutrition-for-a-desk-bound-brain"],"career":["it-career-paths-finding-your-lane","professional-networking-your-career-grows-through-relationsh","clear-technical-communication-the-skill-that-multiplies-ever","mentorship-the-fastest-way-to-grow","interview-preparation-getting-the-job","building-a-home-lab-where-you-actually-learn","certifications-the-roadmap-and-how-to-actually-study","technical-writing-the-underrated-career-superpower","building-in-public-your-reputation-compounds","professional-ethics-the-responsibility-that-comes-with-acces","breaking-into-it-from-zero-to-hired","growing-into-senior-beyond-technical-skill","the-craftspersons-mindset-tying-it-all-together","soft-skills-the-difference-between-a-good-and-great-it-pro","home-lab-practicing-it-skills-without-breaking-production","certification-roadmap-charting-a-path-through-the-alphabet-s","building-a-home-lab-without-breaking-the-bank","negotiating-your-first-it-offer-without-feeling-like-youre-b","money-adulting-basics","financial-basics-for-it-workers-build-while-you-build-a-care","remote-work-working-well-from-anywhere"],"military":["how-staff-codes-work-letter-number-sub","prefix-letters-j-g-s-n-a-c-m-f","functional-numbers-1-through-9-what-each-number-means","sub-designators-the-third-digit-eg-j63","branch-comparison-same-number-different-context","quick-reference-full-cross-matrix","staff-system-overview","staff-functions-19","common-codes-decoded","reading-military-codes-beginner","ranks-echelons-very-basic","military-communication-standards-clear-concise-correct","ooda-loop-decision-making-under-pressure","commanders-intent-empowering-action-without-micromanaging","after-action-review-learning-from-every-event","troop-leading-procedures-a-framework-for-planning-anything","pace-planning-redundancy-by-design","leadership-styles-mission-command-cohesion","opsec-operational-security-in-cyber-real-life","leadership-military-principles-applied-to-it-teams","translating-military-experience-into-it-resume-language","using-the-gi-bill-and-tuition-assistance-for-it-certificatio","networking-events-without-the-awkwardness-a-veterans-field-g","classification-levels-markings-damage-not-importance","cover-sheets-sf-703-sf-704-sf-705","media-equipment-labels-sf-706-through-sf-712","container-end-of-day-forms-sf-700-sf-701-sf-702","clearance-paperwork-sf-86-sf-312-sf-714","spills-sanitisation-reporting-the-first-ten-minutes","mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord","the-intelligence-cycle-direction-collection-processing-disse","red-teaming-as-a-discipline-premortems-structured-contrarian"],"redteam":["rules-of-engagement-read-this-first","nmap-the-network-mapper-deep-dive","masscan-rustscan-internet-scale-port-discovery","theharvester-recon-ng-osint-frameworks","amass-subfinder-subdomain-enumeration","shodan-censys-search-engines-for-exposed-devices","google-dorking-maltego-spiderfoot","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner","sqlmap-automated-sql-injection","ffuf-gobuster-content-parameter-fuzzing","nuclei-templated-vulnerability-scanning","nikto-wpscan-server-cms-scanning","metasploit-framework-modules-sessions-workflow","msfvenom-payload-generation","searchsploit-exploit-db-finding-public-exploits","impacket-the-windowsad-python-toolkit","bloodhound-sharphound-attack-path-graphing","mimikatz-credential-extraction","kerberos-attacks-rubeus-kerbrute","responder-ntlm-relay","adcs-abuse-certipy-the-esc-techniques","c2-concepts-beacons-listeners-redirectors","cobalt-strike-the-commercial-standard","sliver-the-open-source-modern-c2","mythic-havoc-empire-the-c2-ecosystem","hashcat-gpu-password-cracking","john-the-ripper-the-versatile-cracker","hydra-medusa-online-login-attacks","wordlists-hash-identification","aircrack-ng-wi-fi-auditing-suite","wifite-hcxdumptool-automated-wi-fi-pmkid","bettercap-the-mitm-framework","flipper-zero-sub-ghz-rfid-tools","badusb-rf-implants-rubber-ducky-omg-proxmark-hackrf","living-off-the-land-lolbas-gtfobins","privilege-escalation-scanners-peas-powerup","pivoting-tunneling-chisel-ligolo-ng-proxychains","data-exfiltration-channels-dns-icmp-https","pacu-the-aws-exploitation-framework","cloudfox-enumerate-iam-attack-surface-enumeration","kubernetes-attacks-rbac-abuse-container-escape","cloud-credential-attacks-the-purple-team-bridge"],"blueteam":["wireshark-packet-analysis","tcpdump-capture-from-the-command-line","zeek-network-metadata-logging","suricata-snort-signature-idsips","arkime-ntopng-full-capture-traffic-analytics","splunk-spl-the-siem-standard","elastic-elk-stack-open-source-log-analytics","wazuh-open-source-xdrsiem","graylog-loki-log-aggregation-alternatives","sigma-write-detections-once-run-anywhere","sysmon-the-windows-telemetry-powerhouse","osquery-your-fleet-as-a-sql-database","velociraptor-endpoint-dfir-hunting-at-scale","windows-event-logs-the-ids-that-matter","auditd-linux-endpoint-logging","yara-pattern-matching-rules-for-malware","mitre-attck-navigator-coverage-driven-detection","adversary-emulation-atomic-red-team-caldera","detection-tuning-the-pyramid-of-pain","volatility-memory-forensics","autopsy-the-sleuth-kit-disk-forensics","kape-plaso-triage-super-timelines","windows-forensic-artifacts","chain-of-custody-evidence-handling","misp-opencti-threat-intel-platforms","stix-taxii-the-sharing-standards","malware-sandboxes-virustotal-anyrun-hybrid-analysis","threat-hunting-assume-breach-go-looking","vulnerability-scanners-nessus-openvas","cis-benchmarks-cis-cat-hardening-baselines","lynis-linux-audit-hardening","openscap-disa-stigs-compliance-driven-hardening","patch-config-management-as-a-control","honeypots-canarytokens-deception-tech","email-security-spf-dkim-dmarc","identity-threat-detection-response-itdr","purple-teaming-closing-the-detection-gap"],"cloud":["cloud-fundamentals-regions-azs-shared-responsibility","aws-getting-started","aws-cli-cloudshell","google-cloud-getting-started","gcloud-cli-cloud-shell","cloud-rosetta-stone-aws-gcp-azure","aws-iam-users-roles-policies","aws-iam-deep-assumerole-sts-boundaries","gcp-iam-members-roles-hierarchy","gcp-service-accounts-workload-identity","cloud-iam-pitfalls-privilege-escalation","aws-vpc-subnets-security-groups-nacls","aws-load-balancing-dns-elb-route-53-cloudfront","gcp-vpc-global-networks-firewall-rules","gcp-load-balancing-dns","hybrid-connectivity-vpn-interconnect-peering","aws-compute-ec2-amis-auto-scaling","aws-serverless-containers-lambda-ecs-eks-fargate","gcp-compute-compute-engine-migs","gcp-serverless-containers-cloud-run-functions-gke","choosing-compute-vm-vs-container-vs-serverless","aws-storage-s3-classes-ebs-efs","aws-databases-rds-aurora-dynamodb","gcp-storage-cloud-storage-persistent-disk-filestore","gcp-databases-cloud-sql-spanner-firestore","bigquery-serverless-data-warehouse","aws-security-stack-cloudtrail-guardduty-security-hub","aws-data-protection-kms-secrets-manager","gcp-security-cloud-audit-logs-security-command-center","gcp-data-protection-cloud-kms-secret-manager-vpc-sc","cspm-prowler-scoutsuite-steampipe","terraform-on-aws-gcp","aws-native-iac-cloudformation-cdk","cloud-cost-control-budgets-tags-rightsizing","landing-zones-multi-account-structure","gcp-native-iac-deployment-manager-config-controller","cloud-cicd-codepipeline-cloud-build","aws-observability-cloudwatch-x-ray","gcp-observability-cloud-monitoring-logging-trace","well-architected-the-architecture-framework","azure-getting-started-entra-id","azure-core-resource-groups-vnet-vms-storage","azure-security-defender-key-vault-sentinel","azure-hierarchy-rbac-scopes-policy","azure-networking-vnet-nsg-the-load-balancer-family","azure-compute-storage-picking-the-right-sku","azure-monitor-log-analytics-kql","azure-troubleshooting-playbook","entra-id-sign-in-conditional-access-troubleshooting"],"cs":["big-o-in-practice-what-the-notation-hides","amortized-analysis-why-a-dynamic-array-is-o1-on-average","time-vs-space-trade-offs-what-caching-actually-costs","recursion-induction-trusting-a-function-that-calls-itself","p-np-knowing-when-to-stop-looking-for-an-exact-answer","memory-layout-cache-locality-why-arrays-beat-linked-lists","hash-tables-collisions-load-factor-the-dos-that-exploits-the","trees-bst-balanced-heap-trie-and-what-each-is-actually-for","graphs-representation-traversal-the-four-algorithms-worth-kn","probabilistic-structures-bloom-filters-hyperloglog-sketches","sorting-searching-why-your-language-picked-the-one-it-did","divide-conquer-greedy-dynamic-programming-recognising-which-","string-algorithms-matching-edit-distance-where-regex-fits","randomised-algorithms-sampling-reservoirs-monte-carlo","algorithm-interview-patterns-the-eight-that-cover-most-quest","processes-threads-scheduling-what-a-context-switch-costs","virtual-memory-paging-the-tlb-swaps-bad-reputation","concurrency-primitives-mutexes-semaphores-conditions-atomics","deadlock-livelock-the-four-conditions-and-which-one-to-break","filesystems-from-the-inside-inodes-journaling-crash-consiste","time-in-distributed-systems-why-timestamps-cannot-order-even","consensus-raft-and-paxos-without-the-paper","failure-detection-flp-why-is-it-down-has-no-perfect-answer","caches-the-memory-hierarchy-the-numbers-every-engineer-shoul","number-representation-twos-complement-ieee-754-the-bugs-each","speculative-execution-its-security-cost-spectre-and-meltdown","instruction-execution-pipelining-superscalar-why-branches-ar","instruction-sets-x86-64-arm64-risc-v-why-the-shift-is-happen","how-a-compiler-works-lexing-parsing-ir-codegen","interpreters-bytecode-jit-the-spectrum-from-python-to-the-jv","type-systems-static-dynamic-and-what-types-actually-buy-you","garbage-collection-generational-collectors-pauses-tuning","undefined-behaviour-memory-safety-the-class-behind-most-cves"],"eng":["scalability-101-vertical-vs-horizontal","load-balancing-sharding","back-of-the-envelope-estimation","designing-for-failure","the-system-design-interview-a-framework","monolith-vs-microservices-vs-modular-monolith","event-driven-architecture","clean-hexagonal-architecture","cqrs-event-sourcing","the-twelve-factor-app","domain-driven-design-ddd","solid-principles","coupling-cohesion","api-first-contract-driven-design","idempotency-exactly-once-safe-retries","clean-code-naming","code-review-doing-it-well","testing-strategy-the-test-pyramid","technical-debt-recognize-pay-it-down","adrs-design-docs","resilience-patterns-circuit-breaker-retry-timeout","distributed-transactions-saga-outbox","backpressure-flow-control","consistency-in-practice-quorums-tunable-reads","the-engineering-ladder-junior-to-principal","staff-archetypes","tech-lead-vs-engineering-manager","influence-without-authority","cert-roadmaps-choosing-a-path","cloud-native-serverless-architecture-patterns","schema-data-modeling-patterns","estimation-planning","career-ladders-interviews","coder-vs-programmer-vs-developer-vs-architect","the-wider-it-org-roles-beyond-writing-code","unified-endpoint-management-uem-engineer"],"data":["how-a-database-actually-works","the-relational-model-keys-integrity","normalization-1nf-through-bcnf","acid-transactions-isolation-levels","er-modeling-designing-the-schema","sql-joins-every-type-and-the-null-traps","window-functions-analytics-without-collapsing-rows","ctes-recursion-readable-composable-queries","aggregation-group-by-having-rollup","subqueries-exists-set-operations","indexes-explained-b-tree-hash-covering","reading-query-plans-explain-analyze","query-optimization-sargability-n1","locking-mvcc-concurrency-without-chaos","partitioning-sharding-scaling-one-big-table","postgresql-the-default-choice","postgres-power-features-jsonb-full-text","mysql-mariadb-the-other-giant","sqlite-the-database-thats-everywhere","connection-pooling-surviving-many-clients","the-nosql-landscape-four-families","mongodb-documents-the-aggregation-pipeline","redis-the-in-memory-multi-tool","cassandra-dynamodb-wide-column-at-scale","graph-databases-when-relationships-are-the-data","oltp-vs-olap-rows-vs-columns","columnar-engines-parquet-duckdb-clickhouse","warehouse-vs-lake-vs-lakehouse","the-semantic-layer-metrics","data-quality-observability","backups-point-in-time-recovery","replication-high-availability","schema-migrations-zero-downtime-change","database-security-least-privilege-rls","monitoring-a-database-what-to-watch","data-roles-who-does-what","designing-a-schema-from-requirements","time-series-event-data","vector-databases-embeddings-similarity-search","the-data-interview"],"web":["how-the-browser-renders-a-page","reflow-repaint-what-causes-jank","the-dom-events-bubbling-delegation","web-storage-cookies-localstorage-indexeddb","devtools-mastery","flexbox-one-dimensional-layout","css-grid-two-dimensional-layout","responsive-design-fluid-mobile-first","modern-css-custom-properties-has-layers","design-systems-tokens-tailwind","closures-scope-this","async-deep-promises-await-the-event-loop","prototypes-modern-classes","modules-bundlers-esm-vite-tree-shaking","typescript-types-for-javascript","react-components-hooks-the-mental-model","react-patterns-pitfalls","vue-svelte-other-reactivity-models","meta-frameworks-nextjs-rendering-modes","state-management-when-you-actually-need-it","fetch-rest-cors-in-practice","graphql-on-the-backend-schema-resolvers-caching","realtime-websockets-sse-polling","frontend-auth-tokens-cookies-oauth","data-fetching-patterns-react-query-caching","web-performance-core-web-vitals","web-accessibility-a11y-wcag-aria","frontend-testing-unit-component-e2e","frontend-security-xss-csrf-csp","seo-metadata-for-developers","progressive-web-apps-offline-installable","rendering-at-the-edge-cdns-edge-functions","webassembly-native-speed-in-the-browser","frontend-build-deploy-ci-preview-deploys","the-full-stack-picture-how-it-all-connects"],"endpoint":["microsoft-endpoint-configuration-manager-mecm","azure-ad-microsoft-entra-id-endpoint-identity","microsoft-intune-cloud-mdm-mam","windows-autopilot-zero-touch-provisioning","enrollment-status-page-esp","co-management-cloud-attach","conditional-access-device-compliance","troubleshooting-toolkit-log-reference","glossary-acronyms-logs-task-sequence-variables","mecm-client-health-install-repair-the-cycles","mecm-deployment-content-troubleshooting","mecm-osd-task-sequence-failure-triage","mecm-site-health-server-log-map","configuration-profiles-settings-catalog-templates-custom","policy-conflicts-proving-which-one-won","security-baselines-without-breaking-the-fleet","administrative-templates-admx-backed-policy","assignment-strategy-users-devices-filters-exclusions","win32-app-packaging-intunewin-end-to-end","install-contexts-system-vs-user","store-lob-enterprise-app-catalog-apps","app-protection-policies-mam-without-enrolment","application-troubleshooting-reading-the-ime-log","windows-update-for-business-rings-deferrals-deadlines","feature-vs-quality-vs-driver-updates","windows-autopatch-what-it-takes-over","update-compliance-reporting-where-the-truth-lives","emergency-patching-advisory-to-verified","windows-administration-fundamentals","bitlocker-at-scale-silent-enablement-key-escrow-recovery","defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro","local-admin-rights-removing-them-and-endpoint-privilege-mana","windows-laps-local-admin-password-rotation-in-entra-and-ad","firewall-removable-media-policy-the-two-controls-auditors-as","compliance-policies-deep-settings-grace-periods-what-non-com","device-trust-end-to-end-enrolment-compliance-ca-access","reporting-on-drift-finding-devices-that-quietly-stopped-comp","the-identityendpoint-seam-the-failure-that-lands-both-teams-","macos-for-windows-admins-the-translation-table-security-mode","apple-fleet-management-business-manager-ade-jamf-vs-intune-f","ios-android-enterprise-supervision-work-profiles-mam"],"infra":["windows-server-editions-licensing-what-you-are-actually-buyi","server-core-why-you-would-remove-the-gui-and-how-you-manage-","server-manager-rsat-windows-admin-center-which-console-wins","roles-features-what-installing-a-role-actually-changes","server-hardening-baseline-the-short-list-that-removes-most-r","ad-ds-boundaries-when-to-add-an-ou-a-domain-or-a-forest","fsmo-roles-the-five-jobs-that-cannot-be-done-by-everyone","ad-replication-how-changes-travel-and-triage-when-they-stop","trusts-direction-transitivity-why-they-are-backwards","sites-subnets-why-clients-authenticate-against-the-wrong-dc","group-policy-architecture-where-the-settings-actually-live","processing-order-precedence-lsdou-enforcement-loopback","filtering-security-groups-wmi-item-level-targeting","group-policy-preferences-the-half-people-forget-exists","gpo-troubleshooting-proving-what-a-machine-actually-received","group-nesting-strategy-agdlp-and-why-nested-groups-become-a-","service-accounts-gmsa-and-retiring-the-shared-password","kerberos-in-operations-spns-delegation-clock-skew","entra-connect-hybrid-identity-choosing-how-passwords-are-che","cleaning-up-a-legacy-directory-stale-objects-over-permissive","windows-dns-administration-zones-scavenging-forwarders","dhcp-administration-scopes-reservations-failover-relay","file-services-share-vs-ntfs-permissions-dfs-quotas","ad-cs-design-offline-roots-issuing-cas-publishing","certificate-templates-the-settings-that-matter-and-the-ones-","certificate-lifecycle-auto-enrolment-and-the-expiry-nobody-s","domain-controller-recovery-authoritative-vs-non-authoritativ","decommissioning-a-server-properly-the-checklist-that-prevent","virtualization-fundamentals-hypervisors-overcommit-the-noisy","hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr","snapshots-are-not-backups-what-they-cost-and-how-they-bite","backup-strategy-3-2-1-1-0-and-the-schemes-that-make-restores","ransomware-resilient-backup-immutability-isolation-assuming-","restore-testing-dr-design-turning-backups-into-a-recovery-ca"],"m365":["m365-tenant-anatomy-the-tenant-its-domains-the-admin-centres","licensing-without-tears-e3-e5-business-group-based-assignmen","admin-roles-least-privilege-the-roles-worth-knowing-and-pim-","service-health-the-message-center-knowing-before-the-tickets","mail-flow-connectors-transport-rules-the-path-a-message-take","mailbox-types-delegation-user-shared-room-equipment","eop-defender-for-office-anti-spam-anti-phish-safe-links-quar","message-trace-header-analysis-proving-where-a-message-died","sharepoint-online-architecture-sites-libraries-the-limits-th","the-sharing-permissions-model-why-it-sprawls-and-how-to-cont","onedrive-known-folder-move-files-on-demand-sync-triage","teams-architecture-what-a-team-actually-is","teams-governance-sprawl-naming-expiry-the-guest-question","retention-policies-vs-retention-labels-the-distinction-that-","sensitivity-labels-dlp-classification-that-survives-contact-","ediscovery-content-search-the-audit-log-answering-legal-with","backup-for-m365-why-native-retention-is-not-a-backup","the-m365-troubleshooting-playbook-tenant-identity-licence-po"],"math":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications","unit-3-integrals-series-area-techniques-differential-equatio","chapter-tests-the-final-where-the-marks-actually-go","logarithms-exponents-rules-and-how-to-solve","trigonometry-the-unit-circle-identities-inverses","the-two-pictures-derivative-as-slope-integral-as-area","algebra-geometry-formulas-the-prerequisites","shape-formulas-labelled-diagrams","ti-84-plus-ce-the-keys-that-matter-for-calculus","the-named-theorems-rolle-mvt-ivt-evt-squeeze","sin-cos-tan-sec-what-they-actually-are","implicit-differentiation-choosing-which-rule-first","numerical-integration-trapezoidal-rule-midpoint-simpsons","series-choosing-a-test-and-radius-of-convergence"],"quotes":["sourced-quotes-why-this-collection-has-citations","stoic-quotes-marcus-aurelius-epictetus-seneca","eastern-quotes-tao-te-ching-zen-the-buddhist-canon","modern-existentialist-quotes","misattributed-famous-lines-nobody-can-source"],"acronym":["how-to-use-this-dictionary","acronyms-09","acronyms-a","acronyms-b","acronyms-c","acronyms-d","acronyms-e","acronyms-f","acronyms-g","acronyms-h","acronyms-i","acronyms-j","acronyms-k","acronyms-l","acronyms-m","acronyms-n","acronyms-o","acronyms-p","acronyms-q","acronyms-r","acronyms-s","acronyms-t","acronyms-u","acronyms-v","acronyms-w","acronyms-x","acronyms-y","acronyms-z","by-area-ai","by-area-business","by-area-certifications","by-area-cloud","by-area-compliance","by-area-computer-science","by-area-cryptography","by-area-data","by-area-devops","by-area-directory","by-area-electronics","by-area-endpoint","by-area-engineering","by-area-enterprise","by-area-government","by-area-hardware","by-area-health","by-area-infrastructure","by-area-linux","by-area-misc","by-area-networking","by-area-operations","by-area-organizations","by-area-risk","by-area-security","by-area-standards","by-area-storage","by-area-systems","by-area-virtualization","by-area-web","by-area-windows"]}</script>
+<script type="application/json" id="topic-index">{"net":["osi-model-7-layers","tcpip-model-4-layers-vs-osi-mapping","tcp-vs-udp-transport-layer","network-topologies","subnetting-cidr","routing-vlans-network-devices","wireless-80211-standards-security","dhcp-dora-process","common-ports-protocol-reference","dns-record-types","cabling-connectors-ethernet-standards","nmap-scan-types-reference","routing-protocols-wan-technologies","wireless-networking-80211-standards-security","network-device-cli-show-commands","tcpdump-packet-capture-reference","networking-for-absolute-beginners","ip-addresses-subnets-gently","dns-the-internets-phone-book","dhcp-how-devices-get-their-ip-address","wi-fi-basics-80211-bands-and-security","switching-vlans-dividing-your-network-logically","routing-protocols-how-routers-find-the-best-path","firewalls-the-networks-bouncer","load-balancers-high-availability-never-go-down","cloud-networking-vpc-subnets-cdns","network-troubleshooting-a-systematic-approach","ipv6-the-internets-upgrade","common-protocols-whats-actually-happening-on-the-wire","vpns-tunneling-secure-connections-over-untrusted-networks","subnetting-the-math-that-scares-beginners-it-shouldnt","network-design-how-networks-are-structured","dns-deep-dive-records-resolution-security","nat-port-forwarding-how-private-networks-reach-the-internet","8021x-nac-who-gets-on-the-network","http-the-protocol-that-runs-the-web","network-monitoring-seeing-what-flows-through","active-directory-ldap-enterprise-identity-101","cloud-networking-vpc-subnets-security-groups","dns-deep-dive-how-domain-names-actually-work","wireless-security-80211-standards-wi-fi-hardening","packet-analysis-reading-the-networks-mind-with-wireshark","dns-deep-dive-how-name-resolution-really-works","vpns-explained-tunnels-encryption-and-what-they-dont-do","subnetting-without-the-headache-cidr-notation-made-practical","load-balancers-explained-spreading-the-work-around","the-tls-handshake-what-actually-happens-before-https-feels-s","bgp-how-the-internet-routes-between-networks","qos-quality-of-service-traffic-shaping","http2-http3-quic-modern-web-transport","ntp-time-synchronization-why-clocks-matter","reverse-proxies-nginx-haproxy-the-front-door","network-automation-ansible-netmiko-napalm","dnssec-encrypted-dns-doh-dot","wan-switching-deep-sd-wan-mpls-vlans-poe","modern-connectivity-5g-private-cellular-satellite-iot-radios","edge-computing-what-it-is-once-the-marketing-is-removed"],"sec":["cia-triad","aaa-framework","access-control-models","pki-certificate-lifecycle","cryptography-algorithm-reference","cloud-service-deployment-models","password-authentication-attack-types","kerberos-authentication-flow","active-directory-structure-objects-attacks","tls-handshake-cipher-suites-certificate-chain","security-basics-in-plain-english","everyday-security-hygiene","passwords-hashing-how-logins-are-stored-safely","multi-factor-authentication-layers-of-proof","phishing-anatomy-of-a-social-engineering-attack","tls-https-how-secure-connections-work","encryption-fundamentals-symmetric-vs-asymmetric","identity-access-management-who-can-do-what","supply-chain-security-trust-what-you-build-with","owasp-top-10-the-most-critical-web-security-risks","endpoint-security-protecting-the-devices-people-actually-use","secrets-management-stop-hardcoding-passwords","web-security-headers-free-defense-in-a-few-lines","idsips-detection-catching-attacks-on-the-wire","cryptography-fundamentals-the-building-blocks-of-security","zero-trust-never-trust-always-verify","threat-modeling-finding-flaws-before-you-build-them","siem-log-analysis-blue-team-fundamentals","malware-analysis-static-dynamic-analysis-fundamentals","container-security-101-why-an-image-is-not-a-sandbox","social-engineering-defending-the-human-layer","owasp-top-10-the-web-vulnerabilities-everyone-must-know","api-security-oauth2-jwt-token-based-authentication","phishing-beyond-email-smishing-vishing-and-qr-code-scams","encryption-basics-at-rest-in-transit-and-why-its-encrypted-i","zero-trust-never-trust-always-verify-explained-simply","security-headers-the-http-response-fields-that-quietly-prote","oauth-20-oidc-saml-federated-identity","passkeys-webauthn-killing-the-password","sessions-cookies-jwt-managing-web-auth-state","sast-dast-sca-automated-security-testing","web-application-firewalls-waf","the-injection-family-one-bug-class-six-costumes","broken-access-control-idor-traversal-the-checks-nobody-ran","ssrf-xxe-deserialization-the-server-side-heavy-hitters","post-quantum-cryptography-harvest-now-decrypt-later","data-loss-prevention-classification-egress-the-false-positiv","network-security-architecture-segmentation-dmz-egress-filter","privileged-access-management-vaulting-just-in-time-session-r","ot-vs-it-the-purdue-model-when-the-generic-answer-is-the-wro","ics-protocols-modbus-dnp3-opc-ua-and-their-security-assumpti","securing-ot-without-breaking-it-segmentation-access-safety-f","physical-security-systems-access-control-cctv-the-facility-l","the-insider-threat-programme-malicious-negligent-compromised","internal-investigations-evidence-handling-staying-in-your-la","doing-the-pqc-migration-inventory-crypto-agility-the-roadmap","adjacent-cryptography-zkps-homomorphic-encryption-mpc-confid"],"threat":["cyber-kill-chain-lockheed-martin","mitre-attck-framework","diamond-model-of-intrusion-analysis","threat-intelligence-lifecycle","social-engineering-techniques","malware-types-reference","dos-ddos-network-attack-types","threats-explained-simply","anatomy-of-an-attack-step-by-step","how-attacks-actually-work-the-attackers-mindset","social-engineering-people-are-the-attack-surface","vulnerability-management-finding-and-fixing-weaknesses","threat-hunting-proactively-finding-what-slipped-through","digital-forensics-reconstructing-what-happened","ransomware-the-defining-threat-of-the-era","threat-actors-know-your-adversary","email-authentication-spf-dkim-dmarc","osint-for-defenders-see-yourself-as-attackers-do","malware-analysis-understanding-what-the-bad-code-does","threat-intelligence-turning-data-into-decisions","threat-hunting-finding-what-detection-missed","indicators-of-compromise-iocs-what-to-look-for","the-cyber-kill-chain-thinking-like-the-attacker-stage-by-sta","open-source-intelligence-osint-whats-already-public-about-yo","ransomware-how-it-spreads-and-why-backups-arent-the-whole-st","reverse-engineering-binary-analysis-reading-code-you-dont-ha","anti-analysis-techniques-how-malware-hides-and-how-analysts-","supply-chain-attacks-compromise-one-reach-thousands","the-criminal-economy-access-brokers-affiliates-how-breaches-","threat-modeling-methodologies-stride-vs-pasta-vs-attack-tree","mitre-d3fend-engage-mapping-defenses-and-deception-to-attck"],"grc":["risk-management-lifecycle","nist-cybersecurity-framework-20","defense-in-depth-layered-security","legal-regulatory-framework-references","cissp-8-domains-overview","risk-rules-in-plain-english","frameworks-without-the-jargon","risk-management-101-threat-vulnerability-impact","compliance-frameworks-playing-by-the-rules","business-continuity-disaster-recovery-keeping-the-lights-on","data-classification-knowing-what-needs-protecting","third-party-risk-your-security-is-only-as-strong-as-your-ven","security-awareness-turning-people-into-a-defense-layer","nist-csf-the-common-language-of-cybersecurity","the-audit-process-proving-controls-actually-work","privacy-regulations-gdpr-ccpa-data-rights","nist-csf-iso-27001-grc-frameworks-explained","soc-2-trust-service-criteria-for-cloud-service-providers","vendor-risk-management-securing-the-supply-chain","bcp-dr-planning-for-the-day-everything-goes-wrong","privacy-law-gdpr-ccpa-for-it-professionals","audit-prep-surviving-and-thriving-in-a-compliance-audit","change-management-the-process-that-prevents-self-inflicted-o","data-classification-why-just-be-careful-with-data-isnt-a-pol","reading-a-soc-2-report-without-falling-asleep","the-three-lines-of-defense-whos-actually-watching-the-risk","vendor-risk-assessments-why-we-use-a-cloud-provider-isnt-a-s","data-privacy-techniques-anonymization-differential-privacy","section-508-accessibility-as-us-federal-law","isoiec-27001-27002-the-isms-annex-a-and-certification","pci-dss-the-12-requirements-scope-reduction-saq-vs-roc","hipaa-privacy-rule-security-rule-breach-notification","fedramp-nist-800-53-control-baselines-and-the-ato","the-controls-universe-types-functions-mapping-once-to-many","data-governance-retention-ediscovery-owning-data-on-purpose","the-regulatory-landscape-dora-nis2-cyber-disclosure-rules"],"ops":["comptia-troubleshooting-methodology","incident-response-lifecycle-picerl","vulnerability-management-lifecycle","bcp-dr-key-metrics-recovery-strategies","digital-forensics-process","splunk-spl-search-language-reference","security-operations-for-beginners","a-day-in-the-soc","troubleshooting-like-a-pro","siem-log-analysis-finding-signals-in-the-noise","incident-response-what-to-do-when-it-goes-wrong","backup-disaster-recovery-surviving-the-worst-case","monitoring-observability-know-before-users-complain","itil-service-management-how-it-runs-as-a-business","performance-capacity-finding-and-fixing-bottlenecks","observability-knowing-what-your-systems-are-doing","sre-engineering-reliability-with-data-not-heroics","incident-command-running-a-major-incident-without-chaos","postgresql-administration-database-ops-101","web-server-hardening-nginx-apache-tls-done-right","writing-runbooks-that-people-actually-follow","capacity-planning-answering-will-we-run-out-of-room-before-y","writing-a-postmortem-people-actually-learn-from","chaos-engineering-breaking-things-on-purpose","distributed-tracing-opentelemetry","soar-security-orchestration-automation-response","load-performance-testing","prometheus-grafana-metrics-dashboards","golden-signals-red-use-what-to-measure","slis-slos-error-budgets","structured-logging-log-pipelines","on-call-done-humanely","automation-risk-discipline-blast-radius-approval-gates-the-k"],"devops":["cicd-automate-the-path-from-code-to-production","kubernetes-container-orchestration-at-scale","infrastructure-as-code-servers-you-define-in-text-files","container-security-hardening-docker-images","kubernetes-container-orchestration-fundamentals","cicd-pipelines-from-commit-to-production-automatically","terraform-infrastructure-as-code-in-practice","message-queues-event-driven-architecture","caching-strategies-from-app-to-cdn","serverless-faas-code-without-managing-servers","object-storage-s3-the-cloud-storage-model","deployment-strategies-blue-green-canary-rolling","cap-theorem-consistency-models","service-mesh-istio-linkerd-the-sidecar-pattern","gitops-git-as-the-source-of-truth-for-operations","finops-cloud-cost-management","what-devops-actually-is-culture-over-tools","the-three-ways-flow-feedback-learning","dora-metrics-measuring-delivery-performance","value-stream-mapping-find-the-bottleneck","platform-engineering-the-internal-developer-platform","cicd-pipeline-design-stages-gates-artifacts","github-actions-workflows-jobs-secrets","jenkins-gitlab-ci-circleci-the-landscape","branching-strategies-trunk-vs-github-flow-vs-gitflow","progressive-delivery-flags-canary-in-the-pipeline","docker-deep-multi-stage-builds-image-slimming","kubernetes-objects-the-ones-you-actually-use","helm-kustomize-packaging-manifests","kubernetes-security-rbac-network-policies-pod-security","configuration-management-ansible-the-alternatives","secrets-management-vault-kubernetes-secrets","software-supply-chain-security-sbom-slsa-sigstore","policy-as-code-oparego-kyverno","artifact-registry-management","kubernetes-networking-storage-cni-csi"],"pentest":["penetration-testing-phases","owasp-top-10-2021","sqlmap-sql-injection-tool-reference","vulnerability-scanning","kali-linux-arsenal","hak5-gear","hardware-rf-hacking","c2-pivoting","re-cloud-fuzzing","methodology-phases","reconnaissance-osint","scanning-enumeration","exploitation","post-exploitation-privesc","web-wireless-reporting","ethical-hacking-101","scoping-rules-of-engagement","getting-started-in-ethical-hacking-the-right-way","basic-recon-enumeration-know-your-target","web-application-pentesting-hacking-the-web-safely","recon-methodology-intelligence-before-attack","password-attacks-how-credentials-get-cracked","privilege-escalation-from-foothold-to-full-control","privilege-escalation-from-low-user-to-rootadmin","pentest-reporting-the-skill-that-makes-or-breaks-your-career","password-attacks-101-cracking-spraying-and-why-mfa-matters","reading-an-nmap-scan-like-a-pro","web-app-basics-finding-your-first-idor-lab-practice","social-engineering-101-why-pretexting-works-on-smart-people-"],"linux":["linux-filesystem-hierarchy-fhs","linux-file-permissions-model","linux-boot-process-biosuefi-systemd","ssh-commands-keys-tunneling","tmux-terminal-multiplexer","unix-linux-commands-quick-reference","raid-levels-reference","comptia-a-hardware-quick-reference","docker-containers-images-compose","yaml-config-language-reference","kubernetes-container-orchestration-reference","filesystem-navigation","file-ops-text-processing","permissions-ownership","users-groups-privilege","processes-services","package-management","networking-cli","shell-cron-hardening","linux-for-newcomers","permissions-packages-for-newcomers","shell-scripting-automate-repetitive-work","cron-jobs-scheduling-tasks-in-linux","processes-signals-running-programs-in-linux","systemd-managing-linux-services","disk-management-partitions-filesystems-lvm","docker-containers-package-once-run-anywhere","awk-sed-the-text-processing-powerhouses","user-group-management-who-can-do-what-in-linux","package-management-installing-and-managing-software","terminal-text-editors-editing-files-without-a-gui","linux-permissions-who-can-do-what-in-depth","ssh-secure-remote-access-done-right","boot-process-logs-understanding-how-linux-starts-and-speaks","storage-management-disks-partitions-lvm-raid","the-ip-command-modern-linux-networking","robust-bash-scripts-that-dont-silently-destroy-things","under-the-hood-namespaces-cgroups","performance-debugging-when-you-need-to-go-deeper","nfs-samba-sharing-files-across-the-network","advanced-bash-scripting-patterns-for-reliable-scripts","lvm-storage-flexible-disk-management-on-linux","mail-servers-postfix-dovecot-email-plumbing","high-availability-keeping-services-up-when-servers-fail","container-internals-what-docker-is-actually-built-from","systemd-essentials-services-units-and-why-things-start-at-bo","file-permissions-demystified-rwx-octal-notation-and-chmod","process-management-finding-and-taming-runaway-processes","the-disk-is-full-diagnosing-storage-problems-like-a-calm-pro","linux-firewalls-iptables-nftables-ufw","selinux-apparmor-mandatory-access-control","ebpf-programmable-kernel-observability-security","podman-rootless-containers","systemd-deep-units-timers-journald","zfs-btrfs-snapshots-integrity","advanced-bash-traps-expansion-robust-scripts","secure-boot-luks-integrity-measured-boot-dm-verity-ima","package-image-building-from-rpmdeb-to-immutable-linux"],"ai":["machine-learning-pipeline","ml-learning-paradigms","agentic-ai-orchestration","ai-ethics-responsible-ai-nist-ai-rmf","ml-foundations","neural-networks-deep-learning","llms-generative-ai","ai-for-defense-blue-team","adversarial-ai-ai-threats-red-team","ai-governance-frameworks","ai-glossary-quick-reference","ai-ml-for-beginners","using-ai-well-prompting-responsibility","prompt-engineering-getting-better-answers-from-ai","ai-tools-for-it-work-practical-everyday-use","ai-ethics-the-human-side-of-machine-intelligence","building-with-ai-apis-from-prompt-to-production","machine-learning-fundamentals-how-machines-learn","embeddings-rag-giving-ai-access-to-your-own-data","ai-security-attacking-and-defending-ai-systems","ml-pipeline-from-raw-data-to-a-serving-model","retrieval-augmented-generation-rag-explained-simply","tokens-context-windows-and-why-just-paste-the-whole-codebase","prompt-injection-the-sql-injection-of-the-ai-world","fine-tuning-vs-prompting-vs-rag-picking-the-right-tool","bias-in-ai-models-where-it-comes-from-and-why-just-remove-it","model-context-protocol-mcp-usb-c-for-ai","etl-data-pipelines-moving-data-at-scale","vector-databases-similarity-search-at-scale","mlops-shipping-monitoring-models-in-production","fine-tuning-vs-rag-vs-prompting-when-to-use-which","lora-quantization-tokenization-internals","running-local-llms-ollama-llamacpp-lm-studio","llm-evaluation-guardrails-diffusion-models","function-calling-tools-letting-a-model-act","structured-output-validation-getting-json-you-can-trust","cost-latency-optimization-caching-batching-model-tiering","observability-for-ai-tracing-token-accounting-quality-monito","the-transformer-attention-and-why-it-changed-everything","training-pipeline-pretraining-sft-rlhf-dpo","inference-internals-kv-cache-context-windows-sampling","multi-agent-systems-orchestration-hand-offs-the-coordination","agent-frameworks-what-they-give-you-and-what-they-cost","agent-safety-sandboxing-permissions-blast-radius-human-in-th","deploying-ai-assistants-copilot-licensing-data-boundaries","shadow-ai-finding-it-and-offering-a-sanctioned-path-instead","ai-acceptable-use-a-policy-people-will-actually-follow","data-governance-for-ai-oversharing-at-the-speed-of-search","deepfakes-voicevideo-impersonation-verification-that-resists"],"script":["regular-expressions-regex","html-hypertext-markup-language","css-cascading-style-sheets","javascript-es6-through-es2025","json-javascript-object-notation","python-scripting-automation","powershell-windows-automation","bash-bourne-again-shell","zsh-z-shell","go-systems-cloud-language","powershell-scripting-reference","bash-scripting-debian-ubuntu-reference","html-structure-semantic-elements","css-selectors-layout-variables","javascript-es2022-reference","json-jq-data-format-cli-processor","sql-query-reference","url-encoding-percent-encoding-reference","programming-fundamentals-concepts-vocabulary","object-oriented-programming-classes-objects-the-4-pillars","data-structures-how-data-is-organised-in-memory","big-o-notation-measuring-algorithm-efficiency","design-patterns-reusable-solutions-to-common-problems","rest-http-apis-how-the-web-communicates","git-version-control-reference","programming-from-zero-start-here","variables-data-types-storing-information","control-flow-decisions-repetition","functions-reusable-building-blocks","data-structures-lists-keyvalue","errors-debugging-when-things-break","the-workflow-good-habits","version-control-with-git-save-points","apis-data-formats-how-programs-talk","operators-expressions","working-with-text-strings","input-output-talking-to-the-user","scope-where-variables-live","which-language-should-i-learn-first","how-the-web-works-for-coders","secure-coding-basics-beginner","how-computers-think-bits-binary","files-paths-the-command-line","thinking-in-algorithms","programming-paradigms-gently","testing-your-code","setting-up-to-code","learning-to-learn-code","numbers-math-rounding-gotchas","looping-over-data-iteration-patterns","standard-library-packages","handling-errors-gracefully","reading-writing-files","refactoring-clean-code","regex-in-plain-english-gentle-intro","conditionals-deep-dive","truthiness-common-pitfalls","variables-const-let-naming","dates-times-time-zones","a-first-look-at-async","capstone-read-a-whole-tiny-program","apis-http-how-programs-talk-to-each-other","json-the-universal-data-language","modules-packages-pip-using-other-peoples-code","object-oriented-programming-classes-objects","choosing-the-right-data-structure","list-comprehensions-generators-pythonic-power","context-managers-decorators-elegant-python-patterns","building-cli-tools-in-python-argparse-click","type-hints-dataclasses-self-documenting-code","testing-with-pytest-prove-your-code-works","sql-databases-where-data-actually-lives","git-version-control-every-developer-needs","environment-variables-configuration-keep-secrets-out-of-code","logging-stop-using-print-use-logging","reproducible-python-environments-make-it-work-everywhere","async-programming-do-more-without-waiting","web-scraping-extracting-data-from-websites","regular-expressions-pattern-matching-power","string-processing-text-manipulation-toolkit","exception-handling-writing-code-that-doesnt-crash","working-with-files-reading-writing-and-paths","debugging-finding-out-why-your-code-lies-to-you","virtual-environments-isolating-project-dependencies","it-automation-scripting-the-boring-stuff-away","building-a-rest-api-from-zero-to-running-endpoint","dates-times-trickier-than-you-think","data-analysis-with-pandas-spreadsheets-in-code","code-quality-tooling-let-robots-enforce-the-boring-rules","mocking-testing-code-that-talks-to-the-outside-world","concurrency-doing-more-than-one-thing-at-once","sockets-networking-from-first-principles","building-a-real-cli-tool-putting-it-all-together","consuming-apis-robustly-beyond-requestsget","encoding-bytes-text-and-why-it-works-on-my-machine","solid-principles-writing-code-that-survives-change","design-patterns-named-solutions-to-common-problems","cloud-automation-controlling-infrastructure-with-code","data-validation-never-trust-input","webhooks-chatops-event-driven-automation","serialization-saving-objects-without-opening-a-hole","testing-strategy-why-and-how-to-test","powershell-scripting-automate-windows-cross-platform","iot-security-securing-connected-devices","python-asyncawait-concurrent-io-without-threads","regular-expressions-pattern-matching-that-pays-off-forever","git-advanced-workflows-beyond-add-commit-push","network-automation-configuring-switches-routers-with-python","web-scraping-extracting-data-from-websites-with-python","working-with-apis-and-json-in-python","regular-expressions-a-survival-guide-for-it-tasks","scheduling-scripts-the-right-way-cron-timers-and-idempotency","python-the-everything-language","typescript-javascript-that-scales","graphql-ask-for-exactly-what-you-need","databases-relational-vs-nosql-acid-indexing","websockets-sse-real-time-on-the-web","api-design-versioning-pagination-rate-limits-idempotency","grpc-protocol-buffers-high-performance-rpc","oltp-vs-olap-transactional-vs-analytical-data","webassembly-wasm-near-native-speed-in-the-browser","progressive-web-apps-pwa-web-apps-that-feel-native","web-accessibility-a11y-building-for-everyone","rust-safe-systems-programming","java-the-enterprise-workhorse","c-net-microsofts-cross-platform-stack","ruby-optimized-for-developer-happiness","php-the-language-that-runs-the-web","c-close-to-the-metal","assembly-how-programs-actually-run","semantic-versioning-dependency-management","apache-kafka-the-distributed-event-log","apache-spark-big-data-processing","orchestration-airflow-dagster","dbt-the-modern-data-stack","dimensional-modeling-star-snowflake-schemas","kotlin-swift-scala-modern-typed-application-languages","elixir-haskell-the-functional-niche-languages","microsoft-graph-from-powershell-the-modern-admin-api","jea-just-enough-administration-constrained-remoting"],"shortcut":["system-general","microsoft-office-excelword","spotify-media","dod-department-of-defense","windows","macos","terminal-bash","vim","vs-code","tmux-browser","dod-quick-reference","universal-shortcuts-everyone-should-know","text-editing-window-shortcuts","powershell-windows-and-cross-platform-scripting","git-power-user-beyond-add-commit-push","tmux-never-lose-a-session-again","text-processing-mastery-combining-the-classic-tools","intermediate-vim-editing-as-a-language","browser-power-moves-tabs-history-and-devtools-shortcuts","tmux-survival-kit-never-lose-a-terminal-session-again","vs-code-setup-settings-profiles","vs-code-command-palette-keybindings","vs-code-editing-superpowers","vs-code-debugging","vs-code-remote-dev-dev-containers","vs-code-extensions-that-matter","dotfiles-environment-management","shell-terminal-setup","runtime-version-managers","ai-pair-programming-using-it-well","terminal-productivity-work-faster-at-the-command-line","github-codespaces-cloud-dev-environments","live-share-real-time-collaborative-editing","modern-cli-tools-ripgrep-fzf-bat-jq-eza","google-chrome-keyboard-shortcuts","github-git-command-reference","api-keys-gateways-netlify-github-rest"],"philosophy":["stoicism-the-art-of-rational-endurance","machiavellianism-power-realism-strategy","psychology-mind-behavior-biases","philosophy-schools-of-thought","buddhism-the-path-to-liberation","taoism-the-way-of-nature","existentialism-absurdism","mental-models-folk-wisdom","more-models-for-a-clear-head","decision-making","wicca-sabbats-elements-tools","paganism-traditions-core-concepts","druidism-grades-awen-sacred-concepts","minimalism-intentional-living"],"productivity":["habits-time","learning-how-to-learn-build-the-skill-behind-all-skills","time-management-making-your-hours-count","the-japanese-mastery-loop-kata-poka-yoke-hansei-kaizen-shoku","hansei-the-15-minutes-that-beat-15-more","the-memory-palace-method-of-loci-for-ordered-lists","sleep-where-the-studying-actually-sticks","attention-task-switching-residue-the-cost-of-interruption","note-taking-for-learning-notes-you-never-reopen-are-theatre","study-systems-that-survive-a-brain-that-wont-cooperate"],"mind":["communication-relationships","resilience-perspective","imposter-syndrome-you-belong-here","burnout-recognizing-it-before-it-breaks-you","the-compound-effect-small-consistent-actions-build-careers","dealing-with-failure-falling-forward","survival-mindsets-hard-won-wisdom-for-a-long-it-career","surviving-on-call-when-the-pager-owns-your-night","surviving-and-thriving-in-your-first-on-call-rotation","imposter-syndrome-in-it-youre-not-the-only-one-faking-it-a-l","desk-body-eyes-wrists-back-the-dose-problem","fuel-focus-nutrition-for-a-desk-bound-brain"],"career":["it-career-paths-finding-your-lane","professional-networking-your-career-grows-through-relationsh","clear-technical-communication-the-skill-that-multiplies-ever","mentorship-the-fastest-way-to-grow","interview-preparation-getting-the-job","building-a-home-lab-where-you-actually-learn","certifications-the-roadmap-and-how-to-actually-study","technical-writing-the-underrated-career-superpower","building-in-public-your-reputation-compounds","professional-ethics-the-responsibility-that-comes-with-acces","breaking-into-it-from-zero-to-hired","growing-into-senior-beyond-technical-skill","the-craftspersons-mindset-tying-it-all-together","soft-skills-the-difference-between-a-good-and-great-it-pro","home-lab-practicing-it-skills-without-breaking-production","certification-roadmap-charting-a-path-through-the-alphabet-s","building-a-home-lab-without-breaking-the-bank","negotiating-your-first-it-offer-without-feeling-like-youre-b","money-adulting-basics","financial-basics-for-it-workers-build-while-you-build-a-care","remote-work-working-well-from-anywhere"],"military":["how-staff-codes-work-letter-number-sub","prefix-letters-j-g-s-n-a-c-m-f","functional-numbers-1-through-9-what-each-number-means","sub-designators-the-third-digit-eg-j63","branch-comparison-same-number-different-context","quick-reference-full-cross-matrix","staff-system-overview","staff-functions-19","common-codes-decoded","reading-military-codes-beginner","ranks-echelons-very-basic","military-communication-standards-clear-concise-correct","ooda-loop-decision-making-under-pressure","commanders-intent-empowering-action-without-micromanaging","after-action-review-learning-from-every-event","troop-leading-procedures-a-framework-for-planning-anything","pace-planning-redundancy-by-design","leadership-styles-mission-command-cohesion","opsec-operational-security-in-cyber-real-life","leadership-military-principles-applied-to-it-teams","translating-military-experience-into-it-resume-language","using-the-gi-bill-and-tuition-assistance-for-it-certificatio","networking-events-without-the-awkwardness-a-veterans-field-g","classification-levels-markings-damage-not-importance","cover-sheets-sf-703-sf-704-sf-705","media-equipment-labels-sf-706-through-sf-712","container-end-of-day-forms-sf-700-sf-701-sf-702","clearance-paperwork-sf-86-sf-312-sf-714","spills-sanitisation-reporting-the-first-ten-minutes","mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord","the-intelligence-cycle-direction-collection-processing-disse","red-teaming-as-a-discipline-premortems-structured-contrarian"],"redteam":["rules-of-engagement-read-this-first","nmap-the-network-mapper-deep-dive","masscan-rustscan-internet-scale-port-discovery","theharvester-recon-ng-osint-frameworks","amass-subfinder-subdomain-enumeration","shodan-censys-search-engines-for-exposed-devices","google-dorking-maltego-spiderfoot","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner","sqlmap-automated-sql-injection","ffuf-gobuster-content-parameter-fuzzing","nuclei-templated-vulnerability-scanning","nikto-wpscan-server-cms-scanning","metasploit-framework-modules-sessions-workflow","msfvenom-payload-generation","searchsploit-exploit-db-finding-public-exploits","impacket-the-windowsad-python-toolkit","bloodhound-sharphound-attack-path-graphing","mimikatz-credential-extraction","kerberos-attacks-rubeus-kerbrute","responder-ntlm-relay","adcs-abuse-certipy-the-esc-techniques","c2-concepts-beacons-listeners-redirectors","cobalt-strike-the-commercial-standard","sliver-the-open-source-modern-c2","mythic-havoc-empire-the-c2-ecosystem","hashcat-gpu-password-cracking","john-the-ripper-the-versatile-cracker","hydra-medusa-online-login-attacks","wordlists-hash-identification","aircrack-ng-wi-fi-auditing-suite","wifite-hcxdumptool-automated-wi-fi-pmkid","bettercap-the-mitm-framework","flipper-zero-sub-ghz-rfid-tools","badusb-rf-implants-rubber-ducky-omg-proxmark-hackrf","living-off-the-land-lolbas-gtfobins","privilege-escalation-scanners-peas-powerup","pivoting-tunneling-chisel-ligolo-ng-proxychains","data-exfiltration-channels-dns-icmp-https","pacu-the-aws-exploitation-framework","cloudfox-enumerate-iam-attack-surface-enumeration","kubernetes-attacks-rbac-abuse-container-escape","cloud-credential-attacks-the-purple-team-bridge"],"blueteam":["wireshark-packet-analysis","tcpdump-capture-from-the-command-line","zeek-network-metadata-logging","suricata-snort-signature-idsips","arkime-ntopng-full-capture-traffic-analytics","splunk-spl-the-siem-standard","elastic-elk-stack-open-source-log-analytics","wazuh-open-source-xdrsiem","graylog-loki-log-aggregation-alternatives","sigma-write-detections-once-run-anywhere","sysmon-the-windows-telemetry-powerhouse","osquery-your-fleet-as-a-sql-database","velociraptor-endpoint-dfir-hunting-at-scale","windows-event-logs-the-ids-that-matter","auditd-linux-endpoint-logging","yara-pattern-matching-rules-for-malware","mitre-attck-navigator-coverage-driven-detection","adversary-emulation-atomic-red-team-caldera","detection-tuning-the-pyramid-of-pain","volatility-memory-forensics","autopsy-the-sleuth-kit-disk-forensics","kape-plaso-triage-super-timelines","windows-forensic-artifacts","chain-of-custody-evidence-handling","misp-opencti-threat-intel-platforms","stix-taxii-the-sharing-standards","malware-sandboxes-virustotal-anyrun-hybrid-analysis","threat-hunting-assume-breach-go-looking","vulnerability-scanners-nessus-openvas","cis-benchmarks-cis-cat-hardening-baselines","lynis-linux-audit-hardening","openscap-disa-stigs-compliance-driven-hardening","patch-config-management-as-a-control","honeypots-canarytokens-deception-tech","email-security-spf-dkim-dmarc","identity-threat-detection-response-itdr","purple-teaming-closing-the-detection-gap"],"cloud":["cloud-fundamentals-regions-azs-shared-responsibility","aws-getting-started","aws-cli-cloudshell","google-cloud-getting-started","gcloud-cli-cloud-shell","cloud-rosetta-stone-aws-gcp-azure","aws-iam-users-roles-policies","aws-iam-deep-assumerole-sts-boundaries","gcp-iam-members-roles-hierarchy","gcp-service-accounts-workload-identity","cloud-iam-pitfalls-privilege-escalation","aws-vpc-subnets-security-groups-nacls","aws-load-balancing-dns-elb-route-53-cloudfront","gcp-vpc-global-networks-firewall-rules","gcp-load-balancing-dns","hybrid-connectivity-vpn-interconnect-peering","aws-compute-ec2-amis-auto-scaling","aws-serverless-containers-lambda-ecs-eks-fargate","gcp-compute-compute-engine-migs","gcp-serverless-containers-cloud-run-functions-gke","choosing-compute-vm-vs-container-vs-serverless","aws-storage-s3-classes-ebs-efs","aws-databases-rds-aurora-dynamodb","gcp-storage-cloud-storage-persistent-disk-filestore","gcp-databases-cloud-sql-spanner-firestore","bigquery-serverless-data-warehouse","aws-security-stack-cloudtrail-guardduty-security-hub","aws-data-protection-kms-secrets-manager","gcp-security-cloud-audit-logs-security-command-center","gcp-data-protection-cloud-kms-secret-manager-vpc-sc","cspm-prowler-scoutsuite-steampipe","terraform-on-aws-gcp","aws-native-iac-cloudformation-cdk","cloud-cost-control-budgets-tags-rightsizing","landing-zones-multi-account-structure","gcp-native-iac-deployment-manager-config-controller","cloud-cicd-codepipeline-cloud-build","aws-observability-cloudwatch-x-ray","gcp-observability-cloud-monitoring-logging-trace","well-architected-the-architecture-framework","azure-getting-started-entra-id","azure-core-resource-groups-vnet-vms-storage","azure-security-defender-key-vault-sentinel","azure-hierarchy-rbac-scopes-policy","azure-networking-vnet-nsg-the-load-balancer-family","azure-compute-storage-picking-the-right-sku","azure-monitor-log-analytics-kql","azure-troubleshooting-playbook","entra-id-sign-in-conditional-access-troubleshooting"],"cs":["big-o-in-practice-what-the-notation-hides","amortized-analysis-why-a-dynamic-array-is-o1-on-average","time-vs-space-trade-offs-what-caching-actually-costs","recursion-induction-trusting-a-function-that-calls-itself","p-np-knowing-when-to-stop-looking-for-an-exact-answer","memory-layout-cache-locality-why-arrays-beat-linked-lists","hash-tables-collisions-load-factor-the-dos-that-exploits-the","trees-bst-balanced-heap-trie-and-what-each-is-actually-for","graphs-representation-traversal-the-four-algorithms-worth-kn","probabilistic-structures-bloom-filters-hyperloglog-sketches","sorting-searching-why-your-language-picked-the-one-it-did","divide-conquer-greedy-dynamic-programming-recognising-which-","string-algorithms-matching-edit-distance-where-regex-fits","randomised-algorithms-sampling-reservoirs-monte-carlo","algorithm-interview-patterns-the-eight-that-cover-most-quest","processes-threads-scheduling-what-a-context-switch-costs","virtual-memory-paging-the-tlb-swaps-bad-reputation","concurrency-primitives-mutexes-semaphores-conditions-atomics","deadlock-livelock-the-four-conditions-and-which-one-to-break","filesystems-from-the-inside-inodes-journaling-crash-consiste","time-in-distributed-systems-why-timestamps-cannot-order-even","consensus-raft-and-paxos-without-the-paper","failure-detection-flp-why-is-it-down-has-no-perfect-answer","caches-the-memory-hierarchy-the-numbers-every-engineer-shoul","number-representation-twos-complement-ieee-754-the-bugs-each","speculative-execution-its-security-cost-spectre-and-meltdown","instruction-execution-pipelining-superscalar-why-branches-ar","instruction-sets-x86-64-arm64-risc-v-why-the-shift-is-happen","how-a-compiler-works-lexing-parsing-ir-codegen","interpreters-bytecode-jit-the-spectrum-from-python-to-the-jv","type-systems-static-dynamic-and-what-types-actually-buy-you","garbage-collection-generational-collectors-pauses-tuning","undefined-behaviour-memory-safety-the-class-behind-most-cves"],"eng":["scalability-101-vertical-vs-horizontal","load-balancing-sharding","back-of-the-envelope-estimation","designing-for-failure","the-system-design-interview-a-framework","monolith-vs-microservices-vs-modular-monolith","event-driven-architecture","clean-hexagonal-architecture","cqrs-event-sourcing","the-twelve-factor-app","domain-driven-design-ddd","solid-principles","coupling-cohesion","api-first-contract-driven-design","idempotency-exactly-once-safe-retries","clean-code-naming","code-review-doing-it-well","testing-strategy-the-test-pyramid","technical-debt-recognize-pay-it-down","adrs-design-docs","resilience-patterns-circuit-breaker-retry-timeout","distributed-transactions-saga-outbox","backpressure-flow-control","consistency-in-practice-quorums-tunable-reads","the-engineering-ladder-junior-to-principal","staff-archetypes","tech-lead-vs-engineering-manager","influence-without-authority","cert-roadmaps-choosing-a-path","cloud-native-serverless-architecture-patterns","schema-data-modeling-patterns","estimation-planning","career-ladders-interviews","coder-vs-programmer-vs-developer-vs-architect","the-wider-it-org-roles-beyond-writing-code","unified-endpoint-management-uem-engineer"],"data":["how-a-database-actually-works","the-relational-model-keys-integrity","normalization-1nf-through-bcnf","acid-transactions-isolation-levels","er-modeling-designing-the-schema","sql-joins-every-type-and-the-null-traps","window-functions-analytics-without-collapsing-rows","ctes-recursion-readable-composable-queries","aggregation-group-by-having-rollup","subqueries-exists-set-operations","indexes-explained-b-tree-hash-covering","reading-query-plans-explain-analyze","query-optimization-sargability-n1","locking-mvcc-concurrency-without-chaos","partitioning-sharding-scaling-one-big-table","postgresql-the-default-choice","postgres-power-features-jsonb-full-text","mysql-mariadb-the-other-giant","sqlite-the-database-thats-everywhere","connection-pooling-surviving-many-clients","the-nosql-landscape-four-families","mongodb-documents-the-aggregation-pipeline","redis-the-in-memory-multi-tool","cassandra-dynamodb-wide-column-at-scale","graph-databases-when-relationships-are-the-data","oltp-vs-olap-rows-vs-columns","columnar-engines-parquet-duckdb-clickhouse","warehouse-vs-lake-vs-lakehouse","the-semantic-layer-metrics","data-quality-observability","backups-point-in-time-recovery","replication-high-availability","schema-migrations-zero-downtime-change","database-security-least-privilege-rls","monitoring-a-database-what-to-watch","data-roles-who-does-what","designing-a-schema-from-requirements","time-series-event-data","vector-databases-embeddings-similarity-search","the-data-interview"],"web":["how-the-browser-renders-a-page","reflow-repaint-what-causes-jank","the-dom-events-bubbling-delegation","web-storage-cookies-localstorage-indexeddb","devtools-mastery","flexbox-one-dimensional-layout","css-grid-two-dimensional-layout","responsive-design-fluid-mobile-first","modern-css-custom-properties-has-layers","design-systems-tokens-tailwind","closures-scope-this","async-deep-promises-await-the-event-loop","prototypes-modern-classes","modules-bundlers-esm-vite-tree-shaking","typescript-types-for-javascript","react-components-hooks-the-mental-model","react-patterns-pitfalls","vue-svelte-other-reactivity-models","meta-frameworks-nextjs-rendering-modes","state-management-when-you-actually-need-it","fetch-rest-cors-in-practice","graphql-on-the-backend-schema-resolvers-caching","realtime-websockets-sse-polling","frontend-auth-tokens-cookies-oauth","data-fetching-patterns-react-query-caching","web-performance-core-web-vitals","web-accessibility-a11y-wcag-aria","frontend-testing-unit-component-e2e","frontend-security-xss-csrf-csp","seo-metadata-for-developers","progressive-web-apps-offline-installable","rendering-at-the-edge-cdns-edge-functions","webassembly-native-speed-in-the-browser","frontend-build-deploy-ci-preview-deploys","the-full-stack-picture-how-it-all-connects"],"endpoint":["microsoft-endpoint-configuration-manager-mecm","azure-ad-microsoft-entra-id-endpoint-identity","microsoft-intune-cloud-mdm-mam","windows-autopilot-zero-touch-provisioning","enrollment-status-page-esp","co-management-cloud-attach","conditional-access-device-compliance","troubleshooting-toolkit-log-reference","glossary-acronyms-logs-task-sequence-variables","mecm-client-health-install-repair-the-cycles","mecm-deployment-content-troubleshooting","mecm-osd-task-sequence-failure-triage","mecm-site-health-server-log-map","configuration-profiles-settings-catalog-templates-custom","policy-conflicts-proving-which-one-won","security-baselines-without-breaking-the-fleet","administrative-templates-admx-backed-policy","assignment-strategy-users-devices-filters-exclusions","win32-app-packaging-intunewin-end-to-end","install-contexts-system-vs-user","store-lob-enterprise-app-catalog-apps","app-protection-policies-mam-without-enrolment","application-troubleshooting-reading-the-ime-log","windows-update-for-business-rings-deferrals-deadlines","feature-vs-quality-vs-driver-updates","windows-autopatch-what-it-takes-over","update-compliance-reporting-where-the-truth-lives","emergency-patching-advisory-to-verified","windows-administration-fundamentals","bitlocker-at-scale-silent-enablement-key-escrow-recovery","defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro","local-admin-rights-removing-them-and-endpoint-privilege-mana","windows-laps-local-admin-password-rotation-in-entra-and-ad","firewall-removable-media-policy-the-two-controls-auditors-as","compliance-policies-deep-settings-grace-periods-what-non-com","device-trust-end-to-end-enrolment-compliance-ca-access","reporting-on-drift-finding-devices-that-quietly-stopped-comp","the-identityendpoint-seam-the-failure-that-lands-both-teams-","macos-for-windows-admins-the-translation-table-security-mode","apple-fleet-management-business-manager-ade-jamf-vs-intune-f","ios-android-enterprise-supervision-work-profiles-mam"],"infra":["windows-server-editions-licensing-what-you-are-actually-buyi","server-core-why-you-would-remove-the-gui-and-how-you-manage-","server-manager-rsat-windows-admin-center-which-console-wins","roles-features-what-installing-a-role-actually-changes","server-hardening-baseline-the-short-list-that-removes-most-r","ad-ds-boundaries-when-to-add-an-ou-a-domain-or-a-forest","fsmo-roles-the-five-jobs-that-cannot-be-done-by-everyone","ad-replication-how-changes-travel-and-triage-when-they-stop","trusts-direction-transitivity-why-they-are-backwards","sites-subnets-why-clients-authenticate-against-the-wrong-dc","group-policy-architecture-where-the-settings-actually-live","processing-order-precedence-lsdou-enforcement-loopback","filtering-security-groups-wmi-item-level-targeting","group-policy-preferences-the-half-people-forget-exists","gpo-troubleshooting-proving-what-a-machine-actually-received","group-nesting-strategy-agdlp-and-why-nested-groups-become-a-","service-accounts-gmsa-and-retiring-the-shared-password","kerberos-in-operations-spns-delegation-clock-skew","entra-connect-hybrid-identity-choosing-how-passwords-are-che","cleaning-up-a-legacy-directory-stale-objects-over-permissive","windows-dns-administration-zones-scavenging-forwarders","dhcp-administration-scopes-reservations-failover-relay","file-services-share-vs-ntfs-permissions-dfs-quotas","ad-cs-design-offline-roots-issuing-cas-publishing","certificate-templates-the-settings-that-matter-and-the-ones-","certificate-lifecycle-auto-enrolment-and-the-expiry-nobody-s","domain-controller-recovery-authoritative-vs-non-authoritativ","decommissioning-a-server-properly-the-checklist-that-prevent","virtualization-fundamentals-hypervisors-overcommit-the-noisy","hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr","snapshots-are-not-backups-what-they-cost-and-how-they-bite","backup-strategy-3-2-1-1-0-and-the-schemes-that-make-restores","ransomware-resilient-backup-immutability-isolation-assuming-","restore-testing-dr-design-turning-backups-into-a-recovery-ca"],"m365":["m365-tenant-anatomy-the-tenant-its-domains-the-admin-centres","licensing-without-tears-e3-e5-business-group-based-assignmen","admin-roles-least-privilege-the-roles-worth-knowing-and-pim-","service-health-the-message-center-knowing-before-the-tickets","mail-flow-connectors-transport-rules-the-path-a-message-take","mailbox-types-delegation-user-shared-room-equipment","eop-defender-for-office-anti-spam-anti-phish-safe-links-quar","message-trace-header-analysis-proving-where-a-message-died","sharepoint-online-architecture-sites-libraries-the-limits-th","the-sharing-permissions-model-why-it-sprawls-and-how-to-cont","onedrive-known-folder-move-files-on-demand-sync-triage","teams-architecture-what-a-team-actually-is","teams-governance-sprawl-naming-expiry-the-guest-question","retention-policies-vs-retention-labels-the-distinction-that-","sensitivity-labels-dlp-classification-that-survives-contact-","ediscovery-content-search-the-audit-log-answering-legal-with","backup-for-m365-why-native-retention-is-not-a-backup","the-m365-troubleshooting-playbook-tenant-identity-licence-po","teams-voice-phone-system-calling-plans-direct-routing-operat","teams-call-quality-cqd-the-network-requirements-the-real-cul","teams-policies-meeting-messaging-app-the-assignment-preceden","retention-litigation-hold-archiving-legals-requirements-in-m","purview-overview-the-compliance-surface-mapped-to-what-audit","the-admin-modules-exchange-online-teams-graph-from-one-conso","reporting-usage-analytics-adoption-data-that-answers-a-real-","tenant-to-tenant-mergers-the-migration-nobody-plans-enough-t"],"math":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications","unit-3-integrals-series-area-techniques-differential-equatio","chapter-tests-the-final-where-the-marks-actually-go","logarithms-exponents-rules-and-how-to-solve","trigonometry-the-unit-circle-identities-inverses","the-two-pictures-derivative-as-slope-integral-as-area","algebra-geometry-formulas-the-prerequisites","shape-formulas-labelled-diagrams","ti-84-plus-ce-the-keys-that-matter-for-calculus","the-named-theorems-rolle-mvt-ivt-evt-squeeze","sin-cos-tan-sec-what-they-actually-are","implicit-differentiation-choosing-which-rule-first","numerical-integration-trapezoidal-rule-midpoint-simpsons","series-choosing-a-test-and-radius-of-convergence"],"quotes":["sourced-quotes-why-this-collection-has-citations","stoic-quotes-marcus-aurelius-epictetus-seneca","eastern-quotes-tao-te-ching-zen-the-buddhist-canon","modern-existentialist-quotes","misattributed-famous-lines-nobody-can-source"],"acronym":["how-to-use-this-dictionary","acronyms-09","acronyms-a","acronyms-b","acronyms-c","acronyms-d","acronyms-e","acronyms-f","acronyms-g","acronyms-h","acronyms-i","acronyms-j","acronyms-k","acronyms-l","acronyms-m","acronyms-n","acronyms-o","acronyms-p","acronyms-q","acronyms-r","acronyms-s","acronyms-t","acronyms-u","acronyms-v","acronyms-w","acronyms-x","acronyms-y","acronyms-z","by-area-ai","by-area-business","by-area-certifications","by-area-cloud","by-area-compliance","by-area-computer-science","by-area-cryptography","by-area-data","by-area-devops","by-area-directory","by-area-electronics","by-area-endpoint","by-area-engineering","by-area-enterprise","by-area-government","by-area-hardware","by-area-health","by-area-infrastructure","by-area-linux","by-area-misc","by-area-networking","by-area-operations","by-area-organizations","by-area-risk","by-area-security","by-area-standards","by-area-storage","by-area-systems","by-area-virtualization","by-area-web","by-area-windows"]}</script>
 </body>
 </html>

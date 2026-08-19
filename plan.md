@@ -1592,14 +1592,14 @@ Pairs directly with the `redteam` AD-attack cards — same objects, defender's v
 - [x] Licensing Without Tears — E3 vs E5 vs Business, add-ons, group-based licensing
 - [x] Admin Roles & Least Privilege — the built-in roles worth knowing, and PIM for the rest
 - [x] Service Health & Message Center — knowing about the outage before the tickets
-- [ ] Tenant-to-Tenant & Mergers — the migration nobody plans enough time for
+- [x] Tenant-to-Tenant & Mergers — the migration nobody plans enough time for
 
 **Wave W2 — Exchange Online**
 - [x] Mail Flow Explained — connectors, transport rules, the path a message actually takes
 - [x] Mailbox Types — user, shared, room, equipment, and delegation done right
 - [x] Anti-Spam & Anti-Phish — EOP, Defender for Office, quarantine, safe links/attachments
 - [x] Message Trace & Header Analysis — proving where a message went, and where it died
-- [ ] Retention, Litigation Hold & Archiving — legal's requirements in mailbox terms
+- [x] Retention, Litigation Hold & Archiving — legal's requirements in mailbox terms
 
 **Wave W3 — SharePoint & OneDrive**
 - [x] SharePoint Online Architecture — sites, libraries, lists, and the 400-URL trap
@@ -1610,22 +1610,22 @@ Pairs directly with the `redteam` AD-attack cards — same objects, defender's v
 
 **Wave W4 — Teams**
 - [x] Teams Architecture — what a team really is (M365 group + SharePoint + Exchange + chat)
-- [ ] Teams Policies — meeting, messaging, app and calling policy packages
-- [ ] Teams Voice Basics — Phone System, calling plans, Direct Routing, SIP at a glance
-- [ ] Teams Call Quality Troubleshooting — CQD, network requirements, the real culprits
+- [x] Teams Policies — meeting, messaging, app and calling policy packages
+- [x] Teams Voice Basics — Phone System, calling plans, Direct Routing, SIP at a glance
+- [x] Teams Call Quality Troubleshooting — CQD, network requirements, the real culprits
 - [x] Governance & Sprawl — naming policy, expiration, the 4,000-team problem
 
 **Wave W5 — Purview, Compliance & Data**
-- [ ] Purview Overview — the compliance surface, mapped to what auditors ask for
+- [x] Purview Overview — the compliance surface, mapped to what auditors ask for
 - [x] Sensitivity Labels & DLP — classification that survives contact with users
 - [x] Retention Policies vs Retention Labels — the distinction that trips everyone
 - [x] eDiscovery & Content Search — running a legal hold end to end
-- [~] Insider Risk & Audit Log — the unified audit log shipped; Insider Risk Management itself did not
+- [x] Insider Risk & Audit Log — audit log in wave 1; Insider Risk in the Purview overview, wave 2
 
 **Wave W6 — M365 Operations & Troubleshooting**
-- [ ] The PowerShell Modules — Graph, Exchange Online, Teams; connecting and staying connected
-- [ ] Graph API for Admins — batch operations, permissions, throttling
-- [ ] Reporting & Usage Analytics — adoption data that answers a real question
+- [x] The PowerShell Modules — Graph, Exchange Online, Teams; connecting and staying connected
+- [x] Graph API for Admins — batch operations, permissions, throttling
+- [x] Reporting & Usage Analytics — adoption data that answers a real question
 - [x] Backup for M365 — why native retention is not a backup
 - [x] M365 Troubleshooting Playbook — tenant, identity, licence, policy, client: in that order
 
@@ -5589,3 +5589,14 @@ migration, litigation hold in mailbox terms, Teams policy packages, Teams voice 
 quality, a Purview overview, the PowerShell modules, Graph for admins (mostly covered in
 `script`), usage reporting, and Insider Risk Management. A second wave of ~6 cards would close
 the domain; none of them is a foundation the rest depends on.
+
+> **Wave 2 shipped in the same session — Track W is closed.** Eight more cards, not six: Teams
+> voice, Teams call quality, Teams policies and precedence, retention/hold/archiving, the
+> Purview overview (carrying Insider Risk), the admin PowerShell modules, usage reporting, and
+> tenant-to-tenant migration. `m365` is **26 cards**; the site is **1,106 topics / 29 domains**.
+> All nine remaining items are ticked, and the wave-1 partial on Insider Risk is now complete.
+> Re-audited before writing: all nine were genuine voids — `meeting policy`, `calling plan`,
+> `direct routing`, `cqd`, `litigation hold`, `communication compliance`, `usage report` and
+> `tenant-to-tenant` each returned **0** mentions across the other 28 domains. The only overlap
+> found was network-side QoS and jitter in `net`, which the call-quality card cross-references
+> rather than restates.
