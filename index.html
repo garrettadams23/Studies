@@ -50872,8 +50872,8 @@ whole point of pairing these two domains.
 <span class="ctag ctag-secplus">GCIH</span>
 </div>
 <span class="domain-sub">NSM · SIEM · EDR · Detection · DFIR · Threat Intel</span>
-<span class="domain-meta" aria-label="37 topics, about 25 min to read"
->37 topics · ~25 min</span>
+<span class="domain-meta" aria-label="49 topics, about 55 min to read"
+>49 topics · ~55 min</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -52154,6 +52154,788 @@ This card is the keystone that ties the whole Red and Blue domains together.
 </div>
 </div>
 <!-- /domain-body blueteam -->
+<!-- ── TOPIC: WHAT DETECTION ENGINEERING IS ──────────────────── -->
+<div class="topic" id="what-detection-engineering-is-and-why-it-split-off-from-soc-" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🏗️</span>
+<span class="topic-name">What Detection Engineering Is — And Why It Split Off From SOC <span class="acro-exp">(Security Operations Center)</span> Analysis</span>
+<span class="topic-badge">Detection Engineering</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">A Software Discipline That Happens to Produce Detections</div>
+<div class="concept-desc">
+For years, writing rules was something analysts did between alerts, and the results looked
+like it: logic nobody else could read, no tests, no version history, and no way to tell
+whether a rule had ever fired on the thing it was written for. Detection engineering is the
+response — treating detections as a product with requirements, review, tests, deployment and
+a retirement plan. The split happened because the two jobs have different clocks. Analysis is
+interrupt-driven and measured in minutes; engineering is planned and measured in releases,
+and neither survives being done in the other's rhythm.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th></th><th>SOC analysis</th><th>Detection engineering</th></tr></thead>
+<tbody>
+<tr><td>Unit of work</td><td>An alert</td><td>A detection</td></tr>
+<tr><td>Clock</td><td>Interrupt-driven, minutes</td><td>Planned, a release cycle</td></tr>
+<tr><td>Succeeds when</td><td>The incident is resolved correctly</td><td>The rule fires on the technique and rarely otherwise</td></tr>
+<tr><td>Feedback</td><td>The next shift</td><td>Metrics over weeks, and purple-team results</td></tr>
+<tr><td>Fails as</td><td>A missed incident</td><td>A rule everyone learned to ignore</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Failure Mode It Exists to Prevent</div>
+<div class="concept-desc">
+An unengineered rule set decays in a specific, recognisable way, and every stage of the decay
+looks locally reasonable. Recognising the pattern is most of the argument for the discipline.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Stage</th><th>What happens</th></tr></thead>
+<tbody>
+<tr><td>1. A rule is written after an incident</td><td>Specific to that incident, no requirement written down</td></tr>
+<tr><td>2. It is noisy</td><td>Analysts add exclusions, one hostname at a time</td></tr>
+<tr><td>3. The exclusions accumulate</td><td>Nobody remembers which were temporary</td></tr>
+<tr><td>4. A log source changes</td><td>The rule silently stops matching anything at all</td></tr>
+<tr><td>5. It is never removed</td><td>Because nobody can prove it is not the only thing catching something</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Stage 4 is the dangerous one, because a rule that fires on nothing looks identical to a
+rule protecting a quiet environment. Everything in this track exists to make that
+distinguishable.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: THE DETECTION LIFECYCLE ────────────────────────── -->
+<div class="topic" id="the-detection-lifecycle-idea-to-retirement-and-the-gates-bet" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🔄</span>
+<span class="topic-name">The Detection Lifecycle — Idea to Retirement, and the Gates Between</span>
+<span class="topic-badge">Detection Engineering</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Flow</div>
+<div class="concept-title">Seven Stages, Each With an Exit Condition</div>
+<div class="concept-desc">
+The value of naming the stages is not process for its own sake — it is that each one has a
+condition for leaving it, so "is this rule ready?" stops being a matter of taste.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>#</th><th>Stage</th><th>Leaves when</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Idea</td><td>A threat, an incident or an intel report names a behaviour worth catching</td></tr>
+<tr><td>2</td><td>Requirement</td><td>The behaviour, the log source and the expected response are written down</td></tr>
+<tr><td>3</td><td>Logic</td><td>A query exists that matches the behaviour in your data</td></tr>
+<tr><td>4</td><td>Test</td><td>It fires on a synthetic or emulated instance, and not on a week of normal traffic</td></tr>
+<tr><td>5</td><td>Deploy</td><td>Merged, versioned, and shipped with a responder runbook</td></tr>
+<tr><td>6</td><td>Tune</td><td>Precision is acceptable, and every exclusion has a reason recorded</td></tr>
+<tr><td>7</td><td>Retire</td><td>The behaviour is impossible, better covered, or the rule is measurably useless</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Two Stages Almost Everyone Skips</div>
+<div class="concept-desc">
+Stage 2 and stage 7. Skipping the requirement means nobody can later say what the rule was
+supposed to catch, so it can never be judged — only defended. Skipping retirement means the
+rule set only ever grows, and the ratio of signal to noise falls with every addition. A
+detection programme that has never deleted a rule is not careful; it is unmaintained.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Symptom</th><th>Which stage was skipped</th></tr></thead>
+<tbody>
+<tr><td>"What is this alert telling me to do?"</td><td>2 — no requirement, so no response was ever defined</td></tr>
+<tr><td>"It has always been noisy, we just close them"</td><td>6 — tuning never had a target to hit</td></tr>
+<tr><td>"Nobody knows if it still works"</td><td>4 — it was never tested, so there is nothing to re-run</td></tr>
+<tr><td>"We have 900 rules and 40 fire"</td><td>7 — nothing has ever been retired</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: DETECTION REQUIREMENTS ─────────────────────────── -->
+<div class="topic" id="detection-requirements-writing-one-before-writing-the-rule" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📝</span>
+<span class="topic-name">Detection Requirements — Writing One Before Writing the Rule</span>
+<span class="topic-badge">Detection Engineering</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">Seven Fields, and the Rule Is Half Written</div>
+<div class="concept-desc">
+A detection requirement is short — a paragraph and a table, not a document. Its purpose is to
+force the questions that are expensive to answer after the logic exists, particularly the
+third and the sixth.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Field</th><th>Answers</th></tr></thead>
+<tbody>
+<tr><td>Behaviour</td><td>What is the adversary doing, in plain language?</td></tr>
+<tr><td>Technique</td><td>Which ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> technique, and which procedure of it?</td></tr>
+<tr><td>Data source</td><td>Which log, from which sensor, with which fields — and do we have it?</td></tr>
+<tr><td>Logic sketch</td><td>Roughly what the query asserts</td></tr>
+<tr><td>Known benign</td><td>What legitimately looks like this here?</td></tr>
+<tr><td>Response</td><td>What should the analyst <em>do</em> when it fires?</td></tr>
+<tr><td>Validation</td><td>How will we make it fire on purpose?</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+If the "known benign" field is empty, the requirement is not finished — it means nobody has
+looked at what normal traffic does, and the tuning phase will discover it in production
+instead.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Response Field Is the One That Prevents Waste</div>
+<div class="concept-desc">
+Ask what the analyst should do, and a surprising number of proposed detections have no
+answer. "Investigate" is not an answer; it is the absence of one. A detection whose only
+possible response is "look at it and decide it was probably fine" is producing work rather
+than security, and the honest options are to enrich it until a decision is possible, raise
+its threshold until it is rare enough to justify the look, or not build it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>If the response is…</th><th>Then</th></tr></thead>
+<tbody>
+<tr><td>A concrete containment action</td><td>Build it; consider automating the action</td></tr>
+<tr><td>A specific triage question with a data answer</td><td>Build it, and enrich the alert with that data</td></tr>
+<tr><td>"Investigate"</td><td>Not a requirement yet — go back and finish it</td></tr>
+<tr><td>"Add it to a dashboard"</td><td>It is a hunting input, not a detection</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The last row is a legitimate outcome, not a rejection: some signals belong in the workflow
+described by <span class="xref">Threat Hunting — Assume Breach, Go Looking</span> rather
+than in an alert queue.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: LOG SOURCE INVENTORY & TELEMETRY GAPS ──────────── -->
+<div class="topic" id="log-source-inventory-telemetry-gaps-proving-a-rule-can-fire-" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📚</span>
+<span class="topic-name">Log Source Inventory &amp; Telemetry Gaps — Proving a Rule Can Fire at All</span>
+<span class="topic-badge">Detection Engineering</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Coverage Claims Are Claims About Data, Not About Rules</div>
+<div class="concept-desc">
+A rule can only detect what the telemetry records. This sounds obvious and is routinely
+violated: coverage maps are drawn from the rule set, so a technique shows as covered because
+a rule exists, regardless of whether the log source that rule reads is deployed on the
+machines where the technique would occur. The gap is invisible in every dashboard and
+obvious in every incident.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Inventory column</th><th>Why it matters</th></tr></thead>
+<tbody>
+<tr><td>Source</td><td>What produces it — the sensor, not the vendor</td></tr>
+<tr><td>Estate coverage</td><td>Which fraction of hosts actually send it</td></tr>
+<tr><td>Fidelity</td><td>Full events, sampled, or summarised — the difference decides what is detectable</td></tr>
+<tr><td>Latency</td><td>Seconds or hours; some detections are pointless at hours</td></tr>
+<tr><td>Retention</td><td>How far back an investigation can reach</td></tr>
+<tr><td>Fields present</td><td>The specific fields rules depend on, which vendors quietly change</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Technique</div>
+<div class="concept-title">Prove the Gap, Don't Assert It</div>
+<div class="concept-desc">
+The convincing form of a telemetry gap is not "we think we lack process creation on servers".
+It is a query showing how many distinct hosts reported that event class in the last seven
+days, held against the asset inventory count. That is a number a budget conversation can
+proceed from, and it is the same query that catches silent collection failures later.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Check</th><th>Reveals</th></tr></thead>
+<tbody>
+<tr><td>Distinct reporting hosts per source, per day</td><td>Estate coverage, and the day it dropped</td></tr>
+<tr><td>Event volume per host, per source</td><td>Agents that are running but configured to send nothing useful</td></tr>
+<tr><td>Field presence rate on key fields</td><td>A schema change that emptied a field the rules read</td></tr>
+<tr><td>Newest event age per source</td><td>A pipeline that stopped an hour ago and told nobody</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Run these as scheduled detections in their own right. A collection outage is a security
+incident with no alert of its own unless you write one; on Windows estates,
+<span class="xref">Sysmon — The Windows Telemetry Powerhouse</span> is usually the source
+most worth monitoring this way, because its config is edited far more often than agents
+are reinstalled.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: NORMALISATION SCHEMAS ──────────────────────────── -->
+<div class="topic" id="normalisation-schemas-ocsf-ecs-asim-and-why-the-schema-decid" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🧬</span>
+<span class="topic-name">Normalisation Schemas — OCSF, ECS <span class="acro-exp">(Elastic Container Service)</span> &amp; ASIM, and Why the Schema Decides the Query</span>
+<span class="topic-badge">Detection Engineering</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Every Rule Is Written Against a Field Name, Not Against an Event</div>
+<div class="concept-desc">
+A detection does not match "a process started". It matches a specific field holding a
+specific value in a specific schema. Change the schema and the rule is worthless even though
+the underlying behaviour is unchanged. That is why normalisation is a detection-engineering
+concern rather than a data-plumbing one: the schema you normalise to is the vocabulary every
+rule you ever write will be phrased in, and changing it later means rewriting all of them.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Schema</th><th>Comes from</th><th>Shape</th></tr></thead>
+<tbody>
+<tr><td>OCSF</td><td>A vendor-neutral consortium effort</td><td>Event classes with typed attributes; aims to be the interchange format</td></tr>
+<tr><td>ECS</td><td>The Elastic ecosystem</td><td>Flat dotted field names; widely adopted beyond Elastic itself</td></tr>
+<tr><td>ASIM</td><td>Microsoft Sentinel</td><td>Normalising parsers over native tables, queried as functions</td></tr>
+<tr><td>"Whatever the vendor sent"</td><td>Nobody</td><td>The default, and the reason rule portability is usually zero</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Choosing</div>
+<div class="concept-title">Normalise at Ingest, or Query Through a Parser?</div>
+<div class="concept-desc">
+Two strategies, and the choice is a real trade rather than a best practice. Normalising at
+ingest is faster to query and destroys anything the schema has no room for; parsing at query
+time keeps the raw event and pays for the translation on every search.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th></th><th>Normalise at ingest</th><th>Parse at query time</th></tr></thead>
+<tbody>
+<tr><td>Query speed</td><td>Fast — the work is already done</td><td>Slower, sometimes much</td></tr>
+<tr><td>Raw fidelity</td><td>Lost unless you keep a copy</td><td>Preserved</td></tr>
+<tr><td>Schema change</td><td>Reindex or accept a split history</td><td>Edit the parser, and history follows</td></tr>
+<tr><td>Failure mode</td><td>A field silently dropped at ingest, discovered months later</td><td>A parser that stops matching after a vendor update</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Whichever you pick, keep the raw event somewhere for a defined window. Every schema is a
+judgement about what matters, and incidents are precisely the times that judgement turns
+out to have been wrong.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Technique</div>
+<div class="concept-title">Writing Portable Logic Anyway</div>
+<div class="concept-desc">
+Full portability is a marketing claim, but a large fraction of it is reachable with
+discipline, and it is what makes a platform migration survivable.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Practice</th><th>Buys</th></tr></thead>
+<tbody>
+<tr><td>Express the rule in Sigma, generate the backend query</td><td>One source of truth, several deployments</td></tr>
+<tr><td>Keep field mappings in one place, not in each rule</td><td>A schema change is one edit</td></tr>
+<tr><td>Avoid backend-specific functions in the core logic</td><td>The clever regex is where portability dies</td></tr>
+<tr><td>Test the generated query, not just the source</td><td>Generation is a translation, and translations have bugs</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The format itself and its backends are covered by
+<span class="xref">Sigma — Write Detections Once, Run Anywhere</span>; this card is about
+the decision that has to be made before Sigma can help you.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: DETECTION-AS-CODE ──────────────────────────────── -->
+<div class="topic" id="detection-as-code-git-review-ci-versioned-rules" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🧾</span>
+<span class="topic-name">Detection-as-Code — Git, Review, CI &amp; Versioned Rules</span>
+<span class="topic-badge">Detection Engineering</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Console Is Not a Source of Truth</div>
+<div class="concept-desc">
+Rules edited directly in a SIEM <span class="acro-exp">(Security Information and Event Management)</span> console have no history, no review, no tests and no way to
+recreate the environment after a mistake. Detection-as-code moves the definitions into a
+repository and makes the console a deployment target. The benefits are the ones any team
+gets from version control, and one that is specific to security: when a rule stops firing,
+<code>git log</code> answers "what changed and who changed it" in seconds, which is otherwise
+an unanswerable question.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Capability</th><th>Console-only</th><th>In a repository</th></tr></thead>
+<tbody>
+<tr><td>Who changed this, and why</td><td>An audit log entry, if you are lucky</td><td>A commit with a message and a reviewer</td></tr>
+<tr><td>Roll back a bad rule</td><td>Rewrite it from memory</td><td>Revert</td></tr>
+<tr><td>Review before production</td><td>Convention, at best</td><td>A pull request that cannot be skipped</td></tr>
+<tr><td>Rebuild after a platform loss</td><td>Weeks</td><td>Redeploy from the repository</td></tr>
+<tr><td>Test before deploy</td><td>Not possible</td><td>CI runs the rule's tests</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">What Lives in the Repository</div>
+<div class="concept-desc">
+The rule alone is not enough. A detection is a small bundle, and keeping the parts together
+is what stops the runbook from rotting away from the logic it documents.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Artifact</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td>The rule</td><td>The logic, in Sigma or the platform's language</td></tr>
+<tr><td>The requirement</td><td>Why it exists, and what response it expects</td></tr>
+<tr><td>Test cases</td><td>Events that must match, and events that must not</td></tr>
+<tr><td>Tuning exclusions</td><td>With a reason and a date on every one</td></tr>
+<tr><td>The responder runbook</td><td>Shipped with the rule, versioned with it</td></tr>
+<tr><td>Metadata</td><td>ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> mapping, severity, owner, log sources depended on</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Flow</div>
+<div class="concept-title">A Pipeline That Is Worth Having</div>
+<div class="concept-desc">
+Start smaller than the diagram in the vendor talk. Lint and schema validation on every push
+catches most of what review would catch, costs an afternoon to build, and stops the two most
+common production breakages: a syntactically invalid rule, and one referencing a field that
+does not exist.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Stage</th><th>Catches</th></tr></thead>
+<tbody>
+<tr><td>Lint &amp; schema validation</td><td>Malformed rules, missing metadata, unknown fields</td></tr>
+<tr><td>Unit tests against sample events</td><td>Logic that does not match what it claims to</td></tr>
+<tr><td>Peer review</td><td>Rules that are technically correct and operationally useless</td></tr>
+<tr><td>Deploy to a staging tenant or a dry-run mode</td><td>Volume surprises, before analysts see them</td></tr>
+<tr><td>Promote to production</td><td>—</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: TESTING A DETECTION ────────────────────────────── -->
+<div class="topic" id="testing-a-detection-synthetic-events-emulation-regression" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🧪</span>
+<span class="topic-name">Testing a Detection — Synthetic Events, Emulation &amp; Regression</span>
+<span class="topic-badge">Detection Engineering</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Three Tests, Answering Three Different Doubts</div>
+<div class="concept-desc">
+"Does this rule work" is three questions, and passing one of them says nothing about the
+others. A rule can match a hand-crafted event perfectly and never fire on the real technique;
+it can fire on the real technique and also on a backup job every night.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Test</th><th>Question</th><th>Method</th></tr></thead>
+<tbody>
+<tr><td>Unit</td><td>Does the logic match what I think it matches?</td><td>Sample events checked into the repository, matched offline</td></tr>
+<tr><td>Emulation</td><td>Does it fire on the real technique in our estate?</td><td>Run the procedure on a test host and watch for the alert</td></tr>
+<tr><td>Noise</td><td>Does it fire on anything else?</td><td>Run the logic across a week of historical data before deploying</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The noise test is the cheapest of the three and the one most often skipped — the data is
+already there, and running the query over last week answers the tuning question before a
+single analyst is interrupted.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Technique</div>
+<div class="concept-title">Regression — The Rule That Silently Stopped Working</div>
+<div class="concept-desc">
+This is the failure this whole discipline is built around. An agent upgrade renames a field,
+a Sysmon config is trimmed for volume, a log pipeline drops an event class — and every rule
+depending on it goes quiet. Nothing alerts, because the absence of alerts is what success
+looks like. The only defence is to make firing an expectation that can fail.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Guard</th><th>How it works</th></tr></thead>
+<tbody>
+<tr><td>Scheduled emulation</td><td>Run a benign procedure on a canary host on a schedule; alert if the detection does <em>not</em> fire</td></tr>
+<tr><td>Field-presence monitors</td><td>Alert when a field the rules depend on drops below its normal fill rate</td></tr>
+<tr><td>Volume anomaly on the source</td><td>Alert on a log source whose volume falls off a cliff</td></tr>
+<tr><td>Last-fired tracking</td><td>Review rules that have not fired in 90 days — some are fine, some are broken</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The tooling for the first row already exists in
+<span class="xref">Adversary Emulation — Atomic Red Team &amp; Caldera</span>; what turns
+it from an exercise into a regression test is running it on a schedule and alerting on
+silence rather than on success.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: MEASURING DETECTION QUALITY ────────────────────── -->
+<div class="topic" id="measuring-detection-quality-precision-recall-the-alert-to-in" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📐</span>
+<span class="topic-name">Measuring Detection Quality — Precision, Recall &amp; the Alert-to-Incident Ratio</span>
+<span class="topic-badge">Detection Engineering</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">The Two Numbers, and Why You Cannot Have Both</div>
+<div class="concept-desc">
+Precision is the share of alerts that were real. Recall is the share of real events that
+alerted. Every threshold, every exclusion and every broadened condition trades one against
+the other, and pretending otherwise is how rule sets end up simultaneously noisy and blind.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Metric</th><th>Formula</th><th>Falls when</th></tr></thead>
+<tbody>
+<tr><td>Precision</td><td>true positives ÷ all alerts</td><td>The rule is broad, or the environment is noisier than assumed</td></tr>
+<tr><td>Recall</td><td>true positives ÷ all real occurrences</td><td>The rule is narrow, or the telemetry is missing</td></tr>
+<tr><td>Alert-to-incident ratio</td><td>alerts ÷ incidents declared</td><td>A practical stand-in for precision when ground truth is unknown</td></tr>
+<tr><td>Time-to-detect</td><td>occurrence → alert</td><td>Batch pipelines and hourly schedules quietly dominate this</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Recall is the hard one, because it needs a denominator nobody has: the real occurrences you
+did not see. Purple-team exercises exist largely to create that denominator artificially —
+a known number of executed techniques, and a count of how many alerted.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Metrics That Look Useful and Are Not</div>
+<div class="concept-desc">
+Detection programmes are frequently reported with numbers that go up when things get worse.
+Each of these appears on real dashboards, and each rewards the wrong behaviour.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Metric</th><th>What it actually rewards</th></tr></thead>
+<tbody>
+<tr><td>Number of rules deployed</td><td>Writing rules, not writing good ones or deleting bad ones</td></tr>
+<tr><td>Alerts triaged per analyst</td><td>Noise, and burning out the people absorbing it</td></tr>
+<tr><td>ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> techniques "covered"</td><td>Claiming coverage a rule cannot deliver without the telemetry</td></tr>
+<tr><td>Mean time to close an alert</td><td>Closing quickly, which is not the same as investigating</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+A defensible dashboard is small: precision per rule, the alert-to-incident ratio, the count
+of rules that have not fired in 90 days, and the share of the estate reporting each log
+source. Four numbers, each of which gets worse when the programme gets worse.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: ATT&CK COVERAGE MAPPING ────────────────────────── -->
+<div class="topic" id="attck-coverage-mapping-honest-heat-maps-and-the-lie-of-100-c" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🗺️</span>
+<span class="topic-name">ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> Coverage Mapping — Honest Heat Maps and the Lie of "100% Coverage"</span>
+<span class="topic-badge">Detection Engineering</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">A Green Square Means "A Rule Exists", Not "We Would Catch It"</div>
+<div class="concept-desc">
+Coverage maps are built by counting rules against techniques, which makes them a map of the
+rule set rather than of the defence. Four things break the equivalence, and all four are
+invisible on the heat map: the log source may not be deployed where the technique would
+occur, the rule may match one procedure out of a dozen, it may be tuned to near-silence, or
+it may have stopped firing months ago. Green is a claim about inventory; the interesting
+question is about capability.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>The map says</th><th>Reality can be</th></tr></thead>
+<tbody>
+<tr><td>Technique covered</td><td>Covered on 40% of the estate, where the agent is deployed</td></tr>
+<tr><td>Technique covered</td><td>One procedure of many; the common variant walks past</td></tr>
+<tr><td>Technique covered</td><td>Covered, but tuned down to nothing after a noisy month</td></tr>
+<tr><td>Technique covered</td><td>Was covered, until a field rename in March</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Technique</div>
+<div class="concept-title">Colouring the Map With Something Defensible</div>
+<div class="concept-desc">
+The repair is to stop colouring by rule existence and start colouring by evidence. Each level
+below costs more to establish than the one before it, and each is honest about a different
+thing — publishing which level a square is at is more useful than any single colour.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Level</th><th>Evidence required</th></tr></thead>
+<tbody>
+<tr><td>0 — none</td><td>No rule, or no telemetry to write one against</td></tr>
+<tr><td>1 — rule exists</td><td>A deployed detection claiming the technique</td></tr>
+<tr><td>2 — telemetry confirmed</td><td>The log source is present on the assets that matter, and measured</td></tr>
+<tr><td>3 — validated</td><td>An emulated procedure fired the rule, on a dated test</td></tr>
+<tr><td>4 — validated recently, several procedures</td><td>The same, re-run on a schedule, across variants</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Most mature programmes sit at level 3 for a modest number of techniques and level 0 or 1
+everywhere else, and that is a far more useful picture than a uniformly green map. The
+Navigator layers themselves are covered by
+<span class="xref">MITRE ATT&amp;CK &amp; Navigator — Coverage-Driven Detection</span>;
+the argument here is about what the colours are allowed to mean.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Coverage Is Not the Goal Anyway</div>
+<div class="concept-desc">
+Chasing breadth across the whole matrix spreads effort evenly over techniques that are not
+evenly likely or evenly damaging. A threat-informed programme covers the techniques its
+actual adversaries use, deeply, and accepts gaps elsewhere on purpose — a documented,
+deliberate gap is a defensible position in a way that a thin green wash is not.
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: DETECTION BACKLOG & RETIREMENT ─────────────────── -->
+<div class="topic" id="the-detection-backlog-retiring-a-rule-without-losing-why-it-" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">🗃️</span>
+<span class="topic-name">The Detection Backlog &amp; Retiring a Rule Without Losing Why It Existed</span>
+<span class="topic-badge">Detection Engineering</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Technique</div>
+<div class="concept-title">Threat Model In, Rules Out</div>
+<div class="concept-desc">
+Without a queue, detections get written in response to whatever happened most recently — the
+last incident, the last vendor briefing, the last thing a manager read. That produces deep
+coverage of the past and none of the likely. A backlog is the mechanism for spending
+engineering time on the highest-value gap instead of the most recent noise.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Input</th><th>Contributes</th></tr></thead>
+<tbody>
+<tr><td>Threat intel on actors targeting your sector</td><td>Techniques worth prioritising</td></tr>
+<tr><td>Incidents and near-misses</td><td>Proven gaps, with evidence attached</td></tr>
+<tr><td>Purple-team results</td><td>Measured misses, the highest-quality input there is</td></tr>
+<tr><td>Crown-jewel analysis</td><td>Where a detection is worth the most</td></tr>
+<tr><td>New telemetry becoming available</td><td>Detections that were previously impossible</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Score each item on likelihood, impact, and whether the telemetry exists. The third column
+is the one that reorders the list: a high-value detection you cannot currently write is a
+logging project, not a detection task, and it should be routed as one.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Retirement — Deleting a Rule Is a Feature</div>
+<div class="concept-desc">
+Nobody wants to be the person who deleted the rule that would have caught it, so nothing is
+ever deleted, and the rule set silently degrades into a haystack. The fix is to make
+retirement a normal, recorded decision with criteria agreed in advance — and to note that
+deletion in a version-controlled repository is reversible, which removes most of the fear.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Retire when</th><th>Caveat</th></tr></thead>
+<tbody>
+<tr><td>The behaviour is now impossible in this estate</td><td>Verify — "we removed that" is often aspirational</td></tr>
+<tr><td>A better rule covers it</td><td>Confirm the replacement actually fires, first</td></tr>
+<tr><td>Precision is unfixably low</td><td>Try converting it to a hunting query rather than deleting outright</td></tr>
+<tr><td>It has not fired in a year</td><td>Only after ruling out regression — silence has two causes</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+Record the retirement with its reason and the date in the repository. The next person to
+propose that detection will find the note, which is the difference between an institution
+that learns and one that rediscovers.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: DOCUMENTATION FOR RESPONDERS ───────────────────── -->
+<div class="topic" id="documentation-for-responders-the-runbook-that-ships-with-the" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">📗</span>
+<span class="topic-name">Documentation for Responders — The Runbook That Ships With the Rule</span>
+<span class="topic-badge">Detection Engineering</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">The Alert Is a Message to a Tired Person at 3am</div>
+<div class="concept-desc">
+The engineer writing a detection holds a great deal of context: why this pattern matters,
+what benign thing looks similar, what to check first. None of that reaches the analyst unless
+it is written down, and the analyst meeting the alert may be new, tired, and looking at it
+for the first time at the worst hour. A detection without a runbook is not finished; it has
+been handed over without the half that makes it usable.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Section</th><th>Answers</th></tr></thead>
+<tbody>
+<tr><td>What fired, in one sentence</td><td>What does this rule believe just happened?</td></tr>
+<tr><td>Why it matters</td><td>What is the adversary achieving if this is real?</td></tr>
+<tr><td>Known benign causes</td><td>What legitimately does this here, and how do I tell?</td></tr>
+<tr><td>Triage steps</td><td>The first three things to check, in order, with the queries</td></tr>
+<tr><td>Escalate when</td><td>The specific condition — not "if it looks bad"</td></tr>
+<tr><td>Containment options</td><td>What can be done immediately, and who may authorise it</td></tr>
+<tr><td>False-positive feedback</td><td>Where to report noise so the rule improves</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Technique</div>
+<div class="concept-title">Keeping It Alive</div>
+<div class="concept-desc">
+Runbooks rot faster than rules, because a rule that breaks eventually gets noticed and a
+stale runbook just quietly misleads. Three habits keep them honest, and the first one does
+most of the work.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Habit</th><th>Effect</th></tr></thead>
+<tbody>
+<tr><td>Store it beside the rule, in the same commit</td><td>Changing logic without touching the runbook becomes visible in review</td></tr>
+<tr><td>Link it from the alert itself</td><td>Nobody searches a wiki at 3am</td></tr>
+<tr><td>Let responders edit it</td><td>The people meeting the alert know what was missing</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The general craft of writing procedures people follow under pressure is in
+<span class="xref">Writing Runbooks That People Actually Follow</span> in the Operations
+domain; what is specific here is that the runbook is an artifact of the detection, versioned
+with it, and not a separate document that drifts.
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── TOPIC: LOG VOLUME & COST ──────────────────────────────── -->
+<div class="topic" id="log-volume-cost-the-detections-a-budget-quietly-kills" data-reviewed="2026-08">
+<div class="topic-header">
+<span class="topic-icon">💰</span>
+<span class="topic-name">Log Volume &amp; Cost — The Detections a Budget Quietly Kills</span>
+<span class="topic-badge">Detection Engineering</span>
+<span class="topic-chev">▶</span>
+</div>
+<div class="topic-body">
+<div class="concept-card">
+<div class="concept-label">Concept</div>
+<div class="concept-title">Ingest Pricing Is a Detection Policy Nobody Voted For</div>
+<div class="concept-desc">
+When a SIEM <span class="acro-exp">(Security Information and Event Management)</span> is priced by volume, every decision to drop a log source is a decision to make a
+class of detection impossible — and those decisions are usually made by whoever was asked to
+reduce spend, without a detection engineer in the room. The result is a coverage map with
+holes whose cause is a finance conversation from eighteen months ago that nobody recorded.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Reduction</th><th>Detection cost</th></tr></thead>
+<tbody>
+<tr><td>Drop verbose process-creation logging</td><td>Most endpoint behavioural detection goes with it</td></tr>
+<tr><td>Sample network flow data</td><td>Rare-event detection stops working; volume detection survives</td></tr>
+<tr><td>Shorten hot retention</td><td>Slow-burn intrusions become undetectable in hindsight</td></tr>
+<tr><td>Filter "noisy" event IDs</td><td>Often the exact IDs the rules depend on — check first</td></tr>
+<tr><td>Drop cloud audit logs</td><td>Identity-based attacks lose their only evidence trail</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Technique</div>
+<div class="concept-title">Reducing Volume Without Trading Away Detection</div>
+<div class="concept-desc">
+The choice is not "keep everything" versus "drop things". Most estates have a great deal of
+genuinely low-value volume, and separating it from the load-bearing telemetry is an
+engineering task with a real answer.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Lever</th><th>Keeps detection intact because</th></tr></thead>
+<tbody>
+<tr><td>Filter at the agent, not the SIEM</td><td>You pay for what you keep, and the decision is explicit and reviewable</td></tr>
+<tr><td>Tiered storage — hot for rules, cold for investigation</td><td>Detections run on recent data; investigations tolerate slow queries</td></tr>
+<tr><td>Summarise the highest-volume, lowest-signal sources</td><td>Aggregates still support threshold detections</td></tr>
+<tr><td>Route to a cheap lake, search on demand</td><td>Retention for investigations survives the ingest budget</td></tr>
+<tr><td>Publish the detection cost of each proposed cut</td><td>Turns a spend decision into a documented risk decision</td></tr>
+</tbody>
+</table>
+<div class="concept-desc" style="margin-top:10px">
+The last row is the one that matters organisationally. "We can save this much, and here are
+the eleven detections that stop working" is a decision someone can own. A quiet filter
+change is not.
+</div>
+</div>
+</div>
+</div>
+</div>
 </script>
 </div>
 <div class="domain-section domain-cloud" data-domain="cloud">
@@ -73131,6 +73913,6 @@ stored under the old id is migrated once on load. -->
 card. Only one domain's content is ever in the DOM, so the things that
 used to walk every topic — the n/m progress badges, the random pick, and
 working out which domain a #slug lives in — read this map instead. -->
-<script type="application/json" id="topic-index">{"net":["osi-model-7-layers","tcpip-model-4-layers-vs-osi-mapping","tcp-vs-udp-transport-layer","network-topologies","subnetting-cidr","routing-vlans-network-devices","wireless-80211-standards-security","dhcp-dora-process","common-ports-protocol-reference","dns-record-types","cabling-connectors-ethernet-standards","nmap-scan-types-reference","routing-protocols-wan-technologies","wireless-networking-80211-standards-security","network-device-cli-show-commands","tcpdump-packet-capture-reference","networking-for-absolute-beginners","ip-addresses-subnets-gently","dns-the-internets-phone-book","dhcp-how-devices-get-their-ip-address","wi-fi-basics-80211-bands-and-security","switching-vlans-dividing-your-network-logically","routing-protocols-how-routers-find-the-best-path","firewalls-the-networks-bouncer","load-balancers-high-availability-never-go-down","cloud-networking-vpc-subnets-cdns","network-troubleshooting-a-systematic-approach","ipv6-the-internets-upgrade","common-protocols-whats-actually-happening-on-the-wire","vpns-tunneling-secure-connections-over-untrusted-networks","subnetting-the-math-that-scares-beginners-it-shouldnt","network-design-how-networks-are-structured","dns-deep-dive-records-resolution-security","nat-port-forwarding-how-private-networks-reach-the-internet","8021x-nac-who-gets-on-the-network","http-the-protocol-that-runs-the-web","network-monitoring-seeing-what-flows-through","active-directory-ldap-enterprise-identity-101","cloud-networking-vpc-subnets-security-groups","dns-deep-dive-how-domain-names-actually-work","wireless-security-80211-standards-wi-fi-hardening","packet-analysis-reading-the-networks-mind-with-wireshark","dns-deep-dive-how-name-resolution-really-works","vpns-explained-tunnels-encryption-and-what-they-dont-do","subnetting-without-the-headache-cidr-notation-made-practical","load-balancers-explained-spreading-the-work-around","the-tls-handshake-what-actually-happens-before-https-feels-s","bgp-how-the-internet-routes-between-networks","qos-quality-of-service-traffic-shaping","http2-http3-quic-modern-web-transport","ntp-time-synchronization-why-clocks-matter","reverse-proxies-nginx-haproxy-the-front-door","network-automation-ansible-netmiko-napalm","dnssec-encrypted-dns-doh-dot","wan-switching-deep-sd-wan-mpls-vlans-poe","modern-connectivity-5g-private-cellular-satellite-iot-radios","edge-computing-what-it-is-once-the-marketing-is-removed"],"sec":["cia-triad","aaa-framework","access-control-models","pki-certificate-lifecycle","cryptography-algorithm-reference","cloud-service-deployment-models","password-authentication-attack-types","kerberos-authentication-flow","active-directory-structure-objects-attacks","tls-handshake-cipher-suites-certificate-chain","security-basics-in-plain-english","everyday-security-hygiene","passwords-hashing-how-logins-are-stored-safely","multi-factor-authentication-layers-of-proof","phishing-anatomy-of-a-social-engineering-attack","tls-https-how-secure-connections-work","encryption-fundamentals-symmetric-vs-asymmetric","identity-access-management-who-can-do-what","supply-chain-security-trust-what-you-build-with","owasp-top-10-the-most-critical-web-security-risks","endpoint-security-protecting-the-devices-people-actually-use","secrets-management-stop-hardcoding-passwords","web-security-headers-free-defense-in-a-few-lines","idsips-detection-catching-attacks-on-the-wire","cryptography-fundamentals-the-building-blocks-of-security","zero-trust-never-trust-always-verify","threat-modeling-finding-flaws-before-you-build-them","siem-log-analysis-blue-team-fundamentals","malware-analysis-static-dynamic-analysis-fundamentals","container-security-101-why-an-image-is-not-a-sandbox","social-engineering-defending-the-human-layer","owasp-top-10-the-web-vulnerabilities-everyone-must-know","api-security-oauth2-jwt-token-based-authentication","phishing-beyond-email-smishing-vishing-and-qr-code-scams","encryption-basics-at-rest-in-transit-and-why-its-encrypted-i","zero-trust-never-trust-always-verify-explained-simply","security-headers-the-http-response-fields-that-quietly-prote","oauth-20-oidc-saml-federated-identity","passkeys-webauthn-killing-the-password","sessions-cookies-jwt-managing-web-auth-state","sast-dast-sca-automated-security-testing","web-application-firewalls-waf","the-injection-family-one-bug-class-six-costumes","broken-access-control-idor-traversal-the-checks-nobody-ran","ssrf-xxe-deserialization-the-server-side-heavy-hitters","post-quantum-cryptography-harvest-now-decrypt-later","data-loss-prevention-classification-egress-the-false-positiv","network-security-architecture-segmentation-dmz-egress-filter","privileged-access-management-vaulting-just-in-time-session-r","ot-vs-it-the-purdue-model-when-the-generic-answer-is-the-wro","ics-protocols-modbus-dnp3-opc-ua-and-their-security-assumpti","securing-ot-without-breaking-it-segmentation-access-safety-f","physical-security-systems-access-control-cctv-the-facility-l","the-insider-threat-programme-malicious-negligent-compromised","internal-investigations-evidence-handling-staying-in-your-la","doing-the-pqc-migration-inventory-crypto-agility-the-roadmap","adjacent-cryptography-zkps-homomorphic-encryption-mpc-confid"],"threat":["cyber-kill-chain-lockheed-martin","mitre-attck-framework","diamond-model-of-intrusion-analysis","threat-intelligence-lifecycle","social-engineering-techniques","malware-types-reference","dos-ddos-network-attack-types","threats-explained-simply","anatomy-of-an-attack-step-by-step","how-attacks-actually-work-the-attackers-mindset","social-engineering-people-are-the-attack-surface","vulnerability-management-finding-and-fixing-weaknesses","threat-hunting-proactively-finding-what-slipped-through","digital-forensics-reconstructing-what-happened","ransomware-the-defining-threat-of-the-era","threat-actors-know-your-adversary","email-authentication-spf-dkim-dmarc","osint-for-defenders-see-yourself-as-attackers-do","malware-analysis-understanding-what-the-bad-code-does","threat-intelligence-turning-data-into-decisions","threat-hunting-finding-what-detection-missed","indicators-of-compromise-iocs-what-to-look-for","the-cyber-kill-chain-thinking-like-the-attacker-stage-by-sta","open-source-intelligence-osint-whats-already-public-about-yo","ransomware-how-it-spreads-and-why-backups-arent-the-whole-st","reverse-engineering-binary-analysis-reading-code-you-dont-ha","anti-analysis-techniques-how-malware-hides-and-how-analysts-","supply-chain-attacks-compromise-one-reach-thousands","the-criminal-economy-access-brokers-affiliates-how-breaches-","threat-modeling-methodologies-stride-vs-pasta-vs-attack-tree","mitre-d3fend-engage-mapping-defenses-and-deception-to-attck"],"grc":["risk-management-lifecycle","nist-cybersecurity-framework-20","defense-in-depth-layered-security","legal-regulatory-framework-references","cissp-8-domains-overview","risk-rules-in-plain-english","frameworks-without-the-jargon","risk-management-101-threat-vulnerability-impact","compliance-frameworks-playing-by-the-rules","business-continuity-disaster-recovery-keeping-the-lights-on","data-classification-knowing-what-needs-protecting","third-party-risk-your-security-is-only-as-strong-as-your-ven","security-awareness-turning-people-into-a-defense-layer","nist-csf-the-common-language-of-cybersecurity","the-audit-process-proving-controls-actually-work","privacy-regulations-gdpr-ccpa-data-rights","nist-csf-iso-27001-grc-frameworks-explained","soc-2-trust-service-criteria-for-cloud-service-providers","vendor-risk-management-securing-the-supply-chain","bcp-dr-planning-for-the-day-everything-goes-wrong","privacy-law-gdpr-ccpa-for-it-professionals","audit-prep-surviving-and-thriving-in-a-compliance-audit","change-management-the-process-that-prevents-self-inflicted-o","data-classification-why-just-be-careful-with-data-isnt-a-pol","reading-a-soc-2-report-without-falling-asleep","the-three-lines-of-defense-whos-actually-watching-the-risk","vendor-risk-assessments-why-we-use-a-cloud-provider-isnt-a-s","data-privacy-techniques-anonymization-differential-privacy","section-508-accessibility-as-us-federal-law","isoiec-27001-27002-the-isms-annex-a-and-certification","pci-dss-the-12-requirements-scope-reduction-saq-vs-roc","hipaa-privacy-rule-security-rule-breach-notification","fedramp-nist-800-53-control-baselines-and-the-ato","the-controls-universe-types-functions-mapping-once-to-many","data-governance-retention-ediscovery-owning-data-on-purpose","the-regulatory-landscape-dora-nis2-cyber-disclosure-rules"],"ops":["comptia-troubleshooting-methodology","incident-response-lifecycle-picerl","vulnerability-management-lifecycle","bcp-dr-key-metrics-recovery-strategies","digital-forensics-process","splunk-spl-search-language-reference","security-operations-for-beginners","a-day-in-the-soc","troubleshooting-like-a-pro","siem-log-analysis-finding-signals-in-the-noise","incident-response-what-to-do-when-it-goes-wrong","backup-disaster-recovery-surviving-the-worst-case","monitoring-observability-know-before-users-complain","itil-service-management-how-it-runs-as-a-business","performance-capacity-finding-and-fixing-bottlenecks","observability-knowing-what-your-systems-are-doing","sre-engineering-reliability-with-data-not-heroics","incident-command-running-a-major-incident-without-chaos","postgresql-administration-database-ops-101","web-server-hardening-nginx-apache-tls-done-right","writing-runbooks-that-people-actually-follow","capacity-planning-answering-will-we-run-out-of-room-before-y","writing-a-postmortem-people-actually-learn-from","chaos-engineering-breaking-things-on-purpose","distributed-tracing-opentelemetry","soar-security-orchestration-automation-response","load-performance-testing","prometheus-grafana-metrics-dashboards","golden-signals-red-use-what-to-measure","slis-slos-error-budgets","structured-logging-log-pipelines","on-call-done-humanely","automation-risk-discipline-blast-radius-approval-gates-the-k"],"devops":["cicd-automate-the-path-from-code-to-production","kubernetes-container-orchestration-at-scale","infrastructure-as-code-servers-you-define-in-text-files","container-security-hardening-docker-images","kubernetes-container-orchestration-fundamentals","cicd-pipelines-from-commit-to-production-automatically","terraform-infrastructure-as-code-in-practice","message-queues-event-driven-architecture","caching-strategies-from-app-to-cdn","serverless-faas-code-without-managing-servers","object-storage-s3-the-cloud-storage-model","deployment-strategies-blue-green-canary-rolling","cap-theorem-consistency-models","service-mesh-istio-linkerd-the-sidecar-pattern","gitops-git-as-the-source-of-truth-for-operations","finops-cloud-cost-management","what-devops-actually-is-culture-over-tools","the-three-ways-flow-feedback-learning","dora-metrics-measuring-delivery-performance","value-stream-mapping-find-the-bottleneck","platform-engineering-the-internal-developer-platform","cicd-pipeline-design-stages-gates-artifacts","github-actions-workflows-jobs-secrets","jenkins-gitlab-ci-circleci-the-landscape","branching-strategies-trunk-vs-github-flow-vs-gitflow","progressive-delivery-flags-canary-in-the-pipeline","docker-deep-multi-stage-builds-image-slimming","kubernetes-objects-the-ones-you-actually-use","helm-kustomize-packaging-manifests","kubernetes-security-rbac-network-policies-pod-security","configuration-management-ansible-the-alternatives","secrets-management-vault-kubernetes-secrets","software-supply-chain-security-sbom-slsa-sigstore","policy-as-code-oparego-kyverno","artifact-registry-management","kubernetes-networking-storage-cni-csi"],"pentest":["penetration-testing-phases","owasp-top-10-2021","sqlmap-sql-injection-tool-reference","vulnerability-scanning","kali-linux-arsenal","hak5-gear","hardware-rf-hacking","c2-pivoting","re-cloud-fuzzing","methodology-phases","reconnaissance-osint","scanning-enumeration","exploitation","post-exploitation-privesc","web-wireless-reporting","ethical-hacking-101","scoping-rules-of-engagement","getting-started-in-ethical-hacking-the-right-way","basic-recon-enumeration-know-your-target","web-application-pentesting-hacking-the-web-safely","recon-methodology-intelligence-before-attack","password-attacks-how-credentials-get-cracked","privilege-escalation-from-foothold-to-full-control","privilege-escalation-from-low-user-to-rootadmin","pentest-reporting-the-skill-that-makes-or-breaks-your-career","password-attacks-101-cracking-spraying-and-why-mfa-matters","reading-an-nmap-scan-like-a-pro","web-app-basics-finding-your-first-idor-lab-practice","social-engineering-101-why-pretexting-works-on-smart-people-"],"linux":["linux-filesystem-hierarchy-fhs","linux-file-permissions-model","linux-boot-process-biosuefi-systemd","ssh-commands-keys-tunneling","tmux-terminal-multiplexer","unix-linux-commands-quick-reference","raid-levels-reference","comptia-a-hardware-quick-reference","docker-containers-images-compose","yaml-config-language-reference","kubernetes-container-orchestration-reference","filesystem-navigation","file-ops-text-processing","permissions-ownership","users-groups-privilege","processes-services","package-management","networking-cli","shell-cron-hardening","linux-for-newcomers","permissions-packages-for-newcomers","shell-scripting-automate-repetitive-work","cron-jobs-scheduling-tasks-in-linux","processes-signals-running-programs-in-linux","systemd-managing-linux-services","disk-management-partitions-filesystems-lvm","docker-containers-package-once-run-anywhere","awk-sed-the-text-processing-powerhouses","user-group-management-who-can-do-what-in-linux","package-management-installing-and-managing-software","terminal-text-editors-editing-files-without-a-gui","linux-permissions-who-can-do-what-in-depth","ssh-secure-remote-access-done-right","boot-process-logs-understanding-how-linux-starts-and-speaks","storage-management-disks-partitions-lvm-raid","the-ip-command-modern-linux-networking","robust-bash-scripts-that-dont-silently-destroy-things","under-the-hood-namespaces-cgroups","performance-debugging-when-you-need-to-go-deeper","nfs-samba-sharing-files-across-the-network","advanced-bash-scripting-patterns-for-reliable-scripts","lvm-storage-flexible-disk-management-on-linux","mail-servers-postfix-dovecot-email-plumbing","high-availability-keeping-services-up-when-servers-fail","container-internals-what-docker-is-actually-built-from","systemd-essentials-services-units-and-why-things-start-at-bo","file-permissions-demystified-rwx-octal-notation-and-chmod","process-management-finding-and-taming-runaway-processes","the-disk-is-full-diagnosing-storage-problems-like-a-calm-pro","linux-firewalls-iptables-nftables-ufw","selinux-apparmor-mandatory-access-control","ebpf-programmable-kernel-observability-security","podman-rootless-containers","systemd-deep-units-timers-journald","zfs-btrfs-snapshots-integrity","advanced-bash-traps-expansion-robust-scripts","secure-boot-luks-integrity-measured-boot-dm-verity-ima","package-image-building-from-rpmdeb-to-immutable-linux"],"ai":["machine-learning-pipeline","ml-learning-paradigms","agentic-ai-orchestration","ai-ethics-responsible-ai-nist-ai-rmf","ml-foundations","neural-networks-deep-learning","llms-generative-ai","ai-for-defense-blue-team","adversarial-ai-ai-threats-red-team","ai-governance-frameworks","ai-glossary-quick-reference","ai-ml-for-beginners","using-ai-well-prompting-responsibility","prompt-engineering-getting-better-answers-from-ai","ai-tools-for-it-work-practical-everyday-use","ai-ethics-the-human-side-of-machine-intelligence","building-with-ai-apis-from-prompt-to-production","machine-learning-fundamentals-how-machines-learn","embeddings-rag-giving-ai-access-to-your-own-data","ai-security-attacking-and-defending-ai-systems","ml-pipeline-from-raw-data-to-a-serving-model","retrieval-augmented-generation-rag-explained-simply","tokens-context-windows-and-why-just-paste-the-whole-codebase","prompt-injection-the-sql-injection-of-the-ai-world","fine-tuning-vs-prompting-vs-rag-picking-the-right-tool","bias-in-ai-models-where-it-comes-from-and-why-just-remove-it","model-context-protocol-mcp-usb-c-for-ai","etl-data-pipelines-moving-data-at-scale","vector-databases-similarity-search-at-scale","mlops-shipping-monitoring-models-in-production","fine-tuning-vs-rag-vs-prompting-when-to-use-which","lora-quantization-tokenization-internals","running-local-llms-ollama-llamacpp-lm-studio","llm-evaluation-guardrails-diffusion-models","function-calling-tools-letting-a-model-act","structured-output-validation-getting-json-you-can-trust","cost-latency-optimization-caching-batching-model-tiering","observability-for-ai-tracing-token-accounting-quality-monito","the-transformer-attention-and-why-it-changed-everything","training-pipeline-pretraining-sft-rlhf-dpo","inference-internals-kv-cache-context-windows-sampling","multi-agent-systems-orchestration-hand-offs-the-coordination","agent-frameworks-what-they-give-you-and-what-they-cost","agent-safety-sandboxing-permissions-blast-radius-human-in-th","deploying-ai-assistants-copilot-licensing-data-boundaries","shadow-ai-finding-it-and-offering-a-sanctioned-path-instead","ai-acceptable-use-a-policy-people-will-actually-follow","data-governance-for-ai-oversharing-at-the-speed-of-search","deepfakes-voicevideo-impersonation-verification-that-resists"],"script":["regular-expressions-regex","html-hypertext-markup-language","css-cascading-style-sheets","javascript-es6-through-es2025","json-javascript-object-notation","python-scripting-automation","powershell-windows-automation","bash-bourne-again-shell","zsh-z-shell","go-systems-cloud-language","powershell-scripting-reference","bash-scripting-debian-ubuntu-reference","html-structure-semantic-elements","css-selectors-layout-variables","javascript-es2022-reference","json-jq-data-format-cli-processor","sql-query-reference","url-encoding-percent-encoding-reference","programming-fundamentals-concepts-vocabulary","object-oriented-programming-classes-objects-the-4-pillars","data-structures-how-data-is-organised-in-memory","big-o-notation-measuring-algorithm-efficiency","design-patterns-reusable-solutions-to-common-problems","rest-http-apis-how-the-web-communicates","git-version-control-reference","programming-from-zero-start-here","variables-data-types-storing-information","control-flow-decisions-repetition","functions-reusable-building-blocks","data-structures-lists-keyvalue","errors-debugging-when-things-break","the-workflow-good-habits","version-control-with-git-save-points","apis-data-formats-how-programs-talk","operators-expressions","working-with-text-strings","input-output-talking-to-the-user","scope-where-variables-live","which-language-should-i-learn-first","how-the-web-works-for-coders","secure-coding-basics-beginner","how-computers-think-bits-binary","files-paths-the-command-line","thinking-in-algorithms","programming-paradigms-gently","testing-your-code","setting-up-to-code","learning-to-learn-code","numbers-math-rounding-gotchas","looping-over-data-iteration-patterns","standard-library-packages","handling-errors-gracefully","reading-writing-files","refactoring-clean-code","regex-in-plain-english-gentle-intro","conditionals-deep-dive","truthiness-common-pitfalls","variables-const-let-naming","dates-times-time-zones","a-first-look-at-async","capstone-read-a-whole-tiny-program","apis-http-how-programs-talk-to-each-other","json-the-universal-data-language","modules-packages-pip-using-other-peoples-code","object-oriented-programming-classes-objects","choosing-the-right-data-structure","list-comprehensions-generators-pythonic-power","context-managers-decorators-elegant-python-patterns","building-cli-tools-in-python-argparse-click","type-hints-dataclasses-self-documenting-code","testing-with-pytest-prove-your-code-works","sql-databases-where-data-actually-lives","git-version-control-every-developer-needs","environment-variables-configuration-keep-secrets-out-of-code","logging-stop-using-print-use-logging","reproducible-python-environments-make-it-work-everywhere","async-programming-do-more-without-waiting","web-scraping-extracting-data-from-websites","regular-expressions-pattern-matching-power","string-processing-text-manipulation-toolkit","exception-handling-writing-code-that-doesnt-crash","working-with-files-reading-writing-and-paths","debugging-finding-out-why-your-code-lies-to-you","virtual-environments-isolating-project-dependencies","it-automation-scripting-the-boring-stuff-away","building-a-rest-api-from-zero-to-running-endpoint","dates-times-trickier-than-you-think","data-analysis-with-pandas-spreadsheets-in-code","code-quality-tooling-let-robots-enforce-the-boring-rules","mocking-testing-code-that-talks-to-the-outside-world","concurrency-doing-more-than-one-thing-at-once","sockets-networking-from-first-principles","building-a-real-cli-tool-putting-it-all-together","consuming-apis-robustly-beyond-requestsget","encoding-bytes-text-and-why-it-works-on-my-machine","solid-principles-writing-code-that-survives-change","design-patterns-named-solutions-to-common-problems","cloud-automation-controlling-infrastructure-with-code","data-validation-never-trust-input","webhooks-chatops-event-driven-automation","serialization-saving-objects-without-opening-a-hole","testing-strategy-why-and-how-to-test","powershell-scripting-automate-windows-cross-platform","iot-security-securing-connected-devices","python-asyncawait-concurrent-io-without-threads","regular-expressions-pattern-matching-that-pays-off-forever","git-advanced-workflows-beyond-add-commit-push","network-automation-configuring-switches-routers-with-python","web-scraping-extracting-data-from-websites-with-python","working-with-apis-and-json-in-python","regular-expressions-a-survival-guide-for-it-tasks","scheduling-scripts-the-right-way-cron-timers-and-idempotency","python-the-everything-language","typescript-javascript-that-scales","graphql-ask-for-exactly-what-you-need","databases-relational-vs-nosql-acid-indexing","websockets-sse-real-time-on-the-web","api-design-versioning-pagination-rate-limits-idempotency","grpc-protocol-buffers-high-performance-rpc","oltp-vs-olap-transactional-vs-analytical-data","webassembly-wasm-near-native-speed-in-the-browser","progressive-web-apps-pwa-web-apps-that-feel-native","web-accessibility-a11y-building-for-everyone","rust-safe-systems-programming","java-the-enterprise-workhorse","c-net-microsofts-cross-platform-stack","ruby-optimized-for-developer-happiness","php-the-language-that-runs-the-web","c-close-to-the-metal","assembly-how-programs-actually-run","semantic-versioning-dependency-management","apache-kafka-the-distributed-event-log","apache-spark-big-data-processing","orchestration-airflow-dagster","dbt-the-modern-data-stack","dimensional-modeling-star-snowflake-schemas","kotlin-swift-scala-modern-typed-application-languages","elixir-haskell-the-functional-niche-languages","microsoft-graph-from-powershell-the-modern-admin-api","jea-just-enough-administration-constrained-remoting"],"shortcut":["system-general","microsoft-office-excelword","spotify-media","dod-department-of-defense","windows","macos","terminal-bash","vim","vs-code","tmux-browser","dod-quick-reference","universal-shortcuts-everyone-should-know","text-editing-window-shortcuts","powershell-windows-and-cross-platform-scripting","git-power-user-beyond-add-commit-push","tmux-never-lose-a-session-again","text-processing-mastery-combining-the-classic-tools","intermediate-vim-editing-as-a-language","browser-power-moves-tabs-history-and-devtools-shortcuts","tmux-survival-kit-never-lose-a-terminal-session-again","vs-code-setup-settings-profiles","vs-code-command-palette-keybindings","vs-code-editing-superpowers","vs-code-debugging","vs-code-remote-dev-dev-containers","vs-code-extensions-that-matter","dotfiles-environment-management","shell-terminal-setup","runtime-version-managers","ai-pair-programming-using-it-well","terminal-productivity-work-faster-at-the-command-line","github-codespaces-cloud-dev-environments","live-share-real-time-collaborative-editing","modern-cli-tools-ripgrep-fzf-bat-jq-eza","google-chrome-keyboard-shortcuts","github-git-command-reference","api-keys-gateways-netlify-github-rest"],"philosophy":["stoicism-the-art-of-rational-endurance","machiavellianism-power-realism-strategy","psychology-mind-behavior-biases","philosophy-schools-of-thought","buddhism-the-path-to-liberation","taoism-the-way-of-nature","existentialism-absurdism","mental-models-folk-wisdom","more-models-for-a-clear-head","decision-making","wicca-sabbats-elements-tools","paganism-traditions-core-concepts","druidism-grades-awen-sacred-concepts","minimalism-intentional-living"],"productivity":["habits-time","learning-how-to-learn-build-the-skill-behind-all-skills","time-management-making-your-hours-count","the-japanese-mastery-loop-kata-poka-yoke-hansei-kaizen-shoku","hansei-the-15-minutes-that-beat-15-more","the-memory-palace-method-of-loci-for-ordered-lists","sleep-where-the-studying-actually-sticks","attention-task-switching-residue-the-cost-of-interruption","note-taking-for-learning-notes-you-never-reopen-are-theatre","study-systems-that-survive-a-brain-that-wont-cooperate"],"mind":["communication-relationships","resilience-perspective","imposter-syndrome-you-belong-here","burnout-recognizing-it-before-it-breaks-you","the-compound-effect-small-consistent-actions-build-careers","dealing-with-failure-falling-forward","survival-mindsets-hard-won-wisdom-for-a-long-it-career","surviving-on-call-when-the-pager-owns-your-night","surviving-and-thriving-in-your-first-on-call-rotation","imposter-syndrome-in-it-youre-not-the-only-one-faking-it-a-l","desk-body-eyes-wrists-back-the-dose-problem","fuel-focus-nutrition-for-a-desk-bound-brain"],"career":["it-career-paths-finding-your-lane","professional-networking-your-career-grows-through-relationsh","clear-technical-communication-the-skill-that-multiplies-ever","mentorship-the-fastest-way-to-grow","interview-preparation-getting-the-job","building-a-home-lab-where-you-actually-learn","certifications-the-roadmap-and-how-to-actually-study","technical-writing-the-underrated-career-superpower","building-in-public-your-reputation-compounds","professional-ethics-the-responsibility-that-comes-with-acces","breaking-into-it-from-zero-to-hired","growing-into-senior-beyond-technical-skill","the-craftspersons-mindset-tying-it-all-together","soft-skills-the-difference-between-a-good-and-great-it-pro","home-lab-practicing-it-skills-without-breaking-production","certification-roadmap-charting-a-path-through-the-alphabet-s","building-a-home-lab-without-breaking-the-bank","negotiating-your-first-it-offer-without-feeling-like-youre-b","money-adulting-basics","financial-basics-for-it-workers-build-while-you-build-a-care","remote-work-working-well-from-anywhere"],"military":["how-staff-codes-work-letter-number-sub","prefix-letters-j-g-s-n-a-c-m-f","functional-numbers-1-through-9-what-each-number-means","sub-designators-the-third-digit-eg-j63","branch-comparison-same-number-different-context","quick-reference-full-cross-matrix","staff-system-overview","staff-functions-19","common-codes-decoded","reading-military-codes-beginner","ranks-echelons-very-basic","military-communication-standards-clear-concise-correct","ooda-loop-decision-making-under-pressure","commanders-intent-empowering-action-without-micromanaging","after-action-review-learning-from-every-event","troop-leading-procedures-a-framework-for-planning-anything","pace-planning-redundancy-by-design","leadership-styles-mission-command-cohesion","opsec-operational-security-in-cyber-real-life","leadership-military-principles-applied-to-it-teams","translating-military-experience-into-it-resume-language","using-the-gi-bill-and-tuition-assistance-for-it-certificatio","networking-events-without-the-awkwardness-a-veterans-field-g","classification-levels-markings-damage-not-importance","cover-sheets-sf-703-sf-704-sf-705","media-equipment-labels-sf-706-through-sf-712","container-end-of-day-forms-sf-700-sf-701-sf-702","clearance-paperwork-sf-86-sf-312-sf-714","spills-sanitisation-reporting-the-first-ten-minutes","mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord","the-intelligence-cycle-direction-collection-processing-disse","red-teaming-as-a-discipline-premortems-structured-contrarian"],"redteam":["rules-of-engagement-read-this-first","nmap-the-network-mapper-deep-dive","masscan-rustscan-internet-scale-port-discovery","theharvester-recon-ng-osint-frameworks","amass-subfinder-subdomain-enumeration","shodan-censys-search-engines-for-exposed-devices","google-dorking-maltego-spiderfoot","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner","sqlmap-automated-sql-injection","ffuf-gobuster-content-parameter-fuzzing","nuclei-templated-vulnerability-scanning","nikto-wpscan-server-cms-scanning","metasploit-framework-modules-sessions-workflow","msfvenom-payload-generation","searchsploit-exploit-db-finding-public-exploits","impacket-the-windowsad-python-toolkit","bloodhound-sharphound-attack-path-graphing","mimikatz-credential-extraction","kerberos-attacks-rubeus-kerbrute","responder-ntlm-relay","adcs-abuse-certipy-the-esc-techniques","c2-concepts-beacons-listeners-redirectors","cobalt-strike-the-commercial-standard","sliver-the-open-source-modern-c2","mythic-havoc-empire-the-c2-ecosystem","hashcat-gpu-password-cracking","john-the-ripper-the-versatile-cracker","hydra-medusa-online-login-attacks","wordlists-hash-identification","aircrack-ng-wi-fi-auditing-suite","wifite-hcxdumptool-automated-wi-fi-pmkid","bettercap-the-mitm-framework","flipper-zero-sub-ghz-rfid-tools","badusb-rf-implants-rubber-ducky-omg-proxmark-hackrf","living-off-the-land-lolbas-gtfobins","privilege-escalation-scanners-peas-powerup","pivoting-tunneling-chisel-ligolo-ng-proxychains","data-exfiltration-channels-dns-icmp-https","pacu-the-aws-exploitation-framework","cloudfox-enumerate-iam-attack-surface-enumeration","kubernetes-attacks-rbac-abuse-container-escape","cloud-credential-attacks-the-purple-team-bridge"],"blueteam":["wireshark-packet-analysis","tcpdump-capture-from-the-command-line","zeek-network-metadata-logging","suricata-snort-signature-idsips","arkime-ntopng-full-capture-traffic-analytics","splunk-spl-the-siem-standard","elastic-elk-stack-open-source-log-analytics","wazuh-open-source-xdrsiem","graylog-loki-log-aggregation-alternatives","sigma-write-detections-once-run-anywhere","sysmon-the-windows-telemetry-powerhouse","osquery-your-fleet-as-a-sql-database","velociraptor-endpoint-dfir-hunting-at-scale","windows-event-logs-the-ids-that-matter","auditd-linux-endpoint-logging","yara-pattern-matching-rules-for-malware","mitre-attck-navigator-coverage-driven-detection","adversary-emulation-atomic-red-team-caldera","detection-tuning-the-pyramid-of-pain","volatility-memory-forensics","autopsy-the-sleuth-kit-disk-forensics","kape-plaso-triage-super-timelines","windows-forensic-artifacts","chain-of-custody-evidence-handling","misp-opencti-threat-intel-platforms","stix-taxii-the-sharing-standards","malware-sandboxes-virustotal-anyrun-hybrid-analysis","threat-hunting-assume-breach-go-looking","vulnerability-scanners-nessus-openvas","cis-benchmarks-cis-cat-hardening-baselines","lynis-linux-audit-hardening","openscap-disa-stigs-compliance-driven-hardening","patch-config-management-as-a-control","honeypots-canarytokens-deception-tech","email-security-spf-dkim-dmarc","identity-threat-detection-response-itdr","purple-teaming-closing-the-detection-gap"],"cloud":["cloud-fundamentals-regions-azs-shared-responsibility","aws-getting-started","aws-cli-cloudshell","google-cloud-getting-started","gcloud-cli-cloud-shell","cloud-rosetta-stone-aws-gcp-azure","aws-iam-users-roles-policies","aws-iam-deep-assumerole-sts-boundaries","gcp-iam-members-roles-hierarchy","gcp-service-accounts-workload-identity","cloud-iam-pitfalls-privilege-escalation","aws-vpc-subnets-security-groups-nacls","aws-load-balancing-dns-elb-route-53-cloudfront","gcp-vpc-global-networks-firewall-rules","gcp-load-balancing-dns","hybrid-connectivity-vpn-interconnect-peering","aws-compute-ec2-amis-auto-scaling","aws-serverless-containers-lambda-ecs-eks-fargate","gcp-compute-compute-engine-migs","gcp-serverless-containers-cloud-run-functions-gke","choosing-compute-vm-vs-container-vs-serverless","aws-storage-s3-classes-ebs-efs","aws-databases-rds-aurora-dynamodb","gcp-storage-cloud-storage-persistent-disk-filestore","gcp-databases-cloud-sql-spanner-firestore","bigquery-serverless-data-warehouse","aws-security-stack-cloudtrail-guardduty-security-hub","aws-data-protection-kms-secrets-manager","gcp-security-cloud-audit-logs-security-command-center","gcp-data-protection-cloud-kms-secret-manager-vpc-sc","cspm-prowler-scoutsuite-steampipe","terraform-on-aws-gcp","aws-native-iac-cloudformation-cdk","cloud-cost-control-budgets-tags-rightsizing","landing-zones-multi-account-structure","gcp-native-iac-deployment-manager-config-controller","cloud-cicd-codepipeline-cloud-build","aws-observability-cloudwatch-x-ray","gcp-observability-cloud-monitoring-logging-trace","well-architected-the-architecture-framework","azure-getting-started-entra-id","azure-core-resource-groups-vnet-vms-storage","azure-security-defender-key-vault-sentinel","azure-hierarchy-rbac-scopes-policy","azure-networking-vnet-nsg-the-load-balancer-family","azure-compute-storage-picking-the-right-sku","azure-monitor-log-analytics-kql","azure-troubleshooting-playbook","entra-id-sign-in-conditional-access-troubleshooting"],"cs":["big-o-in-practice-what-the-notation-hides","amortized-analysis-why-a-dynamic-array-is-o1-on-average","time-vs-space-trade-offs-what-caching-actually-costs","recursion-induction-trusting-a-function-that-calls-itself","p-np-knowing-when-to-stop-looking-for-an-exact-answer","memory-layout-cache-locality-why-arrays-beat-linked-lists","hash-tables-collisions-load-factor-the-dos-that-exploits-the","trees-bst-balanced-heap-trie-and-what-each-is-actually-for","graphs-representation-traversal-the-four-algorithms-worth-kn","probabilistic-structures-bloom-filters-hyperloglog-sketches","sorting-searching-why-your-language-picked-the-one-it-did","divide-conquer-greedy-dynamic-programming-recognising-which-","string-algorithms-matching-edit-distance-where-regex-fits","randomised-algorithms-sampling-reservoirs-monte-carlo","algorithm-interview-patterns-the-eight-that-cover-most-quest","processes-threads-scheduling-what-a-context-switch-costs","virtual-memory-paging-the-tlb-swaps-bad-reputation","concurrency-primitives-mutexes-semaphores-conditions-atomics","deadlock-livelock-the-four-conditions-and-which-one-to-break","filesystems-from-the-inside-inodes-journaling-crash-consiste","time-in-distributed-systems-why-timestamps-cannot-order-even","consensus-raft-and-paxos-without-the-paper","failure-detection-flp-why-is-it-down-has-no-perfect-answer","caches-the-memory-hierarchy-the-numbers-every-engineer-shoul","number-representation-twos-complement-ieee-754-the-bugs-each","speculative-execution-its-security-cost-spectre-and-meltdown","instruction-execution-pipelining-superscalar-why-branches-ar","instruction-sets-x86-64-arm64-risc-v-why-the-shift-is-happen","how-a-compiler-works-lexing-parsing-ir-codegen","interpreters-bytecode-jit-the-spectrum-from-python-to-the-jv","type-systems-static-dynamic-and-what-types-actually-buy-you","garbage-collection-generational-collectors-pauses-tuning","undefined-behaviour-memory-safety-the-class-behind-most-cves"],"eng":["scalability-101-vertical-vs-horizontal","load-balancing-sharding","back-of-the-envelope-estimation","designing-for-failure","the-system-design-interview-a-framework","monolith-vs-microservices-vs-modular-monolith","event-driven-architecture","clean-hexagonal-architecture","cqrs-event-sourcing","the-twelve-factor-app","domain-driven-design-ddd","solid-principles","coupling-cohesion","api-first-contract-driven-design","idempotency-exactly-once-safe-retries","clean-code-naming","code-review-doing-it-well","testing-strategy-the-test-pyramid","technical-debt-recognize-pay-it-down","adrs-design-docs","resilience-patterns-circuit-breaker-retry-timeout","distributed-transactions-saga-outbox","backpressure-flow-control","consistency-in-practice-quorums-tunable-reads","the-engineering-ladder-junior-to-principal","staff-archetypes","tech-lead-vs-engineering-manager","influence-without-authority","cert-roadmaps-choosing-a-path","cloud-native-serverless-architecture-patterns","schema-data-modeling-patterns","estimation-planning","career-ladders-interviews","coder-vs-programmer-vs-developer-vs-architect","the-wider-it-org-roles-beyond-writing-code","unified-endpoint-management-uem-engineer"],"data":["how-a-database-actually-works","the-relational-model-keys-integrity","normalization-1nf-through-bcnf","acid-transactions-isolation-levels","er-modeling-designing-the-schema","sql-joins-every-type-and-the-null-traps","window-functions-analytics-without-collapsing-rows","ctes-recursion-readable-composable-queries","aggregation-group-by-having-rollup","subqueries-exists-set-operations","indexes-explained-b-tree-hash-covering","reading-query-plans-explain-analyze","query-optimization-sargability-n1","locking-mvcc-concurrency-without-chaos","partitioning-sharding-scaling-one-big-table","postgresql-the-default-choice","postgres-power-features-jsonb-full-text","mysql-mariadb-the-other-giant","sqlite-the-database-thats-everywhere","connection-pooling-surviving-many-clients","the-nosql-landscape-four-families","mongodb-documents-the-aggregation-pipeline","redis-the-in-memory-multi-tool","cassandra-dynamodb-wide-column-at-scale","graph-databases-when-relationships-are-the-data","oltp-vs-olap-rows-vs-columns","columnar-engines-parquet-duckdb-clickhouse","warehouse-vs-lake-vs-lakehouse","the-semantic-layer-metrics","data-quality-observability","backups-point-in-time-recovery","replication-high-availability","schema-migrations-zero-downtime-change","database-security-least-privilege-rls","monitoring-a-database-what-to-watch","data-roles-who-does-what","designing-a-schema-from-requirements","time-series-event-data","vector-databases-embeddings-similarity-search","the-data-interview"],"web":["how-the-browser-renders-a-page","reflow-repaint-what-causes-jank","the-dom-events-bubbling-delegation","web-storage-cookies-localstorage-indexeddb","devtools-mastery","flexbox-one-dimensional-layout","css-grid-two-dimensional-layout","responsive-design-fluid-mobile-first","modern-css-custom-properties-has-layers","design-systems-tokens-tailwind","closures-scope-this","async-deep-promises-await-the-event-loop","prototypes-modern-classes","modules-bundlers-esm-vite-tree-shaking","typescript-types-for-javascript","react-components-hooks-the-mental-model","react-patterns-pitfalls","vue-svelte-other-reactivity-models","meta-frameworks-nextjs-rendering-modes","state-management-when-you-actually-need-it","fetch-rest-cors-in-practice","graphql-on-the-backend-schema-resolvers-caching","realtime-websockets-sse-polling","frontend-auth-tokens-cookies-oauth","data-fetching-patterns-react-query-caching","web-performance-core-web-vitals","web-accessibility-a11y-wcag-aria","frontend-testing-unit-component-e2e","frontend-security-xss-csrf-csp","seo-metadata-for-developers","progressive-web-apps-offline-installable","rendering-at-the-edge-cdns-edge-functions","webassembly-native-speed-in-the-browser","frontend-build-deploy-ci-preview-deploys","the-full-stack-picture-how-it-all-connects"],"endpoint":["microsoft-endpoint-configuration-manager-mecm","azure-ad-microsoft-entra-id-endpoint-identity","microsoft-intune-cloud-mdm-mam","windows-autopilot-zero-touch-provisioning","enrollment-status-page-esp","co-management-cloud-attach","conditional-access-device-compliance","troubleshooting-toolkit-log-reference","glossary-acronyms-logs-task-sequence-variables","mecm-client-health-install-repair-the-cycles","mecm-deployment-content-troubleshooting","mecm-osd-task-sequence-failure-triage","mecm-site-health-server-log-map","configuration-profiles-settings-catalog-templates-custom","policy-conflicts-proving-which-one-won","security-baselines-without-breaking-the-fleet","administrative-templates-admx-backed-policy","assignment-strategy-users-devices-filters-exclusions","win32-app-packaging-intunewin-end-to-end","install-contexts-system-vs-user","store-lob-enterprise-app-catalog-apps","app-protection-policies-mam-without-enrolment","application-troubleshooting-reading-the-ime-log","windows-update-for-business-rings-deferrals-deadlines","feature-vs-quality-vs-driver-updates","windows-autopatch-what-it-takes-over","update-compliance-reporting-where-the-truth-lives","emergency-patching-advisory-to-verified","windows-administration-fundamentals","bitlocker-at-scale-silent-enablement-key-escrow-recovery","defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro","local-admin-rights-removing-them-and-endpoint-privilege-mana","windows-laps-local-admin-password-rotation-in-entra-and-ad","firewall-removable-media-policy-the-two-controls-auditors-as","compliance-policies-deep-settings-grace-periods-what-non-com","device-trust-end-to-end-enrolment-compliance-ca-access","reporting-on-drift-finding-devices-that-quietly-stopped-comp","the-identityendpoint-seam-the-failure-that-lands-both-teams-","macos-for-windows-admins-the-translation-table-security-mode","apple-fleet-management-business-manager-ade-jamf-vs-intune-f","ios-android-enterprise-supervision-work-profiles-mam"],"infra":["windows-server-editions-licensing-what-you-are-actually-buyi","server-core-why-you-would-remove-the-gui-and-how-you-manage-","server-manager-rsat-windows-admin-center-which-console-wins","roles-features-what-installing-a-role-actually-changes","server-hardening-baseline-the-short-list-that-removes-most-r","ad-ds-boundaries-when-to-add-an-ou-a-domain-or-a-forest","fsmo-roles-the-five-jobs-that-cannot-be-done-by-everyone","ad-replication-how-changes-travel-and-triage-when-they-stop","trusts-direction-transitivity-why-they-are-backwards","sites-subnets-why-clients-authenticate-against-the-wrong-dc","group-policy-architecture-where-the-settings-actually-live","processing-order-precedence-lsdou-enforcement-loopback","filtering-security-groups-wmi-item-level-targeting","group-policy-preferences-the-half-people-forget-exists","gpo-troubleshooting-proving-what-a-machine-actually-received","group-nesting-strategy-agdlp-and-why-nested-groups-become-a-","service-accounts-gmsa-and-retiring-the-shared-password","kerberos-in-operations-spns-delegation-clock-skew","entra-connect-hybrid-identity-choosing-how-passwords-are-che","cleaning-up-a-legacy-directory-stale-objects-over-permissive","windows-dns-administration-zones-scavenging-forwarders","dhcp-administration-scopes-reservations-failover-relay","file-services-share-vs-ntfs-permissions-dfs-quotas","ad-cs-design-offline-roots-issuing-cas-publishing","certificate-templates-the-settings-that-matter-and-the-ones-","certificate-lifecycle-auto-enrolment-and-the-expiry-nobody-s","domain-controller-recovery-authoritative-vs-non-authoritativ","decommissioning-a-server-properly-the-checklist-that-prevent","virtualization-fundamentals-hypervisors-overcommit-the-noisy","hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr","snapshots-are-not-backups-what-they-cost-and-how-they-bite","backup-strategy-3-2-1-1-0-and-the-schemes-that-make-restores","ransomware-resilient-backup-immutability-isolation-assuming-","restore-testing-dr-design-turning-backups-into-a-recovery-ca"],"m365":["m365-tenant-anatomy-the-tenant-its-domains-the-admin-centres","licensing-without-tears-e3-e5-business-group-based-assignmen","admin-roles-least-privilege-the-roles-worth-knowing-and-pim-","service-health-the-message-center-knowing-before-the-tickets","mail-flow-connectors-transport-rules-the-path-a-message-take","mailbox-types-delegation-user-shared-room-equipment","eop-defender-for-office-anti-spam-anti-phish-safe-links-quar","message-trace-header-analysis-proving-where-a-message-died","sharepoint-online-architecture-sites-libraries-the-limits-th","the-sharing-permissions-model-why-it-sprawls-and-how-to-cont","onedrive-known-folder-move-files-on-demand-sync-triage","teams-architecture-what-a-team-actually-is","teams-governance-sprawl-naming-expiry-the-guest-question","retention-policies-vs-retention-labels-the-distinction-that-","sensitivity-labels-dlp-classification-that-survives-contact-","ediscovery-content-search-the-audit-log-answering-legal-with","backup-for-m365-why-native-retention-is-not-a-backup","the-m365-troubleshooting-playbook-tenant-identity-licence-po","teams-voice-phone-system-calling-plans-direct-routing-operat","teams-call-quality-cqd-the-network-requirements-the-real-cul","teams-policies-meeting-messaging-app-the-assignment-preceden","retention-litigation-hold-archiving-legals-requirements-in-m","purview-overview-the-compliance-surface-mapped-to-what-audit","the-admin-modules-exchange-online-teams-graph-from-one-conso","reporting-usage-analytics-adoption-data-that-answers-a-real-","tenant-to-tenant-mergers-the-migration-nobody-plans-enough-t"],"math":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications","unit-3-integrals-series-area-techniques-differential-equatio","chapter-tests-the-final-where-the-marks-actually-go","logarithms-exponents-rules-and-how-to-solve","trigonometry-the-unit-circle-identities-inverses","the-two-pictures-derivative-as-slope-integral-as-area","algebra-geometry-formulas-the-prerequisites","shape-formulas-labelled-diagrams","ti-84-plus-ce-the-keys-that-matter-for-calculus","the-named-theorems-rolle-mvt-ivt-evt-squeeze","sin-cos-tan-sec-what-they-actually-are","implicit-differentiation-choosing-which-rule-first","numerical-integration-trapezoidal-rule-midpoint-simpsons","series-choosing-a-test-and-radius-of-convergence"],"quotes":["sourced-quotes-why-this-collection-has-citations","stoic-quotes-marcus-aurelius-epictetus-seneca","eastern-quotes-tao-te-ching-zen-the-buddhist-canon","modern-existentialist-quotes","misattributed-famous-lines-nobody-can-source"],"acronym":["how-to-use-this-dictionary","acronyms-09","acronyms-a","acronyms-b","acronyms-c","acronyms-d","acronyms-e","acronyms-f","acronyms-g","acronyms-h","acronyms-i","acronyms-j","acronyms-k","acronyms-l","acronyms-m","acronyms-n","acronyms-o","acronyms-p","acronyms-q","acronyms-r","acronyms-s","acronyms-t","acronyms-u","acronyms-v","acronyms-w","acronyms-x","acronyms-y","acronyms-z","by-area-ai","by-area-business","by-area-certifications","by-area-cloud","by-area-compliance","by-area-computer-science","by-area-cryptography","by-area-data","by-area-devops","by-area-directory","by-area-electronics","by-area-endpoint","by-area-engineering","by-area-enterprise","by-area-government","by-area-hardware","by-area-health","by-area-infrastructure","by-area-linux","by-area-misc","by-area-networking","by-area-operations","by-area-organizations","by-area-risk","by-area-security","by-area-standards","by-area-storage","by-area-systems","by-area-virtualization","by-area-web","by-area-windows"]}</script>
+<script type="application/json" id="topic-index">{"net":["osi-model-7-layers","tcpip-model-4-layers-vs-osi-mapping","tcp-vs-udp-transport-layer","network-topologies","subnetting-cidr","routing-vlans-network-devices","wireless-80211-standards-security","dhcp-dora-process","common-ports-protocol-reference","dns-record-types","cabling-connectors-ethernet-standards","nmap-scan-types-reference","routing-protocols-wan-technologies","wireless-networking-80211-standards-security","network-device-cli-show-commands","tcpdump-packet-capture-reference","networking-for-absolute-beginners","ip-addresses-subnets-gently","dns-the-internets-phone-book","dhcp-how-devices-get-their-ip-address","wi-fi-basics-80211-bands-and-security","switching-vlans-dividing-your-network-logically","routing-protocols-how-routers-find-the-best-path","firewalls-the-networks-bouncer","load-balancers-high-availability-never-go-down","cloud-networking-vpc-subnets-cdns","network-troubleshooting-a-systematic-approach","ipv6-the-internets-upgrade","common-protocols-whats-actually-happening-on-the-wire","vpns-tunneling-secure-connections-over-untrusted-networks","subnetting-the-math-that-scares-beginners-it-shouldnt","network-design-how-networks-are-structured","dns-deep-dive-records-resolution-security","nat-port-forwarding-how-private-networks-reach-the-internet","8021x-nac-who-gets-on-the-network","http-the-protocol-that-runs-the-web","network-monitoring-seeing-what-flows-through","active-directory-ldap-enterprise-identity-101","cloud-networking-vpc-subnets-security-groups","dns-deep-dive-how-domain-names-actually-work","wireless-security-80211-standards-wi-fi-hardening","packet-analysis-reading-the-networks-mind-with-wireshark","dns-deep-dive-how-name-resolution-really-works","vpns-explained-tunnels-encryption-and-what-they-dont-do","subnetting-without-the-headache-cidr-notation-made-practical","load-balancers-explained-spreading-the-work-around","the-tls-handshake-what-actually-happens-before-https-feels-s","bgp-how-the-internet-routes-between-networks","qos-quality-of-service-traffic-shaping","http2-http3-quic-modern-web-transport","ntp-time-synchronization-why-clocks-matter","reverse-proxies-nginx-haproxy-the-front-door","network-automation-ansible-netmiko-napalm","dnssec-encrypted-dns-doh-dot","wan-switching-deep-sd-wan-mpls-vlans-poe","modern-connectivity-5g-private-cellular-satellite-iot-radios","edge-computing-what-it-is-once-the-marketing-is-removed"],"sec":["cia-triad","aaa-framework","access-control-models","pki-certificate-lifecycle","cryptography-algorithm-reference","cloud-service-deployment-models","password-authentication-attack-types","kerberos-authentication-flow","active-directory-structure-objects-attacks","tls-handshake-cipher-suites-certificate-chain","security-basics-in-plain-english","everyday-security-hygiene","passwords-hashing-how-logins-are-stored-safely","multi-factor-authentication-layers-of-proof","phishing-anatomy-of-a-social-engineering-attack","tls-https-how-secure-connections-work","encryption-fundamentals-symmetric-vs-asymmetric","identity-access-management-who-can-do-what","supply-chain-security-trust-what-you-build-with","owasp-top-10-the-most-critical-web-security-risks","endpoint-security-protecting-the-devices-people-actually-use","secrets-management-stop-hardcoding-passwords","web-security-headers-free-defense-in-a-few-lines","idsips-detection-catching-attacks-on-the-wire","cryptography-fundamentals-the-building-blocks-of-security","zero-trust-never-trust-always-verify","threat-modeling-finding-flaws-before-you-build-them","siem-log-analysis-blue-team-fundamentals","malware-analysis-static-dynamic-analysis-fundamentals","container-security-101-why-an-image-is-not-a-sandbox","social-engineering-defending-the-human-layer","owasp-top-10-the-web-vulnerabilities-everyone-must-know","api-security-oauth2-jwt-token-based-authentication","phishing-beyond-email-smishing-vishing-and-qr-code-scams","encryption-basics-at-rest-in-transit-and-why-its-encrypted-i","zero-trust-never-trust-always-verify-explained-simply","security-headers-the-http-response-fields-that-quietly-prote","oauth-20-oidc-saml-federated-identity","passkeys-webauthn-killing-the-password","sessions-cookies-jwt-managing-web-auth-state","sast-dast-sca-automated-security-testing","web-application-firewalls-waf","the-injection-family-one-bug-class-six-costumes","broken-access-control-idor-traversal-the-checks-nobody-ran","ssrf-xxe-deserialization-the-server-side-heavy-hitters","post-quantum-cryptography-harvest-now-decrypt-later","data-loss-prevention-classification-egress-the-false-positiv","network-security-architecture-segmentation-dmz-egress-filter","privileged-access-management-vaulting-just-in-time-session-r","ot-vs-it-the-purdue-model-when-the-generic-answer-is-the-wro","ics-protocols-modbus-dnp3-opc-ua-and-their-security-assumpti","securing-ot-without-breaking-it-segmentation-access-safety-f","physical-security-systems-access-control-cctv-the-facility-l","the-insider-threat-programme-malicious-negligent-compromised","internal-investigations-evidence-handling-staying-in-your-la","doing-the-pqc-migration-inventory-crypto-agility-the-roadmap","adjacent-cryptography-zkps-homomorphic-encryption-mpc-confid"],"threat":["cyber-kill-chain-lockheed-martin","mitre-attck-framework","diamond-model-of-intrusion-analysis","threat-intelligence-lifecycle","social-engineering-techniques","malware-types-reference","dos-ddos-network-attack-types","threats-explained-simply","anatomy-of-an-attack-step-by-step","how-attacks-actually-work-the-attackers-mindset","social-engineering-people-are-the-attack-surface","vulnerability-management-finding-and-fixing-weaknesses","threat-hunting-proactively-finding-what-slipped-through","digital-forensics-reconstructing-what-happened","ransomware-the-defining-threat-of-the-era","threat-actors-know-your-adversary","email-authentication-spf-dkim-dmarc","osint-for-defenders-see-yourself-as-attackers-do","malware-analysis-understanding-what-the-bad-code-does","threat-intelligence-turning-data-into-decisions","threat-hunting-finding-what-detection-missed","indicators-of-compromise-iocs-what-to-look-for","the-cyber-kill-chain-thinking-like-the-attacker-stage-by-sta","open-source-intelligence-osint-whats-already-public-about-yo","ransomware-how-it-spreads-and-why-backups-arent-the-whole-st","reverse-engineering-binary-analysis-reading-code-you-dont-ha","anti-analysis-techniques-how-malware-hides-and-how-analysts-","supply-chain-attacks-compromise-one-reach-thousands","the-criminal-economy-access-brokers-affiliates-how-breaches-","threat-modeling-methodologies-stride-vs-pasta-vs-attack-tree","mitre-d3fend-engage-mapping-defenses-and-deception-to-attck"],"grc":["risk-management-lifecycle","nist-cybersecurity-framework-20","defense-in-depth-layered-security","legal-regulatory-framework-references","cissp-8-domains-overview","risk-rules-in-plain-english","frameworks-without-the-jargon","risk-management-101-threat-vulnerability-impact","compliance-frameworks-playing-by-the-rules","business-continuity-disaster-recovery-keeping-the-lights-on","data-classification-knowing-what-needs-protecting","third-party-risk-your-security-is-only-as-strong-as-your-ven","security-awareness-turning-people-into-a-defense-layer","nist-csf-the-common-language-of-cybersecurity","the-audit-process-proving-controls-actually-work","privacy-regulations-gdpr-ccpa-data-rights","nist-csf-iso-27001-grc-frameworks-explained","soc-2-trust-service-criteria-for-cloud-service-providers","vendor-risk-management-securing-the-supply-chain","bcp-dr-planning-for-the-day-everything-goes-wrong","privacy-law-gdpr-ccpa-for-it-professionals","audit-prep-surviving-and-thriving-in-a-compliance-audit","change-management-the-process-that-prevents-self-inflicted-o","data-classification-why-just-be-careful-with-data-isnt-a-pol","reading-a-soc-2-report-without-falling-asleep","the-three-lines-of-defense-whos-actually-watching-the-risk","vendor-risk-assessments-why-we-use-a-cloud-provider-isnt-a-s","data-privacy-techniques-anonymization-differential-privacy","section-508-accessibility-as-us-federal-law","isoiec-27001-27002-the-isms-annex-a-and-certification","pci-dss-the-12-requirements-scope-reduction-saq-vs-roc","hipaa-privacy-rule-security-rule-breach-notification","fedramp-nist-800-53-control-baselines-and-the-ato","the-controls-universe-types-functions-mapping-once-to-many","data-governance-retention-ediscovery-owning-data-on-purpose","the-regulatory-landscape-dora-nis2-cyber-disclosure-rules"],"ops":["comptia-troubleshooting-methodology","incident-response-lifecycle-picerl","vulnerability-management-lifecycle","bcp-dr-key-metrics-recovery-strategies","digital-forensics-process","splunk-spl-search-language-reference","security-operations-for-beginners","a-day-in-the-soc","troubleshooting-like-a-pro","siem-log-analysis-finding-signals-in-the-noise","incident-response-what-to-do-when-it-goes-wrong","backup-disaster-recovery-surviving-the-worst-case","monitoring-observability-know-before-users-complain","itil-service-management-how-it-runs-as-a-business","performance-capacity-finding-and-fixing-bottlenecks","observability-knowing-what-your-systems-are-doing","sre-engineering-reliability-with-data-not-heroics","incident-command-running-a-major-incident-without-chaos","postgresql-administration-database-ops-101","web-server-hardening-nginx-apache-tls-done-right","writing-runbooks-that-people-actually-follow","capacity-planning-answering-will-we-run-out-of-room-before-y","writing-a-postmortem-people-actually-learn-from","chaos-engineering-breaking-things-on-purpose","distributed-tracing-opentelemetry","soar-security-orchestration-automation-response","load-performance-testing","prometheus-grafana-metrics-dashboards","golden-signals-red-use-what-to-measure","slis-slos-error-budgets","structured-logging-log-pipelines","on-call-done-humanely","automation-risk-discipline-blast-radius-approval-gates-the-k"],"devops":["cicd-automate-the-path-from-code-to-production","kubernetes-container-orchestration-at-scale","infrastructure-as-code-servers-you-define-in-text-files","container-security-hardening-docker-images","kubernetes-container-orchestration-fundamentals","cicd-pipelines-from-commit-to-production-automatically","terraform-infrastructure-as-code-in-practice","message-queues-event-driven-architecture","caching-strategies-from-app-to-cdn","serverless-faas-code-without-managing-servers","object-storage-s3-the-cloud-storage-model","deployment-strategies-blue-green-canary-rolling","cap-theorem-consistency-models","service-mesh-istio-linkerd-the-sidecar-pattern","gitops-git-as-the-source-of-truth-for-operations","finops-cloud-cost-management","what-devops-actually-is-culture-over-tools","the-three-ways-flow-feedback-learning","dora-metrics-measuring-delivery-performance","value-stream-mapping-find-the-bottleneck","platform-engineering-the-internal-developer-platform","cicd-pipeline-design-stages-gates-artifacts","github-actions-workflows-jobs-secrets","jenkins-gitlab-ci-circleci-the-landscape","branching-strategies-trunk-vs-github-flow-vs-gitflow","progressive-delivery-flags-canary-in-the-pipeline","docker-deep-multi-stage-builds-image-slimming","kubernetes-objects-the-ones-you-actually-use","helm-kustomize-packaging-manifests","kubernetes-security-rbac-network-policies-pod-security","configuration-management-ansible-the-alternatives","secrets-management-vault-kubernetes-secrets","software-supply-chain-security-sbom-slsa-sigstore","policy-as-code-oparego-kyverno","artifact-registry-management","kubernetes-networking-storage-cni-csi"],"pentest":["penetration-testing-phases","owasp-top-10-2021","sqlmap-sql-injection-tool-reference","vulnerability-scanning","kali-linux-arsenal","hak5-gear","hardware-rf-hacking","c2-pivoting","re-cloud-fuzzing","methodology-phases","reconnaissance-osint","scanning-enumeration","exploitation","post-exploitation-privesc","web-wireless-reporting","ethical-hacking-101","scoping-rules-of-engagement","getting-started-in-ethical-hacking-the-right-way","basic-recon-enumeration-know-your-target","web-application-pentesting-hacking-the-web-safely","recon-methodology-intelligence-before-attack","password-attacks-how-credentials-get-cracked","privilege-escalation-from-foothold-to-full-control","privilege-escalation-from-low-user-to-rootadmin","pentest-reporting-the-skill-that-makes-or-breaks-your-career","password-attacks-101-cracking-spraying-and-why-mfa-matters","reading-an-nmap-scan-like-a-pro","web-app-basics-finding-your-first-idor-lab-practice","social-engineering-101-why-pretexting-works-on-smart-people-"],"linux":["linux-filesystem-hierarchy-fhs","linux-file-permissions-model","linux-boot-process-biosuefi-systemd","ssh-commands-keys-tunneling","tmux-terminal-multiplexer","unix-linux-commands-quick-reference","raid-levels-reference","comptia-a-hardware-quick-reference","docker-containers-images-compose","yaml-config-language-reference","kubernetes-container-orchestration-reference","filesystem-navigation","file-ops-text-processing","permissions-ownership","users-groups-privilege","processes-services","package-management","networking-cli","shell-cron-hardening","linux-for-newcomers","permissions-packages-for-newcomers","shell-scripting-automate-repetitive-work","cron-jobs-scheduling-tasks-in-linux","processes-signals-running-programs-in-linux","systemd-managing-linux-services","disk-management-partitions-filesystems-lvm","docker-containers-package-once-run-anywhere","awk-sed-the-text-processing-powerhouses","user-group-management-who-can-do-what-in-linux","package-management-installing-and-managing-software","terminal-text-editors-editing-files-without-a-gui","linux-permissions-who-can-do-what-in-depth","ssh-secure-remote-access-done-right","boot-process-logs-understanding-how-linux-starts-and-speaks","storage-management-disks-partitions-lvm-raid","the-ip-command-modern-linux-networking","robust-bash-scripts-that-dont-silently-destroy-things","under-the-hood-namespaces-cgroups","performance-debugging-when-you-need-to-go-deeper","nfs-samba-sharing-files-across-the-network","advanced-bash-scripting-patterns-for-reliable-scripts","lvm-storage-flexible-disk-management-on-linux","mail-servers-postfix-dovecot-email-plumbing","high-availability-keeping-services-up-when-servers-fail","container-internals-what-docker-is-actually-built-from","systemd-essentials-services-units-and-why-things-start-at-bo","file-permissions-demystified-rwx-octal-notation-and-chmod","process-management-finding-and-taming-runaway-processes","the-disk-is-full-diagnosing-storage-problems-like-a-calm-pro","linux-firewalls-iptables-nftables-ufw","selinux-apparmor-mandatory-access-control","ebpf-programmable-kernel-observability-security","podman-rootless-containers","systemd-deep-units-timers-journald","zfs-btrfs-snapshots-integrity","advanced-bash-traps-expansion-robust-scripts","secure-boot-luks-integrity-measured-boot-dm-verity-ima","package-image-building-from-rpmdeb-to-immutable-linux"],"ai":["machine-learning-pipeline","ml-learning-paradigms","agentic-ai-orchestration","ai-ethics-responsible-ai-nist-ai-rmf","ml-foundations","neural-networks-deep-learning","llms-generative-ai","ai-for-defense-blue-team","adversarial-ai-ai-threats-red-team","ai-governance-frameworks","ai-glossary-quick-reference","ai-ml-for-beginners","using-ai-well-prompting-responsibility","prompt-engineering-getting-better-answers-from-ai","ai-tools-for-it-work-practical-everyday-use","ai-ethics-the-human-side-of-machine-intelligence","building-with-ai-apis-from-prompt-to-production","machine-learning-fundamentals-how-machines-learn","embeddings-rag-giving-ai-access-to-your-own-data","ai-security-attacking-and-defending-ai-systems","ml-pipeline-from-raw-data-to-a-serving-model","retrieval-augmented-generation-rag-explained-simply","tokens-context-windows-and-why-just-paste-the-whole-codebase","prompt-injection-the-sql-injection-of-the-ai-world","fine-tuning-vs-prompting-vs-rag-picking-the-right-tool","bias-in-ai-models-where-it-comes-from-and-why-just-remove-it","model-context-protocol-mcp-usb-c-for-ai","etl-data-pipelines-moving-data-at-scale","vector-databases-similarity-search-at-scale","mlops-shipping-monitoring-models-in-production","fine-tuning-vs-rag-vs-prompting-when-to-use-which","lora-quantization-tokenization-internals","running-local-llms-ollama-llamacpp-lm-studio","llm-evaluation-guardrails-diffusion-models","function-calling-tools-letting-a-model-act","structured-output-validation-getting-json-you-can-trust","cost-latency-optimization-caching-batching-model-tiering","observability-for-ai-tracing-token-accounting-quality-monito","the-transformer-attention-and-why-it-changed-everything","training-pipeline-pretraining-sft-rlhf-dpo","inference-internals-kv-cache-context-windows-sampling","multi-agent-systems-orchestration-hand-offs-the-coordination","agent-frameworks-what-they-give-you-and-what-they-cost","agent-safety-sandboxing-permissions-blast-radius-human-in-th","deploying-ai-assistants-copilot-licensing-data-boundaries","shadow-ai-finding-it-and-offering-a-sanctioned-path-instead","ai-acceptable-use-a-policy-people-will-actually-follow","data-governance-for-ai-oversharing-at-the-speed-of-search","deepfakes-voicevideo-impersonation-verification-that-resists"],"script":["regular-expressions-regex","html-hypertext-markup-language","css-cascading-style-sheets","javascript-es6-through-es2025","json-javascript-object-notation","python-scripting-automation","powershell-windows-automation","bash-bourne-again-shell","zsh-z-shell","go-systems-cloud-language","powershell-scripting-reference","bash-scripting-debian-ubuntu-reference","html-structure-semantic-elements","css-selectors-layout-variables","javascript-es2022-reference","json-jq-data-format-cli-processor","sql-query-reference","url-encoding-percent-encoding-reference","programming-fundamentals-concepts-vocabulary","object-oriented-programming-classes-objects-the-4-pillars","data-structures-how-data-is-organised-in-memory","big-o-notation-measuring-algorithm-efficiency","design-patterns-reusable-solutions-to-common-problems","rest-http-apis-how-the-web-communicates","git-version-control-reference","programming-from-zero-start-here","variables-data-types-storing-information","control-flow-decisions-repetition","functions-reusable-building-blocks","data-structures-lists-keyvalue","errors-debugging-when-things-break","the-workflow-good-habits","version-control-with-git-save-points","apis-data-formats-how-programs-talk","operators-expressions","working-with-text-strings","input-output-talking-to-the-user","scope-where-variables-live","which-language-should-i-learn-first","how-the-web-works-for-coders","secure-coding-basics-beginner","how-computers-think-bits-binary","files-paths-the-command-line","thinking-in-algorithms","programming-paradigms-gently","testing-your-code","setting-up-to-code","learning-to-learn-code","numbers-math-rounding-gotchas","looping-over-data-iteration-patterns","standard-library-packages","handling-errors-gracefully","reading-writing-files","refactoring-clean-code","regex-in-plain-english-gentle-intro","conditionals-deep-dive","truthiness-common-pitfalls","variables-const-let-naming","dates-times-time-zones","a-first-look-at-async","capstone-read-a-whole-tiny-program","apis-http-how-programs-talk-to-each-other","json-the-universal-data-language","modules-packages-pip-using-other-peoples-code","object-oriented-programming-classes-objects","choosing-the-right-data-structure","list-comprehensions-generators-pythonic-power","context-managers-decorators-elegant-python-patterns","building-cli-tools-in-python-argparse-click","type-hints-dataclasses-self-documenting-code","testing-with-pytest-prove-your-code-works","sql-databases-where-data-actually-lives","git-version-control-every-developer-needs","environment-variables-configuration-keep-secrets-out-of-code","logging-stop-using-print-use-logging","reproducible-python-environments-make-it-work-everywhere","async-programming-do-more-without-waiting","web-scraping-extracting-data-from-websites","regular-expressions-pattern-matching-power","string-processing-text-manipulation-toolkit","exception-handling-writing-code-that-doesnt-crash","working-with-files-reading-writing-and-paths","debugging-finding-out-why-your-code-lies-to-you","virtual-environments-isolating-project-dependencies","it-automation-scripting-the-boring-stuff-away","building-a-rest-api-from-zero-to-running-endpoint","dates-times-trickier-than-you-think","data-analysis-with-pandas-spreadsheets-in-code","code-quality-tooling-let-robots-enforce-the-boring-rules","mocking-testing-code-that-talks-to-the-outside-world","concurrency-doing-more-than-one-thing-at-once","sockets-networking-from-first-principles","building-a-real-cli-tool-putting-it-all-together","consuming-apis-robustly-beyond-requestsget","encoding-bytes-text-and-why-it-works-on-my-machine","solid-principles-writing-code-that-survives-change","design-patterns-named-solutions-to-common-problems","cloud-automation-controlling-infrastructure-with-code","data-validation-never-trust-input","webhooks-chatops-event-driven-automation","serialization-saving-objects-without-opening-a-hole","testing-strategy-why-and-how-to-test","powershell-scripting-automate-windows-cross-platform","iot-security-securing-connected-devices","python-asyncawait-concurrent-io-without-threads","regular-expressions-pattern-matching-that-pays-off-forever","git-advanced-workflows-beyond-add-commit-push","network-automation-configuring-switches-routers-with-python","web-scraping-extracting-data-from-websites-with-python","working-with-apis-and-json-in-python","regular-expressions-a-survival-guide-for-it-tasks","scheduling-scripts-the-right-way-cron-timers-and-idempotency","python-the-everything-language","typescript-javascript-that-scales","graphql-ask-for-exactly-what-you-need","databases-relational-vs-nosql-acid-indexing","websockets-sse-real-time-on-the-web","api-design-versioning-pagination-rate-limits-idempotency","grpc-protocol-buffers-high-performance-rpc","oltp-vs-olap-transactional-vs-analytical-data","webassembly-wasm-near-native-speed-in-the-browser","progressive-web-apps-pwa-web-apps-that-feel-native","web-accessibility-a11y-building-for-everyone","rust-safe-systems-programming","java-the-enterprise-workhorse","c-net-microsofts-cross-platform-stack","ruby-optimized-for-developer-happiness","php-the-language-that-runs-the-web","c-close-to-the-metal","assembly-how-programs-actually-run","semantic-versioning-dependency-management","apache-kafka-the-distributed-event-log","apache-spark-big-data-processing","orchestration-airflow-dagster","dbt-the-modern-data-stack","dimensional-modeling-star-snowflake-schemas","kotlin-swift-scala-modern-typed-application-languages","elixir-haskell-the-functional-niche-languages","microsoft-graph-from-powershell-the-modern-admin-api","jea-just-enough-administration-constrained-remoting"],"shortcut":["system-general","microsoft-office-excelword","spotify-media","dod-department-of-defense","windows","macos","terminal-bash","vim","vs-code","tmux-browser","dod-quick-reference","universal-shortcuts-everyone-should-know","text-editing-window-shortcuts","powershell-windows-and-cross-platform-scripting","git-power-user-beyond-add-commit-push","tmux-never-lose-a-session-again","text-processing-mastery-combining-the-classic-tools","intermediate-vim-editing-as-a-language","browser-power-moves-tabs-history-and-devtools-shortcuts","tmux-survival-kit-never-lose-a-terminal-session-again","vs-code-setup-settings-profiles","vs-code-command-palette-keybindings","vs-code-editing-superpowers","vs-code-debugging","vs-code-remote-dev-dev-containers","vs-code-extensions-that-matter","dotfiles-environment-management","shell-terminal-setup","runtime-version-managers","ai-pair-programming-using-it-well","terminal-productivity-work-faster-at-the-command-line","github-codespaces-cloud-dev-environments","live-share-real-time-collaborative-editing","modern-cli-tools-ripgrep-fzf-bat-jq-eza","google-chrome-keyboard-shortcuts","github-git-command-reference","api-keys-gateways-netlify-github-rest"],"philosophy":["stoicism-the-art-of-rational-endurance","machiavellianism-power-realism-strategy","psychology-mind-behavior-biases","philosophy-schools-of-thought","buddhism-the-path-to-liberation","taoism-the-way-of-nature","existentialism-absurdism","mental-models-folk-wisdom","more-models-for-a-clear-head","decision-making","wicca-sabbats-elements-tools","paganism-traditions-core-concepts","druidism-grades-awen-sacred-concepts","minimalism-intentional-living"],"productivity":["habits-time","learning-how-to-learn-build-the-skill-behind-all-skills","time-management-making-your-hours-count","the-japanese-mastery-loop-kata-poka-yoke-hansei-kaizen-shoku","hansei-the-15-minutes-that-beat-15-more","the-memory-palace-method-of-loci-for-ordered-lists","sleep-where-the-studying-actually-sticks","attention-task-switching-residue-the-cost-of-interruption","note-taking-for-learning-notes-you-never-reopen-are-theatre","study-systems-that-survive-a-brain-that-wont-cooperate"],"mind":["communication-relationships","resilience-perspective","imposter-syndrome-you-belong-here","burnout-recognizing-it-before-it-breaks-you","the-compound-effect-small-consistent-actions-build-careers","dealing-with-failure-falling-forward","survival-mindsets-hard-won-wisdom-for-a-long-it-career","surviving-on-call-when-the-pager-owns-your-night","surviving-and-thriving-in-your-first-on-call-rotation","imposter-syndrome-in-it-youre-not-the-only-one-faking-it-a-l","desk-body-eyes-wrists-back-the-dose-problem","fuel-focus-nutrition-for-a-desk-bound-brain"],"career":["it-career-paths-finding-your-lane","professional-networking-your-career-grows-through-relationsh","clear-technical-communication-the-skill-that-multiplies-ever","mentorship-the-fastest-way-to-grow","interview-preparation-getting-the-job","building-a-home-lab-where-you-actually-learn","certifications-the-roadmap-and-how-to-actually-study","technical-writing-the-underrated-career-superpower","building-in-public-your-reputation-compounds","professional-ethics-the-responsibility-that-comes-with-acces","breaking-into-it-from-zero-to-hired","growing-into-senior-beyond-technical-skill","the-craftspersons-mindset-tying-it-all-together","soft-skills-the-difference-between-a-good-and-great-it-pro","home-lab-practicing-it-skills-without-breaking-production","certification-roadmap-charting-a-path-through-the-alphabet-s","building-a-home-lab-without-breaking-the-bank","negotiating-your-first-it-offer-without-feeling-like-youre-b","money-adulting-basics","financial-basics-for-it-workers-build-while-you-build-a-care","remote-work-working-well-from-anywhere"],"military":["how-staff-codes-work-letter-number-sub","prefix-letters-j-g-s-n-a-c-m-f","functional-numbers-1-through-9-what-each-number-means","sub-designators-the-third-digit-eg-j63","branch-comparison-same-number-different-context","quick-reference-full-cross-matrix","staff-system-overview","staff-functions-19","common-codes-decoded","reading-military-codes-beginner","ranks-echelons-very-basic","military-communication-standards-clear-concise-correct","ooda-loop-decision-making-under-pressure","commanders-intent-empowering-action-without-micromanaging","after-action-review-learning-from-every-event","troop-leading-procedures-a-framework-for-planning-anything","pace-planning-redundancy-by-design","leadership-styles-mission-command-cohesion","opsec-operational-security-in-cyber-real-life","leadership-military-principles-applied-to-it-teams","translating-military-experience-into-it-resume-language","using-the-gi-bill-and-tuition-assistance-for-it-certificatio","networking-events-without-the-awkwardness-a-veterans-field-g","classification-levels-markings-damage-not-importance","cover-sheets-sf-703-sf-704-sf-705","media-equipment-labels-sf-706-through-sf-712","container-end-of-day-forms-sf-700-sf-701-sf-702","clearance-paperwork-sf-86-sf-312-sf-714","spills-sanitisation-reporting-the-first-ten-minutes","mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord","the-intelligence-cycle-direction-collection-processing-disse","red-teaming-as-a-discipline-premortems-structured-contrarian"],"redteam":["rules-of-engagement-read-this-first","nmap-the-network-mapper-deep-dive","masscan-rustscan-internet-scale-port-discovery","theharvester-recon-ng-osint-frameworks","amass-subfinder-subdomain-enumeration","shodan-censys-search-engines-for-exposed-devices","google-dorking-maltego-spiderfoot","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner","sqlmap-automated-sql-injection","ffuf-gobuster-content-parameter-fuzzing","nuclei-templated-vulnerability-scanning","nikto-wpscan-server-cms-scanning","metasploit-framework-modules-sessions-workflow","msfvenom-payload-generation","searchsploit-exploit-db-finding-public-exploits","impacket-the-windowsad-python-toolkit","bloodhound-sharphound-attack-path-graphing","mimikatz-credential-extraction","kerberos-attacks-rubeus-kerbrute","responder-ntlm-relay","adcs-abuse-certipy-the-esc-techniques","c2-concepts-beacons-listeners-redirectors","cobalt-strike-the-commercial-standard","sliver-the-open-source-modern-c2","mythic-havoc-empire-the-c2-ecosystem","hashcat-gpu-password-cracking","john-the-ripper-the-versatile-cracker","hydra-medusa-online-login-attacks","wordlists-hash-identification","aircrack-ng-wi-fi-auditing-suite","wifite-hcxdumptool-automated-wi-fi-pmkid","bettercap-the-mitm-framework","flipper-zero-sub-ghz-rfid-tools","badusb-rf-implants-rubber-ducky-omg-proxmark-hackrf","living-off-the-land-lolbas-gtfobins","privilege-escalation-scanners-peas-powerup","pivoting-tunneling-chisel-ligolo-ng-proxychains","data-exfiltration-channels-dns-icmp-https","pacu-the-aws-exploitation-framework","cloudfox-enumerate-iam-attack-surface-enumeration","kubernetes-attacks-rbac-abuse-container-escape","cloud-credential-attacks-the-purple-team-bridge"],"blueteam":["wireshark-packet-analysis","tcpdump-capture-from-the-command-line","zeek-network-metadata-logging","suricata-snort-signature-idsips","arkime-ntopng-full-capture-traffic-analytics","splunk-spl-the-siem-standard","elastic-elk-stack-open-source-log-analytics","wazuh-open-source-xdrsiem","graylog-loki-log-aggregation-alternatives","sigma-write-detections-once-run-anywhere","sysmon-the-windows-telemetry-powerhouse","osquery-your-fleet-as-a-sql-database","velociraptor-endpoint-dfir-hunting-at-scale","windows-event-logs-the-ids-that-matter","auditd-linux-endpoint-logging","yara-pattern-matching-rules-for-malware","mitre-attck-navigator-coverage-driven-detection","adversary-emulation-atomic-red-team-caldera","detection-tuning-the-pyramid-of-pain","volatility-memory-forensics","autopsy-the-sleuth-kit-disk-forensics","kape-plaso-triage-super-timelines","windows-forensic-artifacts","chain-of-custody-evidence-handling","misp-opencti-threat-intel-platforms","stix-taxii-the-sharing-standards","malware-sandboxes-virustotal-anyrun-hybrid-analysis","threat-hunting-assume-breach-go-looking","vulnerability-scanners-nessus-openvas","cis-benchmarks-cis-cat-hardening-baselines","lynis-linux-audit-hardening","openscap-disa-stigs-compliance-driven-hardening","patch-config-management-as-a-control","honeypots-canarytokens-deception-tech","email-security-spf-dkim-dmarc","identity-threat-detection-response-itdr","purple-teaming-closing-the-detection-gap","what-detection-engineering-is-and-why-it-split-off-from-soc-","the-detection-lifecycle-idea-to-retirement-and-the-gates-bet","detection-requirements-writing-one-before-writing-the-rule","log-source-inventory-telemetry-gaps-proving-a-rule-can-fire-","normalisation-schemas-ocsf-ecs-asim-and-why-the-schema-decid","detection-as-code-git-review-ci-versioned-rules","testing-a-detection-synthetic-events-emulation-regression","measuring-detection-quality-precision-recall-the-alert-to-in","attck-coverage-mapping-honest-heat-maps-and-the-lie-of-100-c","the-detection-backlog-retiring-a-rule-without-losing-why-it-","documentation-for-responders-the-runbook-that-ships-with-the","log-volume-cost-the-detections-a-budget-quietly-kills"],"cloud":["cloud-fundamentals-regions-azs-shared-responsibility","aws-getting-started","aws-cli-cloudshell","google-cloud-getting-started","gcloud-cli-cloud-shell","cloud-rosetta-stone-aws-gcp-azure","aws-iam-users-roles-policies","aws-iam-deep-assumerole-sts-boundaries","gcp-iam-members-roles-hierarchy","gcp-service-accounts-workload-identity","cloud-iam-pitfalls-privilege-escalation","aws-vpc-subnets-security-groups-nacls","aws-load-balancing-dns-elb-route-53-cloudfront","gcp-vpc-global-networks-firewall-rules","gcp-load-balancing-dns","hybrid-connectivity-vpn-interconnect-peering","aws-compute-ec2-amis-auto-scaling","aws-serverless-containers-lambda-ecs-eks-fargate","gcp-compute-compute-engine-migs","gcp-serverless-containers-cloud-run-functions-gke","choosing-compute-vm-vs-container-vs-serverless","aws-storage-s3-classes-ebs-efs","aws-databases-rds-aurora-dynamodb","gcp-storage-cloud-storage-persistent-disk-filestore","gcp-databases-cloud-sql-spanner-firestore","bigquery-serverless-data-warehouse","aws-security-stack-cloudtrail-guardduty-security-hub","aws-data-protection-kms-secrets-manager","gcp-security-cloud-audit-logs-security-command-center","gcp-data-protection-cloud-kms-secret-manager-vpc-sc","cspm-prowler-scoutsuite-steampipe","terraform-on-aws-gcp","aws-native-iac-cloudformation-cdk","cloud-cost-control-budgets-tags-rightsizing","landing-zones-multi-account-structure","gcp-native-iac-deployment-manager-config-controller","cloud-cicd-codepipeline-cloud-build","aws-observability-cloudwatch-x-ray","gcp-observability-cloud-monitoring-logging-trace","well-architected-the-architecture-framework","azure-getting-started-entra-id","azure-core-resource-groups-vnet-vms-storage","azure-security-defender-key-vault-sentinel","azure-hierarchy-rbac-scopes-policy","azure-networking-vnet-nsg-the-load-balancer-family","azure-compute-storage-picking-the-right-sku","azure-monitor-log-analytics-kql","azure-troubleshooting-playbook","entra-id-sign-in-conditional-access-troubleshooting"],"cs":["big-o-in-practice-what-the-notation-hides","amortized-analysis-why-a-dynamic-array-is-o1-on-average","time-vs-space-trade-offs-what-caching-actually-costs","recursion-induction-trusting-a-function-that-calls-itself","p-np-knowing-when-to-stop-looking-for-an-exact-answer","memory-layout-cache-locality-why-arrays-beat-linked-lists","hash-tables-collisions-load-factor-the-dos-that-exploits-the","trees-bst-balanced-heap-trie-and-what-each-is-actually-for","graphs-representation-traversal-the-four-algorithms-worth-kn","probabilistic-structures-bloom-filters-hyperloglog-sketches","sorting-searching-why-your-language-picked-the-one-it-did","divide-conquer-greedy-dynamic-programming-recognising-which-","string-algorithms-matching-edit-distance-where-regex-fits","randomised-algorithms-sampling-reservoirs-monte-carlo","algorithm-interview-patterns-the-eight-that-cover-most-quest","processes-threads-scheduling-what-a-context-switch-costs","virtual-memory-paging-the-tlb-swaps-bad-reputation","concurrency-primitives-mutexes-semaphores-conditions-atomics","deadlock-livelock-the-four-conditions-and-which-one-to-break","filesystems-from-the-inside-inodes-journaling-crash-consiste","time-in-distributed-systems-why-timestamps-cannot-order-even","consensus-raft-and-paxos-without-the-paper","failure-detection-flp-why-is-it-down-has-no-perfect-answer","caches-the-memory-hierarchy-the-numbers-every-engineer-shoul","number-representation-twos-complement-ieee-754-the-bugs-each","speculative-execution-its-security-cost-spectre-and-meltdown","instruction-execution-pipelining-superscalar-why-branches-ar","instruction-sets-x86-64-arm64-risc-v-why-the-shift-is-happen","how-a-compiler-works-lexing-parsing-ir-codegen","interpreters-bytecode-jit-the-spectrum-from-python-to-the-jv","type-systems-static-dynamic-and-what-types-actually-buy-you","garbage-collection-generational-collectors-pauses-tuning","undefined-behaviour-memory-safety-the-class-behind-most-cves"],"eng":["scalability-101-vertical-vs-horizontal","load-balancing-sharding","back-of-the-envelope-estimation","designing-for-failure","the-system-design-interview-a-framework","monolith-vs-microservices-vs-modular-monolith","event-driven-architecture","clean-hexagonal-architecture","cqrs-event-sourcing","the-twelve-factor-app","domain-driven-design-ddd","solid-principles","coupling-cohesion","api-first-contract-driven-design","idempotency-exactly-once-safe-retries","clean-code-naming","code-review-doing-it-well","testing-strategy-the-test-pyramid","technical-debt-recognize-pay-it-down","adrs-design-docs","resilience-patterns-circuit-breaker-retry-timeout","distributed-transactions-saga-outbox","backpressure-flow-control","consistency-in-practice-quorums-tunable-reads","the-engineering-ladder-junior-to-principal","staff-archetypes","tech-lead-vs-engineering-manager","influence-without-authority","cert-roadmaps-choosing-a-path","cloud-native-serverless-architecture-patterns","schema-data-modeling-patterns","estimation-planning","career-ladders-interviews","coder-vs-programmer-vs-developer-vs-architect","the-wider-it-org-roles-beyond-writing-code","unified-endpoint-management-uem-engineer"],"data":["how-a-database-actually-works","the-relational-model-keys-integrity","normalization-1nf-through-bcnf","acid-transactions-isolation-levels","er-modeling-designing-the-schema","sql-joins-every-type-and-the-null-traps","window-functions-analytics-without-collapsing-rows","ctes-recursion-readable-composable-queries","aggregation-group-by-having-rollup","subqueries-exists-set-operations","indexes-explained-b-tree-hash-covering","reading-query-plans-explain-analyze","query-optimization-sargability-n1","locking-mvcc-concurrency-without-chaos","partitioning-sharding-scaling-one-big-table","postgresql-the-default-choice","postgres-power-features-jsonb-full-text","mysql-mariadb-the-other-giant","sqlite-the-database-thats-everywhere","connection-pooling-surviving-many-clients","the-nosql-landscape-four-families","mongodb-documents-the-aggregation-pipeline","redis-the-in-memory-multi-tool","cassandra-dynamodb-wide-column-at-scale","graph-databases-when-relationships-are-the-data","oltp-vs-olap-rows-vs-columns","columnar-engines-parquet-duckdb-clickhouse","warehouse-vs-lake-vs-lakehouse","the-semantic-layer-metrics","data-quality-observability","backups-point-in-time-recovery","replication-high-availability","schema-migrations-zero-downtime-change","database-security-least-privilege-rls","monitoring-a-database-what-to-watch","data-roles-who-does-what","designing-a-schema-from-requirements","time-series-event-data","vector-databases-embeddings-similarity-search","the-data-interview"],"web":["how-the-browser-renders-a-page","reflow-repaint-what-causes-jank","the-dom-events-bubbling-delegation","web-storage-cookies-localstorage-indexeddb","devtools-mastery","flexbox-one-dimensional-layout","css-grid-two-dimensional-layout","responsive-design-fluid-mobile-first","modern-css-custom-properties-has-layers","design-systems-tokens-tailwind","closures-scope-this","async-deep-promises-await-the-event-loop","prototypes-modern-classes","modules-bundlers-esm-vite-tree-shaking","typescript-types-for-javascript","react-components-hooks-the-mental-model","react-patterns-pitfalls","vue-svelte-other-reactivity-models","meta-frameworks-nextjs-rendering-modes","state-management-when-you-actually-need-it","fetch-rest-cors-in-practice","graphql-on-the-backend-schema-resolvers-caching","realtime-websockets-sse-polling","frontend-auth-tokens-cookies-oauth","data-fetching-patterns-react-query-caching","web-performance-core-web-vitals","web-accessibility-a11y-wcag-aria","frontend-testing-unit-component-e2e","frontend-security-xss-csrf-csp","seo-metadata-for-developers","progressive-web-apps-offline-installable","rendering-at-the-edge-cdns-edge-functions","webassembly-native-speed-in-the-browser","frontend-build-deploy-ci-preview-deploys","the-full-stack-picture-how-it-all-connects"],"endpoint":["microsoft-endpoint-configuration-manager-mecm","azure-ad-microsoft-entra-id-endpoint-identity","microsoft-intune-cloud-mdm-mam","windows-autopilot-zero-touch-provisioning","enrollment-status-page-esp","co-management-cloud-attach","conditional-access-device-compliance","troubleshooting-toolkit-log-reference","glossary-acronyms-logs-task-sequence-variables","mecm-client-health-install-repair-the-cycles","mecm-deployment-content-troubleshooting","mecm-osd-task-sequence-failure-triage","mecm-site-health-server-log-map","configuration-profiles-settings-catalog-templates-custom","policy-conflicts-proving-which-one-won","security-baselines-without-breaking-the-fleet","administrative-templates-admx-backed-policy","assignment-strategy-users-devices-filters-exclusions","win32-app-packaging-intunewin-end-to-end","install-contexts-system-vs-user","store-lob-enterprise-app-catalog-apps","app-protection-policies-mam-without-enrolment","application-troubleshooting-reading-the-ime-log","windows-update-for-business-rings-deferrals-deadlines","feature-vs-quality-vs-driver-updates","windows-autopatch-what-it-takes-over","update-compliance-reporting-where-the-truth-lives","emergency-patching-advisory-to-verified","windows-administration-fundamentals","bitlocker-at-scale-silent-enablement-key-escrow-recovery","defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro","local-admin-rights-removing-them-and-endpoint-privilege-mana","windows-laps-local-admin-password-rotation-in-entra-and-ad","firewall-removable-media-policy-the-two-controls-auditors-as","compliance-policies-deep-settings-grace-periods-what-non-com","device-trust-end-to-end-enrolment-compliance-ca-access","reporting-on-drift-finding-devices-that-quietly-stopped-comp","the-identityendpoint-seam-the-failure-that-lands-both-teams-","macos-for-windows-admins-the-translation-table-security-mode","apple-fleet-management-business-manager-ade-jamf-vs-intune-f","ios-android-enterprise-supervision-work-profiles-mam"],"infra":["windows-server-editions-licensing-what-you-are-actually-buyi","server-core-why-you-would-remove-the-gui-and-how-you-manage-","server-manager-rsat-windows-admin-center-which-console-wins","roles-features-what-installing-a-role-actually-changes","server-hardening-baseline-the-short-list-that-removes-most-r","ad-ds-boundaries-when-to-add-an-ou-a-domain-or-a-forest","fsmo-roles-the-five-jobs-that-cannot-be-done-by-everyone","ad-replication-how-changes-travel-and-triage-when-they-stop","trusts-direction-transitivity-why-they-are-backwards","sites-subnets-why-clients-authenticate-against-the-wrong-dc","group-policy-architecture-where-the-settings-actually-live","processing-order-precedence-lsdou-enforcement-loopback","filtering-security-groups-wmi-item-level-targeting","group-policy-preferences-the-half-people-forget-exists","gpo-troubleshooting-proving-what-a-machine-actually-received","group-nesting-strategy-agdlp-and-why-nested-groups-become-a-","service-accounts-gmsa-and-retiring-the-shared-password","kerberos-in-operations-spns-delegation-clock-skew","entra-connect-hybrid-identity-choosing-how-passwords-are-che","cleaning-up-a-legacy-directory-stale-objects-over-permissive","windows-dns-administration-zones-scavenging-forwarders","dhcp-administration-scopes-reservations-failover-relay","file-services-share-vs-ntfs-permissions-dfs-quotas","ad-cs-design-offline-roots-issuing-cas-publishing","certificate-templates-the-settings-that-matter-and-the-ones-","certificate-lifecycle-auto-enrolment-and-the-expiry-nobody-s","domain-controller-recovery-authoritative-vs-non-authoritativ","decommissioning-a-server-properly-the-checklist-that-prevent","virtualization-fundamentals-hypervisors-overcommit-the-noisy","hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr","snapshots-are-not-backups-what-they-cost-and-how-they-bite","backup-strategy-3-2-1-1-0-and-the-schemes-that-make-restores","ransomware-resilient-backup-immutability-isolation-assuming-","restore-testing-dr-design-turning-backups-into-a-recovery-ca"],"m365":["m365-tenant-anatomy-the-tenant-its-domains-the-admin-centres","licensing-without-tears-e3-e5-business-group-based-assignmen","admin-roles-least-privilege-the-roles-worth-knowing-and-pim-","service-health-the-message-center-knowing-before-the-tickets","mail-flow-connectors-transport-rules-the-path-a-message-take","mailbox-types-delegation-user-shared-room-equipment","eop-defender-for-office-anti-spam-anti-phish-safe-links-quar","message-trace-header-analysis-proving-where-a-message-died","sharepoint-online-architecture-sites-libraries-the-limits-th","the-sharing-permissions-model-why-it-sprawls-and-how-to-cont","onedrive-known-folder-move-files-on-demand-sync-triage","teams-architecture-what-a-team-actually-is","teams-governance-sprawl-naming-expiry-the-guest-question","retention-policies-vs-retention-labels-the-distinction-that-","sensitivity-labels-dlp-classification-that-survives-contact-","ediscovery-content-search-the-audit-log-answering-legal-with","backup-for-m365-why-native-retention-is-not-a-backup","the-m365-troubleshooting-playbook-tenant-identity-licence-po","teams-voice-phone-system-calling-plans-direct-routing-operat","teams-call-quality-cqd-the-network-requirements-the-real-cul","teams-policies-meeting-messaging-app-the-assignment-preceden","retention-litigation-hold-archiving-legals-requirements-in-m","purview-overview-the-compliance-surface-mapped-to-what-audit","the-admin-modules-exchange-online-teams-graph-from-one-conso","reporting-usage-analytics-adoption-data-that-answers-a-real-","tenant-to-tenant-mergers-the-migration-nobody-plans-enough-t"],"math":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications","unit-3-integrals-series-area-techniques-differential-equatio","chapter-tests-the-final-where-the-marks-actually-go","logarithms-exponents-rules-and-how-to-solve","trigonometry-the-unit-circle-identities-inverses","the-two-pictures-derivative-as-slope-integral-as-area","algebra-geometry-formulas-the-prerequisites","shape-formulas-labelled-diagrams","ti-84-plus-ce-the-keys-that-matter-for-calculus","the-named-theorems-rolle-mvt-ivt-evt-squeeze","sin-cos-tan-sec-what-they-actually-are","implicit-differentiation-choosing-which-rule-first","numerical-integration-trapezoidal-rule-midpoint-simpsons","series-choosing-a-test-and-radius-of-convergence"],"quotes":["sourced-quotes-why-this-collection-has-citations","stoic-quotes-marcus-aurelius-epictetus-seneca","eastern-quotes-tao-te-ching-zen-the-buddhist-canon","modern-existentialist-quotes","misattributed-famous-lines-nobody-can-source"],"acronym":["how-to-use-this-dictionary","acronyms-09","acronyms-a","acronyms-b","acronyms-c","acronyms-d","acronyms-e","acronyms-f","acronyms-g","acronyms-h","acronyms-i","acronyms-j","acronyms-k","acronyms-l","acronyms-m","acronyms-n","acronyms-o","acronyms-p","acronyms-q","acronyms-r","acronyms-s","acronyms-t","acronyms-u","acronyms-v","acronyms-w","acronyms-x","acronyms-y","acronyms-z","by-area-ai","by-area-business","by-area-certifications","by-area-cloud","by-area-compliance","by-area-computer-science","by-area-cryptography","by-area-data","by-area-devops","by-area-directory","by-area-electronics","by-area-endpoint","by-area-engineering","by-area-enterprise","by-area-government","by-area-hardware","by-area-health","by-area-infrastructure","by-area-linux","by-area-misc","by-area-networking","by-area-operations","by-area-organizations","by-area-risk","by-area-security","by-area-standards","by-area-storage","by-area-systems","by-area-virtualization","by-area-web","by-area-windows"]}</script>
 </body>
 </html>

@@ -2873,38 +2873,38 @@ tuning exercise in a console. The site has SIEM and EDR cards; it has nothing on
 the craft of building what runs inside them.
 
 **Wave BA1 — The Discipline**
-- [ ] What Detection Engineering Is — and why it split off from SOC analysis
-- [ ] The Detection Lifecycle — idea → hypothesis → logic → test → deploy → tune → retire
-- [ ] Detection Requirements — writing one before writing the rule
-- [ ] The Pyramid of Pain Applied — choosing what to detect on, and its cost to the attacker
-- [ ] Coverage vs Noise — the trade every rule makes, made explicit
+- [x] What Detection Engineering Is — and why it split off from SOC analysis
+- [x] The Detection Lifecycle — idea → hypothesis → logic → test → deploy → tune → retire
+- [x] Detection Requirements — writing one before writing the rule
+- [~] The Pyramid of Pain Applied — choosing what to detect on, and its cost to the attacker — **already carded as 'Detection Tuning & the Pyramid of Pain'**
+- [x] Coverage vs Noise — the trade every rule makes, made explicit
 
 **Wave BA2 — Data Before Rules**
-- [ ] Log Source Inventory — knowing what you actually collect, and at what fidelity
-- [ ] Data Normalization — OCSF, ECS, ASIM; why a schema decides your query
-- [ ] Telemetry Gaps — proving a detection cannot fire, before you promise it does
-- [ ] Log Volume & Cost — sampling, filtering, and the detections cost quietly kills
+- [x] Log Source Inventory — knowing what you actually collect, and at what fidelity
+- [x] Data Normalization — OCSF, ECS, ASIM; why a schema decides your query
+- [x] Telemetry Gaps — proving a detection cannot fire, before you promise it does
+- [x] Log Volume & Cost — sampling, filtering, and the detections cost quietly kills
 - [ ] Enrichment — asset, identity and threat context that turns an alert into a decision
 
 **Wave BA3 — Writing Detections**
-- [ ] Sigma as an Interchange Format — writing once, deploying to several backends
-- [ ] Detection-as-Code — Git, review, CI, and versioned rules
+- [~] Sigma as an Interchange Format — writing once, deploying to several backends — **already carded as 'Sigma — Write Detections Once, Run Anywhere'**
+- [x] Detection-as-Code — Git, review, CI, and versioned rules
 - [ ] Writing a Good Rule — specificity, false-positive analysis, the tuning fields
 - [ ] Behavioural vs Signature Detections — worked examples of both for one technique
 - [ ] Correlation & Sequencing — when a single event genuinely is not enough
 
 **Wave BA4 — Testing Detections**
-- [ ] Unit-Testing a Detection — synthetic events and expected verdicts
-- [ ] Atomic Red Team & Emulation for Validation — proving the rule fires on the real thing
-- [ ] Detection Regression — the rule that silently stopped working after a log change
-- [ ] Measuring Detection Quality — precision, recall, alert-to-incident ratio, time-to-detect
-- [ ] Purple-Team Feedback Loop — closing the gap the exercise found
+- [x] Unit-Testing a Detection — synthetic events and expected verdicts
+- [x] Atomic Red Team & Emulation for Validation — proving the rule fires on the real thing
+- [x] Detection Regression — the rule that silently stopped working after a log change
+- [x] Measuring Detection Quality — precision, recall, alert-to-incident ratio, time-to-detect
+- [~] Purple-Team Feedback Loop — closing the gap the exercise found — **already carded as 'Purple Teaming — Closing the Detection Gap'**
 
 **Wave BA5 — Running the Programme**
-- [ ] ATT&CK Coverage Mapping — honest heat maps, and the lie of "100% coverage"
-- [ ] Detection Backlog & Prioritisation — threat model in, rules out
-- [ ] Rule Retirement — deleting detections without losing the reason they existed
-- [ ] Documentation for Responders — the runbook that ships *with* the rule
+- [x] ATT&CK Coverage Mapping — honest heat maps, and the lie of "100% coverage"
+- [x] Detection Backlog & Prioritisation — threat model in, rules out
+- [x] Rule Retirement — deleting detections without losing the reason they existed
+- [x] Documentation for Responders — the runbook that ships *with* the rule
 - [ ] Detection Engineering Interview — what the role is actually assessed on
 
 ### TRACK BB — Adversary Emulation & Purple Teaming  (→ `redteam` / `blueteam`)
@@ -5600,3 +5600,59 @@ the domain; none of them is a foundation the rest depends on.
 > `tenant-to-tenant` each returned **0** mentions across the other 28 domains. The only overlap
 > found was network-side QoS and jitter in `net`, which the call-quality card cross-references
 > rather than restates.
+
+---
+
+## Session record — Track BA: detection engineering as a discipline
+
+Third content wave of the session, and the audit changed the shape of it more than any wave so
+far.
+
+### The audit: the tools were all there, the discipline was not
+
+`blueteam` already carries 37 cards of detection *tooling* — Sigma, Sysmon, ATT&amp;CK Navigator,
+Atomic Red Team, Splunk, Elastic, Wazuh, purple teaming, tuning and the Pyramid of Pain. So the
+first instinct, "blueteam is well covered, pick another track", was wrong in an interesting way.
+Probing for the engineering practice around those tools found this:
+
+| Probe | Mentions site-wide |
+|---|---:|
+| `detection as code`, `alert tuning`, `false positive rate`, `att&ck coverage` | **0** |
+| `detection engineering` | 3 |
+| `sigma rule` | 2 |
+
+The tools were documented and the practice that makes them add up to a programme was not. That
+is a different kind of gap from the M365 one — not an absent subject, but an absent *altitude*.
+
+### What shipped
+
+**12 cards into `blueteam`**, 37 → 49. Site: 1,106 → **1,118 topics**.
+
+| Group | Cards |
+|---|---|
+| The discipline | What detection engineering is · The detection lifecycle · Detection requirements |
+| The data | Log source inventory &amp; telemetry gaps · Normalisation schemas (OCSF/ECS/ASIM) · Log volume &amp; cost |
+| The practice | Detection-as-code · Testing &amp; regression · Measuring quality |
+| The programme | ATT&amp;CK coverage mapping · The backlog &amp; retirement · Responder runbooks |
+
+Six cross-references point back at the tool cards rather than restating them: Sigma, ATT&amp;CK
+Navigator, Atomic Red Team, Sysmon, threat hunting, and the Operations runbook card.
+
+### The spine the cards share
+
+One argument runs through the wave, and it is worth stating in the plan because it is what makes
+the cards a set rather than twelve essays: **a detection that has stopped working is
+indistinguishable from a quiet environment.** The lifecycle exists to give each stage an exit
+condition, the telemetry inventory exists to prove a rule *can* fire, regression tests exist to
+prove it *still* fires, the coverage levels exist to stop a green square meaning "a rule exists",
+and the metrics section exists because most detection dashboards measure things that go up when
+the programme gets worse.
+
+### Track BA after this wave
+
+Eight items were left; three of them are already carded in `blueteam` and are now marked `[~]`
+rather than ticked — the Pyramid of Pain, Sigma as an interchange format, and the purple-team
+feedback loop all have existing homes, and writing second versions would be exactly the
+duplication the audit rule exists to prevent. Five genuine items remain: enrichment, writing a
+good rule, behavioural vs signature detections, correlation and sequencing, and what the role is
+assessed on in interview.
