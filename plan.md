@@ -5575,9 +5575,12 @@ sits at 50% headroom, and `raw_mb` is at 4.1 of 8.0.
 cards re-derived every stamp on the site from `git blame` and moved ~250 topics from
 `2026-06`/`2026-07` to later months, with no content change behind the move. That is the same
 git-version sensitivity the CI comment already documents for `--check`. The churn was reverted
-and the new cards were stamped directly. **Until that is fixed, do not run the stamper in write
-mode over the whole tree** — it silently inflates the freshness signal the `--report` mode
-exists to keep honest. A `--only <file>` flag would be the obvious repair.
+and the new cards were stamped directly.
+
+> **Fixed in the following commit.** `--only <domain>` stamps just the files a wave touched;
+> the docstring now names it as the usual case and says why. Running
+> `--only m365` against the hand-written stamps produced no diff, which is the check that the
+> hand-stamping and the git-derived answer agree.
 
 ### Track W after this session
 

@@ -22,10 +22,17 @@ commit classifies itself as mechanical on the next run, with no SHA list to
 maintain by hand.
 
 Usage:
-    python3 tools/stamp_freshness.py            # stamp in place
+    python3 tools/stamp_freshness.py --only m365   # stamp one domain — the usual case
+    python3 tools/stamp_freshness.py            # stamp everything; see the warning below
     python3 tools/stamp_freshness.py --verify   # CI gate: are the stamps valid?
     python3 tools/stamp_freshness.py --check    # report drift, write nothing
     python3 tools/stamp_freshness.py --report   # oldest volatile topics
+
+**Prefer --only.** A whole-tree write re-derives every stamp on the site from
+`git blame`, and blame heuristics differ between git releases — one content wave
+that added 18 cards also moved ~250 untouched topics into later months with no
+edit behind the move. Stamping the file you actually changed avoids inventing
+freshness for the rest of the site.
 
 --verify and --check are not the same question. --verify asks whether every
 topic carries a plausible stamp, using no git at all, so its answer does not
@@ -273,11 +280,31 @@ def verify():
     return 0
 
 
-def stamp(check_only=False):
+def domain_files(only=None):
+    """The files to stamp — all of them, or the ones named by --only.
+
+    `--only` exists because a whole-tree write is not the safe default it looks
+    like. Stamping one new domain re-derives every other stamp on the site from
+    `git blame`, and blame heuristics differ between git releases: a content
+    wave that added 18 cards also moved ~250 untouched topics into later months,
+    with no edit behind the move. That silently inflates the freshness signal
+    `--report` exists to keep honest. Name the file you actually changed.
+    """
+    files = [p for p in sorted(DATA.glob("*.html")) if p.name not in EXCLUDE]
+    if only is None:
+        return files
+    wanted = {n if n.endswith(".html") else f"{n}.html" for n in only}
+    picked = [p for p in files if p.name in wanted]
+    missing = wanted - {p.name for p in picked}
+    if missing:
+        raise SystemExit(f"error: no such domain file: {', '.join(sorted(missing))}")
+    return picked
+
+
+def stamp(check_only=False, only=None):
+    files = domain_files(only)
     changed, stamped = [], 0
-    for path in sorted(DATA.glob("*.html")):
-        if path.name in EXCLUDE:
-            continue
+    for path in files:
         rel = f"data/{path.name}"
         ignore = mechanical_revs(rel)
         original = path.read_text(encoding="utf-8")
@@ -305,7 +332,7 @@ def stamp(check_only=False):
             if not check_only:
                 path.write_text(result, encoding="utf-8")
 
-    print(f"\n{stamped} topics stamped across {len(list(DATA.glob('*.html'))) - len(EXCLUDE)} files.")
+    print(f"\n{stamped} topics stamped across {len(files)} file(s).")
     if changed:
         print(("Would update: " if check_only else "Updated: ") + ", ".join(changed))
     return 1 if (check_only and changed) else 0
@@ -403,6 +430,17 @@ def candidates(limit=50):
     return 0
 
 
+def parse_only(argv):
+    """Domain names following --only, e.g. `--only m365` or `--only m365 endpoint`."""
+    if "--only" not in argv:
+        return None
+    rest = argv[argv.index("--only") + 1:]
+    names = [a for a in rest if not a.startswith("--")]
+    if not names:
+        raise SystemExit("error: --only needs at least one domain name, e.g. --only m365")
+    return names
+
+
 if __name__ == "__main__":
     if "--verify" in sys.argv:
         sys.exit(verify())
@@ -410,4 +448,4 @@ if __name__ == "__main__":
         sys.exit(report())
     if "--candidates" in sys.argv:
         sys.exit(candidates())
-    sys.exit(stamp(check_only="--check" in sys.argv))
+    sys.exit(stamp(check_only="--check" in sys.argv, only=parse_only(sys.argv)))
