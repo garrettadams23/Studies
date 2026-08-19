@@ -2104,3 +2104,338 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: WRITING A GOOD RULE ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">✍️</span>
+    <span class="topic-name">Writing a Good Rule — Specificity, False-Positive Analysis &amp; the Tuning Fields</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Specific Enough to Be Actionable, General Enough to Survive a Variant</div>
+      <div class="concept-desc">
+        Every rule sits on a line between two failures. Too specific, and it matches one sample from
+        one report — a hash, a filename, a command line copied verbatim — and the next variant walks
+        past it. Too general, and it fires constantly and gets muted. The craft is picking the part
+        of the behaviour that is expensive for the adversary to change, and matching on that.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Matching on…</th><th>Attacker changes it by…</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td>A file hash</td><td>Recompiling</td><td>Nearly free to evade; use as context, not as the rule</td></tr>
+            <tr><td>A filename or path</td><td>Renaming</td><td>Still cheap</td></tr>
+            <tr><td>A command-line string</td><td>Reordering flags, adding whitespace, obfuscating</td><td>Cheap, and the most common over-fit</td></tr>
+            <tr><td>A parent/child process relationship</td><td>Finding another launcher</td><td>Costly — usually worth building on</td></tr>
+            <tr><td>The sequence of actions the objective requires</td><td>Changing the objective</td><td>Most expensive; hardest to write</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          This is the Pyramid of Pain used as a design tool rather than a poster — the ladder itself
+          is in <span class="xref">Detection Tuning &amp; the Pyramid of Pain</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">False-Positive Analysis Before Deployment, Not After</div>
+      <div class="concept-desc">
+        Analysts should never be the mechanism by which a rule's noise is discovered. The historical
+        data needed to find out first is already sitting in the platform, and the query takes
+        minutes.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>What it tells you</th></tr></thead>
+          <tbody>
+            <tr><td>Run the logic over 7–30 days of history</td><td>The real hit count, not the guessed one</td></tr>
+            <tr><td>Group hits by host, user and parent process</td><td>Whether the noise is three machines or the whole estate</td></tr>
+            <tr><td>Read ten hits properly</td><td>Whether they are benign, and <em>why</em> — which becomes the exclusion</td></tr>
+            <tr><td>Project the alert rate per analyst per day</td><td>Whether the response is affordable at all</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          If the projected rate is more than the team can actually triage, the rule is not ready —
+          and the fix is more often better enrichment than a tighter threshold, because a threshold
+          that cuts volume usually cuts recall with it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Exclusions That Do Not Rot</div>
+      <div class="concept-desc">
+        The exclusion list is where rules go to die: entries accumulate, nobody remembers which were
+        meant to be temporary, and eventually the allowlist is wide enough to drive the attack
+        through. Four rules keep it maintainable.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Rule</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Every exclusion carries a reason and a date</td><td>An entry nobody can justify can be deleted</td></tr>
+            <tr><td>Exclude on the narrowest attribute that works</td><td>"This service account on this host" beats "this process name"</td></tr>
+            <tr><td>Never exclude on an attribute the attacker controls</td><td>A rule excluding a filename is a rule with published bypass instructions</td></tr>
+            <tr><td>Review exclusions on a schedule</td><td>The temporary ones outlive the thing they were for</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: BEHAVIOURAL VS SIGNATURE ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎭</span>
+    <span class="topic-name">Behavioural vs Signature Detections — One Technique, Both Ways</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Comparison</div>
+      <div class="concept-title">Two Answers to the Same Question, With Opposite Failure Modes</div>
+      <div class="concept-desc">
+        A signature detection asserts that a specific artifact is bad. A behavioural detection
+        asserts that a pattern of activity is suspicious regardless of the artifacts involved. Both
+        are legitimate, and a programme with only one kind is predictably weak in a known direction.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Signature</th><th>Behavioural</th></tr></thead>
+          <tbody>
+            <tr><td>Asserts</td><td>"This exact thing is bad"</td><td>"This pattern is how the objective is achieved"</td></tr>
+            <tr><td>Precision</td><td>Very high when it hits</td><td>Lower; needs context to be actionable</td></tr>
+            <tr><td>Evasion cost</td><td>Near zero</td><td>Real — the adversary must change method</td></tr>
+            <tr><td>Fails by</td><td>Missing everything it has not seen before</td><td>Firing on the administrator doing their job</td></tr>
+            <tr><td>Best for</td><td>Known-bad, commodity tooling, intel-driven blocking</td><td>Hands-on-keyboard activity, novel tooling</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Worked Example — Credential Dumping From LSASS <span class="acro-exp">(Local Security Authority Subsystem Service)</span></div>
+      <div class="concept-desc">
+        The same technique, detected three ways. The interest is in how each one fails, because that
+        is the argument for running all three rather than picking a favourite.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Approach</th><th>Detects</th><th>Missed by</th></tr></thead>
+          <tbody>
+            <tr><td>Signature: the well-known tool's name or hash</td><td>Off-the-shelf use, unmodified</td><td>Renaming the binary; any custom loader</td></tr>
+            <tr><td>Signature: known malicious command-line patterns</td><td>Copy-pasted procedures from public write-ups</td><td>Trivial obfuscation and flag reordering</td></tr>
+            <tr><td>Behavioural: an unusual process opening a handle to LSASS with read access</td><td>Any tool that needs the memory, whatever it is called</td><td>Techniques that avoid the handle entirely — a driver, or a snapshot API <span class="acro-exp">(Application Programming Interface)</span></td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The behavioural rule is the durable one and also the noisy one — several legitimate
+          security products open exactly that handle. That is not an argument against building it;
+          it is the reason it needs an allowlist of your own tooling, dated and reviewed.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">How the Two Should Be Layered</div>
+      <div class="concept-desc">
+        Signatures are cheap to write, cheap to run and cheap to evade — so use them for breadth and
+        for the commodity end of the threat, where volume matters more than sophistication.
+        Behavioural rules are expensive in every sense — write fewer, aim them at the techniques your
+        threat model actually cares about, and give them the enrichment they need to be triaged.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: ENRICHMENT ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧩</span>
+    <span class="topic-name">Enrichment — The Context That Turns an Alert Into a Decision</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Most "Noisy" Rules Are Actually Context-Starved</div>
+      <div class="concept-desc">
+        When a rule is drowning a team, the reflex is to tighten it, which trades away recall. Often
+        the real problem is that the alert does not carry enough context for a decision, so every
+        hit costs a full investigation regardless of how obvious it should have been. The same
+        alert, arriving with the asset's criticality, the user's role and whether the destination is
+        known, may need three seconds instead of twenty minutes — and the rule never had to change.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Enrichment</th><th>Question it answers instantly</th></tr></thead>
+          <tbody>
+            <tr><td>Asset criticality and owner</td><td>Is this a domain controller or a test VM <span class="acro-exp">(Virtual Machine)</span>?</td></tr>
+            <tr><td>Identity context — role, privilege, department</td><td>Is this person expected to do this?</td></tr>
+            <tr><td>Recent change and ticket data</td><td>Is there an approved change explaining it?</td></tr>
+            <tr><td>Threat intel on the indicator</td><td>Is this destination known-bad, or just unfamiliar?</td></tr>
+            <tr><td>Historical rarity for this host or user</td><td>Is this the first time, or the thousandth?</td></tr>
+            <tr><td>Vulnerability and exposure state</td><td>Could the attempted thing actually have worked?</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The fifth row is the cheapest large win in most environments. "First time this user has run
+          this binary, ever" converts an ambiguous alert into an obvious one, and it needs no
+          external data — only your own history.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Enrich at Detection Time or at Triage Time?</div>
+      <div class="concept-desc">
+        Both have a place, and the deciding question is whether the context changes the
+        <em>verdict</em> or merely informs the human.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>At detection time</th><th>At triage time</th></tr></thead>
+          <tbody>
+            <tr><td>Use when</td><td>The context changes whether it should alert at all</td><td>The context helps a human decide</td></tr>
+            <tr><td>Cost</td><td>Lookups on every event — expensive at volume</td><td>Only on alerts, which are few</td></tr>
+            <tr><td>Risk</td><td>A stale lookup silently suppresses real alerts</td><td>None to detection; it is additive</td></tr>
+            <tr><td>Example</td><td>Suppress on assets in a documented maintenance window</td><td>Attach the asset owner and recent tickets to the case</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Keep suppression-by-enrichment rare and audited. A lookup that silently prevents alerts is
+          a control with no alarm of its own — when the asset inventory goes stale, the detections
+          quietly stop, which is the failure mode
+          <span class="xref">Testing a Detection — Synthetic Events, Emulation &amp; Regression</span>
+          is written to catch.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CORRELATION & SEQUENCING ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔗</span>
+    <span class="topic-name">Correlation &amp; Sequencing — When One Event Genuinely Is Not Enough</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Correlation Is Expensive — Spend It Where a Single Event Cannot Work</div>
+      <div class="concept-desc">
+        Stateful detections hold events over a window and fire on a combination. They are strictly
+        harder than single-event rules: they cost memory, they are harder to test, they break in
+        confusing ways when data arrives late, and their windows are a parameter nobody can derive
+        from first principles. So the bar for using one is that the individual events are genuinely
+        unremarkable and only the combination means anything.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Pattern</th><th>Shape</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Threshold</td><td>N of the same thing in a window</td><td>Many failed authentications from one source</td></tr>
+            <tr><td>Sequence</td><td>A then B, in order, within a window</td><td>Successful login <em>after</em> a burst of failures</td></tr>
+            <tr><td>Absence</td><td>A without the expected B</td><td>A privileged action with no preceding approval record</td></tr>
+            <tr><td>Fan-out</td><td>One actor, many distinct targets</td><td>One account touching hundreds of hosts in an hour</td></tr>
+            <tr><td>Rarity join</td><td>Common event, uncommon pairing</td><td>An ordinary binary run by a user who never runs it</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Four Ways Stateful Rules Break</div>
+      <div class="concept-desc">
+        Each of these produces silence rather than an error, which is why correlation rules need the
+        regression guards more than any other kind.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Failure</th><th>Symptom</th><th>Guard</th></tr></thead>
+          <tbody>
+            <tr><td>Late-arriving data</td><td>The second event lands after the window closed</td><td>Window by event time, not ingest time; allow a grace period</td></tr>
+            <tr><td>Clock skew between sources</td><td>Sequences appear out of order</td><td>Verify time sync before trusting order at all</td></tr>
+            <tr><td>Window too short</td><td>Real attacks straddle the boundary</td><td>Derive the window from observed attacker dwell, not from a round number</td></tr>
+            <tr><td>Join key mismatch</td><td>Two sources name the same host differently</td><td>Normalise the key — this is what the schema work buys</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The join-key failure is the most common and the most silent: a correlation across two log
+          sources that identify hosts by short name and by FQDN <span class="acro-exp">(Fully Qualified Domain Name)</span> respectively will simply never
+          match, and it looks exactly like a quiet network.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: THE DE INTERVIEW ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎤</span>
+    <span class="topic-name">The Detection Engineering Interview — What the Role Is Actually Assessed On</span>
+    <span class="topic-badge">Detection Engineering • Career</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">They Are Testing Judgement, Not Recall</div>
+      <div class="concept-desc">
+        Candidates prepare for this role by memorising event IDs and ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> numbers, and the
+        interview rarely rewards it. The questions are open by design, because the job is a sequence
+        of trade-offs — coverage against noise, specificity against durability, cost against
+        retention — and what is being assessed is whether a candidate can see the trade and reason
+        about it out loud rather than reach for a single right answer that does not exist.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question</th><th>What is really being asked</th></tr></thead>
+          <tbody>
+            <tr><td>"How would you detect technique X?"</td><td>Do you ask what telemetry we have before proposing logic?</td></tr>
+            <tr><td>"This rule fires 400 times a day. Fix it."</td><td>Do you reach for enrichment, or only for a tighter threshold?</td></tr>
+            <tr><td>"How do you know your detections work?"</td><td>Do you have any answer beyond "they exist"?</td></tr>
+            <tr><td>"When would you delete a detection?"</td><td>Do you treat the rule set as something maintained, or only grown?</td></tr>
+            <tr><td>"Walk me through a rule you wrote."</td><td>Can you state its false positives honestly?</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">The Answers That Land</div>
+      <div class="concept-desc">
+        Three habits separate a strong answer from a complete one, and they are the same habits the
+        job needs on the first day.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Habit</th><th>Why it reads well</th></tr></thead>
+          <tbody>
+            <tr><td>Ask about telemetry before proposing a rule</td><td>It is the first question the job asks, every time</td></tr>
+            <tr><td>Name the false positives yourself</td><td>Volunteering the weakness is the strongest signal available</td></tr>
+            <tr><td>Say how you would validate it</td><td>Separates people who have shipped detections from people who have written them</td></tr>
+            <tr><td>Give a number where one exists</td><td>"About 30 hits a day across 4,000 hosts" beats "not too noisy"</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          A portfolio helps more here than in most security roles: a small public repository of
+          rules, with tests and honest false-positive notes, demonstrates the whole discipline in a
+          way a CV line cannot. General interview preparation is in
+          <span class="xref">Interview Preparation — Getting the Job</span> in the IT Career domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

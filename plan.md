@@ -2884,14 +2884,14 @@ the craft of building what runs inside them.
 - [x] Data Normalization — OCSF, ECS, ASIM; why a schema decides your query
 - [x] Telemetry Gaps — proving a detection cannot fire, before you promise it does
 - [x] Log Volume & Cost — sampling, filtering, and the detections cost quietly kills
-- [ ] Enrichment — asset, identity and threat context that turns an alert into a decision
+- [x] Enrichment — asset, identity and threat context that turns an alert into a decision
 
 **Wave BA3 — Writing Detections**
 - [~] Sigma as an Interchange Format — writing once, deploying to several backends — **already carded as 'Sigma — Write Detections Once, Run Anywhere'**
 - [x] Detection-as-Code — Git, review, CI, and versioned rules
-- [ ] Writing a Good Rule — specificity, false-positive analysis, the tuning fields
-- [ ] Behavioural vs Signature Detections — worked examples of both for one technique
-- [ ] Correlation & Sequencing — when a single event genuinely is not enough
+- [x] Writing a Good Rule — specificity, false-positive analysis, the tuning fields
+- [x] Behavioural vs Signature Detections — worked examples of both for one technique
+- [x] Correlation & Sequencing — when a single event genuinely is not enough
 
 **Wave BA4 — Testing Detections**
 - [x] Unit-Testing a Detection — synthetic events and expected verdicts
@@ -2905,7 +2905,7 @@ the craft of building what runs inside them.
 - [x] Detection Backlog & Prioritisation — threat model in, rules out
 - [x] Rule Retirement — deleting detections without losing the reason they existed
 - [x] Documentation for Responders — the runbook that ships *with* the rule
-- [ ] Detection Engineering Interview — what the role is actually assessed on
+- [x] Detection Engineering Interview — what the role is actually assessed on
 
 ### TRACK BB — Adversary Emulation & Purple Teaming  (→ `redteam` / `blueteam`)
 
@@ -5656,3 +5656,13 @@ feedback loop all have existing homes, and writing second versions would be exac
 duplication the audit rule exists to prevent. Five genuine items remain: enrichment, writing a
 good rule, behavioural vs signature detections, correlation and sequencing, and what the role is
 assessed on in interview.
+
+> **Wave 2 shipped in the same session — Track BA is closed.** Those five, re-audited first and
+> all genuine (`false-positive analysis`, `rule specificity`, `asset context`, `event sequencing`
+> and `ioc-based` each returned **0** mentions site-wide). `blueteam` is **54 cards**; the site
+> is **1,123 topics**. The five carry the craft-level material the first wave assumed: which
+> attribute to match on and what it costs the attacker to change, false-positive analysis run on
+> history before deployment rather than on analysts after it, a worked three-way detection of one
+> technique, enrichment as the usual real fix for a "noisy" rule, the five correlation shapes and
+> the four silent ways stateful rules break, and what the role is assessed on. Two tracks are now
+> closed in one session — W and BA.
