@@ -10,6 +10,19 @@ Source files:
 Output:
   index.html            Self-contained page (works with file://, no server needed)
 
+Every domain header is in the markup; no domain's *content* is. Each body ships
+inside an inert `<script type="text/html">` block, which the HTML parser keeps as
+one text node and never builds elements, styles or layout for. script.js moves
+one domain's block into its `.domain-body` when it opens and empties it again
+when another opens, so the live document holds the shell plus at most one
+domain — 92,330 elements at load became 484.
+
+Two things make that safe rather than merely smaller. Topic ids are stamped here
+instead of derived in the browser, so a permalink resolves to a domain before
+that domain exists in the DOM; and the id map is inlined next to the acronym
+payload, so progress badges, the random-topic pick and hash routing all work
+without parsing a single deferred block.
+
 Usage:
   python3 build.py
 """
@@ -22,6 +35,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 DATA = ROOT / "data"
+
+# The slug rule lives in tools/lint_content.py, itself a port of script.js.
+# Reusing it here is what lets build.py stamp the ids the page used to derive at
+# runtime — see assign_topic_ids.
+sys.path.insert(0, str(ROOT / "tools"))
+from lint_content import slugify, topic_label  # noqa: E402
 
 # Set to False (or pass --no-minify) to keep the built HTML pretty-printed.
 MINIFY = "--no-minify" not in sys.argv
@@ -95,6 +114,49 @@ def domain_stats(body_content):
     return topics, label
 
 
+# ── TOPIC IDS ───────────────────────────────────────────────────────────────
+# script.js used to walk every .topic at load and derive its id from the title.
+# That pass cannot run against content the page has not built yet, and a
+# permalink has to resolve *before* its domain is in the DOM, so the ids are
+# stamped here instead. The rule and the ordering are lint_content's, which is
+# the same rule fix_topic_names.py numbers the slug alias map with — verified
+# identical to the browser's output across all 1,080 topics.
+TOPIC_OPEN = '<div class="topic"'
+_TOPIC_OPEN_RE = re.compile(re.escape(TOPIC_OPEN))
+
+
+def assign_topic_ids(body, used):
+    """Stamp `id="slug"` on every topic in one domain body.
+
+    `used` carries across domains because the de-duplication does: the browser
+    numbered a repeated title `-2` in document order over the whole page, and a
+    map keyed to per-file numbering would rename cards that never moved.
+    """
+    starts = [m.start() for m in _TOPIC_OPEN_RE.finditer(body)]
+    out, ids, prev = [], [], 0
+    for n, start in enumerate(starts):
+        end = starts[n + 1] if n + 1 < len(starts) else len(body)
+        label, _ = topic_label(body[start:end])
+        if not label:
+            raise SystemExit(
+                f"error: a topic has no title text to slug from, near char {start}. "
+                "Every .topic needs a <span class=\"topic-name\"> — run "
+                "python tools/lint_content.py.")
+        base = slugify(label)
+        slug, i = base, 2
+        while slug in used:
+            slug = f"{base}-{i}"
+            i += 1
+        used.add(slug)
+        ids.append(slug)
+        cut = start + len(TOPIC_OPEN)
+        out.append(body[prev:cut])
+        out.append(f' id="{slug}"')
+        prev = cut
+    out.append(body[prev:])
+    return "".join(out), ids
+
+
 def build_cert_tags(cert_tags):
     parts = []
     for tag in cert_tags:
@@ -103,6 +165,24 @@ def build_cert_tags(cert_tags):
 
 
 def build_domain_section(domain, body_content):
+    """One domain: its header, an empty body, and its content held in reserve.
+
+    The body starts empty and script.js fills it from the sibling
+    `<script type="text/html">` on open. That block is why the page can carry 29
+    domains and render one: the parser reads it as a single text node, so none of
+    it becomes elements, styles or layout until it is asked for.
+
+    Nothing in the content needs escaping for that to hold. The only sequence
+    that can end a script block is a literal `</script`, and topic markup writes
+    every code sample's tags as entities (`&lt;script&gt;`) — checked below, so a
+    future card that pastes one raw fails the build instead of truncating the
+    page at that point.
+    """
+    if "</script" in body_content.lower():
+        raise SystemExit(
+            f"error: data/{domain['id']}.html contains a literal '</script' — it would "
+            "end the deferred content block early and truncate the page. Write it as "
+            "&lt;/script&gt;.")
     cert_tags_html = build_cert_tags(domain["certTags"])
     sub = domain["sub"]
     topics, read_time = domain_stats(body_content)
@@ -119,9 +199,10 @@ def build_domain_section(domain, body_content):
             >{topics} topics · ~{read_time}</span>
           <span class="chevron">▾</span>
         </div>
-        <div class="domain-body">
+        <div class="domain-body"></div>
+        <script type="text/html" class="domain-src" data-domain="{domain['id']}">
 {body_content}
-        </div>
+        </script>
       </div>"""
 
 
@@ -159,6 +240,20 @@ def build_slug_aliases():
     return payload.replace("</", "<\\/")
 
 
+def build_topic_index(index):
+    """domain id -> its topic ids, in page order.
+
+    Small enough to inline (45 KB against a 4 MB page) and it is what
+    replaces the load-time DOM walk: the progress badge on every collapsed
+    domain, the random-topic pick and `#slug` routing all read this instead of
+    content they would otherwise have to build first.
+    """
+    payload = json.dumps(index, separators=(",", ":"), ensure_ascii=False)
+    total = sum(len(v) for v in index.values())
+    print(f"  + topic index ({len(payload):,} chars, {total} topics)")
+    return payload.replace("</", "<\\/")
+
+
 def main():
     shell_path = ROOT / "index-shell.html"
     domains_path = DATA / "domains.json"
@@ -174,19 +269,24 @@ def main():
     domains = json.loads(domains_path.read_text(encoding="utf-8"))
 
     sections = []
+    used_slugs = set()
+    topic_index = {}
     for domain in domains:
         body_path = DATA / f"{domain['id']}.html"
         if not body_path.exists():
             print(f"WARNING: {body_path} not found — skipping {domain['id']}.")
             continue
         body = body_path.read_text(encoding="utf-8")
+        body, ids = assign_topic_ids(body, used_slugs)
+        topic_index[domain["id"]] = ids
         sections.append(build_domain_section(domain, body))
-        print(f"  + {domain['id']} ({len(body):,} chars)")
+        print(f"  + {domain['id']} ({len(body):,} chars, {len(ids)} topics)")
 
     domains_html = "\n\n".join(sections)
     output = shell.replace("<!-- DOMAINS_CONTENT -->", domains_html)
     output = output.replace("<!-- ACRONYM_DATA -->", build_acronym_payload())
     output = output.replace("<!-- SLUG_ALIASES -->", build_slug_aliases())
+    output = output.replace("<!-- TOPIC_INDEX -->", build_topic_index(topic_index))
 
     if MINIFY:
         raw_len = len(output)

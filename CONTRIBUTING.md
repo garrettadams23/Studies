@@ -37,8 +37,41 @@ filtering, search, permalinks, and progress tracking all work:
 
 Notes:
 - The permalink/reviewed tools and `aria`/keyboard support are added by
-  `script.js` at load — you do **not** add them in markup.
+  `script.js` **when the topic's domain is opened** — you do not add them in
+  markup.
 - `.topic-name` is what the deep-link slug and search use; always include it.
+- Do **not** write an `id` on a `.topic`. `build.py` stamps one, derived from
+  `.topic-name`, and `data/slug-aliases.json` tracks it when a title changes.
+- Never write a literal `</script` in content — not even inside `<pre>`. Domain
+  content ships inside a `<script type="text/html">` block (see below), and that
+  sequence would end it early. Write `&lt;/script&gt;`; the build fails on a raw
+  one rather than shipping a truncated page.
+
+## One domain at a time
+
+`build.py` puts each domain's content in an inert `<script type="text/html">`
+block next to its header instead of in the page body. `script.js` moves one
+domain's block into the DOM when it is opened and empties it again when another
+opens, so the browser only ever builds the domain being read — 404 elements at
+load rather than 92,330.
+
+This costs nothing in content conventions, and one thing in code conventions:
+
+> **Never answer a page-wide question with `document.querySelectorAll(".topic")`.**
+> It sees one domain and returns a confident, wrong answer.
+
+Two accessors exist instead, both in `script.js`:
+
+| You need | Use | Where it comes from |
+|---|---|---|
+| Which topics exist, and where | `topicIndex()` / `topicDomain(id)` | the id map `build.py` inlines |
+| What a topic says (name, card text, full text) | `domainTopics(domainId)` | the deferred block, parsed once and cached |
+
+Search, the flashcard and quiz decks, quick jump, the study list, the progress
+badges and the random pick all go through those, which is why they still cover
+all 29 domains while one is rendered. `tools/smoke_test.mjs` checks exactly that:
+if it starts failing "search still reaches unopened domains", something started
+reading the DOM again.
 
 ## Class conventions (use these, not one-off variants)
 

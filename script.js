@@ -1,10 +1,15 @@
 /**
  * script.js  —  CompTIA & Tech Reference  |  2026 Edition
  * =========================================================
- * toggleDomain / toggleTopic / filter / toggleAll
+ * hydrateDomain / openDomain / toggleDomain / toggleTopic / filter / toggleAll
  * toggleTheme / updateThemeUI
  * initSnapQuote / initCloudStack / initTouchFeedback
  * URL codec helpers
+ *
+ * One domain's content is in the document at a time. Read the DEFERRED DOMAIN
+ * CONTENT section before changing anything that walks .topic — the rule is that
+ * *which* topics exist comes from topicIndex(), and *what they say* comes from
+ * domainTopics(); neither may come from querySelectorAll across the page.
  */
 
 // ── STATE ──────────────────────────────────────────────────────────────────
@@ -31,12 +36,347 @@ const QUOTES = [
   "The present moment always will have been. — Marcus Aurelius"
 ];
 
+// ── DEFERRED DOMAIN CONTENT ────────────────────────────────────────────────
+// Every domain's header is in the document. No domain's content is: build.py
+// parks each body in an inert `<script type="text/html">` beside its section,
+// which the parser keeps as a single text node — no elements, no style
+// resolution, no layout. Opening a domain moves that text into `.domain-body`;
+// opening another empties the first. The document therefore holds the shell
+// plus at most one domain, which is what took the page from 92,330 elements at
+// load to 484.
+//
+// Two rules keep the rest of the file honest about content it cannot see:
+//
+//   1. Which topics exist  → topicIndex(), the id map build.py inlines. The
+//      progress badges, the random pick and `#slug` routing all need to answer
+//      for 29 domains, 28 of which have nothing in the DOM.
+//   2. What a topic says   → domainTopics(), which parses one domain's deferred
+//      text once and caches it. Search and the study decks read that, never the
+//      live DOM, so they cover the whole page exactly as before.
+//
+// Anything that reaches for `document.querySelectorAll(".topic")` instead is
+// asking about the one open domain, and will quietly answer for a 29th of the
+// page. That is the failure mode to watch for here.
+
+/** domain id -> its topic ids, in page order (inlined by build.py). */
+let _topicIndex = null;
+function topicIndex() {
+  if (_topicIndex) return _topicIndex;
+  const el = document.getElementById("topic-index");
+  try {
+    const o = el ? JSON.parse(el.textContent) : {};
+    _topicIndex = (o && typeof o === "object" && !Array.isArray(o)) ? o : {};
+  } catch { _topicIndex = {}; }
+  return _topicIndex;
+}
+
+/** topic id -> the domain that owns it, so a permalink can find its section. */
+let _topicOwner = null;
+function topicDomain(id) {
+  if (!_topicOwner) {
+    _topicOwner = new Map();
+    Object.keys(topicIndex()).forEach(d => topicIndex()[d].forEach(t => _topicOwner.set(t, d)));
+  }
+  return _topicOwner.get(id) || null;
+}
+
+function allTopicIds() {
+  return Object.keys(topicIndex()).reduce((all, d) => all.concat(topicIndex()[d]), []);
+}
+
+/** Cached domain sections — the headers are static, so this never goes stale. */
+let _domainSections = null;
+function domainSections() {
+  if (!_domainSections) _domainSections = [...document.querySelectorAll(".domain-section")];
+  return _domainSections;
+}
+
+function domainSection(id) {
+  return domainSections().find(s => s.dataset.domain === id) || null;
+}
+
+/** The one domain whose content is currently in the document, or null. */
+let _liveDomain = null;
+
+function isHydrated(section) { return !!section && section.dataset.hydrated === "1"; }
+
+/**
+ * Move a domain's deferred content into its body, evicting whichever domain
+ * was there. Everything the outgoing domain owned goes with it — topic
+ * elements, the injected tool buttons, any search highlights — because every
+ * piece of state worth keeping lives in localStorage or in topicIndex(), not in
+ * those nodes.
+ */
+function hydrateDomain(section) {
+  if (!section || isHydrated(section)) return false;
+  const src = section.querySelector("script.domain-src");
+  const body = section.querySelector(".domain-body");
+  if (!src || !body) return false;
+  if (_liveDomain && _liveDomain !== section) dehydrateDomain(_liveDomain);
+  body.innerHTML = src.textContent;
+  section.dataset.hydrated = "1";
+  _liveDomain = section;
+  enhanceDomain(section);
+  return true;
+}
+
+/** Empty a domain's body and collapse it. Its content stays in the page as text. */
+function dehydrateDomain(section) {
+  if (!isHydrated(section)) return;
+  const body = section.querySelector(".domain-body");
+  const header = section.querySelector(".domain-header");
+  body.classList.remove("open");
+  body.textContent = "";
+  delete section.dataset.hydrated;
+  header?.classList.remove("open");
+  header?.setAttribute("aria-expanded", "false");
+  if (_liveDomain === section) _liveDomain = null;
+  // The <mark> wrappers went with the nodes; the set that tracked them must not
+  // outlive them or clearHighlights() would walk detached elements.
+  _highlighted.clear();
+}
+
+/** Open a domain — hydrating it, and closing whichever one was open. */
+function openDomain(section, opts = {}) {
+  if (!section) return;
+  const header = section.querySelector(".domain-header");
+  const body = section.querySelector(".domain-body");
+  hydrateDomain(section);
+  body.classList.add("open");
+  header.classList.add("open");
+  header.setAttribute("aria-expanded", "true");
+  // A domain opened while a search is running shows that search's result, not
+  // its whole self — otherwise the chips and the search disagree about what the
+  // page is showing.
+  if (_searchTerm) applySearchToDomain(section);
+  if (opts.scroll) header.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function closeDomain(section) { dehydrateDomain(section); }
+
+/**
+ * Per-topic setup for a domain that has just arrived in the DOM: the a11y
+ * attributes, stored progress, and the ★ ✓ 🔗 tool cluster. This used to run
+ * once at load over all 1,080 topics; it now runs over the few dozen in one
+ * domain, on open.
+ */
+function enhanceDomain(section) {
+  const ids = topicIndex()[section.dataset.domain] || [];
+  section.querySelectorAll(".topic").forEach((topic, i) => {
+    // build.py stamps the ids. The fallback is for a hand-built fragment (a
+    // patch script, a test page) that never went through it.
+    if (!topic.id) topic.id = ids[i] || slugify(labelText(topic.querySelector(".topic-name")));
+    const header = topic.querySelector(":scope > .topic-header");
+    if (!header) return;
+    header.setAttribute("tabindex", "0");
+    header.setAttribute("role", "button");
+    header.setAttribute("aria-expanded", header.classList.contains("open") ? "true" : "false");
+
+    if (localStorage.getItem(REVIEWED_PREFIX + topic.id) === "1") topic.classList.add("reviewed");
+    if (localStorage.getItem(BOOKMARK_PREFIX + topic.id) === "1") topic.classList.add("bookmarked");
+
+    if (!header.querySelector(".topic-tools")) {
+      const tools = document.createElement("span");
+      tools.className = "topic-tools";
+
+      const bookmark = document.createElement("button");
+      bookmark.type = "button";
+      bookmark.className = "topic-bookmark";
+      bookmark.title = "Save to study list";
+      bookmark.setAttribute("aria-label", "Save topic to study list");
+      bookmark.textContent = "★";
+
+      const review = document.createElement("button");
+      review.type = "button";
+      review.className = "topic-review";
+      review.title = "Mark topic as reviewed";
+      review.setAttribute("aria-label", "Mark topic as reviewed");
+      review.textContent = "✓";
+
+      const link = document.createElement("button");
+      link.type = "button";
+      link.className = "topic-permalink";
+      link.title = "Copy link to this topic";
+      link.setAttribute("aria-label", "Copy link to this topic");
+      link.textContent = "🔗";
+
+      tools.append(bookmark, review, link);
+      const chev = header.querySelector(".topic-chev");
+      chev ? header.insertBefore(tools, chev) : header.appendChild(tools);
+    }
+  });
+
+  // Widgets that live inside a topic and used to be wired at load. The codec's
+  // buttons are handled by delegation on the container; only the matrix builds
+  // DOM of its own, and only when its host arrives.
+  initCloudStack();
+  updateDomainProgress(section);
+}
+
+// ── DEFERRED CONTENT INDEX ─────────────────────────────────────────────────
+// What search and the study decks read instead of the DOM. Parsing markup with
+// regexes is a poor general idea and a good specific one here: the shapes are
+// generated by build.py from data/*.html, tools/lint_content.py already holds
+// the same patterns in Python, and the alternative — DOMParser — rebuilds the
+// 90,000 elements this whole change exists to avoid.
+
+const TOPIC_OPEN = '<div class="topic"';
+const RE_TOPIC_ID = /\bid="([^"]+)"/;
+/**
+ * The opening tag of an element carrying one class, whatever else it carries.
+ *
+ * Both halves of that matter and both were got wrong first time. Any element:
+ * a concept title is a <div> 2,263 times and an <h4> 342 times, and pinning the
+ * tag indexed the <h4> ones as empty. Whatever else: `class="concept-desc
+ * verdict"` is still a description, and requiring an exact attribute skipped
+ * the modifier'd ones — quietly, and only on some cards.
+ */
+const classRe = cls =>
+  new RegExp(`<[a-zA-Z][\\w-]*\\b[^>]*class="(?:[^"]*\\s)?${cls}(?:\\s[^"]*)?"[^>]*>`);
+
+const RE_TOPIC_NAME = classRe("topic-name");
+const RE_TOPIC_BADGE = classRe("topic-badge");
+const RE_CONCEPT_TITLE = classRe("concept-title");
+const RE_CONCEPT_DESC = classRe("concept-desc");
+const RE_ACRO_SPAN = /<span class="acro-exp">\([^<]*?\)<\/span\s*>/g;
+
+/**
+ * The contents of the first element matching `open`, counting nesting.
+ *
+ * The lazy `(.*?)</span>` version of this is wrong on exactly the markup that
+ * matters: a topic name carrying an inline acronym expansion ends at the
+ * *expansion's* closing tag, so "OSI Model — 7 Layers" indexes as
+ * "OSI (Open Systems Interconnection)" and every deck and jump list shows that.
+ */
+function firstInner(html, open) {
+  const m = open.exec(html);
+  if (!m) return "";
+  const tag = /^<([a-zA-Z][\w-]*)/.exec(m[0])[1];
+  const openTag = `<${tag}`, closeTag = `</${tag}`;
+  const start = m.index + m[0].length;
+  let depth = 1, i = start;
+  while (depth > 0) {
+    const c = html.indexOf(closeTag, i);
+    if (c === -1) return html.slice(start);
+    const o = html.indexOf(openTag, i);
+    if (o !== -1 && o < c) { depth++; i = o + openTag.length; continue; }
+    depth--;
+    if (!depth) return html.slice(start, c);
+    i = c + closeTag.length;
+  }
+  return "";
+}
+
+// Entity decoding, by table rather than by parser. The obvious version assigns
+// to a detached <textarea>'s innerHTML and reads .value back, which is correct
+// for every entity that exists — and cost 1,167 ms of the 1,652 ms it took to
+// index the page, because each call is a parser round trip. The table covers
+// every named entity data/*.html actually contains (`grep -o '&[a-z]*;'` finds
+// nine) plus a few likely neighbours; numeric refs are handled generically, and
+// anything else is left as written — it would read as `&hellip;` in a deck,
+// which is wrong but visible, rather than breaking the parse.
+const ENTITIES = {
+  "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&#39;": "'",
+  "&nbsp;": " ", "&bull;": "\u2022", "&middot;": "\u00b7",
+  "&times;": "\u00d7", "&ge;": "\u2265", "&le;": "\u2264", "&mdash;": "\u2014",
+};
+const RE_ENTITY = /&(?:#(\d+)|#[xX]([0-9a-fA-F]+)|[a-zA-Z][a-zA-Z0-9]*);/g;
+
+function decodeEntities(s) {
+  if (!s || s.indexOf("&") === -1) return s;
+  return s.replace(RE_ENTITY, (whole, dec, hex) => {
+    if (dec) return String.fromCodePoint(+dec);
+    if (hex) return String.fromCodePoint(parseInt(hex, 16));
+    return ENTITIES[whole] !== undefined ? ENTITIES[whole] : whole;
+  });
+}
+
+// A tag, by the parser's rule: `<` then a letter (or `</`). `<[^>]+>` looks
+// equivalent and is not — `WHERE created_at < now()` inside a code block has a
+// `>` somewhere after it, so the loose pattern swallows the comparison operator
+// and everything up to it. The browser does not, because `< ` cannot open a tag.
+const RE_TAG = /<\/?[a-zA-Z][^>]*>|<!--[\s\S]*?-->/g;
+const RE_WS = /\s+/g;
+
+/** Markup -> the text a reader sees, whitespace collapsed.
+ *
+ * Tags become nothing, not a space. That looks like the more dangerous choice
+ * and is the correct one: it is what textContent does, and the source already
+ * carries a newline between anything that needs separating. Replacing them with
+ * a space instead put one inside every inline acronym expansion —
+ * `CIDR ( Classless Inter-Domain Routing )` — which is not what the card says
+ * and so is not what a search for it should have to match.
+ */
+function plainText(html) {
+  return decodeEntities(html.replace(RE_TAG, "").replace(RE_WS, " ")).trim();
+}
+
+/** Same, with the inline acronym expansions dropped — the title as written. */
+function plainLabel(html) {
+  return plainText(html.replace(RE_ACRO_SPAN, ""));
+}
+
+const _domainTopics = new Map();
+
+/**
+ * One domain's topics, parsed from its deferred block: id, the fields the decks
+ * show, and the lowercased full text search matches on. Cached — the content
+ * never changes — and warmed in idle time after load, so the first search does
+ * not pay for the parse.
+ */
+function domainTopics(domainId) {
+  const cached = _domainTopics.get(domainId);
+  if (cached) return cached;
+
+  const rows = [];
+  const src = domainSection(domainId)?.querySelector("script.domain-src");
+  const html = src ? src.textContent : "";
+  let start = html.indexOf(TOPIC_OPEN);
+  while (start !== -1) {
+    const next = html.indexOf(TOPIC_OPEN, start + TOPIC_OPEN.length);
+    const chunk = html.slice(start, next === -1 ? html.length : next);
+    const openTag = chunk.slice(0, chunk.indexOf(">") + 1);
+    rows.push({
+      id: (RE_TOPIC_ID.exec(openTag) || ["", ""])[1],
+      name: plainLabel(firstInner(chunk, RE_TOPIC_NAME)),
+      title: plainText(firstInner(chunk, RE_CONCEPT_TITLE)),
+      desc: plainText(firstInner(chunk, RE_CONCEPT_DESC)),
+      badge: plainText(firstInner(chunk, RE_TOPIC_BADGE)),
+      text: plainText(chunk).toLowerCase(),
+    });
+    start = next;
+  }
+  _domainTopics.set(domainId, rows);
+  return rows;
+}
+
+/**
+ * Parse the deferred blocks during idle time, one domain per callback.
+ *
+ * Without this the first search would parse all 29 at once — the one moment the
+ * user is waiting on a keystroke. With it the work is done before they type,
+ * and it never competes with the first paint.
+ */
+function warmContentIndex() {
+  const queue = Object.keys(topicIndex()).filter(d => !_domainTopics.has(d));
+  if (!queue.length) return;
+  const idle = window.requestIdleCallback
+    ? window.requestIdleCallback.bind(window)
+    : (fn => setTimeout(() => fn({ timeRemaining: () => 0 }), 80));
+  const step = deadline => {
+    do { domainTopics(queue.shift()); } while (queue.length && deadline.timeRemaining() > 8);
+    if (queue.length) idle(step, { timeout: 3000 });
+  };
+  idle(step, { timeout: 3000 });
+}
+
 // ── ACCORDION ──────────────────────────────────────────────────────────────
 function toggleDomain(h) {
-  const b = h.nextElementSibling;
-  const open = b.classList.toggle("open");
-  h.classList.toggle("open", open);
-  h.setAttribute("aria-expanded", open ? "true" : "false");
+  const section = h.closest(".domain-section");
+  if (!section) return;
+  section.querySelector(".domain-body").classList.contains("open")
+    ? closeDomain(section)
+    : openDomain(section);
 }
 
 function toggleTopic(h) {
@@ -50,22 +390,40 @@ function toggleTopic(h) {
 function filter(domain, chip) {
   document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
   chip.classList.add("active");
-  document.querySelectorAll(".domain-section").forEach(s => {
+  domainSections().forEach(s => {
     s.classList.toggle("hidden", domain !== "all" && s.dataset.domain !== domain);
   });
+  // Narrowing to a single domain is a request to read it, and it is the only
+  // one on screen — so open it. ALL leaves whatever is open open; closing it
+  // would throw away the reader's place for no reason.
+  if (domain !== "all") openDomain(domainSection(domain));
 }
 
 // ── EXPAND / COLLAPSE ALL ──────────────────────────────────────────────────
+// Scoped to the open domain, because that is the only content there is. The
+// old whole-page version would have to build all 29 domains to expand them —
+// the exact thing a reader pressing "expand" is not asking for.
 function toggleAll() {
   allExpanded = !allExpanded;
-  document.querySelectorAll(".domain-header, .topic-header").forEach(h => {
-    h.classList.toggle("open", allExpanded);
-    if (h.hasAttribute("aria-expanded")) h.setAttribute("aria-expanded", allExpanded ? "true" : "false");
-  });
-  document.querySelectorAll(".domain-body, .topic-body").forEach(b => b.classList.toggle("open", allExpanded));
+  let section = _liveDomain;
+  if (allExpanded && !section) {
+    section = domainSections().find(s =>
+      !s.classList.contains("hidden") && !s.classList.contains("search-hidden"));
+    if (section) openDomain(section);
+  }
+  if (section) {
+    section.querySelectorAll(".topic-header").forEach(h => {
+      h.classList.toggle("open", allExpanded);
+      h.setAttribute("aria-expanded", allExpanded ? "true" : "false");
+    });
+    section.querySelectorAll(".topic-body").forEach(b => b.classList.toggle("open", allExpanded));
+    if (!allExpanded) closeDomain(section);
+  } else {
+    allExpanded = false;
+  }
   const hdrBtn = document.getElementById("hdr-expand-btn");
   if (hdrBtn) {
-    hdrBtn.title = allExpanded ? "Collapse all" : "Expand all";
+    hdrBtn.title = allExpanded ? "Collapse the open domain" : "Expand the open domain";
     hdrBtn.setAttribute("aria-checked", allExpanded ? "true" : "false");
   }
 }
@@ -109,6 +467,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Per-topic tool buttons take precedence over the toggle
     const tool = e.target.closest(".topic-review, .topic-permalink, .topic-bookmark");
     if (tool) { e.stopPropagation(); handleTopicTool(tool); return; }
+    // The URL codec lives inside a topic, so its buttons arrive and leave with
+    // their domain — delegation instead of the load-time wiring they had.
+    const codec = e.target.closest(".url-codec-btn");
+    if (codec) {
+      e.stopPropagation();
+      if (codec.classList.contains("btn-encode")) urlToolEncode();
+      else if (codec.classList.contains("btn-decode")) urlToolDecode();
+      else if (codec.classList.contains("btn-copy")) urlToolCopy();
+      else if (codec.classList.contains("btn-clear")) urlToolClear();
+      return;
+    }
     const dh = e.target.closest(".domain-header");
     if (dh) { toggleDomain(dh); return; }
     const th = e.target.closest(".topic-header");
@@ -136,10 +505,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("search-input")?.addEventListener("input", e => onSearchInput(e.target.value));
   document.getElementById("search-clear")?.addEventListener("click", clearSearch);
   document.getElementById("notepad-tab")?.addEventListener("click", toggleNotepad);
-  document.querySelector(".url-codec-btn.btn-encode")?.addEventListener("click", urlToolEncode);
-  document.querySelector(".url-codec-btn.btn-decode")?.addEventListener("click", urlToolDecode);
-  document.querySelector(".url-codec-btn.btn-copy")?.addEventListener("click", urlToolCopy);
-  document.querySelector(".url-codec-btn.btn-clear")?.addEventListener("click", urlToolClear);
 
   // Global keyboard shortcuts (ignored while typing in a field)
   document.addEventListener("keydown", handleGlobalKeys);
@@ -147,6 +512,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initAccessibilityAndTools();
   initBackToTop();
   initStudyTools();
+
+  // Parse the deferred domain text in idle time, so the first search and the
+  // first deck are instant instead of paying for all 29 domains at once.
+  warmContentIndex();
 });
 
 // ── ACRONYM EXPANSION DENSITY ────────────────────────────────────────────────
@@ -184,15 +553,17 @@ function cycleAcroMode() {
 // ── RANDOM TOPIC ─────────────────────────────────────────────────────────────
 // Open a random topic (and its domain), update the hash, and scroll to it.
 function jumpToRandomTopic() {
-  const topics = document.querySelectorAll(".topic[id]");
-  if (!topics.length) return;
-  const topic = topics[Math.floor(Math.random() * topics.length)];
+  // From the id map, not the DOM: a random pick over the open domain would be
+  // a random pick over a 29th of the site.
+  const ids = allTopicIds();
+  if (!ids.length) return;
+  const id = ids[Math.floor(Math.random() * ids.length)];
   // Clear any active filter/search so the pick is guaranteed visible
   if (typeof clearSearch === "function") {
     const si = document.getElementById("search-input");
     if (si && si.value) clearSearch();
   }
-  location.hash = topic.id;   // openHashTarget (hashchange) expands + scrolls
+  location.hash = id;   // openHashTarget (hashchange) opens the domain + scrolls
   openHashTarget();
 }
 
@@ -251,7 +622,9 @@ function initSnapQuote() {
 // ── CLOUD RESPONSIBILITY MATRIX ────────────────────────────────────────────
 function initCloudStack() {
   const container = document.getElementById("cloud-stack");
-  if (!container) return;
+  // Also skip when it is already built: its domain can be opened, closed and
+  // opened again, and this used to run exactly once per page load.
+  if (!container || container.firstChild) return;
 
   const layers = ["Applications","Data","Runtime","Middleware","OS","Virtualization","Servers","Storage","Networking"];
   const resp   = [[1,1,1,0],[1,1,1,0],[1,1,0,0],[1,1,0,0],[1,1,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0]];
@@ -276,12 +649,19 @@ function initCloudStack() {
 }
 
 // ── TOUCH FEEDBACK ─────────────────────────────────────────────────────────
+// Delegated, not per-element: topic headers arrive and leave with their domain,
+// and three listeners on each of 1,080 of them was the second-largest thing the
+// old load pass did.
 function initTouchFeedback() {
-  document.querySelectorAll(".chip, .domain-header, .topic-header").forEach(el => {
-    el.addEventListener("touchstart",  function() { this.classList.add("is-tapping");    }, { passive: true });
-    el.addEventListener("touchend",    function() { this.classList.remove("is-tapping"); }, { passive: true });
-    el.addEventListener("touchcancel", function() { this.classList.remove("is-tapping"); }, { passive: true });
-  });
+  const SEL = ".chip, .domain-header, .topic-header";
+  const clear = () => document.querySelectorAll(".is-tapping")
+    .forEach(el => el.classList.remove("is-tapping"));
+  document.addEventListener("touchstart", e => {
+    const el = e.target.closest?.(SEL);
+    if (el) el.classList.add("is-tapping");
+  }, { passive: true });
+  document.addEventListener("touchend", clear, { passive: true });
+  document.addEventListener("touchcancel", clear, { passive: true });
 }
 
 // ── ACCESSIBILITY, PERMALINKS & PROGRESS ───────────────────────────────────
@@ -316,82 +696,25 @@ function slugify(s) {
 }
 
 /**
- * One pass over the DOM to make the accordion accessible and add per-topic
- * permalink + "mark reviewed" tools. Runs once at load.
+ * Load-time setup for the parts of the page that are always present.
+ *
+ * The per-topic half of this — ids, stored progress, the tool cluster — moved
+ * to enhanceDomain(), which runs on a domain when it opens. What is left is the
+ * domain headers, the progress badges (read from the id map, so they are right
+ * for domains with nothing in the DOM), and the deep-link handler.
  */
 function initAccessibilityAndTools() {
   // Before any stored state is read, so a renamed topic shows the progress the
   // user earned under its old id.
   migrateAliasedProgress();
 
-  // Make every accordion header focusable and announce its state
-  document.querySelectorAll(".domain-header, .topic-header").forEach(h => {
+  document.querySelectorAll(".domain-header").forEach(h => {
     h.setAttribute("tabindex", "0");
     h.setAttribute("role", "button");
-    h.setAttribute("aria-expanded", h.classList.contains("open") ? "true" : "false");
+    h.setAttribute("aria-expanded", "false");
   });
 
-  const usedIds = new Set();
-  document.querySelectorAll(".domain-section").forEach(domain => {
-    domain.querySelectorAll(".topic").forEach(topic => {
-      const header = topic.querySelector(":scope > .topic-header");
-      if (!header) return;
-      const nameEl = header.querySelector(".topic-name");
-      // Older "Beginner" topics carry the title as a bare text node in the
-      // header (no .topic-name); fall back to the header's own text.
-      const label = labelText(nameEl || header).trim();
-
-      // Stable, unique slug id for deep-linking
-      if (!topic.id) {
-        let base = slugify(label), id = base, i = 2;
-        while (usedIds.has(id)) id = `${base}-${i++}`;
-        usedIds.add(id);
-        topic.id = id;
-      }
-
-      // Reflect stored "reviewed" state
-      if (localStorage.getItem(REVIEWED_PREFIX + topic.id) === "1") {
-        topic.classList.add("reviewed");
-      }
-      // Reflect stored "bookmarked" state
-      if (localStorage.getItem(BOOKMARK_PREFIX + topic.id) === "1") {
-        topic.classList.add("bookmarked");
-      }
-
-      // Inject the tool cluster (bookmark + reviewed toggle + permalink) once
-      if (!header.querySelector(".topic-tools")) {
-        const tools = document.createElement("span");
-        tools.className = "topic-tools";
-
-        const bookmark = document.createElement("button");
-        bookmark.type = "button";
-        bookmark.className = "topic-bookmark";
-        bookmark.title = "Save to study list";
-        bookmark.setAttribute("aria-label", "Save topic to study list");
-        bookmark.textContent = "★";
-
-        const review = document.createElement("button");
-        review.type = "button";
-        review.className = "topic-review";
-        review.title = "Mark topic as reviewed";
-        review.setAttribute("aria-label", "Mark topic as reviewed");
-        review.textContent = "✓";
-
-        const link = document.createElement("button");
-        link.type = "button";
-        link.className = "topic-permalink";
-        link.title = "Copy link to this topic";
-        link.setAttribute("aria-label", "Copy link to this topic");
-        link.textContent = "🔗";
-
-        tools.append(bookmark, review, link);
-        // Insert before the chevron so it stays right-aligned
-        const chev = header.querySelector(".topic-chev");
-        chev ? header.insertBefore(tools, chev) : header.appendChild(tools);
-      }
-    });
-    updateDomainProgress(domain);
-  });
+  domainSections().forEach(updateDomainProgress);
 
   // Deep-link: open + scroll to a topic referenced in the URL hash
   openHashTarget();
@@ -422,13 +745,19 @@ function handleTopicTool(btn) {
   }
 }
 
-/** Update the "n/m reviewed" badge on a domain header. */
+/** Update the "n/m reviewed" badge on a domain header.
+ *
+ * Counted from the id map and localStorage, not from `.topic.reviewed` nodes:
+ * every domain header shows a badge and at most one of them has any topics in
+ * the document to count.
+ */
 function updateDomainProgress(domain) {
   if (!domain) return;
   const header = domain.querySelector(".domain-header");
   if (!header) return;
-  const topics = domain.querySelectorAll(".topic");
-  const done = domain.querySelectorAll(".topic.reviewed").length;
+  const ids = topicIndex()[domain.dataset.domain] || [];
+  const done = ids.reduce(
+    (n, id) => n + (localStorage.getItem(REVIEWED_PREFIX + id) === "1" ? 1 : 0), 0);
   let badge = header.querySelector(".domain-progress");
   if (!badge) {
     badge = document.createElement("span");
@@ -436,8 +765,8 @@ function updateDomainProgress(domain) {
     const chev = header.querySelector(".chevron");
     chev ? header.insertBefore(badge, chev) : header.appendChild(badge);
   }
-  badge.textContent = `${done}/${topics.length}`;
-  badge.classList.toggle("complete", done === topics.length && topics.length > 0);
+  badge.textContent = `${done}/${ids.length}`;
+  badge.classList.toggle("complete", done === ids.length && ids.length > 0);
 }
 
 /** Reflect the currently-open topic in the URL without a scroll jump. */
@@ -496,17 +825,28 @@ function openHashTarget() {
   if (!id) return;
   // A stale link resolves through the alias map, then rewrites itself so the
   // address bar — and anything copied out of it — carries the current id.
-  if (!document.getElementById(id) && slugAliases()[id]) {
+  // Resolved against the id map rather than the document: the topic a cold link
+  // names is almost never in the DOM yet, which is the whole point.
+  if (!topicDomain(id) && slugAliases()[id]) {
     id = slugAliases()[id];
     if (history.replaceState) history.replaceState(null, "", `#${id}`);
     else location.hash = id;
   }
+  const domainId = topicDomain(id);
+  if (!domainId) return;
+  const section = domainSection(domainId);
+  // A link into a domain the chip bar has filtered out drops the filter. The
+  // alternative is rendering a card inside a `display: none` section and
+  // scrolling to nothing.
+  if (section?.classList.contains("hidden")) {
+    document.querySelector('.chip[data-domain="all"]')?.click();
+  }
+  openDomain(section);
   const topic = document.getElementById(id);
   if (!topic || !topic.classList.contains("topic")) return;
-  const domain = topic.closest(".domain-section");
-  domain?.querySelector(".domain-header")?.classList.add("open");
-  domain?.querySelector(".domain-body")?.classList.add("open");
-  domain?.querySelector(".domain-header")?.setAttribute("aria-expanded", "true");
+  // A topic reached by link is shown even when a search is filtering its
+  // domain — the reader asked for this card by name.
+  topic.classList.remove("search-hidden");
   const th = topic.querySelector(".topic-header");
   th?.classList.add("open");
   th?.setAttribute("aria-expanded", "true");
@@ -582,24 +922,6 @@ function urlToolClear() {
 
 /** Nodes we injected <mark> highlights into during the current search. */
 const _highlighted = new Set();
-
-/** Lowercased textContent per topic, computed once (content never changes). */
-const _topicTextCache = new WeakMap();
-function topicSearchText(topic) {
-  let t = _topicTextCache.get(topic);
-  if (t === undefined) {
-    t = topic.textContent.toLowerCase();
-    _topicTextCache.set(topic, t);
-  }
-  return t;
-}
-
-/** Cached domain sections (built once on first search). */
-let _domainSections = null;
-function domainSections() {
-  if (!_domainSections) _domainSections = [...document.querySelectorAll(".domain-section")];
-  return _domainSections;
-}
 
 /** Remove all <mark class="sh"> wrappers, restoring the original text nodes. */
 function clearHighlights() {
@@ -688,6 +1010,62 @@ function searchTerms(term) {
   return terms;
 }
 
+// ── SEARCH STATE ────────────────────────────────────────────────────────────
+// A search now spans more of the page than the page is showing, so the result
+// has to be held rather than only painted: which topics matched, per domain, so
+// that a domain opened later can be filtered to the same result.
+let _searchTerm = "";        // the applied query ("" when not searching)
+let _searchTermList = [];    // it, plus whatever the dictionary says is the same
+const _searchHits = new Map();  // domain id -> Set of matching topic ids
+
+/** The "n matches" pill on a collapsed domain's header. */
+function setMatchBadge(section, n) {
+  const header = section.querySelector(".domain-header");
+  let badge = header.querySelector(".domain-matches");
+  if (!badge) {
+    badge = document.createElement("span");
+    badge.className = "domain-matches";
+    header.insertBefore(badge, header.querySelector(".domain-progress") || header.querySelector(".chevron"));
+  }
+  badge.textContent = `${n} match${n === 1 ? "" : "es"}`;
+}
+
+/**
+ * Filter and highlight the open domain against the current search.
+ *
+ * Split out from runSearch because it runs twice over: once when the search
+ * picks a domain to show, and again whenever the reader opens a different one
+ * while the query is still in the box.
+ */
+function applySearchToDomain(section) {
+  const hits = _searchHits.get(section.dataset.domain);
+  section.querySelectorAll(".topic").forEach(topic => {
+    if (hits && hits.has(topic.id)) {
+      topic.classList.remove("search-hidden");
+      const th = topic.querySelector(".topic-header");
+      th?.classList.add("open");
+      th?.setAttribute("aria-expanded", "true");
+      topic.querySelector(".topic-body")?.classList.add("open");
+      topic.querySelectorAll(
+        ".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, .code-block"
+      ).forEach(n => _searchTermList.forEach(t => highlightIn(n, t)));
+    } else {
+      topic.classList.add("search-hidden");
+    }
+  });
+}
+
+/**
+ * Immediate search runner. Prefer the debounced onSearchInput() for keystrokes.
+ *
+ * Every domain is searched — the deferred blocks are parsed text, not markup
+ * the browser has to build — but only one domain's matches are rendered. The
+ * rest report their count on their header and open on a click, already
+ * filtered. That is the same reach as the old whole-DOM search with a
+ * twenty-ninth of the layout.
+ *
+ * @param {string} raw - Current value of the search input.
+ */
 function runSearch(raw) {
   const term = raw.trim();
   const clearBtn = document.getElementById("search-clear");
@@ -697,49 +1075,54 @@ function runSearch(raw) {
 
   // Reset previous highlights and visibility
   clearHighlights();
-  document.querySelectorAll(".topic.search-hidden, .domain-section.search-hidden")
+  _searchHits.clear();
+  domainSections().forEach(s => {
+    s.classList.remove("search-hidden");
+    s.querySelector(".domain-matches")?.remove();
+  });
+  _liveDomain?.querySelectorAll(".topic.search-hidden")
     .forEach(el => el.classList.remove("search-hidden"));
 
-  if (term.length < 2) {
+  _searchTerm = term.length < 2 ? "" : term;
+  if (!_searchTerm) {
+    _searchTermList = [];
     if (countEl) countEl.textContent = "";
     return;
   }
 
-  const terms = searchTerms(term);
-  const lowered = terms.map(t => t.toLowerCase());
-  let matchCount = 0;
+  _searchTermList = searchTerms(term);
+  const lowered = _searchTermList.map(t => t.toLowerCase());
+  let matchCount = 0, domainCount = 0, firstHit = null;
 
-  domainSections().forEach(domain => {
-    let domainHasMatch = false;
-
-    domain.querySelectorAll(".topic").forEach(topic => {
-      const hay = topicSearchText(topic);
-      if (lowered.some(t => hay.includes(t))) {
-        domainHasMatch = true;
-        matchCount++;
-
-        // Auto-expand the topic and its parent domain
-        topic.querySelector(".topic-header")?.classList.add("open");
-        topic.querySelector(".topic-body")?.classList.add("open");
-        domain.querySelector(".domain-header")?.classList.add("open");
-        domain.querySelector(".domain-body")?.classList.add("open");
-
-        // Highlight only the text-bearing nodes of matched topics
-        topic.querySelectorAll(
-          ".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, .code-block"
-        ).forEach(n => terms.forEach(t => highlightIn(n, t)));
-      } else {
-        topic.classList.add("search-hidden");
-      }
+  domainSections().forEach(section => {
+    const hits = new Set();
+    domainTopics(section.dataset.domain).forEach(t => {
+      if (lowered.some(l => t.text.includes(l))) hits.add(t.id);
     });
-
-    if (!domainHasMatch) domain.classList.add("search-hidden");
+    if (!hits.size) {
+      section.classList.add("search-hidden");
+      return;
+    }
+    _searchHits.set(section.dataset.domain, hits);
+    matchCount += hits.size;
+    domainCount++;
+    // A chip filter still wins over the search's choice of what to show: a
+    // domain the reader has filtered away must not be the one that renders.
+    if (!firstHit && !section.classList.contains("hidden")) firstHit = section;
+    setMatchBadge(section, hits.size);
   });
 
+  // Show the domain the reader is already in if it has anything; otherwise the
+  // first that does. The others stay one click away with their counts visible.
+  const target = _liveDomain && _searchHits.has(_liveDomain.dataset.domain)
+    && !_liveDomain.classList.contains("hidden") ? _liveDomain : firstHit;
+  if (target) openDomain(target);
+
   if (countEl) {
-    const via = terms.length > 1 ? ` · also matching ${terms.slice(1).map(t => `“${t}”`).join(", ")}` : "";
+    const via = _searchTermList.length > 1
+      ? ` · also matching ${_searchTermList.slice(1).map(t => `“${t}”`).join(", ")}` : "";
     countEl.textContent = matchCount
-      ? `${matchCount} match${matchCount !== 1 ? "es" : ""}${via}`
+      ? `${matchCount} match${matchCount !== 1 ? "es" : ""} in ${domainCount} domain${domainCount !== 1 ? "s" : ""}${via}`
       : "no matches";
   }
 }
@@ -1076,21 +1459,24 @@ function srsUpdateBadge() {
 }
 let _stIndex = null;
 
-/** Build a flat index of every topic on the page (once). */
+/** Build a flat index of every topic on the page (once).
+ *
+ * From the deferred blocks, not the document: a deck built from what is
+ * rendered would be one domain deep and look perfectly healthy, which is the
+ * failure this whole file has to keep avoiding.
+ */
 function stIndex() {
   if (_stIndex) return _stIndex;
   _stIndex = [];
-  document.querySelectorAll(".domain-section").forEach(domain => {
+  domainSections().forEach(domain => {
     const domainId = domain.dataset.domain || "";
     const domainTitle = (domain.querySelector(".domain-title")?.textContent || "").trim();
     const domainIcon = (domain.querySelector(".domain-icon")?.textContent || "").trim();
-    domain.querySelectorAll(".topic").forEach(t => {
-      const name = labelText(t.querySelector(".topic-name")
-        || t.querySelector(".topic-header")).trim();
-      const title = (t.querySelector(".concept-title")?.textContent || "").trim();
-      const desc = (t.querySelector(".concept-desc")?.textContent || "").trim();
-      const badge = (t.querySelector(".topic-badge")?.textContent || "").trim();
-      if (t.id && name) _stIndex.push({ id: t.id, name, title, desc, badge, domainId, domainTitle, domainIcon, el: t });
+    domainTopics(domainId).forEach(t => {
+      if (t.id && t.name) {
+        _stIndex.push({ id: t.id, name: t.name, title: t.title, desc: t.desc,
+                        badge: t.badge, domainId, domainTitle, domainIcon });
+      }
     });
   });
   return _stIndex;
@@ -1772,11 +2158,13 @@ function bkApply(kept, mode) {
 
 /** Re-read storage into the page so an import is visible without a reload. */
 function bkRefreshUI() {
+  // Only the open domain has topics to repaint; every other domain reads the
+  // imported storage when it is next opened, and its badge is recomputed below.
   document.querySelectorAll(".topic[id]").forEach(t => {
     t.classList.toggle("reviewed", localStorage.getItem(REVIEWED_PREFIX + t.id) === "1");
     t.classList.toggle("bookmarked", localStorage.getItem(BOOKMARK_PREFIX + t.id) === "1");
   });
-  document.querySelectorAll(".domain-section").forEach(d => updateDomainProgress(d));
+  domainSections().forEach(d => updateDomainProgress(d));
   srsUpdateBadge();
   if (typeof stRefreshStudyList === "function") stRefreshStudyList();
 }

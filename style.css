@@ -2181,6 +2181,26 @@ mark.sh {
   border-color: var(--green);
 }
 
+/* Per-domain search-match count.
+   Only one domain's content is rendered at a time, so a search that reaches the
+   whole page has to report the rest of its result somewhere: this pill is how a
+   collapsed domain says "there are seven of them in here". */
+.domain-matches {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--bg1);
+  background: var(--accent, var(--cyan));
+  border-radius: 2px;
+  padding: 2px 8px;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+.domain-section[data-hydrated="1"] .domain-matches {
+  color: var(--accent, var(--cyan));
+  background: transparent;
+  border: 1px solid currentColor;
+}
+
 /* Floating back-to-top button */
 #back-to-top {
   position: fixed;
@@ -2238,8 +2258,13 @@ mark.sh {
     --text: #000; --muted: #444; --border: #bbb;
   }
   body { background: #fff !important; color: #000 !important; }
+  /* Prints the open domain in full. The others hold their content as inert
+     text rather than markup, so there is nothing for print to lay out — which
+     makes printing one domain the normal case instead of a 400-page accident.
+     Their headers still print, as a contents page does. */
   .domain-body, .topic-body { display: block !important; }
   .domain-section { break-inside: avoid; }
+  .domain-matches { display: none; }
   .note, .concept-card, table { break-inside: avoid; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
   /* Paper has no hover, so the check date goes inline. */

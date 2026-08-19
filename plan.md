@@ -2105,11 +2105,17 @@ separate toys.
 
 ### TRACK AK — Delivery, Performance & Reach
 
-- [ ] **Lazy domain loading (server build only)** — ⚠️ **measured in session 19 and
-  the case is much weaker than written here; see §4b-ii before starting.** Keeping
-  today's full-text search means shipping 77% of the page as a search index anyway, so
-  the real saving is ~23%, not ~100%. Five features also read the whole DOM and would
-  silently return partial results. Original note follows. `index.html` is ~3.2 MB of
+- [x] **Lazy domain loading** — ✅ **shipped, as deferred content rather than fetched
+  fragments; see §4b-iii.** Not the shape this item specified. There are no per-domain
+  files and no fetch: `build.py` parks each domain's body in an inert
+  `<script type="text/html">` block in the same single file, and `script.js` moves one
+  domain into the DOM at a time. That keeps `file://`, the PWA and the offline story
+  exactly as they were — the flag and the second build output this item asked for were
+  never needed. It also does not save a byte, which §4b-ii had already established was
+  the weak half of the argument; it costs 37 KB gzipped. What it buys is the DOM-size
+  win §4b-ii identified as the real one: **92,330 elements → 404 at load, 2,739 ms →
+  771 ms on a 4× throttled phone.** All five whole-DOM features were rewired rather
+  than left to silently under-report. Original note follows. `index.html` is ~3.2 MB of
   HTML; every visitor downloads all 20 domains to read one. Emit per-domain
   fragments plus a shell that fetches on expand, **while keeping the current
   single-file build for `file://`**. Two outputs from one `build.py`, selected
@@ -4831,6 +4837,13 @@ Until this is revisited, **the honest position is that the budget ceiling limits
 backlog and no cheap fix exists.** That is worth knowing before another 160 cards are
 written against an assumption that lazy loading will rescue it.
 
+> **Superseded in part — see §4b-iii.** The deferral shipped, on the user's request
+> rather than on this section's trigger. Everything above about *bytes* held exactly:
+> it saved none, and cost 37 KB. Everything above about *DOM size* held too, and was
+> understated — the measured drop was 92,330 elements to 404, not to 14,208. The one
+> claim that did not survive contact is "needs a verification path that does not
+> exist": the path was `tools/smoke_test.mjs`, which went from 23 checks to 31.
+
 ## 4c. Session 19 — the `script` duplication, resolved and partly disproved
 
 The previous session named `script` duplicating itself as the strongest remaining item.
@@ -5256,3 +5269,124 @@ branches are decisions rather than more of the same:
 
 What it should **not** do is treat the inflated backlog count as a runway; it is not one.
 The high-value existing-domain voids this session could reach are now filled.
+
+---
+
+## 4b-iii. The deferral shipped — one domain in the DOM at a time
+
+Asked for directly: *"I want all domains to show the other domains and only show the
+content of one domain at a time to lower the processing needed."* That is §4b-ii's
+DOM-size argument, and it is the half of the case that measured well.
+
+### What was built
+
+Not what Track AK specified. There are no per-domain fragment files and nothing is
+fetched, because a fetch would have cost the `file://` story that every other decision
+in this repo has protected. Instead `build.py` emits each domain's body inside an inert
+block beside its header:
+
+```html
+<div class="domain-section" data-domain="net">
+  <div class="domain-header">…</div>
+  <div class="domain-body"></div>
+  <script type="text/html" class="domain-src" data-domain="net">…the whole domain…</script>
+</div>
+```
+
+The HTML parser reads that block as one text node: no elements, no style resolution, no
+layout. `script.js` moves it into `.domain-body` when the domain opens and empties the
+previous one. Everything still ships in one file, still works offline, still works over
+`file://`, and the service worker precache list did not change.
+
+### Measured, 4× CPU throttle, 1,080 topics
+
+| | before | after |
+|---|---:|---:|
+| elements at load | 92,330 | **404** |
+| elements with a domain open | 92,330 | 5,892 |
+| load event | 2,739 ms | **771 ms** |
+| open a domain | 125 ms | 63 ms |
+| chip filter | 46 ms | 57 ms |
+| first search (cold) | 1,211 ms | **243 ms** |
+| search after idle warm-up | — | 13 ms |
+| gzipped page | 1,044 KB | **1,081 KB** |
+
+Two of those need their honest reading. The **chip filter got slower**, because a chip
+now opens the domain it narrows to — it is doing more, not the same work worse. And the
+**page got 37 KB bigger**: the topic ids `build.py` now stamps, plus the inlined id map.
+§4b-ii predicted the byte case was weak; it turns out to be negative. The budget wall in
+§4b is therefore **unchanged and slightly closer** — 2% gzip headroom, not 5%. Anyone
+reading this section as "the content ceiling is lifted" has read it backwards.
+
+### The five whole-DOM features, and what each reads now
+
+§4b-ii's strongest argument against building this was that five features walk
+`.domain-section .topic` and would silently return partial results. That was right, and
+it was the bulk of the work. Two accessors replaced the DOM walk:
+
+- `topicIndex()` — domain id → its topic ids, inlined by `build.py` (45 KB). Answers
+  *which topics exist*.
+- `domainTopics(id)` — one domain's deferred text, parsed once and cached, warmed in
+  `requestIdleCallback` after load. Answers *what a topic says*.
+
+| Feature | Was | Now |
+|---|---|---|
+| Search | `topic.textContent` per topic | `domainTopics()` for all 29; renders one, badges the rest with their counts |
+| Flashcards, quiz, quick-jump, study list, due-today | `stIndex()` over the DOM | `stIndex()` over `domainTopics()` — 1,080 cards, 28 domains, unchanged |
+| Progress badges (`n/m`) | counted `.topic.reviewed` | `topicIndex()` + `localStorage` |
+| Expand all | every domain | the open domain, and it opens one if none is |
+| Random topic | `document.querySelectorAll(".topic[id]")` | `topicIndex()` |
+
+**Search changed behaviour, deliberately.** It still reads every domain — the reach is
+identical — but only the open domain's hits are rendered; the rest report `n matches` on
+their header and arrive already filtered when clicked. The count line says so:
+`23 matches in 8 domains`.
+
+### Verification
+
+`tools/smoke_test.mjs` went from 23 checks to 31, including the three that would catch a
+regression back to the old behaviour: no topic elements at load, opening a second domain
+drops the first, and *search still reaches unopened domains*. Separately, a throwaway
+parity harness hydrated all 29 domains and compared every field the study decks and the
+search read — id, name, concept title, description, badge, full text — against what the
+DOM produced before. **1,080 topics, one difference**, and it is the right one: the cloud
+responsibility matrix, whose cells `script.js` generates at runtime and which is
+therefore not in the authored text any more. Its card's prose still carries IaaS/PaaS/
+SaaS; the generated words "Customer" and "Provider" are no longer searchable.
+
+That harness earned its keep. It caught four real bugs that all failed the same way —
+quietly, on a subset:
+
+1. A topic name ending at the first `</span>` indexed *"OSI (Open Systems
+   Interconnection)"* instead of *"OSI Model — 7 Layers"*, on every card carrying an
+   inline acronym expansion. Fixed with a nesting-aware slice.
+2. `class="concept-title"` matched exactly missed the 342 `<h4>` variants and every
+   `class="concept-desc verdict"` — the field came back empty and the flashcard showed
+   its fallback.
+3. Replacing tags with a space rather than nothing put one inside every expansion:
+   `CIDR ( Classless Inter-Domain Routing )`, which is not what the card says and so not
+   what a search for it matched.
+4. `<[^>]+>` as "a tag" ate `WHERE created_at < now()` in a SQL sample, because a `>`
+   follows it eventually. The browser never does this: `< ` cannot open a tag.
+
+Every one of those would have shipped looking fine.
+
+### What it cost
+
+- **37 KB gzipped**, above.
+- **Print** covers the open domain plus every domain's header, rather than the whole
+  site. That is closer to Track AK's "print packs" item than what it replaced, but it is
+  a change.
+- **Expand all** is domain-scoped. The old behaviour would now mean building all 29.
+- One card's runtime-generated table text left the search index (above).
+- `tools/page_budget.py` grew a metric: `dom_elements` (404, budget 1,500) and
+  `content_elements` (86,767, budget 100,000) replace the single `elements` count, which
+  no longer meant one thing.
+
+### What this does and does not unblock
+
+It does not unblock the content backlog — that is bounded by bytes, and bytes got
+slightly worse. §4b-ii's middle-tier search index is still the fix for that, and it is
+now **much cheaper to build**: search already reads a purpose-built index rather than the
+DOM, so trimming what goes into that index is a change to one function, not to the page.
+The fork in the session record below stands, with branch 1 unchanged and easier.

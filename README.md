@@ -10,8 +10,16 @@ Open `index.html` in any modern web browser — no server or build step required
 
 ## Features
 
-- **Interactive Filtering** — Sticky chip nav bar filters by domain instantly.
-- **Full-text Search** — Debounced search highlights matches and auto-expands hits.
+- **One Domain at a Time** — Every domain is listed; the one you open is the
+  only one the browser builds. Opening another releases the last, so the page
+  costs 404 elements at rest instead of 92,330 and loads in a third of the time.
+  Nothing is fetched — the content is all in the page, held as inert text until
+  it is asked for, so this works offline and over `file://` exactly as before.
+- **Interactive Filtering** — Sticky chip nav bar filters by domain instantly,
+  and opens the domain it narrows to.
+- **Full-text Search** — Debounced search reads every domain, not just the open
+  one: it highlights hits in the domain on screen and shows the other domains'
+  match counts on their headers, one click away and already filtered.
 - **Theme Engine** — Dark / Light mode with `localStorage` persistence.
 - **Collapsible Accordions** — Domain and topic-level expand / collapse, fully
   keyboard-operable (`Tab` to a header, `Enter` / `Space` to toggle).
@@ -62,10 +70,13 @@ Open `index.html` in any modern web browser — no server or build step required
 ```
 index.html            Built output — open this in a browser (generated; do not hand-edit)
 index-shell.html      Page skeleton (head, header, filter/search bar, notepad) — edit this
-build.py              Assembles index-shell.html + data/* → index.html (minifies the output)
+build.py              Assembles index-shell.html + data/* → index.html. Stamps each
+                      topic's permalink id, parks each domain's content in an inert
+                      <script type="text/html"> block, and minifies the output
 reconcile_build.py    Recovery tool: syncs a hand-patched index.html back into data/*
-script.js             All interactive logic (accordion, filter, search, theme, URL
-                      codec, notepad, permalinks, progress, back-to-top)
+script.js             All interactive logic (deferred domain content, accordion, filter,
+                      search, theme, URL codec, notepad, permalinks, progress,
+                      back-to-top)
 style.css             Layout, themes, and component styles
 data/
   domains.json        Domain metadata (id, icon, title, cert tags, subtitle)
@@ -97,6 +108,11 @@ All topic content lives in `data/*.html` — one file per domain. To add or upda
    canonical topic skeleton and class conventions).
 2. Run `python3 build.py` from the project root.
 3. Open `index.html` in a browser to verify.
+
+One rule follows from the single-domain rendering, and it is a code rule rather
+than a content one: nothing may answer a page-wide question by walking the DOM,
+because only one domain is in it. Use `topicIndex()` for which topics exist and
+`domainTopics(id)` for what they say — see **CONTRIBUTING.md**.
 
 To add a new domain, add an entry to `data/domains.json` and create the matching
 `data/{id}.html`. **Never hand-edit `index.html`** — it is generated; if it ever

@@ -17,12 +17,19 @@ like a serious regression and is almost entirely Playwright's round trip. Timing
 the same work with `performance.now()` in the page gives 60 ms. One of those
 numbers would have justified a rewrite.
 
-So the page is still not slow. What it *is* is unbounded — every wave adds to it
-and nothing pushes back. This script is the thing that pushes back.
+Since then the page ships one domain's content at a time (build.py's deferred
+blocks), which changed what "elements" means and split this budget in two:
 
-The budgets sit roughly 25% above today's values: a normal content wave passes,
-a doubling does not. When one is hit, that is the moment to have the
-lazy-loading conversation — with a measurement in hand.
+    dom_elements       what the browser builds at load — the shell and 29
+                       domain headers, and at most one domain's content after
+                       that. 92,330 -> 484 measured at 1,080 topics.
+    content_elements   what sits in the deferred blocks: the whole library,
+                       parsed as text and built only on demand. This is the
+                       number a content wave moves, and the one that used to be
+                       "elements".
+
+Both still matter. The first is what a visitor pays on arrival; the second is
+what they download either way, and it is why the byte budgets did not move.
 
     python tools/page_budget.py            report and enforce
     python tools/page_budget.py --report   report only, never fail
@@ -37,35 +44,39 @@ ROOT = Path(__file__).resolve().parent.parent
 PAGE = ROOT / "index.html"
 
 BUDGET = {
-    "gzip_kb": 1100,      # what the visitor downloads; Netlify serves compressed
-    "raw_mb": 4.2,        # what the browser parses
-    "elements": 93_000,   # static markup; the live DOM runs ~4,400 higher
+    "gzip_kb": 1100,          # what the visitor downloads; Netlify serves compressed
+    "raw_mb": 4.4,            # what the browser parses
+    "dom_elements": 1_500,    # what it builds at load: shell + domain headers
+    "content_elements": 100_000,  # the deferred library, built one domain at a time
 }
 
 # Counts opening tags only: not closing tags, not comments, not doctype.
 #
-# This measures the *static* markup: 74,464 against the 75,063 a browser reports
-# with script.js stubbed out, a 0.8% undercount from tags inside inline SVG
-# attributes and the like. The live page carries about 4,400 more (78,819),
-# injected at runtime — chiefly the four-element tool cluster script.js adds to
-# each of 915 topics. The budget is on the static number because that is what a
-# content wave changes and what CI can measure without a browser.
+# This measures the *static* markup: within about 1% of what a browser reports
+# with script.js stubbed out, the gap being tags inside inline SVG attributes
+# and the like. The live page carries more, injected at runtime — chiefly the
+# four-element tool cluster script.js adds to each topic of the open domain.
 TAG_RE = re.compile(r"<(?!/|!)([a-zA-Z][a-zA-Z0-9-]*)")
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
         "meta", "param", "source", "track", "wbr"}
+
+# The two <script> shapes that hold data rather than markup. A JSON payload was
+# always excluded; a deferred domain block is excluded from the *DOM* count and
+# counted on its own, because the browser builds none of it at load.
+JSON_BLOCK_RE = re.compile(r"<script[^>]*type=\"application/json\"[^>]*>.*?</script\s*>", re.S)
+DEFERRED_BLOCK_RE = re.compile(r"<script[^>]*class=\"domain-src\"[^>]*>(.*?)</script\s*>", re.S)
 
 
 def measure():
     raw = PAGE.read_bytes()
     text = raw.decode("utf-8")
-    # A <script type="application/json"> block is data, not markup — anything
-    # angle-bracketed inside it would otherwise be counted as elements.
-    body = re.sub(r"<script[^>]*type=\"application/json\"[^>]*>.*?</script>", "",
-                  text, flags=re.S)
+    deferred = DEFERRED_BLOCK_RE.findall(text)
+    shell = JSON_BLOCK_RE.sub("", DEFERRED_BLOCK_RE.sub("", text))
     return {
         "gzip_kb": len(gzip.compress(raw, 9)) / 1024,
         "raw_mb": len(raw) / 1024 / 1024,
-        "elements": len(TAG_RE.findall(body)),
+        "dom_elements": len(TAG_RE.findall(shell)),
+        "content_elements": sum(len(TAG_RE.findall(d)) for d in deferred),
     }
 
 
@@ -77,12 +88,12 @@ def main():
     m = measure()
     report_only = "--report" in sys.argv
     over = []
-    print(f"{'metric':<12} {'now':>10} {'budget':>10}   headroom")
+    print(f"{'metric':<17} {'now':>10} {'budget':>10}   headroom")
     for key, budget in BUDGET.items():
         now = m[key]
         pct = now / budget * 100
-        fmt = "{:>10,.0f}" if key == "elements" else "{:>10,.1f}"
-        print(f"{key:<12} {fmt.format(now)} {fmt.format(budget)}   {100 - pct:>5.0f}% left"
+        fmt = "{:>10,.1f}" if key in ("gzip_kb", "raw_mb") else "{:>10,.0f}"
+        print(f"{key:<17} {fmt.format(now)} {fmt.format(budget)}   {100 - pct:>5.0f}% left"
               + ("  ** OVER **" if now > budget else ""))
         if now > budget:
             over.append(f"{key}: {now:,.1f} exceeds the budget of {budget:,.1f}")
