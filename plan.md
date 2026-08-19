@@ -4729,6 +4729,13 @@ Three consequences:
    the ceiling without re-measuring would turn the one honest number in this file back
    into a feeling.
 
+> **The ceiling in this section moved — see §4b-iv.** Everything measured here
+> stood; what changed is which measurement the project is willing to be bound
+> by. The byte ceiling was raised from 1,100 KB to 2,200 KB and `raw_mb` became
+> the binding budget, on the owner's explicit call that a slow first visit does
+> not matter for this site. The "~20% of the backlog" arithmetic below is
+> therefore no longer the operative limit.
+
 ## 4b-ii. Lazy loading is not the win Track AK claims — measured
 
 §4b said the page budget bounds the backlog and pointed at Track AK's lazy domain
@@ -4843,6 +4850,12 @@ written against an assumption that lazy loading will rescue it.
 > understated — the measured drop was 92,330 elements to 404, not to 14,208. The one
 > claim that did not survive contact is "needs a verification path that does not
 > exist": the path was `tools/smoke_test.mjs`, which went from 23 checks to 31.
+>
+> **The recommendation this section ends on is now retired — see §4b-iv.** The
+> 164 KB middle-tier search index existed to buy bytes at the cost of turning
+> full-text search into partial search. Bytes stopped being the binding
+> constraint, so the trade is no longer worth making: the site keeps full-text
+> search and does not build the trimmed index.
 
 ## 4c. Session 19 — the `script` duplication, resolved and partly disproved
 
@@ -5270,6 +5283,12 @@ branches are decisions rather than more of the same:
 What it should **not** do is treat the inflated backlog count as a runway; it is not one.
 The high-value existing-domain voids this session could reach are now filled.
 
+> **This fork is resolved — see §4b-iii and §4b-iv.** Branch 1 is retired: bytes stopped
+> being the binding constraint, so full-text search stays. Branch 3's "40–50 cards of
+> runway" is superseded by a measured ~1,000. Branch 2 — whether to open `m365` / `itsm` —
+> is untouched, because it was always an architecture question rather than a budget one,
+> and it is now the only real fork left.
+
 ---
 
 ## 4b-iii. The deferral shipped — one domain in the DOM at a time
@@ -5390,3 +5409,96 @@ slightly worse. §4b-ii's middle-tier search index is still the fix for that, an
 now **much cheaper to build**: search already reads a purpose-built index rather than the
 DOM, so trimming what goes into that index is a change to one function, not to the page.
 The fork in the session record below stands, with branch 1 unchanged and easier.
+
+---
+
+## 4b-iv. The byte ceiling moved, deliberately — 1,100 KB → 2,200 KB
+
+§4b stopped the content backlog at roughly 20% of itself on a gzip ceiling. §4b-iii then
+shipped the deferral and made that ceiling slightly *worse* — 1,081 KB of 1,100. The
+obvious next move looked like §4b-ii's trimmed search index, bought with a downgrade from
+full-text search.
+
+It was the wrong question. The right one, asked by the owner: **why is the gzip number the
+one being enforced at all?**
+
+### The structural reason bytes are the wrong budget here
+
+| | paid when | who pays |
+|---|---|---|
+| **download** (1,081 KB gzipped) | once — `sw.js` precaches the page | a first-time visitor only |
+| **parse** (4.1 MB raw) | every load, cache or no cache | every visitor, every time |
+
+This is a reference people re-open, not a landing page seen once. So the budget was
+enforcing the cost that amortises to nothing and ignoring the cost paid on every visit.
+That inversion is the whole finding; the rest is arithmetic.
+
+### Measured — how the page scales with raw size
+
+Simulated by duplicating each deferred block N times. The load path never parses those
+blocks, so this is an honest model of "the same page with N times the cards". Chromium,
+4× CPU throttle, medians of three, first context discarded as warm-up:
+
+| raw size | ≈ topics | load event | search (warm) | JS heap |
+|---:|---:|---:|---:|---:|
+| **4.1 MB** | **1,080** | **768 ms** | **57 ms** | **14 MB** |
+| 8.1 MB | ~2,150 | 1,164 ms | 97 ms | 26 MB |
+| 12.2 MB | ~3,230 | 1,822 ms | 147 ms | 40 MB |
+| 16.3 MB | ~4,300 | 2,298 ms | 179 ms | 69 MB |
+
+Linear: **~125 ms of load per additional MB**. Session 19's own revisit trigger — throttled
+load past 3 s — is not reached until roughly **22 MB / 5,800 topics**.
+
+At 1,080 topics the unit costs are: **3.9 KB raw and 80 elements per topic**.
+
+### The decision
+
+**The owner's call, recorded as such: a slow first visit does not matter for this site.**
+That is the only cost of ignoring bytes, and it falls on one population — a first-time
+visitor on a slow connection. Nobody else is affected: Netlify's free allowance is ~23,000
+visits a month even at four times this size, and every returning reader is served from the
+service worker.
+
+So the budget was re-derived from the measurements rather than from headroom over today:
+
+| metric | was | now | why this number |
+|---|---:|---:|---|
+| `raw_mb` | 4.4 | **8.0** | ~1.2 s throttled load, ~1,000 more cards. **The binding budget.** |
+| `gzip_kb` | 1,100 | **2,200** | what 8.0 MB compresses to at the measured 3.85× — a tripwire behind `raw_mb`, not a wall |
+| `dom_elements` | 1,500 | 1,500 | unchanged; content growth does not move it, only new domains do (~70 domains of room) |
+| `content_elements` | 100,000 | **175,000** | the library at the `raw_mb` ceiling, at 80 elements/topic |
+
+All four now sit near 50% headroom, so whichever fails, it is the one a content wave
+actually moves. `raw_mb` is set to 8.0 rather than the 22 MB the load-time data would
+allow, because **a budget that will be reached is worth more than one that will not** —
+at 8.0 MB, re-measure rather than assuming this table still holds.
+
+### What this retires, and what it does not
+
+- **Retired: §4b-ii's 164 KB middle-tier search index.** It bought bytes by making search
+  partial. Bytes no longer bind, so the site keeps full-text search. This is the second
+  time that recommendation has been overtaken by a measurement, which is the argument for
+  taking measurements before building things, not after.
+- **Retired: the "~40–50 cards of runway" in the session record.** The measured runway is
+  ~1,000 cards to `raw_mb`, ~3,200 to the 3-second load line.
+- **Not retired: the backlog is still inflated.** Phase 3 and the Phase 4/5 waves each
+  found 60–100% of their nominal spec already written in a neighbouring domain. A bigger
+  ceiling does not make the backlog count real; grep before writing, every time.
+- **Not retired: the `m365` / `itsm` domain question.** That was always an architecture
+  decision about a 28-chip bar, never a budget one. It is now the only open fork.
+
+### The gap this leaves, named rather than papered over
+
+Only one domain renders, so the worst *interaction* on the site is opening the largest
+one — and no budget measures that. At 4× throttle today:
+
+| domain | content elements | open |
+|---|---:|---:|
+| `acronym` | 16,511 | 127 ms |
+| `script` | 13,729 | 196 ms |
+| median domain | 2,220 | ~35 ms |
+
+A domain three times the size of `script` would open visibly slowly and would pass every
+budget in `page_budget.py`. The metric to add, if that becomes a real risk, is the largest
+single domain's element count — not another page-wide total. It is deliberately not added
+now: no domain is close, and an unfired budget is a guess.
