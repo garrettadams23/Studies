@@ -1762,7 +1762,7 @@ Veeam mechanics) are genuine but narrower and can follow if the estate needs the
 - [~] ITIL 4 Without the Jargon — the practices that survive contact with a real team — **already carded as 'ITIL & Service Management — How IT Runs as a Business' in ops**
 - [x] Incident vs Problem vs Change vs Request — the distinction, and why it matters
 - [x] Priority, Impact & Urgency — building a matrix people actually apply
-- [ ] Service Catalog & Request Fulfilment — turning ad-hoc asks into a repeatable service
+- [x] Service Catalog & Request Fulfilment — turning ad-hoc asks into a repeatable service
 - [~] Change Enablement — CAB, standard changes, emergency changes, freeze windows — **already carded as 'Change Management – The Process That Prevents Self-Inflicted Outages' in grc**
 
 **Wave AA2 — The Ticket Craft**
@@ -1773,23 +1773,23 @@ Veeam mechanics) are genuine but narrower and can follow if the estate needs the
 - [x] Working a Queue — prioritisation, batching, and not drowning
 
 **Wave AA3 — Talking to Humans**
-- [ ] The First Ninety Seconds — establishing what actually happened
+- [x] The First Ninety Seconds — establishing what actually happened
 - [x] Explaining Technical Things to Non-Technical People — a repeatable method
 - [x] Difficult Conversations — angry users, VIP pressure, saying no
-- [ ] Remote Support Skills — screen shares, phone-only diagnosis, guiding blind
+- [x] Remote Support Skills — screen shares, phone-only diagnosis, guiding blind
 - [x] Writing for Users — emails, outage notices, and status pages people trust
 
 **Wave AA4 — Knowledge & Automation**
 - [x] Knowledge Management — KCS in practice, and keeping articles from rotting
 - [x] Self-Service That Works — password reset, software portal, and their adoption traps
 - [x] Shift-Left — moving fixes from tier 3 toward tier 1 deliberately
-- [ ] Ticket Automation — templates, workflows, and where automation backfires
+- [x] Ticket Automation — templates, workflows, and where automation backfires
 - [x] Asset & Configuration Management — a CMDB that stays true
 
 **Wave AA5 — Running the Function**
 - [x] Service Desk Metrics — the ones that improve service vs the ones that game it
 - [x] SLAs, OLAs & Underpinning Contracts — the chain of promises
-- [ ] Capacity & Shift Planning — staffing a queue that has a shape
+- [x] Capacity & Shift Planning — staffing a queue that has a shape
 - [~] On-Call Without Burnout — rotations, handovers, escalation policy, comp time — **already carded as 'On-Call Done Humanely' in ops, plus two cards in mind**
 - [~] Major Incident Management — commander, comms lead, scribe, and the bridge discipline — **already carded as 'Incident Command — Running a Major Incident Without Chaos' in ops**
 
@@ -5735,3 +5735,13 @@ desk measured badly does not underperform quietly — it reorganises itself arou
 
 Five items remain: the service catalogue and request fulfilment, the first ninety seconds of an
 incident, remote support skills, ticket automation, and capacity and shift planning.
+
+> **Wave 2 shipped in the same session — Track AA is closed.** All five, re-audited first and all
+> genuine (`request fulfilment`, `first 90 seconds`, `screen share`, `ticket automation` and
+> `shift planning` each returned **0** mentions site-wide). `ops` is **53 cards**; the site is
+> **1,143 topics**. The wave's sharpest card is ticket automation: auto-closing "waiting on user"
+> tickets improves three reported numbers — backlog length, average age, SLA attainment — while
+> doing nothing for the person whose problem is unsolved, which is the metric-cheat pattern from
+> wave 1 in its purest form. Also worth carrying: the queueing-theory point that utilisation above
+> roughly 80% makes waiting times swing wildly, so planned slack is a feature rather than waste.
+> **Three tracks closed this session — W, BA and AA.**

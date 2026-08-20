@@ -121,7 +121,7 @@
           </div>
 
           <!-- ── TOPIC: INCIDENT RESPONSE (PICERL) ────────────────── -->
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🚨</span>
               <span class="topic-name"
@@ -403,7 +403,7 @@
                NEW TOPIC: BCP / DR Key Metrics
                Source: CISSP + Net+ Cheat Sheet PDFs
           ═══════════════════════════════════════════════════════════════ -->
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🏢</span>
               <span class="topic-name"
@@ -763,7 +763,7 @@
                Source: Splunk Cheat Sheet — 241-400pg PDF
                Domain: Security Operations
           ═══════════════════════════════════════════════════════════════ -->
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔎</span>
               <span class="topic-name"
@@ -3579,6 +3579,354 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
           incomparably more than a complete model nobody trusts. It is also the data
           <span class="xref">Change Management – The Process That Prevents Self-Inflicted Outages</span>
           in the Governance domain assumes you have when assessing a change's blast radius.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SERVICE CATALOGUE ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📋</span>
+    <span class="topic-name">Service Catalogue &amp; Request Fulfilment — Turning Ad-Hoc Asks Into a Service</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Catalogue Is a Set of Promises, Not a List of Buttons</div>
+      <div class="concept-desc">
+        Every catalogue item is IT saying: here is a thing you can ask for, here is what it costs
+        you in time, here is who approves it, and here is what you get. That is why building one is
+        harder than it looks and worth more than it looks — most of the work is not the form, it is
+        forcing the organisation to decide who is allowed to have what, which nobody has previously
+        written down.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Item defines</th><th>Which settles</th></tr></thead>
+          <tbody>
+            <tr><td>What is delivered</td><td>Whether the requester and IT agree on "done"</td></tr>
+            <tr><td>Who may request it</td><td>The eligibility argument, once, instead of per ticket</td></tr>
+            <tr><td>Who approves</td><td>The bottleneck, made visible rather than discovered</td></tr>
+            <tr><td>Target delivery time</td><td>Expectations, so "how long?" stops being a conversation</td></tr>
+            <tr><td>What information is needed</td><td>The round trips that would otherwise happen</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Name Items by Outcome, and Start With Ten</div>
+      <div class="concept-desc">
+        Catalogues fail by being either unusably large or organised by IT's internal structure.
+        People search for what they want to achieve, not for the system that provides it, and a
+        catalogue of three hundred items is a catalogue nobody browses.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Instead of</th><th>Call it</th></tr></thead>
+          <tbody>
+            <tr><td>"Entra ID group membership modification"</td><td>"Get access to a shared folder or system"</td></tr>
+            <tr><td>"Endpoint software deployment request"</td><td>"Install software on my computer"</td></tr>
+            <tr><td>"Telephony provisioning"</td><td>"Set up a phone or a work number"</td></tr>
+            <tr><td>"New starter onboarding workflow"</td><td>"Someone is joining my team"</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Build the ten items that cover most of the volume, get them genuinely reliable, then grow.
+          A small catalogue that always works earns the traffic; a complete one with three broken
+          items does not.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Approval Trap</div>
+      <div class="concept-desc">
+        Approvals are added to catalogue items because someone asked "who signs this off?", and each
+        one seems free at design time. In operation each is a queue with a human at the front who
+        has other work — and a request needing three approvals will take days regardless of how fast
+        the fulfilment is. Ask of every approval: what would we do differently if the answer were
+        no? If nobody can say, it is a notification, not an approval.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: THE FIRST NINETY SECONDS ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⏱️</span>
+    <span class="topic-name">The First Ninety Seconds — Establishing What Actually Happened</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Scope Before Cause, Every Time</div>
+      <div class="concept-desc">
+        The first report of an outage is always a single user's experience, and the most expensive
+        mistake available is to start debugging it. One question — is anyone else affected? —
+        separates a user problem from a service problem, and those are different incidents with
+        different priorities, different owners and different first moves.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Seconds</th><th>Establish</th><th>How</th></tr></thead>
+          <tbody>
+            <tr><td>0–20</td><td>Is it one person or many?</td><td>Other tickets, the monitoring, a colleague on the same service</td></tr>
+            <tr><td>20–40</td><td>Is the provider having an incident?</td><td>The vendor's status page — free, and often the whole answer</td></tr>
+            <tr><td>40–60</td><td>What changed recently?</td><td>The change record and the deployment log</td></tr>
+            <tr><td>60–90</td><td>Who needs to know now?</td><td>Raise the priority, or start the major-incident process</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Ninety seconds spent here routinely saves an hour, and it is the difference between an
+          organisation that noticed its outage and one that was told about it by a customer.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Distinguish What You Were Told From What You Verified</div>
+      <div class="concept-desc">
+        Early incident notes carry claims from several people, and they get flattened into fact
+        within minutes. "The database is down" turns out to have been one person's inference from an
+        error message. Keeping the two apart in the ticket costs nothing and prevents the whole
+        response being aimed at a component that was never broken.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Write</th><th>Rather than</th></tr></thead>
+          <tbody>
+            <tr><td>"User reports the app is down; not yet verified"</td><td>"App is down"</td></tr>
+            <tr><td>"Confirmed: health check failing from two locations at 09:14"</td><td>"It's the network"</td></tr>
+            <tr><td>"Change 4471 deployed 09:05 — timing correlates, cause unconfirmed"</td><td>"Caused by change 4471"</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The third line is the one that protects people. A change that correlates in time is a lead,
+          and naming it as the cause in an early note is remarkably hard to walk back — even when the
+          evidence later says otherwise. The systematic version of this discipline is in
+          <span class="xref">CompTIA Troubleshooting Methodology</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: REMOTE SUPPORT SKILLS ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🖥️</span>
+    <span class="topic-name">Remote Support Skills — Screen Shares, Phone-Only Diagnosis &amp; Guiding Blind</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Watching Beats Asking</div>
+      <div class="concept-desc">
+        Users describe what they believe happened, which has already been filtered through their
+        model of the system. Watching them reproduce it removes the filter, and the reproduction
+        itself frequently contains the answer — a dialog dismissed too fast, a wrong field, a step
+        skipped because it has never mattered before. Ask them to show you rather than tell you, and
+        then, crucially, do not take over.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Instead of</th><th>Do</th></tr></thead>
+          <tbody>
+            <tr><td>"What did you click?"</td><td>"Show me exactly what you did — I will watch."</td></tr>
+            <tr><td>Taking control immediately</td><td>Watch the first attempt; take control only once you have seen it</td></tr>
+            <tr><td>"Did you get an error?"</td><td>"Do it again and read me what appears, word for word."</td></tr>
+            <tr><td>Silently fixing it</td><td>Narrate what you are doing, so they learn and trust it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Taking control instantly is faster once and slower forever: the user learns nothing, calls
+          again next month, and never sees what actually caused it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Phone-Only: Guiding Someone You Cannot See</div>
+      <div class="concept-desc">
+        Sometimes there is no screen share — a phone-only user, a device that will not connect, a
+        person in the field. The skill is real and specific: give one instruction at a time, describe
+        targets by what they look like rather than what they are called, and confirm the screen state
+        before each step.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Rule</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>One instruction, then wait</td><td>Three at once produces a report from step three about step one</td></tr>
+            <tr><td>Describe by appearance and position</td><td>"The blue button at the bottom right" beats a menu name they cannot find</td></tr>
+            <tr><td>Confirm state before moving on</td><td>"What does the screen say now?" catches the divergence early</td></tr>
+            <tr><td>Spell anything ambiguous</td><td>Phonetics for characters; "lower-case L or the number 1" is a real ten-minute trap</td></tr>
+            <tr><td>Never say "just"</td><td>"Just open settings" tells someone who cannot find settings that they are the problem</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Remote Access Is a Privilege With a Trail</div>
+      <div class="concept-desc">
+        Remote-control tooling is a standing capability to view and act on any employee's screen, and
+        it is regularly abused in the incidents nobody writes case studies about. Consent before
+        connecting, a visible indicator while connected, a session log, and a rule that support never
+        asks for a password are not bureaucracy — they are what makes the tool safe to keep and what
+        makes users willing to accept a connection.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TICKET AUTOMATION ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚙️</span>
+    <span class="topic-name">Ticket Automation — Templates, Workflows &amp; Where Automation Backfires</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Automate the Handling, Be Careful Automating the Judgement</div>
+      <div class="concept-desc">
+        Service-desk automation splits cleanly into two kinds. Removing mechanical work — filling
+        fields, routing by category, chasing a stalled ticket — is almost always a win. Replacing a
+        decision a human was making is where it goes wrong, because the automation applies the rule
+        to the cases the rule was never designed for, silently and at volume.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Automation</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td>Templates that pre-fill known fields</td><td>Safe, and the highest-value change per hour spent</td></tr>
+            <tr><td>Routing by category to a queue</td><td>Safe, with a fallback queue for anything unmatched</td></tr>
+            <tr><td>Reminders on stalled tickets</td><td>Safe, and it fixes the most common SLA <span class="acro-exp">(Service Level Agreement)</span> breach</td></tr>
+            <tr><td>Auto-resolving on a monitoring all-clear</td><td>Careful — the alert clearing is not the user working again</td></tr>
+            <tr><td>Auto-closing "waiting on user" after N days</td><td>Dangerous — see below</td></tr>
+            <tr><td>Chatbot as the front door</td><td>Only with an obvious, one-step path to a human</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Auto-Close: The Rule That Improves Every Metric and the Service Itself</div>
+      <div class="concept-desc">
+        Closing tickets that have sat in "waiting on user" is the most common automation on any
+        service desk, and it is worth understanding exactly what it does. It shortens the backlog,
+        improves average age, and raises SLA attainment — while doing nothing whatsoever for the
+        person whose problem is unsolved. Some of those users chased and were missed; some replied to
+        the wrong address; some gave up on IT and worked around it, which is the outcome you will
+        never see in the data.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Guard</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Two reminders before closing, at least</td><td>Catches the person who was on leave</td></tr>
+            <tr><td>Close as "no response", not "resolved"</td><td>Keeps the resolution data honest</td></tr>
+            <tr><td>Exclude P1 and P2 entirely</td><td>Nothing important should ever close by timer</td></tr>
+            <tr><td>Make reopening trivial and obvious</td><td>A reply reopens; no new ticket, no lost history</td></tr>
+            <tr><td>Report auto-closures separately</td><td>A rising count is a signal about the service, not a success</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          This is the sharpest instance of the metric-cheat pattern: an automation that improves
+          three reported numbers while making the service slightly worse, adopted with entirely good
+          intentions.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CAPACITY & SHIFT PLANNING ──────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📅</span>
+    <span class="topic-name">Capacity &amp; Shift Planning — Staffing a Queue That Has a Shape</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Demand Is Not Flat, and Averages Hide That Completely</div>
+      <div class="concept-desc">
+        Service-desk demand has a shape: a Monday-morning peak, a post-lunch second wave, spikes
+        after every change window and every term or quarter start. Staffing to the daily average
+        guarantees a queue in the peak and idle agents in the trough, and the daily average is the
+        number most often used, because it is the one the reporting produces by default.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Look at</th><th>Reveals</th></tr></thead>
+          <tbody>
+            <tr><td>Arrivals by hour of day, by weekday</td><td>The real shape to staff against</td></tr>
+            <tr><td>Arrivals after change windows</td><td>Self-inflicted demand — schedulable</td></tr>
+            <tr><td>Seasonal peaks</td><td>Term starts, year end, onboarding waves</td></tr>
+            <tr><td>Handle time by category</td><td>Twenty tickets is not twenty tickets</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Utilisation Above About 80% Makes the Queue Explode</div>
+      <div class="concept-desc">
+        This is queueing theory rather than management opinion, and it is deeply unintuitive: as
+        utilisation approaches capacity, waiting time does not rise proportionally — it rises
+        sharply, because there is no slack to absorb the random clustering of arrivals. A team
+        planned at 95% utilisation is not efficient; it is a team whose waiting times will swing
+        wildly for reasons nobody can point at.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Implication</th><th>What to do</th></tr></thead>
+          <tbody>
+            <tr><td>Slack is a feature, not waste</td><td>Plan for it deliberately, and defend it in budget conversations</td></tr>
+            <tr><td>Idle time is not unproductive</td><td>Fill it with knowledge articles, shift-left work and training</td></tr>
+            <tr><td>Small teams feel variance harder</td><td>One absence in a team of four is a 25% capacity cut</td></tr>
+            <tr><td>Cross-training buys elasticity</td><td>More people able to take the peak beats more people overall</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Shift Design, and the Handover That Is Usually an Afterthought</div>
+      <div class="concept-desc">
+        The gaps between shifts are where tickets are dropped and context evaporates. A shift plan
+        that does not include overlap is a plan that loses information twice a day.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Overlap the shifts by 15–30 minutes</td><td>Handover happens between people, not through a document</td></tr>
+            <tr><td>Hand over in writing as well</td><td>The verbal version is gone in an hour</td></tr>
+            <tr><td>Name an owner for every open P1/P2 at handover</td><td>Otherwise "someone is on it" quietly becomes nobody</td></tr>
+            <tr><td>Rotate the unpopular shifts</td><td>Fixed assignment of the worst slot is how good people leave</td></tr>
+            <tr><td>Protect the recovery time after a bad night</td><td>Coverage next day matters less than the person still being there next year</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The out-of-hours version of the same problem — rotations, escalation policy and
+          compensation — is in <span class="xref">On-Call Done Humanely</span>.
         </div>
       </div>
     </div>
