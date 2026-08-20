@@ -2371,39 +2371,39 @@ reviews and design arguments — taught for practitioners, not for a degree.
 a place it already shows up on the site.
 
 **Wave AM1 — Numbers, Logic & Bases**
-- [ ] Binary, Hex & Bit Manipulation — masks, shifts, flags; subnetting revisited
-- [ ] Boolean Algebra — truth tables, De Morgan, and firewall/query logic
-- [ ] Modular Arithmetic — the clock maths behind hashing, checksums and crypto
+- [~] Binary, Hex & Bit Manipulation — masks, shifts, flags; subnetting revisited — **covered by 'Number Representation — Two's Complement, IEEE-754 & the Bugs Each Causes' in cs and the subnetting cards in net**
+- [x] Boolean Algebra — truth tables, De Morgan, and firewall/query logic
+- [x] Modular Arithmetic — the clock maths behind hashing, checksums and crypto
 - [ ] Sets & Relations — the formal spine of SQL joins and access control
 - [ ] Proof Techniques for Engineers — invariants, contradiction, counterexample
 
 **Wave AM2 — Probability for Defenders**
-- [ ] Probability Fundamentals — independence, conditional probability, expectation
-- [ ] Bayes' Theorem — base rates, and why a 99%-accurate detector still floods the SOC
-- [ ] Distributions That Matter — normal, Poisson, power-law, long tails in latency
+- [x] Probability Fundamentals — independence, conditional probability, expectation
+- [x] Bayes' Theorem — base rates, and why a 99%-accurate detector still floods the SOC
+- [x] Distributions That Matter — normal, Poisson, power-law, long tails in latency
 - [ ] Sampling & Confidence — what a percentile really claims, and sample-size sanity
-- [ ] Birthday Paradox & Collisions — hash collisions, GUID reuse, key spaces
+- [x] Birthday Paradox & Collisions — hash collisions, GUID reuse, key spaces
 
 **Wave AM3 — Statistics for Operations**
 - [ ] Descriptive vs Inferential — the mistake most dashboards make
-- [ ] Percentiles & Latency — why p99 beats the mean, and how to aggregate it wrongly
+- [x] Percentiles & Latency — why p99 beats the mean, and how to aggregate it wrongly
 - [ ] Anomaly Detection Maths — z-scores, MAD, seasonality, and false-positive cost
 - [ ] A/B Testing & Significance — power, p-values, and stopping rules
 - [ ] Forecasting Capacity — trend, seasonality, and headroom planning
 
 **Wave AM4 — Mathematics of Cryptography**
-- [ ] Prime Numbers & Factoring — why RSA rests on a hard problem
-- [ ] Discrete Logarithms & Elliptic Curves — the other hard problem, and why keys shrank
-- [ ] Entropy & Randomness — measuring it, and where implementations lose it
-- [ ] Information Theory Basics — Shannon entropy, compression, password strength
+- [x] Prime Numbers & Factoring — why RSA rests on a hard problem
+- [x] Discrete Logarithms & Elliptic Curves — the other hard problem, and why keys shrank
+- [x] Entropy & Randomness — measuring it, and where implementations lose it
+- [~] Information Theory Basics — Shannon entropy, compression, password strength — **shipped as part of 'Entropy & Randomness — Measuring It, and Where Implementations Lose It'**
 - [ ] Lattices, Gently — the hard problem post-quantum cryptography moved to
 
 **Wave AM5 — Mathematics for Machine Learning**
-- [ ] Vectors & Embeddings — similarity, cosine distance, and what a dimension means
+- [x] Vectors & Embeddings — similarity, cosine distance, and what a dimension means
 - [ ] Matrices & Linear Transformations — the operation a GPU spends its life doing
-- [ ] Derivatives & Gradient Descent — how a model actually learns
+- [x] Derivatives & Gradient Descent — how a model actually learns
 - [ ] Loss Functions & Optimisation — what the model is being told to minimise
-- [ ] Dimensionality & the Curse — why high-dimensional intuition fails
+- [x] Dimensionality & the Curse — why high-dimensional intuition fails
 
 ### TRACK AN — Hardware, Electronics & Embedded  (→ new `hw` domain)
 
@@ -5745,3 +5745,57 @@ incident, remote support skills, ticket automation, and capacity and shift plann
 > wave 1 in its purest form. Also worth carrying: the queueing-theory point that utilisation above
 > roughly 80% makes waiting times swing wildly, so planned slack is a feature rather than waste.
 > **Three tracks closed this session — W, BA and AA.**
+
+---
+
+## Session record — Track AM wave 1: the applied maths behind the rest of the site
+
+Fifth content wave, and the one that fills a gap of a different kind again. `cs` carries 33 cards
+of algorithms, systems and architecture; `math` is a calculus course. Neither holds the applied
+maths the *rest of the site* already depends on — the site teaches entropy, birthday attacks, p99
+latency and base rates without ever giving the arithmetic behind them.
+
+### The audit
+
+`modular arithmetic`, `bayes`, `linear algebra`, `combinatorics`, `birthday paradox`,
+`vector space` and `gradient descent`: **7 of 10 probes returned zero**, and the whole set
+totalled 8 mentions across 29 domains.
+
+### What shipped
+
+**13 cards into `cs`**, 33 → 46. Site: 1,143 → **1,156 topics**.
+
+| Cluster | Cards |
+|---|---|
+| Discrete | Modular arithmetic · Boolean algebra |
+| Probability for ops &amp; security | Probability fundamentals · Bayes &amp; base rates · Distributions that matter · Percentiles &amp; latency · The birthday paradox |
+| Information &amp; crypto | Entropy &amp; randomness · Primes &amp; factoring · Discrete logs &amp; elliptic curves |
+| Machine learning | Vectors &amp; embeddings · Gradient descent · The curse of dimensionality |
+
+Two further items are marked `[~]`: binary and bit manipulation is already covered by cs's number
+representation card plus the subnetting cards in `net`, and information theory was folded into the
+entropy card rather than split across two.
+
+### Why this wave connects the site to itself
+
+Each card was written to land under something the site already asserts:
+
+| Existing content | The maths now behind it |
+|---|---|
+| Detection engineering's precision and noise cards | Bayes and base rates — the 99%-accurate detector producing 1% real alerts, derived |
+| `Enrichment — The Context That Turns an Alert Into a Decision` | Which lever moves alert quality, and why threshold-tightening barely does |
+| `SLIs, SLOs & Error Budgets`, and this session's capacity card | Percentiles, why p99 cannot be averaged, and sample-size honesty |
+| Hashing, tokens and identifiers across `sec` and `web` | The birthday bound, and why 128 bits is the number |
+| Password and key material across `sec` | Shannon entropy, and the five ways implementations lose randomness |
+| The AI domain's embeddings and model cards | Cosine similarity, gradient descent, and the curse |
+
+The Bayes card is the one worth flagging: the detection-engineering wave earlier in this session
+argued operationally that enrichment beats threshold-tightening, and this card derives the same
+conclusion arithmetically. Two waves, two altitudes, one answer — which is what a reference site
+should do and mostly does not.
+
+### Track AM after this wave
+
+Ten items remain, all genuinely uncovered: sets and relations, proof techniques, sampling and
+confidence, descriptive vs inferential, anomaly-detection maths, A/B testing, capacity
+forecasting, lattices, matrices and linear transformations, and loss functions.
