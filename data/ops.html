@@ -121,7 +121,7 @@
           </div>
 
           <!-- ── TOPIC: INCIDENT RESPONSE (PICERL) ────────────────── -->
-          <div class="topic" data-reviewed="2026-06">
+          <div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🚨</span>
               <span class="topic-name"
@@ -403,7 +403,7 @@
                NEW TOPIC: BCP / DR Key Metrics
                Source: CISSP + Net+ Cheat Sheet PDFs
           ═══════════════════════════════════════════════════════════════ -->
-          <div class="topic" data-reviewed="2026-06">
+          <div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🏢</span>
               <span class="topic-name"
@@ -763,7 +763,7 @@
                Source: Splunk Cheat Sheet — 241-400pg PDF
                Domain: Security Operations
           ═══════════════════════════════════════════════════════════════ -->
-          <div class="topic" data-reviewed="2026-06">
+          <div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🔎</span>
               <span class="topic-name"
@@ -1558,7 +1558,7 @@ ps aux --sort=-%mem | head    <span class="com"># top memory consumers</span></d
 
 <!-- BEGINNER30-OPS v1 -->
 <!-- ── TOPIC: PostgreSQL Admin Basics ────────────────────────────── -->
-<div class="topic" data-reviewed="2026-06">
+<div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
     <span class="topic-badge">Beginner</span>
     <span class="topic-name">PostgreSQL Administration – Database Ops 101</span>
@@ -1692,7 +1692,7 @@ psql -U postgres &lt; all_databases_2026-06-01.sql
 
 <!-- BEGINNER37-OPS v1 -->
 <!-- ── TOPIC: Web Server TLS Hardening ───────────────────────── -->
-<div class="topic" data-reviewed="2026-06">
+<div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
     <span class="topic-badge">Beginner</span>
     <span class="topic-name">Web Server Hardening – nginx, Apache &amp; TLS <span class="acro-exp">(Transport Layer Security)</span> Done Right</span>
@@ -1831,7 +1831,7 @@ sudo certbot renew --dry-run
   </div>
 </div>
 <!-- BEGINNER40-OPS v1 -->
-<div class="topic" data-reviewed="2026-06">
+<div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
     <span class="topic-badge">Beginner</span>
     <span class="topic-name">Writing Runbooks That People Actually Follow</span>
@@ -1899,7 +1899,7 @@ watch -n 10 'curl -s https://api.internal.example.com/metrics | grep error_rate'
 </div>
 
 <!-- BEGINNER42-OPS v1 -->
-<div class="topic" data-reviewed="2026-06">
+<div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
     <span class="topic-badge">Beginner</span>
     <span class="topic-name">Capacity Planning – Answering "Will We Run Out of Room?" Before You Do</span>
@@ -1970,7 +1970,7 @@ projected_date = history[-1][0] + timedelta(weeks=weeks_remaining)
 </div>
 
 <!-- BEGINNER45-OPS v1 -->
-<div class="topic" data-reviewed="2026-06">
+<div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
     <span class="topic-badge">Beginner</span>
     <span class="topic-name">Writing a Postmortem People Actually Learn From</span>
@@ -2592,3 +2592,995 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
 </div>
 
 <!-- /domain-body ops -->
+<!-- ── TOPIC: INCIDENT VS PROBLEM VS CHANGE VS REQUEST ───────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎯</span>
+    <span class="topic-name">Incident vs Problem vs Change vs Request — The Distinction That Routes Everything</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Four Words, Four Different Clocks and Four Different Goals</div>
+      <div class="concept-desc">
+        These are treated as ITIL <span class="acro-exp">(Information Technology Infrastructure Library)</span> vocabulary and dismissed as bureaucracy, which is a mistake with a
+        cost. They are four different kinds of work with genuinely different success conditions, and
+        conflating them is why service desks fix the same thing forty times and why real
+        improvements never get funded. The distinction is not paperwork; it is what decides who
+        works the ticket, how fast, and what "done" means.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Type</th><th>Goal</th><th>Done when</th><th>Clock</th></tr></thead>
+          <tbody>
+            <tr><td>Incident</td><td>Restore service</td><td>The user is working again — even on a workaround</td><td>Urgent; the SLA <span class="acro-exp">(Service Level Agreement)</span> is running</td></tr>
+            <tr><td>Problem</td><td>Find and remove the cause</td><td>The underlying fault is understood and fixed or accepted</td><td>Deliberate; measured in weeks</td></tr>
+            <tr><td>Change</td><td>Alter something safely</td><td>The alteration is live and verified</td><td>Scheduled, with approval</td></tr>
+            <tr><td>Request</td><td>Deliver a standard thing</td><td>The person has what they asked for</td><td>Predictable; a catalogue promise</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Restoring Service Is Not Fixing the Cause — and That Is Correct</div>
+      <div class="concept-desc">
+        The most useful consequence of the split: during an incident, a workaround that gets people
+        working is a complete success, even if nobody yet knows why it broke. The instinct to keep
+        digging while users are down is well-meant and wrong. The digging is the problem record,
+        raised from the incident and worked on a different clock by people who are not being paged.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Situation</th><th>Right move</th></tr></thead>
+          <tbody>
+            <tr><td>Restart fixes it, cause unknown</td><td>Close the incident, raise a problem — do not leave the incident open "to investigate"</td></tr>
+            <tr><td>Same incident for the fourth time this month</td><td>The problem record is overdue; the repeat count is the business case</td></tr>
+            <tr><td>Fix requires changing something</td><td>Raise a change; an incident is not authorisation to modify production</td></tr>
+            <tr><td>"Can I have access to X?"</td><td>A request, not an incident — nothing is broken</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row matters more than it looks: requests logged as incidents corrupt every
+          availability metric the service desk reports, because nothing was ever down.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Known Error — The Record That Saves the Most Time</div>
+      <div class="concept-desc">
+        A known error is a problem whose cause is understood but not yet fixed, recorded with its
+        workaround. It is the highest-value artifact a service desk produces and the one most often
+        skipped, because writing it feels like admitting defeat rather than banking knowledge.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Field</th><th>Content</th></tr></thead>
+          <tbody>
+            <tr><td>Symptom as the user reports it</td><td>The words they will actually use — that is what gets searched</td></tr>
+            <tr><td>Cause, as far as known</td><td>Including "not yet understood", which is honest and still useful</td></tr>
+            <tr><td>Workaround</td><td>Exact steps, safe for tier 1 to run</td></tr>
+            <tr><td>Permanent fix status</td><td>Ticket, owner, expected date — or "accepted, will not fix"</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The framework these terms come from is in
+          <span class="xref">ITIL &amp; Service Management — How IT Runs as a Business</span>; this
+          card is the part that changes what you do on a Tuesday.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: PRIORITY, IMPACT & URGENCY ─────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚖️</span>
+    <span class="topic-name">Priority, Impact &amp; Urgency — A Matrix People Actually Apply</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Priority Is Derived, Not Chosen</div>
+      <div class="concept-desc">
+        When priority is a free choice, everything becomes high, because every requester believes
+        their thing is urgent and no agent wants the argument. Deriving it from two independently
+        assessable questions removes the negotiation: impact is how much of the business is
+        affected, urgency is how fast the damage grows. Neither is a matter of who is asking.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Impact ↓ / Urgency →</th><th>High</th><th>Medium</th><th>Low</th></tr></thead>
+          <tbody>
+            <tr><td>High — many users, or a critical service</td><td>P1</td><td>P2</td><td>P3</td></tr>
+            <tr><td>Medium — a team, or a degraded service</td><td>P2</td><td>P3</td><td>P4</td></tr>
+            <tr><td>Low — one user, workaround exists</td><td>P3</td><td>P4</td><td>P4</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Publish the matrix where requesters can see it. Most priority arguments end the moment
+          both people are looking at the same two questions instead of trading adjectives.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Making the Two Axes Answerable Without Judgement Calls</div>
+      <div class="concept-desc">
+        A matrix only removes arguments if its inputs are concrete. Define both axes in terms an
+        agent can check in thirty seconds, and write the definitions into the ticket form itself.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Axis</th><th>Ask</th></tr></thead>
+          <tbody>
+            <tr><td>Impact</td><td>How many people cannot work? Is it a service on the critical list? Is money or safety involved?</td></tr>
+            <tr><td>Urgency</td><td>Is it getting worse? Is there a deadline it will miss? Does a workaround exist?</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The VIP Problem, Named Honestly</div>
+      <div class="concept-desc">
+        Every organisation has people whose tickets move faster than the matrix says. Pretending
+        otherwise makes the process a fiction that agents route around. The workable answer is to
+        make it explicit and bounded: seniority may raise urgency where the person's work genuinely
+        gates others, and it never changes impact. A blanket VIP flag that jumps every ticket to P1
+        teaches everyone that priority is political, and the matrix stops meaning anything.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: WRITING A TICKET ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎫</span>
+    <span class="topic-name">Writing a Ticket Someone Else Can Solve</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Ticket Is Read by Someone Who Was Not There</div>
+      <div class="concept-desc">
+        Resolution time is decided less by technical difficulty than by whether the next person has
+        to go back and ask. Every round trip to the user costs hours of wall-clock time and a chunk
+        of their goodwill. A ticket written for a stranger — which is what the next reader is —
+        eliminates most of them.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Field</th><th>Bad</th><th>Good</th></tr></thead>
+          <tbody>
+            <tr><td>Title</td><td>"Laptop issue"</td><td>"Outlook fails to connect after Windows update, 6 users in Finance"</td></tr>
+            <tr><td>Symptom</td><td>"Doesn't work"</td><td>The exact error text, and what the user was doing when it appeared</td></tr>
+            <tr><td>Scope</td><td>Absent</td><td>One user, one team, or everyone — and how you know</td></tr>
+            <tr><td>When</td><td>"Recently"</td><td>First seen at a time, and what changed near it</td></tr>
+            <tr><td>Already tried</td><td>Absent</td><td>The steps taken and their results, so nobody repeats them</td></tr>
+            <tr><td>Contact &amp; availability</td><td>Absent</td><td>How to reach them and when they are free</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Three Questions That Get a Usable Ticket From Any User</div>
+      <div class="concept-desc">
+        Users do not write bad tickets out of carelessness; they do not know what matters. These
+        three questions, asked in this order, produce a workable ticket from almost anyone, and they
+        fit on a form.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Ask</th><th>Gets you</th></tr></thead>
+          <tbody>
+            <tr><td>"What were you trying to do?"</td><td>The goal — which is sometimes achievable another way entirely</td></tr>
+            <tr><td>"What happened instead — exact words on screen?"</td><td>The error, not their interpretation of it</td></tr>
+            <tr><td>"When did it last work?"</td><td>The change window; this one question resolves a surprising share of tickets</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Never accept "an error came up" without the text. Ask for a photo of the screen if
+          necessary — it is faster than three exchanges of paraphrase, and the error code is
+          frequently the entire answer.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TRIAGE & CATEGORISATION ────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔀</span>
+    <span class="topic-name">Triage &amp; Categorisation — Routing Correctly the First Time</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Misroute Costs More Than a Slow Answer</div>
+      <div class="concept-desc">
+        A ticket sent to the wrong queue does not merely wait — it waits, gets read by someone who
+        cannot help, gets bounced with a one-line note, and arrives at the right team with its clock
+        already spent and its context degraded. Two or three of those and a routine issue has
+        breached its target without anyone doing anything wrong.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Triage decision</th><th>Made from</th></tr></thead>
+          <tbody>
+            <tr><td>Is it an incident, request, or something else?</td><td>Is anything broken?</td></tr>
+            <tr><td>Which service does it concern?</td><td>The service catalogue, not the technology</td></tr>
+            <tr><td>What priority?</td><td>Impact and urgency, from the matrix</td></tr>
+            <tr><td>Can it be solved now?</td><td>Known errors and knowledge articles, searched first</td></tr>
+            <tr><td>Who owns it if not?</td><td>The routing map for that service</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Categorise by Service, Not by Technology</div>
+      <div class="concept-desc">
+        Category trees built from technology — "Network", "Windows", "Database" — require the person
+        categorising to already know the cause, which is precisely what they do not know at triage.
+        Trees built from the user-visible service — "Email", "Printing", "Finance system" — can be
+        chosen from the symptom, which is all anyone has at that moment.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Rule</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>Shallow trees — two levels, not five</td><td>Depth produces guesses, and guesses produce useless reporting</td></tr>
+            <tr><td>Categories a user could pick</td><td>Self-service logging only works if the options make sense to them</td></tr>
+            <tr><td>Re-categorise at close, not at open</td><td>The truth is known at the end; report from that field</td></tr>
+            <tr><td>Review the "Other" bucket monthly</td><td>A growing "Other" is the tree telling you what it is missing</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Separating the open-time category from the close-time one resolves an old argument: triage
+          needs a guess to route, reporting needs the truth, and one field cannot be both.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: ESCALATION ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⬆️</span>
+    <span class="topic-name">Escalation — Functional vs Hierarchical, and Handing Over Without Losing Context</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Two Escalations That Are Constantly Confused</div>
+      <div class="concept-desc">
+        Functional escalation moves a ticket sideways to people with different skills. Hierarchical
+        escalation moves it upward to people with different authority. They solve different
+        problems, and using the wrong one is why "escalating" sometimes means a manager is now
+        watching a ticket nobody has any new ideas about.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Functional</th><th>Hierarchical</th></tr></thead>
+          <tbody>
+            <tr><td>Moves toward</td><td>More specialised skill</td><td>More authority</td></tr>
+            <tr><td>Triggered by</td><td>"I do not know how"</td><td>"I am not allowed", or the business impact is growing</td></tr>
+            <tr><td>Gives you</td><td>A different person's expertise</td><td>Decisions, resources, and someone to tell the business</td></tr>
+            <tr><td>Misused when</td><td>Used to offload a ticket nobody wants</td><td>Used as pressure rather than for a decision</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">The Handover That Does Not Lose the Thread</div>
+      <div class="concept-desc">
+        Most of the value destroyed in escalation is context. The receiving engineer re-derives what
+        the last one already knew, and the user is asked the same questions again. A handover note
+        with five fields costs two minutes and saves an hour — and it is the same note that makes a
+        shift change survivable.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Field</th><th>Content</th></tr></thead>
+          <tbody>
+            <tr><td>Current state</td><td>What is broken right now, in one sentence</td></tr>
+            <tr><td>Ruled out</td><td>What has been checked and found fine — the biggest time-saver</td></tr>
+            <tr><td>Current hypothesis</td><td>What you now think it is, and why</td></tr>
+            <tr><td>Next step you would take</td><td>So the next person starts moving, not reading</td></tr>
+            <tr><td>User state</td><td>What they have been told, and how they are taking it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last field is the one engineers omit and the one that prevents the worst outcome: two
+          people giving a stressed user two different stories. During a major incident this
+          discipline is formalised — see
+          <span class="xref">Incident Command — Running a Major Incident Without Chaos</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CLOSING WELL ───────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">✅</span>
+    <span class="topic-name">Closing Well — Resolution Notes, Root Cause &amp; the Article That Follows</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Close Is Where a Ticket Either Compounds or Evaporates</div>
+      <div class="concept-desc">
+        At the moment of closing, the agent holds everything: the symptom, the false leads, the
+        actual cause, the fix. Ten minutes later it is gone, and the next occurrence starts from
+        zero. "Resolved" as a resolution note is the single most expensive habit on a service desk,
+        because it converts solved work into work that must be solved again.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Resolution note contains</th><th>So that</th></tr></thead>
+          <tbody>
+            <tr><td>What was actually wrong</td><td>The pattern is visible when it recurs</td></tr>
+            <tr><td>What fixed it, specifically</td><td>The next agent can repeat it in minutes</td></tr>
+            <tr><td>Whether it was a workaround or a fix</td><td>A problem record can be raised honestly</td></tr>
+            <tr><td>Anything unusual about this environment</td><td>The exception is documented, not rediscovered</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Closing Codes That Are Worth Reporting On</div>
+      <div class="concept-desc">
+        Most closure code lists are unusable because every option means "fixed". A short list that
+        distinguishes genuinely different outcomes turns the close field into the service desk's
+        most honest data source.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Code</th><th>Means</th><th>Feeds</th></tr></thead>
+          <tbody>
+            <tr><td>Resolved — permanent fix</td><td>It will not come back</td><td>The baseline</td></tr>
+            <tr><td>Resolved — workaround</td><td>It will come back</td><td>The problem backlog</td></tr>
+            <tr><td>Resolved — known error</td><td>Already documented</td><td>Shift-left candidates</td></tr>
+            <tr><td>No fault found</td><td>Could not reproduce</td><td>A watch list, not a dustbin</td></tr>
+            <tr><td>User education</td><td>Nothing was broken</td><td>The knowledge and training backlog</td></tr>
+            <tr><td>Duplicate / cancelled</td><td>Not real work</td><td>Excluded from volume metrics</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          "User education" being a large share is not a complaint about users — it is a measurement
+          of documentation and interface problems, and it is the best-quality input the
+          knowledge-management backlog ever receives.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Close With the User, Not At Them</div>
+      <div class="concept-desc">
+        A ticket closed without the user agreeing it is fixed reopens, or worse, does not reopen and
+        quietly erodes their trust in the whole service. Confirm before closing, say what was wrong
+        in language they can use, and — where it will happen again — tell them what to do next time.
+        That last sentence is what converts one resolved ticket into several that never get raised.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: WORKING A QUEUE ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🌊</span>
+    <span class="topic-name">Working a Queue — Prioritisation, Batching &amp; Not Drowning</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">The Order That Beats Working Top to Bottom</div>
+      <div class="concept-desc">
+        A queue worked strictly in order is worked badly: quick wins sit behind long jobs, tickets
+        about the same outage get investigated three times, and the oldest ones age past their
+        target while everyone is busy. A short pass over the whole queue before starting is worth
+        more than the time it costs, every time.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>#</th><th>Pass</th><th>Why first</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Scan for anything that is actually a P1</td><td>A major incident hiding in the queue is the worst thing that can happen to a shift</td></tr>
+            <tr><td>2</td><td>Group duplicates and same-cause tickets</td><td>One investigation, many closures</td></tr>
+            <tr><td>3</td><td>Clear the two-minute jobs</td><td>Queue length drops, and so does the number of people waiting</td></tr>
+            <tr><td>4</td><td>Unblock anything waiting on you</td><td>Someone else's clock is running on your reply</td></tr>
+            <tr><td>5</td><td>Then work by priority and age</td><td>The remaining work, in the order the matrix says</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Batching, and the Interruption Arithmetic</div>
+      <div class="concept-desc">
+        Context switching is the hidden tax on service-desk work. Handling tickets of a kind
+        together — all the access requests, all the printer issues — reuses the mental context and
+        often the same tooling. The counter-pressure is real: batching delays individual tickets, so
+        it belongs to routine work and never to anything with a live clock.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Batch routine requests into blocks</td><td>Two or three times the throughput on that category</td></tr>
+            <tr><td>Separate a "triage" role from a "solve" role on busy shifts</td><td>New tickets get routed fast without derailing deep work</td></tr>
+            <tr><td>Set a status that means something</td><td>"Waiting on user" is not "in progress"; the metrics depend on the difference</td></tr>
+            <tr><td>Timebox the ticket that is eating the day</td><td>At the limit, escalate or park it — one ticket must not consume a shift</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Permanently Full Queue Is a Staffing Fact, Not a Personal Failure</div>
+      <div class="concept-desc">
+        Individual technique has a ceiling. If the queue grows regardless of how well it is worked,
+        the arrival rate exceeds the service rate, and no amount of prioritisation changes that —
+        only more capacity, fewer arrivals, or a smaller scope will. Agents who do not know this
+        conclude they are the problem, and burn out proving otherwise.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Evidence to gather</th><th>Argues for</th></tr></thead>
+          <tbody>
+            <tr><td>Arrival rate vs closure rate over weeks</td><td>The gap, stated as a number rather than a feeling</td></tr>
+            <tr><td>Top categories by volume</td><td>The shift-left or self-service candidate</td></tr>
+            <tr><td>Repeat tickets on the same cause</td><td>A problem record that would remove the arrivals</td></tr>
+            <tr><td>Time lost to misroutes and rework</td><td>Process fixes that add capacity without headcount</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The personal cost of running at capacity indefinitely is covered by
+          <span class="xref">Burnout — Recognizing It Before It Breaks You</span> in the Mind &amp;
+          Wellbeing domain. The data above is how you make the case before it gets that far.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: EXPLAINING TECHNICAL THINGS ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗣️</span>
+    <span class="topic-name">Explaining Technical Things to Non-Technical People — A Repeatable Method</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Impact First, Then Cause, Then Detail Only If Asked</div>
+      <div class="concept-desc">
+        Technical people explain in the order they investigated: cause, mechanism, then consequence.
+        Listeners need the reverse. Lead with what it means for them, follow with a one-line cause,
+        and stop — offering detail rather than delivering it. The person who wants the mechanism will
+        ask, and the person who does not has already got what they needed.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Order</th><th>Sentence</th></tr></thead>
+          <tbody>
+            <tr><td>1. Impact</td><td>"Email is down for the Manchester office."</td></tr>
+            <tr><td>2. Status</td><td>"We know the cause and we are fixing it now."</td></tr>
+            <tr><td>3. Time</td><td>"We expect it back within the hour; I will update you at 3pm either way."</td></tr>
+            <tr><td>4. What they should do</td><td>"Use your phone for email until then."</td></tr>
+            <tr><td>5. Cause, briefly</td><td>"A network change this morning had a side effect."</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Point 3 is the one that buys the most goodwill and the one most often left out. A promised
+          update at a stated time — kept even when there is no news — is worth more than a faster fix
+          delivered in silence.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Analogies Help Until They Are Load-Bearing</div>
+      <div class="concept-desc">
+        An analogy is a bridge to a decision, not a model to reason from. It works when the listener
+        only needs to grasp the shape of the situation; it fails when they start deducing
+        consequences from the analogy rather than from the system. Use one, then return to the
+        actual thing before anyone acts on it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Instead of</th><th>Say</th></tr></thead>
+          <tbody>
+            <tr><td>"DNS <span class="acro-exp">(Domain Name System)</span> resolution is failing"</td><td>"The system that turns names into addresses is not answering, so nothing can find the server"</td></tr>
+            <tr><td>"We need to fail over to the secondary"</td><td>"We are switching to the backup system; there will be a short interruption"</td></tr>
+            <tr><td>"It's a certificate expiry"</td><td>"A security credential expired overnight — the fix is quick, but it must be done carefully"</td></tr>
+            <tr><td>"That's out of scope"</td><td>"That is a different team's system; here is who to ask and what to tell them"</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The general skill, and how much career leverage it carries, is in
+          <span class="xref">Clear Technical Communication — The Skill That Multiplies Everything</span>
+          in the IT Career domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DIFFICULT CONVERSATIONS ────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">😤</span>
+    <span class="topic-name">Difficult Conversations — Angry Users, VIP Pressure &amp; Saying No</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Anger Is Almost Always About Being Stuck, Not About You</div>
+      <div class="concept-desc">
+        By the time someone is angry at the service desk they have usually lost time, missed
+        something, and been unable to do anything about it. The anger is about helplessness, and the
+        person who answers is simply the first one who can affect it. Reacting to the content rather
+        than the tone is both kinder and more effective, and it is a learnable sequence rather than
+        a personality trait.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>#</th><th>Move</th><th>Sounds like</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Acknowledge the cost, not the emotion</td><td>"You have lost the whole morning to this — understood."</td></tr>
+            <tr><td>2</td><td>Show you have the facts</td><td>"It started at nine, and rebooting did not help."</td></tr>
+            <tr><td>3</td><td>Say what happens now</td><td>"I am doing X, and I will know within twenty minutes."</td></tr>
+            <tr><td>4</td><td>Commit to a next contact</td><td>"I will call you by eleven whether or not it is fixed."</td></tr>
+            <tr><td>5</td><td>Do exactly that</td><td>—</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Never say "calm down", and never defend the department. Both are heard as "your problem is
+          not important", which is the thing that made them angry in the first place.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Saying No Without Saying "No"</div>
+      <div class="concept-desc">
+        Most refusals at a service desk are not refusals of the goal — they are refusals of the
+        specific route. Separating the two turns a confrontation into a redirect, and the phrasing
+        that works is a statement of what you <em>can</em> do, followed by the path for the rest.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Situation</th><th>Response</th></tr></thead>
+          <tbody>
+            <tr><td>Asks for admin rights</td><td>"I cannot grant that, but I can install what you need now, or get standing approval through X."</td></tr>
+            <tr><td>Wants a policy exception</td><td>"That decision sits with the security team — I will raise it and tell you the answer."</td></tr>
+            <tr><td>Wants it faster than the SLA <span class="acro-exp">(Service Level Agreement)</span></td><td>"I can escalate for a business-impact review; that needs your manager to confirm the impact."</td></tr>
+            <tr><td>Asks you to bypass a control</td><td>"I am not able to do that. Here is the supported way, and how long it takes."</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is the one where holding the line matters most, and where writing the request
+          and the refusal into the ticket protects everyone involved — including the requester, who
+          is often being pressured themselves.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: WRITING FOR USERS ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📣</span>
+    <span class="topic-name">Writing for Users — Outage Notices &amp; Status Pages People Trust</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Five-Line Outage Notice</div>
+      <div class="concept-desc">
+        Outage communications fail in one of two directions: too vague to act on, or so detailed
+        that the affected reader cannot find what they need. Five lines, in this order, works for
+        both the person who will read one sentence and the person who will read all of it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Line</th><th>Content</th></tr></thead>
+          <tbody>
+            <tr><td>What is affected</td><td>The service by the name users call it, and who is affected</td></tr>
+            <tr><td>What is happening</td><td>"Under investigation", "cause identified", "fix in progress"</td></tr>
+            <tr><td>What to do meanwhile</td><td>The workaround, or explicitly "there is none"</td></tr>
+            <tr><td>Next update</td><td>A specific time, not "shortly"</td></tr>
+            <tr><td>Where to go for more</td><td>One link or number — not four</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Send the first notice before you understand the cause. "We are aware and investigating,
+          next update in 30 minutes" sent at nine beats a complete explanation at eleven, because in
+          between, every affected person is deciding whether to raise a ticket.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">What Makes a Status Page Believed</div>
+      <div class="concept-desc">
+        A status page is a trust instrument, and trust is lost in one specific way: showing green
+        while users are down. Every organisation that has done this once finds its status page
+        ignored thereafter, and the ticket volume it was built to reduce comes back permanently.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Effect on trust</th></tr></thead>
+          <tbody>
+            <tr><td>Update it before the tickets arrive</td><td>It becomes the first place people look</td></tr>
+            <tr><td>Say "degraded" when it is degraded</td><td>Binary up/down is read as dishonest by anyone experiencing "slow"</td></tr>
+            <tr><td>Host it away from the affected infrastructure</td><td>A status page that dies with the service is worse than none</td></tr>
+            <tr><td>Publish a short post-incident note</td><td>Closes the loop; the absence reads as "they hope we forget"</td></tr>
+            <tr><td>Never quietly delete an incident</td><td>Somebody always noticed</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The internal counterpart — the document that turns an outage into organisational learning
+          rather than a story — is
+          <span class="xref">Writing a Postmortem People Actually Learn From</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: KNOWLEDGE MANAGEMENT ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📖</span>
+    <span class="topic-name">Knowledge Management — KCS in Practice, and Keeping Articles From Rotting</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Capture in the Workflow, Not in a Documentation Sprint</div>
+      <div class="concept-desc">
+        Knowledge-Centred Service rests on one insight: knowledge is a by-product of solving tickets,
+        and it must be captured while solving them or it will not be captured at all. Every
+        organisation that schedules "documentation time" instead discovers that the time is the first
+        thing cancelled when the queue grows — which is exactly when the knowledge is most valuable.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Principle</th><th>In practice</th></tr></thead>
+          <tbody>
+            <tr><td>Capture in the moment</td><td>The article is written while closing the ticket, not later</td></tr>
+            <tr><td>Structure for reuse</td><td>Symptom, environment, cause, resolution — always those four</td></tr>
+            <tr><td>Search before solving</td><td>Every ticket starts with a search; that is what surfaces gaps</td></tr>
+            <tr><td>Improve on use</td><td>Whoever uses an article and finds it wrong fixes it, then and there</td></tr>
+            <tr><td>Publish the imperfect one</td><td>A rough article that solves the ticket beats a polished one that does not exist</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Write in the User's Words, Not the Cause's</div>
+      <div class="concept-desc">
+        Articles are found by searching the symptom, and the symptom is described in the language of
+        the person who has it. An article titled with the technical cause is invisible to precisely
+        the person who needs it — they do not know the cause; that is why they are searching.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Titled</th><th>Found by</th></tr></thead>
+          <tbody>
+            <tr><td>"Kerberos ticket lifetime misconfiguration"</td><td>The person who already knows the answer</td></tr>
+            <tr><td>"Prompted for a password repeatedly when opening shared drives"</td><td>The person with the problem</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Add the technical terms in the body for the specialists — but the title, and the first
+          line, belong to the symptom.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Rot, and the Only Thing That Reliably Prevents It</div>
+      <div class="concept-desc">
+        Knowledge bases decay silently: the console changes, the version moves, the article stays.
+        Scheduled review by a documentation owner sounds right and rarely survives contact with real
+        workloads. What does work is making correction part of use — the agent who follows an article
+        and finds step 4 wrong is the one person guaranteed to know what it should say, and is
+        already there.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Signal</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Article used but ticket still escalated</td><td>Highest-value review candidate there is</td></tr>
+            <tr><td>Never used in a year</td><td>Archive it; the search terms are wrong or nobody needs it</td></tr>
+            <tr><td>Edited by three people this month</td><td>The underlying system is changing — or the article is contested</td></tr>
+            <tr><td>Flagged wrong by an agent</td><td>Fix now, not in the review cycle</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SELF-SERVICE & SHIFT-LEFT ──────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🤖</span>
+    <span class="topic-name">Self-Service &amp; Shift-Left — Moving Fixes Toward Tier 1 Deliberately</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Every Ticket Should Be Solvable One Tier Lower Than It Was Last Year</div>
+      <div class="concept-desc">
+        Shift-left is the deliberate movement of resolution capability toward the user: tier 3 work
+        becomes tier 2 work through documentation and tooling, tier 2 becomes tier 1, and tier 1
+        becomes self-service. It is the only mechanism that reduces service-desk load without
+        reducing service, and it does not happen on its own — the specialists holding the knowledge
+        have no spare time to give it away.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Move</th><th>Requires</th></tr></thead>
+          <tbody>
+            <tr><td>Tier 3 → Tier 2</td><td>A runbook, and the access to follow it</td></tr>
+            <tr><td>Tier 2 → Tier 1</td><td>A tool that makes the safe action easy and the unsafe one impossible</td></tr>
+            <tr><td>Tier 1 → Self-service</td><td>A portal action a non-technical person can complete unaided</td></tr>
+            <tr><td>Self-service → Never happens</td><td>Fixing the underlying cause — the best outcome available</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is the one to aim for. A password-reset portal is a good answer; not needing
+          to reset passwords so often is a better one.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Why Self-Service Portals Get Ignored</div>
+      <div class="concept-desc">
+        Self-service adoption fails for reasons that are almost never about the technology. Each of
+        these is a rational response by a user who tried it once, and each is fixable.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Reason</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Slower than sending an email</td><td>If the portal takes longer than the alternative, it will lose — measure the clicks</td></tr>
+            <tr><td>They tried it and it failed</td><td>One failure ends adoption for that person permanently; reliability is the feature</td></tr>
+            <tr><td>They cannot find the right item</td><td>Catalogue named by outcome, not by system</td></tr>
+            <tr><td>It works but nobody knows</td><td>Reply to email requests with the portal link, every time, for a while</td></tr>
+            <tr><td>The request needs approval nobody grants</td><td>The bottleneck is the approval, not the portal</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Automating a request is also giving a tool real permissions to act. What can go wrong, and
+          the guard rails worth building in, are in
+          <span class="xref">Automation Risk &amp; Discipline — Blast Radius, Approval Gates &amp; the Kill Switch</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SERVICE DESK METRICS ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📊</span>
+    <span class="topic-name">Service Desk Metrics — The Ones That Improve Service vs the Ones That Game It</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Every Service Desk Metric Has a Cheat, and People Find It</div>
+      <div class="concept-desc">
+        This is not cynicism about agents; it is what happens when a number is used to judge people
+        rather than to understand a system. The cheat is usually locally rational and individually
+        harmless, which is why it spreads. Knowing the cheat for each metric is the only way to use
+        it safely.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Metric</th><th>The cheat</th><th>Use it with</th></tr></thead>
+          <tbody>
+            <tr><td>Tickets closed per agent</td><td>Close early, split one issue into five tickets</td><td>Reopen rate</td></tr>
+            <tr><td>Average handle time</td><td>Rush, or push to another queue</td><td>First-contact resolution</td></tr>
+            <tr><td>First-contact resolution</td><td>Log the hard ones as new tickets later</td><td>Repeat-contact rate per user</td></tr>
+            <tr><td>SLA <span class="acro-exp">(Service Level Agreement)</span> attainment</td><td>Re-prioritise on the way in, or stop the clock creatively</td><td>Priority distribution over time</td></tr>
+            <tr><td>CSAT</td><td>Ask only the happy ones; ask right after a win</td><td>Response rate, and who was surveyed</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Five Numbers That Improve the Service</div>
+      <div class="concept-desc">
+        The useful ones share a property: they get worse when the service gets worse, and they cannot
+        be improved by working faster — only by removing causes.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Metric</th><th>Tells you</th></tr></thead>
+          <tbody>
+            <tr><td>Reopen rate</td><td>Whether "resolved" means resolved</td></tr>
+            <tr><td>Repeat tickets on the same cause</td><td>The problem backlog you are not working</td></tr>
+            <tr><td>Arrival rate by category, over time</td><td>Where demand is growing, before it becomes a crisis</td></tr>
+            <tr><td>Time to first meaningful response</td><td>The number users actually experience as "did anyone care"</td></tr>
+            <tr><td>Backlog age distribution</td><td>Whether old tickets are being worked or quietly aged out</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Report these to the team as a system, not to individuals as a scorecard. The moment an
+          agent's pay or standing depends on one of them, it stops measuring the service and starts
+          measuring their response to being measured.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SLAS, OLAS & UNDERPINNING CONTRACTS ────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📜</span>
+    <span class="topic-name">SLAs <span class="acro-exp">(Service Level Agreement)</span>, OLAs &amp; Underpinning Contracts — The Chain of Promises</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Three Agreements, and Why the Chain Must Hold</div>
+      <div class="concept-desc">
+        The promise made to the business is only deliverable if every internal team and every vendor
+        behind it has made a compatible promise. The classic failure is a four-hour SLA to the
+        business resting on a next-business-day hardware contract — a chain that cannot hold, agreed
+        by people who never compared the two documents.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Agreement</th><th>Between</th><th>Fails when</th></tr></thead>
+          <tbody>
+            <tr><td>SLA</td><td>IT and the business</td><td>It was negotiated by someone who never checked the layers below</td></tr>
+            <tr><td>OLA</td><td>Teams inside IT</td><td>It does not exist, so nobody owes anyone a response time</td></tr>
+            <tr><td>Underpinning contract</td><td>IT and a supplier</td><td>Its terms are weaker than the SLA that depends on it</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">What an SLA Should and Should Not Promise</div>
+      <div class="concept-desc">
+        Most SLA disputes come from promising a resolution time for problems whose difficulty is
+        unknown at the moment of promising. Response is controllable; resolution frequently is not.
+        Promising the controllable thing precisely, and the uncontrollable thing honestly, produces
+        an agreement that survives being tested.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Promise</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td>Time to first response</td><td>Safe — entirely within your control</td></tr>
+            <tr><td>Time to restore for known scenarios</td><td>Reasonable, where a documented procedure exists</td></tr>
+            <tr><td>Time to resolve anything at all</td><td>Unwise — you are promising to solve unknown problems on a clock</td></tr>
+            <tr><td>Availability percentages</td><td>Only with a defined measurement window and named exclusions</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Define the clock precisely — business hours or calendar hours, when it pauses for "waiting
+          on user", and who may pause it. Ambiguity there is where SLA reporting quietly becomes
+          fiction. The engineering equivalent of this conversation, expressed in error budgets, is
+          in <span class="xref">SLIs, SLOs &amp; Error Budgets</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CMDB ───────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗄️</span>
+    <span class="topic-name">Asset &amp; Configuration Management — A CMDB <span class="acro-exp">(Configuration Management Database)</span> That Stays True</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Asset Management and Configuration Management Are Different Jobs</div>
+      <div class="concept-desc">
+        Asset management tracks the things you own for financial and lifecycle reasons: what it cost,
+        who has it, when its warranty ends, when it gets replaced. Configuration management tracks
+        how things depend on each other so that a change or an incident can be reasoned about. They
+        overlap in the records and diverge completely in purpose, and a database built for one is
+        usually poor at the other.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Asset</th><th>Configuration</th></tr></thead>
+          <tbody>
+            <tr><td>Question</td><td>What do we own, who has it, what did it cost?</td><td>What breaks if this changes?</td></tr>
+            <tr><td>Key data</td><td>Serial, owner, cost, warranty, location</td><td>Relationships and dependencies</td></tr>
+            <tr><td>Consumers</td><td>Finance, procurement, audit</td><td>Change, incident, problem</td></tr>
+            <tr><td>Fails as</td><td>Paying for licences and devices nobody has</td><td>A change that takes down a service nobody connected to it</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Why Most CMDBs Are Wrong, and the One Rule That Fixes It</div>
+      <div class="concept-desc">
+        CMDBs fail by being too ambitious: model everything, populate it by hand, update it by
+        process. Manual data decays from the day it is entered, and a database people know is stale
+        is consulted by nobody, which removes the last feedback that would have corrected it. The
+        rule that breaks the cycle is to record only what something else keeps true.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Populate by discovery, not by hand</td><td>Automated data is refreshed; typed data is a snapshot of one afternoon</td></tr>
+            <tr><td>Model only what a decision depends on</td><td>Every extra attribute is another thing that will be wrong</td></tr>
+            <tr><td>Own each record type, explicitly</td><td>Unowned records rot without anyone being responsible</td></tr>
+            <tr><td>Use it in change and incident, visibly</td><td>Data consulted daily gets corrected; data consulted at audit does not</td></tr>
+            <tr><td>Reconcile against reality on a schedule</td><td>Discovery versus records; the gap is the health metric</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Start with the services the business would notice losing, and their immediate dependencies.
+          That is a few dozen records that stay true and support real decisions, which is worth
+          incomparably more than a complete model nobody trusts. It is also the data
+          <span class="xref">Change Management – The Process That Prevents Self-Inflicted Outages</span>
+          in the Governance domain assumes you have when assessing a change's blast radius.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

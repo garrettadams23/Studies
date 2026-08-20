@@ -1759,39 +1759,39 @@ Veeam mechanics) are genuine but narrower and can follow if the estate needs the
 ~5 waves, ~25 cards. The trade most people enter IT through, treated seriously.
 
 **Wave AA1 — The Practices**
-- [ ] ITIL 4 Without the Jargon — the practices that survive contact with a real team
-- [ ] Incident vs Problem vs Change vs Request — the distinction, and why it matters
-- [ ] Priority, Impact & Urgency — building a matrix people actually apply
+- [~] ITIL 4 Without the Jargon — the practices that survive contact with a real team — **already carded as 'ITIL & Service Management — How IT Runs as a Business' in ops**
+- [x] Incident vs Problem vs Change vs Request — the distinction, and why it matters
+- [x] Priority, Impact & Urgency — building a matrix people actually apply
 - [ ] Service Catalog & Request Fulfilment — turning ad-hoc asks into a repeatable service
-- [ ] Change Enablement — CAB, standard changes, emergency changes, freeze windows
+- [~] Change Enablement — CAB, standard changes, emergency changes, freeze windows — **already carded as 'Change Management – The Process That Prevents Self-Inflicted Outages' in grc**
 
 **Wave AA2 — The Ticket Craft**
-- [ ] Writing a Ticket Someone Else Can Solve — the fields that decide resolution time
-- [ ] Triage & Categorization — routing correctly the first time
-- [ ] Escalation — functional vs hierarchical, and how to hand over without losing context
-- [ ] Closing Well — resolution notes, root cause, and the knowledge article that follows
-- [ ] Working a Queue — prioritisation, batching, and not drowning
+- [x] Writing a Ticket Someone Else Can Solve — the fields that decide resolution time
+- [x] Triage & Categorization — routing correctly the first time
+- [x] Escalation — functional vs hierarchical, and how to hand over without losing context
+- [x] Closing Well — resolution notes, root cause, and the knowledge article that follows
+- [x] Working a Queue — prioritisation, batching, and not drowning
 
 **Wave AA3 — Talking to Humans**
 - [ ] The First Ninety Seconds — establishing what actually happened
-- [ ] Explaining Technical Things to Non-Technical People — a repeatable method
-- [ ] Difficult Conversations — angry users, VIP pressure, saying no
+- [x] Explaining Technical Things to Non-Technical People — a repeatable method
+- [x] Difficult Conversations — angry users, VIP pressure, saying no
 - [ ] Remote Support Skills — screen shares, phone-only diagnosis, guiding blind
-- [ ] Writing for Users — emails, outage notices, and status pages people trust
+- [x] Writing for Users — emails, outage notices, and status pages people trust
 
 **Wave AA4 — Knowledge & Automation**
-- [ ] Knowledge Management — KCS in practice, and keeping articles from rotting
-- [ ] Self-Service That Works — password reset, software portal, and their adoption traps
-- [ ] Shift-Left — moving fixes from tier 3 toward tier 1 deliberately
+- [x] Knowledge Management — KCS in practice, and keeping articles from rotting
+- [x] Self-Service That Works — password reset, software portal, and their adoption traps
+- [x] Shift-Left — moving fixes from tier 3 toward tier 1 deliberately
 - [ ] Ticket Automation — templates, workflows, and where automation backfires
-- [ ] Asset & Configuration Management — a CMDB that stays true
+- [x] Asset & Configuration Management — a CMDB that stays true
 
 **Wave AA5 — Running the Function**
-- [ ] Service Desk Metrics — the ones that improve service vs the ones that game it
-- [ ] SLAs, OLAs & Underpinning Contracts — the chain of promises
+- [x] Service Desk Metrics — the ones that improve service vs the ones that game it
+- [x] SLAs, OLAs & Underpinning Contracts — the chain of promises
 - [ ] Capacity & Shift Planning — staffing a queue that has a shape
-- [ ] On-Call Without Burnout — rotations, handovers, escalation policy, comp time
-- [ ] Major Incident Management — commander, comms lead, scribe, and the bridge discipline
+- [~] On-Call Without Burnout — rotations, handovers, escalation policy, comp time — **already carded as 'On-Call Done Humanely' in ops, plus two cards in mind**
+- [~] Major Incident Management — commander, comms lead, scribe, and the bridge discipline — **already carded as 'Incident Command — Running a Major Incident Without Chaos' in ops**
 
 ### TRACK AB — Vendor Networking, Firewalls & Wireless  (→ `net`)
 
@@ -5666,3 +5666,72 @@ assessed on in interview.
 > technique, enrichment as the usual real fix for a "noisy" rule, the five correlation shapes and
 > the four silent ways stateful rules break, and what the role is assessed on. Two tracks are now
 > closed in one session — W and BA.
+
+---
+
+## Session record — Track AA: the service-desk half of `ops`
+
+Fourth content wave. The audit result was the starkest of the session, and it also produced the
+one deliberate deviation from a track's spec.
+
+### The audit
+
+| Probe | Mentions site-wide |
+|---|---:|
+| `problem management`, `known error`, `csat`, `escalation matrix`, `shift handover`, `swarming`, `ticket triage`, `service catalog` | **0** |
+| everything else probed in the track | 5, total, across 29 domains |
+
+Eight of nine probes returned nothing. `ops` already carried 33 cards, but reading its list
+explains the gap precisely: incident response, incident command, postmortems, SRE, SLOs,
+observability, on-call, chaos engineering — **the SRE and security half of operations, and none of
+the service-desk half.** A site aimed at CompTIA-track IT professionals was missing the work most
+of them actually do.
+
+### The deviation: `ops`, not a new `itsm` domain
+
+Track AA specifies a new domain. This wave put the cards in `ops` instead, for three reasons
+worth recording so the next session does not "fix" it:
+
+1. **The plan's own repeatedly-validated rule** is to deepen existing domains rather than spin up
+   new ones. Service-desk work *is* operations; the split would have been organisational, not
+   conceptual.
+2. **`ops` was lopsided.** It described operations as practised by SREs and SOC analysts only.
+   Adding the service-desk half makes one coherent domain rather than two partial ones.
+3. **The chip bar is at 29.** The deferral shipped this session makes a 30th domain nearly free at
+   load, so this is now an editorial judgement rather than a performance one — and editorially,
+   one Operations domain reads better than an Operations domain and a Service Desk domain that
+   cross-reference each other constantly.
+
+`ops` is now 48 cards, which is large but within the range of `net` (57), `sec` (57) and
+`linux` (58).
+
+### What shipped
+
+**15 cards into `ops`**, 33 → 48. Site: 1,123 → **1,138 topics**.
+
+| Group | Cards |
+|---|---|
+| The model | Incident vs problem vs change vs request · Priority, impact &amp; urgency |
+| The ticket | Writing a ticket someone else can solve · Triage &amp; categorisation · Escalation &amp; handover · Closing well |
+| The queue | Working a queue · Service desk metrics |
+| The people | Explaining technical things · Difficult conversations · Writing for users |
+| The system | Knowledge management (KCS) · Self-service &amp; shift-left · SLAs, OLAs &amp; underpinning contracts · CMDB |
+
+Four track items are marked `[~]` rather than ticked, because they already have homes: ITIL
+itself, major incident management, on-call without burnout, and change enablement — that last one
+is already covered in `grc` down to standard/normal/emergency changes and what a good change
+request contains, so a second version would have been pure duplication.
+
+### The thread running through the wave
+
+Where the detection-engineering wave had "a rule that stopped working looks like a quiet
+environment", this one has: **every service-desk metric has a cheat, and the cheat is usually
+locally rational.** Tickets closed per agent rewards closing early. Handle time rewards rushing.
+First-contact resolution rewards logging the hard part as a new ticket tomorrow. The cards say so
+explicitly and pair each metric with the counter-metric that exposes its cheat, because a service
+desk measured badly does not underperform quietly — it reorganises itself around the measurement.
+
+### Track AA after this wave
+
+Five items remain: the service catalogue and request fulfilment, the first ninety seconds of an
+incident, remote support skills, ticket automation, and capacity and shift planning.
