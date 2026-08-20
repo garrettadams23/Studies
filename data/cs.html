@@ -3266,3 +3266,753 @@ valgrind --leak-check=full ./prog</pre>
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: SETS & RELATIONS ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔵</span>
+    <span class="topic-name">Sets &amp; Relations — The Formal Spine of SQL <span class="acro-exp">(Structured Query Language)</span> Joins and Access Control</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Table Is a Set, and a Join Is a Set Operation</div>
+      <div class="concept-desc">
+        The relational model is called relational because a table <em>is</em> a relation: a set of
+        tuples. Once that lands, SQL stops being a list of clauses to memorise and becomes a small
+        algebra — every query is a composition of set operations, and the operators behave the way
+        set operators behave.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># The operations, and their SQL spelling</span>
+   A ∪ B    union            ->  UNION
+   A ∩ B    intersection     ->  INNER JOIN on the key, or INTERSECT
+   A \ B    difference       ->  EXCEPT, or LEFT JOIN ... WHERE b.key IS NULL
+   A × B    Cartesian product ->  CROSS JOIN — every row against every row
+
+<span class="com"># A join is a filtered Cartesian product. That is not a metaphor:</span>
+   SELECT * FROM a JOIN b ON a.id = b.a_id
+   ≡ SELECT * FROM a CROSS JOIN b WHERE a.id = b.a_id</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          This explains the accidental Cartesian product every analyst produces once: forget the ON
+          clause and the database faithfully returns every pairing, because that is what the
+          operation is before the filter. A thousand rows joined to a thousand rows is a million.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Relation Properties, and the Access-Control Bugs They Explain</div>
+      <div class="concept-desc">
+        A relation is any set of ordered pairs — "user X is a member of group Y", "role A inherits
+        role B". Three properties decide how such a structure behaves, and each maps directly onto a
+        familiar permissions problem.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Property</th><th>Means</th><th>In access control</th></tr></thead>
+          <tbody>
+            <tr><td>Reflexive</td><td>Everything relates to itself</td><td>A role always includes its own permissions</td></tr>
+            <tr><td>Symmetric</td><td>If A→B then B→A</td><td>Rarely wanted — "can read" should not run backwards</td></tr>
+            <tr><td>Transitive</td><td>If A→B and B→C then A→C</td><td>Nested groups; this is where surprises live</td></tr>
+            <tr><td>Antisymmetric + transitive</td><td>A partial order</td><td>A clean role hierarchy with no cycles</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Transitivity is the one that produces incidents: nested group membership means effective
+          permissions are the <em>transitive closure</em> of the membership relation, not the direct
+          memberships anyone can see in a console. And a cycle in an inheritance graph — A inherits
+          B inherits A — is the structure that makes a permissions resolver hang or overflow.
+          <span class="xref">Access Control Models</span> in the Security domain covers the models;
+          this is the shape underneath them.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Why NULL Breaks the Algebra</div>
+      <div class="concept-desc">
+        Set theory assumes every element either is or is not in a set. SQL's NULL introduces a third
+        answer — unknown — and the algebra stops being two-valued. This is the source of the join and
+        filter behaviour that reliably surprises people.
+      </div>
+      <div class="dw">
+        <pre class="code-block">   NULL = NULL       ->  UNKNOWN, not TRUE
+   NULL &lt;&gt; 'x'      ->  UNKNOWN, not TRUE
+   WHERE col &lt;&gt; 'x'  ->  drops NULL rows, which is usually not what was meant
+   COUNT(col)        ->  ignores NULLs;  COUNT(*) does not
+   NOT IN (subquery containing a NULL)  ->  returns nothing, ever</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The last line is the classic silent bug: <code>NOT IN</code> against a column containing a
+          single NULL returns an empty result set with no error and no warning. Use
+          <code>NOT EXISTS</code>. The join-specific cases are in
+          <span class="xref">SQL Joins — Every Type, and the NULL Traps</span> in the Data domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: PROOF TECHNIQUES ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📏</span>
+    <span class="topic-name">Proof Techniques for Engineers — Invariants, Contradiction &amp; Counterexample</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Three Tools, Used Constantly Without Being Named</div>
+      <div class="concept-desc">
+        Engineers reason formally more often than they think — arguing that a lock is held whenever a
+        structure is modified, or that a retry loop terminates. Naming the technique makes the
+        argument checkable by someone else, which is the entire practical value: an invariant written
+        down can be reviewed, tested and asserted, while the same belief held loosely cannot.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Technique</th><th>Shows</th><th>Engineering use</th></tr></thead>
+          <tbody>
+            <tr><td>Invariant</td><td>Something true before and after every step</td><td>Concurrency, state machines, data integrity</td></tr>
+            <tr><td>Induction</td><td>True for the first case, and preserved by each step</td><td>Recursion, protocol correctness, loop reasoning</td></tr>
+            <tr><td>Contradiction</td><td>Assuming the opposite forces an impossibility</td><td>Impossibility arguments and security bounds</td></tr>
+            <tr><td>Counterexample</td><td>One case where the claim fails</td><td>Disproving a design claim — the fastest tool here</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Invariants Are the One With Immediate Cash Value</div>
+      <div class="concept-desc">
+        An invariant is a statement that must hold at every observable point. Writing them down turns
+        vague correctness into something a test or an assertion can enforce — and the act of writing
+        one frequently reveals that it is already violated.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Invariants worth asserting in real systems</span>
+   "The sum of all account balances is unchanged by a transfer."
+   "Every item in the queue is either being processed or waiting — never both."
+   "The lock is held whenever this structure is modified."
+   "The free list and the allocated list are disjoint, and together are everything."
+   "Total replicas acknowledging a write is always >= the write quorum."
+
+<span class="com"># Then: assert them in tests, and in production where the cost allows.</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          Property-based testing is this idea automated: state the invariant, let the tool generate
+          thousands of inputs and hunt for the case that breaks it. It finds the boundary conditions
+          human-written examples systematically miss, because humans write the cases they already
+          thought of.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Counterexample Is the Politest Argument in Engineering</div>
+      <div class="concept-desc">
+        Design disagreements can circle for an hour on plausibility. One concrete case where the
+        proposal produces a wrong answer ends it immediately, and ends it without anyone having to be
+        persuaded of a general principle — which is why it is also the least adversarial way to
+        disagree. "Here is a sequence of three events where this design loses a write" is a fact, and
+        it can be checked.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SAMPLING & CONFIDENCE ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔬</span>
+    <span class="topic-name">Sampling &amp; Confidence — What a Number From 200 Observations Actually Claims</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Every Measurement Is a Sample, Including the Ones That Look Complete</div>
+      <div class="concept-desc">
+        Monitoring samples. Surveys sample. A week of logs is a sample of all weeks. The number you
+        computed is therefore an estimate with an uncertainty attached, and reporting it without that
+        uncertainty invites decisions the data cannot support — most often, reacting to a change that
+        is entirely within the noise.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Rough margin of error for a proportion, 95% confidence</span>
+   margin ≈ 1 / √n
+
+   n =    100  ->  ±10%
+   n =    400  ->  ±5%
+   n =  1,000  ->  ±3%
+   n = 10,000  ->  ±1%
+
+<span class="com"># So "62% of users prefer X" from 100 people means somewhere in 52-72%.</span>
+<span class="com"># And quadrupling the sample only halves the error — precision is expensive.</span></pre>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">What "95% Confidence" Does and Does Not Say</div>
+      <div class="concept-desc">
+        A 95% confidence interval means: if this procedure were repeated many times, about 95% of the
+        intervals produced would contain the true value. It is a statement about the method, not a
+        probability that this particular interval is right — a distinction that sounds pedantic until
+        someone builds an argument on the misreading.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Claim</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td>"There is a 95% chance the true value is in this range"</td><td>Common, and not what the interval says</td></tr>
+            <tr><td>"The intervals overlap, so there is no difference"</td><td>Wrong — overlapping intervals can still be a real difference</td></tr>
+            <tr><td>"Bigger sample, so it is representative"</td><td>Size does not fix bias; a biased sample is biased at any size</td></tr>
+            <tr><td>"We surveyed everyone who responded"</td><td>Self-selection — the non-responders are usually the finding</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The third row is the one worth internalising. A million rows from one region tells you
+          about that region very precisely and about everywhere else not at all. Sampling
+          <em>bias</em> and sampling <em>error</em> are different problems, and only one of them
+          shrinks with more data.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DESCRIPTIVE VS INFERENTIAL ─────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🪞</span>
+    <span class="topic-name">Descriptive vs Inferential — The Mistake Most Dashboards Make</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Describing What Happened, and Claiming Why</div>
+      <div class="concept-desc">
+        Descriptive statistics summarise the data you have: totals, averages, percentiles, trends.
+        Inferential statistics make a claim beyond the data: that a difference is real, that a
+        pattern will continue, that one thing caused another. Dashboards are built from the first and
+        are read as the second, and the gap between those two is where most bad decisions from good
+        data come from.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The chart shows</th><th>The meeting concludes</th><th>Justified?</th></tr></thead>
+          <tbody>
+            <tr><td>Tickets rose 12% this month</td><td>"Demand is growing"</td><td>Not yet — one month, and the variance is unknown</td></tr>
+            <tr><td>Latency fell after the deploy</td><td>"The deploy fixed it"</td><td>Only with a control; traffic also fell that day</td></tr>
+            <tr><td>Team A closes more tickets</td><td>"Team A is more productive"</td><td>No — different mix, different difficulty</td></tr>
+            <tr><td>Incidents cluster on Mondays</td><td>"Something is wrong with Mondays"</td><td>Check whether the clustering exceeds chance first</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Three Questions Before Believing a Chart</div>
+      <div class="concept-desc">
+        These take seconds and prevent most of the errors above. They are worth asking about your own
+        charts before anyone else asks them.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Ask</th><th>Catches</th></tr></thead>
+          <tbody>
+            <tr><td>What is the normal variation here?</td><td>Reacting to noise as if it were signal</td></tr>
+            <tr><td>What else changed at the same time?</td><td>Confounding — the most common cause of a wrong conclusion</td></tr>
+            <tr><td>Who or what is missing from this data?</td><td>Survivorship: the failed requests that never got logged</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The third is the sharpest. Latency dashboards typically show completed requests, so the
+          ones that timed out — the worst experiences of all — are absent by construction, and the
+          chart looks best exactly when things are worst.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: ANOMALY DETECTION MATHS ────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📉</span>
+    <span class="topic-name">Anomaly Detection Maths — Z-Scores, MAD &amp; Seasonality</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Two Ways to Say "Unusually Far From Normal"</div>
+      <div class="concept-desc">
+        The z-score is the standard measure and it has a specific weakness: it is computed from the
+        mean and standard deviation, both of which are dragged around by the very outliers being
+        looked for. The median-based alternative is robust — an extreme value barely moves it, so it
+        keeps working on exactly the data where the z-score quietly fails.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Z-score — how many standard deviations from the mean</span>
+   z = (x - mean) / stdev
+
+<span class="com"># Robust version — median absolute deviation</span>
+   MAD = median(|xᵢ - median(x)|)
+   robust_z = 0.6745 · (x - median) / MAD
+
+<span class="com"># Why it matters: one enormous spike inflates the stdev, so the</span>
+<span class="com"># NEXT spike scores as normal. The MAD version does not care.</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The z-score also assumes a roughly normal distribution. Most operational data is not
+          normal, so "three sigma" is not the rare event the textbook promises — on heavy-tailed
+          latency data it fires constantly.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Seasonality — Compare Like With Like, or Alert Every Monday</div>
+      <div class="concept-desc">
+        Operational data has cycles: daily, weekly, monthly, and often a term or quarter rhythm. A
+        threshold that ignores them fires every Monday morning and never fires during a quiet Sunday
+        outage. The fix is to compare a point against the same phase of the cycle rather than against
+        a global baseline.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Approach</th><th>Good for</th><th>Weakness</th></tr></thead>
+          <tbody>
+            <tr><td>Fixed threshold</td><td>Hard limits — disk full, certificate expiry</td><td>Useless for anything that varies</td></tr>
+            <tr><td>Rolling mean ± k·stdev</td><td>Slowly varying series</td><td>Learns the anomaly if it persists</td></tr>
+            <tr><td>Same hour, previous weeks</td><td>Strongly weekly patterns</td><td>Needs history; holidays break it</td></tr>
+            <tr><td>Decompose into trend + season + residual</td><td>The general answer</td><td>More machinery, and needs enough history</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Row two contains a real trap: a rolling baseline adapts, so a slow degradation is
+          eventually absorbed into "normal" and stops alerting. A gradual memory leak can defeat an
+          adaptive threshold entirely — which is why absolute limits and adaptive ones are both
+          needed.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The False-Positive Cost Is Part of the Maths</div>
+      <div class="concept-desc">
+        An anomaly detector's threshold is not chosen to be statistically correct; it is chosen to
+        balance two costs — the cost of a missed event against the cost of a false alarm, multiplied
+        by how often each occurs. Because anomalies are rare, false-alarm cost dominates the total
+        almost always, which is the same base-rate arithmetic as
+        <span class="xref">Bayes' Theorem &amp; Base Rates — Why a 99%-Accurate Detector Floods the SOC</span>
+        arriving from a different direction.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: A/B TESTING & SIGNIFICANCE ─────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🅰️</span>
+    <span class="topic-name">A/B Testing &amp; Significance — Power, p-Values &amp; Stopping Rules</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">What a p-Value Says, Precisely</div>
+      <div class="concept-desc">
+        A p-value is the probability of seeing a result at least this extreme <em>if there were no
+        real difference</em>. That is all. It is not the probability that the change works, not the
+        probability the result is a fluke, and not a measure of how large the effect is. Every
+        popular misreading inflates confidence, which is why a discipline built on p-values still
+        ships changes that do nothing.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>People hear</th><th>It actually means</th></tr></thead>
+          <tbody>
+            <tr><td>"95% chance the change works"</td><td>If there were no effect, we would see data this extreme 5% of the time</td></tr>
+            <tr><td>"p &lt; 0.05, so it is real"</td><td>One in twenty null results clears that bar by chance</td></tr>
+            <tr><td>"p = 0.06, so it does nothing"</td><td>Nothing special happens at 0.05; it is a convention</td></tr>
+            <tr><td>"Significant, so it matters"</td><td>Statistical significance says nothing about effect size</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is the commercially important one: with a large enough sample, a 0.01%
+          improvement is statistically significant and practically worthless. Always report the
+          effect size and its interval alongside.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Peeking — The Way Most Real Tests Are Ruined</div>
+      <div class="concept-desc">
+        Checking a running test repeatedly and stopping when it crosses significance is the single
+        most common error in practical A/B testing, and it is fatal. Random fluctuation crosses the
+        threshold eventually on almost any test, so a stop-when-significant rule finds "wins" in
+        experiments where nothing is happening at all.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Fix the sample size BEFORE starting. Roughly, per variant:</span>
+   n ≈ 16 · σ² / Δ²          <span class="com"># continuous metric</span>
+   n ≈ 16 · p(1-p) / Δ²      <span class="com"># conversion rate</span>
+
+   Δ = the smallest difference worth detecting
+   σ = the metric's standard deviation
+
+<span class="com"># Note the Δ²: halving the effect you want to detect QUADRUPLES the</span>
+<span class="com"># sample needed. Small effects are extremely expensive to prove.</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          If continuous monitoring is genuinely needed, use a method designed for it — sequential
+          testing or a Bayesian approach — rather than a fixed-sample test looked at repeatedly.
+          Those methods pay for the peeking in their maths; the classical test does not.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Failures Beyond the Statistics</div>
+      <div class="concept-desc">
+        Most bad A/B results are not statistical errors at all. They are design errors that no amount
+        of correct arithmetic afterwards can repair.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Failure</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Novelty effect</td><td>Anything new performs well for a fortnight, then reverts</td></tr>
+            <tr><td>Assignment leakage</td><td>Users see both variants; the comparison is meaningless</td></tr>
+            <tr><td>Testing too many metrics</td><td>Twenty metrics gives roughly one "significant" result by chance</td></tr>
+            <tr><td>Wrong unit of analysis</td><td>Counting sessions when the treatment applies per user</td></tr>
+            <tr><td>Seasonal confound</td><td>A test spanning a holiday measures the holiday</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: FORECASTING CAPACITY ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔭</span>
+    <span class="topic-name">Forecasting Capacity — Trend, Seasonality &amp; Headroom</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Decompose Before Extrapolating</div>
+      <div class="concept-desc">
+        A usage series is three things added together: a long-run trend, a repeating seasonal
+        pattern, and noise. Fitting a line to the raw series mixes all three and produces a forecast
+        that is confidently wrong in a direction determined by where in the cycle you happened to
+        start.
+      </div>
+      <div class="dw">
+        <pre class="code-block">   observed  =  trend  +  seasonal  +  residual
+
+<span class="com"># Practical procedure, no specialist tooling required:</span>
+   1. Plot it. Most forecasting errors are visible to the eye.
+   2. Remove the seasonality — compare like periods (this Monday
+      against previous Mondays, this quarter against last year's).
+   3. Fit the trend to the deseasonalised series.
+   4. Project, then add the seasonal pattern back on.
+   5. State a RANGE. A single number will be wrong.</pre>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Linear Extrapolation Fails in Both Directions</div>
+      <div class="concept-desc">
+        Growth in real systems is rarely linear, and the two ways of being wrong have opposite
+        consequences. Assuming linear growth for something compounding under-provisions and runs out
+        early; assuming exponential growth for something that has begun saturating over-provisions
+        and wastes budget.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Shape</th><th>Typical of</th><th>Check by</th></tr></thead>
+          <tbody>
+            <tr><td>Linear</td><td>Headcount-driven demand</td><td>Constant absolute increments</td></tr>
+            <tr><td>Exponential</td><td>Data accumulation, viral adoption</td><td>Constant percentage growth — a straight line on a log axis</td></tr>
+            <tr><td>S-curve</td><td>Adoption reaching a natural ceiling</td><td>Growth rate itself falling</td></tr>
+            <tr><td>Step</td><td>Onboarding a customer or a site</td><td>Flat, then a jump — never smooth</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Plot the series on a logarithmic axis as a first move. Exponential growth becomes a
+          straight line there, and distinguishing it from linear growth is the single most valuable
+          thing a capacity forecast can get right.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Forecast to the Order Date, Not to the Full Date</div>
+      <div class="concept-desc">
+        The useful output is not when the resource runs out — it is the last date on which action
+        can still be taken, which is earlier by the whole lead time of procurement, approval and
+        installation. A forecast saying "full in six months" is an emergency if the hardware takes
+        five months to arrive, and a non-event if it takes two weeks.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Report</th><th>Rather than</th></tr></thead>
+          <tbody>
+            <tr><td>"Order by March to avoid saturation in July"</td><td>"Storage is 68% full"</td></tr>
+            <tr><td>A range, with the assumption stated</td><td>A single date implying precision nobody has</td></tr>
+            <tr><td>What would change the answer</td><td>Silence about the migration that doubles it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The operational practice this feeds is in
+          <span class="xref">Capacity Planning – Answering "Will We Run Out of Room?" Before You Do</span>
+          in the Operations domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LATTICES ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🕸️</span>
+    <span class="topic-name">Lattices, Gently — The Hard Problem Post-Quantum Cryptography Moved To</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Grid of Points, and the Difficulty of Finding the Nearest One</div>
+      <div class="concept-desc">
+        A lattice is a regular grid of points extending through space, described by a set of basis
+        vectors. In two dimensions it is graph paper and everything about it is obvious. In several
+        hundred dimensions, two questions become extraordinarily hard: find the shortest non-zero
+        point, and find the lattice point nearest to some arbitrary location. Those are the problems
+        post-quantum cryptography is built on — and unlike factoring, no efficient quantum algorithm
+        for them is known.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># A lattice is all integer combinations of its basis vectors</span>
+   L = { a₁v₁ + a₂v₂ + ... + aₙvₙ  :  aᵢ ∈ ℤ }
+
+<span class="com"># The hard problems:</span>
+   SVP  shortest vector    — find the shortest non-zero lattice point
+   CVP  closest vector     — find the lattice point nearest a given target
+
+<span class="com"># Easy in 2-D with a "good" basis. In 500-D with a "bad" basis, not.</span>
+<span class="com"># That gap between good and bad bases is the trapdoor.</span></pre>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Learning With Errors — Hiding a Secret in Deliberate Noise</div>
+      <div class="concept-desc">
+        The construction most post-quantum schemes rest on is disarmingly simple to state. Take a
+        secret vector, produce many linear equations involving it, and add a small random error to
+        each. Without the errors, schoolroom linear algebra recovers the secret immediately. With
+        them, the problem becomes lattice-hard — and the noise is what does all the work.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Given many samples of the form</span>
+   bᵢ  =  ⟨aᵢ, s⟩ + eᵢ   (mod q)
+
+   aᵢ  public random vectors
+   s   the secret
+   eᵢ  small random errors        <span class="com"># without these, solve by Gaussian elimination</span>
+
+<span class="com"># Recovering s from many (aᵢ, bᵢ) pairs is Learning With Errors.</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The practical costs of the switch follow from the structure: keys and ciphertexts are
+          larger than their elliptic-curve equivalents, which matters for handshake sizes and for
+          constrained devices. The engineering trade-offs and migration path are in
+          <span class="xref">Post-Quantum Cryptography — Harvest Now, Decrypt Later</span> in the
+          Security domain.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Why "No Known Attack" Is the Honest Claim</div>
+      <div class="concept-desc">
+        Lattice problems are not proven hard, any more than factoring is. What supports them is
+        decades of study, a reduction showing that breaking the average case is as hard as the worst
+        case for related problems, and no quantum algorithm giving the kind of advantage that
+        demolished RSA <span class="acro-exp">(Rivest-Shamir-Adleman)</span>. That is a strong position and it is not a proof — which is precisely why
+        deployments are hybrid, running a classical and a post-quantum algorithm together so that a
+        break in either leaves the other standing.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MATRICES ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔢</span>
+    <span class="topic-name">Matrices &amp; Linear Transformations — The Operation a GPU <span class="acro-exp">(Graphics Processing Unit)</span> Spends Its Life Doing</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Matrix Is a Function That Moves Space</div>
+      <div class="concept-desc">
+        The productive way to read a matrix is not as a grid of numbers but as a transformation:
+        multiplying by it rotates, scales, shears or projects every vector at once. Matrix
+        multiplication is then function composition — apply one transformation, then another — which
+        is why the order matters and why <code>AB ≠ BA</code> is normal rather than surprising.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Multiplication: row of A against column of B</span>
+   (AB)ᵢⱼ = Σₖ Aᵢₖ · Bₖⱼ
+
+<span class="com"># Dimensions must meet in the middle, and the result takes the outside:</span>
+   (m × n) · (n × p)  ->  (m × p)
+
+<span class="com"># Cost, and why this is the whole game:</span>
+   naive multiply of two n×n matrices  ->  O(n³) operations
+   every one of which is independent   ->  perfectly parallel</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          That last pair of lines explains GPUs entirely. The work is enormous and every piece of it
+          is independent, which is exactly the shape a processor with thousands of small cores is
+          built for — and exactly the shape a CPU <span class="acro-exp">(Central Processing Unit)</span> with a few fast ones is not.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Where the Same Operation Turns Up</div>
+      <div class="concept-desc">
+        One operation, many disciplines. Recognising it makes several unrelated-looking performance
+        problems the same performance problem.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Field</th><th>The matrix multiply is</th></tr></thead>
+          <tbody>
+            <tr><td>Neural networks</td><td>Every layer: inputs × weights, repeated</td></tr>
+            <tr><td>Graphics</td><td>Model, view and projection transforms per vertex</td></tr>
+            <tr><td>Graph algorithms</td><td>Adjacency matrix powers count paths of a given length</td></tr>
+            <tr><td>Search and recommendation</td><td>Query vector against a document matrix</td></tr>
+            <tr><td>Signal processing</td><td>Transforms expressed as matrix operations</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Memory Layout Decides the Speed, Not the Arithmetic</div>
+      <div class="concept-desc">
+        A naive triple loop and a tuned library perform the same number of multiplications and differ
+        by an order of magnitude or more. The difference is entirely about memory: the tuned version
+        walks memory in the order the cache wants and processes blocks that fit in it. This is the
+        most accessible demonstration that on modern hardware, data movement rather than arithmetic
+        is the cost — the same lesson as
+        <span class="xref">Memory Layout &amp; Cache Locality — Why Arrays Beat Linked Lists</span>,
+        at a scale where it is impossible to miss.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Technique</th><th>Why it wins</th></tr></thead>
+          <tbody>
+            <tr><td>Loop order that follows the layout</td><td>Sequential access instead of striding across memory</td></tr>
+            <tr><td>Blocking / tiling</td><td>Work on a sub-block that stays resident in cache</td></tr>
+            <tr><td>Vector instructions</td><td>Several multiply-adds per instruction</td></tr>
+            <tr><td>Use the tuned library</td><td>All of the above, plus decades of platform-specific work</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LOSS FUNCTIONS ─────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎯</span>
+    <span class="topic-name">Loss Functions — What the Model Is Being Told to Minimise</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Loss Is the Specification, and the Model Will Obey It Literally</div>
+      <div class="concept-desc">
+        A model does not learn the task; it minimises the loss. Where those two come apart, the loss
+        wins, every time and without complaint. Most surprising model behaviour is not a training
+        failure — it is a model succeeding precisely at an objective that did not say what its
+        authors meant.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Loss</th><th>Used for</th><th>Its bias</th></tr></thead>
+          <tbody>
+            <tr><td>Mean squared error</td><td>Regression</td><td>Squares the error, so outliers dominate training</td></tr>
+            <tr><td>Mean absolute error</td><td>Regression with outliers</td><td>Robust, but a weaker gradient near zero</td></tr>
+            <tr><td>Cross-entropy</td><td>Classification</td><td>Punishes confident wrong answers heavily — usually what you want</td></tr>
+            <tr><td>Weighted cross-entropy</td><td>Imbalanced classes</td><td>Encodes the relative cost of each error type explicitly</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The imbalance case is the one that bites in security and fraud work. With 99.9% benign
+          data, a model minimising plain accuracy learns to answer "benign" always — 99.9% accurate,
+          and completely useless. The fix is in the loss, not in more training.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Regularisation — Paying the Model to Stay Simple</div>
+      <div class="concept-desc">
+        Left alone, an over-parameterised model will memorise the training data, which drives training
+        loss to zero and generalisation with it. Regularisation adds a penalty for complexity to the
+        objective, so the model must trade fitting the data against staying simple — and simplicity
+        is what transfers to data it has not seen.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Method</th><th>Mechanism</th></tr></thead>
+          <tbody>
+            <tr><td>L2 penalty</td><td>Penalises large weights; keeps everything small and smooth</td></tr>
+            <tr><td>L1 penalty</td><td>Drives weights to exactly zero — selects features by discarding them</td></tr>
+            <tr><td>Dropout</td><td>Randomly disables units so no single path can be relied on</td></tr>
+            <tr><td>Early stopping</td><td>Stop when validation loss turns upward — the cheapest of all</td></tr>
+            <tr><td>More and better data</td><td>Not regularisation, and usually the strongest option available</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Metric You Report Is Not the Loss You Trained</div>
+      <div class="concept-desc">
+        Training needs a loss that is smooth and differentiable; the business cares about things that
+        are neither — precision at a chosen threshold, revenue, whether an analyst had to look at it.
+        Those cannot be optimised directly, so a proxy is trained and the real thing is measured
+        afterwards. Keeping the gap between proxy and goal in view is most of what separates a model
+        that helps from one that scores well. It is the same pattern as the service-desk metrics in
+        the Operations domain: the moment a proxy becomes the target, it stops measuring what it was
+        chosen to represent.
+      </div>
+    </div>
+  </div>
+</div>

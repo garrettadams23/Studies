@@ -2374,35 +2374,35 @@ a place it already shows up on the site.
 - [~] Binary, Hex & Bit Manipulation — masks, shifts, flags; subnetting revisited — **covered by 'Number Representation — Two's Complement, IEEE-754 & the Bugs Each Causes' in cs and the subnetting cards in net**
 - [x] Boolean Algebra — truth tables, De Morgan, and firewall/query logic
 - [x] Modular Arithmetic — the clock maths behind hashing, checksums and crypto
-- [ ] Sets & Relations — the formal spine of SQL joins and access control
-- [ ] Proof Techniques for Engineers — invariants, contradiction, counterexample
+- [x] Sets & Relations — the formal spine of SQL joins and access control
+- [x] Proof Techniques for Engineers — invariants, contradiction, counterexample
 
 **Wave AM2 — Probability for Defenders**
 - [x] Probability Fundamentals — independence, conditional probability, expectation
 - [x] Bayes' Theorem — base rates, and why a 99%-accurate detector still floods the SOC
 - [x] Distributions That Matter — normal, Poisson, power-law, long tails in latency
-- [ ] Sampling & Confidence — what a percentile really claims, and sample-size sanity
+- [x] Sampling & Confidence — what a percentile really claims, and sample-size sanity
 - [x] Birthday Paradox & Collisions — hash collisions, GUID reuse, key spaces
 
 **Wave AM3 — Statistics for Operations**
-- [ ] Descriptive vs Inferential — the mistake most dashboards make
+- [x] Descriptive vs Inferential — the mistake most dashboards make
 - [x] Percentiles & Latency — why p99 beats the mean, and how to aggregate it wrongly
-- [ ] Anomaly Detection Maths — z-scores, MAD, seasonality, and false-positive cost
-- [ ] A/B Testing & Significance — power, p-values, and stopping rules
-- [ ] Forecasting Capacity — trend, seasonality, and headroom planning
+- [x] Anomaly Detection Maths — z-scores, MAD, seasonality, and false-positive cost
+- [x] A/B Testing & Significance — power, p-values, and stopping rules
+- [x] Forecasting Capacity — trend, seasonality, and headroom planning
 
 **Wave AM4 — Mathematics of Cryptography**
 - [x] Prime Numbers & Factoring — why RSA rests on a hard problem
 - [x] Discrete Logarithms & Elliptic Curves — the other hard problem, and why keys shrank
 - [x] Entropy & Randomness — measuring it, and where implementations lose it
 - [~] Information Theory Basics — Shannon entropy, compression, password strength — **shipped as part of 'Entropy & Randomness — Measuring It, and Where Implementations Lose It'**
-- [ ] Lattices, Gently — the hard problem post-quantum cryptography moved to
+- [x] Lattices, Gently — the hard problem post-quantum cryptography moved to
 
 **Wave AM5 — Mathematics for Machine Learning**
 - [x] Vectors & Embeddings — similarity, cosine distance, and what a dimension means
-- [ ] Matrices & Linear Transformations — the operation a GPU spends its life doing
+- [x] Matrices & Linear Transformations — the operation a GPU spends its life doing
 - [x] Derivatives & Gradient Descent — how a model actually learns
-- [ ] Loss Functions & Optimisation — what the model is being told to minimise
+- [x] Loss Functions & Optimisation — what the model is being told to minimise
 - [x] Dimensionality & the Curse — why high-dimensional intuition fails
 
 ### TRACK AN — Hardware, Electronics & Embedded  (→ new `hw` domain)
@@ -5799,3 +5799,19 @@ should do and mostly does not.
 Ten items remain, all genuinely uncovered: sets and relations, proof techniques, sampling and
 confidence, descriptive vs inferential, anomaly-detection maths, A/B testing, capacity
 forecasting, lattices, matrices and linear transformations, and loss functions.
+
+> **Wave 2 shipped in the same session — Track AM is closed.** All ten, re-audited and all genuine
+> (`set theory`, `proof by contradiction`, `confidence interval`, `z-score`, `p-value`,
+> `linear regression`, `learning with errors`, `linear transformation` and `cross-entropy` each
+> returned **0**). `cs` is **56 cards**; the site is **1,166 topics**. **Four tracks closed this
+> session — W, BA, AA and AM.**
+>
+> The second wave kept the same connective discipline as the first. The anomaly-detection card ends
+> at the base-rate arithmetic from the Bayes card; the forecasting card hands off to `ops`'s
+> capacity card at the point where maths becomes procurement; the matrix card lands on cache
+> locality, already carded in `cs`, at the scale where it is impossible to miss; the lattice card
+> stops where `sec`'s post-quantum migration card begins; and the loss-function card closes on the
+> same observation as the service-desk metrics card written earlier in this session — **the moment
+> a proxy becomes the target, it stops measuring what it was chosen to represent.** That sentence
+> is now the site's most-repeated idea, arrived at independently in operations, detection
+> engineering and machine learning, which is a reasonable sign it is true.
