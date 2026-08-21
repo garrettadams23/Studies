@@ -225,6 +225,31 @@ def blame_times(rel_path, ignore, worktree_text):
     return times
 
 
+def body_times(times, start, end):
+    """Blame times for a topic's body — the span minus its opening tag line.
+
+    The opening line is the one this script rewrites, and excluding it is what
+    stops the stamp from oscillating. The mechanism: writing a corrected stamp
+    inside a commit that *also* adds real content makes that commit
+    non-mechanical, so it cannot be ignored when blaming. Blame then dates the
+    opening line to that commit, `max` picks it up, and the next run pushes the
+    topic forward again — after which the stamping commit is mechanical, the
+    ignore list catches it, and the run after that pulls it back. Three topics
+    in ops.html bounced between 2026-07 and 2026-08 that way across two waves.
+
+    A card's opening tag carries no content, so its blame date can never be
+    honest evidence that anyone reviewed the card: a real edit always touches a
+    body line too. Dropping it costs nothing and removes the cycle.
+
+    The fallback matters. Some topics in data/*.html are written on a single
+    line, header and body together; there the opening line *is* the content, so
+    excluding it would leave nothing to date and the topic would silently keep
+    whatever stamp it already had.
+    """
+    body = [times[n] for n in range(start + 1, end + 1) if n in times]
+    return body or [times[n] for n in range(start, end + 1) if n in times]
+
+
 def topic_spans(lines):
     """[(start_line, end_line, index_of_opening_tag)] for every .topic."""
     starts = [i for i, l in enumerate(lines, 1) if '<div class="topic"' in l]
@@ -313,7 +338,7 @@ def stamp(check_only=False, only=None):
 
         out = list(lines)
         for start, end in topic_spans(lines):
-            span_times = [times[n] for n in range(start, end + 1) if n in times]
+            span_times = body_times(times, start, end)
             if not span_times:
                 continue
             when = datetime.fromtimestamp(max(span_times), timezone.utc).strftime("%Y-%m")

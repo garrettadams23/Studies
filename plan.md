@@ -3222,33 +3222,44 @@ have not thought of yet.
 
 ~4 waves, ~20 cards.
 
-**Wave BJ1 — Designing for Failure**
-- [ ] Failure Modes & Effects Analysis for Systems — thinking it through before it happens
-- [ ] Blast Radius Design — bulkheads, cells, shuffle sharding
-- [ ] Graceful Degradation — the feature that turns off instead of the site going down
-- [ ] Dependency Failure — timeouts, retries with jitter, circuit breakers revisited
-- [ ] Capacity & Load Shedding — choosing what to drop before you are forced to
+**Wave BJ1 — Designing for Failure** — shipped into `ops`, except where noted.
+- [x] Failure Modes & Effects Analysis for Systems — thinking it through before it happens
+- [x] Blast Radius Design — bulkheads, cells, shuffle sharding
+- [x] Graceful Degradation — the feature that turns off instead of the site going down
+- [~] Dependency Failure — timeouts, retries with jitter, circuit breakers revisited — carded in
+  `eng` as *Resilience Patterns — Circuit Breaker, Retry &amp; Timeout*; the new degradation card
+  cross-references it
+- [x] Capacity & Load Shedding — choosing what to drop before you are forced to — same card as
+  degradation, because shedding requests and shedding features are one decision
 
-**Wave BJ2 — Chaos Engineering**
-- [ ] The Method — steady-state hypothesis, blast radius, abort conditions
-- [ ] Your First Experiment — safe, small, and in production eventually
-- [ ] Fault Injection Techniques — latency, errors, resource exhaustion, dependency loss
-- [ ] GameDays — running one that people volunteer for twice
-- [ ] Chaos Maturity — from an annual exercise to continuous verification
+**Wave BJ2 — Chaos Engineering** — mostly pre-existing; the organisational half shipped.
+- [~] The Method — steady-state hypothesis, blast radius, abort conditions — carded in `ops` as
+  *Chaos Engineering — Breaking Things on Purpose*
+- [~] Your First Experiment — safe, small, and in production eventually — same card ("Don't Start
+  Here" is its closing section)
+- [~] Fault Injection Techniques — latency, errors, resource exhaustion, dependency loss — same card
+- [x] GameDays — running one that people volunteer for twice
+- [x] Chaos Maturity — from an annual exercise to continuous verification — same card, as a
+  six-stage path that says plainly where most teams should stop
 
-**Wave BJ3 — Incidents as a System**
-- [ ] Incident Command Deep — roles, handovers, and long incidents
-- [ ] Communication During an Incident — internal, customer, and status page discipline
-- [ ] Blameless Postmortems That Change Something — actions with owners and dates
-- [ ] Learning From Near-Misses — the free lessons most organisations throw away
-- [ ] Incident Metrics — what MTTR does and does not tell you
+**Wave BJ3 — Incidents as a System** — mostly pre-existing.
+- [~] Incident Command Deep — roles, handovers, and long incidents — carded in `ops` as
+  *Incident Command — Running a Major Incident Without Chaos*
+- [~] Communication During an Incident — carded in `ops` as *Writing for Users — Outage Notices
+  &amp; Status Pages People Trust*
+- [~] Blameless Postmortems That Change Something — carded in `ops` as *Writing a Postmortem People
+  Actually Learn From*; the analytical half it was missing is in the new resilience-engineering card
+- [x] Learning From Near-Misses — the free lessons most organisations throw away
+- [x] Incident Metrics — what MTTR does and does not tell you — same card
 
-**Wave BJ4 — Human Factors**
-- [ ] Resilience Engineering — the field, and why "human error" is a bad root cause
-- [ ] Alert Fatigue — measuring it, and treating it as a reliability problem
-- [ ] On-Call Health — load, compensation, and the sustainable rotation
-- [ ] Runbook Quality — testing your runbooks the way you test code
-- [ ] Organisational Memory — keeping what was learned after the people leave
+**Wave BJ4 — Human Factors** — shipped into `ops`, except where noted.
+- [x] Resilience Engineering — the field, and why "human error" is a bad root cause
+- [x] Alert Fatigue — measuring it, and treating it as a reliability problem
+- [~] On-Call Health — load, compensation, and the sustainable rotation — carded in `ops` as
+  *On-Call Done Humanely*
+- [x] Runbook Quality — testing your runbooks the way you test code — same card as alert fatigue;
+  both are about operational artifacts decaying silently
+- [x] Organisational Memory — keeping what was learned after the people leave
 
 ---
 
@@ -6821,3 +6832,90 @@ OTel instruments and views, and symptom-based alerting, which `ops` already card
 recorded in the platform-engineering session record) · `--verify` clean · `smoke_test.mjs` 31/31 ·
 budget after build: raw 4.9 / 8.0 MB, gzip 1,324 / 2,200 KB, DOM 416 / 1,500, content elements
 101,920 / 175,000.
+
+---
+
+## Session record — Track BJ: resilience, plus a real bug in stamp_freshness.py
+
+Nineteenth content wave, and the most heavily pre-covered track audited so far.
+
+### The audit
+
+`ops` already carries five strong incident cards — *Chaos Engineering* (4.9 KB, with the method,
+running an experiment, what to inject, and a "don't start here" caveat), *Incident Command*,
+*Writing a Postmortem People Actually Learn From*, *Writing Runbooks That People Actually Follow*,
+and *On-Call Done Humanely*. `eng` carries *Designing for Failure* and *Resilience Patterns —
+Circuit Breaker, Retry &amp; Timeout*.
+
+That is roughly half of Track BJ already written, and written well. So this audit was mostly about
+finding what the twenty planned items contain that those seven cards do not:
+
+| Probe | Mentions before this wave |
+|---|---|
+| "shuffle shard", `gameday`, `FMEA` | 0 |
+| "near-miss" | 2, both in a threat-intel sense |
+| `bulkhead`, "load shedding" | 1 each, in `eng`, in passing |
+
+**7 cards into `ops`**, 61 → 68. Site: 1,286 → **1,293 topics**. Twelve of the twenty track items
+are marked `[~]` with the card that already covers them — the largest proportion of any track this
+session, and the honest result.
+
+Blast Radius Design · FMEA for Systems · Load Shedding &amp; Graceful Degradation · GameDays &amp;
+Chaos Maturity · Near-Misses &amp; Incident Metrics · Resilience Engineering &amp; Organisational
+Memory · Alert Fatigue &amp; Runbook Quality.
+
+### What these cards are actually about
+
+Four specifics worth carrying:
+
+- **Congestion collapse has a recognisable dashboard signature:** high CPU, high queue depth,
+  near-zero successful throughput, every latency percentile pinned at the timeout. A system showing
+  that shape is spending all its capacity on work that will be discarded, and refusing ten percent
+  of requests immediately would serve the other ninety.
+- **Shuffle sharding is combinatorics doing reliability work.** Two workers each from a pool of
+  eight gives twenty-eight distinct pairs, so one abusive tenant affects the handful who share both
+  of its workers rather than a whole shard. It contains nothing if the workers share a database.
+- **"Human error" is where the investigation stopped.** The action made sense to the person given
+  what they could see; understanding why it made sense is what produces a fix. And the gap between
+  the documented procedure and what people actually do is usually *why the system works* — treat a
+  deviation as a question before treating it as non-compliance.
+- **A noisy pager is an outage you have not had yet.** It is a technical defect, not only a
+  wellbeing one: an engineer who has learned the pager is usually wrong acknowledges the real page
+  more slowly. Track the proportion of pages that led to action; below about half, the pager is
+  training people to ignore it.
+
+### The bug: stamps were oscillating
+
+This wave's stamping run moved three `ops` topics from `2026-07` back to `2026-08` — the exact three
+the previous wave had moved from `2026-08` to `2026-07`. Not drift: a genuine cycle, and worth
+recording because four earlier "corrections" this session were the same mechanism seen from one side.
+
+**Cause.** A topic's date was `max()` over the blame times of every line in its span, including the
+opening `<div class="topic" data-reviewed="…">` line — the line the script itself rewrites. Writing
+a corrected stamp inside a commit that also adds real content makes that commit non-mechanical, so
+it cannot be ignored when blaming; blame then dates the opening line to that commit, `max` picks it
+up, and the topic moves forward. The next run's stamping commit *is* mechanical, the ignore list
+catches it, and the topic moves back. Two waves, two directions, same three cards.
+
+**Fix.** A new `body_times()` helper takes the span minus its opening line. A card's opening tag
+carries no content, so its blame date can never be honest evidence that anyone reviewed the card —
+any real edit touches a body line too. Dropping it removes the cycle at no cost. The fallback
+matters: some topics in `data/*.html` are written on a single line with header and body together, so
+when the body yields nothing the helper falls back to the full span rather than silently leaving the
+topic unstamped.
+
+**Verified.** Restoring the three stamps to their committed values and re-running now leaves them
+alone and moves only the seven new cards. `--only` on `sec`, `grc`, `devops`, `cloud` and `eng` —
+the five domains corrected earlier this session — reports no change on any of them.
+
+This also revises what the platform-engineering record said. That rule — *when `--only` moves an old
+stamp, check whether a mechanical commit inflated it* — was right about the four cases it described,
+and it was treating a symptom. The cause is fixed now; a stamp that moves after this commit deserves
+the original suspicion again.
+
+### Verification
+
+`lint_content.py` 1,293 topics / 173 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py --check` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 4.9 / 8.0 MB, gzip 1,335 / 2,200 KB, DOM 416 / 1,500, content elements
+102,492 / 175,000.

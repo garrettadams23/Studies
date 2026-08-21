@@ -4671,3 +4671,643 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: BLAST RADIUS DESIGN ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧱</span>
+    <span class="topic-name">Blast Radius Design — Bulkheads, Cells &amp; Shuffle Sharding</span>
+    <span class="topic-badge">Reliability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">You Cannot Prevent Failure; You Can Decide How Much of It Reaches Users</div>
+      <div class="concept-desc">
+        Past a certain scale, reliability work stops being about preventing failures and starts
+        being about bounding them. Something will exhaust a connection pool, a poison message will
+        crash a consumer, a deploy will be bad, a single customer will send traffic nobody
+        anticipated. The design question is not whether that happens — it is how many users notice
+        when it does. A system where any one failure affects everyone has, in effect, chosen
+        one hundred percent as its blast radius by default.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          Each technique below trades efficiency for containment, and the trade is explicit:
+          partitioned resources sit idle that a shared pool would have used. That inefficiency is
+          what you are buying, and it is worth naming plainly, because it is the argument that will
+          be made against every one of these designs.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Techniques, From Cheapest to Most Structural</div>
+      <div class="concept-desc">
+        Start at the top. The first two are configuration changes in an afternoon; the last two are
+        architecture.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Technique</th><th>Contains</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>Separate connection pools and thread pools per dependency</td><td>One slow dependency consuming all capacity</td><td>Some idle capacity; a config change</td></tr>
+            <tr><td>Per-tenant rate limits and quotas</td><td>One customer's traffic starving everyone else</td><td>Enforcement plumbing</td></tr>
+            <tr><td>Separate queues per priority or tenant</td><td>A poison message or a backlog blocking unrelated work</td><td>More queues to operate</td></tr>
+            <tr><td>Cells — complete independent stacks, users assigned to one</td><td>Nearly everything; a failed cell affects its cell only</td><td>Substantial: routing, deployment, and operating N of everything</td></tr>
+            <tr><td>Shuffle sharding</td><td>The correlated failure — see below</td><td>Routing complexity, and it is subtle to reason about</td></tr>
+            <tr><td>Separate deployment waves</td><td>A bad deploy reaching all users at once</td><td>Slower rollouts, deliberately</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Shuffle Sharding — The Combinatorics That Do the Work</div>
+      <div class="concept-desc">
+        Plain sharding assigns each customer to one shard: eight shards means a failed shard takes
+        out an eighth of customers, and those customers are down completely. Shuffle sharding gives
+        each customer a random <em>pair</em> of workers instead. The number of distinct pairs from
+        eight workers is twenty-eight, so two customers share both workers only rarely — and a
+        customer whose one worker is unhealthy still has another.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Design</th><th>One worker fails</th><th>One customer is abusive</th></tr></thead>
+          <tbody>
+            <tr><td>Shared pool of 8</td><td>Degraded for everyone</td><td>Everyone affected</td></tr>
+            <tr><td>Sharded, 1 worker each</td><td>1/8 of customers fully down</td><td>1/8 fully affected</td></tr>
+            <tr><td>Shuffle sharded, 2 of 8</td><td>Affected customers still have a healthy worker</td><td>Only those sharing both workers are affected — a small fraction</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The property scales sharply: with more workers per customer and more workers overall, the
+          chance that any two customers overlap completely becomes very small, so one bad actor's
+          effect is confined to a handful of others rather than a whole shard. It needs the client
+          to retry on its other assignment, and it needs the workers to be genuinely independent —
+          shuffle sharding over workers that all share one database contains nothing at all.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: FMEA FOR SYSTEMS ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📋</span>
+    <span class="topic-name">Failure Modes &amp; Effects Analysis for Systems — Thinking It Through Before It Happens</span>
+    <span class="topic-badge">Reliability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Structured Version of a Conversation Teams Have Badly</div>
+      <div class="concept-desc">
+        Every design review includes some version of "what happens if the database is down?" — asked
+        about whichever component the loudest person is worried about, answered from memory, and not
+        written down. FMEA is the same conversation conducted systematically: enumerate every
+        component, ask how each can fail, work out what the user experiences when it does, and
+        record whether anything would tell you. Borrowed from manufacturing and aerospace, and it
+        transfers cleanly because the failure of imagination it corrects is the same one.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          Its value is not the document — it is that the analysis reliably finds failure modes with
+          no detection and no handling, which are the ones that become long outages. Half the
+          findings are usually fixed during the session, because they turn out to be a missing
+          timeout or an alert nobody added.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Table, and the Failure Modes Worth Asking About Every Time</div>
+      <div class="concept-desc">
+        One row per component per failure mode. Keep it to a page — the aim is finding gaps, not
+        producing an artifact.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Column</th><th>Question</th></tr></thead>
+          <tbody>
+            <tr><td>Component</td><td>What part is this?</td></tr>
+            <tr><td>Failure mode</td><td>How can it fail? Not "it breaks" — slow, wrong, partial, unavailable</td></tr>
+            <tr><td>Effect on the user</td><td>What does someone actually experience?</td></tr>
+            <tr><td>Detection</td><td>What would tell us, and how fast? "Nothing" is the finding</td></tr>
+            <tr><td>Current handling</td><td>What happens automatically today?</td></tr>
+            <tr><td>Action</td><td>Detect it, handle it, or accept it explicitly</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The failure modes teams forget are consistent enough to use as a checklist: the dependency
+          that is <em>slow</em> rather than down; the one that returns <em>wrong</em> data
+          successfully; partial failure where some instances work; the dependency that recovers and
+          is immediately overwhelmed by everyone retrying; the certificate that expires; the disk
+          that fills; clock skew; and the failure of the thing that was supposed to detect the
+          failure.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Keeping It From Becoming a Ritual</div>
+      <div class="concept-desc">
+        FMEA has a well-earned reputation in some industries for being a spreadsheet exercise
+        completed to satisfy a process. The difference is entirely in scope and follow-through.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Do</th><th>Rather than</th></tr></thead>
+          <tbody>
+            <tr><td>One critical path, ninety minutes, whiteboard</td><td>Every component of every service</td></tr>
+            <tr><td>Run it at design time and after a surprising incident</td><td>Annually, because the calendar said so</td></tr>
+            <tr><td>Include someone who has been on-call for this system</td><td>Only the people who designed it</td></tr>
+            <tr><td>Turn each "detection: none" into a ticket that day</td><td>A risk register nobody reads</td></tr>
+            <tr><td>Skip the numeric risk scoring</td><td>Debating whether likelihood is 3 or 4</td></tr>
+            <tr><td>Feed the findings into chaos experiments</td><td>Assuming the handling works because it is written down</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is where this pays off twice. FMEA produces hypotheses — "if the cache is
+          unavailable we degrade gracefully" — and a chaos experiment is how you find out whether
+          that is true. The two practices are the same loop: predict the behaviour, then verify it.
+          Prediction alone is how teams acquire confident, wrong beliefs about their own systems.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LOAD SHEDDING & DEGRADATION ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚖️</span>
+    <span class="topic-name">Load Shedding &amp; Graceful Degradation — Choosing What to Drop Before You Are Forced To</span>
+    <span class="topic-badge">Reliability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Accepting Work You Cannot Complete Is Worse Than Refusing It</div>
+      <div class="concept-desc">
+        An overloaded system that keeps accepting requests degrades in the worst possible way: every
+        request queues, every request eventually times out, clients retry, the queue grows, and
+        throughput collapses to near zero while the machine is fully busy. Nobody gets served, and
+        the system is working as hard as it can. Refusing ten percent of requests immediately, so
+        the other ninety are served correctly, is strictly better for users and is the decision the
+        system has to make on its own — because by the time a human is involved it is already in the
+        collapsed state.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          The failure mode has a name worth knowing — congestion collapse — and its signature is
+          distinctive: high CPU <span class="acro-exp">(Central Processing Unit)</span>, high queue depth, near-zero successful throughput, and every
+          latency percentile pinned at the timeout. If a dashboard ever shows that shape, the system
+          has no shedding and is spending all its capacity on work that will be thrown away.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">What to Drop, in Order</div>
+      <div class="concept-desc">
+        Shedding is only useful if the system knows what matters, which means priority has to be
+        attached to requests before the overload rather than inferred during it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Drop first</th><th>Reasoning</th></tr></thead>
+          <tbody>
+            <tr><td>Requests already past their deadline</td><td>The client has given up; completing them is pure waste</td></tr>
+            <tr><td>Retries, before first attempts</td><td>Otherwise retries crowd out the traffic they are retrying for</td></tr>
+            <tr><td>Background and batch work</td><td>It can happen later; interactive work cannot</td></tr>
+            <tr><td>Non-essential enrichment — recommendations, personalisation</td><td>Degrades the page rather than removing it</td></tr>
+            <tr><td>Lower-tier or free traffic, if the business says so</td><td>A business decision, made in advance and written down</td></tr>
+            <tr><td>Write traffic before read traffic, or the reverse</td><td>Depends entirely on the product; decide deliberately</td></tr>
+            <tr><td>Never: health checks and the control plane</td><td>Shedding these turns overload into an outage nobody can fix</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two implementation details matter more than the policy. Reject fast and cheaply — a
+          rejection that costs as much as serving the request sheds nothing. And return a status the
+          client understands as "back off", with a retry hint, because a client that retries a
+          rejection immediately has converted your load shedding into a load multiplier.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Graceful Degradation — The Feature That Turns Off Instead of the Site Going Down</div>
+      <div class="concept-desc">
+        Degradation is shedding applied to functionality rather than to requests: the page renders
+        without the recommendation strip, search returns results without the faceted counts, the
+        dashboard shows cached figures with a timestamp. Users notice something is missing and can
+        still do what they came for.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Classify every dependency as critical or optional, in advance</td><td>The classification is the design; without it everything is critical by accident</td></tr>
+            <tr><td>Optional dependencies get short timeouts and a fallback</td><td>An optional dependency with a thirty-second timeout is a critical one</td></tr>
+            <tr><td>Serve stale data with an explicit staleness indicator</td><td>Usually far better than an error, if the user can see it is stale</td></tr>
+            <tr><td>Feature flags to disable expensive paths under pressure</td><td>A manual lever that works when the automatic one does not</td></tr>
+            <tr><td>Test the degraded path regularly</td><td>Fallbacks that are never exercised do not work when needed</td></tr>
+            <tr><td>Alert on degradation, do not merely tolerate it</td><td>Permanently degraded and healthy look identical from outside</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          That last row is the one that catches teams out. A fallback works so well that nobody
+          notices the dependency has been down for three weeks — until the fallback itself fails and
+          two problems arrive together. Degradation should always be visible in telemetry even when
+          it is invisible to users. The client-side patterns that pair with this are in
+          <span class="xref">Resilience Patterns — Circuit Breaker, Retry &amp; Timeout</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: GAMEDAYS & CHAOS MATURITY ──────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎮</span>
+    <span class="topic-name">GameDays &amp; Chaos Maturity — From an Annual Exercise to Continuous Verification</span>
+    <span class="topic-badge">Reliability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A GameDay Tests the Humans; a Chaos Experiment Tests the System</div>
+      <div class="concept-desc">
+        The two are constantly conflated and they verify different things. A chaos experiment asks
+        whether the system behaves as predicted when something fails — automated, repeatable, and
+        ideally continuous. A GameDay asks whether the <em>organisation</em> can detect, diagnose,
+        communicate about and resolve a problem: whether the alert fires to the right person,
+        whether the runbook is accurate, whether anyone knows who declares an incident, whether the
+        status page can actually be updated by the person on call at two in the morning.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          Most organisations need the second one more urgently and run the first, because injecting
+          a fault is a technical task and running an exercise requires getting people in a room. The
+          method for the technical half is in
+          <span class="xref">Chaos Engineering — Breaking Things on Purpose</span>;
+          this card is the organisational half and the maturity path between them.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Running One That People Volunteer for Twice</div>
+      <div class="concept-desc">
+        A badly run GameDay feels like an exam with an audience, and the team quietly declines the
+        next one. A well-run one feels like finding out useful things together, and the difference
+        is mostly in the framing and the debrief.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>State plainly that the system is on trial, not the people</td><td>Say it at the start; everyone assumes the opposite by default</td></tr>
+            <tr><td>Announce the window, not the scenario</td><td>Preparation is legitimate; foreknowledge of the fault is not</td></tr>
+            <tr><td>Have a facilitator who is not participating</td><td>Someone must watch the clock, the stop condition and the notes</td></tr>
+            <tr><td>Agree the abort condition before starting</td><td>And abort when it is met, without debate — this builds the trust to run more</td></tr>
+            <tr><td>Let people struggle for a while before hinting</td><td>The struggle is the data; rescuing early destroys it</td></tr>
+            <tr><td>Debrief the same day</td><td>Findings evaporate overnight</td></tr>
+            <tr><td>Fix the top three findings before the next one</td><td>Otherwise it is an exercise in rediscovering the same gaps</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The findings that recur across organisations are worth expecting: the alert went to a
+          rotation nobody owns, the runbook referenced a tool that was replaced, the dashboard
+          needed a permission the responder did not have, and nobody was sure who was allowed to
+          declare a customer-facing incident. None of these is discoverable by reading.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Maturity Path, and Where Most Teams Should Stop</div>
+      <div class="concept-desc">
+        Continuous automated chaos in production is the well-publicised end state and it is the
+        right target for a minority of organisations. The stages before it deliver most of the value
+        and are where nearly everyone should be.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stage</th><th>What it looks like</th><th>Prerequisite</th></tr></thead>
+          <tbody>
+            <tr><td>0 — Not ready</td><td>Known reliability problems still unfixed</td><td>Fix those first; chaos will only re-find them</td></tr>
+            <tr><td>1 — Tabletop</td><td>Talk through a scenario in a room, no injection</td><td>Nothing; do this next week</td></tr>
+            <tr><td>2 — GameDay in non-production</td><td>Real fault injection, real responders, safe blast radius</td><td>A non-production environment worth testing in</td></tr>
+            <tr><td>3 — GameDay in production, announced</td><td>Small blast radius, abort ready, business hours</td><td>Observability good enough to see what happens</td></tr>
+            <tr><td>4 — Automated experiments in CI</td><td>Resilience assertions run on every change</td><td>Experiments encoded as tests</td></tr>
+            <tr><td>5 — Continuous production chaos</td><td>Faults injected routinely, unannounced</td><td>Mature automation and genuine organisational confidence</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Stage 1 is underrated and nearly free. Sit six people down and ask what happens if the
+          primary database fails right now — who notices, what fires, who is called, what do they
+          do. The disagreements in that conversation are findings, and they surface in twenty
+          minutes without touching production.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: NEAR-MISSES & INCIDENT METRICS ─────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📈</span>
+    <span class="topic-name">Near-Misses &amp; Incident Metrics — What MTTR <span class="acro-exp">(Mean Time To Repair)</span> Does and Does Not Tell You</span>
+    <span class="topic-badge">Reliability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Free Lessons Most Organisations Throw Away</div>
+      <div class="concept-desc">
+        A near-miss is an event that could have been an incident and was not — the alert that fired
+        while someone happened to be looking, the deploy caught in canary, the failover that worked
+        because a colleague had fixed something unrelated last week. They carry almost all the
+        information of a real incident and none of the cost, and they are systematically discarded
+        because there is no outage to justify writing anything down.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          Industries with severe consequences learned this decades ago and built reporting systems
+          for it, because the same conditions that produce a near-miss produce an accident when one
+          coincidence goes the other way. The software version is cheap: a lightweight channel where
+          "that was close" is a normal thing to say, and a fortnightly ten-minute pass over what
+          people posted.
+        </div>
+        <table class="ref-table">
+          <thead><tr><th>Near-miss</th><th>What it is telling you</th></tr></thead>
+          <tbody>
+            <tr><td>Caught in code review by chance</td><td>The check that should be automated is not</td></tr>
+            <tr><td>Canary caught it</td><td>The canary worked — and would a slower-burning fault have been caught?</td></tr>
+            <tr><td>Noticed by a human watching a dashboard</td><td>There is no alert for this; you got lucky with attention</td></tr>
+            <tr><td>Recovered because the retry happened to succeed</td><td>You are one coincidence from an outage</td></tr>
+            <tr><td>Fixed quickly because one person knew the trick</td><td>A single point of failure who is a person</td></tr>
+            <tr><td>The backup was needed and worked</td><td>Genuinely good news — say so, then check when it was last tested</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Incident Metrics That Mislead, and What to Read Instead</div>
+      <div class="concept-desc">
+        Mean time to recovery is the standard reliability metric and it is a poor one, for a
+        specific statistical reason: incident durations are heavily skewed, so a mean over a small
+        number of wildly different events is dominated by whichever long incident happened to fall
+        in the period.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Instead of</th><th>Read</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>Mean time to recovery</td><td>The distribution — median and worst case</td><td>One nine-hour outage swamps twenty short ones</td></tr>
+            <tr><td>Incident count</td><td>Count by severity, and user-minutes affected</td><td>Counting treats a blip and an outage as equal</td></tr>
+            <tr><td>MTBF <span class="acro-exp">(Mean Time Between Failures)</span> between failures</td><td>Time to detect, separately from time to resolve</td><td>Detection and repair have different fixes</td></tr>
+            <tr><td>"Was there an incident?"</td><td>Error-budget consumption</td><td>Continuous, and already tied to the user's experience</td></tr>
+            <tr><td>Action items created</td><td>Action items completed, and time to completion</td><td>Creation is free; completion is the improvement</td></tr>
+            <tr><td>Repeat-incident rate</td><td>Same, and it is the most honest number here</td><td>Recurrence means the last fix addressed a symptom</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Time to detect deserves separating out because it is usually the larger half and the
+          easier to fix. An incident resolved in ten minutes after ninety minutes of nobody noticing
+          is a monitoring problem wearing a response problem's clothes, and averaging the two hides
+          exactly that.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Measurement Trap</div>
+      <div class="concept-desc">
+        Every incident metric can be improved without improving anything, and the gaming is rarely
+        deliberate — it is what a reasonable person does when a number is watched.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Pressure</th><th>Response it produces</th></tr></thead>
+          <tbody>
+            <tr><td>Reduce incident count</td><td>Fewer things get declared an incident</td></tr>
+            <tr><td>Reduce time to recovery</td><td>Incidents are closed at mitigation, before resolution</td></tr>
+            <tr><td>Reduce severity-one count</td><td>Everything is a severity two</td></tr>
+            <tr><td>Improve postmortem completion</td><td>Postmortems written to be complete, not useful</td></tr>
+            <tr><td>Zero incidents as a goal</td><td>Nobody reports anything; you lose the near-misses too</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The defence is to use these numbers to prompt questions rather than to grade teams, and to
+          watch a counter-metric alongside each one — repeat incidents against incident count,
+          user-minutes against duration. A reliability programme measured as a scorecard produces a
+          good scorecard, which is not the same as a reliable system, and the confusion is difficult
+          to reverse once an organisation has made it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: RESILIENCE ENGINEERING & MEMORY ────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧠</span>
+    <span class="topic-name">Resilience Engineering &amp; Organisational Memory — Why "Human Error" Is a Bad Root Cause</span>
+    <span class="topic-badge">Reliability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">"Human Error" Is Where the Investigation Stopped, Not Where the Cause Was</div>
+      <div class="concept-desc">
+        Resilience engineering is a field with its own research literature, and its central finding
+        is uncomfortable for the way most organisations run incident reviews: when an investigation
+        concludes that someone made a mistake, it has stopped at the point where the interesting
+        questions begin. The person's action made sense to them at the time, given what they could
+        see and the pressures they were under. Understanding <em>why it made sense</em> is what
+        produces a fix; concluding that they should have been more careful produces nothing,
+        because the next person will have the same information and the same pressures.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Instead of</th><th>Ask</th></tr></thead>
+          <tbody>
+            <tr><td>"They ran the command on the wrong host"</td><td>What made the two hosts hard to tell apart at that moment?</td></tr>
+            <tr><td>"They skipped the verification step"</td><td>What made skipping it the reasonable thing to do under that pressure?</td></tr>
+            <tr><td>"They should have escalated sooner"</td><td>What signal would have told them it was time? Did it exist?</td></tr>
+            <tr><td>"They deployed without testing"</td><td>What did the process make easy, and what did it make slow?</td></tr>
+            <tr><td>"They misread the dashboard"</td><td>What does that dashboard look like at 3am to someone who did not build it?</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Each right-hand question has an actionable answer and each left-hand statement does not.
+          The blameless-postmortem practice in
+          <span class="xref">Writing a Postmortem People Actually Learn From</span>
+          is the cultural half of this; the questions above are the analytical half, and they are
+          what makes blamelessness produce findings rather than merely produce politeness.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Work as Imagined and the Work as Done</div>
+      <div class="concept-desc">
+        A second finding from the same field, and the more useful one operationally: there is always
+        a gap between the documented procedure and what people actually do, and the gap is usually
+        <em>why the system works</em>. Operators continuously adapt — checking one more thing,
+        skipping a step that is safe here, knowing which alert to trust. That adaptation absorbs
+        variation the design never anticipated, and it is invisible until somebody enforces the
+        documented process exactly and things get worse.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          The practical consequence: when you find people deviating from a procedure, the first
+          question is not how to stop them. It is what the deviation is achieving. Sometimes it is a
+          genuine risk to close; often it is compensating for something the procedure gets wrong, and
+          the correct fix is to change the procedure. Organisations that treat every deviation as
+          non-compliance lose the adaptation and are surprised when reliability falls.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Organisational Memory — Keeping What Was Learned After the People Leave</div>
+      <div class="concept-desc">
+        Much of an organisation's reliability lives in a handful of people's heads: which alert is
+        noise, why that service has an odd configuration, what happened last time this failed. It is
+        unwritten, it is load-bearing, and it leaves with them — which is why a team can lose two
+        engineers and become measurably less reliable with no change to the system at all.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>What it preserves</th></tr></thead>
+          <tbody>
+            <tr><td>Decision records that say what was rejected and why</td><td>Stops the rejected option being re-adopted in three years</td></tr>
+            <tr><td>Comments explaining why, not what</td><td>The constraint that made odd code correct</td></tr>
+            <tr><td>Searchable, indexed postmortems</td><td>"Has this happened before?" answered in a minute, not by asking</td></tr>
+            <tr><td>Runbooks written by the person who was paged, not the expert</td><td>Captures what a non-expert actually needed to know</td></tr>
+            <tr><td>Rotating on-call across the whole team</td><td>Distributes the knowledge; the fastest way to find undocumented gaps</td></tr>
+            <tr><td>Recording incident calls, with consent</td><td>The reasoning in the moment, which the written record loses</td></tr>
+            <tr><td>An exit handover that is knowledge, not access</td><td>The accounts get transferred; the knowledge usually does not</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The decision-record row is the highest-leverage one and the least practised. Nearly every
+          architecture document records what was chosen; very few record what was rejected and under
+          what constraint — so when the constraint expires, nobody knows the decision can be
+          revisited, and when it still holds, somebody proposes the rejected option again with
+          confidence.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: ALERT FATIGUE & RUNBOOK QUALITY ────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔕</span>
+    <span class="topic-name">Alert Fatigue as a Reliability Problem, and Testing Runbooks Like Code</span>
+    <span class="topic-badge">Reliability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Noisy Pager Is an Outage You Have Not Had Yet</div>
+      <div class="concept-desc">
+        Alert fatigue is normally discussed as a wellbeing issue, and it is one. It is also a
+        straightforwardly technical reliability defect: an engineer who has been woken six times
+        this week by alerts that resolved themselves has learned, correctly, that the pager is
+        usually wrong. When the seventh page is real, it is acknowledged more slowly and
+        investigated less thoroughly, because the prior probability they have absorbed says it will
+        be nothing. The system's mean time to detect has quietly increased, and no dashboard shows
+        it.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          Which means alert quality deserves the same treatment as any other reliability metric:
+          measured, reviewed on a schedule, and owned. The number worth tracking is the proportion
+          of pages that led to action — anything below about half means the pager is training people
+          to ignore it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Measuring and Fixing It</div>
+      <div class="concept-desc">
+        The alerts to remove are identifiable from data rather than from opinion, which matters,
+        because everyone's opinion about which alert is noisy differs and nobody wants to be the one
+        who deleted the alert that would have caught it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Signal</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Alert resolved itself before anyone acted</td><td>Not page-worthy; make it a ticket or add a duration condition</td></tr>
+            <tr><td>Alert fires repeatedly with the same cause</td><td>Fix the cause, or accept it and stop paging for it</td></tr>
+            <tr><td>Alert has never led to action, ever</td><td>Delete it — an alert nobody acts on is documentation with a siren</td></tr>
+            <tr><td>Alert fires outside working hours for something that can wait</td><td>Route by urgency, not by severity label</td></tr>
+            <tr><td>Several alerts fire for one underlying failure</td><td>Group and suppress downstream symptoms</td></tr>
+            <tr><td>Alert is on a cause rather than a symptom</td><td>Alert on the user impact; keep the cause as a diagnostic</td></tr>
+            <tr><td>Pages per shift above a handful</td><td>The rotation is not sustainable — this is the top-level number</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          A useful forcing rule: every page must have a runbook and a human action. If nobody can
+          say what the recipient is supposed to do about it, it is not an alert — and the honest
+          version of that conversation removes a surprising fraction of most alert catalogues in an
+          afternoon.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Runbooks Rot Silently — Test Them the Way You Test Code</div>
+      <div class="concept-desc">
+        A runbook is written once, is correct that day, and then the tool is replaced, the namespace
+        is renamed, the permission model changes and the dashboard link breaks. Nothing tells you.
+        The failure is discovered by a tired person at three in the morning, which is the worst
+        possible test environment and the one every untested runbook is eventually run in. Writing
+        them well is covered in
+        <span class="xref">Writing Runbooks That People Actually Follow</span>;
+        keeping them true is a separate discipline.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Catches</th></tr></thead>
+          <tbody>
+            <tr><td>Execute it during the GameDay for that scenario</td><td>Everything — this is the real test</td></tr>
+            <tr><td>Have the newest team member run it, unaided</td><td>Assumed knowledge the author could not see</td></tr>
+            <tr><td>Automate link and command checking in CI</td><td>Dead links, renamed resources, removed flags</td></tr>
+            <tr><td>Version runbooks in the repository beside the service</td><td>They change in the same pull request as the thing they describe</td></tr>
+            <tr><td>Record when each was last executed, not last edited</td><td>Edited last month and never run is not evidence of anything</td></tr>
+            <tr><td>Automate the steps that are purely mechanical</td><td>A runbook step that is always the same command should be a script</td></tr>
+            <tr><td>Delete runbooks for systems that no longer exist</td><td>Wrong instructions are worse than none, and they look authoritative</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last-executed date is the single most useful piece of metadata to add, because it
+          converts an unanswerable question — is this still correct? — into a visible one. A runbook
+          for a critical failure path that has not been run in two years is a finding, and it is one
+          you can query for rather than discover.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
