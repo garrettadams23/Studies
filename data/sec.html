@@ -6239,3 +6239,305 @@ invoice = Invoice.objects.get(id=request_id, tenant=current_user.tenant)
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: OAUTH 2.1 & PKCE ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔑</span>
+    <span class="topic-name">OAuth <span class="acro-exp">(Open Authorization)</span> 2.1 &amp; PKCE <span class="acro-exp">(Proof Key for Code Exchange)</span> — The Flows That Remain, and the Ones That Were Removed</span>
+    <span class="topic-badge">Identity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">OAuth 2.1 Is a Tidy-Up, Not a New Protocol</div>
+      <div class="concept-desc">
+        OAuth 2.0 accumulated a decade of extensions, security advisories and best-current-practice
+        documents, and the result was a specification where several documented flows were known to
+        be unsafe. OAuth 2.1 consolidates that guidance into one document: it removes the flows that
+        had become indefensible and makes the mitigations mandatory rather than recommended. If you
+        already follow current best practice you are broadly compliant with it; if you are running
+        something written in 2015 against a copied tutorial, you probably are not.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Change</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Implicit flow removed</td><td>Returned tokens in the URL <span class="acro-exp">(Uniform Resource Locator)</span> fragment — logged, cached, leaked via referrer and history</td></tr>
+            <tr><td>Resource owner password credentials removed</td><td>The application handles the user's password, defeating the point of OAuth</td></tr>
+            <tr><td>PKCE required for all authorization-code flows</td><td>Not just public clients — confidential clients benefit too</td></tr>
+            <tr><td>Redirect URIs <span class="acro-exp">(Uniform Resource Identifier)</span> matched exactly</td><td>Wildcard and prefix matching is how tokens end up at attacker-controlled URLs</td></tr>
+            <tr><td>Bearer tokens not permitted in query strings</td><td>Same leakage path as the implicit flow</td></tr>
+            <tr><td>Refresh tokens must be sender-constrained or rotated</td><td>A stolen non-rotating refresh token is indefinite access</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          What remains is a short list: authorization code with PKCE for anything with a user,
+          client credentials for machine-to-machine, device authorization grant for input-limited
+          devices, and refresh tokens under the rules above. If a design calls for something else,
+          that is worth a second look.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">PKCE — What It Actually Prevents</div>
+      <div class="concept-desc">
+        PKCE — Proof Key for Code Exchange — closes the authorization-code interception attack. The
+        code comes back to the client through a redirect, which on a mobile device or in a browser
+        can be observed or hijacked by another application registered for the same URI scheme.
+        Without PKCE, whoever holds that code can exchange it for a token. With it, the code is
+        useless to anyone who does not also hold the secret that generated it.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># 1. Client invents a random secret and sends only its hash</span>
+code_verifier  = random(64)                     <span class="com"># kept in memory</span>
+code_challenge = base64url(sha256(code_verifier))
+
+<span class="com"># 2. Authorization request carries the hash</span>
+GET /authorize?response_type=code&amp;client_id=…
+    &amp;code_challenge=&lt;hash&gt;&amp;code_challenge_method=S256
+
+<span class="com"># 3. Token exchange carries the original — the server re-hashes and compares</span>
+POST /token   grant_type=authorization_code
+              code=&lt;code&gt;&amp;code_verifier=&lt;original&gt;</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          Two details decide whether it works. Use <code>S256</code>, never the <code>plain</code>
+          method, which sends the verifier itself and protects nothing. And the authorization server
+          must <em>reject</em> a token request with no verifier when a challenge was presented —
+          an implementation that treats the verifier as optional can be downgraded by simply
+          omitting it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Device Code Flow, and Why It Keeps Appearing in Incidents</div>
+      <div class="concept-desc">
+        The device authorization grant exists for things with no browser and no keyboard — a
+        television, a command-line tool, a meeting-room display. The user is shown a short code and
+        told to enter it on another device. It is a legitimate flow and it is also the mechanism
+        behind a persistent phishing technique, because the attacker never needs to control any part
+        of the sign-in.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step in the attack</th><th>What the victim sees</th></tr></thead>
+          <tbody>
+            <tr><td>Attacker initiates a device-code request for a real application</td><td>Nothing</td></tr>
+            <tr><td>Attacker sends the user the genuine code and the genuine URL</td><td>A real Microsoft or Google page, correct domain, valid certificate</td></tr>
+            <tr><td>User signs in and approves</td><td>An ordinary, successful sign-in with MFA <span class="acro-exp">(Multi-Factor Authentication)</span></td></tr>
+            <tr><td>Attacker's pending request receives the token</td><td>Nothing at all</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Every anti-phishing control misses this for the same reason
+          <span class="xref">OAuth Consent Phishing — The Attack That Needs No Password</span>
+          is missed: nothing is fake. The practical answer is to restrict the device-code flow by
+          policy to the small number of scenarios that genuinely need it — meeting-room devices and
+          specific command-line tooling — and to alert on its use everywhere else, where it is
+          almost always someone being phished.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TOKEN LIFETIME & REVOCATION ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⏳</span>
+    <span class="topic-name">Token Lifetime &amp; Revocation — The Logout That Does Not, and How to Fix It</span>
+    <span class="topic-badge">Identity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Self-Contained Token Cannot Be Withdrawn, Only Outlived</div>
+      <div class="concept-desc">
+        The property that makes signed tokens efficient is the same one that makes them impossible
+        to revoke: the resource server validates the signature locally and never asks the issuer
+        anything. That is why an API <span class="acro-exp">(Application Programming Interface)</span> can scale without a shared session store — and it is why
+        disabling an account, changing a password, or clicking "sign out everywhere" has no effect
+        on a token already issued. It remains valid until it expires, and every control you thought
+        you had over that session is really a control over the <em>next</em> one.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          Nearly every design decision in this area follows from that single constraint. The
+          question is never "how do we revoke this token" — it is "how short can the window be, and
+          what do we check during it".
+        </div>
+        <table class="ref-table">
+          <thead><tr><th>Approach</th><th>Revocation latency</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>Long-lived self-contained token</td><td>Its full lifetime — hours</td><td>None; also no control</td></tr>
+            <tr><td>Short access token plus refresh</td><td>Minutes — the access-token lifetime</td><td>Frequent refresh round trips; the standard answer</td></tr>
+            <tr><td>Reference token, introspected per request</td><td>Immediate</td><td>A call to the issuer on every request</td></tr>
+            <tr><td>Self-contained plus a revocation list check</td><td>Near immediate</td><td>A shared list every resource server must consult</td></tr>
+            <tr><td>Continuous access evaluation</td><td>Near immediate for supported events</td><td>Requires issuer and resource server to both implement it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Most estates should land on row two with a deliberately short access-token lifetime, and
+          should know what that number is. "Fifteen minutes" and "eight hours" are both defensible
+          answers to different risk questions; not knowing which one is configured is not.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Refresh Token Rotation, and Detecting a Stolen One</div>
+      <div class="concept-desc">
+        The refresh token is the valuable one: it is long-lived by design and exchanging it produces
+        fresh access tokens indefinitely. Rotation makes theft detectable rather than merely
+        limited — each use issues a new refresh token and invalidates the old, so a token used twice
+        means two parties hold it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Behaviour</th><th>Interpretation</th></tr></thead>
+          <tbody>
+            <tr><td>Refresh token used once, as expected</td><td>Normal; issue the replacement</td></tr>
+            <tr><td>A previously-rotated token presented again</td><td>Replay — either the attacker or the legitimate client is using a stale copy</td></tr>
+            <tr><td>On replay, revoke the entire token family</td><td>The correct response: you cannot tell which party is the attacker, so end both</td></tr>
+            <tr><td>Refresh from a new address or device</td><td>Worth a signal; refresh tokens are supposed to stay put</td></tr>
+            <tr><td>Refresh continuing after the account was disabled</td><td>A configuration defect — the refresh path must re-check account state</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The family-revocation rule is the part people soften and should not. It occasionally logs
+          out a legitimate user whose client raced itself or restored from a backup — mildly
+          annoying, and enormously better than the alternative, which is silently allowing the
+          attacker to continue because you could not prove it was them.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Making "Sign Out Everywhere" Mean Something</div>
+      <div class="concept-desc">
+        Users, help desks and incident responders all believe that disabling an account ends access
+        immediately. Making that belief true takes deliberate work at several layers, and the gap
+        between the belief and the reality is where post-compromise access persists.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Layer</th><th>What has to happen</th></tr></thead>
+          <tbody>
+            <tr><td>Refresh tokens</td><td>Revoked at the issuer, per user, on disable and on password change</td></tr>
+            <tr><td>Access tokens</td><td>Kept short enough that expiry <em>is</em> the revocation</td></tr>
+            <tr><td>Application sessions</td><td>Each application's own session cookie also has to be invalidated</td></tr>
+            <tr><td>Federated relying parties</td><td>Single-logout, or short sessions — they will not notice otherwise</td></tr>
+            <tr><td>Consented applications</td><td>Grants revoked separately; a token issued to an app survives the user's logout</td></tr>
+            <tr><td>Long-lived device and app credentials</td><td>Enumerated and revoked; these outlive everything else</td></tr>
+            <tr><td>Cached credentials on the device</td><td>Handled by device management, not by identity</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Test it rather than assuming it. Sign in on two devices, disable the account, and see how
+          long the second one keeps working — for mail, for file access, for each significant
+          application. The answer is frequently much longer than anyone expected, and it is the
+          number your incident response actually has to work with. The non-human side of the same
+          problem is in
+          <span class="xref">Non-Human Identity — Service Accounts, Workloads and the Sprawl Nobody Owns</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SECRETS, TOKENS & KEYS TAXONOMY ────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗝️</span>
+    <span class="topic-name">Secrets, Tokens &amp; Keys — A Taxonomy That Prevents the Wrong Control</span>
+    <span class="topic-badge">Identity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">These Words Get Used Interchangeably and Need Different Handling</div>
+      <div class="concept-desc">
+        "Secret", "token", "key", "credential" and "certificate" are used as synonyms in
+        conversation and in a surprising amount of documentation. They are not interchangeable, and
+        the confusion produces real mistakes: rotating something that cannot be rotated, storing in
+        a vault something that should never have been stored at all, or treating a short-lived
+        artifact with the ceremony owed to a signing key while a real signing key sits in an
+        environment variable.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Thing</th><th>Proves</th><th>Lifetime</th><th>Correct handling</th></tr></thead>
+          <tbody>
+            <tr><td>Password</td><td>A human knows something</td><td>Long, user-changed</td><td>Hashed at rest, never transmitted onward, replaced by passkeys where possible</td></tr>
+            <tr><td>API <span class="acro-exp">(Application Programming Interface)</span> key</td><td>A caller holds a shared string</td><td>Indefinite unless managed</td><td>Vaulted, scoped, rotated; the weakest thing on this list</td></tr>
+            <tr><td>Access token</td><td>An authorisation decision was made recently</td><td>Minutes</td><td>Never stored; held in memory; treated as radioactive in logs</td></tr>
+            <tr><td>Refresh token</td><td>A session may continue</td><td>Days to months</td><td>Stored securely, rotated, revocable, per-device</td></tr>
+            <tr><td>Signing key</td><td>An artifact came from you</td><td>Years</td><td>HSM <span class="acro-exp">(Hardware Security Module)</span> or keyless issuance; never in a repository or a variable</td></tr>
+            <tr><td>Encryption key</td><td>Data can be read</td><td>Long, versioned</td><td>Key-management service; rotation with re-wrapping, not re-encryption</td></tr>
+            <tr><td>Certificate + private key</td><td>An identity, vouched for by a chain</td><td>Months to years</td><td>Automated issuance and renewal; the expiry is the outage</td></tr>
+            <tr><td>Platform identity</td><td>A workload is running where it claims</td><td>Minutes, invisible</td><td>Nothing to handle — the goal state</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Two Questions That Sort Any Credential</div>
+      <div class="concept-desc">
+        Faced with an unfamiliar credential in an unfamiliar system, two questions place it on the
+        table above and determine almost everything you should do about it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question</th><th>If yes</th><th>If no</th></tr></thead>
+          <tbody>
+            <tr><td>Can it be regenerated without coordinating with anyone else?</td><td>Rotate it aggressively and automatically</td><td>Rotation is a project — plan it, rehearse it, and reduce how many depend on it</td></tr>
+            <tr><td>Does holding it alone grant access?</td><td>It is a bearer credential — the strongest handling on the table applies</td><td>It is bound to something; find out to what, and protect that too</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Bearer is the property that matters most and is the least visible. Almost everything in
+          ordinary use is a bearer credential: an access token, an API key, a session cookie, a
+          refresh token. Whoever holds it is you, with no further check. Sender-constrained
+          alternatives — mutual TLS <span class="acro-exp">(Transport Layer Security)</span>, proof-of-possession, hardware-bound tokens — remove that
+          property and are the direction of travel for anything high-value, at the cost of
+          complexity that most systems have not yet accepted.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Mismatches That Cause Real Incidents</div>
+      <div class="concept-desc">
+        Each of these is a control correctly applied to the wrong category, and each is common
+        enough to look for deliberately.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Mismatch</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Access tokens written to a log or an APM <span class="acro-exp">(Application Performance Monitoring)</span> trace</td><td>A short-lived credential is now permanently searchable by anyone with log access</td></tr>
+            <tr><td>API keys treated as passwords and given to people</td><td>They spread through chat and tickets, and nobody knows who holds them</td></tr>
+            <tr><td>A signing key stored in the same vault as everything else</td><td>Compromise of the vault is compromise of every artifact you ever signed</td></tr>
+            <tr><td>Certificates renewed by hand</td><td>The expiry outage, which arrives on a weekend, roughly annually</td></tr>
+            <tr><td>Encryption keys rotated by re-encrypting all data</td><td>Rotation becomes so expensive it never happens; wrap keys instead</td></tr>
+            <tr><td>A refresh token stored where an access token belongs</td><td>Local storage in a browser turns a session into an indefinite one</td></tr>
+            <tr><td>One credential shared across environments</td><td>A test-environment leak becomes a production incident</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The certificate row is the most predictable outage in all of IT and the easiest to remove:
+          automate issuance and renewal, alert on approaching expiry with enough lead time to act
+          during working hours, and keep an inventory — because the certificate that takes a service
+          down is invariably one nobody knew existed. The automation-side handling is in
+          <span class="xref">Secrets in Automation — Vaults, Managed Identities &amp; Never a Plaintext Credential</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

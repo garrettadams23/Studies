@@ -3094,14 +3094,16 @@ coverage has not caught up.
 - [x] Rate Limiting & Abuse — quotas, burst, and distinguishing abuse from success
 - [x] API Inventory & Shadow APIs — you cannot protect the endpoint you forgot
 
-**Wave BD2 — Tokens Done Right** — partly pre-existing; see the audit note in the session record.
+**Wave BD2 — Tokens Done Right** — closed. Three cards shipped into `sec`; see both BD session
+records.
 - [~] JWT Security — algorithm confusion, `none`, key confusion, expiry, revocation — `alg: none`
   and the revocation problem are already in the existing `sec` API card; algorithm and key
-  confusion are in the new federation card. A standalone JWT card would have been a third telling
-- [ ] OAuth 2.1 & PKCE — the flows that remain, and the ones that were removed
-- [ ] Token Lifetime & Revocation — refresh, rotation, and the logout that does not
-- [ ] Machine-to-Machine Auth — client credentials, mTLS, workload identity
-- [ ] Secrets vs Tokens vs Keys — a taxonomy that prevents the wrong control
+  confusion are in the federation card. A standalone JWT card would have been a third telling
+- [x] OAuth 2.1 & PKCE — the flows that remain, and the ones that were removed
+- [x] Token Lifetime & Revocation — refresh, rotation, and the logout that does not
+- [~] Machine-to-Machine Auth — client credentials, mTLS, workload identity — carded as
+  *Non-Human Identity* earlier this session, which is where the credential-choice table lives
+- [x] Secrets vs Tokens vs Keys — a taxonomy that prevents the wrong control
 
 **Wave BD3 — Identity as the Control Plane**
 - [ ] Identity-First Security — what changes when identity is the perimeter
@@ -7394,3 +7396,65 @@ the regulatory half is carded in `grc`, the day-to-day texture is not.
 `annotate_acronyms.py` clean · `stamp_freshness.py --only ops` touched only the 8 new cards ·
 `--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 5.1 / 8.0 MB, gzip 1,395 /
 2,200 KB, DOM 416 / 1,500, content elements 106,125 / 175,000.
+
+---
+
+## Session record — Track BD2: tokens
+
+Twenty-fifth content wave, and a short one: three cards closing the gap this session's earlier BD
+wave explicitly left open.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| "OAuth 2.1", "token revocation", "token lifetime" | 0 |
+| `logout` | `linux` and `shortcut`, both about shell and keyboard shortcuts |
+| `PKCE`, "refresh token", "client credentials" | present — named in the beginner API card and in `web` |
+
+The earlier BD record predicted this shape and it held: the vocabulary appears, the operational
+consequences do not. Nothing said which OAuth flows were removed and why, what happens to a token
+when you disable an account, or why "sign out everywhere" frequently does not.
+
+### What shipped
+
+**3 cards into `sec`**, 78 → 81. Site: 1,329 → **1,332 topics**.
+
+OAuth 2.1 &amp; PKCE · Token Lifetime &amp; Revocation · Secrets, Tokens &amp; Keys.
+
+### What these cards are actually about
+
+The through-line, and the reason these three belong together: **a self-contained token cannot be
+withdrawn, only outlived.** The property that lets an API validate a token locally without asking
+the issuer anything is the same property that makes disabling an account a control over the *next*
+session rather than the current one. Every design decision here follows from that constraint.
+
+Three specifics worth carrying:
+
+- **The device authorization grant is a phishing mechanism nobody has to fake.** The attacker
+  initiates the request, sends the victim the genuine code and the genuine URL, and receives the
+  token when the victim signs in correctly with MFA on the real page. Restrict the flow by policy to
+  the few scenarios that need it and alert on it everywhere else.
+- **On refresh-token replay, revoke the whole family.** A rotated token presented twice means two
+  parties hold it and you cannot tell which is the attacker. Occasionally logging out a legitimate
+  user is enormously better than silently letting the attacker continue.
+- **Bearer is the property that matters and is the least visible.** Access tokens, API keys, session
+  cookies and refresh tokens are all bearer credentials: whoever holds it is you, with no further
+  check. Sender-constrained alternatives remove that, at a complexity cost most systems have not yet
+  accepted.
+
+The taxonomy card ends on the certificate-expiry outage — the most predictable failure in IT, caused
+by manual renewal and an inventory gap, and removable with automation plus alerting that fires early
+enough to act during working hours.
+
+### Track BD after this wave
+
+Closed. BD1, BD3 and BD4 shipped in the earlier wave; BD2 is done here. Two items across the track
+are `[~]` against cards written elsewhere this session.
+
+### Verification
+
+`lint_content.py` 1,332 topics / 193 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only sec` touched only the 3 new cards ·
+`--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 5.2 / 8.0 MB, gzip 1,400 /
+2,200 KB, DOM 416 / 1,500, content elements 106,430 / 175,000.
