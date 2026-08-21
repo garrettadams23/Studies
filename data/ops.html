@@ -121,7 +121,7 @@
           </div>
 
           <!-- ── TOPIC: INCIDENT RESPONSE (PICERL) ────────────────── -->
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🚨</span>
               <span class="topic-name"
@@ -403,7 +403,7 @@
                NEW TOPIC: BCP / DR Key Metrics
                Source: CISSP + Net+ Cheat Sheet PDFs
           ═══════════════════════════════════════════════════════════════ -->
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🏢</span>
               <span class="topic-name"
@@ -763,7 +763,7 @@
                Source: Splunk Cheat Sheet — 241-400pg PDF
                Domain: Security Operations
           ═══════════════════════════════════════════════════════════════ -->
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🔎</span>
               <span class="topic-name"
@@ -3927,6 +3927,745 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
         <div class="concept-desc" style="margin-top:10px">
           The out-of-hours version of the same problem — rotations, escalation policy and
           compensation — is in <span class="xref">On-Call Done Humanely</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CARDINALITY ────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💥</span>
+    <span class="topic-name">Cardinality — The Number That Decides Your Observability Bill</span>
+    <span class="topic-badge">Observability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">One Label Multiplies; Two Labels Multiply Together</div>
+      <div class="concept-desc">
+        In a metrics system, a distinct combination of label values is a distinct time series, and
+        the cost of the system is essentially the number of active series. Adding a label with ten
+        values to a metric with a hundred series produces a thousand. Adding a second label with
+        fifty values produces fifty thousand. The multiplication is invisible in the code — it is
+        one extra argument — and it is the single most common cause of an observability bill that
+        doubles without anyone deciding anything.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># 4 endpoints x 5 status codes = 20 series. Fine.</span>
+http_requests_total{endpoint="/orders", status="200"}
+
+<span class="com"># Add user_id: 4 x 5 x 800,000 = the incident.</span>
+http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The rule that prevents nearly all of it: <strong>a metric label must have a small,
+          bounded set of values that you could write down.</strong> Anything unbounded — a user
+          identifier, a request ID, a URL <span class="acro-exp">(Uniform Resource Locator)</span> with parameters, an error message, an email address — is
+          not a label. It belongs in a log or a trace, where the cost model is per-event rather than
+          per-combination.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Where High Cardinality Sneaks In</div>
+      <div class="concept-desc">
+        Nobody labels a metric with a user ID on purpose. These are the routes it takes instead, and
+        every one of them has been someone's outage.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Source</th><th>Why it is unbounded</th></tr></thead>
+          <tbody>
+            <tr><td>Raw URL path as a label</td><td><code>/orders/8841</code> — one series per order</td></tr>
+            <tr><td>Error message text</td><td>Messages embed identifiers and values</td></tr>
+            <tr><td>Container or pod name</td><td>New name on every deploy; series accumulate forever</td></tr>
+            <tr><td>Version or build identifier</td><td>Bounded but ever-growing; needs retention, not exclusion</td></tr>
+            <tr><td>Customer or tenant ID</td><td>Fine at ten tenants, fatal at fifty thousand</td></tr>
+            <tr><td>Anything from user input</td><td>Attacker-controlled cardinality is a denial-of-wallet attack</td></tr>
+            <tr><td>Histogram buckets multiplied by other labels</td><td>Each bucket is a series; the multiplication is easy to miss</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is worth pausing on: a histogram with twelve buckets, three labels of five
+          values each, is 12 × 125 = 1,500 series from one instrument. Histograms are the right tool
+          for latency and they are expensive, so give them fewer labels than counters.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Controlling It Before the Invoice Does</div>
+      <div class="concept-desc">
+        Cardinality problems are discovered in one of two ways: a query that used to work times
+        out, or finance asks a question. Both are late. These make it visible while it is still
+        cheap to fix.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Normalise paths to route patterns at instrumentation time</td><td>Removes the biggest single source at the source</td></tr>
+            <tr><td>Enforce a label allow-list in the collector</td><td>One place to stop a bad label reaching storage, regardless of who emitted it</td></tr>
+            <tr><td>Alert on series growth per metric, not only on total</td><td>Attributes the growth to a team and a change</td></tr>
+            <tr><td>Show cost per team, derived from series count</td><td>Makes the trade-off visible to the people making it</td></tr>
+            <tr><td>Review new metrics in code review like any interface</td><td>Cheapest possible moment to catch it</td></tr>
+            <tr><td>Put the unbounded dimension in traces or events instead</td><td>Not a compromise — it is where per-request detail belongs</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is the reframing that matters. High-cardinality questions — what happened to
+          <em>this</em> customer, on <em>this</em> request — are legitimate and important. Metrics
+          are simply the wrong store for them, and reaching for events instead answers the question
+          better and more cheaply than a label ever would.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: THREE SIGNALS & WIDE EVENTS ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧩</span>
+    <span class="topic-name">The Three Signals &amp; Wide Events — What Each One Is Bad At</span>
+    <span class="topic-badge">Observability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Metrics, Logs and Traces Are Usually Taught by What They Are Good For</div>
+      <div class="concept-desc">
+        The standard introduction lists the three pillars and their strengths, which is true and does
+        not help you choose. What decides a design is the weaknesses — because in practice you pick
+        a signal, discover six months later that it cannot answer the question you now have, and
+        re-instrument. Knowing the failure mode in advance is the whole value of the taxonomy.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Signal</th><th>Bad at</th><th>Cost model</th></tr></thead>
+          <tbody>
+            <tr><td>Metrics</td><td>Anything per-request; anything you did not think to label</td><td>Per series — grows with cardinality, not with traffic</td></tr>
+            <tr><td>Logs</td><td>Aggregation; correlation across services; consistency</td><td>Per volume — grows linearly with traffic, forever</td></tr>
+            <tr><td>Traces</td><td>Rare events, once sampling discards them; cost at full fidelity</td><td>Per span, mitigated by sampling — which is what loses the rare event</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Read the middle column together and a pattern appears: metrics lose the detail, logs lose
+          the structure, traces lose the rare case. Most organisations run all three pipelines,
+          separately instrumented, separately stored and separately queried — and still cannot
+          answer questions that fall between them.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Wide Events — One Record Per Unit of Work</div>
+      <div class="concept-desc">
+        The alternative approach: emit one structured event per request, carrying everything known
+        about it — route, latency, status, customer tier, region, feature flags, cache outcome,
+        database time, build version, whatever else the code has in hand. Perhaps a hundred fields.
+        Then compute aggregates from those events at query time rather than pre-deciding them at
+        instrumentation time.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          What this buys is the ability to ask a question nobody anticipated. "Slow requests are
+          only for customers on the new plan, in one region, when a particular flag is on" is a
+          three-way breakdown that no pre-aggregated metric contains, and which arbitrary-cardinality
+          events answer in one query. That is the actual definition of observability — the ability
+          to answer unknown-unknowns without shipping new code — as opposed to monitoring, which
+          answers the questions you already had.
+        </div>
+        <table class="ref-table">
+          <thead><tr><th>Property</th><th>Three pipelines</th><th>Wide events</th></tr></thead>
+          <tbody>
+            <tr><td>New question needs new code</td><td>Usually yes</td><td>Usually no</td></tr>
+            <tr><td>High-cardinality breakdowns</td><td>Prohibitive</td><td>The point</td></tr>
+            <tr><td>Cost driver</td><td>Series count and log volume</td><td>Event count and width</td></tr>
+            <tr><td>Long-range aggregates</td><td>Cheap — metrics are already rolled up</td><td>Needs downsampling or a metrics layer alongside</td></tr>
+            <tr><td>Tooling maturity in most shops</td><td>Everywhere</td><td>Depends on the backend supporting it</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">A Realistic Position for Most Teams</div>
+      <div class="concept-desc">
+        This is presented in the industry as a choice of camp, which is unhelpful, because the
+        pragmatic answer combines them and is available today on ordinary tooling.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Use</th><th>For</th></tr></thead>
+          <tbody>
+            <tr><td>Low-cardinality metrics</td><td>SLOs <span class="acro-exp">(Service Level Objective)</span>, alerting, capacity, long-range trends — where cheap aggregates matter</td></tr>
+            <tr><td>Wide structured events, sampled</td><td>Investigation, breakdowns, "why is this one slow"</td></tr>
+            <tr><td>Traces</td><td>Cross-service causality; a trace is a set of related events with parentage</td></tr>
+            <tr><td>Unstructured logs</td><td>As little as possible — they are the expensive way to store a field</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The practical first step is smaller than adopting a philosophy: stop emitting a log line
+          per stage of a request and emit one wide event at the end instead. It reduces volume,
+          removes the correlation problem within a service entirely, and is the same amount of code.
+          The logging discipline underneath is in
+          <span class="xref">Structured Logging &amp; Log Pipelines</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: INSTRUMENTATION STRATEGY ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔧</span>
+    <span class="topic-name">Instrumentation Strategy — What to Instrument First in an Unfamiliar System</span>
+    <span class="topic-badge">Observability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Instrument the Boundaries First, Because That Is Where the Contracts Are</div>
+      <div class="concept-desc">
+        Inheriting a system with no useful telemetry, the instinct is to start where the complexity
+        is — the gnarly module everyone warns you about. That is the wrong end. Start at every point
+        where the service talks to something it does not control: inbound requests, outbound calls,
+        database queries, queue publishes and consumes, cache operations. Boundaries are where
+        latency is spent, where failures originate, and where a contract exists that can be
+        violated.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          A second reason to start there: boundary instrumentation is mostly free. Auto-
+          instrumentation libraries cover HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> servers and clients, database drivers and message
+          brokers without touching business logic, so the first pass is a dependency and a
+          configuration change rather than a project.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Order, and What Each Step Unlocks</div>
+      <div class="concept-desc">
+        Each stage is useful on its own, which matters — this is work that gets interrupted, and an
+        order where every step pays off independently survives interruption.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Add</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Auto-instrumentation at the boundaries</td><td>What is slow, what is failing, and where the time goes</td></tr>
+            <tr><td>2</td><td>Request ID propagated through everything, including logs</td><td>"Show me everything about this one request"</td></tr>
+            <tr><td>3</td><td>One wide event per request with the fields you already have</td><td>Breakdowns by customer, region, version, flag</td></tr>
+            <tr><td>4</td><td>Business-meaningful counters — orders placed, payments failed</td><td>Whether the system is doing its job, not merely responding</td></tr>
+            <tr><td>5</td><td>Spans inside the slow paths identified in step 1</td><td>Where the time goes inside the service</td></tr>
+            <tr><td>6</td><td>Queue depth, saturation, and dependency error rates</td><td>Early warning before users notice</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Step 4 is the one most often skipped and the most valuable to the business. A system can
+          return HTTP 200 to every request while placing no orders, and technical telemetry will
+          show a perfectly healthy service. Every service should have at least one metric that a
+          non-engineer would recognise as the thing it is for.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Observability-Driven Development — Shipping the Instrumentation With the Feature</div>
+      <div class="concept-desc">
+        Instrumentation added after an incident is instrumentation designed by hindsight for a
+        failure that already happened. Added with the feature, while the author still remembers what
+        could go wrong, it is designed for the failures that have not happened yet — which is the
+        set that matters.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Ask "how will I know this is working in production?" during design</td><td>Frequently changes the design, not only the telemetry</td></tr>
+            <tr><td>Watch your own change in production after deploying it</td><td>Catches the partial failure that no alert covers</td></tr>
+            <tr><td>Add the field you wish you had, during the incident</td><td>The cheapest possible moment; the question is already precise</td></tr>
+            <tr><td>Review instrumentation in code review</td><td>Treats telemetry as part of the change, not an optional extra</td></tr>
+            <tr><td>Delete instrumentation nobody queries</td><td>Telemetry has a maintenance and storage cost like any code</td></tr>
+            <tr><td>Include a "what telemetry was missing" item in postmortems</td><td>Turns each incident into a permanent improvement</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is the compounding one, and it belongs in the template rather than in
+          someone's memory — see
+          <span class="xref">Writing a Postmortem People Actually Learn From</span>.
+          Teams that ask it every time reach good observability in about a year of ordinary
+          incidents, without a project ever being funded for it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: OTEL & THE COLLECTOR ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🛠️</span>
+    <span class="topic-name">OpenTelemetry Architecture &amp; the Collector as a Control Point</span>
+    <span class="topic-badge">Observability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Four Pieces, and Only One of Them Is in Your Application</div>
+      <div class="concept-desc">
+        OpenTelemetry is discussed as one thing and is four, with a deliberate separation that is
+        the whole reason to adopt it: the API <span class="acro-exp">(Application Programming Interface)</span> your code calls, the SDK <span class="acro-exp">(Software Development Kit)</span> that implements it, the
+        collector that receives and processes telemetry, and the exporters that send it onward. The
+        separation means your application code never names a vendor. Changing backend becomes a
+        collector configuration change rather than a re-instrumentation project across every
+        service.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Piece</th><th>Lives in</th><th>Changes when</th></tr></thead>
+          <tbody>
+            <tr><td>API</td><td>Your code</td><td>Almost never — that is its contract</td></tr>
+            <tr><td>SDK</td><td>Your process, configured at startup</td><td>Sampling and resource attributes change</td></tr>
+            <tr><td>Collector</td><td>A sidecar, a daemon or a central service</td><td>Routing, filtering, redaction, cost control</td></tr>
+            <tr><td>Exporters</td><td>Collector configuration</td><td>You change or add a backend</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Instrumentation lock-in is the problem this solves and it is worth naming, because it is
+          the reason organisations stay on observability vendors they have outgrown: the cost of
+          leaving is re-instrumenting every service, which nobody will fund.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">What the Collector Is Actually For</div>
+      <div class="concept-desc">
+        Teams commonly send telemetry straight from the application to the backend and treat the
+        collector as an optional hop. It is the single most useful component in the stack, because
+        it is the one place every signal passes through — and therefore the one place a policy can
+        be applied without changing any application.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Job</th><th>Why it belongs there</th></tr></thead>
+          <tbody>
+            <tr><td>Redact personal data before it leaves your network</td><td>One enforcement point instead of trusting every service</td></tr>
+            <tr><td>Drop noisy or unused telemetry</td><td>Cost control that needs no code change or deploy</td></tr>
+            <tr><td>Enforce a label allow-list</td><td>Stops a cardinality explosion reaching storage</td></tr>
+            <tr><td>Add resource attributes — environment, region, team, version</td><td>Consistent everywhere, rather than per-service and drifting</td></tr>
+            <tr><td>Tail sampling</td><td>Needs a complete trace, which only a collector sees</td></tr>
+            <tr><td>Route different signals to different backends</td><td>Cheap storage for volume, expensive tooling for what needs it</td></tr>
+            <tr><td>Buffer and retry when a backend is unavailable</td><td>Backend problems stop being application problems</td></tr>
+            <tr><td>Convert between formats</td><td>How a migration runs with both backends live</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Migrating an Existing Stack Without a Cutover</div>
+      <div class="concept-desc">
+        Nobody gets to start from nothing. The realistic migration runs both systems for a period,
+        and the collector is what makes that affordable rather than a doubling of instrumentation
+        work.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Deploy the collector; point existing agents at it — no application changes yet</td></tr>
+            <tr><td>2</td><td>Export to the current backend from the collector, so nothing visibly changes</td></tr>
+            <tr><td>3</td><td>Add the new backend as a second exporter and compare, live, on real data</td></tr>
+            <tr><td>4</td><td>Move services to OTel <span class="acro-exp">(OpenTelemetry)</span> auto-instrumentation one at a time</td></tr>
+            <tr><td>5</td><td>Rebuild dashboards and alerts against the new backend while the old still works</td></tr>
+            <tr><td>6</td><td>Remove the old exporter only once nothing references it — check queries, not opinions</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two traps worth knowing before you start. Semantic conventions — the standard attribute
+          names — have changed across OTel versions, so pin them and migrate deliberately rather
+          than discovering that half your services use one spelling and half another. And a
+          collector in the request path is infrastructure: give it resource limits, monitor its own
+          queue depth and drop counters, and make sure a collector under pressure degrades by
+          dropping telemetry rather than by blocking the applications sending it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SAMPLING ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎲</span>
+    <span class="topic-name">Sampling — Head, Tail, and Keeping the Traces That Matter</span>
+    <span class="topic-badge">Observability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Uniform Sampling Discards Exactly What You Needed</div>
+      <div class="concept-desc">
+        Keeping one percent of traces is the default answer to trace cost, and it has a specific
+        failure: the traces you want are the rare ones. An error affecting one request in ten
+        thousand, sampled at one percent, is captured once per million requests — so during the
+        incident, the trace you need does not exist. Meanwhile you have retained ten thousand
+        identical successful traces of the same healthy endpoint, which nobody will ever look at.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          Uniform sampling is the right tool for one job only — estimating aggregate rates, where
+          any unbiased sample works. For investigation, which is what traces are actually for, the
+          policy should be biased on purpose: keep everything unusual, keep a thin baseline of the
+          ordinary.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Head, Tail and Where Each One Breaks</div>
+      <div class="concept-desc">
+        The distinction is about <em>when</em> the keep-or-drop decision is made, and it determines
+        what information the decision can use.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Head sampling</th><th>Tail sampling</th></tr></thead>
+          <tbody>
+            <tr><td>Decided</td><td>At the start of the trace, by the first service</td><td>After the trace completes, in the collector</td></tr>
+            <tr><td>Knows the outcome</td><td>No</td><td>Yes — errors, latency, which services were involved</td></tr>
+            <tr><td>Cost of dropped data</td><td>Never generated or sent</td><td>Generated and sent, then discarded</td></tr>
+            <tr><td>Infrastructure needed</td><td>None</td><td>Collector holding spans until the trace finishes</td></tr>
+            <tr><td>Main failure</td><td>Discards errors it could not know about</td><td>Memory pressure; late spans arriving after the decision</td></tr>
+            <tr><td>Consistency</td><td>Must propagate the decision, or traces come out broken</td><td>Naturally consistent — one decision per trace</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The head-sampling consistency row causes a specific, confusing symptom: services making
+          independent sampling decisions produce traces with holes in them, where a middle service
+          is simply absent. If your traces look incomplete, check that the sampling decision is
+          propagated in the trace context rather than re-rolled at each hop.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">A Policy That Works</div>
+      <div class="concept-desc">
+        Most teams need a small set of rules rather than a sampling strategy document. This one is
+        a reasonable default and each rule earns its place.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Rule</th><th>Rate</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Any trace containing an error</td><td>Keep all</td><td>These are what you will look for</td></tr>
+            <tr><td>Any trace slower than the SLO <span class="acro-exp">(Service Level Objective)</span> threshold</td><td>Keep all</td><td>The latency investigation depends on them</td></tr>
+            <tr><td>Rare routes and low-traffic endpoints</td><td>Keep all or nearly all</td><td>They contribute little volume and would otherwise vanish</td></tr>
+            <tr><td>High-value customers or tenants, if applicable</td><td>Higher rate</td><td>You will be asked about these specifically</td></tr>
+            <tr><td>Ordinary successful traffic on hot paths</td><td>A thin percentage</td><td>Enough for a baseline to compare against</td></tr>
+            <tr><td>Health checks and internal polling</td><td>Drop entirely</td><td>Pure volume, zero information</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          One consequence to hold onto: once sampling is biased, <strong>trace counts are no longer
+          traffic counts.</strong> Anyone computing an error rate by counting sampled traces will
+          get a number that is wildly wrong in the alarming direction. Rates come from metrics,
+          which are unsampled; traces answer "what happened in this case". Keeping that division
+          clear prevents a whole category of confident, incorrect dashboards.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DEBUGGING WITH TRACES ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔦</span>
+    <span class="topic-name">Debugging With Traces, Correlating Signals &amp; Dashboards Worth Keeping</span>
+    <span class="topic-badge">Observability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Workflow That Finds Something Nobody Predicted</div>
+      <div class="concept-desc">
+        Dashboards answer questions somebody anticipated. The investigation that matters starts with
+        a symptom nobody has a chart for, and it has a repeatable shape: start from the symptom,
+        compare the bad population against the good one, find the attribute that separates them,
+        then read one trace to understand the mechanism. Most engineers do the last step first —
+        open a trace and stare at it — which shows what one request did without telling you whether
+        it is representative.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Question</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>What exactly is the symptom, in a number a user would feel?</td></tr>
+            <tr><td>2</td><td>Which requests have it — define the bad population precisely</td></tr>
+            <tr><td>3</td><td>How do they differ from the good ones? Break down by every attribute you have</td></tr>
+            <tr><td>4</td><td>Which single attribute best separates the two populations?</td></tr>
+            <tr><td>5</td><td>Now open a representative trace, knowing what it represents</td></tr>
+            <tr><td>6</td><td>What in that trace explains the separation you found in step 4?</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Step 3 is where wide events pay for themselves, and it is why the width matters more than
+          the depth: an attribute you did not record cannot separate anything, and the field that
+          explains the outage is regularly one somebody added "just in case".
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Correlation — The IDs That Make It Possible</div>
+      <div class="concept-desc">
+        Moving between signals — from a metric spike to the traces behind it, from a trace to the
+        logs of one span — is the difference between an investigation that takes minutes and one
+        that takes an afternoon. It depends entirely on identifiers being present and consistent,
+        which is instrumentation work rather than tooling.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Requirement</th><th>Without it</th></tr></thead>
+          <tbody>
+            <tr><td>Trace ID and span ID in every log line</td><td>Logs and traces are two unrelated systems</td></tr>
+            <tr><td>Trace context propagated across every hop, including queues</td><td>Traces stop at the asynchronous boundary — the usual gap</td></tr>
+            <tr><td>Exemplars linking metric buckets to sample traces</td><td>You see the latency spike and cannot reach an example of it</td></tr>
+            <tr><td>Consistent resource attributes across all signals</td><td>"service" means three different things in three tools</td></tr>
+            <tr><td>The same time source and timezone everywhere</td><td>Ordering events across services becomes guesswork</td></tr>
+            <tr><td>A user-visible request ID surfaced in errors</td><td>Support tickets that cannot be traced to a request</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The queue row is the most common real gap. Trace context propagates through HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> headers
+          almost automatically and through message brokers only if somebody puts it in the message
+          and reads it out. Asynchronous work is where the hard bugs live, and it is precisely where
+          the trace usually stops.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Small Number of Dashboards Anyone Actually Uses</div>
+      <div class="concept-desc">
+        Dashboard sprawl is the normal end state: hundreds of panels, most built during one incident
+        by someone who has since left, none deleted, and nobody able to say which is authoritative.
+        The cost is not storage — it is that during the next incident, responders scroll.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Keep</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>One service overview, identical in shape for every service</td><td>Familiarity — a responder can read any service's page</td></tr>
+            <tr><td>One SLO <span class="acro-exp">(Service Level Objective)</span> view per service</td><td>Are we meeting the promise, and how much budget is left</td></tr>
+            <tr><td>One dependency view</td><td>Is it us or something we call</td></tr>
+            <tr><td>A small number of business dashboards</td><td>Is the system doing its job, not merely responding</td></tr>
+            <tr><td>Per-incident exploratory views</td><td>Fine to create — delete or promote them afterwards</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two rules keep it that way. Generate the per-service dashboards from a template so all
+          services look alike and a new one arrives with a page already built. And put an owner and
+          a purpose on every dashboard — anything nobody claims when asked is deleted, which is a
+          five-minute exercise that reliably removes most of them.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CHOOSING SLIs & SETTING SLOs ───────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎯</span>
+    <span class="topic-name">Choosing SLIs <span class="acro-exp">(Service Level Indicator)</span> &amp; Setting an SLO <span class="acro-exp">(Service Level Objective)</span> That Survives</span>
+    <span class="topic-badge">Observability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">An SLI Has to Match What the User Experiences, Not What Is Easy to Measure</div>
+      <div class="concept-desc">
+        Most first SLOs are built on server-side availability, because that number is already
+        collected. It is also the number most likely to be green during an outage: the load balancer
+        reports healthy backends while the page does not load, because the failure is in DNS <span class="acro-exp">(Domain Name System)</span>, the
+        CDN <span class="acro-exp">(Content Delivery Network)</span>, a client-side bundle, or a dependency the health check does not exercise. An indicator
+        that stays green during a user-visible outage is worse than no indicator, because people
+        trust it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Service type</th><th>SLI that reflects the user</th></tr></thead>
+          <tbody>
+            <tr><td>Request/response API <span class="acro-exp">(Application Programming Interface)</span></td><td>Proportion of requests served successfully within a latency threshold</td></tr>
+            <tr><td>Web application</td><td>Client-measured page load and interaction success, not server 200s</td></tr>
+            <tr><td>Asynchronous pipeline</td><td>Proportion of items processed within the freshness window</td></tr>
+            <tr><td>Batch job</td><td>Proportion of runs completing correctly by the deadline</td></tr>
+            <tr><td>Storage system</td><td>Durability, plus read success within latency</td></tr>
+            <tr><td>Internal platform</td><td>Time from merge to deployed; provisioning success rate</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Note that nearly every row is a proportion of good events over valid events. That form is
+          worth adopting deliberately: it makes SLIs comparable across services, composable into an
+          error budget, and immune to the averaging that hides tail behaviour.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Choosing the Number, and Why It Is Not 99.99%</div>
+      <div class="concept-desc">
+        The target is an engineering and business decision disguised as a technical one. Each extra
+        nine costs roughly an order of magnitude more, and beyond a point the user cannot perceive
+        the difference because their own network is less reliable than your service.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Target</th><th>Downtime per 30 days</th><th>What it demands</th></tr></thead>
+          <tbody>
+            <tr><td>99%</td><td>7.2 hours</td><td>Reasonable operations</td></tr>
+            <tr><td>99.9%</td><td>43 minutes</td><td>Real on-call, redundancy, tested rollback</td></tr>
+            <tr><td>99.95%</td><td>22 minutes</td><td>Automated failover; humans are too slow to be the response</td></tr>
+            <tr><td>99.99%</td><td>4.3 minutes</td><td>Multi-region, automatic everything, and every dependency at least as good</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two constraints do most of the deciding. Your SLO cannot meaningfully exceed the
+          reliability of what you depend on, so a service on one cloud region cannot promise more
+          than that region delivers. And the last row's "4.3 minutes" includes someone noticing —
+          which is why targets above about 99.95% are a statement about automation rather than about
+          effort.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Setting One That Is Still Alive in Six Months</div>
+      <div class="concept-desc">
+        Most SLOs are abandoned quietly rather than debated. They stop being referenced, the
+        dashboard goes stale, and eventually someone asks whether anyone still looks at it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Measure for a month before committing to a number</td><td>Start from reality; an aspirational target is breached from day one and then ignored</td></tr>
+            <tr><td>Set it slightly tighter than current performance, not far</td><td>It should be achievable and should occasionally be at risk</td></tr>
+            <tr><td>Negotiate it with whoever depends on the service</td><td>An SLO nobody else agreed to is a team's private metric</td></tr>
+            <tr><td>One or two per service</td><td>Six SLOs means no SLO; nobody can act on six</td></tr>
+            <tr><td>Exclude nothing except genuine invalid traffic</td><td>Carve-outs multiply until the SLO measures only the good case</td></tr>
+            <tr><td>Review quarterly, and be willing to loosen it</td><td>A target nobody can meet gets ignored; loosening honestly keeps it alive</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The willingness to loosen is the counter-intuitive one and it is what separates SLOs that
+          function from SLOs that are theatre. A target consistently missed with no consequence has
+          already stopped being a target — restating it honestly at a level the team can hold, and
+          then defending that level, is worth more than an aspirational number nobody believes.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: ERROR BUDGETS & WHY SLOs FAIL ──────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💰</span>
+    <span class="topic-name">Error Budgets, Policy &amp; Why SLOs <span class="acro-exp">(Service Level Objective)</span> Fail — Which Is Rarely Technical</span>
+    <span class="topic-badge">Observability</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Budget Is Permission to Take Risk, Not a Prediction of Failure</div>
+      <div class="concept-desc">
+        An SLO of 99.9% means one thing in a hundred is allowed to fail, and the error budget is
+        that allowance made explicit and spendable. The reframing matters more than the arithmetic:
+        unspent budget is not a triumph, it is evidence of over-investment in reliability at the
+        expense of shipping. A service that never touches its budget is either more reliable than it
+        needs to be, or has an SLO set too loose to mean anything.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          This is what makes the error budget the most useful idea in the SLO toolkit. It converts
+          an argument between engineers who want to stabilise and product managers who want to ship
+          into a shared number that answers it, and both sides can read it the same way.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">A Policy Agreed Before It Is Needed</div>
+      <div class="concept-desc">
+        The budget only does its job if what happens at each level is agreed in advance, in writing,
+        by the people who would otherwise be negotiating in the moment. Deciding during the
+        exhaustion is deciding under pressure, and reliability loses that argument every time.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Budget state</th><th>Agreed response</th></tr></thead>
+          <tbody>
+            <tr><td>Healthy, spending slowly</td><td>Ship normally; consider whether the SLO is too loose</td></tr>
+            <tr><td>Burning faster than the period allows</td><td>Alert; find out why while there is budget left to spend</td></tr>
+            <tr><td>Half spent, mid-period</td><td>Risky changes get extra review; no large migrations this week</td></tr>
+            <tr><td>Exhausted</td><td>Feature work pauses; reliability work takes priority until it recovers</td></tr>
+            <tr><td>Exhausted by one incident, root cause fixed</td><td>Named exception, granted deliberately — not by silent drift</td></tr>
+            <tr><td>Exhausted repeatedly</td><td>The SLO, the architecture or the staffing is wrong; escalate as a decision</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Burn-rate alerting is the practical form: page on a fast burn — the budget consumed in
+          hours — and raise a ticket on a slow burn that will exhaust it before the period ends. It
+          replaces threshold alerts that fire on every blip with alerts that fire when the promise
+          to users is genuinely at risk, which is a large reduction in pages and an increase in
+          their meaning.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Why SLO Programmes Fail — Almost Always Organisationally</div>
+      <div class="concept-desc">
+        The technical work is a week. The failures are structural, they are predictable, and
+        recognising which one you have is most of the fix.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Failure</th><th>What it looks like</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>No consequence to exhaustion</td><td>The budget runs out and everything continues</td><td>Get the policy agreed by whoever can pause feature work — before you need it</td></tr>
+            <tr><td>The team does not own its reliability</td><td>Breaches are caused by a dependency they cannot change</td><td>Fix ownership, or set the SLO where the control is</td></tr>
+            <tr><td>Set by a central team</td><td>Numbers nobody negotiated and nobody defends</td><td>Owned by the service team, reviewed centrally</td></tr>
+            <tr><td>Used to evaluate people</td><td>Targets get gamed; carve-outs multiply; incidents get reclassified</td><td>Never tie SLOs to performance reviews — this poisons the data permanently</td></tr>
+            <tr><td>Too many SLOs</td><td>A wall of green with one red nobody investigates</td><td>One or two per service, on the user journey that matters</td></tr>
+            <tr><td>Measured where the user is not</td><td>Green during outages; the team stops believing it</td><td>Move measurement toward the client</td></tr>
+            <tr><td>Nobody looks at them</td><td>Stale dashboards, no reviews</td><td>Put the budget in an existing recurring meeting; a metric with no audience dies</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The fourth row is the one that does lasting damage. The moment an SLO affects someone's
+          review, it stops being a measurement and becomes a target to manage — incidents get
+          reclassified, exclusions get argued, and the organisation loses its ability to see its own
+          reliability. That damage outlasts the programme that caused it.
         </div>
       </div>
     </div>

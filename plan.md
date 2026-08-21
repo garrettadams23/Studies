@@ -3176,33 +3176,45 @@ you run it" met a hundred teams.
 ~4 waves, ~20 cards. Beyond the monitoring cards: designing for questions you
 have not thought of yet.
 
-**Wave BH1 — Foundations**
-- [ ] Monitoring vs Observability — the distinction that is not just marketing
-- [ ] The Three Signals & Their Costs — metrics, logs, traces; what each is bad at
-- [ ] Cardinality — the concept that decides your observability bill
-- [ ] Structured Events — wide events as an alternative to three separate pipelines
-- [ ] Instrumentation Strategy — what to instrument first in an unfamiliar system
+**Wave BH1 — Foundations** — shipped into `ops`.
+- [~] Monitoring vs Observability — the distinction that is not just marketing — already carded as
+  *Known Unknowns vs Unknown Unknowns* in `ops`; the new wide-events card restates the distinction
+  where it becomes actionable rather than definitional
+- [x] The Three Signals & Their Costs — metrics, logs, traces; what each is bad at
+- [x] Cardinality — the concept that decides your observability bill
+- [x] Structured Events — wide events as an alternative to three separate pipelines — same card as
+  the three signals, because wide events only make sense as an answer to their weaknesses
+- [x] Instrumentation Strategy — what to instrument first in an unfamiliar system
 
-**Wave BH2 — OpenTelemetry in Practice**
-- [ ] OTel Architecture — API, SDK, collector, exporters
-- [ ] Distributed Tracing Deep — spans, context propagation, sampling strategies
-- [ ] Metrics With OTel — instruments, views, and avoiding cardinality explosions
-- [ ] The Collector as a Control Point — filtering, redaction, routing, cost control
-- [ ] Migrating an Existing Stack — incrementally, without a big-bang cutover
+**Wave BH2 — OpenTelemetry in Practice** — shipped into `ops`.
+- [x] OTel Architecture — API, SDK, collector, exporters
+- [x] Distributed Tracing Deep — spans, context propagation, sampling strategies — the sampling half
+  is its own card; spans and context propagation are already carded in
+  *Distributed Tracing &amp; OpenTelemetry*, and propagation reappears in the correlation card
+- [~] Metrics With OTel — instruments, views, and avoiding cardinality explosions — the cardinality
+  half is the cardinality card, which is the part that matters; instruments and views are reference
+  material better read from the specification than from a card
+- [x] The Collector as a Control Point — filtering, redaction, routing, cost control
+- [x] Migrating an Existing Stack — incrementally, without a big-bang cutover — the six-step
+  sequence in the collector card
 
-**Wave BH3 — Using It**
-- [ ] Debugging With Traces — the workflow that finds an unknown-unknown
-- [ ] Correlating Signals — trace to log to metric, and the IDs that make it possible
-- [ ] Dashboards Worth Keeping — the small number that answer real questions
-- [ ] Alerting on Symptoms, Not Causes — and the pager quality that follows
-- [ ] Observability-Driven Development — shipping instrumentation with the feature
+**Wave BH3 — Using It** — shipped into `ops`.
+- [x] Debugging With Traces — the workflow that finds an unknown-unknown
+- [x] Correlating Signals — trace to log to metric, and the IDs that make it possible
+- [x] Dashboards Worth Keeping — the small number that answer real questions
+- [~] Alerting on Symptoms, Not Causes — carded twice already in `ops`; burn-rate alerting, which is
+  the part that was missing, is in the error-budget card
+- [x] Observability-Driven Development — shipping instrumentation with the feature — the closing
+  section of the instrumentation card
 
-**Wave BH4 — SLOs as a Practice**
-- [ ] Choosing SLIs — the signal that matches the user's experience
-- [ ] Setting an SLO That Survives — negotiated, achievable, and meaningful
-- [ ] Error Budgets & Policy — what actually happens when it is spent
-- [ ] Reporting Reliability — to engineering, and separately to the business
-- [ ] When SLOs Fail — the organisational reasons, not the technical ones
+**Wave BH4 — SLOs as a Practice** — shipped into `ops`.
+- [x] Choosing SLIs — the signal that matches the user's experience
+- [x] Setting an SLO That Survives — negotiated, achievable, and meaningful
+- [x] Error Budgets & Policy — what actually happens when it is spent
+- [ ] Reporting Reliability — to engineering, and separately to the business — still open; the
+  upward-reporting craft is carded in `eng` (*Reporting Upward*) but not the reliability-specific
+  version
+- [x] When SLOs Fail — the organisational reasons, not the technical ones
 
 ### TRACK BJ — Resilience & Chaos Engineering  (→ `ops` / `eng`)
 
@@ -6731,3 +6743,81 @@ path CI/CD and policy as code — and the new cards point at them rather than re
 `annotate_acronyms.py` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
 budget after build: raw 4.9 / 8.0 MB, gzip 1,312 / 2,200 KB, DOM 416 / 1,500, content elements
 101,187 / 175,000.
+
+---
+
+## Session record — Track BH: observability engineering
+
+Eighteenth content wave.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| "wide event" | 0 |
+| `cardinality` | 1, in `data`, about database indexes |
+| OpenTelemetry, distributed tracing, error budget, SLI, SLO, observability | present in `ops` and `cloud` |
+
+The present row was the whole audit, and it needed reading rather than counting. `ops` carries
+seven observability cards, and their sizes tell the story: *Monitoring &amp; Observability* is
+2.2 KB, *Golden Signals* 1.2 KB, *SLIs* 1.0 KB, *Prometheus &amp; Grafana* 2.2 KB,
+*Distributed Tracing &amp; OpenTelemetry* 4.7 KB. They teach what a metric is, what a span is, that
+OTel exists, and that you should alert on symptoms — twice, in two different cards.
+
+None of them touches the decisions that actually shape an observability practice: what a label
+costs, what to do when the trace you need was sampled away, where to put a policy that applies to
+every signal, or what happens when the error budget runs out and nobody has agreed what happens.
+
+### What shipped
+
+**8 cards into `ops`**, 53 → 61. Site: 1,278 → **1,286 topics**.
+
+Cardinality · The Three Signals &amp; Wide Events · Instrumentation Strategy · OpenTelemetry
+Architecture &amp; the Collector · Sampling · Debugging With Traces, Correlation &amp; Dashboards ·
+Choosing SLIs &amp; Setting an SLO That Survives · Error Budgets, Policy &amp; Why SLOs Fail.
+
+### What these cards are actually about
+
+The through-line: **every observability decision is a decision about what you will not be able to
+ask later.** A label you did not add, a trace that was sampled away, a field left out of an event —
+each is a question that becomes unanswerable at the exact moment it matters. The cards are
+organised around making those trade-offs explicit while they are still cheap.
+
+Four specifics worth carrying:
+
+- **Cardinality multiplies and the multiplication is invisible in the code.** One extra label
+  argument turns a hundred series into a hundred thousand. The rule that prevents nearly all of it:
+  a metric label must have a bounded set of values you could write down; anything else belongs in a
+  trace or an event, where the cost model is per-event rather than per-combination.
+- **Uniform sampling discards precisely what you needed.** An error affecting one request in ten
+  thousand, sampled at one percent, is captured once per million requests — so during the incident,
+  the trace does not exist. Bias the policy on purpose: keep everything unusual, keep a thin
+  baseline. And once you do, trace counts are no longer traffic counts, which is its own class of
+  confidently wrong dashboard.
+- **The collector is the most useful component in the stack and is usually skipped.** It is the one
+  place every signal passes through, so redaction, label allow-lists, cost control, tail sampling
+  and backend migration all belong there — none of them requiring an application change.
+- **SLO programmes fail organisationally, not technically.** The technical work is a week. The
+  failure that does lasting damage is tying an SLO to someone's performance review: it stops being
+  a measurement and becomes a target to manage, incidents get reclassified, and the organisation
+  loses the ability to see its own reliability long after the programme ends.
+
+The instrumentation card carries the observation most likely to change what a reader does tomorrow:
+a service can return HTTP 200 to every request while placing no orders, and every technical
+dashboard will show a healthy system. Every service needs at least one metric a non-engineer would
+recognise as the thing it is for.
+
+### Track BH after this wave
+
+One item genuinely open: reporting reliability to the business as distinct from to engineering. Four
+items are marked `[~]` with their existing location — the monitoring/observability distinction,
+OTel instruments and views, and symptom-based alerting, which `ops` already carded twice.
+
+### Verification
+
+`lint_content.py` 1,286 topics / 169 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only ops` corrected three stamps to 2026-07
+(`git log -S` confirms commit d38592c, dated July — the fourth such correction, per the rule
+recorded in the platform-engineering session record) · `--verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 4.9 / 8.0 MB, gzip 1,324 / 2,200 KB, DOM 416 / 1,500, content elements
+101,920 / 175,000.
