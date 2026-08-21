@@ -2546,7 +2546,7 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 
 **Wave AR1 — Physical Security Systems**
 - [ ] Access Control Systems — badges, readers, controllers, anti-passback, tailgating
-- [ ] Credential Cloning — why 125 kHz prox is not a control, and what to move to
+- [x] Credential Cloning — why 125 kHz prox is not a control, and what to move to
 - [ ] CCTV & Video Management — retention, coverage, evidentiary quality, privacy limits
 - [ ] Datacenter & Facility Security — layers, mantraps, visitor control, delivery bays
 - [ ] Environmental Controls & Monitoring — power, cooling, water, fire suppression
@@ -2555,7 +2555,7 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 - [ ] The Insider Threat Model — malicious, negligent, compromised; each needs a different control
 - [ ] Behavioural Indicators — and the ethical line around monitoring people
 - [ ] Separation of Duties & Least Privilege in Practice — beyond the slide
-- [ ] Offboarding as a Security Control — the checklist and its failure modes
+- [x] Offboarding as a Security Control — the checklist and its failure modes
 - [ ] Building an Insider Threat Programme — legal, HR and IT together
 
 **Wave AR3 — Investigations**
@@ -2566,11 +2566,11 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 - [ ] Writing an Investigation Report — findings, evidence, limits, no speculation
 
 **Wave AR4 — OSINT & Attack-Surface Discovery (defensive)**
-- [ ] Mapping Your Own Exposure — domains, certificates, cloud, code, people
-- [ ] Credential Exposure Monitoring — breach data, paste sites, and responsible use
-- [ ] Executive & VIP Exposure — data brokers, doxxing risk, protective steps
-- [ ] Brand & Impersonation Monitoring — lookalike domains, fake apps, takedowns
-- [ ] Turning Findings Into Work — from a scary spreadsheet to a prioritised backlog
+- [x] Mapping Your Own Exposure — domains, certificates, cloud, code, people
+- [x] Credential Exposure Monitoring — breach data, paste sites, and responsible use
+- [x] Executive & VIP Exposure — data brokers, doxxing risk, protective steps
+- [x] Brand & Impersonation Monitoring — lookalike domains, fake apps, takedowns
+- [x] Turning Findings Into Work — from a scary spreadsheet to a prioritised backlog
 
 ---
 
@@ -6036,3 +6036,59 @@ Two specifics worth carrying: PortFast without BPDU guard converts a slow-boot c
 outage risk, so they are a pair and never one alone; and hairpin NAT is usually the wrong fix for
 "works from home, not from the office" — split-horizon DNS is simpler, faster, and removes the
 firewall from a path it does not need to be in.
+
+---
+
+## Session record — Track AR: external exposure, offboarding and credential cloning
+
+Tenth content wave. `sec` already carried three AR cards from an earlier session — physical
+security systems, the insider threat programme, internal investigations — so the audit was about
+finding what those did *not* reach.
+
+### The audit
+
+The exposure sub-track was almost entirely absent: `credential exposure`, `paste site`,
+`takedown` and `data broker` returned **0**, with seven mentions across the whole cluster.
+`offboarding checklist` returned **0**. The physical and investigations material sat at 19
+mentions, which is the three existing cards doing their job at concept level.
+
+### What shipped
+
+**7 cards into `sec`**, 57 → 64. Site: 1,220 → **1,227 topics**.
+
+| Group | Cards |
+|---|---|
+| Seeing yourself | Mapping your own attack surface · Credential exposure monitoring |
+| Being impersonated | Brand &amp; impersonation monitoring · Executive &amp; VIP exposure |
+| Acting on it | Turning findings into work |
+| The gaps in existing cards | Offboarding as a security control · Access credentials &amp; cloning |
+
+### What these cards are actually about
+
+The exposure cluster is **the same reconnaissance the Red Team domain teaches, pointed at
+yourself** — and the cards say so, cross-referencing `Reconnaissance (OSINT)` directly. The
+observation that makes it worth writing: an attacker's inventory of your internet-facing estate is
+routinely more complete than your own asset register, because yours records what was provisioned
+deliberately and theirs includes everything anyone ever stood up and forgot.
+
+Three specifics worth carrying:
+
+- **Dangling DNS is the finding that becomes a real compromise.** A CNAME to a deleted cloud
+  resource hands your subdomain — and its trust — to whoever can claim the name next. It is created
+  by ordinary decommissioning that skipped one step, which is why the fix is a checklist item
+  rather than a scan.
+- **Infostealer logs changed the credential-exposure problem.** They contain session cookies as
+  well as passwords, so resetting the password while leaving sessions live achieves nothing, and
+  the compromised thing is the device rather than the account.
+- **Blocklist before takedown.** Submission to browser and mail blocklists protects users within
+  minutes while removal runs for days, and the priority ordering is the part people get wrong.
+
+### Track AR after this wave
+
+Fourteen items remain, all in the physical-security and internal-investigations depth: access
+control system internals, CCTV evidentiary quality, datacenter facility layers, environmental
+monitoring, behavioural indicators, separation of duties, running an investigation, interviewing,
+working with law enforcement, and investigation reports. Each is genuine and each is a *narrower*
+specialism than this site's audience generally needs — the concept-level card exists for all of
+them. Left open deliberately rather than marked covered: they are real gaps, just low-priority
+ones, and saying so is more useful to the next session than a tick would be.
