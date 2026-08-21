@@ -306,7 +306,7 @@ grype nginx:latest
 
 <!-- BEGINNER31-OPS v1 -->
 <!-- ── TOPIC: Kubernetes for Beginners ───────────────────────── -->
-<div class="topic" data-reviewed="2026-06">
+<div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
     <span class="topic-badge">Beginner</span>
     <span class="topic-name">Kubernetes – Container Orchestration Fundamentals</span>
@@ -452,7 +452,7 @@ spec:
 
 <!-- BEGINNER35-OPS v1 -->
 <!-- ── TOPIC: CI/CD Pipeline Fundamentals ────────────────────── -->
-<div class="topic" data-reviewed="2026-06">
+<div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
     <span class="topic-badge">Beginner</span>
     <span class="topic-name">CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> Pipelines – From Commit to Production Automatically</span>
@@ -2079,6 +2079,693 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                     <strong class="c-green">Cilium</strong> (eBPF-based) is increasingly the default —
                     it does networking, NetworkPolicy, and observability in one. Storage: a
                     <code>PVC</code> requests, the <code>StorageClass</code> + CSI driver fulfill it.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- ── TOPIC: WHY PLATFORM ENGINEERING EXISTS ────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧭</span>
+              <span class="topic-name">Why Platform Engineering Exists — The Cognitive-Load Argument, Stated Honestly</span>
+              <span class="topic-badge">Platform</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">"You Build It, You Run It" Was Right and Did Not Scale</div>
+                <div class="concept-desc">
+                  The DevOps argument was that throwing software over a wall to an operations team produced
+                  slow, brittle delivery, and it was correct. What followed was every product team owning its
+                  own pipeline, infrastructure, observability, security posture and on-call rotation. At two
+                  teams that is autonomy. At forty it is forty half-built platforms, each maintained by people
+                  whose actual job is something else, none of them good, all of them different.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    Platform engineering is the correction, and the honest version of the argument is narrow:
+                    <em>the amount a product engineer must hold in their head to ship safely has grown past
+                    what is reasonable, and most of that load is identical across teams.</em> Not all of it —
+                    the domain knowledge is theirs and must stay theirs. The identical part is what a platform
+                    absorbs.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Three Kinds of Cognitive Load, and Which One to Attack</div>
+                <div class="concept-desc">
+                  The distinction comes from learning theory and it is unusually useful here, because it says
+                  precisely which work is worth removing and which would be harmful to remove.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Type</th><th>Example</th><th>Platform's job</th></tr></thead>
+                    <tbody>
+                      <tr><td>Intrinsic — inherent to the problem</td><td>The business domain; the algorithm</td><td>Leave it alone; this is why the team exists</td></tr>
+                      <tr><td>Extraneous — accidental, from tooling and process</td><td>Writing a pipeline, wiring metrics, requesting a database</td><td>Absorb all of it — this is the entire mandate</td></tr>
+                      <tr><td>Germane — effort that builds useful understanding</td><td>Learning why the system fails the way it does</td><td>Support it; do not hide it behind an abstraction</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The germane row is the one that stops a platform going too far. Hiding production
+                    behaviour from the team that owns the service does not reduce load, it relocates the
+                    understanding away from the people who need it at three in the morning. A platform should
+                    remove the wiring and leave the consequences visible.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">When You Do Not Need a Platform Team</div>
+                <div class="concept-desc">
+                  Platform engineering is a fashion as well as a discipline, and it is adopted at sizes where
+                  it is a net loss. The cost is real: a team that ships no product, an abstraction everyone
+                  must learn, and a new dependency in everybody's critical path.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Situation</th><th>Better answer</th></tr></thead>
+                    <tbody>
+                      <tr><td>Fewer than roughly five product teams</td><td>Shared templates and a conventions document; revisit later</td></tr>
+                      <tr><td>One product, one deployment shape</td><td>Make the one pipeline excellent; there is nothing to abstract over</td></tr>
+                      <tr><td>The pain is one specific thing — say, environments</td><td>Solve that one thing; do not found a department for it</td></tr>
+                      <tr><td>Teams are not actually blocked, leadership is anxious</td><td>Measure first — lead time and where it goes</td></tr>
+                      <tr><td>The real problem is unclear ownership</td><td>An org chart problem; a platform will not fix it and will absorb the blame</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The honest test before starting: can you name the three things product engineers spend
+                    time on that they should not, with evidence rather than intuition? If not, the first piece
+                    of platform work is finding out, and it is usually a fortnight of watching how a change
+                    actually reaches production.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: PLATFORM AS A PRODUCT ──────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🎁</span>
+              <span class="topic-name">Platform as a Product — Adoption, the Option Not to Use It &amp; the Anti-Patterns</span>
+              <span class="topic-badge">Platform</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Voluntary Adoption Is the Forcing Function, Not a Nicety</div>
+                <div class="concept-desc">
+                  The single practice that separates platforms teams love from platforms teams resent is
+                  whether using it is optional. Mandated platforms accumulate features nobody asked for,
+                  because adoption is guaranteed regardless of quality, and the feedback that would have
+                  corrected the roadmap arrives as complaints to management instead. Optional platforms have
+                  to be genuinely faster than the alternative, and that constraint is what keeps them good.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    The nuance worth stating: some things must be mandatory — how production is accessed, how
+                    artifacts are signed, what logging exists. The resolution is to mandate the
+                    <em>outcome</em> and make the platform overwhelmingly the easiest way to achieve it. A
+                    team that goes around it then owns the equivalent work, visibly, which almost nobody
+                    chooses twice.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Running It Like a Product</div>
+                <div class="concept-desc">
+                  Most of this is ordinary product management applied to an internal audience, and the reason
+                  it needs saying is that platform teams are staffed with infrastructure engineers who were
+                  never asked to do any of it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Practice</th><th>What it looks like internally</th></tr></thead>
+                    <tbody>
+                      <tr><td>Know your users</td><td>Sit with product teams while they deploy; watch, do not survey</td></tr>
+                      <tr><td>Have a roadmap, published</td><td>Teams can plan around what is coming instead of building around its absence</td></tr>
+                      <tr><td>Say no, with a reason</td><td>A platform that accepts every request becomes forty features and no product</td></tr>
+                      <tr><td>Version and deprecate deliberately</td><td>Your users cannot upgrade on your schedule</td></tr>
+                      <tr><td>Measure adoption, not delivery</td><td>Shipping a feature nobody adopted is not progress</td></tr>
+                      <tr><td>Treat documentation as the interface</td><td>For an internal product it is where adoption is won or lost</td></tr>
+                      <tr><td>Run a support channel with a service expectation</td><td>Unanswered questions become permanent workarounds</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">The Anti-Patterns, and What Each One Feels Like From Outside</div>
+                <div class="concept-desc">
+                  These are the recognisable failure shapes. The tell is always the same: the platform team's
+                  view of the situation and the product teams' view have stopped matching.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Anti-pattern</th><th>From the outside</th><th>Correction</th></tr></thead>
+                    <tbody>
+                      <tr><td>The gatekeeper</td><td>"We need platform's approval to deploy"</td><td>Guard rails in the path, not gates across it</td></tr>
+                      <tr><td>The ticket queue</td><td>"We asked for a database in March"</td><td>Self-service; a ticket means the automation is missing</td></tr>
+                      <tr><td>The leaky abstraction</td><td>"It works until it breaks, then nobody can debug it"</td><td>Make the underlying system inspectable rather than hidden</td></tr>
+                      <tr><td>The rewrite of the cloud</td><td>"We have our own YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> that generates their YAML"</td><td>Thin layer over the provider; adopt their concepts</td></tr>
+                      <tr><td>The ivory tower</td><td>"They built what they found interesting"</td><td>Rotate engineers through product teams, both directions</td></tr>
+                      <tr><td>The unowned platform</td><td>"It works, but nobody maintains it"</td><td>Fund it as a product with a team, or do not build it</td></tr>
+                      <tr><td>The compliance shield</td><td>"Security made them add another step"</td><td>Automate the control so it costs the team nothing</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The gatekeeper and the ticket queue are the same failure at different speeds, and both
+                    usually start as a temporary measure while automation catches up. Write down when the
+                    temporary measure ends, because otherwise it is the platform's permanent shape and the
+                    team will be described as a bottleneck within two quarters.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: GOLDEN PATHS & TVP ─────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🛤️</span>
+              <span class="topic-name">Golden Paths &amp; the Thinnest Viable Platform — Building the Least That Works</span>
+              <span class="topic-badge">Platform</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Golden Path Is a Supported Route, Not the Only Route</div>
+                <div class="concept-desc">
+                  A golden path is one well-lit way to do a common thing — stand up a service, add a queue,
+                  expose an endpoint — that is fully supported, documented, secure by default and genuinely
+                  the fastest option. Its defining property is that leaving it is allowed. A team with an
+                  unusual requirement steps off, accepts that they now own the pieces the platform was
+                  providing, and nobody has to argue about it.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    That property is what stops golden paths becoming policy. The moment stepping off is
+                    forbidden, the path has to accommodate every case, and it grows into a configuration
+                    language with two hundred options — which is the state most internal platforms are
+                    actually in, and why teams describe them as harder than the underlying cloud.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What a Golden Path Has to Include to Be Worth Following</div>
+                <div class="concept-desc">
+                  A template that generates a repository and stops there is not a golden path; it is a
+                  starting inconvenience. The test is whether a new service reaches production, observed and
+                  secured, without the team assembling anything themselves.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Included</th><th>Because otherwise</th></tr></thead>
+                    <tbody>
+                      <tr><td>Repository, structure and conventions</td><td>Every service is a different shape and nothing transfers</td></tr>
+                      <tr><td>Pipeline that builds, tests, signs and deploys</td><td>The team writes their own, badly, once</td></tr>
+                      <tr><td>Environments already provisioned</td><td>The first week is spent on infrastructure tickets</td></tr>
+                      <tr><td>Observability wired — logs, metrics, traces, a default dashboard</td><td>Instrumentation is added after the first incident</td></tr>
+                      <tr><td>Alerting on the basics, routed to the owning team</td><td>Nobody notices until a user does</td></tr>
+                      <tr><td>Secrets, identity and network position configured</td><td>Credentials end up in environment variables</td></tr>
+                      <tr><td>Ownership registered, so the service is findable</td><td>An unowned service in eighteen months</td></tr>
+                      <tr><td>A documented way to leave the path</td><td>Teams fork the template silently and you lose visibility</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Thinnest Viable Platform — Resisting the Urge to Build a Cloud</div>
+                <div class="concept-desc">
+                  Platform teams are staffed by people who enjoy building infrastructure, working on a problem
+                  where building infrastructure is the visible output. The predictable result is a platform
+                  that reimplements the cloud provider it sits on, with fewer features, no documentation and
+                  one maintainer.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Prefer</th><th>Over</th></tr></thead>
+                    <tbody>
+                      <tr><td>A well-written page of documentation</td><td>A tool that automates a rare two-minute task</td></tr>
+                      <tr><td>A shared module in the provider's own language</td><td>An in-house abstraction over that language</td></tr>
+                      <tr><td>The provider's console for exploration</td><td>Rebuilding read views in your own portal</td></tr>
+                      <tr><td>An off-the-shelf portal or catalogue</td><td>Writing one, which is a product in itself</td></tr>
+                      <tr><td>Conventions enforced in CI</td><td>A wrapper CLI <span class="acro-exp">(Command Line Interface)</span> that must be installed and kept current</td></tr>
+                      <tr><td>Solving the thing three teams asked for</td><td>The general case nobody has hit yet</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    A useful discipline: for every abstraction, write down what it costs a new engineer to
+                    learn and what it saves them. If the honest answer is that they must learn both your layer
+                    and the underlying system, you have added load rather than removed it — which is the exact
+                    opposite of the mandate, and it is the most common way platform work goes wrong while
+                    looking productive.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: DEVELOPER PORTALS & CATALOGUES ─────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📇</span>
+              <span class="topic-name">Developer Portals, Service Catalogues &amp; Scorecards</span>
+              <span class="topic-badge">Platform</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Catalogue Is the Product; the Portal Is Where You Look At It</div>
+                <div class="concept-desc">
+                  Organisations adopt a developer portal expecting the interface to be the value, and the
+                  interface is the least of it. What earns its keep is the catalogue underneath: a machine-
+                  readable record of every service, who owns it, what it depends on, where its code and
+                  dashboards are, and which tier it belongs to. Almost every question that costs an
+                  organisation time — who owns this, what breaks if it goes down, who do I page — is a
+                  catalogue query that currently requires asking three people.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    Which is why an empty or stale portal is worse than none: it is an authoritative-looking
+                    source that is wrong, and people learn within a month to ask a human instead. Accuracy is
+                    the whole product, and accuracy comes from generation rather than from data entry.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Keeping It Accurate Without Anyone Maintaining It</div>
+                <div class="concept-desc">
+                  A catalogue maintained by hand decays predictably: correct at launch, half-right after two
+                  reorganisations, ignored within a year. Every entry that can be derived should be.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Field</th><th>Source of truth</th></tr></thead>
+                    <tbody>
+                      <tr><td>Service exists</td><td>Discovered from deployments and repositories, not registered by hand</td></tr>
+                      <tr><td>Ownership</td><td>A file in the repository, resolved to a current team via the directory</td></tr>
+                      <tr><td>Dependencies</td><td>Derived from traces and network flow, not from a diagram</td></tr>
+                      <tr><td>On-call</td><td>Read live from the paging tool</td></tr>
+                      <tr><td>Dashboards, runbooks, docs</td><td>Conventional locations, generated links</td></tr>
+                      <tr><td>Tier and criticality</td><td>Declared once by the owner; the one field worth entering by hand</td></tr>
+                      <tr><td>Compliance and security posture</td><td>Read from the scanners that already run</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Ownership resolving through a team rather than a person is the detail that decides whether
+                    this survives a reorganisation. Individual names in a catalogue are wrong within months
+                    and produce the worst possible outcome during an incident: a confident page to someone who
+                    left.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Scorecards — Useful Pressure or a League Table Nobody Respects</div>
+                <div class="concept-desc">
+                  Scorecards grade services against standards: has an owner, has a runbook, has alerts,
+                  dependencies patched, secrets not in the repository. Used well they turn invisible
+                  engineering hygiene into something visible enough to fund. Used badly they become a metric
+                  teams game while the underlying property gets worse.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Works</th><th>Fails</th></tr></thead>
+                    <tbody>
+                      <tr><td>Checks the team agrees actually matter</td><td>Checks invented by the platform team alone</td></tr>
+                      <tr><td>Each check links to how to fix it, in one click</td><td>A red square with no next step</td></tr>
+                      <tr><td>Trend over time, per team</td><td>A ranking of teams against each other</td></tr>
+                      <tr><td>Gates only on the few genuinely non-negotiable checks</td><td>Blocking deploys on documentation completeness</td></tr>
+                      <tr><td>Retired when a check becomes universal</td><td>Accumulating checks forever until the score means nothing</td></tr>
+                      <tr><td>New checks arrive in warn mode first</td><td>Everyone turning red overnight for a rule added on Tuesday</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The strongest version couples a check to the golden path: if following the supported route
+                    makes a check pass automatically, the scorecard stops being an audit and becomes an
+                    adoption argument. Teams do not resist a standard that costs them nothing to meet.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: SELF-SERVICE & ENVIRONMENTS ────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🎛️</span>
+              <span class="topic-name">Self-Service Infrastructure &amp; Environment Management</span>
+              <span class="topic-badge">Platform</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Guard Rails Over Gates — and the Difference Is Where the Waiting Happens</div>
+                <div class="concept-desc">
+                  A gate stops a request until someone approves it. A guard rail lets the request proceed
+                  within a shape that cannot cause the harm the gate was worried about. They aim at the same
+                  risk and differ entirely in cost: a gate charges every request the latency of a human, on
+                  their schedule, forever, in exchange for catching the rare bad one. A guard rail charges
+                  engineering effort once.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Gate</th><th>Guard rail that replaces it</th></tr></thead>
+                    <tbody>
+                      <tr><td>Approve every database request</td><td>A module offering three sanctioned sizes, encrypted, backed up, tagged</td></tr>
+                      <tr><td>Review every IAM <span class="acro-exp">(Identity and Access Management)</span> policy</td><td>Pre-built roles per workload type; anything custom goes to review</td></tr>
+                      <tr><td>Approve infrastructure spend</td><td>Budget per team with alerts; approval only above a threshold</td></tr>
+                      <tr><td>Security review every new service</td><td>Golden path that is compliant by construction; review only for departures</td></tr>
+                      <tr><td>Manual production access grants</td><td>Time-boxed self-service elevation, logged and reviewed after</td></tr>
+                      <tr><td>Approve every network rule</td><td>Namespace-scoped policy the team owns, with egress defaults enforced</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The pattern in that right-hand column: the common case becomes free, and the exception
+                    keeps its review. Nearly every gate in a real organisation is defending against a scenario
+                    that only arises in the exceptional case, and charging the common one for it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What Self-Service Actually Requires Behind the Button</div>
+                <div class="concept-desc">
+                  Self-service fails when it provisions the resource and leaves the consequences to somebody
+                  else. These are what make it sustainable rather than a way to accumulate unowned
+                  infrastructure quickly.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Requirement</th><th>Without it</th></tr></thead>
+                    <tbody>
+                      <tr><td>Ownership recorded at creation, non-optional</td><td>Orphaned resources nobody may delete</td></tr>
+                      <tr><td>Cost attributed to the owning team automatically</td><td>Spend nobody feels and nobody can trace</td></tr>
+                      <tr><td>Compliant defaults — encryption, backup, logging, tags</td><td>Self-service becomes the fastest way to create findings</td></tr>
+                      <tr><td>An expiry or a renewal, at least for non-production</td><td>The environment created for a two-week experiment, running in a year</td></tr>
+                      <tr><td>A tested path to delete, not only to create</td><td>One-way growth; the reason cloud bills climb</td></tr>
+                      <tr><td>Quotas per team</td><td>One loop provisioning two hundred instances</td></tr>
+                      <tr><td>Everything through code, so it is reviewable and reproducible</td><td>Console-created resources drift outside every process</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Ephemeral Environments — The Highest-Value Thing on This Page</div>
+                <div class="concept-desc">
+                  A per-pull-request environment, created on open and destroyed on merge, changes how a team
+                  works more than any other platform capability: reviewers see the change running, designers
+                  and product managers can look before merge, integration problems surface days earlier, and
+                  the staging bottleneck where three teams queue behind one shared environment disappears.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Hard part</th><th>Approach</th></tr></thead>
+                    <tbody>
+                      <tr><td>Data — you cannot copy production</td><td>A seeded synthetic dataset, maintained as a first-class artifact</td></tr>
+                      <tr><td>Dependencies on other services</td><td>Point at a shared staging instance, or run contract-tested fakes</td></tr>
+                      <tr><td>Cost</td><td>Aggressive expiry, scale to zero, and destruction on merge — the default must be off</td></tr>
+                      <tr><td>Provisioning time</td><td>Budget for minutes; anything longer and people stop waiting for it</td></tr>
+                      <tr><td>Stateful dependencies</td><td>Template databases restored from a snapshot rather than migrated from empty</td></tr>
+                      <tr><td>Secrets</td><td>Environment-scoped, short-lived, never production credentials</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The synthetic dataset is the piece teams underestimate and it decides whether the whole
+                    thing is useful. An environment with no realistic data lets you check the service starts,
+                    which nobody needed an environment for. Building and maintaining a good seed set is
+                    unglamorous, is the actual work, and pays for itself across testing and demos too.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: PLATFORM SLOs & MIGRATING CONSUMERS ────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📐</span>
+              <span class="topic-name">Platform SLOs <span class="acro-exp">(Service Level Objective)</span> &amp; Migrating Consumers Without Breaking Teams</span>
+              <span class="topic-badge">Platform</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Platform Is Production for Its Users</div>
+                <div class="concept-desc">
+                  Platform teams often carry no formal reliability commitment, on the reasoning that they do
+                  not serve customers. Their users are forty engineers whose work stops when the pipeline is
+                  down, and whose production incidents cannot be fixed when the deploy path is broken. A
+                  platform outage during someone else's incident is a compounding failure, and it is the
+                  scenario that most damages trust in a platform team.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Platform SLI <span class="acro-exp">(Service Level Indicator)</span></th><th>Why it is the one that matters</th></tr></thead>
+                    <tbody>
+                      <tr><td>Time from merge to deployed</td><td>The number every user feels, every day</td></tr>
+                      <tr><td>Pipeline success rate excluding genuine test failures</td><td>Separates "your code is broken" from "the platform is broken"</td></tr>
+                      <tr><td>Environment provisioning time and success rate</td><td>Where self-service either works or quietly does not</td></tr>
+                      <tr><td>Availability of the deploy path during an incident</td><td>The worst possible time to be unavailable</td></tr>
+                      <tr><td>Time to first successful deploy for a new service</td><td>Measures the golden path end to end, honestly</td></tr>
+                      <tr><td>Support response time</td><td>Users experience a slow answer as an outage of you</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Publish these where users see them. A platform team that reports its own reliability
+                    changes the conversation from anecdote — "the pipeline is always flaky" — to a shared
+                    number that either supports the complaint or does not.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">You Cannot Upgrade Your Users on Your Schedule</div>
+                <div class="concept-desc">
+                  Every platform eventually needs to change something its consumers depend on: a base image, a
+                  pipeline syntax, a module interface, an authentication method. The instinct is a deadline
+                  and an announcement. What actually happens is that most teams have work already committed,
+                  the deadline slips, the old path stays alive, and the platform now maintains both versions
+                  indefinitely — which is the state most platform teams are in and the reason they feel
+                  permanently short-staffed.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Practice</th><th>Effect</th></tr></thead>
+                    <tbody>
+                      <tr><td>Know exactly who consumes what, from the catalogue</td><td>Migration becomes a list rather than a broadcast</td></tr>
+                      <tr><td>Migrate the consumers yourself where you can</td><td>The platform team does it forty times well, not forty teams once each</td></tr>
+                      <tr><td>Ship a codemod or automated fix with the deprecation</td><td>Turns a project for each team into a merged pull request</td></tr>
+                      <tr><td>Support both versions for a stated window, then stop</td><td>The window is the commitment; open-ended support is the trap</td></tr>
+                      <tr><td>Brownouts before removal</td><td>Finds the consumer who never read the announcement</td></tr>
+                      <tr><td>Make the new path better, not merely newer</td><td>Migration for the platform's convenience gets deprioritised, correctly</td></tr>
+                      <tr><td>Track migration progress publicly</td><td>Social pressure works, and stragglers become visible early</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">A Support Model That Does Not Become a Help Desk</div>
+                <div class="concept-desc">
+                  Support load is the hidden tax on platform teams and it grows with adoption, which means
+                  success makes it worse. Left unmanaged it consumes the team's capacity to build, and the
+                  platform stops improving at exactly the point it is most used.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+                    <tbody>
+                      <tr><td>One rotating support engineer, protected from project work</td><td>Interrupts land on one person instead of fragmenting everyone</td></tr>
+                      <tr><td>A public channel, not direct messages</td><td>Answers become searchable; the same question is asked once</td></tr>
+                      <tr><td>Every recurring question becomes documentation or a fix</td><td>The queue is a product backlog, sorted by frequency</td></tr>
+                      <tr><td>Track question categories, not just volume</td><td>Tells you which abstraction is confusing before anyone complains</td></tr>
+                      <tr><td>Office hours for the open-ended conversations</td><td>Keeps design discussions out of the incident channel</td></tr>
+                      <tr><td>Escalation path for genuine platform outages</td><td>Distinguishes "how do I" from "everything is down"</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Treat the support queue as your most honest product research. Teams do not fill in surveys
+                    truthfully and they do describe their actual problem when blocked. The three questions
+                    asked most often this quarter are, almost always, next quarter's roadmap.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: MEASURING PLATFORM SUCCESS ─────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📊</span>
+              <span class="topic-name">Measuring Platform Success — Adoption, Lead Time &amp; the Counter-Metrics</span>
+              <span class="topic-badge">Platform</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Platform Team Ships No Product, Which Makes It Permanently Fundable and Permanently Cuttable</div>
+                <div class="concept-desc">
+                  Platform work has no feature launch to point at. Its output is other teams going faster,
+                  which is invisible unless somebody measures it, and which every other team will attribute to
+                  their own competence. That is not cynicism — it is the structural position, and it means
+                  measurement is not bureaucracy for a platform team. It is the only evidence that the
+                  investment is working, and the only defence when budgets tighten.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    It also protects against the opposite failure: a platform team that is genuinely not
+                    helping, sustained by the assumption that platform investment is inherently good. Both
+                    errors are corrected by the same numbers.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What to Measure, and What Each Number Is Vulnerable To</div>
+                <div class="concept-desc">
+                  Every metric here can be moved without improving anything, so each is paired with what it
+                  must be read against.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Metric</th><th>Shows</th><th>Read alongside</th></tr></thead>
+                    <tbody>
+                      <tr><td>Adoption — services on the golden path</td><td>Whether the platform is genuinely the easy option</td><td>Whether adoption was mandated, which voids the signal</td></tr>
+                      <tr><td>Lead time from commit to production</td><td>The core delivery outcome</td><td>Change failure rate — speed at the cost of quality is not a win</td></tr>
+                      <tr><td>Time to first deploy for a new service</td><td>Onboarding cost, end to end</td><td>Whether the resulting service is production-ready or a shell</td></tr>
+                      <tr><td>Deployment frequency</td><td>Confidence in the path</td><td>Batch size; the same volume in more deploys is real progress</td></tr>
+                      <tr><td>Support tickets per team per month</td><td>Friction, honestly reported</td><td>Adoption — more users produce more tickets legitimately</td></tr>
+                      <tr><td>Time spent by product engineers on infrastructure</td><td>Directly measures the mandate</td><td>Self-reported, so trend it rather than trusting the level</td></tr>
+                      <tr><td>Developer satisfaction, asked specifically</td><td>The thing the metrics are proxies for</td><td>Response rate; unhappy teams stop answering</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">The Counter-Metrics, and Documentation as the Surface Where Adoption Is Won</div>
+                <div class="concept-desc">
+                  Counter-metrics exist to catch the improvement that is really a cost moved somewhere less
+                  visible. Watch these as closely as the headline numbers.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Counter-metric</th><th>Catches</th></tr></thead>
+                    <tbody>
+                      <tr><td>Change failure rate and time to restore</td><td>Speed bought by removing safety</td></tr>
+                      <tr><td>Number of teams that forked the golden path</td><td>A path that stopped fitting, discovered before it is universal</td></tr>
+                      <tr><td>Platform-caused incidents</td><td>Reliability debt accumulating under the abstraction</td></tr>
+                      <tr><td>Exception and waiver count</td><td>Guard rails that are really gates people are routing around</td></tr>
+                      <tr><td>Cost per service</td><td>Convenience paid for with an unnoticed bill</td></tr>
+                      <tr><td>Time to debug a production issue on the platform</td><td>A leaky abstraction, in the one measurement that reveals it</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    One last observation that belongs with measurement because it moves every number above:
+                    for an internal platform, <strong>documentation is the interface.</strong> A capability
+                    nobody can find does not exist, and the most common cause of low adoption is not a missing
+                    feature but an undiscoverable one. Treat the getting-started page as the highest-traffic
+                    surface you own, watch a new joiner use it without helping them, and fix what makes them
+                    stop — that half-hour reliably produces more adoption than a quarter of feature work.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: DEVELOPER EXPERIENCE ───────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">⏱️</span>
+              <span class="topic-name">Developer Experience — Inner Loop, Build Speed, Onboarding &amp; Toil Audits</span>
+              <span class="topic-badge">Platform</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Inner Loop Is Where the Day Goes</div>
+                <div class="concept-desc">
+                  A developer's work splits into an inner loop — edit, build, run, test, repeat, dozens of
+                  times an hour — and an outer loop of review, merge, deploy and release, which happens a few
+                  times a day. Platform attention overwhelmingly goes to the outer loop, because that is where
+                  the infrastructure is. The inner loop is where the hours actually are, and a two-minute
+                  rebuild does not cost two minutes: it costs the context that fell out of the engineer's head
+                  while they waited.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    This is why build speed is a feature rather than a nice-to-have. The compounding is
+                    severe — a cycle slow enough to break concentration changes how people work, pushing them
+                    toward larger batches and less frequent verification, which is the opposite of everything
+                    the outer-loop investment was trying to achieve.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Local Development That Matches Production</div>
+                <div class="concept-desc">
+                  The two failure modes are opposite and both common: a local environment so unlike production
+                  that nothing found there is trustworthy, and an attempt to run the whole system locally that
+                  needs sixteen gigabytes and forty minutes.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Problem</th><th>Approach</th></tr></thead>
+                    <tbody>
+                      <tr><td>Too many services to run locally</td><td>Run yours; point at shared staging or contract-tested fakes for the rest</td></tr>
+                      <tr><td>Different runtime versions locally</td><td>Pin the toolchain in the repository; a devcontainer or equivalent</td></tr>
+                      <tr><td>No realistic data</td><td>The same seeded dataset the ephemeral environments use</td></tr>
+                      <tr><td>Secrets and credentials to obtain</td><td>Short-lived developer credentials issued by the platform, not shared ones</td></tr>
+                      <tr><td>Configuration drift between local and deployed</td><td>One configuration mechanism, different values</td></tr>
+                      <tr><td>Works locally, fails deployed</td><td>Same container image locally and in production</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Onboarding to First Commit, and Auditing Toil Honestly</div>
+                <div class="concept-desc">
+                  Two exercises give a platform team a better roadmap than any planning session, and both take
+                  under a week.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Exercise</th><th>How</th><th>What it reveals</th></tr></thead>
+                    <tbody>
+                      <tr><td>Time to first commit</td><td>Watch the next new joiner, in silence, from laptop to merged change</td><td>Every undocumented step, stale link and required favour</td></tr>
+                      <tr><td>Toil audit</td><td>For two weeks, log manual work that is repetitive, automatable and scales with growth</td><td>What to automate, ranked by frequency rather than by irritation</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Watching in silence is the whole method for the first one — the instinct to help destroys
+                    the data, and the moment somebody quietly gives up and asks a colleague is the finding.
+                    For the second, the definition matters: toil is manual, repetitive, automatable, tactical
+                    and scales linearly with the service. Work that is manual but requires judgement is not
+                    toil, and automating it is how organisations produce systems nobody can override. Some
+                    work is also genuinely better left manual: rare, high-consequence and worth a human
+                    pausing over — a production database restore does not need to be one click.
                   </div>
                 </div>
               </div>

@@ -3135,33 +3135,41 @@ engineering builds systems that do not need much proving.
 ~4 waves, ~20 cards. The discipline that grew out of DevOps once "you build it,
 you run it" met a hundred teams.
 
-**Wave BG1 — The Premise**
-- [ ] Why Platform Engineering Exists — the cognitive-load argument, stated honestly
-- [ ] Platform as a Product — users, roadmap, adoption, and the option to not use it
-- [ ] Golden Paths — paved roads that are genuinely faster than going around
-- [ ] Thinnest Viable Platform — resisting the urge to build a cloud on the cloud
-- [ ] Platform Team Anti-Patterns — the gatekeeper, the ticket queue, the abstraction leak
+**Wave BG1 — The Premise** — shipped into `devops`.
+- [x] Why Platform Engineering Exists — the cognitive-load argument, stated honestly
+- [x] Platform as a Product — users, roadmap, adoption, and the option to not use it
+- [x] Golden Paths — paved roads that are genuinely faster than going around
+- [x] Thinnest Viable Platform — resisting the urge to build a cloud on the cloud — same card as
+  golden paths, because the two are the same discipline pointed at build and at scope
+- [x] Platform Team Anti-Patterns — the gatekeeper, the ticket queue, the abstraction leak — inside
+  *Platform as a Product*, where each anti-pattern reads as a product failure
 
-**Wave BG2 — Building It**
-- [ ] Developer Portals — service catalogue, ownership, scorecards
-- [ ] Self-Service Infrastructure — templates, modules, and guard rails over gates
-- [ ] Environment Management — ephemeral environments, seeding, cost control
-- [ ] Paved-Path CI/CD — a pipeline teams inherit rather than copy
-- [ ] Policy as Code in the Platform — compliance that happens by default
+**Wave BG2 — Building It** — shipped into `devops`, except where noted.
+- [x] Developer Portals — service catalogue, ownership, scorecards
+- [x] Self-Service Infrastructure — templates, modules, and guard rails over gates
+- [x] Environment Management — ephemeral environments, seeding, cost control — same card; the
+  guard-rail argument and the ephemeral-environment payoff belong together
+- [~] Paved-Path CI/CD — a pipeline teams inherit rather than copy — the pipeline material is
+  already carded in `devops` (*CI/CD*, *GitHub Actions*, the CI landscape card); the
+  inherit-rather-than-copy point is the golden-path card's contents table
+- [~] Policy as Code in the Platform — compliance that happens by default — carded as
+  *Policy as Code — OPA/Rego &amp; Kyverno* in this domain
 
-**Wave BG3 — Operating It**
-- [ ] Platform SLOs — the platform is production for its users
-- [ ] Versioning & Migrating Consumers — changing a platform without breaking teams
-- [ ] Support Model — office hours, escalation, and not becoming a help desk
-- [ ] Documentation as the Product Surface — where adoption is actually won or lost
-- [ ] Measuring Platform Success — adoption, lead time, and the counter-metrics
+**Wave BG3 — Operating It** — shipped into `devops`.
+- [x] Platform SLOs — the platform is production for its users
+- [x] Versioning & Migrating Consumers — changing a platform without breaking teams
+- [x] Support Model — office hours, escalation, and not becoming a help desk — same card as SLOs
+  and migration, which are the three things a platform owes its users once it has any
+- [x] Documentation as the Product Surface — where adoption is actually won or lost — the closing
+  section of *Measuring Platform Success*, because it is the highest-leverage adoption lever
+- [x] Measuring Platform Success — adoption, lead time, and the counter-metrics
 
-**Wave BG4 — Developer Experience**
-- [ ] Local Development That Matches Production — containers, seeds, fakes
-- [ ] Build & Test Speed as a Feature — the compounding cost of a slow pipeline
-- [ ] Inner vs Outer Loop — where a developer's day actually goes
-- [ ] Onboarding to First Commit — measuring and shortening it
-- [ ] Toil Audits — finding the manual work worth automating, and the work that is not
+**Wave BG4 — Developer Experience** — shipped into `devops`, as one card.
+- [x] Local Development That Matches Production — containers, seeds, fakes
+- [x] Build & Test Speed as a Feature — the compounding cost of a slow pipeline
+- [x] Inner vs Outer Loop — where a developer's day actually goes
+- [x] Onboarding to First Commit — measuring and shortening it
+- [x] Toil Audits — finding the manual work worth automating, and the work that is not
 
 ### TRACK BH — Observability Engineering  (→ `ops`)
 
@@ -6633,3 +6641,93 @@ carded elsewhere, marked `[~]` in the track above with the location.
 `annotate_acronyms.py` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
 budget after build: raw 4.8 / 8.0 MB, gzip 1,301 / 2,200 KB, DOM 416 / 1,500, content elements
 100,530 / 175,000.
+
+---
+
+## Session record — Track BG: platform engineering and the internal developer platform
+
+Seventeenth content wave. The whole track, in one pass, into `devops`.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| "paved road" / "paved path", "platform as a product" | 0 |
+| "thinnest viable platform", "self-service infrastructure" | 0 |
+| "ephemeral environment", "service catalog" / "scorecard" | 0 |
+| "inner loop" / "outer loop", "onboarding to first commit" | 0 |
+| "platform SLO" | 0 |
+| `golden path`, `cognitive load`, `developer portal`, `Backstage` | present |
+
+The present row is one `devops` card — *Platform Engineering &amp; the Internal Developer
+Platform* — whose four concept cards are golden paths, the commit-to-production pipeline, CI in the
+repository, and which CI tool to pick. Three of those four are really CI/CD material. The card names
+the discipline and then teaches pipelines, which is a reasonable card and leaves the discipline
+itself unwritten.
+
+### What shipped
+
+**8 cards into `devops`**, 36 → 44. Site: 1,270 → **1,278 topics**.
+
+Why Platform Engineering Exists · Platform as a Product · Golden Paths &amp; the Thinnest Viable
+Platform · Developer Portals, Service Catalogues &amp; Scorecards · Self-Service Infrastructure &amp;
+Environment Management · Platform SLOs &amp; Migrating Consumers · Measuring Platform Success ·
+Developer Experience.
+
+They carry a **Platform** badge, so the cluster is separable from the domain's DevOps and Delivery
+material.
+
+### What these cards are actually about
+
+The through-line is a constraint rather than a technique: **a platform only stays good while its
+users could leave.** Voluntary adoption is what forces it to be genuinely faster than the
+alternative; mandate it and the feedback that would have corrected the roadmap arrives as
+complaints to management instead. Nearly every anti-pattern in the wave is downstream of losing
+that constraint.
+
+Four specifics worth carrying:
+
+- **Not all cognitive load should be removed.** Extraneous load — pipelines, wiring, provisioning —
+  is the entire mandate. Germane load, the effort that builds understanding of how your system
+  fails, must be protected: hiding production behaviour from the team that owns the service
+  relocates the understanding away from whoever is paged at three in the morning.
+- **A gate and a guard rail address the same risk and charge differently.** A gate charges every
+  request the latency of a human, forever, to catch the rare bad one. A guard rail charges
+  engineering effort once. Almost every gate in a real organisation defends against the exceptional
+  case while billing the common one.
+- **The seed dataset decides whether ephemeral environments are useful.** Per-pull-request
+  environments are the highest-value capability on the list, and an environment with no realistic
+  data only proves the service starts. Building a good synthetic seed set is the unglamorous part
+  and it is the actual work.
+- **A platform team ships no product, which makes it permanently fundable and permanently
+  cuttable.** Its output is other teams going faster, which is invisible unless measured and which
+  those teams will attribute to their own competence. Measurement is the only evidence — and it
+  equally catches the platform team that genuinely is not helping.
+
+The developer-experience card carries the observation that most surprises people: platform attention
+goes to the outer loop because that is where the infrastructure is, while the hours are in the inner
+loop. A two-minute rebuild does not cost two minutes; it costs the context that fell out of the
+engineer's head while they waited, and a cycle slow enough to break concentration pushes people
+toward larger batches — the opposite of what the outer-loop investment was for.
+
+### A third stamp correction
+
+`stamp_freshness.py --only devops` moved three topics: two CI/CD cards from `2026-08` to `2026-07`
+and one Kubernetes card from `2026-06` to `2026-07`. All three trace to commit a5f941f, the August
+commit that split the old `ops` domain into `ops` and `devops`. That is a file move, not an edit —
+exactly the mechanical-commit case the tool's `--ignore-rev` classification exists for — so looking
+through it to the pre-split date is correct behaviour, not drift. Third such correction this
+session; the pattern is consistent enough to state plainly: **when `--only` moves an old stamp,
+check whether a mechanical commit inflated it before assuming the tool is wrong.**
+
+### Track BG after this wave
+
+Complete. Two items are marked `[~]` because they were already carded in this same domain — paved-
+path CI/CD and policy as code — and the new cards point at them rather than restating them.
+
+### Verification
+
+`lint_content.py` 1,278 topics / 167 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 4.9 / 8.0 MB, gzip 1,312 / 2,200 KB, DOM 416 / 1,500, content elements
+101,187 / 175,000.
