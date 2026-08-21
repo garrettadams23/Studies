@@ -2650,4 +2650,437 @@ dsregcmd /status
             </div>
           </div>
 
+
+          <!-- ── TOPIC: SERVERLESS THREAT MODEL ────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">⚡</span>
+              <span class="topic-name">Serverless Threat Model — Event Injection, Over-Permissive Roles &amp; the Function You Cannot Log Into</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Removing the Server Removes Some Risks and Concentrates the Rest</div>
+                <div class="concept-desc">
+                  Serverless genuinely deletes categories of work: no patching, no SSH <span class="acro-exp">(Secure Shell)</span>, no long-lived host for
+                  an attacker to persist on, and a process that dies in seconds. What it does not delete is
+                  the application logic and the identity attached to it — and by removing everywhere else risk
+                  could live, it concentrates the entire remaining attack surface into two things: what the
+                  function does with its input, and what its execution role is allowed to do.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    That concentration cuts both ways. It makes the review tractable, because there are only
+                    two questions and both are answerable from the repository. It also means an
+                    over-permissive role has nothing standing between it and the attacker: no network
+                    boundary, no host hardening, no lateral step to detect. Compromise the function, and you
+                    are already the role.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Event Injection — Untrusted Input From Places That Do Not Look Like Input</div>
+                <div class="concept-desc">
+                  Web applications teach developers to distrust the request. Serverless functions are invoked
+                  by dozens of event sources, most of which feel like infrastructure rather than user input,
+                  and validation is skipped accordingly.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Trigger</th><th>Attacker-controlled part</th></tr></thead>
+                    <tbody>
+                      <tr><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> gateway</td><td>Everything — the one people do validate</td></tr>
+                      <tr><td>Object storage upload</td><td>File name, path, metadata, and the content itself</td></tr>
+                      <tr><td>Queue or stream message</td><td>The payload, if anything upstream can publish</td></tr>
+                      <tr><td>Email or SMS ingestion</td><td>Headers, sender, subject, body</td></tr>
+                      <tr><td>Database change stream</td><td>Any field a user could write, arriving as an event</td></tr>
+                      <tr><td>Third-party webhook</td><td>The entire body, unless the signature is verified — and it usually is not</td></tr>
+                      <tr><td>Log or notification events</td><td>Anything an attacker can cause to be logged</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The object-storage row produces the classic chain: a user uploads a file whose name
+                    contains a shell metacharacter, a function passes that name to a media tool, and the
+                    function's role does the rest. Nobody thought of the filename as user input because the
+                    event came from storage.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">The Failures That Are Specific to This Model</div>
+                <div class="concept-desc">
+                  These are the findings that a general application review misses because they are properties
+                  of the platform rather than of the code.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Failure</th><th>Fix</th></tr></thead>
+                    <tbody>
+                      <tr><td>One shared role across many functions</td><td>A role per function, scoped to the resources that function names</td></tr>
+                      <tr><td>Wildcard resource ARNs <span class="acro-exp">(Amazon Resource Name)</span> in the policy</td><td>Name the queue, the table, the bucket prefix — the effort is small and one-time</td></tr>
+                      <tr><td>Secrets in environment variables</td><td>Fetch from a secret store at invocation; environment variables are visible to anything that reads the config</td></tr>
+                      <tr><td>State reused across invocations</td><td>The container is reused between calls — data cached in a global outlives the request that produced it</td></tr>
+                      <tr><td>Files written to the writable temp directory</td><td>Also survives into the next invocation; clean up or do not write</td></tr>
+                      <tr><td>No timeout or concurrency ceiling</td><td>Cost becomes the denial-of-service target; a loop is a bill</td></tr>
+                      <tr><td>Deep function-to-function chains</td><td>Each hop is a trust decision, and the last one cannot see where the data came from</td></tr>
+                      <tr><td>Dependencies bundled and never rebuilt</td><td>Nothing patches a deployment package; only a redeploy does</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The reused-state rows surprise people most, because the mental model says each invocation
+                    is fresh. The execution environment is reused when it can be — which is what makes warm
+                    starts fast, and what makes a credential or a user's data left in a global variable
+                    readable by the next caller.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: MANAGED SERVICE TRUST BOUNDARIES ───────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧾</span>
+              <span class="topic-name">Managed Service Trust Boundaries — What the Provider Secures, and Precisely What You Do</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Shared Responsibility Diagram Is True and Not Actionable</div>
+                <div class="concept-desc">
+                  Every provider publishes a diagram with a diagonal line: they secure the cloud, you secure
+                  what you put in it. Correct, and it has never prevented a single breach, because the line
+                  moves for every service and the diagram does not say where. The same organisation is
+                  responsible for guest OS <span class="acro-exp">(Operating System)</span> patching on a virtual machine, for nothing of the sort on a managed
+                  database, and for something in between on a managed Kubernetes cluster.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    The question that turns the diagram into work: <em>for this specific service, what
+                    configuration can I change that would expose data?</em> That set is always small, always
+                    documented, and is where essentially all cloud breaches live. The introduction is in
+                    <span class="xref">Cloud Fundamentals — Regions, AZs &amp; Shared Responsibility</span>;
+                    this card is the per-service reading.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Where the Line Sits, by Service Class</div>
+                <div class="concept-desc">
+                  The higher the abstraction, the less you operate and the more the remaining surface is pure
+                  configuration — which is easier, and easier to get catastrophically wrong in one click.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Class</th><th>You still own</th><th>The mistake that matters</th></tr></thead>
+                    <tbody>
+                      <tr><td>Virtual machines</td><td>OS, patching, agents, host firewall, everything above</td><td>An unpatched host with a public address</td></tr>
+                      <tr><td>Managed containers</td><td>Image contents, workload identity, network policy</td><td>A privileged workload with a broad role</td></tr>
+                      <tr><td>Managed databases</td><td>Network exposure, credentials, encryption choice, backups' access</td><td>Public accessibility left enabled on creation</td></tr>
+                      <tr><td>Object storage</td><td>Access policy, encryption, versioning, lifecycle, logging</td><td>The public bucket, still the most common cloud breach</td></tr>
+                      <tr><td>Serverless functions</td><td>Code, dependencies, execution role, triggers</td><td>A wildcard role attached to internet-triggered code</td></tr>
+                      <tr><td>SaaS <span class="acro-exp">(Software as a Service)</span> identity and collaboration</td><td>Tenant configuration, sharing defaults, app consent</td><td>Sharing defaults nobody reviewed after rollout</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">The Boundaries That Are Genuinely Ambiguous</div>
+                <div class="concept-desc">
+                  Most of the line is clear once you look it up. A few places are genuinely contested, and
+                  those are where incidents get argued about afterwards.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Ambiguity</th><th>How to resolve it in advance</th></tr></thead>
+                    <tbody>
+                      <tr><td>Provider-managed encryption keys</td><td>Decide whether you need to hold the key; if compliance says yes, provider-managed does not satisfy it</td></tr>
+                      <tr><td>Backups of a managed service</td><td>Confirm retention, access control and restore testing — managed backup is not tested backup</td></tr>
+                      <tr><td>Logs the provider does not enable by default</td><td>Data-plane logging is usually opt-in and chargeable; absence is your gap, not theirs</td></tr>
+                      <tr><td>Vulnerabilities in a managed runtime</td><td>They patch the platform; you redeploy to pick it up — nothing is automatic</td></tr>
+                      <tr><td>Support access to your data</td><td>Check whether provider staff can read it, and whether that access is logged to you</td></tr>
+                      <tr><td>Region and data residency</td><td>Some services replicate metadata globally; residency claims need the specific service's documentation</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The data-plane logging row is worth acting on immediately. Control-plane events — who
+                    created what — are almost always on by default; data-plane events — who read which
+                    object — usually are not. That is precisely the log you will want during an incident,
+                    and it only exists if somebody turned it on beforehand.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: IAC SECURITY SCANNING ──────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔍</span>
+              <span class="topic-name">IaC <span class="acro-exp">(Infrastructure as Code)</span> Security Scanning — Catching the Misconfiguration Before It Deploys</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Same Finding, Found Three Days Earlier, Is a Different Finding</div>
+                <div class="concept-desc">
+                  A posture-management tool tells you a bucket is public. An IaC scanner tells you a pull
+                  request <em>would make</em> a bucket public — to the person who wrote it, while they are
+                  still holding the context, before anything exists to be exposed. Nothing about the rule
+                  changes; the economics change completely. Cloud misconfiguration is overwhelmingly a
+                  deployment-time problem being detected at runtime, and moving the detection is the single
+                  highest-return change in this whole area.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    Keep both. The scanner sees what the code declares; posture management sees what actually
+                    exists, including everything created by hand, by another team, or by a service that
+                    provisions its own resources. Each has a blind spot precisely where the other looks.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What These Tools Catch, and What They Structurally Cannot</div>
+                <div class="concept-desc">
+                  The limits are not tool quality — they follow from scanning source text rather than a
+                  deployed system, and knowing them stops teams from trusting a green pipeline too far.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Caught</th><th>Missed</th></tr></thead>
+                    <tbody>
+                      <tr><td>Public storage, open security groups, unencrypted volumes</td><td>Anything set outside the code — console changes, other pipelines</td></tr>
+                      <tr><td>Missing logging, missing versioning, missing backup retention</td><td>Values arriving from variables the scanner cannot resolve</td></tr>
+                      <tr><td>Overly permissive IAM <span class="acro-exp">(Identity and Access Management)</span> policies with wildcards</td><td>Whether a permission is actually excessive for that workload</td></tr>
+                      <tr><td>Hardcoded secrets in the template</td><td>Secrets injected at apply time by the pipeline</td></tr>
+                      <tr><td>Known-bad module patterns and versions</td><td>What a third-party module does internally</td></tr>
+                      <tr><td>Drift, if you also scan the plan output</td><td>Runtime state — who has actually been reading the data</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Scanning the <em>plan</em> rather than only the source closes most of the second column's
+                    first two rows. The plan has variables resolved and modules expanded, so it describes what
+                    will actually exist — at the cost of needing credentials to generate it, which is a
+                    pipeline design question worth settling early.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Rolling It Out Without Being Turned Off</div>
+                <div class="concept-desc">
+                  Every one of these tools ships with hundreds of rules enabled and produces four hundred
+                  findings on first run against a real repository. What happens next decides whether the tool
+                  becomes a control or a muted CI step.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+                    <tbody>
+                      <tr><td>Fail the build on new findings only; report existing ones</td><td>Stops the bleeding immediately without a remediation project first</td></tr>
+                      <tr><td>Enable a small high-confidence rule set, then widen</td><td>Ten rules nobody argues with beat four hundred nobody reads</td></tr>
+                      <tr><td>Comment findings on the pull request, at the line</td><td>Fixing it costs a minute there and a ticket anywhere else</td></tr>
+                      <tr><td>Require exceptions in code, with an owner and an expiry</td><td>A suppression comment is reviewable; a tool-side ignore list is not</td></tr>
+                      <tr><td>Fix the shared module rather than each consumer</td><td>Most findings are one bad module used forty times</td></tr>
+                      <tr><td>Publish paved-path modules that are compliant by construction</td><td>Turns the scanner into a backstop instead of a gate people fight</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The last row is where this ends up if it goes well. Scanning finds the same handful of
+                    mistakes repeatedly, and a module that cannot express the mistake removes the class rather
+                    than catching instances of it. The policy-engine mechanics for enforcing that at deploy
+                    time are in <span class="xref">Policy as Code — OPA/Rego &amp; Kyverno</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: CLOUD DETECTION ENGINEERING ────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🛰️</span>
+              <span class="topic-name">Cloud Detection Engineering — The Control-Plane Log as a Detection Source</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">In the Cloud, the API <span class="acro-exp">(Application Programming Interface)</span> Call Is the Attack</div>
+                <div class="concept-desc">
+                  On-premises detection watches processes, files and packets, because that is where an
+                  attacker's actions show up. In a cloud account the equivalent actions are API calls:
+                  creating a user, attaching a policy, snapshotting a volume, disabling a log, copying a
+                  bucket. There is no malware to find and no endpoint to query — the control-plane log is
+                  both the primary telemetry and, on a well-run account, very nearly the only telemetry that
+                  matters.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    This is good for detection engineers: the events are structured, complete, attributed to
+                    an identity, and generated by the platform rather than by an agent an attacker can
+                    disable. It is bad for anyone hoping to start small — the volume is enormous and almost
+                    all of it is automation doing its job, so detections have to be written against identity
+                    and sequence rather than against individual actions.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Detections Worth Having on Day One</div>
+                <div class="concept-desc">
+                  These are chosen for the same property: rare in legitimate operation, and strongly
+                  associated with an attacker establishing themselves.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Detection</th><th>What it catches</th></tr></thead>
+                    <tbody>
+                      <tr><td>Logging disabled, deleted or reconfigured</td><td>The first move of anyone who knows what they are doing</td></tr>
+                      <tr><td>Root or break-glass account used at all</td><td>Should be effectively never; every use is an event</td></tr>
+                      <tr><td>New access key created for an existing identity</td><td>Classic persistence, and trivially missed among normal admin work</td></tr>
+                      <tr><td>Policy attached granting administrative access</td><td>Privilege escalation, at the moment it happens</td></tr>
+                      <tr><td>Trust policy or federation configuration changed</td><td>Opens a door from outside the account entirely</td></tr>
+                      <tr><td>Resource shared or made public — snapshot, image, bucket</td><td>Exfiltration disguised as a configuration change</td></tr>
+                      <tr><td>Snapshot copied to an unknown account</td><td>Data theft that never touches the data plane</td></tr>
+                      <tr><td>Console login without multi-factor, or from a new region</td><td>Credential compromise, before it is used for anything</td></tr>
+                      <tr><td>Enumeration bursts — many describe or list calls, mostly denied</td><td>Reconnaissance, which precedes everything else</td></tr>
+                      <tr><td>Service used in a region the organisation never uses</td><td>The cryptomining signature, and it is common</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Making Them Survive Contact With Real Accounts</div>
+                <div class="concept-desc">
+                  Written naively, every detection above fires constantly, because automation legitimately
+                  does most of these things all day. The tuning that works is structural rather than
+                  threshold-based.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Technique</th><th>Effect</th></tr></thead>
+                    <tbody>
+                      <tr><td>Split by identity type — human, CI role, service, third party</td><td>The same call means different things from each; this alone removes most noise</td></tr>
+                      <tr><td>Alert on a human doing what only automation should do, and the reverse</td><td>Very high signal, and cheap to express</td></tr>
+                      <tr><td>Baseline per account and per role, not globally</td><td>A build account and a finance account share no normal behaviour</td></tr>
+                      <tr><td>Use the user-agent field</td><td>Console versus SDK <span class="acro-exp">(Software Development Kit)</span> versus a known offensive tool is often the whole detection</td></tr>
+                      <tr><td>Correlate sequences, not single calls</td><td>Enumerate, then escalate, then exfiltrate — the shape is the signal</td></tr>
+                      <tr><td>Treat organisation-wide changes as always-alert</td><td>They are rare, deliberate, and catastrophic when they are not yours</td></tr>
+                      <tr><td>Route control-plane logs to an account nobody's workload can write to</td><td>Otherwise the first detection is also the one an attacker deletes</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The last row is a prerequisite rather than a tuning tip: logs stored in the account being
+                    attacked are evidence an attacker can edit. A separate, write-only-from-outside logging
+                    destination is what makes everything above trustworthy. The rule-writing lifecycle itself
+                    is in <span class="xref">The Detection Lifecycle — Idea to Retirement, and the Gates Between</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: CLOUD INCIDENT RESPONSE ────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🚨</span>
+              <span class="topic-name">Cloud Incident Response — Snapshot, Revoke &amp; Contain the Blast Radius</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Compromised Thing Is Almost Never a Machine</div>
+                <div class="concept-desc">
+                  Traditional response starts by identifying affected hosts. In a cloud account the answer is
+                  usually that no host is affected: a credential was used. An access key from a repository, a
+                  role assumed through a misconfigured trust policy, a token stolen from an instance's
+                  metadata endpoint. The attacker never ran code anywhere you own. Asking which server is
+                  compromised produces the answer "none", which is true and leads the whole investigation
+                  nowhere.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    Replace the question. <em>Which identity acted, what is that identity permitted to do, and
+                    what did it actually do?</em> The first is in the log, the second is computable from
+                    policy, and the third is the rest of the investigation. The general process still applies —
+                    <span class="xref">Incident Response — What to Do When It Goes Wrong</span> — but the
+                    artefacts are identities and API <span class="acro-exp">(Application Programming Interface)</span> calls rather than hosts and files.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The First Thirty Minutes, in Order</div>
+                <div class="concept-desc">
+                  The ordering is deliberate and it is the opposite of the instinct. Preserve before you
+                  contain, because containment in the cloud frequently deletes the thing you needed.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Order</th><th>Action</th><th>Why here</th></tr></thead>
+                    <tbody>
+                      <tr><td>1</td><td>Protect the logs — confirm the trail is intact and stored outside this account</td><td>Everything else depends on it, and it is the attacker's first target</td></tr>
+                      <tr><td>2</td><td>Snapshot volumes and capture memory before touching the instance</td><td>Terminating or stopping destroys memory, and auto-scaling may do it for you</td></tr>
+                      <tr><td>3</td><td>Isolate rather than terminate — swap to a deny-all security group, detach from the scaling group</td><td>Keeps the evidence running while removing the reach</td></tr>
+                      <tr><td>4</td><td>Revoke the identity: deactivate keys, and attach an explicit deny to the role</td><td>A role cannot be "logged out"; issued session tokens stay valid until denied</td></tr>
+                      <tr><td>5</td><td>Enumerate what the identity could do — the blast radius is the permission set</td><td>Defines the scope of everything after this</td></tr>
+                      <tr><td>6</td><td>Search the trail for that identity across the full window, all regions</td><td>Attackers work in regions nobody watches</td></tr>
+                      <tr><td>7</td><td>Hunt for persistence — new users, keys, trust policies, functions, scheduled tasks</td><td>Revoking one credential achieves nothing if a second was created</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Step 4 is the one that catches teams out. Deleting an access key stops new sessions and
+                    does nothing to sessions already issued — temporary credentials remain valid for their
+                    full lifetime. The immediate control is an explicit deny policy on the role, applied
+                    before you start cleaning up.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">What Has to Be True Beforehand</div>
+                <div class="concept-desc">
+                  Cloud response is unusually preparation-sensitive: almost every step above fails outright if
+                  one setting was not enabled months earlier.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Prerequisite</th><th>Without it</th></tr></thead>
+                    <tbody>
+                      <tr><td>Organisation-wide logging to a separate, locked account</td><td>The evidence is in the account being investigated, and may be gone</td></tr>
+                      <tr><td>Log retention longer than your detection lag</td><td>The initial access falls outside the window you can see</td></tr>
+                      <tr><td>Data-plane logging on sensitive stores</td><td>You can prove access was possible, never whether data was read</td></tr>
+                      <tr><td>A responder role with snapshot and read rights, pre-provisioned</td><td>An access request during the incident, at three in the morning</td></tr>
+                      <tr><td>A quarantine policy and deny-all group, written in advance</td><td>Improvising containment while the attacker is active</td></tr>
+                      <tr><td>An account inventory including forgotten and shadow accounts</td><td>Investigating six accounts while the incident is in a seventh</td></tr>
+                      <tr><td>Infrastructure as code for the compromised workloads</td><td>Rebuilding clean is a project rather than a redeploy</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The last row is the recovery half and it is what separates a bad day from a bad month. If
+                    the environment is declared in code, rebuilding into a clean account is a pipeline run,
+                    and you never have to answer the unanswerable question of whether you found everything the
+                    attacker left behind.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body cloud -->

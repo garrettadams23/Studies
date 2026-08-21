@@ -2994,12 +2994,13 @@ attack and defence surface.
   row in the incident-response card
 - [x] Incident Response in Kubernetes — isolate, snapshot, evict, and preserve evidence
 
-**Wave BC5 — Serverless & Managed Services**
-- [ ] Serverless Threat Model — event injection, over-permissive roles, cold-start secrets
-- [ ] Managed Service Trust Boundaries — what the provider secures, and precisely what you do
-- [ ] IaC Security Scanning — catching the misconfiguration before it deploys
-- [ ] Cloud Detection Engineering — CloudTrail/Activity Log/Audit Logs as detection sources
-- [ ] Cloud Incident Response — snapshotting, credential revocation, blast-radius containment
+**Wave BC5 — Serverless & Managed Services** — shipped into `cloud`. Track BC is complete except
+for the three items noted in BC2 and BC3 above.
+- [x] Serverless Threat Model — event injection, over-permissive roles, cold-start secrets
+- [x] Managed Service Trust Boundaries — what the provider secures, and precisely what you do
+- [x] IaC Security Scanning — catching the misconfiguration before it deploys
+- [x] Cloud Detection Engineering — CloudTrail/Activity Log/Audit Logs as detection sources
+- [x] Cloud Incident Response — snapshotting, credential revocation, blast-radius containment
 
 ### TRACK BD — API & Identity-First Security  (→ `sec` / `web`)
 
@@ -6458,3 +6459,72 @@ credential-attack material, so it needs the same read-not-count audit this one g
 `annotate_acronyms.py` clean · `stamp_freshness.py --only cloud` touched only the 8 new cards ·
 `--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 4.8 / 8.0 MB, gzip 1,281 /
 2,200 KB, DOM 416 / 1,500, content elements 99,393 / 175,000.
+
+---
+
+## Session record — Track BC5: serverless, managed services and cloud response
+
+Fifteenth content wave, and it closes Track BC apart from three recorded items.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| serverless security / lambda permissions | 0 |
+| `checkov`, `tfsec`, `terrascan`, "IaC scanning" | 0 |
+| "cloud detection" | 0 |
+| snapshot forensics, credential revocation, blast-radius containment | 0 |
+| `CloudTrail`, `GuardDuty`, "shared responsibility" | present |
+
+The present row is named in passing: `cloud` and `redteam` mention CloudTrail as a thing that
+exists, and shared responsibility appears as the standard diagram. Nothing treated the control-plane
+log as a detection source with rules attached, and nothing said where the responsibility line
+actually sits for a given service class — which is the only form of that diagram anyone can act on.
+
+### What shipped
+
+**5 cards into `cloud`**, 57 → 62. Site: 1,257 → **1,262 topics**.
+
+Serverless Threat Model · Managed Service Trust Boundaries · IaC Security Scanning ·
+Cloud Detection Engineering · Cloud Incident Response.
+
+### What these cards are actually about
+
+The organising claim: **in the cloud the API call is the attack, and the identity is the asset.**
+Every card lands somewhere on that. It is why cloud incident response starts by asking which
+identity acted rather than which host is compromised, why the control-plane log is the primary
+telemetry, and why serverless concentrates risk into an execution role.
+
+Four specifics worth carrying:
+
+- **A serverless execution environment is reused between invocations.** Warm starts are the same
+  container, so a credential or a user's data cached in a global variable is readable by the next
+  caller, and files written to the temp directory survive. The mental model says each invocation is
+  fresh; it is not.
+- **Deleting an access key does not stop the session.** Temporary credentials already issued stay
+  valid for their full lifetime, so the immediate containment control is an explicit deny policy on
+  the role — before any cleanup.
+- **Preserve before you contain.** Terminating a compromised instance destroys memory, and
+  auto-scaling may do it for you while you are deciding. Snapshot and isolate; never terminate as a
+  first move.
+- **Logs stored in the account being attacked are evidence the attacker can edit.** Organisation-wide
+  logging to a separate locked account is the prerequisite that makes every detection in these
+  cards trustworthy, and it is a configuration decision made months before it matters.
+
+The IaC card carries a smaller point worth keeping: the same rule fires in a posture tool and in a
+scanner, and finding it three days earlier changes nothing about the rule and everything about the
+economics. Both are needed — the scanner sees what the code declares, posture management sees what
+exists, and each is blind exactly where the other looks.
+
+### Track BC after this wave
+
+Complete except: secrets in Kubernetes (the options comparison), ingress and API exposure as a
+control point, and image security, which is already carded in `devops` and `linux`. All three are
+marked in the track above.
+
+### Verification
+
+`lint_content.py` 1,262 topics / 163 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only cloud` touched only the 5 new cards ·
+`--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 4.8 / 8.0 MB, gzip 1,288 /
+2,200 KB, DOM 416 / 1,500, content elements 99,819 / 175,000.
