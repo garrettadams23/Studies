@@ -1860,7 +1860,10 @@ switch). `script` 138→140, `ops` gains the risk card.
 - [x] Remoting / JEA → *JEA — Just Enough Administration & Constrained Remoting* (plus remoting basics already in the PowerShell cards)
 - [x] Automation Risk + Idempotency + logging/auditability + script-to-service → *Automation Risk & Discipline — Blast Radius, Approval Gates & the Kill Switch* (`ops`)
 - [x] AC1 pipeline/functions/modules, AC4 REST/webhooks/data-wrangling, AC5 Git/docs → already in `script` (*PowerShell*, *IT Automation*, *Consuming APIs Robustly*, *Webhooks & ChatOps*, *Scheduling Scripts the Right Way*, *Git*)
-- [ ] Remaining (narrower): Ansible/DSC config-as-code, Packer golden images, Pester testing, Power Automate/Logic Apps — follow on demand
+- [x] **Remaining items shipped** — Ansible/DSC config-as-code, Packer golden images, Pester
+  testing and Power Automate/Logic Apps, plus *Secrets in Automation*, which the track specced
+  (AC3.4) and which was a genuine zero: `credential in script` and `PowerShell DSC` returned no
+  matches anywhere on the site. 5 cards into `script`; see the session record.
 
 **Wave AC1 — PowerShell for Real Work**
 - [ ] The Object Pipeline — the thing that makes PowerShell different from Bash
@@ -1876,17 +1879,18 @@ switch). `script` 138→140, `ops` gains the risk card.
 - [ ] Scheduled Tasks vs Azure Automation vs Functions — where to run the thing
 - [ ] Idempotency for Admins — scripts that are safe to run twice
 
-**Wave AC3 — Configuration as Code, On-Prem**
-- [ ] Ansible for Windows & Linux — inventory, playbooks, idempotent modules
-- [ ] Desired State Configuration — where it still fits
-- [ ] Golden Images as Code — Packer, and versioning what you deploy
-- [ ] Secrets in Automation — vaults, managed identities, and never a plaintext credential
-- [ ] Testing Automation — Pester, dry runs, and a lab that mirrors production
+**Wave AC3 — Configuration as Code, On-Prem** — shipped into `script`.
+- [x] Ansible for Windows & Linux — inventory, playbooks, idempotent modules
+- [x] Desired State Configuration — where it still fits — same card as Ansible, written as the
+  push/pull comparison, since "where it still fits" is only answerable against the alternative
+- [x] Golden Images as Code — Packer, and versioning what you deploy
+- [x] Secrets in Automation — vaults, managed identities, and never a plaintext credential
+- [x] Testing Automation — Pester, dry runs, and a lab that mirrors production
 
 **Wave AC4 — Glue, APIs & Integration**
 - [ ] Consuming REST APIs From Scripts — auth, pagination, retries, backoff
 - [ ] Webhooks & Event-Driven Ops — reacting instead of polling
-- [ ] Power Automate & Logic Apps — the low-code option, and its real limits
+- [x] Power Automate & Logic Apps — the low-code option, and its real limits — into `script`, beside the code-based options, because the card's whole point is the comparison
 - [ ] CSV, JSON & Excel Wrangling — the daily data shuffling, done cleanly
 - [ ] Building an Internal Tool — when a script deserves a front end
 
@@ -7015,3 +7019,84 @@ what shipped, and reasonable to leave until an estate needs them.
 the oscillation fix from the previous wave holding across a second domain · `--verify` clean ·
 `smoke_test.mjs` 31/31 · budget after build: raw 5.0 / 8.0 MB, gzip 1,346 / 2,200 KB, DOM 416 /
 1,500, content elements 103,217 / 175,000.
+
+---
+
+## Session record — Track AC: the remaining automation items
+
+Twenty-first content wave, and it closes Track AC.
+
+### The audit
+
+An earlier session shipped three genuine-gap cards here (Graph from PowerShell, JEA, automation
+risk) and recorded four items as remaining. Probing those four plus the rest of the track:
+
+| Probe | Mentions before this wave |
+|---|---|
+| `PowerShell DSC`, `Power Automate`, "logic app" | 0 |
+| "credential in script", "runbook automation" | 0 |
+| `Ansible` | 6 domains — but as a named tool, not as configuration-as-code practice |
+| `idempoten`, "dry run", `WhatIf`, "error handling", `webhook`, `REST API` | present in `script` |
+
+The last row confirms the earlier session's judgement: `script` genuinely carries the automation
+craft, and the four recorded remainders were the real gaps. One addition — *Secrets in Automation*
+(AC3.4) was on the track and not on the remaining list, and `credential in script` was a site-wide
+zero, so it went in too.
+
+### What shipped
+
+**5 cards into `script`**, 140 → 145. Site: 1,300 → **1,305 topics**.
+
+Configuration as Code On-Prem · Golden Images as Code · Secrets in Automation · Testing Automation ·
+Power Automate &amp; Logic Apps.
+
+### What these cards are actually about
+
+The through-line: **operations code has more authority over an estate than most application code,
+and is held to a far lower standard.** The script that disables accounts across a directory acts as
+an administrator, on everything, unattended, with nobody watching the result — and gets none of the
+review, testing or staging that a web application gets. That is historical rather than reasoned:
+scripts started as one-off conveniences and quietly became infrastructure.
+
+Four specifics worth carrying:
+
+- **The best secret is the one that does not exist.** Before choosing where to store a credential,
+  check whether the work can run somewhere with a platform identity — a managed identity, a
+  federated pipeline, a group-managed service account. Most credential-handling problems dissolve
+  rather than get solved.
+- **A secret that ever reached a repository is compromised.** Removing it in a later commit changes
+  nothing; the old revision still has it. Rotation is the only step that ends the exposure, and
+  history rewriting on a shared branch is disruptive and usually incomplete.
+- **Idempotency is a property you write, not one the tool gives you.** The moment a playbook shells
+  out to a raw command the guarantee is gone and the tool cannot tell. The working standard: a
+  second run reports zero changes, and an unexpected "changed" is a defect.
+- **Low-code wins the build and code wins the maintenance.** The connector library is the real
+  product, and the criteria that matter are about the second year — how long the thing will live and
+  how bad its failure would be, not how quickly it can exist.
+
+The testing card's practical core is a rewrite that costs ten minutes: separate the decision from
+the action, so the rule that selects which accounts get disabled can be tested against every awkward
+case without a directory and without disabling anybody. And the useful lab is not a copy of
+production — it is ten deliberately strange objects (a nested group, a name with an apostrophe, a
+machine offline for a year), because those shapes are what break bulk scripts.
+
+### A large stamp correction, verified
+
+`stamp_freshness.py --only script` moved 73 topics from `2026-06` to `2026-07` — much larger churn
+than any previous wave, and worth checking rather than assuming. Every one of the 73 was validated
+programmatically against `git log -S`: for each changed topic, the newest commit touching its
+content was compared against the new stamp, and **none** claimed a date fresher than its history
+supports. `script.html` had simply not been re-stamped since the July wave that edited those cards.
+This is backlog, not drift — and the oscillation fix means it should not recur.
+
+### Track AC after this wave
+
+Complete. Waves AC1, AC2, AC4 and AC5 remain formally unticked in the list above, and the earlier
+session's note explains why: their items are carded in `script` already, under different names.
+
+### Verification
+
+`lint_content.py` 1,305 topics / 182 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 5.0 / 8.0 MB, gzip 1,354 / 2,200 KB, DOM 416 / 1,500, content elements
+103,660 / 175,000.
