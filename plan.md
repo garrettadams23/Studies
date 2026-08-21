@@ -2604,16 +2604,16 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 **Wave AS4 — Cost Control in Operations**
 - [~] Cloud FinOps — showback, rightsizing, commitment discounts, anomaly alerts — **already carded as 'Cloud Cost Control — Budgets, Tags & Rightsizing' in cloud and 'FinOps — Cloud Cost Management' in devops**
 - [x] SaaS Sprawl — discovery, consolidation, and reclaiming unused seats
-- [ ] Hardware Refresh Economics — when replacing beats maintaining
+- [x] Hardware Refresh Economics — when replacing beats maintaining
 - [x] The Cost of Downtime — modelling it credibly enough to fund resilience
 - [x] Technical Debt as a Financial Argument — translating it into language that funds it
 
 **Wave AS5 — Governance of Spend**
 - [~] Vendor Risk Management — security review, concentration risk, fourth parties — **already carded three times in grc, including 'Third-Party Risk — Your Security Is Only as Strong as Your Vendors'**
 - [~] Asset Management End to End — procure → deploy → maintain → retire → dispose — **already carded as 'Asset & Configuration Management — A CMDB That Stays True' in ops**
-- [ ] Portfolio & Prioritisation — deciding what *not* to do, defensibly
+- [x] Portfolio & Prioritisation — deciding what *not* to do, defensibly
 - [~] Benefits Realisation — checking afterwards whether it did what the case claimed — **shipped as a section of 'The Business Case — One Page an Executive Will Actually Read'**
-- [ ] Reporting to the Board — three slides, no jargon, no surprises
+- [x] Reporting to the Board — three slides, no jargon, no surprises
 
 ### TRACK AT — Leading Technical Teams
 
@@ -5873,3 +5873,12 @@ appears in the original TCO model.
 
 Three items remain: hardware refresh economics, portfolio and prioritisation, and reporting to the
 board.
+
+> **Shipped immediately after — Track AS is closed.** `eng` is **53 cards**; the site is **1,183
+> topics**. **Five tracks closed this session — W, BA, AA, AM and AS.** The three closers:
+> hardware refresh, where the cost of keeping a machine lands in everyone else's budget and staff
+> time on slow machines dwarfs the rest at fleet scale; portfolio prioritisation as deciding what
+> will *not* happen, with work-in-progress limits as the free improvement organisations refuse
+> because it means saying "not yet" out loud; and reporting upward, where every metric needs the
+> sentence that says why anyone should care — rising cloud spend against falling unit cost being
+> the success story that reads as a problem without it.
