@@ -2913,32 +2913,32 @@ the craft of building what runs inside them.
 pairs with the detection it should trigger — the site's existing rule.
 
 **Wave BB1 — Emulation Foundations**
-- [ ] Emulation vs Simulation vs Penetration Testing — three different questions
-- [ ] Building a Threat Profile — picking an adversary that is relevant to *you*
-- [ ] Emulation Plans — CTID plans, and writing your own from intel
-- [ ] Rules of Engagement for Emulation — scope, safety, deconfliction, kill switch
-- [ ] Lab Design for Emulation — a range that is safe to break
+- [x] Emulation vs Simulation vs Penetration Testing — three different questions
+- [x] Building a Threat Profile — picking an adversary that is relevant to *you*
+- [x] Emulation Plans — CTID plans, and writing your own from intel
+- [x] Rules of Engagement for Emulation — scope, safety, deconfliction, kill switch
+- [x] Lab Design for Emulation — a range that is safe to break
 
 **Wave BB2 — Running an Exercise**
-- [ ] Purple Team Mechanics — the room, the roles, the cadence
-- [ ] Technique-by-Technique Execution — run, observe, record, adjust
-- [ ] Detection Gaps in Real Time — the value that only appears when both teams watch together
-- [ ] Evidence Capture — screenshots, timestamps, telemetry references
-- [ ] The Debrief — findings that turn into backlog items, not a scorecard
+- [x] Purple Team Mechanics — the room, the roles, the cadence
+- [x] Technique-by-Technique Execution — run, observe, record, adjust
+- [x] Detection Gaps in Real Time — the value that only appears when both teams watch together
+- [x] Evidence Capture — screenshots, timestamps, telemetry references
+- [x] The Debrief — findings that turn into backlog items, not a scorecard
 
 **Wave BB3 — Automation**
-- [ ] Breach & Attack Simulation Tools — what they do well, and their blind spots
-- [ ] Atomic Testing at Scale — scheduled, safe, continuous validation
-- [ ] CI for Security Controls — treating control efficacy as a test suite
-- [ ] Safe Payloads — proving execution without doing damage
-- [ ] Avoiding Emulation Theatre — when a green dashboard means nothing
+- [x] Breach & Attack Simulation Tools — what they do well, and their blind spots
+- [x] Atomic Testing at Scale — scheduled, safe, continuous validation
+- [x] CI for Security Controls — treating control efficacy as a test suite
+- [x] Safe Payloads — proving execution without doing damage
+- [x] Avoiding Emulation Theatre — when a green dashboard means nothing
 
 **Wave BB4 — Reporting & Value**
-- [ ] Writing the Emulation Report — narrative, timeline, gaps, recommendations
-- [ ] Mapping Findings to Controls & Owners — every gap gets a name and a date
-- [ ] Measuring Programme Improvement Over Time — the metric that survives scrutiny
-- [ ] Communicating Risk to Leadership — without either alarmism or false comfort
-- [ ] Building the Business Case for Purple — funding the second exercise
+- [x] Writing the Emulation Report — narrative, timeline, gaps, recommendations
+- [x] Mapping Findings to Controls & Owners — every gap gets a name and a date
+- [x] Measuring Programme Improvement Over Time — the metric that survives scrutiny
+- [x] Communicating Risk to Leadership — without either alarmism or false comfort
+- [x] Building the Business Case for Purple — funding the second exercise
 
 ### TRACK BC — Cloud-Native & Kubernetes Security  (→ `cloud` / `blueteam`)
 
@@ -5935,3 +5935,56 @@ managing incidents as a leader, and engineering team metrics.
 > same failure as the service-desk metrics, the auto-close automation and the machine-learning loss
 > function. Three waves in three different domains arrived at it independently, and the card now
 > says so — it is one pattern rather than three coincidences.
+
+---
+
+## Session record — Track BB: purple teaming as an exercise discipline, into `redteam`
+
+Eighth content wave, and the natural completion of the detection-engineering work from earlier in
+the session. That wave repeatedly pointed at purple exercises as the source of measured recall —
+the only way to get a denominator for "how much did we miss" — while the site had two
+single-section cards on the subject.
+
+### The audit
+
+`emulation plan`, `exercise scoping`, `purple exercise` and `control validation`: **0** each,
+three mentions in total. `blueteam` carried *Adversary Emulation — Atomic Red Team &amp; Caldera*
+and *Purple Teaming — Closing the Detection Gap*, both one concept card long. The tools were
+named; the discipline of running an exercise was not.
+
+### Placed in `redteam`, and why
+
+The two existing cards are in `blueteam`, so keeping the cluster together had an argument. Three
+things outweighed it: `blueteam` was already the largest security domain at 54 cards while
+`redteam` sat at 44; the craft in these cards — threat profiling, emulation plans, rules of
+engagement, lab design, safe payloads, execution — is red-side work; and the blue-side half is
+already carded in detail from the detection wave, which these cross-reference six times. The
+result is two domains that each hold their half of the exercise and point at each other, rather
+than one domain holding both.
+
+### What shipped
+
+**9 cards into `redteam`**, 44 → 53. Site: 1,198 → **1,207 topics**.
+
+| Group | Cards |
+|---|---|
+| Choosing the activity | Emulation vs simulation vs pentest · Building a threat profile |
+| Setting it up | Emulation plans &amp; rules of engagement · Lab design |
+| Running it | Purple team mechanics · Evidence capture &amp; the debrief |
+| Keeping it true | Continuous validation · Avoiding emulation theatre · The report &amp; funding the next one |
+
+### The two ideas worth carrying
+
+**Four outcomes per technique, not two.** Prevented, detected, logged-only, and nothing. Recording
+pass/fail loses the distinction that decides who does the follow-up work: "logged only" is a
+detection task and the cheapest win available, while "nothing" is a logging project that no
+detection can fix. Organisations routinely discover at their first exercise that they already
+collect everything needed for a dozen detections nobody wrote.
+
+**Emulation theatre is the same pattern again.** A detection written to match the emulation
+framework's distinctive command line fires perfectly every exercise and never once on an
+adversary. Re-running only the techniques known to pass, counting an alert nobody triages as
+coverage, quietly dropping the techniques that keep failing — each is locally reasonable, and
+together they produce a rising score and a static defence. This is the fourth independent
+appearance of the proxy-becomes-target pattern this session, after the service-desk metrics, the
+ML loss function and engineering velocity.

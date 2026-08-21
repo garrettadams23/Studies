@@ -1529,3 +1529,634 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
           </div>
 
 <!-- /domain-body redteam -->
+
+<!-- ── TOPIC: EMULATION VS SIMULATION VS PENTEST ─────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎭</span>
+    <span class="topic-name">Emulation vs Simulation vs Penetration Testing — Three Different Questions</span>
+    <span class="topic-badge">Purple Team</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Comparison</div>
+      <div class="concept-title">Buying the Wrong One Is the Most Expensive Mistake Here</div>
+      <div class="concept-desc">
+        These three are sold interchangeably and answer entirely different questions. An organisation
+        that needs to know whether its detections work will learn almost nothing from a penetration
+        test, and one that needs to find exploitable vulnerabilities will get little from a purple
+        exercise. Knowing which question you have is most of getting value from the money.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Activity</th><th>Answers</th><th>Output</th></tr></thead>
+          <tbody>
+            <tr><td>Vulnerability assessment</td><td>What is exposed and unpatched?</td><td>A prioritised list of findings</td></tr>
+            <tr><td>Penetration test</td><td>Can someone get in, and how far?</td><td>Proven attack paths with evidence</td></tr>
+            <tr><td>Red team</td><td>Would we notice a capable adversary pursuing an objective?</td><td>A narrative, and what the defenders saw</td></tr>
+            <tr><td>Adversary emulation</td><td>Do our controls stop or detect <em>these specific techniques</em>?</td><td>Per-technique pass/fail, mapped to detections</td></tr>
+            <tr><td>Purple team</td><td>All of the above, improved as you go</td><td>Fixed detections, and a shorter gap list</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The essential distinction: a red team measures whether you noticed <em>this time</em>, and
+          hides to do it. Emulation announces every technique and measures whether the control
+          worked, which produces far more improvement per hour and no bragging rights for anyone.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Maturity Decides Which Is Worth Doing</div>
+      <div class="concept-desc">
+        Running a covert red team against an immature detection programme is an expensive way to
+        learn what an afternoon of emulation would have told you for free — and it damages the
+        relationship between the teams, because the result reads as a verdict rather than as data.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>If you…</th><th>Do this</th></tr></thead>
+          <tbody>
+            <tr><td>Have few detections and are not sure what fires</td><td>Atomic emulation, technique by technique</td></tr>
+            <tr><td>Have a detection programme and want the gaps</td><td>Purple exercise against a relevant threat profile</td></tr>
+            <tr><td>Have a mature programme and want an honest test</td><td>Red team, covert, with a real objective</td></tr>
+            <tr><td>Need an external attestation for a customer or regulator</td><td>Penetration test, scoped and reported formally</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The tooling for the first row is in
+          <span class="xref">Adversary Emulation — Atomic Red Team &amp; Caldera</span>, and the
+          discipline the results feed is in
+          <span class="xref">Measuring Detection Quality — Precision, Recall &amp; the Alert-to-Incident Ratio</span>,
+          both in the Blue Team domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: THREAT PROFILE ─────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎯</span>
+    <span class="topic-name">Building a Threat Profile — Picking an Adversary Relevant to You</span>
+    <span class="topic-badge">Purple Team</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Start From What You Have, Not From What Is in the News</div>
+      <div class="concept-desc">
+        Emulating whichever group published a report last month is the default and it is close to
+        random. A threat profile built from your own sector, geography, technology and — most
+        usefully — the things an attacker would actually want from you, produces an exercise whose
+        findings matter. The profile is a page, not a project.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Input</th><th>Question</th></tr></thead>
+          <tbody>
+            <tr><td>What you hold</td><td>What is worth stealing, encrypting or disrupting here?</td></tr>
+            <tr><td>Sector and geography</td><td>Who targets organisations like this, per public reporting?</td></tr>
+            <tr><td>Your technology</td><td>Which techniques are even applicable to this estate?</td></tr>
+            <tr><td>Your history</td><td>What has actually been attempted against you before?</td></tr>
+            <tr><td>Your exposure</td><td>What is reachable from the internet, and who has access?</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The third row eliminates a surprising amount of work. Emulating a technique that requires
+          a technology you do not run tells you nothing, and a startling share of published emulation
+          plans are full of them for any given organisation.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Emulate Behaviours, Not a Brand</div>
+      <div class="concept-desc">
+        Naming a specific adversary group is useful for narrative and for getting the exercise
+        funded, and it is not the substance. Groups rename, merge, share tooling and change methods;
+        what persists is the behaviour — how they get in, how they persist, how they move, how they
+        take things out. A profile expressed as a technique list survives the attribution changing,
+        and it is what the detections actually have to match.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Fragile</th><th>Durable</th></tr></thead>
+          <tbody>
+            <tr><td>"We emulate GroupName"</td><td>"We emulate initial access by phishing an OAuth <span class="acro-exp">(Open Authorization)</span> consent, then token theft"</td></tr>
+            <tr><td>A specific tool's hash</td><td>The behaviour that tool produces on the host</td></tr>
+            <tr><td>Last quarter's report</td><td>Techniques seen repeatedly across several reports in your sector</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: EMULATION PLANS & ROE ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📜</span>
+    <span class="topic-name">Emulation Plans &amp; Rules of Engagement — Scope, Safety &amp; the Kill Switch</span>
+    <span class="topic-badge">Purple Team</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">What an Emulation Plan Contains</div>
+      <div class="concept-desc">
+        A plan turns a threat profile into something two teams can run on a Tuesday. Published plans
+        exist and are a good starting skeleton, but the value is in adapting one to your estate —
+        the techniques that apply, in an order that reflects a real intrusion, with commands someone
+        can actually execute.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Section</th><th>Content</th></tr></thead>
+          <tbody>
+            <tr><td>Scenario</td><td>The narrative — who, why, and what they are after</td></tr>
+            <tr><td>Technique list</td><td>Mapped to ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span>, ordered as a real intrusion would run</td></tr>
+            <tr><td>Procedures</td><td>The exact commands or tooling for each, and the safe variant</td></tr>
+            <tr><td>Expected telemetry</td><td>What each should produce, and where — the blue team's checklist</td></tr>
+            <tr><td>Expected detections</td><td>Which rule should fire, if any exists</td></tr>
+            <tr><td>Cleanup</td><td>How each step is undone, per step</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The "expected telemetry" column is what turns a test into a diagnosis. When nothing fires,
+          it tells you immediately whether the problem is a missing detection or a missing log
+          source — two very different pieces of work.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Rules of Engagement for Emulation Are Not the Pentest Ones</div>
+      <div class="concept-desc">
+        Emulation runs techniques deliberately designed to look like an intrusion, inside production
+        or near it, often while a SOC <span class="acro-exp">(Security Operations Center)</span> is watching without knowing. The rules exist to prevent two
+        specific outcomes: real damage, and a genuine incident response to a fake incident — which
+        has cost real organisations real money.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Rule</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>Named deconfliction contact, reachable throughout</td><td>Someone can confirm within a minute whether an alert is the exercise</td></tr>
+            <tr><td>An agreed kill switch, and who may pull it</td><td>Stops everything immediately, no debate</td></tr>
+            <tr><td>Scope stated as systems and data, not as "production"</td><td>Ambiguity here becomes an incident</td></tr>
+            <tr><td>No destructive actions; safe payload variants only</td><td>Proving execution does not require damage</td></tr>
+            <tr><td>Real credentials and real data never exfiltrated</td><td>A test that creates a real exposure has failed</td></tr>
+            <tr><td>Written authorisation from someone who can give it</td><td>Legal protection for the people executing</td></tr>
+            <tr><td>Full logging of every action, timestamped</td><td>Separates exercise activity from a genuine intrusion afterwards</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Decide in advance what happens if a <em>real</em> intrusion is discovered during the
+          exercise. It happens, and the plan is always the same: stop the exercise, preserve
+          everything, and switch to real incident response — but agreeing that beforehand saves the
+          argument at the worst moment. The general framework is in
+          <span class="xref">Rules of Engagement — Read This First</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Safe Payloads — Proving Execution Without Doing Damage</div>
+      <div class="concept-desc">
+        The goal is to demonstrate that a technique would have worked, which almost never requires
+        performing its harmful effect. A payload that writes a marker file proves code execution as
+        conclusively as one that encrypts a share, and can be cleaned up afterwards.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Instead of</th><th>Do</th></tr></thead>
+          <tbody>
+            <tr><td>Encrypting files to test ransomware detection</td><td>Rename or write markers in a canary directory with the same access pattern</td></tr>
+            <tr><td>Dumping real credentials</td><td>Perform the access that triggers the telemetry; discard the output unread</td></tr>
+            <tr><td>Exfiltrating real data</td><td>Send generated data of the same size and shape to a controlled endpoint</td></tr>
+            <tr><td>Persisting indefinitely</td><td>Persist, verify detection, remove — and record the removal</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: PURPLE TEAM MECHANICS ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🟣</span>
+    <span class="topic-name">Purple Team Mechanics — The Room, the Roles &amp; the Cadence</span>
+    <span class="topic-badge">Purple Team</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Four Roles, and the One People Forget</div>
+      <div class="concept-desc">
+        A purple exercise is a facilitated session rather than an attack. Without named roles it
+        degenerates into two people at keyboards and nobody recording what happened, which produces
+        an enjoyable afternoon and no findings.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Role</th><th>Does</th></tr></thead>
+          <tbody>
+            <tr><td>Operator (red)</td><td>Executes each technique, announcing before and after</td></tr>
+            <tr><td>Analyst (blue)</td><td>Watches the tooling as if it were a normal shift, and says what they see</td></tr>
+            <tr><td>Facilitator</td><td>Keeps the cadence, stops rabbit holes, calls the next technique</td></tr>
+            <tr><td>Scribe</td><td>Records what ran, what fired, what did not, with timestamps</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The scribe is the role that gets dropped and the one that determines whether the exercise
+          produces anything durable. Nobody reconstructs an eight-hour session from memory, and the
+          findings are the entire deliverable.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">The Loop, Per Technique</div>
+      <div class="concept-desc">
+        The rhythm is short and repetitive by design. It should feel almost mechanical — the value is
+        in coverage and honesty, not in cleverness.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>#</th><th>Step</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Announce</td><td>"Running T-whatever on this host now"</td></tr>
+            <tr><td>2</td><td>Execute</td><td>The procedure, exactly as written</td></tr>
+            <tr><td>3</td><td>Observe</td><td>Blue reports what they see — alert, log only, or nothing</td></tr>
+            <tr><td>4</td><td>Record</td><td>Outcome, evidence reference, and the gap if there is one</td></tr>
+            <tr><td>5</td><td>Adjust, if quick</td><td>Tune a rule and re-run immediately — the best moment there is</td></tr>
+            <tr><td>6</td><td>Clean up</td><td>Undo it before moving on, not at the end</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Step 5 is what makes it purple rather than a test. Writing or fixing a detection while the
+          technique is still reproducible on demand takes minutes; doing it three weeks later from a
+          report takes an afternoon and often does not happen at all.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Three Outcomes Per Technique, and Only One Is a Pass</div>
+      <div class="concept-desc">
+        Recording outcomes as pass/fail loses the distinction that decides what work follows. A
+        technique that was logged but not alerted is a detection task; one that produced no telemetry
+        at all is a logging project, and confusing the two sends the work to the wrong team.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Outcome</th><th>Means</th><th>Work it creates</th></tr></thead>
+          <tbody>
+            <tr><td>Prevented</td><td>A control stopped it outright</td><td>None — record it, it is the best result</td></tr>
+            <tr><td>Detected</td><td>An alert fired, correctly</td><td>None, beyond checking the alert was actionable</td></tr>
+            <tr><td>Logged only</td><td>The telemetry exists; no rule matched</td><td>Write a detection — the cheapest win available</td></tr>
+            <tr><td>Nothing</td><td>No trace anywhere</td><td>A logging gap; a detection cannot fix it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The "logged only" row is where most of the value of a first exercise sits. Organisations
+          routinely discover they already collect everything needed for a dozen detections nobody
+          wrote — see
+          <span class="xref">Log Source Inventory &amp; Telemetry Gaps — Proving a Rule Can Fire at All</span>
+          in the Blue Team domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LAB DESIGN FOR EMULATION ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧪</span>
+    <span class="topic-name">Lab Design for Emulation — A Range That Is Safe to Break</span>
+    <span class="topic-badge">Purple Team</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Lab Must Resemble Production Where It Matters</div>
+      <div class="concept-desc">
+        A range that is nothing like the estate produces results that transfer to nothing. The
+        resemblance that matters is not scale — it is configuration: the same endpoint agent with the
+        same policy, the same logging pipeline, the same identity model. A lab with default logging
+        will show detections firing that would never fire in production, which is worse than no lab
+        because it produces false confidence.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Must match production</th><th>Need not</th></tr></thead>
+          <tbody>
+            <tr><td>Endpoint agent, version and policy</td><td>Scale — three hosts is enough</td></tr>
+            <tr><td>Logging configuration and pipeline</td><td>Real data</td></tr>
+            <tr><td>Identity model and privilege structure</td><td>Real users</td></tr>
+            <tr><td>OS <span class="acro-exp">(Operating System)</span> builds and patch level</td><td>Hardware</td></tr>
+            <tr><td>Network controls in the path</td><td>Bandwidth</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Keeping It Isolated, and Keeping It Cheap</div>
+      <div class="concept-desc">
+        Two failure modes kill emulation labs: one escapes into the corporate network, or one becomes
+        so expensive and precious that nobody wants to break it — at which point it stops being a
+        range.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>No route to corporate; separate identity entirely</td><td>An emulation that reaches production is an incident</td></tr>
+            <tr><td>Snapshot everything before each run</td><td>Reset in minutes rather than rebuild in days</td></tr>
+            <tr><td>Build it from the same automation as production</td><td>Rebuildable, and it stays in step as production changes</td></tr>
+            <tr><td>Ship its telemetry to a separate index</td><td>Exercise data must never contaminate real detection metrics</td></tr>
+            <tr><td>Expect to destroy it regularly</td><td>A range nobody will break is a demonstration environment</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The separate index is the detail most often missed, and it corrupts a whole quarter of
+          detection metrics when it is: exercise activity inflates true positives and makes tuning
+          decisions on fiction.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: EVIDENCE & THE DEBRIEF ─────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📸</span>
+    <span class="topic-name">Evidence Capture &amp; the Debrief — Findings That Become Backlog Items</span>
+    <span class="topic-badge">Purple Team</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Capture It While It Is Still True</div>
+      <div class="concept-desc">
+        Logs roll, indexes age out, and hosts get rebuilt. Evidence gathered during the exercise is
+        cheap; evidence gathered a week later is often impossible, and a finding nobody can
+        substantiate gets argued away by whoever owns the control.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Capture</th><th>For</th></tr></thead>
+          <tbody>
+            <tr><td>Exact command and timestamp, in a known timezone</td><td>Correlating with telemetry later</td></tr>
+            <tr><td>Host, account and source used</td><td>Reproducing it, and scoping the gap</td></tr>
+            <tr><td>Screenshot of the alert — or of its absence</td><td>The absence is the finding, and it is the hardest to evidence later</td></tr>
+            <tr><td>A saved query that returns the raw telemetry</td><td>The detection engineer's starting point</td></tr>
+            <tr><td>Outcome, in the four-way classification</td><td>Routing the work to detection or to logging</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Record the timezone explicitly. Correlating a red-team log in one timezone with a SIEM <span class="acro-exp">(Security Information and Event Management)</span> in
+          UTC has consumed more debrief time than any other single detail.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">The Debrief Produces Tickets, Not a Score</div>
+      <div class="concept-desc">
+        A debrief that ends in a percentage — "we detected 61% of techniques" — is satisfying,
+        comparable, and produces nothing. A debrief that ends in a list of owned, dated tickets is
+        the entire point of having run the exercise. Hold it within a day or two, while everyone
+        still remembers the detail.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Section</th><th>Content</th></tr></thead>
+          <tbody>
+            <tr><td>What we ran</td><td>The technique list and the scenario, briefly</td></tr>
+            <tr><td>What worked</td><td>Named, publicly — the blue team rarely hears this</td></tr>
+            <tr><td>What did not</td><td>Split into detection gaps and logging gaps</td></tr>
+            <tr><td>Quick wins already fixed</td><td>The rules tuned during the session; note them as done</td></tr>
+            <tr><td>Backlog</td><td>Each gap as a ticket, with an owner and a date</td></tr>
+            <tr><td>What we could not test</td><td>Honesty about scope — it shapes the next exercise</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Lead with what worked. An exercise that reads as an audit of the blue team will be the last
+          one they agree to, and the whole model depends on both sides wanting the next one. The
+          gaps feed straight into
+          <span class="xref">The Detection Backlog &amp; Retiring a Rule Without Losing Why It Existed</span>
+          in the Blue Team domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CONTINUOUS VALIDATION ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔁</span>
+    <span class="topic-name">Continuous Validation — Atomic Testing at Scale &amp; CI for Security Controls</span>
+    <span class="topic-badge">Purple Team</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">An Annual Exercise Measures One Day a Year</div>
+      <div class="concept-desc">
+        A purple exercise produces a snapshot, and estates change weekly — an agent policy is edited,
+        a log source is trimmed for cost, a rule is tuned after a noisy night. The finding that took
+        a day to produce silently expires, and nobody knows when. Running a subset of techniques on a
+        schedule turns control efficacy from an annual event into a monitored property.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Cadence</th><th>Scope</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>Daily or weekly, automated</td><td>A small set of safe, high-value techniques</td><td>Catch regressions within days</td></tr>
+            <tr><td>Monthly</td><td>A tactic area, rotating</td><td>Broader coverage without a full exercise</td></tr>
+            <tr><td>Quarterly, facilitated</td><td>A full scenario with both teams in the room</td><td>Find new gaps; build the relationship</td></tr>
+            <tr><td>Annually</td><td>Covert red team</td><td>The honest end-to-end test</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The scheduled row is the same mechanism as the regression guard in
+          <span class="xref">Testing a Detection — Synthetic Events, Emulation &amp; Regression</span>
+          — and the alert that matters is when a technique that used to be detected stops being
+          detected, which is a failure only continuous testing can see.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Breach &amp; Attack Simulation Tools — What They Do Well, and Their Blind Spot</div>
+      <div class="concept-desc">
+        Commercial platforms automate exactly this loop, and they are genuinely useful for breadth,
+        scheduling and reporting. Their limitation is structural rather than a product flaw: they run
+        the techniques in their library, in the way their library implements them, and both the
+        detections and the vendors know it. A control tuned until the platform goes green may be
+        tuned to the platform's implementation rather than to the behaviour.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Good at</th><th>Blind to</th></tr></thead>
+          <tbody>
+            <tr><td>Breadth and repetition without staff time</td><td>Anything specific to your environment</td></tr>
+            <tr><td>Trend reporting over months</td><td>Whether the alert was <em>actionable</em>, not just present</td></tr>
+            <tr><td>Catching regressions quickly</td><td>Procedure variants outside the library</td></tr>
+            <tr><td>Evidence for auditors</td><td>The human half — did an analyst notice and act?</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Use them for the regression half and keep facilitated exercises for discovery. A green
+          dashboard from a tool nobody has adversarially examined is emulation theatre, which is the
+          failure mode the next card is about.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: AVOIDING EMULATION THEATRE ─────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎪</span>
+    <span class="topic-name">Avoiding Emulation Theatre — When a Green Dashboard Means Nothing</span>
+    <span class="topic-badge">Purple Team</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Programme Can Optimise Itself Into Uselessness</div>
+      <div class="concept-desc">
+        Every validation programme is under pressure to produce improving numbers, and there are
+        several ways to improve them without improving security. None requires dishonesty — each is
+        a locally reasonable decision, which is exactly why they accumulate.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The shortcut</th><th>What it produces</th></tr></thead>
+          <tbody>
+            <tr><td>Re-running only techniques known to be detected</td><td>A rising score and no new information</td></tr>
+            <tr><td>Writing a rule that matches the test's exact artifact</td><td>A detection for your own tooling, not for the technique</td></tr>
+            <tr><td>Counting "an alert fired" as success</td><td>Alerts nobody triages, counted as coverage</td></tr>
+            <tr><td>Testing in a lab that logs more than production</td><td>Confidence in controls that are not deployed</td></tr>
+            <tr><td>Excluding the techniques that keep failing</td><td>The gap list shrinks; the gaps do not</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The second row deserves particular care. If a detection matches the emulation framework's
+          distinctive command line rather than the underlying behaviour, it will fire perfectly every
+          exercise and never once on an adversary — and it will look like coverage until the day it
+          matters.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Keeping It Honest</div>
+      <div class="concept-desc">
+        Five habits, each of which makes the numbers worse and the programme better — which is the
+        test of whether a security metric is real.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Habit</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Vary the procedure, not just the technique</td><td>Tests the behaviour rather than one command line</td></tr>
+            <tr><td>Require the alert to be actionable, not merely present</td><td>Excludes alerts nobody would work</td></tr>
+            <tr><td>Keep the failing techniques on the list</td><td>The gap list is the deliverable; do not curate it</td></tr>
+            <tr><td>Test in production-equivalent config, always</td><td>Removes the lab's flattering defaults</td></tr>
+            <tr><td>Let the blue team run it blind sometimes</td><td>Measures whether anyone <em>notices</em>, not whether a rule exists</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Report the number of gaps found alongside the coverage percentage. A programme finding
+          fewer gaps each quarter is either genuinely improving or has stopped looking properly, and
+          only the raw count and the difficulty of what was tested distinguish the two.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: REPORTING & PROGRAMME VALUE ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📑</span>
+    <span class="topic-name">The Emulation Report &amp; Funding the Next One</span>
+    <span class="topic-badge">Purple Team</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Two Audiences, One Document</div>
+      <div class="concept-desc">
+        The report has to serve an engineer who will fix a detection and an executive who will fund
+        the next exercise, and writing one document for both is a solved problem: a narrative summary
+        that stands alone, followed by technical detail nobody senior needs to read.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Section</th><th>For</th></tr></thead>
+          <tbody>
+            <tr><td>One-page summary: what was tested, what we learned, what we are doing</td><td>Leadership — and it must stand alone</td></tr>
+            <tr><td>Scenario narrative and timeline</td><td>Everyone; it is what makes the risk concrete</td></tr>
+            <tr><td>Per-technique results table</td><td>Detection engineers</td></tr>
+            <tr><td>Gaps, each with an owner and a date</td><td>Whoever tracks the work</td></tr>
+            <tr><td>Evidence appendix</td><td>The person who will dispute a finding</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Communicating Risk Without Alarmism or False Comfort</div>
+      <div class="concept-desc">
+        Both failure modes lose the audience permanently. Overstating turns every future report into
+        noise to be discounted; understating means the gaps never get funded and the programme is
+        blamed when something happens. The escape is to describe what was observed and let the facts
+        carry the weight.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Avoid</th><th>Say</th></tr></thead>
+          <tbody>
+            <tr><td>"We are critically exposed to a devastating attack"</td><td>"Credential dumping on a domain controller produced no alert; here is what that would enable"</td></tr>
+            <tr><td>"Everything passed"</td><td>"14 of 20 detected; the six gaps are these, and two are already fixed"</td></tr>
+            <tr><td>A score with no context</td><td>What was tested, how hard it was, and what changed since last time</td></tr>
+            <tr><td>Blaming a team</td><td>Naming the control and its owner — controls fail, not people</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Metric That Survives Scrutiny</div>
+      <div class="concept-desc">
+        Coverage percentages invite the question "of what?" and rarely survive it. Two measures hold
+        up in front of a sceptical audience because both get worse when the programme gets worse:
+        the time from a gap being found to it being closed, and whether previously-detected
+        techniques are still detected on re-test. The first shows the programme produces change; the
+        second shows the change persists — and together they are the business case for the next
+        exercise, which is the only funding argument that consistently works.
+      </div>
+    </div>
+  </div>
+</div>
