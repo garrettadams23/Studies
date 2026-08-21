@@ -2492,12 +2492,12 @@ a place it already shows up on the site.
 - [x] Soldering & Rework — through-hole and SMD basics, and knowing when not to
 - [x] Data Recovery Triage — when to stop and send it to a lab
 
-**Wave AN4 — Peripherals & the Office Estate**
-- [ ] Displays — panel types, scaling, colour, multi-monitor and docking pitfalls
-- [ ] Printers & MFPs — the technologies, drivers, print servers, and secure release
-- [ ] Docks, USB-C & Thunderbolt — power delivery, alt modes, and the compatibility mess
-- [ ] Input Devices & Accessibility Hardware — switches, trackballs, ergonomic kit
-- [ ] Conference Room Technology — the AV stack, and why it always breaks
+**Wave AN4 — Peripherals & the Office Estate** — shipped into `hw`.
+- [x] Displays — panel types, scaling, colour, multi-monitor and docking pitfalls
+- [x] Printers & MFPs — the technologies, drivers, print servers, and secure release
+- [x] Docks, USB-C & Thunderbolt — power delivery, alt modes, and the compatibility mess
+- [x] Input Devices & Accessibility Hardware — switches, trackballs, ergonomic kit
+- [x] Conference Room Technology — the AV stack, and why it always breaks
 
 **Wave AN5 — Embedded & Single-Board**
 - [ ] Microcontrollers vs SBCs — Arduino vs Raspberry Pi, and choosing correctly
@@ -7614,3 +7614,50 @@ waves. AN2 and AN3 are complete; AN6 shipped into `sec`.
 now works normally against the committed file and touched only the 5 new cards · `--verify` clean ·
 `smoke_test.mjs` 31/31 · budget after build: raw 5.2 / 8.0 MB, gzip 1,423 / 2,200 KB, DOM 428 /
 1,500, content elements 107,790 / 175,000.
+
+---
+
+## Session record — Track AN4: peripherals and the office estate
+
+Twenty-eighth content wave. `hw` 13 → 18. Site: 1,345 → **1,350 topics**.
+
+Displays · Printers &amp; MFPs · Docks, USB-C &amp; Thunderbolt · Input Devices &amp; Accessibility
+Hardware · Conference Room Technology.
+
+### What these cards are actually about
+
+The through-line: **this is the hardware users actually touch, and it generates support load out of
+all proportion to its complexity.** Nobody escalates about a CPU. They escalate about the second
+monitor, the dock, the printer and the meeting room — and in each case the fault is usually a
+configuration or a cable rather than a component.
+
+Four specifics worth carrying:
+
+- **USB-C is a connector shape, and that is the entire problem.** Two identical-looking cables can
+  differ by a factor of eighty in bandwidth; a port may deliver 7.5 W or 240 W. Most "the dock is
+  broken" tickets are a charge-only cable from a phone box. Buy certified, label them, standardise.
+- **Read a dock's power *to the host*, not its own supply rating.** A 180 W dock may deliver 65 W
+  upstream, and a workstation laptop under load will slowly flatten while plugged in.
+- **"We cannot hear you" is a dropdown.** The conferencing application is on the laptop's own
+  microphone and speakers rather than the room system. Teaching people where that setting lives
+  resolves more room incidents than any equipment change.
+- **Security baselines that disable accessibility features are a common own-goal.** The features
+  have been abused for privilege escalation at a login screen — a real technique — and blunt
+  mitigation removes the on-screen keyboard from someone who depends on it. Fix the specific abuse,
+  not the feature.
+
+Two estate-level points worth keeping: standardise on one monitor model and one scaling setting
+where you can, because a fleet with three pixel densities produces a permanent trickle of tickets no
+individual fix resolves; and in a meeting-room emergency, get the meeting running on any channel
+first and fix the room afterwards — the meeting is what matters, the room is not.
+
+### Track AN after this wave
+
+AN5 (embedded and single-board) is the last unwritten wave, plus the one open AN1 item on signals.
+
+### Verification
+
+`lint_content.py` 1,350 topics / 198 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only hw` touched only the 5 new cards ·
+`--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 5.3 / 8.0 MB, gzip 1,431 /
+2,200 KB, DOM 428 / 1,500, content elements 108,342 / 175,000.
