@@ -1768,3 +1768,485 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: MICROCONTROLLERS VS SBCs ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🤖</span>
+    <span class="topic-name">Microcontrollers vs Single-Board Computers — Choosing Correctly</span>
+    <span class="topic-badge">Embedded</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">One Runs Your Code; the Other Runs an Operating System That Runs Your Code</div>
+      <div class="concept-desc">
+        A microcontroller executes your program directly on bare metal: it starts in milliseconds,
+        does exactly one thing, and does it with predictable timing because nothing else is
+        competing. A single-board computer boots Linux, and your program is one process among many —
+        which buys networking, a filesystem, package management and every library in the ecosystem,
+        at the cost of a boot time measured in tens of seconds and timing that is approximate.
+        Choosing wrongly is the most common mistake in a first embedded project, in both directions.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Microcontroller</th><th>Single-board computer</th></tr></thead>
+          <tbody>
+            <tr><td>Example</td><td>Arduino, ESP32, Pi Pico, STM32</td><td>Raspberry Pi, and its many relatives</td></tr>
+            <tr><td>Runs</td><td>Your code, directly</td><td>Linux, and your code on top</td></tr>
+            <tr><td>Boot</td><td>Milliseconds</td><td>Twenty to sixty seconds</td></tr>
+            <tr><td>Timing</td><td>Deterministic to microseconds</td><td>Approximate; the scheduler intervenes</td></tr>
+            <tr><td>Power</td><td>Milliwatts; runs for months on a battery</td><td>Watts; effectively needs mains</td></tr>
+            <tr><td>Loss of power</td><td>Harmless — no filesystem to corrupt</td><td>Can corrupt the card; needs graceful shutdown or a read-only root</td></tr>
+            <tr><td>Networking, storage, video</td><td>Bolted on, with effort</td><td>Built in</td></tr>
+            <tr><td>Debugging</td><td>Serial output, a logic analyser, sometimes JTAG</td><td>SSH <span class="acro-exp">(Secure Shell)</span> in and use ordinary Linux tools</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Choosing, by the Question the Project Actually Asks</div>
+      <div class="concept-desc">
+        Four questions settle nearly every case, and they are worth asking in this order because the
+        first two are disqualifying.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question</th><th>If yes</th></tr></thead>
+          <tbody>
+            <tr><td>Does it run on a battery for a long time?</td><td>Microcontroller — an SBC's idle draw ends the discussion</td></tr>
+            <tr><td>Does timing need to be exact and guaranteed?</td><td>Microcontroller</td></tr>
+            <tr><td>Does it need a filesystem, a web server, or a real network stack?</td><td>SBC</td></tr>
+            <tr><td>Will it lose power without warning, routinely?</td><td>Microcontroller, or an SBC with a read-only root filesystem</td></tr>
+            <tr><td>Do you need camera, video or serious compute?</td><td>SBC</td></tr>
+            <tr><td>Will there be many units, and does unit cost matter?</td><td>Microcontroller — an order of magnitude cheaper</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          A pattern worth knowing because it resolves the awkward middle: use both. A microcontroller
+          handles the real-time, low-power sensing and reports over serial or a network to an SBC
+          that does the storage, the web interface and the integration. Each does what it is good at,
+          and the split is usually simpler than forcing either to do the other's job.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Where These Actually Appear in an IT Estate</div>
+      <div class="concept-desc">
+        This is not only hobby material. Single-board computers turn up in production environments
+        regularly, and usually without anyone deciding they should — which is where the risk is.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Appears as</th><th>Concern</th></tr></thead>
+          <tbody>
+            <tr><td>Digital signage and dashboard displays</td><td>Unmanaged, unpatched, often on the corporate network</td></tr>
+            <tr><td>Environmental monitoring in a comms room</td><td>Genuinely useful; needs an owner and a patching route</td></tr>
+            <tr><td>A "temporary" bridge or converter someone built</td><td>Becomes permanent; no documentation, one person understands it</td></tr>
+            <tr><td>Test and lab automation</td><td>Fine — keep it off production networks</td></tr>
+            <tr><td>A vendor appliance that is an SBC in a case</td><td>More common than expected; ask what it runs and how it updates</td></tr>
+            <tr><td>Someone's project on the office wifi</td><td>Default credentials, exposed services, nobody's asset register</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The productive response is not prohibition, which drives it underground. It is a sanctioned
+          path: a defined network segment for these devices, a base image with credentials changed
+          and updates enabled, and an entry in the asset register with a named owner. That converts
+          a shadow device into a managed one at almost no cost, and people will use it because it is
+          easier than hiding.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: GPIO, I2C, SPI & UART ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔀</span>
+    <span class="topic-name">GPIO, I²C, SPI <span class="acro-exp">(Stateful Packet Inspection)</span> &amp; UART — Talking to the Physical World</span>
+    <span class="topic-badge">Embedded</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Four Ways to Move Bits Over Wires, With Different Trade-Offs</div>
+      <div class="concept-desc">
+        These four cover nearly everything a sensor, display or peripheral will speak. They differ in
+        wire count, speed, how many devices share a bus, and how each device is addressed —
+        and those differences decide which one a chip designer chose.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>GPIO</th><th>UART</th><th>I²C</th><th>SPI</th></tr></thead>
+          <tbody>
+            <tr><td>Wires</td><td>1 per signal</td><td>2 (TX, RX)</td><td>2 (SDA, SCL)</td><td>4+ (MOSI, MISO, SCK, CS each)</td></tr>
+            <tr><td>Clock</td><td>—</td><td>None — both ends agree a baud rate</td><td>Shared clock</td><td>Shared clock</td></tr>
+            <tr><td>Devices per bus</td><td>1 per pin</td><td>2 — point to point</td><td>Many, by address</td><td>Many, one chip-select line each</td></tr>
+            <tr><td>Speed</td><td>As fast as you toggle</td><td>Slow — typically to 115200 baud</td><td>Moderate — 100 kHz to 1 MHz+</td><td>Fast — tens of MHz</td></tr>
+            <tr><td>Good for</td><td>Buttons, LEDs <span class="acro-exp">(Light Emitting Diode)</span>, relays</td><td>Consoles, GPS <span class="acro-exp">(Global Positioning System)</span>, modems, debug output</td><td>Many small sensors on two wires</td><td>Displays, SD cards, anything fast</td></tr>
+            <tr><td>Main annoyance</td><td>Nothing — it is a wire</td><td>Baud mismatch; TX/RX crossed</td><td>Address conflicts; missing pull-ups</td><td>Pin count; chip-select management</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The quick way to choose when you have a free hand: I²C when you want several sensors and
+          few wires, SPI when you want speed, UART when you want a simple point-to-point link or a
+          console you can watch. In practice the peripheral has already decided for you.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Voltage Levels — The Mistake That Destroys Hardware</div>
+      <div class="concept-desc">
+        These buses carry logic at a specific voltage, commonly 3.3 V or 5 V, and connecting a 5 V
+        device's output to a 3.3 V input can permanently damage the input. Nothing warns you; the
+        connectors are the same jumper wires. This is the single most common way beginners destroy a
+        board, and it is entirely avoidable by checking two datasheets before wiring anything.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Point</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Check both sides' logic levels first</td><td>Thirty seconds; prevents the most expensive beginner mistake</td></tr>
+            <tr><td>Use a level shifter when they differ</td><td>Cheap, small, and the correct answer rather than hoping</td></tr>
+            <tr><td>Some 3.3 V devices tolerate 5 V inputs</td><td>Some. The datasheet says; assumption does not</td></tr>
+            <tr><td>I²C needs pull-up resistors on both lines</td><td>Many breakout boards include them — several boards on one bus means too many</td></tr>
+            <tr><td>Share a common ground, always</td><td>Signals are measured against ground; without a shared one nothing works</td></tr>
+            <tr><td>Do not power a motor from the board's regulator</td><td>Current spikes brown out the microcontroller and cause "random" resets</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The common-ground point catches almost everyone once. Two devices with separate power
+          supplies and only data lines between them have no shared reference, so the receiver cannot
+          interpret the voltage it is being sent. The symptom is nothing working at all, and the fix
+          is one wire.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">When the Device Does Not Respond</div>
+      <div class="concept-desc">
+        Bus problems produce one symptom — silence — with many causes. This order finds most of them
+        quickly, and the last step is the one that converts guessing into knowing.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Check</th><th>Catches</th></tr></thead>
+          <tbody>
+            <tr><td>Is the device powered, and at the right voltage?</td><td>The most common cause, and the easiest to overlook</td></tr>
+            <tr><td>Common ground connected?</td><td>See above; nothing works without it</td></tr>
+            <tr><td>For UART: are TX and RX crossed?</td><td>TX must go to RX — a coin-flip nobody wins first time</td></tr>
+            <tr><td>For UART: does the baud rate match?</td><td>Mismatch gives garbage characters rather than silence — a useful distinction</td></tr>
+            <tr><td>For I²C: run a bus scan</td><td>Tells you whether the device is present at all, and at which address</td></tr>
+            <tr><td>For I²C: two devices at the same address?</td><td>Common with two identical sensors; many have an address-select pin</td></tr>
+            <tr><td>For SPI: is chip-select asserted, and is the mode right?</td><td>Clock polarity and phase must match the peripheral</td></tr>
+            <tr><td>Put a logic analyser on it</td><td>Shows whether anything was sent, and whether it was acknowledged</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The I²C bus scan deserves to be the first real diagnostic every time: a few lines of code
+          or a standard utility walks every address and reports what answered. "Nothing at any
+          address" and "present at 0x76, not 0x77 as documented" are completely different problems,
+          and the scan tells them apart in seconds. The instrument choice behind this is in
+          <span class="xref">Test Gear — Multimeter, Oscilloscope, Logic Analyser: What Each One Answers</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: FIRMWARE BASICS ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💽</span>
+    <span class="topic-name">Firmware Basics — Bootloaders, Flashing, JTAG/SWD, Bricking &amp; Recovery</span>
+    <span class="topic-badge">Embedded</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Bootloader Is a Small Program Whose Job Is Replacing the Big One</div>
+      <div class="concept-desc">
+        A microcontroller running your program cannot easily replace that program, because it is
+        busy running it. The bootloader solves this: a small piece of code that runs first, decides
+        whether to accept a new application over serial or USB <span class="acro-exp">(Universal Serial Bus)</span>, and otherwise hands control to the
+        existing one. Almost every convenience in embedded development — plugging in a board and
+        uploading code without special hardware — is the bootloader doing its job.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Method</th><th>Needs</th><th>Can it recover a dead device?</th></tr></thead>
+          <tbody>
+            <tr><td>Bootloader over USB or serial</td><td>Nothing extra</td><td>Only if the bootloader still runs</td></tr>
+            <tr><td>Mass-storage bootloader — drag and drop a file</td><td>Nothing extra</td><td>Usually yes; hard to break</td></tr>
+            <tr><td>Over-the-air update</td><td>A working network stack and update logic</td><td>No — a bad update removes the path</td></tr>
+            <tr><td>SWD — serial wire debug</td><td>A cheap debug probe, two pins</td><td>Yes; writes flash directly</td></tr>
+            <tr><td>JTAG</td><td>A probe and more pins</td><td>Yes; the recovery path of last resort</td></tr>
+            <tr><td>External programmer clipped to the flash chip</td><td>A clip and a programmer</td><td>Yes, when nothing else responds</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The distinction that matters: the first three methods depend on software already running
+          on the device, so a bad flash can remove them. SWD and JTAG talk to the silicon, which is
+          why they recover devices that have no working software at all. A device with accessible
+          debug pins is very hard to permanently brick; one without them is one bad update away
+          from being scrap.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Bricking — What It Means and Which Kind You Have</div>
+      <div class="concept-desc">
+        "Bricked" covers everything from a minor inconvenience to genuinely unrecoverable. Knowing
+        which you are facing decides whether to spend an hour or order a replacement.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Kind</th><th>Means</th><th>Recovery</th></tr></thead>
+          <tbody>
+            <tr><td>Soft brick</td><td>Bad application, bootloader intact</td><td>Reflash normally; sometimes a button held at power-on</td></tr>
+            <tr><td>Bootloader damaged</td><td>Nothing responds over the usual route</td><td>SWD or JTAG</td></tr>
+            <tr><td>Debug interface disabled</td><td>Security fuses set, deliberately or accidentally</td><td>Often none; some parts allow a full erase that clears everything</td></tr>
+            <tr><td>Wrong fuse or config bits</td><td>Clock source or reset behaviour misconfigured</td><td>Sometimes recoverable with an external clock supplied to the part</td></tr>
+            <tr><td>Physical damage</td><td>Over-voltage, reverse polarity, heat</td><td>None</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Read-out protection and debug-disable fuses are worth a specific warning: they exist to
+          stop firmware being extracted from a shipped product, they are frequently one-way, and
+          enabling one on a development board turns it into an ornament. Understand what a security
+          setting does before writing it, because that class of mistake is not reversible.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Habits That Keep Devices Recoverable</div>
+      <div class="concept-desc">
+        Most bricking is preventable with a handful of practices, and the same practices are what
+        separate a hobby project from something you would deploy anywhere it is inconvenient to
+        reach.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Read back and keep a copy of the original firmware before writing</td><td>The only way back to a known-good state on a device you did not build</td></tr>
+            <tr><td>Keep the debug pins accessible on anything you design</td><td>A header costs nothing and is the difference between recoverable and scrap</td></tr>
+            <tr><td>Verify after writing, do not assume</td><td>A partially-written image is worse than none</td></tr>
+            <tr><td>Never update over the air without a rollback path</td><td>A/B slots, or a watchdog that reverts on repeated boot failure</td></tr>
+            <tr><td>Test the update mechanism before you need it</td><td>The mechanism is the thing that must never fail — see the firmware-update card</td></tr>
+            <tr><td>Power the device properly during a flash</td><td>Interruption mid-write is a common cause of a hard brick</td></tr>
+            <tr><td>Keep the serial console available</td><td>The cheapest diagnostic there is, and it costs two pins</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The rollback point generalises well beyond hobby hardware, and the security framing is in
+          <span class="xref">Firmware Update Mechanisms — The Feature That Is Also the Attack Path</span>:
+          the update path is simultaneously the most important reliability feature a device has and
+          one of its most attractive attack surfaces, which is why it deserves more design attention
+          than the feature it is delivering.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: REAL-TIME CONSTRAINTS ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⏱️</span>
+    <span class="topic-name">Real-Time Constraints — RTOS, Determinism &amp; Why Linux Is Not Always Right</span>
+    <span class="topic-badge">Embedded</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Real-Time Means Predictable, Not Fast</div>
+      <div class="concept-desc">
+        This is the definition people get wrong, and getting it right changes how the whole problem
+        looks. A real-time system is one where being late is a failure — not where things happen
+        quickly. A system that responds in a guaranteed two milliseconds every single time is
+        real-time; one that usually responds in fifty microseconds and occasionally takes thirty
+        milliseconds is not, and is unusable for the jobs that need the guarantee. What matters is
+        the worst case, and general-purpose operating systems optimise the average.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Class</th><th>Missing a deadline means</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Hard real-time</td><td>System failure, possibly dangerous</td><td>Motor control, airbag, industrial safety interlock</td></tr>
+            <tr><td>Firm real-time</td><td>The result is worthless, though nothing breaks</td><td>A missed frame in a control loop</td></tr>
+            <tr><td>Soft real-time</td><td>Quality degrades</td><td>Video playback, audio, user interfaces</td></tr>
+            <tr><td>Not real-time</td><td>It finishes when it finishes</td><td>Almost all ordinary computing</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The practical consequence for anyone specifying a system: ask "what happens if this is
+          late?" before choosing a platform. If the honest answer is "nothing much", Linux on an SBC
+          is fine and far easier to work with. If the answer involves damage or danger, that
+          decision has been made for you.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Where the Jitter Comes From</div>
+      <div class="concept-desc">
+        A general-purpose operating system introduces variability at several layers, all of them
+        deliberate and all of them helpful for throughput. Each is a reason the worst case is far
+        from the average.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Source</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Scheduler preemption</td><td>Your process is descheduled at an arbitrary moment</td></tr>
+            <tr><td>Interrupt handling</td><td>Another device's interrupt runs before your code</td></tr>
+            <tr><td>Virtual memory and page faults</td><td>A memory access takes a millisecond instead of nanoseconds</td></tr>
+            <tr><td>Garbage collection, in managed runtimes</td><td>An unpredictable pause of unpredictable length</td></tr>
+            <tr><td>Caches and branch prediction</td><td>The same code takes different times depending on history</td></tr>
+            <tr><td>Power management and frequency scaling</td><td>The processor is slower than you measured, sometimes</td></tr>
+            <tr><td>Filesystem and I/O <span class="acro-exp">(Input/Output)</span></td><td>Buffering, flushes, and a device that decides to be busy</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Linux can be pushed a long way toward determinism — the real-time preemption work is
+          mainline now, and with careful tuning (CPU isolation, locked memory, priorities, disabled
+          frequency scaling) it achieves latencies good enough for a great deal of industrial work.
+          It is genuine engineering rather than a checkbox, and the result is bounded latency in the
+          tens of microseconds rather than the guaranteed microseconds a microcontroller gives free.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">RTOS, Bare Metal, or Linux — and What an RTOS Actually Gives You</div>
+      <div class="concept-desc">
+        A real-time operating system sits between bare metal and Linux: it provides tasks,
+        priorities, timers and synchronisation with a scheduler whose behaviour is predictable and
+        documented, in a few tens of kilobytes.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Choose</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><td>Bare metal — a loop and interrupts</td><td>One or two simple jobs; the least to go wrong; hardest to extend</td></tr>
+            <tr><td>RTOS — FreeRTOS, Zephyr and similar</td><td>Several concurrent jobs with different priorities and hard timing</td></tr>
+            <tr><td>Linux</td><td>Networking, filesystems, libraries and displays matter more than timing</td></tr>
+            <tr><td>Linux with real-time preemption</td><td>You need both, and can invest in tuning and measuring</td></tr>
+            <tr><td>Both, split across two chips</td><td>Frequently the cleanest answer — the pattern from the SBC card</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Whichever you choose, the discipline that matters is measuring the worst case rather than
+          the average. Log the maximum latency observed over hours or days of realistic operation,
+          not the mean over a minute — because the mean will look excellent right up until the one
+          occasion that matters, and in a hard real-time system that single occasion is the entire
+          specification.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: HOME LAB HARDWARE ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏗️</span>
+    <span class="topic-name">Home Lab Hardware — A Genuinely Useful Build, at Three Budgets</span>
+    <span class="topic-badge">Embedded</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Buy for the Thing You Will Actually Do This Month</div>
+      <div class="concept-desc">
+        Home labs fail in a predictable way: someone buys enterprise gear because it is cheap
+        second-hand, discovers it is loud, hot and expensive to run, and it sits unused in a
+        cupboard within a year. The hardware was not the problem — the ordering was. Decide what you
+        want to learn first, buy the smallest thing that supports it, and expand when a specific
+        limitation actually stops you. The other cards in this domain cover the components; this one
+        is about not wasting money on them.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Goal</th><th>What it actually needs</th></tr></thead>
+          <tbody>
+            <tr><td>Linux, containers, scripting, self-hosting</td><td>Any machine with 16 GB of memory — including one you already own</td></tr>
+            <tr><td>Virtualisation and clustering</td><td>Memory above all; two or three small nodes beat one large one</td></tr>
+            <tr><td>Networking — VLANs <span class="acro-exp">(Virtual Local Area Network)</span>, routing, firewalls</td><td>A managed switch and a router you can configure; compute is irrelevant</td></tr>
+            <tr><td>Windows Server, Active Directory, MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span></td><td>Memory and disk; runs fine virtualised on one host</td></tr>
+            <tr><td>Storage, RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span>, backup</td><td>Several drives and the ability to attach them; the rest is software</td></tr>
+            <tr><td>Security lab — attack and detect</td><td>Isolated networking, and snapshots you can revert quickly</td></tr>
+            <tr><td>AI <span class="acro-exp">(Artificial Intelligence)</span> and GPU <span class="acro-exp">(Graphics Processing Unit)</span> workloads</td><td>The one case where a specific expensive component is the requirement</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Three Budgets, and What Each One Buys</div>
+      <div class="concept-desc">
+        Deliberately without prices, which date immediately — the tiers are about the shape of the
+        build rather than a number.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Tier</th><th>Build</th><th>Reaches</th></tr></thead>
+          <tbody>
+            <tr><td>Nothing</td><td>The machine you own, plus virtualisation software</td><td>Linux, containers, scripting, most certification labs</td></tr>
+            <tr><td>Minimal</td><td>One second-hand mini PC or small-form-factor desktop, memory maxed; a managed switch</td><td>Virtualisation, a small AD <span class="acro-exp">(Active Directory)</span> lab, VLANs, self-hosted services</td></tr>
+            <tr><td>Comfortable</td><td>Two or three mini PCs, a proper switch, a router appliance, a small NAS <span class="acro-exp">(Network Attached Storage)</span></td><td>Clustering, high availability, shared storage, segmented security labs</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Second-hand small-form-factor office machines are the strongest value in this space by a
+          wide margin: they are plentiful, cheap, quiet, draw very little power, take a surprising
+          amount of memory, and three of them cluster nicely. They are the reason the "comfortable"
+          tier is far cheaper than it once was, and they are almost always a better choice than a
+          decommissioned rack server.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Costs Nobody Budgets, and the Rule That Prevents Regret</div>
+      <div class="concept-desc">
+        The purchase price is the smallest part of what a lab costs, and the other parts are what
+        determine whether it survives past the first few months.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Cost</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>Electricity</td><td>A machine running continuously has an annual cost worth calculating before buying</td></tr>
+            <tr><td>Noise</td><td>Enterprise servers are unbearable in a home; this alone ends most rack ambitions</td></tr>
+            <tr><td>Heat</td><td>A cupboard with a server in it becomes an oven and shortens everything's life</td></tr>
+            <tr><td>Time</td><td>A lab that needs constant maintenance stops teaching and starts consuming</td></tr>
+            <tr><td>Household tolerance</td><td>Genuinely a constraint; the router the house depends on should not be your lab</td></tr>
+            <tr><td>Security</td><td>Lab machines are unpatched by nature; segment them from the home network</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The security row is the one that matters beyond the hobby. A lab exists to run vulnerable,
+          half-configured, deliberately-broken things, and that is exactly what it should be for —
+          on its own VLAN, with no route to the network the household uses. The separation is a
+          switch configuration rather than a purchase, and it is the difference between a learning
+          environment and an incident. The career-side framing of what to do with a lab is in
+          <span class="xref">Building a Home Lab — Where You Actually Learn</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

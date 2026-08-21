@@ -2499,12 +2499,13 @@ a place it already shows up on the site.
 - [x] Input Devices & Accessibility Hardware — switches, trackballs, ergonomic kit
 - [x] Conference Room Technology — the AV stack, and why it always breaks
 
-**Wave AN5 — Embedded & Single-Board**
-- [ ] Microcontrollers vs SBCs — Arduino vs Raspberry Pi, and choosing correctly
-- [ ] GPIO, I²C, SPI & UART — talking to the physical world
-- [ ] Firmware Basics — bootloaders, flashing, JTAG/SWD, bricking and recovery
-- [ ] Real-Time Constraints — RTOS, determinism, and why Linux is not always right
-- [ ] Home Lab Hardware — a genuinely useful build, at three budgets
+**Wave AN5 — Embedded & Single-Board** — shipped into `hw`. Track AN is now complete except for
+one AN1 item.
+- [x] Microcontrollers vs SBCs — Arduino vs Raspberry Pi, and choosing correctly
+- [x] GPIO, I²C, SPI & UART — talking to the physical world
+- [x] Firmware Basics — bootloaders, flashing, JTAG/SWD, bricking and recovery
+- [x] Real-Time Constraints — RTOS, determinism, and why Linux is not always right
+- [x] Home Lab Hardware — a genuinely useful build, at three budgets
 
 **Wave AN6 — Hardware Security** — shipped into `sec`, not `hw`. See the session record
 *Track AN6: hardware and firmware device security* at the end of this file. The `hw` domain
@@ -7661,3 +7662,52 @@ AN5 (embedded and single-board) is the last unwritten wave, plus the one open AN
 `annotate_acronyms.py` clean · `stamp_freshness.py --only hw` touched only the 5 new cards ·
 `--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 5.3 / 8.0 MB, gzip 1,431 /
 2,200 KB, DOM 428 / 1,500, content elements 108,342 / 175,000.
+
+---
+
+## Session record — Track AN5: embedded and single-board, closing Track AN
+
+Twenty-ninth content wave. `hw` 18 → 23. Site: 1,350 → **1,355 topics**.
+
+Microcontrollers vs Single-Board Computers · GPIO, I²C, SPI &amp; UART · Firmware Basics ·
+Real-Time Constraints · Home Lab Hardware.
+
+### What these cards are actually about
+
+The through-line: **the choice between a microcontroller and a small Linux computer is decided by
+constraints that are invisible in a feature comparison** — power budget, timing guarantees, and what
+happens when the power is pulled. Choosing wrongly is the standard first-project mistake, in both
+directions, and it is settled by four questions rather than by capability.
+
+Four specifics worth carrying:
+
+- **Real-time means predictable, not fast.** A guaranteed two milliseconds every time is real-time;
+  usually fifty microseconds with an occasional thirty milliseconds is not. General-purpose
+  operating systems optimise the average, and real-time systems are specified by the worst case.
+- **Voltage-level mismatch is how beginners destroy boards, and it is silent.** The jumper wires are
+  identical; 5 V into a 3.3 V input damages it permanently. Checking two datasheets takes thirty
+  seconds. Missing a common ground is the other one, and its symptom is nothing working at all.
+- **A device with accessible debug pins is very hard to permanently brick.** SWD and JTAG talk to
+  the silicon rather than to software, so they recover devices with no working firmware. Read-out
+  protection fuses are frequently one-way and turn a development board into an ornament.
+- **Second-hand small-form-factor office machines are the strongest value in home labs.** Quiet,
+  cheap, low-power, generous with memory, and three cluster nicely — almost always a better choice
+  than a decommissioned rack server, which is loud, hot and expensive to run.
+
+The SBC card carries the point that matters to an IT estate rather than a hobbyist: single-board
+computers are already in most organisations as signage, monitoring and "temporary" bridges, usually
+unowned and unpatched on the corporate network. The productive response is a sanctioned path — a
+segment, a base image, an asset-register entry with an owner — because prohibition drives it
+underground.
+
+### Track AN after this wave
+
+Complete except one AN1 item: signals — analogue versus digital, sampling, noise and grounding.
+`hw` is 23 topics across five waves, with AN6 in `sec`.
+
+### Verification
+
+`lint_content.py` 30 domain files, 1,355 topics / 201 cross-references clean ·
+`fix_topic_names.py --check` clean · `annotate_acronyms.py` clean · `stamp_freshness.py --only hw`
+touched only the 5 new cards · `--verify` clean · `smoke_test.mjs` 31/31 · budget after build:
+raw 5.3 / 8.0 MB, gzip 1,439 / 2,200 KB, DOM 428 / 1,500, content elements 108,893 / 175,000.
