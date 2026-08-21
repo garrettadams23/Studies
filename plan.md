@@ -2121,9 +2121,12 @@ separate toys.
 
 ### TRACK AH — Findability & Navigation
 
-- [ ] **Acronym-aware search** — expand the query through `acronyms.json` so
+- [x] **Acronym-aware search** — expand the query through `acronyms.json` so
   searching "Unified Endpoint Management" finds UEM cards and vice versa.
-  The data already exists; the search does not use it.
+  **Already built** — `acroSearchMap()` and `searchTerms()` in `script.js` do exactly this, and
+  the count line reports the alternate it matched through. Verified headlessly in both directions:
+  `UEM` and `Unified Endpoint Management` each return 7 matches in 4 domains, `MFA` and
+  `Multi-Factor Authentication` each return 54 in 14. Ticked after checking rather than assuming.
 - [ ] **Expansion density toggle** — a header control for the inline acronym
   expansions: *always* (today) / *first use per domain* / *hover only* /
   *off*. Purely a CSS class on `<body>` plus a `localStorage` preference.
@@ -2133,7 +2136,12 @@ separate toys.
   candidates by shared acronyms and title terms.
 - [ ] **Domain landing cards** — an intro card at the top of each domain: what it
   covers, who it is for, where to start, what to read next.
-- [ ] **Search operators** — `domain:net`, `badge:beginner`, quoted phrases.
+- [x] **Search operators** — `domain:net` and quoted phrases shipped; `badge:` deliberately not.
+  Badges are inconsistent across domains — "SEC • Essential", "Beginner", "OPS • Modern" and
+  "LIFESTYLE • Career" all coexist — so a `badge:` operator would need a vocabulary the reader
+  cannot guess. `domain:` uses domain ids, which the chips and permalinks already expose. Multiple
+  `domain:` terms are additive. Documented in the search box's tooltip; five smoke checks protect
+  the behaviour.
 - [ ] **Recently viewed** — the last ten topics, in the quick-jump palette.
 - [ ] **Deep-link to a card, not just a topic** — anchor IDs on `concept-card`s
   for precise sharing.
@@ -3110,10 +3118,18 @@ records.
 - [x] Secrets vs Tokens vs Keys — a taxonomy that prevents the wrong control
 
 **Wave BD3 — Identity as the Control Plane**
-- [ ] Identity-First Security — what changes when identity is the perimeter
-- [ ] ITDR — detecting identity attacks: token theft, consent phishing, MFA fatigue
-- [ ] Conditional Access Patterns — a policy set that is coherent rather than accreted
-- [ ] Privileged Access Done Properly — tiering, PAWs, break-glass, JIT elevation
+- [~] Identity-First Security — what changes when identity is the perimeter — carded twice as
+  *Zero Trust — Never Trust, Always Verify* (`sec`) and *Zero Trust – "Never Trust, Always Verify"
+  Explained Simply* (`net`); the identity-as-perimeter argument is what those cards are
+- [~] ITDR — detecting identity attacks: token theft, consent phishing, MFA fatigue — carded as
+  *Identity Threat Detection &amp; Response (ITDR)* in `blueteam`; this session's federation and
+  consent-phishing cards cross-reference it
+- [~] Conditional Access Patterns — a policy set that is coherent rather than accreted — carded as
+  *Conditional Access &amp; Device Compliance* (`endpoint`) and *Entra ID — Sign-In &amp; Conditional
+  Access Troubleshooting* (`cloud`)
+- [~] Privileged Access Done Properly — tiering, PAWs, break-glass, JIT elevation — carded as
+  *Privileged Access Management — Vaulting, Just-in-Time &amp; Session Recording*; tier-zero and
+  privileged-access-workstation material is in `infra`
 - [x] Non-Human Identity — service principals, workload identities, and the sprawl nobody owns
 
 **Wave BD4 — Federation & Third Parties** — shipped into `sec`.
@@ -7711,3 +7727,64 @@ Complete except one AN1 item: signals — analogue versus digital, sampling, noi
 `fix_topic_names.py --check` clean · `annotate_acronyms.py` clean · `stamp_freshness.py --only hw`
 touched only the 5 new cards · `--verify` clean · `smoke_test.mjs` 31/31 · budget after build:
 raw 5.3 / 8.0 MB, gzip 1,439 / 2,200 KB, DOM 428 / 1,500, content elements 108,893 / 175,000.
+
+---
+
+## Session record — Track AH: search operators, and one item that was already built
+
+Thirtieth wave, and the first engineering rather than content one this session. With the content
+backlog in live tracks down to twelve items and the site at 1,355 topics across 30 domains,
+findability is now worth more than another card.
+
+### One item was already done
+
+**Acronym-aware search** was specced as "the data already exists; the search does not use it". It
+does — `acroSearchMap()` and `searchTerms()` have been expanding queries through the acronym
+dictionary, and the count line reports which alternate matched. Verified headlessly in both
+directions before ticking: `UEM` and `Unified Endpoint Management` each return 7 matches in 4
+domains; `MFA` and `Multi-Factor Authentication` each return 54 in 14.
+
+That is the third time this session a specced item turned out to be built. The checklist convention
+note added earlier covers the shipped-note case; this is the other one — an item whose implementation
+landed without anyone going back to the plan. **Check before writing, including for engineering
+items.**
+
+### What shipped
+
+**Search operators.** Two, chosen because they are what a reader of a 1,300-topic site actually
+needs:
+
+- `domain:net firewall` — restricts the search to one domain. Multiple are additive. Uses domain
+  ids, which the chips and permalinks already expose, so the vocabulary is one the reader has seen.
+- `"exact phrase"` — matched literally. Several phrases are all required, and they combine with free
+  text rather than merging into one substring, so `"default deny" DNS` asks for both.
+
+`badge:beginner` from the spec was deliberately **not** built. Badges are inconsistent across
+domains — "SEC • Essential", "Beginner", "OPS • Modern" and "LIFESTYLE • Career" all coexist — so
+the operator would need a vocabulary a reader cannot guess and would mostly return nothing. Making
+badges consistent is a content job; if it is ever done, the operator becomes worth having.
+
+### A bug found in the first version
+
+The initial implementation dropped free text shorter than two characters, so `domain:hw x` returned
+all 23 topics in `hw` — answering "everything in that domain" to a reader who asked for "x", and
+presenting it as a result rather than a rejected query. Fixed: free text below the threshold now
+makes the whole query unusable, matching what a bare one-character query already did. It is the same
+class of failure as a silently-ignored operator, which is why both now have a smoke check.
+
+### Verification
+
+Five new checks in `smoke_test.mjs`, 31 → **36**, covering exactly the failures that would be quiet:
+`domain:` actually narrowing (93 unscoped → 17 in one domain), an unknown domain yielding nothing
+rather than everything, a phrase matching, phrase-plus-text combining rather than merging, and short
+free text rejecting the query. The operators are documented in the search box's tooltip, since an
+undiscoverable feature is not one.
+
+`lint_content.py` 1,355 topics clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 36/36 ·
+no console errors, no off-site requests · budget unchanged at raw 5.3 / 8.0 MB, gzip 1,440 / 2,200 KB.
+
+### Track AH after this wave
+
+Five items open: expansion-density toggle, related topics, domain landing cards, recently viewed,
+and deep-linking to a concept card. The last is small and useful; related topics needs a curated
+data file and is the largest.

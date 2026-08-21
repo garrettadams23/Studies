@@ -243,6 +243,42 @@ if (otherDomain) {
     crossed.shown === crossed.promised && crossed.promised > 0 && crossed.marks > 0,
     `${otherDomain}: ${crossed.shown} shown of ${crossed.promised} promised, ${crossed.marks} highlights`);
 }
+// ── search operators ────────────────────────────────────────────────────────
+// `domain:` and quoted phrases narrow a 1,300-topic site to something a reader
+// can use. The cases worth protecting are the ones that fail quietly: an
+// operator that is ignored answers a different question than the one asked, and
+// looks like a result rather than a mistake.
+const ops = await page.evaluate(async () => {
+  const el = document.getElementById("search-input");
+  const probe = async q => {
+    el.value = q;
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    await new Promise(r => setTimeout(r, 350));
+    const n = document.getElementById("search-count")?.textContent || "";
+    const m = n.match(/^(\d+) match/);
+    return { text: n, hits: m ? Number(m[1]) : 0,
+             domains: [...document.querySelectorAll(".domain-section:not(.search-hidden)")].length };
+  };
+  const out = {};
+  out.bare      = await probe("firewall");
+  out.scoped    = await probe("domain:net firewall");
+  out.unknownDm = await probe("domain:nosuchdomain firewall");
+  out.phrase    = await probe('"shuffle sharding"');
+  out.nonsense  = await probe('"shuffle sharding" biscuits');
+  out.shortText = await probe("domain:hw x");
+  return out;
+});
+check("domain: narrows the search", ops.scoped.hits > 0 && ops.scoped.hits < ops.bare.hits
+  && ops.scoped.domains === 1,
+  `${ops.bare.hits} unscoped -> ${ops.scoped.hits} in ${ops.scoped.domains} domain`);
+check("an unknown domain: yields nothing, not everything", ops.unknownDm.hits === 0,
+  ops.unknownDm.text);
+check("a quoted phrase matches", ops.phrase.hits > 0, ops.phrase.text);
+check("phrase and free text are combined, not merged", ops.nonsense.hits === 0,
+  ops.nonsense.text);
+check("free text too short to use rejects the query rather than dropping it",
+  ops.shortText.hits === 0, ops.shortText.text || "(cleared)");
+
 await page.fill("#search-input", "");
 await page.waitForTimeout(250);
 

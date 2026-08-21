@@ -1010,6 +1010,40 @@ function searchTerms(term) {
   return terms;
 }
 
+/**
+ * Split a raw query into its operators, its quoted phrases and the free text.
+ *
+ * At 1,300+ topics a bare substring search returns more than a reader can use,
+ * and the two things they actually want are "only in this domain" and "these
+ * words, in this order". Both are one regex each; neither needs an index.
+ *
+ *   domain:net tcp        → free text "tcp", restricted to the net domain
+ *   "default deny"        → that phrase, literally, not two words
+ *   domain:ops "burn rate" alerting
+ *
+ * `domain:` is matched against domain ids, which are what the chips and the
+ * permalinks already use, so the vocabulary is one the reader has seen. An id
+ * that does not exist yields no matches rather than being ignored — silently
+ * dropping an operator would answer a different question than the one asked.
+ */
+const RE_DOMAIN_OP = /(?:^|\s)domain:([a-z0-9_-]+)/gi;
+const RE_PHRASE = /"([^"]+)"/g;
+
+function parseQuery(raw) {
+  const domains = [];
+  const phrases = [];
+  let rest = raw.replace(RE_PHRASE, (_, p) => {
+    const t = p.trim();
+    if (t) phrases.push(t);
+    return " ";
+  });
+  rest = rest.replace(RE_DOMAIN_OP, (_, d) => {
+    domains.push(d.toLowerCase());
+    return " ";
+  });
+  return { domains, phrases, text: rest.replace(/\s+/g, " ").trim() };
+}
+
 // ── SEARCH STATE ────────────────────────────────────────────────────────────
 // A search now spans more of the page than the page is showing, so the result
 // has to be held rather than only painted: which topics matched, per domain, so
@@ -1083,21 +1117,51 @@ function runSearch(raw) {
   _liveDomain?.querySelectorAll(".topic.search-hidden")
     .forEach(el => el.classList.remove("search-hidden"));
 
-  _searchTerm = term.length < 2 ? "" : term;
+  const q = parseQuery(term);
+  // A query is runnable once it carries something to match on: free text of at
+  // least two characters, or a phrase, or a bare `domain:` used to browse one
+  // domain. Measuring the raw string instead would reject `domain:hw` — which
+  // is two characters of operator and eight of intent.
+  //
+  // Free text below the threshold makes the whole query unusable rather than
+  // being dropped. Dropping it is worse than doing nothing: `domain:hw x`
+  // would quietly answer "everything in hw", which is not what was asked and
+  // reads as a result rather than as a rejected query.
+  const tooShort = q.text.length > 0 && q.text.length < 2;
+  const usable = !tooShort
+    && (q.text.length >= 2 || q.phrases.length > 0 || q.domains.length > 0);
+  _searchTerm = usable ? term : "";
   if (!_searchTerm) {
     _searchTermList = [];
     if (countEl) countEl.textContent = "";
     return;
   }
 
-  _searchTermList = searchTerms(term);
-  const lowered = _searchTermList.map(t => t.toLowerCase());
+  // Highlight everything the reader asked for: the phrases verbatim, and the
+  // free text along with whatever the acronym dictionary says is the same
+  // thing. The operators themselves are never highlighted — they are not
+  // content the reader was looking for.
+  const textTerms = q.text ? searchTerms(q.text) : [];
+  _searchTermList = [...q.phrases, ...textTerms];
+  const loweredText = textTerms.map(t => t.toLowerCase());
+  const loweredPhrases = q.phrases.map(p => p.toLowerCase());
   let matchCount = 0, domainCount = 0, firstHit = null;
 
   domainSections().forEach(section => {
     const hits = new Set();
+    // `domain:` narrows which domains are searched at all. Several are additive
+    // — `domain:net domain:hw` searches both.
+    if (q.domains.length && !q.domains.includes(section.dataset.domain)) {
+      section.classList.add("search-hidden");
+      return;
+    }
     domainTopics(section.dataset.domain).forEach(t => {
-      if (lowered.some(l => t.text.includes(l))) hits.add(t.id);
+      // Phrases are required, all of them; the free text is satisfied by the
+      // query or any of its acronym equivalents. A query that is only
+      // operators and phrases matches on the phrases alone.
+      if (!loweredPhrases.every(p => t.text.includes(p))) return;
+      if (loweredText.length && !loweredText.some(l => t.text.includes(l))) return;
+      hits.add(t.id);
     });
     if (!hits.size) {
       section.classList.add("search-hidden");
@@ -1119,11 +1183,16 @@ function runSearch(raw) {
   if (target) openDomain(target);
 
   if (countEl) {
-    const via = _searchTermList.length > 1
-      ? ` · also matching ${_searchTermList.slice(1).map(t => `“${t}”`).join(", ")}` : "";
+    // Only the acronym alternates belong in "also matching" — phrases are what
+    // the reader typed, not something the dictionary added on their behalf.
+    const via = textTerms.length > 1
+      ? ` · also matching ${textTerms.slice(1).map(t => `“${t}”`).join(", ")}` : "";
+    // Say when an operator narrowed the search, so "no matches" is never
+    // ambiguous between "nothing on the site" and "nothing in that domain".
+    const scope = q.domains.length ? ` · in ${q.domains.join(", ")}` : "";
     countEl.textContent = matchCount
       ? `${matchCount} match${matchCount !== 1 ? "es" : ""} in ${domainCount} domain${domainCount !== 1 ? "s" : ""}${via}`
-      : "no matches";
+      : `no matches${scope}`;
   }
 }
 
