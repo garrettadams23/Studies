@@ -2320,7 +2320,8 @@ became duplicate tracks:
   relevant to a query plan as to a rate limiter as to a password-cracking
   estimate. Filing it inside `eng` would bury it from the security and data
   readers who need it most.
-- **New domain `hw` 🔧 "Hardware, Electronics & Embedded"** (Track AN). Passes
+- **New domain `hw` 🔧 "Hardware, Electronics & Embedded"** (Track AN) — **scaffolded and shipped**;
+  8 cards, accent `#a3e635`, chip in the Core IT group. Passes
   the rule cleanly: its own tools (multimeter, logic analyser, soldering iron,
   POST card), its own job titles (bench tech, field engineer, embedded
   developer), and easily 30 cards of material.
@@ -2468,19 +2469,21 @@ a place it already shows up on the site.
 
 ~6 waves, ~30 cards. The physical layer, from a bench repair to a soldered board.
 
-**Wave AN1 — Electronics Fundamentals**
-- [ ] Voltage, Current & Resistance — Ohm's law with worked IT examples
-- [ ] Power & Thermals — watts, heat, and why the PSU calculation matters
-- [ ] Components — resistors, capacitors, diodes, transistors, and reading a schematic
-- [ ] Signals — analogue vs digital, sampling, noise, grounding
-- [ ] Test Gear — multimeter, oscilloscope, logic analyser: what each answers
+**Wave AN1 — Electronics Fundamentals** — shipped; `hw` domain scaffolded. See the session record.
+- [x] Voltage, Current & Resistance — Ohm's law with worked IT examples
+- [x] Power & Thermals — watts, heat, and why the PSU calculation matters
+- [x] Components — resistors, capacitors, diodes, transistors, and reading a schematic
+- [ ] Signals — analogue vs digital, sampling, noise, grounding — still open; the noise and
+  grounding half is the part with real IT application
+- [x] Test Gear — multimeter, oscilloscope, logic analyser: what each answers
 
-**Wave AN2 — PC Hardware Deep**
-- [ ] Motherboard Anatomy — chipsets, lanes, headers, and the block diagram
-- [ ] CPU & Cooling — sockets, TDP, thermal paste, throttling diagnosis
-- [ ] Memory Deep — channels, ranks, timings, ECC, and diagnosing bad RAM
-- [ ] Storage Interfaces — SATA/NVMe/PCIe lanes, and where the bottleneck really is
-- [ ] Power Supplies — rails, efficiency ratings, sizing, and failure symptoms
+**Wave AN2 — PC Hardware Deep** — shipped into `hw`.
+- [x] Motherboard Anatomy — chipsets, lanes, headers, and the block diagram
+- [x] CPU & Cooling — sockets, TDP, thermal paste, throttling diagnosis
+- [x] Memory Deep — channels, ranks, timings, ECC, and diagnosing bad RAM
+- [x] Storage Interfaces — SATA/NVMe/PCIe lanes, and where the bottleneck really is
+- [x] Power Supplies — rails, efficiency ratings, sizing, and failure symptoms — inside
+  *Power &amp; Thermals*, where the sizing calculation and the failure-symptom table both live
 
 **Wave AN3 — Diagnosis & Repair**
 - [ ] Systematic Hardware Troubleshooting — isolate, swap, minimum viable system
@@ -7458,3 +7461,101 @@ are `[~]` against cards written elsewhere this session.
 `annotate_acronyms.py` clean · `stamp_freshness.py --only sec` touched only the 3 new cards ·
 `--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 5.2 / 8.0 MB, gzip 1,400 /
 2,200 KB, DOM 416 / 1,500, content elements 106,430 / 175,000.
+
+---
+
+## Session record — Track AN1/AN2: the `hw` domain, scaffolded and opened
+
+Twenty-sixth content wave, and the first new domain of this session — the site's **30th**.
+
+### Why this one, and why now
+
+After the plan.md accuracy pass, the honest backlog was 86 items in tracks whose checklists still
+mean what they say — and Track AN held 25 of them, by far the largest single genuine void. The
+probes were unambiguous:
+
+| Probe | Mentions before this wave |
+|---|---|
+| `thermal paste`, "POST beep", `resistor`, `multimeter`, `oscilloscope` | 0 |
+| `Arduino`, `I2C`, `RTOS`, "soldering" (electronics sense) | 0 |
+| `motherboard`, "power supply" | acronym list only |
+| `Ohm` | one hit in `script`, unrelated |
+
+Nothing on the site covered PC hardware, electronics or embedded systems at all. `linux` was
+expected to hold A+ hardware material and does not — its topic list is entirely software.
+
+### The domain decision, revisited
+
+The earlier AN6 record argued that hardware *security* belonged in `sec` rather than behind a domain
+that might never be scaffolded, and shipped it there. That was right, and it left the question of
+whether `hw` should exist at all. It should: electronics fundamentals, PC hardware, diagnosis and
+repair, peripherals and embedded are a coherent body of work with a distinct audience, and they do
+not fit in any existing domain. AN6 staying in `sec` is not a loss — the security reader finds it
+where they are, and `hw` starts at electronics, which is where an electronics domain should start.
+
+### Scaffolding
+
+Four files, no tooling — there is no `scaffold_domain.py` in `tools/`, contrary to what a session
+summary claimed, so this was done by hand and is recorded here for the next new domain:
+
+| File | Change |
+|---|---|
+| `data/domains.json` | Entry inserted after `infra`; id `hw`, icon 🔧, A+ and Hands-On cert tags |
+| `index-shell.html` | Chip added to the Core IT group, after `m365` |
+| `style.css` | Accent `#a3e635` — checked against the 19 hex values already in use, all distinct |
+| `data/hw.html` | The content itself |
+
+One behaviour worth knowing: `stamp_freshness.py --only hw` reports "0 topics stamped" for a
+brand-new file, because git has never seen it and blame returns nothing. That is the documented
+path, not a failure — the hand-written stamps stand and `--verify` passes. The next run, once
+committed, will confirm them.
+
+### What shipped
+
+**8 cards, a new `hw` domain.** Site: 1,332 → **1,340 topics**, 29 → **30 domains**.
+
+| Wave | Cards |
+|---|---|
+| AN1 — Electronics | Voltage, Current &amp; Resistance · Power &amp; Thermals · Components &amp; Schematics · Test Gear |
+| AN2 — PC Hardware | Motherboard Anatomy · CPU &amp; Cooling · Memory Deep · Storage Interfaces |
+
+### What these cards are actually about
+
+The through-line: **hardware knowledge earns its place in an IT career as diagnosis, not as
+repair.** Component-level repair is rarely economic and usually voids a warranty. What this
+material buys is the ability to tell an electrical problem from a logical one, to know when a
+vendor's explanation is implausible, and to recognise the physical cause behind a ticket that has
+been chased through software for a fortnight.
+
+Four specifics worth carrying:
+
+- **TDP is a cooling design target, not a consumption figure.** A 65 W processor can draw well over
+  200 W in boost by design, so a cooler sized to the rated number produces a machine that is fast for
+  thirty seconds. And throttling at 95 °C is a cooling problem while throttling at 70 °C is a
+  power-limit setting — different diagnoses entirely.
+- **UPS volt-amps are not watts.** VA equals watts only for a purely resistive load, and a computer
+  power supply is not one. Multiply by the stated power factor before comparing to your load.
+- **Which memory slots you use silently halves bandwidth.** The channel pairs are usually not
+  adjacent, so filling the two slots nearest the processor is the common error — and the machine
+  boots and works perfectly, which is why it presents as a performance mystery rather than a fault.
+- **An M.2 slot is a form factor, not a protocol.** An M.2 SATA drive in an M.2 slot delivers SATA
+  speeds and looks, to whoever bought "an M.2 SSD", like a defective product.
+
+The cards are also where the site's cheapest sustainability advice now lives, and it is literal:
+compressed air and ten minutes routinely restore a throttling laptop that was being considered for
+replacement.
+
+### Track AN after this wave
+
+AN1 has one item open — analogue versus digital signals, sampling, noise and grounding, where the
+noise and grounding half has the real IT application. AN3 (diagnosis and repair), AN4 (peripherals
+and the office estate) and AN5 (embedded and single-board) are untouched and are the natural next
+waves in this domain. AN6 shipped into `sec` earlier this session.
+
+### Verification
+
+`lint_content.py` 30 domain files, 1,340 topics / 194 cross-references clean ·
+`fix_topic_names.py --check` clean · `annotate_acronyms.py` clean · `stamp_freshness.py --verify`
+clean · `smoke_test.mjs` 31/31 · topic index confirms 8 `hw` topics and one deferred block ·
+budget after build: raw 5.2 / 8.0 MB, gzip 1,414 / 2,200 KB, DOM 428 / 1,500 (the new chip),
+content elements 107,250 / 175,000.
