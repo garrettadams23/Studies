@@ -2560,4 +2560,659 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
   </div>
 </div>
 
+
+<!-- ── TOPIC: STORAGE FUNDAMENTALS ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💾</span>
+    <span class="topic-name">Storage Fundamentals — Block, File &amp; Object in the Datacenter</span>
+    <span class="topic-badge">Infra • Storage</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Difference Is Who Owns the Filesystem</div>
+      <div class="concept-desc">
+        Block, file and object are usually introduced as three storage products. The distinction
+        that actually predicts their behaviour is simpler: <em>where the filesystem lives.</em> Block
+        storage hands a server raw addressable blocks and the server puts a filesystem on them. File
+        storage keeps the filesystem on the storage system and lends you a path into it. Object
+        storage has no filesystem at all — just a flat namespace of keys, retrieved whole over
+        HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          Everything else follows from that. Only one server can own a block device at a time,
+          because two filesystems writing the same blocks corrupt each other — which is why shared
+          block storage needs a cluster filesystem or careful orchestration. File storage is
+          shareable precisely because the storage system arbitrates. And object storage cannot
+          modify part of a file, because there is no block layer to modify: you replace the whole
+          object.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Choosing, and What Each One Is Bad At</div>
+      <div class="concept-desc">
+        Most storage mistakes are a workload placed on the wrong one of these three, and the symptom
+        appears months later as a performance or cost problem rather than as an error.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Block</th><th>File</th><th>Object</th></tr></thead>
+          <tbody>
+            <tr><td>Accessed as</td><td>A raw disk (LUN)</td><td>A share or export</td><td>An HTTP API <span class="acro-exp">(Application Programming Interface)</span>, by key</td></tr>
+            <tr><td>Filesystem owned by</td><td>The server</td><td>The storage system</td><td>Nobody</td></tr>
+            <tr><td>Shared between hosts</td><td>Only with a cluster filesystem</td><td>Yes, by design</td><td>Yes, by design</td></tr>
+            <tr><td>Partial update</td><td>Yes — any block</td><td>Yes — any byte range</td><td>No — replace the object</td></tr>
+            <tr><td>Typical protocols</td><td>iSCSI <span class="acro-exp">(Internet Small Computer Systems Interface)</span>, Fibre Channel, NVMe-oF</td><td>SMB <span class="acro-exp">(Server Message Block)</span>, NFS <span class="acro-exp">(Network File System)</span></td><td>S3-compatible HTTP</td></tr>
+            <tr><td>Best for</td><td>Databases, VM <span class="acro-exp">(Virtual Machine)</span> disks, low latency</td><td>Shared documents, home directories, applications expecting a path</td><td>Backups, media, logs, anything large and write-once</td></tr>
+            <tr><td>Bad at</td><td>Sharing; scaling past one array</td><td>Very high concurrency; millions of small files</td><td>Random updates; latency-sensitive work</td></tr>
+            <tr><td>Cost per usable terabyte</td><td>Highest</td><td>Middle</td><td>Lowest, by a wide margin</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Mistakes That Follow From Getting This Wrong</div>
+      <div class="concept-desc">
+        Each of these is common, and each is the same error: treating one storage type as though it
+        had another's semantics.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Mistake</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td>A database on an SMB share</td><td>Locking semantics differ from a local filesystem; corruption or refusal to start</td></tr>
+            <tr><td>Mounting object storage as a filesystem</td><td>Works, then behaves badly — every "write" is a whole-object rewrite</td></tr>
+            <tr><td>Presenting one LUN <span class="acro-exp">(Logical Unit Number)</span> to two hosts without a cluster filesystem</td><td>Silent, comprehensive corruption</td></tr>
+            <tr><td>Millions of small files on a NAS <span class="acro-exp">(Network Attached Storage)</span></td><td>Metadata operations, not throughput, become the limit</td></tr>
+            <tr><td>Backups on the same array as production</td><td>One array failure takes both — see the 3-2-1-1-0 card</td></tr>
+            <tr><td>Assuming object storage is immediately consistent everywhere</td><td>Depends on the implementation; check before designing around it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The backup row connects to
+          <span class="xref">Backup Strategy — 3-2-1-1-0 and the Schemes That Make Restores Possible</span>,
+          and it is the one that turns a storage decision into a recovery failure: a snapshot on the
+          same array is not a second copy, however the vendor's marketing describes it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: RAID & ERASURE CODING ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧮</span>
+    <span class="topic-name">RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span> &amp; Erasure Coding — What Redundancy Buys, and the Rebuild Window</span>
+    <span class="topic-badge">Infra • Storage</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Redundancy Protects Against Drive Failure and Nothing Else</div>
+      <div class="concept-desc">
+        RAID keeps a volume online when a disk dies. That is its entire promise, and it is worth
+        stating flatly because the mistake it invites has cost more data than the failures it
+        prevents: RAID does not protect against deletion, corruption, ransomware, a failed
+        controller, a flood, or somebody typing the wrong command. Every one of those is faithfully
+        replicated across all members, instantly. An array is an availability feature; a backup is a
+        recovery feature, and they are not substitutes.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Level</th><th>Survives</th><th>Capacity cost</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>RAID 0</td><td>Nothing</td><td>None</td><td>Striping only; failure risk multiplies with member count</td></tr>
+            <tr><td>RAID 1</td><td>One of two</td><td>50%</td><td>Simple, fast reads, fast rebuild</td></tr>
+            <tr><td>RAID 5</td><td>One drive</td><td>One drive's worth</td><td>Increasingly discouraged at large capacities — see below</td></tr>
+            <tr><td>RAID 6</td><td>Two drives</td><td>Two drives' worth</td><td>The realistic minimum for large spinning disks</td></tr>
+            <tr><td>RAID 10</td><td>One per mirrored pair</td><td>50%</td><td>Best write performance and fastest rebuild; the database answer</td></tr>
+            <tr><td>Erasure coding</td><td>Configurable — n of m fragments</td><td>Tunable, far better than mirroring at scale</td><td>Distributed across nodes, not just disks</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Rebuild Window Is the Real Risk</div>
+      <div class="concept-desc">
+        When a drive fails, the array reconstructs its contents onto a replacement by reading every
+        remaining drive end to end. On modern high-capacity disks that takes many hours, sometimes
+        days — and throughout it the array is running degraded, under maximum read load, on drives
+        that are the same age and model as the one that just failed. A second failure during that
+        window is far more likely than the naive independent-failure arithmetic suggests, because
+        the failures are correlated by age, batch and workload.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          This is why single-parity RAID 5 fell out of favour for large disks rather than because of
+          any change in the mathematics of parity: the array grew, the rebuild got longer, and the
+          exposure window grew with it. The mitigations are practical rather than clever.
+        </div>
+        <table class="ref-table">
+          <thead><tr><th>Mitigation</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Double parity or better on large drives</td><td>A second failure during rebuild stops being fatal</td></tr>
+            <tr><td>Hot spares that rebuild automatically</td><td>Removes the hours between failure and someone noticing</td></tr>
+            <tr><td>Smaller failure domains — more, smaller groups</td><td>Shorter rebuilds, less data at risk each time</td></tr>
+            <tr><td>Mix drive batches where you can</td><td>Reduces correlated failure from a bad production run</td></tr>
+            <tr><td>Scrub or patrol-read on a schedule</td><td>Finds latent bad sectors before a rebuild depends on them</td></tr>
+            <tr><td>Monitor and alert on degraded state</td><td>The array that has been degraded for six weeks is common and is one failure from gone</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Erasure Coding — Why Scale-Out Systems Do Not Use RAID</div>
+      <div class="concept-desc">
+        Erasure coding generalises parity: split an object into <em>k</em> data fragments, compute
+        <em>m</em> parity fragments, distribute all of them across nodes, and reconstruct from any
+        <em>k</em>. It is what object stores and distributed filesystems use, and the reason is
+        economic — three-way replication costs 200% overhead, while a 10+4 code survives four
+        simultaneous failures for 40%.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Property</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Fragments spread across nodes and racks</td><td>Survives losing a whole node or rack, not just a disk</td></tr>
+            <tr><td>Reads may touch many nodes</td><td>Higher latency than a mirror; wrong for small random reads</td></tr>
+            <tr><td>Reconstruction reads k fragments</td><td>Rebuild traffic is network traffic, and it competes with clients</td></tr>
+            <tr><td>Encoding costs CPU <span class="acro-exp">(Central Processing Unit)</span> on write</td><td>Fine for large sequential objects, poor for small hot writes</td></tr>
+            <tr><td>Wider codes are cheaper and slower to rebuild</td><td>The tuning knob; pick from the failure domain, not from the ratio alone</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The practical rule this leads to: mirror or RAID 10 for latency-sensitive random workloads,
+          erasure coding for large capacity where throughput matters more than latency. And on any
+          of them, remember the first card's point — none of this is a backup, because all of it
+          replicates a deletion perfectly.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SAN & FABRIC ───────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔗</span>
+    <span class="topic-name">SAN <span class="acro-exp">(Storage Area Network)</span> &amp; Fabric — LUNs <span class="acro-exp">(Logical Unit Number)</span>, Zoning, Multipathing &amp; iSCSI <span class="acro-exp">(Internet Small Computer Systems Interface)</span> vs Fibre Channel</span>
+    <span class="topic-badge">Infra • Storage</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A SAN Is a Network Whose Payload Is Disk Commands</div>
+      <div class="concept-desc">
+        A storage area network carries SCSI <span class="acro-exp">(Small Computer System Interface)</span> or NVMe <span class="acro-exp">(Non-Volatile Memory Express)</span> commands between servers and arrays, so that a
+        volume on the array appears to the server as a locally attached disk. Everything unfamiliar
+        about SANs follows from that one fact: the vocabulary is networking vocabulary, the failure
+        modes are networking failure modes, and the consequences are disk consequences — a dropped
+        frame is not a retransmitted packet, it is an I/O <span class="acro-exp">(Input/Output)</span> error that a filesystem has to handle.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Term</th><th>Means</th></tr></thead>
+          <tbody>
+            <tr><td>LUN</td><td>A volume presented to a host — the unit of allocation</td></tr>
+            <tr><td>Initiator</td><td>The server end; the thing issuing commands</td></tr>
+            <tr><td>Target</td><td>The array end; the thing answering</td></tr>
+            <tr><td>WWN / IQN</td><td>The identity of an endpoint — Fibre Channel and iSCSI respectively</td></tr>
+            <tr><td>Fabric</td><td>The switched network between them</td></tr>
+            <tr><td>Zoning</td><td>Switch-level rule for which initiators may see which targets</td></tr>
+            <tr><td>LUN masking</td><td>Array-level rule for which hosts a LUN is presented to</td></tr>
+            <tr><td>Multipathing</td><td>Host-side driver collapsing several routes to one LUN into one device</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Zoning and masking do overlapping jobs from opposite ends, and both are normally used.
+          Zoning limits what the fabric will carry; masking limits what the array will admit. The
+          reason for both is the failure they prevent: a host that can see a LUN belonging to
+          another host may write a signature to it, which corrupts it instantly and completely.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">iSCSI vs Fibre Channel — Choosing on Operations, Not on Speed</div>
+      <div class="concept-desc">
+        The comparison is usually framed as performance, and modern Ethernet has largely closed that
+        gap. The real difference is operational: Fibre Channel is a separate, purpose-built network
+        that does one job, and iSCSI runs on the network you already have — which is both its
+        advantage and its risk.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Fibre Channel</th><th>iSCSI</th></tr></thead>
+          <tbody>
+            <tr><td>Runs on</td><td>Dedicated FC switches and HBAs <span class="acro-exp">(Host Bus Adapter)</span></td><td>Ordinary Ethernet</td></tr>
+            <tr><td>Cost</td><td>High — separate hardware and skills</td><td>Low — reuses existing kit</td></tr>
+            <tr><td>Lossless by design</td><td>Yes, built into the protocol</td><td>No — needs careful network design</td></tr>
+            <tr><td>Isolation</td><td>Physical, by default</td><td>Requires a dedicated VLAN <span class="acro-exp">(Virtual Local Area Network)</span> or physical separation</td></tr>
+            <tr><td>Who operates it</td><td>Usually the storage team</td><td>Usually the network team, sometimes without knowing</td></tr>
+            <tr><td>Typical failure</td><td>Zoning mistakes, cable and SFP <span class="acro-exp">(Small Form-factor Pluggable)</span> faults</td><td>A network change nobody flagged as storage-affecting</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          That last row is the whole argument. iSCSI's weakness is not throughput, it is that the
+          storage path now depends on a network with a change process that treats it as ordinary
+          traffic. If you run iSCSI, isolate it — dedicated VLAN or dedicated NICs <span class="acro-exp">(Network Interface Card)</span>, jumbo frames
+          configured consistently end to end, flow control agreed, and the storage VLAN named in
+          change reviews so nobody reconfigures it on a Tuesday afternoon.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Multipathing — The Thing That Is Either Configured or Actively Harmful</div>
+      <div class="concept-desc">
+        Multiple physical routes to the same LUN mean the operating system sees the same volume
+        several times. Multipathing software recognises them as one device and handles failover and
+        load balancing. Without it configured correctly, the host either treats one disk as four
+        separate disks — which is how volumes get overwritten — or fails to survive the path
+        failure the redundancy was bought for.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Check</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Every LUN shows the expected path count, on every host</td><td>A host with one path has no redundancy and nothing says so</td></tr>
+            <tr><td>The vendor's recommended path-selection policy is set</td><td>Defaults are frequently wrong for the array in front of you</td></tr>
+            <tr><td>Alerting on path-down events</td><td>Otherwise you find out when the second path fails</td></tr>
+            <tr><td>Pull a cable during commissioning, deliberately</td><td>The only way to know failover actually works</td></tr>
+            <tr><td>Queue depth set per the vendor's guidance</td><td>Too high overwhelms the array; too low throttles the host</td></tr>
+            <tr><td>Timeout values matched to the array's failover time</td><td>Mismatched timeouts turn a survivable path failure into an I/O error</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The commissioning cable-pull is worth insisting on. Path redundancy is a claim on a
+          diagram until somebody has tested it, and the moment to discover a mismatched timeout is
+          during a planned test rather than during an unplanned switch reboot.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SMB & NFS AT SCALE ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📂</span>
+    <span class="topic-name">SMB <span class="acro-exp">(Server Message Block)</span> &amp; NFS <span class="acro-exp">(Network File System)</span> at Scale — Protocol Behaviour, Versions &amp; Why File Workloads Feel Slow</span>
+    <span class="topic-badge">Infra • Storage</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">File Protocols Are Chatty, and Latency Multiplies</div>
+      <div class="concept-desc">
+        Opening a file over SMB or NFS is not one operation. It is a sequence: resolve the path
+        component by component, check permissions, open, query attributes, read, close. Each step is
+        a round trip. On a local network at half a millisecond, nobody notices. Over a link at
+        forty milliseconds, the same operation that took ten milliseconds takes several seconds —
+        and the throughput of the link is irrelevant, because nothing is waiting on bandwidth.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          This single fact explains most file-server complaints. "The share is slow from the branch
+          office" is almost never a bandwidth problem, and adding bandwidth reliably fails to fix
+          it. It also explains why a workload of a million small files behaves completely differently
+          from one large file of the same total size: the second is bandwidth-bound and the first is
+          round-trip-bound.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Versions, and Why They Matter More Than the Product</div>
+      <div class="concept-desc">
+        Both protocols changed substantially across versions, and an estate running an old dialect
+        for compatibility gives up performance and security together.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Version</th><th>What it brought</th><th>Position now</th></tr></thead>
+          <tbody>
+            <tr><td>SMB 1</td><td>The original</td><td>Disable it — no encryption, no integrity, and the ransomware worm vector</td></tr>
+            <tr><td>SMB 2</td><td>Far fewer round trips; compound operations</td><td>The step change in performance</td></tr>
+            <tr><td>SMB 3</td><td>Encryption, multichannel, transparent failover, RDMA <span class="acro-exp">(Remote Direct Memory Access)</span></td><td>What to be running</td></tr>
+            <tr><td>NFSv3</td><td>Stateless, simple, still very common</td><td>Works; authentication is host-based and weak</td></tr>
+            <tr><td>NFSv4 / 4.1</td><td>Stateful, single port, ACLs <span class="acro-exp">(Access Control List)</span>, Kerberos, sessions</td><td>Preferred, especially across any boundary</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          SMB 1 deserves its own line. It has no meaningful authentication of the server, no
+          transport encryption, and it carried one of the most damaging ransomware worms in
+          circulation. If something still needs it, that device is the problem to solve, not the
+          reason to keep the protocol enabled estate-wide.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Symptoms and Where They Actually Come From</div>
+      <div class="concept-desc">
+        File-service complaints arrive as "the share is slow" regardless of cause. These are the
+        distinctions that separate them, in the order worth checking.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Usual cause</th><th>Fix direction</th></tr></thead>
+          <tbody>
+            <tr><td>Slow only from a remote site</td><td>Round-trip latency, not bandwidth</td><td>Cache locally; replicate; use a protocol built for the WAN <span class="acro-exp">(Wide Area Network)</span></td></tr>
+            <tr><td>Slow browsing, fast transfers</td><td>Metadata operations dominate</td><td>Fewer files per directory; faster metadata tier</td></tr>
+            <tr><td>Slow for one application only</td><td>It opens and closes files per operation</td><td>Application behaviour; a share is the wrong backing store</td></tr>
+            <tr><td>Intermittent hangs</td><td>Oplock or lease conflicts between clients</td><td>Find the client holding the lock; check antivirus scanning the share</td></tr>
+            <tr><td>Slow after a security change</td><td>SMB encryption or signing now enforced</td><td>Real cost; budget CPU <span class="acro-exp">(Central Processing Unit)</span> for it rather than turning it off</td></tr>
+            <tr><td>Whole share stalls periodically</td><td>Backup or antivirus walking the tree</td><td>Reschedule; exclude correctly; use snapshot-based backup</td></tr>
+            <tr><td>Permission errors that make no sense</td><td>Share and filesystem permissions interacting</td><td>See the file-services card — the effective right is the lesser of the two</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The permissions half of file services — share versus NTFS <span class="acro-exp">(New Technology File System)</span> rights, DFS <span class="acro-exp">(Distributed File System)</span> namespaces and
+          quotas — is in
+          <span class="xref">File Services — Share vs NTFS Permissions, DFS &amp; Quotas</span>.
+          This card is deliberately the protocol half, because the two produce the same complaint
+          from users and have nothing else in common.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: STORAGE PERFORMANCE ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚡</span>
+    <span class="topic-name">Storage Performance — IOPS <span class="acro-exp">(Input/Output Operations Per Second)</span>, Throughput, Latency &amp; Which One Is Your Limit</span>
+    <span class="topic-badge">Infra • Storage</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Three Numbers, and Only One of Them Is Your Problem</div>
+      <div class="concept-desc">
+        Storage performance discussions go wrong because three different measurements get treated
+        as one quantity called "speed". IOPS counts operations per second and is what small random
+        work needs. Throughput counts bytes per second and is what large sequential work needs.
+        Latency is how long one operation takes, and it is what users actually experience. They are
+        related but not interchangeable: an array can deliver enormous throughput while every
+        individual operation is slow, and the users of a database will describe that as broken.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Workload</th><th>Bound by</th><th>Watch</th></tr></thead>
+          <tbody>
+            <tr><td>Transactional database</td><td>Latency, then IOPS</td><td>Write latency, especially the log device</td></tr>
+            <tr><td>Analytics scan, backup, media</td><td>Throughput</td><td>Sustained MB/s and where it plateaus</td></tr>
+            <tr><td>Virtual desktop estate</td><td>IOPS, in bursts</td><td>Boot and login storms, not the steady state</td></tr>
+            <tr><td>File server with many small files</td><td>Metadata operations</td><td>Operations per second, not bytes</td></tr>
+            <tr><td>Log ingest</td><td>Throughput and write amplification</td><td>Sustained write, and what compaction costs</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Vendor figures almost always quote the best case for one of these — usually large
+          sequential reads or 100% random reads at an unrealistic queue depth. A figure without its
+          block size, read/write mix and queue depth is not a measurement, and comparing two such
+          figures is meaningless.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Queue Depth — The Number That Explains Confusing Results</div>
+      <div class="concept-desc">
+        Queue depth is how many operations are outstanding at once. It ties the other three
+        together through a relationship worth internalising: <strong>IOPS ≈ queue depth ÷
+        latency.</strong> A single-threaded workload with one outstanding operation and a
+        one-millisecond latency cannot exceed a thousand IOPS no matter how capable the array is —
+        because it never asks for more than one thing at a time.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          This explains the two most common confusions in storage benchmarking. A benchmark showing
+          far lower IOPS than the array's rating is usually running at too shallow a queue depth to
+          exercise it. And an array hitting its rated IOPS while everything feels slow is usually
+          running at a very deep queue: the operations are being delivered, each one is just waiting
+          in line, and latency has climbed accordingly.
+        </div>
+        <table class="ref-table">
+          <thead><tr><th>Observation</th><th>Reading</th></tr></thead>
+          <tbody>
+            <tr><td>Low IOPS, low latency, low queue depth</td><td>The application is not asking for more; storage is not the bottleneck</td></tr>
+            <tr><td>High IOPS, rising latency, deep queue</td><td>The array is saturated — this is the real limit</td></tr>
+            <tr><td>Low IOPS, high latency, low queue depth</td><td>Something is slow per operation — a path, a tier, a failing disk</td></tr>
+            <tr><td>Latency fine at the array, poor at the host</td><td>The problem is in the path, not the storage</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Finding the Actual Bottleneck</div>
+      <div class="concept-desc">
+        "Storage is slow" is a conclusion, usually reached before measurement. Work down the stack
+        in this order; the layer where latency first appears is the layer to fix.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Layer</th><th>Question</th></tr></thead>
+          <tbody>
+            <tr><td>Application</td><td>Is it doing far more I/O <span class="acro-exp">(Input/Output)</span> than it needs — a missing index, no caching?</td></tr>
+            <tr><td>Guest OS <span class="acro-exp">(Operating System)</span></td><td>Filesystem alignment, scheduler, queue depth limits</td></tr>
+            <tr><td>Hypervisor</td><td>Is another VM <span class="acro-exp">(Virtual Machine)</span> on this datastore consuming it? Is CPU <span class="acro-exp">(Central Processing Unit)</span> ready time the real issue?</td></tr>
+            <tr><td>Path</td><td>Multipathing healthy? A degraded path halves throughput silently</td></tr>
+            <tr><td>Array front end</td><td>Controller CPU, cache hit rate, port saturation</td></tr>
+            <tr><td>Array back end</td><td>Disk-group utilisation, a rebuild in progress, tiering moving data</td></tr>
+            <tr><td>Media</td><td>Failing drive, SSD <span class="acro-exp">(Solid State Drive)</span> approaching wear-out, write cliff on a full drive</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two entries deserve suspicion early because they are invisible from the host: a rebuild
+          running on the array, and a tiering engine relocating data. Both consume back-end capacity
+          on their own schedule, both make performance vary by time of day for no reason the
+          application can see, and both are the answer more often than anyone expects. The
+          hypervisor row connects to
+          <span class="xref">Virtualization Fundamentals — Hypervisors, Overcommit &amp; the Noisy Neighbour</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: THIN PROVISIONING, DEDUP & TIERING ─────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🪄</span>
+    <span class="topic-name">Thin Provisioning, Deduplication &amp; Tiering — The Features That Save Space and Surprise You</span>
+    <span class="topic-badge">Infra • Storage</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Every Efficiency Feature Is a Bet That Usage Stays Normal</div>
+      <div class="concept-desc">
+        Thin provisioning, deduplication, compression and tiering all work by not doing something
+        until it is necessary — not allocating space until written, not storing a block twice, not
+        keeping cold data on expensive media. Each pays off reliably and each has the same shape of
+        failure: they are efficient under expected conditions and degrade sharply outside them,
+        usually all at once, usually because of a single unexpected event.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Feature</th><th>Saves</th><th>Breaks when</th></tr></thead>
+          <tbody>
+            <tr><td>Thin provisioning</td><td>Space allocated but unused</td><td>Everyone uses what they were promised at once</td></tr>
+            <tr><td>Deduplication</td><td>Repeated blocks — huge on VM <span class="acro-exp">(Virtual Machine)</span> estates</td><td>The data becomes unique — encrypted or compressed already</td></tr>
+            <tr><td>Compression</td><td>Compressible data</td><td>Media and encrypted data; costs CPU <span class="acro-exp">(Central Processing Unit)</span> for no gain</td></tr>
+            <tr><td>Auto-tiering</td><td>Cold data on cheap media</td><td>The working set shifts faster than the tiering engine reacts</td></tr>
+            <tr><td>Snapshots retained long-term</td><td>Nothing — they consume, not save</td><td>Change rate rises; the pool fills from an unexpected direction</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Thin-Provisioning Cliff</div>
+      <div class="concept-desc">
+        Thin provisioning is over-subscription: the array promises more capacity than it has,
+        because most volumes never fill. This is sound and it is how essentially all modern storage
+        is run. The failure mode is not gradual. Right up to the moment the pool is full,
+        performance and behaviour are normal — and then writes fail across every volume in the pool
+        simultaneously, including the ones nobody was growing.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Alert on pool utilisation at two thresholds, well before full</td><td>The first is a warning; the second is an emergency</td></tr>
+            <tr><td>Alert on rate of growth, not only on level</td><td>85% and stable is fine; 60% and climbing fast is not</td></tr>
+            <tr><td>Keep headroom that is genuinely reserved</td><td>Headroom you would consume in a pinch is not headroom</td></tr>
+            <tr><td>Know how long it takes to add capacity</td><td>If procurement takes six weeks, alert six weeks of growth early</td></tr>
+            <tr><td>Watch snapshot and clone consumption separately</td><td>A pool commonly fills from snapshots, not from volumes</td></tr>
+            <tr><td>Reclaim deleted space — UNMAP or TRIM from the guest</td><td>Without it, thin volumes only ever grow, however much is deleted inside</td></tr>
+            <tr><td>Do not thin-provision at three layers at once</td><td>Guest, hypervisor and array each over-subscribing is unmodellable</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The reclaim row is the one that quietly causes most pool-full incidents. Deleting a file
+          inside a guest frees space in the guest filesystem and tells the array nothing; without
+          UNMAP or TRIM propagating down, the array still considers those blocks written. Estates
+          discover this when a pool is full while every volume inside reports plenty of free space.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Deduplication and Tiering — Reading the Claims Honestly</div>
+      <div class="concept-desc">
+        Both are sold with ratios, and both ratios are real for the workload they were measured on
+        and meaningless for yours.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Claim</th><th>Reality</th></tr></thead>
+          <tbody>
+            <tr><td>"10:1 deduplication"</td><td>Plausible on a VM estate from one template; near 1:1 on media or encrypted data</td></tr>
+            <tr><td>"Dedup makes backups cheap"</td><td>True, and it is why backup appliances lead with it — full backups repeat enormously</td></tr>
+            <tr><td>"Efficiency features are free"</td><td>They cost CPU, memory and metadata; inline dedup costs write latency</td></tr>
+            <tr><td>"Tiering means you need less fast media"</td><td>Only if the working set is stable and smaller than the fast tier</td></tr>
+            <tr><td>"Tiering reacts automatically"</td><td>On a schedule, often hours or a day — a Monday-morning shift is served from the cold tier</td></tr>
+            <tr><td>"Dedup protects nothing"</td><td>Correct, and worth remembering: deduplicated data has one copy of each block by design</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row matters for backup design specifically. A deduplicated backup repository is
+          efficient and is a single fate-shared copy: corruption of a heavily-referenced block
+          affects every backup that references it. That is not an argument against dedup — it is the
+          argument for the second copy on different media that
+          <span class="xref">Backup Strategy — 3-2-1-1-0 and the Schemes That Make Restores Possible</span>
+          already insists on.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: STORAGE CAPACITY PLANNING ──────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📆</span>
+    <span class="topic-name">Storage Capacity Planning — Forecasting Growth Before It Becomes an Incident</span>
+    <span class="topic-badge">Infra • Storage</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Only Storage Emergency That Is Entirely Predictable</div>
+      <div class="concept-desc">
+        Almost every storage incident has a moment of surprise in it — a drive fails, a controller
+        panics, a path drops. Running out of space does not. It approaches at a measurable rate, in
+        plain view, for months, and it still causes outages routinely — because nobody was reporting
+        the rate, only the level, and because the lead time to add capacity was longer than the
+        warning anybody had configured.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          The reframing that fixes it: <strong>capacity is a time problem, not a percentage
+          problem.</strong> "The pool is 82% full" prompts nothing. "The pool has eleven weeks left
+          at the current rate, and procurement takes eight" is a decision with a deadline, and
+          everyone in the room understands it immediately.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">What to Measure, and What Each Number Is For</div>
+      <div class="concept-desc">
+        A useful forecast needs a small set of numbers tracked over time. The trend matters far more
+        than the precision.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Measure</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>Used capacity per pool, weekly</td><td>The raw series everything else is derived from</td></tr>
+            <tr><td>Growth rate, as a rolling average</td><td>Smooths one-off events into a usable trend</td></tr>
+            <tr><td>Weeks-to-full, derived</td><td>The headline number; the one to alert on</td></tr>
+            <tr><td>Effective capacity after dedup and compression</td><td>Efficiency ratios shift as data changes — do not assume they hold</td></tr>
+            <tr><td>Snapshot and clone consumption, separately</td><td>Grows with change rate, not with new data; behaves differently</td></tr>
+            <tr><td>Performance headroom alongside capacity</td><td>An array frequently runs out of IOPS <span class="acro-exp">(Input/Output Operations Per Second)</span> before it runs out of terabytes</td></tr>
+            <tr><td>Lead time to add capacity, measured</td><td>Sets how far ahead your alerting has to reach</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The performance-headroom row is the trap in an all-flash world. Capacity is cheap and
+          plentiful; controller CPU <span class="acro-exp">(Central Processing Unit)</span> and cache are not. An array at 50% capacity and 95% controller
+          utilisation needs expansion just as urgently, and no capacity report will say so.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Why Forecasts Are Wrong, and What to Do About It</div>
+      <div class="concept-desc">
+        Linear extrapolation from the last few months is right often enough to be useful and wrong
+        in specific, recognisable ways. Knowing the ways is what turns a forecast into a plan.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Cause of error</th><th>Handling</th></tr></thead>
+          <tbody>
+            <tr><td>Step changes — a migration, a new system, an acquisition</td><td>These come from the project pipeline; ask, do not extrapolate</td></tr>
+            <tr><td>Seasonality — year-end, retail peaks, academic terms</td><td>Compare year on year, not month on month</td></tr>
+            <tr><td>Retention policy changes</td><td>Extending retention is a capacity decision; it is rarely reviewed as one</td></tr>
+            <tr><td>Efficiency ratio drifting</td><td>Encrypted or pre-compressed data arriving deduplicates far less</td></tr>
+            <tr><td>Nobody ever deletes anything</td><td>The most common cause of all; check whether lifecycle policies actually run</td></tr>
+            <tr><td>Growth that is really a bug</td><td>A runaway log or a failing job can fill a pool in days</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two habits cover most of that list. Review capacity alongside the project pipeline rather
+          than in isolation, so step changes arrive as plans instead of as surprises. And alert on
+          <em>acceleration</em> as well as on level — a growth rate that doubles this week is
+          usually a bug, and catching it as a bug rather than as a capacity request is both cheaper
+          and faster. The recovery-side capacity question — how long a restore takes and whether the
+          target has room — is in
+          <span class="xref">Restore Testing &amp; DR Design — Turning Backups Into a Recovery Capability</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body infra -->

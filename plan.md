@@ -1729,12 +1729,22 @@ Veeam mechanics) are genuine but narrower and can follow if the estate needs the
 - [ ] P2V and V2V — the migrations that still happen
 - [ ] Virtualization Troubleshooting — the storage/network/host triage order
 
-**Wave Z3 — Storage**
-- [ ] Storage Fundamentals — block vs file vs object, restated for the datacenter
-- [ ] SAN & Fabric Basics — LUNs, zoning, multipathing, iSCSI vs Fibre Channel
-- [ ] NAS & File Services — SMB/NFS at scale, DFS, quotas, access-based enumeration
-- [ ] Storage Performance — IOPS, throughput, latency, queue depth, and which one is your limit
-- [ ] Storage Tiering & Capacity Planning — forecasting growth before it becomes an incident
+**Wave Z3 — Storage** — shipped into `infra`. See the session record.
+- [x] Storage Fundamentals — block vs file vs object, restated for the datacenter
+- [x] SAN & Fabric Basics — LUNs, zoning, multipathing, iSCSI vs Fibre Channel
+- [x] NAS & File Services — SMB/NFS at scale, DFS, quotas, access-based enumeration — split: the
+  permissions, DFS and quota half was already carded as *File Services — Share vs NTFS Permissions,
+  DFS &amp; Quotas*, so the new card is the protocol half (dialects, round-trip behaviour, why file
+  workloads feel slow) and the two cross-reference each other
+- [x] Storage Performance — IOPS, throughput, latency, queue depth, and which one is your limit
+- [x] Storage Tiering & Capacity Planning — forecasting growth before it becomes an incident — two
+  cards, because they are different jobs: the efficiency-features card covers tiering with thin
+  provisioning and dedup, and capacity planning stands alone
+- [x] **Added beyond the plan:** RAID &amp; Erasure Coding — the redundancy layer the track assumed
+  and never specced; `RAID` appeared in `cs`, `linux` and `script` but nowhere in `infra`, and
+  `erasure coding` was a site-wide zero
+- [x] **Added beyond the plan:** Thin Provisioning, Deduplication &amp; Tiering — `thin provision`
+  and `erasure coding` were zeros and the thin-provisioning cliff is a real operational hazard
 
 **Wave Z4 — Backup & Recovery**
 - [ ] Backup Strategy — 3-2-1-1-0, full/incremental/differential, retention schemes
@@ -6919,3 +6929,89 @@ the original suspicion again.
 `annotate_acronyms.py --check` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
 budget after build: raw 4.9 / 8.0 MB, gzip 1,335 / 2,200 KB, DOM 416 / 1,500, content elements
 102,492 / 175,000.
+
+---
+
+## Session record — Track Z3: storage
+
+Twentieth content wave, and the first to return to a Phase-4 track after finishing Phase 6.
+
+### Choosing this one
+
+With Phase 6 closed, a count of remaining open items put Track Z at the top with 26. Reading the
+track showed most of that was already answered: an earlier session shipped the six-card spine —
+virtualization fundamentals, the hypervisor comparison, snapshots-are-not-backups, 3-2-1-1-0,
+ransomware-resilient backup and restore testing — and recorded exactly what it left. Wave Z3,
+storage, was untouched in full.
+
+**An audit note worth recording.** The first probe run reported `RPO`, `RTO`, `ML-KEM`,
+`crypto-agility` and `live migration` as site-wide zeros. All five were false. The patterns were
+written as `"RPO\|RTO"` and passed to `grep -E`, where `\|` is an escaped pipe — a literal `|`
+character — so the search was for the string `RPO|RTO`, which appears nowhere. Under `-E` the
+alternation is a bare `|`; the backslash form belongs to basic `grep`. Re-running correctly showed
+`RTO` in nine domains and post-quantum already carded in `sec`. **A zero from a multi-term probe is
+worth re-running as separate single-term greps before it becomes a wave.** Had that gone unchecked
+this session would have written a post-quantum card that already exists.
+
+### The audit, corrected
+
+| Probe | Mentions before this wave |
+|---|---|
+| `erasure coding`, `thin provision`, `paravirtual` | 0 |
+| `iSCSI` | acronym list only |
+| `RAID` | `cs`, `linux`, `script` — nowhere in `infra` |
+| `deduplicat` | `script` and `threat`, neither about storage |
+| `hypervisor`, `live migration`, `vMotion`, `3-2-1` | present in `infra` — the spine already shipped |
+
+### What shipped
+
+**7 cards into `infra`**, 34 → 41. Site: 1,293 → **1,300 topics**.
+
+Storage Fundamentals · RAID &amp; Erasure Coding · SAN &amp; Fabric · SMB &amp; NFS at Scale ·
+Storage Performance · Thin Provisioning, Deduplication &amp; Tiering · Storage Capacity Planning.
+
+### What these cards are actually about
+
+The through-line: **storage failures are almost never surprises about the media.** They are
+consequences of a design choice made months earlier — the wrong access model, an efficiency feature
+outside its assumptions, a redundancy scheme whose rebuild window nobody costed, a growth rate
+nobody was reporting.
+
+Four specifics worth carrying:
+
+- **Block, file and object differ by where the filesystem lives.** Everything else follows: only one
+  server can own a block device because two filesystems writing the same blocks corrupt each other;
+  file storage is shareable because the storage system arbitrates; object storage cannot modify part
+  of a file because there is no block layer to modify.
+- **The rebuild window is the real risk in RAID, not the parity mathematics.** A rebuild reads every
+  remaining drive end to end, for hours or days, while degraded, on drives of the same age and
+  batch. Single parity fell out of favour because disks got bigger and the window grew — not because
+  anything about parity changed.
+- **Thin provisioning has no gradual failure.** Behaviour is normal right up to a full pool, then
+  writes fail across every volume in it at once. And the usual cause is not growth: it is deleted
+  space never reclaimed, because a guest deleting a file tells the array nothing without UNMAP or
+  TRIM. Pools fill while every volume inside reports free space.
+- **Capacity is a time problem, not a percentage problem.** "82% full" prompts nothing; "eleven
+  weeks left, and procurement takes eight" is a decision with a deadline. And in an all-flash estate
+  the array often runs out of controller headroom long before terabytes, which no capacity report
+  will mention.
+
+The SMB/NFS card carries the one that resolves most user complaints: file protocols are chatty, so
+opening a file is a sequence of round trips. "The share is slow from the branch office" is a latency
+problem, adding bandwidth reliably fails to fix it, and a million small files behaves nothing like
+one large file of the same size.
+
+### Track Z after this wave
+
+Waves Z1, Z2, Z4 and Z5 remain partly open, and the earlier session's note still describes them
+accurately: sizing and overcommit depth, VM lifecycle and templates, live-migration operations,
+P2V/V2V, backup products, failover and failback drills, tabletops. All genuine, all narrower than
+what shipped, and reasonable to leave until an estate needs them.
+
+### Verification
+
+`lint_content.py` 1,300 topics / 178 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only infra` touched only the 7 new cards —
+the oscillation fix from the previous wave holding across a second domain · `--verify` clean ·
+`smoke_test.mjs` 31/31 · budget after build: raw 5.0 / 8.0 MB, gzip 1,346 / 2,200 KB, DOM 416 /
+1,500, content elements 103,217 / 175,000.
