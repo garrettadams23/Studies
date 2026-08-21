@@ -3085,33 +3085,46 @@ coverage has not caught up.
 ~4 waves, ~20 cards. Distinct from GRC: GRC proves compliance, privacy
 engineering builds systems that do not need much proving.
 
-**Wave BF1 — Privacy as a System Property**
-- [ ] Privacy vs Security — overlapping, not the same, and where they conflict
-- [ ] Data Minimisation — the control that removes whole classes of risk
-- [ ] Purpose Limitation in a Data Warehouse — hard, and why it is usually skipped
-- [ ] Data Inventory & Mapping — knowing where personal data actually flows
-- [ ] Privacy by Design — the seven principles, translated into engineering decisions
+**Wave BF1 — Privacy as a System Property** — shipped into `grc`. See the session record.
+- [x] Privacy vs Security — overlapping, not the same, and where they conflict — reframed as
+  privacy *engineering* vs privacy *compliance*, which is the distinction the reader of this site
+  actually needs, since the compliance half is already four cards in this domain
+- [x] Data Minimisation — the control that removes whole classes of risk
+- [x] Purpose Limitation in a Data Warehouse — hard, and why it is usually skipped
+- [x] Data Inventory & Mapping — knowing where personal data actually flows
+- [~] Privacy by Design — the seven principles, translated into engineering decisions — the
+  principle is carded in *Privacy Regulations*; the translation is distributed through this whole
+  cluster rather than restated as a list
 
-**Wave BF2 — Technical Controls**
-- [ ] De-identification — anonymisation vs pseudonymisation, and re-identification risk
-- [ ] Differential Privacy, Practically — the intuition, the epsilon, the trade
-- [ ] Tokenisation & Format-Preserving Encryption — protecting data that must stay usable
-- [ ] Access Control for Personal Data — purpose-bound access and audit
-- [ ] Retention & Deletion That Actually Deletes — backups, replicas, caches, logs
+**Wave BF2 — Technical Controls** — shipped into `grc`, except where noted.
+- [~] De-identification — anonymisation vs pseudonymisation, and re-identification risk — the
+  techniques are carded in *Data Privacy Techniques*; the legal consequence of the
+  pseudonymisation/anonymisation distinction is in the tokenisation card, which is where it bites
+- [~] Differential Privacy, Practically — already carded in *Data Privacy Techniques* and `ai`
+- [x] Tokenisation & Format-Preserving Encryption — protecting data that must stay usable
+- [x] Access Control for Personal Data — purpose-bound access and audit — inside the purpose
+  limitation card, because purpose-bound access is what purpose limitation means operationally
+- [x] Retention & Deletion That Actually Deletes — backups, replicas, caches, logs
 
-**Wave BF3 — User-Facing Obligations**
-- [ ] DSARs — building a subject-access process that scales
-- [ ] Right to Erasure — the engineering problem behind the legal right
-- [ ] Consent & Preference Management — storing and honouring it across systems
-- [ ] Cookies & Tracking — the technical reality behind the banner
-- [ ] Cross-Border Transfers — the mechanisms, and their architectural consequences
+**Wave BF3 — User-Facing Obligations** — shipped into `grc`.
+- [x] DSARs — building a subject-access process that scales
+- [x] Right to Erasure — the engineering problem behind the legal right — split across the deletion
+  card (the mechanism) and the DSAR card (the process); the legal shape is already in *Privacy Law*
+- [x] Consent & Preference Management — storing and honouring it across systems
+- [x] Cookies & Tracking — the technical reality behind the banner — same card
+- [x] Cross-Border Transfers — the mechanisms, and their architectural consequences — inside the
+  flow-mapping card, framed as the architecture decision it actually is
 
-**Wave BF4 — Privacy in New Systems**
-- [ ] Privacy in Machine Learning — training data, memorisation, model inversion
-- [ ] Telemetry Design — useful product analytics that collect less
-- [ ] Third-Party Data Sharing — contracts, technical limits, and verification
-- [ ] Privacy Incident Response — when it is a breach, and the clock that starts
-- [ ] Privacy Review as a Process — lightweight enough that teams use it
+**Wave BF4 — Privacy in New Systems** — partly shipped.
+- [~] Privacy in Machine Learning — training data, memorisation, model inversion — carded in `ai`
+  (*Adversarial AI &amp; AI Threats*) and named in *Data Privacy Techniques*
+- [x] Telemetry Design — useful product analytics that collect less
+- [ ] Third-Party Data Sharing — contracts, technical limits, and verification — still open; the
+  vendor-contract half is in `grc`'s third-party cards, the technical-verification half is not
+  written
+- [x] Privacy Incident Response — when it is a breach, and the clock that starts
+- [x] Privacy Review as a Process — lightweight enough that teams use it — the trigger table in the
+  first card
 
 ---
 
@@ -6528,3 +6541,95 @@ marked in the track above.
 `annotate_acronyms.py` clean · `stamp_freshness.py --only cloud` touched only the 5 new cards ·
 `--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 4.8 / 8.0 MB, gzip 1,288 /
 2,200 KB, DOM 416 / 1,500, content elements 99,819 / 175,000.
+
+---
+
+## Session record — Track BF: privacy engineering
+
+Sixteenth content wave.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| `pseudonymisation` / `pseudonymization` | 0 |
+| `tokenisation` / `tokenization` | 0 |
+| `DSAR` / "subject access" | 0 |
+| "consent management" | 0 |
+| "cross-border transfer" | 0 |
+| "telemetry design" | 0 |
+| differential privacy, re-identification, data minimisation, privacy by design, purpose limitation | present in `grc` |
+
+The present row is four existing `grc` cards: *Data Privacy Techniques*, *Privacy Regulations*,
+*Privacy Law*, and *Data Governance, Retention &amp; eDiscovery*. Reading them showed they are the
+compliance half, and a good one — k-anonymity, differential privacy, GDPR vocabulary, data subject
+rights, retention as governance. What none of them does is tell an engineer how to build the
+system: how to make purpose limitation hold in a warehouse, what actually happens to a record when
+you delete it, how to answer a subject access request without consuming a team, or how to honour a
+withdrawn consent in the six systems that took a copy.
+
+That gap is exactly Track BF's stated premise — *GRC proves compliance, privacy engineering builds
+systems that do not need much proving* — so the first card was written to name the distinction
+explicitly rather than assume the reader arrives with it.
+
+### The domain decision
+
+Track BF targets `grc` / `eng`. All eight went to `grc`, which is where a reader looking for privacy
+will look, and where the four compliance cards already sit so the two halves cross-reference each
+other. `grc` was also among the smaller domains at 36 topics; `eng` had just taken the supply-chain
+wave and stood at 76. The new cards carry the badge **Privacy Engineering**, distinct from the
+existing **Privacy** badge, so the two halves are visually separable within the domain.
+
+### What shipped
+
+**8 cards into `grc`**, 36 → 44. Site: 1,262 → **1,270 topics**.
+
+Privacy Engineering vs Compliance · Data Inventory &amp; Flow Mapping · Purpose Limitation in a Data
+Warehouse · Tokenisation &amp; Format-Preserving Encryption · Deletion That Actually Deletes ·
+Subject Access Requests at Scale · Consent, Preferences &amp; Tracking · Telemetry Design &amp;
+Privacy Incident Response.
+
+### What these cards are actually about
+
+The through-line: **almost every default in modern architecture works against privacy, and none of
+them was chosen to.** Soft deletes, event sourcing, backups, replicas, caches, warehouses,
+generous telemetry — each is good engineering, and collectively they are why an organisation with
+excellent privacy documentation frequently cannot delete a person.
+
+Four specifics worth carrying:
+
+- **Pseudonymised data is still personal data.** Identifiers replaced but the mapping retained
+  anywhere means every obligation continues to apply. Calling it anonymous is the single most
+  consequential mistake in this area, and it is usually made in good faith.
+- **Data minimisation is the only control that removes categories of risk rather than managing
+  them.** Not collecting a field removes the breach, the access review, the retention schedule, the
+  subject-access search and the deletion job at once, permanently. Every other control is ongoing
+  work with an ongoing failure rate.
+- **Backups are settled practice, not the hard part.** Regulators accept that backups cannot be
+  surgically edited; what is expected is a defined expiry and a documented process so a restore does
+  not resurrect erased records. The hard parts are search indexes, event streams and the analytics
+  warehouse — the one-way pipelines nobody propagates deletions into.
+- **The seventy-two hours include the weekend, and awareness starts with the support agent.** The
+  common failure is a security team resolving an incident competently while nobody asks whether
+  personal data was involved. The fix is a standing assessment step inside the existing incident
+  process, not a parallel privacy process.
+
+### A second stamp correction
+
+`stamp_freshness.py --only grc` moved 16 topics from `2026-06` to `2026-07`. As with the `sec` case
+in the API wave, this is a correction rather than drift: `git log -S` on those cards' titles shows
+them created in commit d38592c, dated 2026-07, so 2026-06 was stale. Recorded for the same reason —
+so a later session reading the diff does not reverse it.
+
+### Track BF after this wave
+
+One item genuinely open: third-party data sharing, whose contract half is in `grc`'s vendor cards
+and whose technical-verification half is unwritten. Everything else is either shipped or already
+carded elsewhere, marked `[~]` in the track above with the location.
+
+### Verification
+
+`lint_content.py` 1,270 topics / 167 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 4.8 / 8.0 MB, gzip 1,301 / 2,200 KB, DOM 416 / 1,500, content elements
+100,530 / 175,000.
