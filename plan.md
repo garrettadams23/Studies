@@ -2723,26 +2723,31 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 ~4 waves, ~20 cards. Complements `lifestyle`'s freelance-tax card with the craft
 of running the work.
 
-**Wave AV1 — Positioning**
-- [ ] Consultant vs Contractor vs Staff Augmentation — three different businesses
-- [ ] Choosing a Niche — why specificity wins work
-- [ ] Pricing — hourly, day rate, fixed price, value-based; and their risk profiles
-- [ ] Finding Clients — referrals, partners, content, and the honest cold-outreach maths
-- [ ] The Proposal & Statement of Work — scope, exclusions, acceptance criteria
+**Wave AV1 — Positioning** — shipped into `career`.
+- [x] Consultant vs Contractor vs Staff Augmentation — three different businesses
+- [x] Choosing a Niche — why specificity wins work — same card, because the niche only makes sense
+  once you know which of the three businesses you are in
+- [x] Pricing — hourly, day rate, fixed price, value-based; and their risk profiles
+- [x] Finding Clients — referrals, partners, content, and the honest cold-outreach maths
+- [x] The Proposal & Statement of Work — scope, exclusions, acceptance criteria
 
-**Wave AV2 — Delivering**
-- [ ] Discovery — the first two weeks that determine the engagement
-- [ ] Managing Scope — change control without becoming the difficult one
-- [ ] Working Inside Someone Else's Politics — reading the room you were dropped into
-- [ ] Handover & Enablement — leaving a client better, not dependent
-- [ ] The Assessment Report — findings, risk-ranked recommendations, and an owner per item
+**Wave AV2 — Delivering** — shipped into `career`.
+- [x] Discovery — the first two weeks that determine the engagement
+- [x] Managing Scope — change control without becoming the difficult one — same card as discovery;
+  scope creep is what happens when discovery was skipped
+- [x] Working Inside Someone Else's Politics — reading the room you were dropped into
+- [x] Handover & Enablement — leaving a client better, not dependent — same card as politics, since
+  both are about the internal team's relationship to your presence
+- [x] The Assessment Report — findings, risk-ranked recommendations, and an owner per item
 
-**Wave AV3 — The Business Side**
-- [ ] Cash Flow & Runway — invoicing, payment terms, and the late-payer problem
-- [ ] Insurance, Liability & Entity Choice — the boring protections that matter
-- [ ] Contracts for Independents — IP, indemnity, non-solicit, limitation of liability
-- [ ] Subcontracting & Partnering — growing past your own hours
-- [ ] Knowing When to Stop — bad clients, bad engagements, exiting cleanly
+**Wave AV3 — The Business Side** — partly shipped into `career`.
+- [x] Cash Flow & Runway — invoicing, payment terms, and the late-payer problem
+- [x] Insurance, Liability & Entity Choice — the boring protections that matter — same card, framed
+  as orientation with an explicit note that jurisdictions differ and this is not legal advice
+- [x] Contracts for Independents — IP, indemnity, non-solicit, limitation of liability — same card
+- [ ] Subcontracting & Partnering — growing past your own hours — still open
+- [x] Knowing When to Stop — bad clients, bad engagements, exiting cleanly — the closing section of
+  the business-side card
 
 **Wave AV4 — Specialist Practices**
 - [ ] Running a Security Assessment Engagement — rules of engagement to final debrief
@@ -7179,3 +7184,79 @@ existing cards in `career` and `ops`.
 looking through an August mechanical commit as designed · `--verify` clean · `smoke_test.mjs` 31/31 ·
 budget after build: raw 5.0 / 8.0 MB, gzip 1,367 / 2,200 KB, DOM 416 / 1,500, content elements
 104,484 / 175,000.
+
+---
+
+## Session record — Track AV: consulting, contracting and independent practice
+
+Twenty-third content wave, and the second zero-ticked track closed in a row.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| `consulting`, `freelance`, "rate card", "day rate" | 0 |
+| "client discovery", `IR35` | 0 |
+| "statement of work" | 2 — `acronym` and `pentest`, in a penetration-testing sense |
+| `contracting` | `grc` and `military`, neither about independent practice |
+
+`career` carries the employed-career layer well — negotiating an offer, financial basics, breaking
+in, growing into senior. Nothing addressed the other path at all.
+
+### What shipped
+
+**8 cards into `career`**, 29 → 37. Site: 1,313 → **1,321 topics**.
+
+Consultant, Contractor or Staff Augmentation · Pricing · Finding Clients · The Proposal &amp;
+Statement of Work · Discovery &amp; Managing Scope · Someone Else's Politics &amp; Handover · The
+Assessment Report · The Business Side.
+
+### What these cards are actually about
+
+The through-line: **almost every failure in independent practice is a pricing or scoping decision
+made before the work started, discovered months later.** The engagement that will not end, the
+fixed-price job that ate three unpaid weeks, the client whose late payment becomes your crisis, the
+report nobody acted on — each traces back to something that was cheap to define up front and
+expensive to renegotiate afterwards.
+
+Four specifics worth carrying:
+
+- **Work the rate backwards from billable days.** A realistic year is 130–150 billable days once
+  holiday, sales, admin and gaps between engagements are counted — not 220. The day rate that
+  matches a salary is therefore considerably higher than the naive division, and getting this wrong
+  at the start is what makes the first year feel like a mistake.
+- **Hourly pricing penalises expertise.** The person who solves it in two hours earns less than the
+  one who takes eight, and the client experiences the fast answer as poor value. That misalignment
+  is the argument for every other pricing model.
+- **Deemed acceptance is the least glamorous clause and does the most work.** Without it an
+  engagement can be held open indefinitely by a client who is merely busy — no dispute, no bad
+  faith, just a review that never happens and an invoice that cannot be raised.
+- **Dependency is commercially attractive and professionally corrosive.** The client who cannot
+  operate what you built keeps paying, and every later engagement is a rescue rather than a choice.
+  Referrals from work that visibly holds are worth more than a retainer built on helplessness.
+
+Two smaller ones: referring out work you cannot take is the highest-return, least obvious business
+development there is; and the honest unfinished-work list at handover — three things remaining, what
+you would do, roughly what they cost — is in practice the most common origin of the next engagement.
+
+### A note on scope
+
+The contracts and protections card is deliberately written as orientation rather than as advice, and
+says so in the card: entity structure, employment-status rules, insurance requirements and
+enforceability of restrictive covenants all vary substantially by jurisdiction. The card names what
+to look at and why it matters, and points at getting professional help for anything significant.
+That framing is the right one for this site's audience and should be kept if the card is revised.
+
+### Track AV after this wave
+
+Two areas open: subcontracting and partnering (AV3.4), and the whole of AV4 — running a security
+assessment engagement end to end, fractional and advisory roles, expert witness work, and
+productising a service. AV4 is the most specialised material in the track and reasonable to leave
+until asked for.
+
+### Verification
+
+`lint_content.py` 1,321 topics / 185 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only career` touched only the 8 new cards ·
+`--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 5.1 / 8.0 MB, gzip 1,381 /
+2,200 KB, DOM 416 / 1,500, content elements 105,348 / 175,000.
