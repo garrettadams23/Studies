@@ -48,6 +48,42 @@ of this file, and *Part 3 of Phase 6* (how to write a card, the pattern library,
 the risk register). The backlog is a menu, not a queue — and at this size, how
 well each card is written matters more than how many remain.
 
+### How to read a track's checklist
+
+A mechanical count of `- [ ]` lines across this file badly overstates the real backlog,
+for a structural reason worth knowing before you plan a session.
+
+Most tracks now carry a **shipped-note** — a short bold paragraph at the top of the track
+recording what was actually built, which items were consolidated into which card, and what
+was deliberately left. Those notes are accurate. The `- [ ]` wave lists *underneath* them
+are the **original specification**, written before anything shipped, and in most tracks they
+were never ticked afterwards. Both are useful — the note says what exists, the spec says
+what was once imagined — but only the note is current.
+
+So: **where a track has a shipped-note, read the note first and treat the wave lists below it
+as background.** Tracks carrying such a note are marked `⟵ see the shipped-note above` on
+their first wave heading. Tracks without a note have checklists that mean what they say.
+
+Three item states are used, and the distinction matters:
+
+| Mark | Means |
+|---|---|
+| `- [x]` | Shipped. Where a card covers several specced items, the annotation says which card |
+| `- [~]` | Genuinely covered, elsewhere — the annotation names the existing card and domain |
+| `- [ ]` | Actually open |
+
+`[~]` is doing a lot of work in the later tracks and should keep doing it. The repeated
+finding of this project is that a track reads as unbuilt while being 60–100% covered by a
+neighbouring domain under different card titles, and marking those `[~]` with a location is
+what stops the next session rewriting them.
+
+**What that convention is worth, measured.** At the time this note was written the file
+contained **245** unticked `- [ ]` lines. **159 of them sit inside the nine tracks that carry
+a shipped-note** — Y, Z, AC, AD, AE, AF, AP, AQ, AR — and are largely superseded by it. Only
+**86** are in tracks whose checklists still mean what they say. A session that plans from the
+raw count will pick a track that is mostly already built; a session that reads the notes first
+will not.
+
 ---
 
 ## P1 — High-impact quick wins
@@ -1638,7 +1674,7 @@ was speced), Y5 shipped this session.** endpoint is now 34. Remaining: Y4 provis
 depth, Y6 compliance/CA depth, Y7 MECM site design, Y8 analytics/fleet. `[x]` marks
 the card that fills each item below.
 
-**Wave Y1 — Intune Deep: Policy**
+**Wave Y1 — Intune Deep: Policy** ⟵ see the shipped-note above
 - [x] Configuration Profiles → *Configuration Profiles — Settings Catalog, Templates & Custom*
 - [x] Policy Conflicts → *Policy Conflicts — Proving Which One Won*
 - [x] Security Baselines → *Security Baselines Without Breaking the Fleet*
@@ -1715,7 +1751,7 @@ Veeam mechanics) are genuine but narrower and can follow if the estate needs the
 - [x] Restore Testing + DR Design + DR for Cloud/SaaS → *Restore Testing & DR Design — Turning Backups Into a Recovery Capability*
 - [ ] Remaining: sizing/overcommit deep, VM lifecycle/templates, live migration ops, P2V/V2V, storage fundamentals/SAN/NAS/performance/tiering, backup targets & products, failover/failback drill, tabletop, post-incident review (narrower depth — follow on demand)
 
-**Wave Z1 — Hypervisors**
+**Wave Z1 — Hypervisors** ⟵ see the shipped-note above
 - [ ] Virtualization Fundamentals — type 1 vs type 2, paravirtualization, hardware assist
 - [ ] VMware vSphere — ESXi, vCenter, clusters, DRS/HA, the vocabulary
 - [ ] Hyper-V — generations, integration services, checkpoints, Windows-shop realities
@@ -1865,7 +1901,7 @@ switch). `script` 138→140, `ops` gains the risk card.
   (AC3.4) and which was a genuine zero: `credential in script` and `PowerShell DSC` returned no
   matches anywhere on the site. 5 cards into `script`; see the session record.
 
-**Wave AC1 — PowerShell for Real Work**
+**Wave AC1 — PowerShell for Real Work** ⟵ see the shipped-note above
 - [ ] The Object Pipeline — the thing that makes PowerShell different from Bash
 - [ ] Remoting — WinRM, sessions, `Invoke-Command` fan-out, JEA
 - [ ] Error Handling That Survives Production — try/catch, `-ErrorAction`, transcripts
@@ -1916,7 +1952,7 @@ the narrower AD4 (ChromeOS, kiosks, UEM selection) can follow. endpoint 38→41.
 - [x] Config profiles / .mobileconfig → in the macOS card; MAM without enrolment cross-linked to the existing App Protection Policies card
 - [ ] Remaining (narrower): Jamf smart-group depth, macOS update timing specifics, multi-platform policy design, Linux desktop, ChromeOS, kiosk/frontline, UEM selection — follow on demand
 
-**Wave AD1 — macOS Administration**
+**Wave AD1 — macOS Administration** ⟵ see the shipped-note above
 - [ ] macOS for Windows Admins — the translation table for every concept
 - [ ] macOS Security Model — Gatekeeper, notarization, TCC, SIP, XProtect
 - [ ] Configuration Profiles — the `.mobileconfig` model and its payloads
@@ -1967,7 +2003,7 @@ extremes, sustainability/accessibility) are narrower and can follow. `sec` 46→
 - [ ] Remaining (narrower): healthcare/finance/gov/edu operational specifics — the AE2 items whose
   regulatory half is already in `grc` but whose day-to-day operational texture is not written
 
-**Wave AE1 — Operational Technology & ICS**
+**Wave AE1 — Operational Technology & ICS** ⟵ see the shipped-note above
 - [ ] OT vs IT — different priorities, different consequences, different clocks
 - [ ] The Purdue Model — levels, and where the boundaries really sit today
 - [ ] ICS Protocols — Modbus, DNP3, OPC UA and their security assumptions
@@ -2019,7 +2055,7 @@ filled:
 - [x] AF1 "Using AI Well" cluster → already in `ai` (*Using AI Well*, *AI Tools for IT Work*, *Prompt Engineering*)
 - [ ] Remaining (narrower / measurement-y): AI for log analysis, measuring whether it helped, detecting automated attacks, the AI-incident tabletop, and the AF4 career-effects wave — follow on demand
 
-**Wave AF1 — Using AI Well**
+**Wave AF1 — Using AI Well** ⟵ see the shipped-note above
 - [ ] What LLMs Are Good and Bad At — a calibrated mental model for daily work
 - [ ] Prompting for Technical Work — context, constraints, and verification loops
 - [ ] AI-Assisted Scripting — generating, reviewing and testing code you did not write
@@ -2499,8 +2535,14 @@ written — 2 cards into `sec`.** `sec` 52→54.
 - [x] AP1 threat & standards → *Post-Quantum Cryptography — Harvest Now, Decrypt Later* (Track J: Shor/Grover, ML-KEM/ML-DSA, hybrid, what doesn't break)
 - [x] AP2 the migration (inventory, crypto-agility, CBOM, PKI, roadmap) → *Doing the PQC Migration — Inventory, Crypto-Agility & the Roadmap*
 - [x] AP3 adjacent crypto (ZKP, homomorphic, MPC, threshold, confidential computing) → *Adjacent Cryptography — ZKPs, Homomorphic Encryption, MPC & Confidential Computing*
+- [ ] **Depth, re-audited later:** all three cards are short — 4.6 KB, 4.4 KB and 3.7 KB, two
+  concept cards each — so the track is covered at concept level and thin underneath. The two items
+  with the most genuine room left are *Certificate &amp; PKI Migration* (chains, hardware security
+  modules, and the long tail of embedded devices that will never receive a new algorithm) and
+  *Reading a Cryptographic Claim Critically*. Neither is a rewrite; both are depth on an existing
+  card or one new card each.
 
-**Wave AP1 — The Threat & the Standards**
+**Wave AP1 — The Threat & the Standards** ⟵ see the shipped-note above
 - [ ] Quantum Computing for Security People — qubits, Shor, Grover, and what actually breaks
 - [ ] Harvest Now, Decrypt Later — which of today's data has a long enough shelf life to care
 - [ ] The NIST PQC Standards — ML-KEM, ML-DSA, SLH-DSA, and what each replaces
@@ -2534,7 +2576,7 @@ speculative and fastest-ageing; left for on-demand. `net` 55→57.
 - [x] Edge Computing + CDN function-at-edge + fleet mgmt + offline-first + edge security → *Edge Computing — What It Is Once the Marketing Is Removed*
 - [ ] Remaining (narrower/speculative): AR/VR/XR, headset management, digital twins, spatial-data privacy, frontier-pilot evaluation — follow on demand
 
-**Wave AQ1 — Edge & Distributed Compute**
+**Wave AQ1 — Edge & Distributed Compute** ⟵ see the shipped-note above
 - [ ] Edge Computing — what it is once the marketing is removed, and when latency justifies it
 - [ ] CDN Compute & Function-at-Edge — running logic in the POP
 - [ ] Managing Fleets of Edge Devices — updates, drift and observability without a datacenter
@@ -2577,7 +2619,7 @@ threat and investigations had only passing mentions; no dedicated cards. `sec` 4
 
 Cross-linked to the SF-312 clearance card and the digital-forensics card.
 
-**Wave AR1 — Physical Security Systems**
+**Wave AR1 — Physical Security Systems** ⟵ see the shipped-note above
 - [ ] Access Control Systems — badges, readers, controllers, anti-passback, tailgating
 - [x] Credential Cloning — why 125 kHz prox is not a control, and what to move to
 - [ ] CCTV & Video Management — retention, coverage, evidentiary quality, privacy limits
