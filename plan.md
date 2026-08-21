@@ -2444,12 +2444,22 @@ a place it already shows up on the site.
 - [ ] Real-Time Constraints — RTOS, determinism, and why Linux is not always right
 - [ ] Home Lab Hardware — a genuinely useful build, at three budgets
 
-**Wave AN6 — Hardware Security**
-- [ ] Hardware Root of Trust — TPM, secure enclaves, measured boot, attestation
-- [ ] Firmware & Supply-Chain Attacks — UEFI implants, Option ROMs, vendor trust
-- [ ] Physical Attacks — evil maid, DMA attacks, cold boot, chip-off forensics
-- [ ] Hardware Hacking Tools — Bus Pirate, logic analysers, JTAG; authorised use only
-- [ ] Defending Physical Access — port control, chassis intrusion, screen locks that hold
+**Wave AN6 — Hardware Security** — shipped into `sec`, not `hw`. See the session record
+*Track AN6: hardware and firmware device security* at the end of this file. The `hw` domain
+does not exist yet and these five items are security material that a security domain reader
+needs whether or not an electronics domain is ever built; parking them behind a domain that
+may never be scaffolded was the worse choice.
+- [x] Hardware Root of Trust — TPM, secure enclaves, measured boot, attestation
+- [x] Firmware & Supply-Chain Attacks — UEFI implants, Option ROMs, vendor trust — split across
+  *Firmware Update Mechanisms* (the attack path) and *Counterfeit &amp; Tampered Hardware* (vendor trust)
+- [x] Physical Attacks — evil maid, DMA attacks, cold boot, chip-off forensics — *The Hardware Attack Surface*
+- [x] Hardware Hacking Tools — Bus Pirate, logic analysers, JTAG; authorised use only — *Firmware
+  Extraction &amp; Analysis*, framed as authorised assessment work throughout
+- [~] Defending Physical Access — port control, chassis intrusion, screen locks that hold — the
+  defensive half is inside *The Hardware Attack Surface*; the estate-management depth (DMA port
+  policy, chassis intrusion switches at fleet scale) is still open and belongs with `endpoint`
+- [x] **Added beyond the plan:** Media Sanitisation &amp; Disposal — the decommissioning end of the
+  same hardware lifecycle, and a genuine zero-mention void
 
 ---
 
@@ -6092,3 +6102,77 @@ working with law enforcement, and investigation reports. Each is genuine and eac
 specialism than this site's audience generally needs — the concept-level card exists for all of
 them. Left open deliberately rather than marked covered: they are real gaps, just low-priority
 ones, and saying so is more useful to the next session than a tick would be.
+
+---
+
+## Session record — Track AN6: hardware and firmware device security
+
+Eleventh content wave, and the first to take material from Phase 5's `hw` domain plan and ship it
+into an existing domain instead.
+
+### The decision, first
+
+Track AN scaffolds a new `hw` domain covering electronics, PC hardware, repair, peripherals,
+embedded and hardware security — roughly 30 cards across six waves. AN6 is the last of those six.
+Building the domain to reach its security wave is the wrong order of work: the five AN6 items are
+security material, they belong to a reader who is already in `sec`, and the other five waves are a
+different audience entirely. They shipped into `sec`. If `hw` is ever scaffolded, AN6 is done and
+the domain starts at electronics — which is where an electronics domain should start anyway.
+
+### The audit
+
+Probed the whole tree for the vocabulary these cards would need:
+
+| Probe | Mentions before this wave |
+|---|---|
+| `jtag` | 0 |
+| `hardware root of trust` | 0 |
+| `supply chain implant` | 0 |
+| `chip-off` | 0 |
+| `firmware update mechanism` | 0 |
+| `degauss` / `shred` / `purge` (media sanitisation sense) | 0 |
+| `secure boot` / `tpm` / `uefi` | present, but operational only |
+
+The last row is the one that shaped the wave. `linux` and `endpoint` already teach Secure Boot and
+BitLocker-with-TPM as *things you configure* — enrol the key, escrow the recovery key, do not break
+the chain. Nothing anywhere explained what the chain proves, what it does not prove, or what an
+attacker with the device in their hands actually does. That is the gap: not the settings, the
+threat model underneath them.
+
+### What shipped
+
+**6 cards into `sec`**, 64 → 70. Site: 1,227 → **1,233 topics**.
+
+| Card | What it is for |
+|---|---|
+| The Hardware Attack Surface — What Physical Access to a Device Buys | evil maid, DMA, cold boot, chip-off, and what each actually requires |
+| Firmware Extraction &amp; Analysis — Getting the Code Off, and Reading It | UART/JTAG/SPI flash, the tools, and authorised-use framing |
+| Hardware Root of Trust — What a Verified Boot Chain Actually Proves | secure boot vs measured boot, attestation, and the limits |
+| Firmware Update Mechanisms — The Feature That Is Also the Attack Path | signing, rollback protection, A/B slots, and estates that never patch |
+| Counterfeit &amp; Tampered Hardware — Provenance, Grey Market &amp; Implants | the boring risk that is common vs the exciting one that is rare |
+| Media Sanitisation &amp; Disposal — What "Wiped" Actually Means | clear/purge/destroy, SSD reality, and the process failures |
+
+### What these cards are actually about
+
+Three specifics worth carrying:
+
+- **Secure boot refuses; measured boot records.** They are constantly conflated and they solve
+  different problems. Secure boot stops an unsigned component from running and tells you nothing
+  afterwards. Measured boot lets anything run but hashes each stage into the TPM, so a remote
+  verifier can see what booted. Attestation needs the second; only the second survives an attacker
+  who can sign.
+- **Overwriting an SSD does not do to it what it does to a disk.** Wear levelling means the
+  logical block you overwrote and the flash page holding the old data are different places. The
+  block-overwrite tooling everyone learned on spinning disks is theatre on flash; the answer is the
+  drive's own sanitise command, or having encrypted from day one so disposal is a key deletion.
+- **Targeted implants are overweighted and counterfeits are underweighted.** The interdiction story
+  gets the attention; the thing that actually reaches estates is a counterfeit part with a
+  relabelled controller, failing early and carrying firmware nobody can attest. Provenance is a
+  purchasing control, and it is the cheapest one on this list.
+
+### Verification
+
+`lint_content.py` 1,233 topics / 144 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py --check` clean · `stamp_freshness.py --only sec` then `--verify` clean ·
+`smoke_test.mjs` 31/31 · budget after build: raw 4.6 / 8.0 MB, gzip 1,245 / 2,200 KB,
+DOM 416 / 1,500, content elements 97,401 / 175,000.
