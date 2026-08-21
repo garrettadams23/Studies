@@ -1961,7 +1961,11 @@ extremes, sustainability/accessibility) are narrower and can follow. `sec` 46→
 - [x] ICS Protocols → *ICS Protocols — Modbus, DNP3, OPC UA and Their Security Assumptions*
 - [x] Securing OT Without Breaking It + OT Incident Response → *Securing OT Without Breaking It — Segmentation, Access & Safety-First IR*
 - [x] AE2 regulated industries → HIPAA/PCI/CMMC/STIGs already in `grc`; legal hold in `grc`'s data-governance card
-- [ ] Remaining (narrower): healthcare/finance/gov/edu operational specifics, scale extremes (SMB/enterprise/MSP/M&A), green IT, accessible IT, e-waste, surveillance-vs-monitoring — follow on demand
+- [x] **Scale extremes, green IT, accessible IT and surveillance-vs-monitoring shipped** — AE3 and
+  AE4 in full, 8 cards into `ops`; e-waste and professional ethics were already carded elsewhere.
+  See the session record.
+- [ ] Remaining (narrower): healthcare/finance/gov/edu operational specifics — the AE2 items whose
+  regulatory half is already in `grc` but whose day-to-day operational texture is not written
 
 **Wave AE1 — Operational Technology & ICS**
 - [ ] OT vs IT — different priorities, different consequences, different clocks
@@ -1977,19 +1981,24 @@ extremes, sustainability/accessibility) are narrower and can follow. `sec` 46→
 - [ ] Education IT — FERPA, 1:1 device programs, seasonal load, tiny budgets
 - [ ] Legal Hold & Discovery for IT — what "preserve everything" means operationally
 
-**Wave AE3 — Scale Extremes**
-- [ ] IT for Very Small Organisations — one person, no budget, and what to prioritise
-- [ ] IT for the Very Large — federation, delegation, and standardising across business units
-- [ ] MSP Operations — multi-tenant tooling, onboarding, and the support model
-- [ ] Remote & Distributed Workforces — provisioning, support and security without an office
-- [ ] Mergers, Acquisitions & Divestitures — the IT workstream nobody staffs properly
+**Wave AE3 — Scale Extremes** — shipped into `ops`. See the session record.
+- [x] IT for Very Small Organisations — one person, no budget, and what to prioritise
+- [x] IT for the Very Large — federation, delegation, and standardising across business units
+- [x] MSP Operations — multi-tenant tooling, onboarding, and the support model
+- [x] Remote & Distributed Workforces — provisioning, support and security without an office
+- [x] Mergers, Acquisitions & Divestitures — the IT workstream nobody staffs properly
 
-**Wave AE4 — Sustainability, Accessibility & Ethics in Operations**
-- [ ] Green IT — power, cooling, hardware lifespan, and the honest carbon maths
-- [ ] Accessible IT — assistive technology, procurement, and testing your own tools
-- [ ] E-Waste & Secure Disposal — data destruction standards and chain of custody
-- [ ] Surveillance vs Monitoring — where legitimate telemetry becomes something else
-- [ ] Professional Ethics Under Pressure — the situations that actually come up
+**Wave AE4 — Sustainability, Accessibility & Ethics in Operations** — shipped into `ops`, except
+where noted.
+- [x] Green IT — power, cooling, hardware lifespan, and the honest carbon maths
+- [x] Accessible IT — assistive technology, procurement, and testing your own tools
+- [~] E-Waste & Secure Disposal — data destruction standards and chain of custody — carded earlier
+  this session as *Media Sanitisation &amp; Disposal — What "Wiped" Actually Means* in `sec`; the
+  Green IT card cross-references it, because sanitisation is what makes reuse and resale available
+- [x] Surveillance vs Monitoring — where legitimate telemetry becomes something else
+- [~] Professional Ethics Under Pressure — carded in `career` as *Professional Ethics — The
+  Responsibility That Comes With Access*; the surveillance card cross-references it and supplies the
+  specific requests that test the line
 
 ### TRACK AF — Working With AI as an IT Professional
 
@@ -7260,3 +7269,86 @@ until asked for.
 `annotate_acronyms.py` clean · `stamp_freshness.py --only career` touched only the 8 new cards ·
 `--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 5.1 / 8.0 MB, gzip 1,381 /
 2,200 KB, DOM 416 / 1,500, content elements 105,348 / 175,000.
+
+---
+
+## Session record — Track AE3/AE4: scale extremes, sustainability, accessibility and ethics
+
+Twenty-fourth content wave.
+
+### Choosing this one, and two tracks ruled out
+
+Three tracks were audited before picking. **AQ (Emerging Platforms)** turned out largely covered:
+`net` carries *Modern Connectivity — 5G, Private Cellular, Satellite &amp; IoT* and *Edge Computing*,
+which between them answer most of the track. **AD (Apple/Android)** likewise: `endpoint` carries
+*macOS for Windows Admins*, *Apple Fleet Management* and *iOS &amp; Android Enterprise*, and the
+genuine zeros left — declarative device management, Kandji, Knox — are narrow vendor specifics.
+Recording both here so a later session does not re-audit them.
+
+Track AE's earlier session shipped AE1 (OT/ICS) and correctly judged AE2 as overlapping `grc`. AE3
+and AE4 were untouched, and the probes agreed:
+
+| Probe | Mentions before this wave |
+|---|---|
+| "multi-tenant tooling", `divestiture` | 0 |
+| "green IT", `PUE`, "e-waste" | 0 |
+| "small business IT", "seasonal load" | 0 |
+| `MSP` | `acronym`, `endpoint`, `grc` — named, never as an operating model |
+| `accessib`, `WCAG`, "screen reader" | present — all web-facing, in `web`, `script` and `grc` |
+
+That last row is the interesting one. Accessibility is on the site as a *web standard*. Nothing
+covered it as an *IT operations* concern — the internal tools IT procures, the assistive software
+application control silently blocks, the MFA method that excludes someone.
+
+### What shipped
+
+**8 cards into `ops`**, 68 → 76. Site: 1,321 → **1,329 topics**.
+
+IT for Very Small Organisations · IT for the Very Large · MSP Operations · Remote &amp; Distributed
+Workforces · Mergers, Acquisitions &amp; Divestitures · Green IT · Accessible IT · Surveillance vs
+Monitoring.
+
+All eight went to `ops` under an **Operating Context** badge rather than splitting the ethics and
+sustainability cards to `grc`. They are one idea — how the same IT job changes with the context it
+is done in — and separating them would have made the reader hunt.
+
+### What these cards are actually about
+
+The through-line: **the generic answer is calibrated to a mid-sized, office-based, single-entity
+organisation, and almost nobody works in one.** Every card is a case where the standard advice is
+not merely insufficient but actively wrong.
+
+Four specifics worth carrying:
+
+- **Manufacturing usually outweighs running, for end-user devices.** Emissions from building a
+  laptop exceed several years of using it, which inverts the intuitive advice: extending the refresh
+  cycle by a year does more than any power setting. Endpoint power settings are worth doing and not
+  worth leading with; reducing email storage measures nothing.
+- **At large scale, every technical problem is an agreement problem.** The engineering to standardise
+  endpoint management takes weeks; the agreement takes quarters. Skipping it produces a standard
+  that exists on paper while everyone continues as before.
+- **An MSP's remote-management platform is tier zero and is usually protected like an ordinary SaaS
+  tool.** It exists to push software to every endpoint at every client, so an attacker who reaches
+  it has that capability too — which is exactly how mass incidents have happened.
+- **The monitoring/surveillance line is drawn by purpose, not by data or tooling.** It is crossed by
+  drift: a capability exists, a senior person asks a reasonable-sounding question, somebody answers
+  because they can, and a precedent is set nobody decided. The control that matters is protecting
+  the junior person who has to say no — written authorisation rules, so refusal is procedure rather
+  than personal courage.
+
+The small-organisation card carries the one most likely to be acted on tomorrow: domains,
+certificates and cloud tenancies registered to an individual's personal account are an ordinary
+convenience at founding and an existential problem the day that person leaves badly or cannot be
+reached.
+
+### Track AE after this wave
+
+One area open: the AE2 operational specifics for healthcare, finance, government and education —
+the regulatory half is carded in `grc`, the day-to-day texture is not.
+
+### Verification
+
+`lint_content.py` 1,329 topics / 190 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only ops` touched only the 8 new cards ·
+`--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 5.1 / 8.0 MB, gzip 1,395 /
+2,200 KB, DOM 416 / 1,500, content elements 106,125 / 175,000.
