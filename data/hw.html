@@ -772,3 +772,496 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: SYSTEMATIC HARDWARE TROUBLESHOOTING ────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔬</span>
+    <span class="topic-name">Systematic Hardware Troubleshooting — Isolate, Swap &amp; the Minimum Viable System</span>
+    <span class="topic-badge">Diagnosis</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Change One Thing, and Know What You Expect to Happen</div>
+      <div class="concept-desc">
+        Hardware faults reward discipline more than knowledge, because the search space is small and
+        finite — a desktop has perhaps eight replaceable parts. What wastes the afternoon is changing
+        three things at once, losing track of what was tried, and ending up unable to say whether the
+        machine ever worked with the original memory in the original slot. The method is unglamorous
+        and it is faster than intuition almost every time.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>1. Reproduce it</td><td>Know the exact conditions; an intermittent fault you cannot trigger cannot be tested</td></tr>
+            <tr><td>2. Write down the starting state</td><td>Which parts, which slots, which settings — you will need this in an hour</td></tr>
+            <tr><td>3. Reduce to the minimum viable system</td><td>Board, CPU <span class="acro-exp">(Central Processing Unit)</span>, cooler, one memory module, power. Nothing else</td></tr>
+            <tr><td>4. Confirm the minimum works, or does not</td><td>This single step splits the problem in half</td></tr>
+            <tr><td>5. Add one component; retest</td><td>One. The discipline is the whole method</td></tr>
+            <tr><td>6. Swap with known-good, not with another suspect</td><td>Two unknown parts prove nothing about either</td></tr>
+            <tr><td>7. Record the result of every step</td><td>The notes are what stop you repeating the third attempt twice</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Step 6 is where most home diagnosis goes wrong. Swapping a suspect part into a second
+          suspect machine produces a result nobody can interpret. Known-good means a part you have
+          just seen working, in a machine you have just seen working.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Isolate by Half, and Start With What Is Free</div>
+      <div class="concept-desc">
+        Before removing anything, several checks cost nothing and resolve a surprising share of
+        faults. Technicians skip them because they feel too simple, and then find them at the end.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Check</th><th>Catches</th></tr></thead>
+          <tbody>
+            <tr><td>Is it plugged in, switched on at the wall, and is the socket live?</td><td>More often than anyone admits, especially remotely</td></tr>
+            <tr><td>Reseat everything — memory, cards, cables, both ends</td><td>Partial seating after transport; the single highest-yield step</td></tr>
+            <tr><td>Try a different cable, a different port, a different monitor</td><td>Display faults that are not the computer</td></tr>
+            <tr><td>Clear CMOS <span class="acro-exp">(Complementary Metal-Oxide-Semiconductor)</span></td><td>A bad setting that prevents boot; costs a minute</td></tr>
+            <tr><td>Look and smell</td><td>Bulging capacitors, scorch marks, burnt smell, corrosion</td></tr>
+            <tr><td>Listen and feel</td><td>Fans spinning? Drive spinning? Any beep at all?</td></tr>
+            <tr><td>Check what changed most recently</td><td>New hardware, new driver, moved desk, storm last night</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          "What changed?" is the most productive single question in all troubleshooting, and it is
+          worth asking about the environment as well as the machine. A workstation that started
+          failing after being moved is a reseating problem; one that started after a power cut is a
+          supply problem until proven otherwise.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Knowing When to Stop</div>
+      <div class="concept-desc">
+        In a professional context the decision to stop diagnosing is as important as the diagnosis,
+        and it should be made on cost rather than on curiosity. An hour of a technician's time
+        against a replacement part is an arithmetic problem, and the answer usually favours the part.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stop when</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>The machine is under warranty</td><td>Opening it may void cover; the vendor's process is faster and free</td></tr>
+            <tr><td>Diagnosis time exceeds the replacement cost</td><td>Straightforward economics, and it applies sooner than people expect</td></tr>
+            <tr><td>The data matters more than the machine</td><td>Stop and preserve the drive before any further attempts</td></tr>
+            <tr><td>Component-level repair is the only remaining path</td><td>Specialist work; send it out or replace the board</td></tr>
+            <tr><td>It is a fleet-wide pattern</td><td>Escalate to the vendor — this is a warranty claim, not a repair</td></tr>
+            <tr><td>You have swapped everything and it still fails</td><td>Suspect the thing you did not swap: the power, the desk, the environment</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The data row overrides all the others. If the drive holds anything not backed up, powering
+          the machine on repeatedly to chase a fault can turn a recoverable situation into an
+          unrecoverable one — see the data-recovery triage card. Preserve first, diagnose second.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: POST, BEEP CODES & DIAGNOSTIC LEDS ─────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🚦</span>
+    <span class="topic-name">POST, Beep Codes &amp; Diagnostic LEDs <span class="acro-exp">(Light Emitting Diode)</span> — Reading a Machine That Will Not Boot</span>
+    <span class="topic-badge">Diagnosis</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Machine With No Display Is Still Telling You Things</div>
+      <div class="concept-desc">
+        Power-on self test runs before anything you can see. The firmware checks the processor,
+        initialises memory, brings up the chipset, finds a display adapter, then finally puts an
+        image on screen — and if it fails before that last step there is nothing to read. The
+        machine has not gone silent; it is reporting through the only channels it has left, which
+        are beeps, LEDs and a two-digit code display. Knowing that these exist is what turns "it is
+        dead" into a specific fault.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Channel</th><th>Where</th><th>Reading it</th></tr></thead>
+          <tbody>
+            <tr><td>Beep codes</td><td>Internal speaker or buzzer</td><td>Count the pattern; look it up for that firmware vendor</td></tr>
+            <tr><td>Diagnostic LEDs</td><td>Row of labelled LEDs on the board — CPU <span class="acro-exp">(Central Processing Unit)</span>, DRAM <span class="acro-exp">(Dynamic Random Access Memory)</span>, VGA <span class="acro-exp">(Video Graphics Array)</span>, BOOT</td><td>The one that stays lit is where POST stopped</td></tr>
+            <tr><td>POST code display</td><td>Two-digit hex readout on better boards</td><td>Look up the code in the board manual</td></tr>
+            <tr><td>Laptop LED patterns</td><td>Power or caps-lock LED blinking a pattern</td><td>Vendor-specific; documented in their service manual</td></tr>
+            <tr><td>Fan behaviour</td><td>Full speed, or stopping and restarting</td><td>Full speed constantly often means POST never completed</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Boards no longer ship with a speaker by default, which is why beep codes feel obsolete —
+          a cheap header speaker costs almost nothing and restores the channel. On a board with
+          diagnostic LEDs it is unnecessary; on one without, it is the difference between a code and
+          a guess.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Where POST Stops, and What It Means</div>
+      <div class="concept-desc">
+        Codes and beep patterns are vendor-specific and must be looked up. The <em>stage</em> is
+        universal, and the stage is usually enough to act on.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stops at</th><th>Likely causes, in order</th></tr></thead>
+          <tbody>
+            <tr><td>Nothing at all — no fans, no lights</td><td>Power supply, wall power, front-panel switch wiring, dead board</td></tr>
+            <tr><td>Fans spin, no LEDs advance</td><td>Missing CPU power connector; CPU not seated; board fault</td></tr>
+            <tr><td>CPU LED</td><td>Seating, unsupported CPU needing a firmware update, cooler over-tightened</td></tr>
+            <tr><td>DRAM LED</td><td>Reseat memory; try one module; try a different slot; check the supported list</td></tr>
+            <tr><td>VGA LED</td><td>Graphics card seating and power; try integrated graphics; try another card</td></tr>
+            <tr><td>BOOT LED</td><td>POST passed — this is now a storage or bootloader problem, not hardware initialisation</td></tr>
+            <tr><td>Posts, then reboots in a loop</td><td>Overheating, unstable memory profile, marginal power</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The BOOT row is the important dividing line. Once POST completes, hardware initialisation
+          succeeded and you have moved into a different category of problem — boot order, a failed
+          drive, a corrupted bootloader, or a firmware setting. Everything before it is hardware.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Order That Resolves Most No-Boot Machines</div>
+      <div class="concept-desc">
+        Working this sequence takes about fifteen minutes and resolves the large majority of
+        no-display faults without any parts.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Order</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Confirm mains power and that the supply's own switch is on</td></tr>
+            <tr><td>2</td><td>Look for diagnostic LEDs or a POST code; note it before changing anything</td></tr>
+            <tr><td>3</td><td>Reseat memory, graphics card and both ends of every power cable</td></tr>
+            <tr><td>4</td><td>Confirm the CPU power connector is fitted — the most-missed item in a new build</td></tr>
+            <tr><td>5</td><td>Clear CMOS <span class="acro-exp">(Complementary Metal-Oxide-Semiconductor)</span>; if it posts, a setting was the fault and you now know it</td></tr>
+            <tr><td>6</td><td>Strip to minimum viable system and retest</td></tr>
+            <tr><td>7</td><td>One memory module, in the slot the manual names for a single module</td></tr>
+            <tr><td>8</td><td>Bypass the case: test the board on the bench, in case a standoff is shorting it</td></tr>
+            <tr><td>9</td><td>Substitute a known-good power supply</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Step 8 is the one people skip and it catches a genuine class of new-build fault: a
+          mounting standoff under a part of the board with no hole shorts it against the case, and
+          the machine is completely dead in the case and boots perfectly on the bench. If a
+          newly-built machine will not post, testing it outside the case is worth the ten minutes.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: INTERMITTENT FAULTS ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎲</span>
+    <span class="topic-name">Intermittent Faults — Heat, Vibration, Marginal Power &amp; How to Reproduce Them</span>
+    <span class="topic-badge">Diagnosis</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Intermittent Means Conditional, and the Condition Is Findable</div>
+      <div class="concept-desc">
+        Faults described as random almost never are. They are conditional on something nobody has
+        identified yet — temperature, load, elapsed time since power-on, physical position,
+        humidity, what else is running on the same circuit. Reframing "it happens randomly" as
+        "there is a condition I have not found" changes the work from waiting for it to happen into
+        looking for what is different when it does.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Pattern</th><th>Suspect</th></tr></thead>
+          <tbody>
+            <tr><td>Fails after twenty minutes, fine after a rest</td><td>Thermal — something is heating past a threshold</td></tr>
+            <tr><td>Fails only under heavy load</td><td>Power delivery, or thermal, or both</td></tr>
+            <tr><td>Fails in the morning, fine later</td><td>Cold — solder joints, or a marginal capacitor warming up</td></tr>
+            <tr><td>Fails when moved or bumped</td><td>Mechanical — a connector, a socket, a cracked joint</td></tr>
+            <tr><td>Fails at the same time each day</td><td>Environmental — a cleaner's vacuum, air conditioning cycling, a scheduled job</td></tr>
+            <tr><td>Fails on one machine, never on an identical one</td><td>That unit's specific part; compare configurations exactly</td></tr>
+            <tr><td>Started after a specific date</td><td>Ask what changed then — including in the room</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The cold-morning row is genuinely counter-intuitive and worth knowing: some faults appear
+          when cold and vanish when warm, because a marginal solder joint or a component's
+          tolerances shift with temperature in the opposite direction to the usual assumption. "It
+          only fails first thing" is a real diagnostic signal, not a user's imagination.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Forcing It to Happen</div>
+      <div class="concept-desc">
+        You cannot diagnose what you cannot reproduce, so the first work is making the fault happen
+        on demand. Each technique deliberately drives one variable to its limit.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Technique</th><th>Tests</th></tr></thead>
+          <tbody>
+            <tr><td>Sustained CPU <span class="acro-exp">(Central Processing Unit)</span> and memory stress, an hour or more</td><td>Thermal and power under load together</td></tr>
+            <tr><td>Overnight memory test</td><td>Marginal modules a single pass misses</td></tr>
+            <tr><td>Storage read-verify across the whole device</td><td>Bad sectors that only appear in rarely-read regions</td></tr>
+            <tr><td>Run with the case open, then closed</td><td>Separates airflow problems from everything else</td></tr>
+            <tr><td>Gentle, deliberate flexing of a board or connector</td><td>Cracked joints and marginal seating — expect it to be conclusive</td></tr>
+            <tr><td>Freeze spray or a hairdryer on one component</td><td>Isolates thermal sensitivity to a specific part</td></tr>
+            <tr><td>Swap onto a different circuit or a UPS <span class="acro-exp">(Uninterruptible Power Supply)</span></td><td>Mains quality, which is invisible from inside the machine</td></tr>
+            <tr><td>Log continuously — temperatures, voltages, errors</td><td>Captures the state at the moment of failure, which memory does not</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Continuous logging is the one to set up first, because it works while you do something
+          else. A script recording temperatures, fan speeds, voltages and system errors every ten
+          seconds turns "it crashed again overnight" into a timestamped picture of what the machine
+          was doing in the sixty seconds before it went.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Environmental Causes Nobody Looks For</div>
+      <div class="concept-desc">
+        When a machine has had every component swapped and still fails intermittently, the fault is
+        not in the machine. These are the causes that survive a full parts replacement, and they are
+        found by looking at the room rather than the box.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Cause</th><th>Signature</th></tr></thead>
+          <tbody>
+            <tr><td>Mains sags when something else starts</td><td>Correlates with a lift, a compressor, a kettle, a machine on the same circuit</td></tr>
+            <tr><td>Shared circuit overloaded</td><td>Fails when several devices are busy simultaneously</td></tr>
+            <tr><td>Ambient temperature at the limit</td><td>Fine in winter, fails in summer, or fails after the door is closed</td></tr>
+            <tr><td>Airflow blocked or recirculating</td><td>A cupboard, a box in front of the intake, a rack with a reversed device</td></tr>
+            <tr><td>Vibration</td><td>Near a door, on a shared desk, next to a plant room</td></tr>
+            <tr><td>Static in a dry room with a synthetic floor</td><td>Seasonal, and correlates with someone touching the machine</td></tr>
+            <tr><td>Electrical noise from nearby equipment</td><td>Correlates with specific machinery running</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two habits make these findable. Ask the user for the pattern in their words before
+          proposing anything — they frequently know it and assume it is irrelevant ("only when the
+          air conditioning kicks in"). And when a machine has been fully rebuilt and still fails,
+          swap the whole machine to a different location before ordering another part, because that
+          single test distinguishes the box from the room.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SOLDERING & REWORK ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🪛</span>
+    <span class="topic-name">Soldering &amp; Rework — Through-Hole, SMD Basics &amp; Knowing When Not To</span>
+    <span class="topic-badge">Diagnosis</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Heat the Joint, Not the Solder</div>
+      <div class="concept-desc">
+        The single technique that separates a reliable joint from a bad one: bring the iron to the
+        pad and the component lead together, let both come up to temperature, then feed solder into
+        the joint so it melts on the work rather than on the iron. Solder melted on the iron and
+        dabbed on cools into a dull, weak connection sitting on top of the pad — a cold joint, which
+        may test as connected and fail later under vibration or thermal cycling.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Good joint</th><th>Cold joint</th></tr></thead>
+          <tbody>
+            <tr><td>Shiny, smooth, concave fillet</td><td>Dull, grainy, blobby, convex</td></tr>
+            <tr><td>Wets both pad and lead</td><td>Sits on one, balled up on the other</td></tr>
+            <tr><td>Mechanically solid</td><td>Moves or cracks under gentle pressure</td></tr>
+            <tr><td>Made in two or three seconds</td><td>Made slowly, or with repeated reheating</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Flux is the other half and is consistently under-used by beginners. It cleans the oxide
+          that stops solder wetting a surface, and most difficulty soldering — solder that will not
+          stick, joints that need excessive heat — is a flux problem rather than a technique or
+          temperature problem.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">What Is Realistically Repairable, and With What</div>
+      <div class="concept-desc">
+        The gap between through-hole and surface-mount work is large, and being honest about which
+        you are equipped for prevents turning a repairable board into a scrap one.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Work</th><th>Needs</th><th>Difficulty</th></tr></thead>
+          <tbody>
+            <tr><td>Through-hole — connectors, electrolytic capacitors, headers</td><td>Temperature-controlled iron, flux, solder, desoldering braid or pump</td><td>Learnable in an evening</td></tr>
+            <tr><td>Replacing a barrel jack or a broken header</td><td>The above, plus patience with multi-layer ground planes</td><td>The classic worthwhile repair</td></tr>
+            <tr><td>Larger surface-mount — resistors, capacitors, small chips</td><td>Fine tip, tweezers, magnification, good flux</td><td>Practice required, achievable</td></tr>
+            <tr><td>Fine-pitch chips</td><td>Hot air, stencils, real magnification, steady technique</td><td>Specialist</td></tr>
+            <tr><td>Ball grid array — reballing, reflow</td><td>Proper reflow equipment and experience</td><td>Send it out</td></tr>
+            <tr><td>Anything on a phone or modern laptop board</td><td>Microscope, hot air, board-level schematics</td><td>A trade in its own right</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Ground planes are the specific difficulty in through-hole rework on modern boards: a pin
+          connected to a large copper plane conducts heat away faster than a small iron can supply
+          it, so the joint never melts properly. The answer is a higher-power iron and a bigger tip
+          rather than more time — prolonged heating is what lifts pads and ends repairs.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">When Not To — and the Safety That Is Not Optional</div>
+      <div class="concept-desc">
+        In an IT context, the decision not to solder is correct far more often than the decision to.
+        These are the cases where attempting it makes things worse.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Do not</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>On anything under warranty</td><td>Voids it instantly, and the vendor will replace it for free</td></tr>
+            <tr><td>On a board you have not diagnosed</td><td>Replacing a component that was not the fault adds damage</td></tr>
+            <tr><td>On a device holding the only copy of important data</td><td>Recover the data first, always</td></tr>
+            <tr><td>On mains-side circuitry without training</td><td>A genuine electrocution risk, not a caution</td></tr>
+            <tr><td>Near a charged high-voltage capacitor</td><td>Power supplies and displays store dangerous energy after unplugging</td></tr>
+            <tr><td>On lithium cells</td><td>Fire risk; cells need spot-welded tabs, not soldering</td></tr>
+            <tr><td>When the repair costs more than the part</td><td>Which, for most modern components, it does</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Three safety points are worth stating without hedging. Ventilate — flux fumes are an
+          irritant and should not be breathed. Wear eye protection, because solder spits. And treat
+          power supplies and CRT-era displays as dangerous while unplugged: their capacitors hold a
+          charge that can injure you long after the mains is disconnected, and discharging them
+          safely is a specific procedure rather than a matter of care.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DATA RECOVERY TRIAGE ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🆘</span>
+    <span class="topic-name">Data Recovery Triage — When to Stop and Send It to a Lab</span>
+    <span class="topic-badge">Diagnosis</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The First Decision Is Whether to Power It On Again</div>
+      <div class="concept-desc">
+        Every additional power-on of a physically failing drive risks converting a recoverable
+        situation into an unrecoverable one. A head that is contacting the platter damages the
+        surface a little more each rotation; a drive with a failing motor may not spin again. The
+        instinct — try it once more, maybe it will work this time — is precisely the wrong one, and
+        it is the reason many lab cases are more expensive than they needed to be.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Clicking, grinding, beeping, or a repeated spin-up-and-stop</td><td><strong>Stop.</strong> Power off and do not power on again</td></tr>
+            <tr><td>Drive not detected at all, no sound</td><td>Stop; could be electronics, which a lab can address</td></tr>
+            <tr><td>Was dropped, or exposed to liquid or fire</td><td>Stop; do not attempt to dry it or run it</td></tr>
+            <tr><td>Detected, readable, some files error</td><td>Image it now, before anything else</td></tr>
+            <tr><td>Accidental deletion or a formatted volume</td><td>Stop writing to it; recovery software on an image is reasonable</td></tr>
+            <tr><td>Encrypted volume without the key</td><td>No lab can help; this is a key-management problem</td></tr>
+            <tr><td>Ransomware</td><td>An incident, not a recovery job — preserve and follow the IR <span class="acro-exp">(Incident Response)</span> process</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The single most important distinction is <em>logical</em> versus <em>physical</em>. A
+          logical failure — deletion, corruption, a lost partition — leaves the hardware healthy and
+          is often recoverable with software. A physical failure needs a cleanroom and specialist
+          equipment, and every DIY attempt reduces what a lab can retrieve. The noises in the first
+          row are the tell, and they mean stop.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Image First, Work on the Copy</div>
+      <div class="concept-desc">
+        When the drive is still readable, the correct first action is always to take a
+        sector-by-sector image and then do all further work on that image. Recovery attempts on the
+        original consume the limited number of reads a dying drive has left.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Write-block the source if you have the hardware</td><td>Guarantees nothing writes to it, including the operating system mounting it</td></tr>
+            <tr><td>Use an imager that retries and logs bad sectors</td><td>A plain copy stops at the first error; a proper imager skips and returns</td></tr>
+            <tr><td>Image the easy areas first, bad regions last</td><td>Get the most data off before the drive deteriorates further</td></tr>
+            <tr><td>Keep the drive cool, and stop if it warms sharply</td><td>Heat accelerates a marginal failure</td></tr>
+            <tr><td>Verify the image before touching the original again</td><td>An incomplete image discovered later is a wasted opportunity</td></tr>
+            <tr><td>Work only on copies of the image thereafter</td><td>Recovery tools can be destructive; keep the pristine copy</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          One SSD-specific caution: flash drives can fail into a read-only state or fail completely
+          with no warning at all, and their controllers may aggressively remap or discard data. There
+          is far less "partial failure" runway than with a spinning disk, so the window to image is
+          shorter and the case for imaging immediately is stronger.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Conversation to Have Before Any of This</div>
+      <div class="concept-desc">
+        Data recovery in a professional context is as much an expectation-management job as a
+        technical one, and having these facts ready prevents the worst version of the conversation.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Point</th><th>Why to say it early</th></tr></thead>
+          <tbody>
+            <tr><td>Professional recovery is expensive — often four figures</td><td>The decision is the owner's, and it depends on what the data is worth</td></tr>
+            <tr><td>Nothing is guaranteed</td><td>Reputable labs say so; ones promising certainty are worth avoiding</td></tr>
+            <tr><td>Attempting it yourself may make a lab recovery impossible</td><td>The most important thing the owner needs to know, before they try</td></tr>
+            <tr><td>Ask for a no-recovery-no-fee assessment</td><td>Standard at reputable labs, and it bounds the downside</td></tr>
+            <tr><td>Ask what happens to the data and the drive afterwards</td><td>Chain of custody matters, especially with personal or regulated data</td></tr>
+            <tr><td>Establish how the recovered data will be returned securely</td><td>It is a copy of everything; treat it accordingly</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          And the uncomfortable part worth saying once, kindly, after the immediate crisis: this is a
+          backup problem that has already happened. The card that prevents the next one is
+          <span class="xref">Backup Strategy — 3-2-1-1-0 and the Schemes That Make Restores Possible</span>,
+          and the moment someone has just paid a lab is the moment they will actually act on it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

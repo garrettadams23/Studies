@@ -2485,12 +2485,12 @@ a place it already shows up on the site.
 - [x] Power Supplies — rails, efficiency ratings, sizing, and failure symptoms — inside
   *Power &amp; Thermals*, where the sizing calculation and the failure-symptom table both live
 
-**Wave AN3 — Diagnosis & Repair**
-- [ ] Systematic Hardware Troubleshooting — isolate, swap, minimum viable system
-- [ ] POST, Beep Codes & Diagnostic LEDs — reading a machine that will not boot
-- [ ] Intermittent Faults — heat, vibration, marginal power, and how to reproduce them
-- [ ] Soldering & Rework — through-hole and SMD basics, and knowing when not to
-- [ ] Data Recovery Triage — when to stop and send it to a lab
+**Wave AN3 — Diagnosis & Repair** — shipped into `hw`.
+- [x] Systematic Hardware Troubleshooting — isolate, swap, minimum viable system
+- [x] POST, Beep Codes & Diagnostic LEDs — reading a machine that will not boot
+- [x] Intermittent Faults — heat, vibration, marginal power, and how to reproduce them
+- [x] Soldering & Rework — through-hole and SMD basics, and knowing when not to
+- [x] Data Recovery Triage — when to stop and send it to a lab
 
 **Wave AN4 — Peripherals & the Office Estate**
 - [ ] Displays — panel types, scaling, colour, multi-monitor and docking pitfalls
@@ -7559,3 +7559,58 @@ waves in this domain. AN6 shipped into `sec` earlier this session.
 clean · `smoke_test.mjs` 31/31 · topic index confirms 8 `hw` topics and one deferred block ·
 budget after build: raw 5.2 / 8.0 MB, gzip 1,414 / 2,200 KB, DOM 428 / 1,500 (the new chip),
 content elements 107,250 / 175,000.
+
+---
+
+## Session record — Track AN3: diagnosis and repair
+
+Twenty-seventh content wave, filling out the `hw` domain opened in the previous one.
+
+### What shipped
+
+**5 cards into `hw`**, 8 → 13. Site: 1,340 → **1,345 topics**.
+
+Systematic Hardware Troubleshooting · POST, Beep Codes &amp; Diagnostic LEDs · Intermittent Faults ·
+Soldering &amp; Rework · Data Recovery Triage.
+
+### What these cards are actually about
+
+The through-line: **hardware faults reward discipline over knowledge, because the search space is
+small and finite.** A desktop has perhaps eight replaceable parts. What wastes the afternoon is
+changing three of them at once and losing track of what was tried — which is why the method reads as
+bureaucratic and beats intuition almost every time.
+
+Four specifics worth carrying:
+
+- **Swap with known-good, never with another suspect.** Moving a suspect part into a second suspect
+  machine produces a result nobody can interpret. Known-good means a part you have just watched
+  working, in a machine you have just watched working.
+- **A machine with no display is still reporting.** POST runs before anything is visible, so failure
+  before display initialisation leaves beeps, diagnostic LEDs and a POST code as the only channels.
+  The BOOT LED is the dividing line: past it, hardware initialisation succeeded and the problem has
+  become a storage or bootloader one.
+- **"Intermittent" means conditional, and the condition is findable.** Fails after twenty minutes is
+  thermal; fails when cold is a marginal joint, which is real and counter-intuitive; fails at the
+  same time daily is environmental. When a machine has been fully rebuilt and still fails, move the
+  whole machine to a different room — that single test separates the box from the environment.
+- **The first data-recovery decision is whether to power it on again.** Clicking, grinding or
+  repeated spin-up means stop: every further attempt converts a recoverable case into a more
+  expensive or impossible one. Where the drive still reads, image it first and work only on copies.
+
+Two safety points are stated in the soldering card without hedging, and should stay that way: power
+supplies and CRT-era displays hold a dangerous charge after unplugging, and lithium cells are a fire
+risk that must never be soldered directly.
+
+### Track AN after this wave
+
+AN1 has one item open (signals — analogue vs digital, sampling, noise, grounding). AN4 (peripherals
+and the office estate) and AN5 (embedded and single-board) are untouched and are the natural next
+waves. AN2 and AN3 are complete; AN6 shipped into `sec`.
+
+### Verification
+
+`lint_content.py` 30 domain files, 1,345 topics / 195 cross-references clean ·
+`fix_topic_names.py --check` clean · `annotate_acronyms.py` clean · `stamp_freshness.py --only hw`
+now works normally against the committed file and touched only the 5 new cards · `--verify` clean ·
+`smoke_test.mjs` 31/31 · budget after build: raw 5.2 / 8.0 MB, gzip 1,423 / 2,200 KB, DOM 428 /
+1,500, content elements 107,790 / 175,000.
