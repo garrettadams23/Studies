@@ -3033,33 +3033,40 @@ coverage has not caught up.
 
 ~4 waves, ~20 cards. The SBOM cards exist; the discipline around them does not.
 
-**Wave BE1 — Understanding the Chain**
-- [ ] Where a Build Actually Comes From — every input, including the ones you forgot
-- [ ] Historic Supply-Chain Attacks — what each one actually exploited
-- [ ] Dependency Risk — transitive depth, typosquatting, abandoned packages
-- [ ] Build System as a Target — the CI runner is production-adjacent
-- [ ] Trust Decisions — pinning, vendoring, mirrors, and their maintenance cost
+**Wave BE1 — Understanding the Chain** — shipped into `eng`, not `sec`. See the session record.
+- [x] Where a Build Actually Comes From — every input, including the ones you forgot
+- [x] Historic Supply-Chain Attacks — what each one actually exploited — written as a pattern table
+  inside the same card rather than a card of case studies, because the shared structure is the
+  lesson and the individual incidents date badly
+- [x] Dependency Risk — transitive depth, typosquatting, abandoned packages
+- [x] Build System as a Target — the CI runner is production-adjacent — *Securing the Pipeline*
+- [x] Trust Decisions — pinning, vendoring, mirrors, and their maintenance cost — split where the
+  reader meets each: pinning's cost with dependency risk, mirrors with internal registries
 
-**Wave BE2 — Provenance & Attestation**
-- [ ] SLSA Levels — what each one actually requires you to change
-- [ ] Signing & Sigstore — keyless signing, transparency logs, verification
-- [ ] Attestations & in-toto — statements about how an artifact was produced
-- [ ] Verifying at Deploy Time — admission policy that refuses unsigned artifacts
-- [ ] Reproducible Builds — the property, the practical obstacles
+**Wave BE2 — Provenance & Attestation** — shipped into `eng`.
+- [x] SLSA Levels — what each one actually requires you to change
+- [x] Signing & Sigstore — keyless signing, transparency logs, verification
+- [x] Attestations & in-toto — statements about how an artifact was produced — same card; the
+  who/how distinction only lands when the two are taught together
+- [x] Verifying at Deploy Time — admission policy that refuses unsigned artifacts
+- [x] Reproducible Builds — the property, the practical obstacles
 
-**Wave BE3 — Operating It**
-- [ ] SBOM in Practice — generating, storing, and actually querying one
-- [ ] VEX — saying "we ship it but are not affected", credibly
-- [ ] Dependency Update Strategy — automated bumps without a broken main branch
-- [ ] Vulnerability Triage for Dependencies — reachability, exploitability, real priority
-- [ ] Responding to a Compromised Dependency — the first hour
+**Wave BE3 — Operating It** — shipped into `eng`.
+- [x] SBOM in Practice — generating, storing, and actually querying one
+- [x] VEX — saying "we ship it but are not affected", credibly
+- [x] Dependency Update Strategy — automated bumps without a broken main branch
+- [x] Vulnerability Triage for Dependencies — reachability, exploitability, real priority
+- [x] Responding to a Compromised Dependency — the first hour
 
-**Wave BE4 — Internal Supply Chain**
-- [ ] Securing the CI/CD Pipeline — secrets, runners, forks, and injection via pull request
-- [ ] Artifact Repositories — promotion, retention, immutability, access
-- [ ] Internal Package Registries — and the dependency-confusion class of attack
-- [ ] Golden Images & Base Layer Hygiene — one place to patch, one place to break
-- [ ] Developer Workstation Trust — the machine that signs your commits
+**Wave BE4 — Internal Supply Chain** — shipped into `eng`, except where noted.
+- [x] Securing the CI/CD Pipeline — secrets, runners, forks, and injection via pull request
+- [~] Artifact Repositories — promotion, retention, immutability, access — already carded as
+  *Artifact &amp; Registry Management* in `devops`; the new card cross-references it
+- [x] Internal Package Registries — and the dependency-confusion class of attack
+- [x] Golden Images & Base Layer Hygiene — one place to patch, one place to break — inside
+  *Securing the Pipeline*, where the rebuild-schedule point has something to attach to
+- [~] Developer Workstation Trust — the machine that signs your commits — the endpoint half is
+  carded in `endpoint`; the commit-signing half is a genuine small gap, left open
 
 ### TRACK BF — Privacy Engineering  (→ `grc` / `eng`)
 
@@ -6273,3 +6280,86 @@ is otherwise complete — conditional access and privileged-access tiering are a
 `annotate_acronyms.py` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
 budget after build: raw 4.7 / 8.0 MB, gzip 1,257 / 2,200 KB, DOM 416 / 1,500, content elements
 98,092 / 175,000.
+
+---
+
+## Session record — Track BE: software supply chain and integrity
+
+Thirteenth content wave. The whole track, in one pass, into `eng`.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| `in-toto`, `reproducible build`, `artifact repository`, `golden image` | 0 |
+| `VEX` | acronym list and one unrelated `linux` hit only |
+| `dependency confusion` | 1, in `threat` |
+| `SLSA`, `sigstore` | present in `devops` and `threat` |
+| `SBOM` | present in four domains |
+
+The middle rows made this an audit that had to read rather than count. `devops` carries *Software
+Supply Chain Security — SBOM…* and `sec` carries *Supply Chain Security — Trust What You Build
+With*; both are real cards and both are roughly three concept cards long. Reading them showed the
+shape: they name SBOM, SLSA and sigstore and say why each matters. Nothing anywhere says what a
+SLSA level costs you, how keyless signing removes the key, what a VEX justification has to contain,
+or what you do in the hour after a dependency you ship turns out to be malicious.
+
+### The domain decision
+
+The plan targets `eng` / `sec`. It went entirely to `eng`, for two reasons. The material is about
+how software gets built — the reader who needs it is the one already thinking about builds,
+pipelines and dependencies. And `sec` had just reached 78 topics in the previous wave while `eng`
+sat at 68; concentrating a third supply-chain cluster in `sec` would have made the largest domain
+larger while leaving the engineering domain without the material its own readers need. The new
+cards cross-reference `devops` for policy-as-code and registry mechanics, and `ops` for incident
+response, so the existing cards stay the entry points they already were.
+
+### What shipped
+
+**8 cards into `eng`**, 68 → 76. Site: 1,241 → **1,249 topics**.
+
+| Group | Cards |
+|---|---|
+| Understanding the chain (BE1) | Where a Build Actually Comes From · Dependency Risk |
+| Provenance (BE2) | SLSA Levels · Signing, Sigstore &amp; Attestation · Verifying at Deploy Time |
+| Operating it (BE3) | SBOM in Practice &amp; VEX · Dependency Triage &amp; Update Strategy |
+| Internal chain (BE4) | Securing the Pipeline |
+
+### What these cards are actually about
+
+The organising observation, stated in the first card and paid off in the last: in every one of these
+attacks **nothing goes wrong on the victim's side.** The repository is untouched, the reviews
+happened, the signature verifies. That is why signature-checking and publisher-verification controls
+do not fire — the attacker satisfied both. It is also the argument for provenance: *which build,
+from which source, on which system* names facts an attacker cannot fabricate by holding a key.
+
+Four specifics worth carrying:
+
+- **`cosign verify $IMAGE` on its own is close to meaningless.** Keyless signing is open by design,
+  so a valid signature only proves somebody signed. The control is `--certificate-identity-regexp`
+  anchored to the start of the string, plus the issuer, plus verifying by digest rather than by a
+  mutable tag.
+- **Pinning and a working update process are one control, not two.** Pinning defends against
+  takeover, protestware and republished versions, and it also stops security fixes arriving. The
+  combination that works is a cooling-off delay on new releases plus auto-merge once they have aged.
+- **Generating provenance and verifying it are different projects, and the second is the control.**
+  Generation breaks nothing so it ships; enforcement can stop a deploy so it is deferred. The
+  rollout sequence in the deploy-time card exists because every failed attempt at this control
+  fails the same way — global enforcement on a Tuesday, universal exemption by Thursday.
+- **A compromised dependency is not a vulnerability to patch.** It is code that already executed on
+  developer machines and CI runners. Removing the package restores a clean tree and does nothing
+  about the credentials read an hour after install; the runners are compromised hosts and their
+  secrets are burned.
+
+### Track BE after this wave
+
+Two items left open deliberately, both marked `[~]` above: artifact repositories, already carded in
+`devops`; and developer-workstation trust, whose endpoint half is in `endpoint` and whose
+commit-signing half is a genuine small gap.
+
+### Verification
+
+`lint_content.py` 1,249 topics / 153 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only eng` touched only the 8 new cards, no
+churn · `--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 4.7 / 8.0 MB, gzip
+1,269 / 2,200 KB, DOM 416 / 1,500, content elements 98,725 / 175,000.

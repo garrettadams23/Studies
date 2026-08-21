@@ -3964,3 +3964,698 @@
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: WHERE A BUILD COMES FROM ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏗️</span>
+    <span class="topic-name">Where a Build Actually Comes From — Every Input, Including the Ones You Forgot</span>
+    <span class="topic-badge">Supply Chain</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Your Source Code Is a Minority Shareholder in Your Artifact</div>
+      <div class="concept-desc">
+        Ask an engineer what goes into their production container and they will describe the
+        repository. Then count what the build actually consumed: a base image from a public
+        registry, a package index resolving several hundred transitive dependencies, a compiler
+        toolchain, a handful of CI actions pulled by tag from third-party repositories, build-time
+        environment variables, and whatever the vendored install script decided to fetch. By volume,
+        the code your team wrote is usually a rounding error.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          Supply-chain security is the discipline of taking that list seriously. Every input is a
+          place someone else's decision becomes your running code, and the defining property of the
+          category is that <em>nothing goes wrong on your side.</em> Your repository is untouched,
+          your reviews happened, your tests passed. The compromise entered through a door you built
+          on purpose and then stopped looking at.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Input Inventory, and What Compromising Each One Buys</div>
+      <div class="concept-desc">
+        Enumerate these for one real service before reading further. The exercise usually finds two
+        or three inputs nobody had thought of as inputs at all.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Input</th><th>What an attacker gets</th><th>Typical control</th></tr></thead>
+          <tbody>
+            <tr><td>Source repository</td><td>Whatever the reviewer misses</td><td>Branch protection, required review, signed commits</td></tr>
+            <tr><td>Direct dependencies</td><td>Code running with your application's privileges</td><td>Pinning, lockfiles, review of additions</td></tr>
+            <tr><td>Transitive dependencies</td><td>The same, from a package nobody chose</td><td>Lockfile integrity hashes; depth awareness</td></tr>
+            <tr><td>Base image</td><td>Everything under your application layer</td><td>Digest pinning, minimal bases, scheduled rebuilds</td></tr>
+            <tr><td>Build toolchain</td><td>Compiler-level insertion, invisible in source</td><td>Trusted, versioned, reproducible toolchains</td></tr>
+            <tr><td>CI actions and plugins</td><td>Full access to the build, its secrets and its outputs</td><td>Pin to commit SHA <span class="acro-exp">(Secure Hash Algorithm)</span>, never to a moving tag</td></tr>
+            <tr><td>The runner itself</td><td>Every secret any job on it can reach</td><td>Ephemeral runners; no shared state between jobs</td></tr>
+            <tr><td>Package registry availability</td><td>Substitution, or a build that cannot happen</td><td>Internal mirror with an audit trail</td></tr>
+            <tr><td>Install and post-install scripts</td><td>Arbitrary execution at install time, on every machine</td><td>Disable where the ecosystem allows; review where it does not</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Pattern Across the Famous Incidents</div>
+      <div class="concept-desc">
+        The well-known supply-chain compromises look different in the write-ups and share one
+        structure: a trusted distribution path was used exactly as designed.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Entry point</th><th>Why the victim's controls did not fire</th></tr></thead>
+          <tbody>
+            <tr><td>Build system of a trusted vendor</td><td>The update was genuinely signed by the vendor — signature checks passed</td></tr>
+            <tr><td>Maintainer account of a popular package</td><td>The publisher was the real publisher, using the real credential</td></tr>
+            <tr><td>A maintainer handing the project to a volunteer</td><td>No technical control models a change of intent</td></tr>
+            <tr><td>A CI workflow triggered by an external pull request</td><td>The pipeline ran attacker-supplied code with repository secrets, as configured</td></tr>
+            <tr><td>A package name the internal registry did not own</td><td>The resolver preferred the public copy, following its documented rules</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Read the second column as the design brief for everything that follows. Controls that ask
+          "is this signed?" or "is this the real publisher?" answer a question the attacker has
+          already satisfied. The useful questions are <em>which build produced this, from which
+          source, on which system</em> — which is what provenance and attestation exist to answer.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DEPENDENCY RISK ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📦</span>
+    <span class="topic-name">Dependency Risk — Transitive Depth, Typosquatting &amp; the Abandoned Package</span>
+    <span class="topic-badge">Supply Chain</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">You Reviewed the One You Chose; You Installed Several Hundred</div>
+      <div class="concept-desc">
+        A team adopts a library after a genuine discussion — maintainership, licence, activity,
+        whether it does more than needed. That discussion covers one node. Installing it pulls its
+        dependencies, and theirs, typically two orders of magnitude more code than the thing that
+        was evaluated. Nobody chose those. Nobody reviewed them. Each one can execute at install
+        time in most ecosystems, and each one is a maintainer account that can be phished.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          The useful metric is not dependency count, which nobody can act on. It is
+          <em>how many distinct maintainers can put code on your production machines without anyone
+          on your team approving it.</em> That number is usually in the hundreds, it is computable
+          from the lockfile, and it changes the conversation because it is a count of people rather
+          than a count of packages.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Attack Families, and the Control That Actually Stops Each</div>
+      <div class="concept-desc">
+        These are frequently discussed as one topic and defended against as if one control covered
+        them. They do not share a control.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Family</th><th>Mechanism</th><th>What stops it</th></tr></thead>
+          <tbody>
+            <tr><td>Typosquatting</td><td>A package named one character from a popular one</td><td>Lockfiles and an internal mirror; a human never types it twice</td></tr>
+            <tr><td>Dependency confusion</td><td>A public package matching an internal name, higher version</td><td>Scoped names you own; a resolver configured never to fall back to public</td></tr>
+            <tr><td>Maintainer account takeover</td><td>Real package, real name, hijacked publishing credential</td><td>Pinning, plus a cooling-off delay before adopting new versions</td></tr>
+            <tr><td>Malicious handover</td><td>An exhausted maintainer accepts help from a stranger</td><td>Nothing technical — watch for ownership changes and stay pinned</td></tr>
+            <tr><td>Protestware and sabotage</td><td>The genuine author ships harmful behaviour deliberately</td><td>Pinning; a mirror that does not re-resolve on its own</td></tr>
+            <tr><td>Abandonment</td><td>No malice, no patches, no response to reports</td><td>Track maintenance signals; budget replacement before it is urgent</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Notice how much work pinning does across that column, and what it costs: pinned
+          dependencies do not receive security fixes on their own either. Pinning is only safe when
+          it is paired with a working update process — which is why the two have to be adopted
+          together rather than in sequence.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Judging a Dependency Before You Take It</div>
+      <div class="concept-desc">
+        Star counts and download numbers measure popularity, and popularity is a reason an attacker
+        would target a package rather than evidence that it is safe. These signals are more useful
+        and take about five minutes to check.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Signal</th><th>What it tells you</th></tr></thead>
+          <tbody>
+            <tr><td>Number of maintainers with publish rights</td><td>One is a bus factor and a single phishing target; twenty is a wide door</td></tr>
+            <tr><td>Whether releases are built by CI from a tagged commit</td><td>A hand-uploaded artifact cannot be traced to any source</td></tr>
+            <tr><td>Its own transitive count</td><td>You are adopting all of it, not the top node</td></tr>
+            <tr><td>Whether install-time scripts run</td><td>Turns installation into code execution on every developer machine</td></tr>
+            <tr><td>Time to fix the last security report</td><td>Predicts your exposure window better than any other single number</td></tr>
+            <tr><td>Whether you would use ten percent of it</td><td>The best dependency decision is frequently forty lines of your own code</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SLSA LEVELS ────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🪜</span>
+    <span class="topic-name">SLSA Levels — What Each One Actually Requires You to Change</span>
+    <span class="topic-badge">Supply Chain</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Ladder for Build Integrity, Not a Checklist for Security</div>
+      <div class="concept-desc">
+        SLSA — Supply-chain Levels for Software Artifacts — grades one narrow question: how much can
+        a consumer of your artifact trust a statement about where it came from? It says nothing
+        about whether your code is any good, whether your dependencies are safe, or whether the
+        thing you built is worth running. That narrowness is the point. It makes the levels
+        achievable, and it makes them mean something specific when claimed.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          The framing that makes it click: each level removes one way an attacker could lie about
+          provenance. Level 1 makes a claim exist at all. Level 2 makes the claim come from the
+          build service rather than from whoever ran it. Level 3 makes the build itself hard to
+          tamper with while it runs.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Levels, and the Work Each One Is</div>
+      <div class="concept-desc">
+        Most teams on a managed CI platform are close to Level 2 without knowing it, and the
+        remaining step is usually configuration rather than engineering.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Level</th><th>Requirement</th><th>What you actually do</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>No guarantees</td><td>The default; artifacts with no recorded origin</td></tr>
+            <tr><td>1</td><td>Provenance exists</td><td>Build automatically and emit a provenance document with the artifact</td></tr>
+            <tr><td>2</td><td>Provenance is signed by the build platform</td><td>Use a hosted build service that signs; stop publishing from laptops</td></tr>
+            <tr><td>3</td><td>The build is hardened and isolated</td><td>Ephemeral, isolated runners; secrets unreachable by user-defined build steps</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The single highest-value move on that ladder is the Level 2 one, and it is organisational
+          rather than technical: <em>no artifact reaches a registry except from CI.</em> The
+          release-from-a-laptop path is how most unattributable artifacts come to exist, and closing
+          it is what makes every later control meaningful.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">What a SLSA Level Does Not Tell You</div>
+      <div class="concept-desc">
+        Level claims get read as security ratings, which they are not, and the gap causes real
+        misplaced confidence.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>It does not mean</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>The code was reviewed</td><td>Source-integrity requirements sit outside the build track</td></tr>
+            <tr><td>The dependencies are safe</td><td>It describes this build, not what the build consumed</td></tr>
+            <tr><td>There are no vulnerabilities</td><td>Provenance is orthogonal to scanning entirely</td></tr>
+            <tr><td>The artifact is what you want</td><td>It proves origin, not fitness — a faithfully built backdoor is still Level 3</td></tr>
+            <tr><td>Anyone checked the provenance</td><td>Generating it and verifying it are different projects, and the second is often skipped</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          That last row is the common failure. Provenance generation gets adopted because it is a
+          pipeline change one team can make alone; verification gets deferred because it can break
+          deploys. Unverified provenance is metadata, not a control.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SIGNING & ATTESTATION ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">✍️</span>
+    <span class="topic-name">Signing, Sigstore &amp; Attestation — Proving How an Artifact Was Made</span>
+    <span class="topic-badge">Supply Chain</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Signing Answers "Who"; Attestation Answers "How"</div>
+      <div class="concept-desc">
+        A signature binds an artifact to a key, and every major supply-chain compromise of the last
+        decade produced correctly signed artifacts — because the attacker reached the build system
+        that holds the key. Signing alone therefore proves something true and insufficient. An
+        attestation is a signed <em>statement about</em> an artifact: this digest was built from
+        this commit, by this workflow, on this platform, at this time. That is a claim an attacker
+        cannot satisfy merely by holding a key, because it names facts checkable against systems
+        they do not control.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          in-toto is the format those statements are written in; SLSA provenance is one specific
+          kind of in-toto statement. Worth holding onto, because the two names appear together
+          constantly and are frequently assumed to be alternatives.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Keyless Signing — Removing the Thing That Gets Stolen</div>
+      <div class="concept-desc">
+        The traditional obstacle to signing was never the cryptography; it was owning a long-lived
+        private key. It has to be stored somewhere, reachable by CI, rotated, and recovered when the
+        person who generated it leaves. Most organisations that "do signing" have a key in a
+        variable that has not moved in four years.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          Sigstore's keyless flow removes the object entirely. The build proves its identity with a
+          short-lived OIDC <span class="acro-exp">(OpenID Connect)</span> token — from GitHub Actions, GitLab, or a cloud workload identity — and
+          receives a certificate valid for minutes, long enough to sign. The certificate, the
+          signature and the identity that requested it are recorded in a public append-only
+          transparency log. Nothing durable exists to steal afterwards.
+        </div>
+        <table class="ref-table">
+          <thead><tr><th>Piece</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td>Fulcio</td><td>Issues a short-lived certificate bound to a verified identity</td></tr>
+            <tr><td>Rekor</td><td>Append-only transparency log of what was signed, by whom, and when</td></tr>
+            <tr><td>Cosign</td><td>The tool that signs, attests and verifies, usually against a registry</td></tr>
+            <tr><td>The identity</td><td>A workflow in a repository — not a person, and not a key</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The transparency log carries a second, quieter benefit: a maintainer can detect a
+          compromise by noticing signatures they did not produce. Without it, detection depends on
+          somebody reporting the malicious artifact after the fact.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Verify the Identity, Not Merely the Signature</div>
+      <div class="concept-desc">
+        The most common mistake with keyless signing is checking that a valid signature exists.
+        Anyone can produce one — the flow is open by design. What matters is <em>whose</em> identity
+        signed, and <em>which workflow</em> it ran in.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Says almost nothing: someone, somewhere, signed this</span>
+cosign verify $IMAGE
+
+<span class="com"># The real check: this identity, from this issuer, and no other</span>
+cosign verify $IMAGE \
+  --certificate-identity-regexp '^https://github.com/acme/api/.github/workflows/release.yml@refs/tags/' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          Two details decide whether this is a control or a ritual. Anchor the identity pattern to
+          the start of the string — an unanchored match against a repository name is satisfied by a
+          repository whose name merely contains it. And verify by digest rather than by tag: a tag
+          is a mutable pointer, so verifying <code>:latest</code> confirms a signature on whatever
+          the tag meant at that instant, which is not necessarily what gets pulled a second later.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: VERIFYING AT DEPLOY TIME ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🛂</span>
+    <span class="topic-name">Verifying at Deploy Time — Admission Policy &amp; Reproducible Builds</span>
+    <span class="topic-badge">Supply Chain</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Control Is the Refusal, Not the Signature</div>
+      <div class="concept-desc">
+        Everything upstream produces evidence. None of it constrains anything until some system
+        declines to run an artifact whose evidence is missing or wrong. That refusal is the entire
+        control, and it is the step most programmes never reach — because generating attestations
+        breaks nothing and enforcing them can stop a deploy at four in the afternoon.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          Put the gate where nothing can go around it. A check in the deploy pipeline is a good
+          start and is bypassed by anyone who applies a manifest directly; an admission controller
+          in the cluster sees every path. The policy machinery is the same as for any other
+          admission rule — see
+          <span class="xref">Policy as Code — OPA/Rego &amp; Kyverno</span>
+          in the DevOps domain for the mechanics.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Rolling It Out Without Stopping Deployments</div>
+      <div class="concept-desc">
+        The sequence matters more than the policy language. Every failed rollout of this control
+        looks the same: enforcement enabled globally on a Tuesday, three unrelated teams blocked by
+        Wednesday, exemption granted to everyone by Thursday.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stage</th><th>Action</th><th>Why this order</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Audit mode — log what would be refused, block nothing</td><td>Reveals the real inventory, which is always larger than expected</td></tr>
+            <tr><td>2</td><td>Fix the fixable — sign the internal images that simply were not</td><td>Most of the audit list is not exceptions, it is unfinished work</td></tr>
+            <tr><td>3</td><td>Enforce for one namespace that is already clean</td><td>Proves the mechanism with nothing at stake</td></tr>
+            <tr><td>4</td><td>Named, time-boxed exemptions for third-party images</td><td>Vendor images you cannot sign are the genuine long tail</td></tr>
+            <tr><td>5</td><td>Enforce by default; exemptions must be requested</td><td>Flips the default, which is the point of the whole exercise</td></tr>
+            <tr><td>6</td><td>Alert on exemption use and expiry</td><td>Otherwise the temporary list becomes the permanent one</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Decide the failure mode deliberately and write it down. If the policy engine or the
+          transparency log is unreachable, does the deploy proceed or stop? Fail-open makes the
+          control absent exactly when infrastructure is unhealthy — which is when an attacker would
+          prefer to act. Fail-closed can turn an outage in one dependency into an inability to
+          deploy the fix. Most teams should fail closed and keep a rehearsed break-glass path.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Reproducible Builds — The Property Underneath the Claim</div>
+      <div class="concept-desc">
+        A build is reproducible if the same source, built again, produces a bit-identical artifact.
+        That sounds academic until you notice what it enables: anyone can rebuild and compare, so a
+        compromised build system can be caught by a second party who does not trust the first. It
+        turns "trust this build" into "check this build", which is the only claim in the whole
+        supply-chain stack that does not eventually rest on trusting someone.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What breaks reproducibility</th><th>Usual fix</th></tr></thead>
+          <tbody>
+            <tr><td>Embedded build timestamps</td><td>Set <code>SOURCE_DATE_EPOCH</code> from the commit date</td></tr>
+            <tr><td>Filesystem ordering in archives</td><td>Sort entries explicitly; normalise permissions and ownership</td></tr>
+            <tr><td>Absolute paths baked into binaries</td><td>Build in a fixed path, or strip the prefix</td></tr>
+            <tr><td>Unpinned toolchain or base image</td><td>Pin by digest, including the compiler</td></tr>
+            <tr><td>Dependency resolution at build time</td><td>Lockfiles with hashes; a mirror that does not drift</td></tr>
+            <tr><td>Locale, timezone, hostname, random seeds</td><td>Fix them in the build environment</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Full bit-for-bit reproducibility is expensive in some ecosystems and cheap in others, so
+          treat it as a direction rather than a gate. Even partial progress pays: most of that list
+          is also what makes a build deterministic enough to debug, and a team that pins its
+          toolchain and drops its timestamps has removed real variance whether or not it ever
+          compares hashes with anyone.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SBOM & VEX ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📋</span>
+    <span class="topic-name">SBOM <span class="acro-exp">(Software Bill of Materials)</span> in Practice &amp; VEX <span class="acro-exp">(Vulnerability Exploitability eXchange)</span> — Querying It, and Saying "Not Affected" Credibly</span>
+    <span class="topic-badge">Supply Chain</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Question an SBOM Exists to Answer in Under an Hour</div>
+      <div class="concept-desc">
+        A software bill of materials is an inventory of what is inside an artifact. Its value is not
+        the document — it is the answer to one question, asked on a bad morning:
+        <em>which of our services contain this component, at which version, and which of those are
+        actually in production right now?</em> Organisations without an SBOM answer that by asking
+        every team and waiting two days. That delay is the entire cost being avoided.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          Which means the test of an SBOM programme is not whether documents are generated. It is
+          whether someone can run that query. An SBOM attached to a registry artifact and never
+          indexed is a file; an SBOM in a store you can query across every deployed version is an
+          incident-response capability. Generation is the easy half and gets all the attention.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Decisions That Determine Whether It Is Useful</div>
+      <div class="concept-desc">
+        A few early choices decide whether the resulting inventory answers real questions or merely
+        satisfies a contractual clause.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Decision</th><th>Get it right by</th></tr></thead>
+          <tbody>
+            <tr><td>When to generate</td><td>At build, from the build — a scan of the finished image guesses; the build knows</td></tr>
+            <tr><td>Which format</td><td>SPDX or CycloneDX; pick one, and care more about consistency than the choice</td></tr>
+            <tr><td>How deep</td><td>Include transitive dependencies and OS <span class="acro-exp">(Operating System)</span> packages, or you have documented the top layer</td></tr>
+            <tr><td>Where it lives</td><td>Attached to the artifact by digest, and indexed centrally — both, not either</td></tr>
+            <tr><td>Identifier discipline</td><td>Package URLs <span class="acro-exp">(Uniform Resource Locator)</span> and CPEs; free-text names cannot be matched to advisories</td></tr>
+            <tr><td>Coverage of what runs</td><td>Tie SBOMs to deployed digests, so the query returns services, not builds</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">VEX — The Document That Says "Present, But Not Exploitable"</div>
+      <div class="concept-desc">
+        An SBOM plus a vulnerability feed produces a list dominated by findings that do not apply:
+        the vulnerable function is never called, the affected code path is compiled out, the feature
+        is disabled. A Vulnerability Exploitability eXchange document is a machine-readable
+        statement of that judgement, attached to the artifact, so downstream consumers and scanners
+        stop re-raising it — and so the reasoning survives the person who made it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Status</th><th>Means</th><th>Obligation</th></tr></thead>
+          <tbody>
+            <tr><td>Not affected</td><td>Present, but not exploitable here</td><td>State a justification — this is the one that needs defending</td></tr>
+            <tr><td>Affected</td><td>Exploitable; action required</td><td>Advise what consumers should do meanwhile</td></tr>
+            <tr><td>Fixed</td><td>Remediated in this version</td><td>Say which version, precisely</td></tr>
+            <tr><td>Under investigation</td><td>Not yet determined</td><td>Legitimate, but it is a timer, not an answer</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The justifications are a fixed vocabulary — component not present, vulnerable code not in
+          the execution path, inline mitigation already exists, and so on — and that constraint is
+          what gives VEX its integrity. "Not affected" without a justification is an assertion;
+          with one, it is a claim somebody can check and, if wrong, correct. Treat every "not
+          affected" as a statement you will one day have to defend to an auditor or a customer,
+          because you will.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DEPENDENCY TRIAGE & UPDATES ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔁</span>
+    <span class="topic-name">Dependency Triage &amp; Update Strategy — Reachability, Bumps &amp; the First Hour of a Compromise</span>
+    <span class="topic-badge">Supply Chain</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Severity Is About the Vulnerability; Priority Is About You</div>
+      <div class="concept-desc">
+        A dependency scanner returns hundreds of findings sorted by a score computed by someone who
+        has never seen your system. Working that list top-down is how teams spend a quarter on
+        critical-rated issues in code paths their application never executes, while a medium-rated
+        flaw sits in the request handler on the public endpoint. The score is an input to
+        prioritisation, not the prioritisation.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question</th><th>Why it outranks the score</th></tr></thead>
+          <tbody>
+            <tr><td>Is the vulnerable function reachable from our code?</td><td>The majority of findings fail this and can be deferred honestly</td></tr>
+            <tr><td>Is it a build-time or a runtime dependency?</td><td>A test-only package is not in the deployed artifact</td></tr>
+            <tr><td>Is the affected component exposed to untrusted input?</td><td>Decides whether an attacker can reach it at all</td></tr>
+            <tr><td>Is there a public exploit, and is it being used?</td><td>Known-exploited status changes the timeline more than any severity band</td></tr>
+            <tr><td>What is the fix's blast radius?</td><td>A patch bump and a major-version migration are different pieces of work</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Reachability analysis is the highest-leverage tool here, and its limits should be stated
+          plainly: it under-reports on dynamic dispatch, reflection and anything invoked by string
+          name. Use it to justify deferring, never to justify ignoring, and re-run it when the code
+          around the call sites changes.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">An Update Strategy That Does Not Break Main</div>
+      <div class="concept-desc">
+        Automated update tooling either becomes the thing that keeps a codebase current, or a
+        permanent wall of ignored pull requests that trains everyone to ignore dependency alerts.
+        The difference is configuration, not tooling choice.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Group patch and minor bumps into one scheduled pull request</td><td>One review a week instead of thirty notifications</td></tr>
+            <tr><td>Auto-merge patch updates when the full suite passes</td><td>Removes the work nobody was ever going to do by hand</td></tr>
+            <tr><td>Raise major versions individually, with the changelog</td><td>These are migrations; they need a human and a moment</td></tr>
+            <tr><td>Apply a cooling-off delay before adopting a new release</td><td>Most malicious releases are pulled within days of publication</td></tr>
+            <tr><td>Update continuously rather than in a quarterly sweep</td><td>Small diffs are reviewable; a year of drift is a project</td></tr>
+            <tr><td>Treat a red update pull request as a real signal</td><td>It is the earliest, cheapest warning that a dependency changed behaviour</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The cooling-off delay and auto-merge look contradictory and are not: hold new versions
+          briefly, then adopt them automatically once they have aged. That combination is what makes
+          pinning safe, and it is the reason the two controls belong in the same conversation.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">A Dependency You Ship Was Compromised — The First Hour</div>
+      <div class="concept-desc">
+        This is a different exercise from patching a vulnerability. A vulnerability is a weakness
+        that might be exploited; a compromised package is code that already ran, on developer
+        machines and build runners, with whatever those hold.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Order</th><th>Step</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Determine exposure from the SBOM <span class="acro-exp">(Software Bill of Materials)</span> store — which versions, which services, which are deployed</td></tr>
+            <tr><td>2</td><td>Establish the window: when the bad version was published, and when you first resolved it</td></tr>
+            <tr><td>3</td><td>Stop the spread — pin or block the version in the internal mirror so no new build picks it up</td></tr>
+            <tr><td>4</td><td>Treat CI runners and developer machines that installed it as compromised hosts, not as build infrastructure</td></tr>
+            <tr><td>5</td><td>Rotate every secret those runners could reach, on the assumption they were read</td></tr>
+            <tr><td>6</td><td>Rebuild and redeploy from a clean resolution; roll forward rather than merely reverting the manifest</td></tr>
+            <tr><td>7</td><td>Hunt for what the payload did — outbound connections, new credentials, modified artifacts</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Steps 4 and 5 are the ones routinely skipped, and they are the ones that matter. Removing
+          the package restores a clean dependency tree and does nothing about a credential that was
+          exfiltrated an hour after it was installed. The wider incident process is in
+          <span class="xref">Incident Response — What to Do When It Goes Wrong</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SECURING THE PIPELINE ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚙️</span>
+    <span class="topic-name">Securing the Pipeline — Secrets, Runners, Fork Pull Requests &amp; Internal Registries</span>
+    <span class="topic-badge">Supply Chain</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">CI Is Production, and It Is Usually Governed Like a Developer Tool</div>
+      <div class="concept-desc">
+        The build system holds deployment credentials, signing identities, registry write access and
+        cloud roles, and it executes code from every branch anyone pushes. By capability it is one
+        of the most privileged systems in the organisation. By governance it is normally a
+        configuration file that any contributor can edit, reviewed with the same attention as a
+        change to a README.
+      </div>
+      <div class="dw">
+        <div class="concept-desc" style="margin-top:0">
+          The mental correction that fixes most of the specific problems: <em>a pipeline definition
+          is privileged code.</em> Reviewing a workflow change is reviewing something that runs with
+          production credentials. Requiring approval for changes under the CI directory, separately
+          from ordinary code review, costs almost nothing and closes the most direct path there is.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Failure Modes, Ranked by How Often They Are Real</div>
+      <div class="concept-desc">
+        These are the findings that actually appear in pipeline reviews, in roughly the order they
+        turn up.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Failure</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Workflows triggered by fork pull requests can reach secrets</td><td>Use the unprivileged trigger for untrusted code; never check out and run a fork's code in a privileged job</td></tr>
+            <tr><td>Third-party actions pinned to a mutable tag</td><td>Pin to a full commit SHA <span class="acro-exp">(Secure Hash Algorithm)</span>; a tag can be repointed by whoever owns it</td></tr>
+            <tr><td>Long-lived cloud keys stored as CI secrets</td><td>OIDC <span class="acro-exp">(OpenID Connect)</span> federation from the CI provider, scoped to repository and branch</td></tr>
+            <tr><td>Every job gets every secret</td><td>Scope secrets per environment and per job; most jobs need none</td></tr>
+            <tr><td>Self-hosted runners reused between jobs</td><td>Ephemeral runners — otherwise one job's leftovers are the next job's inputs</td></tr>
+            <tr><td>Untrusted input interpolated into a shell step</td><td>Pass it as an environment variable and quote it; a branch or title can be a command</td></tr>
+            <tr><td>Caches shared across branches</td><td>A poisoned cache entry from any branch reaches the release build</td></tr>
+            <tr><td>Deployment credentials usable from any branch</td><td>Bind deploy identity to protected branches and tags only</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The fork-pull-request row causes the worst outcomes because the vulnerable configuration
+          exists for a good reason — maintainers want CI results on external contributions. The
+          workable answer is running untrusted code without secrets and deferring anything
+          privileged to a separate, approved workflow.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Internal Registries and the Dependency-Confusion Class</div>
+      <div class="concept-desc">
+        An internal registry is usually adopted for caching and availability, and it happens to be
+        the control that stops several attacks at once — but only if it is configured to be
+        authoritative rather than merely first in a list.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Setting</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Never fall back to the public index for a name you own</td><td>The whole dependency-confusion attack is that fallback</td></tr>
+            <tr><td>Own the namespace publicly too — register the scope or prefix</td><td>Removes the possibility rather than mitigating it</td></tr>
+            <tr><td>Do not merge internal and public packages into one index</td><td>A merged view lets a higher public version win on name alone</td></tr>
+            <tr><td>Cache immutably; never re-fetch a version already stored</td><td>Defeats republished and tampered versions</td></tr>
+            <tr><td>Promote between repositories rather than rebuilding</td><td>The artifact tested is the artifact released</td></tr>
+            <tr><td>Make base and golden images rebuild on a schedule</td><td>One place to patch — but only if something rebuilds it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The golden-image row is the one that quietly decays. A shared base image is genuinely the
+          cheapest way to patch a fleet, and it becomes the cheapest way to ship a two-year-old
+          vulnerability everywhere the moment nobody owns rebuilding it. If you adopt one, the
+          rebuild schedule is part of the decision, not a follow-up task. Registry mechanics are in
+          <span class="xref">Artifact &amp; Registry Management</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
