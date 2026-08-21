@@ -2623,8 +2623,8 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 - [x] From Engineer to Manager — what you actually stop doing
 - [x] The First 90 Days Leading a Team — listen, map, stabilise, then change
 - [x] Delegation — the levels, and why "I'll just do it" is a trap
-- [ ] Your Calendar Is the Strategy — where a manager's time really goes
-- [ ] Keeping Technical Enough — staying credible without taking the work back
+- [x] Your Calendar Is the Strategy — where a manager's time really goes
+- [x] Keeping Technical Enough — staying credible without taking the work back
 
 **Wave AT2 — People**
 - [x] One-to-Ones That Are Worth Having — structure, cadence, and what not to use them for
@@ -2637,15 +2637,15 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 - [x] Writing a Job Description That Attracts the Right Person
 - [x] Designing an Interview Loop — signal per hour, and reducing bias
 - [x] Technical Assessment Without Hazing — realistic tasks, fair scope
-- [ ] Reference Checks & Offers — closing well, and the counter-offer conversation
+- [x] Reference Checks & Offers — closing well, and the counter-offer conversation
 - [x] Onboarding — the 30/60/90 that produces a contributor, not a spectator
 
 **Wave AT4 — Running the Work**
-- [ ] Planning Without Theatre — roadmaps, capacity, and honest estimates
-- [ ] Prioritisation Under Pressure — saying no with a reason attached
-- [ ] Project Management for Technical Leads — the minimum viable process
-- [ ] Managing Incidents as a Leader — comms, decisions, and protecting the responders
-- [ ] Metrics for Engineering Teams — what DORA does and does not tell you
+- [x] Planning Without Theatre — roadmaps, capacity, and honest estimates
+- [~] Prioritisation Under Pressure — saying no with a reason attached — **already carded as 'Portfolio & Prioritisation — Deciding What Not to Do, Defensibly' in eng and 'Difficult Conversations — Angry Users, VIP Pressure & Saying No' in ops**
+- [x] Project Management for Technical Leads — the minimum viable process
+- [~] Managing Incidents as a Leader — comms, decisions, and protecting the responders — **already carded as 'Incident Command — Running a Major Incident Without Chaos' in ops**
+- [~] Metrics for Engineering Teams — what DORA does and does not tell you — **already carded as 'DORA Metrics — Measuring Delivery Performance' in devops**
 
 **Wave AT5 — Organisation & Influence**
 - [x] Team Topologies — stream-aligned, platform, enabling, complicated-subsystem
@@ -5924,3 +5924,14 @@ the other person was bored and now is not.
 Eight items remain: the manager's calendar, keeping technical enough, reference checks and offers,
 planning without theatre, prioritisation under pressure, project management for technical leads,
 managing incidents as a leader, and engineering team metrics.
+
+> **Wave 2 shipped in the same session — Track AT is closed.** Five written, three marked `[~]` as
+> already carded (prioritisation under pressure, incident leadership, DORA metrics). `eng` is
+> **68 cards**; the site is **1,198 topics**. **Six tracks closed this session — W, BA, AA, AM, AS
+> and AT.**
+>
+> The velocity card in this wave names the session's recurring pattern explicitly for the first
+> time: velocity used to forecast is useful and velocity used as a target inflates, which is the
+> same failure as the service-desk metrics, the auto-close automation and the machine-learning loss
+> function. Three waves in three different domains arrived at it independently, and the card now
+> says so — it is one pattern rather than three coincidences.
