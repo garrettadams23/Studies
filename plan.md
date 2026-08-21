@@ -1799,39 +1799,39 @@ Veeam mechanics) are genuine but narrower and can follow if the estate needs the
 actually touch. Vendor-specific, deliberately.
 
 **Wave AB1 — Cisco IOS in Practice**
-- [ ] IOS Navigation — modes, `show` commands worth memorising, config archives
-- [ ] Switch Configuration — VLANs, trunks, port security, PortFast/BPDU guard
-- [ ] Router Configuration — interfaces, static and dynamic routing, ACLs
-- [ ] Troubleshooting on IOS — `show interface`, CDP/LLDP, SPAN, debug safely
-- [ ] Config Management & Upgrades — backups, staged upgrades, rollback plan
+- [x] IOS Navigation — modes, `show` commands worth memorising, config archives
+- [x] Switch Configuration — VLANs, trunks, port security, PortFast/BPDU guard
+- [~] Router Configuration — interfaces, static and dynamic routing, ACLs — **core routing, ACLs and interfaces are carded in 'Routing Protocols & WAN Technologies' and 'Routing, VLANs & Network Devices' in net**
+- [~] Troubleshooting on IOS — `show interface`, CDP/LLDP, SPAN, debug safely — **already carded as 'Network Device CLI — Show Commands' in net**
+- [x] Config Management & Upgrades — backups, staged upgrades, rollback plan
 
 **Wave AB2 — Enterprise Firewalls**
-- [ ] Firewall Policy Design — zones, rule order, the implicit deny, documentation
-- [ ] Palo Alto Concepts — App-ID, User-ID, security profiles, the commit model
-- [ ] FortiGate Concepts — policies, VDOMs, SD-WAN features, logging
-- [ ] NAT on Firewalls — source/destination NAT, hairpinning, and reading a flow
-- [ ] Firewall Troubleshooting — packet capture, session table, policy lookup order
+- [x] Firewall Policy Design — zones, rule order, the implicit deny, documentation
+- [x] Palo Alto Concepts — App-ID, User-ID, security profiles, the commit model
+- [x] FortiGate Concepts — policies, VDOMs, SD-WAN features, logging
+- [x] NAT on Firewalls — source/destination NAT, hairpinning, and reading a flow
+- [x] Firewall Troubleshooting — packet capture, session table, policy lookup order
 
 **Wave AB3 — Wireless Engineering**
-- [ ] RF Fundamentals — channels, width, co-channel interference, cell design
-- [ ] Site Surveys — predictive vs passive vs active, and reading a heat map
-- [ ] Enterprise Wi-Fi Auth — 802.1X, RADIUS, certificates, PSK's remaining niche
-- [ ] Controller vs Cloud-Managed — Meraki/Mist/Aruba models compared
-- [ ] Wireless Troubleshooting — roaming, sticky clients, retries, "it's slow" triage
+- [x] RF Fundamentals — channels, width, co-channel interference, cell design
+- [x] Site Surveys — predictive vs passive vs active, and reading a heat map
+- [~] Enterprise Wi-Fi Auth — 802.1X, RADIUS, certificates, PSK's remaining niche — **already carded as '802.1X & NAC — Who Gets On the Network?' in net**
+- [x] Controller vs Cloud-Managed — Meraki/Mist/Aruba models compared
+- [x] Wireless Troubleshooting — roaming, sticky clients, retries, "it's slow" triage
 
 **Wave AB4 — Network Operations**
-- [ ] Monitoring a Network — SNMP, NetFlow/IPFIX, syslog, streaming telemetry
-- [ ] Change Control for Networks — the discipline that prevents the 2 a.m. outage
-- [ ] Network Documentation — diagrams that stay current, IP plans, cable schedules
-- [ ] Capacity & Utilisation — reading trends before users report slowness
-- [ ] Network Automation Basics — Netmiko/NAPALM/Ansible for network devices
+- [~] Monitoring a Network — SNMP, NetFlow/IPFIX, syslog, streaming telemetry — **already carded as 'Network Monitoring — Seeing What Flows Through' in net**
+- [~] Change Control for Networks — the discipline that prevents the 2 a.m. outage — **already carded as 'Change Management – The Process That Prevents Self-Inflicted Outages' in grc, and the cutover card above**
+- [x] Network Documentation — diagrams that stay current, IP plans, cable schedules
+- [~] Capacity & Utilisation — reading trends before users report slowness — **already carded as 'Capacity Planning – Answering "Will We Run Out of Room?" Before You Do' in ops**
+- [~] Network Automation Basics — Netmiko/NAPALM/Ansible for network devices — **already carded as 'Network Automation — Ansible, Netmiko & NAPALM' in net**
 
 **Wave AB5 — Physical & Field**
-- [ ] Structured Cabling — standards, labelling, patch panel discipline
-- [ ] Rack & Power Planning — U space, PDUs, redundant feeds, airflow
-- [ ] Fiber in Practice — types, connectors, cleaning, loss budgets
-- [ ] Cutover Nights — planning, comms, rollback triggers, go/no-go
-- [ ] Field Toolkit — what to actually carry, and the tests each tool answers
+- [x] Structured Cabling — standards, labelling, patch panel discipline
+- [x] Rack & Power Planning — U space, PDUs, redundant feeds, airflow
+- [x] Fiber in Practice — types, connectors, cleaning, loss budgets
+- [x] Cutover Nights — planning, comms, rollback triggers, go/no-go
+- [x] Field Toolkit — what to actually carry, and the tests each tool answers
 
 ### TRACK AC — Automation for Administrators  (→ `script` + `ops`)
 
@@ -5988,3 +5988,51 @@ coverage, quietly dropping the techniques that keep failing — each is locally 
 together they produce a rising score and a static defence. This is the fourth independent
 appearance of the proxy-becomes-target pattern this session, after the service-desk metrics, the
 ML loss function and engineering velocity.
+
+---
+
+## Session record — Track AB: the operational layer under `net`'s concept cards
+
+Ninth content wave, and the audit found a gap with a shape worth naming: `net` had 57 cards of
+*concepts* — switching and VLANs, firewalls, NAT, 802.1X, wireless security, monitoring,
+automation — and almost nothing at the level where someone configures or troubleshoots them.
+
+| Probe | Mentions |
+|---|---:|
+| `bpdu guard`, `portfast`, `site survey`, `co-channel`, `rule order`, `session table`, `policy lookup`, `source nat`, `destination nat`, `structured cabling`, `go/no-go`, `rollback trigger` | **0** each |
+| `switchport mode`, `access-list`, `show running-config`, `implicit deny`, `patch panel` | 1 each |
+
+The site could explain what a VLAN is and not what a trunk misconfiguration looks like; what a
+firewall does and not why the rule never matched.
+
+### What shipped
+
+**13 cards into `net`**, 57 → 70. Site: 1,207 → **1,220 topics**. `net` is now the largest domain,
+which is defensible for a site whose readers are largely working toward Network+ and beyond.
+
+| Group | Cards |
+|---|---|
+| Device operations | Config management, archives &amp; upgrades · Switch port configuration &amp; edge protection |
+| Firewalls | Policy design &amp; rule order · NAT in practice · Firewall troubleshooting · Vendor firewall concepts |
+| Wireless | RF fundamentals &amp; site surveys · Wireless troubleshooting · Controller vs cloud-managed |
+| Physical &amp; field | Structured cabling, racks &amp; fibre · The field toolkit |
+| Change | Cutover nights · Network documentation that stays current |
+
+Seven track items are `[~]`: router configuration, IOS troubleshooting, enterprise Wi-Fi auth,
+network monitoring, network automation, network change control and capacity — all already carded,
+most of them in `net` itself.
+
+### The through-line
+
+Every card in this wave is written from the position of someone connected *through* the thing they
+are changing. That is the difference between network operations and every other kind: the timed
+reload before a risky change, out-of-band access verified before the cutover starts rather than
+when it is needed, the rollback trigger agreed while everyone is rested, and never saving a
+configuration until you have proved you can still reach the device. Three separate cards arrive at
+the same discipline from different directions, which is why it is stated explicitly in the first
+one rather than implied across all of them.
+
+Two specifics worth carrying: PortFast without BPDU guard converts a slow-boot complaint into an
+outage risk, so they are a pair and never one alone; and hairpin NAT is usually the wrong fix for
+"works from home, not from the office" — split-horizon DNS is simpler, faster, and removes the
+firewall from a path it does not need to be in.
