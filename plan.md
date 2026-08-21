@@ -2620,25 +2620,25 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 ~5 waves, ~25 cards. Complements the individual-contributor ladder in `eng`.
 
 **Wave AT1 — The Transition**
-- [ ] From Engineer to Manager — what you actually stop doing
-- [ ] The First 90 Days Leading a Team — listen, map, stabilise, then change
-- [ ] Delegation — the levels, and why "I'll just do it" is a trap
+- [x] From Engineer to Manager — what you actually stop doing
+- [x] The First 90 Days Leading a Team — listen, map, stabilise, then change
+- [x] Delegation — the levels, and why "I'll just do it" is a trap
 - [ ] Your Calendar Is the Strategy — where a manager's time really goes
 - [ ] Keeping Technical Enough — staying credible without taking the work back
 
 **Wave AT2 — People**
-- [ ] One-to-Ones That Are Worth Having — structure, cadence, and what not to use them for
-- [ ] Feedback & Difficult Conversations — specific, timely, and survivable
-- [ ] Performance Management — the honest version, including managing someone out
-- [ ] Career Development for Your Reports — growth plans that are not just promotion
-- [ ] Retention — why good people leave, and the ones you can prevent
+- [x] One-to-Ones That Are Worth Having — structure, cadence, and what not to use them for
+- [x] Feedback & Difficult Conversations — specific, timely, and survivable
+- [x] Performance Management — the honest version, including managing someone out
+- [x] Career Development for Your Reports — growth plans that are not just promotion
+- [x] Retention — why good people leave, and the ones you can prevent
 
 **Wave AT3 — Hiring**
-- [ ] Writing a Job Description That Attracts the Right Person
-- [ ] Designing an Interview Loop — signal per hour, and reducing bias
-- [ ] Technical Assessment Without Hazing — realistic tasks, fair scope
+- [x] Writing a Job Description That Attracts the Right Person
+- [x] Designing an Interview Loop — signal per hour, and reducing bias
+- [x] Technical Assessment Without Hazing — realistic tasks, fair scope
 - [ ] Reference Checks & Offers — closing well, and the counter-offer conversation
-- [ ] Onboarding — the 30/60/90 that produces a contributor, not a spectator
+- [x] Onboarding — the 30/60/90 that produces a contributor, not a spectator
 
 **Wave AT4 — Running the Work**
 - [ ] Planning Without Theatre — roadmaps, capacity, and honest estimates
@@ -2648,11 +2648,11 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 - [ ] Metrics for Engineering Teams — what DORA does and does not tell you
 
 **Wave AT5 — Organisation & Influence**
-- [ ] Team Topologies — stream-aligned, platform, enabling, complicated-subsystem
-- [ ] Conway's Law in Practice — shaping the org to get the architecture you want
-- [ ] Managing Up — giving your leadership what they need to back you
-- [ ] Cross-Team Politics — alliances, escalation, and picking battles
-- [ ] Building a Culture Deliberately — rituals, defaults, and what you tolerate
+- [x] Team Topologies — stream-aligned, platform, enabling, complicated-subsystem
+- [x] Conway's Law in Practice — shaping the org to get the architecture you want
+- [x] Managing Up — giving your leadership what they need to back you
+- [x] Cross-Team Politics — alliances, escalation, and picking battles
+- [x] Building a Culture Deliberately — rituals, defaults, and what you tolerate
 
 ### TRACK AU — Enablement, Training & Technical Influence
 
@@ -5882,3 +5882,45 @@ board.
 > because it means saying "not yet" out loud; and reporting upward, where every metric needs the
 > sentence that says why anyone should care — rising cloud spend against falling unit cost being
 > the success story that reads as a problem without it.
+
+---
+
+## Session record — Track AT wave 1: leading technical teams
+
+Seventh content wave, and the emptiest audit of the session: seven probes for the management
+craft — `one-on-one`, `interview loop`, `team topolog`, `managing up`, `giving feedback`,
+`coaching` — returned **one mention in total across 29 domains**. `eng` had the *positions*
+(the ladder, staff+ archetypes, tech lead vs engineering manager, influence without authority)
+and nothing about the work.
+
+### What shipped
+
+**10 cards into `eng`**, 53 → 63. Site: 1,183 → **1,193 topics**.
+
+| Group | Cards |
+|---|---|
+| The transition | Engineer to manager · The first 90 days leading a team |
+| The core loop | Delegation · One-to-ones · Feedback &amp; difficult conversations |
+| The people | Performance &amp; retention · Hiring · Onboarding |
+| The system | Team shapes &amp; Conway's law · Managing up &amp; cross-team politics |
+
+### The thread
+
+Where the finance wave was about currency, this one is about a single repeated observation:
+**the failure is almost always in the handover, not in the person.** Delegation that comes back
+wrong had an unstated level. Feedback that lands badly was vague or late. A review that surprises
+someone failed months earlier. An enabling team that became a dependency forgot that its defining
+feature is leaving. Culture is not the stated values but the accumulated record of what got
+addressed. Each card locates the failure in something the leader controls, which is both more
+useful and more uncomfortable than the alternative.
+
+Two things worth carrying: the delegation levels stated out loud ("decide and tell me afterwards"
+takes three seconds and removes most of the ambiguity), and the arithmetic that makes "faster if I
+do it" wrong at around the third occurrence — plus the part the arithmetic misses, which is that
+the other person was bored and now is not.
+
+### Track AT after this wave
+
+Eight items remain: the manager's calendar, keeping technical enough, reference checks and offers,
+planning without theatre, prioritisation under pressure, project management for technical leads,
+managing incidents as a leader, and engineering team metrics.
