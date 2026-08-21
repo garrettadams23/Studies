@@ -2995,15 +2995,19 @@ attack and defence surface.
 ~4 waves, ~20 cards. The perimeter moved to the API and the token; the site's
 coverage has not caught up.
 
-**Wave BD1 — API Security**
-- [ ] OWASP API Top 10 — what differs from the web Top 10, and why
-- [ ] Broken Object-Level Authorization — the single most common real API bug
-- [ ] Authentication vs Authorization at the API — where each belongs
-- [ ] Rate Limiting & Abuse — quotas, burst, and distinguishing abuse from success
-- [ ] API Inventory & Shadow APIs — you cannot protect the endpoint you forgot
+**Wave BD1 — API Security** — shipped into `sec`.
+- [x] OWASP API Top 10 — what differs from the web Top 10, and why
+- [x] Broken Object-Level Authorization — the single most common real API bug
+- [~] Authentication vs Authorization at the API — where each belongs — already carded at concept
+  level in *API Security – OAuth2, JWT &amp; Token-Based Authentication*; the API-specific half is
+  inside the BOLA card, where it belongs
+- [x] Rate Limiting & Abuse — quotas, burst, and distinguishing abuse from success
+- [x] API Inventory & Shadow APIs — you cannot protect the endpoint you forgot
 
-**Wave BD2 — Tokens Done Right**
-- [ ] JWT Security — algorithm confusion, `none`, key confusion, expiry, revocation
+**Wave BD2 — Tokens Done Right** — partly pre-existing; see the audit note in the session record.
+- [~] JWT Security — algorithm confusion, `none`, key confusion, expiry, revocation — `alg: none`
+  and the revocation problem are already in the existing `sec` API card; algorithm and key
+  confusion are in the new federation card. A standalone JWT card would have been a third telling
 - [ ] OAuth 2.1 & PKCE — the flows that remain, and the ones that were removed
 - [ ] Token Lifetime & Revocation — refresh, rotation, and the logout that does not
 - [ ] Machine-to-Machine Auth — client credentials, mTLS, workload identity
@@ -3014,14 +3018,16 @@ coverage has not caught up.
 - [ ] ITDR — detecting identity attacks: token theft, consent phishing, MFA fatigue
 - [ ] Conditional Access Patterns — a policy set that is coherent rather than accreted
 - [ ] Privileged Access Done Properly — tiering, PAWs, break-glass, JIT elevation
-- [ ] Non-Human Identity — service principals, workload identities, and the sprawl nobody owns
+- [x] Non-Human Identity — service principals, workload identities, and the sprawl nobody owns
 
-**Wave BD4 — Federation & Third Parties**
-- [ ] SAML & OIDC Attack Surface — golden SAML, signature confusion, reply-URL abuse
-- [ ] SCIM & Provisioning Risk — the integration that quietly holds write access
-- [ ] OAuth Consent Phishing — the attack that needs no password
-- [ ] B2B & Guest Access — external identities without opening the tenant
-- [ ] Third-Party App Governance — reviewing, restricting and revoking app permissions
+**Wave BD4 — Federation & Third Parties** — shipped into `sec`.
+- [x] SAML & OIDC Attack Surface — golden SAML, signature confusion, reply-URL abuse
+- [x] SCIM & Provisioning Risk — the integration that quietly holds write access — inside
+  *Third-Party App Governance*, which is where the reader will look for it
+- [x] OAuth Consent Phishing — the attack that needs no password
+- [x] B2B & Guest Access — external identities without opening the tenant — same card; guests and
+  integrations are the same governance gap seen from two directions
+- [x] Third-Party App Governance — reviewing, restricting and revoking app permissions
 
 ### TRACK BE — Software Supply Chain & Integrity  (→ `eng` / `sec`)
 
@@ -6176,3 +6182,94 @@ Three specifics worth carrying:
 `annotate_acronyms.py --check` clean · `stamp_freshness.py --only sec` then `--verify` clean ·
 `smoke_test.mjs` 31/31 · budget after build: raw 4.6 / 8.0 MB, gzip 1,245 / 2,200 KB,
 DOM 416 / 1,500, content elements 97,401 / 175,000.
+
+---
+
+## Session record — Track BD: API and identity-first security
+
+Twelfth content wave, and the largest single void found by audit so far.
+
+### The audit
+
+Track BD's premise is that the perimeter moved to the API and the token while the site's coverage
+stayed with the network and the login page. The probe results said so bluntly:
+
+| Probe | Mentions before this wave |
+|---|---|
+| `BOLA` | 0 (one unrelated hit in `math`) |
+| `broken object`, `OWASP API`, `shadow API` | 0 |
+| `golden SAML`, `signature confusion`, `reply URL` | 0 |
+| `consent phishing`, `app consent`, `enterprise application` | 0 |
+| `non-human identity`, `client credentials`, `device code` | 0 |
+| `PKCE`, `JWT`, `SCIM`, `conditional access` | present — see below |
+
+The last row is where the audit had to be careful rather than fast. Those terms appear, so a
+keyword pass would call the track covered. Reading the actual cards showed what they are: a
+beginner-level `sec` card explaining what a token is and how OAuth2 roles fit together, plus `web`
+cards on sessions, cookies and federated identity. All correct, all pitched at first contact. None
+of them is about attacking or defending any of it.
+
+Two items were therefore deliberately *not* written. `alg: none` and the revocation problem are
+already taught in the existing API card, and a standalone JWT-security card would have been a third
+telling of the same material — algorithm and key confusion went into the federation card instead,
+where the golden-SAML material gives them a reason to exist. Authentication-vs-authorization is
+likewise already carded; its API-specific consequence lives inside the BOLA card, which is the only
+place it changes what a reader does.
+
+### What shipped
+
+**8 cards into `sec`**, 70 → 78. Site: 1,233 → **1,241 topics**.
+
+| Group | Cards |
+|---|---|
+| API security (BD1) | The OWASP API Security Top 10 · Broken Object-Level Authorization · API Abuse &amp; Rate Limiting · API Inventory &amp; Shadow APIs |
+| Identity-first (BD3–BD4) | Federation Attack Surface · OAuth Consent Phishing · Third-Party App Governance · Non-Human Identity |
+
+### What these cards are actually about
+
+The connective idea across all eight: **every one of these attacks is legitimate use of a working
+system.** No exploit, no malformed input, no bypass. That is why the existing control set misses
+them, and it is what makes them worth eight cards.
+
+Four specifics worth carrying:
+
+- **BOLA is a missing line, which is why review never catches it.** The endpoint validates the
+  token, loads the record by ID, returns it. Nothing in the diff looks wrong because the wrongness
+  is an absence. Scoping the query by tenant beats a separate ownership check — a check can be
+  forgotten on the next endpoint, a repository that will not return cross-tenant rows cannot be.
+- **Unguessable identifiers are not an authorization control.** Worth doing, and it stops trivial
+  enumeration, but identifiers leak through shared links, exports, webhooks and support tickets.
+  The real test needs two accounts and a replay, and it belongs in the pipeline.
+- **Consent phishing defeats every anti-phishing control by being genuine.** Real domain, real
+  certificate, real login, real MFA. The password reset afterwards changes nothing, because the
+  refresh token survives it. Prevention is a tenant setting; response is revoking the grant, not
+  the credential.
+- **Machine identities outnumber humans and no part of the identity lifecycle reaches them.** No
+  joiner, no leaver, no MFA, and an access review that stalls because nobody can say what the
+  account is for. The card ends on rotation rehearsal, because a team that does not know what
+  breaks when a credential rotates will, under incident pressure, choose to leave the attacker's
+  access in place.
+
+### A stamp correction worth recording
+
+`stamp_freshness.py --only sec` moved 25 topics from `2026-08` back to `2026-07`. That looked like
+the blame-drift hazard the tool's own docstring warns about, and it is the opposite: those are
+foundational cards — Active Directory, TLS, password hashing, threat modelling — that an earlier
+whole-tree run had wrongly bumped forward. `git log -S` on their content confirms the real last
+edit was July. The `--only` path corrected them. Recorded here so a future session reading the diff
+does not "fix" it back.
+
+### Track BD after this wave
+
+BD2 (tokens) is the remaining substantive gap: OAuth 2.1 flow changes and PKCE, token lifetime and
+rotation, machine-to-machine auth, and a secrets/tokens/keys taxonomy. Worth writing, and it should
+be written as one card about token lifetime rather than four that re-explain what a token is. BD3
+is otherwise complete — conditional access and privileged-access tiering are already carded in
+`m365`, `endpoint` and `infra`.
+
+### Verification
+
+`lint_content.py` 1,241 topics / 150 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 4.7 / 8.0 MB, gzip 1,257 / 2,200 KB, DOM 416 / 1,500, content elements
+98,092 / 175,000.
