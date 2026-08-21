@@ -2955,33 +2955,44 @@ pairs with the detection it should trigger — the site's existing rule.
 ~5 waves, ~25 cards. The site teaches Kubernetes operationally; this is the
 attack and defence surface.
 
-**Wave BC1 — The Kubernetes Threat Model**
-- [ ] What an Attacker Sees — the control plane, the kubelet, etcd, the workloads
-- [ ] The Four Cs — cloud, cluster, container, code
-- [ ] Kubernetes RBAC Deep — verbs, resources, and the escalation paths people miss
-- [ ] Service Accounts & Token Projection — the credential every pod carries
-- [ ] etcd & Control-Plane Exposure — the game-over surfaces
+**Wave BC1 — The Kubernetes Threat Model** — shipped into `cloud`.
+- [x] What an Attacker Sees — the control plane, the kubelet, etcd, the workloads
+- [x] The Four Cs — cloud, cluster, container, code — same card; the model is diagnostic and needs
+  the surfaces beside it to be worth anything
+- [x] Kubernetes RBAC Deep — verbs, resources, and the escalation paths people miss
+- [x] Service Accounts & Token Projection — the credential every pod carries
+- [x] etcd & Control-Plane Exposure — the game-over surfaces — the surfaces table in the threat-model
+  card, ranked by consequence
 
-**Wave BC2 — Workload Hardening**
-- [ ] Pod Security Standards — privileged/baseline/restricted, and enforcing them
-- [ ] Container Breakout Paths — privileged pods, hostPath, hostPID, capabilities
-- [ ] Admission Control — OPA/Gatekeeper and Kyverno, and policy-as-code
-- [ ] Image Security — minimal bases, non-root, read-only filesystems, distroless
-- [ ] Secrets in Kubernetes — why the built-in kind is only base64, and the options
+**Wave BC2 — Workload Hardening** — shipped into `cloud`, except where noted.
+- [x] Pod Security Standards — privileged/baseline/restricted, and enforcing them
+- [x] Container Breakout Paths — privileged pods, hostPath, hostPID, capabilities — same card as
+  PSA, because the profiles only make sense once you know what they are refusing
+- [~] Admission Control — OPA/Gatekeeper and Kyverno, and policy-as-code — already carded as
+  *Policy as Code — OPA/Rego &amp; Kyverno* in `devops`; the new card cross-references it and adds
+  the PSA-validates-but-cannot-mutate ordering trap
+- [~] Image Security — minimal bases, non-root, read-only filesystems, distroless — carded in
+  `devops` (*Container Security*) and `linux`
+- [ ] Secrets in Kubernetes — why the built-in kind is only base64, and the options — still open;
+  partly reached by the etcd row and the token card, but the options comparison is unwritten
 
-**Wave BC3 — Network & Identity**
-- [ ] Network Policies — default-deny, and why almost nobody has it
-- [ ] Service Mesh Security — mTLS, authorization policy, and the complexity cost
-- [ ] Workload Identity — federating pods to cloud IAM without long-lived keys
-- [ ] Ingress & API Exposure — the gateway as a control point
-- [ ] Multi-Tenancy — namespaces are not a security boundary; what to do instead
+**Wave BC3 — Network & Identity** — shipped into `cloud`, except where noted.
+- [x] Network Policies — default-deny, and why almost nobody has it
+- [x] Service Mesh Security — mTLS, authorization policy, and the complexity cost — same card, so
+  the "network policy first, mesh only for the second column" judgement is stated once
+- [x] Workload Identity — federating pods to cloud IAM without long-lived keys — inside the
+  service-account token card, where the audience field explains the mechanism
+- [ ] Ingress & API Exposure — the gateway as a control point — still open
+- [x] Multi-Tenancy — namespaces are not a security boundary; what to do instead
 
-**Wave BC4 — Runtime & Detection**
-- [ ] Runtime Security — Falco/Tetragon, eBPF-based detection in the cluster
-- [ ] Audit Logs — what the API server records, and the queries worth saving
-- [ ] Container Forensics — investigating something that no longer exists
-- [ ] Drift & Immutability — detecting a changed container in a declarative world
-- [ ] Incident Response in Kubernetes — isolate, snapshot, evict, and preserve evidence
+**Wave BC4 — Runtime & Detection** — shipped into `cloud`.
+- [x] Runtime Security — Falco/Tetragon, eBPF-based detection in the cluster
+- [x] Audit Logs — what the API server records, and the queries worth saving — same card as
+  runtime, because the point is that the two answer different questions
+- [x] Container Forensics — investigating something that no longer exists
+- [x] Drift & Immutability — detecting a changed container in a declarative world — the GitOps-diff
+  row in the incident-response card
+- [x] Incident Response in Kubernetes — isolate, snapshot, evict, and preserve evidence
 
 **Wave BC5 — Serverless & Managed Services**
 - [ ] Serverless Threat Model — event injection, over-permissive roles, cold-start secrets
@@ -6363,3 +6374,87 @@ commit-signing half is a genuine small gap.
 `annotate_acronyms.py` clean · `stamp_freshness.py --only eng` touched only the 8 new cards, no
 churn · `--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 4.7 / 8.0 MB, gzip
 1,269 / 2,200 KB, DOM 416 / 1,500, content elements 98,725 / 175,000.
+
+---
+
+## Session record — Track BC: cloud-native and Kubernetes security
+
+Fourteenth content wave. Waves BC1–BC4 into `cloud`; BC5 (serverless and managed services) left for
+a later pass.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| `service account token`, `token projection` | 0 |
+| `hostPID`, `container forensic` | 0 |
+| `namespaces are not a security boundary` | 0 |
+| `kubelet` | 1, in `redteam` |
+| `pod security standard`, `default-deny`, `Falco`, `Tetragon` | present, scattered |
+
+The scattered row needed reading rather than counting, and what it found was thin: the entire
+site's Kubernetes security coverage was one `devops` card (*Kubernetes Security — RBAC…*, three
+concept cards), one `devops` container-hardening card, and one `redteam` attack card
+(*Kubernetes Attacks*, 4.4 KB, two concept cards). Those are correct and they are introductions.
+Nothing said what `create pods` is actually equivalent to, why every pod carries an API credential,
+what a NetworkPolicy does on a CNI that does not implement it, or why killing a compromised pod
+destroys the evidence.
+
+### The domain decision
+
+The plan targets `cloud` / `blueteam`. All eight went to `cloud`: the reader who needs this is
+already thinking about cloud-native infrastructure, and `cloud` was at 49 topics against
+`blueteam`'s 54. The cards cross-reference `devops` for policy-as-code and service-mesh
+architecture, `redteam` for the offensive walkthrough, `blueteam` for detection-as-code, and `ops`
+for incident response — so every neighbouring domain keeps its existing entry point.
+
+### What shipped
+
+**8 cards into `cloud`**, 49 → 57. Site: 1,249 → **1,257 topics**.
+
+| Group | Cards |
+|---|---|
+| Threat model (BC1) | The Kubernetes Threat Model · Kubernetes RBAC Deep · Service Account Tokens &amp; Workload Identity |
+| Hardening (BC2) | Container Breakout Paths &amp; Pod Security Standards |
+| Network &amp; tenancy (BC3) | Network Policies &amp; Service Mesh · Kubernetes Multi-Tenancy |
+| Runtime &amp; response (BC4) | Runtime Security &amp; Audit Logs · Incident Response in Kubernetes |
+
+### What these cards are actually about
+
+The through-line: **Kubernetes hardening is almost entirely about changing defaults, not about
+finding vulnerabilities.** Every path in these cards is open in a fresh cluster and closable from a
+manifest. That is why the wave reads as configuration rather than exploitation, and why the
+threat-model card is drawn from inside one pod rather than from the control plane down.
+
+Four specifics worth carrying:
+
+- **Several ordinary-looking RBAC verbs are cluster-admin.** `create pods` means running as any
+  service account in the namespace; `pods/exec` means taking over an existing workload's identity;
+  write access to a mutating webhook means rewriting every object entering the cluster. Nothing in
+  a role definition says so, which is why RBAC reviews that read like least-privilege often are not.
+- **Every pod is issued an API credential it did not ask for.** `automountServiceAccountToken:
+  false` is a one-line fix for workloads that never call the API, which is most of them. And the
+  legacy-versus-projected distinction decides whether a stolen token expires or works forever from
+  anywhere.
+- **A NetworkPolicy on a CNI that does not implement it applies cleanly and does nothing.** The
+  object appears in `kubectl get` either way. Also: default-deny egress blocks cluster DNS, which is
+  what breaks every first attempt and looks nothing like a network-policy problem.
+- **Killing a compromised pod destroys the evidence and redeploys the vulnerability.** The
+  containment move is removing the label the controller's selector matches — the workload heals, the
+  original keeps running, and you get to investigate. Under pressure, availability wins unless the
+  team already knows this trick.
+
+### Track BC after this wave
+
+Three items open, all recorded above: secrets in Kubernetes (the options comparison), ingress and
+API exposure, and the whole of BC5 — serverless threat model, managed-service trust boundaries, IaC
+scanning, cloud detection engineering and cloud incident response. BC5 is the natural next wave in
+this area; note that `sec` and `redteam` already carry parts of the cloud-detection and
+credential-attack material, so it needs the same read-not-count audit this one got.
+
+### Verification
+
+`lint_content.py` 1,257 topics / 159 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only cloud` touched only the 8 new cards ·
+`--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 4.8 / 8.0 MB, gzip 1,281 /
+2,200 KB, DOM 416 / 1,500, content elements 99,393 / 175,000.
