@@ -2682,33 +2682,41 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 
 ~4 waves, ~20 cards. Teaching as a function, not as a personality trait.
 
-**Wave AU1 — Designing Learning**
-- [ ] How Adults Actually Learn — relevance, practice, feedback, spacing
-- [ ] Curriculum Design — objectives, sequencing, and cutting the nice-to-know
-- [ ] Building a Lab — repeatable, resettable, and cheap enough to keep
-- [ ] Assessment That Means Something — beyond a multiple-choice quiz
-- [ ] Measuring Training — behaviour change, not attendance
+**Wave AU1 — Designing Learning** — shipped into `career`.
+- [x] How Adults Actually Learn — relevance, practice, feedback, spacing
+- [x] Curriculum Design — objectives, sequencing, and cutting the nice-to-know
+- [~] Building a Lab — repeatable, resettable, and cheap enough to keep — `career` already carries
+  three home-lab cards (*Building a Home Lab*, *Home Lab – Practicing IT Skills*, *Building a Home
+  Lab Without Breaking the Bank*)
+- [x] Assessment That Means Something — beyond a multiple-choice quiz — same card as curriculum
+  design, because assessment is step 2 of backward design and cannot be taught after it
+- [x] Measuring Training — behaviour change, not attendance — the four-level table closing the
+  adult-learning card
 
-**Wave AU2 — Delivering It**
-- [ ] Running a Workshop — pacing, energy, and rescuing the room when it stalls
-- [ ] Live Demos That Do Not Fail — rehearsal, fallbacks, recorded escape hatch
-- [ ] Screencasts & Async Video — scripting, recording, editing, and length discipline
-- [ ] Facilitating a Retrospective or Tabletop — neutrality and the hard question
-- [ ] Teaching a Tool You Just Learned — the honest way to do it
+**Wave AU2 — Delivering It** — shipped into `career`.
+- [x] Running a Workshop — pacing, energy, and rescuing the room when it stalls
+- [x] Live Demos That Do Not Fail — rehearsal, fallbacks, recorded escape hatch
+- [x] Screencasts & Async Video — scripting, recording, editing, and length discipline — same card
+  as demos; both are "showing rather than telling", and the fallback recording links them
+- [x] Facilitating a Retrospective or Tabletop — neutrality and the hard question
+- [ ] Teaching a Tool You Just Learned — the honest way to do it — still open; a small, genuine
+  card about the credibility of teaching from one step ahead
 
-**Wave AU3 — Documentation as Infrastructure**
-- [ ] Documentation Types — tutorial, how-to, reference, explanation (and mixing them up)
-- [ ] Runbooks That Work at 3 a.m. — testable, unambiguous, no missing step
-- [ ] Docs-as-Code — review, versioning, CI checks, and ownership
-- [ ] Keeping Documentation Alive — review triggers, owners, and deleting the dead
-- [ ] Diagrams That Explain — the small number of shapes worth using
+**Wave AU3 — Documentation as Infrastructure** — shipped into `career`, except where noted.
+- [x] Documentation Types — tutorial, how-to, reference, explanation (and mixing them up)
+- [~] Runbooks That Work at 3 a.m. — carded in `ops` as *Writing Runbooks That People Actually
+  Follow*, with the testing half added in this session's resilience wave
+- [x] Docs-as-Code — review, versioning, CI checks, and ownership — same card as documentation types
+- [x] Keeping Documentation Alive — review triggers, owners, and deleting the dead — same card
+- [x] Diagrams That Explain — the small number of shapes worth using
 
-**Wave AU4 — Influence Beyond Your Team**
-- [ ] Writing a Proposal People Say Yes To — problem, options, recommendation, cost
-- [ ] Presenting to Executives — the pyramid principle, and the first thirty seconds
-- [ ] Speaking at a Conference — CFP writing, talk structure, rehearsal
-- [ ] Community & Open Source Contribution — what it gives back, realistically
-- [ ] Building an Internal Community of Practice — starting one that survives month three
+**Wave AU4 — Influence Beyond Your Team** — shipped into `career` as one card.
+- [x] Writing a Proposal People Say Yes To — problem, options, recommendation, cost
+- [x] Presenting to Executives — the pyramid principle, and the first thirty seconds
+- [x] Speaking at a Conference — CFP writing, talk structure, rehearsal
+- [~] Community & Open Source Contribution — carded in `career` as *Building in Public — Your
+  Reputation Compounds*
+- [x] Building an Internal Community of Practice — starting one that survives month three
 
 ### TRACK AV — Consulting, Contracting & Independent Practice
 
@@ -7100,3 +7108,74 @@ session's note explains why: their items are carded in `script` already, under d
 `annotate_acronyms.py` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
 budget after build: raw 5.0 / 8.0 MB, gzip 1,354 / 2,200 KB, DOM 416 / 1,500, content elements
 103,660 / 175,000.
+
+---
+
+## Session record — Track AU: enablement, training and technical influence
+
+Twenty-second content wave, and the first track in this session that had **zero** items ticked
+before it started.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| "training session", `workshop`, "lunch and learn", "brown bag" | 0 |
+| "conference talk", "knowledge transfer" | 0 |
+| "documentation…audience" | 0 |
+| "technical writing", `mentoring` | present in `career` |
+
+`career` carries *Clear Technical Communication*, *Technical Writing*, *Mentorship* and *Building in
+Public* — the individual-skill layer, and a good one. What none of them covers is teaching as a
+**function**: designing a curriculum, running a room, facilitating a session where you have no
+stake in the answer, or getting a proposal through people who do not report to you. That is the
+track's own framing — *teaching as a function, not as a personality trait* — and it was accurate.
+
+### What shipped
+
+**8 cards into `career`**, 21 → 29. Site: 1,305 → **1,313 topics**.
+
+How Adults Actually Learn · Curriculum Design &amp; Assessment · Running a Workshop · Live Demos
+&amp; Screencasts · Facilitating Retrospectives &amp; Tabletops · Documentation Types &amp;
+Docs-as-Code · Diagrams That Explain · Proposals, Executives &amp; Speaking.
+
+### What these cards are actually about
+
+The through-line: **the expert is systematically the worst judge of whether their explanation
+worked.** Their knowledge is chunked, so they cannot feel the weight of what they are asking a
+learner to hold; their diagram is comprehensive because they can already read it; their proposal
+builds to a conclusion because that is the order in which they earned it. Every card here is, in
+some form, a countermeasure to that blind spot.
+
+Four specifics worth carrying:
+
+- **Explaining is not teaching.** An hour of excellent explanation produces people who understood it
+  in the room and cannot do it on Thursday. Understanding while somebody else drives is a different
+  capability from doing it, and only the second is what anyone wanted.
+- **Design backwards from the behaviour.** Name what people must do unaided, decide what would prove
+  it, then choose content — and delete everything left over. The nice-to-know is what pushes a
+  session long, rushes the practice, and turns the exercise into a demo.
+- **A tutorial cannot have branches.** If it says "depending on your environment", it is a how-to
+  guide and a beginner will fail at that sentence. Most frustrating documentation is two documents
+  wearing one title.
+- **Put the recommendation first, and include do-nothing honestly.** A proposal presenting one
+  course of action reads as advocacy; one that says what happens if you decline reads as advice, and
+  gets a decision rather than a request for more information.
+
+Two smaller ones worth keeping: the silent written round at the start of a retrospective costs three
+minutes and reliably surfaces what the most junior person was not going to say; and the diagram you
+draw *while* explaining a system to someone is almost always at the right level of abstraction,
+because it contains exactly what was needed and nothing else.
+
+### Track AU after this wave
+
+One item genuinely open — *Teaching a Tool You Just Learned* — and three marked `[~]` against
+existing cards in `career` and `ops`.
+
+### Verification
+
+`lint_content.py` 1,313 topics / 183 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only career` moved one topic 2026-06 → 2026-07,
+looking through an August mechanical commit as designed · `--verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 5.0 / 8.0 MB, gzip 1,367 / 2,200 KB, DOM 416 / 1,500, content elements
+104,484 / 175,000.
