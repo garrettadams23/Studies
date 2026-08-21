@@ -2581,38 +2581,38 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 ~5 waves, ~25 cards. Organisational money, not personal money.
 
 **Wave AS1 — The Money Model**
-- [ ] CapEx vs OpEx — and why the cloud migration changed the conversation
-- [ ] Building an IT Budget — run vs grow vs transform, and defending each line
-- [ ] TCO Modelling — the costs that never appear on the quote
-- [ ] Chargeback & Showback — making consumption visible without starting a war
-- [ ] Business Case Writing — the one-page version an executive will actually read
+- [x] CapEx vs OpEx — and why the cloud migration changed the conversation
+- [x] Building an IT Budget — run vs grow vs transform, and defending each line
+- [x] TCO Modelling — the costs that never appear on the quote
+- [x] Chargeback & Showback — making consumption visible without starting a war
+- [x] Business Case Writing — the one-page version an executive will actually read
 
 **Wave AS2 — Buying Well**
-- [ ] Requirements Before Vendors — writing them so the demo cannot dazzle you
-- [ ] RFI / RFP / RFQ — running a fair process that gets a real answer
-- [ ] Evaluating a Vendor — financial health, roadmap, support model, references
-- [ ] Proof of Concept Design — success criteria agreed *before* the trial starts
-- [ ] Negotiation for IT Buyers — timing, leverage, and what is actually discountable
+- [x] Requirements Before Vendors — writing them so the demo cannot dazzle you
+- [x] RFI / RFP / RFQ — running a fair process that gets a real answer
+- [x] Evaluating a Vendor — financial health, roadmap, support model, references
+- [x] Proof of Concept Design — success criteria agreed *before* the trial starts
+- [x] Negotiation for IT Buyers — timing, leverage, and what is actually discountable
 
 **Wave AS3 — Contracts & Licensing**
-- [ ] Reading a Contract as an Engineer — the clauses that bite operations
-- [ ] SLAs, Credits & What They Are Really Worth — an outage refund is not a control
-- [ ] Software Licensing Models — per-user, per-device, core-based, consumption
-- [ ] Surviving a Licence Audit — preparation, evidence, and the true-up conversation
-- [ ] Exit Clauses & Lock-In — data export, transition assistance, and the migration you will do
+- [x] Reading a Contract as an Engineer — the clauses that bite operations
+- [x] SLAs, Credits & What They Are Really Worth — an outage refund is not a control
+- [x] Software Licensing Models — per-user, per-device, core-based, consumption
+- [x] Surviving a Licence Audit — preparation, evidence, and the true-up conversation
+- [x] Exit Clauses & Lock-In — data export, transition assistance, and the migration you will do
 
 **Wave AS4 — Cost Control in Operations**
-- [ ] Cloud FinOps — showback, rightsizing, commitment discounts, anomaly alerts
-- [ ] SaaS Sprawl — discovery, consolidation, and reclaiming unused seats
+- [~] Cloud FinOps — showback, rightsizing, commitment discounts, anomaly alerts — **already carded as 'Cloud Cost Control — Budgets, Tags & Rightsizing' in cloud and 'FinOps — Cloud Cost Management' in devops**
+- [x] SaaS Sprawl — discovery, consolidation, and reclaiming unused seats
 - [ ] Hardware Refresh Economics — when replacing beats maintaining
-- [ ] The Cost of Downtime — modelling it credibly enough to fund resilience
-- [ ] Technical Debt as a Financial Argument — translating it into language that funds it
+- [x] The Cost of Downtime — modelling it credibly enough to fund resilience
+- [x] Technical Debt as a Financial Argument — translating it into language that funds it
 
 **Wave AS5 — Governance of Spend**
-- [ ] Vendor Risk Management — security review, concentration risk, fourth parties
-- [ ] Asset Management End to End — procure → deploy → maintain → retire → dispose
+- [~] Vendor Risk Management — security review, concentration risk, fourth parties — **already carded three times in grc, including 'Third-Party Risk — Your Security Is Only as Strong as Your Vendors'**
+- [~] Asset Management End to End — procure → deploy → maintain → retire → dispose — **already carded as 'Asset & Configuration Management — A CMDB That Stays True' in ops**
 - [ ] Portfolio & Prioritisation — deciding what *not* to do, defensibly
-- [ ] Benefits Realisation — checking afterwards whether it did what the case claimed
+- [~] Benefits Realisation — checking afterwards whether it did what the case claimed — **shipped as a section of 'The Business Case — One Page an Executive Will Actually Read'**
 - [ ] Reporting to the Board — three slides, no jargon, no surprises
 
 ### TRACK AT — Leading Technical Teams
@@ -5815,3 +5815,61 @@ forecasting, lattices, matrices and linear transformations, and loss functions.
 > a proxy becomes the target, it stops measuring what it was chosen to represent.** That sentence
 > is now the site's most-repeated idea, arrived at independently in operations, detection
 > engineering and machine learning, which is a reasonable sign it is true.
+
+---
+
+## Session record — Track AS: IT finance and procurement, into `eng`
+
+Sixth content wave. The audit found a void of a kind the site had not filled before — not a
+technology, but the commercial half of the job.
+
+### The audit
+
+`chargeback`, `showback`, `vendor management`, `contract negotiation`, `budget cycle` and
+`true-up` returned **0**. `capex`, `opex`, `total cost of ownership` and `rfp` returned 2 each —
+**every one of them from the acronym dictionary**, meaning the site could expand the abbreviation
+and say nothing about the concept. Only cloud FinOps was genuinely covered, twice.
+
+### What shipped
+
+**14 cards into `eng`**, 36 → 50. Site: 1,166 → **1,180 topics**.
+
+| Group | Cards |
+|---|---|
+| Money | CapEx vs OpEx · Building an IT budget · TCO modelling · Chargeback &amp; showback · SaaS sprawl |
+| Making the case | The business case · The cost of downtime · Technical debt as a financial argument |
+| Buying | Requirements before vendors · Evaluating a vendor &amp; the PoC · Negotiation for IT buyers |
+| Living with it | Reading a contract as an engineer · Licensing models &amp; surviving an audit · Exit clauses &amp; lock-in |
+
+Three items are `[~]`: cloud FinOps (carded in `cloud` and `devops`), vendor risk management
+(carded three times in `grc`), and end-to-end asset management (the CMDB card written earlier this
+session). Benefits realisation shipped as a section of the business-case card rather than as its
+own.
+
+### Why `eng` rather than `career`
+
+`career` is about the individual's trajectory and personal finances; this material is about
+running IT as a business function. `eng` already carries the engineering ladder, tech lead vs
+engineering manager, estimation and planning, and the wider IT org — the professional-practice
+cluster. These sit with those.
+
+### The argument the wave keeps making
+
+Engineers lose these conversations by under-claiming and by arguing in the wrong currency. Nearly
+every card contains a two-column table turning an engineering statement into a business one — "the
+framework is three versions behind" becomes "it leaves security support in June, which is an audit
+finding and blocks the integration". The point is not persuasion technique; it is that a
+consequence with a date attached is a decision someone else can own, and a technical complaint is
+not.
+
+Three specific things worth carrying: leverage is highest before you have chosen and near zero at
+renewal, so almost every purchasing mistake is negotiating later on that curve than necessary; an
+SLA credit is a pre-agreed refund schedule rather than an availability control, so if an outage
+would genuinely hurt, the mitigation is your architecture; and process lock-in — the organisation
+reshaping itself around a tool's assumptions — is the largest exit cost and the one that never
+appears in the original TCO model.
+
+### Track AS after this wave
+
+Three items remain: hardware refresh economics, portfolio and prioritisation, and reporting to the
+board.
