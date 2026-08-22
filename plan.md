@@ -2143,8 +2143,13 @@ separate toys.
   `domain:` terms are additive. Documented in the search box's tooltip; five smoke checks protect
   the behaviour.
 - [ ] **Recently viewed** — the last ten topics, in the quick-jump palette.
-- [ ] **Deep-link to a card, not just a topic** — anchor IDs on `concept-card`s
-  for precise sharing.
+- [x] **Deep-link to a card, not just a topic** — `#topic-id/3` scrolls to the third concept card
+  and marks it briefly; clicking a card's `.concept-label` copies that link. Cards are addressed by
+  position rather than by a slug of their title: a slug needs every `.concept-title` stamped and
+  kept stable, and concept titles are edited far more freely than topic names — which have an alias
+  map precisely because they are not. An index survives rewording and breaks on reordering; between
+  the two, rewording is what actually happens. Out-of-range indices fall back to the topic, so a
+  link shared before a card was removed still lands somewhere useful.
 
 ### TRACK AJ — Quality Gates & Tooling
 
@@ -7788,3 +7793,45 @@ no console errors, no off-site requests · budget unchanged at raw 5.3 / 8.0 MB,
 Five items open: expansion-density toggle, related topics, domain landing cards, recently viewed,
 and deep-linking to a concept card. The last is small and useful; related topics needs a curated
 data file and is the largest.
+
+---
+
+## Session record — Track AH: card-level deep links
+
+Thirty-first wave, and the last piece of work before this session's branch was left for review.
+
+### What shipped
+
+`#topic-id/3` now resolves to the third concept card in that topic: the domain hydrates, the topic
+opens, the card is scrolled to centre and outlined for a couple of seconds. Clicking any concept
+card's label copies that link.
+
+Three decisions worth recording:
+
+- **Cards are addressed by position, not by a title slug.** A slug would be prettier and would need
+  every `.concept-title` stamped at build time and kept stable. Concept titles are edited far more
+  freely than topic names — which have an alias map precisely because they are not. An index
+  survives rewording and breaks on reordering; rewording is what actually happens.
+- **The affordance costs no elements.** A domain can hold several hundred concept cards, so a link
+  button per card is a real slice of the DOM budget for something used rarely. The label itself is
+  the control, delegated from the domain container, with the hint in a hover state.
+- **Out-of-range falls back to the topic.** Links outlive the cards they were written against, and
+  landing on the topic is better than doing nothing.
+
+The clipboard fallback also now confirms. Over `file://` there is no clipboard permission, so the
+handler puts the link in the address bar instead — and previously said nothing, which reads as a
+broken control. It now shows the same "copied" state either way.
+
+### Verification
+
+Two new smoke checks, 36 → **39** (one is a guard that the test found a topic with enough cards to
+be worth testing — the first version silently passed against a single-card topic and exercised
+nothing). Verified: a card link marks the right card (7-card topic, index 1 for `/2`), an
+out-of-range index opens the topic and marks nothing, and a plain topic link is unaffected.
+
+`lint_content.py` 1,355 topics clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 39/39 ·
+no console errors, no off-site requests · budget unchanged.
+
+### Track AH after this wave
+
+Four items open: expansion-density toggle, related topics, domain landing cards, recently viewed.

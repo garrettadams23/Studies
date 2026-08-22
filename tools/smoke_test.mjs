@@ -191,6 +191,48 @@ for (const id of sample) {
 }
 check("permalinks expand their topic", permalinkFails.length === 0, permalinkFails.join(", "));
 
+// ── card-level permalinks: #topic/2 lands on that card, not just the topic ───
+// Both halves matter. Landing on the wrong card is a silent wrong answer, and
+// an index past the end has to fall back to the topic rather than doing
+// nothing — links outlive the cards they were written against.
+// Pick a topic that actually has several concept cards. The id map only knows
+// ids, and card counts live in the deferred text, so a domain is opened and
+// asked. Choosing the first id blindly picked a single-card topic and let the
+// check pass without exercising anything.
+await page.goto(PAGE, { waitUntil: "load" });
+const cardProbeDomain = await page.evaluate(() =>
+  document.querySelector(".domain-section")?.dataset.domain || null);
+await openDomain(cardProbeDomain);
+await page.waitForTimeout(250);
+const cardTarget = await page.evaluate(() => {
+  const t = [...document.querySelectorAll(".topic")]
+    .find(x => x.id && x.querySelectorAll(".topic-body > .concept-card").length >= 3);
+  return t ? t.id : null;
+});
+check("found a multi-card topic to test card links against", !!cardTarget, cardTarget || "none");
+if (cardTarget) {
+  await page.goto(`${PAGE}#${cardTarget}/2`, { waitUntil: "load" });
+  await page.waitForTimeout(600);
+  const hit = await page.evaluate(id => {
+    const t = document.getElementById(id);
+    const cards = t ? [...t.querySelectorAll(".topic-body > .concept-card")] : [];
+    return { cards: cards.length, marked: cards.findIndex(c => c.classList.contains("card-linked")) };
+  }, cardTarget);
+  check("a card-level link marks that card",
+    hit.cards >= 3 && hit.marked === 1,
+    `${cardTarget}: ${hit.cards} cards, marked index ${hit.marked}`);
+
+  await page.waitForTimeout(2400);   // let the mark expire before the next case
+  await page.goto(`${PAGE}#${cardTarget}/99`, { waitUntil: "load" });
+  await page.waitForTimeout(600);
+  const over = await page.evaluate(id => ({
+    open: !!document.getElementById(id)?.querySelector(".topic-body.open"),
+    marked: !!document.querySelector(".concept-card.card-linked"),
+  }), cardTarget);
+  check("an out-of-range card index falls back to the topic",
+    over.open && !over.marked, `open=${over.open} marked=${over.marked}`);
+}
+
 // ── per-domain size hints ───────────────────────────────────────────────────
 // build.py computes these from the real word count; a missing or zero-topic
 // meta means the stats function stopped seeing the body it measures.

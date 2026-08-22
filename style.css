@@ -714,6 +714,48 @@ header p {
   text-transform: uppercase;
   padding: 12px 18px 0;
 }
+
+/* The label doubles as a link-to-this-card affordance. Deliberately quiet:
+   discoverable on hover, invisible otherwise, and costing no extra element on
+   any of the several hundred concept cards a domain can hold. */
+.concept-label {
+  cursor: pointer;
+  width: fit-content;
+}
+.concept-label:hover {
+  color: var(--accent, #38bdf8);
+}
+.concept-label::after {
+  content: " \1F517";
+  opacity: 0;
+  font-size: 9px;
+  transition: opacity 0.15s ease;
+}
+.concept-label:hover::after,
+.concept-label:focus-visible::after {
+  opacity: 0.6;
+}
+.concept-label.copied::after {
+  content: " \2713 copied";
+  opacity: 1;
+  letter-spacing: 0;
+  color: var(--green, #22c55e);
+}
+
+/* Where a card-level link landed. Fades itself out after a couple of seconds —
+   long enough to find, short enough not to become part of the page. */
+.concept-card.card-linked {
+  box-shadow: 0 0 0 2px var(--accent, #38bdf8);
+  transition: box-shadow 0.4s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .concept-card.card-linked { transition: none; }
+  .concept-label::after { transition: none; }
+}
+@media print {
+  .concept-label::after { content: ""; }
+  .concept-card.card-linked { box-shadow: none; }
+}
 .concept-title {
   font-size: 15px;
   font-weight: 600;

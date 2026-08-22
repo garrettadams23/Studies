@@ -478,6 +478,11 @@ document.addEventListener("DOMContentLoaded", () => {
       else if (codec.classList.contains("btn-clear")) urlToolClear();
       return;
     }
+    // A concept card's label copies a link to that card. Inside a topic body,
+    // so it must be handled before the topic-header toggle below — and it never
+    // reaches it anyway, but the ordering states the intent.
+    const cardLabel = e.target.closest(".concept-label");
+    if (cardLabel) { e.stopPropagation(); copyCardLink(cardLabel); return; }
     const dh = e.target.closest(".domain-header");
     if (dh) { toggleDomain(dh); return; }
     const th = e.target.closest(".topic-header");
@@ -820,8 +825,24 @@ function migrateAliasedProgress() {
   return moved;
 }
 
+/**
+ * Split `#topic-id/3` into the topic and the 1-based concept-card index.
+ *
+ * Cards are addressed by position rather than by a slug of their title. A slug
+ * would be prettier and would need every `.concept-title` stamped at build
+ * time and kept stable — and concept titles are edited far more freely than
+ * topic names, which have an alias map precisely because they are not. An
+ * index survives rewording and breaks on reordering; between the two,
+ * rewording is what actually happens.
+ */
+function splitCardHash(hash) {
+  const m = hash.match(/^(.*?)\/(\d+)$/);
+  return m ? { id: m[1], card: Number(m[2]) } : { id: hash, card: 0 };
+}
+
 function openHashTarget() {
-  let id = decodeURIComponent(location.hash.slice(1));
+  const parsed = splitCardHash(decodeURIComponent(location.hash.slice(1)));
+  let id = parsed.id;
   if (!id) return;
   // A stale link resolves through the alias map, then rewrites itself so the
   // address bar — and anything copied out of it — carries the current id.
@@ -829,8 +850,9 @@ function openHashTarget() {
   // names is almost never in the DOM yet, which is the whole point.
   if (!topicDomain(id) && slugAliases()[id]) {
     id = slugAliases()[id];
-    if (history.replaceState) history.replaceState(null, "", `#${id}`);
-    else location.hash = id;
+    const rewritten = parsed.card ? `#${id}/${parsed.card}` : `#${id}`;
+    if (history.replaceState) history.replaceState(null, "", rewritten);
+    else location.hash = rewritten.slice(1);
   }
   const domainId = topicDomain(id);
   if (!domainId) return;
@@ -851,7 +873,52 @@ function openHashTarget() {
   th?.classList.add("open");
   th?.setAttribute("aria-expanded", "true");
   topic.querySelector(".topic-body")?.classList.add("open");
-  topic.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  // A card-level link scrolls to the card and marks it briefly. Falling back to
+  // the topic when the index is out of range is deliberate: a link shared
+  // before a card was removed should still land somewhere useful rather than
+  // doing nothing.
+  const card = parsed.card
+    ? topic.querySelectorAll(".topic-body > .concept-card")[parsed.card - 1]
+    : null;
+  if (card) {
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    card.classList.add("card-linked");
+    setTimeout(() => card.classList.remove("card-linked"), 2200);
+  } else {
+    topic.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+/**
+ * Copy a link to one concept card. Delegated from the domain body rather than
+ * given a button per card: a domain can hold several hundred concept cards, and
+ * an affordance that costs one element each is a real slice of the DOM budget
+ * for something used rarely. The label carries the hint in its `title`.
+ */
+function copyCardLink(label) {
+  const card = label.closest(".concept-card");
+  const topic = label.closest(".topic");
+  if (!card || !topic?.id) return;
+  const cards = [...topic.querySelectorAll(".topic-body > .concept-card")];
+  const n = cards.indexOf(card) + 1;
+  if (n < 1) return;
+  const url = `${location.origin}${location.pathname}#${topic.id}/${n}`;
+  const done = () => {
+    label.classList.add("copied");
+    setTimeout(() => label.classList.remove("copied"), 1200);
+  };
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(url)
+      .then(done)
+      // No clipboard permission — over `file://`, or a browser that withholds
+      // it. Putting the link in the address bar is the fallback, and it still
+      // confirms: a silent no-op reads as a broken control.
+      .catch(() => { location.hash = `${topic.id}/${n}`; done(); });
+  } else {
+    location.hash = `${topic.id}/${n}`;
+    done();
+  }
 }
 
 // ── BACK TO TOP ─────────────────────────────────────────────────────────────
