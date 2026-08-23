@@ -6507,3 +6507,307 @@ POST /token   grant_type=authorization_code
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: SASE & SSE ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🛰️</span>
+    <span class="topic-name">SASE <span class="acro-exp">(Secure Access Service Edge)</span> &amp; SSE <span class="acro-exp">(Security Service Edge)</span> — What Converged, and What You Are Actually Buying</span>
+    <span class="topic-badge">SEC • Architecture</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Bundle, Not an Invention</div>
+      <div class="concept-desc">
+        Secure Access Service Edge is not a technology. It is five or six existing products, bought
+        as one subscription, delivered from the provider's points of presence instead of from
+        appliances in your buildings. That framing matters, because it tells you what to evaluate:
+        not "is SASE good" but "is <em>this vendor's</em> web gateway, and their ZTNA <span class="acro-exp">(Zero Trust Network Access)</span>, and their
+        CASB <span class="acro-exp">(Cloud Access Security Broker)</span> each good enough, and does buying them together beat buying the best of each". Often it
+        does — one policy, one identity, one place to look — and sometimes it very much does not.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Component</th><th>Replaces</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td>SWG — secure web gateway</td><td>The on-premises proxy</td><td>Where may this user browse, and what may they download?</td></tr>
+            <tr><td>CASB — cloud access security broker</td><td>Nothing; this is new</td><td>What is happening inside the SaaS <span class="acro-exp">(Software as a Service)</span> applications?</td></tr>
+            <tr><td>ZTNA — zero trust network access</td><td>The remote-access VPN <span class="acro-exp">(Virtual Private Network)</span></td><td>May this identity, on this device, reach this one application?</td></tr>
+            <tr><td>FWaaS — firewall as a service</td><td>The branch firewall</td><td>The non-web traffic, and egress policy</td></tr>
+            <tr><td>DLP <span class="acro-exp">(Data Loss Prevention)</span></td><td>An on-premises appliance, if any</td><td>Is regulated data leaving?</td></tr>
+            <tr><td>SD-WAN <span class="acro-exp">(Software Defined Wide Area Network)</span></td><td>MPLS <span class="acro-exp">(Multiprotocol Label Switching)</span> and branch routers</td><td>How does the traffic get to all of the above?</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The distinction people trip on: **SSE** is the security half — SWG, CASB, ZTNA, usually
+          DLP. **SASE** is SSE plus the networking half, SD-WAN. If your branches are already
+          connected and you only need the security services, you are shopping for SSE, and saying so
+          keeps half the sales conversation off the table. The networking half is in
+          <span class="xref">WAN &amp; Switching Deep — SD-WAN, MPLS, VLANs &amp; PoE</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Why It Happened: the Traffic Stopped Coming to You</div>
+      <div class="concept-desc">
+        The architecture it replaces made sense when the applications and the users were both inside
+        the building. Every assumption behind it has since broken.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Old assumption</th><th>What changed</th></tr></thead>
+          <tbody>
+            <tr><td>Applications live in our datacentre</td><td>They are SaaS, in someone else's</td></tr>
+            <tr><td>Users work from our offices</td><td>They work from anywhere, permanently</td></tr>
+            <tr><td>Branch traffic backhauls to HQ for inspection</td><td>That doubles the latency to a cloud app that is nearer the branch than HQ is</td></tr>
+            <tr><td>The VPN puts remote users "inside"</td><td>Which is exactly the flat access an attacker wants after one phish</td></tr>
+            <tr><td>Inspection happens on appliances we own</td><td>Appliances size for peak and are replaced on a hardware cycle</td></tr>
+            <tr><td>The perimeter is a place</td><td>The perimeter is an identity and a device posture</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The backhaul row is what usually funds the project. A branch sending its cloud traffic to
+          headquarters and back to be inspected pays that detour on every request, and users
+          experience it as "the internet is slow here" — which is why local break-out with
+          inspection at a nearby point of presence is the single most visible improvement most
+          organisations get from this.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Evaluating It Honestly, and the Failure Modes</div>
+      <div class="concept-desc">
+        The marketing is uniform across vendors; the products are not. These are the questions that
+        separate them, and the ways deployments go wrong.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Ask</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Which components are yours, and which were acquired?</td><td>A bundle assembled from three acquisitions often has three consoles and three policy models</td></tr>
+            <tr><td>Where are the points of presence, relative to our people?</td><td>The whole latency argument depends on this and on nothing else</td></tr>
+            <tr><td>What happens when the agent cannot reach you?</td><td>Fail-open is a security hole; fail-closed is an outage. You must choose deliberately</td></tr>
+            <tr><td>How is TLS <span class="acro-exp">(Transport Layer Security)</span> inspected, and what is exempted?</td><td>Banking, health and pinned applications will break; the exemption list is a real design artefact</td></tr>
+            <tr><td>Can policy be written once across all components?</td><td>This is the actual benefit of a bundle. Without it you have bought a discount, not an architecture</td></tr>
+            <tr><td>What does the exit look like?</td><td>Every device carries their agent and every branch routes through them. Getting out is a project</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two failure modes recur. The first is <strong>a single point of failure you do not
+          own</strong>: when the provider has an outage, every office and every remote worker loses
+          the internet at once, and the mitigation has to be designed before you need it. The second
+          is <strong>TLS inspection breaking things quietly</strong> — a mobile application that
+          pins its certificate does not report a policy error, it just fails, and the ticket arrives
+          as "the app doesn't work on the work laptop". Both are manageable; neither is optional to
+          think about. The lock-in question is the same one as
+          <span class="xref">Exit Clauses &amp; Lock-In — What It Costs to Leave</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: ZTNA ───────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🚧</span>
+    <span class="topic-name">ZTNA <span class="acro-exp">(Zero Trust Network Access)</span> — Replacing the VPN <span class="acro-exp">(Virtual Private Network)</span>, and What Breaks When You Do</span>
+    <span class="topic-badge">SEC • Architecture</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Access to an Application, Not to a Network</div>
+      <div class="concept-desc">
+        A VPN answers one question — "are you allowed on?" — and then puts you on a network where
+        everything is reachable. Zero trust network access answers a different question for every
+        connection: may <em>this identity</em>, on <em>this device</em>, in <em>this state</em>,
+        reach <em>this application</em>, right now? The user never gets an IP <span class="acro-exp">(Internet Protocol)</span> address on your
+        network at all. The practical consequence is that a stolen credential reaches whatever that
+        one person was authorised for, instead of everything the network could route to.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>VPN</th><th>ZTNA</th></tr></thead>
+          <tbody>
+            <tr><td>Grants</td><td>A network position</td><td>A session to one application</td></tr>
+            <tr><td>Evaluated</td><td>Once, at connect</td><td>Continuously, per request</td></tr>
+            <tr><td>Device posture</td><td>Sometimes checked at login</td><td>An input to every decision</td></tr>
+            <tr><td>Visible surface</td><td>The concentrator, on the internet</td><td>Nothing inbound — the connector dials out</td></tr>
+            <tr><td>Lateral movement</td><td>The network's job to prevent, and it usually does not</td><td>There is no network to move across</td></tr>
+            <tr><td>Contractor access</td><td>A VPN account, and then hope</td><td>Two applications, expiring on a date</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The fourth row is underrated. A VPN concentrator must be reachable from the internet,
+          which makes it a permanent, scanned, occasionally catastrophically vulnerable target — the
+          last several years have supplied a steady stream of examples. A ZTNA connector makes only
+          outbound connections, so there is nothing to find.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">What a Deployment Actually Involves</div>
+      <div class="concept-desc">
+        The technology is the easy half. The hard half is that ZTNA requires you to know what your
+        applications are and who should reach them — which most organisations have never had to
+        write down, because the network answered it implicitly.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>The real work</th></tr></thead>
+          <tbody>
+            <tr><td>Inventory the applications</td><td>Including the ones nobody owns. This is where projects stall</td></tr>
+            <tr><td>Decide who should reach each</td><td>Groups, ideally from HR attributes rather than hand-maintained lists</td></tr>
+            <tr><td>Deploy connectors beside the applications</td><td>In each datacentre, cloud VPC <span class="acro-exp">(Virtual Private Cloud)</span> and, awkwardly, that one office cupboard</td></tr>
+            <tr><td>Define device posture that people can pass</td><td>Too strict and you lock out the contractors; too loose and you have a VPN with extra steps</td></tr>
+            <tr><td>Run both in parallel</td><td>Migrate group by group. A cutover weekend for remote access is not a plan</td></tr>
+            <tr><td>Handle the exceptions explicitly</td><td>Legacy protocols, thick clients, printers, appliances with hard-coded addresses</td></tr>
+            <tr><td>Decommission the VPN</td><td>The step everyone skips, which means the old flat path is still there</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          That last row decides whether any of it was worth doing. A ZTNA rollout that leaves the
+          VPN running "for a few edge cases" has added a control and removed nothing — the attacker
+          uses the path that still exists. Put a date on the decommission at the start, and treat
+          the remaining edge cases as work to be finished rather than as a permanent exemption.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">What Breaks, and What It Does Not Solve</div>
+      <div class="concept-desc">
+        Broadly honest list, including the things vendors are quiet about.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Problem</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Anything that connects <em>to</em> the client</td><td>Server-initiated protocols, some voice, some remote support tools</td></tr>
+            <tr><td>Non-web protocols on legacy systems</td><td>Supported by most products now, less well than the demo suggests</td></tr>
+            <tr><td>Unmanaged devices</td><td>Posture checks need an agent; contractors and personal machines need a browser-based path instead</td></tr>
+            <tr><td>Latency for chatty applications</td><td>Per-request evaluation is not free; a database client over ZTNA can feel worse</td></tr>
+            <tr><td>Identity provider outage</td><td>Everything stops. This is the price of identity being the perimeter</td></tr>
+            <tr><td>The provider becomes the target</td><td>You have consolidated access decisions into one vendor. Judge their security accordingly</td></tr>
+            <tr><td>It does not fix what happens after access</td><td>ZTNA is a door. The application's own authorisation is still the application's problem</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The final row is the one worth arguing about internally, because it is where "zero trust"
+          gets oversold. Reaching an application is not the same as being allowed to do everything
+          in it, and a broken object-level check inside the app is untouched by any of this —
+          <span class="xref">Broken Object-Level Authorization — The Bug in Almost Every API</span>.
+          The principle behind the whole architecture is in
+          <span class="xref">Zero Trust — Never Trust, Always Verify</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CASB & SECURE WEB GATEWAY ──────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔎</span>
+    <span class="topic-name">CASB <span class="acro-exp">(Cloud Access Security Broker)</span> &amp; Secure Web Gateway — Seeing SaaS <span class="acro-exp">(Software as a Service)</span> Without Breaking It</span>
+    <span class="topic-badge">SEC • Architecture</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Two Vantage Points, and They See Different Things</div>
+      <div class="concept-desc">
+        A secure web gateway sits in the traffic path and judges requests: this site, this category,
+        this file type, this upload. A cloud access security broker asks about the *application* —
+        who is in this tenant, what is shared publicly, which third-party app has been granted
+        access to it. The first sees packets and cannot tell you that a file in a sanctioned
+        SharePoint site is shared with the whole internet. The second sees that immediately and
+        cannot block anything in real time unless it is also in the path. Most products do both, in
+        two different modes, and knowing which mode is answering a given question is most of
+        operating them well.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Mode</th><th>How</th><th>Sees</th><th>Cannot</th></tr></thead>
+          <tbody>
+            <tr><td>Inline (forward proxy)</td><td>Agent or tunnel routes traffic through it</td><td>Everything the device sends, in real time</td><td>Anything not on that device</td></tr>
+            <tr><td>Reverse proxy</td><td>Sits in front of the SaaS login</td><td>Unmanaged devices too</td><td>Applications that will not cooperate</td></tr>
+            <tr><td>API <span class="acro-exp">(Application Programming Interface)</span> mode</td><td>Connects to the SaaS tenant with an app registration</td><td>Sharing, configuration, data at rest, retroactively</td><td>Stop something as it happens — it is minutes behind</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          API mode is the one people underestimate. It requires no agent, covers every device
+          including personal ones, and answers the questions that actually cause breaches — what is
+          public, who has been granted access, which OAuth <span class="acro-exp">(Open Authorization)</span> application is reading the mail. Its cost
+          is latency: it reports after the fact. Both modes together is the normal answer.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Shadow IT — the Original Use Case, and What to Do With the Report</div>
+      <div class="concept-desc">
+        The first thing every deployment produces is a list of a few hundred cloud applications
+        nobody approved. What matters is what happens next, because the obvious response is the
+        wrong one.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Finding</th><th>Response</th></tr></thead>
+          <tbody>
+            <tr><td>A tool a team genuinely relies on</td><td>Sanction it. It was bought because a need was not met</td></tr>
+            <tr><td>Ten tools that do the same thing</td><td>Pick one, licence it properly, and save the money</td></tr>
+            <tr><td>A file converter or "free PDF <span class="acro-exp">(Portable Document Format)</span> tool"</td><td>Block it — these are where documents go to be harvested</td></tr>
+            <tr><td>A consumer account of a sanctioned service</td><td>Tenant restrictions, not a block: people are trying to work</td></tr>
+            <tr><td>An AI <span class="acro-exp">(Artificial Intelligence)</span> assistant nobody approved</td><td>The current version of this problem; needs a policy before it needs a block</td></tr>
+            <tr><td>Something with no business use at all</td><td>Block, quietly, and move on</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The rule underneath the table: <strong>blocking everything unsanctioned produces a
+          workforce that routes around you</strong>, on personal devices where you can see nothing
+          at all. Shadow IT is a demand signal. Reading it as one — sanction, consolidate, restrict,
+          block, in that order of preference — is what makes the tool worth its licence.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">TLS <span class="acro-exp">(Transport Layer Security)</span> Inspection, and the Tickets It Generates</div>
+      <div class="concept-desc">
+        Almost everything a gateway does depends on decrypting TLS, and almost every difficult
+        ticket in this space comes from that decision.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
+          <tbody>
+            <tr><td>One application fails with no useful error</td><td>Certificate pinning. It cannot be configured around — it must be exempted</td></tr>
+            <tr><td>A command-line tool fails, the browser works</td><td>The tool uses its own certificate store and has never seen your inspection CA <span class="acro-exp">(Certificate Authority)</span></td></tr>
+            <tr><td>Users see certificate warnings</td><td>The inspection CA is not trusted on that device — a device-management problem</td></tr>
+            <tr><td>A banking or health site is blocked internally</td><td>It is exempted from inspection by policy, and something else is failing behind that</td></tr>
+            <tr><td>Everything is slower</td><td>Decrypt, inspect, re-encrypt has a real cost, especially far from a point of presence</td></tr>
+            <tr><td>Legal asks whether you are reading personal traffic</td><td>A fair question. Category-based exemptions and a written policy are the answer</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Maintain the exemption list as a deliberate artefact with a reason recorded against each
+          entry, rather than as a scar tissue of one-off fixes — otherwise it grows until the
+          gateway is inspecting very little and nobody can say why. The consent-and-app-registration
+          half of the CASB story is the same problem as
+          <span class="xref">App Registrations, Service Principals &amp; Consent — What Your Tenant Has Agreed To</span>,
+          and the certificate mechanics are in
+          <span class="xref">TLS &amp; HTTPS — How Secure Connections Work</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

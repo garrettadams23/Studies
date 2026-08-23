@@ -9088,3 +9088,36 @@ description and the Open Graph text carry `<!-- TOPIC_COUNT -->` placeholders fi
 index. The check that caught the drift stays, but there is nothing left for it to catch.
 
 Site total 1,375 → **1,380**. Twelve new cross-references folded into `related.json`.
+
+
+## Session record — the SASE gap, found by probing subjects rather than domains
+
+At 1,380 topics, picking the thinnest domain stops being the right way to find gaps. This wave
+probed the other way: a list of ~70 significant IT subjects checked against every **topic title** on
+the site, looking for zero hits.
+
+Most came back covered, several under names the probe did not guess — eBPF inside a Kubernetes
+detection card, TPM inside *Hardware Root of Trust*, agents inside *Agentic AI*, salary inside two
+negotiation cards. The genuine hole was a cluster: **SASE, SSE, ZTNA, CASB, SWG**. Zero Trust as a
+*principle* has two cards in `sec`; the product architecture that implements it — the thing
+organisations actually buy and deploy — had none.
+
+### Three cards
+
+- **SASE & SSE** — leads with the deflationary point: it is not a technology, it is five existing
+  products bought as one subscription and delivered from someone else's edge. Which changes the
+  evaluation question from "is SASE good" to "is *this vendor's* gateway, and their ZTNA, and their
+  CASB each good enough". Includes the SSE-versus-SASE distinction that keeps half a sales
+  conversation off the table, and the two failure modes: a single point of failure you do not own,
+  and TLS inspection breaking pinned applications silently.
+- **ZTNA** — access to an application rather than a position on a network, with the row people
+  underrate: a VPN concentrator must be reachable from the internet and has been a reliable source
+  of catastrophic vulnerabilities, while a ZTNA connector only dials out. Ends on what it does *not*
+  fix — reaching an application is not permission to do everything in it.
+- **CASB & Secure Web Gateway** — inline versus API mode, and why the mode decides which questions
+  can be answered. The shadow-IT section argues against the obvious response: blocking everything
+  unsanctioned produces a workforce on personal devices where you can see nothing, so read the
+  report as a demand signal — sanction, consolidate, restrict, block, in that order.
+
+Site total 1,380 → **1,383**. Twelve new cross-references. The link-preview counts updated
+themselves, which is the build-time substitution from the previous wave earning its keep.
