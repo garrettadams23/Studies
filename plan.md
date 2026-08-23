@@ -8771,4 +8771,19 @@ one part, only that part is restamped.
 
 `smoke_test.mjs` 115/115 · `lint_content.py` clean · `check_markup.py` now parses 36 files instead
 of 31 · renames, contradictions and paths all clean · `fix_topic_names.py --check` reports the same
-103 aliases · no stamp churn.
+103 aliases.
+
+### The freshness cost, again measured
+
+Restamping after the split moved **20 of the 145 cards** from 2026-07 to 2026-08. `-C -C` copy
+detection recovers the other 125 by itself — the delete and the adds are one commit, which is
+exactly the case it is for — and the 20 that fall through are short blocks under git's
+copy-detection minimum. Listing the split in `.git-blame-ignore-revs` recovers **none** of them,
+measured rather than assumed, for the reason the file's own header gives: the part files did not
+exist before this commit, so there is no earlier version of those lines to fall back to.
+
+Twenty cards, one month generous. Recorded beside the commit in the ignore file, with the
+measurement, so the next session does not repeat the experiment. That is now the third instance of
+the same limitation in this session, and the pattern is worth stating once: **a mechanical commit
+that creates or merges lines cannot be neutralised by `--ignore-rev`.** Only one that *modifies*
+existing lines can.
