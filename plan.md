@@ -8416,3 +8416,54 @@ churn on the existing 26** — the `body_times()` fix from earlier still holds.
 
 Site total 1,355 → **1,364** topics. Budget raw 5.4 / 8.0 MB, content elements 110,310 / 175,000.
 `smoke_test.mjs` 110/110.
+
+
+## Session record — pentest content wave: five cards, and one the audit killed
+
+`pentest` had 29 topics with visible duplication (two privilege-escalation cards, two on password
+attacks, "Methodology & Phases" beside "Penetration Testing Phases"). The gaps were not in the
+tooling — `redteam` covers that in depth — but in the *kinds of engagement* the domain never
+described.
+
+### An API card was written, then deleted
+
+The probe that justified it was `grep "API pentest"` → **0**, and that was the wrong probe. Listing
+topic titles instead found five cards in `sec`, including **"The OWASP API Security Top 10 — Where
+the Web List Stops Being Enough"**, whose subtitle was almost word-for-word the one already drafted,
+plus dedicated cards on broken object-level authorisation, rate limiting and shadow API inventory.
+The card was discarded before it shipped.
+
+This is the third recorded instance of the same mistake and it now has a rule: **probe the topic
+titles, not just the prose.** A phrase-shaped grep (`"API pentest"`, `"physical pentest"`) asks
+whether anyone happened to use that exact wording. Listing `.topic-name` across the site asks
+whether the subject is covered, which is the actual question.
+
+### What shipped
+
+Five cards, 29 → **34**:
+
+- **Physical Assessments & Covert Entry** — the only engagement where being wrong means the police.
+  Leads on paperwork rather than technique, including the shared-tenancy trap: a client can
+  authorise entry to their suite and cannot authorise the lobby, the lifts or the loading bay.
+- **Cloud Penetration Testing** — testing a configuration, not a network, and the rule that
+  permission to edit permissions is equivalent to every permission.
+- **Mobile Application Testing** — every mobile assessment is two assessments, and the severity is
+  in the second one. States plainly that pinning and root detection are speed bumps, not controls.
+- **Rating a Finding — CVSS, EPSS & the Number the Client Will Argue About** — CVSS was cited seven
+  times in the domain and explained nowhere. Includes the disputes, and the position that a
+  low-scoring finding you are worried about belongs in the narrative anyway.
+- **Responsible Disclosure & Bug Bounties** — finding it was never the risky part. Covers the four
+  positions a researcher can be in, and the minimum-proof line that separates a report from an
+  unauthorised access to personal data.
+
+### A stamp correction worth recording
+
+Stamping pentest moved **six existing topics from 2026-06 to 2026-07**. Verified rather than
+accepted: `git log -S` on a distinctive line from each shows them created in `d38592c`, dated
+**2026-07-13**. The old 2026-06 stamps were wrong, and they were wrong because the domain had not
+been re-stamped since the `body_times()` fix — the old code took the maximum blame date over the
+whole topic span *including the opening tag the stamper itself rewrites*, which pinned the date to
+the previous stamping run. Any domain not re-stamped since that fix may carry the same error.
+
+Site total 1,364 → **1,369** topics. `check_markup.py` clean · `lint_content.py` clean ·
+`smoke_test.mjs` 110/110 · related.json +14 links from the new cross-references.
