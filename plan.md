@@ -8467,3 +8467,31 @@ the previous stamping run. Any domain not re-stamped since that fix may carry th
 
 Site total 1,364 → **1,369** topics. `check_markup.py` clean · `lint_content.py` clean ·
 `smoke_test.mjs` 110/110 · related.json +14 links from the new cross-references.
+
+
+## Session record — correcting the freshness stamps the fix had not reached
+
+The pentest wave turned up six topics stamped 2026-06 that were really 2026-07, and named the
+cause: a domain that has not been re-stamped since the `body_times()` fix carries dates derived the
+old way. That is a claim about the whole site, so it was checked against the whole site.
+
+`stamp_freshness.py --check` named **nine domains**: ai, career, linux, military, mind, net,
+philosophy, shortcut, threat. Re-stamping moved **88 topics**, in both directions:
+
+| Change | Topics |
+|---|---|
+| 2026-06 → 2026-07 | 73 |
+| 2026-08 → 2026-07 | 13 |
+| 2026-07 → 2026-08 | 2 |
+
+**The thirteen downgrades are the important ones.** A stamp that understates freshness is a nuisance;
+one that overstates it tells a reader a card was reviewed a month more recently than it was, which
+is the failure a freshness stamp exists to prevent. Traced properly rather than accepted: the
+Subnetting & CIDR card's topic body was last touched by `1bc9ce8` on **2026-08-02** — a site-wide
+acronym pass across 31 files — which `global_markup_passes()` correctly ignores, leaving 2026-07 as
+the real date. A naive `git blame` over the same span reports August and would have "confirmed" the
+wrong answer. The tool is more careful than the check.
+
+`--check` now reports nothing to update, so the site is consistent for the first time since the fix
+landed. 1,310 stamps across 29 files; the acronym domain's 59 topics are generated and carry none by
+design.
