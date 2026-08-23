@@ -737,6 +737,136 @@ check("Enter on a focused cross-reference follows it",
   !!xrefKey && !!xrefKey.want && xrefKey.got === xrefKey.want,
   xrefKey ? `${xrefKey.want} -> ${xrefKey.got}` : "none found");
 
+// ── study tooling: scheduler, acronym quiz, distractors, backup ─────────────
+// Four features that shipped without any coverage. Each has a failure that is
+// silent: a scheduler that stops writing records looks like "nothing is due",
+// a quiz whose distractors come from the wrong pool looks like an easy quiz,
+// and an export that drops a key looks like a smaller export.
+await page.goto(PAGE, { waitUntil: "load" });
+
+const srs = await page.evaluate(() => {
+  localStorage.clear();
+  const id = stIndex()[0].id;
+  const first = srsGrade(id, "good");
+  const second = srsGrade(id, "good");
+  const third = srsGrade(id, "good");
+  const badge = document.querySelector("#study-fab .study-badge")?.textContent ?? null;
+  // A card graded three times is scheduled well past today, so it must not be
+  // in the due count — that is the whole point of the interval.
+  const dueAfter = srsDueCount();
+  const failed = srsGrade(id, "again");
+  return {
+    id, first, second, third, badge, dueAfter,
+    known: localStorage.getItem("known:" + id),
+    failedInterval: failed.i, failedEase: failed.e, thirdEase: third.e,
+    failedDue: failed.d, tomorrow: srsToday(1),
+    dueNow: srsDueCount(),
+  };
+});
+check("grading a card writes a scheduler record",
+  !!srs && srs.first.i === 1 && typeof srs.first.d === "string" && srs.first.n === 1,
+  JSON.stringify(srs?.first));
+check("the interval grows across gradings",
+  srs.second.i === 6 && srs.third.i > srs.second.i,
+  `${srs.first.i} -> ${srs.second.i} -> ${srs.third.i} days`);
+check("a graded card counts as known", srs.known === "1");
+check("a scheduled card is not due today", srs.dueAfter === 0, `${srs.dueAfter} due`);
+// The scheduler works in whole days, so "again" means tomorrow rather than
+// later in this session — asserted as written, not as an SRS purist would want
+// it. If that is ever changed, this is the check that should change with it.
+check("'again' resets the interval and lowers the ease",
+  srs.failedInterval === 1 && srs.failedEase < srs.thirdEase
+  && srs.failedDue === srs.tomorrow && srs.dueNow === 0,
+  `i=${srs.failedInterval}, ease ${srs.thirdEase} -> ${srs.failedEase}, due ${srs.failedDue}`);
+
+const acroQ = await page.evaluate(() => {
+  const qs = acroQuestions("__all", 8);
+  const areas = acroAreas();
+  const bad = qs.filter(q =>
+    q.options.length !== 4 ||
+    new Set(q.options.map(o => o.toLowerCase())).size !== 4 ||
+    !q.options.includes(q.answer));
+  // Same-area distractors are the claim the code makes; check it on an area
+  // big enough that the fallback to the whole dictionary never kicks in.
+  const big = areas.map(a => ({ a, n: acroQuestions(a, 3).length }))
+    .filter(r => r.n === 3).slice(0, 3);
+  return { count: qs.length, areas: areas.length, bad: bad.length, big: big.map(r => r.a) };
+});
+check("the acronym quiz builds questions from the dictionary",
+  acroQ.count === 8 && acroQ.areas > 10, `${acroQ.count} questions, ${acroQ.areas} areas`);
+check("every acronym question has four distinct options, one of them right",
+  acroQ.bad === 0, `${acroQ.bad} malformed`);
+check("a single subject area can fill a quiz on its own",
+  acroQ.big.length === 3, acroQ.big.join(", "));
+
+const distract = await page.evaluate(() => {
+  const domain = [...document.querySelectorAll(".domain-section")]
+    .map(s => s.dataset.domain).find(d => stTopicsForScope(d).length >= 8);
+  if (!domain) return null;
+  const stage = document.createElement("div");
+  stStartQuiz(domain, stage);
+  const ids = [...stage.querySelectorAll(".st-q-opt")].map(b => b.dataset.id);
+  const owner = new Set(stTopicsForScope(domain).map(t => t.id));
+  return { domain, options: ids.length, foreign: ids.filter(id => !owner.has(id)).length };
+});
+check("quiz distractors come from the scope that was chosen",
+  !!distract && distract.options === 4 && distract.foreign === 0,
+  distract ? `${distract.options} options, ${distract.foreign} from outside ${distract.domain}` : "no domain");
+
+const backup = await page.evaluate(() => {
+  localStorage.clear();
+  const ids = stIndex().slice(0, 3).map(t => t.id);
+  localStorage.setItem("reviewed:" + ids[0], "1");
+  localStorage.setItem("bookmark:" + ids[1], "1");
+  srsGrade(ids[2], "good");
+  localStorage.setItem("unrelated-key", "should not travel");
+  const payload = bkExport();
+  const text = JSON.stringify(payload);
+  localStorage.clear();
+  const vetted = bkValidate(text);
+  const { kept, skipped } = bkSanitise(vetted.data);
+  bkApply(kept, "replace");
+  return {
+    counts: payload.counts,
+    carriedUnrelated: Object.keys(payload.data).includes("unrelated-key"),
+    skipped,
+    restored: {
+      reviewed: localStorage.getItem("reviewed:" + ids[0]),
+      bookmark: localStorage.getItem("bookmark:" + ids[1]),
+      srs: !!localStorage.getItem("srs:" + ids[2]),
+    },
+  };
+});
+check("an export carries the progress keys and nothing else",
+  backup.counts.reviewed === 1 && backup.counts.bookmark === 1 && backup.counts.srs === 1
+  && !backup.carriedUnrelated,
+  JSON.stringify(backup.counts));
+check("an import restores what was exported",
+  backup.restored.reviewed === "1" && backup.restored.bookmark === "1" && backup.restored.srs,
+  JSON.stringify(backup.restored));
+
+const rejects = await page.evaluate(() => {
+  const out = {};
+  const tryIt = (name, text) => {
+    try { bkValidate(text); out[name] = "accepted"; }
+    catch (e) { out[name] = "rejected"; }
+  };
+  tryIt("garbage", "not json at all");
+  tryIt("wrongFormat", JSON.stringify({ format: "something-else", version: 1, data: {} }));
+  tryIt("wrongVersion", JSON.stringify({ format: "techref-progress", version: 99, data: {} }));
+  // A well-formed file carrying a key we do not own, and a malformed record.
+  const { kept, skipped } = bkSanitise({ "evil-key": "x", "srs:abc": { d: "not-a-date" } });
+  out.sanitised = `${Object.keys(kept).length} kept, ${skipped} refused`;
+  return out;
+});
+check("a file that is not a progress export is refused",
+  rejects.garbage === "rejected" && rejects.wrongFormat === "rejected"
+  && rejects.wrongVersion === "rejected", JSON.stringify(rejects));
+check("an import refuses keys and shapes it does not own",
+  rejects.sanitised === "0 kept, 2 refused", rejects.sanitised);
+
+await page.evaluate(() => localStorage.clear());
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));

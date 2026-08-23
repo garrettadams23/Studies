@@ -2096,17 +2096,24 @@ The study FAB already has **flashcards, an auto-generated quiz, a study list and
 a quick-jump palette**. This track makes them into a system rather than four
 separate toys.
 
-- [ ] **Spaced repetition** — an SM-2-style scheduler over the existing
-  `known:` / `bookmark:` state, so flashcards resurface on a schedule instead of
-  randomly. Store `{id, ease, interval, due}` in `localStorage`; add a "due
-  today" count to the FAB.
-- [ ] **Acronym quiz mode** — generate questions directly from
-  `data/acronyms.json` (expansion → acronym and back). It is the highest-quality
-  question source on the site because the answers are already structured, and
-  the current MCQ generator has to guess distractors from topic titles.
-- [ ] **Better distractors** — pick wrong answers from the *same domain* and,
-  where available, the same subject area, so questions stop being trivially
-  guessable.
+*Shipped-note: four of the eight below are done and were shipped without any test coverage —
+spaced repetition, the acronym quiz, the distractor fix and export/import. All four were verified
+headlessly and given the checks they never had (14 of them) rather than rewritten. Read the ticks.*
+
+- [x] **Spaced repetition** — **already built.** `srsGrade()` / `srsIsDue()` / `srsDueCount()` in
+  `script.js`, storing `{e, i, d, n}` under `srs:<id>`, with the due count badged on the study FAB
+  and a "⏰ Due today" deck. Verified: intervals step 1 → 6 → 15 days across three "good" gradings,
+  a graded card is marked known, a scheduled card leaves the due count, and "again" resets the
+  interval and drops the ease. Five checks added.
+- [x] **Acronym quiz mode** — **already built.** `acroQuestions()` builds expand, contract and
+  disambiguate questions straight from the dictionary. Verified: 8 questions across 28 subject
+  areas, every one with four distinct options including the answer, and a single area can fill a
+  quiz on its own. Three checks added.
+- [x] **Better distractors** — **already built, both quizzes.** The topic quiz draws wrong answers
+  from the chosen scope's pool; `acroDistractors()` draws from the same subject area and falls back
+  to the whole dictionary only when the area is too small. The multi-meaning questions use the
+  *other meanings of the same acronym* as distractors, which is the sharper version of the item.
+  Verified: a domain-scoped quiz produced four options, none from outside that domain.
 - [ ] **Exam mode** — timed, fixed question count, no feedback until the end,
   then a scored report broken down by domain with links to the weak topics.
 - [ ] **Learning paths** — an ordered sequence of existing topic IDs
@@ -2114,8 +2121,12 @@ separate toys.
   a UEM engineer", "SOC analyst starter". Pure data over existing content.
 - [ ] **Progress dashboard** — reviewed / bookmarked / known per domain over
   time, plus a streak. All from `localStorage`, no backend.
-- [ ] **Export & import progress** — a JSON download and restore, so clearing
-  browser data is not a catastrophe. Also the only realistic cross-device path.
+- [x] **Export & import progress** — **already built** (session 10): `bkExport()`, `bkValidate()`,
+  `bkSanitise()` and `bkApply()` with merge / replace / preview. Verified end to end: the export
+  carries reviewed, bookmark, known and srs keys and refuses to carry an unrelated one; a round trip
+  restores all three; a file that is not a progress export is rejected on all three grounds; and a
+  well-formed file carrying a key the page does not own, or a malformed scheduler record, is
+  refused rather than written. Six checks added.
 - [ ] **Per-topic notes** — extend the notepad to attach a note to a topic ID and
   surface it inline when that topic is open.
 
