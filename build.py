@@ -501,6 +501,14 @@ def main():
     output = output.replace("<!-- LEARNING_PATHS -->", build_paths())
     output = output.replace("<!-- CHANGELOG -->", build_changelog(changelog))
 
+    # The link-preview text quotes the site's size. Substituting it here is the
+    # difference between a number that is right and a number that was right
+    # once: every content wave used to need someone to remember to edit it, and
+    # the check that caught the drift only caught it after the fact.
+    total_topics = sum(len(v) for v in topic_index.values())
+    output = output.replace("<!-- TOPIC_COUNT -->", f"{total_topics:,}")
+    output = output.replace("<!-- DOMAIN_COUNT -->", str(len(topic_index)))
+
     if MINIFY:
         raw_len = len(output)
         output = minify_html(output)

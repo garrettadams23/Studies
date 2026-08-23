@@ -9050,3 +9050,41 @@ This decision was deferred across many sessions with a test attached to it. The 
 be answerable only *after* building the features — and when it was answered, it said no, clearly,
 with numbers. Worth remembering the next time something is tempting and expensive: writing down what
 would make it worthwhile is what stopped it happening on vibes.
+
+
+## Session record — mind content wave: the non-technical half of the job
+
+`mind` was the thinnest substantial domain at twelve topics, covering the part of an IT career that
+is not technical. Audited by topic title across all thirty domains first — which found that two
+candidates were already handled and should not be duplicated: **difficult conversations** exists
+twice, in `ops` (angry users, VIP pressure, saying no) and `eng` (giving feedback), and **money**
+has two cards in `career`.
+
+### Five cards, 12 → 17
+
+- **Layoffs & Job Loss** — nothing on the site mentioned this at all, in a field where it happens to
+  most people at least once. Separates the business decision from the verdict, gives the
+  time-sensitive first week in order, and is explicit about the one thing that turns a bad month
+  into a legal problem: taking company material on the way out.
+- **The Always-On Feeling** — deliberately *not* burnout. Burnout is exhaustion; this is
+  hypervigilance, and it usually comes first. The most useful row in it is an engineering one:
+  people check dashboards off-shift because they do not trust their alerts, so fixing the alerts
+  fixes the checking.
+- **Comparison** — you are measuring an ordinary Tuesday against the aggregate of everyone else's
+  best days. Ends on the structural point rather than the personal one: comparison is unbearable
+  where admitting ignorance is unsafe, and that is a property of the team.
+- **A Manager You Cannot Fix** — separates mismatch, overload, out-of-depth, structurally trapped
+  and bad actor, because those are five problems with five different answers and treating them
+  alike is how people stay stuck for years.
+- **Asking for Help** — the four-line question that gets answered fast, the timebox that settles
+  when to send it, and the other half nobody writes down: how a senior person answers decides
+  whether anyone asks them again.
+
+### A count that no longer needs remembering
+
+The link-preview check failed on this wave, correctly: the hand-written description said 1,375
+topics and the site had 1,380. Rather than edit the number, `build.py` now substitutes it — the
+description and the Open Graph text carry `<!-- TOPIC_COUNT -->` placeholders filled from the topic
+index. The check that caught the drift stays, but there is nothing left for it to catch.
+
+Site total 1,375 → **1,380**. Twelve new cross-references folded into `related.json`.
