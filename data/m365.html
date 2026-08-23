@@ -1922,3 +1922,863 @@ Get-MgContext | Select-Object Account, Scopes</pre>
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: M365 GROUPS ────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">👥</span>
+    <span class="topic-name">Microsoft 365 Groups — The Object Underneath Teams, SharePoint &amp; Planner</span>
+    <span class="topic-badge">M365 • Foundations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">One Group, Several Faces</div>
+      <div class="concept-desc">
+        A great deal of confusion in a tenant comes from not knowing that Teams, a SharePoint site,
+        a Planner plan, a shared mailbox-like inbox and a calendar are frequently the <em>same
+        object</em> wearing different clothes. Creating a team creates a Microsoft 365 Group; that
+        group owns a SharePoint site, a mailbox, a calendar, a Planner plan and a OneNote notebook.
+        Delete the group and all of them go. Rename it in one place and the others follow, or do
+        not, depending on which place. Once you see the group underneath, the sprawl and the odd
+        deletion behaviour both stop being mysterious.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Group type</th><th>What it is</th><th>Can it be a team?</th></tr></thead>
+          <tbody>
+            <tr><td>Microsoft 365 Group</td><td>Membership plus a collection of workloads</td><td>Yes — this is the one</td></tr>
+            <tr><td>Security group</td><td>Membership for permissions and policy targeting only</td><td>No</td></tr>
+            <tr><td>Mail-enabled security group</td><td>A security group that also receives mail</td><td>No; cannot be created new in most tenants</td></tr>
+            <tr><td>Distribution list</td><td>Mail routing to a list of recipients</td><td>No — upgradeable to a Group</td></tr>
+            <tr><td>Dynamic group</td><td>Membership from a rule over user attributes</td><td>Yes, if it is a Microsoft 365 Group</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The practical rule: use a <strong>security group</strong> to grant access or target a
+          policy, and a <strong>Microsoft 365 Group</strong> when a set of people needs a place to
+          work. Using the wrong one is how a tenant ends up with three hundred teams that exist only
+          because somebody needed a licence assignment target.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Where a Group Is Created, and What It Drags With It</div>
+      <div class="concept-desc">
+        Every one of these entry points produces the same underlying object. Knowing that is what
+        lets a governance policy be written once rather than five times.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The user does this</th><th>What is actually created</th></tr></thead>
+          <tbody>
+            <tr><td>Creates a team in Teams</td><td>Group + SharePoint site + mailbox + Planner + notebook</td></tr>
+            <tr><td>Creates a team site in SharePoint</td><td>The same, minus the Teams front end until someone adds it</td></tr>
+            <tr><td>Creates a plan in Planner</td><td>A group, if they did not pick an existing one</td></tr>
+            <tr><td>Creates a shared library in OneDrive</td><td>A group and its SharePoint site</td></tr>
+            <tr><td>Creates a Yammer/Viva Engage community</td><td>A group, in a tenant configured that way</td></tr>
+            <tr><td>Creates a Power BI <span class="acro-exp">(Business Intelligence)</span> workspace</td><td>Historically a group; now optional</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          A communication site is the exception worth remembering: it is a SharePoint site with no
+          group behind it, which is why its permissions are managed differently and why it is the
+          right choice for an intranet page rather than a workspace.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Behaviours That Surprise People</div>
+      <div class="concept-desc">
+        Almost every "that is not what I expected" moment with Groups comes from one of these.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
+          <tbody>
+            <tr><td>Deleting a team removed a SharePoint site nobody expected</td><td>The site belonged to the group; deletion cascades</td></tr>
+            <tr><td>A deleted group came back</td><td>Soft delete: recoverable for 30 days by default</td></tr>
+            <tr><td>Renaming the team did not rename the site URL <span class="acro-exp">(Uniform Resource Locator)</span></td><td>The display name changes; the site address does not</td></tr>
+            <tr><td>Owners left the company and nobody can manage the team</td><td>Ownerless groups are a governance gap — set an ownerless policy</td></tr>
+            <tr><td>Group email arrives that nobody wanted</td><td>The group has a mailbox whether the team uses it or not</td></tr>
+            <tr><td>A dynamic group will not accept manual members</td><td>Rule-driven membership is exclusive; it is one or the other</td></tr>
+            <tr><td>Guests appear in a group nobody invited them to</td><td>Guest access is tenant-wide unless restricted per group</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The naming, expiry and creation-restriction controls that keep this under control are in
+          <span class="xref">Teams Governance &amp; Sprawl — Naming, Expiry &amp; the Guest Question</span>,
+          and they work at the group level precisely because everything above is one object.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: EXCHANGE ONLINE MIGRATION ──────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📬</span>
+    <span class="topic-name">Exchange Online Migration — Cutover, Staged, Hybrid &amp; Choosing Honestly</span>
+    <span class="topic-badge">M365 • Migration</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Four Routes, and the One Question That Picks Between Them</div>
+      <div class="concept-desc">
+        The question is not "which is best" but "how long will both systems have to coexist, and
+        does the user experience have to be seamless while they do". Everything else follows from
+        that answer, and getting it wrong is what turns a two-week project into a six-month one.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Route</th><th>Suits</th><th>Coexistence</th><th>Main cost</th></tr></thead>
+          <tbody>
+            <tr><td>Cutover</td><td>Small estates moving in one weekend</td><td>None — a hard switch</td><td>Everyone changes at once; no rollback but a restore</td></tr>
+            <tr><td>Staged</td><td>Legacy on-premises versions, in batches</td><td>Partial and awkward</td><td>Free/busy and delegation gaps during the move</td></tr>
+            <tr><td>Hybrid</td><td>Anything large, or anything staying split</td><td>Full — free/busy, mail flow, delegation</td><td>A hybrid configuration to build, run and eventually retire</td></tr>
+            <tr><td>Third-party tool</td><td>Migrating from a non-Exchange system, or across tenants</td><td>Whatever the tool provides</td><td>Licensing, and trusting someone else's fidelity claims</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Hybrid is chosen far more often than its complexity warrants, usually because it is the
+          documented path for large organisations and nobody measured whether their organisation is
+          large. It is also chosen correctly far more often than people admit, because "we will be
+          finished in a month" is almost never true.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">What Actually Moves, and What Does Not</div>
+      <div class="concept-desc">
+        A migration is judged by what users notice on Monday, and what they notice is almost never
+        the mailbox contents — those move reliably. It is the things attached to the mailbox.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Item</th><th>Moves?</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>Mail, calendar, contacts, tasks</td><td>Yes</td><td>The easy part, and the part everyone plans for</td></tr>
+            <tr><td>Rules and out-of-office</td><td>Usually</td><td>Client-side rules can be lost; server-side survive</td></tr>
+            <tr><td>Delegate and Send-As permissions</td><td>Often not cleanly</td><td>Audit and re-apply; a classic Monday morning ticket</td></tr>
+            <tr><td>Shared mailboxes</td><td>Yes, but plan the order</td><td>Move a shared mailbox with the people who use it</td></tr>
+            <tr><td>Public folders</td><td>Painfully</td><td>A project of its own; consider retiring them instead</td></tr>
+            <tr><td>Distribution lists</td><td>Via directory sync</td><td>On-premises-managed lists stay on-premises-managed</td></tr>
+            <tr><td>Archives and retention</td><td>Depends</td><td>Journaling and legal hold need their own decision</td></tr>
+            <tr><td>Device and app connections</td><td>No</td><td>Anything with a hard-coded server name breaks</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is the one that generates the most tickets and appears on the fewest plans.
+          Scanners, alarm panels, line-of-business applications and copiers all send mail through
+          something, and that something usually has an IP <span class="acro-exp">(Internet Protocol)</span> address, a server name and a password that
+          predates everyone currently employed. Inventory them <em>before</em> the cutover;
+          <span class="xref">Mail Flow — Connectors, Transport Rules &amp; the Path a Message Takes</span>
+          is where the replacement path is designed.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Week Around the Move</div>
+      <div class="concept-desc">
+        These are the failures that actually happen, in roughly the order they show up.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Usual cause</th></tr></thead>
+          <tbody>
+            <tr><td>Migration batch crawls or stalls</td><td>Source server throughput, not the network; check the source's own limits</td></tr>
+            <tr><td>A handful of mailboxes fail with corrupt items</td><td>Raise the bad-item limit deliberately, and record what was skipped</td></tr>
+            <tr><td>Outlook keeps prompting for credentials after the move</td><td>Autodiscover still answering from the old system, or a stale profile</td></tr>
+            <tr><td>Free/busy is blank across the split</td><td>The hybrid organisation relationship, not the mailbox</td></tr>
+            <tr><td>Mail loops between the two systems</td><td>A target address or a connector pointing back at the source</td></tr>
+            <tr><td>External mail stops after the DNS <span class="acro-exp">(Domain Name System)</span> change</td><td>MX moved before the mailboxes did, or SPF was not updated</td></tr>
+            <tr><td>Delegates lost access</td><td>Cross-premises delegation is limited; re-apply after both parties move</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two rules are worth more than any checklist. <strong>Move people who work together in the
+          same batch</strong> — delegation and calendar sharing are what break across the split, and
+          batching by department costs nothing. And <strong>change DNS last</strong>: the MX record
+          is the switch, and flipping it before the mailboxes are ready turns a migration into an
+          outage. The go/no-go framing for the night itself is in
+          <span class="xref">Cutover Nights — Go/No-Go, Comms &amp; Rollback Triggers</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SHAREPOINT & ONEDRIVE MIGRATION ────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📂</span>
+    <span class="topic-name">SharePoint &amp; OneDrive Migration — File Servers, SPMT &amp; the Metadata You Will Lose</span>
+    <span class="topic-badge">M365 • Migration</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A File Share Is Not a Document Library, and Copying It Like One Fails</div>
+      <div class="concept-desc">
+        The temptation is to treat the migration as a copy: point a tool at <code>\\fileserver\share</code>,
+        point it at a library, press go. It will mostly work, and the parts that do not are the parts
+        people care about. A file share has folders, NTFS <span class="acro-exp">(New Technology File System)</span> permissions and a modification date. A
+        document library has metadata columns, versioning, sharing links, retention labels and a
+        permission model that inherits differently. Migrating well means deciding which of those the
+        content should acquire, and the answer is rarely "none".
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>On the file share</th><th>In SharePoint</th><th>Decision needed</th></tr></thead>
+          <tbody>
+            <tr><td>Deep folder trees</td><td>Views over metadata</td><td>Flatten now, or carry the depth and the path-length problem</td></tr>
+            <tr><td>NTFS groups per folder</td><td>Site and library permissions</td><td>Rebuild deliberately; do not import the tangle</td></tr>
+            <tr><td>Filename conventions</td><td>Columns</td><td>The convention is metadata — promote it or lose it</td></tr>
+            <tr><td>"Final_v3_REALfinal.docx"</td><td>Version history</td><td>Migrate one file; the versions become versions</td></tr>
+            <tr><td>Nobody's owner</td><td>A site owner</td><td>No owner, no migration — find one or archive it</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Where the Content Should Land</div>
+      <div class="concept-desc">
+        Putting everything in OneDrive is the most common mistake, and it is a governance problem
+        rather than a technical one: content in a personal OneDrive is deleted with the account.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Content</th><th>Destination</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>One person's working files</td><td>OneDrive</td><td>Personal by definition; shared by link when needed</td></tr>
+            <tr><td>A team's active work</td><td>The team's SharePoint site</td><td>Survives the person leaving</td></tr>
+            <tr><td>Department reference material</td><td>A departmental site or a communication site</td><td>Read-heavy; different permission shape</td></tr>
+            <tr><td>Records with a retention requirement</td><td>A site with labels applied</td><td>Retention is a property of the location, not the file</td></tr>
+            <tr><td>Archive nobody opens</td><td>Cheap storage, or the bin</td><td>Migrating it costs money and time for no benefit</td></tr>
+            <tr><td>Application data, databases, disk images</td><td>Not SharePoint</td><td>It is a document library, not a filesystem</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The archive row deserves the emphasis. In most estates a large fraction of a file share
+          has not been opened in years, and a migration is the only moment anyone will ever have
+          permission to ask whether it should exist. Measuring last-accessed dates before the
+          project starts is the cheapest scope reduction available.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">What Blocks a Migration, and What Bites Afterwards</div>
+      <div class="concept-desc">
+        Most tools report these as a list of skipped items at the end, which is exactly when nobody
+        reads them. Scan first instead.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Problem</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Path length</td><td>Deep trees plus long names exceed the limit; flatten or rename before moving</td></tr>
+            <tr><td>Illegal characters and names</td><td>A short list of characters and reserved names is rejected outright</td></tr>
+            <tr><td>Files open or locked</td><td>Scanned as blocked; run the final pass out of hours</td></tr>
+            <tr><td>Very large files</td><td>Above the per-file limit they simply will not go</td></tr>
+            <tr><td>Shortcuts, junctions, symlinks</td><td>Copied as broken files, or skipped</td></tr>
+            <tr><td>OneNote notebooks on a share</td><td>Migrate as notebooks, not as folders of files</td></tr>
+            <tr><td>Sync client meltdown afterwards</td><td>Users syncing an entire migrated library; use Files On-Demand and shortcuts</td></tr>
+            <tr><td>Permissions look right but nobody can edit</td><td>Broken inheritance imported item-by-item; rebuild at the library level</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last two rows cause more post-migration pain than every blocked file combined. The
+          sync behaviour and the permission model each have their own card —
+          <span class="xref">OneDrive — Known Folder Move, Files On-Demand &amp; Sync Triage</span>
+          and <span class="xref">The Sharing &amp; Permissions Model — Why It Sprawls, and How to Contain It</span>
+          — and reading both before the cutover is worth more than any amount of extra migration
+          throughput.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: POWER PLATFORM GOVERNANCE ──────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚡</span>
+    <span class="topic-name">Power Platform Governance — Environments, DLP <span class="acro-exp">(Data Loss Prevention)</span> Policies &amp; the Citizen Developer Problem</span>
+    <span class="topic-badge">M365 • Governance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Every Licence Includes a Development Platform, Whether You Planned One or Not</div>
+      <div class="concept-desc">
+        Power Apps, Power Automate and Power BI <span class="acro-exp">(Business Intelligence)</span> ship with most licences, which means anyone in the
+        organisation can build something that moves data between systems, runs on a schedule and
+        becomes load-bearing — with no code review, no source control and no handover. This is not
+        a reason to switch it off. The alternative to a governed platform is not "no automation", it
+        is automation in a spreadsheet with a macro, or a script on somebody's laptop that runs when
+        the laptop is awake. The job is to make the supported path the easy one.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Risk</th><th>What it looks like in practice</th></tr></thead>
+          <tbody>
+            <tr><td>Data exfiltration</td><td>A flow copying a SharePoint list to a personal cloud drive, in good faith</td></tr>
+            <tr><td>Bus factor of one</td><td>A business-critical approval flow owned by someone who left</td></tr>
+            <tr><td>Connection ownership</td><td>The flow runs as its author, with their permissions, forever</td></tr>
+            <tr><td>Invisible dependencies</td><td>Nobody knows a flow exists until the day it stops</td></tr>
+            <tr><td>Licensing surprises</td><td>Premium connectors metered per user, discovered at renewal</td></tr>
+            <tr><td>Shadow integration</td><td>Two systems kept in sync by an app nobody in IT has seen</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Three Controls That Do Most of the Work</div>
+      <div class="concept-desc">
+        Governance here is not a hundred settings. It is three decisions, made once, that shape
+        everything built afterwards.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>What it does</th><th>Sensible starting position</th></tr></thead>
+          <tbody>
+            <tr><td>Environments</td><td>Isolated containers for apps, flows and data</td><td>A default environment nobody builds production in, plus per-team environments on request</td></tr>
+            <tr><td>Data loss prevention policies</td><td>Sorts connectors into business, non-business and blocked — the two groups cannot be mixed in one app</td><td>Business: the organisation's own systems. Non-business: everything social and personal. Blocked: anything with no business use</td></tr>
+            <tr><td>Environment creation rights</td><td>Who can make a new environment at all</td><td>Restricted to admins; requests are cheap to approve and impossible to undo</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The DLP model is the one worth understanding properly, because it is unusual: it does not
+          inspect data. It prevents a single app or flow from connecting to a business connector and
+          a non-business connector at the same time. That is a crude rule, and it is remarkably
+          effective — the exfiltration path in nearly every real incident is exactly that pairing.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Adopting Governance Onto a Platform Already in Use</div>
+      <div class="concept-desc">
+        Almost nobody gets to start clean. The estate already contains hundreds of flows, and the
+        order of operations is what decides whether governance lands or is quietly resented.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Why in this order</th></tr></thead>
+          <tbody>
+            <tr><td>Inventory first, change nothing</td><td>You cannot assess impact without knowing what exists and who owns it</td></tr>
+            <tr><td>Publish the DLP policy in report-only terms</td><td>Find out what would break before it breaks</td></tr>
+            <tr><td>Contact owners of anything that would be blocked</td><td>Most will move willingly; a few have a real requirement</td></tr>
+            <tr><td>Enforce, with an exception route</td><td>A policy with no exception route gets worked around, not followed</td></tr>
+            <tr><td>Move critical flows to service accounts</td><td>Ownership by a person is the single biggest fragility</td></tr>
+            <tr><td>Set up an "adopt this flow" path</td><td>Some citizen automation deserves to become supported IT automation</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is the part most governance programmes skip, and it is the one that earns
+          trust: when a flow matters enough, IT should take it, own it, and say so. The engineering
+          version of that handover is in
+          <span class="xref">Automation Risk &amp; Discipline — Blast Radius, Approval Gates &amp; the Kill Switch</span>,
+          and the low-code tooling itself is covered from the scripting side in
+          <span class="xref">Power Automate &amp; Logic Apps — The Low-Code Option, and Its Real Limits</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: EXTERNAL COLLABORATION ─────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🤝</span>
+    <span class="topic-name">External Collaboration — Guests, B2B <span class="acro-exp">(Business to Business)</span> &amp; the Lifecycle Nobody Owns</span>
+    <span class="topic-badge">M365 • Governance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Guest Is a Real Account in Your Directory</div>
+      <div class="concept-desc">
+        The mental model that causes trouble is "sharing a file with someone outside". What actually
+        happens is that an account is created in your tenant, backed by an identity somewhere else,
+        and it stays there. It appears in address lists, it can be added to groups, it can be
+        granted access to things nobody intended, and — unlike an employee — no HR process will ever
+        tell you it should be removed. Three years of project work produces hundreds of these, most
+        belonging to people who have long since left the company that was the partner.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Route in</th><th>Creates a guest?</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>Added to a team or group</td><td>Yes</td><td>The obvious one, and the best governed</td></tr>
+            <tr><td>Sent a "specific people" sharing link</td><td>Yes</td><td>Created quietly, by anyone, from a file</td></tr>
+            <tr><td>Invited to a shared channel</td><td>No — B2B direct connect</td><td>No guest object; trust between tenants instead</td></tr>
+            <tr><td>Sent an "anyone" link</td><td>No account at all</td><td>Which is the problem: no identity, no audit trail</td></tr>
+            <tr><td>Invited to a Teams meeting</td><td>No</td><td>Meeting participation is not directory access</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Shared channels are worth knowing about specifically, because they solve the case people
+          reach for guests to solve: the partner keeps their own identity, their own tenant's
+          policies apply to them, and no account accumulates in yours. Where both sides are
+          Microsoft 365 tenants, it is the better answer more often than it is chosen.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Settings That Decide How Much Sprawl You Get</div>
+      <div class="concept-desc">
+        These live in several consoles and interact, which is why external access so often behaves
+        differently from what the policy document says.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Setting</th><th>Where</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Who can invite guests</td><td>Entra external collaboration</td><td>Everyone, admins and a guest-inviter role, or nobody</td></tr>
+            <tr><td>Cross-tenant access policy</td><td>Entra</td><td>Per-partner trust: whose MFA <span class="acro-exp">(Multi-Factor Authentication)</span> you accept, what is allowed in and out</td></tr>
+            <tr><td>Guest permissions in the directory</td><td>Entra</td><td>Whether guests can read other users and groups</td></tr>
+            <tr><td>External sharing level</td><td>SharePoint, per site</td><td>The tenant setting is a ceiling; each site can be stricter</td></tr>
+            <tr><td>Default link type</td><td>SharePoint</td><td>"Anyone" versus "specific people" — the single highest-impact default</td></tr>
+            <tr><td>Guest access in Teams</td><td>Teams admin</td><td>A separate switch that can silently contradict the others</td></tr>
+            <tr><td>Group-level guest policy</td><td>Entra group settings</td><td>Blocks guests on sensitive teams without blocking the tenant</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Changing the default link type from "anyone" to "specific people" is the highest-value
+          single change on this list. It does not stop anyone doing anything; it stops the
+          <em>accident</em>, which is what almost all inappropriate external sharing turns out to be.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Cleaning Up, and Then Staying Clean</div>
+      <div class="concept-desc">
+        The cleanup is a one-off project. The lifecycle is what stops you doing it again in two
+        years.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Action</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Report on guests by last sign-in</td><td>Anything dormant for a year is a candidate; most will be</td></tr>
+            <tr><td>Find guests with no group membership</td><td>Created by a sharing link and forgotten; usually safe to remove</td></tr>
+            <tr><td>Run access reviews on guest-bearing groups</td><td>Puts the decision with the group owner, who actually knows</td></tr>
+            <tr><td>Set an expiry on guest accounts</td><td>A renewal prompt beats an annual audit nobody schedules</td></tr>
+            <tr><td>Restrict who can invite</td><td>Not to block collaboration — to make it visible</td></tr>
+            <tr><td>Block sign-in before deleting</td><td>Deleting a guest can remove their contributions' attribution; block first, observe, then delete</td></tr>
+            <tr><td>Watch for a guest in a privileged role</td><td>Rare, serious, and worth an alert of its own</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Access reviews are the mechanism that makes this sustainable, because they push the
+          question to the only person who can answer it — the team owner, who knows whether the
+          project is over. The equivalent question for internal accounts is in
+          <span class="xref">Offboarding as a Security Control — The Checklist and Its Failure Modes</span>;
+          guests are the same problem with nobody to trigger it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: APP REGISTRATIONS & CONSENT ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔑</span>
+    <span class="topic-name">App Registrations, Service Principals &amp; Consent — What Your Tenant Has Agreed To</span>
+    <span class="topic-badge">M365 • Identity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Two Objects, and Why Confusing Them Wastes an Afternoon</div>
+      <div class="concept-desc">
+        An <strong>application registration</strong> is the definition of an application: its
+        identity, its permissions, its credentials, its redirect addresses. A <strong>service
+        principal</strong> is that application's presence in a particular tenant — the thing that
+        actually holds role assignments and consent. A first-party Microsoft application has a
+        service principal in your tenant and no registration, because the registration lives in
+        Microsoft's. An application your team wrote has both. Half the confusing permission errors
+        in a tenant come from editing one and expecting the other to change.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question</th><th>Answered by</th></tr></thead>
+          <tbody>
+            <tr><td>What permissions does this app request?</td><td>The app registration</td></tr>
+            <tr><td>What has this tenant actually granted it?</td><td>The service principal's consent</td></tr>
+            <tr><td>What secret or certificate does it authenticate with?</td><td>The app registration</td></tr>
+            <tr><td>Is it allowed to sign in here at all?</td><td>The service principal</td></tr>
+            <tr><td>Which users have consented individually?</td><td>Delegated consent grants on the principal</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Delegated vs Application Permissions — The Distinction That Matters Most</div>
+      <div class="concept-desc">
+        This is the one to internalise, because it decides whether a compromised credential reads
+        one mailbox or all of them.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Delegated</th><th>Application</th></tr></thead>
+          <tbody>
+            <tr><td>Acts as</td><td>The signed-in user</td><td>Itself, with no user present</td></tr>
+            <tr><td>Reach</td><td>Never more than that user has</td><td>The whole tenant, unless scoped</td></tr>
+            <tr><td>Consent</td><td>The user, or an admin for everyone</td><td>An administrator, always</td></tr>
+            <tr><td>Typical use</td><td>An app a person signs in to</td><td>A background job, a script, a sync</td></tr>
+            <tr><td>Failure mode</td><td>Limited blast radius</td><td>"Read all mailboxes" in the wrong hands</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Where an application permission is genuinely required, scope it. Mail and calendar
+          application permissions can be restricted to a named set of mailboxes by policy, and
+          almost nobody does it — an unscoped <em>Mail.Read</em> application grant is one of the
+          most valuable things in the tenant to an attacker, and one of the least noticed by anyone
+          else. The general principle is in
+          <span class="xref">Admin Roles &amp; Least Privilege — The Roles Worth Knowing, and PIM for the Rest</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Consent Hygiene, and the Failure That Arrives on a Schedule</div>
+      <div class="concept-desc">
+        Two things go wrong here. One is an attack; the other is a certainty, and it always happens
+        at the worst time.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Item</th><th>What to do</th></tr></thead>
+          <tbody>
+            <tr><td>User consent settings</td><td>Restrict to verified publishers and low-impact permissions; the default is broader than most tenants want</td></tr>
+            <tr><td>Admin consent workflow</td><td>Give users a request button — otherwise they find an unsanctioned tool instead</td></tr>
+            <tr><td>Illicit consent grants</td><td>The phishing variant that asks for permission rather than a password; review new grants routinely</td></tr>
+            <tr><td>Expiring client secrets</td><td>They expire, silently, and the integration stops at 3am — inventory and alert ahead of the date</td></tr>
+            <tr><td>Certificates over secrets</td><td>Longer-lived, not copy-pasteable into a chat, and rotatable without downtime</td></tr>
+            <tr><td>Unused service principals</td><td>Sign-in logs show which have not been used in months; each is standing permission</td></tr>
+            <tr><td>Owners of registrations</td><td>An app whose owner left is an app nobody can rotate credentials for</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The expiring-secret row is the most reliably painful item in this whole domain. It is
+          entirely preventable with a report that lists every credential and its expiry date, run
+          monthly and read by a person — and the reason it keeps happening is that nothing surfaces
+          it until the integration fails. Building that report is one of the highest-value hours of
+          scripting available in a tenant;
+          <span class="xref">The Admin Modules — Exchange Online, Teams &amp; Graph From One Console</span>
+          covers where to run it from.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SECURE SCORE & TENANT BASELINE ─────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📈</span>
+    <span class="topic-name">Secure Score &amp; the Tenant Baseline — Which Recommendations Are Worth Doing</span>
+    <span class="topic-badge">M365 • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Score Is a Prompt, Not a Target</div>
+      <div class="concept-desc">
+        Secure Score is a list of configuration recommendations with points attached, and it is
+        genuinely useful for one thing: making a security posture visible to people who do not read
+        configuration. It is not a measure of how secure a tenant is. Points are not weighted by
+        your risk, several recommendations are only appropriate for some organisations, and a score
+        can be raised meaningfully by enabling things nobody will operate. Treat it as a queue to
+        triage, work the top of it honestly, and never let the number become the objective.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The score is good at</th><th>The score is bad at</th></tr></thead>
+          <tbody>
+            <tr><td>Surfacing settings nobody knew existed</td><td>Weighting anything by your actual threat model</td></tr>
+            <tr><td>Tracking direction over months</td><td>Comparing your tenant to anyone else's</td></tr>
+            <tr><td>Giving a non-technical audience a trend line</td><td>Distinguishing "configured" from "operated"</td></tr>
+            <tr><td>Catching regressions after a change</td><td>Knowing whether a control is tuned or drowning in noise</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Handful That Actually Move Risk</div>
+      <div class="concept-desc">
+        Sorted by what a real intrusion runs into, rather than by points. Most tenants can do all of
+        these, and doing them beats a long tail of small items every time.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>Stops</th></tr></thead>
+          <tbody>
+            <tr><td>Phishing-resistant MFA <span class="acro-exp">(Multi-Factor Authentication)</span> for admins; MFA for everyone</td><td>The overwhelming majority of account takeover</td></tr>
+            <tr><td>Block legacy authentication</td><td>Password spray against protocols that cannot do MFA</td></tr>
+            <tr><td>No standing Global Administrator; PIM <span class="acro-exp">(Privileged Identity Management)</span> for elevation</td><td>One compromised session owning the tenant</td></tr>
+            <tr><td>Restrict user consent to applications</td><td>Consent phishing, which asks for permission rather than a password</td></tr>
+            <tr><td>Block or restrict mailbox forwarding to external addresses</td><td>The quiet, persistent half of business email compromise</td></tr>
+            <tr><td>Conditional Access requiring a compliant or joined device</td><td>Valid credentials used from an attacker's machine</td></tr>
+            <tr><td>Enable and retain the unified audit log</td><td>Not an attack — the inability to answer questions afterwards</td></tr>
+            <tr><td>Alert on new inbox rules and consent grants</td><td>The two most reliable early indicators in a mailbox compromise</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The audit log row is the one people postpone and later regret. It is not preventive, it
+          costs nothing, and it is the difference between "an account was compromised, here is
+          exactly what was accessed" and "an account was compromised, we assume the worst" — which
+          in a regulated environment is the difference between a note and a notification.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Rolling Out a Baseline Without Locking Everyone Out</div>
+      <div class="concept-desc">
+        Every item above can break someone's Monday. The sequence below is what makes that
+        survivable, and the first row is not optional.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Create break-glass accounts first</td><td>Two, excluded from Conditional Access, long random passwords stored offline, sign-in alerted</td></tr>
+            <tr><td>Use report-only mode</td><td>Every Conditional Access policy runs in report-only until its impact is known</td></tr>
+            <tr><td>Read the sign-in logs, not your assumptions</td><td>The service account nobody documented shows up here and nowhere else</td></tr>
+            <tr><td>Pilot with IT, then a friendly department</td><td>The people most able to describe what broke</td></tr>
+            <tr><td>Announce before enforcing</td><td>A prompt nobody expected is indistinguishable from phishing</td></tr>
+            <tr><td>Enforce in waves, with a rollback decision point</td><td>And know who is allowed to make that call at 2am</td></tr>
+            <tr><td>Re-check the score afterwards</td><td>Regressions are quiet; a monthly look catches the setting somebody reverted</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The break-glass row has ended more incidents badly than any other omission on this page.
+          A Conditional Access policy that accidentally includes every account, applied to a tenant
+          with no excluded emergency account, locks out the people who would fix it — including the
+          ones who wrote it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MULTI-GEO & DATA RESIDENCY ─────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🌍</span>
+    <span class="topic-name">Multi-Geo &amp; Data Residency — Where the Data Lives, and What That Actually Buys</span>
+    <span class="topic-badge">M365 • Compliance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Residency Answers a Narrower Question Than People Think</div>
+      <div class="concept-desc">
+        "Our data must stay in the country" is usually repeated from a contract or a regulator
+        without anyone establishing which data, at rest or in transit, and whether the requirement
+        is about storage location or about who can be compelled to hand it over. Those are different
+        questions with different answers. Residency controls where data sits at rest. They say
+        comparatively little about where it is processed transiently, where support staff are
+        located, or which legal jurisdiction can reach the provider — and it is frequently one of
+        those, not storage, that the requirement was really about.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Concern</th><th>Addressed by residency?</th></tr></thead>
+          <tbody>
+            <tr><td>Where the mailbox and the files sit at rest</td><td>Yes — this is exactly what it controls</td></tr>
+            <tr><td>Transient processing during a service operation</td><td>Partly; varies by workload</td></tr>
+            <tr><td>Where support engineers are located</td><td>No — a separate commitment, if offered at all</td></tr>
+            <tr><td>Which government can compel disclosure</td><td>No — that follows the provider, not the disk</td></tr>
+            <tr><td>Who inside your organisation can read it</td><td>No — that is permissions and labelling</td></tr>
+            <tr><td>Whether an AI <span class="acro-exp">(Artificial Intelligence)</span> feature sends content elsewhere</td><td>No — read that feature's own data boundary</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last two rows are where most real requirements actually live, and both are cheaper to
+          satisfy than a multi-geo deployment. Establishing which row the requirement belongs to,
+          in writing, before designing anything, is the single most valuable step here.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">What Multi-Geo Is, and What It Costs</div>
+      <div class="concept-desc">
+        Multi-Geo lets one tenant store certain workloads in more than one region, assigning each
+        user a preferred data location. It is one tenant, not several — the directory, the policies
+        and the administration stay unified.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Aspect</th><th>Reality</th></tr></thead>
+          <tbody>
+            <tr><td>Scope</td><td>Selected workloads — mailboxes and files. Not everything in the tenant</td></tr>
+            <tr><td>Directory</td><td>Single, in the tenant's home region</td></tr>
+            <tr><td>Licensing</td><td>An add-on per user in a satellite location</td></tr>
+            <tr><td>Administration</td><td>One tenant, but per-user location becomes a provisioning attribute you must get right</td></tr>
+            <tr><td>Search and collaboration</td><td>Works across regions, with more moving parts behind it</td></tr>
+            <tr><td>Moving a user between regions</td><td>Supported and asynchronous; plan it, do not improvise it</td></tr>
+            <tr><td>Reversibility</td><td>Awkward. Adding a region is a decision to live with</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Compare it honestly against the alternative it is usually chosen over — a separate tenant
+          per country. Separate tenants give harder isolation and much worse collaboration, plus
+          duplicated administration forever. Multi-Geo keeps one organisation and costs an add-on
+          and a provisioning attribute. Neither is wrong; they answer different requirements.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Answering the Auditor Without Overbuilding</div>
+      <div class="concept-desc">
+        Most residency requirements can be met without Multi-Geo at all. Work down this list before
+        committing to it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question to settle</th><th>Why it comes first</th></tr></thead>
+          <tbody>
+            <tr><td>Which regulation, and which clause?</td><td>Most of the time nobody has read it; the clause is narrower than the summary</td></tr>
+            <tr><td>Which data, specifically?</td><td>Frequently one system's records, not the whole tenant</td></tr>
+            <tr><td>Where is the tenant's home region already?</td><td>If it is already correct, there may be nothing to do</td></tr>
+            <tr><td>Is classification the real answer?</td><td>Labelling and DLP <span class="acro-exp">(Data Loss Prevention)</span> address "this must not leave" better than geography does</td></tr>
+            <tr><td>What do the provider's own commitments say?</td><td>Published, specific, and usually stronger than assumed</td></tr>
+            <tr><td>What does the AI feature do?</td><td>Ask about the boundary explicitly; it is the newest and least understood part</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Where the answer really is "this content must never leave the jurisdiction", the mechanism
+          that enforces it inside the tenant is classification, not storage location —
+          <span class="xref">Sensitivity Labels &amp; DLP — Classification That Survives Contact With Users</span>.
+          Residency puts the bytes in the right country; labelling stops the wrong person emailing
+          them out of it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TENANT LIFECYCLE AUTOMATION ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔄</span>
+    <span class="topic-name">Joiner, Mover, Leaver in M365 Terms — The Process That Prevents Most Cleanup</span>
+    <span class="topic-badge">M365 • Operations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Almost Every Governance Problem Is a Lifecycle Problem Wearing a Costume</div>
+      <div class="concept-desc">
+        Ownerless teams, dormant guests, licences nobody uses, mailboxes still receiving mail for
+        people who left, permissions accumulated over a decade of internal moves — none of these are
+        really configuration problems, and no amount of tidying fixes them permanently. They are all
+        the same problem: something happened to a person and nothing happened to their access.
+        Fixing the joiner, mover and leaver processes removes the cause; the cleanup projects are
+        just the symptom being treated repeatedly.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Event</th><th>What should happen automatically</th></tr></thead>
+          <tbody>
+            <tr><td>Joiner</td><td>Account, licence by group membership, baseline group memberships, manager set</td></tr>
+            <tr><td>Mover</td><td>Old department's access removed — the half that is always skipped</td></tr>
+            <tr><td>Leaver</td><td>Sign-in blocked, sessions revoked, licence reclaimed, mailbox converted, data owner assigned</td></tr>
+            <tr><td>Contractor end date</td><td>The same as a leaver, on a date known at creation</td></tr>
+            <tr><td>Long leave</td><td>Sign-in blocked without deleting anything</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The mover row is the one that quietly creates the most risk. Adding access is a request
+          somebody makes; removing it is a request nobody makes. After a few internal moves a
+          long-serving employee holds a union of every role they have ever had, which is exactly the
+          account an attacker wants.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Leaver Checklist, in Tenant Terms</div>
+      <div class="concept-desc">
+        In order. The first three are urgent; the rest are important and can be scheduled.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Block sign-in</td><td>Immediate, and reversible — never start with deletion</td></tr>
+            <tr><td>Revoke sessions and refresh tokens</td><td>Blocking sign-in does not end a session already issued</td></tr>
+            <tr><td>Reset the password, remove MFA <span class="acro-exp">(Multi-Factor Authentication)</span> methods</td><td>Closes self-service recovery back into the account</td></tr>
+            <tr><td>Check for forwarding rules and delegates</td><td>Both an exfiltration path and an ordinary handover mistake</td></tr>
+            <tr><td>Assign a manager to the OneDrive</td><td>Otherwise it is deleted with the account, on a timer</td></tr>
+            <tr><td>Convert the mailbox to shared</td><td>Keeps mail flowing to the team; frees the licence</td></tr>
+            <tr><td>Transfer team and group ownership</td><td>Before deletion, not after — this is where ownerless teams come from</td></tr>
+            <tr><td>Reclaim the licence</td><td>Group-based assignment does this by itself, which is the argument for it</td></tr>
+            <tr><td>Deal with app registrations they owned</td><td>An unowned application is an unrotatable credential</td></tr>
+            <tr><td>Delete, on a defined delay</td><td>After the retention requirement, not before someone asks for the data</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Making It Run Without a Person in the Loop</div>
+      <div class="concept-desc">
+        The design goal is that the tenant reacts to an attribute change rather than to a ticket.
+        Everything below follows from choosing a source of truth and meaning it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>One authoritative source for who works here</td><td>Usually HR. Two sources means neither is trusted</td></tr>
+            <tr><td>Licences by group membership, never individually</td><td>Assignment and reclamation both become free</td></tr>
+            <tr><td>Dynamic groups from department and job title</td><td>The mover case handles itself when attributes drive membership</td></tr>
+            <tr><td>Access packages for anything discretionary</td><td>Time-bound by design, with an approver and an expiry</td></tr>
+            <tr><td>Access reviews for what cannot be automated</td><td>Pushes the decision to the person who knows</td></tr>
+            <tr><td>An end date on every contractor at creation</td><td>The single highest-value field in the whole process</td></tr>
+            <tr><td>Alert on privileged role changes</td><td>The one path that should never be quiet</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Attribute-driven membership is what makes the mover case solvable at all: when
+          <em>department</em> is the thing that grants access, changing department removes the old
+          access as a side effect rather than as a task someone has to remember. The security
+          framing of the leaver half is in
+          <span class="xref">Offboarding as a Security Control — The Checklist and Its Failure Modes</span>,
+          and the licensing mechanics are in
+          <span class="xref">Licensing Without Tears — E3, E5, Business &amp; Group-Based Assignment</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

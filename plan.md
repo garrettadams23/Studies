@@ -8362,3 +8362,57 @@ never had; four were built this session — learning paths, per-topic notes, the
 and exam mode. The study tools are now a system rather than four separate toys, which is what the
 track's own preamble asked for: a path tells you what to read, the dashboard tells you what you have
 covered, the scheduler brings it back, and the exam tells you whether any of it stuck.
+
+
+## Session record — m365 content wave: nine cards
+
+Six engineering waves in a row; this one is content. `m365` was audited rather than guessed at: 26
+topics, well-built, with the voids clustered in exactly the places a domain grows *around* rather
+than into — the object model beneath the workloads, the two migrations, and the identity surface.
+
+### The audit
+
+Twenty candidate subjects were probed against the whole site before anything was written. Zero
+mentions: **Power Platform**, **M365 Groups** as an object, **SPMT**, **cutover/staged migration**,
+**hybrid Exchange**. One or two mentions only: **Secure Score**, **multi-geo**, **data residency**,
+**guest access**, **B2B**. Already carded and left alone: Copilot licensing and data boundaries
+(a concept card inside an existing topic), Conditional Access (41 mentions across the site), DMARC
+(33), access reviews (10).
+
+**One audit false positive, again.** `grep -oi Viva` returned 22 — every one of them inside the word
+*sur**viva**l*. The count and the file list disagreed, which is what caught it. Case-insensitive
+substring counts need a word boundary, and the rule already recorded for multi-term greps applies
+just as well to short single terms.
+
+### What shipped
+
+Nine cards, 26 → **35** topics:
+
+- **Microsoft 365 Groups** — the object underneath Teams, SharePoint, Planner and the odd deletion
+  behaviour. Written first deliberately: several existing cards make more sense once it exists.
+- **Exchange Online Migration** and **SharePoint & OneDrive Migration** — the two projects that
+  dominate a tenant's first two years and had no coverage at all.
+- **Power Platform Governance** — a development platform ships in the licence whether or not anyone
+  planned one.
+- **External Collaboration** — guests are accounts in your directory that no HR process will ever
+  retire.
+- **App Registrations, Service Principals & Consent** — including the failure that arrives on a
+  schedule: client secrets expire silently at 3am.
+- **Secure Score & the Tenant Baseline** — sorted by what an intrusion actually runs into rather
+  than by points, with break-glass accounts as step one.
+- **Multi-Geo & Data Residency** — mostly an argument for establishing which question is being
+  asked before building anything.
+- **Joiner, Mover, Leaver in M365 Terms** — the process whose absence causes most of the cleanup the
+  other cards describe.
+
+### Verification
+
+`check_markup.py` clean after every card, which caught nothing this time but would have caught the
+one truncated heredoc that has bitten this project before. `lint_content.py` caught **three** bad
+cross-references written from memory — `Automation Risk` was really `Automation Risk & Discipline`,
+and two named cards that do not exist. All three repointed at real titles. The new xrefs were folded
+into `related.json` (+26 links) and `stamp_freshness.py --only m365` stamped the new cards with **no
+churn on the existing 26** — the `body_times()` fix from earlier still holds.
+
+Site total 1,355 → **1,364** topics. Budget raw 5.4 / 8.0 MB, content elements 110,310 / 175,000.
+`smoke_test.mjs` 110/110.
