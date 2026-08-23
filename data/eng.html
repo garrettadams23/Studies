@@ -4659,3 +4659,109 @@ cosign verify $IMAGE \
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: OPEN SOURCE LICENCES ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚖️</span>
+    <span class="topic-name">Open Source Licences — Permissive, Copyleft &amp; What Actually Obliges You</span>
+    <span class="topic-badge">ENG • Governance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Question Is Not "Which Licence" — It Is "Are You Distributing?"</div>
+      <div class="concept-desc">
+        Almost every anxious conversation about open-source licensing skips the step that decides
+        the answer. Most obligations in most licences are triggered by <em>distribution</em> —
+        giving software to someone outside your organisation. Running it internally, on your own
+        servers, for your own staff, triggers very little in most licences. Ship a product, an
+        installer, a container image to a customer, or firmware in a device, and the same code
+        carries real requirements. Establish which of those you are doing first; the licence
+        matrix only means something afterwards.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What you are doing</th><th>Typically triggers</th></tr></thead>
+          <tbody>
+            <tr><td>Running it on your own servers, internal users</td><td>Almost nothing, in most licences</td></tr>
+            <tr><td>Offering it as a network service to others</td><td>Nothing — <em>except</em> under AGPL-style terms, which is the whole point of them</td></tr>
+            <tr><td>Shipping a binary, an installer or an image</td><td>Attribution, licence text, and for copyleft the corresponding source</td></tr>
+            <tr><td>Shipping hardware with software on it</td><td>The same, plus installation information under some copyleft terms</td></tr>
+            <tr><td>Publishing your own source that includes theirs</td><td>The licence's compatibility rules now bind your project</td></tr>
+            <tr><td>Internal modifications you never release</td><td>Usually nothing at all</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The second row is why the AGPL exists and why some organisations ban it outright: ordinary
+          copyleft was written when software was shipped, so running a modified version as a hosted
+          service created an obligation-free loophole. AGPL closes it by treating network use as
+          distribution. Whether that is a problem for you depends entirely on whether you would
+          modify it and whether you offer it to others.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Families, and What Each Asks For</div>
+      <div class="concept-desc">
+        Dozens of licences exist; they cluster into four groups, and knowing the group is most of
+        what a practitioner needs. This is orientation, not legal advice — for anything you ship
+        commercially, the answer comes from a lawyer who has read your actual situation.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Family</th><th>Examples</th><th>Asks of you</th></tr></thead>
+          <tbody>
+            <tr><td>Permissive</td><td>MIT, BSD, ISC</td><td>Keep the notice and the licence text. That is broadly it</td></tr>
+            <tr><td>Permissive with a patent grant</td><td>Apache 2.0</td><td>The above, plus state changes; gives explicit patent rights</td></tr>
+            <tr><td>Weak copyleft</td><td>LGPL, MPL 2.0, EPL</td><td>Changes <em>to that component</em> must be shared; your own code need not be</td></tr>
+            <tr><td>Strong copyleft</td><td>GPL 2.0/3.0, AGPL</td><td>Distribute a combined work and the whole thing carries the licence</td></tr>
+            <tr><td>Not open source at all</td><td>SSPL, BUSL, "source available", most vendor community editions</td><td>Read them properly — several forbid exactly the use you had in mind</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          That last row has grown in importance. A number of well-known projects have relicensed to
+          source-available terms that restrict offering the software as a service or require a
+          commercial agreement above a threshold. They are frequently still described as "open
+          source" in blog posts and dashboards. The practical habit: <strong>check the licence file
+          in the version you are actually pulling</strong>, not the one you remember from three
+          years ago.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Compliance Without a Legal Department</div>
+      <div class="concept-desc">
+        For most IT teams this is a small amount of ongoing hygiene rather than a project, and it is
+        much cheaper before an acquisition, an audit or a customer questionnaire than during one.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Know what you ship versus what you run</td><td>The single distinction that scopes everything else</td></tr>
+            <tr><td>Generate an SBOM <span class="acro-exp">(Software Bill of Materials)</span> and keep the licence field</td><td>Most tooling reports licences alongside versions; that report *is* your inventory</td></tr>
+            <tr><td>Have a policy with a small allow list</td><td>"Permissive and weak copyleft, ask before strong copyleft" fits on one page and answers 95% of cases</td></tr>
+            <tr><td>Ship a notices file</td><td>Attribution is the most commonly breached obligation and the easiest to satisfy</td></tr>
+            <tr><td>Watch for transitive licences</td><td>Your permissive dependency may pull a copyleft one four levels down</td></tr>
+            <tr><td>Re-check on relicensing</td><td>A dependency changing licence in a minor version has happened repeatedly</td></tr>
+            <tr><td>Never paste licensed code into your own without checking</td><td>Including code an assistant suggested — the obligation follows the code, not the route it took</td></tr>
+            <tr><td>Get advice before shipping copyleft in a product</td><td>This is the one where being wrong is expensive</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The transitive row is where teams are usually surprised, and it is the same mechanism as
+          the security problem next door — you did not choose that dependency, and you carry it
+          anyway. The inventory that answers both questions is the same artefact:
+          <span class="xref">SBOM in Practice &amp; VEX — Querying It, and Saying "Not Affected" Credibly</span>,
+          alongside <span class="xref">Dependency Risk — Transitive Depth, Typosquatting &amp; the Abandoned Package</span>.
+          The commercial equivalent of the whole conversation is
+          <span class="xref">Licensing Models &amp; Surviving an Audit — The True-Up Conversation</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

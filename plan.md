@@ -9150,3 +9150,32 @@ twice on the whole site, `maintenance mode` once, `CPU ready` once, `P2V` not at
   it cannot get it, and adding virtual processors makes it worse.
 
 Site total 1,383 → **1,387**. All suites green, budget 31% headroom.
+
+
+## Session record — open-source licences, the gap the probe found next
+
+The subject probe returned zero topic-title matches for `open source licen`, `GPL`, `MIT licen` and
+`copyleft`. The prose confirmed it: **GPL and copyleft appear nowhere on the site**, on a reference
+that covers dependency risk, SBOM, supply-chain security and commercial licensing audits in depth.
+The obligations that come with the code were the one part missing.
+
+One card, written to lead with the question people skip:
+
+**"Which licence?" is the second question. The first is "are you distributing?"** Most obligations
+in most licences are triggered by distribution; running something internally triggers very little.
+That single distinction scopes the entire subject, and it is why the AGPL exists — ordinary copyleft
+was written when software was shipped, so hosting a modified version was an obligation-free
+loophole.
+
+Two things it says that similar material usually does not. **Source-available is not open source**,
+and several well-known projects have relicensed to terms that forbid exactly the hosted use a reader
+might have planned, while still being described as open source in blog posts — so check the licence
+file in the version you are actually pulling. And **the obligation follows the code, not the route
+it took**, which now includes code an assistant suggested.
+
+Deliberately one card rather than two. A second on choosing and trusting dependencies was drafted in
+outline and dropped: `eng` already has *Dependency Risk — Transitive Depth, Typosquatting & the
+Abandoned Package* and *Dependency Triage*, and `devops` has *Software Supply Chain Security*. The
+audit-first rule applies to my own good ideas.
+
+Site total 1,387 → **1,388**.
