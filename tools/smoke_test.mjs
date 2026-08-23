@@ -1223,6 +1223,37 @@ check("closing the modal stops the exam clock",
   examClosed.running && examClosed.cleared, JSON.stringify(examClosed));
 await page.evaluate(() => localStorage.clear());
 
+// ── the study index reaches every topic ─────────────────────────────────────
+// stIndex() drops any topic it cannot parse a name for, and everything the
+// study tools offer is built from it: decks, quizzes, the palette, paths,
+// related topics. A topic that falls out is not broken — it is *absent*, from
+// every one of those, silently. 41 topics in this repo write their name span
+// across two lines (`<span class="topic-name"\n  >…`), which is exactly the
+// shape a naive parser misses.
+await page.goto(PAGE, { waitUntil: "load" });
+const indexReach = await page.evaluate(() => {
+  const idx = topicIndex();
+  const have = new Map(stIndex().map(t => [t.id, t]));
+  const missing = [];
+  const unnamed = [];
+  Object.keys(idx).forEach(d => idx[d].forEach(id => {
+    const row = have.get(id);
+    if (!row) missing.push(`${d}:${id}`);
+    else if (!row.name || !row.name.trim()) unnamed.push(`${d}:${id}`);
+  }));
+  return {
+    total: Object.values(idx).reduce((n, a) => n + a.length, 0),
+    indexed: have.size, missing: missing.slice(0, 5), missingN: missing.length,
+    unnamed: unnamed.slice(0, 5), unnamedN: unnamed.length,
+  };
+});
+check("every indexed topic reaches the study index",
+  indexReach.missingN === 0 && indexReach.indexed === indexReach.total,
+  `${indexReach.indexed}/${indexReach.total}` +
+  (indexReach.missingN ? ` — missing ${indexReach.missing.join(", ")}` : ""));
+check("every topic in the study index has a name",
+  indexReach.unnamedN === 0, indexReach.unnamed.join(", "));
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));
