@@ -987,6 +987,382 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
             </div>
           </div>
 
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌍</span>
+              <span class="topic-name">Internationalization (i18n) — Designing for Languages You Do Not Speak</span>
+              <span class="topic-badge">Quality</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">i18n Is Not Translation — It Is Removing the Assumptions That Make Translation Impossible</div>
+                <div class="concept-desc">
+                  The two words are used interchangeably and mean opposite halves of the job.
+                  <strong>Localization (l10n)</strong> is producing the French: translators, glossaries,
+                  a review cycle. <strong>Internationalization (i18n)</strong> is everything you do
+                  first so that producing the French is possible at all — and essentially all of it is
+                  removing English grammar and English typography from your code. It is engineering
+                  work, it happens before a single string is sent anywhere, and it is very cheap now
+                  and very expensive in two years. The costly version is not the translation budget;
+                  it is discovering that fixing the code is a rewrite of every screen.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    The tell that a codebase was never internationalized is not the absence of a
+                    translation file. It is <strong>string concatenation in the view layer</strong>,
+                    and it is visible in one grep.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Concatenation Bug, Which Is the Whole Subject in One Line</div>
+                <div class="concept-desc">
+                  This looks harmless and cannot be translated by anyone, at any budget:
+                </div>
+                <div class="dw">
+                  <pre class="code-block">// Untranslatable — three separate mistakes
+"You have " + n + (n === 1 ? " message" : " messages")
+
+// Translatable — one string, named placeholder, plural handled by the format
+t("inbox.count", { count: n })
+  en: "{count, plural, one {You have # message} other {You have # messages}}"
+  pl: "{count, plural, one {...} few {...} many {...} other {...}}"</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Assumption baked in</th><th>Where it fails</th></tr></thead>
+                    <tbody>
+                      <tr><td>Word order is subject-verb-object</td><td>Japanese and Turkish put the verb last; a translator cannot reorder fragments your code will re-join</td></tr>
+                      <tr><td>Plural means "one" versus "not one"</td><td>Polish and Russian have <em>few</em> and <em>many</em>; Arabic uses six categories; Japanese uses one</td></tr>
+                      <tr><td>Zero is just another plural</td><td>"You have 0 messages" is grammatical; "No messages" is what a human writes, and only a message format lets a translator choose</td></tr>
+                      <tr><td>Gender does not affect the sentence</td><td>In Spanish and Hebrew the surrounding words change with the subject's gender — so the variable has to be <em>inside</em> the translated string</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">The rule that prevents all of it:</strong> a translator
+                    must receive whole sentences with named placeholders, never fragments. If a
+                    translator cannot move a placeholder to the other end of the sentence, the string
+                    is broken regardless of how correct the English reads.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Never Format These By Hand</div>
+                <div class="concept-desc">
+                  Every runtime worth using ships a locale database. Hand-rolling any row of this
+                  table is how a product ends up telling a German user that something costs
+                  <code>1,234.50 €</code> when it should say <code>1.234,50 €</code>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Thing</th><th>Use</th><th>What varies that you would not guess</th></tr></thead>
+                    <tbody>
+                      <tr><td>Numbers</td><td><code>Intl.NumberFormat</code></td><td>Decimal comma; grouping by 2s in India (<code>12,34,567</code>); non-Western digits</td></tr>
+                      <tr><td>Currency</td><td><code>Intl.NumberFormat</code> with a currency code</td><td>Symbol position, spacing, and the number of decimal places — JPY has none</td></tr>
+                      <tr><td>Dates</td><td><code>Intl.DateTimeFormat</code></td><td>Order, separators, 12- versus 24-hour, and which day the week starts on</td></tr>
+                      <tr><td>Relative time</td><td><code>Intl.RelativeTimeFormat</code></td><td>"3 days ago" declines differently and is not always a suffix</td></tr>
+                      <tr><td>Lists</td><td><code>Intl.ListFormat</code></td><td>The Oxford comma is not universal, and neither is "and"</td></tr>
+                      <tr><td>Sorting</td><td><code>Intl.Collator</code></td><td>Swedish sorts <em>å</em> after <em>z</em>; German sorts it with <em>a</em>. Same characters, different order, both correct</td></tr>
+                      <tr><td>Case changes</td><td>Locale-aware <code>toLocaleUpperCase</code></td><td>Turkish dotted and dotless <em>i</em> — the classic bug that breaks a login form in exactly one country</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    A locale is not a language: <code>pt-BR</code> and <code>pt-PT</code> differ in
+                    vocabulary and formatting, and <code>en-GB</code> and <code>en-US</code> disagree
+                    about the date order in a way that silently produces the wrong day for eleven
+                    days a month. Store and negotiate full locale tags, not two-letter languages.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Layout: Text Expands, and Some of It Runs the Other Way</div>
+                <div class="concept-desc">
+                  Translated text is routinely much longer than the English — German and Finnish
+                  especially, and short strings expand proportionally most, so buttons and labels
+                  break before paragraphs do. Any container sized to fit the English is a defect
+                  waiting for a translation file.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Problem</th><th>Fix</th></tr></thead>
+                    <tbody>
+                      <tr><td>Fixed-width buttons and nav items</td><td>Size from content, allow wrapping, and never truncate a control's label</td></tr>
+                      <tr><td>Text baked into images</td><td>Real text over the image, or one asset per locale — an image is not translatable</td></tr>
+                      <tr><td>Right-to-left languages</td><td><code>dir="rtl"</code> plus <strong>logical CSS <span class="acro-exp">(Cascading Style Sheets)</span> properties</strong> — <code>margin-inline-start</code>, not <code>margin-left</code> — so the whole layout mirrors from one attribute</td></tr>
+                      <tr><td>Icons in RTL</td><td>Directional icons mirror (back arrows, progress); representational ones do not (clocks, logos, a play button on media)</td></tr>
+                      <tr><td>Mixed direction in one line</td><td>A phone number or Latin brand name inside Arabic text needs bidi isolation (<code>&lt;bdi&gt;</code> or <code>unicode-bidi: isolate</code>), or punctuation jumps to the wrong end</td></tr>
+                      <tr><td>Truncating with substring</td><td>Cuts through emoji and Indic clusters. Use a segmenter, or fade with CSS instead of slicing</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    The length assumption hides in one more place: <strong>a "character" is not a
+                    byte, a code point, or a visible glyph.</strong> A single family emoji is one
+                    thing on screen and several code units in JavaScript, so a database column sized
+                    in characters, a validator counting <code>.length</code>, and a user counting
+                    what they can see will all disagree.
+                    <span class="xref">Encoding — Bytes, Text, and Why "It Works on My Machine"</span>
+                    is the same trap one layer down.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Assumptions Hiding in Your Forms</div>
+                <div class="concept-desc">
+                  Personal data models leak the developer's own country more reliably than anything
+                  else in the codebase, and each of these locks out real users rather than merely
+                  annoying them.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Assumption</th><th>Reality</th></tr></thead>
+                    <tbody>
+                      <tr><td>First name and last name</td><td>Many people have one name, several family names, or a family name written first. Store a full name and, only if you genuinely need it, a separate display name</td></tr>
+                      <tr><td>A state or province is required</td><td>Most countries do not have one</td></tr>
+                      <tr><td>Postcodes match a pattern</td><td>Formats vary and some places have none. Validate per country, or not at all</td></tr>
+                      <tr><td>Addresses have a fixed shape</td><td>Field order and which lines exist differ; render the address form from the selected country</td></tr>
+                      <tr><td>Phone numbers are national</td><td>Store E.164 with the country code, and never strip a leading <code>+</code></td></tr>
+                      <tr><td>Everyone shares a calendar</td><td>Working weeks differ, and public holidays are per-country business logic, not a constant</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Time deserves its own warning. Store instants in UTC <span class="acro-exp">(Coordinated Universal Time)</span> and render in the viewer's
+                    zone — but <strong>"the day" is a local concept</strong>: a birthday, an opening
+                    time and a monthly billing date have no timezone at all, and converting them to
+                    UTC is what makes them arrive a day early for half the world.
+                    <span class="xref">Dates, Times &amp; Time Zones</span> covers the storage side.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Testing It Before Anything Is Translated</div>
+                <div class="concept-desc">
+                  The reason i18n bugs ship is that they are invisible until a real translation
+                  arrives, which is usually after the design is frozen. Pseudo-localization removes
+                  that dependency: generate a fake locale from the English by accenting every
+                  character, padding the string, and bracketing it.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">Save changes   →   [!!! Šàvé çhàngéš —— ]
+
+Reads in English, so you can still use the app.
+Three defects become visible immediately:
+  • Any string still in plain English is hardcoded and never reached the catalogue.
+  • Any text overflowing its box will overflow in German.
+  • Any missing bracket is a sentence assembled from fragments at runtime.</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Gate</th><th>Catches</th></tr></thead>
+                    <tbody>
+                      <tr><td>Pseudo-locale build in CI</td><td>Hardcoded strings and layout overflow, on every pull request</td></tr>
+                      <tr><td>Lint rule against literal JSX <span class="acro-exp">(JavaScript XML)</span> text</td><td>The concatenation habit, at the point it is written</td></tr>
+                      <tr><td>Screenshot review in one RTL locale</td><td>Physical CSS properties that did not mirror</td></tr>
+                      <tr><td>Translator context notes on each key</td><td>"Open" as a verb versus an adjective — the ambiguity no format string can express</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">The order that keeps the cost low:</strong> extract
+                    strings, adopt a message format with plural support, switch to logical CSS
+                    properties, and turn on the pseudo-locale — all before choosing a translation
+                    vendor. Do it in that order and the first real language is a configuration
+                    change; do it after, and it is a redesign.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧰</span>
+              <span class="topic-name">Accessibility Remediation — Working Through an Audit Backlog</span>
+              <span class="topic-badge">A11y</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Audit Gives You Violations; Users Have Tasks They Cannot Finish</div>
+                <div class="concept-desc">
+                  <span class="xref">Web Accessibility (a11y) — WCAG &amp; ARIA</span> is the standard.
+                  This is what happens after someone runs it against a real codebase and hands you
+                  four hundred findings. The instinct is to sort by the tool's severity label and
+                  start at the top, and it is the wrong sort: severity describes how badly a
+                  guideline is broken, not whether anybody is stopped. A low-contrast footer link is
+                  flagged; a submit button with no accessible name ends the session. Both appear on
+                  the list, and only one of them is losing you users today.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Tier</th><th>Test</th><th>Examples</th></tr></thead>
+                    <tbody>
+                      <tr><td><strong>Blocker</strong></td><td>A task cannot be completed at all by some user</td><td>Unlabelled controls; keyboard traps; a modal that does not take focus; a custom control with no keyboard path; an error that is never announced</td></tr>
+                      <tr><td><strong>Severe</strong></td><td>Completable, but hostile</td><td>Illogical focus order; icon-only buttons; a table with no header association; missing skip link on a long nav</td></tr>
+                      <tr><td><strong>Cosmetic</strong></td><td>Non-conformant, no functional impact</td><td>Contrast on a decorative element; a redundant landmark; a heading level skipped once</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">Then order the blockers by flow, not by page:</strong>
+                    sign-in, checkout, and anything that carries money or identity go first, because
+                    those are the tasks a person cannot simply do somewhere else on your site. A
+                    marketing page with the same violation is a smaller problem in exactly the way it
+                    sounds.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Four Hundred Violations Are Usually Twelve Components</div>
+                <div class="concept-desc">
+                  This is the single most useful fact about remediation, and it is invisible in the
+                  report. Automated tools count <em>instances</em> — one per rendered element, per
+                  page, per state. A date picker used on thirty screens produces thirty findings and
+                  one bug. Regrouping the report by component before planning anything changes the
+                  job from an unbounded page-by-page slog into a bounded list with an end.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Counted as</th><th>Effect</th></tr></thead>
+                    <tbody>
+                      <tr><td>Instances (the report's own number)</td><td>The burndown barely moves for weeks, the work looks endless, and the team stops believing the number</td></tr>
+                      <tr><td>Components (after regrouping)</td><td>Fixing one shared control closes dozens of findings at once, and progress is visible from the first week</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    It also settles where the fix belongs. If the accessible name has to be added in
+                    thirty call sites, the component is wrong; fix it once, inside, and let every
+                    call site inherit it. <strong>A design system is the highest-leverage
+                    accessibility investment available</strong> for the same reason it is the
+                    highest-leverage anything: the fix applies to code not yet written.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What Automation Finds, and What It Cannot</div>
+                <div class="concept-desc">
+                  Automated scanning catches a real but minority share of accessibility problems —
+                  the ones expressible as a rule about markup. It is genuinely valuable and it is not
+                  a verdict, and knowing which column a question falls into stops a lot of wasted
+                  argument.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Automation finds</th><th>Only a human finds</th></tr></thead>
+                    <tbody>
+                      <tr><td>Missing <code>alt</code> attribute</td><td>Whether the alt text describes the right thing, or restates the caption</td></tr>
+                      <tr><td>Contrast below threshold</td><td>Whether the focus indicator is visible against the component it sits on</td></tr>
+                      <tr><td>Form control with no accessible name</td><td>Whether the name matches the visible label a voice-control user will say</td></tr>
+                      <tr><td>Invalid ARIA <span class="acro-exp">(Accessible Rich Internet Applications)</span> attribute or role</td><td>Whether the role is a lie — a <code>div</code> with <code>role="button"</code> and no key handling</td></tr>
+                      <tr><td>Duplicate <code>id</code>, missing lang</td><td>Whether the reading order makes sense, or errors reach the user at all</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    The manual pass is short and does not need specialist tooling. <strong>Unplug the
+                    mouse</strong> and complete the flow: can you reach every control, is focus
+                    always visible, does anything trap you? Then <strong>zoom to 400%</strong> and
+                    check nothing is cut off or overlapped. Then run a screen reader through the same
+                    flow. Those three passes find most of the right-hand column, and the first one
+                    takes minutes.
+                    <span class="xref">Accessible IT — Assistive Technology, Procurement &amp; Testing Your Own Tools</span>
+                    covers the same testing habit applied to the tools you buy rather than the ones
+                    you build.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Fixes Decay Unless Something Enforces Them</div>
+                <div class="concept-desc">
+                  The predictable end of a remediation project is a re-audit eighteen months later
+                  finding a similar count. Nothing was undone; new code simply arrived without the
+                  same care. Remediation that is not accompanied by a gate is a cleaning, not a fix.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Gate</th><th>Catches</th><th>Cost</th></tr></thead>
+                    <tbody>
+                      <tr><td>Accessibility linter in the editor</td><td>Wrong roles, missing alt, click handlers on non-interactive elements</td><td>Near zero, and it teaches while it blocks</td></tr>
+                      <tr><td>Automated scan in component tests</td><td>Regressions in shared components, at the moment the component changes</td><td>Low; the same rules as the audit tool, one layer earlier</td></tr>
+                      <tr><td>Keyboard path in end-to-end tests</td><td>Focus management in modals, menus and forms — the things a static scan cannot see</td><td>Moderate; worth it for the critical flows only</td></tr>
+                      <tr><td>Manual review for new components</td><td>Everything in the right-hand column above</td><td>Highest, so scope it to new shared components rather than every pull request</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Turn scanning on for changed files before turning it on repository-wide.
+                    A gate that fails every build on day one gets switched off in week one, which is
+                    the same mechanic that defeats any late-introduced check —
+                    <span class="xref">Frontend Testing — Unit, Component &amp; E2E</span> has the
+                    general version of the argument.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Two Ways Organisations Buy Their Way Into a Worse Position</div>
+                <div class="concept-desc">
+                  Both are attractive precisely because they convert an engineering backlog into a
+                  purchase or a document, and both have made the underlying exposure larger rather
+                  than smaller.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Shortcut</th><th>What it actually does</th></tr></thead>
+                    <tbody>
+                      <tr><td>Accessibility overlay widgets</td><td>A script that adjusts the page at runtime. It cannot repair a control that has no accessible name or a flow with no keyboard path, it frequently interferes with the assistive technology a user has already configured, and organisations that installed one have still faced complaints. It is a purchase that feels like a fix</td></tr>
+                      <tr><td>An optimistic conformance report</td><td>A published accessibility statement or vendor report claiming "supports" where the honest answer is "partially supports". Over-claiming is what converts a complaint into a documented misrepresentation, and it is checkable by anybody with a browser</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    The safe version of the second is dull and defensible: state what is not
+                    conformant, say what the workaround is, give a date, and provide a contact that a
+                    human answers. Regulators and procurement teams both respond far better to a
+                    known gap with a plan than to a claim that does not survive inspection —
+                    <span class="xref">Section 508 — Accessibility as US Federal Law</span> is where
+                    that document becomes a procurement requirement rather than a courtesy.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Order That Actually Works</div>
+                <div class="concept-desc">
+                  Put together, remediation has a sequence, and most of the value lands in the first
+                  three steps.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">1.  Regroup the report by component, not by page.
+2.  Fix blockers on money-and-identity flows first.
+3.  Turn on the linter and component scanning for changed files.
+4.  Do the three manual passes on those same flows: keyboard, zoom, screen reader.
+5.  Work the severe tier by component, in leverage order.
+6.  Publish an honest statement with the remaining gaps and dates.
+7.  Re-audit — and compare component counts, not instance counts.</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">One thing outperforms all of it:</strong> watch somebody
+                    who uses a screen reader or switch control try to complete your main flow. Half
+                    an hour of that reorders the backlog more accurately than any severity column,
+                    because it replaces a guess about impact with an observation of it — and it
+                    tends to end the argument about whether the work is worth funding.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧪</span>
@@ -1089,6 +1465,193 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
             </div>
           </div>
 
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🕸️</span>
+              <span class="topic-name">Technical SEO <span class="acro-exp">(Search Engine Optimization)</span> Operations — Crawling, Indexing &amp; Migrations Without Losing Traffic</span>
+              <span class="topic-badge">Shipping</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Crawled, Indexed and Ranking Are Three Different Things</div>
+                <div class="concept-desc">
+                  <span class="xref">SEO &amp; Metadata for Developers</span> covers what to put on a
+                  page. This card is about the part a developer actually gets paged for: a page that
+                  exists, looks correct, and does not appear in search. Nearly every such problem is a
+                  fault at one of three joints, and naming the joint first turns a vague complaint
+                  into a five-minute diagnosis.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Stage</th><th>Question</th><th>Where you check</th></tr></thead>
+                    <tbody>
+                      <tr><td>Discovered</td><td>Does anything link to it, or list it in a sitemap?</td><td>Sitemap, internal links, server logs</td></tr>
+                      <tr><td>Crawled</td><td>Was the URL <span class="acro-exp">(Uniform Resource Locator)</span> fetched, and what status came back?</td><td>Server logs — the only record of what was really requested</td></tr>
+                      <tr><td>Indexed</td><td>Was the fetched page stored, and under which canonical?</td><td>Search Console's URL inspection</td></tr>
+                      <tr><td>Ranking</td><td>Indexed, but does it appear for the query?</td><td>Content and competition — no longer an engineering problem</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">The value of the split</strong> is that it separates work
+                    you can do from work you cannot. Discovery and crawling are engineering, entirely
+                    within your control, and measurable from your own logs. Ranking is not, and an
+                    engineer who accepts a ranking target has accepted a goal with no lever attached.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Mistake Everyone Makes Once: robots.txt Does Not Remove Pages</div>
+                <div class="concept-desc">
+                  A staging path leaks into the index. The instinct is to block it in
+                  <code>robots.txt</code>, and it is exactly wrong. <strong>robots.txt controls
+                  crawling; <code>noindex</code> controls indexing</strong> — and a crawler that is
+                  forbidden from fetching the page can never see the <code>noindex</code> you put in
+                  it. The page stays indexed, often with a snippet reading "no information is
+                  available", and now it is stuck there because you removed the only mechanism that
+                  could have cleared it.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">Wrong:  robots.txt: Disallow: /staging/     +  &lt;meta name="robots" content="noindex"&gt;
+        → never fetched → noindex never read → stays indexed indefinitely
+
+Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="noindex"&gt;
+        → fetched → noindex read → dropped from the index
+        → only then, block the crawl if you still want to</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Control</th><th>Actually does</th><th>Use it for</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>robots.txt</code></td><td>Requests that a URL not be fetched. Public, and advisory</td><td>Saving crawl effort on infinite or worthless URL spaces</td></tr>
+                      <tr><td><code>meta robots: noindex</code></td><td>Keeps a fetched page out of the index</td><td>Removing a page from search while it stays reachable</td></tr>
+                      <tr><td><code>X-Robots-Tag</code> header</td><td>The same directive, at HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> level</td><td>PDFs <span class="acro-exp">(Portable Document Format)</span>, images, anything with no HTML <span class="acro-exp">(HyperText Markup Language)</span> head</td></tr>
+                      <tr><td><code>rel=canonical</code></td><td>A <em>hint</em> about which duplicate is authoritative</td><td>Parameter and duplicate URLs — not for removal, and it can be overruled</td></tr>
+                      <tr><td>401 / 403</td><td>Actually prevents access</td><td>Staging environments. This is the real answer, and it always was</td></tr>
+                      <tr><td><code>410 Gone</code></td><td>States the page is permanently removed</td><td>Deletions you want processed faster than a 404</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-red">Two things follow from "advisory".</strong> robots.txt is
+                    fetched by anyone, so listing <code>/admin-beta/</code> in it publishes the path
+                    to every scanner on the internet — it is a hint file, never an access control.
+                    And a canonical is a suggestion: search engines regularly pick a different one,
+                    and the report will tell you they did, which is a fact worth checking before
+                    arguing that the tag is broken.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What Each Status Code Teaches a Crawler</div>
+                <div class="concept-desc">
+                  Crawlers learn from status codes the way a cache does, and the operationally
+                  expensive errors are the ones that return a success code for a failure.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Code</th><th>Interpreted as</th><th>Watch for</th></tr></thead>
+                    <tbody>
+                      <tr><td>200</td><td>A real page; index it</td><td>Returning 200 with "Sorry, not found" — a <strong>soft 404</strong>, which pollutes the index with empty pages</td></tr>
+                      <tr><td>301</td><td>Permanent move; transfer signals, update the URL</td><td>Chains. Each hop costs time and some are abandoned — redirect once, to the final URL</td></tr>
+                      <tr><td>302</td><td>Temporary; keep the old URL</td><td>Used for permanent moves by accident, usually because it is the framework default</td></tr>
+                      <tr><td>404</td><td>Missing; retry occasionally, then drop</td><td>Nothing. A 404 for something absent is correct and needs no fixing</td></tr>
+                      <tr><td>410</td><td>Deliberately gone</td><td>Use when you mean it; it is processed more decisively than 404</td></tr>
+                      <tr><td>503</td><td>Temporarily unavailable; come back</td><td>The right code for maintenance. A maintenance page served as 200 asks to be indexed as your content</td></tr>
+                      <tr><td>5xx sustained</td><td>The site is unhealthy; crawl less</td><td>Crawl rate drops after outages and recovers slowly — an availability incident has a tail</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Migrations: the Redirect Map Is the Deliverable</div>
+                <div class="concept-desc">
+                  Replatforming, restructuring URLs, or moving domains is where sites actually lose
+                  traffic, and it is nearly always the same failure: the redirect map was written
+                  after launch, from memory, by someone who did not have the old URL list.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Step</th><th>Do it</th><th>Because</th></tr></thead>
+                    <tbody>
+                      <tr><td>Inventory before you build</td><td>Crawl the old site and export every indexed URL, plus every URL with traffic or inbound links</td><td>After launch the old site is gone and the list is unrecoverable</td></tr>
+                      <tr><td>Map old to new, one hop</td><td>Every old URL points directly at its final destination</td><td>Chains lose time and sometimes stop being followed</td></tr>
+                      <tr><td>Map to the closest equivalent</td><td>Not to the homepage</td><td>A mass redirect to the root is treated as a soft 404 and keeps nothing</td></tr>
+                      <tr><td>Keep the old sitemap live briefly</td><td>Serve it after launch for a few weeks</td><td>It is how crawlers rediscover the old URLs in order to see the redirects</td></tr>
+                      <tr><td>Change one thing at a time</td><td>URLs, or design, or platform — not all three in one week</td><td>If traffic drops you must be able to attribute it; simultaneous changes make the cause unrecoverable</td></tr>
+                      <tr><td>Watch logs, not rankings, first</td><td>Crawl volume, status mix and error rate for two weeks</td><td>Ranking data lags by weeks; crawl errors show up the same day</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Expect a dip. A well-executed migration usually loses some traffic for a few
+                    weeks while everything is re-crawled, and saying so beforehand is the difference
+                    between a known cost and an emergency — because the pressure to roll back peaks
+                    exactly when recovery is about to begin.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">JavaScript, Crawl Budget &amp; the Two Kinds of Performance Data</div>
+                <div class="concept-desc">
+                  Three operational realities that come up on every modern site, each of which
+                  contradicts something people believe.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Reality</th><th>What it means for the build</th></tr></thead>
+                    <tbody>
+                      <tr><td>Rendering happens, but later</td><td>Major crawlers execute JavaScript — on a second pass, from a queue. Content that only exists after a client-side fetch is discovered late, and content behind an interaction is not discovered at all. Server-render or prerender anything that must be indexed</td></tr>
+                      <tr><td>Crawl budget is spent on junk first</td><td>Faceted navigation generates near-infinite URL combinations, and a crawler will happily spend its visit on <code>?sort=asc&amp;colour=red&amp;page=7</code> instead of your new pages. Canonicalise parameters, and block the genuinely infinite spaces from crawling</td></tr>
+                      <tr><td>Lab and field data disagree, and field wins</td><td>A Lighthouse run is one synthetic load on your machine. Field data is a rolling window of real visits on real devices and networks. When they conflict, the field number is the one that counts — and it is why a fast local score coexists with a failing report</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    That last row is the reconciliation people look for when
+                    <span class="xref">Web Performance — Core Web Vitals</span> passes locally and
+                    fails in the report: the metric is the same, the population is not. Field data
+                    also lags by weeks, so a fix deployed today shows up in the report long after the
+                    lab has stopped complaining — which is a reason to keep the deploy date written
+                    down beside the graph.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Logs Are the Only Ground Truth</div>
+                <div class="concept-desc">
+                  Every other source is an interpretation. Server logs record what was requested,
+                  when, by whom, and what you returned — which makes them the one place that can
+                  settle an argument about whether a page was ever fetched.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Question</th><th>What the logs show</th></tr></thead>
+                    <tbody>
+                      <tr><td>"Our new section isn't indexed"</td><td>Whether it was ever requested. If not, it is a discovery problem — links and sitemap — and no amount of on-page work will help</td></tr>
+                      <tr><td>"Crawling dropped after the release"</td><td>The status mix on the release date. A jump in 5xx or in redirect hops explains it directly</td></tr>
+                      <tr><td>"Are we wasting crawl on rubbish?"</td><td>The share of requests going to parameter URLs, pagination and filters versus real content</td></tr>
+                      <tr><td>"Is this traffic really a search engine?"</td><td>Verify by reverse DNS <span class="acro-exp">(Domain Name System)</span> on the requesting address. A large share of declared crawler traffic is something else wearing the name</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    <strong class="c-green">The habit worth forming:</strong> before changing
+                    anything, establish which of the four stages is failing, and take the evidence
+                    from logs rather than from the dashboard. Most technical SEO work is
+                    troubleshooting a distributed fetcher you cannot instrument — so the parts you
+                    <em>can</em> instrument are worth more than they look.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📲</span>

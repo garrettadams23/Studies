@@ -3790,15 +3790,15 @@ card or two folded into an existing track if it ever matters.
 
 | Gap | Where it would go | Verdict |
 |---|---|---|
-| Mainframe & legacy systems (z/OS, COBOL, AS/400) | `infra` | Genuinely uncovered and genuinely still running banks — worth **one card** on why it persists and how it integrates, not a track |
-| Reverse engineering & binary analysis | `redteam` / Track M | Partly implied by malware analysis in Track K; add explicitly to M if it is ever a working need |
-| Accessibility engineering (beyond WCAG basics in `web`) | `web` | Two cards at most: testing with assistive tech, and remediation workflow |
-| Internationalization engineering | `web` | One card; the site itself has rejected translation, so this is for the reader's products |
+| ~~Mainframe & legacy systems (z/OS, COBOL, AS/400)~~ | `infra` | ✅ **Shipped** — *Mainframe & Midrange — Why They Are Still There, and How You Integrate With One*. One card, as the verdict said |
+| ~~Reverse engineering & binary analysis~~ | `threat` | ✅ **Already covered** — *Reverse Engineering & Binary Analysis — Reading Code You Don't Have Source For* landed in `threat`, not `redteam`. Audited, not rewritten |
+| ~~Accessibility engineering (beyond WCAG basics in `web`)~~ | `web` · `ops` | ✅ **Both halves closed** — assistive-tech testing was already in `ops` (*Accessible IT*); the remediation workflow shipped as *Accessibility Remediation — Working Through an Audit Backlog* |
+| ~~Internationalization engineering~~ | `web` | ✅ **Shipped** — *Internationalization (i18n) — Designing for Languages You Do Not Speak*. Still nothing about translating this site |
 | Payments & fintech infrastructure | `data` / `grc` | PCI DSS is already covered; the rest is a niche |
 | Blockchain & distributed ledger | — | **Rejected.** Low operational relevance to this site's readership, and the security angle is already covered by key management |
 | HPC & scientific computing | — | **Rejected.** Different career entirely |
 | Video, streaming & media engineering | — | **Rejected.** Same reason |
-| Technical SEO & web operations | `web` | One card, and only because the site itself has SEO tags |
+| ~~Technical SEO & web operations~~ | `web` | ✅ **Shipped** — *Technical SEO Operations — Crawling, Indexing & Migrations Without Losing Traffic*. The existing SEO card was on-page metadata; this is the operational half |
 
 ---
 
@@ -9361,3 +9361,93 @@ hour: without it two duplicated topics would have shipped and quietly shifted th
 suffixed after them.
 
 Site total 1,395 → **1,401**. The live content backlog is now empty.
+
+
+## Session record — the Appendix-8 gaps, closed
+
+The live backlog emptied last session, so this one went to the oldest open list in the file:
+**§8, "subject gaps with no track"**, written months ago and never revisited. Nine rows, three
+already rejected on the merits. The remaining six were audited against the site as it is now
+rather than as it was when the row was written, and the audit moved two of them before any
+content was drafted.
+
+| Row | Audit found | Outcome |
+|---|---|---|
+| Mainframe & legacy systems | Zero topic titles matching `mainframe`, `COBOL`, `AS/400`, `z/OS` | Written |
+| Internationalization | Zero matching `i18n`, `internationali*`, `localiz*` | Written |
+| Technical SEO & web ops | One card, and it is on-page metadata only | Written — the operational half |
+| Accessibility beyond WCAG | Five accessibility topics across four domains | Half already covered; wrote the other half |
+| Reverse engineering | A full card in `threat`, not `redteam` where the row expected it | **Already closed** — no work needed |
+| Payments & fintech | PCI DSS covered in `grc`; the row's own verdict was "niche" | Left as rejected |
+
+Two of the six needed no writing at all, and finding that out cost one grep each. **The row was
+stale, not the site** — which is the argument for auditing a backlog item against current content
+before treating it as work, and it is the same discipline that killed the API-pentest card
+earlier: probe *topic titles*, not prose.
+
+### The four cards
+
+**Mainframe & Midrange** (`infra`) — the useful framing is that these systems survive for an
+engineering reason, not a cowardice one: the specification is the code, and forty years of rules
+about how interest accrues exist nowhere else in writing. The card is built around the fact that
+you will never write COBOL and will absolutely have to parse a fixed-width EBCDIC file — so the
+data traps get their own table, because every one of them parses without error and is wrong.
+Packed decimal read as text corrupts money silently; a copybook is the only parser you will get;
+trailing spaces are structural. Two inversions worth stating plainly: consumption is billed, so
+optimisation *is* the cost control rather than something you do later; and the batch window is a
+real deadline, so an integration that adds twenty minutes to a run ending at 05:50 is an outage.
+The modernisation section says the comparison harness is the deliverable, and that automated
+COBOL-to-Java translation produces COBOL written in Java — a maintainable legacy system converted
+into an unmaintainable modern one, which reads as progress on a slide.
+
+**Internationalization (i18n)** (`web`) — the thesis is in the title of the first concept card:
+i18n is not translation, it is removing the assumptions that make translation impossible. The
+whole subject compresses into the concatenation bug, so that gets the code block: `"You have " + n
++ " messages"` bakes in word order, a two-category plural rule, and the absence of gender, and no
+translation budget can repair it. Arabic uses six plural categories; Japanese uses one. The rest
+is the *never format these by hand* table (Swedish sorts **å** after **z**, German sorts it with
+**a** — same characters, both correct), text expansion, RTL as logical properties rather than a
+`direction` flip, and the form assumptions that lock people out rather than annoy them. It ends on
+pseudo-localization, which is the only technique here that finds bugs **before** a translator is
+hired: `[!!! Šàvé çhàngéš —— ]` exposes hardcoded strings, overflow and runtime-assembled
+sentences in one build.
+
+**Technical SEO Operations** (`web`) — the existing SEO card is on-page metadata, so this one is
+the part a developer gets paged for. It is organised around *discovered → crawled → indexed →
+ranking*, because naming the failing joint turns a vague complaint into a five-minute diagnosis,
+and because it separates work you can do from work you cannot: an engineer who accepts a ranking
+target has accepted a goal with no lever attached. The centrepiece is the mistake everyone makes
+once — blocking a URL in `robots.txt` so the crawler can never read the `noindex` inside it, which
+leaves the page indexed permanently and removes the only mechanism that could have cleared it. The
+migration section says the redirect map is the deliverable and must be built from a crawl of the
+old site *before* launch, because afterwards the list is unrecoverable. Also written down: field
+data and lab data disagree, and the field number is the one that counts.
+
+**Accessibility Remediation** (`web`) — what happens after someone hands you four hundred
+findings. The argument is that the tool's severity column is the wrong sort: it describes how
+badly a guideline is broken, not whether anybody is stopped, and an unlabelled submit button ends
+a session while a low-contrast footer link does not. Then the fact that is invisible in the
+report — **four hundred violations are usually twelve components**, because scanners count
+instances and a date picker on thirty screens is thirty findings and one bug. Regrouping by
+component before planning turns an unbounded slog into a bounded list, and it decides where the
+fix belongs: if the accessible name has to be added at thirty call sites, the component is wrong.
+The card is blunt about overlay widgets (a purchase that feels like a fix) and about optimistic
+conformance statements (what converts a complaint into a documented misrepresentation), and it
+ends on the observation that half an hour watching one person use a screen reader reorders the
+backlog more accurately than any severity column.
+
+### Wiring
+
+Four new permalinks, nine cross-references resolved at build time, and **fourteen bidirectional
+related-topic pairs** added to `related.json` — hand-picked, because the suggester's top hits for
+these titles were `sin, cos, tan & sec` for the mainframe card and `Databases — ACID & Indexing`
+for the SEO one. Token overlap has nothing to say about a subject the site has never covered,
+which is exactly the case where a new card needs the links most.
+
+One thing the tooling caught immediately: `related.json` slugs are truncated at 60 characters, so
+the hand-written `…language-that-funds-it` did not exist — the real id ends `…funds-i`. The check
+named the missing target and the resulting one-way edge in the same run.
+
+Site total 1,401 → **1,405**. `infra` 45 → 46, `web` 35 → 38. Smoke **135/135** · axe **6/6** ·
+visual **2/2** · budget 29% gzip headroom. The OG card was regenerated, since its topic count is
+baked into the image.

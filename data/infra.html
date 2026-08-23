@@ -3609,4 +3609,200 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
   </div>
 </div>
 
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏛️</span>
+    <span class="topic-name">Mainframe &amp; Midrange — Why They Are Still There, and How You Integrate With One</span>
+    <span class="topic-badge">Infra • Legacy Platforms</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">"Still Running" Is an Engineering Answer, Not an Embarrassment</div>
+      <div class="concept-desc">
+        The usual framing is that mainframes survive because nobody was brave enough to replace them.
+        That is not the reason, and believing it is how integration projects get scoped badly. Two
+        things keep these systems in place. First, the machine is built for a workload most modern
+        infrastructure is not: enormous transaction volumes with per-transaction integrity, where the
+        redundancy is in the hardware — a failing processor retries the instruction rather than
+        failing the node. Second, and more decisively, <strong>the specification is the code</strong>.
+        Forty years of rules about how interest accrues, how a claim is settled, how a shipment is
+        rated, exist nowhere else in writing. Nobody is defending the platform; they are defending
+        the only surviving copy of the business.
+      </div>
+      <div class="dw">
+        <div class="concept-desc">
+          The asymmetry that decides these arguments: the current system's failure modes are known,
+          bounded and already priced. A rewrite's are not, and they land on the day the rewrite goes
+          live — which is also the day the people who understood the original are gone. That is not
+          an argument against ever modernising. It is the reason modernising is done in slices, and
+          it is why "we should just rewrite it" costs credibility in a room that has watched
+          somebody try.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Vocabulary, Because Almost Every Word Is Different</div>
+      <div class="concept-desc">
+        Half the difficulty of a first mainframe conversation is that both sides are describing the
+        same concepts with words the other has never heard. The right-hand column is deliberately
+        approximate — close enough to hold the conversation, not close enough to reason from.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Term</th><th>What it is</th><th>Nearest thing you know</th></tr></thead>
+          <tbody>
+            <tr><td>z/OS</td><td>The mainframe operating system</td><td>The OS, but scheduling batch is a first-class job of it</td></tr>
+            <tr><td>IBM i (AS/400, iSeries, System i)</td><td>The midrange OS, with the database built into it</td><td>An OS and an RDBMS <span class="acro-exp">(Relational Database Management System)</span> fused, not layered</td></tr>
+            <tr><td>LPAR</td><td>Logical partition</td><td>A VM <span class="acro-exp">(Virtual Machine)</span>, but partitioned in firmware and far older than the idea</td></tr>
+            <tr><td>CICS</td><td>Transaction monitor — runs the online programs</td><td>The application server</td></tr>
+            <tr><td>IMS</td><td>Hierarchical database and transaction manager</td><td>Pre-relational data, still in production</td></tr>
+            <tr><td>Db2 for z/OS</td><td>The relational database</td><td>Genuinely the same idea, different dialect</td></tr>
+            <tr><td>COBOL, PL/I</td><td>The languages the business logic is written in</td><td>Verbose, readable, and not the problem people assume</td></tr>
+            <tr><td>JCL</td><td>Job Control Language — how batch work is submitted</td><td>A shell script, if a shell script were a declaration of datasets</td></tr>
+            <tr><td>VSAM</td><td>Keyed record file access</td><td>An indexed key/value store predating the term</td></tr>
+            <tr><td>Copybook</td><td>The record layout for a file or message</td><td>The struct definition — and the only parser you will get</td></tr>
+            <tr><td>SMF</td><td>System Management Facilities records</td><td>Telemetry and audit logs, in a binary house format</td></tr>
+            <tr><td>RACF, ACF2, Top Secret</td><td>The access control products</td><td>The directory and the authorisation engine, not joined to yours</td></tr>
+            <tr><td>3270, 5250</td><td>Terminal protocols</td><td>The green screen — a block-mode form, not a character stream</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Worth knowing before you use the wrong one in a meeting: <strong>3270 is z/OS and 5250 is
+          IBM i</strong>, and the two platforms are unrelated products that only look alike from
+          outside. A person who supports one may know nothing about the other.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Four Ways You Will Actually Integrate</div>
+      <div class="concept-desc">
+        You will almost certainly never write COBOL. What you will do is move data across the
+        boundary, and there are four routes in practice — in descending order of how much you should
+        want them.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Route</th><th>What it looks like</th><th>Where it breaks</th></tr></thead>
+          <tbody>
+            <tr><td>Message queue (MQ)</td><td>A real transactional queue, in both directions</td><td>Character conversion at the queue manager, and length assumptions in fixed-format messages</td></tr>
+            <tr><td>API <span class="acro-exp">(Application Programming Interface)</span> façade</td><td>REST <span class="acro-exp">(Representational State Transfer)</span> in front of a CICS transaction, vendor-built or homegrown</td><td>The façade hides where the transaction actually commits — a retry may not be idempotent</td></tr>
+            <tr><td>Scheduled file transfer</td><td>Fixed-width files exchanged on the batch schedule</td><td>Reading a file that is still being written; and the file is a day old by design, which nobody tells the product owner</td></tr>
+            <tr><td>Screen scraping</td><td>Driving a 3270/5250 session programmatically</td><td>There is no contract. A field moving two columns is a silent corruption, not an error</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-red">Screen scraping is the one to argue about.</strong> It is chosen
+          because it needs nothing from the mainframe team, which is exactly why it is fragile: an
+          interface with no owner and no versioning has no way to warn you. If it is the only option,
+          the mitigation is a canary — a scripted session that runs a known transaction with a known
+          answer and alarms when the parse stops matching, so you find out from monitoring rather
+          than from reconciliation.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Data Traps, Which Are Where the Time Goes</div>
+      <div class="concept-desc">
+        Every one of these has silently corrupted a production feed somewhere. They share a shape:
+        the data parses without error and is wrong.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Trap</th><th>What actually happens</th><th>What to do</th></tr></thead>
+          <tbody>
+            <tr><td>EBCDIC, not ASCII <span class="acro-exp">(American Standard Code for Information Interchange)</span></td><td>A working file looks like binary noise in your editor</td><td>Convert explicitly, and know <em>which</em> code page — EBCDIC has national variants that move punctuation</td></tr>
+            <tr><td>Fixed width, no delimiters</td><td>There is nothing in the file that says where a field ends</td><td>Get the copybook. Treat it as a project deliverable with a name against it, not a favour</td></tr>
+            <tr><td>Packed decimal (COMP-3)</td><td>Two digits per byte, sign in the final nibble</td><td>Decode it as packed decimal. Reading it as text or as an integer corrupts money quietly</td></tr>
+            <tr><td>Zoned decimal with overpunch</td><td>The sign is folded into the last digit, so −123 reads as <code>12L</code></td><td>Never regex a numeric field. Use the copybook's picture clause</td></tr>
+            <tr><td>Trailing spaces are structural</td><td>Padding is how the record keeps its length</td><td>Trim on the way into your model, never on the way back out</td></tr>
+            <tr><td>Julian and 6-digit dates</td><td><code>yyddd</code>, or a 2-digit year with a pivot rule buried in code</td><td>Pin the pivot in writing during analysis; guessing is a class of bug that appears years later</td></tr>
+            <tr><td>Low-values and high-values</td><td>All-<code>0x00</code> or all-<code>0xFF</code> used as sentinels</td><td>Map them to null deliberately — they are not empty strings</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The generalisation worth carrying away: on this platform <strong>a record layout is a
+          binary contract, not a text format</strong>. Modern integration habits assume the file
+          describes itself — a header row, a JSON <span class="acro-exp">(JavaScript Object Notation)</span> key, a delimiter to split on. Here nothing does,
+          and every field boundary you assume is an assumption you are making on your own authority.
+          <span class="xref">Encoding — Bytes, Text, and Why "It Works on My Machine"</span> is the
+          same lesson at the level of your own language runtime.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Four Operational Facts That Change How You Work</div>
+      <div class="concept-desc">
+        These surprise people more than the technology does, because each one inverts an instinct
+        that is correct everywhere else.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Fact</th><th>Why it inverts an instinct</th></tr></thead>
+          <tbody>
+            <tr><td>Consumption is billed</td><td>Capacity licensing means an inefficient query is a line item on an invoice. Cloud teaches "add capacity, optimise later"; here optimisation <em>is</em> the cost control, and a chatty integration has a price attached to it</td></tr>
+            <tr><td>The batch window is the real deadline</td><td>Overnight processing has a finish time the business depends on. An integration that adds twenty minutes to a run ending at 05:50 is an outage, discovered in production, once</td></tr>
+            <tr><td>Identity is somewhere else</td><td>Mainframe accounts live in RACF or its competitors, not in your directory. The standing audit finding is an access review that covered every system except the one holding the money</td></tr>
+            <tr><td>The knowledge is retiring</td><td>The person who answered your question last year may not be there next year. Write down every answer you get, in your repository, at the time you get it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last one is not sentiment. In practice it means the highest-value artefact your project
+          produces is not the integration — it is <strong>the documented record layout and the
+          documented meaning of each status code</strong>, written down for the first time in
+          decades because you were the one who had to ask.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Modernising Without a Big Bang</div>
+      <div class="concept-desc">
+        The pattern that works is the strangler: put a façade in front of the existing system, move
+        one function at a time behind it, and leave the old path running. What makes it work here is
+        not the routing — it is what you do with the old path once it is no longer authoritative.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>The part people skip</th></tr></thead>
+          <tbody>
+            <tr><td>Façade first</td><td>Callers move to the new interface while it still forwards everything. Nothing has been rewritten yet, and that is the point</td></tr>
+            <tr><td>Pick a function with a boundary</td><td>Something that reads a lot and writes little, first. The functions that own the ledger go last, not first</td></tr>
+            <tr><td>Run both and compare</td><td>Feed production traffic to old and new, compare outputs, and let the old one keep answering. This harness is the real deliverable — there is no test suite to inherit, because the production system <em>is</em> the specification</td></tr>
+            <tr><td>Cut over on evidence</td><td>Switch when the comparison has been clean across a full business cycle — a month-end, a year-end — not when the sprint ends</td></tr>
+            <tr><td>Delete the old path</td><td>Otherwise you now maintain two systems and have made things worse. Removal is part of the work, scheduled and funded</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-amber">On automated translation:</strong> tools that convert COBOL to
+          Java or C# produce COBOL written in Java — the same structure, the same eighty-branch
+          paragraph, none of the domain knowledge, and now nobody at all understands it, because the
+          people who could read the original no longer recognise it. It converts a maintainable
+          legacy system into an unmaintainable modern one, which reads as progress on a slide.
+        </div>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong class="c-green">And deciding not to migrate is a legitimate outcome.</strong> A
+          well-wrapped mainframe with a documented API, a monitored batch schedule and its access
+          review inside the same governance as everything else is a perfectly defensible piece of
+          infrastructure. Making that case honestly is
+          <span class="xref">Technical Debt as a Financial Argument — Language That Funds It</span>
+          applied to the largest debt in the estate — and the argument is stronger when you can show
+          what the wrap cost versus what the rewrite was quoted at.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body infra -->
