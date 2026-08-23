@@ -2225,8 +2225,11 @@ shipped in the Track AJ wave. Read the ticks, not the original list.*
   all 201 are checked by `lint_content.py` and now resolved to ids by `build.py`. There is nothing
   left for this item to check; it was written before the `xref` convention existed.
 - [x] **Performance budget** — `tools/page_budget.py`, in CI, four metrics with headroom.
-- [ ] **Visual regression** — headless screenshots of a few representative
-  topics in both themes, diffed on PRs.
+- [x] **Visual regression** — `tools/visual_test.mjs`, in CI and behind `make visual`. Deliberately
+  **not** "a few representative topics": it shoots the **filter bar** in both themes and nothing
+  else. Content screenshots fail on every content wave, and a check that fails constantly is one
+  people learn to ignore. Threshold calibrated rather than guessed — repeated runs differ by exactly
+  zero pixels, and reverting one chip's colour moves 0.111%, so the limit is 0.05%.
 - [x] **Acronym drift report** — `tools/acronym_drift.py`. Capitalised tokens the dictionary lacks,
   ranked by frequency, per domain with `--domain`; `--unused` lists entries no card uses. A report,
   not a gate — see the tool's docstring for why neither number is safe to fail a build on.
@@ -9208,3 +9211,39 @@ can restore the data, they hold a key. That may be perfectly acceptable; it is s
 product the marketing described.
 
 `sec` 84 → **86**. Site total 1,388 → **1,390**.
+
+
+## Session record — Track AJ closed: visual regression, scoped to survive
+
+The last open item in the track, and the one most likely to be built badly. The spec said "headless
+screenshots of a few representative topics in both themes". Built that way it would fail on every
+content wave, and **a check that fails constantly is one people learn to ignore** — which is worse
+than not having it, because the ignoring spreads to the checks that matter.
+
+So it shoots one thing: **the filter bar**, both themes, one viewport. Thirty coloured chips in a
+row. It changes rarely, every visitor sees it, and it is the exact place the light-mode contrast bug
+lived.
+
+### Two things the first attempt got wrong, both visible only by looking
+
+The first version screenshotted the whole `<header>`. Opening the baseline showed why that was a
+mistake twice over: the header is dominated by **a large static illustration** that can never
+regress and made the baseline 290 KB, and it contains the **rotating quote** — so the check would
+have failed at random, on a schedule nobody could predict. Switching to the filter bar took the
+baselines from 600 KB to 68 KB and made them deterministic.
+
+### The threshold is calibrated, not guessed
+
+Repeated runs in one environment differ by **exactly zero** pixels. Reverting a single chip's colour
+to its pre-fix value moves **0.111%** — one chip's text is a small share of a bar of thirty. The
+first threshold, 0.2%, would have watched that go straight past; it is now 0.05%, verified to fail
+on the planted revert and pass on the restore.
+
+The docstring names the escape hatch explicitly: if a runner's font rendering ever makes this noisy,
+raise the number or drop the shot — do not silence the job.
+
+### Track AJ is now closed
+
+All eight items. Three were already shipped, one measured itself away, and four were built this
+session: the markup validator with its self-test, the acronym drift report, the accessibility scan
+that found sixteen violations, and this.

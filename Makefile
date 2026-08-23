@@ -12,7 +12,7 @@ PY ?= python3
 NODE ?= node
 
 .DEFAULT_GOAL := build
-.PHONY: build check test a11y og all fmt acronyms stamp clean help
+.PHONY: build check test a11y og visual all fmt acronyms stamp clean help
 
 ## build: regenerate index.html from data/ (the usual command)
 build:
@@ -58,8 +58,12 @@ a11y:
 og:
 	$(NODE) tools/gen_og_image.mjs
 
+## visual: pixel-diff the filter bar against tools/baseline (--update to accept)
+visual:
+	$(NODE) tools/visual_test.mjs
+
 ## all: build, then every check, then the browser tests
-all: build check test a11y
+all: build check test a11y visual
 
 ## help: list these targets
 help:

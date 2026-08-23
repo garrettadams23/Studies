@@ -160,3 +160,9 @@ jobs:
       # wave that does not regenerate it ships a stale claim.
       - name: Check the social card is current
         run: node tools/gen_og_image.mjs --check
+
+      # Pixel diff of the filter bar against a committed baseline, both themes.
+      # Deliberately narrow: a suite that screenshots content fails on every
+      # content wave, and a check that fails constantly gets ignored.
+      - name: Visual regression (filter bar)
+        run: node tools/visual_test.mjs
