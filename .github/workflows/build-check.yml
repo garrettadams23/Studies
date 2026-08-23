@@ -66,6 +66,12 @@ jobs:
       - name: Check for renamed products
         run: python tools/check_renames.py
 
+      # A hand-written acronym expansion that disagrees with the dictionary is
+      # a plain contradiction, and the annotator cannot see it — it only ever
+      # adds expansions, never reads the ones an author typed.
+      - name: Check for contradicted acronym expansions
+        run: python tools/check_contradictions.py --strict
+
       # --verify, not --check. --check re-derives every stamp from `git blame`,
       # and blame heuristics differ between git releases: this repo passed
       # --check under git 2.43 and failed it under 2.54 on a runner, with no
