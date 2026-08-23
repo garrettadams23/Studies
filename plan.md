@@ -2131,8 +2131,14 @@ headlessly and given the checks they never had (14 of them) rather than rewritte
   restores all three; a file that is not a progress export is rejected on all three grounds; and a
   well-formed file carrying a key the page does not own, or a malformed scheduler record, is
   refused rather than written. Six checks added.
-- [ ] **Per-topic notes** — extend the notepad to attach a note to a topic ID and
-  surface it inline when that topic is open.
+- [x] **Per-topic notes** — a 📝 in the topic tool cluster beside ★ ✓ 🔗. One note per topic under
+  `note:<id>`, rendered at the top of the topic body whenever that topic is open, with the header
+  button lit on any topic that carries one. Built as a *sibling* of the notepad rather than an
+  extension of it: the notepad is one shared scratchpad, and a note about Kerberos delegation
+  belongs on the Kerberos card. Because it uses the same prefixed-key shape as the other per-topic
+  state, the export, the import's validation and the "what do we own" list picked it up by the rules
+  they already had — one branch in `bkSerialise` for free text, and the count line now distinguishes
+  topic notes from notepad notes so a restore cannot misreport.
 
 ### TRACK AH — Findability & Navigation
 
@@ -8250,3 +8256,35 @@ done, that "you are here" lands on the first unreviewed step, and that Continue 
 Two items open: **exam mode** (timed, fixed count, no feedback until a scored per-domain report) and
 **per-topic notes** (attach a note to a topic id and surface it inline). Both are self-contained;
 exam mode is the larger one and would reuse the quiz generators as they stand.
+
+
+## Session record — Track AG: per-topic notes
+
+A 📝 alongside ★ ✓ 🔗. One note per topic, at the top of that topic's body, lit on the header when a
+topic carries one.
+
+**Built beside the notepad, not inside it.** The item said "extend the notepad to attach a note to a
+topic ID". The notepad is a single shared scratchpad with authorship and sorting; threading a
+topic id through it would have meant a mode inside a feature that does not want one. A separate
+`note:<id>` key is smaller, and it lands in the right place — a note about Kerberos delegation
+belongs on the Kerberos card, not in a pile with everything else.
+
+**The shape was the design.** Using the same prefixed-key-holding-a-string form as `reviewed:` and
+`bookmark:` meant the backup system adopted notes almost for free: `bkCategory` gained one line,
+`bkOwnedKeys` and the export needed nothing. Writing the test is what caught the one place it was
+*not* free — `bkSerialise`'s fallback treats every unrecognised key as a boolean flag, so notes
+would have been silently refused on import. One branch fixed it. The count line now separates topic
+notes from notepad notes as well, because conflating them would misreport what a restore actually
+put back.
+
+**Failure modes covered.** Eight checks, 83 → **91**: the editor opens, the note saves and shows and
+flags its topic, it sits above the concept cards, it survives the domain being evicted and
+reopened — the case that matters most here, since only one domain's content is ever in the DOM — it
+travels in the export and comes back on import, a malformed note is refused, and deleting one
+removes the block and the flag.
+
+### Track AG after this wave
+
+Two items open: **exam mode** and the **progress dashboard**. Exam mode would reuse the quiz
+generators as they stand; the dashboard is the more useful of the two, since every number it needs
+is already in `localStorage` and nothing currently shows a reader what they have covered.

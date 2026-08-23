@@ -933,6 +933,91 @@ check("Continue opens the step you are on",
   `${pathJump.want} -> ${pathJump.got}`);
 await page.evaluate(() => localStorage.clear());
 
+// ── per-topic notes ─────────────────────────────────────────────────────────
+// A note that saves but never reappears, or reappears but never exports, are
+// both silent — the reader only finds out when the note is gone.
+await page.goto(PAGE, { waitUntil: "load" });
+const note = await page.evaluate(async () => {
+  localStorage.clear();
+  const first = [...document.querySelectorAll(".domain-section")][0].dataset.domain;
+  openDomain(domainSection(first));
+  await new Promise(r => setTimeout(r, 250));
+  const topic = document.querySelector(".domain-body.open .topic");
+  topic.querySelector(".topic-note-btn").click();
+  await new Promise(r => setTimeout(r, 150));
+  const input = topic.querySelector(".topic-note .tn-input");
+  const opened = !!input && !input.hidden;
+  input.value = "check this against the lab build";
+  input.dispatchEvent(new Event("blur"));
+  await new Promise(r => setTimeout(r, 100));
+  return {
+    id: topic.id, opened,
+    stored: localStorage.getItem("note:" + topic.id),
+    shown: topic.querySelector(".topic-note .tn-text")?.textContent,
+    inputHidden: topic.querySelector(".topic-note .tn-input")?.hidden,
+    flagged: topic.classList.contains("noted"),
+    // The note must be the first thing in the body, above the concept cards.
+    first: topic.querySelector(":scope > .topic-body").firstElementChild
+             ?.classList.contains("topic-note"),
+  };
+});
+check("the note button opens an editor on the topic", note.opened);
+check("a note is saved, shown and flagged on the topic",
+  note.stored === "check this against the lab build"
+  && note.shown === note.stored && note.inputHidden && note.flagged,
+  `stored=${JSON.stringify(note.stored)} flagged=${note.flagged}`);
+check("the note sits above the concept cards", note.first === true);
+
+const noteBack = await page.evaluate(async () => {
+  const id = [...document.querySelectorAll(".topic")].find(t => t.classList.contains("noted"))?.id;
+  // Close and reopen the domain: the note lives in storage, not in the DOM that
+  // just got thrown away.
+  const section = domainSection(topicDomain(id));
+  closeDomain(section);
+  openDomain(section);
+  await new Promise(r => setTimeout(r, 250));
+  document.getElementById(id).querySelector(".topic-header").click();
+  await new Promise(r => setTimeout(r, 200));
+  return document.getElementById(id)?.querySelector(".topic-note .tn-text")?.textContent || "";
+});
+check("a note survives the domain being evicted and reopened",
+  noteBack === "check this against the lab build", noteBack);
+
+const noteBackup = await page.evaluate(() => {
+  const payload = bkExport();
+  const noteKeys = Object.keys(payload.data).filter(k => k.startsWith("note:"));
+  localStorage.clear();
+  const { kept } = bkSanitise(bkValidate(JSON.stringify(payload)).data);
+  bkApply(kept, "replace");
+  const restored = noteKeys.map(k => localStorage.getItem(k));
+  // And a note shape the page does not accept must be refused, like any other.
+  const bad = bkSanitise({ "note:x": 42, "note:y": "   " });
+  return { counted: payload.counts.topicNote, noteKeys: noteKeys.length,
+           restored, refused: bad.skipped };
+});
+check("notes travel in the progress export",
+  noteBackup.counted === 1 && noteBackup.noteKeys === 1,
+  `counted ${noteBackup.counted}, ${noteBackup.noteKeys} keys`);
+check("notes come back on import",
+  noteBackup.restored[0] === "check this against the lab build", noteBackup.restored[0]);
+check("a note that is not a usable string is refused on import",
+  noteBackup.refused === 2, `${noteBackup.refused} refused`);
+
+const noteGone = await page.evaluate(async () => {
+  const id = [...document.querySelectorAll(".topic")].find(t => t.classList.contains("noted"))?.id;
+  const topic = document.getElementById(id);
+  topic.querySelector(".topic-note .tn-edit").click();
+  topic.querySelector(".topic-note .tn-clear").click();
+  await new Promise(r => setTimeout(r, 120));
+  return { stored: localStorage.getItem("note:" + id),
+           block: !!topic.querySelector(".topic-note"),
+           flagged: topic.classList.contains("noted") };
+});
+check("deleting a note removes the block and the flag",
+  noteGone.stored === null && !noteGone.block && !noteGone.flagged,
+  JSON.stringify(noteGone));
+await page.evaluate(() => localStorage.clear());
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));

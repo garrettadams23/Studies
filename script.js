@@ -201,6 +201,105 @@ function renderDomainIntro(section) {
   body.prepend(card);
 }
 
+// ── PER-TOPIC NOTES ─────────────────────────────────────────────────────────
+// One note per topic, stored under `note:<id>`, shown at the top of the topic's
+// body whenever that topic is open. Separate from the notepad, which is a
+// single shared scratchpad: a note about Kerberos delegation belongs on the
+// Kerberos card, not in a pile with everything else.
+//
+// It is deliberately the same shape as the other per-topic state — a prefixed
+// key holding a plain string — so the export, the import's validation and the
+// "what do we own" list all pick it up by the rule they already have.
+
+function topicNote(id) {
+  try { return localStorage.getItem(NOTE_PREFIX + id) || ""; } catch { return ""; }
+}
+
+function saveTopicNote(id, text) {
+  const value = (text || "").slice(0, NOTE_MAX).trim();
+  try {
+    if (value) localStorage.setItem(NOTE_PREFIX + id, value);
+    else localStorage.removeItem(NOTE_PREFIX + id);
+  } catch { /* quota — the note stays on screen, just unsaved */ }
+  document.getElementById(id)?.classList.toggle("noted", !!value);
+  return value;
+}
+
+/**
+ * Render the note block into a topic body, or update it in place.
+ *
+ * `open` forces the editor open — what the 📝 button does. Without it the block
+ * only appears when there is a note to show, so a topic nobody has annotated
+ * looks exactly as it did before this feature existed.
+ */
+function renderTopicNote(topic, { open = false } = {}) {
+  if (!topic) return null;
+  const body = topic.querySelector(":scope > .topic-body");
+  if (!body) return null;
+  const existing = body.querySelector(":scope > .topic-note");
+  const text = topicNote(topic.id);
+  if (!text && !open) { existing?.remove(); return null; }
+
+  let block = existing;
+  if (!block) {
+    block = document.createElement("div");
+    block.className = "topic-note";
+    block.innerHTML =
+      '<div class="tn-head"><span class="tn-label">My note</span>' +
+      '<button type="button" class="tn-edit">Edit</button>' +
+      '<button type="button" class="tn-clear" hidden>Delete</button></div>' +
+      '<div class="tn-text"></div>' +
+      '<textarea class="tn-input" rows="3" maxlength="' + NOTE_MAX +
+      '" placeholder="A note only you see. Stored in this browser, and included in your progress export."></textarea>';
+    body.prepend(block);
+
+    const input = block.querySelector(".tn-input");
+    const commit = () => {
+      const saved = saveTopicNote(topic.id, input.value);
+      block.querySelector(".tn-text").textContent = saved;
+      setEditing(false);
+      if (!saved) block.remove();
+    };
+    block.querySelector(".tn-edit").addEventListener("click", () => setEditing(true));
+    block.querySelector(".tn-clear").addEventListener("click", () => {
+      input.value = ""; commit();
+    });
+    input.addEventListener("blur", commit);
+    input.addEventListener("keydown", e => {
+      // Escape abandons the edit; the note on screen is the saved one.
+      if (e.key === "Escape") { input.value = topicNote(topic.id); commit(); }
+    });
+
+    function setEditing(on) {
+      block.classList.toggle("editing", on);
+      block.querySelector(".tn-text").hidden = on;
+      block.querySelector(".tn-clear").hidden = !on;
+      input.hidden = !on;
+      if (on) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+    }
+    block._setEditing = setEditing;
+    setEditing(false);
+  }
+
+  block.querySelector(".tn-text").textContent = text;
+  block.querySelector(".tn-input").value = text;
+  if (open) block._setEditing(true);
+  return block;
+}
+
+/** The 📝 button: open the topic if it is closed, then focus the editor. */
+function toggleTopicNote(topic) {
+  const header = topic.querySelector(":scope > .topic-header");
+  const body = topic.querySelector(":scope > .topic-body");
+  if (body && !body.classList.contains("open")) {
+    header?.classList.add("open");
+    header?.setAttribute("aria-expanded", "true");
+    body.classList.add("open");
+    renderSeeAlso(topic);
+  }
+  renderTopicNote(topic, { open: true });
+}
+
 /** topic id -> ids worth reading next (inlined by build.py from data/related.json). */
 let _related = null;
 function relatedTopics() {
@@ -323,6 +422,7 @@ function enhanceDomain(section) {
 
     if (localStorage.getItem(REVIEWED_PREFIX + topic.id) === "1") topic.classList.add("reviewed");
     if (localStorage.getItem(BOOKMARK_PREFIX + topic.id) === "1") topic.classList.add("bookmarked");
+    if (localStorage.getItem(NOTE_PREFIX + topic.id)) topic.classList.add("noted");
 
     if (!header.querySelector(".topic-tools")) {
       const tools = document.createElement("span");
@@ -349,7 +449,14 @@ function enhanceDomain(section) {
       link.setAttribute("aria-label", "Copy link to this topic");
       link.textContent = "🔗";
 
-      tools.append(bookmark, review, link);
+      const note = document.createElement("button");
+      note.type = "button";
+      note.className = "topic-note-btn";
+      note.title = "Note on this topic";
+      note.setAttribute("aria-label", "Write a note on this topic");
+      note.textContent = "📝";
+
+      tools.append(bookmark, review, note, link);
       const chev = header.querySelector(".topic-chev");
       chev ? header.insertBefore(tools, chev) : header.appendChild(tools);
     }
@@ -532,7 +639,11 @@ function toggleTopic(h) {
   const open = h.classList.toggle("open");
   h.nextElementSibling.classList.toggle("open", open);
   h.setAttribute("aria-expanded", open ? "true" : "false");
-  if (open) { renderSeeAlso(h.parentElement); updateTopicHash(h.parentElement); }
+  if (open) {
+    renderSeeAlso(h.parentElement);
+    renderTopicNote(h.parentElement);
+    updateTopicHash(h.parentElement);
+  }
 }
 
 // ── FILTER ─────────────────────────────────────────────────────────────────
@@ -614,7 +725,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("domain-container");
   container?.addEventListener("click", e => {
     // Per-topic tool buttons take precedence over the toggle
-    const tool = e.target.closest(".topic-review, .topic-permalink, .topic-bookmark");
+    const tool = e.target.closest(".topic-review, .topic-permalink, .topic-bookmark, .topic-note-btn");
     if (tool) { e.stopPropagation(); handleTopicTool(tool); return; }
     // The URL codec lives inside a topic, so its buttons arrive and leave with
     // their domain — delegation instead of the load-time wiring they had.
@@ -648,7 +759,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const xref = e.target.closest(".xref[data-xref]");
     if (xref) { e.preventDefault(); stGoToTopic(xref.dataset.xref); return; }
     const header = e.target.closest(".domain-header, .topic-header");
-    if (!header || e.target.closest(".topic-review, .topic-permalink")) return;
+    if (!header || e.target.closest(".topic-review, .topic-permalink, .topic-note-btn")) return;
     e.preventDefault();
     header.classList.contains("domain-header") ? toggleDomain(header) : toggleTopic(header);
   });
@@ -826,6 +937,8 @@ function initTouchFeedback() {
 
 // ── ACCESSIBILITY, PERMALINKS & PROGRESS ───────────────────────────────────
 const REVIEWED_PREFIX = "reviewed:";
+const NOTE_PREFIX = "note:";
+const NOTE_MAX = 1000;
 
 /**
  * Text of an element with the inline acronym expansions removed.
@@ -894,6 +1007,8 @@ function handleTopicTool(btn) {
     const key = REVIEWED_PREFIX + topic.id;
     on ? localStorage.setItem(key, "1") : localStorage.removeItem(key);
     updateDomainProgress(topic.closest(".domain-section"));
+  } else if (btn.classList.contains("topic-note-btn")) {
+    toggleTopicNote(topic);
   } else if (btn.classList.contains("topic-permalink")) {
     const url = `${location.origin}${location.pathname}#${topic.id}`;
     const done = () => { btn.classList.add("copied"); setTimeout(() => btn.classList.remove("copied"), 1200); };
@@ -1065,6 +1180,7 @@ function openHashTarget() {
   th?.setAttribute("aria-expanded", "true");
   topic.querySelector(".topic-body")?.classList.add("open");
   renderSeeAlso(topic);
+  renderTopicNote(topic);
 
   // A card-level link scrolls to the card and marks it briefly. Falling back to
   // the topic when the index is out of range is deliberate: a link shared
@@ -1341,6 +1457,7 @@ function applySearchToDomain(section) {
       th?.setAttribute("aria-expanded", "true");
       topic.querySelector(".topic-body")?.classList.add("open");
       renderSeeAlso(topic);
+      renderTopicNote(topic);
       topic.querySelectorAll(
         ".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, .code-block"
       ).forEach(n => _searchTermList.forEach(t => highlightIn(n, t)));
@@ -2433,6 +2550,7 @@ function bkCategory(key) {
   if (key.startsWith(BOOKMARK_PREFIX)) return "bookmark";
   if (key.startsWith(KNOWN_PREFIX)) return "known";
   if (key.startsWith(SRS_PREFIX)) return "srs";
+  if (key.startsWith(NOTE_PREFIX)) return "topicNote";
   if (key === NP_STORE_KEY || key === NP_AUTHOR_KEY) return "notes";
   return null;
 }
@@ -2457,7 +2575,7 @@ function bkCollect() {
 }
 
 function bkCounts(data) {
-  const c = { reviewed: 0, bookmark: 0, known: 0, srs: 0, notes: 0 };
+  const c = { reviewed: 0, bookmark: 0, known: 0, srs: 0, topicNote: 0, notes: 0 };
   Object.keys(data).forEach(k => {
     const cat = bkCategory(k);
     if (!cat) return;
@@ -2531,6 +2649,13 @@ function bkSerialise(key, v) {
     return Array.isArray(a) ? JSON.stringify(a) : null;
   }
   if (key === NP_AUTHOR_KEY) return typeof v === "string" ? v.slice(0, 80) : null;
+  // A per-topic note is free text, so it is the one key here with no shape to
+  // check beyond "a non-empty string, truncated to what the editor allows".
+  if (key.startsWith(NOTE_PREFIX)) {
+    if (typeof v !== "string") return null;
+    const t = v.slice(0, NOTE_MAX).trim();
+    return t || null;
+  }
   // reviewed / bookmark / known are plain flags
   return (v === "1" || v === 1 || v === true) ? "1" : null;
 }
@@ -2612,7 +2737,12 @@ function bkRefreshUI() {
 }
 
 function bkCountLine(c) {
-  return `${c.reviewed} reviewed · ${c.bookmark} starred · ${c.known} known · ${c.srs} scheduled · ${c.notes} note${c.notes === 1 ? "" : "s"}`;
+  // Two kinds of note, and conflating them would misreport a restore: `notes`
+  // is the shared notepad's entries, `topicNote` is one note pinned to a topic.
+  const pin = c.topicNote || 0;
+  return `${c.reviewed} reviewed · ${c.bookmark} starred · ${c.known} known · ` +
+         `${c.srs} scheduled · ${pin} topic note${pin === 1 ? "" : "s"} · ` +
+         `${c.notes} notepad note${c.notes === 1 ? "" : "s"}`;
 }
 
 function stOpenBackup() {

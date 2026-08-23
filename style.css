@@ -2763,6 +2763,38 @@ body.st-lock { overflow: hidden; }
 .st-list-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; padding: 4px 6px; }
 .st-list-remove:hover { color: var(--red, #ff5470); }
 
+/* Per-topic note — sits at the top of a topic body, above the concept cards. */
+.topic-note {
+  border: 1px dashed var(--border);
+  border-left: 3px solid var(--amber);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  background: color-mix(in srgb, var(--amber) 5%, transparent);
+}
+.tn-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.tn-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted); margin-right: auto;
+}
+.tn-edit, .tn-clear {
+  font: inherit; font-size: 11px; background: none; border: 1px solid var(--border);
+  border-radius: 4px; padding: 2px 8px; color: var(--muted); cursor: pointer;
+}
+.tn-edit:hover, .tn-clear:hover { color: var(--text); border-color: var(--amber); }
+.tn-text { font-size: 13px; line-height: 1.6; white-space: pre-wrap; color: var(--text); }
+.tn-input {
+  width: 100%; font: inherit; font-size: 13px; line-height: 1.6;
+  background: var(--bg2); color: var(--text);
+  border: 1px solid var(--border); border-radius: 4px; padding: 8px; resize: vertical;
+}
+.tn-input:focus { outline: none; border-color: var(--amber); }
+/* A topic carrying a note says so on its header, the way ★ and ✓ do. */
+.topic.noted .topic-note-btn { opacity: 1; filter: none; }
+.topic-note-btn { opacity: 0.45; }
+.topic-note-btn:hover, .topic.noted .topic-note-btn { opacity: 1; }
+@media print { .tn-edit, .tn-clear, .tn-input { display: none; } }
+
 /* Learning paths */
 .st-paths { list-style: none; margin: 14px 0 0; padding: 0; }
 .st-path { margin-bottom: 12px; }
