@@ -201,6 +201,74 @@ function renderDomainIntro(section) {
   body.prepend(card);
 }
 
+/** topic id -> ids worth reading next (inlined by build.py from data/related.json). */
+let _related = null;
+function relatedTopics() {
+  if (_related) return _related;
+  const el = document.getElementById("related-topics");
+  try {
+    const o = el ? JSON.parse(el.textContent) : {};
+    _related = (o && typeof o === "object" && !Array.isArray(o)) ? o : {};
+  } catch { _related = {}; }
+  return _related;
+}
+
+/** A topic id -> its title as written, without parsing every domain. */
+function topicName(id) {
+  const d = topicDomain(id);
+  if (!d) return null;
+  return domainTopics(d).find(t => t.id === id)?.name || null;
+}
+
+/**
+ * Append the "See also" strip to a topic, once, the first time it is opened.
+ *
+ * Rendered on open rather than at hydration because a domain is dozens of
+ * topics and a reader opens two or three: doing it here spends the work on the
+ * cards actually read, and it is where the target titles are resolved, which
+ * costs a parse of whichever *other* domain a link points into.
+ *
+ * An id that no longer resolves is dropped and a strip with nothing left in it
+ * is not rendered at all — deleting a topic must not leave dead links on
+ * everything that referenced it.
+ */
+function renderSeeAlso(topic) {
+  if (!topic || topic.dataset.seeAlso === "1") return;
+  topic.dataset.seeAlso = "1";
+  const body = topic.querySelector(":scope > .topic-body");
+  const ids = relatedTopics()[topic.id];
+  if (!body || !Array.isArray(ids) || !ids.length) return;
+
+  const rows = ids
+    .map(id => ({ id, name: topicName(id), domain: topicDomain(id) }))
+    .filter(r => r.name);
+  if (!rows.length) return;
+
+  const strip = document.createElement("div");
+  strip.className = "see-also";
+  const label = document.createElement("span");
+  label.className = "sa-label";
+  label.textContent = "See also";
+  strip.append(label);
+  rows.forEach(r => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "sa-link";
+    b.textContent = r.name;
+    // The domain is worth showing: half these links leave the domain the
+    // reader is in, and following one without knowing that is disorienting.
+    if (r.domain && r.domain !== topic.closest(".domain-section")?.dataset.domain) {
+      const tag = document.createElement("span");
+      tag.className = "sa-domain";
+      tag.textContent = r.domain;
+      b.append(" ", tag);
+    }
+    b.addEventListener("click", () => stGoToTopic(r.id));
+    strip.append(b);
+  });
+  body.append(strip);
+}
+
 /** Empty a domain's body and collapse it. Its content stays in the page as text. */
 function dehydrateDomain(section) {
   if (!isHydrated(section)) return;
@@ -464,7 +532,7 @@ function toggleTopic(h) {
   const open = h.classList.toggle("open");
   h.nextElementSibling.classList.toggle("open", open);
   h.setAttribute("aria-expanded", open ? "true" : "false");
-  if (open) updateTopicHash(h.parentElement);
+  if (open) { renderSeeAlso(h.parentElement); updateTopicHash(h.parentElement); }
 }
 
 // ── FILTER ─────────────────────────────────────────────────────────────────
@@ -990,6 +1058,7 @@ function openHashTarget() {
   th?.classList.add("open");
   th?.setAttribute("aria-expanded", "true");
   topic.querySelector(".topic-body")?.classList.add("open");
+  renderSeeAlso(topic);
 
   // A card-level link scrolls to the card and marks it briefly. Falling back to
   // the topic when the index is out of range is deliberate: a link shared
@@ -1265,6 +1334,7 @@ function applySearchToDomain(section) {
       th?.classList.add("open");
       th?.setAttribute("aria-expanded", "true");
       topic.querySelector(".topic-body")?.classList.add("open");
+      renderSeeAlso(topic);
       topic.querySelectorAll(
         ".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, .code-block"
       ).forEach(n => _searchTermList.forEach(t => highlightIn(n, t)));

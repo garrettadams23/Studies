@@ -2133,9 +2133,16 @@ separate toys.
   at build time, and the hover mode already solves the density-in-tables cost the item was written
   for. Verified headlessly — cycles always → hover → off → always, the label and stored preference
   track it, and the preference survives a reload. Two smoke checks added, since it had none.
-- [ ] **Related topics** — a small "see also" strip per topic, driven by a
-  hand-curated `related.json` keyed on topic ID, with a script that suggests
-  candidates by shared acronyms and title terms.
+- [x] **Related topics** — `data/related.json` keyed on topic id, inlined by `build.py` and
+  rendered as a "See also" strip the first time a topic is opened. Seeded from the 201
+  `<span class="xref">` cross-references already in the cards — a writer saying two topics belong
+  together, and already title-checked by the linter — then curated up to 554 links on 412 topics.
+  `tools/suggest_related.py` provides the shortlists (`--xrefs`, `--domain`, `--topic`) and a
+  `--check` that catches a dead id before it renders as a dead link.
+- [ ] **Clickable cross-references** — the 201 `<span class="xref">Exact Title</span>` spans are
+  lint-checked and styled but inert. They resolve to topic ids at build time already (that is how
+  `related.json` was seeded), so making them links is a build-time id stamp plus the click handler
+  the see-also strip already has.
 - [x] **Domain landing cards** — 30 intros shipped as `data/domain-intros.json`, inlined by
   `build.py` and rendered by `script.js` above a domain's topics on hydration. Deliberately *not*
   a `.topic` in the content files: a signpost should not be counted by the topic index, dated by
@@ -7959,3 +7966,68 @@ and a script that suggests candidates by shared acronyms and title terms. It is 
 remaining item in the track, and the name-resolution work above applies to it directly: key it on
 **topic ids**, not names, since ids are stamped by `build.py` and already have an alias file
 covering renames.
+
+
+## Session record — Track AH: related topics, closing the track
+
+The last item in Track AH, and the one whose brief said "hand-curated" for a reason.
+
+### The seed was already in the content
+
+201 `<span class="xref">Exact Topic Title</span>` cross-references sit in the cards, and each one is
+a writer saying *these two belong together*. `lint_content.py` already proves every one resolves to
+a real title. Read both ways — the reader of the target wants the link as much as the reader of the
+source — they gave **402 directed edges across 321 topics before a single judgement call**, and
+they are curation rather than inference. Curation on top brought it to **554 links on 412 topics**:
+all 23 hardware cards (the new domain had almost no xrefs), and `web` and `data`, which had 0/35
+and 3/40 coverage and whose topics form obvious reading orders.
+
+### The suggestion script is a shortlist, and its precision says why
+
+`tools/suggest_related.py` ranks candidates by shared title terms weighted by rarity, plus shared
+title acronyms, with a cross-domain bonus. Run over the hardware domain it proposed, in its top
+five: Ohm's **Law** ↔ GDPR & CCPA (**law**), **Components** & Schematics ↔ React **Components**,
+Memory Deep ↔ Organisational **Memory**, Storage Interfaces (PCIe **lanes**) ↔ IT Career Paths
+(Finding Your **Lane**). Roughly a quarter of the top suggestions were worth keeping — and the
+quarter that were, were excellent: Test Gear ↔ The Field Toolkit, Memory Deep ↔ Virtual Memory,
+Power & Thermals ↔ Green IT.
+
+That ratio is the argument for the whole design. A strip generated automatically would be right a
+quarter of the time, which is exactly often enough to look deliberate and exactly wrong enough to
+teach a reader to ignore it. **The script's job is to make curation cheap, not to do it**, and the
+docstring says so, so the next session does not "improve" it into an auto-generator.
+
+### Keyed on ids, not titles
+
+The landing-card work in the previous wave resolved topics by **name** and paid for it three times
+over. This file is keyed on **ids**: they are stamped by `build.py`, the alias file already covers
+renames, and `suggest_related.py` imports build.py's own stamping so a suggestion can be pasted
+straight in. The renderer still drops anything that fails to resolve — a deleted topic must not
+leave dead strips on everything that pointed at it — and both `--check` and a smoke check assert
+that nothing currently does.
+
+### Rendering
+
+The strip is built the first time a topic opens, not at hydration: a domain is dozens of topics and
+a reader opens two or three, and resolving a target's title costs a parse of whichever *other*
+domain it lives in. All three paths that open a topic — the header, a permalink, a search hit — go
+through it. A link leaving the domain is tagged with the domain it goes to, because roughly half of
+them do and following one blind is disorienting.
+
+### Verification
+
+Six new checks, 53 → **59**: the strip renders on open with every link resolved, sits below the last
+concept card, tags a cross-domain link, follows to the right topic, renders once rather than once
+per open, and — the one that matters over time — every id in the whole payload resolves.
+
+`smoke_test.mjs` 59/59 · `suggest_related.py --check` clean, 0 one-way edges · budget raw 5.4 / 8.0
+MB, gzip 1,456 / 2,200 KB, DOM 429 / 1,500.
+
+### Track AH is now closed
+
+Every item in the track is shipped. The obvious follow-on is new and recorded above rather than
+folded in here: **the 201 xrefs are still inert**. They are lint-checked, styled, and now proven to
+resolve to ids — clicking one should go there.
+
+Coverage to build on, for whoever picks up related topics again: `script` 12/145, `linux` 5/58,
+`acronym` 0/59, `shortcut` 0/37, `pentest` 3/29, `math` 0/16, `philosophy` 0/14.

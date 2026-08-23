@@ -606,6 +606,79 @@ const introAfterSearch = await page.evaluate(() => {
 check("the landing card hides while a search is filtering", introDuringSearch === true);
 check("the landing card comes back when the search is cleared", introAfterSearch === true);
 
+// ── see also ────────────────────────────────────────────────────────────────
+// The strip renders on open, links only to topics that resolve, and following
+// one lands on that topic — including when it lives in another domain, which is
+// half of them and the case a within-domain test would never exercise.
+await page.goto(PAGE, { waitUntil: "load" });
+const saProbe = await page.evaluate(async () => {
+  const rel = relatedTopics();
+  // Pick a topic whose strip crosses a domain boundary.
+  const src = Object.keys(rel).find(id =>
+    topicDomain(id) && rel[id].some(t => topicDomain(t) && topicDomain(t) !== topicDomain(id)));
+  if (!src) return null;
+  location.hash = src;
+  openHashTarget();
+  await new Promise(r => setTimeout(r, 400));
+  const topic = document.getElementById(src);
+  const strip = topic?.querySelector(":scope > .topic-body > .see-also");
+  return {
+    src,
+    wanted: rel[src].length,
+    rendered: strip ? strip.querySelectorAll(".sa-link").length : 0,
+    label: strip?.querySelector(".sa-label")?.textContent || "",
+    tagged: strip ? strip.querySelectorAll(".sa-domain").length : 0,
+    lastChild: strip ? topic.querySelector(":scope > .topic-body").lastElementChild === strip : false,
+  };
+});
+check("a related topic renders its see-also strip",
+  !!saProbe && saProbe.rendered === saProbe.wanted && saProbe.label === "See also",
+  saProbe ? `${saProbe.rendered}/${saProbe.wanted} links on ${saProbe.src}` : "no cross-domain pair");
+check("the strip sits below the last concept card",
+  !!saProbe && saProbe.lastChild);
+check("a link out of the domain says so",
+  !!saProbe && saProbe.tagged > 0, saProbe ? `${saProbe.tagged} tagged` : "");
+
+const saJump = await page.evaluate(async () => {
+  const btn = document.querySelector(".topic-body.open .see-also .sa-link");
+  if (!btn) return null;
+  const want = btn.childNodes[0].textContent.trim();
+  btn.click();
+  await new Promise(r => setTimeout(r, 400));
+  const t = document.getElementById(location.hash.slice(1));
+  const name = t?.querySelector(".topic-name")?.cloneNode(true);
+  name?.querySelectorAll(".acro-exp").forEach(e => e.remove());
+  return { want, got: (name?.textContent || "").replace(/\s+/g, " ").trim(),
+           open: !!t?.querySelector(".topic-body")?.classList.contains("open") };
+});
+check("following a see-also link opens that topic",
+  !!saJump && saJump.open && saJump.got === saJump.want,
+  saJump ? `${saJump.want} -> ${saJump.got}` : "no link");
+
+// The strip is rendered once per topic however the topic was opened, and every
+// id in the payload has to resolve — a dead id would render a link to nothing.
+const saOnce = await page.evaluate(async () => {
+  const id = location.hash.slice(1);
+  const topic = document.getElementById(id);
+  const header = topic?.querySelector(".topic-header");
+  header?.click(); await new Promise(r => setTimeout(r, 150));
+  header?.click(); await new Promise(r => setTimeout(r, 150));
+  return topic?.querySelectorAll(".see-also").length ?? -1;
+});
+check("the strip is rendered once, not once per open", saOnce <= 1, `${saOnce} strips`);
+
+const relDead = await page.evaluate(() => {
+  const rel = relatedTopics();
+  const bad = [];
+  Object.keys(rel).forEach(src => {
+    if (!topicDomain(src)) bad.push(src);
+    rel[src].forEach(t => { if (!topicDomain(t)) bad.push(`${src} -> ${t}`); });
+  });
+  return bad;
+});
+check("every related id resolves to a real topic",
+  relDead.length === 0, relDead.slice(0, 3).join(" | "));
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));

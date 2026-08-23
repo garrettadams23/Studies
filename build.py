@@ -277,6 +277,24 @@ def build_domain_intros():
     return payload.replace("</", "<\\/")
 
 
+def build_related():
+    """topic id -> the ids worth reading next, inlined from data/related.json.
+
+    Keyed on ids rather than titles because ids are stamped here and covered by
+    the slug alias file, so a rename carries the relation with it. The page
+    drops any id it cannot resolve, which is what keeps a deleted topic from
+    leaving dead strips behind on everything that pointed at it.
+    """
+    path = DATA / "related.json"
+    if not path.exists():
+        return "{}"
+    related = json.loads(path.read_text(encoding="utf-8"))
+    payload = json.dumps(related, separators=(",", ":"), ensure_ascii=False)
+    total = sum(len(v) for v in related.values())
+    print(f"  + related topics ({len(payload):,} chars, {total} links on {len(related)} topics)")
+    return payload.replace("</", "<\\/")
+
+
 def main():
     shell_path = ROOT / "index-shell.html"
     domains_path = DATA / "domains.json"
@@ -311,6 +329,7 @@ def main():
     output = output.replace("<!-- SLUG_ALIASES -->", build_slug_aliases())
     output = output.replace("<!-- TOPIC_INDEX -->", build_topic_index(topic_index))
     output = output.replace("<!-- DOMAIN_INTROS -->", build_domain_intros())
+    output = output.replace("<!-- RELATED_TOPICS -->", build_related())
 
     if MINIFY:
         raw_len = len(output)
