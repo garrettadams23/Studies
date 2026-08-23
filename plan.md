@@ -2624,12 +2624,10 @@ written — 2 cards into `sec`.** `sec` 52→54.
 - [x] AP1 threat & standards → *Post-Quantum Cryptography — Harvest Now, Decrypt Later* (Track J: Shor/Grover, ML-KEM/ML-DSA, hybrid, what doesn't break)
 - [x] AP2 the migration (inventory, crypto-agility, CBOM, PKI, roadmap) → *Doing the PQC Migration — Inventory, Crypto-Agility & the Roadmap*
 - [x] AP3 adjacent crypto (ZKP, homomorphic, MPC, threshold, confidential computing) → *Adjacent Cryptography — ZKPs, Homomorphic Encryption, MPC & Confidential Computing*
-- [ ] **Depth, re-audited later:** all three cards are short — 4.6 KB, 4.4 KB and 3.7 KB, two
-  concept cards each — so the track is covered at concept level and thin underneath. The two items
-  with the most genuine room left are *Certificate &amp; PKI Migration* (chains, hardware security
-  modules, and the long tail of embedded devices that will never receive a new algorithm) and
-  *Reading a Cryptographic Claim Critically*. Neither is a rewrite; both are depth on an existing
-  card or one new card each.
+- [x] **Depth, re-audited:** both named items shipped as new cards rather than as depth on the
+  existing three, which stay as the concept-level entry points. *Certificate &amp; PKI Migration —
+  Chains, HSMs &amp; the Devices That Will Never Update* and *Reading a Cryptographic Claim
+  Critically — Vendor Slides &amp; "Military-Grade"*. `sec` 84 → 86.
 
 **Wave AP1 — The Threat & the Standards** ⟵ see the shipped-note above
 - [ ] Quantum Computing for Security People — qubits, Shor, Grover, and what actually breaks
@@ -9179,3 +9177,34 @@ Abandoned Package* and *Dependency Triage*, and `devops` has *Software Supply Ch
 audit-first rule applies to my own good ideas.
 
 Site total 1,387 → **1,388**.
+
+
+## Session record — Track AP depth, as the re-audit specified
+
+The item named two gaps and predicted their shape correctly: "neither is a rewrite; both are depth
+on an existing card or one new card each". Both became new cards, because each is a different
+*question* from the ones the concept cards answer rather than more detail on the same one.
+
+**Certificate & PKI Migration.** The insight it is built around is that a certificate migration runs
+in the opposite direction to the instinct: you do not start by issuing new leaf certificates, you
+start by asking whether anything in the estate can validate the new chain at all. Two things fall
+out of that. The **HSM certification lag** — a validated module cannot ship a new algorithm the week
+the standard lands, so the implement-validate-buy-install pipeline, not the cryptography, sets the
+earliest possible migration date. And the **long tail**: building controls, medical equipment,
+field devices and appliances whose vendor is gone will never receive a new algorithm, and the honest
+answer for all of them is the same — terminate the modern cryptography at a proxy you control and
+let the legacy device speak whatever it can, on a segment where that is acceptable.
+
+There is also a genuinely cheerful note in it, which is rare for this subject: as public certificate
+lifetimes fall toward weeks, the automation that becomes mandatory is the same automation that makes
+an algorithm change a configuration change. **Short lifetimes are crypto-agility arriving by another
+route.**
+
+**Reading a Cryptographic Claim Critically.** Built on the observation that every serious failure in
+deployed cryptography has been in key management, mode selection or protocol design rather than in
+the cipher — which is precisely why the cipher is the part printed on the slide. The most useful
+thing in it is the ten-second test: *what happens when a user forgets their password?* If the vendor
+can restore the data, they hold a key. That may be perfectly acceptable; it is simply not the
+product the marketing described.
+
+`sec` 84 → **86**. Site total 1,388 → **1,390**.

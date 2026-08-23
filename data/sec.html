@@ -6811,3 +6811,208 @@ POST /token   grant_type=authorization_code
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: CERTIFICATE & PKI MIGRATION ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔗</span>
+    <span class="topic-name">Certificate &amp; PKI <span class="acro-exp">(Public Key Infrastructure)</span> Migration — Chains, HSMs <span class="acro-exp">(Hardware Security Module)</span> &amp; the Devices That Will Never Update</span>
+    <span class="topic-badge">SEC • Cryptography</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Certificate Is a Chain, and a Chain Migrates From the Wrong End</div>
+      <div class="concept-desc">
+        Changing the algorithm on a certificate sounds like a certificate problem. It is a
+        <em>chain</em> problem: a leaf is only usable if everything above it — the issuing authority,
+        any intermediates, the root in the trust store — can be validated by whatever is checking it.
+        That gives the migration a fixed order, and the order runs opposite to the instinct. You do
+        not start by issuing new leaf certificates. You start by asking whether anything in your
+        estate can validate the new chain at all, because a leaf nobody trusts is worse than the old
+        one that worked.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Layer</th><th>Migration question</th><th>Typical lifetime</th></tr></thead>
+          <tbody>
+            <tr><td>Root CA <span class="acro-exp">(Certificate Authority)</span></td><td>Can it be created, protected and *distributed* to every trust store?</td><td>Decades — this is the slow one</td></tr>
+            <tr><td>Intermediate / issuing CA</td><td>Can it sign with the new algorithm, and will clients chain to it?</td><td>Years</td></tr>
+            <tr><td>Leaf certificates</td><td>Can the endpoint present it, and can the client parse it?</td><td>Months, and shrinking</td></tr>
+            <tr><td>Trust stores</td><td>Who updates them, and what never gets updated?</td><td>The actual constraint</td></tr>
+            <tr><td>Revocation and transparency</td><td>Do CRL <span class="acro-exp">(Certificate Revocation List)</span>, OCSP <span class="acro-exp">(Online Certificate Status Protocol)</span> and logging cope with the new object sizes?</td><td>Rarely considered until it breaks</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The shrinking leaf lifetime is quietly the most helpful trend here. As public certificate
+          validity drops toward weeks, the automation to reissue constantly becomes mandatory — and
+          an estate that reissues every leaf automatically every few weeks is an estate that can
+          change algorithm as a configuration change rather than as a project. Short lifetimes are
+          crypto-agility arriving by another route.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Where the Keys Live — HSMs and the Things That Hold Them</div>
+      <div class="concept-desc">
+        A private key that matters is usually in hardware, and hardware is where "just change the
+        algorithm" meets its first hard limit.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Holder</th><th>Constraint</th></tr></thead>
+          <tbody>
+            <tr><td>Hardware security module</td><td>New algorithms need firmware support; certification lags the standard by years</td></tr>
+            <tr><td>Cloud key service</td><td>Provider-dependent; usually first to offer new algorithms, and you cannot export the key</td></tr>
+            <tr><td>TPM <span class="acro-exp">(Trusted Platform Module)</span> on a laptop or server</td><td>Fixed at manufacture. Whatever it supports is what that machine supports</td></tr>
+            <tr><td>Smart cards and security keys</td><td>Replaced physically, per person, which is a logistics project</td></tr>
+            <tr><td>Code-signing key</td><td>Changing it means every consumer of the signature must accept the new one</td></tr>
+            <tr><td>Software key in a file</td><td>The easiest to migrate and the one you should have moved to hardware</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The certification lag is worth planning around explicitly. A validated module cannot ship
+          a new algorithm the week the standard lands — it has to be implemented, then validated,
+          then bought, then installed. For an organisation whose keys live in HSMs, that pipeline,
+          not the cryptography, sets the earliest possible migration date.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Long Tail That Will Never Receive a New Algorithm</div>
+      <div class="concept-desc">
+        Every estate contains devices that cannot be updated: they are out of support, the vendor is
+        gone, the firmware is signed with a key nobody has, or updating them requires a site visit to
+        a location that is now a car park. Pretending otherwise is how migrations stall at 94%.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Situation</th><th>Realistic option</th></tr></thead>
+          <tbody>
+            <tr><td>Building controls, meters, industrial equipment</td><td>Isolate and put a gateway in front that speaks the new algorithm outward</td></tr>
+            <tr><td>Medical or safety-certified equipment</td><td>Recertification cost usually decides; compensating controls and network separation</td></tr>
+            <tr><td>Embedded devices in the field</td><td>Replacement on the normal refresh cycle — start counting cycles now</td></tr>
+            <tr><td>An appliance whose vendor has gone</td><td>Terminate the connection in front of it; treat it as untrusted</td></tr>
+            <tr><td>Firmware signed with an old key</td><td>The device's trust anchor cannot be changed. It is a replacement, not a migration</td></tr>
+            <tr><td>Something nobody can identify</td><td>The inventory problem again — and it is always bigger than the crypto problem</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The pattern in the first and fourth rows is the general answer for this whole category:
+          <strong>terminate the modern cryptography at a proxy you control</strong> and let the
+          legacy device speak whatever it can, on a segment where that is acceptable. It is not
+          elegant and it is how large estates will actually get through this decade. The inventory
+          that makes any of it possible is the subject of
+          <span class="xref">Doing the PQC Migration — Inventory, Crypto-Agility &amp; the Roadmap</span>,
+          and the certificate mechanics underneath are in
+          <span class="xref">PKI &amp; Certificate Lifecycle</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: READING A CRYPTOGRAPHIC CLAIM ──────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧐</span>
+    <span class="topic-name">Reading a Cryptographic Claim Critically — Vendor Slides &amp; "Military-Grade"</span>
+    <span class="topic-badge">SEC • Cryptography</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Naming an Algorithm Answers Almost Nothing</div>
+      <div class="concept-desc">
+        "AES-256 encryption" is the most common security claim in the industry and one of the least
+        informative. It says which cipher is used and nothing about the questions that determine
+        whether anything is actually protected: encrypted at rest, in transit, or both; who holds
+        the key; whether the vendor can decrypt it; whether the ciphertext is authenticated; how the
+        key was derived. Every serious failure in deployed cryptography over the last two decades
+        has been in one of those answers rather than in the cipher — which is exactly why the cipher
+        is the part that gets printed on the slide.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The claim</th><th>What it leaves open</th></tr></thead>
+          <tbody>
+            <tr><td>"AES-256"</td><td>Which mode? Is it authenticated? Where does the key come from?</td></tr>
+            <tr><td>"Encrypted at rest"</td><td>Usually full-disk, which protects a stolen drive and nothing else</td></tr>
+            <tr><td>"End-to-end encrypted"</td><td>Which two ends? If the vendor can reset your access, they are an end</td></tr>
+            <tr><td>"Zero knowledge"</td><td>A precise term with a precise meaning, and usually not the one intended</td></tr>
+            <tr><td>"Military-grade"</td><td>Nothing. There is no such standard</td></tr>
+            <tr><td>"Bank-level security"</td><td>Also nothing, and banks are not a cryptographic benchmark</td></tr>
+            <tr><td>"Quantum-safe"</td><td>Which algorithm, for which operation? Signatures and key exchange are different problems</td></tr>
+            <tr><td>"Proprietary encryption"</td><td>The strongest available warning sign</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row deserves its reputation. A cipher that has not been published and attacked by
+          people trying to break it has not been shown to be strong — it has only been shown to
+          resist its designers, who are the group least able to find its flaws. "We invented our own"
+          is, on its own, sufficient reason to look elsewhere.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Questions That Actually Separate Products</div>
+      <div class="concept-desc">
+        Six questions, answerable by any vendor with a real design, and revealing in proportion to
+        how uncomfortable they make the conversation.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Ask</th><th>What a good answer sounds like</th></tr></thead>
+          <tbody>
+            <tr><td>Who holds the key, and can you decrypt my data?</td><td>A specific "no, and here is why we cannot" — or an honest yes</td></tr>
+            <tr><td>What happens when a user forgets their password?</td><td>If the vendor can restore the data, the encryption is not what you thought</td></tr>
+            <tr><td>Is the ciphertext authenticated?</td><td>An AEAD mode by name. Encryption without integrity is a known family of attacks</td></tr>
+            <tr><td>Where do keys come from and how are they rotated?</td><td>A named derivation function, a rotation story, and no key in a config file</td></tr>
+            <tr><td>Has it been independently reviewed?</td><td>A published report with findings — not a certification logo</td></tr>
+            <tr><td>What is the threat model?</td><td>A vendor that can name what it does *not* protect against is telling the truth</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The password-reset question is the fastest tell available and takes ten seconds. If a
+          service can give you your data back after you forget everything, then it holds a key —
+          which may be entirely acceptable, and is simply not the same product as one where it
+          cannot. The failure is not the design; it is the marketing that describes both the same way.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Certifications, Compliance and What They Do and Do Not Say</div>
+      <div class="concept-desc">
+        Logos are evidence of something narrower than they appear, and knowing which is which
+        prevents both misplaced trust and unfair dismissal.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Signal</th><th>Actually means</th></tr></thead>
+          <tbody>
+            <tr><td>Validated cryptographic module</td><td>A specific module, at a specific version, implements specific algorithms correctly. Not that the product uses it well</td></tr>
+            <tr><td>Compliance certification</td><td>Controls were assessed against a framework at a point in time. Says little about the cryptography</td></tr>
+            <tr><td>"Uses industry-standard algorithms"</td><td>The minimum bar, stated as an achievement</td></tr>
+            <tr><td>A published protocol specification</td><td>Genuinely meaningful — it can be reviewed by people with no incentive to be kind</td></tr>
+            <tr><td>An independent audit with findings</td><td>The strongest ordinary signal, especially when the findings are unflattering</td></tr>
+            <tr><td>A bug bounty with real payouts</td><td>Evidence that outside scrutiny is welcome rather than tolerated</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The first row is the one most often over-read: a validated module inside a product does
+          not make the product's cryptography sound, because the interesting mistakes are almost
+          always in how the module is *used* — key management, mode selection, protocol design.
+          The general principle behind all of this is the one on
+          <span class="xref">Cryptography Fundamentals — The Building Blocks of Security</span>:
+          do not build your own, and be equally suspicious of anyone who did.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
