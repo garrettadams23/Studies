@@ -72,6 +72,11 @@ jobs:
       - name: Check for contradicted acronym expansions
         run: python tools/check_contradictions.py --strict
 
+      # Volatile spans and fact anchors: a malformed or future date, or an
+      # anchor missing its source, fails. The vendor-console queue only reports.
+      - name: Check dated claims
+        run: python tools/check_volatility.py
+
       # --verify, not --check. --check re-derives every stamp from `git blame`,
       # and blame heuristics differ between git releases: this repo passed
       # --check under git 2.43 and failed it under 2.54 on a runner, with no

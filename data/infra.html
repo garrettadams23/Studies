@@ -111,6 +111,7 @@
       <div class="concept-label">Failure mode</div>
       <div class="concept-title">Evaluation Media That Quietly Expires</div>
       <div class="concept-desc">
+        <!-- fact: Windows Server evaluation runs 180 days | source: Windows Server evaluation licensing terms | checked: 2026-08 -->
         Evaluation installs run for 180 days and then begin shutting down hourly. It is a
         reliable source of a mystifying outage roughly six months after someone stood up a
         "temporary" server. Check what you are running before it tells you:
@@ -242,7 +243,7 @@ Invoke-Command <span class="kw">-ComputerName</span> DC01,DC02,DC03 <span class=
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🛠️</span>
-    <span class="topic-name">Server Manager, RSAT <span class="acro-exp">(Remote Server Administration Tools)</span> &amp; Windows Admin Center — Which Console Wins</span>
+    <span class="topic-name">Server Manager, RSAT <span class="acro-exp">(Remote Server Administration Tools)</span> &amp; <span class="volatile" data-checked="2026-08">Windows Admin Center</span> — Which Console Wins</span>
     <span class="topic-badge">Server • Tooling</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -259,7 +260,7 @@ Invoke-Command <span class="kw">-ComputerName</span> DC01,DC02,DC03 <span class=
       <div class="dw">
         <table class="ref-table">
           <thead>
-            <tr><th></th><th>Server Manager</th><th>RSAT</th><th>Windows Admin Center</th></tr>
+            <tr><th></th><th>Server Manager</th><th>RSAT</th><th><span class="volatile" data-checked="2026-08">Windows Admin Center</span></th></tr>
           </thead>
           <tbody>
             <tr>
@@ -292,7 +293,7 @@ Invoke-Command <span class="kw">-ComputerName</span> DC01,DC02,DC03 <span class=
       <div class="concept-desc verdict">
         <strong>The verdict:</strong> install RSAT on your admin workstation and use it for AD,
         DNS and Group Policy work — the snap-ins remain the most complete tools for those
-        objects. Use Windows Admin Center for everything fleet-shaped: patching status,
+        objects. Use <span class="volatile" data-checked="2026-08">Windows Admin Center</span> for everything fleet-shaped: patching status,
         certificates, event logs, remote PowerShell, and anything on Server Core. Use Server
         Manager to install a role and then close it.
       </div>
@@ -789,6 +790,7 @@ repadmin /syncall /AdeP</pre>
       <div class="concept-label">Failure mode</div>
       <div class="concept-title">The Tombstone Lifetime, and the DC You Left Switched Off</div>
       <div class="concept-desc">
+        <!-- fact: tombstone lifetime 180 days | source: Active Directory forest functional level defaults since Server 2003 SP1 | checked: 2026-08 -->
         Deletions replicate as tombstones — markers that persist for a fixed lifetime, 180 days
         on any modern domain. A DC that is offline longer than that has missed the window in
         which it could learn about those deletions, and Active Directory will
@@ -1424,6 +1426,7 @@ Get-ADUser <span class="kw">-Filter</span> * <span class="kw">-Properties</span>
       </div>
       <div class="concept-desc verdict">
         <strong>The verdict:</strong> gMSA is the default answer for a domain service. AD <span class="acro-exp">(Active Directory)</span>
+        <!-- fact: gMSA password 240 characters, 30-day rotation | source: Active Directory group managed service account defaults | checked: 2026-08 -->
         generates a 240-character password, rotates it every 30 days, and the servers authorised
         to use it retrieve it themselves. Nobody ever knows it, so nobody can leak it.
       </div>

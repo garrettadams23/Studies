@@ -179,6 +179,31 @@ you nothing.
 
 Do not mark something that is not going to move. `$0` stays free.
 
+### Fact anchors — where a number came from
+
+A volatile span says *when* a claim was checked. A **fact anchor** says *where it came
+from*, so the next person can re-verify it in a minute instead of re-researching it in an
+hour. It is an HTML comment immediately before the element making the claim, so it costs
+the reader nothing:
+
+```html
+<!-- fact: tombstone lifetime 180 days | source: Active Directory forest functional
+     level defaults since Server 2003 SP1 | checked: 2026-08 -->
+Deletions replicate as tombstones — markers that persist for 180 days …
+```
+
+Three fields, pipe-separated: the claim in a few words, the source, and the month you
+checked it. Worth adding for a **version-specific number a reader could act on** — a
+retention window, a service limit, an evaluation period, a default that a vendor could
+change. Not worth adding for arithmetic, for something the card derives itself, or for a
+figure whose source is the card's own worked example.
+
+`python tools/check_volatility.py` validates both conventions — a malformed or future
+`data-checked`, an anchor missing a field — and lists them oldest first so a freshness
+pass has somewhere to start. It also reports topics that name a vendor console and carry
+no dated span; that half is a queue to read, never a gate, because plenty of cards
+mention a console without making a claim about one.
+
 For repeated SVG diagram colours, style the shapes from a class on the `<svg>` instead —
 `.topo-svg line { stroke: var(--sky); }` and `math.html`'s `msv-*` set are the pattern.
 
