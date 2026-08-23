@@ -53,6 +53,9 @@ import sys
 from html import unescape
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).parent))
+from lint_content import domain_files  # noqa: E402
+
 ROOT = Path(__file__).parent.parent
 DATA = ROOT / "data"
 
@@ -110,9 +113,9 @@ def scan(only_domain=None):
     domains = [d["id"] for d in json.loads((DATA / "domains.json").read_text(encoding="utf-8"))]
     texts = {}
     for domain in domains:
-        path = DATA / f"{domain}.html"
-        if path.exists():
-            texts[domain] = prose(path.read_text(encoding="utf-8"))
+        paths = domain_files(domain)
+        if paths:
+            texts[domain] = prose("".join(p.read_text(encoding="utf-8") for p in paths))
     # The word list comes from the whole site even when the report is narrowed
     # to one domain: what counts as an ordinary word does not change per domain.
     words = common_words(texts.values())

@@ -318,12 +318,24 @@ def domain_files(only=None):
     files = [p for p in sorted(DATA.glob("*.html")) if p.name not in EXCLUDE]
     if only is None:
         return files
-    wanted = {n if n.endswith(".html") else f"{n}.html" for n in only}
-    picked = [p for p in files if p.name in wanted]
-    missing = wanted - {p.name for p in picked}
+    # A name may be a domain (`script`), which selects all of that domain's
+    # parts, or a single file (`script.03-python.html`) when only one part
+    # changed — which is the point of splitting a domain in the first place.
+    picked, missing = [], []
+    for name in only:
+        if name.endswith(".html"):
+            match = [p for p in files if p.name == name]
+        else:
+            match = [p for p in files
+                     if p.name == f"{name}.html" or p.name.startswith(f"{name}.")]
+        if not match:
+            missing.append(name)
+        picked.extend(match)
     if missing:
-        raise SystemExit(f"error: no such domain file: {', '.join(sorted(missing))}")
-    return picked
+        raise SystemExit(f"error: no such domain or file: {', '.join(sorted(missing))}")
+    # Deduplicate while keeping build order.
+    seen = set()
+    return [p for p in files if p in picked and not (p in seen or seen.add(p))]
 
 
 def stamp(check_only=False, only=None):

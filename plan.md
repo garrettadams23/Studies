@@ -2943,11 +2943,13 @@ of change that is easy to start and expensive to abandon.
 - [ ] **Topic ID stability contract** — write down, in `CONTRIBUTING.md`, that
   topic slugs are a public interface: renaming a `.topic-name` breaks
   permalinks and stored progress. Add an alias map so renames are survivable.
-- [ ] **Split `data/script.html`** — at 719 KB and 137 topics it is a third of
-  the content in one file and the hardest to work in. It contains at least three
-  domains' worth of material (shell/regex, languages, web fundamentals).
-  Splitting it into multiple source files that build into the *same* domain
-  keeps every slug intact — `build.py` would concatenate `script.*.html`.
+- [x] **Split `data/script.html`** — done exactly as specified: six ordered parts building into the
+  *same* domain, concatenated by `build.py` in filename order.
+  `script.01-references` (25) · `02-beginner` (36) · `03-python` (41) · `04-it-automation` (10) ·
+  `05-platform` (26) · `06-admin-automation` (7). Every slug, permalink and stored progress key is
+  untouched, and the built `index.html` is **byte-identical** to the pre-split build — which is the
+  proof, not a hope. `domain_files()` in `lint_content.py` is now the one place that answers "where
+  does a domain live", and six tools use it.
 - [ ] **Build performance & determinism** — the build is fast today; add a
   guard so it stays reproducible (stable ordering, no timestamps in output).
 - [ ] **Archive `patches/`** — ~1.7 MB of already-applied one-shot scripts. Tag
@@ -8723,3 +8725,50 @@ Eight new links folded into `related.json`.
 
 Site total 1,369 → **1,375** topics. Budget raw 5.5 / 8.0 MB, content elements 111,516 / 175,000.
 `smoke_test.mjs` 115/115, every checker clean, no stamp churn on the existing ten.
+
+
+## Session record — splitting the biggest file without moving a single slug
+
+`data/script.html` was 762 KB and 145 topics — a fifth of the site's topics in one file, and by a
+wide margin the hardest to work in. Track AY specified the safe shape years of caution had already
+arrived at, and it is worth restating because it is the whole reason this was low-risk: **split into
+parts that build into the same domain**, not into new domains.
+
+Topic ids come from `build.py` stamping slugs in document order with de-duplication carried across
+the whole site. Split `script` into three *domains* and that order changes, every duplicate-title
+suffix shifts, and permalinks and stored progress break silently. Split it into ordered *parts*
+concatenated back into one domain and the byte sequence build.py sees is exactly what it saw before.
+
+### The gate that made it safe
+
+`index.html` was built before the split, and again after. **Byte-identical.** Not "tests pass" —
+identical output from identical input, which is the only evidence that matters for a refactor whose
+entire claim is that it changes nothing.
+
+The parts are exact slices of the original file, joined with nothing, and `build.py` refuses to
+concatenate a part that does not end in a newline — the one way this could silently glue a card's
+last line to the next card's first.
+
+### One helper, six tools
+
+The real work was that six tools each had their own idea of where a domain's source lives.
+`domain_files(domain_id)` in `lint_content.py` is now the single answer — one file, or its parts in
+filename order, and it *errors* if both exist rather than quietly preferring one.
+
+Two subtleties the tools surfaced, both of which would have been silent bugs:
+
+- `annotate_acronyms.py` derived the domain from `path.stem`, so `script.03-python` looked like a
+  domain called `script.03-python` and its `byDomain` acronym overrides stopped applying. It reads
+  the filename prefix now. Caught because `--check` reported `script.05-platform.html` out of date.
+- `fix_topic_names.py` already had a local function called `domain_files`, which the import
+  shadowed into infinite recursion. Renamed to `source_files()`.
+
+`stamp_freshness.py --only` now accepts either a domain (`--only script`, all six parts) or a single
+part (`--only script.03-python.html`) — which is the day-to-day benefit of the split: after editing
+one part, only that part is restamped.
+
+### Everything else, unchanged
+
+`smoke_test.mjs` 115/115 · `lint_content.py` clean · `check_markup.py` now parses 36 files instead
+of 31 · renames, contradictions and paths all clean · `fix_topic_names.py --check` reports the same
+103 aliases · no stamp churn.

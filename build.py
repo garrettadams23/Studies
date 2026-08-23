@@ -40,7 +40,8 @@ DATA = ROOT / "data"
 # Reusing it here is what lets build.py stamp the ids the page used to derive at
 # runtime — see assign_topic_ids.
 sys.path.insert(0, str(ROOT / "tools"))
-from lint_content import ACRO_SPAN_RE, XREF_RE, slugify, topic_label  # noqa: E402
+from lint_content import (ACRO_SPAN_RE, XREF_RE, domain_files, domain_of,  # noqa: E402
+                          slugify, topic_label)
 
 # Set to False (or pass --no-minify) to keep the built HTML pretty-printed.
 MINIFY = "--no-minify" not in sys.argv
@@ -417,11 +418,24 @@ def main():
     by_title = {}
     changelog = {}
     for domain in domains:
-        body_path = DATA / f"{domain['id']}.html"
-        if not body_path.exists():
-            print(f"WARNING: {body_path} not found — skipping {domain['id']}.")
+        # One file, or an ordered set of parts concatenated in filename order.
+        # Parts build into the same domain, so the topic order — and therefore
+        # every slug — is exactly what a single file would have produced.
+        paths = domain_files(domain["id"])
+        if not paths:
+            print(f"WARNING: no source for {domain['id']} — skipping.")
             continue
-        body = body_path.read_text(encoding="utf-8")
+        chunks = []
+        for part in paths:
+            text = part.read_text(encoding="utf-8")
+            # Joined with nothing, so a part is an exact slice of what a single
+            # file held. A part that does not end in a newline would glue its
+            # last line to the next part's first, which is the one way this can
+            # silently corrupt a card.
+            if not text.endswith("\n") and part is not paths[-1]:
+                raise SystemExit(f"error: {part.name} does not end with a newline.")
+            chunks.append(text)
+        body = "".join(chunks)
         body, ids = assign_topic_ids(body, used_slugs)
         topic_index[domain["id"]] = ids
         by_title.update(topic_titles(body, ids))
@@ -429,6 +443,8 @@ def main():
         if recent:
             changelog[domain["id"]] = recent
         bodies.append((domain, body, ids))
+        if len(paths) > 1:
+            print(f"    ({len(paths)} parts: {', '.join(p.name for p in paths)})")
 
     sections = []
     xref_total = 0

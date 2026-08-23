@@ -50,7 +50,8 @@ DATA = ROOT / "data"
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tools"))
 
-from lint_content import ACRO_SPAN_RE, XREF_RE, slugify, topic_label, xref_targets  # noqa: E402
+from lint_content import (ACRO_SPAN_RE, XREF_RE, domain_files, slugify,  # noqa: E402
+                          topic_label, xref_targets)
 from build import _TOPIC_OPEN_RE  # noqa: E402
 
 RELATED = DATA / "related.json"
@@ -77,10 +78,10 @@ def topics():
     domains = json.loads((DATA / "domains.json").read_text(encoding="utf-8"))
     used, rows = set(), []
     for domain in domains:
-        path = DATA / f"{domain['id']}.html"
-        if not path.exists():
+        paths = domain_files(domain["id"])
+        if not paths:
             continue
-        body = path.read_text(encoding="utf-8")
+        body = "".join(p.read_text(encoding="utf-8") for p in paths)
         starts = [m.start() for m in _TOPIC_OPEN_RE.finditer(body)]
         for n, start in enumerate(starts):
             end = starts[n + 1] if n + 1 < len(starts) else len(body)

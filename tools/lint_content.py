@@ -76,6 +76,36 @@ def slugify(s):
     return s[:60] or "topic"
 
 
+# ── Where a domain's source lives ───────────────────────────────────────────
+# A domain is normally one file, `data/<id>.html`. A domain that has outgrown
+# one file is split into ordered parts — `data/<id>.01-name.html`,
+# `data/<id>.02-name.html` — which build.py concatenates in filename order.
+#
+# The parts build into the *same* domain, which is the whole point: the topic
+# order is unchanged, so every slug, permalink and stored progress key survives
+# a split untouched. Splitting into a new *domain* would not.
+
+
+def domain_files(domain_id, data_dir=None):
+    """The source files for one domain, in build order."""
+    data_dir = data_dir or DATA
+    single = data_dir / f"{domain_id}.html"
+    parts = sorted(data_dir.glob(f"{domain_id}.*.html"))
+    if single.exists():
+        if parts:
+            raise SystemExit(
+                f"error: {domain_id} has both {single.name} and "
+                f"{len(parts)} part file(s). Pick one — a domain is either one "
+                f"file or a set of parts, never both.")
+        return [single]
+    return parts
+
+
+def domain_of(path):
+    """The domain a source file belongs to: `script.03-python.html` -> `script`."""
+    return path.name.split(".", 1)[0]
+
+
 ACRO_SPAN_RE = re.compile(r'\s*<span class="acro-exp">\([^<]*?\)</span\s*>')
 TOPIC_START_RE = re.compile(r'<div class="topic"')
 
@@ -250,7 +280,7 @@ def main():
     # so a collision is only real if it survives that ordering.
     import json
     order = [d["id"] for d in json.loads((DATA / "domains.json").read_text())]
-    files = [DATA / f"{d}.html" for d in order if (DATA / f"{d}.html").exists()]
+    files = [f for d in order for f in domain_files(d)]
 
     for path in files:
         text = path.read_text(encoding="utf-8")
