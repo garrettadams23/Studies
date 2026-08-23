@@ -12,7 +12,7 @@ PY ?= python3
 NODE ?= node
 
 .DEFAULT_GOAL := build
-.PHONY: build check test a11y all fmt acronyms stamp clean help
+.PHONY: build check test a11y og all fmt acronyms stamp clean help
 
 ## build: regenerate index.html from data/ (the usual command)
 build:
@@ -42,6 +42,7 @@ check:
 	$(PY) tools/suggest_related.py --check
 	$(PY) tools/check_paths.py
 	$(PY) tools/stamp_freshness.py --verify
+	$(PY) tools/check_determinism.py
 	$(PY) tools/page_budget.py
 
 ## test: drive the built page in a real browser (needs playwright + chromium)
@@ -51,6 +52,10 @@ test:
 ## a11y: axe-core over the shell, a domain and a dialog, in both themes
 a11y:
 	$(NODE) tools/a11y_test.mjs
+
+## og: regenerate the social card from the current content
+og:
+	$(NODE) tools/gen_og_image.mjs
 
 ## all: build, then every check, then the browser tests
 all: build check test a11y

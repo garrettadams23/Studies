@@ -1430,6 +1430,33 @@ check("steps are numbered, and the pack is invisible on screen",
   `n=${pack.numbered} display=${pack.hiddenOnScreen}`);
 check("the pack is removed after printing", pack.cleared);
 
+// ── link preview metadata ───────────────────────────────────────────────────
+// The counts in the description are written by hand and the ones on the card
+// are generated, so they can drift apart. A preview that advertises a number
+// the site no longer has is the kind of wrong nobody notices for a year.
+const preview = await page.evaluate(() => {
+  const get = sel => document.querySelector(sel)?.getAttribute("content") || "";
+  return {
+    description: get('meta[name="description"]'),
+    ogTitle: get('meta[property="og:title"]'),
+    ogImage: get('meta[property="og:image"]'),
+    ogDesc: get('meta[property="og:description"]'),
+    twitter: get('meta[name="twitter:card"]'),
+    topics: Object.values(topicIndex()).reduce((n, a) => n + a.length, 0),
+    domains: document.querySelectorAll(".domain-section").length,
+  };
+});
+check("the page carries link preview metadata",
+  preview.ogTitle && preview.ogImage.endsWith("/Img/og-card.png")
+  && preview.twitter === "summary_large_image" && preview.description.length > 60,
+  preview.ogImage);
+const asWritten = n => n.toLocaleString("en");
+check("the preview text quotes the site's real size",
+  preview.description.includes(asWritten(preview.topics))
+  && preview.description.includes(`${preview.domains} domains`)
+  && preview.ogDesc.includes(asWritten(preview.topics)),
+  `${asWritten(preview.topics)} topics, ${preview.domains} domains`);
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));

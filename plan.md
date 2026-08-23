@@ -2261,7 +2261,13 @@ shipped in the Track AJ wave. Read the ticks, not the original list.*
   `index.html`, `style.css` and `script.js`, so it changes exactly when the bytes do — no forgotten
   bump, no pointless invalidation — and CI fails if it is stale. The fragments clause is moot:
   lazy loading shipped as inline deferred blocks, so there is nothing separate to precache.
-- [ ] **Share cards** — generated OG images per domain for link previews.
+- [x] **Share cards** — one card for the site, not thirty. `tools/gen_og_image.mjs` renders
+  `Img/og-card.png` at 1200×630 from an HTML template through Playwright, with the topic and domain
+  counts read from the sources so they cannot go stale; `--check` fails CI if it is out of date. The
+  page also gained the `description`, Open Graph and Twitter tags it had never had at all.
+  **Per-domain cards were deliberately not built**: domains are hash fragments, and no crawler
+  distinguishes `/#net` from `/` or runs the script that would render it — they would be thirty
+  images nothing ever requests.
 - [x] **Reading time & size hints** — per domain, so a study session can be
   planned realistically. ✅ Session 19. Computed in `build.py` from the real word
   count, weighted by kind: tables ×1.4 because they are scanned rather than read,
@@ -2960,8 +2966,10 @@ of change that is easy to start and expensive to abandon.
   untouched, and the built `index.html` is **byte-identical** to the pre-split build — which is the
   proof, not a hope. `domain_files()` in `lint_content.py` is now the one place that answers "where
   does a domain live", and six tools use it.
-- [ ] **Build performance & determinism** — the build is fast today; add a
-  guard so it stays reproducible (stable ordering, no timestamps in output).
+- [x] **Build determinism** — `tools/check_determinism.py` builds twice and compares the bytes of
+  `index.html` and `sw.js`, in CI and in `make check`. Verified to fail on a planted `time_ns()`
+  before being wired in. It is also what makes "the built page is byte-identical", the proof the
+  `script` split relied on, mean anything.
 - [x] **Archive `patches/`** — 54 one-shot injection scripts, 1.8 MB, untouched since 2026-07-04
   and superseded by editing `data/` directly. Tagged `archive/patches-2026-08` and deleted;
   recoverable with `git checkout archive/patches-2026-08 -- patches/`.
@@ -8899,3 +8907,37 @@ and the failure list said so within seconds.
 
 **6/6 scans clean.** `make a11y` runs it; CI runs it as part of the browser job. Two new smoke
 checks pin the structure that replaced the violation, 132 → **133**.
+
+
+## Session record — link previews, and a guard on the build itself
+
+### The site had no link preview at all
+
+Not "the per-domain cards were missing" — no `description`, no Open Graph, no Twitter card. A link
+to it rendered as a bare URL everywhere it was shared, which for a free public reference is a
+straightforward loss.
+
+`tools/gen_og_image.mjs` renders `Img/og-card.png` at 1200×630 from an HTML template through
+Playwright, which is already a dependency for the tests. The counts on the card — 1,375 topics, 30
+domains, 0 third-party requests — are **read from the sources at render time**, so the card cannot
+advertise a number the site no longer has, and `--check` fails CI if it is stale.
+
+**Per-domain cards were not built, on purpose.** The original item asked for one per domain. Domains
+here are hash fragments; no crawler distinguishes `/#net` from `/`, and none runs the JavaScript
+that would render that domain. Thirty images that nothing would ever request. The reasoning is in
+the item and in the tool's docstring so it is not re-proposed.
+
+A smoke check asserts the preview text quotes the site's **real** size — the description is written
+by hand and the card is generated, so they can drift, and a preview advertising last year's numbers
+is exactly the kind of wrong nobody notices for a year.
+
+### Build determinism
+
+`tools/check_determinism.py` builds twice and compares bytes. Cheap, and it is the check that gives
+meaning to the technique this session leaned on twice: *build before, build after, compare*. Without
+it, "byte-identical" only ever meant "identical this once".
+
+Verified against a planted `time_ns()` in `build.py` before being wired into CI — it reported both
+outputs differing and exited non-zero.
+
+135 checks; `make` now also has `a11y` and `og` targets.

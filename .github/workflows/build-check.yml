@@ -82,6 +82,12 @@ jobs:
       - name: Rebuild index.html
         run: python build.py
 
+      # Two identical builds must produce identical bytes. Without this, a
+      # timestamp or a set iteration turns every commit's diff into noise, and
+      # noise is where a real change hides.
+      - name: Check the build is reproducible
+        run: python tools/check_determinism.py
+
       - name: Check the page performance budget
         run: python tools/page_budget.py
 
@@ -144,3 +150,8 @@ jobs:
       # failure ambiguous.
       - name: Accessibility scan
         run: node tools/a11y_test.mjs
+
+      # The social card's numbers are generated from the content, so a content
+      # wave that does not regenerate it ships a stale claim.
+      - name: Check the social card is current
+        run: node tools/gen_og_image.mjs --check
