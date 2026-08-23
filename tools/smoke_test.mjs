@@ -501,12 +501,28 @@ await page.waitForTimeout(300);
 const kbDomain = await page.evaluate(() =>
   document.querySelector(".domain-body")?.classList.contains("open"));
 check("Enter opens a domain", !!kbDomain);
-await page.locator(".domain-body.open .topic-header").first().focus();
+// The header is layout; the control inside it is a real <button>, so that the
+// per-topic tool buttons beside it are not nested inside another control.
+await page.locator(".domain-body.open .topic-toggle").first().focus();
 await page.keyboard.press("Enter");
 await page.waitForTimeout(300);
-const kbTopic = await page.evaluate(() =>
-  document.querySelector(".domain-body.open .topic-header")?.getAttribute("aria-expanded"));
-check("Enter opens a topic and sets aria-expanded", kbTopic === "true", `aria-expanded=${kbTopic}`);
+const kbTopic = await page.evaluate(() => {
+  const toggle = document.querySelector(".domain-body.open .topic-toggle");
+  return {
+    expanded: toggle?.getAttribute("aria-expanded"),
+    isButton: toggle?.tagName,
+    headerHasRole: document.querySelector(".domain-body.open .topic-header")?.hasAttribute("role"),
+    bodyOpen: !!toggle?.parentElement.parentElement
+      .querySelector(":scope > .topic-body")?.classList.contains("open"),
+  };
+});
+check("Enter opens a topic and sets aria-expanded",
+  kbTopic.expanded === "true" && kbTopic.bodyOpen, `aria-expanded=${kbTopic.expanded}`);
+// The violation this replaced: role="button" on a header that contains four
+// real buttons is a control inside a control, and axe reports it as serious.
+check("the topic toggle is a real button and the header claims no role",
+  kbTopic.isButton === "BUTTON" && kbTopic.headerHasRole === false,
+  `${kbTopic.isButton}, header role=${kbTopic.headerHasRole}`);
 
 // ── domain landing cards ────────────────────────────────────────────────────
 // The card is data, not content: it must render above the topics, link only to

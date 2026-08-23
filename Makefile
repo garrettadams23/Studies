@@ -12,7 +12,7 @@ PY ?= python3
 NODE ?= node
 
 .DEFAULT_GOAL := build
-.PHONY: build check test all fmt acronyms stamp clean help
+.PHONY: build check test a11y all fmt acronyms stamp clean help
 
 ## build: regenerate index.html from data/ (the usual command)
 build:
@@ -48,8 +48,12 @@ check:
 test:
 	$(NODE) tools/smoke_test.mjs
 
+## a11y: axe-core over the shell, a domain and a dialog, in both themes
+a11y:
+	$(NODE) tools/a11y_test.mjs
+
 ## all: build, then every check, then the browser tests
-all: build check test
+all: build check test a11y
 
 ## help: list these targets
 help:

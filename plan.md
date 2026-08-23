@@ -2214,10 +2214,9 @@ shipped in the Track AJ wave. Read the ticks, not the original list.*
 - [x] **Duplicate-slug guard** — `lint_content.py` errors on a collision by name, with the file and
   line of the topic that claimed the slug first. `build.py` still suffixes, so the guard is what
   makes the suffix visible rather than silent.
-- [ ] **Accessibility CI** — run axe against the built page; enforce contrast,
-  landmark and `aria-expanded` correctness on the accordions. *(The smoke test asserts
-  `aria-expanded` on both accordion levels and theme contrast on four elements; axe would cover the
-  rest.)*
+- [x] **Accessibility CI** — `tools/a11y_test.mjs`, axe-core over three states (shell, an open
+  domain with an expanded topic, a study dialog) in **both themes**, in CI and behind `make a11y`.
+  Its first run found **16 serious violations**; all are fixed and all six scans are clean.
 - [~] **Link & anchor checker** — measured rather than built: the content contains **one**
   `href="#"` and **one** external link in 1,355 topics. Cross-references are the real mechanism, and
   all 201 are checked by `lint_content.py` and now resolved to ids by `build.py`. There is nothing
@@ -8840,3 +8839,63 @@ Five checks, 127 → **132**, and the first one had to be fixed before it meant 
 the first learning path, which is entirely inside `net`, so "spans a whole path" was passing without
 ever crossing a domain boundary. It now picks a path that actually crosses one — 15 topics across 5
 domains, built with zero topics rendered.
+
+
+## Session record — Track AJ: accessibility CI, and the sixteen violations it found
+
+`tools/a11y_test.mjs` runs axe-core over three states — the shell at load, an open domain with an
+expanded topic, and a study dialog — in **both themes**. Six scans. It is deliberately separate from
+`smoke_test.mjs`: the smoke test asserts specific behaviour and must pass on every commit, while
+this runs a third-party rule set that can grow new rules between versions, and mixing them would
+make a smoke failure ambiguous. It scans one domain rather than thirty, and says why: the content
+markup is generated from the same conventions everywhere, so the thirtieth domain exercises the same
+rules at thirty times the cost, and `lint_content.py` is what keeps the conventions uniform.
+
+The first run: **0 of 6 scans clean, 16 serious violations.** Three distinct problems.
+
+### The accessible name nobody gave the search box
+
+`label-title-only`: the search input's only accessible name came from its `title`, which carries the
+operator documentation. One `aria-label`.
+
+### Colour, in both directions
+
+Nearly 300 nodes failed contrast, and the causes were worth separating rather than "darkening things
+until axe went quiet":
+
+- **All 30 filter chips were unreadable in light mode.** Each carries its own hue, all picked
+  against a near-black background, and every one of them failed on a light one — in the single place
+  the whole page is navigated from. Each is now darkened to 4.6–4.7:1, computed rather than
+  eyeballed so nothing is darkened more than it needs to be, and the identity survives.
+- **`--cyan`, `--green` and `--red` failed in light mode** at 3.4–4.4:1, and they are used for small
+  text throughout. Darkened at the token, which fixed many nodes at once.
+- **The active ALL chip was `#fff` on a light background** — 1.1:1. It had simply disappeared.
+- **`--muted` failed in dark mode** at 3.3–3.8:1, and the per-domain `--accent` values had the same
+  light-mode problem as the chips: one override per domain fixed the see-also links, landing card
+  buttons and every clickable cross-reference together.
+- **Two decorative `opacity` values were doing the damage**, not the colours: the cert tags' `0.7`
+  cost 1.3 contrast points in both themes, and the dashboard's `0.55` on untouched rows multiplied
+  against already-muted text. Both replaced with colour choices, which is what a reader with low
+  vision can actually work with.
+
+### The one that was a real bug, not a shade
+
+`nested-interactive`, on all 1,375 topics: `.topic-header` had `role="button"` **and contained the
+★ ✓ 📝 🔗 buttons**. A control inside a control is invalid ARIA and leaves those four ambiguous or
+unreachable to a screen reader.
+
+The header is now layout with no role, and the clickable part is a real `<button class="topic-toggle">`
+wrapping the icon, name and badge, with the tools and the chevron as siblings — so the row order is
+unchanged and the chevron, being decorative, is `aria-hidden` and outside the button's accessible
+name. All twelve places that set a topic's open state now go through one `setTopicOpen()`.
+
+**It broke everything first, informatively.** The initial version wrapped the chevron too, so
+`header.insertBefore(tools, chev)` threw against a node that was no longer its child —
+`enhanceDomain` aborted, and nine smoke checks failed at once. That is the smoke suite doing exactly
+its job: a structural change that looked fine in one place took the whole domain's setup with it,
+and the failure list said so within seconds.
+
+### Result
+
+**6/6 scans clean.** `make a11y` runs it; CI runs it as part of the browser job. Two new smoke
+checks pin the structure that replaced the violation, 132 → **133**.

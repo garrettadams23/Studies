@@ -346,9 +346,7 @@ function toggleTopicNote(topic) {
   const header = topic.querySelector(":scope > .topic-header");
   const body = topic.querySelector(":scope > .topic-body");
   if (body && !body.classList.contains("open")) {
-    header?.classList.add("open");
-    header?.setAttribute("aria-expanded", "true");
-    body.classList.add("open");
+    setTopicOpen(header, true);
     renderSeeAlso(topic);
   }
   renderTopicNote(topic, { open: true });
@@ -470,9 +468,29 @@ function enhanceDomain(section) {
     if (!topic.id) topic.id = ids[i] || slugify(labelText(topic.querySelector(".topic-name")));
     const header = topic.querySelector(":scope > .topic-header");
     if (!header) return;
-    header.setAttribute("tabindex", "0");
-    header.setAttribute("role", "button");
-    header.setAttribute("aria-expanded", header.classList.contains("open") ? "true" : "false");
+    // The header used to be role="button" and also contained the ★ ✓ 📝 🔗
+    // buttons — a control nested inside a control, which is invalid ARIA and
+    // leaves those four unreachable or ambiguous to a screen reader. The
+    // clickable part is now a real <button> wrapping the icon, name, badge and
+    // chevron; the tools are its siblings. The header keeps the layout and no
+    // longer claims to be interactive itself.
+    let toggle = header.querySelector(":scope > .topic-toggle");
+    if (!toggle) {
+      toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "topic-toggle";
+      // Everything except the chevron. The chevron stays a sibling so the row
+      // keeps its original order — name, tools, chevron — and because a
+      // decorative arrow does not belong inside the button's accessible name.
+      const chev = header.querySelector(":scope > .topic-chev");
+      chev?.setAttribute("aria-hidden", "true");
+      [...header.childNodes].forEach(n => { if (n !== chev) toggle.appendChild(n); });
+      chev ? header.insertBefore(toggle, chev) : header.appendChild(toggle);
+    }
+    header.removeAttribute("tabindex");
+    header.removeAttribute("role");
+    header.removeAttribute("aria-expanded");
+    toggle.setAttribute("aria-expanded", header.classList.contains("open") ? "true" : "false");
 
     if (localStorage.getItem(REVIEWED_PREFIX + topic.id) === "1") topic.classList.add("reviewed");
     if (localStorage.getItem(BOOKMARK_PREFIX + topic.id) === "1") topic.classList.add("bookmarked");
@@ -511,7 +529,7 @@ function enhanceDomain(section) {
       note.textContent = "📝";
 
       tools.append(bookmark, review, note, link);
-      const chev = header.querySelector(".topic-chev");
+      const chev = header.querySelector(":scope > .topic-chev");
       chev ? header.insertBefore(tools, chev) : header.appendChild(tools);
     }
   });
@@ -689,14 +707,27 @@ function toggleDomain(h) {
     : openDomain(section);
 }
 
+/** The element carrying a topic's expanded state — its toggle button. */
+function topicToggle(header) {
+  return header?.querySelector(":scope > .topic-toggle") || header;
+}
+
+/** Set a topic's open state in one place: the header class, the body, the aria. */
+function setTopicOpen(header, open) {
+  if (!header) return;
+  header.classList.toggle("open", open);
+  header.parentElement?.querySelector(":scope > .topic-body")?.classList.toggle("open", open);
+  topicToggle(header).setAttribute("aria-expanded", open ? "true" : "false");
+}
+
 function toggleTopic(h) {
-  const open = h.classList.toggle("open");
-  h.nextElementSibling.classList.toggle("open", open);
-  h.setAttribute("aria-expanded", open ? "true" : "false");
+  const header = h.classList?.contains("topic-toggle") ? h.parentElement : h;
+  const open = !header.classList.contains("open");
+  setTopicOpen(header, open);
   if (open) {
-    renderSeeAlso(h.parentElement);
-    renderTopicNote(h.parentElement);
-    updateTopicHash(h.parentElement);
+    renderSeeAlso(header.parentElement);
+    renderTopicNote(header.parentElement);
+    updateTopicHash(header.parentElement);
   }
 }
 
@@ -726,11 +757,7 @@ function toggleAll() {
     if (section) openDomain(section);
   }
   if (section) {
-    section.querySelectorAll(".topic-header").forEach(h => {
-      h.classList.toggle("open", allExpanded);
-      h.setAttribute("aria-expanded", allExpanded ? "true" : "false");
-    });
-    section.querySelectorAll(".topic-body").forEach(b => b.classList.toggle("open", allExpanded));
+    section.querySelectorAll(".topic-header").forEach(h => setTopicOpen(h, allExpanded));
     if (!allExpanded) closeDomain(section);
   } else {
     allExpanded = false;
@@ -803,6 +830,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (xref) { e.stopPropagation(); stGoToTopic(xref.dataset.xref); return; }
     const dh = e.target.closest(".domain-header");
     if (dh) { toggleDomain(dh); return; }
+    // The button is the control; the header around it is layout. Clicking the
+    // padding either side of the button still toggles, which is what a large
+    // touch target is for.
+    const tt = e.target.closest(".topic-toggle");
+    if (tt) { toggleTopic(tt.parentElement); return; }
     const th = e.target.closest(".topic-header");
     if (th) toggleTopic(th);
   });
@@ -812,6 +844,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key !== "Enter" && e.key !== " ") return;
     const xref = e.target.closest(".xref[data-xref]");
     if (xref) { e.preventDefault(); stGoToTopic(xref.dataset.xref); return; }
+    // A real <button> already fires a click on Enter and Space; handling it
+    // here as well toggled the topic twice, which looked like nothing happening.
+    if (e.target.closest(".topic-toggle")) return;
     const header = e.target.closest(".domain-header, .topic-header");
     if (!header || e.target.closest(".topic-review, .topic-permalink, .topic-note-btn")) return;
     e.preventDefault();
@@ -1232,10 +1267,7 @@ function openHashTarget() {
   // A topic reached by link is shown even when a search is filtering its
   // domain — the reader asked for this card by name.
   topic.classList.remove("search-hidden");
-  const th = topic.querySelector(".topic-header");
-  th?.classList.add("open");
-  th?.setAttribute("aria-expanded", "true");
-  topic.querySelector(".topic-body")?.classList.add("open");
+  setTopicOpen(topic.querySelector(":scope > .topic-header"), true);
   renderSeeAlso(topic);
   renderTopicNote(topic);
 
@@ -1509,10 +1541,7 @@ function applySearchToDomain(section) {
   section.querySelectorAll(".topic").forEach(topic => {
     if (hits && hits.has(topic.id)) {
       topic.classList.remove("search-hidden");
-      const th = topic.querySelector(".topic-header");
-      th?.classList.add("open");
-      th?.setAttribute("aria-expanded", "true");
-      topic.querySelector(".topic-body")?.classList.add("open");
+      setTopicOpen(topic.querySelector(":scope > .topic-header"), true);
       renderSeeAlso(topic);
       renderTopicNote(topic);
       topic.querySelectorAll(
@@ -2925,6 +2954,8 @@ function buildPrintPack(rows, title) {
   // Every card open: a handout with collapsed sections is a list of titles.
   host.querySelectorAll(".topic-header").forEach(h => h.classList.add("open"));
   host.querySelectorAll(".topic-body").forEach(b => b.classList.add("open"));
+  // The pack never runs through enhanceDomain, so it has no toggle buttons —
+  // classes alone are what the print stylesheet reads.
   document.body.appendChild(host);
   document.body.classList.add("printing");
   return host;

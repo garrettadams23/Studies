@@ -126,8 +126,8 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Install Playwright and Chromium
-        run: npm install playwright && npx playwright install --with-deps chromium
+      - name: Install Playwright, axe-core and Chromium
+        run: npm install playwright axe-core && npx playwright install --with-deps chromium
 
       - name: Build the page
         run: python build.py
@@ -137,3 +137,10 @@ jobs:
       # verification since the first review; this is what makes the claim true.
       - name: Smoke-test the built page
         run: node tools/smoke_test.mjs
+
+      # axe-core over the shell, an open domain and a dialog, in both themes.
+      # Separate from the smoke test because it runs a third-party rule set that
+      # can grow new rules between versions — mixing them would make a smoke
+      # failure ambiguous.
+      - name: Accessibility scan
+        run: node tools/a11y_test.mjs
