@@ -2247,8 +2247,11 @@ shipped in the Track AJ wave. Read the ticks, not the original list.*
   single-file build for `file://`**. Two outputs from one `build.py`, selected
   by a flag. This is the single biggest performance win available, and also the
   riskiest change on this list — it must not break offline or the PWA.
-- [ ] **Print packs** — a print stylesheet variant that outputs one domain, or
-  one learning path, as a clean revision handout.
+- [x] **Print packs** — 🖨 Print pack in the study menu: a domain, a **learning path**, the study
+  list or today's due cards, every card open, none of the page furniture, page-broken between
+  domains and never through a concept card. Built into its own container rather than by styling what
+  is on screen — only one domain is ever hydrated, so "print what is rendered" could never produce a
+  path that spans five domains, which is the pack most worth printing.
 - [x] **Markdown export** — ⬇ Export as Markdown in the study menu, with the same scope picker the
   decks use (all / one domain / study list / due today). Converts from the *deferred blocks*, so a
   domain that has never been opened exports identically to one that has. Copy or download; the
@@ -8814,3 +8817,26 @@ comment says why the registration itself is not covered, so the gap is a recorde
 than an oversight.
 
 123 → **127** checks.
+
+
+## Session record — print packs
+
+🖨 Print pack: a domain, a learning path, the study list or today's due cards, as a handout.
+
+**Generated, not styled.** The obvious implementation is a print stylesheet over whatever is on
+screen, and it cannot work here: only one domain is ever hydrated, so the pack most worth printing —
+a learning path, which spans five domains in the SOC starter's case — could never be produced that
+way. The pack is built into a container of its own from the deferred blocks, with every card forced
+open, and `body.printing` hides everything else.
+
+That hiding is written as `body.printing > *:not(#print-pack)` rather than as a list of things to
+hide, so a header or panel added next year does not quietly start appearing on printouts.
+
+Page breaks are set where they help: a new page per domain, never a break through a concept card,
+and breaks allowed inside a topic — a card that would rather start a new page than split is worth
+the whitespace; a whole topic is not.
+
+Five checks, 127 → **132**, and the first one had to be fixed before it meant anything: it tested
+the first learning path, which is entirely inside `net`, so "spans a whole path" was passing without
+ever crossing a domain boundary. It now picks a path that actually crosses one — 15 topics across 5
+domains, built with zero topics rendered.

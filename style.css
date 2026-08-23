@@ -2852,6 +2852,32 @@ body.st-lock { overflow: hidden; }
 .ut-dismiss:hover { color: var(--text); }
 @media print { #update-toast { display: none; } }
 
+/* Print packs — a generated handout, hidden on screen, alone on paper. */
+#print-pack { display: none; }
+.pp-title { font-size: 22px; margin: 0 0 4px; }
+.pp-meta { font-family: var(--mono); font-size: 11px; color: var(--muted); margin: 0 0 18px; }
+.pp-domain { font-size: 15px; margin: 22px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+.pp-topic { position: relative; margin-bottom: 18px; }
+.pp-n { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+@media print {
+  /* The pack replaces the page rather than sitting alongside it. Hiding by
+     child selector, not by naming each thing, so a new header or panel added
+     later does not silently start printing. */
+  body.printing > *:not(#print-pack) { display: none !important; }
+  body.printing #print-pack { display: block; }
+  /* Nothing in a handout is clickable, and a page break through a card is
+     worse than a short page. */
+  #print-pack .topic-chev,
+  #print-pack .topic-tools,
+  #print-pack .see-also,
+  #print-pack .topic-note { display: none; }
+  #print-pack .topic { break-inside: auto; border-bottom: none; }
+  #print-pack .concept-card { break-inside: avoid; }
+  #print-pack .pp-topic { break-inside: auto; }
+  #print-pack .pp-domain { break-before: page; }
+  #print-pack .pp-domain:first-of-type { break-before: auto; }
+}
+
 /* Progress dashboard */
 .st-pg-top { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .st-pg-stat {

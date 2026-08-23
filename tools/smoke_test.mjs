@@ -1371,6 +1371,49 @@ check("accepting asks the waiting worker to take over",
   JSON.stringify(toast.messages));
 check("it can be dismissed", toast.dismissed);
 
+// ── print packs ─────────────────────────────────────────────────────────────
+// The pack is generated into a container of its own, because only one domain
+// is ever hydrated and a learning path spans several — "print what is
+// rendered" could never produce the pack most worth printing.
+await page.goto(PAGE, { waitUntil: "load" });
+const pack = await page.evaluate(() => {
+  // A path that actually crosses domains — the first one is all `net`, and
+  // testing on that would prove nothing about the case this design exists for.
+  const path = learningPaths().find(p =>
+    new Set(pathSteps(p).map(t => t.domainId)).size > 1) || learningPaths()[0];
+  const rows = pathSteps(path);
+  const domains = new Set(rows.map(t => t.domainId));
+  buildPrintPack(rows, path.name);
+  const host = document.getElementById("print-pack");
+  const out = {
+    steps: rows.length,
+    domainsSpanned: domains.size,
+    inDom: document.querySelectorAll(".domain-body .topic").length,
+    sections: host.querySelectorAll(".pp-topic").length,
+    openBodies: host.querySelectorAll(".topic-body.open").length,
+    closedBodies: host.querySelectorAll(".topic-body:not(.open)").length,
+    numbered: host.querySelector(".pp-n")?.textContent,
+    printingClass: document.body.classList.contains("printing"),
+    hiddenOnScreen: getComputedStyle(host).display,
+  };
+  clearPrintPack();
+  out.cleared = !document.getElementById("print-pack")
+    && !document.body.classList.contains("printing");
+  return out;
+});
+check("a print pack spans a whole learning path",
+  pack.sections === pack.steps && pack.domainsSpanned > 1,
+  `${pack.sections}/${pack.steps} topics across ${pack.domainsSpanned} domains`);
+check("it is built without hydrating those domains",
+  pack.inDom === 0, `${pack.inDom} topics rendered`);
+check("every card in the pack is open",
+  pack.openBodies === pack.steps && pack.closedBodies === 0,
+  `${pack.openBodies} open, ${pack.closedBodies} closed`);
+check("steps are numbered, and the pack is invisible on screen",
+  pack.numbered === "1" && pack.hiddenOnScreen === "none" && pack.printingClass,
+  `n=${pack.numbered} display=${pack.hiddenOnScreen}`);
+check("the pack is removed after printing", pack.cleared);
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));

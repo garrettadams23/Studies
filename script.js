@@ -2890,6 +2890,110 @@ function stOpenExport(initialScope) {
   });
 }
 
+// ── PRINT PACKS ─────────────────────────────────────────────────────────────
+// A revision handout: one domain, one learning path or the study list, printed
+// with every card open and none of the page's furniture.
+//
+// Built into a container of its own rather than by styling what happens to be
+// on screen. Only one domain is ever hydrated, so "print what is rendered"
+// could never span a learning path — and a path is exactly the thing worth
+// printing.
+
+function printPackHtml(rows, title) {
+  const parts = [`<h1 class="pp-title">${esc(title)}</h1>`,
+                 `<p class="pp-meta">${rows.length} topic${rows.length === 1 ? "" : "s"} · ${srsToday()}</p>`];
+  let lastDomain = null;
+  rows.forEach((t, i) => {
+    if (t.domainId !== lastDomain) {
+      parts.push(`<h2 class="pp-domain">${esc(t.domainIcon)} ${esc(t.domainTitle || t.domainId)}</h2>`);
+      lastDomain = t.domainId;
+    }
+    const html = topicHtml(t.id);
+    if (!html) return;
+    // Numbered, because a printed pack has no scrollbar to orient by and a
+    // path's order is the whole point of it.
+    parts.push(`<section class="pp-topic"><span class="pp-n">${i + 1}</span>${html}</section>`);
+  });
+  return parts.join("\n");
+}
+
+function buildPrintPack(rows, title) {
+  document.getElementById("print-pack")?.remove();
+  const host = document.createElement("div");
+  host.id = "print-pack";
+  host.innerHTML = printPackHtml(rows, title);
+  // Every card open: a handout with collapsed sections is a list of titles.
+  host.querySelectorAll(".topic-header").forEach(h => h.classList.add("open"));
+  host.querySelectorAll(".topic-body").forEach(b => b.classList.add("open"));
+  document.body.appendChild(host);
+  document.body.classList.add("printing");
+  return host;
+}
+
+function clearPrintPack() {
+  document.getElementById("print-pack")?.remove();
+  document.body.classList.remove("printing");
+}
+
+function stOpenPrint() {
+  stOpen(body => {
+    const paths = learningPaths();
+    body.innerHTML =
+      '<h2 class="st-h">🖨 Print pack</h2>' +
+      '<p class="st-bk-lead">A revision handout with every card open and none of the page ' +
+      'furniture. Print it, or save it as a PDF from the print dialog.</p>' +
+      '<div class="st-toolbar"><label class="st-lbl">Pack</label>' +
+      '<select id="st-pp-scope" class="st-select">' +
+        '<optgroup label="Domains">' + stScopeOptions().map(d =>
+          `<option value="d:${esc(d.id)}">${esc(d.icon)} ${esc(d.title)} (${d.n})</option>`).join("") +
+        '</optgroup>' +
+        (paths.length ? '<optgroup label="Learning paths">' + paths.map(p =>
+          `<option value="p:${esc(p.id)}">${esc(p.icon || "🧭")} ${esc(p.name)}</option>`).join("") +
+          '</optgroup>' : "") +
+        '<optgroup label="Yours">' +
+          '<option value="s:__bookmarks">★ My study list</option>' +
+          '<option value="s:__due">⏰ Due today</option>' +
+        '</optgroup>' +
+      '</select>' +
+      '<button id="st-pp-go" class="st-btn st-btn-primary">Print</button></div>' +
+      '<p class="st-hint" id="st-pp-note"></p>';
+    const sel = body.querySelector("#st-pp-scope");
+    const note = body.querySelector("#st-pp-note");
+
+    const chosen = () => {
+      const [kind, key] = [sel.value.slice(0, 1), sel.value.slice(2)];
+      if (kind === "p") {
+        const path = learningPaths().find(p => p.id === key);
+        return { rows: path ? pathSteps(path) : [], title: path ? path.name : key };
+      }
+      const rows = stTopicsForScope(key);
+      const label = sel.options[sel.selectedIndex].textContent.replace(/\s*\(\d+\)\s*$/, "").trim();
+      return { rows, title: label };
+    };
+    const describe = () => {
+      const { rows } = chosen();
+      note.textContent = rows.length
+        ? `${rows.length} topic${rows.length === 1 ? "" : "s"} in this pack.`
+        : "Nothing in that pack yet.";
+    };
+    sel.addEventListener("change", describe);
+    describe();
+    body.querySelector("#st-pp-go").addEventListener("click", () => {
+      const { rows, title } = chosen();
+      if (!rows.length) return;
+      buildPrintPack(rows, title);
+      stClose();
+      // The print dialog is modal, so the cleanup has to be bound to the event
+      // rather than run after the call — some browsers return immediately.
+      const done = () => { clearPrintPack(); window.removeEventListener("afterprint", done); };
+      window.addEventListener("afterprint", done);
+      window.print();
+      // Belt and braces for browsers that never fire afterprint.
+      setTimeout(done, 60000);
+    });
+  });
+}
+
 // ── STREAK ──────────────────────────────────────────────────────────────────
 // One record: the last day anything was studied, the run length, and the best
 // run. Days rather than sessions, and no list of dates — a streak that needs a
@@ -3471,6 +3575,7 @@ function initStudyTools() {
       '<button class="study-mi" data-act="exam"><span>📋</span> Exam mode</button>' +
       '<button class="study-mi" data-act="progress"><span>📊</span> Progress</button>' +
       '<button class="study-mi" data-act="md"><span>⬇</span> Export as Markdown</button>' +
+      '<button class="study-mi" data-act="print"><span>🖨</span> Print pack</button>' +
       '<button class="study-mi" data-act="backup"><span>💾</span> Back up &amp; restore</button>' +
     '</div>' +
     '<button id="study-fab" title="Study tools" aria-label="Study tools" aria-haspopup="true" aria-expanded="false">' +
@@ -3497,6 +3602,7 @@ function initStudyTools() {
     ({ jump: stOpenJump, cards: stOpenFlashcards, due: stOpenDue, quiz: stOpenQuiz,
        acro: stOpenAcroQuiz, list: stOpenStudyList, paths: stOpenPaths,
        progress: stOpenProgress, exam: stOpenExam, md: stOpenExport,
+       print: stOpenPrint,
        backup: stOpenBackup }[mi.dataset.act])();
   });
   document.addEventListener("click", e => { if (!fab.contains(e.target) && !menu.hidden) closeMenu(); });
