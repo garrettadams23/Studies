@@ -2798,9 +2798,12 @@ function mdFromNode(node, out) {
   if (cls.contains("concept-label")) { out.push(`**${text.toUpperCase()}**\n\n`); return; }
   if (cls.contains("concept-title")) { out.push(`### ${text}\n\n`); return; }
   if (cls.contains("xref")) { out.push(`_${text}_`); return; }
-  // A row of a div-built table — the layer stacks and comparison grids. Its
-  // children are cells, and cells belong on one line.
-  if (cls.contains("layer") || cls.contains("dt-row")) {
+  // A row of a div-built table. There are 78 of these on the site against 1,883
+  // real <table> elements, and until they are converted the export has to know
+  // their class names: their children are cells, and cells belong on one line.
+  if (cls.contains("layer") || cls.contains("dt-row") || cls.contains("kc-row")
+      || cls.contains("nist-row") || cls.contains("perm-row")
+      || cls.contains("url-codec-row")) {
     const cells = [...el.children].map(c => mdText(c.textContent).trim()).filter(Boolean);
     out.push((cells.length ? cells.join(" — ") : text) + "\n");
     return;

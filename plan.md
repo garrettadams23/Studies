@@ -2960,7 +2960,10 @@ of change that is easy to start and expensive to abandon.
 - [~] **Incremental path if that is a yes** — moot, since the answer is no. The evaluation named a
   much smaller change that gets the same benefit: convert the **78 div-built pseudo-tables** to real
   `<table>` markup. That is where the export's special cases live, and it is 78 elements against
-  1,883 real tables.
+  1,883 real tables. Until then the Markdown export knows their class names — `kc-row`, `nist-row`,
+  `perm-row`, `url-codec-row`, `layer`, `dt-row` — so they export as rows rather than as one line
+  per cell. Naming them in the converter is the cheap half; converting the markup is the half that
+  also fixes screen-reader output.
 - [x] **Topic ID stability contract** — written into `CONTRIBUTING.md` as *Topic IDs are a
   contract*, with the table of what does and does not move an id, why it matters (permalinks and
   five `localStorage` key prefixes), the rule to prefer parts over new domains, and the
