@@ -2249,7 +2249,10 @@ shipped in the Track AJ wave. Read the ticks, not the original list.*
   riskiest change on this list — it must not break offline or the PWA.
 - [ ] **Print packs** — a print stylesheet variant that outputs one domain, or
   one learning path, as a clean revision handout.
-- [ ] **Markdown export** — dump any topic or domain as Markdown for notes apps.
+- [x] **Markdown export** — ⬇ Export as Markdown in the study menu, with the same scope picker the
+  decks use (all / one domain / study list / due today). Converts from the *deferred blocks*, so a
+  domain that has never been opened exports identically to one that has. Copy or download; the
+  filename carries the scope and the date.
 - [ ] **PWA polish** — an update prompt when a new `CACHE_VERSION` is available,
   and precache the fragments if lazy loading ships.
 - [ ] **Share cards** — generated OG images per domain for link previews.
@@ -8739,3 +8742,42 @@ rename. Plus the proof technique the split used — build before and after, comp
 local; it exists so the directory is recoverable by name rather than by SHA archaeology:
 
     git checkout archive/patches-2026-08 -- patches/
+
+
+## Session record — Markdown export, and three bugs the tests found
+
+⬇ Export as Markdown in the study menu: a topic, a domain, the study list, or the whole library,
+copied or downloaded as a `.md` file. It converts from the **deferred blocks**, not the live DOM, so
+a domain nobody has opened exports exactly like one that has — the constraint every feature here
+lives under, asserted directly by a check that runs the export with zero topics rendered.
+
+### Structural, not generic
+
+The converter knows this site's conventions rather than HTML in general, and it is much better for
+knowing them: a `.concept-label` becomes a bold kicker rather than a paragraph, a `.concept-title`
+becomes `###`, a `.xref` becomes italics, an `.acro-exp` is kept inline because an exported file has
+no hover to reveal it. Fenced code keeps its own indentation — the whitespace tidy-up deliberately
+skips fenced regions, since collapsing it would corrupt every example on the site.
+
+### What writing the tests found
+
+Three real bugs, none of which would have been visible by skim-reading an export:
+
+1. **Every table on the site exported with an empty header row.** `mdTable` keyed off `<thead>`, and
+   almost no table here has one — the header is a bare `<tr>` of `<th>`. So the header line came out
+   as `| | | | | |` and the real headings were pushed into the body. Now it finds the first row
+   containing a `<th>`.
+2. **Div-built tables flattened into one unreadable line.** The layer stacks and comparison grids
+   carry their structure in nested `<div>`s, and nothing emitted a line break for them. Block-level
+   elements now end a line, and a `.layer` row joins its cells with `—` on one.
+3. **Leading whitespace broke every heading.** Text nodes between elements were emitted verbatim, so
+   headings came out as `&nbsp;### Title` and no Markdown renderer would have treated them as
+   headings.
+
+And two bugs in the *checks themselves*, which is its own lesson: the topic chosen for the table
+test was matched on the bare string `<table` and turned out to be a code sample, and the
+run-splitting used `runs[runs.length - 1] ||= []` on an empty array — which assigns to index `-1`,
+creating a property rather than an element, so the "square rows" assertion was silently examining
+nothing at all and would have passed on any output. **A check that examines nothing passes.**
+
+Seven new checks, 115 → **123**.

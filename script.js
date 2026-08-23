@@ -2684,6 +2684,212 @@ function stExamFinish() {
   return r;
 }
 
+// ── MARKDOWN EXPORT ─────────────────────────────────────────────────────────
+// Take a topic, a domain or the whole site out of this page and into a notes
+// app. The conversion runs over the deferred block's markup rather than the
+// live DOM, so a domain that has never been opened exports exactly like one
+// that has — the same reason every other feature here reads the blocks.
+
+// Elements that end a line. Without this, a card built from nested <div>s — the
+// layer stacks, the comparison grids — flattens into one unreadable run: the
+// markup carried the structure and the text never did.
+const MD_BLOCK = new Set(["DIV", "P", "SECTION", "UL", "OL", "TR", "H1", "H2", "H3", "H4", "H5", "H6"]);
+
+/** Inline elements that become Markdown wrappers rather than structure. */
+const MD_WRAP = { strong: "**", b: "**", em: "_", i: "_", code: "`" };
+
+/** Collapse runs of whitespace without eating the space between two elements. */
+function mdText(s) { return (s || "").replace(/\s+/g, " "); }
+
+function mdEscape(s) {
+  // Only the characters that would change the meaning of a *table* cell or
+  // start a list. Escaping every Markdown metacharacter makes prose unreadable
+  // for the sake of edge cases that do not occur in this content.
+  return s.replace(/\|/g, "\\|");
+}
+
+/** One table -> a Markdown table. Ragged rows are padded, never dropped. */
+function mdTable(table) {
+  const trs = [...table.querySelectorAll("tr")];
+  const rows = trs.map(tr =>
+    [...tr.querySelectorAll("th, td")].map(c => mdEscape(mdText(c.textContent).trim())));
+  if (!rows.length) return "";
+  const width = Math.max(...rows.map(r => r.length));
+  const pad = r => r.concat(Array(width - r.length).fill(""));
+  // Most tables here have no <thead> at all — the header is a bare <tr> of
+  // <th>. Keying off <thead> put five empty cells in the header and pushed the
+  // real one into the body, on every table on the site.
+  const headIndex = trs.findIndex(tr => tr.querySelector("th"));
+  const hasHead = headIndex !== -1 && rows[headIndex].some(Boolean);
+  const head = hasHead ? pad(rows[headIndex]) : Array(width).fill("");
+  const body = rows.filter((_, i) => !hasHead || i !== headIndex);
+  return [
+    `| ${head.join(" | ")} |`,
+    `| ${Array(width).fill("---").join(" | ")} |`,
+    ...body.map(r => `| ${pad(r).join(" | ")} |`),
+  ].join("\n") + "\n";
+}
+
+/**
+ * Walk a topic's markup and emit Markdown.
+ *
+ * Deliberately structural rather than generic: this converts *this site's*
+ * conventions — concept cards, reference tables, code blocks, cross-references
+ * — and it is much better at that than a general HTML-to-Markdown pass would
+ * be, because it knows a `.concept-label` is a kicker and not a paragraph.
+ */
+function mdFromNode(node, out) {
+  if (node.nodeType === 3) { out.push(mdText(node.nodeValue)); return; }
+  if (node.nodeType !== 1) return;
+  const el = node;
+  const cls = el.classList;
+
+  if (cls.contains("topic-icon") || cls.contains("topic-chev")) return;
+  if (cls.contains("acro-exp")) { out.push(" " + mdText(el.textContent).trim()); return; }
+
+  if (el.tagName === "PRE") {
+    out.push("\n```\n" + el.textContent.replace(/\s+$/, "") + "\n```\n\n");
+    return;
+  }
+  if (el.tagName === "TABLE") { out.push("\n" + mdTable(el) + "\n"); return; }
+  if (el.tagName === "BR") { out.push("\n"); return; }
+  if (el.tagName === "LI") {
+    out.push("- ");
+    [...el.childNodes].forEach(c => mdFromNode(c, out));
+    out.push("\n");
+    return;
+  }
+
+  const wrap = MD_WRAP[el.tagName.toLowerCase()];
+  const text = mdText(el.textContent).trim();
+  if (wrap && text) { out.push(wrap + text + wrap); return; }
+
+  if (cls.contains("topic-name")) { out.push(`\n## ${text}\n\n`); return; }
+  if (cls.contains("topic-badge")) { out.push(`_${text}_\n\n`); return; }
+  if (cls.contains("concept-label")) { out.push(`**${text.toUpperCase()}**\n\n`); return; }
+  if (cls.contains("concept-title")) { out.push(`### ${text}\n\n`); return; }
+  if (cls.contains("xref")) { out.push(`_${text}_`); return; }
+  // A row of a div-built table — the layer stacks and comparison grids. Its
+  // children are cells, and cells belong on one line.
+  if (cls.contains("layer") || cls.contains("dt-row")) {
+    const cells = [...el.children].map(c => mdText(c.textContent).trim()).filter(Boolean);
+    out.push((cells.length ? cells.join(" — ") : text) + "\n");
+    return;
+  }
+
+  [...el.childNodes].forEach(c => mdFromNode(c, out));
+  if (cls.contains("concept-desc") || cls.contains("dt")) out.push("\n\n");
+  else if (MD_BLOCK.has(el.tagName)) out.push("\n");
+  if (cls.contains("concept-card")) out.push("\n");
+}
+
+function mdForTopicHtml(html) {
+  const host = document.createElement("div");
+  host.innerHTML = html;
+  const out = [];
+  [...host.childNodes].forEach(c => mdFromNode(c, out));
+  // Tidy the prose, and only the prose: a fenced block's leading whitespace is
+  // the code's own indentation, and collapsing it would corrupt every example
+  // on the site.
+  return out.join("")
+    .split(/(```[\s\S]*?```)/g)
+    .map((chunk, i) => i % 2 ? chunk : chunk
+      .replace(/[ \t]{2,}/g, " ")
+      .replace(/^[ \t]+/gm, "")
+      .replace(/[ \t]+$/gm, ""))
+    .join("")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim() + "\n";
+}
+
+/** The raw markup of one topic, from its domain's deferred block. */
+function topicHtml(id) {
+  const d = topicDomain(id);
+  const src = d && domainSection(d)?.querySelector("script.domain-src");
+  if (!src) return "";
+  const html = src.textContent;
+  const marker = `id="${id}"`;
+  const at = html.indexOf(marker);
+  if (at === -1) return "";
+  const start = html.lastIndexOf(TOPIC_OPEN, at);
+  const next = html.indexOf(TOPIC_OPEN, at);
+  return html.slice(start, next === -1 ? html.length : next);
+}
+
+/** Markdown for a set of topics, grouped under their domain headings. */
+function mdForTopics(rows, title) {
+  const byDomain = new Map();
+  rows.forEach(t => {
+    if (!byDomain.has(t.domainId)) byDomain.set(t.domainId, []);
+    byDomain.get(t.domainId).push(t);
+  });
+  const parts = [`# ${title}`, "", `_${rows.length} topic${rows.length === 1 ? "" : "s"}, exported ${srsToday()}._`, ""];
+  byDomain.forEach((topics, domainId) => {
+    const label = topics[0].domainTitle || domainId;
+    if (byDomain.size > 1) parts.push(`\n# ${topics[0].domainIcon} ${label}`.trim(), "");
+    topics.forEach(t => {
+      const md = mdForTopicHtml(topicHtml(t.id));
+      if (md.trim()) parts.push(md, "");
+    });
+  });
+  return parts.join("\n").replace(/\n{3,}/g, "\n\n");
+}
+
+function stOpenExport(initialScope) {
+  stOpen(body => {
+    body.innerHTML =
+      '<h2 class="st-h">⬇ Export as Markdown</h2>' +
+      '<p class="st-bk-lead">Take a topic, a domain or the whole library into a notes app. ' +
+      'Tables, code blocks and cross-references come across; the styling does not.</p>' +
+      '<div class="st-toolbar"><label class="st-lbl">Export</label>' + stScopeSelectHTML("st-md-scope") +
+      '<button id="st-md-go" class="st-btn st-btn-primary">Generate</button></div>' +
+      '<div class="st-toolbar"><span class="st-count" id="st-md-size"></span>' +
+      '<button id="st-md-copy" class="st-btn" disabled>Copy</button>' +
+      '<button id="st-md-dl" class="st-btn" disabled>Download</button></div>' +
+      '<textarea id="st-md-out" class="tn-input" rows="12" readonly ' +
+      'placeholder="Pick a scope and press Generate."></textarea>';
+    const scope = body.querySelector("#st-md-scope");
+    if (initialScope) scope.value = initialScope;
+    const out = body.querySelector("#st-md-out");
+    const size = body.querySelector("#st-md-size");
+    const copy = body.querySelector("#st-md-copy");
+    const dl = body.querySelector("#st-md-dl");
+
+    const generate = () => {
+      const rows = stTopicsForScope(scope.value);
+      if (!rows.length) {
+        out.value = ""; size.textContent = "Nothing in that scope.";
+        copy.disabled = dl.disabled = true;
+        return;
+      }
+      const label = scope.options[scope.selectedIndex].textContent.replace(/\s*\(\d+\)\s*$/, "").trim();
+      out.value = mdForTopics(rows, label);
+      size.textContent = `${rows.length} topics · ${Math.round(out.value.length / 1024)} KB`;
+      copy.disabled = dl.disabled = false;
+    };
+    body.querySelector("#st-md-go").addEventListener("click", generate);
+    copy.addEventListener("click", () => {
+      const done = () => { copy.textContent = "Copied"; setTimeout(() => (copy.textContent = "Copy"), 1200); };
+      // Selecting the textarea is the fallback that works everywhere, including
+      // the contexts where the clipboard API is refused without a prompt.
+      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(out.value).then(done).catch(() => { out.select(); done(); });
+      else { out.select(); done(); }
+    });
+    dl.addEventListener("click", () => {
+      const blob = new Blob([out.value], { type: "text/markdown" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `techref-${slugify(scope.value === "__all" ? "all-domains" : scope.value)}-${srsToday()}.md`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    });
+    generate();
+  });
+}
+
 // ── STREAK ──────────────────────────────────────────────────────────────────
 // One record: the last day anything was studied, the run length, and the best
 // run. Days rather than sessions, and no list of dates — a streak that needs a
@@ -3264,6 +3470,7 @@ function initStudyTools() {
       '<button class="study-mi" data-act="paths"><span>🧭</span> Learning paths</button>' +
       '<button class="study-mi" data-act="exam"><span>📋</span> Exam mode</button>' +
       '<button class="study-mi" data-act="progress"><span>📊</span> Progress</button>' +
+      '<button class="study-mi" data-act="md"><span>⬇</span> Export as Markdown</button>' +
       '<button class="study-mi" data-act="backup"><span>💾</span> Back up &amp; restore</button>' +
     '</div>' +
     '<button id="study-fab" title="Study tools" aria-label="Study tools" aria-haspopup="true" aria-expanded="false">' +
@@ -3289,7 +3496,7 @@ function initStudyTools() {
     closeMenu();
     ({ jump: stOpenJump, cards: stOpenFlashcards, due: stOpenDue, quiz: stOpenQuiz,
        acro: stOpenAcroQuiz, list: stOpenStudyList, paths: stOpenPaths,
-       progress: stOpenProgress, exam: stOpenExam,
+       progress: stOpenProgress, exam: stOpenExam, md: stOpenExport,
        backup: stOpenBackup }[mi.dataset.act])();
   });
   document.addEventListener("click", e => { if (!fab.contains(e.target) && !menu.hidden) closeMenu(); });

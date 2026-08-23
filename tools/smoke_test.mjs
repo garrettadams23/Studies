@@ -1254,6 +1254,90 @@ check("every indexed topic reaches the study index",
 check("every topic in the study index has a name",
   indexReach.unnamedN === 0, indexReach.unnamed.join(", "));
 
+// ── markdown export ─────────────────────────────────────────────────────────
+// The conversion runs over the deferred blocks, so it has to work for a domain
+// that has never been opened — which is the case a live-DOM implementation
+// would silently fail on.
+await page.goto(PAGE, { waitUntil: "load" });
+const md = await page.evaluate(() => {
+  // A topic with a table and one with a code block, from a domain nobody opened.
+  // A real table, not a `<table` inside a code sample — which is what the
+  // first match on the bare string turned out to be.
+  const withTable = stIndex().find(t => topicHtml(t.id).includes('class="ref-table"'));
+  const withCode = stIndex().find(t => /<pre[^>]*>/.test(topicHtml(t.id)));
+  const one = mdForTopicHtml(topicHtml(withTable.id));
+  const code = withCode ? mdForTopicHtml(topicHtml(withCode.id)) : "";
+  return {
+    domainsInDom: document.querySelectorAll(".domain-body .topic").length,
+    name: withTable.name,
+    heading: one.split("\n").find(l => l.startsWith("## ")) || "",
+    hasCardHeading: /^### /m.test(one),
+    hasTable: /^\| .* \|$/m.test(one) && /^\| ---/m.test(one),
+    // Per contiguous run: a topic legitimately holds several tables of
+    // different widths, and lumping their rows together only proves that.
+    // Per contiguous run: a topic legitimately holds several tables of
+    // different widths, and lumping their rows together only proves that.
+    tableRowsSquare: (() => {
+      const runs = [];
+      let run = null;
+      one.split("\n").forEach(l => {
+        if (l.startsWith("|")) { if (!run) { run = []; runs.push(run); } run.push(l); }
+        else run = null;
+      });
+      const real = runs.filter(r => r.length > 2);
+      return real.length > 0 && real.every(r => new Set(r.map(x => x.split("|").length)).size === 1);
+    })(),
+    tableHeaderFilled: (() => {
+      const lines = one.split("\n");
+      const sep = lines.findIndex(l => /^\| ---/.test(l));
+      return sep > 0 && /[A-Za-z0-9]/.test(lines[sep - 1]);
+    })(),
+    hasFence: /```/.test(code),
+    noTags: !/<[a-z][^>]*>/i.test(one),
+    noChevron: !one.includes("▶"),
+  };
+});
+check("markdown export works on domains that are not in the DOM",
+  md.domainsInDom === 0 && md.heading.length > 3, `${md.domainsInDom} topics rendered`);
+// The heading keeps its inline acronym expansions on purpose: an exported file
+// has no hover, so the expansion has to be in the text or it is lost.
+check("a topic exports as a heading with its concept cards",
+  md.heading.startsWith("## ") && md.heading.includes(md.name.split(" ")[0])
+  && md.hasCardHeading, md.heading);
+check("reference tables become markdown tables with square rows",
+  md.hasTable && md.tableRowsSquare);
+// Most tables here have no <thead>; the header is a bare <tr> of <th>. Keying
+// off <thead> silently emitted an empty header row on every table on the site.
+check("a table's header row carries its headings",
+  md.tableHeaderFilled);
+check("code blocks become fenced blocks", md.hasFence);
+check("no markup or chrome survives the conversion",
+  md.noTags && md.noChevron, `tags=${!md.noTags} chevron=${!md.noChevron}`);
+
+const mdScope = await page.evaluate(async () => {
+  stOpenExport();
+  await new Promise(r => setTimeout(r, 200));
+  const sel = document.getElementById("st-md-scope");
+  const domain = [...sel.options].map(o => o.value).find(v => !v.startsWith("__"));
+  sel.value = domain;
+  document.getElementById("st-md-go").click();
+  await new Promise(r => setTimeout(r, 400));
+  const text = document.getElementById("st-md-out").value;
+  const expected = stTopicsForScope(domain).length;
+  return {
+    domain, expected,
+    headings: (text.match(/^## /gm) || []).length,
+    size: text.length,
+    sizeLine: document.getElementById("st-md-size").textContent,
+    copyEnabled: !document.getElementById("st-md-copy").disabled,
+  };
+});
+check("exporting a domain emits one heading per topic",
+  mdScope.headings === mdScope.expected,
+  `${mdScope.headings}/${mdScope.expected} in ${mdScope.domain}`);
+check("the export reports its size and enables the buttons",
+  /\d+ topics · \d+ KB/.test(mdScope.sizeLine) && mdScope.copyEnabled, mdScope.sizeLine);
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));
