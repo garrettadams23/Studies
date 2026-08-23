@@ -2123,8 +2123,12 @@ headlessly and given the checks they never had (14 of them) rather than rewritte
   it. `tools/check_paths.py` gates the ids in CI. Routes: Network Foundations (22), SOC Analyst
   Starter (15), Breaking Into IT (11), Comfortable in the Terminal (11), First 90 Days on an
   Endpoint Team (8), Cloud From Zero (8).
-- [ ] **Progress dashboard** — reviewed / bookmarked / known per domain over
-  time, plus a streak. All from `localStorage`, no backend.
+- [x] **Progress dashboard** — 📊 Progress in the study menu: reviewed of total for the whole site
+  and per domain with a bar, plus starred, known, noted and due counts, and a day streak with its
+  best run. Every number comes from `localStorage` and the inlined topic index, never from the
+  document — the dashboard has to report on all thirty domains while at most one is in the DOM.
+  Domains with nothing read are listed last and muted rather than hidden. The streak is one record
+  (`{last, n, best}`), fed by every action that means work happened, and it travels in the export.
 - [x] **Export & import progress** — **already built** (session 10): `bkExport()`, `bkValidate()`,
   `bkSanitise()` and `bkApply()` with merge / replace / preview. Verified end to end: the export
   carries reviewed, bookmark, known and srs keys and refuses to carry an unrelated one; a round trip
@@ -8288,3 +8292,31 @@ removes the block and the flag.
 Two items open: **exam mode** and the **progress dashboard**. Exam mode would reuse the quiz
 generators as they stand; the dashboard is the more useful of the two, since every number it needs
 is already in `localStorage` and nothing currently shows a reader what they have covered.
+
+
+## Session record — Track AG: the progress dashboard, and a streak that cannot lie
+
+📊 Progress in the study menu. Reviewed of total for the site and per domain, plus starred, known,
+noted, due today, and a day streak with its best run.
+
+**Nothing is computed from the document.** This is the constraint the whole page is built around and
+the one a dashboard is most likely to break: counting `.topic` elements would report on the single
+domain that happens to be open and look entirely healthy doing it. Every count reads the inlined
+topic index and `localStorage`, so all thirty domains are reported whether or not any of them has
+ever been opened. The smoke check asserts exactly that — six reviewed topics across three domains,
+counted correctly while **zero** topics are rendered.
+
+**The streak is one record, not a list of days.** `{last, n, best}`. A streak that needs a growing
+array of dates to answer "how many days in a row" is storing the wrong thing. Three behaviours
+follow and each is checked: a busy day counts once, yesterday continues the run, and a lapsed run
+reads as zero *without* being destroyed — `streakCurrent()` returns 0 while `best` survives, so a
+missed day costs the run rather than the record.
+
+**Untouched domains are muted, not hidden.** A report that shows only what has been read cannot show
+what has not, and "what have I not touched" is the more useful question after the first week.
+
+### Verification
+
+Nine new checks, 91 → **100**: the dashboard's coverage and its independence from the DOM, the
+streak's three transitions and its best-run memory, and both directions of its export — restored
+intact, and a malformed record refused.

@@ -1018,6 +1018,86 @@ check("deleting a note removes the block and the flag",
   JSON.stringify(noteGone));
 await page.evaluate(() => localStorage.clear());
 
+// ── progress dashboard and streak ───────────────────────────────────────────
+// The dashboard has to report on all thirty domains while at most one is in
+// the DOM — a version that counted rendered .topic elements would report on a
+// thirtieth of the site and look perfectly healthy.
+await page.goto(PAGE, { waitUntil: "load" });
+const dash = await page.evaluate(async () => {
+  localStorage.clear();
+  const idx = topicIndex();
+  const domains = Object.keys(idx);
+  // Plant state in three domains, none of which is open.
+  const planted = domains.slice(0, 3);
+  planted.forEach((d, i) => {
+    idx[d].slice(0, i + 1).forEach(id => localStorage.setItem("reviewed:" + id, "1"));
+  });
+  localStorage.setItem("bookmark:" + idx[planted[0]][0], "1");
+  localStorage.setItem("note:" + idx[planted[1]][0], "a note");
+  const stats = progressStats();
+  const byId = Object.fromEntries(stats.rows.map(r => [r.id, r]));
+  return {
+    domains: stats.rows.length,
+    siteTotal: stats.all.total,
+    indexedTotal: Object.values(idx).reduce((n, a) => n + a.length, 0),
+    reviewed: stats.all.reviewed,
+    perDomain: planted.map(d => byId[d].reviewed),
+    starred: stats.all.bookmarked,
+    noted: stats.all.noted,
+    inDom: document.querySelectorAll(".domain-body .topic").length,
+  };
+});
+check("the dashboard covers every domain and every topic",
+  dash.domains > 25 && dash.siteTotal === dash.indexedTotal,
+  `${dash.domains} domains, ${dash.siteTotal} topics`);
+check("it reports state from domains that are not in the DOM",
+  dash.reviewed === 6 && dash.perDomain.join(",") === "1,2,3" && dash.inDom === 0,
+  `${dash.reviewed} reviewed with ${dash.inDom} topics rendered`);
+check("stars and notes are counted too",
+  dash.starred === 1 && dash.noted === 1, `${dash.starred} starred, ${dash.noted} noted`);
+
+const streak = await page.evaluate(async () => {
+  localStorage.clear();
+  const out = {};
+  // A fresh day: any action starts a run of one, and repeating it does not
+  // inflate the count.
+  streakTouch(); streakTouch();
+  out.today = streakCurrent();
+  // Yesterday's run continues; a gap starts over; an old run is not "current".
+  localStorage.setItem("study-streak", JSON.stringify({ last: srsToday(-1), n: 4, best: 9 }));
+  streakTouch();
+  out.continued = streakGet().n;
+  localStorage.setItem("study-streak", JSON.stringify({ last: srsToday(-5), n: 4, best: 9 }));
+  out.staleReads = streakCurrent();
+  streakTouch();
+  out.afterGap = streakGet().n;
+  out.best = streakGet().best;
+  return out;
+});
+check("a day of activity counts once", streak.today === 1, `${streak.today}`);
+check("yesterday's streak continues", streak.continued === 5, `${streak.continued}`);
+check("a lapsed streak reads as zero and starts over",
+  streak.staleReads === 0 && streak.afterGap === 1,
+  `current ${streak.staleReads}, restarted at ${streak.afterGap}`);
+check("the best run is remembered", streak.best === 9, `${streak.best}`);
+
+const streakTravel = await page.evaluate(() => {
+  localStorage.clear();
+  localStorage.setItem("study-streak", JSON.stringify({ last: srsToday(), n: 3, best: 11 }));
+  const payload = bkExport();
+  localStorage.clear();
+  const { kept } = bkSanitise(bkValidate(JSON.stringify(payload)).data);
+  bkApply(kept, "replace");
+  const bad = bkSanitise({ "study-streak": { last: "yesterday", n: 3 } });
+  return { restored: streakGet(), refused: bad.skipped };
+});
+check("the streak survives an export and import",
+  streakTravel.restored.n === 3 && streakTravel.restored.best === 11,
+  JSON.stringify(streakTravel.restored));
+check("a malformed streak record is refused on import",
+  streakTravel.refused === 1, `${streakTravel.refused} refused`);
+await page.evaluate(() => localStorage.clear());
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));

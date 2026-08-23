@@ -218,7 +218,7 @@ function topicNote(id) {
 function saveTopicNote(id, text) {
   const value = (text || "").slice(0, NOTE_MAX).trim();
   try {
-    if (value) localStorage.setItem(NOTE_PREFIX + id, value);
+    if (value) { localStorage.setItem(NOTE_PREFIX + id, value); streakTouch(); }
     else localStorage.removeItem(NOTE_PREFIX + id);
   } catch { /* quota — the note stays on screen, just unsaved */ }
   document.getElementById(id)?.classList.toggle("noted", !!value);
@@ -938,6 +938,7 @@ function initTouchFeedback() {
 // ── ACCESSIBILITY, PERMALINKS & PROGRESS ───────────────────────────────────
 const REVIEWED_PREFIX = "reviewed:";
 const NOTE_PREFIX = "note:";
+const STREAK_KEY = "study-streak";
 const NOTE_MAX = 1000;
 
 /**
@@ -1001,11 +1002,13 @@ function handleTopicTool(btn) {
     const on = topic.classList.toggle("bookmarked");
     const key = BOOKMARK_PREFIX + topic.id;
     on ? localStorage.setItem(key, "1") : localStorage.removeItem(key);
+    if (on) streakTouch();
     if (typeof stRefreshStudyList === "function") stRefreshStudyList();
   } else if (btn.classList.contains("topic-review")) {
     const on = topic.classList.toggle("reviewed");
     const key = REVIEWED_PREFIX + topic.id;
     on ? localStorage.setItem(key, "1") : localStorage.removeItem(key);
+    if (on) streakTouch();
     updateDomainProgress(topic.closest(".domain-section"));
   } else if (btn.classList.contains("topic-note-btn")) {
     toggleTopicNote(topic);
@@ -1887,6 +1890,7 @@ function srsGrade(id, grade) {
   const rec = { e: Math.round(e * 100) / 100, i, d: srsToday(i), n };
   try { localStorage.setItem(SRS_PREFIX + id, JSON.stringify(rec)); } catch { /* quota */ }
   if (grade !== "again") localStorage.setItem(KNOWN_PREFIX + id, "1");
+  streakTouch();
   srsUpdateBadge();
   return rec;
 }
@@ -2400,6 +2404,120 @@ function stRenderAcroQuestion(stage) {
 }
 
 // ── STUDY LIST (bookmarks) ──────────────────────────────────────────────────
+// ── STREAK ──────────────────────────────────────────────────────────────────
+// One record: the last day anything was studied, the run length, and the best
+// run. Days rather than sessions, and no list of dates — a streak that needs a
+// growing array to answer "how many days in a row" is storing the wrong thing.
+
+function streakGet() {
+  try {
+    const r = JSON.parse(localStorage.getItem(STREAK_KEY) || "null");
+    if (r && typeof r === "object" && typeof r.last === "string") return r;
+  } catch { /* corrupt — start again */ }
+  return { last: "", n: 0, best: 0 };
+}
+
+/**
+ * Mark today as studied. Called from every action that means work happened:
+ * marking a topic reviewed, starring one, writing a note, grading a card.
+ *
+ * Yesterday continues the run; anything older starts a new one; today is a
+ * no-op, so a busy day counts once.
+ */
+function streakTouch() {
+  const r = streakGet();
+  const today = srsToday();
+  if (r.last === today) return r;
+  r.n = r.last === srsToday(-1) ? r.n + 1 : 1;
+  r.last = today;
+  r.best = Math.max(r.best || 0, r.n);
+  try { localStorage.setItem(STREAK_KEY, JSON.stringify(r)); } catch { /* quota */ }
+  return r;
+}
+
+/** A run only counts while it is current: yesterday's streak, unfed, is over. */
+function streakCurrent() {
+  const r = streakGet();
+  if (r.last === srsToday() || r.last === srsToday(-1)) return r.n;
+  return 0;
+}
+
+// ── PROGRESS DASHBOARD ──────────────────────────────────────────────────────
+// Every number here already exists in localStorage and in the inlined topic
+// index. Nothing is computed from the document, which is the only way this can
+// report on all thirty domains when at most one of them is in the DOM.
+
+function progressStats() {
+  const idx = topicIndex();
+  const rows = [];
+  let all = { total: 0, reviewed: 0, bookmarked: 0, known: 0, noted: 0, due: 0 };
+  domainSections().forEach(section => {
+    const id = section.dataset.domain;
+    const ids = idx[id] || [];
+    const row = {
+      id,
+      title: (section.querySelector(".domain-title")?.textContent || id).trim(),
+      icon: (section.querySelector(".domain-icon")?.textContent || "").trim(),
+      total: ids.length, reviewed: 0, bookmarked: 0, known: 0, noted: 0, due: 0,
+    };
+    ids.forEach(t => {
+      if (localStorage.getItem(REVIEWED_PREFIX + t) === "1") row.reviewed++;
+      if (localStorage.getItem(BOOKMARK_PREFIX + t) === "1") row.bookmarked++;
+      if (localStorage.getItem(KNOWN_PREFIX + t) === "1") row.known++;
+      if (localStorage.getItem(NOTE_PREFIX + t)) row.noted++;
+      if (srsGet(t) && srsIsDue(t)) row.due++;
+    });
+    rows.push(row);
+    Object.keys(all).forEach(k => { all[k] += row[k]; });
+  });
+  return { rows, all };
+}
+
+function stOpenProgress() {
+  stOpen(body => {
+    const { rows, all } = progressStats();
+    const streak = streakCurrent();
+    const best = streakGet().best || 0;
+    const pct = all.total ? Math.round((all.reviewed / all.total) * 100) : 0;
+    // Domains nobody has touched go last: the list is a record of what has been
+    // read, and burying that under twenty untouched rows is not a report.
+    const sorted = rows.slice().sort((a, b) =>
+      (b.reviewed - a.reviewed) || (b.known - a.known) || a.title.localeCompare(b.title));
+    body.innerHTML =
+      '<h2 class="st-h">📊 Progress</h2>' +
+      '<div class="st-pg-top">' +
+        `<div class="st-pg-stat"><span class="st-pg-n">${all.reviewed}</span>` +
+          `<span class="st-pg-l">of ${all.total} reviewed</span></div>` +
+        `<div class="st-pg-stat"><span class="st-pg-n">${pct}%</span>` +
+          '<span class="st-pg-l">of the site</span></div>' +
+        `<div class="st-pg-stat"><span class="st-pg-n">${streak}</span>` +
+          `<span class="st-pg-l">day streak${best > streak ? ` · best ${best}` : ""}</span></div>` +
+        `<div class="st-pg-stat"><span class="st-pg-n">${all.due}</span>` +
+          '<span class="st-pg-l">due today</span></div>' +
+      '</div>' +
+      `<p class="st-hint">${all.bookmarked} starred · ${all.known} known · ${all.noted} with a note. ` +
+      'Everything here lives in this browser — back it up from the study menu.</p>' +
+      '<table class="st-pg-table"><thead><tr><th>Domain</th><th>Reviewed</th><th></th>' +
+      '<th>★</th><th>✓</th><th>📝</th></tr></thead><tbody>' +
+      sorted.map(r => {
+        const p = r.total ? Math.round((r.reviewed / r.total) * 100) : 0;
+        return `<tr${r.reviewed ? "" : ' class="untouched"'}>` +
+          `<td><button class="st-pg-dom" data-id="${esc(r.id)}">${esc(r.icon)} ${esc(r.title)}</button></td>` +
+          `<td class="st-pg-num">${r.reviewed}/${r.total}</td>` +
+          `<td class="st-pg-barcell"><div class="st-pg-bar"><div class="st-pg-fill" style="width:${p}%"></div></div></td>` +
+          `<td class="st-pg-num">${r.bookmarked || ""}</td>` +
+          `<td class="st-pg-num">${r.known || ""}</td>` +
+          `<td class="st-pg-num">${r.noted || ""}</td></tr>`;
+      }).join("") + '</tbody></table>';
+    body.querySelectorAll(".st-pg-dom").forEach(b => b.addEventListener("click", () => {
+      stClose();
+      const section = domainSection(b.dataset.id);
+      section?.scrollIntoView({ behavior: "smooth", block: "start" });
+      openDomain(section);
+    }));
+  });
+}
+
 // ── LEARNING PATHS ──────────────────────────────────────────────────────────
 // An ordered route through topics that already exist, rendered as a checklist
 // against the progress in localStorage. No content of its own — the value is
@@ -2551,12 +2669,15 @@ function bkCategory(key) {
   if (key.startsWith(KNOWN_PREFIX)) return "known";
   if (key.startsWith(SRS_PREFIX)) return "srs";
   if (key.startsWith(NOTE_PREFIX)) return "topicNote";
+  if (key === STREAK_KEY) return "streak";
   if (key === NP_STORE_KEY || key === NP_AUTHOR_KEY) return "notes";
   return null;
 }
 
 /** Keys whose stored value is itself JSON — exported parsed, so the file reads. */
-function bkIsJson(key) { return key.startsWith(SRS_PREFIX) || key === NP_STORE_KEY; }
+function bkIsJson(key) {
+  return key.startsWith(SRS_PREFIX) || key === NP_STORE_KEY || key === STREAK_KEY;
+}
 
 function bkParse(raw) { try { return JSON.parse(raw); } catch { return null; } }
 
@@ -2575,7 +2696,7 @@ function bkCollect() {
 }
 
 function bkCounts(data) {
-  const c = { reviewed: 0, bookmark: 0, known: 0, srs: 0, topicNote: 0, notes: 0 };
+  const c = { reviewed: 0, bookmark: 0, known: 0, srs: 0, topicNote: 0, notes: 0, streak: 0 };
   Object.keys(data).forEach(k => {
     const cat = bkCategory(k);
     if (!cat) return;
@@ -2649,6 +2770,17 @@ function bkSerialise(key, v) {
     return Array.isArray(a) ? JSON.stringify(a) : null;
   }
   if (key === NP_AUTHOR_KEY) return typeof v === "string" ? v.slice(0, 80) : null;
+  if (key === STREAK_KEY) {
+    const r = typeof v === "string" ? bkParse(v) : v;
+    if (!r || typeof r !== "object" || Array.isArray(r)) return null;
+    if (typeof r.last !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(r.last)) return null;
+    const n = Number(r.n), best = Number(r.best);
+    return JSON.stringify({
+      last: r.last,
+      n: Number.isFinite(n) && n >= 0 ? Math.round(n) : 0,
+      best: Number.isFinite(best) && best >= 0 ? Math.round(best) : 0,
+    });
+  }
   // A per-topic note is free text, so it is the one key here with no shape to
   // check beyond "a non-empty string, truncated to what the editor allows".
   if (key.startsWith(NOTE_PREFIX)) {
@@ -2850,6 +2982,7 @@ function initStudyTools() {
       '<button class="study-mi" data-act="acro"><span>🔤</span> Acronym quiz</button>' +
       '<button class="study-mi" data-act="list"><span>★</span> Study list</button>' +
       '<button class="study-mi" data-act="paths"><span>🧭</span> Learning paths</button>' +
+      '<button class="study-mi" data-act="progress"><span>📊</span> Progress</button>' +
       '<button class="study-mi" data-act="backup"><span>💾</span> Back up &amp; restore</button>' +
     '</div>' +
     '<button id="study-fab" title="Study tools" aria-label="Study tools" aria-haspopup="true" aria-expanded="false">' +
@@ -2875,6 +3008,7 @@ function initStudyTools() {
     closeMenu();
     ({ jump: stOpenJump, cards: stOpenFlashcards, due: stOpenDue, quiz: stOpenQuiz,
        acro: stOpenAcroQuiz, list: stOpenStudyList, paths: stOpenPaths,
+       progress: stOpenProgress,
        backup: stOpenBackup }[mi.dataset.act])();
   });
   document.addEventListener("click", e => { if (!fab.contains(e.target) && !menu.hidden) closeMenu(); });
