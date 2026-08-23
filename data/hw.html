@@ -2250,3 +2250,105 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: SIGNALS ────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">〰️</span>
+    <span class="topic-name">Signals — Analogue, Digital, Noise &amp; the Grounding Problem</span>
+    <span class="topic-badge">Embedded</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Digital Signals Are Analogue Signals We Agree to Round</div>
+      <div class="concept-desc">
+        There is no such thing as a digital wire. There is a voltage that rises and falls, and a
+        receiver that calls anything above one threshold a 1 and anything below another a 0. The
+        digital abstraction holds while the edges are clean and the levels are clear, and it stops
+        holding the moment noise, cable length or a bad ground pushes the voltage into the gap
+        between the thresholds. Almost every mysterious intermittent fault in wired equipment lives
+        in that gap.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Property</th><th>Analogue</th><th>Digital</th></tr></thead>
+          <tbody>
+            <tr><td>Value</td><td>Continuous — a temperature, a voltage, a sound</td><td>Two states, by agreement</td></tr>
+            <tr><td>Noise</td><td>Adds directly to the signal, permanently</td><td>Ignored entirely — until it crosses the threshold</td></tr>
+            <tr><td>Degradation over distance</td><td>Gradual and cumulative</td><td>Perfect, then suddenly not</td></tr>
+            <tr><td>Repeating it</td><td>Amplifies the noise too</td><td>Regenerates cleanly</td></tr>
+            <tr><td>Failure style</td><td>Quality drops</td><td>Works, works, works, garbage</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is why digital faults are harder to diagnose than analogue ones. An analogue
+          signal degrading tells you it is degrading; a digital link at the edge of its margin looks
+          perfect right up until it does not, and then usually only under load, or when the air
+          conditioning starts, or when someone runs the lift.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Sampling — the Rules That Decide What You Can Measure</div>
+      <div class="concept-desc">
+        Converting an analogue signal to numbers has two knobs and one famous trap, and they explain
+        a surprising amount of everyday IT behaviour.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Idea</th><th>Means</th><th>Shows up as</th></tr></thead>
+          <tbody>
+            <tr><td>Sample rate</td><td>How often you look</td><td>Audio at 44.1 kHz; a scope's timebase; a monitoring interval</td></tr>
+            <tr><td>Nyquist limit</td><td>You must sample at more than twice the highest frequency present</td><td>Sample too slowly and a fast signal reappears as a slow one that was never there</td></tr>
+            <tr><td>Aliasing</td><td>The false slow signal that results</td><td>Wagon wheels spinning backwards; a CPU <span class="acro-exp">(Central Processing Unit)</span> graph showing a trend that is an artefact of the polling interval</td></tr>
+            <tr><td>Bit depth / resolution</td><td>How finely each sample is graded</td><td>8-bit versus 24-bit audio; a sensor reporting whole degrees</td></tr>
+            <tr><td>Quantisation error</td><td>The rounding, at every sample</td><td>The noise floor you cannot get below</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Aliasing is the one worth carrying into ordinary IT work, because it is not a hardware
+          curiosity — a metric sampled every five minutes cannot represent anything that happens in
+          thirty seconds, and it will happily draw you a smooth line through a series of spikes it
+          never saw. The monitoring version of the same trap is in
+          <span class="xref">Cardinality — The Number That Decides Your Observability Bill</span>'s
+          neighbourhood: resolution costs money, and the cheap setting quietly changes what is
+          knowable.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Noise and Grounding — the Part With Real IT Application</div>
+      <div class="concept-desc">
+        This is where signal theory stops being abstract and starts explaining the buzzing
+        projector, the flaky serial console and the switch that drops a link when the lift runs.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Hum or buzz in audio and video</td><td>Ground loop — two ends at different ground potentials</td><td>An isolator, or feed both ends from one power source</td></tr>
+            <tr><td>Serial link works on the bench, fails on site</td><td>No common ground between separately-powered devices</td><td>One wire, and the single most common embedded fault</td></tr>
+            <tr><td>Errors on a copper run near machinery</td><td>Induced interference on an unbalanced or unshielded cable</td><td>Shielded cable grounded at one end, or fibre, which does not care</td></tr>
+            <tr><td>A link that fails only under load</td><td>Marginal signal integrity; more traffic means more chances to be wrong</td><td>Shorter run, better cable, check terminations</td></tr>
+            <tr><td>Random resets when a motor starts</td><td>Voltage sag or a spike on the supply</td><td>Separate supplies, decoupling, and do not power motors from the logic rail</td></tr>
+            <tr><td>Intermittent faults that follow the weather</td><td>Moisture and connector oxidation changing resistance</td><td>Reseat and clean; outdoor runs need outdoor-rated hardware</td></tr>
+            <tr><td>A device that only works when you touch it</td><td>You are the ground path. It was never grounded properly</td><td>Fix the ground, not the symptom</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two rules carry most of this. <strong>Ground shields at one end only</strong> — grounding
+          both creates the loop you were trying to avoid — and <strong>separately powered devices
+          exchanging data need a shared ground reference</strong>, because a signal voltage is
+          meaningless without one. Fibre sidesteps the entire category by carrying light instead of
+          voltage, which is why it is the right answer for a run between buildings regardless of the
+          distance involved. The instrument for seeing any of this is in
+          <span class="xref">Test Gear — Multimeter, Oscilloscope, Logic Analyser: What Each One Answers</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

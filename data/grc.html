@@ -3722,3 +3722,102 @@ THIRD LINE  - Internal audit, reporting directly to the board,
           </div>
 
 <!-- /domain-body grc -->
+<!-- ── TOPIC: THIRD-PARTY DATA SHARING ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🤝</span>
+    <span class="topic-name">Third-Party Data Sharing — Contracts, Technical Limits &amp; Verification</span>
+    <span class="topic-badge">GRC • Privacy</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Contract Is a Promise; a Technical Limit Is a Fact</div>
+      <div class="concept-desc">
+        Sharing personal data with a supplier produces two artefacts that are easy to confuse. The
+        contract says what they are permitted to do, who is responsible, and what happens when it
+        goes wrong — and it is enforceable only afterwards, in the worst circumstances, at cost. The
+        technical limits decide what they are <em>able</em> to do, and they apply on the day. Mature
+        programmes write both and treat the second as the control; immature ones sign a data
+        processing agreement, file it, and never look at what is actually flowing.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question</th><th>Answered by the contract</th><th>Answered by the technical limit</th></tr></thead>
+          <tbody>
+            <tr><td>What may they use it for?</td><td>Purpose limitation clause</td><td>Which fields you actually send</td></tr>
+            <tr><td>How long may they keep it?</td><td>Retention clause</td><td>Whether you can prove deletion happened</td></tr>
+            <tr><td>Who else sees it?</td><td>Sub-processor list and approval rights</td><td>Where the data physically lands</td></tr>
+            <tr><td>What if they are breached?</td><td>Notification window and liability</td><td>How much they held when it happened</td></tr>
+            <tr><td>Can we get it back or move it?</td><td>Exit clause</td><td>Whether an export actually exists and has been tested</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The right-hand column is the one you control unilaterally, and it is nearly always
+          cheaper. Sending a supplier a hashed identifier instead of an email address does more for
+          the fourth row than any liability cap negotiated over three weeks.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Reducing What You Send Before You Argue About Terms</div>
+      <div class="concept-desc">
+        In rough order of how much risk each removes per hour of effort. Most of it is engineering,
+        not legal work.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Technique</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Send fewer fields</td><td>The cheapest and most effective control there is, and the one most often skipped because the API <span class="acro-exp">(Application Programming Interface)</span> offers everything</td></tr>
+            <tr><td>Pseudonymise identifiers</td><td>They can still join their own records; a breach of theirs is not a breach of your customer list</td></tr>
+            <tr><td>Aggregate before sending</td><td>Counts and cohorts instead of rows, where the supplier's job allows it</td></tr>
+            <tr><td>Truncate or bucket</td><td>Year of birth, not date; region, not postcode; hour, not timestamp</td></tr>
+            <tr><td>Scope the credential</td><td>A key that can read one dataset, not the tenant</td></tr>
+            <tr><td>Push, do not grant</td><td>Sending them what they need beats giving them access to fetch what they like</td></tr>
+            <tr><td>Set a retention period on your side</td><td>You cannot leak what you no longer send, and old feeds outlive their reason</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The sixth row is the structural one. An integration that grants a supplier read access to a
+          system is unbounded — it will be used for whatever is useful later, by whoever holds the
+          credential. A feed that pushes a defined set of fields is a contract expressed in code, and
+          changing it requires a change nobody can make quietly.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Verification — Proving It Rather Than Assuming It</div>
+      <div class="concept-desc">
+        The half that is usually missing. A signed agreement and an annual questionnaire tell you
+        what a supplier says; these tell you what is true.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Check</th><th>What it catches</th></tr></thead>
+          <tbody>
+            <tr><td>Capture what the integration actually sends, once a year</td><td>Field creep — an API version added twelve fields and nobody re-reviewed</td></tr>
+            <tr><td>Compare the sub-processor list to last year's</td><td>New parties you never approved, added by notice you did not read</td></tr>
+            <tr><td>Ask for evidence of deletion, not confirmation</td><td>"Confirmed deleted" is a sentence; a job log with a date is evidence</td></tr>
+            <tr><td>Test the export before you need it</td><td>An exit clause with no working export is a clause, not an exit</td></tr>
+            <tr><td>Re-read the assurance report's scope</td><td>Certification covers named systems; yours may not be one of them</td></tr>
+            <tr><td>Check whether the feed is still used</td><td>A surprising share of live integrations feed a dashboard nobody opens</td></tr>
+            <tr><td>Confirm where data lands, not where the company is</td><td>The two are frequently different and only one is in the contract</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The first and last rows find the most. <strong>Field creep</strong> is the normal state of
+          a long-lived integration — nobody re-reviews a feed after it works — and capturing a real
+          payload takes an hour and reliably surprises someone. The contractual half of the
+          relationship is in
+          <span class="xref">Third-Party Risk — Your Security Is Only as Strong as Your Vendors</span>,
+          and the design-side principle is
+          <span class="xref">Telemetry Design &amp; Privacy Incident Response — Collecting Less, and the Clock That Starts</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

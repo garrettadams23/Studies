@@ -2561,8 +2561,10 @@ a place it already shows up on the site.
 - [x] Voltage, Current & Resistance — Ohm's law with worked IT examples
 - [x] Power & Thermals — watts, heat, and why the PSU calculation matters
 - [x] Components — resistors, capacitors, diodes, transistors, and reading a schematic
-- [ ] Signals — analogue vs digital, sampling, noise, grounding — still open; the noise and
-  grounding half is the part with real IT application
+- [x] Signals → *Signals — Analogue, Digital, Noise & the Grounding Problem*. The noise and
+  grounding half is the bulk of it, as the note asked, and aliasing is carried across into
+  monitoring — a metric sampled every five minutes cannot represent a thirty-second event, and will
+  draw a smooth line through spikes it never saw.
 - [x] Test Gear — multimeter, oscilloscope, logic analyser: what each answers
 
 **Wave AN2 — PC Hardware Deep** — shipped into `hw`.
@@ -2840,8 +2842,9 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 - [x] Screencasts & Async Video — scripting, recording, editing, and length discipline — same card
   as demos; both are "showing rather than telling", and the fallback recording links them
 - [x] Facilitating a Retrospective or Tabletop — neutrality and the hard question
-- [ ] Teaching a Tool You Just Learned — the honest way to do it — still open; a small, genuine
-  card about the credibility of teaching from one step ahead
+- [x] Teaching a Tool You Just Learned → shipped into `career`. One step ahead is the *best*
+  distance to teach from, because the expert has forgotten what was confusing; the credibility
+  problem is solved by saying where you are rather than by waiting for mastery.
 
 **Wave AU3 — Documentation as Infrastructure** — shipped into `career`, except where noted.
 - [x] Documentation Types — tutorial, how-to, reference, explanation (and mixing them up)
@@ -3240,8 +3243,9 @@ engineering builds systems that do not need much proving.
 - [~] Privacy in Machine Learning — training data, memorisation, model inversion — carded in `ai`
   (*Adversarial AI &amp; AI Threats*) and named in *Data Privacy Techniques*
 - [x] Telemetry Design — useful product analytics that collect less
-- [ ] Third-Party Data Sharing — contracts, technical limits, and verification — still open; the
-  vendor-contract half is in `grc`'s third-party cards, the technical-verification half is not
+- [x] Third-Party Data Sharing → *Third-Party Data Sharing — Contracts, Technical Limits &
+  Verification*, written to supply exactly the missing half: what you send, how to reduce it, and
+  how to verify rather than assume.
   written
 - [x] Privacy Incident Response — when it is a breach, and the clock that starts
 - [x] Privacy Review as a Process — lightweight enough that teams use it — the trigger table in the
@@ -9282,3 +9286,33 @@ Its debugging list ends where it should: **"Service has no endpoints" is the mos
 perfectly healthy throughout.
 
 Site total 1,390 → **1,392**. Track BC is closed.
+
+
+## Session record — four single-item closures: AN, AU, BF, and BC before them
+
+The live content backlog was eleven items across five tracks. Four are now closed; the six remaining
+are Track AV's specialist-practice set.
+
+**Signals** (`hw`) — the note said "the noise and grounding half is the part with real IT
+application", and that is where the weight went: ground loops in audio and video, the missing common
+ground that makes a serial link work on the bench and fail on site, induced interference near
+machinery, and the device that only works when you touch it because *you* are the ground path. Two
+rules carry most of it — ground shields at one end only, and separately powered devices exchanging
+data need a shared reference. It also carries aliasing across into ordinary monitoring: a metric
+sampled every five minutes cannot represent a thirty-second event and will draw a confident smooth
+line through spikes it never saw.
+
+**Teaching a Tool You Just Learned** (`career`) — the argument is that one step ahead is the *best*
+distance to teach from, not a compromise: the expert has forgotten what was confusing and you have
+not, and that advantage expires within months. The highest-value artefact a recent learner can
+produce is the one experts never write — a table of exact error text and what it actually meant.
+The credibility problem is solved by stating the distance, not by waiting for mastery.
+
+**Third-Party Data Sharing** (`grc`) — written to supply precisely the half the note said was
+missing. A contract is a promise, enforceable afterwards at cost; a technical limit is a fact that
+applies on the day. The verification section is the part that rarely exists: capture what the
+integration actually sends once a year (**field creep** is the normal state of a long-lived feed),
+ask for evidence of deletion rather than confirmation, and test the export before you need it,
+because an exit clause with no working export is a clause and not an exit.
+
+Site total 1,392 → **1,395**.
