@@ -2889,16 +2889,16 @@ of running the work.
 - [x] Insurance, Liability & Entity Choice — the boring protections that matter — same card, framed
   as orientation with an explicit note that jurisdictions differ and this is not legal advice
 - [x] Contracts for Independents — IP, indemnity, non-solicit, limitation of liability — same card
-- [ ] Subcontracting & Partnering — growing past your own hours — still open
+- [x] Subcontracting & Partnering → *Subcontracting & Partnering — Growing Past Your Own Hours*
 - [x] Knowing When to Stop — bad clients, bad engagements, exiting cleanly — the closing section of
   the business-side card
 
 **Wave AV4 — Specialist Practices**
-- [ ] Running a Security Assessment Engagement — rules of engagement to final debrief
-- [ ] Fractional & Advisory Roles — vCISO, fractional IT director; scope and boundaries
-- [ ] Expert Witness & Forensic Work — standards, impartiality, and report discipline
-- [ ] Training & Workshop Delivery as a Product — packaging what you know
-- [ ] Productising a Service — from bespoke hours to a repeatable offer
+- [x] Running a Security Assessment Engagement → *Running a Security Assessment — Rules of Engagement to Final Debrief*
+- [x] Fractional & Advisory Roles → *Fractional & Advisory Roles — vCISO, Fractional IT Director & the Boundary Problem*
+- [x] Expert Witness & Forensic Work → *Expert Witness & Forensic Work — Impartiality, Standards & Report Discipline*
+- [x] Training & Workshop Delivery as a Product → *Training & Workshop Delivery as a Product — Packaging What You Know*
+- [x] Productising a Service → *Productising a Service — From Bespoke Hours to a Repeatable Offer*
 
 ---
 
@@ -9316,3 +9316,48 @@ ask for evidence of deletion rather than confirmation, and test the export befor
 because an exit clause with no working export is a clause and not an exit.
 
 Site total 1,392 → **1,395**.
+
+
+## Session record — Track AV closed: the specialist-practice set
+
+Six cards into `career`, closing the last of the live content backlog. `career` 38 → **44**.
+
+Each is built on the one thing that distinguishes it from ordinary consultancy advice:
+
+- **Subcontracting & Partnering** — when you are prime, *the client's opinion of the work is their
+  opinion of you*; delegating delivery does not delegate reputation, so review time is a real cost
+  that has to sit inside the margin before the price is agreed. The honest summary is that
+  subcontracting converts a delivery business into a management business, and people who love the
+  work often discover they have hired themselves into a job they did not want.
+- **Productising a Service** — same work, named scope, fixed price. Written down, the reason it
+  sells better is a fact about buyers: an unfamiliar supplier asking for an open-ended commitment
+  needs far more trust than one asking for a bounded, named amount. Price from your **worst** run,
+  and write the exclusions before the inclusions.
+- **Fractional & Advisory Roles** — the failure mode is a client who wanted *capacity* buying
+  *judgement*, and the rule for doing the job in two days a month is that your success condition is
+  the client needing you less. Firm on one thing: lending your title to a policy you cannot
+  influence transfers all the risk and none of the authority.
+- **Running a Security Assessment** — an engagement is a sequence, and the technical work is the
+  smaller half. Sell the **retest** in the original engagement, because one that must be separately
+  justified three months later usually is not. The debrief runs technical-team-first, since the
+  people who will implement every fix are the people the findings expose.
+- **Expert Witness & Forensic Work** — the duty is to the court, not to whoever is paying, and an
+  expert who advocates is ineffective rather than merely unethical. The timezone row is not a small
+  point: normalisation failures have undone more digital timelines than any technical error.
+- **Training as a Product** — the lab is where the budget goes, and the discipline that saves you is
+  that it must reset in minutes and run without your laptop. Happy-sheets measure enjoyment; a
+  client who cannot see a change will not rebook.
+
+### A mistake worth recording
+
+The splice used `glob("scratchpad/av/*.html")` and the directory still held **two cards from a
+session two days earlier** — so it appended eight files and shipped two topics a second time.
+`lint_content.py` caught it immediately, by name, with both line numbers: *slug already used by
+career.html:2561 — permalinks shift*. Reverted and redone with an explicit file list.
+
+Two lessons. **Glob a scratchpad and you inherit its history** — name the files. And the
+duplicate-slug guard, ticked earlier this session as "already shipped", earned its place within the
+hour: without it two duplicated topics would have shipped and quietly shifted the ids of everything
+suffixed after them.
+
+Site total 1,395 → **1,401**. The live content backlog is now empty.
