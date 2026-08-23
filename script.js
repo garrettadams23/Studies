@@ -133,6 +133,28 @@ function domainIntros() {
   return _domainIntros;
 }
 
+/** domain id -> {month, topics}: what was reviewed here most recently. */
+let _changelog = null;
+function changelog() {
+  if (_changelog) return _changelog;
+  const el = document.getElementById("changelog");
+  try {
+    const o = el ? JSON.parse(el.textContent) : {};
+    _changelog = (o && typeof o === "object" && !Array.isArray(o)) ? o : {};
+  } catch { _changelog = {}; }
+  return _changelog;
+}
+
+/** "August 2026" from "2026-08". Falls back to the raw value rather than NaN. */
+const MONTHS = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+function monthLabel(ym) {
+  const m = /^(\d{4})-(\d{2})$/.exec(ym || "");
+  if (!m) return ym || "";
+  const n = Number(m[2]);
+  return (n >= 1 && n <= 12) ? `${MONTHS[n - 1]} ${m[1]}` : ym;
+}
+
 /**
  * Put a domain's landing card above its topics: what it covers, who it is for,
  * three topics to start with, and where to go next.
@@ -198,6 +220,38 @@ function renderDomainIntro(section) {
   }
 
   add("di-next", "Then", intro.next);
+
+  // "Is anyone still maintaining this?" — answered from the freshness stamps
+  // rather than left to be guessed at from the writing style.
+  const log = changelog()[section.dataset.domain];
+  const rows = domainTopics(section.dataset.domain);
+  const recent = (log?.topics || [])
+    .map(id => rows.find(t => t.id === id))
+    .filter(Boolean);
+  if (log?.month) {
+    const row = document.createElement("div");
+    row.className = "di-row di-updated";
+    const l = document.createElement("span");
+    l.className = "di-label";
+    l.textContent = "Updated";
+    const v = document.createElement("span");
+    v.className = "di-text di-links";
+    const when = document.createElement("span");
+    when.className = "di-when";
+    when.textContent = monthLabel(log.month);
+    v.append(when);
+    recent.forEach(t => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "di-link";
+      b.textContent = t.name;
+      b.addEventListener("click", () => stGoToTopic(t.id));
+      v.append(b);
+    });
+    row.append(l, v);
+    card.append(row);
+  }
+
   body.prepend(card);
 }
 

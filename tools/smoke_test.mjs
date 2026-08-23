@@ -532,7 +532,12 @@ const intro = await page.evaluate(d => {
   return {
     first: body.firstElementChild === card,
     rows: [...card.querySelectorAll(".di-label")].map(l => l.textContent),
-    links: [...card.querySelectorAll(".di-link")].map(b => b.textContent),
+    // Scoped to the "Start here" row: the "Updated" row below it reuses
+    // .di-link, and counting both would make this check pass for the wrong
+    // reason the moment either row changed.
+    links: [...card.querySelectorAll(".di-start .di-link")].map(b => b.textContent),
+    updated: card.querySelector(".di-updated .di-when")?.textContent || "",
+    updatedLinks: card.querySelectorAll(".di-updated .di-link").length,
     topics: body.querySelectorAll(".topic").length,
     indexed: (topicIndex()[d] || []).length,
     introIsTopic: card.classList.contains("topic"),
@@ -554,9 +559,16 @@ check("the landing card is not counted as a topic",
   intro ? `${intro.topics} in DOM vs ${intro.indexed} indexed` : "");
 
 // Clicking a start link must land on that topic, open.
+// The landing card says when the domain was last reviewed and what was
+// reviewed then, from the freshness stamps — a reference site should answer
+// "is anyone still maintaining this?" without being asked.
+check("the landing card says when the domain was last updated",
+  !!intro && /^[A-Z][a-z]+ \d{4}$/.test(intro.updated) && intro.updatedLinks > 0,
+  intro ? `${intro.updated}, ${intro.updatedLinks} topics` : "");
+
 const startJump = await page.evaluate(async () => {
   const card = document.querySelector(".domain-body.open > .domain-intro");
-  const btn = card?.querySelector(".di-link");
+  const btn = card?.querySelector(".di-start .di-link");
   if (!btn) return null;
   const want = btn.textContent;
   btn.click();
@@ -587,6 +599,23 @@ const unresolved = await page.evaluate(() => {
   });
   return bad;
 });
+// The changelog is generated from the freshness stamps, so a domain missing
+// from it means the stamps are missing — worth failing on, not shrugging at.
+const logCoverage = await page.evaluate(() => {
+  const log = changelog();
+  const ids = [...document.querySelectorAll(".domain-section")].map(s => s.dataset.domain);
+  const byId = new Set(stIndex().map(t => t.id));
+  const missing = ids.filter(d => !log[d]);
+  const dead = Object.keys(log).flatMap(d => (log[d].topics || []).filter(t => !byId.has(t)));
+  const badMonth = Object.keys(log).filter(d => !/^\d{4}-\d{2}$/.test(log[d].month || ""));
+  return { domains: ids.length, logged: Object.keys(log).length, missing, dead, badMonth };
+});
+check("every domain with stamped topics has a changelog entry",
+  logCoverage.missing.length <= 1, `missing: ${logCoverage.missing.join(", ") || "none"}`);
+check("every changelog entry names real topics and a real month",
+  logCoverage.dead.length === 0 && logCoverage.badMonth.length === 0,
+  `${logCoverage.dead.length} dead, ${logCoverage.badMonth.length} bad months`);
+
 check("every landing card's 'start here' names resolve, in all domains",
   unresolved.length === 0, unresolved.slice(0, 3).join(" | "));
 

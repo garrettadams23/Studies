@@ -200,6 +200,31 @@ def link_xrefs(body, by_title):
     return XREF_RE.sub(_stamp, body), linked[0]
 
 
+_REVIEWED_RE = re.compile(r'data-reviewed="(\d{4}-\d{2})"')
+
+
+def recent_topics(body, ids, limit=3):
+    """The most recently reviewed topics in one domain, newest first.
+
+    Read from the `data-reviewed` stamps rather than from git, so the build
+    stays offline and deterministic and the answer matches what
+    stamp_freshness.py put in the file. Ties keep document order, which is a
+    stable and meaningful fallback: the stamps are month-granular, so ties are
+    the normal case rather than the exception.
+    """
+    starts = [m.start() for m in _TOPIC_OPEN_RE.finditer(body)]
+    rows = []
+    for n, start in enumerate(starts):
+        end = starts[n + 1] if n + 1 < len(starts) else len(body)
+        m = _REVIEWED_RE.search(body[start:end])
+        if m and n < len(ids):
+            rows.append((m.group(1), n, ids[n]))
+    if not rows:
+        return None
+    rows.sort(key=lambda r: (r[0], -r[1]), reverse=True)
+    return {"month": rows[0][0], "topics": [r[2] for r in rows[:limit]]}
+
+
 def build_cert_tags(cert_tags):
     parts = []
     for tag in cert_tags:
@@ -297,6 +322,18 @@ def build_topic_index(index):
     return payload.replace("</", "<\\/")
 
 
+def build_changelog(changelog):
+    """domain id -> {month, topics}: what was reviewed here most recently.
+
+    Rendered on the domain's landing card. It answers the question a reference
+    site cannot otherwise answer — "is anyone still maintaining this?" — from
+    data the freshness stamps already carry.
+    """
+    payload = json.dumps(changelog, separators=(",", ":"), ensure_ascii=False)
+    print(f"  + changelog ({len(payload):,} chars, {len(changelog)} domains)")
+    return payload.replace("</", "<\\/")
+
+
 def build_domain_intros():
     """domain id -> its landing card, inlined from data/domain-intros.json.
 
@@ -378,6 +415,7 @@ def main():
     used_slugs = set()
     topic_index = {}
     by_title = {}
+    changelog = {}
     for domain in domains:
         body_path = DATA / f"{domain['id']}.html"
         if not body_path.exists():
@@ -387,6 +425,9 @@ def main():
         body, ids = assign_topic_ids(body, used_slugs)
         topic_index[domain["id"]] = ids
         by_title.update(topic_titles(body, ids))
+        recent = recent_topics(body, ids)
+        if recent:
+            changelog[domain["id"]] = recent
         bodies.append((domain, body, ids))
 
     sections = []
@@ -406,6 +447,7 @@ def main():
     output = output.replace("<!-- DOMAIN_INTROS -->", build_domain_intros())
     output = output.replace("<!-- RELATED_TOPICS -->", build_related())
     output = output.replace("<!-- LEARNING_PATHS -->", build_paths())
+    output = output.replace("<!-- CHANGELOG -->", build_changelog(changelog))
 
     if MINIFY:
         raw_len = len(output)
