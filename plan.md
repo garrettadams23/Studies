@@ -2116,9 +2116,13 @@ headlessly and given the checks they never had (14 of them) rather than rewritte
   Verified: a domain-scoped quiz produced four options, none from outside that domain.
 - [ ] **Exam mode** — timed, fixed question count, no feedback until the end,
   then a scored report broken down by domain with links to the weak topics.
-- [ ] **Learning paths** — an ordered sequence of existing topic IDs
-  (`paths.json`) rendered as a checklist: "Net+ in 30 topics", "First 90 days as
-  a UEM engineer", "SOC analyst starter". Pure data over existing content.
+- [x] **Learning paths** — `data/paths.json`, six routes over 75 existing topics, inlined by
+  `build.py` and opened from the study menu as 🧭 Learning paths. A step counts as done when the
+  topic carries the same ✓ the topic header sets — not a second, parallel progress state — and the
+  first unreviewed step is marked "you are here" with a **Continue** button that goes straight to
+  it. `tools/check_paths.py` gates the ids in CI. Routes: Network Foundations (22), SOC Analyst
+  Starter (15), Breaking Into IT (11), Comfortable in the Terminal (11), First 90 Days on an
+  Endpoint Team (8), Cloud From Zero (8).
 - [ ] **Progress dashboard** — reviewed / bookmarked / known per domain over
   time, plus a streak. All from `localStorage`, no backend.
 - [x] **Export & import progress** — **already built** (session 10): `bkExport()`, `bkValidate()`,
@@ -8197,3 +8201,52 @@ files, all correct after the SPI fix. `annotate_acronyms.py --check` clean · `l
 clean, ambiguity trend unchanged at 4 · `check_markup.py` 31 files clean ·
 `stamp_freshness.py --verify` 1,296 stamps valid (the acronym domain's 59 topics are generated and
 carry none by design) · `smoke_test.mjs` 64/64.
+
+
+## Session record — Track AG: learning paths, and covering four features that had no tests
+
+Two halves. The first was bookkeeping with teeth: **four of Track AG's eight items were already
+built** — spaced repetition, the acronym quiz, the distractor fix and export/import — and **not one
+of them had a single test**. Each fails silently, which is what makes the gap matter: a scheduler
+that stops writing records looks like "nothing is due"; distractors drawn from the wrong pool look
+like an easy quiz; an export that drops a key looks like a smaller export. Fourteen checks added,
+64 → 77, and the features left alone.
+
+One assertion had to be corrected rather than the code. The scheduler works in **whole days**, so
+"again" schedules a lapsed card for tomorrow rather than later in the same session. An SRS purist
+would re-queue it immediately; the check now asserts the behaviour as written, with a note to change
+the check if the behaviour ever changes. Writing the test is how that got noticed at all.
+
+### Learning paths
+
+Six routes over 75 topics that already exist — Network Foundations, SOC Analyst Starter, Breaking
+Into IT, Comfortable in the Terminal, First 90 Days on an Endpoint Team, Cloud From Zero. The whole
+feature is 4.9 KB of ids: no new content, and the value is entirely in the order.
+
+Three decisions worth keeping:
+
+- **Done means reviewed.** A path reads the same `reviewed:` key the ✓ on a topic header sets rather
+  than inventing a per-path state. Progress therefore already exists the moment a path is added, it
+  survives export/import for free, and there is no second source of truth to reconcile.
+- **"You are here" is the feature.** An ordered list without a current position is just a list. The
+  first unreviewed step is marked and a **Continue** button opens it.
+- **Authored by resolver, not by hand.** The paths were written as `(domain, title fragment)` pairs
+  and resolved to ids by a script that refuses ambiguity — it caught six selectors matching two
+  topics each (`SSH`, `Bash`, `Package Management`, `CIA`, `Infrastructure as Code`) and one naming
+  a card that does not exist. Typing 75 slugs by hand would have produced silent misses instead;
+  this is the same lesson as the landing cards, applied before it cost anything.
+
+`tools/check_paths.py` gates every step id in CI, verified to fail on a planted bad step before
+being wired in. It also reports reach: the six paths touch 75 distinct topics across 15 domains.
+
+### Verification
+
+`smoke_test.mjs` 83/83 — six new checks covering that a path renders every step it declares (a
+broken path renders as a *shorter* path, which is the silent failure), that reviewed steps count as
+done, that "you are here" lands on the first unreviewed step, and that Continue opens it.
+
+### Track AG after this wave
+
+Two items open: **exam mode** (timed, fixed count, no feedback until a scored per-domain report) and
+**per-topic notes** (attach a note to a topic id and surface it inline). Both are self-contained;
+exam mode is the larger one and would reuse the quiz generators as they stand.

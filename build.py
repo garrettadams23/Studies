@@ -338,6 +338,24 @@ def build_related():
     return payload.replace("</", "<\\/")
 
 
+def build_paths():
+    """Ordered reading routes over existing topics, from data/paths.json.
+
+    Pure data: a path is a list of topic ids the page renders as a checklist
+    against the progress already in localStorage. Nothing here is content, which
+    is why a path costs a few hundred bytes and no maintenance beyond the ids
+    staying valid — checked by tools/check_paths.py.
+    """
+    path = DATA / "paths.json"
+    if not path.exists():
+        return "[]"
+    paths = json.loads(path.read_text(encoding="utf-8"))
+    payload = json.dumps(paths, separators=(",", ":"), ensure_ascii=False)
+    steps = sum(len(p.get("steps") or []) for p in paths)
+    print(f"  + learning paths ({len(payload):,} chars, {len(paths)} paths, {steps} steps)")
+    return payload.replace("</", "<\\/")
+
+
 def main():
     shell_path = ROOT / "index-shell.html"
     domains_path = DATA / "domains.json"
@@ -387,6 +405,7 @@ def main():
     output = output.replace("<!-- TOPIC_INDEX -->", build_topic_index(topic_index))
     output = output.replace("<!-- DOMAIN_INTROS -->", build_domain_intros())
     output = output.replace("<!-- RELATED_TOPICS -->", build_related())
+    output = output.replace("<!-- LEARNING_PATHS -->", build_paths())
 
     if MINIFY:
         raw_len = len(output)

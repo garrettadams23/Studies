@@ -867,6 +867,72 @@ check("an import refuses keys and shapes it does not own",
 
 await page.evaluate(() => localStorage.clear());
 
+// ── learning paths ──────────────────────────────────────────────────────────
+// A path drops steps it cannot resolve, so a broken path renders as a *shorter*
+// path. That is the failure to guard: the rendered step count has to match the
+// payload, and the progress has to track the same reviewed state the ✓ sets.
+await page.goto(PAGE, { waitUntil: "load" });
+const pathPayload = await page.evaluate(() => {
+  const el = document.getElementById("learning-paths");
+  try { return el ? JSON.parse(el.textContent) : null; } catch { return null; }
+});
+check("learning paths are inlined", Array.isArray(pathPayload) && pathPayload.length > 0,
+  `${pathPayload ? pathPayload.length : 0} paths`);
+
+const pathResolve = await page.evaluate(() => {
+  const byId = new Set(stIndex().map(t => t.id));
+  const bad = [];
+  learningPaths().forEach(p =>
+    (p.steps || []).forEach(s => { if (!byId.has(s)) bad.push(`${p.id}: ${s}`); }));
+  return { bad, total: learningPaths().reduce((n, p) => n + p.steps.length, 0) };
+});
+check("every step in every path resolves to a topic",
+  pathResolve.bad.length === 0, pathResolve.bad.slice(0, 3).join(" | "));
+
+const pathUI = await page.evaluate(async () => {
+  localStorage.clear();
+  const p = learningPaths()[0];
+  // Mark the first two steps reviewed, so progress has something to report.
+  localStorage.setItem("reviewed:" + p.steps[0], "1");
+  localStorage.setItem("reviewed:" + p.steps[1], "1");
+  stOpenPaths();
+  await new Promise(r => setTimeout(r, 200));
+  const card = document.querySelector(`.st-path[data-id="${p.id}"]`);
+  const listCount = card?.querySelector(".st-path-count")?.textContent || "";
+  card?.querySelector(".st-path-open").click();
+  await new Promise(r => setTimeout(r, 200));
+  const steps = [...document.querySelectorAll(".st-path-step")];
+  return {
+    id: p.id,
+    listCount,
+    rendered: steps.length,
+    declared: p.steps.length,
+    done: steps.filter(li => li.classList.contains("done")).length,
+    hereIndex: steps.findIndex(li => li.classList.contains("here")),
+    hasContinue: !!document.getElementById("st-path-next"),
+  };
+});
+check("a path renders every step it declares",
+  pathUI.rendered === pathUI.declared, `${pathUI.rendered}/${pathUI.declared}`);
+check("reviewed steps count as done",
+  pathUI.done === 2 && pathUI.listCount.startsWith("2/"),
+  `${pathUI.done} done, list said ${pathUI.listCount}`);
+check("the first unreviewed step is marked as where you are",
+  pathUI.hereIndex === 2 && pathUI.hasContinue, `here at index ${pathUI.hereIndex}`);
+
+const pathJump = await page.evaluate(async () => {
+  const btn = document.getElementById("st-path-next");
+  const want = learningPaths()[0].steps[2];
+  btn.click();
+  await new Promise(r => setTimeout(r, 400));
+  return { want, got: location.hash.slice(1),
+           open: !!document.getElementById(want)?.querySelector(".topic-body")?.classList.contains("open") };
+});
+check("Continue opens the step you are on",
+  pathJump.got === pathJump.want && pathJump.open,
+  `${pathJump.want} -> ${pathJump.got}`);
+await page.evaluate(() => localStorage.clear());
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));

@@ -78,6 +78,11 @@ jobs:
       - name: Check the related-topics map
         run: python tools/suggest_related.py --check
 
+      # Every step in every learning path points at a topic that exists. A path
+      # drops what it cannot resolve, so a broken one renders as a shorter one.
+      - name: Check the learning paths
+        run: python tools/check_paths.py
+
       - name: Fail if index.html is stale
         run: |
           if ! git diff --exit-code -- index.html; then

@@ -2283,6 +2283,102 @@ function stRenderAcroQuestion(stage) {
 }
 
 // ── STUDY LIST (bookmarks) ──────────────────────────────────────────────────
+// ── LEARNING PATHS ──────────────────────────────────────────────────────────
+// An ordered route through topics that already exist, rendered as a checklist
+// against the progress in localStorage. No content of its own — the value is
+// entirely in the order, which is why a path costs a few hundred bytes.
+
+let _paths = null;
+function learningPaths() {
+  if (_paths) return _paths;
+  const el = document.getElementById("learning-paths");
+  try {
+    const p = el ? JSON.parse(el.textContent) : [];
+    _paths = Array.isArray(p) ? p : [];
+  } catch { _paths = []; }
+  return _paths;
+}
+
+/** One path's steps, resolved to topics and dropping any that no longer exist. */
+function pathSteps(path) {
+  const byId = new Map(stIndex().map(t => [t.id, t]));
+  return (path.steps || []).map(id => byId.get(id)).filter(Boolean);
+}
+
+/** Done means reviewed — the same ✓ the topic header sets, not a second state. */
+function pathProgress(path) {
+  const steps = pathSteps(path);
+  const done = steps.filter(t => localStorage.getItem(REVIEWED_PREFIX + t.id) === "1").length;
+  return { done, total: steps.length };
+}
+
+function stOpenPaths() {
+  stOpen(body => {
+    body.innerHTML = '<h2 class="st-h">🧭 Learning paths</h2><div id="st-paths-body"></div>';
+    stRenderPathList(body.querySelector("#st-paths-body"));
+  });
+}
+
+function stRenderPathList(host) {
+  const paths = learningPaths();
+  if (!paths.length) {
+    host.innerHTML = '<p class="st-empty">No paths are defined.</p>';
+    return;
+  }
+  host.innerHTML =
+    '<p class="st-hint">A route through topics that already exist, in an order that builds. ' +
+    'A step counts as done when the topic is marked ✓ reviewed.</p>' +
+    '<ul class="st-paths">' + paths.map(p => {
+      const { done, total } = pathProgress(p);
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      return `<li class="st-path" data-id="${esc(p.id)}">` +
+        `<button class="st-path-open">` +
+          `<span class="st-path-icon">${esc(p.icon || "🧭")}</span>` +
+          `<span class="st-path-main"><span class="st-path-name">${esc(p.name)}</span>` +
+          `<span class="st-path-blurb">${esc(p.blurb || "")}</span>` +
+          `<span class="st-path-for">${esc(p["for"] || "")}</span></span>` +
+          `<span class="st-path-count">${done}/${total}</span>` +
+        `</button>` +
+        `<div class="st-path-bar"><div class="st-path-fill" style="width:${pct}%"></div></div>` +
+      `</li>`;
+    }).join("") + '</ul>';
+  host.querySelectorAll(".st-path").forEach(li =>
+    li.querySelector(".st-path-open").addEventListener("click", () => {
+      const path = learningPaths().find(p => p.id === li.dataset.id);
+      if (path) stRenderPath(host, path);
+    }));
+}
+
+function stRenderPath(host, path) {
+  const steps = pathSteps(path);
+  const { done, total } = pathProgress(path);
+  // The first unreviewed step is where the reader is, and saying so is most of
+  // what a path is for — an ordered list without a "you are here" is a list.
+  const nextStep = steps.find(t => localStorage.getItem(REVIEWED_PREFIX + t.id) !== "1");
+  host.innerHTML =
+    '<button id="st-path-back" class="st-btn">← All paths</button>' +
+    `<h3 class="st-path-title">${esc(path.icon || "🧭")} ${esc(path.name)}</h3>` +
+    `<p class="st-hint">${esc(path.blurb || "")}</p>` +
+    `<p class="st-hint st-path-for">${esc(path["for"] || "")}</p>` +
+    `<div class="st-toolbar"><span class="st-count">${done} of ${total} reviewed</span>` +
+    (nextStep ? '<button id="st-path-next" class="st-btn st-btn-primary">Continue</button>' : "") +
+    '</div>' +
+    '<ol class="st-path-steps">' + steps.map((t, i) => {
+      const isDone = localStorage.getItem(REVIEWED_PREFIX + t.id) === "1";
+      const here = !isDone && t === nextStep;
+      return `<li class="st-path-step${isDone ? " done" : ""}${here ? " here" : ""}">` +
+        `<span class="st-step-n">${isDone ? "✓" : i + 1}</span>` +
+        `<button class="st-step-link" data-id="${esc(t.id)}">${esc(t.name)}</button>` +
+        `<span class="st-step-dom">${esc(t.domainIcon)} ${esc(t.domainId)}</span></li>`;
+    }).join("") + '</ol>';
+  host.querySelector("#st-path-back").addEventListener("click", () => stRenderPathList(host));
+  host.querySelector("#st-path-next")?.addEventListener("click", () => {
+    stClose(); stGoToTopic(nextStep.id);
+  });
+  host.querySelectorAll(".st-step-link").forEach(b =>
+    b.addEventListener("click", () => { stClose(); stGoToTopic(b.dataset.id); }));
+}
+
 function stOpenStudyList() {
   stOpen(body => {
     body.innerHTML = '<h2 class="st-h">★ My study list</h2><div id="st-list-body"></div>';
@@ -2623,6 +2719,7 @@ function initStudyTools() {
       '<button class="study-mi" data-act="quiz"><span>❓</span> Quiz</button>' +
       '<button class="study-mi" data-act="acro"><span>🔤</span> Acronym quiz</button>' +
       '<button class="study-mi" data-act="list"><span>★</span> Study list</button>' +
+      '<button class="study-mi" data-act="paths"><span>🧭</span> Learning paths</button>' +
       '<button class="study-mi" data-act="backup"><span>💾</span> Back up &amp; restore</button>' +
     '</div>' +
     '<button id="study-fab" title="Study tools" aria-label="Study tools" aria-haspopup="true" aria-expanded="false">' +
@@ -2647,7 +2744,8 @@ function initStudyTools() {
     const mi = e.target.closest(".study-mi"); if (!mi) return;
     closeMenu();
     ({ jump: stOpenJump, cards: stOpenFlashcards, due: stOpenDue, quiz: stOpenQuiz,
-       acro: stOpenAcroQuiz, list: stOpenStudyList, backup: stOpenBackup }[mi.dataset.act])();
+       acro: stOpenAcroQuiz, list: stOpenStudyList, paths: stOpenPaths,
+       backup: stOpenBackup }[mi.dataset.act])();
   });
   document.addEventListener("click", e => { if (!fab.contains(e.target) && !menu.hidden) closeMenu(); });
 
