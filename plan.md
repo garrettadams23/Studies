@@ -2172,25 +2172,33 @@ separate toys.
 
 *(No "TRACK AI" — the letters would collide with the AI domain.)*
 
-- [ ] **Markup validator in CI** — parse every `data/*.html` with a real HTML
-  parser and fail on unclosed or stray tags. A one-off parse run showed the
-  markup is currently clean; this keeps it that way.
-- [ ] **Content linter** — enforce `CONTRIBUTING.md` mechanically: every
-  `.topic` has a `.topic-name`, `.topic-chev` (never `topic-chevron`),
-  `ref-table` over `ai-table` for new content, no hard-coded hex colours, no
-  inline `style="color:…"`.
-- [ ] **Duplicate-slug guard** — fail the build if two topics slugify to the same
-  id, since `script.js` silently suffixes them and permalinks shift.
+*Shipped-note: five of the eight below are done. `lint_content.py`, `page_budget.py` and the
+duplicate-slug guard have been in CI for many sessions; `check_markup.py` and `acronym_drift.py`
+shipped in the Track AJ wave. Read the ticks, not the original list.*
+
+- [x] **Markup validator in CI** — `tools/check_markup.py`, a stack-based `html.parser` pass over
+  every `data/*.html` fragment and over `index.html`. Unclosed tags, stray closers and closed void
+  elements all fail the build. `--self-test` runs it over six deliberately broken fixtures and fails
+  if any of them passes, so "0 errors" cannot mean "stopped looking". Both steps are in CI.
+- [x] **Content linter** — `tools/lint_content.py`, in CI since session 10; tracks a warning trend
+  and errors on convention breaks and dangling cross-references.
+- [x] **Duplicate-slug guard** — `lint_content.py` errors on a collision by name, with the file and
+  line of the topic that claimed the slug first. `build.py` still suffixes, so the guard is what
+  makes the suffix visible rather than silent.
 - [ ] **Accessibility CI** — run axe against the built page; enforce contrast,
-  landmark and `aria-expanded` correctness on the accordions.
-- [ ] **Link & anchor checker** — every `#slug` referenced in prose resolves to a
-  real topic; every external link is alive.
-- [ ] **Performance budget** — fail if `index.html` grows beyond an agreed size
-  without a deliberate bump (it is ~3.2 MB today).
+  landmark and `aria-expanded` correctness on the accordions. *(The smoke test asserts
+  `aria-expanded` on both accordion levels and theme contrast on four elements; axe would cover the
+  rest.)*
+- [~] **Link & anchor checker** — measured rather than built: the content contains **one**
+  `href="#"` and **one** external link in 1,355 topics. Cross-references are the real mechanism, and
+  all 201 are checked by `lint_content.py` and now resolved to ids by `build.py`. There is nothing
+  left for this item to check; it was written before the `xref` convention existed.
+- [x] **Performance budget** — `tools/page_budget.py`, in CI, four metrics with headroom.
 - [ ] **Visual regression** — headless screenshots of a few representative
   topics in both themes, diffed on PRs.
-- [ ] **Acronym drift report** — list capitalised tokens appearing in content
-  that are *not* in `acronyms.json`, as a to-do queue for the dictionary.
+- [x] **Acronym drift report** — `tools/acronym_drift.py`. Capitalised tokens the dictionary lacks,
+  ranked by frequency, per domain with `--domain`; `--unused` lists entries no card uses. A report,
+  not a gate — see the tool's docstring for why neither number is safe to fail a build on.
 
 ### TRACK AK — Delivery, Performance & Reach
 
@@ -8067,3 +8075,77 @@ assertion, then ask what would still pass if the feature were deleted.**
 
 `smoke_test.mjs` 64/64 · `lint_content.py` clean · budget raw 5.4 / 8.0 MB, gzip 1,460 / 2,200 KB,
 DOM 429 / 1,500.
+
+
+## Session record — Track AJ: two quality gates, and one item that measured itself away
+
+Track AJ's checklist was written before most of it existed. Verified first, as the checklist
+convention requires: **three of the eight items were already shipped and in CI** — the content
+linter, the duplicate-slug guard and the performance budget. That is the fifth time this has
+happened, and the count is now high enough to be the default expectation rather than a surprise.
+
+### Markup validator
+
+`lint_content.py` reads the content as text, which is right for "does this card use `ref-table`"
+and useless for "is this markup well-formed". `tools/check_markup.py` runs a stack-based
+`html.parser` over every fragment and over the built page: unclosed elements, closers with nothing
+open, and closed void elements.
+
+It matters more here than in an ordinary page. A domain's content is parsed once as *text*, shipped
+inside an inert script block, and only becomes elements when `innerHTML` runs on it — so a stray tag
+is invisible until a reader opens that one domain, and the browser's repair (hoisting the rest of
+the card out of its parent) is silent. All 31 files are clean today; the point is keeping them that
+way.
+
+**The validator has a `--self-test`, and it is in CI next to the validator itself.** Six fixtures,
+each broken one specific way, plus one well-formed fixture that must produce nothing. A checker that
+reports "0 errors" is indistinguishable from a checker that has quietly stopped looking, and the
+previous wave had already been bitten by a keyboard test that passed for an unrelated reason.
+
+### Acronym drift report
+
+`tools/acronym_drift.py` lists capitalised tokens the dictionary has never heard of. The first run
+returned 3,050 tokens and was useless — the top of the list was `ID`, `TERMS`, `WHAT`, `IS`, `WHY`,
+`LIFESTYLE`. Three exclusions fixed it, and the third is the interesting one:
+
+- **Categorical labels are not prose.** `.topic-badge` and `.concept-label` are shouted by design.
+- **A plural of a known entry is not drift.** APIs, VMs, URLs.
+- **An ordinary word being shouted in a heading is not an acronym** — WHAT, WHY, FROM, KEY. There is
+  no wordlist on the machine to consult, so **the content supplies one**: a token whose lowercase
+  form appears twenty or more times in the site's own lowercase prose is a word. No data file, no
+  maintenance, and it adapts as the writing does.
+
+1,711 tokens remain, and narrowed to a single domain it is a direct work queue — `--domain hw`
+returns SBC, UART, JTAG, SWD, TX, RX, XMP, VRM, every one a real gap left by the hardware wave.
+
+**Neither number gates CI, deliberately.** The unknown-token list is full of product names;
+`--unused` reports 173 dictionary entries no card uses, and the dictionary is *also* a standalone
+reference domain and the quiz's question bank, so an entry existing for its own sake is the point.
+A gate on either would fail every content wave for reasons nobody should act on. The docstring says
+so, so the next session does not "fix" it into a gate.
+
+### The item that measured itself away
+
+**Link & anchor checker** — "every `#slug` referenced in prose resolves; every external link is
+alive". Measured before building: the content holds **one** `href="#"` and **one** external link
+across 1,355 topics. The item was written before the `<span class="xref">` convention existed, and
+that convention is now checked by the linter and resolved to ids by the build. Marked `[~]` with the
+measurement rather than built, and rather than left open to be rediscovered.
+
+### Also in CI now
+
+`suggest_related.py --check`, verified to fail on a planted bad id before being wired in — the same
+rule as the self-test above.
+
+`check_markup.py` 31 files clean · self-test 6 fixtures clean · `smoke_test.mjs` 64/64 ·
+`lint_content.py` clean · budget raw 5.4 / 8.0 MB.
+
+### Track AJ after this wave
+
+Two items open: **accessibility CI** (axe against the built page; the smoke test already covers
+`aria-expanded` on both accordion levels and theme contrast on four elements) and **visual
+regression** (screenshot diffs, the least valuable item in the track on a page whose layout is this
+stable).
+
+The drift report also leaves a content queue behind it: the dictionary is missing the embedded and
+hardware vocabulary the last content wave introduced.

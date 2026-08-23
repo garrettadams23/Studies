@@ -43,6 +43,18 @@ jobs:
       - name: Check the calculus cheat sheet is not stale
         run: python tools/gen_cheatsheet.py --check
 
+      # A real parser, not a text scan: lint_content.py checks conventions and
+      # cannot see a <span> that was never closed. A domain's content is shipped
+      # as text and only becomes elements when a reader opens that one domain,
+      # so a stray tag is invisible until then.
+      - name: Check the markup is well-formed
+        run: python tools/check_markup.py
+
+      # And prove the checker still fails on breakage. A validator reporting
+      # "0 errors" is indistinguishable from one that stopped looking.
+      - name: Self-test the markup checker
+        run: python tools/check_markup.py --self-test
+
       - name: Lint content conventions
         run: python tools/lint_content.py
 
@@ -61,6 +73,10 @@ jobs:
 
       - name: Check the page performance budget
         run: python tools/page_budget.py
+
+      # Every id in data/related.json resolves, and no topic points at itself.
+      - name: Check the related-topics map
+        run: python tools/suggest_related.py --check
 
       - name: Fail if index.html is stale
         run: |
