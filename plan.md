@@ -8149,3 +8149,40 @@ stable).
 
 The drift report also leaves a content queue behind it: the dictionary is missing the embedded and
 hardware vocabulary the last content wave introduced.
+
+
+## Session record — the drift report's first queue, worked
+
+`acronym_drift.py` shipped in the previous wave with a work queue attached. This is that queue,
+worked, which is also the tool's first real test.
+
+**25 entries added**, 1,069 → 1,094: the embedded and hardware vocabulary the hardware wave
+introduced and nothing was watching (UART, JTAG, SWD, SBC, GPIO, VRM, XMP, TX, RX), plus the gaps
+the report surfaced elsewhere — IDOR, OPA, SLSA, IMA, OPSEC, JVM, ZAP, RC4, PHP, E2E, UTC, IEC, OMA,
+OOBE, CySA, PUE. `hw`'s unknown-token count fell from 42 tokens / 83 occurrences to 32 / 43.
+
+### The wave found a wrong expansion that had been shipping
+
+`SPI` was in the dictionary with exactly one meaning — **Stateful Packet Inspection** — and the
+annotator had been rendering that inside `GPIO, I²C, SPI & UART` and beside "SPI flash chip". Both
+uses on the site are **Serial Peripheral Interface**; the firewall sense appears in no card at all.
+The entry now carries both meanings with the bus as the annotated default, so the reference domain
+keeps the firewall sense and the cards say what they mean.
+
+This is worth stating plainly, because it is the argument for the tool existing: the error was in
+content the linter passes, the smoke test passes, and a human had read. What surfaced it was
+counting a domain's vocabulary against the dictionary — the one check nothing was doing. The
+ambiguity warning `lint_content.py` already tracks (four, unchanged) could not see it either: a
+single-meaning entry is not ambiguous, it is just wrong.
+
+`SBC` was added the other way round — two meanings from the start, `Single-Board Computer` as the
+default with `byDomain` overrides to `Session Border Controller` for `net` and `m365`. Verified in
+the diff: `hw` got the board, `m365` got the controller.
+
+### Verification
+
+Every new expansion was read in the diff rather than trusted: 39 distinct injections across 16
+files, all correct after the SPI fix. `annotate_acronyms.py --check` clean · `lint_content.py`
+clean, ambiguity trend unchanged at 4 · `check_markup.py` 31 files clean ·
+`stamp_freshness.py --verify` 1,296 stamps valid (the acronym domain's 59 topics are generated and
+carry none by design) · `smoke_test.mjs` 64/64.

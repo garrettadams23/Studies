@@ -121,7 +121,7 @@ runtime falls non-linearly with load — read the vendor curve, do not divide</p
           <thead><tr><th>Rule of thumb</th><th>Use</th></tr></thead>
           <tbody>
             <tr><td>1 W consumed ≈ 1 W of heat to remove</td><td>Cooling sizing follows directly from the power draw</td></tr>
-            <tr><td>Cooling itself consumes power</td><td>Total facility draw exceeds IT draw — this is what PUE measures</td></tr>
+            <tr><td>Cooling itself consumes power</td><td>Total facility draw exceeds IT draw — this is what PUE <span class="acro-exp">(Power Usage Effectiveness)</span> measures</td></tr>
             <tr><td>Every 10 °C rise roughly halves electrolytic capacitor life</td><td>Why hot equipment fails early rather than immediately</td></tr>
             <tr><td>Silicon throttles rather than fails</td><td>A hot machine is slow before it is broken — check thermals on performance complaints</td></tr>
             <tr><td>Airflow direction is front-to-back, consistently</td><td>One reversed device recirculates hot air into its neighbours</td></tr>
@@ -320,7 +320,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <tbody>
             <tr><td>Multimeter</td><td>Is the voltage right? Is this connected? Is this fuse good?</td><td>Anything about shape, noise or brief events</td></tr>
             <tr><td>Oscilloscope</td><td>What does this signal look like over microseconds?</td><td>What the data means, across many lines at once</td></tr>
-            <tr><td>Logic analyser</td><td>What did these eight lines actually say, decoded as I²C or SPI <span class="acro-exp">(Stateful Packet Inspection)</span>?</td><td>Signal quality — it sees ones and zeros, not marginal edges</td></tr>
+            <tr><td>Logic analyser</td><td>What did these eight lines actually say, decoded as I²C or SPI <span class="acro-exp">(Serial Peripheral Interface)</span>?</td><td>Signal quality — it sees ones and zeros, not marginal edges</td></tr>
           </tbody>
         </table>
         <div class="concept-desc" style="margin-top:10px">
@@ -380,7 +380,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         <div class="concept-desc" style="margin-top:10px">
           A cheap USB <span class="acro-exp">(Universal Serial Bus)</span> logic analyser deserves a specific recommendation for anyone touching embedded
           or serial devices: for the price of a couple of network cables it decodes I²C, SPI and
-          UART directly into readable transactions, and it converts "the device is not responding"
+          UART <span class="acro-exp">(Universal Asynchronous Receiver/Transmitter)</span> directly into readable transactions, and it converts "the device is not responding"
           from a guess into a transcript showing whether anything was sent, whether it was
           acknowledged, and at what address.
         </div>
@@ -446,7 +446,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>Front-panel header</td><td>Power switch, reset, LEDs <span class="acro-exp">(Light Emitting Diode)</span> — the fiddliest ten minutes of any build</td></tr>
             <tr><td>CMOS <span class="acro-exp">(Complementary Metal-Oxide-Semiconductor)</span> battery and clear jumper</td><td>The fix for a machine that will not post after a bad setting</td></tr>
             <tr><td>Diagnostic LEDs or a POST code display</td><td>The single most useful feature on a board when something is wrong</td></tr>
-            <tr><td>VRM and its heatsink</td><td>Converts 12 V to CPU voltage; poor VRM cooling throttles a good CPU</td></tr>
+            <tr><td>VRM <span class="acro-exp">(Voltage Regulator Module)</span> and its heatsink</td><td>Converts 12 V to CPU voltage; poor VRM cooling throttles a good CPU</td></tr>
           </tbody>
         </table>
       </div>
@@ -632,7 +632,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>Rank</td><td>How many banks of chips a module presents</td><td>Affects capacity limits and sometimes speed</td></tr>
             <tr><td>Registered / buffered</td><td>A buffer between controller and chips, for large server configurations</td><td>Not interchangeable with unbuffered — check board support</td></tr>
             <tr><td>ECC</td><td>Extra bits detect and correct single-bit errors</td><td>Substantially, for servers and anything long-running</td></tr>
-            <tr><td>XMP / EXPO profile</td><td>A stored overclock the board applies</td><td>Rated speed usually requires enabling it explicitly</td></tr>
+            <tr><td>XMP <span class="acro-exp">(Extreme Memory Profile)</span> / EXPO profile</td><td>A stored overclock the board applies</td><td>Rated speed usually requires enabling it explicitly</td></tr>
           </tbody>
         </table>
         <div class="concept-desc" style="margin-top:10px">
@@ -1800,7 +1800,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>Power</td><td>Milliwatts; runs for months on a battery</td><td>Watts; effectively needs mains</td></tr>
             <tr><td>Loss of power</td><td>Harmless — no filesystem to corrupt</td><td>Can corrupt the card; needs graceful shutdown or a read-only root</td></tr>
             <tr><td>Networking, storage, video</td><td>Bolted on, with effort</td><td>Built in</td></tr>
-            <tr><td>Debugging</td><td>Serial output, a logic analyser, sometimes JTAG</td><td>SSH <span class="acro-exp">(Secure Shell)</span> in and use ordinary Linux tools</td></tr>
+            <tr><td>Debugging</td><td>Serial output, a logic analyser, sometimes JTAG <span class="acro-exp">(Joint Test Action Group)</span></td><td>SSH <span class="acro-exp">(Secure Shell)</span> in and use ordinary Linux tools</td></tr>
           </tbody>
         </table>
       </div>
@@ -1816,7 +1816,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         <table class="ref-table">
           <thead><tr><th>Question</th><th>If yes</th></tr></thead>
           <tbody>
-            <tr><td>Does it run on a battery for a long time?</td><td>Microcontroller — an SBC's idle draw ends the discussion</td></tr>
+            <tr><td>Does it run on a battery for a long time?</td><td>Microcontroller — an SBC <span class="acro-exp">(Single-Board Computer)</span>'s idle draw ends the discussion</td></tr>
             <tr><td>Does timing need to be exact and guaranteed?</td><td>Microcontroller</td></tr>
             <tr><td>Does it need a filesystem, a web server, or a real network stack?</td><td>SBC</td></tr>
             <tr><td>Will it lose power without warning, routinely?</td><td>Microcontroller, or an SBC with a read-only root filesystem</td></tr>
@@ -1867,7 +1867,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🔀</span>
-    <span class="topic-name">GPIO, I²C, SPI <span class="acro-exp">(Stateful Packet Inspection)</span> &amp; UART — Talking to the Physical World</span>
+    <span class="topic-name">GPIO <span class="acro-exp">(General-Purpose Input/Output)</span>, I²C, SPI <span class="acro-exp">(Serial Peripheral Interface)</span> &amp; UART <span class="acro-exp">(Universal Asynchronous Receiver/Transmitter)</span> — Talking to the Physical World</span>
     <span class="topic-badge">Embedded</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -1941,7 +1941,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <tbody>
             <tr><td>Is the device powered, and at the right voltage?</td><td>The most common cause, and the easiest to overlook</td></tr>
             <tr><td>Common ground connected?</td><td>See above; nothing works without it</td></tr>
-            <tr><td>For UART: are TX and RX crossed?</td><td>TX must go to RX — a coin-flip nobody wins first time</td></tr>
+            <tr><td>For UART: are TX <span class="acro-exp">(Transmit)</span> and RX <span class="acro-exp">(Receive)</span> crossed?</td><td>TX must go to RX — a coin-flip nobody wins first time</td></tr>
             <tr><td>For UART: does the baud rate match?</td><td>Mismatch gives garbage characters rather than silence — a useful distinction</td></tr>
             <tr><td>For I²C: run a bus scan</td><td>Tells you whether the device is present at all, and at which address</td></tr>
             <tr><td>For I²C: two devices at the same address?</td><td>Common with two identical sensors; many have an address-select pin</td></tr>
@@ -1988,7 +1988,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>Mass-storage bootloader — drag and drop a file</td><td>Nothing extra</td><td>Usually yes; hard to break</td></tr>
             <tr><td>Over-the-air update</td><td>A working network stack and update logic</td><td>No — a bad update removes the path</td></tr>
             <tr><td>SWD — serial wire debug</td><td>A cheap debug probe, two pins</td><td>Yes; writes flash directly</td></tr>
-            <tr><td>JTAG</td><td>A probe and more pins</td><td>Yes; the recovery path of last resort</td></tr>
+            <tr><td>JTAG <span class="acro-exp">(Joint Test Action Group)</span></td><td>A probe and more pins</td><td>Yes; the recovery path of last resort</td></tr>
             <tr><td>External programmer clipped to the flash chip</td><td>A clip and a programmer</td><td>Yes, when nothing else responds</td></tr>
           </tbody>
         </table>
@@ -2092,7 +2092,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         </table>
         <div class="concept-desc" style="margin-top:10px">
           The practical consequence for anyone specifying a system: ask "what happens if this is
-          late?" before choosing a platform. If the honest answer is "nothing much", Linux on an SBC
+          late?" before choosing a platform. If the honest answer is "nothing much", Linux on an SBC <span class="acro-exp">(Single-Board Computer)</span>
           is fine and far easier to work with. If the answer involves damage or danger, that
           decision has been made for you.
         </div>

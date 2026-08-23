@@ -1157,7 +1157,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
         <div class="dt">▸ COMMON TLS ATTACKS</div>
         <table class="ref-table">
           <tr><th>Attack</th><th>Target</th><th>Mechanism</th><th>Fix</th></tr>
-          <tr><td style="color:var(--red)">BEAST</td><td>TLS 1.0 CBC</td><td>IV prediction in CBC mode allows plaintext recovery</td><td>TLS 1.1+ or RC4 (deprecated) — use TLS 1.2+</td></tr>
+          <tr><td style="color:var(--red)">BEAST</td><td>TLS 1.0 CBC</td><td>IV prediction in CBC mode allows plaintext recovery</td><td>TLS 1.1+ or RC4 <span class="acro-exp">(Rivest Cipher 4)</span> (deprecated) — use TLS 1.2+</td></tr>
           <tr><td style="color:var(--red)">POODLE</td><td>SSLv3 CBC</td><td>Padding oracle on SSLv3</td><td>Disable SSLv3 entirely</td></tr>
           <tr><td style="color:var(--red)">DROWN</td><td>SSLv2 shared key</td><td>SSLv2 oracle decrypts TLS sessions sharing same key pair</td><td>Disable SSLv2; use separate certs</td></tr>
           <tr><td style="color:var(--red)">Heartbleed (CVE-2014-0160)</td><td>OpenSSL &lt;1.0.1g</td><td>Buffer over-read in heartbeat extension leaks server memory (keys, sessions)</td><td>Patch OpenSSL; revoke exposed certs</td></tr>
@@ -3439,7 +3439,7 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
                     <tr><td>Finds</td><td>Injection, hardcoded secrets, unsafe calls</td><td>Auth flaws, XSS <span class="acro-exp">(Cross-Site Scripting)</span>, misconfig, real exploits</td><td>Known CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span> in libraries</td></tr>
                     <tr><td>Needs it running?</td><td class="c-green">No</td><td class="c-red">Yes</td><td class="c-green">No</td></tr>
                     <tr><td>Weakness</td><td>False positives; no runtime view</td><td>Misses source-level bugs; needs a live target</td><td>Only known vulns</td></tr>
-                    <tr><td>Tools</td><td>Semgrep, CodeQL, SonarQube</td><td>OWASP <span class="acro-exp">(Open Worldwide Application Security Project)</span> ZAP, Burp</td><td>Dependabot, Snyk, Trivy</td></tr>
+                    <tr><td>Tools</td><td>Semgrep, CodeQL, SonarQube</td><td>OWASP <span class="acro-exp">(Open Worldwide Application Security Project)</span> ZAP <span class="acro-exp">(Zed Attack Proxy)</span>, Burp</td><td>Dependabot, Snyk, Trivy</td></tr>
                   </table>
                 </div>
               </div>
@@ -3644,7 +3644,7 @@ direction = <span class="m">"DESC"</span> <span class="kw">if</span> direction.u
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🚪</span>
-    <span class="topic-name">Broken Access Control — IDOR, Traversal &amp; the Checks Nobody Ran</span>
+    <span class="topic-name">Broken Access Control — IDOR <span class="acro-exp">(Insecure Direct Object Reference)</span>, Traversal &amp; the Checks Nobody Ran</span>
     <span class="topic-badge">AppSec • Defence</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -3793,7 +3793,7 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
       <div class="concept-title">Rebuilding an Object Runs Code, by Design</div>
       <div class="concept-desc">
         Native deserialization — Python <code>pickle</code>, Java's <code>ObjectInputStream</code>,
-        PHP <code>unserialize</code> — reconstructs arbitrary objects, which means invoking
+        PHP <span class="acro-exp">(PHP: Hypertext Preprocessor)</span> <code>unserialize</code> — reconstructs arbitrary objects, which means invoking
         constructors and magic methods that exist in the application's own dependency tree. An
         attacker who controls the byte stream chains those into remote code execution without
         needing any vulnerability in your code.
@@ -5124,9 +5124,9 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
         <table class="ref-table">
           <thead><tr><th>Interface</th><th>Gives</th><th>Typically found as</th></tr></thead>
           <tbody>
-            <tr><td>UART serial console</td><td>Boot messages, and often an interactive shell</td><td>Three or four pads: TX, RX, ground, sometimes power</td></tr>
-            <tr><td>JTAG / SWD</td><td>Halt the processor, read and write memory, single-step</td><td>A multi-pin header or pads, sometimes locked in production</td></tr>
-            <tr><td>SPI <span class="acro-exp">(Stateful Packet Inspection)</span> flash chip</td><td>The entire firmware image, read in place with a clip</td><td>An 8-pin chip beside the processor</td></tr>
+            <tr><td>UART <span class="acro-exp">(Universal Asynchronous Receiver/Transmitter)</span> serial console</td><td>Boot messages, and often an interactive shell</td><td>Three or four pads: TX <span class="acro-exp">(Transmit)</span>, RX <span class="acro-exp">(Receive)</span>, ground, sometimes power</td></tr>
+            <tr><td>JTAG <span class="acro-exp">(Joint Test Action Group)</span> / SWD <span class="acro-exp">(Serial Wire Debug)</span></td><td>Halt the processor, read and write memory, single-step</td><td>A multi-pin header or pads, sometimes locked in production</td></tr>
+            <tr><td>SPI <span class="acro-exp">(Serial Peripheral Interface)</span> flash chip</td><td>The entire firmware image, read in place with a clip</td><td>An 8-pin chip beside the processor</td></tr>
             <tr><td>eMMC <span class="acro-exp">(Embedded MultiMediaCard)</span> / NAND</td><td>Storage contents, including configuration and keys</td><td>Requires desoldering, or test pads if provided</td></tr>
             <tr><td>USB <span class="acro-exp">(Universal Serial Bus)</span> in debug or recovery mode</td><td>Firmware load paths, sometimes unauthenticated</td><td>A button combination at power-on</td></tr>
           </tbody>
