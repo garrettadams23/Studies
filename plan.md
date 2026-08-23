@@ -2114,8 +2114,12 @@ headlessly and given the checks they never had (14 of them) rather than rewritte
   to the whole dictionary only when the area is too small. The multi-meaning questions use the
   *other meanings of the same acronym* as distractors, which is the sharper version of the item.
   Verified: a domain-scoped quiz produced four options, none from outside that domain.
-- [ ] **Exam mode** — timed, fixed question count, no feedback until the end,
-  then a scored report broken down by domain with links to the weak topics.
+- [x] **Exam mode** — 📋 Exam in the study menu. Fixed length (10 / 20 / 40), a clock at 45 seconds
+  a question or untimed, answers recorded with **no marking until the end**, back-navigation to
+  change one, and running out of time submits rather than errors. The report scores the paper,
+  breaks it down by domain **weakest first**, lists every missed topic as a link — marking the ones
+  left blank as such — and offers "★ star all of these", which puts the whole list into the study
+  deck in one click.
 - [x] **Learning paths** — `data/paths.json`, six routes over 75 existing topics, inlined by
   `build.py` and opened from the study menu as 🧭 Learning paths. A step counts as done when the
   topic carries the same ✓ the topic header sets — not a second, parallel progress state — and the
@@ -8320,3 +8324,41 @@ what has not, and "what have I not touched" is the more useful question after th
 Nine new checks, 91 → **100**: the dashboard's coverage and its independence from the DOM, the
 streak's three transitions and its best-run memory, and both directions of its export — restored
 intact, and a malformed record refused.
+
+
+## Session record — Track AG closed: exam mode
+
+The last item in the track.
+
+**The mode is defined by what it withholds.** A quiz that marks each answer as you go is a study
+tool; an exam that does not is a measurement. Everything else follows from that: answers are
+recorded and the paper moves on, a chosen option is styled as *chosen* and never as right or wrong,
+and nothing is scored until the paper is handed in. The checks assert the absence — after answering
+deliberately wrongly, zero marking elements exist in the stage.
+
+**Distractors come from the question's own domain.** The plain quiz draws from the selected scope,
+which is right for a single domain and wrong for "all domains": three options about Kubernetes and
+one about soldering is a question about noticing the odd one out. Exam mode uses the question's own
+domain wherever that domain has four topics to offer, falling back to the scope otherwise. Checked
+over a 20-question all-domains paper: zero questions drew an option from another domain.
+
+**The report is a to-do list, not a scoreboard.** Domains are ordered weakest first, every missed
+topic is a link back to it, unanswered questions are marked as unanswered rather than merged with
+wrong ones, and "★ star all of these" turns the result into a study deck in one click.
+
+**The bug the tests were written to catch.** The clock is an interval, and an interval outlives the
+modal that owns it. Left running after the reader closes the exam, it would keep ticking against a
+detached stage and eventually "submit" a paper nobody was sitting. `stClose()` now stops it, and a
+check opens an exam, confirms the timer is running, closes the modal and confirms the state is gone.
+
+### Verification
+
+Ten new checks, 100 → **110**.
+
+### Track AG is now closed
+
+All eight items shipped. Four of them turned out to be built already and were given the tests they
+never had; four were built this session — learning paths, per-topic notes, the progress dashboard
+and exam mode. The study tools are now a system rather than four separate toys, which is what the
+track's own preamble asked for: a path tells you what to read, the dashboard tells you what you have
+covered, the scheduler brings it back, and the exam tells you whether any of it stuck.

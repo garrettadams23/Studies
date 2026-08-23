@@ -1972,6 +1972,11 @@ function stClose() {
   document.body.classList.remove("st-lock");
   _stQuizState = null;
   _stCardState = null;
+  // The exam's clock is an interval, and an interval outlives the modal that
+  // owns it — left running it would keep ticking against a stage that is no
+  // longer on screen, and eventually "submit" a paper nobody is sitting.
+  stExamStop();
+  _examState = null;
 }
 
 function esc(s) { return (s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
@@ -2404,6 +2409,227 @@ function stRenderAcroQuestion(stage) {
 }
 
 // ── STUDY LIST (bookmarks) ──────────────────────────────────────────────────
+// ── EXAM MODE ───────────────────────────────────────────────────────────────
+// The quiz with three things taken away and one added: a fixed length, a clock,
+// and no feedback until the end — then a report broken down by domain, with the
+// topics that were missed linked so the next step is one click rather than a
+// memory exercise.
+//
+// The no-feedback rule is the point of the mode. A quiz that marks each answer
+// is a study tool; an exam that does not is a measurement, and the difference
+// is whether the score means anything.
+
+const EXAM_SECONDS_PER_Q = 45;
+let _examState = null;
+
+/**
+ * Distractors from the question's own domain wherever that domain is big
+ * enough, falling back to the scope.
+ *
+ * Drawing them from the whole site — which is what "all domains" would do
+ * naively — makes almost every question answerable by noticing that three
+ * options are about Kubernetes and one is about soldering.
+ */
+function examDistractors(q, pool, byDomain) {
+  const home = (byDomain.get(q.domainId) || []).filter(t => t.id !== q.id);
+  const from = home.length >= 3 ? home : pool.filter(t => t.id !== q.id);
+  return shuffle(from.slice()).slice(0, 3);
+}
+
+function examBuild(scope, count) {
+  const pool = stTopicsForScope(scope).filter(t => t.title || t.desc);
+  if (pool.length < 4) return null;
+  const byDomain = new Map();
+  pool.forEach(t => {
+    if (!byDomain.has(t.domainId)) byDomain.set(t.domainId, []);
+    byDomain.get(t.domainId).push(t);
+  });
+  return shuffle(pool.slice()).slice(0, Math.min(count, pool.length)).map(q => {
+    const wrong = examDistractors(q, pool, byDomain);
+    return {
+      id: q.id, name: q.name, domainId: q.domainId, domainTitle: q.domainTitle,
+      domainIcon: q.domainIcon,
+      prompt: q.title || (q.desc || "").slice(0, 160),
+      options: shuffle([q, ...wrong]).map(o => ({ id: o.id, name: o.name })),
+      answer: q.id,
+    };
+  }).filter(q => q.options.length === 4);
+}
+
+function examTimeLeft() {
+  const s = _examState;
+  if (!s || !s.limit) return null;
+  return Math.max(0, s.limit - Math.round((Date.now() - s.started) / 1000));
+}
+
+function examClock(seconds) {
+  const m = Math.floor(seconds / 60), sec = seconds % 60;
+  return `${m}:${String(sec).padStart(2, "0")}`;
+}
+
+function stOpenExam() {
+  stOpen(body => {
+    body.innerHTML =
+      '<h2 class="st-h">📋 Exam</h2>' +
+      '<p class="st-bk-lead">A fixed number of questions, a clock, and no feedback until the end — ' +
+      'then a breakdown by domain with every missed topic linked.</p>' +
+      '<div class="st-toolbar"><label class="st-lbl">From</label>' + stScopeSelectHTML("st-ex-scope") +
+      '</div>' +
+      '<div class="st-toolbar"><label class="st-lbl">Length</label>' +
+      '<select id="st-ex-count" class="st-select">' +
+        '<option value="10">10 questions</option>' +
+        '<option value="20" selected>20 questions</option>' +
+        '<option value="40">40 questions</option></select>' +
+      '<label class="st-lbl">Clock</label>' +
+      '<select id="st-ex-timed" class="st-select">' +
+        '<option value="1" selected>Timed</option>' +
+        '<option value="0">Untimed</option></select>' +
+      '<button id="st-ex-start" class="st-btn st-btn-primary">Begin</button></div>' +
+      '<div id="st-ex-stage"></div>';
+    const stage = body.querySelector("#st-ex-stage");
+    body.querySelector("#st-ex-start").addEventListener("click", () => stStartExam(
+      body.querySelector("#st-ex-scope").value,
+      Number(body.querySelector("#st-ex-count").value),
+      body.querySelector("#st-ex-timed").value === "1",
+      stage));
+  });
+}
+
+function stStartExam(scope, count, timed, stage) {
+  const questions = examBuild(scope, count);
+  if (!questions || questions.length < 4) {
+    stage.innerHTML = '<p class="st-empty">Not enough topics with descriptions in that scope to sit an exam. Pick a broader one.</p>';
+    return;
+  }
+  stExamStop();
+  _examState = {
+    scope, questions, i: 0, answers: new Array(questions.length).fill(null),
+    started: Date.now(), limit: timed ? questions.length * EXAM_SECONDS_PER_Q : 0,
+    timer: null, stage,
+  };
+  if (_examState.limit) {
+    _examState.timer = setInterval(() => {
+      const left = examTimeLeft();
+      const el = document.getElementById("st-ex-clock");
+      if (el) {
+        el.textContent = examClock(left);
+        el.classList.toggle("low", left <= 60);
+      }
+      // Running out is a submission, not an error: the paper is taken away and
+      // whatever is on it is marked.
+      if (left <= 0) stExamFinish();
+    }, 1000);
+  }
+  stExamRender();
+}
+
+/** Clear the interval whenever the exam ends, is restarted, or the modal closes. */
+function stExamStop() {
+  if (_examState?.timer) clearInterval(_examState.timer);
+  if (_examState) _examState.timer = null;
+}
+
+function stExamRender() {
+  const s = _examState; if (!s) return;
+  const q = s.questions[s.i];
+  const left = examTimeLeft();
+  const answered = s.answers.filter(a => a !== null).length;
+  s.stage.innerHTML =
+    '<div class="st-ex-bar">' +
+      `<span class="st-progress">Question ${s.i + 1} / ${s.questions.length}</span>` +
+      `<span class="st-ex-answered">${answered} answered</span>` +
+      (s.limit ? `<span id="st-ex-clock" class="st-ex-clock${left <= 60 ? " low" : ""}">${examClock(left)}</span>` : "") +
+    '</div>' +
+    `<div class="st-q-prompt"><span class="st-q-label">Which topic does this describe?</span>${esc(q.prompt)}</div>` +
+    '<ul class="st-q-options">' + q.options.map(o =>
+      `<li><button class="st-q-opt${s.answers[s.i] === o.id ? " chosen" : ""}" data-id="${esc(o.id)}">${esc(o.name)}</button></li>`).join("") +
+    '</ul>' +
+    '<div class="st-ex-nav">' +
+      `<button id="st-ex-prev" class="st-btn"${s.i === 0 ? " disabled" : ""}>← Back</button>` +
+      (s.i === s.questions.length - 1
+        ? '<button id="st-ex-finish" class="st-btn st-btn-primary">Finish</button>'
+        : '<button id="st-ex-next" class="st-btn st-btn-primary">Next →</button>') +
+    '</div>';
+  // Choosing an answer says nothing about whether it was right — that is the
+  // whole mode. It moves on, because hesitating over a mark you will not get is
+  // the habit an exam is meant to break.
+  s.stage.querySelectorAll(".st-q-opt").forEach(btn => btn.addEventListener("click", () => {
+    s.answers[s.i] = btn.dataset.id;
+    if (s.i < s.questions.length - 1) { s.i++; stExamRender(); }
+    else stExamRender();
+  }));
+  s.stage.querySelector("#st-ex-prev")?.addEventListener("click", () => { if (s.i > 0) { s.i--; stExamRender(); } });
+  s.stage.querySelector("#st-ex-next")?.addEventListener("click", () => { s.i++; stExamRender(); });
+  s.stage.querySelector("#st-ex-finish")?.addEventListener("click", stExamFinish);
+}
+
+function examResult() {
+  const s = _examState;
+  const byDomain = new Map();
+  const missed = [];
+  s.questions.forEach((q, i) => {
+    const right = s.answers[i] === q.answer;
+    if (!byDomain.has(q.domainId)) {
+      byDomain.set(q.domainId, { id: q.domainId, title: q.domainTitle, icon: q.domainIcon, n: 0, right: 0 });
+    }
+    const d = byDomain.get(q.domainId);
+    d.n++;
+    if (right) d.right++;
+    else missed.push({ id: q.id, name: q.name, domainId: q.domainId, skipped: s.answers[i] === null });
+  });
+  const score = s.questions.length - missed.length;
+  return {
+    score, total: s.questions.length, missed,
+    elapsed: Math.round((Date.now() - s.started) / 1000),
+    // Weakest first: a report is a list of what to do next, and the domain you
+    // scored 40% in belongs above the one you scored 90% in.
+    domains: [...byDomain.values()].sort((a, b) => (a.right / a.n) - (b.right / b.n)),
+  };
+}
+
+function stExamFinish() {
+  const s = _examState; if (!s) return;
+  stExamStop();
+  const r = examResult();
+  const pct = Math.round((r.score / r.total) * 100);
+  s.stage.innerHTML =
+    '<div class="st-result"><div class="st-result-big">' +
+      (pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "📚") + '</div>' +
+    `<p>Score: <strong>${r.score} / ${r.total}</strong> (${pct}%) · ${examClock(r.elapsed)} taken</p></div>` +
+    '<table class="st-ex-table"><thead><tr><th>Domain</th><th>Score</th><th></th></tr></thead><tbody>' +
+    r.domains.map(d => {
+      const p = Math.round((d.right / d.n) * 100);
+      return `<tr><td>${esc(d.icon)} ${esc(d.title)}</td><td class="st-pg-num">${d.right}/${d.n}</td>` +
+        `<td class="st-pg-barcell"><div class="st-pg-bar"><div class="st-pg-fill" style="width:${p}%"></div></div></td></tr>`;
+    }).join("") + '</tbody></table>' +
+    (r.missed.length
+      ? '<h3 class="st-path-title">What to review</h3>' +
+        '<div class="st-toolbar"><span class="st-count">' +
+        `${r.missed.length} missed</span>` +
+        '<button id="st-ex-star" class="st-btn">★ Star all of these</button>' +
+        '<button id="st-ex-again" class="st-btn st-btn-primary">Sit another</button></div>' +
+        '<ul class="st-list">' + r.missed.map(m =>
+          `<li class="st-list-item"><button class="st-list-link" data-id="${esc(m.id)}">${esc(m.name)}</button>` +
+          `<span class="st-step-dom">${esc(m.domainId)}${m.skipped ? " · unanswered" : ""}</span></li>`).join("") +
+        '</ul>'
+      : '<p class="st-hint">Nothing missed. Pick a broader scope or a longer paper.</p>' +
+        '<div class="st-toolbar"><button id="st-ex-again" class="st-btn st-btn-primary">Sit another</button></div>');
+  s.stage.querySelectorAll(".st-list-link").forEach(b =>
+    b.addEventListener("click", () => { stClose(); stGoToTopic(b.dataset.id); }));
+  s.stage.querySelector("#st-ex-star")?.addEventListener("click", e => {
+    r.missed.forEach(m => localStorage.setItem(BOOKMARK_PREFIX + m.id, "1"));
+    document.querySelectorAll(".topic").forEach(t => {
+      if (localStorage.getItem(BOOKMARK_PREFIX + t.id) === "1") t.classList.add("bookmarked");
+    });
+    e.target.textContent = `★ ${r.missed.length} starred`;
+    e.target.disabled = true;
+    if (typeof stRefreshStudyList === "function") stRefreshStudyList();
+  });
+  s.stage.querySelector("#st-ex-again")?.addEventListener("click", () => stOpenExam());
+  streakTouch();
+  return r;
+}
+
 // ── STREAK ──────────────────────────────────────────────────────────────────
 // One record: the last day anything was studied, the run length, and the best
 // run. Days rather than sessions, and no list of dates — a streak that needs a
@@ -2982,6 +3208,7 @@ function initStudyTools() {
       '<button class="study-mi" data-act="acro"><span>🔤</span> Acronym quiz</button>' +
       '<button class="study-mi" data-act="list"><span>★</span> Study list</button>' +
       '<button class="study-mi" data-act="paths"><span>🧭</span> Learning paths</button>' +
+      '<button class="study-mi" data-act="exam"><span>📋</span> Exam mode</button>' +
       '<button class="study-mi" data-act="progress"><span>📊</span> Progress</button>' +
       '<button class="study-mi" data-act="backup"><span>💾</span> Back up &amp; restore</button>' +
     '</div>' +
@@ -3008,7 +3235,7 @@ function initStudyTools() {
     closeMenu();
     ({ jump: stOpenJump, cards: stOpenFlashcards, due: stOpenDue, quiz: stOpenQuiz,
        acro: stOpenAcroQuiz, list: stOpenStudyList, paths: stOpenPaths,
-       progress: stOpenProgress,
+       progress: stOpenProgress, exam: stOpenExam,
        backup: stOpenBackup }[mi.dataset.act])();
   });
   document.addEventListener("click", e => { if (!fab.contains(e.target) && !menu.hidden) closeMenu(); });

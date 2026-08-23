@@ -1098,6 +1098,102 @@ check("a malformed streak record is refused on import",
   streakTravel.refused === 1, `${streakTravel.refused} refused`);
 await page.evaluate(() => localStorage.clear());
 
+// ── exam mode ───────────────────────────────────────────────────────────────
+// The mode is defined by what it withholds, so that is what gets asserted:
+// a fixed length, no marking until the end, and a report that names the topics
+// to go back to.
+await page.goto(PAGE, { waitUntil: "load" });
+const exam = await page.evaluate(async () => {
+  localStorage.clear();
+  stOpenExam();
+  await new Promise(r => setTimeout(r, 150));
+  document.getElementById("st-ex-count").value = "10";
+  document.getElementById("st-ex-start").click();
+  await new Promise(r => setTimeout(r, 200));
+  const stage = document.getElementById("st-ex-stage");
+  const clock = document.getElementById("st-ex-clock")?.textContent || "";
+  const first = stage.querySelector(".st-q-opt");
+  const optionCount = stage.querySelectorAll(".st-q-opt").length;
+  // Answer the first question deliberately wrong, and check nothing is marked.
+  const wrong = [...stage.querySelectorAll(".st-q-opt")]
+    .find(b => b.dataset.id !== _examState.questions[0].answer);
+  wrong.click();
+  await new Promise(r => setTimeout(r, 100));
+  const marked = stage.querySelectorAll(".correct, .incorrect, .st-q-feedback").length;
+  return { clock, optionCount, length: _examState.questions.length, marked,
+           movedOn: _examState.i === 1, hasFirst: !!first };
+});
+check("an exam is a fixed number of questions with a clock",
+  exam.length === 10 && /^\d+:\d\d$/.test(exam.clock), `${exam.length} questions, clock ${exam.clock}`);
+check("each question offers four options", exam.optionCount === 4, `${exam.optionCount}`);
+check("answering marks nothing and moves on",
+  exam.marked === 0 && exam.movedOn, `${exam.marked} marks shown`);
+
+const examDistract = await page.evaluate(() => {
+  // With "all domains" selected, distractors still have to come from the
+  // question's own domain — otherwise the odd one out is obvious.
+  const qs = examBuild("__all", 20);
+  const foreign = qs.filter(q => {
+    const home = q.domainId;
+    return q.options.filter(o => topicDomain(o.id) !== home).length > 0;
+  });
+  return { built: qs.length, foreign: foreign.length };
+});
+check("distractors come from the question's own domain",
+  examDistract.built === 20 && examDistract.foreign === 0,
+  `${examDistract.foreign} of ${examDistract.built} questions drew from elsewhere`);
+
+const examReport = await page.evaluate(async () => {
+  // Answer the rest: every question right except the first, which is already
+  // wrong, plus one left blank.
+  const s = _examState;
+  for (let i = 1; i < s.questions.length - 1; i++) s.answers[i] = s.questions[i].answer;
+  const r = stExamFinish();
+  await new Promise(res => setTimeout(res, 150));
+  const stage = document.getElementById("st-ex-stage");
+  const rows = stage.querySelectorAll(".st-ex-table tbody tr").length;
+  const missedLinks = [...stage.querySelectorAll(".st-list-link")].map(b => b.dataset.id);
+  stage.querySelector("#st-ex-star").click();
+  await new Promise(res => setTimeout(res, 100));
+  return {
+    score: r.score, total: r.total, missed: r.missed.length,
+    skipped: r.missed.filter(m => m.skipped).length,
+    rows, missedLinks,
+    starred: missedLinks.filter(id => localStorage.getItem("bookmark:" + id) === "1").length,
+    timerStopped: _examState.timer === null,
+    // Weakest domain first — the report is a to-do list, not a scoreboard.
+    ordered: r.domains.every((d, i, a) =>
+      i === 0 || (a[i - 1].right / a[i - 1].n) <= (d.right / d.n)),
+  };
+});
+check("the exam scores what was answered and counts what was skipped",
+  examReport.score === examReport.total - 2 && examReport.missed === 2
+  && examReport.skipped === 1,
+  `${examReport.score}/${examReport.total}, ${examReport.missed} missed, ${examReport.skipped} blank`);
+check("the report breaks down by domain, weakest first",
+  examReport.rows > 0 && examReport.ordered, `${examReport.rows} domain rows`);
+check("every missed topic is linked back",
+  examReport.missedLinks.length === examReport.missed, `${examReport.missedLinks.length} links`);
+check("'star all of these' adds the missed topics to the study list",
+  examReport.starred === examReport.missed, `${examReport.starred} starred`);
+check("finishing stops the clock", examReport.timerStopped);
+
+const examClosed = await page.evaluate(async () => {
+  stOpenExam();
+  await new Promise(r => setTimeout(r, 120));
+  document.getElementById("st-ex-start").click();
+  await new Promise(r => setTimeout(r, 150));
+  const running = _examState?.timer !== null;
+  stClose();
+  await new Promise(r => setTimeout(r, 120));
+  return { running, cleared: _examState === null };
+});
+// An interval outlives the modal that owns it; left running it would submit a
+// paper nobody is sitting.
+check("closing the modal stops the exam clock",
+  examClosed.running && examClosed.cleared, JSON.stringify(examClosed));
+await page.evaluate(() => localStorage.clear());
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));
