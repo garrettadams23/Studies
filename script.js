@@ -1,10 +1,15 @@
 /**
  * script.js  —  CompTIA & Tech Reference  |  2026 Edition
  * =========================================================
- * toggleDomain / toggleTopic / filter / toggleAll
+ * hydrateDomain / openDomain / toggleDomain / toggleTopic / filter / toggleAll
  * toggleTheme / updateThemeUI
  * initSnapQuote / initCloudStack / initTouchFeedback
  * URL codec helpers
+ *
+ * One domain's content is in the document at a time. Read the DEFERRED DOMAIN
+ * CONTENT section before changing anything that walks .topic — the rule is that
+ * *which* topics exist comes from topicIndex(), and *what they say* comes from
+ * domainTopics(); neither may come from querySelectorAll across the page.
  */
 
 // ── STATE ──────────────────────────────────────────────────────────────────
@@ -31,41 +36,735 @@ const QUOTES = [
   "The present moment always will have been. — Marcus Aurelius"
 ];
 
+// ── DEFERRED DOMAIN CONTENT ────────────────────────────────────────────────
+// Every domain's header is in the document. No domain's content is: build.py
+// parks each body in an inert `<script type="text/html">` beside its section,
+// which the parser keeps as a single text node — no elements, no style
+// resolution, no layout. Opening a domain moves that text into `.domain-body`;
+// opening another empties the first. The document therefore holds the shell
+// plus at most one domain, which is what took the page from 92,330 elements at
+// load to 484.
+//
+// Two rules keep the rest of the file honest about content it cannot see:
+//
+//   1. Which topics exist  → topicIndex(), the id map build.py inlines. The
+//      progress badges, the random pick and `#slug` routing all need to answer
+//      for 29 domains, 28 of which have nothing in the DOM.
+//   2. What a topic says   → domainTopics(), which parses one domain's deferred
+//      text once and caches it. Search and the study decks read that, never the
+//      live DOM, so they cover the whole page exactly as before.
+//
+// Anything that reaches for `document.querySelectorAll(".topic")` instead is
+// asking about the one open domain, and will quietly answer for a 29th of the
+// page. That is the failure mode to watch for here.
+
+/** domain id -> its topic ids, in page order (inlined by build.py). */
+let _topicIndex = null;
+function topicIndex() {
+  if (_topicIndex) return _topicIndex;
+  const el = document.getElementById("topic-index");
+  try {
+    const o = el ? JSON.parse(el.textContent) : {};
+    _topicIndex = (o && typeof o === "object" && !Array.isArray(o)) ? o : {};
+  } catch { _topicIndex = {}; }
+  return _topicIndex;
+}
+
+/** topic id -> the domain that owns it, so a permalink can find its section. */
+let _topicOwner = null;
+function topicDomain(id) {
+  if (!_topicOwner) {
+    _topicOwner = new Map();
+    Object.keys(topicIndex()).forEach(d => topicIndex()[d].forEach(t => _topicOwner.set(t, d)));
+  }
+  return _topicOwner.get(id) || null;
+}
+
+function allTopicIds() {
+  return Object.keys(topicIndex()).reduce((all, d) => all.concat(topicIndex()[d]), []);
+}
+
+/** Cached domain sections — the headers are static, so this never goes stale. */
+let _domainSections = null;
+function domainSections() {
+  if (!_domainSections) _domainSections = [...document.querySelectorAll(".domain-section")];
+  return _domainSections;
+}
+
+function domainSection(id) {
+  return domainSections().find(s => s.dataset.domain === id) || null;
+}
+
+/** The one domain whose content is currently in the document, or null. */
+let _liveDomain = null;
+
+function isHydrated(section) { return !!section && section.dataset.hydrated === "1"; }
+
+/**
+ * Move a domain's deferred content into its body, evicting whichever domain
+ * was there. Everything the outgoing domain owned goes with it — topic
+ * elements, the injected tool buttons, any search highlights — because every
+ * piece of state worth keeping lives in localStorage or in topicIndex(), not in
+ * those nodes.
+ */
+function hydrateDomain(section) {
+  if (!section || isHydrated(section)) return false;
+  const src = section.querySelector("script.domain-src");
+  const body = section.querySelector(".domain-body");
+  if (!src || !body) return false;
+  if (_liveDomain && _liveDomain !== section) dehydrateDomain(_liveDomain);
+  body.innerHTML = src.textContent;
+  section.dataset.hydrated = "1";
+  _liveDomain = section;
+  enhanceDomain(section);
+  renderDomainIntro(section);
+  return true;
+}
+
+/** domain id -> its landing card (inlined by build.py from data/domain-intros.json). */
+let _domainIntros = null;
+function domainIntros() {
+  if (_domainIntros) return _domainIntros;
+  const el = document.getElementById("domain-intros");
+  try {
+    const o = el ? JSON.parse(el.textContent) : {};
+    _domainIntros = (o && typeof o === "object" && !Array.isArray(o)) ? o : {};
+  } catch { _domainIntros = {}; }
+  return _domainIntros;
+}
+
+/** domain id -> {month, topics}: what was reviewed here most recently. */
+let _changelog = null;
+function changelog() {
+  if (_changelog) return _changelog;
+  const el = document.getElementById("changelog");
+  try {
+    const o = el ? JSON.parse(el.textContent) : {};
+    _changelog = (o && typeof o === "object" && !Array.isArray(o)) ? o : {};
+  } catch { _changelog = {}; }
+  return _changelog;
+}
+
+/** "August 2026" from "2026-08". Falls back to the raw value rather than NaN. */
+const MONTHS = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+function monthLabel(ym) {
+  const m = /^(\d{4})-(\d{2})$/.exec(ym || "");
+  if (!m) return ym || "";
+  const n = Number(m[2]);
+  return (n >= 1 && n <= 12) ? `${MONTHS[n - 1]} ${m[1]}` : ym;
+}
+
+/**
+ * Put a domain's landing card above its topics: what it covers, who it is for,
+ * three topics to start with, and where to go next.
+ *
+ * The card is data rather than a `.topic` in the content file, and that is the
+ * whole point — a signpost should not be counted by the topic index, dated by
+ * stamp_freshness.py, offered by the random pick or dealt into a study deck.
+ *
+ * The "start here" entries are stored as topic *names* and resolved here
+ * against the domain's own parsed topics. A name that no longer resolves is
+ * dropped rather than rendered dead, so renaming a topic costs the card one
+ * link instead of leaving a button that goes nowhere.
+ */
+function renderDomainIntro(section) {
+  const body = section?.querySelector(".domain-body");
+  const intro = domainIntros()[section?.dataset.domain];
+  if (!body || !intro || body.querySelector(":scope > .domain-intro")) return;
+
+  const byName = new Map();
+  domainTopics(section.dataset.domain).forEach(t => {
+    if (t.name && t.id && !byName.has(t.name)) byName.set(t.name, t.id);
+  });
+
+  const card = document.createElement("div");
+  card.className = "domain-intro";
+
+  const add = (cls, label, text) => {
+    if (!text) return;
+    const row = document.createElement("div");
+    row.className = "di-row " + cls;
+    const l = document.createElement("span");
+    l.className = "di-label";
+    l.textContent = label;
+    const v = document.createElement("span");
+    v.className = "di-text";
+    v.textContent = text;
+    row.append(l, v);
+    card.append(row);
+  };
+
+  add("di-covers", "Covers", intro.covers);
+  add("di-who", "For", intro.who);
+
+  const starts = (intro.start || []).filter(n => byName.has(n));
+  if (starts.length) {
+    const row = document.createElement("div");
+    row.className = "di-row di-start";
+    const l = document.createElement("span");
+    l.className = "di-label";
+    l.textContent = "Start here";
+    const list = document.createElement("span");
+    list.className = "di-text di-links";
+    starts.forEach(name => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "di-link";
+      b.textContent = name;
+      b.addEventListener("click", () => stGoToTopic(byName.get(name)));
+      list.append(b);
+    });
+    row.append(l, list);
+    card.append(row);
+  }
+
+  add("di-next", "Then", intro.next);
+
+  // "Is anyone still maintaining this?" — answered from the freshness stamps
+  // rather than left to be guessed at from the writing style.
+  const log = changelog()[section.dataset.domain];
+  const rows = domainTopics(section.dataset.domain);
+  const recent = (log?.topics || [])
+    .map(id => rows.find(t => t.id === id))
+    .filter(Boolean);
+  if (log?.month) {
+    const row = document.createElement("div");
+    row.className = "di-row di-updated";
+    const l = document.createElement("span");
+    l.className = "di-label";
+    l.textContent = "Updated";
+    const v = document.createElement("span");
+    v.className = "di-text di-links";
+    const when = document.createElement("span");
+    when.className = "di-when";
+    when.textContent = monthLabel(log.month);
+    v.append(when);
+    recent.forEach(t => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "di-link";
+      b.textContent = t.name;
+      b.addEventListener("click", () => stGoToTopic(t.id));
+      v.append(b);
+    });
+    row.append(l, v);
+    card.append(row);
+  }
+
+  body.prepend(card);
+}
+
+// ── PER-TOPIC NOTES ─────────────────────────────────────────────────────────
+// One note per topic, stored under `note:<id>`, shown at the top of the topic's
+// body whenever that topic is open. Separate from the notepad, which is a
+// single shared scratchpad: a note about Kerberos delegation belongs on the
+// Kerberos card, not in a pile with everything else.
+//
+// It is deliberately the same shape as the other per-topic state — a prefixed
+// key holding a plain string — so the export, the import's validation and the
+// "what do we own" list all pick it up by the rule they already have.
+
+function topicNote(id) {
+  try { return localStorage.getItem(NOTE_PREFIX + id) || ""; } catch { return ""; }
+}
+
+function saveTopicNote(id, text) {
+  const value = (text || "").slice(0, NOTE_MAX).trim();
+  try {
+    if (value) { localStorage.setItem(NOTE_PREFIX + id, value); streakTouch(); }
+    else localStorage.removeItem(NOTE_PREFIX + id);
+  } catch { /* quota — the note stays on screen, just unsaved */ }
+  document.getElementById(id)?.classList.toggle("noted", !!value);
+  return value;
+}
+
+/**
+ * Render the note block into a topic body, or update it in place.
+ *
+ * `open` forces the editor open — what the 📝 button does. Without it the block
+ * only appears when there is a note to show, so a topic nobody has annotated
+ * looks exactly as it did before this feature existed.
+ */
+function renderTopicNote(topic, { open = false } = {}) {
+  if (!topic) return null;
+  const body = topic.querySelector(":scope > .topic-body");
+  if (!body) return null;
+  const existing = body.querySelector(":scope > .topic-note");
+  const text = topicNote(topic.id);
+  if (!text && !open) { existing?.remove(); return null; }
+
+  let block = existing;
+  if (!block) {
+    block = document.createElement("div");
+    block.className = "topic-note";
+    block.innerHTML =
+      '<div class="tn-head"><span class="tn-label">My note</span>' +
+      '<button type="button" class="tn-edit">Edit</button>' +
+      '<button type="button" class="tn-clear" hidden>Delete</button></div>' +
+      '<div class="tn-text"></div>' +
+      '<textarea class="tn-input" rows="3" maxlength="' + NOTE_MAX +
+      '" placeholder="A note only you see. Stored in this browser, and included in your progress export."></textarea>';
+    body.prepend(block);
+
+    const input = block.querySelector(".tn-input");
+    const commit = () => {
+      const saved = saveTopicNote(topic.id, input.value);
+      block.querySelector(".tn-text").textContent = saved;
+      setEditing(false);
+      if (!saved) block.remove();
+    };
+    block.querySelector(".tn-edit").addEventListener("click", () => setEditing(true));
+    block.querySelector(".tn-clear").addEventListener("click", () => {
+      input.value = ""; commit();
+    });
+    input.addEventListener("blur", commit);
+    input.addEventListener("keydown", e => {
+      // Escape abandons the edit; the note on screen is the saved one.
+      if (e.key === "Escape") { input.value = topicNote(topic.id); commit(); }
+    });
+
+    function setEditing(on) {
+      block.classList.toggle("editing", on);
+      block.querySelector(".tn-text").hidden = on;
+      block.querySelector(".tn-clear").hidden = !on;
+      input.hidden = !on;
+      if (on) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+    }
+    block._setEditing = setEditing;
+    setEditing(false);
+  }
+
+  block.querySelector(".tn-text").textContent = text;
+  block.querySelector(".tn-input").value = text;
+  if (open) block._setEditing(true);
+  return block;
+}
+
+/** The 📝 button: open the topic if it is closed, then focus the editor. */
+function toggleTopicNote(topic) {
+  const header = topic.querySelector(":scope > .topic-header");
+  const body = topic.querySelector(":scope > .topic-body");
+  if (body && !body.classList.contains("open")) {
+    setTopicOpen(header, true);
+    renderSeeAlso(topic);
+  }
+  renderTopicNote(topic, { open: true });
+}
+
+/** topic id -> ids worth reading next (inlined by build.py from data/related.json). */
+let _related = null;
+function relatedTopics() {
+  if (_related) return _related;
+  const el = document.getElementById("related-topics");
+  try {
+    const o = el ? JSON.parse(el.textContent) : {};
+    _related = (o && typeof o === "object" && !Array.isArray(o)) ? o : {};
+  } catch { _related = {}; }
+  return _related;
+}
+
+/** A topic id -> its title as written, without parsing every domain. */
+function topicName(id) {
+  const d = topicDomain(id);
+  if (!d) return null;
+  return domainTopics(d).find(t => t.id === id)?.name || null;
+}
+
+/**
+ * Append the "See also" strip to a topic, once, the first time it is opened.
+ *
+ * Rendered on open rather than at hydration because a domain is dozens of
+ * topics and a reader opens two or three: doing it here spends the work on the
+ * cards actually read, and it is where the target titles are resolved, which
+ * costs a parse of whichever *other* domain a link points into.
+ *
+ * An id that no longer resolves is dropped and a strip with nothing left in it
+ * is not rendered at all — deleting a topic must not leave dead links on
+ * everything that referenced it.
+ */
+function renderSeeAlso(topic) {
+  if (!topic || topic.dataset.seeAlso === "1") return;
+  topic.dataset.seeAlso = "1";
+  const body = topic.querySelector(":scope > .topic-body");
+  const ids = relatedTopics()[topic.id];
+  if (!body || !Array.isArray(ids) || !ids.length) return;
+
+  const rows = ids
+    .map(id => ({ id, name: topicName(id), domain: topicDomain(id) }))
+    .filter(r => r.name);
+  if (!rows.length) return;
+
+  const strip = document.createElement("div");
+  strip.className = "see-also";
+  const label = document.createElement("span");
+  label.className = "sa-label";
+  label.textContent = "See also";
+  strip.append(label);
+  rows.forEach(r => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "sa-link";
+    b.textContent = r.name;
+    // The domain is worth showing: half these links leave the domain the
+    // reader is in, and following one without knowing that is disorienting.
+    if (r.domain && r.domain !== topic.closest(".domain-section")?.dataset.domain) {
+      const tag = document.createElement("span");
+      tag.className = "sa-domain";
+      tag.textContent = r.domain;
+      b.append(" ", tag);
+    }
+    b.addEventListener("click", () => stGoToTopic(r.id));
+    strip.append(b);
+  });
+  body.append(strip);
+}
+
+/** Empty a domain's body and collapse it. Its content stays in the page as text. */
+function dehydrateDomain(section) {
+  if (!isHydrated(section)) return;
+  const body = section.querySelector(".domain-body");
+  const header = section.querySelector(".domain-header");
+  body.classList.remove("open");
+  body.textContent = "";
+  delete section.dataset.hydrated;
+  header?.classList.remove("open");
+  header?.setAttribute("aria-expanded", "false");
+  if (_liveDomain === section) _liveDomain = null;
+  // The <mark> wrappers went with the nodes; the set that tracked them must not
+  // outlive them or clearHighlights() would walk detached elements.
+  _highlighted.clear();
+}
+
+/** Open a domain — hydrating it, and closing whichever one was open. */
+function openDomain(section, opts = {}) {
+  if (!section) return;
+  const header = section.querySelector(".domain-header");
+  const body = section.querySelector(".domain-body");
+  hydrateDomain(section);
+  body.classList.add("open");
+  header.classList.add("open");
+  header.setAttribute("aria-expanded", "true");
+  // A domain opened while a search is running shows that search's result, not
+  // its whole self — otherwise the chips and the search disagree about what the
+  // page is showing.
+  if (_searchTerm) applySearchToDomain(section);
+  if (opts.scroll) header.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function closeDomain(section) { dehydrateDomain(section); }
+
+/**
+ * Per-topic setup for a domain that has just arrived in the DOM: the a11y
+ * attributes, stored progress, and the ★ ✓ 🔗 tool cluster. This used to run
+ * once at load over all 1,080 topics; it now runs over the few dozen in one
+ * domain, on open.
+ */
+function enhanceDomain(section) {
+  const ids = topicIndex()[section.dataset.domain] || [];
+  section.querySelectorAll(".topic").forEach((topic, i) => {
+    // build.py stamps the ids. The fallback is for a hand-built fragment (a
+    // patch script, a test page) that never went through it.
+    if (!topic.id) topic.id = ids[i] || slugify(labelText(topic.querySelector(".topic-name")));
+    const header = topic.querySelector(":scope > .topic-header");
+    if (!header) return;
+    // The header used to be role="button" and also contained the ★ ✓ 📝 🔗
+    // buttons — a control nested inside a control, which is invalid ARIA and
+    // leaves those four unreachable or ambiguous to a screen reader. The
+    // clickable part is now a real <button> wrapping the icon, name, badge and
+    // chevron; the tools are its siblings. The header keeps the layout and no
+    // longer claims to be interactive itself.
+    let toggle = header.querySelector(":scope > .topic-toggle");
+    if (!toggle) {
+      toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "topic-toggle";
+      // Everything except the chevron. The chevron stays a sibling so the row
+      // keeps its original order — name, tools, chevron — and because a
+      // decorative arrow does not belong inside the button's accessible name.
+      const chev = header.querySelector(":scope > .topic-chev");
+      chev?.setAttribute("aria-hidden", "true");
+      [...header.childNodes].forEach(n => { if (n !== chev) toggle.appendChild(n); });
+      chev ? header.insertBefore(toggle, chev) : header.appendChild(toggle);
+    }
+    header.removeAttribute("tabindex");
+    header.removeAttribute("role");
+    header.removeAttribute("aria-expanded");
+    toggle.setAttribute("aria-expanded", header.classList.contains("open") ? "true" : "false");
+
+    if (localStorage.getItem(REVIEWED_PREFIX + topic.id) === "1") topic.classList.add("reviewed");
+    if (localStorage.getItem(BOOKMARK_PREFIX + topic.id) === "1") topic.classList.add("bookmarked");
+    if (localStorage.getItem(NOTE_PREFIX + topic.id)) topic.classList.add("noted");
+
+    if (!header.querySelector(".topic-tools")) {
+      const tools = document.createElement("span");
+      tools.className = "topic-tools";
+
+      const bookmark = document.createElement("button");
+      bookmark.type = "button";
+      bookmark.className = "topic-bookmark";
+      bookmark.title = "Save to study list";
+      bookmark.setAttribute("aria-label", "Save topic to study list");
+      bookmark.textContent = "★";
+
+      const review = document.createElement("button");
+      review.type = "button";
+      review.className = "topic-review";
+      review.title = "Mark topic as reviewed";
+      review.setAttribute("aria-label", "Mark topic as reviewed");
+      review.textContent = "✓";
+
+      const link = document.createElement("button");
+      link.type = "button";
+      link.className = "topic-permalink";
+      link.title = "Copy link to this topic";
+      link.setAttribute("aria-label", "Copy link to this topic");
+      link.textContent = "🔗";
+
+      const note = document.createElement("button");
+      note.type = "button";
+      note.className = "topic-note-btn";
+      note.title = "Note on this topic";
+      note.setAttribute("aria-label", "Write a note on this topic");
+      note.textContent = "📝";
+
+      tools.append(bookmark, review, note, link);
+      const chev = header.querySelector(":scope > .topic-chev");
+      chev ? header.insertBefore(tools, chev) : header.appendChild(tools);
+    }
+  });
+
+  // Widgets that live inside a topic and used to be wired at load. The codec's
+  // buttons are handled by delegation on the container; only the matrix builds
+  // DOM of its own, and only when its host arrives.
+  initCloudStack();
+  updateDomainProgress(section);
+}
+
+// ── DEFERRED CONTENT INDEX ─────────────────────────────────────────────────
+// What search and the study decks read instead of the DOM. Parsing markup with
+// regexes is a poor general idea and a good specific one here: the shapes are
+// generated by build.py from data/*.html, tools/lint_content.py already holds
+// the same patterns in Python, and the alternative — DOMParser — rebuilds the
+// 90,000 elements this whole change exists to avoid.
+
+const TOPIC_OPEN = '<div class="topic"';
+const RE_TOPIC_ID = /\bid="([^"]+)"/;
+/**
+ * The opening tag of an element carrying one class, whatever else it carries.
+ *
+ * Both halves of that matter and both were got wrong first time. Any element:
+ * a concept title is a <div> 2,263 times and an <h4> 342 times, and pinning the
+ * tag indexed the <h4> ones as empty. Whatever else: `class="concept-desc
+ * verdict"` is still a description, and requiring an exact attribute skipped
+ * the modifier'd ones — quietly, and only on some cards.
+ */
+const classRe = cls =>
+  new RegExp(`<[a-zA-Z][\\w-]*\\b[^>]*class="(?:[^"]*\\s)?${cls}(?:\\s[^"]*)?"[^>]*>`);
+
+const RE_TOPIC_NAME = classRe("topic-name");
+const RE_TOPIC_BADGE = classRe("topic-badge");
+const RE_CONCEPT_TITLE = classRe("concept-title");
+const RE_CONCEPT_DESC = classRe("concept-desc");
+const RE_ACRO_SPAN = /<span class="acro-exp">\([^<]*?\)<\/span\s*>/g;
+
+/**
+ * The contents of the first element matching `open`, counting nesting.
+ *
+ * The lazy `(.*?)</span>` version of this is wrong on exactly the markup that
+ * matters: a topic name carrying an inline acronym expansion ends at the
+ * *expansion's* closing tag, so "OSI Model — 7 Layers" indexes as
+ * "OSI (Open Systems Interconnection)" and every deck and jump list shows that.
+ */
+function firstInner(html, open) {
+  const m = open.exec(html);
+  if (!m) return "";
+  const tag = /^<([a-zA-Z][\w-]*)/.exec(m[0])[1];
+  const openTag = `<${tag}`, closeTag = `</${tag}`;
+  const start = m.index + m[0].length;
+  let depth = 1, i = start;
+  while (depth > 0) {
+    const c = html.indexOf(closeTag, i);
+    if (c === -1) return html.slice(start);
+    const o = html.indexOf(openTag, i);
+    if (o !== -1 && o < c) { depth++; i = o + openTag.length; continue; }
+    depth--;
+    if (!depth) return html.slice(start, c);
+    i = c + closeTag.length;
+  }
+  return "";
+}
+
+// Entity decoding, by table rather than by parser. The obvious version assigns
+// to a detached <textarea>'s innerHTML and reads .value back, which is correct
+// for every entity that exists — and cost 1,167 ms of the 1,652 ms it took to
+// index the page, because each call is a parser round trip. The table covers
+// every named entity data/*.html actually contains (`grep -o '&[a-z]*;'` finds
+// nine) plus a few likely neighbours; numeric refs are handled generically, and
+// anything else is left as written — it would read as `&hellip;` in a deck,
+// which is wrong but visible, rather than breaking the parse.
+const ENTITIES = {
+  "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&#39;": "'",
+  "&nbsp;": " ", "&bull;": "\u2022", "&middot;": "\u00b7",
+  "&times;": "\u00d7", "&ge;": "\u2265", "&le;": "\u2264", "&mdash;": "\u2014",
+};
+const RE_ENTITY = /&(?:#(\d+)|#[xX]([0-9a-fA-F]+)|[a-zA-Z][a-zA-Z0-9]*);/g;
+
+function decodeEntities(s) {
+  if (!s || s.indexOf("&") === -1) return s;
+  return s.replace(RE_ENTITY, (whole, dec, hex) => {
+    if (dec) return String.fromCodePoint(+dec);
+    if (hex) return String.fromCodePoint(parseInt(hex, 16));
+    return ENTITIES[whole] !== undefined ? ENTITIES[whole] : whole;
+  });
+}
+
+// A tag, by the parser's rule: `<` then a letter (or `</`). `<[^>]+>` looks
+// equivalent and is not — `WHERE created_at < now()` inside a code block has a
+// `>` somewhere after it, so the loose pattern swallows the comparison operator
+// and everything up to it. The browser does not, because `< ` cannot open a tag.
+const RE_TAG = /<\/?[a-zA-Z][^>]*>|<!--[\s\S]*?-->/g;
+const RE_WS = /\s+/g;
+
+/** Markup -> the text a reader sees, whitespace collapsed.
+ *
+ * Tags become nothing, not a space. That looks like the more dangerous choice
+ * and is the correct one: it is what textContent does, and the source already
+ * carries a newline between anything that needs separating. Replacing them with
+ * a space instead put one inside every inline acronym expansion —
+ * `CIDR ( Classless Inter-Domain Routing )` — which is not what the card says
+ * and so is not what a search for it should have to match.
+ */
+function plainText(html) {
+  return decodeEntities(html.replace(RE_TAG, "").replace(RE_WS, " ")).trim();
+}
+
+/** Same, with the inline acronym expansions dropped — the title as written. */
+function plainLabel(html) {
+  return plainText(html.replace(RE_ACRO_SPAN, ""));
+}
+
+const _domainTopics = new Map();
+
+/**
+ * One domain's topics, parsed from its deferred block: id, the fields the decks
+ * show, and the lowercased full text search matches on. Cached — the content
+ * never changes — and warmed in idle time after load, so the first search does
+ * not pay for the parse.
+ */
+function domainTopics(domainId) {
+  const cached = _domainTopics.get(domainId);
+  if (cached) return cached;
+
+  const rows = [];
+  const src = domainSection(domainId)?.querySelector("script.domain-src");
+  const html = src ? src.textContent : "";
+  let start = html.indexOf(TOPIC_OPEN);
+  while (start !== -1) {
+    const next = html.indexOf(TOPIC_OPEN, start + TOPIC_OPEN.length);
+    const chunk = html.slice(start, next === -1 ? html.length : next);
+    const openTag = chunk.slice(0, chunk.indexOf(">") + 1);
+    rows.push({
+      id: (RE_TOPIC_ID.exec(openTag) || ["", ""])[1],
+      name: plainLabel(firstInner(chunk, RE_TOPIC_NAME)),
+      title: plainText(firstInner(chunk, RE_CONCEPT_TITLE)),
+      desc: plainText(firstInner(chunk, RE_CONCEPT_DESC)),
+      badge: plainText(firstInner(chunk, RE_TOPIC_BADGE)),
+      text: plainText(chunk).toLowerCase(),
+    });
+    start = next;
+  }
+  _domainTopics.set(domainId, rows);
+  return rows;
+}
+
+/**
+ * Parse the deferred blocks during idle time, one domain per callback.
+ *
+ * Without this the first search would parse all 29 at once — the one moment the
+ * user is waiting on a keystroke. With it the work is done before they type,
+ * and it never competes with the first paint.
+ */
+function warmContentIndex() {
+  const queue = Object.keys(topicIndex()).filter(d => !_domainTopics.has(d));
+  if (!queue.length) return;
+  const idle = window.requestIdleCallback
+    ? window.requestIdleCallback.bind(window)
+    : (fn => setTimeout(() => fn({ timeRemaining: () => 0 }), 80));
+  const step = deadline => {
+    do { domainTopics(queue.shift()); } while (queue.length && deadline.timeRemaining() > 8);
+    if (queue.length) idle(step, { timeout: 3000 });
+  };
+  idle(step, { timeout: 3000 });
+}
+
 // ── ACCORDION ──────────────────────────────────────────────────────────────
 function toggleDomain(h) {
-  const b = h.nextElementSibling;
-  const open = b.classList.toggle("open");
-  h.classList.toggle("open", open);
-  h.setAttribute("aria-expanded", open ? "true" : "false");
+  const section = h.closest(".domain-section");
+  if (!section) return;
+  section.querySelector(".domain-body").classList.contains("open")
+    ? closeDomain(section)
+    : openDomain(section);
+}
+
+/** The element carrying a topic's expanded state — its toggle button. */
+function topicToggle(header) {
+  return header?.querySelector(":scope > .topic-toggle") || header;
+}
+
+/** Set a topic's open state in one place: the header class, the body, the aria. */
+function setTopicOpen(header, open) {
+  if (!header) return;
+  header.classList.toggle("open", open);
+  header.parentElement?.querySelector(":scope > .topic-body")?.classList.toggle("open", open);
+  topicToggle(header).setAttribute("aria-expanded", open ? "true" : "false");
 }
 
 function toggleTopic(h) {
-  const open = h.classList.toggle("open");
-  h.nextElementSibling.classList.toggle("open", open);
-  h.setAttribute("aria-expanded", open ? "true" : "false");
-  if (open) updateTopicHash(h.parentElement);
+  const header = h.classList?.contains("topic-toggle") ? h.parentElement : h;
+  const open = !header.classList.contains("open");
+  setTopicOpen(header, open);
+  if (open) {
+    renderSeeAlso(header.parentElement);
+    renderTopicNote(header.parentElement);
+    updateTopicHash(header.parentElement);
+  }
 }
 
 // ── FILTER ─────────────────────────────────────────────────────────────────
 function filter(domain, chip) {
   document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
   chip.classList.add("active");
-  document.querySelectorAll(".domain-section").forEach(s => {
+  domainSections().forEach(s => {
     s.classList.toggle("hidden", domain !== "all" && s.dataset.domain !== domain);
   });
+  // Narrowing to a single domain is a request to read it, and it is the only
+  // one on screen — so open it. ALL leaves whatever is open open; closing it
+  // would throw away the reader's place for no reason.
+  if (domain !== "all") openDomain(domainSection(domain));
 }
 
 // ── EXPAND / COLLAPSE ALL ──────────────────────────────────────────────────
+// Scoped to the open domain, because that is the only content there is. The
+// old whole-page version would have to build all 29 domains to expand them —
+// the exact thing a reader pressing "expand" is not asking for.
 function toggleAll() {
   allExpanded = !allExpanded;
-  document.querySelectorAll(".domain-header, .topic-header").forEach(h => {
-    h.classList.toggle("open", allExpanded);
-    if (h.hasAttribute("aria-expanded")) h.setAttribute("aria-expanded", allExpanded ? "true" : "false");
-  });
-  document.querySelectorAll(".domain-body, .topic-body").forEach(b => b.classList.toggle("open", allExpanded));
+  let section = _liveDomain;
+  if (allExpanded && !section) {
+    section = domainSections().find(s =>
+      !s.classList.contains("hidden") && !s.classList.contains("search-hidden"));
+    if (section) openDomain(section);
+  }
+  if (section) {
+    section.querySelectorAll(".topic-header").forEach(h => setTopicOpen(h, allExpanded));
+    if (!allExpanded) closeDomain(section);
+  } else {
+    allExpanded = false;
+  }
   const hdrBtn = document.getElementById("hdr-expand-btn");
   if (hdrBtn) {
-    hdrBtn.title = allExpanded ? "Collapse all" : "Expand all";
+    hdrBtn.title = allExpanded ? "Collapse the open domain" : "Expand the open domain";
     hdrBtn.setAttribute("aria-checked", allExpanded ? "true" : "false");
   }
 }
@@ -107,10 +806,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("domain-container");
   container?.addEventListener("click", e => {
     // Per-topic tool buttons take precedence over the toggle
-    const tool = e.target.closest(".topic-review, .topic-permalink, .topic-bookmark");
+    const tool = e.target.closest(".topic-review, .topic-permalink, .topic-bookmark, .topic-note-btn");
     if (tool) { e.stopPropagation(); handleTopicTool(tool); return; }
+    // The URL codec lives inside a topic, so its buttons arrive and leave with
+    // their domain — delegation instead of the load-time wiring they had.
+    const codec = e.target.closest(".url-codec-btn");
+    if (codec) {
+      e.stopPropagation();
+      if (codec.classList.contains("btn-encode")) urlToolEncode();
+      else if (codec.classList.contains("btn-decode")) urlToolDecode();
+      else if (codec.classList.contains("btn-copy")) urlToolCopy();
+      else if (codec.classList.contains("btn-clear")) urlToolClear();
+      return;
+    }
+    // A concept card's label copies a link to that card. Inside a topic body,
+    // so it must be handled before the topic-header toggle below — and it never
+    // reaches it anyway, but the ordering states the intent.
+    const cardLabel = e.target.closest(".concept-label");
+    if (cardLabel) { e.stopPropagation(); copyCardLink(cardLabel); return; }
+    // A cross-reference build.py resolved to an id. Inert spans — a title that
+    // no longer matches a topic — fall through and stay plain text.
+    const xref = e.target.closest(".xref[data-xref]");
+    if (xref) { e.stopPropagation(); stGoToTopic(xref.dataset.xref); return; }
     const dh = e.target.closest(".domain-header");
     if (dh) { toggleDomain(dh); return; }
+    // The button is the control; the header around it is layout. Clicking the
+    // padding either side of the button still toggles, which is what a large
+    // touch target is for.
+    const tt = e.target.closest(".topic-toggle");
+    if (tt) { toggleTopic(tt.parentElement); return; }
     const th = e.target.closest(".topic-header");
     if (th) toggleTopic(th);
   });
@@ -118,8 +842,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Accordion — keyboard support (Enter / Space on focused headers)
   container?.addEventListener("keydown", e => {
     if (e.key !== "Enter" && e.key !== " ") return;
+    const xref = e.target.closest(".xref[data-xref]");
+    if (xref) { e.preventDefault(); stGoToTopic(xref.dataset.xref); return; }
+    // A real <button> already fires a click on Enter and Space; handling it
+    // here as well toggled the topic twice, which looked like nothing happening.
+    if (e.target.closest(".topic-toggle")) return;
     const header = e.target.closest(".domain-header, .topic-header");
-    if (!header || e.target.closest(".topic-review, .topic-permalink")) return;
+    if (!header || e.target.closest(".topic-review, .topic-permalink, .topic-note-btn")) return;
     e.preventDefault();
     header.classList.contains("domain-header") ? toggleDomain(header) : toggleTopic(header);
   });
@@ -136,10 +865,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("search-input")?.addEventListener("input", e => onSearchInput(e.target.value));
   document.getElementById("search-clear")?.addEventListener("click", clearSearch);
   document.getElementById("notepad-tab")?.addEventListener("click", toggleNotepad);
-  document.querySelector(".url-codec-btn.btn-encode")?.addEventListener("click", urlToolEncode);
-  document.querySelector(".url-codec-btn.btn-decode")?.addEventListener("click", urlToolDecode);
-  document.querySelector(".url-codec-btn.btn-copy")?.addEventListener("click", urlToolCopy);
-  document.querySelector(".url-codec-btn.btn-clear")?.addEventListener("click", urlToolClear);
 
   // Global keyboard shortcuts (ignored while typing in a field)
   document.addEventListener("keydown", handleGlobalKeys);
@@ -147,6 +872,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initAccessibilityAndTools();
   initBackToTop();
   initStudyTools();
+
+  // Parse the deferred domain text in idle time, so the first search and the
+  // first deck are instant instead of paying for all 29 domains at once.
+  warmContentIndex();
 });
 
 // ── ACRONYM EXPANSION DENSITY ────────────────────────────────────────────────
@@ -184,15 +913,17 @@ function cycleAcroMode() {
 // ── RANDOM TOPIC ─────────────────────────────────────────────────────────────
 // Open a random topic (and its domain), update the hash, and scroll to it.
 function jumpToRandomTopic() {
-  const topics = document.querySelectorAll(".topic[id]");
-  if (!topics.length) return;
-  const topic = topics[Math.floor(Math.random() * topics.length)];
+  // From the id map, not the DOM: a random pick over the open domain would be
+  // a random pick over a 29th of the site.
+  const ids = allTopicIds();
+  if (!ids.length) return;
+  const id = ids[Math.floor(Math.random() * ids.length)];
   // Clear any active filter/search so the pick is guaranteed visible
   if (typeof clearSearch === "function") {
     const si = document.getElementById("search-input");
     if (si && si.value) clearSearch();
   }
-  location.hash = topic.id;   // openHashTarget (hashchange) expands + scrolls
+  location.hash = id;   // openHashTarget (hashchange) opens the domain + scrolls
   openHashTarget();
 }
 
@@ -251,7 +982,9 @@ function initSnapQuote() {
 // ── CLOUD RESPONSIBILITY MATRIX ────────────────────────────────────────────
 function initCloudStack() {
   const container = document.getElementById("cloud-stack");
-  if (!container) return;
+  // Also skip when it is already built: its domain can be opened, closed and
+  // opened again, and this used to run exactly once per page load.
+  if (!container || container.firstChild) return;
 
   const layers = ["Applications","Data","Runtime","Middleware","OS","Virtualization","Servers","Storage","Networking"];
   const resp   = [[1,1,1,0],[1,1,1,0],[1,1,0,0],[1,1,0,0],[1,1,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0]];
@@ -276,16 +1009,26 @@ function initCloudStack() {
 }
 
 // ── TOUCH FEEDBACK ─────────────────────────────────────────────────────────
+// Delegated, not per-element: topic headers arrive and leave with their domain,
+// and three listeners on each of 1,080 of them was the second-largest thing the
+// old load pass did.
 function initTouchFeedback() {
-  document.querySelectorAll(".chip, .domain-header, .topic-header").forEach(el => {
-    el.addEventListener("touchstart",  function() { this.classList.add("is-tapping");    }, { passive: true });
-    el.addEventListener("touchend",    function() { this.classList.remove("is-tapping"); }, { passive: true });
-    el.addEventListener("touchcancel", function() { this.classList.remove("is-tapping"); }, { passive: true });
-  });
+  const SEL = ".chip, .domain-header, .topic-header";
+  const clear = () => document.querySelectorAll(".is-tapping")
+    .forEach(el => el.classList.remove("is-tapping"));
+  document.addEventListener("touchstart", e => {
+    const el = e.target.closest?.(SEL);
+    if (el) el.classList.add("is-tapping");
+  }, { passive: true });
+  document.addEventListener("touchend", clear, { passive: true });
+  document.addEventListener("touchcancel", clear, { passive: true });
 }
 
 // ── ACCESSIBILITY, PERMALINKS & PROGRESS ───────────────────────────────────
 const REVIEWED_PREFIX = "reviewed:";
+const NOTE_PREFIX = "note:";
+const STREAK_KEY = "study-streak";
+const NOTE_MAX = 1000;
 
 /**
  * Text of an element with the inline acronym expansions removed.
@@ -316,82 +1059,25 @@ function slugify(s) {
 }
 
 /**
- * One pass over the DOM to make the accordion accessible and add per-topic
- * permalink + "mark reviewed" tools. Runs once at load.
+ * Load-time setup for the parts of the page that are always present.
+ *
+ * The per-topic half of this — ids, stored progress, the tool cluster — moved
+ * to enhanceDomain(), which runs on a domain when it opens. What is left is the
+ * domain headers, the progress badges (read from the id map, so they are right
+ * for domains with nothing in the DOM), and the deep-link handler.
  */
 function initAccessibilityAndTools() {
   // Before any stored state is read, so a renamed topic shows the progress the
   // user earned under its old id.
   migrateAliasedProgress();
 
-  // Make every accordion header focusable and announce its state
-  document.querySelectorAll(".domain-header, .topic-header").forEach(h => {
+  document.querySelectorAll(".domain-header").forEach(h => {
     h.setAttribute("tabindex", "0");
     h.setAttribute("role", "button");
-    h.setAttribute("aria-expanded", h.classList.contains("open") ? "true" : "false");
+    h.setAttribute("aria-expanded", "false");
   });
 
-  const usedIds = new Set();
-  document.querySelectorAll(".domain-section").forEach(domain => {
-    domain.querySelectorAll(".topic").forEach(topic => {
-      const header = topic.querySelector(":scope > .topic-header");
-      if (!header) return;
-      const nameEl = header.querySelector(".topic-name");
-      // Older "Beginner" topics carry the title as a bare text node in the
-      // header (no .topic-name); fall back to the header's own text.
-      const label = labelText(nameEl || header).trim();
-
-      // Stable, unique slug id for deep-linking
-      if (!topic.id) {
-        let base = slugify(label), id = base, i = 2;
-        while (usedIds.has(id)) id = `${base}-${i++}`;
-        usedIds.add(id);
-        topic.id = id;
-      }
-
-      // Reflect stored "reviewed" state
-      if (localStorage.getItem(REVIEWED_PREFIX + topic.id) === "1") {
-        topic.classList.add("reviewed");
-      }
-      // Reflect stored "bookmarked" state
-      if (localStorage.getItem(BOOKMARK_PREFIX + topic.id) === "1") {
-        topic.classList.add("bookmarked");
-      }
-
-      // Inject the tool cluster (bookmark + reviewed toggle + permalink) once
-      if (!header.querySelector(".topic-tools")) {
-        const tools = document.createElement("span");
-        tools.className = "topic-tools";
-
-        const bookmark = document.createElement("button");
-        bookmark.type = "button";
-        bookmark.className = "topic-bookmark";
-        bookmark.title = "Save to study list";
-        bookmark.setAttribute("aria-label", "Save topic to study list");
-        bookmark.textContent = "★";
-
-        const review = document.createElement("button");
-        review.type = "button";
-        review.className = "topic-review";
-        review.title = "Mark topic as reviewed";
-        review.setAttribute("aria-label", "Mark topic as reviewed");
-        review.textContent = "✓";
-
-        const link = document.createElement("button");
-        link.type = "button";
-        link.className = "topic-permalink";
-        link.title = "Copy link to this topic";
-        link.setAttribute("aria-label", "Copy link to this topic");
-        link.textContent = "🔗";
-
-        tools.append(bookmark, review, link);
-        // Insert before the chevron so it stays right-aligned
-        const chev = header.querySelector(".topic-chev");
-        chev ? header.insertBefore(tools, chev) : header.appendChild(tools);
-      }
-    });
-    updateDomainProgress(domain);
-  });
+  domainSections().forEach(updateDomainProgress);
 
   // Deep-link: open + scroll to a topic referenced in the URL hash
   openHashTarget();
@@ -405,12 +1091,16 @@ function handleTopicTool(btn) {
     const on = topic.classList.toggle("bookmarked");
     const key = BOOKMARK_PREFIX + topic.id;
     on ? localStorage.setItem(key, "1") : localStorage.removeItem(key);
+    if (on) streakTouch();
     if (typeof stRefreshStudyList === "function") stRefreshStudyList();
   } else if (btn.classList.contains("topic-review")) {
     const on = topic.classList.toggle("reviewed");
     const key = REVIEWED_PREFIX + topic.id;
     on ? localStorage.setItem(key, "1") : localStorage.removeItem(key);
+    if (on) streakTouch();
     updateDomainProgress(topic.closest(".domain-section"));
+  } else if (btn.classList.contains("topic-note-btn")) {
+    toggleTopicNote(topic);
   } else if (btn.classList.contains("topic-permalink")) {
     const url = `${location.origin}${location.pathname}#${topic.id}`;
     const done = () => { btn.classList.add("copied"); setTimeout(() => btn.classList.remove("copied"), 1200); };
@@ -422,13 +1112,19 @@ function handleTopicTool(btn) {
   }
 }
 
-/** Update the "n/m reviewed" badge on a domain header. */
+/** Update the "n/m reviewed" badge on a domain header.
+ *
+ * Counted from the id map and localStorage, not from `.topic.reviewed` nodes:
+ * every domain header shows a badge and at most one of them has any topics in
+ * the document to count.
+ */
 function updateDomainProgress(domain) {
   if (!domain) return;
   const header = domain.querySelector(".domain-header");
   if (!header) return;
-  const topics = domain.querySelectorAll(".topic");
-  const done = domain.querySelectorAll(".topic.reviewed").length;
+  const ids = topicIndex()[domain.dataset.domain] || [];
+  const done = ids.reduce(
+    (n, id) => n + (localStorage.getItem(REVIEWED_PREFIX + id) === "1" ? 1 : 0), 0);
   let badge = header.querySelector(".domain-progress");
   if (!badge) {
     badge = document.createElement("span");
@@ -436,13 +1132,49 @@ function updateDomainProgress(domain) {
     const chev = header.querySelector(".chevron");
     chev ? header.insertBefore(badge, chev) : header.appendChild(badge);
   }
-  badge.textContent = `${done}/${topics.length}`;
-  badge.classList.toggle("complete", done === topics.length && topics.length > 0);
+  badge.textContent = `${done}/${ids.length}`;
+  badge.classList.toggle("complete", done === ids.length && ids.length > 0);
 }
 
 /** Reflect the currently-open topic in the URL without a scroll jump. */
 function updateTopicHash(topic) {
   if (topic?.id) history.replaceState(null, "", `#${topic.id}`);
+  recordVisit(topic?.id);
+}
+
+// ── RECENTLY VIEWED ─────────────────────────────────────────────────────────
+// The quick-jump palette opens on an empty query, and with 1,300+ topics its
+// first sixty rows were whatever the index happened to hold — arbitrary, and
+// never what the reader wanted. The list they actually want on an empty query
+// is the handful of topics they were just in.
+//
+// Stored as ids rather than as anything resolved: a card that is later renamed
+// or removed simply drops out when the index cannot resolve it, which is the
+// right failure. Ten is enough to cover a session's back-and-forth without the
+// palette becoming a second history page.
+const RECENT_KEY = "recent-topics";
+const RECENT_MAX = 10;
+
+function recentIds() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(RECENT_KEY) || "[]");
+    return Array.isArray(raw) ? raw.filter(x => typeof x === "string") : [];
+  } catch {
+    return [];   // corrupt or unavailable storage is not worth an error here
+  }
+}
+
+function recordVisit(id) {
+  if (!id) return;
+  const next = [id, ...recentIds().filter(x => x !== id)].slice(0, RECENT_MAX);
+  try { localStorage.setItem(RECENT_KEY, JSON.stringify(next)); } catch { /* full or blocked */ }
+}
+
+/** Recently-viewed rows, resolved against the study index and in visit order. */
+function recentTopics() {
+  const idx = stIndex();
+  const byId = new Map(idx.map(t => [t.id, t]));
+  return recentIds().map(id => byId.get(id)).filter(Boolean);
 }
 
 /** Expand and scroll to the topic named in location.hash, if any. */
@@ -491,27 +1223,100 @@ function migrateAliasedProgress() {
   return moved;
 }
 
+/**
+ * Split `#topic-id/3` into the topic and the 1-based concept-card index.
+ *
+ * Cards are addressed by position rather than by a slug of their title. A slug
+ * would be prettier and would need every `.concept-title` stamped at build
+ * time and kept stable — and concept titles are edited far more freely than
+ * topic names, which have an alias map precisely because they are not. An
+ * index survives rewording and breaks on reordering; between the two,
+ * rewording is what actually happens.
+ */
+function splitCardHash(hash) {
+  const m = hash.match(/^(.*?)\/(\d+)$/);
+  return m ? { id: m[1], card: Number(m[2]) } : { id: hash, card: 0 };
+}
+
 function openHashTarget() {
-  let id = decodeURIComponent(location.hash.slice(1));
+  const parsed = splitCardHash(decodeURIComponent(location.hash.slice(1)));
+  let id = parsed.id;
   if (!id) return;
   // A stale link resolves through the alias map, then rewrites itself so the
   // address bar — and anything copied out of it — carries the current id.
-  if (!document.getElementById(id) && slugAliases()[id]) {
+  // Resolved against the id map rather than the document: the topic a cold link
+  // names is almost never in the DOM yet, which is the whole point.
+  if (!topicDomain(id) && slugAliases()[id]) {
     id = slugAliases()[id];
-    if (history.replaceState) history.replaceState(null, "", `#${id}`);
-    else location.hash = id;
+    const rewritten = parsed.card ? `#${id}/${parsed.card}` : `#${id}`;
+    if (history.replaceState) history.replaceState(null, "", rewritten);
+    else location.hash = rewritten.slice(1);
   }
+  const domainId = topicDomain(id);
+  if (!domainId) return;
+  const section = domainSection(domainId);
+  // A link into a domain the chip bar has filtered out drops the filter. The
+  // alternative is rendering a card inside a `display: none` section and
+  // scrolling to nothing.
+  if (section?.classList.contains("hidden")) {
+    document.querySelector('.chip[data-domain="all"]')?.click();
+  }
+  openDomain(section);
   const topic = document.getElementById(id);
   if (!topic || !topic.classList.contains("topic")) return;
-  const domain = topic.closest(".domain-section");
-  domain?.querySelector(".domain-header")?.classList.add("open");
-  domain?.querySelector(".domain-body")?.classList.add("open");
-  domain?.querySelector(".domain-header")?.setAttribute("aria-expanded", "true");
-  const th = topic.querySelector(".topic-header");
-  th?.classList.add("open");
-  th?.setAttribute("aria-expanded", "true");
-  topic.querySelector(".topic-body")?.classList.add("open");
-  topic.scrollIntoView({ behavior: "smooth", block: "start" });
+  // A topic reached by link is shown even when a search is filtering its
+  // domain — the reader asked for this card by name.
+  topic.classList.remove("search-hidden");
+  setTopicOpen(topic.querySelector(":scope > .topic-header"), true);
+  renderSeeAlso(topic);
+  renderTopicNote(topic);
+
+  // A card-level link scrolls to the card and marks it briefly. Falling back to
+  // the topic when the index is out of range is deliberate: a link shared
+  // before a card was removed should still land somewhere useful rather than
+  // doing nothing.
+  const card = parsed.card
+    ? topic.querySelectorAll(".topic-body > .concept-card")[parsed.card - 1]
+    : null;
+  recordVisit(topic.id);
+  if (card) {
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    card.classList.add("card-linked");
+    setTimeout(() => card.classList.remove("card-linked"), 2200);
+  } else {
+    topic.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+/**
+ * Copy a link to one concept card. Delegated from the domain body rather than
+ * given a button per card: a domain can hold several hundred concept cards, and
+ * an affordance that costs one element each is a real slice of the DOM budget
+ * for something used rarely. The label carries the hint in its `title`.
+ */
+function copyCardLink(label) {
+  const card = label.closest(".concept-card");
+  const topic = label.closest(".topic");
+  if (!card || !topic?.id) return;
+  const cards = [...topic.querySelectorAll(".topic-body > .concept-card")];
+  const n = cards.indexOf(card) + 1;
+  if (n < 1) return;
+  const url = `${location.origin}${location.pathname}#${topic.id}/${n}`;
+  const done = () => {
+    label.classList.add("copied");
+    setTimeout(() => label.classList.remove("copied"), 1200);
+  };
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(url)
+      .then(done)
+      // No clipboard permission — over `file://`, or a browser that withholds
+      // it. Putting the link in the address bar is the fallback, and it still
+      // confirms: a silent no-op reads as a broken control.
+      .catch(() => { location.hash = `${topic.id}/${n}`; done(); });
+  } else {
+    location.hash = `${topic.id}/${n}`;
+    done();
+  }
 }
 
 // ── BACK TO TOP ─────────────────────────────────────────────────────────────
@@ -582,24 +1387,6 @@ function urlToolClear() {
 
 /** Nodes we injected <mark> highlights into during the current search. */
 const _highlighted = new Set();
-
-/** Lowercased textContent per topic, computed once (content never changes). */
-const _topicTextCache = new WeakMap();
-function topicSearchText(topic) {
-  let t = _topicTextCache.get(topic);
-  if (t === undefined) {
-    t = topic.textContent.toLowerCase();
-    _topicTextCache.set(topic, t);
-  }
-  return t;
-}
-
-/** Cached domain sections (built once on first search). */
-let _domainSections = null;
-function domainSections() {
-  if (!_domainSections) _domainSections = [...document.querySelectorAll(".domain-section")];
-  return _domainSections;
-}
 
 /** Remove all <mark class="sh"> wrappers, restoring the original text nodes. */
 function clearHighlights() {
@@ -688,6 +1475,98 @@ function searchTerms(term) {
   return terms;
 }
 
+/**
+ * Split a raw query into its operators, its quoted phrases and the free text.
+ *
+ * At 1,300+ topics a bare substring search returns more than a reader can use,
+ * and the two things they actually want are "only in this domain" and "these
+ * words, in this order". Both are one regex each; neither needs an index.
+ *
+ *   domain:net tcp        → free text "tcp", restricted to the net domain
+ *   "default deny"        → that phrase, literally, not two words
+ *   domain:ops "burn rate" alerting
+ *
+ * `domain:` is matched against domain ids, which are what the chips and the
+ * permalinks already use, so the vocabulary is one the reader has seen. An id
+ * that does not exist yields no matches rather than being ignored — silently
+ * dropping an operator would answer a different question than the one asked.
+ */
+const RE_DOMAIN_OP = /(?:^|\s)domain:([a-z0-9_-]+)/gi;
+const RE_PHRASE = /"([^"]+)"/g;
+
+function parseQuery(raw) {
+  const domains = [];
+  const phrases = [];
+  let rest = raw.replace(RE_PHRASE, (_, p) => {
+    const t = p.trim();
+    if (t) phrases.push(t);
+    return " ";
+  });
+  rest = rest.replace(RE_DOMAIN_OP, (_, d) => {
+    domains.push(d.toLowerCase());
+    return " ";
+  });
+  return { domains, phrases, text: rest.replace(/\s+/g, " ").trim() };
+}
+
+// ── SEARCH STATE ────────────────────────────────────────────────────────────
+// A search now spans more of the page than the page is showing, so the result
+// has to be held rather than only painted: which topics matched, per domain, so
+// that a domain opened later can be filtered to the same result.
+let _searchTerm = "";        // the applied query ("" when not searching)
+let _searchTermList = [];    // it, plus whatever the dictionary says is the same
+const _searchHits = new Map();  // domain id -> Set of matching topic ids
+
+/** The "n matches" pill on a collapsed domain's header. */
+function setMatchBadge(section, n) {
+  const header = section.querySelector(".domain-header");
+  let badge = header.querySelector(".domain-matches");
+  if (!badge) {
+    badge = document.createElement("span");
+    badge.className = "domain-matches";
+    header.insertBefore(badge, header.querySelector(".domain-progress") || header.querySelector(".chevron"));
+  }
+  badge.textContent = `${n} match${n === 1 ? "" : "es"}`;
+}
+
+/**
+ * Filter and highlight the open domain against the current search.
+ *
+ * Split out from runSearch because it runs twice over: once when the search
+ * picks a domain to show, and again whenever the reader opens a different one
+ * while the query is still in the box.
+ */
+function applySearchToDomain(section) {
+  const hits = _searchHits.get(section.dataset.domain);
+  section.querySelectorAll(".topic").forEach(topic => {
+    if (hits && hits.has(topic.id)) {
+      topic.classList.remove("search-hidden");
+      setTopicOpen(topic.querySelector(":scope > .topic-header"), true);
+      renderSeeAlso(topic);
+      renderTopicNote(topic);
+      topic.querySelectorAll(
+        ".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, .code-block"
+      ).forEach(n => _searchTermList.forEach(t => highlightIn(n, t)));
+    } else {
+      topic.classList.add("search-hidden");
+    }
+  });
+  // A search asked for topics, not for the domain's front matter.
+  section.querySelector(":scope > .domain-body > .domain-intro")
+    ?.classList.add("search-hidden");
+}
+
+/**
+ * Immediate search runner. Prefer the debounced onSearchInput() for keystrokes.
+ *
+ * Every domain is searched — the deferred blocks are parsed text, not markup
+ * the browser has to build — but only one domain's matches are rendered. The
+ * rest report their count on their header and open on a click, already
+ * filtered. That is the same reach as the old whole-DOM search with a
+ * twenty-ninth of the layout.
+ *
+ * @param {string} raw - Current value of the search input.
+ */
 function runSearch(raw) {
   const term = raw.trim();
   const clearBtn = document.getElementById("search-clear");
@@ -697,50 +1576,90 @@ function runSearch(raw) {
 
   // Reset previous highlights and visibility
   clearHighlights();
-  document.querySelectorAll(".topic.search-hidden, .domain-section.search-hidden")
+  _searchHits.clear();
+  domainSections().forEach(s => {
+    s.classList.remove("search-hidden");
+    s.querySelector(".domain-matches")?.remove();
+  });
+  _liveDomain?.querySelectorAll(".topic.search-hidden, .domain-intro.search-hidden")
     .forEach(el => el.classList.remove("search-hidden"));
 
-  if (term.length < 2) {
+  const q = parseQuery(term);
+  // A query is runnable once it carries something to match on: free text of at
+  // least two characters, or a phrase, or a bare `domain:` used to browse one
+  // domain. Measuring the raw string instead would reject `domain:hw` — which
+  // is two characters of operator and eight of intent.
+  //
+  // Free text below the threshold makes the whole query unusable rather than
+  // being dropped. Dropping it is worse than doing nothing: `domain:hw x`
+  // would quietly answer "everything in hw", which is not what was asked and
+  // reads as a result rather than as a rejected query.
+  const tooShort = q.text.length > 0 && q.text.length < 2;
+  const usable = !tooShort
+    && (q.text.length >= 2 || q.phrases.length > 0 || q.domains.length > 0);
+  _searchTerm = usable ? term : "";
+  if (!_searchTerm) {
+    _searchTermList = [];
     if (countEl) countEl.textContent = "";
     return;
   }
 
-  const terms = searchTerms(term);
-  const lowered = terms.map(t => t.toLowerCase());
-  let matchCount = 0;
+  // Highlight everything the reader asked for: the phrases verbatim, and the
+  // free text along with whatever the acronym dictionary says is the same
+  // thing. The operators themselves are never highlighted — they are not
+  // content the reader was looking for.
+  const textTerms = q.text ? searchTerms(q.text) : [];
+  _searchTermList = [...q.phrases, ...textTerms];
+  const loweredText = textTerms.map(t => t.toLowerCase());
+  const loweredPhrases = q.phrases.map(p => p.toLowerCase());
+  let matchCount = 0, domainCount = 0, firstHit = null;
 
-  domainSections().forEach(domain => {
-    let domainHasMatch = false;
-
-    domain.querySelectorAll(".topic").forEach(topic => {
-      const hay = topicSearchText(topic);
-      if (lowered.some(t => hay.includes(t))) {
-        domainHasMatch = true;
-        matchCount++;
-
-        // Auto-expand the topic and its parent domain
-        topic.querySelector(".topic-header")?.classList.add("open");
-        topic.querySelector(".topic-body")?.classList.add("open");
-        domain.querySelector(".domain-header")?.classList.add("open");
-        domain.querySelector(".domain-body")?.classList.add("open");
-
-        // Highlight only the text-bearing nodes of matched topics
-        topic.querySelectorAll(
-          ".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, .code-block"
-        ).forEach(n => terms.forEach(t => highlightIn(n, t)));
-      } else {
-        topic.classList.add("search-hidden");
-      }
+  domainSections().forEach(section => {
+    const hits = new Set();
+    // `domain:` narrows which domains are searched at all. Several are additive
+    // — `domain:net domain:hw` searches both.
+    if (q.domains.length && !q.domains.includes(section.dataset.domain)) {
+      section.classList.add("search-hidden");
+      return;
+    }
+    domainTopics(section.dataset.domain).forEach(t => {
+      // Phrases are required, all of them; the free text is satisfied by the
+      // query or any of its acronym equivalents. A query that is only
+      // operators and phrases matches on the phrases alone.
+      if (!loweredPhrases.every(p => t.text.includes(p))) return;
+      if (loweredText.length && !loweredText.some(l => t.text.includes(l))) return;
+      hits.add(t.id);
     });
-
-    if (!domainHasMatch) domain.classList.add("search-hidden");
+    if (!hits.size) {
+      section.classList.add("search-hidden");
+      return;
+    }
+    _searchHits.set(section.dataset.domain, hits);
+    matchCount += hits.size;
+    domainCount++;
+    // A chip filter still wins over the search's choice of what to show: a
+    // domain the reader has filtered away must not be the one that renders.
+    if (!firstHit && !section.classList.contains("hidden")) firstHit = section;
+    setMatchBadge(section, hits.size);
   });
 
+  // Show the domain the reader is already in if it has anything; otherwise the
+  // first that does. The others stay one click away with their counts visible.
+  const target = _liveDomain && _searchHits.has(_liveDomain.dataset.domain)
+    && !_liveDomain.classList.contains("hidden") ? _liveDomain : firstHit;
+  if (target) openDomain(target);
+
   if (countEl) {
-    const via = terms.length > 1 ? ` · also matching ${terms.slice(1).map(t => `“${t}”`).join(", ")}` : "";
+    // Only the acronym alternates belong in "also matching" — phrases are what
+    // the reader typed, not something the dictionary added on their behalf.
+    const via = textTerms.length > 1
+      ? ` · also matching ${textTerms.slice(1).map(t => `“${t}”`).join(", ")}` : "";
+    // Say when an operator narrowed the search, so "no matches" is never
+    // ambiguous between "nothing on the site" and "nothing in that domain".
+    const scope = q.domains.length ? ` · in ${q.domains.join(", ")}` : "";
     countEl.textContent = matchCount
-      ? `${matchCount} match${matchCount !== 1 ? "es" : ""}${via}`
-      : "no matches";
+      ? `${matchCount} match${matchCount !== 1 ? "es" : ""} in ${domainCount} domain${domainCount !== 1 ? "s" : ""}${via}`
+      : `no matches${scope}`;
   }
 }
 
@@ -1054,6 +1973,7 @@ function srsGrade(id, grade) {
   const rec = { e: Math.round(e * 100) / 100, i, d: srsToday(i), n };
   try { localStorage.setItem(SRS_PREFIX + id, JSON.stringify(rec)); } catch { /* quota */ }
   if (grade !== "again") localStorage.setItem(KNOWN_PREFIX + id, "1");
+  streakTouch();
   srsUpdateBadge();
   return rec;
 }
@@ -1076,21 +1996,24 @@ function srsUpdateBadge() {
 }
 let _stIndex = null;
 
-/** Build a flat index of every topic on the page (once). */
+/** Build a flat index of every topic on the page (once).
+ *
+ * From the deferred blocks, not the document: a deck built from what is
+ * rendered would be one domain deep and look perfectly healthy, which is the
+ * failure this whole file has to keep avoiding.
+ */
 function stIndex() {
   if (_stIndex) return _stIndex;
   _stIndex = [];
-  document.querySelectorAll(".domain-section").forEach(domain => {
+  domainSections().forEach(domain => {
     const domainId = domain.dataset.domain || "";
     const domainTitle = (domain.querySelector(".domain-title")?.textContent || "").trim();
     const domainIcon = (domain.querySelector(".domain-icon")?.textContent || "").trim();
-    domain.querySelectorAll(".topic").forEach(t => {
-      const name = labelText(t.querySelector(".topic-name")
-        || t.querySelector(".topic-header")).trim();
-      const title = (t.querySelector(".concept-title")?.textContent || "").trim();
-      const desc = (t.querySelector(".concept-desc")?.textContent || "").trim();
-      const badge = (t.querySelector(".topic-badge")?.textContent || "").trim();
-      if (t.id && name) _stIndex.push({ id: t.id, name, title, desc, badge, domainId, domainTitle, domainIcon, el: t });
+    domainTopics(domainId).forEach(t => {
+      if (t.id && t.name) {
+        _stIndex.push({ id: t.id, name: t.name, title: t.title, desc: t.desc,
+                        badge: t.badge, domainId, domainTitle, domainIcon });
+      }
     });
   });
   return _stIndex;
@@ -1132,6 +2055,11 @@ function stClose() {
   document.body.classList.remove("st-lock");
   _stQuizState = null;
   _stCardState = null;
+  // The exam's clock is an interval, and an interval outlives the modal that
+  // owns it — left running it would keep ticking against a stage that is no
+  // longer on screen, and eventually "submit" a paper nobody is sitting.
+  stExamStop();
+  _examState = null;
 }
 
 function esc(s) { return (s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
@@ -1199,16 +2127,29 @@ function stOpenJump() {
     const list = body.querySelector("#st-jump-list");
     let items = [], active = 0;
 
+    // On an empty query the palette leads with what the reader was just
+    // looking at, then falls back to the index. Recent rows are marked so the
+    // ordering is explained rather than mysterious.
+    let recentCount = 0;
     function render(q) {
       const query = q.trim().toLowerCase();
       const idx = stIndex();
-      items = (query
-        ? idx.filter(t => (t.name + " " + t.domainTitle + " " + t.title).toLowerCase().includes(query))
-        : idx).slice(0, 60);
+      if (query) {
+        recentCount = 0;
+        items = idx
+          .filter(t => (t.name + " " + t.domainTitle + " " + t.title).toLowerCase().includes(query))
+          .slice(0, 60);
+      } else {
+        const recent = recentTopics();
+        recentCount = recent.length;
+        const seen = new Set(recent.map(t => t.id));
+        items = [...recent, ...idx.filter(t => !seen.has(t.id))].slice(0, 60);
+      }
       active = 0;
       list.innerHTML = items.map((t, i) =>
         `<li class="st-jump-item${i === 0 ? " active" : ""}" data-i="${i}">` +
         `<span class="st-jump-name">${esc(t.name)}</span>` +
+        (i < recentCount ? '<span class="st-jump-recent">recent</span>' : "") +
         `<span class="st-jump-dom">${esc(t.domainIcon)} ${esc(t.domainTitle)}</span></li>`).join("")
         || '<li class="st-jump-empty">No matches</li>';
     }
@@ -1551,6 +2492,752 @@ function stRenderAcroQuestion(stage) {
 }
 
 // ── STUDY LIST (bookmarks) ──────────────────────────────────────────────────
+// ── EXAM MODE ───────────────────────────────────────────────────────────────
+// The quiz with three things taken away and one added: a fixed length, a clock,
+// and no feedback until the end — then a report broken down by domain, with the
+// topics that were missed linked so the next step is one click rather than a
+// memory exercise.
+//
+// The no-feedback rule is the point of the mode. A quiz that marks each answer
+// is a study tool; an exam that does not is a measurement, and the difference
+// is whether the score means anything.
+
+const EXAM_SECONDS_PER_Q = 45;
+let _examState = null;
+
+/**
+ * Distractors from the question's own domain wherever that domain is big
+ * enough, falling back to the scope.
+ *
+ * Drawing them from the whole site — which is what "all domains" would do
+ * naively — makes almost every question answerable by noticing that three
+ * options are about Kubernetes and one is about soldering.
+ */
+function examDistractors(q, pool, byDomain) {
+  const home = (byDomain.get(q.domainId) || []).filter(t => t.id !== q.id);
+  const from = home.length >= 3 ? home : pool.filter(t => t.id !== q.id);
+  return shuffle(from.slice()).slice(0, 3);
+}
+
+function examBuild(scope, count) {
+  const pool = stTopicsForScope(scope).filter(t => t.title || t.desc);
+  if (pool.length < 4) return null;
+  const byDomain = new Map();
+  pool.forEach(t => {
+    if (!byDomain.has(t.domainId)) byDomain.set(t.domainId, []);
+    byDomain.get(t.domainId).push(t);
+  });
+  return shuffle(pool.slice()).slice(0, Math.min(count, pool.length)).map(q => {
+    const wrong = examDistractors(q, pool, byDomain);
+    return {
+      id: q.id, name: q.name, domainId: q.domainId, domainTitle: q.domainTitle,
+      domainIcon: q.domainIcon,
+      prompt: q.title || (q.desc || "").slice(0, 160),
+      options: shuffle([q, ...wrong]).map(o => ({ id: o.id, name: o.name })),
+      answer: q.id,
+    };
+  }).filter(q => q.options.length === 4);
+}
+
+function examTimeLeft() {
+  const s = _examState;
+  if (!s || !s.limit) return null;
+  return Math.max(0, s.limit - Math.round((Date.now() - s.started) / 1000));
+}
+
+function examClock(seconds) {
+  const m = Math.floor(seconds / 60), sec = seconds % 60;
+  return `${m}:${String(sec).padStart(2, "0")}`;
+}
+
+function stOpenExam() {
+  stOpen(body => {
+    body.innerHTML =
+      '<h2 class="st-h">📋 Exam</h2>' +
+      '<p class="st-bk-lead">A fixed number of questions, a clock, and no feedback until the end — ' +
+      'then a breakdown by domain with every missed topic linked.</p>' +
+      '<div class="st-toolbar"><label class="st-lbl">From</label>' + stScopeSelectHTML("st-ex-scope") +
+      '</div>' +
+      '<div class="st-toolbar"><label class="st-lbl">Length</label>' +
+      '<select id="st-ex-count" class="st-select">' +
+        '<option value="10">10 questions</option>' +
+        '<option value="20" selected>20 questions</option>' +
+        '<option value="40">40 questions</option></select>' +
+      '<label class="st-lbl">Clock</label>' +
+      '<select id="st-ex-timed" class="st-select">' +
+        '<option value="1" selected>Timed</option>' +
+        '<option value="0">Untimed</option></select>' +
+      '<button id="st-ex-start" class="st-btn st-btn-primary">Begin</button></div>' +
+      '<div id="st-ex-stage"></div>';
+    const stage = body.querySelector("#st-ex-stage");
+    body.querySelector("#st-ex-start").addEventListener("click", () => stStartExam(
+      body.querySelector("#st-ex-scope").value,
+      Number(body.querySelector("#st-ex-count").value),
+      body.querySelector("#st-ex-timed").value === "1",
+      stage));
+  });
+}
+
+function stStartExam(scope, count, timed, stage) {
+  const questions = examBuild(scope, count);
+  if (!questions || questions.length < 4) {
+    stage.innerHTML = '<p class="st-empty">Not enough topics with descriptions in that scope to sit an exam. Pick a broader one.</p>';
+    return;
+  }
+  stExamStop();
+  _examState = {
+    scope, questions, i: 0, answers: new Array(questions.length).fill(null),
+    started: Date.now(), limit: timed ? questions.length * EXAM_SECONDS_PER_Q : 0,
+    timer: null, stage,
+  };
+  if (_examState.limit) {
+    _examState.timer = setInterval(() => {
+      const left = examTimeLeft();
+      const el = document.getElementById("st-ex-clock");
+      if (el) {
+        el.textContent = examClock(left);
+        el.classList.toggle("low", left <= 60);
+      }
+      // Running out is a submission, not an error: the paper is taken away and
+      // whatever is on it is marked.
+      if (left <= 0) stExamFinish();
+    }, 1000);
+  }
+  stExamRender();
+}
+
+/** Clear the interval whenever the exam ends, is restarted, or the modal closes. */
+function stExamStop() {
+  if (_examState?.timer) clearInterval(_examState.timer);
+  if (_examState) _examState.timer = null;
+}
+
+function stExamRender() {
+  const s = _examState; if (!s) return;
+  const q = s.questions[s.i];
+  const left = examTimeLeft();
+  const answered = s.answers.filter(a => a !== null).length;
+  s.stage.innerHTML =
+    '<div class="st-ex-bar">' +
+      `<span class="st-progress">Question ${s.i + 1} / ${s.questions.length}</span>` +
+      `<span class="st-ex-answered">${answered} answered</span>` +
+      (s.limit ? `<span id="st-ex-clock" class="st-ex-clock${left <= 60 ? " low" : ""}">${examClock(left)}</span>` : "") +
+    '</div>' +
+    `<div class="st-q-prompt"><span class="st-q-label">Which topic does this describe?</span>${esc(q.prompt)}</div>` +
+    '<ul class="st-q-options">' + q.options.map(o =>
+      `<li><button class="st-q-opt${s.answers[s.i] === o.id ? " chosen" : ""}" data-id="${esc(o.id)}">${esc(o.name)}</button></li>`).join("") +
+    '</ul>' +
+    '<div class="st-ex-nav">' +
+      `<button id="st-ex-prev" class="st-btn"${s.i === 0 ? " disabled" : ""}>← Back</button>` +
+      (s.i === s.questions.length - 1
+        ? '<button id="st-ex-finish" class="st-btn st-btn-primary">Finish</button>'
+        : '<button id="st-ex-next" class="st-btn st-btn-primary">Next →</button>') +
+    '</div>';
+  // Choosing an answer says nothing about whether it was right — that is the
+  // whole mode. It moves on, because hesitating over a mark you will not get is
+  // the habit an exam is meant to break.
+  s.stage.querySelectorAll(".st-q-opt").forEach(btn => btn.addEventListener("click", () => {
+    s.answers[s.i] = btn.dataset.id;
+    if (s.i < s.questions.length - 1) { s.i++; stExamRender(); }
+    else stExamRender();
+  }));
+  s.stage.querySelector("#st-ex-prev")?.addEventListener("click", () => { if (s.i > 0) { s.i--; stExamRender(); } });
+  s.stage.querySelector("#st-ex-next")?.addEventListener("click", () => { s.i++; stExamRender(); });
+  s.stage.querySelector("#st-ex-finish")?.addEventListener("click", stExamFinish);
+}
+
+function examResult() {
+  const s = _examState;
+  const byDomain = new Map();
+  const missed = [];
+  s.questions.forEach((q, i) => {
+    const right = s.answers[i] === q.answer;
+    if (!byDomain.has(q.domainId)) {
+      byDomain.set(q.domainId, { id: q.domainId, title: q.domainTitle, icon: q.domainIcon, n: 0, right: 0 });
+    }
+    const d = byDomain.get(q.domainId);
+    d.n++;
+    if (right) d.right++;
+    else missed.push({ id: q.id, name: q.name, domainId: q.domainId, skipped: s.answers[i] === null });
+  });
+  const score = s.questions.length - missed.length;
+  return {
+    score, total: s.questions.length, missed,
+    elapsed: Math.round((Date.now() - s.started) / 1000),
+    // Weakest first: a report is a list of what to do next, and the domain you
+    // scored 40% in belongs above the one you scored 90% in.
+    domains: [...byDomain.values()].sort((a, b) => (a.right / a.n) - (b.right / b.n)),
+  };
+}
+
+function stExamFinish() {
+  const s = _examState; if (!s) return;
+  stExamStop();
+  const r = examResult();
+  const pct = Math.round((r.score / r.total) * 100);
+  s.stage.innerHTML =
+    '<div class="st-result"><div class="st-result-big">' +
+      (pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "📚") + '</div>' +
+    `<p>Score: <strong>${r.score} / ${r.total}</strong> (${pct}%) · ${examClock(r.elapsed)} taken</p></div>` +
+    '<table class="st-ex-table"><thead><tr><th>Domain</th><th>Score</th><th></th></tr></thead><tbody>' +
+    r.domains.map(d => {
+      const p = Math.round((d.right / d.n) * 100);
+      return `<tr><td>${esc(d.icon)} ${esc(d.title)}</td><td class="st-pg-num">${d.right}/${d.n}</td>` +
+        `<td class="st-pg-barcell"><div class="st-pg-bar"><div class="st-pg-fill" style="width:${p}%"></div></div></td></tr>`;
+    }).join("") + '</tbody></table>' +
+    (r.missed.length
+      ? '<h3 class="st-path-title">What to review</h3>' +
+        '<div class="st-toolbar"><span class="st-count">' +
+        `${r.missed.length} missed</span>` +
+        '<button id="st-ex-star" class="st-btn">★ Star all of these</button>' +
+        '<button id="st-ex-again" class="st-btn st-btn-primary">Sit another</button></div>' +
+        '<ul class="st-list">' + r.missed.map(m =>
+          `<li class="st-list-item"><button class="st-list-link" data-id="${esc(m.id)}">${esc(m.name)}</button>` +
+          `<span class="st-step-dom">${esc(m.domainId)}${m.skipped ? " · unanswered" : ""}</span></li>`).join("") +
+        '</ul>'
+      : '<p class="st-hint">Nothing missed. Pick a broader scope or a longer paper.</p>' +
+        '<div class="st-toolbar"><button id="st-ex-again" class="st-btn st-btn-primary">Sit another</button></div>');
+  s.stage.querySelectorAll(".st-list-link").forEach(b =>
+    b.addEventListener("click", () => { stClose(); stGoToTopic(b.dataset.id); }));
+  s.stage.querySelector("#st-ex-star")?.addEventListener("click", e => {
+    r.missed.forEach(m => localStorage.setItem(BOOKMARK_PREFIX + m.id, "1"));
+    document.querySelectorAll(".topic").forEach(t => {
+      if (localStorage.getItem(BOOKMARK_PREFIX + t.id) === "1") t.classList.add("bookmarked");
+    });
+    e.target.textContent = `★ ${r.missed.length} starred`;
+    e.target.disabled = true;
+    if (typeof stRefreshStudyList === "function") stRefreshStudyList();
+  });
+  s.stage.querySelector("#st-ex-again")?.addEventListener("click", () => stOpenExam());
+  streakTouch();
+  return r;
+}
+
+// ── MARKDOWN EXPORT ─────────────────────────────────────────────────────────
+// Take a topic, a domain or the whole site out of this page and into a notes
+// app. The conversion runs over the deferred block's markup rather than the
+// live DOM, so a domain that has never been opened exports exactly like one
+// that has — the same reason every other feature here reads the blocks.
+
+// Elements that end a line. Without this, a card built from nested <div>s — the
+// layer stacks, the comparison grids — flattens into one unreadable run: the
+// markup carried the structure and the text never did.
+const MD_BLOCK = new Set(["DIV", "P", "SECTION", "UL", "OL", "TR", "H1", "H2", "H3", "H4", "H5", "H6"]);
+
+/** Inline elements that become Markdown wrappers rather than structure. */
+const MD_WRAP = { strong: "**", b: "**", em: "_", i: "_", code: "`" };
+
+/** Collapse runs of whitespace without eating the space between two elements. */
+function mdText(s) { return (s || "").replace(/\s+/g, " "); }
+
+function mdEscape(s) {
+  // Only the characters that would change the meaning of a *table* cell or
+  // start a list. Escaping every Markdown metacharacter makes prose unreadable
+  // for the sake of edge cases that do not occur in this content.
+  return s.replace(/\|/g, "\\|");
+}
+
+/** One table -> a Markdown table. Ragged rows are padded, never dropped. */
+function mdTable(table) {
+  const trs = [...table.querySelectorAll("tr")];
+  const rows = trs.map(tr =>
+    [...tr.querySelectorAll("th, td")].map(c => mdEscape(mdText(c.textContent).trim())));
+  if (!rows.length) return "";
+  const width = Math.max(...rows.map(r => r.length));
+  const pad = r => r.concat(Array(width - r.length).fill(""));
+  // Most tables here have no <thead> at all — the header is a bare <tr> of
+  // <th>. Keying off <thead> put five empty cells in the header and pushed the
+  // real one into the body, on every table on the site.
+  const headIndex = trs.findIndex(tr => tr.querySelector("th"));
+  const hasHead = headIndex !== -1 && rows[headIndex].some(Boolean);
+  const head = hasHead ? pad(rows[headIndex]) : Array(width).fill("");
+  const body = rows.filter((_, i) => !hasHead || i !== headIndex);
+  return [
+    `| ${head.join(" | ")} |`,
+    `| ${Array(width).fill("---").join(" | ")} |`,
+    ...body.map(r => `| ${pad(r).join(" | ")} |`),
+  ].join("\n") + "\n";
+}
+
+/**
+ * Walk a topic's markup and emit Markdown.
+ *
+ * Deliberately structural rather than generic: this converts *this site's*
+ * conventions — concept cards, reference tables, code blocks, cross-references
+ * — and it is much better at that than a general HTML-to-Markdown pass would
+ * be, because it knows a `.concept-label` is a kicker and not a paragraph.
+ */
+function mdFromNode(node, out) {
+  if (node.nodeType === 3) { out.push(mdText(node.nodeValue)); return; }
+  if (node.nodeType !== 1) return;
+  const el = node;
+  const cls = el.classList;
+
+  if (cls.contains("topic-icon") || cls.contains("topic-chev")) return;
+  if (cls.contains("acro-exp")) { out.push(" " + mdText(el.textContent).trim()); return; }
+
+  if (el.tagName === "PRE") {
+    out.push("\n```\n" + el.textContent.replace(/\s+$/, "") + "\n```\n\n");
+    return;
+  }
+  if (el.tagName === "TABLE") { out.push("\n" + mdTable(el) + "\n"); return; }
+  if (el.tagName === "BR") { out.push("\n"); return; }
+  if (el.tagName === "LI") {
+    out.push("- ");
+    [...el.childNodes].forEach(c => mdFromNode(c, out));
+    out.push("\n");
+    return;
+  }
+
+  const wrap = MD_WRAP[el.tagName.toLowerCase()];
+  const text = mdText(el.textContent).trim();
+  if (wrap && text) { out.push(wrap + text + wrap); return; }
+
+  if (cls.contains("topic-name")) { out.push(`\n## ${text}\n\n`); return; }
+  if (cls.contains("topic-badge")) { out.push(`_${text}_\n\n`); return; }
+  if (cls.contains("concept-label")) { out.push(`**${text.toUpperCase()}**\n\n`); return; }
+  if (cls.contains("concept-title")) { out.push(`### ${text}\n\n`); return; }
+  if (cls.contains("xref")) { out.push(`_${text}_`); return; }
+  // A row of a div-built table. There are 78 of these on the site against 1,883
+  // real <table> elements, and until they are converted the export has to know
+  // their class names: their children are cells, and cells belong on one line.
+  if (cls.contains("layer") || cls.contains("dt-row") || cls.contains("kc-row")
+      || cls.contains("nist-row") || cls.contains("perm-row")
+      || cls.contains("url-codec-row")) {
+    const cells = [...el.children].map(c => mdText(c.textContent).trim()).filter(Boolean);
+    out.push((cells.length ? cells.join(" — ") : text) + "\n");
+    return;
+  }
+
+  [...el.childNodes].forEach(c => mdFromNode(c, out));
+  if (cls.contains("concept-desc") || cls.contains("dt")) out.push("\n\n");
+  else if (MD_BLOCK.has(el.tagName)) out.push("\n");
+  if (cls.contains("concept-card")) out.push("\n");
+}
+
+function mdForTopicHtml(html) {
+  const host = document.createElement("div");
+  host.innerHTML = html;
+  const out = [];
+  [...host.childNodes].forEach(c => mdFromNode(c, out));
+  // Tidy the prose, and only the prose: a fenced block's leading whitespace is
+  // the code's own indentation, and collapsing it would corrupt every example
+  // on the site.
+  return out.join("")
+    .split(/(```[\s\S]*?```)/g)
+    .map((chunk, i) => i % 2 ? chunk : chunk
+      .replace(/[ \t]{2,}/g, " ")
+      .replace(/^[ \t]+/gm, "")
+      .replace(/[ \t]+$/gm, ""))
+    .join("")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim() + "\n";
+}
+
+/** The raw markup of one topic, from its domain's deferred block. */
+function topicHtml(id) {
+  const d = topicDomain(id);
+  const src = d && domainSection(d)?.querySelector("script.domain-src");
+  if (!src) return "";
+  const html = src.textContent;
+  const marker = `id="${id}"`;
+  const at = html.indexOf(marker);
+  if (at === -1) return "";
+  const start = html.lastIndexOf(TOPIC_OPEN, at);
+  const next = html.indexOf(TOPIC_OPEN, at);
+  return html.slice(start, next === -1 ? html.length : next);
+}
+
+/** Markdown for a set of topics, grouped under their domain headings. */
+function mdForTopics(rows, title) {
+  const byDomain = new Map();
+  rows.forEach(t => {
+    if (!byDomain.has(t.domainId)) byDomain.set(t.domainId, []);
+    byDomain.get(t.domainId).push(t);
+  });
+  const parts = [`# ${title}`, "", `_${rows.length} topic${rows.length === 1 ? "" : "s"}, exported ${srsToday()}._`, ""];
+  byDomain.forEach((topics, domainId) => {
+    const label = topics[0].domainTitle || domainId;
+    if (byDomain.size > 1) parts.push(`\n# ${topics[0].domainIcon} ${label}`.trim(), "");
+    topics.forEach(t => {
+      const md = mdForTopicHtml(topicHtml(t.id));
+      if (md.trim()) parts.push(md, "");
+    });
+  });
+  return parts.join("\n").replace(/\n{3,}/g, "\n\n");
+}
+
+function stOpenExport(initialScope) {
+  stOpen(body => {
+    body.innerHTML =
+      '<h2 class="st-h">⬇ Export as Markdown</h2>' +
+      '<p class="st-bk-lead">Take a topic, a domain or the whole library into a notes app. ' +
+      'Tables, code blocks and cross-references come across; the styling does not.</p>' +
+      '<div class="st-toolbar"><label class="st-lbl">Export</label>' + stScopeSelectHTML("st-md-scope") +
+      '<button id="st-md-go" class="st-btn st-btn-primary">Generate</button></div>' +
+      '<div class="st-toolbar"><span class="st-count" id="st-md-size"></span>' +
+      '<button id="st-md-copy" class="st-btn" disabled>Copy</button>' +
+      '<button id="st-md-dl" class="st-btn" disabled>Download</button></div>' +
+      '<textarea id="st-md-out" class="tn-input" rows="12" readonly ' +
+      'placeholder="Pick a scope and press Generate."></textarea>';
+    const scope = body.querySelector("#st-md-scope");
+    if (initialScope) scope.value = initialScope;
+    const out = body.querySelector("#st-md-out");
+    const size = body.querySelector("#st-md-size");
+    const copy = body.querySelector("#st-md-copy");
+    const dl = body.querySelector("#st-md-dl");
+
+    const generate = () => {
+      const rows = stTopicsForScope(scope.value);
+      if (!rows.length) {
+        out.value = ""; size.textContent = "Nothing in that scope.";
+        copy.disabled = dl.disabled = true;
+        return;
+      }
+      const label = scope.options[scope.selectedIndex].textContent.replace(/\s*\(\d+\)\s*$/, "").trim();
+      out.value = mdForTopics(rows, label);
+      size.textContent = `${rows.length} topics · ${Math.round(out.value.length / 1024)} KB`;
+      copy.disabled = dl.disabled = false;
+    };
+    body.querySelector("#st-md-go").addEventListener("click", generate);
+    copy.addEventListener("click", () => {
+      const done = () => { copy.textContent = "Copied"; setTimeout(() => (copy.textContent = "Copy"), 1200); };
+      // Selecting the textarea is the fallback that works everywhere, including
+      // the contexts where the clipboard API is refused without a prompt.
+      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(out.value).then(done).catch(() => { out.select(); done(); });
+      else { out.select(); done(); }
+    });
+    dl.addEventListener("click", () => {
+      const blob = new Blob([out.value], { type: "text/markdown" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `techref-${slugify(scope.value === "__all" ? "all-domains" : scope.value)}-${srsToday()}.md`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    });
+    generate();
+  });
+}
+
+// ── PRINT PACKS ─────────────────────────────────────────────────────────────
+// A revision handout: one domain, one learning path or the study list, printed
+// with every card open and none of the page's furniture.
+//
+// Built into a container of its own rather than by styling what happens to be
+// on screen. Only one domain is ever hydrated, so "print what is rendered"
+// could never span a learning path — and a path is exactly the thing worth
+// printing.
+
+function printPackHtml(rows, title) {
+  const parts = [`<h1 class="pp-title">${esc(title)}</h1>`,
+                 `<p class="pp-meta">${rows.length} topic${rows.length === 1 ? "" : "s"} · ${srsToday()}</p>`];
+  let lastDomain = null;
+  rows.forEach((t, i) => {
+    if (t.domainId !== lastDomain) {
+      parts.push(`<h2 class="pp-domain">${esc(t.domainIcon)} ${esc(t.domainTitle || t.domainId)}</h2>`);
+      lastDomain = t.domainId;
+    }
+    const html = topicHtml(t.id);
+    if (!html) return;
+    // Numbered, because a printed pack has no scrollbar to orient by and a
+    // path's order is the whole point of it.
+    parts.push(`<section class="pp-topic"><span class="pp-n">${i + 1}</span>${html}</section>`);
+  });
+  return parts.join("\n");
+}
+
+function buildPrintPack(rows, title) {
+  document.getElementById("print-pack")?.remove();
+  const host = document.createElement("div");
+  host.id = "print-pack";
+  host.innerHTML = printPackHtml(rows, title);
+  // Every card open: a handout with collapsed sections is a list of titles.
+  host.querySelectorAll(".topic-header").forEach(h => h.classList.add("open"));
+  host.querySelectorAll(".topic-body").forEach(b => b.classList.add("open"));
+  // The pack never runs through enhanceDomain, so it has no toggle buttons —
+  // classes alone are what the print stylesheet reads.
+  document.body.appendChild(host);
+  document.body.classList.add("printing");
+  return host;
+}
+
+function clearPrintPack() {
+  document.getElementById("print-pack")?.remove();
+  document.body.classList.remove("printing");
+}
+
+function stOpenPrint() {
+  stOpen(body => {
+    const paths = learningPaths();
+    body.innerHTML =
+      '<h2 class="st-h">🖨 Print pack</h2>' +
+      '<p class="st-bk-lead">A revision handout with every card open and none of the page ' +
+      'furniture. Print it, or save it as a PDF from the print dialog.</p>' +
+      '<div class="st-toolbar"><label class="st-lbl">Pack</label>' +
+      '<select id="st-pp-scope" class="st-select">' +
+        '<optgroup label="Domains">' + stScopeOptions().map(d =>
+          `<option value="d:${esc(d.id)}">${esc(d.icon)} ${esc(d.title)} (${d.n})</option>`).join("") +
+        '</optgroup>' +
+        (paths.length ? '<optgroup label="Learning paths">' + paths.map(p =>
+          `<option value="p:${esc(p.id)}">${esc(p.icon || "🧭")} ${esc(p.name)}</option>`).join("") +
+          '</optgroup>' : "") +
+        '<optgroup label="Yours">' +
+          '<option value="s:__bookmarks">★ My study list</option>' +
+          '<option value="s:__due">⏰ Due today</option>' +
+        '</optgroup>' +
+      '</select>' +
+      '<button id="st-pp-go" class="st-btn st-btn-primary">Print</button></div>' +
+      '<p class="st-hint" id="st-pp-note"></p>';
+    const sel = body.querySelector("#st-pp-scope");
+    const note = body.querySelector("#st-pp-note");
+
+    const chosen = () => {
+      const [kind, key] = [sel.value.slice(0, 1), sel.value.slice(2)];
+      if (kind === "p") {
+        const path = learningPaths().find(p => p.id === key);
+        return { rows: path ? pathSteps(path) : [], title: path ? path.name : key };
+      }
+      const rows = stTopicsForScope(key);
+      const label = sel.options[sel.selectedIndex].textContent.replace(/\s*\(\d+\)\s*$/, "").trim();
+      return { rows, title: label };
+    };
+    const describe = () => {
+      const { rows } = chosen();
+      note.textContent = rows.length
+        ? `${rows.length} topic${rows.length === 1 ? "" : "s"} in this pack.`
+        : "Nothing in that pack yet.";
+    };
+    sel.addEventListener("change", describe);
+    describe();
+    body.querySelector("#st-pp-go").addEventListener("click", () => {
+      const { rows, title } = chosen();
+      if (!rows.length) return;
+      buildPrintPack(rows, title);
+      stClose();
+      // The print dialog is modal, so the cleanup has to be bound to the event
+      // rather than run after the call — some browsers return immediately.
+      const done = () => { clearPrintPack(); window.removeEventListener("afterprint", done); };
+      window.addEventListener("afterprint", done);
+      window.print();
+      // Belt and braces for browsers that never fire afterprint.
+      setTimeout(done, 60000);
+    });
+  });
+}
+
+// ── STREAK ──────────────────────────────────────────────────────────────────
+// One record: the last day anything was studied, the run length, and the best
+// run. Days rather than sessions, and no list of dates — a streak that needs a
+// growing array to answer "how many days in a row" is storing the wrong thing.
+
+function streakGet() {
+  try {
+    const r = JSON.parse(localStorage.getItem(STREAK_KEY) || "null");
+    if (r && typeof r === "object" && typeof r.last === "string") return r;
+  } catch { /* corrupt — start again */ }
+  return { last: "", n: 0, best: 0 };
+}
+
+/**
+ * Mark today as studied. Called from every action that means work happened:
+ * marking a topic reviewed, starring one, writing a note, grading a card.
+ *
+ * Yesterday continues the run; anything older starts a new one; today is a
+ * no-op, so a busy day counts once.
+ */
+function streakTouch() {
+  const r = streakGet();
+  const today = srsToday();
+  if (r.last === today) return r;
+  r.n = r.last === srsToday(-1) ? r.n + 1 : 1;
+  r.last = today;
+  r.best = Math.max(r.best || 0, r.n);
+  try { localStorage.setItem(STREAK_KEY, JSON.stringify(r)); } catch { /* quota */ }
+  return r;
+}
+
+/** A run only counts while it is current: yesterday's streak, unfed, is over. */
+function streakCurrent() {
+  const r = streakGet();
+  if (r.last === srsToday() || r.last === srsToday(-1)) return r.n;
+  return 0;
+}
+
+// ── PROGRESS DASHBOARD ──────────────────────────────────────────────────────
+// Every number here already exists in localStorage and in the inlined topic
+// index. Nothing is computed from the document, which is the only way this can
+// report on all thirty domains when at most one of them is in the DOM.
+
+function progressStats() {
+  const idx = topicIndex();
+  const rows = [];
+  let all = { total: 0, reviewed: 0, bookmarked: 0, known: 0, noted: 0, due: 0 };
+  domainSections().forEach(section => {
+    const id = section.dataset.domain;
+    const ids = idx[id] || [];
+    const row = {
+      id,
+      title: (section.querySelector(".domain-title")?.textContent || id).trim(),
+      icon: (section.querySelector(".domain-icon")?.textContent || "").trim(),
+      total: ids.length, reviewed: 0, bookmarked: 0, known: 0, noted: 0, due: 0,
+    };
+    ids.forEach(t => {
+      if (localStorage.getItem(REVIEWED_PREFIX + t) === "1") row.reviewed++;
+      if (localStorage.getItem(BOOKMARK_PREFIX + t) === "1") row.bookmarked++;
+      if (localStorage.getItem(KNOWN_PREFIX + t) === "1") row.known++;
+      if (localStorage.getItem(NOTE_PREFIX + t)) row.noted++;
+      if (srsGet(t) && srsIsDue(t)) row.due++;
+    });
+    rows.push(row);
+    Object.keys(all).forEach(k => { all[k] += row[k]; });
+  });
+  return { rows, all };
+}
+
+function stOpenProgress() {
+  stOpen(body => {
+    const { rows, all } = progressStats();
+    const streak = streakCurrent();
+    const best = streakGet().best || 0;
+    const pct = all.total ? Math.round((all.reviewed / all.total) * 100) : 0;
+    // Domains nobody has touched go last: the list is a record of what has been
+    // read, and burying that under twenty untouched rows is not a report.
+    const sorted = rows.slice().sort((a, b) =>
+      (b.reviewed - a.reviewed) || (b.known - a.known) || a.title.localeCompare(b.title));
+    body.innerHTML =
+      '<h2 class="st-h">📊 Progress</h2>' +
+      '<div class="st-pg-top">' +
+        `<div class="st-pg-stat"><span class="st-pg-n">${all.reviewed}</span>` +
+          `<span class="st-pg-l">of ${all.total} reviewed</span></div>` +
+        `<div class="st-pg-stat"><span class="st-pg-n">${pct}%</span>` +
+          '<span class="st-pg-l">of the site</span></div>' +
+        `<div class="st-pg-stat"><span class="st-pg-n">${streak}</span>` +
+          `<span class="st-pg-l">day streak${best > streak ? ` · best ${best}` : ""}</span></div>` +
+        `<div class="st-pg-stat"><span class="st-pg-n">${all.due}</span>` +
+          '<span class="st-pg-l">due today</span></div>' +
+      '</div>' +
+      `<p class="st-hint">${all.bookmarked} starred · ${all.known} known · ${all.noted} with a note. ` +
+      'Everything here lives in this browser — back it up from the study menu.</p>' +
+      '<table class="st-pg-table"><thead><tr><th>Domain</th><th>Reviewed</th><th></th>' +
+      '<th>★</th><th>✓</th><th>📝</th></tr></thead><tbody>' +
+      sorted.map(r => {
+        const p = r.total ? Math.round((r.reviewed / r.total) * 100) : 0;
+        return `<tr${r.reviewed ? "" : ' class="untouched"'}>` +
+          `<td><button class="st-pg-dom" data-id="${esc(r.id)}">${esc(r.icon)} ${esc(r.title)}</button></td>` +
+          `<td class="st-pg-num">${r.reviewed}/${r.total}</td>` +
+          `<td class="st-pg-barcell"><div class="st-pg-bar"><div class="st-pg-fill" style="width:${p}%"></div></div></td>` +
+          `<td class="st-pg-num">${r.bookmarked || ""}</td>` +
+          `<td class="st-pg-num">${r.known || ""}</td>` +
+          `<td class="st-pg-num">${r.noted || ""}</td></tr>`;
+      }).join("") + '</tbody></table>';
+    body.querySelectorAll(".st-pg-dom").forEach(b => b.addEventListener("click", () => {
+      stClose();
+      const section = domainSection(b.dataset.id);
+      section?.scrollIntoView({ behavior: "smooth", block: "start" });
+      openDomain(section);
+    }));
+  });
+}
+
+// ── LEARNING PATHS ──────────────────────────────────────────────────────────
+// An ordered route through topics that already exist, rendered as a checklist
+// against the progress in localStorage. No content of its own — the value is
+// entirely in the order, which is why a path costs a few hundred bytes.
+
+let _paths = null;
+function learningPaths() {
+  if (_paths) return _paths;
+  const el = document.getElementById("learning-paths");
+  try {
+    const p = el ? JSON.parse(el.textContent) : [];
+    _paths = Array.isArray(p) ? p : [];
+  } catch { _paths = []; }
+  return _paths;
+}
+
+/** One path's steps, resolved to topics and dropping any that no longer exist. */
+function pathSteps(path) {
+  const byId = new Map(stIndex().map(t => [t.id, t]));
+  return (path.steps || []).map(id => byId.get(id)).filter(Boolean);
+}
+
+/** Done means reviewed — the same ✓ the topic header sets, not a second state. */
+function pathProgress(path) {
+  const steps = pathSteps(path);
+  const done = steps.filter(t => localStorage.getItem(REVIEWED_PREFIX + t.id) === "1").length;
+  return { done, total: steps.length };
+}
+
+function stOpenPaths() {
+  stOpen(body => {
+    body.innerHTML = '<h2 class="st-h">🧭 Learning paths</h2><div id="st-paths-body"></div>';
+    stRenderPathList(body.querySelector("#st-paths-body"));
+  });
+}
+
+function stRenderPathList(host) {
+  const paths = learningPaths();
+  if (!paths.length) {
+    host.innerHTML = '<p class="st-empty">No paths are defined.</p>';
+    return;
+  }
+  host.innerHTML =
+    '<p class="st-hint">A route through topics that already exist, in an order that builds. ' +
+    'A step counts as done when the topic is marked ✓ reviewed.</p>' +
+    '<ul class="st-paths">' + paths.map(p => {
+      const { done, total } = pathProgress(p);
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      return `<li class="st-path" data-id="${esc(p.id)}">` +
+        `<button class="st-path-open">` +
+          `<span class="st-path-icon">${esc(p.icon || "🧭")}</span>` +
+          `<span class="st-path-main"><span class="st-path-name">${esc(p.name)}</span>` +
+          `<span class="st-path-blurb">${esc(p.blurb || "")}</span>` +
+          `<span class="st-path-for">${esc(p["for"] || "")}</span></span>` +
+          `<span class="st-path-count">${done}/${total}</span>` +
+        `</button>` +
+        `<div class="st-path-bar"><div class="st-path-fill" style="width:${pct}%"></div></div>` +
+      `</li>`;
+    }).join("") + '</ul>';
+  host.querySelectorAll(".st-path").forEach(li =>
+    li.querySelector(".st-path-open").addEventListener("click", () => {
+      const path = learningPaths().find(p => p.id === li.dataset.id);
+      if (path) stRenderPath(host, path);
+    }));
+}
+
+function stRenderPath(host, path) {
+  const steps = pathSteps(path);
+  const { done, total } = pathProgress(path);
+  // The first unreviewed step is where the reader is, and saying so is most of
+  // what a path is for — an ordered list without a "you are here" is a list.
+  const nextStep = steps.find(t => localStorage.getItem(REVIEWED_PREFIX + t.id) !== "1");
+  host.innerHTML =
+    '<button id="st-path-back" class="st-btn">← All paths</button>' +
+    `<h3 class="st-path-title">${esc(path.icon || "🧭")} ${esc(path.name)}</h3>` +
+    `<p class="st-hint">${esc(path.blurb || "")}</p>` +
+    `<p class="st-hint st-path-for">${esc(path["for"] || "")}</p>` +
+    `<div class="st-toolbar"><span class="st-count">${done} of ${total} reviewed</span>` +
+    (nextStep ? '<button id="st-path-next" class="st-btn st-btn-primary">Continue</button>' : "") +
+    '</div>' +
+    '<ol class="st-path-steps">' + steps.map((t, i) => {
+      const isDone = localStorage.getItem(REVIEWED_PREFIX + t.id) === "1";
+      const here = !isDone && t === nextStep;
+      return `<li class="st-path-step${isDone ? " done" : ""}${here ? " here" : ""}">` +
+        `<span class="st-step-n">${isDone ? "✓" : i + 1}</span>` +
+        `<button class="st-step-link" data-id="${esc(t.id)}">${esc(t.name)}</button>` +
+        `<span class="st-step-dom">${esc(t.domainIcon)} ${esc(t.domainId)}</span></li>`;
+    }).join("") + '</ol>';
+  host.querySelector("#st-path-back").addEventListener("click", () => stRenderPathList(host));
+  host.querySelector("#st-path-next")?.addEventListener("click", () => {
+    stClose(); stGoToTopic(nextStep.id);
+  });
+  host.querySelectorAll(".st-step-link").forEach(b =>
+    b.addEventListener("click", () => { stClose(); stGoToTopic(b.dataset.id); }));
+}
+
 function stOpenStudyList() {
   stOpen(body => {
     body.innerHTML = '<h2 class="st-h">★ My study list</h2><div id="st-list-body"></div>';
@@ -1605,12 +3292,16 @@ function bkCategory(key) {
   if (key.startsWith(BOOKMARK_PREFIX)) return "bookmark";
   if (key.startsWith(KNOWN_PREFIX)) return "known";
   if (key.startsWith(SRS_PREFIX)) return "srs";
+  if (key.startsWith(NOTE_PREFIX)) return "topicNote";
+  if (key === STREAK_KEY) return "streak";
   if (key === NP_STORE_KEY || key === NP_AUTHOR_KEY) return "notes";
   return null;
 }
 
 /** Keys whose stored value is itself JSON — exported parsed, so the file reads. */
-function bkIsJson(key) { return key.startsWith(SRS_PREFIX) || key === NP_STORE_KEY; }
+function bkIsJson(key) {
+  return key.startsWith(SRS_PREFIX) || key === NP_STORE_KEY || key === STREAK_KEY;
+}
 
 function bkParse(raw) { try { return JSON.parse(raw); } catch { return null; } }
 
@@ -1629,7 +3320,7 @@ function bkCollect() {
 }
 
 function bkCounts(data) {
-  const c = { reviewed: 0, bookmark: 0, known: 0, srs: 0, notes: 0 };
+  const c = { reviewed: 0, bookmark: 0, known: 0, srs: 0, topicNote: 0, notes: 0, streak: 0 };
   Object.keys(data).forEach(k => {
     const cat = bkCategory(k);
     if (!cat) return;
@@ -1703,6 +3394,24 @@ function bkSerialise(key, v) {
     return Array.isArray(a) ? JSON.stringify(a) : null;
   }
   if (key === NP_AUTHOR_KEY) return typeof v === "string" ? v.slice(0, 80) : null;
+  if (key === STREAK_KEY) {
+    const r = typeof v === "string" ? bkParse(v) : v;
+    if (!r || typeof r !== "object" || Array.isArray(r)) return null;
+    if (typeof r.last !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(r.last)) return null;
+    const n = Number(r.n), best = Number(r.best);
+    return JSON.stringify({
+      last: r.last,
+      n: Number.isFinite(n) && n >= 0 ? Math.round(n) : 0,
+      best: Number.isFinite(best) && best >= 0 ? Math.round(best) : 0,
+    });
+  }
+  // A per-topic note is free text, so it is the one key here with no shape to
+  // check beyond "a non-empty string, truncated to what the editor allows".
+  if (key.startsWith(NOTE_PREFIX)) {
+    if (typeof v !== "string") return null;
+    const t = v.slice(0, NOTE_MAX).trim();
+    return t || null;
+  }
   // reviewed / bookmark / known are plain flags
   return (v === "1" || v === 1 || v === true) ? "1" : null;
 }
@@ -1772,17 +3481,24 @@ function bkApply(kept, mode) {
 
 /** Re-read storage into the page so an import is visible without a reload. */
 function bkRefreshUI() {
+  // Only the open domain has topics to repaint; every other domain reads the
+  // imported storage when it is next opened, and its badge is recomputed below.
   document.querySelectorAll(".topic[id]").forEach(t => {
     t.classList.toggle("reviewed", localStorage.getItem(REVIEWED_PREFIX + t.id) === "1");
     t.classList.toggle("bookmarked", localStorage.getItem(BOOKMARK_PREFIX + t.id) === "1");
   });
-  document.querySelectorAll(".domain-section").forEach(d => updateDomainProgress(d));
+  domainSections().forEach(d => updateDomainProgress(d));
   srsUpdateBadge();
   if (typeof stRefreshStudyList === "function") stRefreshStudyList();
 }
 
 function bkCountLine(c) {
-  return `${c.reviewed} reviewed · ${c.bookmark} starred · ${c.known} known · ${c.srs} scheduled · ${c.notes} note${c.notes === 1 ? "" : "s"}`;
+  // Two kinds of note, and conflating them would misreport a restore: `notes`
+  // is the shared notepad's entries, `topicNote` is one note pinned to a topic.
+  const pin = c.topicNote || 0;
+  return `${c.reviewed} reviewed · ${c.bookmark} starred · ${c.known} known · ` +
+         `${c.srs} scheduled · ${pin} topic note${pin === 1 ? "" : "s"} · ` +
+         `${c.notes} notepad note${c.notes === 1 ? "" : "s"}`;
 }
 
 function stOpenBackup() {
@@ -1889,6 +3605,11 @@ function initStudyTools() {
       '<button class="study-mi" data-act="quiz"><span>❓</span> Quiz</button>' +
       '<button class="study-mi" data-act="acro"><span>🔤</span> Acronym quiz</button>' +
       '<button class="study-mi" data-act="list"><span>★</span> Study list</button>' +
+      '<button class="study-mi" data-act="paths"><span>🧭</span> Learning paths</button>' +
+      '<button class="study-mi" data-act="exam"><span>📋</span> Exam mode</button>' +
+      '<button class="study-mi" data-act="progress"><span>📊</span> Progress</button>' +
+      '<button class="study-mi" data-act="md"><span>⬇</span> Export as Markdown</button>' +
+      '<button class="study-mi" data-act="print"><span>🖨</span> Print pack</button>' +
       '<button class="study-mi" data-act="backup"><span>💾</span> Back up &amp; restore</button>' +
     '</div>' +
     '<button id="study-fab" title="Study tools" aria-label="Study tools" aria-haspopup="true" aria-expanded="false">' +
@@ -1913,7 +3634,10 @@ function initStudyTools() {
     const mi = e.target.closest(".study-mi"); if (!mi) return;
     closeMenu();
     ({ jump: stOpenJump, cards: stOpenFlashcards, due: stOpenDue, quiz: stOpenQuiz,
-       acro: stOpenAcroQuiz, list: stOpenStudyList, backup: stOpenBackup }[mi.dataset.act])();
+       acro: stOpenAcroQuiz, list: stOpenStudyList, paths: stOpenPaths,
+       progress: stOpenProgress, exam: stOpenExam, md: stOpenExport,
+       print: stOpenPrint,
+       backup: stOpenBackup }[mi.dataset.act])();
   });
   document.addEventListener("click", e => { if (!fab.contains(e.target) && !menu.hidden) closeMenu(); });
 
@@ -1929,8 +3653,59 @@ function initStudyTools() {
 }
 
 // ── SERVICE WORKER (offline PWA; https only — never over file://) ────────────
+/**
+ * Offer a reload when a new version is waiting.
+ *
+ * The worker no longer calls skipWaiting() on install, so a new version sits in
+ * `waiting` until someone accepts it. That is the point: swapping the assets
+ * under an open page is how a reader ends up with a new script.js and an old
+ * index.html, and on a page that keeps their progress in localStorage that is
+ * not a cosmetic problem.
+ *
+ * Rendered rather than alert()ed, and dismissible: an update is worth
+ * mentioning once, not insisting on.
+ */
+function showUpdateToast(worker) {
+  if (document.getElementById("update-toast")) return null;
+  const bar = document.createElement("div");
+  bar.id = "update-toast";
+  bar.setAttribute("role", "status");
+  bar.innerHTML =
+    '<span class="ut-text">A newer version of this page is ready.</span>' +
+    '<button type="button" class="ut-go">Reload</button>' +
+    '<button type="button" class="ut-dismiss" aria-label="Dismiss">✕</button>';
+  bar.querySelector(".ut-go").addEventListener("click", () => {
+    bar.querySelector(".ut-go").textContent = "Reloading…";
+    // The worker takes over, fires controllerchange, and the page reloads once.
+    // Without the guard a page can reload in a loop when several tabs accept.
+    worker?.postMessage({ type: "skip-waiting" });
+    if (!worker) location.reload();
+  });
+  bar.querySelector(".ut-dismiss").addEventListener("click", () => bar.remove());
+  document.body.appendChild(bar);
+  return bar;
+}
+
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+    navigator.serviceWorker.register("/sw.js").then(reg => {
+      if (reg.waiting) showUpdateToast(reg.waiting);
+      reg.addEventListener("updatefound", () => {
+        const installing = reg.installing;
+        installing?.addEventListener("statechange", () => {
+          // "installed" with a controller already present means an update, not
+          // a first install — the first install has nothing to replace.
+          if (installing.state === "installed" && navigator.serviceWorker.controller) {
+            showUpdateToast(installing);
+          }
+        });
+      });
+    }).catch(() => {});
+    let reloading = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (reloading) return;
+      reloading = true;
+      location.reload();
+    });
   });
 }

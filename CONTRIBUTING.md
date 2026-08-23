@@ -1,14 +1,30 @@
 # Contributing — Content & Markup Conventions
 
-All visible content lives in `data/*.html` (one file per domain) and is assembled
-into `index.html` by `build.py`. **Never hand-edit `index.html`.**
+All visible content lives in `data/*.html` and is assembled into `index.html` by
+`build.py`. **Never hand-edit `index.html`.**
+
+A domain is normally one file, `data/{id}.html`. A domain that has outgrown one
+file is split into ordered **parts** — `data/script.01-references.html`,
+`data/script.02-beginner.html`, … — which `build.py` concatenates in filename
+order into the same domain. Parts exist so a large domain is workable; they are
+not separate domains, and splitting one changes nothing about the built page.
+A domain may have a single file *or* parts, never both; the tools error if it
+has both.
 
 ## Workflow
 
-1. Edit the relevant `data/{domain}.html`.
-2. Run `python3 tools/annotate_acronyms.py` (adds inline acronym expansions).
-3. Run `python3 build.py`.
-4. Open `index.html` and verify (filter, search, expand, light/dark).
+```
+make            # gen acronym domain -> annotate -> build
+make check      # every static gate CI runs
+make test       # drive the built page in a browser
+```
+
+Then open `index.html` and verify by hand (filter, search, expand, light/dark).
+
+The order in `make build` is not arbitrary: the acronym domain is generated from
+the dictionary, the annotator rewrites content using it, and `build.py`
+assembles what both produced. Running them out of order gives you a page that
+looks correct and is stale. `make help` lists everything.
 
 ## Canonical topic skeleton
 
@@ -37,8 +53,41 @@ filtering, search, permalinks, and progress tracking all work:
 
 Notes:
 - The permalink/reviewed tools and `aria`/keyboard support are added by
-  `script.js` at load — you do **not** add them in markup.
+  `script.js` **when the topic's domain is opened** — you do not add them in
+  markup.
 - `.topic-name` is what the deep-link slug and search use; always include it.
+- Do **not** write an `id` on a `.topic`. `build.py` stamps one, derived from
+  `.topic-name`, and `data/slug-aliases.json` tracks it when a title changes.
+- Never write a literal `</script` in content — not even inside `<pre>`. Domain
+  content ships inside a `<script type="text/html">` block (see below), and that
+  sequence would end it early. Write `&lt;/script&gt;`; the build fails on a raw
+  one rather than shipping a truncated page.
+
+## One domain at a time
+
+`build.py` puts each domain's content in an inert `<script type="text/html">`
+block next to its header instead of in the page body. `script.js` moves one
+domain's block into the DOM when it is opened and empties it again when another
+opens, so the browser only ever builds the domain being read — 404 elements at
+load rather than 92,330.
+
+This costs nothing in content conventions, and one thing in code conventions:
+
+> **Never answer a page-wide question with `document.querySelectorAll(".topic")`.**
+> It sees one domain and returns a confident, wrong answer.
+
+Two accessors exist instead, both in `script.js`:
+
+| You need | Use | Where it comes from |
+|---|---|---|
+| Which topics exist, and where | `topicIndex()` / `topicDomain(id)` | the id map `build.py` inlines |
+| What a topic says (name, card text, full text) | `domainTopics(domainId)` | the deferred block, parsed once and cached |
+
+Search, the flashcard and quiz decks, quick jump, the study list, the progress
+badges and the random pick all go through those, which is why they still cover
+all 29 domains while one is rendered. `tools/smoke_test.mjs` checks exactly that:
+if it starts failing "search still reaches unopened domains", something started
+reading the DOM again.
 
 ## Class conventions (use these, not one-off variants)
 
@@ -72,10 +121,11 @@ for three-tone ladders. Add a variable there rather than a literal here.
 
 ## Before you push
 
-`python build.py` regenerates `index.html`; CI fails if you forgot. Then:
+`make build` regenerates `index.html`; CI fails if you forgot. Then:
 
 ```
-node tools/smoke_test.mjs      # drives the built page in a real browser
+make check                     # every static gate, fastest-failing first
+make test                      # drives the built page in a real browser
 ```
 
 It checks the things a structural change quietly breaks — a chip without its
@@ -129,6 +179,31 @@ you nothing.
 
 Do not mark something that is not going to move. `$0` stays free.
 
+### Fact anchors — where a number came from
+
+A volatile span says *when* a claim was checked. A **fact anchor** says *where it came
+from*, so the next person can re-verify it in a minute instead of re-researching it in an
+hour. It is an HTML comment immediately before the element making the claim, so it costs
+the reader nothing:
+
+```html
+<!-- fact: tombstone lifetime 180 days | source: Active Directory forest functional
+     level defaults since Server 2003 SP1 | checked: 2026-08 -->
+Deletions replicate as tombstones — markers that persist for 180 days …
+```
+
+Three fields, pipe-separated: the claim in a few words, the source, and the month you
+checked it. Worth adding for a **version-specific number a reader could act on** — a
+retention window, a service limit, an evaluation period, a default that a vendor could
+change. Not worth adding for arithmetic, for something the card derives itself, or for a
+figure whose source is the card's own worked example.
+
+`python tools/check_volatility.py` validates both conventions — a malformed or future
+`data-checked`, an anchor missing a field — and lists them oldest first so a freshness
+pass has somewhere to start. It also reports topics that name a vendor console and carry
+no dated span; that half is a queue to read, never a gate, because plenty of cards
+mention a console without making a claim about one.
+
 For repeated SVG diagram colours, style the shapes from a class on the `<svg>` instead —
 `.topo-svg line { stroke: var(--sky); }` and `math.html`'s `msv-*` set are the pattern.
 
@@ -174,6 +249,38 @@ A topic that tracks something changeable — a vendor console, a price, a produc
 name — should also carry `data-volatile="true"`. Only volatile topics appear in
 `--report`; stable ones (the OSI model, the TCP handshake) are excluded on
 purpose, so the report stays a to-do list rather than a source of guilt.
+
+## Topic IDs are a contract
+
+A topic's id is `slugify(its title)`, stamped by `build.py` in document order,
+with duplicates suffixed `-2`, `-3` in the order they are encountered **across
+the whole site**. That id is not an implementation detail. It is:
+
+* the permalink someone shared — `index.html#osi-model-7-layers`
+* the key their progress is stored under — `reviewed:`, `bookmark:`, `known:`,
+  `srs:`, `note:`
+* the key `related.json` and `paths.json` point at
+
+So a change that moves ids is a change that silently breaks other people's
+saved state. What moves them:
+
+| Change | Moves ids? |
+|---|---|
+| Editing a card's body | No |
+| Renaming a topic | **Yes** — that topic's id, and `fix_topic_names.py` records an alias |
+| Reordering topics within a domain | Only if two titles collide and swap suffixes |
+| Moving cards between **parts of the same domain**, in order | No |
+| Moving cards to a **different domain** | Possibly — dedup order changes site-wide |
+| Adding a topic whose title duplicates an existing one | **Yes** — it takes `-2`, and anything already suffixed shifts |
+
+Two rules follow. **Prefer parts over new domains** when a file gets too big —
+that is why `script` is six parts rather than three domains. And when you do
+rename, let `tools/fix_topic_names.py` write the alias so the old permalink
+still lands; never hand-edit `data/slug-aliases.json`.
+
+If you are refactoring and believe the page should be unchanged, prove it:
+build before and after and compare `index.html` byte for byte. That is how the
+`script` split was verified.
 
 ## Adding a domain
 

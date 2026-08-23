@@ -468,8 +468,8 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Service</th><th>Does</th></tr>
-                    <tr><td>ALB <span class="acro-exp">(Application Load Balancer)</span> (Application LB)</td><td>Layer 7 — routes HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>(S) by path/host, WebSockets, target groups</td></tr>
-                    <tr><td>NLB <span class="acro-exp">(Network Load Balancer)</span> (Network LB)</td><td>Layer 4 — ultra-fast TCP/UDP, static IPs <span class="acro-exp">(Internet Protocol)</span>, extreme throughput</td></tr>
+                    <tr><td>ALB <span class="acro-exp">(Application Load Balancer)</span></td><td>Layer 7 — routes HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>(S) by path/host, WebSockets, target groups</td></tr>
+                    <tr><td>NLB <span class="acro-exp">(Network Load Balancer)</span></td><td>Layer 4 — ultra-fast TCP/UDP, static IPs <span class="acro-exp">(Internet Protocol)</span>, extreme throughput</td></tr>
                     <tr><td>Route 53</td><td>DNS + health checks + routing policies (latency, weighted, failover, geo)</td></tr>
                     <tr><td>CloudFront</td><td>CDN <span class="acro-exp">(Content Delivery Network)</span> — caches content at edge locations near users; also DDoS/TLS termination</td></tr>
                   </table>
@@ -1717,6 +1717,7 @@ az storage blob generate-sas --account-name stprod01 --container-name backups \
                 <div class="concept-label">Observability</div>
                 <div class="concept-title">Metrics Are Free, Logs Are Opt-In</div>
                 <div class="concept-desc">
+                  <!-- fact: platform metrics retained 93 days | source: Azure Monitor data platform retention | checked: 2026-08 -->
                   Platform <strong>metrics</strong> are collected automatically and kept for 93 days.
                   Resource <strong>logs</strong> are not collected at all until you add a
                   <strong>diagnostic setting</strong> pointing the resource at a Log Analytics
@@ -1926,4 +1927,1368 @@ dsregcmd /status
             </div>
           </div>
 
+
+          <!-- ── TOPIC: KUBERNETES THREAT MODEL ────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">☸️</span>
+              <span class="topic-name">The Kubernetes Threat Model — The Four Cs and What an Attacker Sees</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">An Attacker Does Not See a Cluster — They See One Pod, and What It Can Reach</div>
+                <div class="concept-desc">
+                  Kubernetes diagrams are drawn from the operator's viewpoint: a control plane above, nodes
+                  below, workloads inside. An attacker arrives somewhere entirely different — inside one
+                  container, usually through an ordinary application vulnerability that has nothing to do with
+                  Kubernetes at all. Everything that follows is a question of what that one process can reach:
+                  which token is mounted, which network destinations answer, which host resources are shared,
+                  and whether the node's cloud identity is borrowable.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    This is why cluster hardening that starts at the control plane frequently misses. The
+                    control plane is usually managed, patched and unreachable from the internet. The
+                    interesting path runs the other way — from a compromised workload outward — and almost
+                    every step of it is a default that was never changed.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Four Cs — Where a Control Belongs</div>
+                <div class="concept-desc">
+                  Cloud, Cluster, Container, Code. The model's usefulness is diagnostic: when a control is
+                  failing, it names which layer should have held, and it stops teams from solving a
+                  cluster-layer problem with a code-layer fix.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Layer</th><th>Owns</th><th>Failure looks like</th></tr></thead>
+                    <tbody>
+                      <tr><td>Cloud</td><td>Node identity, network boundaries, managed control plane, key management</td><td>A pod borrowing the node's cloud role and reading a whole bucket</td></tr>
+                      <tr><td>Cluster</td><td>RBAC <span class="acro-exp">(Role-Based Access Control)</span>, admission, network policy, namespaces, secrets</td><td>A service account that can create pods, and therefore can become anything</td></tr>
+                      <tr><td>Container</td><td>Image contents, runtime privileges, filesystem, capabilities</td><td>A privileged pod with the host filesystem mounted</td></tr>
+                      <tr><td>Code</td><td>The application, its dependencies, its handling of input</td><td>The SSRF <span class="acro-exp">(Server-Side Request Forgery)</span> or deserialisation bug that started the whole chain</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Read it outside-in for defence and inside-out for attack. The layers nest, so a control at
+                    an outer layer contains failures at inner ones — which is the argument for spending
+                    effort on cluster and cloud configuration rather than on making every application perfect.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Surfaces, and What Reaching Each One Costs You</div>
+                <div class="concept-desc">
+                  Ranked by consequence rather than by likelihood. The top two are game over, and both are
+                  usually protected by network position alone.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Surface</th><th>What it grants</th><th>Baseline control</th></tr></thead>
+                    <tbody>
+                      <tr><td>etcd</td><td>Every secret in the cluster, in one place, unencrypted by default</td><td>mTLS <span class="acro-exp">(Mutual Transport Layer Security)</span>, no route from workloads, encryption at rest with an external key</td></tr>
+                      <tr><td>API <span class="acro-exp">(Application Programming Interface)</span> server</td><td>Whatever the caller's RBAC allows — often more than intended</td><td>Authentication, tight RBAC, audit logging</td></tr>
+                      <tr><td>kubelet</td><td>Exec into any pod on that node; read its logs and secrets</td><td>Authentication and authorization enabled; never anonymous</td></tr>
+                      <tr><td>Cloud metadata endpoint</td><td>The node's identity, and everything that identity can do</td><td>Block pod access to it; use per-workload identity instead</td></tr>
+                      <tr><td>Container runtime socket</td><td>Root on the node, immediately</td><td>Never mount it into a pod; treat any request to as a red flag</td></tr>
+                      <tr><td>The workloads themselves</td><td>The starting position for everything above</td><td>The rest of this cluster of cards</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The metadata-endpoint row is the one that turns a container compromise into a cloud
+                    compromise, and it is a single network rule. If you do one thing after reading this card,
+                    make it that one — the attack path is short, well documented, and still open in most
+                    clusters. The offensive walkthrough is in
+                    <span class="xref">Kubernetes Attacks — RBAC Abuse &amp; Container Escape</span>
+                    in the Red Team domain.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: KUBERNETES RBAC DEEP ───────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔑</span>
+              <span class="topic-name">Kubernetes RBAC <span class="acro-exp">(Role-Based Access Control)</span> Deep — The Escalation Paths People Miss</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Several Innocuous Permissions Are Cluster-Admin Wearing a Hat</div>
+                <div class="concept-desc">
+                  Kubernetes RBAC is easy to read and hard to reason about, because the permission model
+                  describes API <span class="acro-exp">(Application Programming Interface)</span> verbs on resources while the actual privilege depends on what those resources
+                  do. Nothing in a role definition says "this is equivalent to root". The knowledge lives
+                  entirely in knowing what the object is for, which is why RBAC reviews that read like
+                  least-privilege frequently are not.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    The reframing that makes review possible: stop reading roles as lists of verbs and start
+                    asking <em>what can the holder of this role cause to run, and as whom?</em> Anything that
+                    creates or controls a workload inherits every identity that workload can use.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Permissions That Are Cluster-Admin in Practice</div>
+                <div class="concept-desc">
+                  Each row is a permission that looks bounded in a role definition and is not. Grant any of
+                  them and you have granted considerably more.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Permission</th><th>Why it is escalation</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>create pods</code></td><td>Run a pod as any service account in the namespace, and read its token</td></tr>
+                      <tr><td><code>create pods/exec</code></td><td>Execute inside an existing pod — its identity, its secrets, its network position</td></tr>
+                      <tr><td><code>get secrets</code></td><td>Every credential the namespace holds, including service-account tokens</td></tr>
+                      <tr><td><code>create/patch</code> on Deployments, Jobs, CronJobs, DaemonSets</td><td>Indirect pod creation; the controller does it for you</td></tr>
+                      <tr><td><code>escalate</code> or <code>bind</code> on roles</td><td>Grant yourself permissions you do not have — the verb exists precisely to gate this</td></tr>
+                      <tr><td><code>impersonate</code></td><td>Act as any user, group or service account</td></tr>
+                      <tr><td><code>patch nodes</code></td><td>Manipulate scheduling to place a workload where you want it</td></tr>
+                      <tr><td>Write access to validating or mutating webhooks</td><td>Rewrite or approve every object entering the cluster</td></tr>
+                      <tr><td><code>create certificatesigningrequests</code> plus approval</td><td>Mint a client certificate for any identity</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Wildcards deserve a line of their own. A role with <code>resources: ["*"]</code> silently
+                    acquires permissions on every custom resource anybody installs later — an operator added
+                    next quarter extends a role written this quarter, with no change to the role and no
+                    review.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Auditing It Without Reading Every Manifest</div>
+                <div class="concept-desc">
+                  RBAC review by hand does not scale past a small cluster, and the built-in tooling answers
+                  the question backwards — it tells you what a subject can do, when the useful question is who
+                  can do a dangerous thing.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Backwards, and still the fastest first check for one identity</span>
+          kubectl auth can-i --list --as=system:serviceaccount:prod:api
+
+          <span class="com"># The question that actually matters, asked directly</span>
+          kubectl auth can-i create pods --as=system:serviceaccount:prod:api -n prod
+
+          <span class="com"># Find every binding to the built-in admin role — expect this list to be short</span>
+          kubectl get clusterrolebindings -o json \
+            | jq -r '.items[] | select(.roleRef.name=="cluster-admin")
+                     | "\(.metadata.name): \([.subjects[]?.name] | join(","))"'</pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Three habits do most of the work: default every workload to a dedicated service account
+                    with no permissions at all, so a grant is always deliberate; prefer namespaced Roles to
+                    ClusterRoles, since the blast radius is the difference; and re-run the dangerous-verb
+                    query in CI, so a permission added in a Helm chart upgrade surfaces as a diff rather than
+                    as an audit finding a year later.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: SERVICE ACCOUNT TOKENS ─────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🎟️</span>
+              <span class="topic-name">Service Account Tokens &amp; Workload Identity — The Credential Every Pod Carries</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Every Pod Is Issued an API <span class="acro-exp">(Application Programming Interface)</span> Credential Whether It Needs One or Not</div>
+                <div class="concept-desc">
+                  Unless it is switched off, Kubernetes mounts a service-account token into every pod at a
+                  fixed path. The application never asked for it and in most cases never uses it — but it is
+                  on the filesystem, readable by the process, and it authenticates to the API server. Any
+                  code execution inside that container therefore starts with a cluster credential in hand.
+                  This is the single most useful fact an attacker learns about Kubernetes, and it is a
+                  one-line fix.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># The default nobody chose</span>
+          /var/run/secrets/kubernetes.io/serviceaccount/token
+
+          <span class="com"># Turn it off for workloads that do not talk to the API — most of them</span>
+          spec:
+            automountServiceAccountToken: false</pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Set it on the pod spec rather than the service account where you can: the service-account
+                    setting is easy to override accidentally, and the pod-level declaration sits next to the
+                    workload it describes. Either way, make "does this need API access?" a question the
+                    manifest answers explicitly.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Projected Tokens — Why the Modern Ones Are Better</div>
+                <div class="concept-desc">
+                  The original design stored a permanent token in a Secret object. Projected (bound) tokens
+                  replaced it, and the differences are exactly the properties that decide how bad a stolen
+                  token is.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Property</th><th>Legacy Secret token</th><th>Projected token</th></tr></thead>
+                    <tbody>
+                      <tr><td>Lifetime</td><td>Never expires</td><td>Short, and rotated by the kubelet</td></tr>
+                      <tr><td>Bound to</td><td>Nothing</td><td>A specific pod and service account</td></tr>
+                      <tr><td>Audience</td><td>Any consumer</td><td>Declared — a token for one service is rejected by another</td></tr>
+                      <tr><td>Survives pod deletion</td><td>Yes — still valid</td><td>No; it is invalidated with the pod</td></tr>
+                      <tr><td>Stored in etcd</td><td>Yes, readable by anyone with <code>get secrets</code></td><td>No</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The practical consequence for defenders: on a modern cluster, a token exfiltrated from a
+                    pod stops working. On a cluster still carrying legacy tokens — usually because something
+                    old requested one, or because a manifest creates a token Secret by hand — it works
+                    forever, from anywhere, and its use is indistinguishable from the real workload. Auditing
+                    for long-lived token Secrets is a short, high-value job.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Federating to Cloud IAM <span class="acro-exp">(Identity and Access Management)</span> Without a Long-Lived Key</div>
+                <div class="concept-desc">
+                  Workloads need cloud permissions — a bucket, a queue, a database. The two obvious answers
+                  are both wrong: a static access key in a Secret is a credential that leaks and never
+                  expires, and letting the pod use the node's instance role gives every pod on that node the
+                  same access, which is the union of what all of them need.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Approach</th><th>Grants</th><th>Verdict</th></tr></thead>
+                    <tbody>
+                      <tr><td>Static key in a Secret</td><td>Whatever the key allows, forever</td><td>Avoid; it is the credential that turns up in a repository</td></tr>
+                      <tr><td>Node instance role</td><td>Everything every pod on the node needs</td><td>Avoid; there is no per-workload boundary at all</td></tr>
+                      <tr><td>Workload identity federation</td><td>Exactly one workload's permissions, short-lived</td><td>The answer — the service-account token is exchanged for cloud credentials</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The federation mechanism is the projected token's audience field doing real work: the
+                    cluster's OIDC <span class="acro-exp">(OpenID Connect)</span> issuer is trusted by the cloud provider, and the trust policy names the
+                    exact namespace and service account. Pair it with blocking pod access to the metadata
+                    endpoint — otherwise the node-role path stays open next to the good one, and an attacker
+                    will simply take it. The identity-side concepts are in
+                    <span class="xref">Cloud IAM Pitfalls &amp; Privilege Escalation</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: CONTAINER BREAKOUT & POD SECURITY ──────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🚪</span>
+              <span class="topic-name">Container Breakout Paths &amp; Pod Security Standards</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Most Escapes Are Not Exploits — They Are Configuration Working Correctly</div>
+                <div class="concept-desc">
+                  "Container escape" suggests a kernel vulnerability and an exploit chain. Those exist and are
+                  rare. The overwhelming majority of real escapes are a pod that was granted a host resource
+                  on purpose, by a manifest somebody wrote to make something work, that then did exactly what
+                  it was configured to do. Nothing is exploited. The container was simply never a boundary in
+                  that configuration.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    Which is good news for defence: these are visible in the manifest, checkable before
+                    deployment, and enforceable by admission policy. The vulnerability class you cannot see is
+                    the small one; the configuration class you can see is the large one.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Paths, and What Each One Is Actually For</div>
+                <div class="concept-desc">
+                  Each of these has a legitimate use, which is why blanket bans fail and admission policy with
+                  a documented exception process works. The right question is never "should this be allowed"
+                  but "is this workload the one that needs it".
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Setting</th><th>What it gives an attacker</th><th>Legitimate use</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>privileged: true</code></td><td>Effectively root on the node</td><td>Some CNI and storage plugins; almost nothing else</td></tr>
+                      <tr><td><code>hostPath</code> mount of <code>/</code> or <code>/etc</code></td><td>Read and write the node filesystem — add an authorized key and stop trying</td><td>Node-level agents, narrowly scoped</td></tr>
+                      <tr><td>Mounting the container runtime socket</td><td>Start a privileged container; instant node root</td><td>Legacy CI-in-cluster patterns — replace them</td></tr>
+                      <tr><td><code>hostPID</code></td><td>See and signal every process on the node; read their memory</td><td>Monitoring agents</td></tr>
+                      <tr><td><code>hostNetwork</code></td><td>The node's network position, including anything bound to localhost</td><td>Ingress controllers, some network plugins</td></tr>
+                      <tr><td><code>CAP_SYS_ADMIN</code> and friends</td><td>Mount filesystems, manipulate namespaces — many roads to the host</td><td>Rare; usually a symptom of not knowing which capability was needed</td></tr>
+                      <tr><td>Running as root in the container</td><td>Turns any other weakness into a much shorter path</td><td>Badly built images; fixable at build time</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Pod Security Standards — Three Profiles, and Enforcing Them</div>
+                <div class="concept-desc">
+                  Pod Security Standards name three profiles and the built-in Pod Security Admission
+                  controller applies them per namespace by label. It is not a policy engine and does not try
+                  to be — which is exactly why it is worth turning on first: no dependency, no rules to write,
+                  no engine to operate.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Profile</th><th>Allows</th><th>Use for</th></tr></thead>
+                    <tbody>
+                      <tr><td>Privileged</td><td>Everything; no restrictions</td><td>Only namespaces holding genuine infrastructure components</td></tr>
+                      <tr><td>Baseline</td><td>Blocks known privilege escalation — privileged, hostPID, hostNetwork, most hostPath</td><td>A realistic floor for existing workloads</td></tr>
+                      <tr><td>Restricted</td><td>Baseline plus non-root, no privilege escalation, dropped capabilities, seccomp</td><td>The target for anything written after you adopt this</td></tr>
+                    </tbody>
+                  </table>
+                  <pre class="code-block"><span class="com"># Warn first — every namespace, no breakage, real inventory</span>
+          kubectl label namespace prod pod-security.kubernetes.io/warn=restricted
+
+          <span class="com"># Then enforce where it is already clean, and keep audit one level stricter</span>
+          kubectl label namespace prod \
+            pod-security.kubernetes.io/enforce=baseline \
+            pod-security.kubernetes.io/audit=restricted</pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Enforce at one level while auditing at the next tells you what tightening would cost
+                    before you pay it — the single most useful configuration in this whole area. When you
+                    outgrow the three profiles, a full policy engine is the next step; the mechanics are in
+                    <span class="xref">Policy as Code — OPA/Rego &amp; Kyverno</span>.
+                    Note the ordering trap: Pod Security Admission validates, so it cannot fix anything, and
+                    a mutating engine that adds a security context runs first. Check what actually reached
+                    the API <span class="acro-exp">(Application Programming Interface)</span> server rather than what the manifest said.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: NETWORK POLICY & SERVICE MESH ──────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🕸️</span>
+              <span class="topic-name">Network Policies &amp; Service Mesh — Default-Deny, mTLS <span class="acro-exp">(Mutual Transport Layer Security)</span> &amp; the Complexity Cost</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Cluster Is a Flat Network Until Somebody Says Otherwise</div>
+                <div class="concept-desc">
+                  By default every pod can open a connection to every other pod, in every namespace. The
+                  marketing image of workload isolation describes resource scheduling, not network
+                  segmentation. This means one compromised container has unrestricted reachability to the
+                  database, the internal admin service, the metadata endpoint and every other team's
+                  workloads — the exact lateral movement that segmentation exists to prevent, inside a
+                  boundary people describe as isolated.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    Two facts make this worse than it sounds. NetworkPolicy resources are enforced by the CNI
+                    plugin, so on a plugin that does not implement them the objects apply cleanly and do
+                    nothing at all — a policy that appears in <code>kubectl get</code> is not evidence of
+                    enforcement. And policies are additive with no deny rules, so a namespace with no policy
+                    is fully open, and adding one policy to a namespace flips its pods to deny-by-default for
+                    the direction that policy covers.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Reaching Default-Deny Without an Outage</div>
+                <div class="concept-desc">
+                  Default-deny is the single highest-value cluster control and the one most often abandoned
+                  halfway, because it is adopted in the wrong order. Writing the deny rule first turns an
+                  unknown dependency graph into an incident.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Step</th><th>Action</th></tr></thead>
+                    <tbody>
+                      <tr><td>1</td><td>Observe first — use flow logs or the mesh's telemetry to learn who actually talks to whom</td></tr>
+                      <tr><td>2</td><td>Write allow rules from observed traffic, still with no deny in place</td></tr>
+                      <tr><td>3</td><td>Confirm the allow set covers a full business cycle — the nightly job is what breaks</td></tr>
+                      <tr><td>4</td><td>Apply default-deny ingress in one non-critical namespace</td></tr>
+                      <tr><td>5</td><td>Then egress, which is the half that stops exfiltration and the half people skip</td></tr>
+                      <tr><td>6</td><td>Namespace-by-namespace, with the DNS <span class="acro-exp">(Domain Name System)</span> rule remembered every time</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The DNS rule earns its own mention because it causes most first-attempt failures: a
+                    default-deny egress policy blocks lookups to the cluster DNS service, so everything fails
+                    in a way that looks nothing like a network policy problem. Allow UDP <span class="acro-exp">(User Datagram Protocol)</span> and TCP <span class="acro-exp">(Transmission Control Protocol)</span> 53 to the
+                    DNS namespace in every egress policy, as a template, before you need to debug it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">When a Service Mesh Is Worth Its Cost</div>
+                <div class="concept-desc">
+                  A mesh gives identity-based authorization and mutual TLS <span class="acro-exp">(Transport Layer Security)</span> between workloads — controls that
+                  network policy cannot express, because IP <span class="acro-exp">(Internet Protocol)</span> addresses in a cluster are ephemeral and
+                  reassigned. It also adds a proxy beside every pod, a control plane to run and upgrade, and
+                  a new place for latency and failures to originate.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Need</th><th>Network policy</th><th>Mesh</th></tr></thead>
+                    <tbody>
+                      <tr><td>Stop pod A reaching pod B</td><td>Yes — do this first</td><td>Overkill</td></tr>
+                      <tr><td>Encrypt traffic between workloads</td><td>No</td><td>Yes, transparently</td></tr>
+                      <tr><td>Authorize by workload identity rather than address</td><td>No</td><td>Yes — the real reason to adopt one</td></tr>
+                      <tr><td>Prove who called what, for audit</td><td>No</td><td>Yes</td></tr>
+                      <tr><td>Regulatory encryption-in-transit requirement</td><td>No</td><td>Yes, without changing applications</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The honest sequencing: network policy first, always, because it is free with the platform
+                    and stops the movement that matters most. Adopt a mesh when you have a specific need in
+                    that table's second column, not because the architecture diagram looks more complete with
+                    one. A half-operated mesh is a new failure domain in exchange for controls nobody
+                    configured. The architectural view is in
+                    <span class="xref">Service Mesh — Istio, Linkerd &amp; the Sidecar Pattern</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: KUBERNETES MULTI-TENANCY ───────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🏘️</span>
+              <span class="topic-name">Kubernetes Multi-Tenancy — Namespaces Are Not a Security Boundary</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Namespace Is a Naming Scope That People Read as a Wall</div>
+                <div class="concept-desc">
+                  Namespaces partition object names and give RBAC <span class="acro-exp">(Role-Based Access Control)</span> something to scope to. That is the whole
+                  feature. They do not partition the network, the nodes, the kernel, or the control plane —
+                  pods in different namespaces share all four by default. The phrase "we isolate tenants with
+                  namespaces" is extremely common and describes an isolation that mostly is not there.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Shared across namespaces by default</th><th>Consequence</th></tr></thead>
+                    <tbody>
+                      <tr><td>The pod network</td><td>Any pod can connect to any other, cross-namespace</td></tr>
+                      <tr><td>Nodes and their kernel</td><td>Two tenants' pods run side by side; one breakout reaches both</td></tr>
+                      <tr><td>The API <span class="acro-exp">(Application Programming Interface)</span> server and etcd</td><td>One RBAC mistake spans everything</td></tr>
+                      <tr><td>Cluster-scoped objects</td><td>CRDs <span class="acro-exp">(Custom Resource Definition)</span>, webhooks, storage classes, node state — no namespace at all</td></tr>
+                      <tr><td>Node resources</td><td>A noisy neighbour is also an availability attack</td></tr>
+                      <tr><td>The DNS <span class="acro-exp">(Domain Name System)</span> service</td><td>Service discovery reveals what other tenants run</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Choosing a Model by Who the Tenants Are</div>
+                <div class="concept-desc">
+                  The right answer follows entirely from one question, and it is not a technical one: what
+                  happens if one tenant runs hostile code on purpose? Teams inside one organisation and
+                  customers running arbitrary workloads are different problems, and only the first is served
+                  by a shared cluster.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Tenants</th><th>Model</th><th>Reasoning</th></tr></thead>
+                    <tbody>
+                      <tr><td>Teams in one organisation, trusted, non-hostile</td><td>Namespaces plus network policy, quotas, RBAC, PSA</td><td>Protects against mistakes, which is the real threat</td></tr>
+                      <tr><td>Separate environments — dev, staging, prod</td><td>Separate clusters</td><td>The blast radius is the point; sharing a control plane defeats it</td></tr>
+                      <tr><td>Business units with distinct compliance scope</td><td>Separate clusters, or dedicated node pools with strict scheduling</td><td>Auditors ask about shared kernels, correctly</td></tr>
+                      <tr><td>Customers running code you did not write</td><td>Separate clusters, or a sandboxed runtime, or both</td><td>The shared kernel is the boundary, and a container is not one</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    When workloads genuinely must be hostile-tolerant on shared infrastructure, the answer is
+                    a stronger runtime boundary rather than more Kubernetes configuration: a sandboxed runtime
+                    such as gVisor, or lightweight virtual machines per pod. They cost startup latency and
+                    some compatibility, and they are the only thing on this page that changes what a kernel
+                    exploit reaches.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Making Soft Multi-Tenancy Actually Hold</div>
+                <div class="concept-desc">
+                  Most clusters are soft multi-tenant — trusted teams, shared platform — and that is a
+                  reasonable choice. It only works if the defaults are changed deliberately, because every one
+                  of these is open until someone closes it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Control</th><th>Prevents</th></tr></thead>
+                    <tbody>
+                      <tr><td>Default-deny network policy per namespace</td><td>Cross-tenant lateral movement</td></tr>
+                      <tr><td>ResourceQuota and LimitRange</td><td>One tenant starving the cluster, deliberately or otherwise</td></tr>
+                      <tr><td>Pod Security Admission at baseline or restricted</td><td>A tenant pod that mounts the host and reaches everyone</td></tr>
+                      <tr><td>Namespaced Roles only; no ClusterRole grants to tenants</td><td>Cluster-scoped reads across every tenant</td></tr>
+                      <tr><td>Restricting who can create CRDs, webhooks and PVs</td><td>A tenant object that affects the whole cluster</td></tr>
+                      <tr><td>Node pools with taints for sensitive workloads</td><td>Co-tenancy on the same kernel as untrusted code</td></tr>
+                      <tr><td>Per-namespace quota on Secrets and services</td><td>Resource exhaustion attacks that are not CPU <span class="acro-exp">(Central Processing Unit)</span> or memory</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Write down which of these you have and which you do not, and share it with whoever
+                    believes the namespaces are a boundary. Half the value of this card is that conversation
+                    happening before an incident rather than during one.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: K8S RUNTIME SECURITY & AUDIT ───────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📡</span>
+              <span class="topic-name">Runtime Security &amp; Audit Logs — eBPF <span class="acro-exp">(Extended Berkeley Packet Filter)</span> Detection and What the API <span class="acro-exp">(Application Programming Interface)</span> Server Records</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Two Telemetry Sources, Answering Two Different Questions</div>
+                <div class="concept-desc">
+                  Cluster detection has exactly two vantage points and confusing them wastes a lot of effort.
+                  The API server audit log records <em>what was asked of Kubernetes</em> — every request, its
+                  subject, its object, its outcome. Runtime sensors record <em>what happened inside a
+                  container</em> — processes, files, network connections, syscalls. An attacker who abuses
+                  RBAC <span class="acro-exp">(Role-Based Access Control)</span> is visible only in the first. An attacker who runs a cryptominer in a pod they were
+                  entitled to create is visible only in the second.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    Most clusters have neither properly. Managed control planes often ship audit logs to the
+                    cloud provider's logging service where nobody has written a query against them, and
+                    runtime sensors are installed in default mode where they produce a volume of low-value
+                    alerts that gets muted within a fortnight.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Audit Log Queries Worth Saving</div>
+                <div class="concept-desc">
+                  The audit stream is enormous and almost entirely uninteresting, so the value is in a small
+                  set of specific, low-frequency events. These are the ones that are rare in normal operation
+                  and significant when they occur.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Event</th><th>Why it matters</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>pods/exec</code> or <code>pods/attach</code> in production</td><td>Interactive access to a running workload; should be rare and attributable</td></tr>
+                      <tr><td>Secret reads by an unusual subject</td><td>The most direct credential-theft path in the cluster</td></tr>
+                      <tr><td>Creation of a privileged or hostPath pod</td><td>The escape configuration, at the moment it is requested</td></tr>
+                      <tr><td>RoleBinding or ClusterRoleBinding changes</td><td>Privilege grants; every one should map to a change record</td></tr>
+                      <tr><td>Anonymous or unauthenticated requests that succeed</td><td>Should be zero; anything else is a finding</td></tr>
+                      <tr><td>Repeated <code>403</code>s from one subject</td><td>Permission enumeration — an attacker mapping what they can do</td></tr>
+                      <tr><td>New webhook, CRD <span class="acro-exp">(Custom Resource Definition)</span> or DaemonSet</td><td>Cluster-wide effect; low frequency, high consequence</td></tr>
+                      <tr><td>Service account authenticating from outside the cluster</td><td>A token that left the pod it was issued to</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Configure the audit policy deliberately: <code>Metadata</code> level for most resources,
+                    <code>RequestResponse</code> for RBAC objects and secrets, and drop the high-volume
+                    read-only noise from system components. Logging everything at the highest level is the
+                    usual first attempt and it is abandoned on cost within a month.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Runtime Sensors — Getting Signal Instead of Volume</div>
+                <div class="concept-desc">
+                  eBPF-based sensors — Falco, Tetragon and their commercial equivalents — observe kernel
+                  events from outside the container, so a compromised workload cannot hide from them. The
+                  difficulty is never collection; it is that container workloads are so uniform that the
+                  default rule sets fire constantly on legitimate behaviour.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Practice</th><th>Effect</th></tr></thead>
+                    <tbody>
+                      <tr><td>Exploit the uniformity — a given image should always do the same things</td><td>Baselines are far tighter than on a general-purpose host</td></tr>
+                      <tr><td>Alert on a shell spawned in a container that has no shell in its normal path</td><td>Among the highest-signal detections available anywhere</td></tr>
+                      <tr><td>Alert on writes to binary paths in a container</td><td>Containers should be effectively immutable; a write is an event</td></tr>
+                      <tr><td>Alert on outbound connections to destinations the workload never uses</td><td>Catches the miner, the beacon and the exfiltration</td></tr>
+                      <tr><td>Alert on reads of the service-account token by an unexpected process</td><td>Credential theft, at the moment it happens</td></tr>
+                      <tr><td>Tune per workload, not globally</td><td>A global exception to silence one noisy app blinds the whole cluster</td></tr>
+                      <tr><td>Enforce read-only root filesystems first</td><td>Prevention removes the alerts rather than tuning them</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    That last row is the reordering worth taking away: several of these detections exist
+                    because a preventive control was not applied. A read-only root filesystem, a dropped
+                    capability set and a non-root user eliminate whole rule categories, and a rule you never
+                    have to tune is better than a rule you tuned well. Rule-writing discipline itself is in
+                    <span class="xref">Detection-as-Code — Git, Review, CI &amp; Versioned Rules</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: KUBERNETES INCIDENT RESPONSE ───────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧯</span>
+              <span class="topic-name">Incident Response in Kubernetes — Investigating Something That No Longer Exists</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Platform's Best Feature Is Working Against You</div>
+                <div class="concept-desc">
+                  Kubernetes exists to replace unhealthy workloads automatically. During an incident that
+                  behaviour destroys evidence faster than any anti-forensic technique an attacker would
+                  bother with: kill the compromised pod and the controller schedules a fresh one, the
+                  original filesystem is gone, its logs may be gone with it, and the replacement is running
+                  the same vulnerable image. The instinct that works on a server — isolate it, then
+                  investigate — deletes the crime scene here.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    The correction is a single change of order: <strong>isolate without terminating.</strong>
+                    A pod can be cut off from the network and detached from its controller while continuing
+                    to run, which preserves memory, filesystem and process state for as long as you need it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Containing a Compromised Pod, in Order</div>
+                <div class="concept-desc">
+                  Each step is deliberately reversible until the last, and the order matters: label first, or
+                  the isolation policy will not select it.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># 1. Relabel so the ReplicaSet stops owning it — the controller</span>
+          <span class="com">#    creates a replacement, the original keeps running, untouched</span>
+          kubectl label pod api-7d9f quarantine=true app-
+
+          <span class="com"># 2. Cut network reachability with a policy that selects only that label</span>
+          kubectl apply -f quarantine-deny-all.yaml
+
+          <span class="com"># 3. Capture, in this order — memory before anything that might restart it</span>
+          kubectl cp api-7d9f:/proc/1/environ ./evidence/environ
+          kubectl logs api-7d9f --previous > ./evidence/logs.txt
+          kubectl get pod api-7d9f -o yaml > ./evidence/spec.yaml
+
+          <span class="com"># 4. Snapshot the node's disk through the cloud provider, not the cluster</span></pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Step 1 is the one worth memorising. Removing the label that the controller's selector
+                    matches orphans the pod: the workload heals, users see a brief blip, and the evidence
+                    stays alive. Without it you are choosing between service availability and knowing what
+                    happened, and under pressure availability wins every time.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Scoping It — and the Preparation That Has to Exist Beforehand</div>
+                <div class="concept-desc">
+                  Once one pod is contained, the question is what else the attacker reached. In a cluster the
+                  answer follows the identity and the network far more than the host.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Question</th><th>Where the answer is</th></tr></thead>
+                    <tbody>
+                      <tr><td>What could that service account do?</td><td><code>auth can-i --list</code> as that subject — this is the blast radius</td></tr>
+                      <tr><td>Did the token get used elsewhere?</td><td>Audit log, filtered by that subject, across the whole window</td></tr>
+                      <tr><td>Did it reach the cloud?</td><td>Cloud audit trail for the node role and any federated identity</td></tr>
+                      <tr><td>What could it connect to?</td><td>The absence of a network policy is itself the answer</td></tr>
+                      <tr><td>Is the image compromised or just the running pod?</td><td>Registry provenance and the image digest actually deployed</td></tr>
+                      <tr><td>Did anything change in the cluster?</td><td>GitOps <span class="acro-exp">(Git Operations)</span> diff against the declared state — drift is a finding</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Three things must exist before the incident or none of the above works: audit logs
+                    retained somewhere outside the cluster, a quarantine network policy written and tested in
+                    advance, and node-snapshot permissions that an on-call responder actually holds at three
+                    in the morning. Rehearse the containment sequence on a scratch cluster once — it takes
+                    twenty minutes and it is the difference between doing this from a runbook and improvising
+                    it. The general process is in
+                    <span class="xref">Incident Response — What to Do When It Goes Wrong</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- ── TOPIC: SERVERLESS THREAT MODEL ────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">⚡</span>
+              <span class="topic-name">Serverless Threat Model — Event Injection, Over-Permissive Roles &amp; the Function You Cannot Log Into</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Removing the Server Removes Some Risks and Concentrates the Rest</div>
+                <div class="concept-desc">
+                  Serverless genuinely deletes categories of work: no patching, no SSH <span class="acro-exp">(Secure Shell)</span>, no long-lived host for
+                  an attacker to persist on, and a process that dies in seconds. What it does not delete is
+                  the application logic and the identity attached to it — and by removing everywhere else risk
+                  could live, it concentrates the entire remaining attack surface into two things: what the
+                  function does with its input, and what its execution role is allowed to do.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    That concentration cuts both ways. It makes the review tractable, because there are only
+                    two questions and both are answerable from the repository. It also means an
+                    over-permissive role has nothing standing between it and the attacker: no network
+                    boundary, no host hardening, no lateral step to detect. Compromise the function, and you
+                    are already the role.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Event Injection — Untrusted Input From Places That Do Not Look Like Input</div>
+                <div class="concept-desc">
+                  Web applications teach developers to distrust the request. Serverless functions are invoked
+                  by dozens of event sources, most of which feel like infrastructure rather than user input,
+                  and validation is skipped accordingly.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Trigger</th><th>Attacker-controlled part</th></tr></thead>
+                    <tbody>
+                      <tr><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> gateway</td><td>Everything — the one people do validate</td></tr>
+                      <tr><td>Object storage upload</td><td>File name, path, metadata, and the content itself</td></tr>
+                      <tr><td>Queue or stream message</td><td>The payload, if anything upstream can publish</td></tr>
+                      <tr><td>Email or SMS ingestion</td><td>Headers, sender, subject, body</td></tr>
+                      <tr><td>Database change stream</td><td>Any field a user could write, arriving as an event</td></tr>
+                      <tr><td>Third-party webhook</td><td>The entire body, unless the signature is verified — and it usually is not</td></tr>
+                      <tr><td>Log or notification events</td><td>Anything an attacker can cause to be logged</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The object-storage row produces the classic chain: a user uploads a file whose name
+                    contains a shell metacharacter, a function passes that name to a media tool, and the
+                    function's role does the rest. Nobody thought of the filename as user input because the
+                    event came from storage.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">The Failures That Are Specific to This Model</div>
+                <div class="concept-desc">
+                  These are the findings that a general application review misses because they are properties
+                  of the platform rather than of the code.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Failure</th><th>Fix</th></tr></thead>
+                    <tbody>
+                      <tr><td>One shared role across many functions</td><td>A role per function, scoped to the resources that function names</td></tr>
+                      <tr><td>Wildcard resource ARNs <span class="acro-exp">(Amazon Resource Name)</span> in the policy</td><td>Name the queue, the table, the bucket prefix — the effort is small and one-time</td></tr>
+                      <tr><td>Secrets in environment variables</td><td>Fetch from a secret store at invocation; environment variables are visible to anything that reads the config</td></tr>
+                      <tr><td>State reused across invocations</td><td>The container is reused between calls — data cached in a global outlives the request that produced it</td></tr>
+                      <tr><td>Files written to the writable temp directory</td><td>Also survives into the next invocation; clean up or do not write</td></tr>
+                      <tr><td>No timeout or concurrency ceiling</td><td>Cost becomes the denial-of-service target; a loop is a bill</td></tr>
+                      <tr><td>Deep function-to-function chains</td><td>Each hop is a trust decision, and the last one cannot see where the data came from</td></tr>
+                      <tr><td>Dependencies bundled and never rebuilt</td><td>Nothing patches a deployment package; only a redeploy does</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The reused-state rows surprise people most, because the mental model says each invocation
+                    is fresh. The execution environment is reused when it can be — which is what makes warm
+                    starts fast, and what makes a credential or a user's data left in a global variable
+                    readable by the next caller.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: MANAGED SERVICE TRUST BOUNDARIES ───────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧾</span>
+              <span class="topic-name">Managed Service Trust Boundaries — What the Provider Secures, and Precisely What You Do</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Shared Responsibility Diagram Is True and Not Actionable</div>
+                <div class="concept-desc">
+                  Every provider publishes a diagram with a diagonal line: they secure the cloud, you secure
+                  what you put in it. Correct, and it has never prevented a single breach, because the line
+                  moves for every service and the diagram does not say where. The same organisation is
+                  responsible for guest OS <span class="acro-exp">(Operating System)</span> patching on a virtual machine, for nothing of the sort on a managed
+                  database, and for something in between on a managed Kubernetes cluster.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    The question that turns the diagram into work: <em>for this specific service, what
+                    configuration can I change that would expose data?</em> That set is always small, always
+                    documented, and is where essentially all cloud breaches live. The introduction is in
+                    <span class="xref">Cloud Fundamentals — Regions, AZs &amp; Shared Responsibility</span>;
+                    this card is the per-service reading.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Where the Line Sits, by Service Class</div>
+                <div class="concept-desc">
+                  The higher the abstraction, the less you operate and the more the remaining surface is pure
+                  configuration — which is easier, and easier to get catastrophically wrong in one click.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Class</th><th>You still own</th><th>The mistake that matters</th></tr></thead>
+                    <tbody>
+                      <tr><td>Virtual machines</td><td>OS, patching, agents, host firewall, everything above</td><td>An unpatched host with a public address</td></tr>
+                      <tr><td>Managed containers</td><td>Image contents, workload identity, network policy</td><td>A privileged workload with a broad role</td></tr>
+                      <tr><td>Managed databases</td><td>Network exposure, credentials, encryption choice, backups' access</td><td>Public accessibility left enabled on creation</td></tr>
+                      <tr><td>Object storage</td><td>Access policy, encryption, versioning, lifecycle, logging</td><td>The public bucket, still the most common cloud breach</td></tr>
+                      <tr><td>Serverless functions</td><td>Code, dependencies, execution role, triggers</td><td>A wildcard role attached to internet-triggered code</td></tr>
+                      <tr><td>SaaS <span class="acro-exp">(Software as a Service)</span> identity and collaboration</td><td>Tenant configuration, sharing defaults, app consent</td><td>Sharing defaults nobody reviewed after rollout</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">The Boundaries That Are Genuinely Ambiguous</div>
+                <div class="concept-desc">
+                  Most of the line is clear once you look it up. A few places are genuinely contested, and
+                  those are where incidents get argued about afterwards.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Ambiguity</th><th>How to resolve it in advance</th></tr></thead>
+                    <tbody>
+                      <tr><td>Provider-managed encryption keys</td><td>Decide whether you need to hold the key; if compliance says yes, provider-managed does not satisfy it</td></tr>
+                      <tr><td>Backups of a managed service</td><td>Confirm retention, access control and restore testing — managed backup is not tested backup</td></tr>
+                      <tr><td>Logs the provider does not enable by default</td><td>Data-plane logging is usually opt-in and chargeable; absence is your gap, not theirs</td></tr>
+                      <tr><td>Vulnerabilities in a managed runtime</td><td>They patch the platform; you redeploy to pick it up — nothing is automatic</td></tr>
+                      <tr><td>Support access to your data</td><td>Check whether provider staff can read it, and whether that access is logged to you</td></tr>
+                      <tr><td>Region and data residency</td><td>Some services replicate metadata globally; residency claims need the specific service's documentation</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The data-plane logging row is worth acting on immediately. Control-plane events — who
+                    created what — are almost always on by default; data-plane events — who read which
+                    object — usually are not. That is precisely the log you will want during an incident,
+                    and it only exists if somebody turned it on beforehand.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: IAC SECURITY SCANNING ──────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔍</span>
+              <span class="topic-name">IaC <span class="acro-exp">(Infrastructure as Code)</span> Security Scanning — Catching the Misconfiguration Before It Deploys</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Same Finding, Found Three Days Earlier, Is a Different Finding</div>
+                <div class="concept-desc">
+                  A posture-management tool tells you a bucket is public. An IaC scanner tells you a pull
+                  request <em>would make</em> a bucket public — to the person who wrote it, while they are
+                  still holding the context, before anything exists to be exposed. Nothing about the rule
+                  changes; the economics change completely. Cloud misconfiguration is overwhelmingly a
+                  deployment-time problem being detected at runtime, and moving the detection is the single
+                  highest-return change in this whole area.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    Keep both. The scanner sees what the code declares; posture management sees what actually
+                    exists, including everything created by hand, by another team, or by a service that
+                    provisions its own resources. Each has a blind spot precisely where the other looks.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What These Tools Catch, and What They Structurally Cannot</div>
+                <div class="concept-desc">
+                  The limits are not tool quality — they follow from scanning source text rather than a
+                  deployed system, and knowing them stops teams from trusting a green pipeline too far.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Caught</th><th>Missed</th></tr></thead>
+                    <tbody>
+                      <tr><td>Public storage, open security groups, unencrypted volumes</td><td>Anything set outside the code — console changes, other pipelines</td></tr>
+                      <tr><td>Missing logging, missing versioning, missing backup retention</td><td>Values arriving from variables the scanner cannot resolve</td></tr>
+                      <tr><td>Overly permissive IAM <span class="acro-exp">(Identity and Access Management)</span> policies with wildcards</td><td>Whether a permission is actually excessive for that workload</td></tr>
+                      <tr><td>Hardcoded secrets in the template</td><td>Secrets injected at apply time by the pipeline</td></tr>
+                      <tr><td>Known-bad module patterns and versions</td><td>What a third-party module does internally</td></tr>
+                      <tr><td>Drift, if you also scan the plan output</td><td>Runtime state — who has actually been reading the data</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Scanning the <em>plan</em> rather than only the source closes most of the second column's
+                    first two rows. The plan has variables resolved and modules expanded, so it describes what
+                    will actually exist — at the cost of needing credentials to generate it, which is a
+                    pipeline design question worth settling early.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Rolling It Out Without Being Turned Off</div>
+                <div class="concept-desc">
+                  Every one of these tools ships with hundreds of rules enabled and produces four hundred
+                  findings on first run against a real repository. What happens next decides whether the tool
+                  becomes a control or a muted CI step.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+                    <tbody>
+                      <tr><td>Fail the build on new findings only; report existing ones</td><td>Stops the bleeding immediately without a remediation project first</td></tr>
+                      <tr><td>Enable a small high-confidence rule set, then widen</td><td>Ten rules nobody argues with beat four hundred nobody reads</td></tr>
+                      <tr><td>Comment findings on the pull request, at the line</td><td>Fixing it costs a minute there and a ticket anywhere else</td></tr>
+                      <tr><td>Require exceptions in code, with an owner and an expiry</td><td>A suppression comment is reviewable; a tool-side ignore list is not</td></tr>
+                      <tr><td>Fix the shared module rather than each consumer</td><td>Most findings are one bad module used forty times</td></tr>
+                      <tr><td>Publish paved-path modules that are compliant by construction</td><td>Turns the scanner into a backstop instead of a gate people fight</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The last row is where this ends up if it goes well. Scanning finds the same handful of
+                    mistakes repeatedly, and a module that cannot express the mistake removes the class rather
+                    than catching instances of it. The policy-engine mechanics for enforcing that at deploy
+                    time are in <span class="xref">Policy as Code — OPA/Rego &amp; Kyverno</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: CLOUD DETECTION ENGINEERING ────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🛰️</span>
+              <span class="topic-name">Cloud Detection Engineering — The Control-Plane Log as a Detection Source</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">In the Cloud, the API <span class="acro-exp">(Application Programming Interface)</span> Call Is the Attack</div>
+                <div class="concept-desc">
+                  On-premises detection watches processes, files and packets, because that is where an
+                  attacker's actions show up. In a cloud account the equivalent actions are API calls:
+                  creating a user, attaching a policy, snapshotting a volume, disabling a log, copying a
+                  bucket. There is no malware to find and no endpoint to query — the control-plane log is
+                  both the primary telemetry and, on a well-run account, very nearly the only telemetry that
+                  matters.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    This is good for detection engineers: the events are structured, complete, attributed to
+                    an identity, and generated by the platform rather than by an agent an attacker can
+                    disable. It is bad for anyone hoping to start small — the volume is enormous and almost
+                    all of it is automation doing its job, so detections have to be written against identity
+                    and sequence rather than against individual actions.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Detections Worth Having on Day One</div>
+                <div class="concept-desc">
+                  These are chosen for the same property: rare in legitimate operation, and strongly
+                  associated with an attacker establishing themselves.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Detection</th><th>What it catches</th></tr></thead>
+                    <tbody>
+                      <tr><td>Logging disabled, deleted or reconfigured</td><td>The first move of anyone who knows what they are doing</td></tr>
+                      <tr><td>Root or break-glass account used at all</td><td>Should be effectively never; every use is an event</td></tr>
+                      <tr><td>New access key created for an existing identity</td><td>Classic persistence, and trivially missed among normal admin work</td></tr>
+                      <tr><td>Policy attached granting administrative access</td><td>Privilege escalation, at the moment it happens</td></tr>
+                      <tr><td>Trust policy or federation configuration changed</td><td>Opens a door from outside the account entirely</td></tr>
+                      <tr><td>Resource shared or made public — snapshot, image, bucket</td><td>Exfiltration disguised as a configuration change</td></tr>
+                      <tr><td>Snapshot copied to an unknown account</td><td>Data theft that never touches the data plane</td></tr>
+                      <tr><td>Console login without multi-factor, or from a new region</td><td>Credential compromise, before it is used for anything</td></tr>
+                      <tr><td>Enumeration bursts — many describe or list calls, mostly denied</td><td>Reconnaissance, which precedes everything else</td></tr>
+                      <tr><td>Service used in a region the organisation never uses</td><td>The cryptomining signature, and it is common</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Making Them Survive Contact With Real Accounts</div>
+                <div class="concept-desc">
+                  Written naively, every detection above fires constantly, because automation legitimately
+                  does most of these things all day. The tuning that works is structural rather than
+                  threshold-based.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Technique</th><th>Effect</th></tr></thead>
+                    <tbody>
+                      <tr><td>Split by identity type — human, CI role, service, third party</td><td>The same call means different things from each; this alone removes most noise</td></tr>
+                      <tr><td>Alert on a human doing what only automation should do, and the reverse</td><td>Very high signal, and cheap to express</td></tr>
+                      <tr><td>Baseline per account and per role, not globally</td><td>A build account and a finance account share no normal behaviour</td></tr>
+                      <tr><td>Use the user-agent field</td><td>Console versus SDK <span class="acro-exp">(Software Development Kit)</span> versus a known offensive tool is often the whole detection</td></tr>
+                      <tr><td>Correlate sequences, not single calls</td><td>Enumerate, then escalate, then exfiltrate — the shape is the signal</td></tr>
+                      <tr><td>Treat organisation-wide changes as always-alert</td><td>They are rare, deliberate, and catastrophic when they are not yours</td></tr>
+                      <tr><td>Route control-plane logs to an account nobody's workload can write to</td><td>Otherwise the first detection is also the one an attacker deletes</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The last row is a prerequisite rather than a tuning tip: logs stored in the account being
+                    attacked are evidence an attacker can edit. A separate, write-only-from-outside logging
+                    destination is what makes everything above trustworthy. The rule-writing lifecycle itself
+                    is in <span class="xref">The Detection Lifecycle — Idea to Retirement, and the Gates Between</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: CLOUD INCIDENT RESPONSE ────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🚨</span>
+              <span class="topic-name">Cloud Incident Response — Snapshot, Revoke &amp; Contain the Blast Radius</span>
+              <span class="topic-badge">Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Compromised Thing Is Almost Never a Machine</div>
+                <div class="concept-desc">
+                  Traditional response starts by identifying affected hosts. In a cloud account the answer is
+                  usually that no host is affected: a credential was used. An access key from a repository, a
+                  role assumed through a misconfigured trust policy, a token stolen from an instance's
+                  metadata endpoint. The attacker never ran code anywhere you own. Asking which server is
+                  compromised produces the answer "none", which is true and leads the whole investigation
+                  nowhere.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    Replace the question. <em>Which identity acted, what is that identity permitted to do, and
+                    what did it actually do?</em> The first is in the log, the second is computable from
+                    policy, and the third is the rest of the investigation. The general process still applies —
+                    <span class="xref">Incident Response — What to Do When It Goes Wrong</span> — but the
+                    artefacts are identities and API <span class="acro-exp">(Application Programming Interface)</span> calls rather than hosts and files.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The First Thirty Minutes, in Order</div>
+                <div class="concept-desc">
+                  The ordering is deliberate and it is the opposite of the instinct. Preserve before you
+                  contain, because containment in the cloud frequently deletes the thing you needed.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Order</th><th>Action</th><th>Why here</th></tr></thead>
+                    <tbody>
+                      <tr><td>1</td><td>Protect the logs — confirm the trail is intact and stored outside this account</td><td>Everything else depends on it, and it is the attacker's first target</td></tr>
+                      <tr><td>2</td><td>Snapshot volumes and capture memory before touching the instance</td><td>Terminating or stopping destroys memory, and auto-scaling may do it for you</td></tr>
+                      <tr><td>3</td><td>Isolate rather than terminate — swap to a deny-all security group, detach from the scaling group</td><td>Keeps the evidence running while removing the reach</td></tr>
+                      <tr><td>4</td><td>Revoke the identity: deactivate keys, and attach an explicit deny to the role</td><td>A role cannot be "logged out"; issued session tokens stay valid until denied</td></tr>
+                      <tr><td>5</td><td>Enumerate what the identity could do — the blast radius is the permission set</td><td>Defines the scope of everything after this</td></tr>
+                      <tr><td>6</td><td>Search the trail for that identity across the full window, all regions</td><td>Attackers work in regions nobody watches</td></tr>
+                      <tr><td>7</td><td>Hunt for persistence — new users, keys, trust policies, functions, scheduled tasks</td><td>Revoking one credential achieves nothing if a second was created</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Step 4 is the one that catches teams out. Deleting an access key stops new sessions and
+                    does nothing to sessions already issued — temporary credentials remain valid for their
+                    full lifetime. The immediate control is an explicit deny policy on the role, applied
+                    before you start cleaning up.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">What Has to Be True Beforehand</div>
+                <div class="concept-desc">
+                  Cloud response is unusually preparation-sensitive: almost every step above fails outright if
+                  one setting was not enabled months earlier.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Prerequisite</th><th>Without it</th></tr></thead>
+                    <tbody>
+                      <tr><td>Organisation-wide logging to a separate, locked account</td><td>The evidence is in the account being investigated, and may be gone</td></tr>
+                      <tr><td>Log retention longer than your detection lag</td><td>The initial access falls outside the window you can see</td></tr>
+                      <tr><td>Data-plane logging on sensitive stores</td><td>You can prove access was possible, never whether data was read</td></tr>
+                      <tr><td>A responder role with snapshot and read rights, pre-provisioned</td><td>An access request during the incident, at three in the morning</td></tr>
+                      <tr><td>A quarantine policy and deny-all group, written in advance</td><td>Improvising containment while the attacker is active</td></tr>
+                      <tr><td>An account inventory including forgotten and shadow accounts</td><td>Investigating six accounts while the incident is in a seventh</td></tr>
+                      <tr><td>Infrastructure as code for the compromised workloads</td><td>Rebuilding clean is a project rather than a redeploy</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The last row is the recovery half and it is what separates a bad day from a bad month. If
+                    the environment is declared in code, rebuilding into a clean account is a pipeline run,
+                    and you never have to answer the unanswerable question of whether you found everything the
+                    attacker left behind.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body cloud -->
+
+<!-- ── TOPIC: SECRETS IN KUBERNETES ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🤫</span>
+    <span class="topic-name">Secrets in Kubernetes — Base64 Is Not Encryption, and the Options That Are</span>
+    <span class="topic-badge">CLOUD • Kubernetes</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Built-In Secret Is a ConfigMap With a Warning Label</div>
+      <div class="concept-desc">
+        A Kubernetes Secret stores its values base64-encoded, which is an encoding, not a cipher —
+        anyone who can read the object can read the value with one command. It is stored in etcd,
+        which by default writes it to disk in that same recoverable form. What a Secret actually
+        buys you over a ConfigMap is a separate resource type that access control can be written
+        against, and a convention that tooling respects by not printing it. Those are real, and
+        neither is encryption.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Assumption</th><th>Reality</th></tr></thead>
+          <tbody>
+            <tr><td>Secrets are encrypted</td><td>Base64 in the API <span class="acro-exp">(Application Programming Interface)</span>, and in etcd unless you configured encryption at rest</td></tr>
+            <tr><td>Only my pod can read it</td><td>Anyone with get on Secrets in that namespace, and anyone who can create a pod there</td></tr>
+            <tr><td>A cluster admin cannot see it</td><td>They can. Everything below is about limiting who counts as one</td></tr>
+            <tr><td>It is safe in Git if the repo is private</td><td>Every clone, fork, CI log and backup now has it, permanently</td></tr>
+            <tr><td>Rotating it is easy</td><td>Only if something restarts the consumers. Mounted secrets update; environment variables do not</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The "create a pod" clause in the second row is the one people miss. Permission to run a
+          workload in a namespace is effectively permission to read every Secret in it, because a
+          pod can simply mount them. Namespace-scoped RBAC <span class="acro-exp">(Role-Based Access Control)</span> is therefore a boundary between
+          <em>teams</em> and not a boundary between a team and its own secrets.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Options, and What Each One Actually Fixes</div>
+      <div class="concept-desc">
+        These solve different problems, and choosing well starts with naming which problem you have:
+        secrets in Git, secrets on disk, or long-lived secrets at all.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Option</th><th>Fixes</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>Encryption at rest for etcd</td><td>Secrets readable from a disk or a backup</td><td>Key management; with a KMS <span class="acro-exp">(Key Management Service)</span> provider the key lives outside the cluster</td></tr>
+            <tr><td>Sealed Secrets</td><td>Secrets in Git — the ciphertext is safe to commit</td><td>A controller and its key; still a long-lived secret at rest in the cluster</td></tr>
+            <tr><td>External Secrets Operator</td><td>The cluster stops being the system of record</td><td>Another operator; the vault becomes a hard dependency</td></tr>
+            <tr><td>CSI secrets driver</td><td>Mounts from a vault at pod start, never creating a Secret object</td><td>Node-level component; per-pod identity to get right</td></tr>
+            <tr><td>Workload identity federation</td><td>The long-lived secret itself — the pod's token is exchanged for short-lived cloud credentials</td><td>Only works for services that accept federated identity</td></tr>
+            <tr><td>Cloud provider secret manager, called directly</td><td>Secrets in the cluster at all</td><td>Application code changes, and a failure mode at start-up</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last two rows are the direction of travel, and the reason is worth stating plainly:
+          every other option is a better way to store a long-lived credential, while these remove
+          the long-lived credential. A pod that exchanges its own signed identity token for a
+          fifteen-minute cloud credential has nothing worth stealing at rest.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Where Secrets Leak Even When Stored Correctly</div>
+      <div class="concept-desc">
+        Most real exposure is not the storage. It is everything that touches the value on the way to
+        the process.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Leak</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Environment variables</td><td>Visible in the pod spec, in <code>describe</code>, in crash dumps, and to any process on the container</td></tr>
+            <tr><td>Logs</td><td>A framework printing its configuration at start-up sends the lot to the log pipeline</td></tr>
+            <tr><td>Helm values and rendered manifests</td><td>Committed, cached in the release history, and readable from the cluster</td></tr>
+            <tr><td>CI job output</td><td>Masking is best-effort; a base64 or JSON-wrapped value often slips past it</td></tr>
+            <tr><td>Backups of etcd</td><td>Encryption at rest does not help if the backup was taken from the API</td></tr>
+            <tr><td>Images</td><td>A secret baked in a layer is in the registry forever, including in the layers you deleted</td></tr>
+            <tr><td>Ephemeral debug containers</td><td>Attach to a running pod and the mounted secrets are right there</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Prefer <strong>mounted files over environment variables</strong> for anything that
+          matters: files are not inherited by child processes, do not appear in a pod description,
+          and are updated in place when the secret rotates. The wider practice is the same as
+          <span class="xref">Secrets in Automation — Vaults, Managed Identities &amp; Never a Plaintext Credential</span>,
+          and the identity mechanism behind the last two options is in
+          <span class="xref">Service Account Tokens &amp; Workload Identity — The Credential Every Pod Carries</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: INGRESS & API EXPOSURE ─────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🚪</span>
+    <span class="topic-name">Ingress &amp; API <span class="acro-exp">(Application Programming Interface)</span> Exposure — The Gateway as a Control Point</span>
+    <span class="topic-badge">CLOUD • Kubernetes</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">One Place Where Every Request Enters — Use It</div>
+      <div class="concept-desc">
+        A cluster's ingress is the narrowest point in the whole system: every external request passes
+        through it, and it is the last place you can apply a rule without touching application code.
+        That makes it the cheapest control point you will ever have, and the most commonly wasted —
+        most clusters run an ingress controller as a router and nothing else, then implement
+        authentication, rate limiting and header hygiene separately in every service, inconsistently.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>Why here rather than in each service</th></tr></thead>
+          <tbody>
+            <tr><td>TLS <span class="acro-exp">(Transport Layer Security)</span> termination and certificate lifecycle</td><td>One automation, one renewal path, one place to get the cipher policy right</td></tr>
+            <tr><td>Rate limiting</td><td>Per client, before your application spends a database query on it</td></tr>
+            <tr><td>Request size and timeout limits</td><td>A default that protects every service, including ones nobody remembered</td></tr>
+            <tr><td>Authentication at the edge</td><td>Useful for internal tools; never a substitute for the service's own authorisation</td></tr>
+            <tr><td>Header hygiene</td><td>Strip inbound spoofed headers, add security headers outbound</td></tr>
+            <tr><td>WAF <span class="acro-exp">(Web Application Firewall)</span> or bot rules</td><td>Where a shared rule set can exist at all</td></tr>
+            <tr><td>Consistent logging</td><td>One access log format for every request that enters the cluster</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The fourth row carries the caveat that matters. Authentication at the gateway proves
+          <em>who</em> is calling; it says nothing about whether they may act on <em>this object</em>,
+          and a service that trusts a header because "the gateway checked" is one misconfigured route
+          away from trusting anybody — <span class="xref">Broken Object-Level Authorization — The Bug in Almost Every API</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Ingress, Gateway API and Service Mesh — Which Layer Does What</div>
+      <div class="concept-desc">
+        Three overlapping things, frequently deployed together without a clear division of
+        responsibility, which is how a request ends up being routed twice and authorised nowhere.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Layer</th><th>Handles</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Service of type LoadBalancer</td><td>Raw exposure of one service</td><td>Fine for one thing; a cloud load balancer per service gets expensive</td></tr>
+            <tr><td>Ingress</td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> routing by host and path</td><td>The long-standing default; capabilities beyond routing arrive as vendor annotations</td></tr>
+            <tr><td>Gateway API</td><td>The same, with a richer typed model</td><td>Separates the platform team's Gateway from the app team's Route — the real reason it exists</td></tr>
+            <tr><td>Service mesh</td><td>Traffic <em>between</em> services, mTLS <span class="acro-exp">(Mutual Transport Layer Security)</span>, retries, policy</td><td>Solves an east-west problem; it is not an ingress and does not replace one</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The Gateway API split is worth understanding even if you never adopt it, because it names
+          the governance problem correctly: with plain Ingress, a team that can create an Ingress
+          object can usually claim any hostname, including one already in use. Separating who owns
+          the listener from who owns the route is a permissions model, not a feature.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Exposure Mistakes, and the Order to Debug a 502</div>
+      <div class="concept-desc">
+        Two lists: what accidentally becomes public, and the sequence that finds a broken route in
+        minutes rather than an afternoon.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Accidental exposure</th><th>How it happens</th></tr></thead>
+          <tbody>
+            <tr><td>A dashboard or admin UI <span class="acro-exp">(User Interface)</span></td><td>An Ingress created for convenience during a debugging session and never removed</td></tr>
+            <tr><td>A service of type LoadBalancer in a shared namespace</td><td>One line in a Helm chart, and a public IP <span class="acro-exp">(Internet Protocol)</span> appears</td></tr>
+            <tr><td>A wildcard host rule</td><td>Catches every unmatched hostname, including ones pointed at you by someone else</td></tr>
+            <tr><td>The default backend</td><td>Answers everything unmatched; make it a 404, not an application</td></tr>
+            <tr><td>Non-production copies</td><td>Same chart, same ingress annotations, no authentication</td></tr>
+          </tbody>
+        </table>
+        <div class="dw" style="margin-top:12px">
+          <table class="ref-table">
+            <thead><tr><th>Debugging a 502 or 404</th><th>Rules out</th></tr></thead>
+            <tbody>
+              <tr><td>Does DNS <span class="acro-exp">(Domain Name System)</span> point at the ingress address?</td><td>Half of all "the ingress is broken" reports</td></tr>
+              <tr><td>Did the controller accept the object? Check its events</td><td>A rejected or conflicting rule is silent in the object itself</td></tr>
+              <tr><td>Does the Service have endpoints?</td><td>No endpoints means the selector does not match any ready pod — the usual 502</td></tr>
+              <tr><td>Does the port name and number match?</td><td>A named port that does not exist fails at the Service, not the Ingress</td></tr>
+              <tr><td>Is a NetworkPolicy blocking the controller?</td><td>Default-deny namespaces forget to allow ingress from the controller</td></tr>
+              <tr><td>Is the certificate issued and valid?</td><td>A pending certificate serves the controller's default, which looks like a routing bug</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="concept-desc" style="margin-top:10px">
+          "Service has no endpoints" is the single most common cause of a 502 from an ingress, and
+          the fastest check on the list — a selector typo or an unready readiness probe, both of
+          which the Ingress object itself reports as perfectly healthy. The default-deny interaction
+          is covered from the other side in
+          <span class="xref">Network Policies &amp; Service Mesh — Default-Deny, mTLS &amp; the Complexity Cost</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

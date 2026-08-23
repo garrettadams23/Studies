@@ -237,7 +237,9 @@ def main():
     for path in sorted(DATA.glob("*.html")):
         if path.name in EXCLUDE_FILES:
             continue
-        terms = load_acronyms(path.stem)
+        # `script.03-python.html` is still the `script` domain, so a byDomain
+        # override has to resolve from the filename prefix, not the stem.
+        terms = load_acronyms(path.name.split(".", 1)[0])
         pattern = build_pattern(terms)
         original = path.read_text(encoding="utf-8")
         cleaned = EXP_SPAN_RE.sub("", original)

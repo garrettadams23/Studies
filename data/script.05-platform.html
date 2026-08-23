@@ -1,0 +1,1650 @@
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🐍</span>
+              <span class="topic-name">Python — The Everything Language</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Why Python Runs the World</div>
+                <div class="concept-desc">
+                  Python is the default language of automation, data science, AI/ML,
+                  scripting, and glue code. It is dynamically typed, interpreted, and
+                  reads almost like English — indentation <em>is</em> the syntax, so
+                  there are no braces. If you learn one language for IT and security
+                  work, make it this one: nearly every tool (Ansible, scapy, requests,
+                  pandas, PyTorch) has a Python interface.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Syntax</div>
+                <div class="concept-title">Core Syntax &amp; Data Types</div>
+                <div class="dw">
+                  <div class="code-label">THE ESSENTIALS</div>
+<pre class="code-block"><span class="com"># Variables — no type declarations, just assign</span>
+<span class="var">name</span> = <span class="str">"Alice"</span>        <span class="com"># str</span>
+<span class="var">age</span> = <span class="num">30</span>             <span class="com"># int</span>
+<span class="var">pi</span> = <span class="num">3.14159</span>        <span class="com"># float</span>
+<span class="var">active</span> = <span class="kw">True</span>         <span class="com"># bool</span>
+<span class="var">items</span> = <span class="kw">None</span>          <span class="com"># the "no value" sentinel</span>
+
+<span class="com"># f-strings — the modern way to build text</span>
+<span class="fn">print</span>(<span class="str">f"</span><span class="str">{name}</span><span class="str"> is </span><span class="str">{age}</span><span class="str">"</span>)   <span class="com"># Alice is 30</span>
+
+<span class="com"># The four core containers</span>
+<span class="var">nums</span>  = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]              <span class="com"># list  — ordered, mutable</span>
+<span class="var">point</span> = (<span class="num">4</span>, <span class="num">5</span>)                 <span class="com"># tuple — ordered, immutable</span>
+<span class="var">seen</span>  = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}              <span class="com"># set   — unique, unordered</span>
+<span class="var">user</span>  = {<span class="str">"id"</span>: <span class="num">1</span>, <span class="str">"role"</span>: <span class="str">"admin"</span>}  <span class="com"># dict  — key/value</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Syntax</div>
+                <div class="concept-title">Control Flow, Functions &amp; Comprehensions</div>
+                <div class="dw">
+                  <div class="code-label">LOGIC &amp; REUSE</div>
+<pre class="code-block"><span class="com"># Indentation defines blocks — 4 spaces, no braces</span>
+<span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">nums</span>:
+    <span class="kw">if</span> <span class="var">n</span> % <span class="num">2</span> == <span class="num">0</span>:
+        <span class="fn">print</span>(<span class="str">f"</span><span class="str">{n}</span><span class="str"> is even"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">f"</span><span class="str">{n}</span><span class="str"> is odd"</span>)
+
+<span class="com"># Functions — default args, type hints (optional but recommended)</span>
+<span class="kw">def</span> <span class="fn">greet</span>(<span class="var">name</span>: <span class="type">str</span>, <span class="var">excited</span>: <span class="type">bool</span> = <span class="kw">False</span>) -&gt; <span class="type">str</span>:
+    <span class="var">msg</span> = <span class="str">f"Hello, </span><span class="str">{name}</span><span class="str">"</span>
+    <span class="kw">return</span> <span class="var">msg</span> + (<span class="str">"!"</span> <span class="kw">if</span> <span class="var">excited</span> <span class="kw">else</span> <span class="str">"."</span>)
+
+<span class="com"># Comprehensions — Python's signature one-liners</span>
+<span class="var">squares</span> = [<span class="var">n</span>*<span class="var">n</span> <span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>)]           <span class="com"># [0,1,4,9,...]</span>
+<span class="var">evens</span>   = [<span class="var">n</span> <span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">nums</span> <span class="kw">if</span> <span class="var">n</span> % <span class="num">2</span> == <span class="num">0</span>]
+<span class="var">lookup</span>  = {<span class="var">u</span>[<span class="str">"id"</span>]: <span class="var">u</span> <span class="kw">for</span> <span class="var">u</span> <span class="kw">in</span> <span class="var">users</span>}          <span class="com"># dict comprehension</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Practical</div>
+                <div class="concept-title">Files, Errors &amp; a Real Script</div>
+                <div class="dw">
+                  <div class="code-label">A SCRIPT YOU'D ACTUALLY WRITE</div>
+<pre class="code-block"><span class="kw">import</span> <span class="var">json</span>
+<span class="kw">from</span> <span class="var">pathlib</span> <span class="kw">import</span> <span class="var">Path</span>
+
+<span class="com"># Context manager — file is closed automatically, even on error</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"servers.json"</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="var">servers</span> = <span class="fn">json.load</span>(<span class="var">f</span>)
+
+<span class="kw">for</span> <span class="var">host</span> <span class="kw">in</span> <span class="var">servers</span>:
+    <span class="kw">try</span>:
+        <span class="var">status</span> = <span class="fn">check</span>(<span class="var">host</span>[<span class="str">"ip"</span>])
+    <span class="kw">except</span> <span class="type">ConnectionError</span> <span class="kw">as</span> <span class="var">e</span>:
+        <span class="fn">print</span>(<span class="str">f"</span><span class="str">{host['name']}</span><span class="str"> unreachable: </span><span class="str">{e}</span><span class="str">"</span>)
+        <span class="kw">continue</span>
+    <span class="fn">print</span>(<span class="str">f"</span><span class="str">{host['name']}</span><span class="str">: </span><span class="str">{status}</span><span class="str">"</span>)
+
+<span class="com"># Guard so the file can be imported without running main()</span>
+<span class="kw">if</span> <span class="var">__name__</span> == <span class="str">"__main__"</span>:
+    <span class="fn">main</span>()</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Toolchain</div>
+                <div class="concept-title">Environments, pip &amp; the Standard Library</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Command / Module</th><th>What It Does</th></tr>
+                    <tr><td><code>python3 -m venv .venv</code></td><td>Create an isolated virtual environment</td></tr>
+                    <tr><td><code>source .venv/bin/activate</code></td><td>Activate it (deactivate with <code>deactivate</code>)</td></tr>
+                    <tr><td><code>pip install requests</code></td><td>Install a package from PyPI into the venv</td></tr>
+                    <tr><td><code>pip freeze &gt; requirements.txt</code></td><td>Pin exact versions for reproducible installs</td></tr>
+                    <tr><td><code>python3 -m pytest</code></td><td>Run tests (the standard testing tool)</td></tr>
+                    <tr><td><span class="c-cyan">requests</span></td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> for humans — API <span class="acro-exp">(Application Programming Interface)</span> calls in 2 lines</td></tr>
+                    <tr><td><span class="c-cyan">json / csv</span></td><td>Parse and write structured data</td></tr>
+                    <tr><td><span class="c-cyan">pathlib</span></td><td>Modern, OS-agnostic file paths</td></tr>
+                    <tr><td><span class="c-cyan">subprocess</span></td><td>Run shell commands and capture output</td></tr>
+                    <tr><td><span class="c-cyan">argparse</span></td><td>Build proper command-line interfaces</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Gotchas</div>
+                <div class="concept-title">Traps That Bite Beginners</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Trap</th><th>Why &amp; The Fix</th></tr>
+                    <tr><td>Mutable default args</td><td><code>def f(x=[])</code> reuses the <em>same</em> list across calls. Use <code>x=None</code> then <code>x = x or []</code>.</td></tr>
+                    <tr><td>Copying references</td><td><code>b = a</code> on a list points at the same object. Use <code>a.copy()</code> or <code>list(a)</code>.</td></tr>
+                    <tr><td>Integer vs float division</td><td><code>/</code> always gives a float; use <code>//</code> for integer (floor) division.</td></tr>
+                    <tr><td>Indentation mixing</td><td>Never mix tabs and spaces — Python rejects it. Configure your editor to 4 spaces.</td></tr>
+                    <tr><td>Bare <code>except:</code></td><td>Swallows every error including Ctrl-C. Catch specific exceptions instead.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🟦</span>
+              <span class="topic-name">TypeScript — JavaScript That Scales</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Why Add Types to JavaScript</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">TypeScript</strong> is JavaScript with a static
+                  type system bolted on. You write types; a compiler (<code>tsc</code>)
+                  checks them and then <em>erases</em> them, emitting plain JavaScript that
+                  runs anywhere JS runs. The payoff: bugs caught in your editor instead of
+                  in production, autocomplete that actually knows your data, and code that
+                  documents itself. It has become the default for any JS codebase past
+                  "small script" size — React, Node, Deno, and Angular all lean on it.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Syntax</div>
+                <div class="concept-title">Types, Interfaces &amp; Functions</div>
+                <div class="dw">
+                  <div class="code-label">THE ESSENTIALS</div>
+<pre class="code-block"><span class="com">// Primitive annotations — usually inferred, write them at boundaries</span>
+<span class="kw">let</span> <span class="var">name</span>: <span class="type">string</span> = <span class="str">"Alice"</span>;
+<span class="kw">let</span> <span class="var">age</span>: <span class="type">number</span> = <span class="num">30</span>;
+<span class="kw">let</span> <span class="var">tags</span>: <span class="type">string</span>[] = [<span class="str">"admin"</span>, <span class="str">"beta"</span>];
+
+<span class="com">// Object shapes — interface (extendable) or type alias</span>
+<span class="kw">interface</span> <span class="type">User</span> {
+  <span class="var">id</span>: <span class="type">number</span>;
+  <span class="var">name</span>: <span class="type">string</span>;
+  <span class="var">email</span>?: <span class="type">string</span>;        <span class="com">// ? = optional</span>
+  <span class="kw">readonly</span> <span class="var">createdAt</span>: <span class="type">Date</span>;  <span class="com">// can't reassign</span>
+}
+
+<span class="com">// Union types — "one of these"</span>
+<span class="kw">type</span> <span class="type">Status</span> = <span class="str">"active"</span> | <span class="str">"suspended"</span> | <span class="str">"deleted"</span>;
+
+<span class="com">// Typed function — params and return</span>
+<span class="kw">function</span> <span class="fn">greet</span>(<span class="var">user</span>: <span class="type">User</span>): <span class="type">string</span> {
+  <span class="kw">return</span> <span class="str">`Hello, </span>${<span class="var">user</span>.<span class="var">name</span>}<span class="str">`</span>;
+}</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Power Tools</div>
+                <div class="concept-title">Generics, Narrowing &amp; Utility Types</div>
+                <div class="dw">
+                  <div class="code-label">WHERE TYPESCRIPT EARNS ITS KEEP</div>
+<pre class="code-block"><span class="com">// Generics — reusable code that keeps its types</span>
+<span class="kw">function</span> <span class="fn">first</span>&lt;<span class="type">T</span>&gt;(<span class="var">arr</span>: <span class="type">T</span>[]): <span class="type">T</span> | <span class="type">undefined</span> {
+  <span class="kw">return</span> <span class="var">arr</span>[<span class="num">0</span>];
+}
+<span class="kw">const</span> <span class="var">n</span> = <span class="fn">first</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]);   <span class="com">// n is number | undefined</span>
+
+<span class="com">// Narrowing — the compiler tracks what a value must be</span>
+<span class="kw">function</span> <span class="fn">len</span>(<span class="var">x</span>: <span class="type">string</span> | <span class="type">string</span>[]): <span class="type">number</span> {
+  <span class="kw">if</span> (<span class="kw">typeof</span> <span class="var">x</span> === <span class="str">"string"</span>) <span class="kw">return</span> <span class="var">x</span>.<span class="var">length</span>;  <span class="com">// x: string here</span>
+  <span class="kw">return</span> <span class="var">x</span>.<span class="var">length</span>;                              <span class="com">// x: string[] here</span>
+}
+
+<span class="com">// Utility types — transform existing types instead of retyping</span>
+<span class="kw">type</span> <span class="type">PartialUser</span> = <span class="type">Partial</span>&lt;<span class="type">User</span>&gt;;   <span class="com">// all fields optional</span>
+<span class="kw">type</span> <span class="type">UserId</span>     = <span class="type">Pick</span>&lt;<span class="type">User</span>, <span class="str">"id"</span>&gt;;   <span class="com">// just { id }</span>
+<span class="kw">type</span> <span class="type">Public</span>     = <span class="type">Omit</span>&lt;<span class="type">User</span>, <span class="str">"email"</span>&gt;; <span class="com">// everything but email</span></pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Key Types &amp; Toolchain</div>
+                <div class="dw">
+                  <div class="dt">▸ TYPES YOU'LL REACH FOR</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Type</th><th>Meaning</th></tr>
+                    <tr><td><code>unknown</code></td><td>Type-safe <code>any</code> — must narrow before use. Prefer over <code>any</code>.</td></tr>
+                    <tr><td><code>any</code></td><td>Opt out of checking. A code smell — every <code>any</code> is a hole in your safety net.</td></tr>
+                    <tr><td><code>never</code></td><td>A value that can't exist (exhaustive switches, functions that always throw).</td></tr>
+                    <tr><td><code>void</code></td><td>Function returns nothing meaningful.</td></tr>
+                    <tr><td><code>T | null</code></td><td>Explicit nullability — <code>strictNullChecks</code> forces you to handle it.</td></tr>
+                    <tr><td><code>as const</code></td><td>Freeze a literal to its narrowest type (great for config objects).</td></tr>
+                  </table>
+                  <div class="dt">▸ TOOLCHAIN</div>
+                  <table class="ref-table">
+                    <tr><th>Command / File</th><th>What It Does</th></tr>
+                    <tr><td><code>tsc</code></td><td>The TypeScript compiler — type-checks and emits JS</td></tr>
+                    <tr><td><code>tsc --noEmit</code></td><td>Type-check only (let a bundler handle JS output)</td></tr>
+                    <tr><td><code>tsconfig.json</code></td><td>Project config — set <code>"strict": true</code> and never look back</td></tr>
+                    <tr><td><code>tsx</code> / <code>ts-node</code></td><td>Run a <code>.ts</code> file directly without a separate build</td></tr>
+                    <tr><td><code>@types/*</code></td><td>Community type definitions for untyped npm packages</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Best Practices</div>
+                <div class="concept-title">Getting the Most From the Type System</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Do</th><th>Why</th></tr>
+                    <tr><td>Turn on <code>strict</code></td><td>Enables null checks, implicit-any errors, and the checks that catch real bugs.</td></tr>
+                    <tr><td>Let inference work</td><td>Don't annotate what the compiler already knows; type the boundaries (params, exports, API shapes).</td></tr>
+                    <tr><td>Model states as unions</td><td><code>"loading" | "error" | "ready"</code> makes impossible states unrepresentable.</td></tr>
+                    <tr><td>Avoid <code>any</code></td><td>It silently disables checking for everything it touches. Reach for <code>unknown</code> + narrowing.</td></tr>
+                    <tr><td>Types ≠ runtime validation</td><td>Types vanish at runtime — validate external data (API/JSON) with a library like Zod.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">◈</span>
+              <span class="topic-name">GraphQL — Ask For Exactly What You Need</span>
+              <span class="topic-badge">API</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">One Endpoint, Precise Queries</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">GraphQL</strong> is a query language for APIs <span class="acro-exp">(Application Programming Interface)</span>.
+                  Instead of many REST <span class="acro-exp">(Representational State Transfer)</span> endpoints each returning a fixed shape, a GraphQL
+                  API exposes <em>one</em> endpoint and a typed schema; the client sends a
+                  query describing exactly the fields it wants, and gets back JSON <span class="acro-exp">(JavaScript Object Notation)</span> in that
+                  exact shape — no more, no less. It solves REST's two classic pains:
+                  <strong class="c-amber">over-fetching</strong> (getting fields you don't
+                  need) and <strong class="c-amber">under-fetching</strong> (making 3 calls
+                  to assemble one screen).
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">A Query and Its Response</div>
+                <div class="dw">
+                  <div class="code-label">CLIENT ASKS FOR SPECIFIC FIELDS</div>
+<pre class="code-block"><span class="com"># Query — one round trip pulls a user AND their recent posts</span>
+<span class="kw">query</span> <span class="fn">GetUser</span>(<span class="var">$id</span>: <span class="type">ID!</span>) {
+  <span class="var">user</span>(<span class="var">id</span>: <span class="var">$id</span>) {
+    <span class="var">name</span>
+    <span class="var">email</span>
+    <span class="var">posts</span>(<span class="var">last</span>: <span class="num">3</span>) {
+      <span class="var">title</span>
+      <span class="var">publishedAt</span>
+    }
+  }
+}</pre>
+                  <div class="code-label" style="margin-top:12px">SERVER RETURNS THAT EXACT SHAPE</div>
+<pre class="code-block">{
+  <span class="str">"data"</span>: {
+    <span class="str">"user"</span>: {
+      <span class="str">"name"</span>: <span class="str">"Alice"</span>,
+      <span class="str">"email"</span>: <span class="str">"alice@example.com"</span>,
+      <span class="str">"posts"</span>: [
+        { <span class="str">"title"</span>: <span class="str">"Intro to GraphQL"</span>, <span class="str">"publishedAt"</span>: <span class="str">"2026-01-04"</span> }
+      ]
+    }
+  }
+}</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Three Operation Types &amp; the Schema</div>
+                <div class="dw">
+                  <div class="dt">▸ OPERATIONS</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Operation</th><th>Purpose</th><th>REST Analogy</th></tr>
+                    <tr><td>query</td><td>Read data (no side effects)</td><td>GET</td></tr>
+                    <tr><td>mutation</td><td>Create / update / delete</td><td>POST / PUT / DELETE</td></tr>
+                    <tr><td>subscription</td><td>Real-time stream of updates (usually over WebSocket)</td><td>Webhook / SSE <span class="acro-exp">(Server-Sent Events)</span></td></tr>
+                  </table>
+                  <div class="dt">▸ SCHEMA DEFINITION (SDL)</div>
+<pre class="code-block"><span class="kw">type</span> <span class="type">User</span> {
+  <span class="var">id</span>: <span class="type">ID!</span>          <span class="com"># ! = non-nullable</span>
+  <span class="var">name</span>: <span class="type">String!</span>
+  <span class="var">posts</span>: [<span class="type">Post!</span>]!  <span class="com"># non-null list of non-null Posts</span>
+}
+<span class="kw">type</span> <span class="type">Query</span> {
+  <span class="var">user</span>(<span class="var">id</span>: <span class="type">ID!</span>): <span class="type">User</span>
+}</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Trade-offs</div>
+                <div class="concept-title">GraphQL vs REST — When to Use Which</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Dimension</th><th>REST</th><th>GraphQL</th></tr>
+                    <tr><td>Fetching</td><td class="c-amber">Fixed shapes; may over/under-fetch</td><td class="c-green">Client picks exact fields</td></tr>
+                    <tr><td>Endpoints</td><td>Many (one per resource)</td><td>One</td></tr>
+                    <tr><td>Caching</td><td class="c-green">Easy — HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> caches by URL <span class="acro-exp">(Uniform Resource Locator)</span></td><td class="c-amber">Harder — one URL, needs client-side cache</td></tr>
+                    <tr><td>Versioning</td><td>Often <code>/v2/</code> URLs</td><td class="c-green">Evolve the schema; deprecate fields</td></tr>
+                    <tr><td>Learning curve</td><td class="c-green">Low</td><td class="c-amber">Higher (schema, resolvers, tooling)</td></tr>
+                    <tr><td>Risk</td><td>N+1 across endpoints</td><td class="c-red">N+1 in resolvers; deep/expensive queries need limits</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong>Rule of thumb:</strong> REST shines for simple, cacheable,
+                    resource-shaped APIs. GraphQL shines when many clients need many
+                    different slices of a richly-connected data graph (think a mobile app
+                    and a web app hitting the same backend).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🗄️</span>
+              <span class="topic-name">Databases — Relational vs NoSQL, ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span> &amp; Indexing</span>
+              <span class="topic-badge">Data</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Two Families of Database</div>
+                <div class="concept-desc">
+                  A <strong class="c-cyan">relational (SQL)</strong> database stores data in
+                  tables with a fixed schema and enforces relationships between them —
+                  PostgreSQL, MySQL, SQL <span class="acro-exp">(Structured Query Language)</span> Server. A <strong class="c-amber">NoSQL</strong>
+                  database trades some of that rigor for flexibility and horizontal scale,
+                  and comes in several shapes. The real question isn't "which is better" —
+                  it's <em>what shape is your data, and what guarantees do you need?</em>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">NoSQL Families</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Type</th><th>Stores</th><th>Examples</th><th>Good For</th></tr>
+                    <tr><td>Document</td><td>JSON-like documents</td><td>MongoDB, Couchbase</td><td>Flexible, nested records</td></tr>
+                    <tr><td>Key-Value</td><td>Simple key → value</td><td>Redis, DynamoDB</td><td>Caching, sessions, speed</td></tr>
+                    <tr><td>Wide-Column</td><td>Rows with dynamic columns</td><td>Cassandra, HBase</td><td>Huge write volume, time-series</td></tr>
+                    <tr><td>Graph</td><td>Nodes &amp; edges</td><td>Neo4j, Neptune</td><td>Relationships (social, fraud)</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Guarantees</div>
+                <div class="concept-title">ACID — The Transaction Contract</div>
+                <div class="concept-desc">
+                  A <strong>transaction</strong> groups multiple operations so they succeed
+                  or fail together. ACID is the promise relational databases make about them:
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Letter</th><th>Guarantee</th></tr>
+                    <tr><td>Atomicity</td><td>All operations commit, or none do. No half-finished transfers.</td></tr>
+                    <tr><td>Consistency</td><td>Every transaction moves the DB from one valid state to another (constraints hold).</td></tr>
+                    <tr><td>Isolation</td><td>Concurrent transactions don't see each other's half-done work.</td></tr>
+                    <tr><td>Durability</td><td>Once committed, data survives a crash or power loss.</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Many NoSQL systems relax these for scale, offering
+                    <strong>BASE</strong> instead (Basically Available, Soft state,
+                    Eventually consistent) — writes propagate over time rather than instantly.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Performance</div>
+                <div class="concept-title">Indexing — Why the Right Index Is 1000× Faster</div>
+                <div class="concept-desc">
+                  Without an index, finding a row means a <strong class="c-red">full table
+                  scan</strong> — reading every row. An index is a sorted lookup structure
+                  (usually a B-tree) that turns that into a fast search, the way a book's
+                  index beats flipping every page. The trade: indexes speed up reads but
+                  slow down writes (every insert updates the index) and use disk.
+                </div>
+                <div class="dw">
+                  <div class="code-label">CREATE AN INDEX &amp; CHECK IT'S USED</div>
+<pre class="code-block"><span class="com">-- Slow: full scan of a big table</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> customer_id = <span class="num">42</span>;
+
+<span class="com">-- Add an index on the filtered column</span>
+<span class="kw">CREATE INDEX</span> idx_orders_customer <span class="kw">ON</span> orders(customer_id);
+
+<span class="com">-- EXPLAIN shows the planner's strategy — look for "Index Scan"</span>
+<span class="com">-- instead of "Seq Scan" (Postgres) after adding the index</span>
+<span class="kw">EXPLAIN ANALYZE</span> <span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> customer_id = <span class="num">42</span>;</pre>
+                  <div class="dt" style="margin-top:12px">▸ INDEXING RULES OF THUMB</div>
+                  <table class="ref-table">
+                    <tr><th>Do</th><th>Why</th></tr>
+                    <tr><td>Index columns you filter/join/sort on</td><td>That's where scans hurt</td></tr>
+                    <tr><td>Use a composite index for multi-column filters</td><td>One index can serve <code>WHERE a=? AND b=?</code></td></tr>
+                    <tr><td>Don't index everything</td><td>Each index taxes every write and eats storage</td></tr>
+                    <tr><td>Read the query plan</td><td><code>EXPLAIN</code> tells you what the DB actually does — measure, don't guess</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Design</div>
+                <div class="concept-title">Normalization vs Denormalization</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Approach</th><th>What</th><th>Trade-off</th></tr>
+                    <tr><td>Normalize</td><td>Split data so each fact lives in exactly one place (no duplication)</td><td>Clean writes, no update anomalies — but more joins on read</td></tr>
+                    <tr><td>Denormalize</td><td>Duplicate data to avoid joins</td><td>Faster reads — but you must keep copies in sync</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Relational databases start normalized; you denormalize deliberately for
+                    read performance. Document databases often start denormalized (embed
+                    related data) and trade write-side duplication for single-read fetches.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔴</span>
+              <span class="topic-name">WebSockets &amp; SSE <span class="acro-exp">(Server-Sent Events)</span> — Real-Time on the Web</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Push, Don't Poll</div>
+                <div class="concept-desc">
+                  Plain HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> is request/response: the client asks, the server answers, the
+                  connection closes. That's terrible for live data — chat, notifications,
+                  dashboards, multiplayer — where the <em>server</em> needs to speak first.
+                  The old workaround was <strong class="c-red">polling</strong> (ask "any
+                  news?" every few seconds — wasteful and laggy).
+                  <strong class="c-cyan">WebSockets</strong> and
+                  <strong class="c-amber">Server-Sent Events</strong> keep a connection open
+                  so the server can push the instant something happens.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Three Ways to Get Live Data</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>Direction</th><th>Best For</th></tr>
+                    <tr><td>Polling</td><td>Client pulls repeatedly</td><td>Simple, infrequent updates; last resort</td></tr>
+                    <tr><td>SSE (EventSource)</td><td>Server → client, one-way</td><td>Feeds, notifications, live logs, progress</td></tr>
+                    <tr><td>WebSocket</td><td>Full-duplex, both ways</td><td>Chat, games, collaborative editing, trading</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Reach for <strong>SSE</strong> when only the server needs to push (it's
+                    just HTTP, auto-reconnects, and is dead simple). Reach for
+                    <strong>WebSockets</strong> when the client must send too, in real time.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">WebSocket &amp; SSE Clients</div>
+                <div class="dw">
+                  <div class="code-label">WEBSOCKET — TWO-WAY</div>
+<pre class="code-block"><span class="kw">const</span> <span class="var">ws</span> = <span class="kw">new</span> <span class="fn">WebSocket</span>(<span class="str">"wss://example.com/chat"</span>);
+
+<span class="var">ws</span>.<span class="var">onopen</span>  = () =&gt; <span class="var">ws</span>.<span class="fn">send</span>(<span class="fn">JSON.stringify</span>({ <span class="var">join</span>: <span class="str">"room-7"</span> }));
+<span class="var">ws</span>.<span class="var">onmessage</span> = (<span class="var">e</span>) =&gt; <span class="fn">render</span>(<span class="fn">JSON.parse</span>(<span class="var">e</span>.<span class="var">data</span>));
+<span class="var">ws</span>.<span class="var">onclose</span> = () =&gt; <span class="fn">scheduleReconnect</span>();   <span class="com">// you handle reconnect</span></pre>
+                  <div class="code-label" style="margin-top:12px">SSE — SERVER-TO-CLIENT (AUTO-RECONNECTS)</div>
+<pre class="code-block"><span class="kw">const</span> <span class="var">es</span> = <span class="kw">new</span> <span class="fn">EventSource</span>(<span class="str">"/api/updates"</span>);
+<span class="var">es</span>.<span class="var">onmessage</span> = (<span class="var">e</span>) =&gt; <span class="fn">append</span>(<span class="var">e</span>.<span class="var">data</span>);
+<span class="var">es</span>.<span class="fn">addEventListener</span>(<span class="str">"price"</span>, (<span class="var">e</span>) =&gt; <span class="fn">updateTicker</span>(<span class="var">e</span>.<span class="var">data</span>));</pre>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Practical</div>
+                <div class="concept-title">Gotchas in Production</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Issue</th><th>What To Know</th></tr>
+                    <tr><td>Use <code>wss://</code></td><td>The encrypted (TLS) scheme — like HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span> for sockets. Never ship plain <code>ws://</code>.</td></tr>
+                    <tr><td>Reconnection</td><td>WebSockets don't auto-reconnect — implement backoff. SSE reconnects for you and can resume via <code>Last-Event-ID</code>.</td></tr>
+                    <tr><td>Heartbeats</td><td>Send periodic pings so proxies/load balancers don't kill an idle connection.</td></tr>
+                    <tr><td>Scaling</td><td>Open connections are stateful — many servers need a shared pub/sub layer (e.g. Redis) to broadcast across nodes.</td></tr>
+                    <tr><td>Auth</td><td>Browsers can't set custom headers on a WebSocket handshake — pass a token via a cookie or a short-lived ticket in the URL <span class="acro-exp">(Uniform Resource Locator)</span>.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧩</span>
+              <span class="topic-name">API <span class="acro-exp">(Application Programming Interface)</span> Design — Versioning, Pagination, Rate Limits &amp; Idempotency</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Contract Others Build On</div>
+                <div class="concept-desc">
+                  Once people depend on your API, its <em>shape</em> is a promise. Good API
+                  design is mostly about the boring-but-critical concerns that keep that
+                  promise as the API grows: not breaking existing clients, returning large
+                  result sets safely, protecting the service from abuse, and behaving
+                  predictably when the network retries. Get these four right and the rest is
+                  detail.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Versioning — Don't Break Existing Clients</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Strategy</th><th>Example</th><th>Notes</th></tr>
+                    <tr><td>URL <span class="acro-exp">(Uniform Resource Locator)</span> path</td><td><code>/v2/users</code></td><td>Most common, visible, easy to route</td></tr>
+                    <tr><td>Header</td><td><code>Accept: application/vnd.api+json;v=2</code></td><td>Cleaner URLs; harder to test by hand</td></tr>
+                    <tr><td>Query param</td><td><code>?version=2</code></td><td>Simple but easy to forget</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Rule: an additive change (new optional field) is backward-compatible and
+                    needs no new version. Removing/renaming a field or changing its type is
+                    <strong class="c-red">breaking</strong> — that's when you bump the version
+                    and keep the old one running during a deprecation window.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Pagination &amp; Rate Limiting</div>
+                <div class="dw">
+                  <div class="dt">▸ PAGINATION — NEVER RETURN "ALL"</div>
+                  <table class="ref-table" style="margin-bottom:14px">
+                    <tr><th>Style</th><th>How</th><th>Trade-off</th></tr>
+                    <tr><td>Offset/limit</td><td><code>?offset=40&amp;limit=20</code></td><td>Simple; slow &amp; wobbly on big/changing data</td></tr>
+                    <tr><td>Cursor/keyset</td><td><code>?after=&lt;id&gt;&amp;limit=20</code></td><td>Fast &amp; stable at scale; can't jump to page N</td></tr>
+                  </table>
+                  <div class="dt">▸ RATE LIMITING — RESPONSE HEADERS</div>
+<pre class="code-block"><span class="com"># Server tells the client its budget</span>
+HTTP/1.1 <span class="num">429</span> Too Many Requests
+<span class="attr">X-RateLimit-Limit</span>: <span class="num">100</span>
+<span class="attr">X-RateLimit-Remaining</span>: <span class="num">0</span>
+<span class="attr">Retry-After</span>: <span class="num">30</span>          <span class="com"># wait 30s before retrying</span></pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Return <code>429</code> when a client exceeds its budget; a well-behaved
+                    client backs off using <code>Retry-After</code>. Common algorithms:
+                    <strong>token bucket</strong> (allows bursts) and
+                    <strong>sliding window</strong> (smooth).
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reliability</div>
+                <div class="concept-title">Idempotency — Safe Retries</div>
+                <div class="concept-desc">
+                  Networks drop responses. If a client retries a payment because it never got
+                  the reply, you must not charge twice. An
+                  <strong class="c-cyan">idempotency key</strong> — a unique ID the client
+                  sends with the request — lets the server recognize a duplicate and return
+                  the <em>original</em> result instead of doing the work again.
+                </div>
+                <div class="dw">
+<pre class="code-block">POST /charges
+<span class="attr">Idempotency-Key</span>: <span class="str">a1b2c3-unique-per-attempt</span>
+
+<span class="com"># First call: process, store result under the key.</span>
+<span class="com"># Retry with the SAME key: return the stored result, don't re-charge.</span></pre>
+                  <div class="dt" style="margin-top:10px">▸ WHICH HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> METHODS ARE ALREADY IDEMPOTENT?</div>
+                  <table class="ref-table">
+                    <tr><th>Method</th><th>Idempotent?</th></tr>
+                    <tr><td>GET, PUT, DELETE</td><td class="c-green">Yes — same call, same end state</td></tr>
+                    <tr><td>POST</td><td class="c-red">No — needs an idempotency key to be safe to retry</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">⚙️</span>
+              <span class="topic-name">gRPC &amp; Protocol Buffers — High-Performance RPC <span class="acro-exp">(Remote Procedure Call)</span></span>
+              <span class="topic-badge">API</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Calling a Remote Function Like a Local One</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">gRPC</strong> is a framework for
+                  <strong>Remote Procedure Calls</strong> — you call a method on another
+                  service as if it were a local function, and gRPC handles the networking. It
+                  runs over HTTP/2 <span class="acro-exp">(HyperText Transfer Protocol version 2)</span> and serializes data with
+                  <strong class="c-amber">Protocol Buffers</strong> (protobuf): a compact
+                  <em>binary</em> format defined by a schema. The result is dramatically
+                  smaller and faster than JSON <span class="acro-exp">(JavaScript Object Notation)</span> over REST <span class="acro-exp">(Representational State Transfer)</span> — which is why it's the default for
+                  internal microservice-to-microservice communication.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Example</div>
+                <div class="concept-title">Define Once in a .proto File</div>
+                <div class="dw">
+                  <div class="code-label">user.proto — THE CONTRACT</div>
+<pre class="code-block"><span class="kw">syntax</span> = <span class="str">"proto3"</span>;
+
+<span class="com">// A message = a typed record; numbers are field tags (wire IDs)</span>
+<span class="kw">message</span> <span class="type">UserRequest</span> {
+  <span class="type">int32</span> <span class="var">id</span> = <span class="num">1</span>;
+}
+<span class="kw">message</span> <span class="type">User</span> {
+  <span class="type">int32</span>  <span class="var">id</span>    = <span class="num">1</span>;
+  <span class="type">string</span> <span class="var">name</span>  = <span class="num">2</span>;
+  <span class="type">string</span> <span class="var">email</span> = <span class="num">3</span>;
+}
+
+<span class="com">// A service = the callable methods</span>
+<span class="kw">service</span> <span class="type">UserService</span> {
+  <span class="kw">rpc</span> <span class="fn">GetUser</span>(<span class="type">UserRequest</span>) <span class="kw">returns</span> (<span class="type">User</span>);
+}</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    A compiler (<code>protoc</code>) turns this into typed client + server code
+                    in your language — both sides share one source of truth, so a mismatched
+                    field is a compile error, not a 3 a.m. surprise.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Four Call Styles</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Type</th><th>Shape</th><th>Use</th></tr>
+                    <tr><td>Unary</td><td>1 request → 1 response</td><td>Ordinary calls</td></tr>
+                    <tr><td>Server streaming</td><td>1 request → stream of responses</td><td>Live feeds, large results</td></tr>
+                    <tr><td>Client streaming</td><td>Stream of requests → 1 response</td><td>Uploads, telemetry</td></tr>
+                    <tr><td>Bidirectional</td><td>Both stream at once</td><td>Chat, real-time sync</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Streaming comes free from HTTP/2's multiplexing — a big reason gRPC picked
+                    it as the transport.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Trade-offs</div>
+                <div class="concept-title">gRPC vs REST — Pick the Right Tool</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>gRPC</th><th>REST/JSON</th></tr>
+                    <tr><td>Payload</td><td class="c-green">Compact binary</td><td>Human-readable text</td></tr>
+                    <tr><td>Speed</td><td class="c-green">Faster (binary + HTTP/2)</td><td>Slower</td></tr>
+                    <tr><td>Contract</td><td class="c-green">Strong (.proto schema)</td><td>Looser (OpenAPI optional)</td></tr>
+                    <tr><td>Browser support</td><td class="c-red">Needs a proxy (gRPC-Web)</td><td class="c-green">Native everywhere</td></tr>
+                    <tr><td>Debug by hand</td><td class="c-red">Hard (binary)</td><td class="c-green">Easy (curl)</td></tr>
+                    <tr><td>Best for</td><td>Internal microservices</td><td>Public/browser APIs <span class="acro-exp">(Application Programming Interface)</span></td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-07">
+            <div class="topic-header">
+              <span class="topic-icon">📊</span>
+              <span class="topic-name">OLTP <span class="acro-exp">(Online Transaction Processing)</span> vs OLAP <span class="acro-exp">(Online Analytical Processing)</span> — Transactional vs Analytical Data</span>
+              <span class="topic-badge">Data</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Two Jobs, Two Very Different Databases</div>
+                <div class="concept-desc">
+                  Databases do two fundamentally different kinds of work.
+                  <strong class="c-cyan">OLTP</strong> (Online Transaction Processing) runs the
+                  live application — many small, fast reads and writes: place an order, update a
+                  profile. <strong class="c-amber">OLAP</strong> (Online Analytical Processing)
+                  answers big questions over history: "revenue by region by quarter for three
+                  years." Trying to run heavy analytics on your production OLTP database is a
+                  classic mistake — the giant scan slows down every customer's checkout.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Comparison</div>
+                <div class="concept-title">OLTP vs OLAP Side by Side</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>OLTP</th><th>OLAP</th></tr>
+                    <tr><td>Purpose</td><td>Run the application</td><td>Analyze &amp; report</td></tr>
+                    <tr><td>Queries</td><td>Many small reads/writes</td><td>Few huge aggregations</td></tr>
+                    <tr><td>Touches</td><td>A few rows by key</td><td>Millions of rows, few columns</td></tr>
+                    <tr><td>Optimized for</td><td>Fast writes, low latency</td><td>Fast scans &amp; aggregates</td></tr>
+                    <tr><td>Data</td><td>Current, detailed</td><td>Historical, often aggregated</td></tr>
+                    <tr><td>Examples</td><td>Postgres, MySQL</td><td>BigQuery, Snowflake, Redshift</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Why</div>
+                <div class="concept-title">Row Stores vs Column Stores</div>
+                <div class="concept-desc">
+                  The performance gap comes down to physical layout. OLTP databases are
+                  <strong class="c-cyan">row-oriented</strong> — a whole record sits together, so
+                  reading or writing one order is one fast seek. OLAP databases are
+                  <strong class="c-amber">column-oriented</strong> — each column is stored
+                  together, so summing one column over millions of rows reads only that column
+                  (and compresses beautifully, since a column holds similar values).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Row store</th><th>Column store</th></tr>
+                    <tr><td>Great at</td><td>Fetch/modify whole records</td><td>Aggregate a few columns over many rows</td></tr>
+                    <tr><td>Compression</td><td class="c-amber">Modest</td><td class="c-green">Excellent (like values together)</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">In Practice</div>
+                <div class="concept-title">You Use Both — Connected by a Pipeline</div>
+                <div class="concept-desc">
+                  A typical stack keeps them separate: the app writes to an OLTP database, and a
+                  <strong>data pipeline (ETL/ELT)</strong> periodically copies and reshapes that
+                  data into an OLAP warehouse for analysts and dashboards. This isolates the two
+                  workloads so analytics never slows the live app, and lets each database be
+                  tuned for its job. (A newer category, <strong class="c-cyan">HTAP</strong>,
+                  tries to serve both from one system — handy, but the separated pattern still
+                  dominates.)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧱</span>
+              <span class="topic-name">WebAssembly (WASM) — Near-Native Speed in the Browser</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Fast, Portable Compile Target for the Web</div>
+                <div class="concept-desc">
+                  JavaScript is the only language browsers natively run — but it's not ideal for
+                  CPU-heavy work like video editing, games, or CAD.
+                  <strong class="c-cyan">WebAssembly</strong> is a compact
+                  <strong>binary instruction format</strong> that runs at near-native speed in
+                  the browser. You write in C, C++, Rust, or Go, compile to a <code>.wasm</code>
+                  module, and it executes in the same secure sandbox as JS — often 10–100× faster
+                  for number-crunching. It doesn't replace JavaScript; it runs
+                  <em>alongside</em> it for the heavy lifting.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Why It's Fast &amp; Safe</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Property</th><th>Detail</th></tr>
+                    <tr><td>Binary format</td><td>Compact to download and quick to parse/compile vs parsing text JS.</td></tr>
+                    <tr><td>Predictable performance</td><td>Statically typed, ahead-of-time-friendly — no JIT <span class="acro-exp">(Just-In-Time)</span> warm-up guessing.</td></tr>
+                    <tr><td>Sandboxed</td><td>Runs in the same memory-safe browser sandbox as JS — can't touch the system directly.</td></tr>
+                    <tr><td>Language-agnostic</td><td>Any language with a WASM backend compiles to it (Rust, C/C++, Go, C#…).</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">How It Works</div>
+                <div class="concept-title">JS Loads and Calls It</div>
+                <div class="dw">
+<pre class="code-block"><span class="com">// JS instantiates the module and calls exported functions</span>
+<span class="kw">const</span> { <span class="var">instance</span> } = <span class="kw">await</span> <span class="var">WebAssembly</span>.<span class="fn">instantiateStreaming</span>(
+  <span class="fn">fetch</span>(<span class="str">"image-filter.wasm"</span>)
+);
+<span class="kw">const</span> <span class="var">result</span> = <span class="var">instance</span>.<span class="var">exports</span>.<span class="fn">applyBlur</span>(<span class="var">ptr</span>, <span class="var">len</span>);</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    JS and WASM share memory via a typed <code>ArrayBuffer</code>. Modern
+                    toolchains (Emscripten for C/C++, <code>wasm-pack</code> for Rust) generate
+                    the glue so you mostly call WASM like a normal library.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Where It Shines — and WASI Beyond the Browser</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Use case</th><th>Example</th></tr>
+                    <tr><td>Compute-heavy apps</td><td>Figma, Photoshop web, video/audio editing, 3D/CAD, games</td></tr>
+                    <tr><td>Port existing code</td><td>Bring a mature C/C++ library to the web unchanged (ffmpeg, SQLite)</td></tr>
+                    <tr><td>Server / edge</td><td>Via <strong>WASI</strong>, WASM runs outside the browser — fast-starting, sandboxed serverless &amp; plugins</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Not for everything: WASM can't directly touch the DOM <span class="acro-exp">(Document Object Model)</span> (it calls back into JS
+                    for that), and simple UI <span class="acro-exp">(User Interface)</span> logic is still easier in plain JavaScript. Reach for
+                    it when performance is the bottleneck.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📱</span>
+              <span class="topic-name">Progressive Web Apps (PWA) — Web Apps That Feel Native</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">One Codebase, App-Like Experience</div>
+                <div class="concept-desc">
+                  A <strong class="c-cyan">Progressive Web App</strong> is a website that uses
+                  modern browser capabilities to behave like an installed app — it can be added
+                  to the home screen, work offline, load instantly, and send push notifications
+                  — all from a single web codebase, no app store required. "Progressive" means it
+                  works as a normal site everywhere and <em>enhances</em> where the browser
+                  supports more. It's the middle ground between a website and a native app.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Three Core Ingredients</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Piece</th><th>What It Provides</th></tr>
+                    <tr><td>Service Worker</td><td>A script that runs in the background between the page and network — enables offline, caching, and push. The heart of a PWA.</td></tr>
+                    <tr><td>Web App Manifest</td><td>A JSON <span class="acro-exp">(JavaScript Object Notation)</span> file describing the app (name, icons, colors, display mode) so it can be installed to the home screen.</td></tr>
+                    <tr><td>HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span></td><td>Required — service workers only run over secure connections (they're powerful, so they must be trusted).</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Key Idea</div>
+                <div class="concept-title">The Service Worker — Offline &amp; Caching</div>
+                <div class="concept-desc">
+                  A service worker sits between your app and the network as a programmable proxy.
+                  It can intercept every request and decide: serve from cache, fetch from network,
+                  or both. That's what makes a PWA load instantly and keep working with no
+                  connection.
+                </div>
+                <div class="dw">
+<pre class="code-block"><span class="com">// Cache-first: serve from cache, fall back to network</span>
+<span class="var">self</span>.<span class="fn">addEventListener</span>(<span class="str">"fetch"</span>, (<span class="var">e</span>) =&gt; {
+  <span class="var">e</span>.<span class="fn">respondWith</span>(
+    <span class="fn">caches</span>.<span class="fn">match</span>(<span class="var">e</span>.<span class="var">request</span>)
+      .<span class="fn">then</span>((<span class="var">hit</span>) =&gt; <span class="var">hit</span> ?? <span class="fn">fetch</span>(<span class="var">e</span>.<span class="var">request</span>))
+  );
+});</pre>
+                  <div class="concept-desc" style="margin-top:8px">
+                    Common strategies: <strong>cache-first</strong> (assets), <strong>network-first</strong>
+                    (fresh data), and <strong>stale-while-revalidate</strong> (fast + eventually fresh).
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Trade-offs</div>
+                <div class="concept-title">PWA vs Native</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>PWA</th><th>Native app</th></tr>
+                    <tr><td>Codebase</td><td class="c-green">One (web)</td><td>Per platform</td></tr>
+                    <tr><td>Install</td><td class="c-green">From a URL <span class="acro-exp">(Uniform Resource Locator)</span>, no store</td><td>App store</td></tr>
+                    <tr><td>Device APIs <span class="acro-exp">(Application Programming Interface)</span></td><td class="c-amber">Growing, but limited</td><td class="c-green">Full access</td></tr>
+                    <tr><td>Updates</td><td class="c-green">Instant (it's a website)</td><td>Store review + user update</td></tr>
+                    <tr><td>iOS support</td><td class="c-amber">Partial (some APIs gated)</td><td class="c-green">Full</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Great for content, commerce, and productivity apps where reach and instant
+                    updates matter; native still wins for deep hardware access and demanding games.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">♿</span>
+              <span class="topic-name">Web Accessibility (a11y) — Building for Everyone</span>
+              <span class="topic-badge">Web</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Web Should Work for Every User</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Accessibility</strong> (abbreviated
+                  <strong>a11y</strong> — "a", 11 letters, "y") means building sites people can
+                  use regardless of ability: someone navigating by keyboard, hearing a screen
+                  reader, zooming to 400%, or avoiding motion. It's not a niche — it overlaps with
+                  good UX <span class="acro-exp">(User Experience)</span> for everyone (captions help in loud rooms; keyboard support helps power
+                  users), it's often a <strong>legal requirement</strong> (ADA, EU EN 301 549),
+                  and the standard to aim for is <strong class="c-amber">WCAG <span class="acro-exp">(Web Content Accessibility Guidelines)</span></strong> at level AA.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Framework</div>
+                <div class="concept-title">POUR — The Four Principles</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Principle</th><th>Means</th></tr>
+                    <tr><td>Perceivable</td><td>Users can sense the content — alt text on images, captions on video, sufficient color contrast.</td></tr>
+                    <tr><td>Operable</td><td>Everything works by keyboard, not just mouse; enough time; no seizure-inducing flashing.</td></tr>
+                    <tr><td>Understandable</td><td>Clear language, predictable navigation, helpful error messages.</td></tr>
+                    <tr><td>Robust</td><td>Works across browsers and assistive tech — valid, semantic HTML <span class="acro-exp">(HyperText Markup Language)</span>.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Practical</div>
+                <div class="concept-title">The Highest-Impact Habits</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Do</th><th>Why</th></tr>
+                    <tr><td>Use semantic HTML</td><td>A real <code>&lt;button&gt;</code> is focusable, clickable, and announced correctly for free. A <code>&lt;div onclick&gt;</code> is none of those.</td></tr>
+                    <tr><td>Alt text on images</td><td>Describe meaningful images; use empty <code>alt=""</code> for decorative ones so screen readers skip them.</td></tr>
+                    <tr><td>Label every input</td><td>A <code>&lt;label&gt;</code> tied to its field tells users what to type.</td></tr>
+                    <tr><td>Keyboard + visible focus</td><td>Tab through the whole page; never remove the focus outline without replacing it.</td></tr>
+                    <tr><td>Color contrast ≥ 4.5:1</td><td>Body text must stand out from its background (WCAG AA).</td></tr>
+                    <tr><td>Respect reduced motion</td><td>Honor <code>prefers-reduced-motion</code> for users who get motion sickness.</td></tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">ARIA — Use Sparingly</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">ARIA</strong> (Accessible Rich Internet Applications)
+                  adds roles and states (<code>role</code>, <code>aria-label</code>,
+                  <code>aria-expanded</code>) so screen readers understand custom widgets. But the
+                  first rule of ARIA is: <strong class="c-red">don't use ARIA if native HTML can do
+                  it</strong> — a real <code>&lt;nav&gt;</code>/<code>&lt;button&gt;</code>/<code>&lt;input&gt;</code>
+                  beats a div patched with attributes. Bad ARIA is worse than none.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Testing</th><th>How</th></tr>
+                    <tr><td>Automated</td><td>axe, Lighthouse, WAVE — catch ~30–40% of issues fast.</td></tr>
+                    <tr><td>Manual</td><td>Unplug the mouse and navigate; turn on a screen reader (VoiceOver, NVDA). No tool replaces this.</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🦀</span>
+              <span class="topic-name">Rust — Safe Systems Programming</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Memory Safety Without a Garbage Collector</div>
+                <div class="concept-desc">
+                  Rust's <strong class="c-cyan">ownership</strong> and <strong class="c-cyan">borrow
+                  checker</strong> guarantee memory safety at <em>compile time</em> — no GC, no
+                  use-after-free, no data races. That's why it's winning in systems, WASM <span class="acro-exp">(WebAssembly)</span>, CLI <span class="acro-exp">(Command Line Interface)</span> tools,
+                  and increasingly the Linux kernel.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">fn</span> <span class="fn">main</span>() {
+    <span class="kw">let</span> mut nums = <span class="type">vec!</span>[<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+    nums.<span class="fn">push</span>(<span class="num">4</span>);
+    <span class="kw">let</span> sum: <span class="type">i32</span> = nums.<span class="fn">iter</span>().<span class="fn">sum</span>();   <span class="com">// 10</span>
+    <span class="fn">println!</span>(<span class="str">"sum = {sum}"</span>);
+}</pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td>Ownership / borrow</td><td>Each value has one owner; borrows are checked at compile time</td></tr>
+                    <tr><td><code>Option</code> / <code>Result</code></td><td>No null; errors are values you must handle</td></tr>
+                    <tr><td>Cargo</td><td>Build tool + package manager (crates.io)</td></tr>
+                    <tr><td>Traits</td><td>Shared behavior (like interfaces) with zero-cost generics</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Trade-off:</strong> a steep learning curve ("fighting the
+                    borrow checker") buys you C-like speed with safety guarantees. If it compiles, a
+                    whole class of bugs is simply gone.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">☕</span>
+              <span class="topic-name">Java — The Enterprise Workhorse</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Write Once, Run Anywhere on the JVM <span class="acro-exp">(Java Virtual Machine)</span></div>
+                <div class="concept-desc">
+                  Java compiles to bytecode that runs on the <strong class="c-cyan">JVM</strong>,
+                  making it portable and battle-tested for large backends. Statically typed,
+                  object-oriented, with a massive ecosystem (Spring) and a mature GC.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">public class</span> <span class="type">App</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">var</span> nums = <span class="type">List</span>.<span class="fn">of</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>);
+        <span class="kw">int</span> sum = nums.<span class="fn">stream</span>().<span class="fn">mapToInt</span>(<span class="type">Integer</span>::intValue).<span class="fn">sum</span>();
+        <span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"sum = "</span> + sum);
+    }
+}</pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td>JVM / bytecode</td><td>Portable runtime; also hosts Kotlin, Scala, Clojure</td></tr>
+                    <tr><td>Spring Boot</td><td>The dominant framework for services</td></tr>
+                    <tr><td>Maven / Gradle</td><td>Build &amp; dependency management</td></tr>
+                    <tr><td>Modern Java</td><td>Records, sealed types, virtual threads (Project Loom)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Kotlin</strong> is the modern, less-verbose JVM language
+                    (and Android's default) — worth reaching for on new JVM projects.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🎯</span>
+              <span class="topic-name">C# &amp; .NET — Microsoft's Cross-Platform Stack</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Java's Sibling, Now Open &amp; Everywhere</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">C#</strong> runs on <strong class="c-cyan">.NET</strong>,
+                  which is now open-source and cross-platform. Strong tooling (Visual Studio),
+                  first-class async, and used for web (ASP.NET), desktop, games (Unity), and cloud.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">var</span> nums = <span class="kw">new</span>[] { <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span> };
+<span class="kw">var</span> sum = nums.<span class="fn">Sum</span>();            <span class="com">// LINQ</span>
+<span class="type">Console</span>.<span class="fn">WriteLine</span>($<span class="str">"sum = {sum}"</span>);</pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td>.NET (Core)</td><td>Cross-platform runtime &amp; SDK <span class="acro-exp">(Software Development Kit)</span> (<code>dotnet</code> CLI <span class="acro-exp">(Command Line Interface)</span>)</td></tr>
+                    <tr><td>LINQ</td><td>Query collections/DBs with a fluent, SQL-like syntax</td></tr>
+                    <tr><td>async/await</td><td>C# pioneered the pattern most languages now copy</td></tr>
+                    <tr><td>ASP.NET Core / Blazor</td><td>Web APIs <span class="acro-exp">(Application Programming Interface)</span> &amp; SPA-in-C# via WASM <span class="acro-exp">(WebAssembly)</span></td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Familiar if you know Java; NuGet is the package manager. Unity makes C# a major
+                    game-development language too.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">💎</span>
+              <span class="topic-name">Ruby — Optimized for Developer Happiness</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Elegant, Dynamic, and All About Rails</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Ruby</strong> is a dynamic, purely object-oriented language
+                  prized for readable, expressive code. Its killer app is
+                  <strong class="c-cyan">Ruby on Rails</strong>, the convention-over-configuration
+                  framework that shaped modern web development.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+sum = nums.<span class="fn">reduce</span>(<span class="num">0</span>, :+)   <span class="com"># or nums.sum</span>
+<span class="fn">puts</span> <span class="str">"sum = #{sum}"</span></pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td>Everything is an object</td><td>Even numbers; blocks &amp; iterators everywhere</td></tr>
+                    <tr><td>Rails</td><td>MVC <span class="acro-exp">(Model-View-Controller)</span>, "convention over configuration", rapid CRUD <span class="acro-exp">(Create, Read, Update, Delete)</span> apps</td></tr>
+                    <tr><td>Gems / Bundler</td><td>Packages &amp; dependency locking</td></tr>
+                    <tr><td>Metaprogramming</td><td>Powerful DSLs <span class="acro-exp">(Domain-Specific Language)</span> (Rails leans on this heavily)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Great for startups and prototyping — you go from idea to CRUD app fast. Trade-off:
+                    dynamic typing and slower raw speed than compiled languages.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🐘</span>
+              <span class="topic-name">PHP <span class="acro-exp">(PHP: Hypertext Preprocessor)</span> — The Language That Runs the Web</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Still Powering the Majority of Websites</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">PHP</strong> is a server-side language built for the web —
+                  it powers WordPress, and thus a huge share of all sites. Modern PHP (8.x) is
+                  genuinely good: typed, fast, with a strong framework in
+                  <strong class="c-cyan">Laravel</strong>.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">&lt;?php</span>
+$nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+$sum = <span class="fn">array_sum</span>($nums);
+<span class="kw">echo</span> <span class="str">"sum = $sum"</span>;</pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td>Request-per-script</td><td>Classic model: each request runs a script fresh</td></tr>
+                    <tr><td>Composer</td><td>The modern package manager (Packagist)</td></tr>
+                    <tr><td>Laravel / Symfony</td><td>Full-featured modern frameworks</td></tr>
+                    <tr><td>PHP 8+</td><td>JIT <span class="acro-exp">(Just-In-Time)</span>, typed properties, enums, attributes, fibers</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Don't judge it by 2005 — modern PHP is a competent, fast web language. Its
+                    ubiquity in shared hosting and WordPress keeps demand high.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔩</span>
+              <span class="topic-name">C — Close to the Metal</span>
+              <span class="topic-badge">Language</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Language Everything Else Is Built On</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">C</strong> is small, fast, and gives you direct control over
+                  memory via pointers. Operating systems, embedded firmware, databases, and language
+                  runtimes are written in it. Learning C teaches how computers <em>actually</em> work.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    <span class="kw">int</span> nums[] = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}, sum = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) sum += nums[i];
+    <span class="fn">printf</span>(<span class="str">"sum = %d\n"</span>, sum);
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td>Pointers</td><td>Variables that hold memory addresses — power &amp; footguns</td></tr>
+                    <tr><td>Manual memory</td><td><code>malloc</code>/<code>free</code> — you own leaks &amp; use-after-free</td></tr>
+                    <tr><td>Compilation</td><td>Preprocess → compile → link (gcc/clang, make)</td></tr>
+                    <tr><td>Undefined behavior</td><td>Off-the-rails when you break the rules (buffer overflows)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    C's manual memory is exactly what Rust set out to make safe. Its lack of guardrails
+                    is why memory-safety bugs dominate CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span> — the security case for newer languages.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">⚙️</span>
+              <span class="topic-name">Assembly &amp; How Programs Actually Run</span>
+              <span class="topic-badge">Fundamentals</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Registers, the Stack &amp; the CPU <span class="acro-exp">(Central Processing Unit)</span>'s Real Job</div>
+                <div class="concept-desc">
+                  Under every language is machine code the CPU executes. Assembly is the
+                  human-readable form. You rarely write it, but understanding it demystifies
+                  performance, debugging, and — crucially — how exploits like buffer overflows work
+                  (ties to the reverse-engineering material).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td>Registers</td><td>Tiny ultra-fast CPU storage (rax, rsp, rip…)</td></tr>
+                    <tr><td>The stack</td><td>Grows down; holds locals, args &amp; return addresses</td></tr>
+                    <tr><td>Calling convention</td><td>Rules for passing args &amp; returns (System V, stdcall)</td></tr>
+                    <tr><td>Instructions</td><td><code>mov</code>, <code>push</code>, <code>call</code>, <code>ret</code>, <code>jmp</code></td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Why it matters: overwriting a saved <em>return address</em> on the stack is the
+                    classic buffer-overflow exploit — and why we have stack canaries, ASLR <span class="acro-exp">(Address Space Layout Randomization)</span>, and NX.
+                    Reading disassembly is core to malware analysis and CTF <span class="acro-exp">(Capture The Flag)</span> pwn/rev challenges.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🏷️</span>
+              <span class="topic-name">Semantic Versioning &amp; Dependency Management</span>
+              <span class="topic-badge">Fundamentals</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What <code>^1.2.3</code> Actually Means</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">SemVer</strong> gives version numbers meaning so tools can
+                  update safely. <code>MAJOR.MINOR.PATCH</code>: bump MAJOR for breaking changes, MINOR
+                  for new backward-compatible features, PATCH for fixes.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Range</th><th>Allows</th></tr>
+                    <tr><td><code>^1.2.3</code></td><td>&ge;1.2.3, &lt;2.0.0 (compatible: minor+patch)</td></tr>
+                    <tr><td><code>~1.2.3</code></td><td>&ge;1.2.3, &lt;1.3.0 (patch only)</td></tr>
+                    <tr><td><code>1.2.3</code></td><td>Exactly that version (pinned)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Lockfiles</strong> (<code>package-lock.json</code>,
+                    <code>poetry.lock</code>, <code>Cargo.lock</code>) pin the <em>exact</em> resolved
+                    tree so builds are reproducible — commit them. Ranges say "what's allowed"; the
+                    lockfile says "what you actually got." A <code>0.x</code> version signals anything
+                    may break at any time.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌊</span>
+              <span class="topic-name">Apache Kafka — The Distributed Event Log</span>
+              <span class="topic-badge">Data Eng</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Backbone of Streaming Data</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Kafka</strong> is a durable, distributed
+                  <strong>append-only log</strong>. Producers write events to topics; consumers read
+                  at their own pace. Because the log is retained and replayable, it decouples systems
+                  and underpins event-driven architectures.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td>Topic / partition</td><td>A stream, split into ordered partitions for parallelism</td></tr>
+                    <tr><td>Offset</td><td>A consumer's position in a partition — replay by rewinding</td></tr>
+                    <tr><td>Consumer group</td><td>Consumers share partitions to scale out</td></tr>
+                    <tr><td>Retention</td><td>Keep events for days/forever — the log is the source of truth</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">vs a queue:</strong> a classic queue deletes on read;
+                    Kafka keeps the log so many consumers replay independently. It's the practical
+                    engine behind Event Sourcing, CQRS <span class="acro-exp">(Command Query Responsibility Segregation)</span>, and the Outbox pattern (ties to the
+                    engineering cards).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">✨</span>
+              <span class="topic-name">Apache Spark — Big-Data Processing</span>
+              <span class="topic-badge">Data Eng</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Compute Across a Cluster, in Memory</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Spark</strong> processes datasets too big for one machine by
+                  distributing the work across a cluster and keeping data in memory. You write
+                  DataFrame/SQL code; Spark plans and parallelizes it.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># PySpark: read, aggregate, write — runs distributed</span>
+df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span class="str">"s3://data/events/"</span>)
+(df.<span class="fn">groupBy</span>(<span class="str">"country"</span>)
+   .<span class="fn">count</span>()
+   .<span class="fn">write</span>.<span class="fn">parquet</span>(<span class="str">"s3://out/by_country/"</span>))</pre>
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td>DataFrame / Spark SQL <span class="acro-exp">(Structured Query Language)</span></td><td>The high-level API <span class="acro-exp">(Application Programming Interface)</span> most people use</td></tr>
+                    <tr><td>Lazy + DAG <span class="acro-exp">(Directed Acyclic Graph)</span></td><td>Transformations build a plan; actions trigger execution</td></tr>
+                    <tr><td>Structured Streaming</td><td>Same API for batch &amp; streaming</td></tr>
+                    <tr><td>Databricks</td><td>The managed commercial platform</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">When:</strong> data outgrows pandas/one box. For smaller
+                    data, single-node tools (DuckDB, Polars) are simpler and often faster — don't
+                    reach for a cluster you don't need.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🗓️</span>
+              <span class="topic-name">Orchestration — Airflow &amp; Dagster</span>
+              <span class="topic-badge">Data Eng</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Scheduling &amp; Wiring Data Pipelines</div>
+                <div class="concept-desc">
+                  Data pipelines are graphs of dependent tasks ("load, then transform, then report").
+                  Orchestrators schedule them, handle retries and backfills, and show you what failed
+                  and why.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool</th><th>Model</th></tr>
+                    <tr><td>Airflow</td><td>The incumbent — Python DAGs <span class="acro-exp">(Directed Acyclic Graph)</span> of tasks; huge operator ecosystem</td></tr>
+                    <tr><td>Dagster</td><td>Asset-oriented — declare the data assets, it derives the graph</td></tr>
+                    <tr><td>Prefect</td><td>Pythonic, dynamic flows; lighter than Airflow</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Key features:</strong> a DAG (no cycles), scheduling,
+                    retries, and <strong>backfills</strong> (re-run history after a fix).
+                    Asset-based tools (Dagster) shift thinking from "run these tasks" to "produce
+                    these datasets," which maps better to lineage and data quality.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔧</span>
+              <span class="topic-name">dbt &amp; the Modern Data Stack</span>
+              <span class="topic-badge">Data Eng</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Software Engineering for SQL <span class="acro-exp">(Structured Query Language)</span></div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">dbt</strong> brought engineering discipline to analytics: you
+                  write transformations as version-controlled SQL <code>SELECT</code>s (models), and
+                  dbt handles dependencies, testing, and documentation — all running inside your
+                  warehouse.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td>ELT <span class="acro-exp">(Extract, Load, Transform)</span> (not ETL)</td><td>Load raw first, transform in the warehouse (Snowflake/BigQuery)</td></tr>
+                    <tr><td>Models</td><td>A SQL SELECT = a table/view; <code>ref()</code> builds the DAG <span class="acro-exp">(Directed Acyclic Graph)</span></td></tr>
+                    <tr><td>Tests &amp; docs</td><td>Assert not-null/unique; auto-generate a data catalog</td></tr>
+                    <tr><td>The stack</td><td>Fivetran/Airbyte (ingest) → warehouse → dbt → BI <span class="acro-exp">(Business Intelligence)</span> (Looker)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-green">Why it stuck:</strong> analytics code gets Git, code
+                    review, CI, and tests — treating pipelines like software. ELT works because cloud
+                    warehouses are cheap and powerful enough to transform in place.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">⭐</span>
+              <span class="topic-name">Dimensional Modeling — Star &amp; Snowflake Schemas</span>
+              <span class="topic-badge">Data Eng</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Designing a Warehouse for Analytics</div>
+                <div class="concept-desc">
+                  Transactional (OLTP) schemas are normalized for writes; analytics (OLAP) wants fast
+                  aggregation over huge tables. <strong class="c-cyan">Dimensional modeling</strong>
+                  (Kimball) organizes data into facts and dimensions for exactly that.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Concept</th><th>Detail</th></tr>
+                    <tr><td>Fact table</td><td>The measurements/events (sales, clicks) — long &amp; numeric</td></tr>
+                    <tr><td>Dimension table</td><td>The context (date, product, customer) — descriptive</td></tr>
+                    <tr><td>Star schema</td><td>Facts in the center, dimensions around — few joins, fast</td></tr>
+                    <tr><td>Snowflake</td><td>Dimensions further normalized — less duplication, more joins</td></tr>
+                    <tr><td>SCD (Type 2)</td><td>Track history when a dimension changes (keep old rows)</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    <strong class="c-amber">Slowly Changing Dimensions</strong> answer "what was the
+                    customer's tier <em>when</em> they bought?" — Type 2 keeps versioned rows so
+                    history stays accurate. Star schemas are the default; snowflake only when storage
+                    or governance demands it.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📱</span>
+              <span class="topic-name">Kotlin, Swift &amp; Scala — Modern Typed Application Languages</span>
+              <span class="topic-badge">Languages</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Why Together</div>
+                <div class="concept-title">Three Answers to "Fix the Language, Keep the Platform"</div>
+                <div class="concept-desc">
+                  Each of these arrived to replace an entrenched language without leaving its
+                  ecosystem. Kotlin fixes Java while running on the JVM <span class="acro-exp">(Java Virtual Machine)</span>. Swift replaces
+                  Objective-C while keeping the Apple frameworks. Scala brought functional
+                  programming to the JVM. So all three share a family resemblance — strong static
+                  types, null safety, type inference, immutability by default, expressions instead
+                  of statements — because they are all reactions to the same 1990s pain points.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Language</th><th>Runs on</th><th>Replaces / joins</th><th>Home turf</th></tr>
+                    <tr><td>Kotlin</td><td>JVM (also native, JS)</td><td>Java</td><td>Android, increasingly server-side</td></tr>
+                    <tr><td>Swift</td><td>Native (LLVM)</td><td>Objective-C</td><td>iOS/macOS; some server &amp; systems use</td></tr>
+                    <tr><td>Scala</td><td>JVM (also JS, native)</td><td>Joins Java</td><td>Big data (Spark), typed FP shops</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Shared Ideas</div>
+                <div class="concept-title">Null Safety and the Expression Habit</div>
+                <div class="concept-desc">
+                  The one feature to carry away is <strong class="c-cyan">null in the type
+                  system</strong>. A plain <code>String</code> cannot be null; a
+                  <code>String?</code> might be, and the compiler forces you to handle the
+                  difference before you can call a method on it. That single move eliminates the
+                  most common crash in the languages they replaced. The second shared habit is that
+                  almost everything is an expression that returns a value — an <code>if</code>, a
+                  <code>when</code>/<code>match</code> — so you assign its result rather than
+                  mutating a variable inside branches.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com">// Kotlin — null safety and when-as-expression</span>
+val name: String? = user.nickname          <span class="com">// may be null</span>
+val shown = name?.uppercase() ?: "GUEST"    <span class="com">// safe call + default</span>
+
+val tier = when (score) {                    <span class="com">// returns a value</span>
+    in 90..100 -> "A"
+    in 80..89  -> "B"
+    else       -> "C"
+}</pre>
+                  <pre class="code-block"><span class="com">// Swift — optionals are the same idea, different syntax</span>
+let name: String? = user.nickname
+let shown = name?.uppercased() ?? "GUEST"
+if let real = name { greet(real) }          <span class="com">// unwrap safely</span></pre>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Where They Diverge</div>
+                <div class="concept-title">Pragmatic vs Pure</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Kotlin</strong> is deliberately pragmatic — coroutines
+                  make async code read like sequential code, and Java interop is seamless, which is
+                  why Google made it the Android default. <strong class="c-cyan">Swift</strong>
+                  leans on value types (structs copied, not shared) and, rather than a garbage
+                  collector, uses ARC — automatic reference counting decided at compile time, whose
+                  one sharp edge is the retain cycle you break with a <code>weak</code> reference.
+                  <strong class="c-cyan">Scala</strong> is the most powerful and the steepest: a
+                  full functional type system, immutable-first, beloved where correctness is worth
+                  a hard learning curve and easy to overcomplicate where it is not.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">λ</span>
+              <span class="topic-name">Elixir, Haskell &amp; the Functional / Niche Languages</span>
+              <span class="topic-badge">Languages</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Why Learn One</div>
+                <div class="concept-title">A Different Language Rewires How You Think</div>
+                <div class="concept-desc">
+                  You will likely never ship Haskell to production, and that is not the point.
+                  Languages built on ideas your daily one lacks — enforced purity, the actor model,
+                  a type system that proves things — leave habits behind that make your everyday
+                  code better: smaller functions, less shared mutable state, thinking about failure
+                  as data. Each language below is worth a weekend for the idea it forces on you.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Language</th><th>The idea it teaches</th></tr>
+                    <tr><td>Elixir / Erlang</td><td>Fault tolerance through isolated processes and "let it crash"</td></tr>
+                    <tr><td>Haskell</td><td>Purity, laziness, and a type system that carries real proof</td></tr>
+                    <tr><td>Lua</td><td>How small an embeddable language can be</td></tr>
+                    <tr><td>R</td><td>Statistics and data as a first-class, vectorized concern</td></tr>
+                    <tr><td>MATLAB</td><td>Matrix maths as the native datatype (engineering, DSP)</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Elixir &amp; the BEAM</div>
+                <div class="concept-title">"Let It Crash" Is a Design, Not a Shrug</div>
+                <div class="concept-desc">
+                  Elixir runs on the <strong class="c-cyan">BEAM</strong>, Erlang's virtual
+                  machine, built for telephone switches that must not go down. The model: millions
+                  of tiny isolated processes, sharing nothing, communicating only by messages. When
+                  one hits an error it dies cleanly and a supervisor restarts it in a known-good
+                  state — so instead of defensively guarding every edge case, you let a failed
+                  process crash and be reborn. That is how the BEAM reaches nine-nines uptime, and
+                  it is a genuinely different answer to reliability than try/catch everywhere.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Elixir — spawn a process, send it a message</span>
+pid = spawn(fn -&gt; receive do
+  {:hello, name} -&gt; IO.puts("hi #{name}")
+end end)
+send(pid, {:hello, "world"})
+<span class="com"># Pattern matching everywhere; immutability is the default.</span></pre>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Haskell</div>
+                <div class="concept-title">The Compiler as a Proof Checker</div>
+                <div class="concept-desc">
+                  Haskell is <strong class="c-cyan">purely functional</strong>: a function given the
+                  same input always returns the same output and changes nothing else, so anything
+                  with a side effect — I/O, state, randomness — is marked in its type. That sounds
+                  academic until you feel the payoff: "if it compiles, it usually works" is close
+                  to true, because the type system has ruled out whole categories of bug before the
+                  program ever runs. It is also <strong class="c-cyan">lazy</strong> — nothing is
+                  computed until its value is needed, which makes infinite data structures ordinary
+                  and evaluation order occasionally surprising. The vocabulary it makes concrete —
+                  pure functions, immutability, effects as values — is exactly what shows up, gently,
+                  in modern JavaScript, Rust and Kotlin.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    <strong class="c-amber">The others, briefly:</strong> Lua is the go-to embedded
+                    scripting language — game engines, nginx, Redis — because the whole interpreter
+                    is tiny and trivially bound to C. R and MATLAB are domain tools rather than
+                    general-purpose languages: R for statistics and its plotting, MATLAB for
+                    matrix-heavy engineering and signal processing. Reach for them when the domain
+                    is the point, not the software.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

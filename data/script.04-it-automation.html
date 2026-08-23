@@ -1,0 +1,1238 @@
+
+<!-- BEGINNER30-SCRIPT v1 -->
+<!-- ── TOPIC: PowerShell Scripting Fundamentals ──────────────────── -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <span class="topic-name">PowerShell Scripting – Automate Windows &amp; Cross-Platform</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">PowerShell vs Bash – Key Differences</div>
+      <div class="concept-desc">
+        PowerShell looks like a shell but behaves like a programming language.
+        The most important difference: <strong>PowerShell passes objects,
+        Bash passes text.</strong><br><br>
+        <table class="ai-table">
+          <tr><th>Feature</th><th>Bash</th><th>PowerShell</th></tr>
+          <tr><td>Output type</td><td>Plain text</td><td>.NET objects</td></tr>
+          <tr><td>Pipe</td><td><code>grep, awk, cut</code></td><td>property access</td></tr>
+          <tr><td>Error handling</td><td><code>$? / set -e</code></td><td><code>try/catch</code></td></tr>
+          <tr><td>OS <span class="acro-exp">(Operating System)</span></td><td>Linux/macOS</td><td>Windows, Linux, macOS</td></tr>
+          <tr><td>Extension</td><td><code>.sh</code></td><td><code>.ps1</code></td></tr>
+        </table>
+        <br>
+        PowerShell is now open-source and cross-platform (pwsh). For Windows
+        administration it is the <em>standard</em> — learn it even if you
+        primarily work on Linux.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Syntax</div>
+      <div class="concept-title">PowerShell Fundamentals</div>
+      <div class="concept-desc">Variables, loops, conditionals, functions — the building blocks.</div>
+      <div class="code-block">
+<span class="com"># Variables start with $</span>
+$name   = <span class="str">"Alice"</span>
+$age    = <span class="num">30</span>
+$active = $true
+
+<span class="com"># String interpolation (double quotes expand variables)</span>
+Write-Host <span class="str">"Hello, $name! You are $age years old."</span>
+
+<span class="com"># Arrays</span>
+$servers = <span class="str">"srv01"</span>, <span class="str">"srv02"</span>, <span class="str">"srv03"</span>
+$servers[<span class="num">0</span>]          <span class="com"># srv01</span>
+$servers.Count     <span class="com"># 3</span>
+
+<span class="com"># Hash table (dictionary)</span>
+$config = @{
+    Host = <span class="str">"db01"</span>
+    Port = <span class="num">5432</span>
+    DB   = <span class="str">"myapp"</span>
+}
+$config[<span class="str">"Host"</span>]   <span class="com"># db01</span>
+$config.Port     <span class="com"># 5432 — dot notation works too</span>
+
+<span class="com"># For-each loop</span>
+foreach ($server in $servers) {
+    Write-Host <span class="str">"Pinging $server ..."</span>
+    Test-Connection $server -Count <span class="num">1</span> -Quiet
+}
+
+<span class="com"># If / elseif / else</span>
+if ($age -ge <span class="num">18</span>) {
+    Write-Host <span class="str">"Adult"</span>
+} elseif ($age -ge <span class="num">13</span>) {
+    Write-Host <span class="str">"Teen"</span>
+} else {
+    Write-Host <span class="str">"Child"</span>
+}
+
+<span class="com"># Function</span>
+function Get-DiskUsage {
+    param([string]$Path = <span class="str">"C:\"</span>)
+    Get-PSDrive -Name ($Path[<span class="num">0</span>]) | Select Used, Free
+}
+Get-DiskUsage -Path <span class="str">"D:\"</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Object Pipeline</div>
+      <div class="concept-title">Working with Objects in the Pipeline</div>
+      <div class="concept-desc">
+        Because PowerShell passes objects, you can filter and select
+        <em>properties</em> without parsing text. This is PowerShell's
+        superpower.
+      </div>
+      <div class="code-block">
+<span class="com"># Get all running services, filter, sort, format</span>
+Get-Service |
+    Where-Object { $_.Status -eq <span class="str">"Running"</span> } |
+    Sort-Object   DisplayName |
+    Select-Object Name, DisplayName, StartType |
+    Format-Table -AutoSize
+
+<span class="com"># $_ is the current object in the pipeline</span>
+<span class="com"># Where-Object = filter (like grep but for objects)</span>
+<span class="com"># Select-Object = pick columns (like cut but named)</span>
+
+<span class="com"># Find processes using more than 500 MB RAM</span>
+Get-Process |
+    Where-Object { $_.WorkingSet64 -gt <span class="num">500</span>MB } |
+    Select-Object Name, Id,
+      @{N=<span class="str">"RAM_MB"</span>; E={[math]::Round($_.WorkingSet64/<span class="num">1</span>MB)}} |
+    Sort-Object RAM_MB -Descending
+
+<span class="com"># Export to CSV for a report</span>
+Get-EventLog -LogName Security -Newest <span class="num">100</span> |
+    Where-Object { $_.EventID -eq <span class="num">4625</span> } |  <span class="com"># failed logons</span>
+    Select-Object TimeGenerated, Message |
+    Export-Csv -Path failed_logons.csv -NoTypeInformation
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Error Handling</div>
+      <div class="concept-title">try / catch / finally in PowerShell</div>
+      <div class="concept-desc">
+        PowerShell uses <code>try/catch/finally</code> like most modern
+        languages. Use <code>-ErrorAction Stop</code> to make cmdlets throw
+        catchable exceptions (by default many just warn and continue).
+      </div>
+      <div class="code-block">
+<span class="com"># Always use -ErrorAction Stop so errors are catchable</span>
+try {
+    $result = Invoke-WebRequest -Uri <span class="str">"https://api.internal/health"</span> `
+                                -ErrorAction Stop
+    Write-Host <span class="str">"API is UP: $($result.StatusCode)"</span>
+}
+catch [System.Net.WebException] {
+    Write-Warning <span class="str">"Network error: $($_.Exception.Message)"</span>
+}
+catch {
+    Write-Error   <span class="str">"Unexpected error: $($_.Exception.Message)"</span>
+}
+finally {
+    Write-Host <span class="str">"Health check complete."</span>  <span class="com"># always runs</span>
+}
+
+<span class="com"># Log errors to a file</span>
+$ErrorActionPreference = <span class="str">"Stop"</span>
+try {
+    Get-Content <span class="str">"C:\missing_file.txt"</span>
+} catch {
+    $_ | Out-File -Append <span class="str">"C:\Logs\errors.log"</span>
+}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER32-SCRIPT v1 -->
+<!-- ── TOPIC: IoT Security Fundamentals ──────────────────────── -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <span class="topic-name">IoT <span class="acro-exp">(Internet of Things)</span> Security – Securing Connected Devices</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why IoT Is a Security Problem</div>
+      <div class="concept-desc">
+        <strong>IoT (Internet of Things)</strong> devices — cameras, smart
+        TVs, routers, industrial sensors, medical devices — are computers
+        with network access. Unlike PCs, they often:<br><br>
+        &bull; Ship with <strong>default credentials</strong> that users never
+          change.<br>
+        &bull; Run <strong>outdated Linux kernels</strong> with no automatic
+          updates.<br>
+        &bull; Expose <strong>unnecessary services</strong> (Telnet, FTP,
+          unencrypted HTTP) on open ports.<br>
+        &bull; Have <strong>no monitoring</strong> — nobody watches their
+          logs.<br>
+        &bull; Are deployed and <strong>forgotten</strong> for years.<br><br>
+        The Mirai botnet (2016) compromised 600,000+ IoT devices by
+        simply trying default username/password combinations and used them
+        to launch the largest DDoS <span class="acro-exp">(Distributed Denial of Service)</span> attack in history at the time.
+        <br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        device is secure because it's "just a camera" or "just a
+        thermostat." Assume it is a fully capable Linux box sitting on
+        your network.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Discovery</div>
+      <div class="concept-title">Finding IoT Devices on Your Network</div>
+      <div class="concept-desc">
+        You cannot protect what you cannot see. These tools enumerate
+        every device on the network:
+      </div>
+      <div class="code-block">
+<span class="com"># Discover all hosts on the LAN (ping sweep)</span>
+nmap -sn <span class="num">192.168.1</span>.0/<span class="num">24</span>
+
+<span class="com"># Identify OS and open ports of every host</span>
+sudo nmap -O -sV <span class="num">192.168.1</span>.0/<span class="num">24</span> -oN lan_scan.txt
+
+<span class="com"># Find devices running Telnet (port 23) — a huge red flag</span>
+nmap -p <span class="num">23</span> --open <span class="num">192.168.1</span>.0/<span class="num">24</span>
+
+<span class="com"># Find devices with default web UIs (port 80/8080)</span>
+nmap -p <span class="num">80,8080,8443</span> --open <span class="num">192.168.1</span>.0/<span class="num">24</span>
+
+<span class="com"># Banner grab — what software version is running?</span>
+nc -zv <span class="num">192.168.1</span>.<span class="num">50</span> <span class="num">80</span>
+curl -I http://<span class="num">192.168.1</span>.<span class="num">50</span>  <span class="com"># look at Server: header</span>
+
+<span class="com"># Search Shodan for devices exposed to the internet</span>
+<span class="com"># (Shodan indexes internet-facing devices — use only for research)</span>
+<span class="com"># Web: shodan.io/search?query=camera+default+password</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Hardening</div>
+      <div class="concept-title">IoT Security Checklist</div>
+      <div class="concept-desc">
+        Apply these controls to every IoT device you manage:
+      </div>
+      <div class="code-block">
+<span class="com">MUST-DO IoT HARDENING CHECKLIST</span>
+<span class="com">───────────────────────────────────────────────────────────</span>
+
+[ ] Change default credentials immediately after provisioning
+[ ] Disable Telnet (port 23); use SSH if CLI access is needed
+[ ] Disable UPnP — it auto-opens firewall holes without your knowledge
+[ ] Segment IoT devices on a separate VLAN
+    (IoT VLAN can reach internet but NOT corporate LAN)
+[ ] Update firmware to the latest version
+[ ] Set up automatic update notifications or a review schedule
+[ ] Disable unused services (FTP, SNMP v1/v2 community string "public")
+[ ] Change SNMP community strings to strong random values
+[ ] Use HTTPS for web management; verify certificate
+[ ] Enable logging and send logs to your SIEM if possible
+[ ] Block inbound internet access to IoT devices at firewall
+[ ] Physically label devices with their VLAN and last audit date
+
+<span class="com"># Create an IoT VLAN rule (iptables — IoT VLAN is 192.168.10.0/24)</span>
+<span class="com"># Allow IoT → internet but block IoT → corporate (192.168.1.0/24)</span>
+sudo iptables -I FORWARD -s <span class="num">192.168.10</span>.0/<span class="num">24</span>   -d <span class="num">192.168.1</span>.0/<span class="num">24</span> -j DROP
+sudo iptables -I FORWARD -s <span class="num">192.168.10</span>.0/<span class="num">24</span>   -d <span class="num">0</span>.0.0.0/<span class="num">0</span> -j ACCEPT
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Firmware Analysis</div>
+      <div class="concept-title">Basic Firmware Triage with Binwalk</div>
+      <div class="concept-desc">
+        Firmware is the operating system of an embedded device. Security
+        researchers extract and analyse firmware images to find hardcoded
+        credentials, old vulnerable software, and backdoors.
+        <em>Only analyse firmware you have permission to test.</em>
+      </div>
+      <div class="code-block">
+<span class="com"># Install binwalk (firmware analysis tool)</span>
+sudo apt install binwalk
+
+<span class="com"># Scan a firmware image for embedded file systems</span>
+binwalk firmware.bin
+
+<span class="com"># Extract all file systems and compressed archives</span>
+binwalk -e firmware.bin
+<span class="com"># Creates _firmware.bin.extracted/</span>
+
+<span class="com"># Search for hardcoded passwords in extracted filesystem</span>
+grep -r <span class="str">"password"</span>  _firmware.bin.extracted/ --include=<span class="str">"*.conf"</span>
+grep -r <span class="str">"passwd"</span>    _firmware.bin.extracted/etc/
+cat _firmware.bin.extracted/etc/shadow  <span class="com"># hashed passwords</span>
+
+<span class="com"># Look for SSL private keys</span>
+find _firmware.bin.extracted/ -name <span class="str">"*.pem"</span> -o -name <span class="str">"*.key"</span>
+
+<span class="com"># Find SUID binaries in the extracted filesystem</span>
+find _firmware.bin.extracted/ -perm -<span class="num">4000</span> <span class="num">2</span>&gt;/dev/null
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER33-SCRIPT v1 -->
+<!-- ── TOPIC: Python async/await ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-badge">Intermediate</span>
+    <span class="topic-name">Python Async/Await – Concurrent I/O <span class="acro-exp">(Input/Output)</span> Without Threads</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Async? The Waiting Problem</div>
+      <div class="concept-desc">
+        A normal Python function blocks while waiting for I/O (network call,
+        file read, database query). If you have 1,000 API <span class="acro-exp">(Application Programming Interface)</span> calls to make,
+        sequential blocking takes 1,000 × wait time.<br><br>
+        <strong>Async</strong> lets Python do something else while waiting.
+        When an I/O call is in-flight, the event loop switches to another
+        coroutine — so 1,000 API calls can be in-flight simultaneously.<br><br>
+        <strong>Rule of thumb:</strong><br>
+        &bull; Use <code>async/await</code> for I/O-bound work (HTTP calls,
+          DB queries, file I/O).<br>
+        &bull; Use <code>multiprocessing</code> for CPU-bound work
+          (image processing, ML training) — Python's GIL still blocks
+          CPU <span class="acro-exp">(Central Processing Unit)</span> work in a single process.<br><br>
+        <em>"Not my circus, not my monkey"</em> — don't force async on
+        everything. A simple script with two HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> calls doesn't need it.
+        Use it when you have many concurrent I/O operations.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Syntax</div>
+      <div class="concept-title">async def, await, and asyncio.run</div>
+      <div class="concept-desc">
+        An <code>async def</code> function is a <em>coroutine</em>. Calling
+        it returns a coroutine object — it doesn't run until you
+        <code>await</code> it or pass it to the event loop.
+      </div>
+      <div class="code-block">
+<span class="kw">import</span> asyncio, time
+
+<span class="kw">async def</span> <span class="fn">fetch_data</span>(url: str) -&gt; str:
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Starting {url}"</span>)
+    <span class="kw">await</span> asyncio.sleep(<span class="num">1</span>)   <span class="com"># simulate network wait</span>
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Done    {url}"</span>)
+    <span class="kw">return</span> <span class="fn">f</span><span class="str">"data from {url}"</span>
+
+<span class="kw">async def</span> <span class="fn">main_sequential</span>():
+    t = time.perf_counter()
+    r1 = <span class="kw">await</span> <span class="fn">fetch_data</span>(<span class="str">"http://api-1"</span>)
+    r2 = <span class="kw">await</span> <span class="fn">fetch_data</span>(<span class="str">"http://api-2"</span>)
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Sequential: {time.perf_counter()-t:.1f}s"</span>)  <span class="com"># ~2 s</span>
+
+<span class="kw">async def</span> <span class="fn">main_concurrent</span>():
+    t = time.perf_counter()
+    r1, r2 = <span class="kw">await</span> asyncio.gather(
+        <span class="fn">fetch_data</span>(<span class="str">"http://api-1"</span>),
+        <span class="fn">fetch_data</span>(<span class="str">"http://api-2"</span>),
+    )
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Concurrent: {time.perf_counter()-t:.1f}s"</span>)  <span class="com"># ~1 s</span>
+
+asyncio.run(<span class="fn">main_sequential</span>())
+asyncio.run(<span class="fn">main_concurrent</span>())
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">HTTP Requests</div>
+      <div class="concept-title">Async HTTP with aiohttp</div>
+      <div class="concept-desc">
+        The <code>requests</code> library is synchronous — it blocks.
+        Use <code>aiohttp</code> for async HTTP. This example fetches
+        100 URLs <span class="acro-exp">(Uniform Resource Locator)</span> concurrently instead of one at a time.
+      </div>
+      <div class="code-block">
+<span class="com"># pip install aiohttp</span>
+<span class="kw">import</span> asyncio, aiohttp
+
+URLS = [
+    <span class="str">"https://httpbin.org/delay/1"</span>,
+    <span class="str">"https://httpbin.org/delay/1"</span>,
+    <span class="str">"https://httpbin.org/delay/1"</span>,
+]   <span class="com"># extend to 100+ in real use</span>
+
+<span class="kw">async def</span> <span class="fn">fetch</span>(session: aiohttp.ClientSession, url: str) -&gt; dict:
+    <span class="kw">async with</span> session.get(url) <span class="kw">as</span> resp:
+        data = <span class="kw">await</span> resp.json()
+        <span class="kw">return</span> {<span class="str">"url"</span>: url, <span class="str">"status"</span>: resp.status}
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="kw">async with</span> aiohttp.ClientSession() <span class="kw">as</span> session:
+        tasks   = [<span class="fn">fetch</span>(session, u) <span class="kw">for</span> u <span class="kw">in</span> URLS]
+        results = <span class="kw">await</span> asyncio.gather(*tasks, return_exceptions=<span class="kw">True</span>)
+    <span class="kw">for</span> r <span class="kw">in</span> results:
+        <span class="kw">if</span> isinstance(r, Exception):
+            <span class="fn">print</span>(<span class="str">"Error:"</span>, r)
+        <span class="kw">else</span>:
+            <span class="fn">print</span>(r)
+
+asyncio.run(<span class="fn">main</span>())
+<span class="com"># 3 × 1-second requests complete in ~1 second total</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Rate Limiting</div>
+      <div class="concept-title">Semaphores – Limiting Concurrency</div>
+      <div class="concept-desc">
+        Launching 10,000 coroutines at once can overwhelm an API or
+        exhaust file descriptors. Use a <em>Semaphore</em> to cap
+        concurrent tasks.
+      </div>
+      <div class="code-block">
+<span class="kw">import</span> asyncio, aiohttp
+
+<span class="kw">async def</span> <span class="fn">fetch_with_limit</span>(sem, session, url):
+    <span class="kw">async with</span> sem:            <span class="com"># acquire — blocks if limit reached</span>
+        <span class="kw">async with</span> session.get(url) <span class="kw">as</span> r:
+            <span class="kw">return</span> <span class="kw">await</span> r.text()
+
+<span class="kw">async def</span> <span class="fn">main</span>(urls):
+    sem     = asyncio.Semaphore(<span class="num">10</span>)   <span class="com"># max 10 concurrent requests</span>
+    <span class="kw">async with</span> aiohttp.ClientSession() <span class="kw">as</span> session:
+        tasks = [<span class="fn">fetch_with_limit</span>(sem, session, u) <span class="kw">for</span> u <span class="kw">in</span> urls]
+        <span class="kw">return</span> <span class="kw">await</span> asyncio.gather(*tasks, return_exceptions=<span class="kw">True</span>)
+
+<span class="com"># results = asyncio.run(main(my_url_list))</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER35-SCRIPT v1 -->
+<!-- ── TOPIC: Regular Expressions Deep Dive ──────────────────── -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <span class="topic-name">Regular Expressions – Pattern Matching That Pays Off Forever</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Learn Regex?</div>
+      <div class="concept-desc">
+        A <strong>regular expression (regex)</strong> is a tiny language for
+        describing patterns in text. It shows up <em>everywhere</em>:
+        log searching (<code>grep</code>), text editors (find/replace),
+        input validation, SIEM <span class="acro-exp">(Security Information and Event Management)</span> queries, firewall rules, programming
+        languages.<br><br>
+        Learn it once, and you can search a million-line log file for
+        "every IP <span class="acro-exp">(Internet Protocol)</span> address that tried to log in as root" in seconds —
+        a task that would take hours by hand.<br><br>
+        <em>"Not my circus, not my monkey"</em> — don't write a 200-character
+        regex when a simple string search does the job. Regex is powerful,
+        but overusing it makes code unreadable. Use the simplest tool that
+        solves the problem.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Building Blocks</div>
+      <div class="concept-title">The Regex Cheat Sheet</div>
+      <div class="concept-desc">
+        Master these symbols and you can read 90% of regexes you'll
+        encounter:
+      </div>
+      <div class="code-block">
+<span class="com">Symbol   Meaning                          Example matches</span>
+.        Any single character             a.c   →  abc, a9c, a c
+*        Zero or more of previous         ab*   →  a, ab, abbb
++        One or more of previous          ab+   →  ab, abbb (not "a")
+?        Zero or one (optional)           colou?r → color, colour
+^        Start of line/string             ^Error  → line starting with "Error"
+$        End of line/string               \.com$  → ends with ".com"
+[abc]    Any one of a, b, c               gr[ae]y  → gray, grey
+[^abc]   Anything EXCEPT a, b, c          [^0-9]   → any non-digit
+[a-z]    Range (a through z)              [a-zA-Z0-9_]  → word characters
+{n,m}    Between n and m repeats          \d{3,5}  → 3-5 digits
+\d       Any digit  [0-9]                \d{1,3}\.\d{1,3}  → IP-ish
+\w       Word char [a-zA-Z0-9_]          \w+@\w+   → simple email shape
+\s       Whitespace (space, tab, newline) \s+      → one or more spaces
+( )      Group / capture                 (https?)://  → captures http or https
+|        OR / alternation                cat|dog    → cat OR dog
+\b       Word boundary                   \bcat\b    → "cat" not "category"
+
+<span class="com"># Greedy vs lazy matching — a common gotcha:</span>
+<span class="com"># &lt;.+&gt;     greedy: matches "&lt;b&gt;text&lt;/b&gt;" (too much!)</span>
+<span class="com"># &lt;.+?&gt;    lazy:   matches "&lt;b&gt;" then "&lt;/b&gt;" separately (correct)</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Practical Patterns</div>
+      <div class="concept-title">Real Regexes You'll Actually Use</div>
+      <div class="concept-desc">
+        These are battle-tested patterns for common IT/security tasks:
+      </div>
+      <div class="code-block">
+<span class="com"># IPv4 address (good enough for log filtering, not RFC-perfect)</span>
+\b(?:\d{1,3}\.){3}\d{1,3}\b
+
+<span class="com"># Email address (practical, not 100% RFC compliant — nothing truly is)</span>
+[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}
+
+<span class="com"># US phone number (several common formats)</span>
+\(?\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}
+
+<span class="com"># ISO 8601 date/timestamp (2026-06-06T14:30:00Z)</span>
+\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z?
+
+<span class="com"># Find failed SSH logins and extract the source IP (capture group)</span>
+grep -oP <span class="str">'Failed password .* from \K[\d.]+'</span> /var/log/auth.log
+
+<span class="com"># Validate a strong password (8+ chars, upper, lower, digit, symbol)</span>
+^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$
+<span class="com"># (?=...) is a "lookahead" — checks a condition without consuming characters</span>
+
+<span class="com"># Extract all URLs from a block of text</span>
+https?://[^\s"'&lt;&gt;]+
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Python re module</div>
+      <div class="concept-title">Using Regex in Python</div>
+      <div class="concept-desc">
+        Python's <code>re</code> module is the standard way to apply
+        regex in scripts. <code>re.compile()</code> pre-compiles a pattern
+        for reuse — important when matching against thousands of lines.
+      </div>
+      <div class="code-block">
+<span class="kw">import</span> re
+
+log_line = <span class="str">"2026-06-06 09:14:32 Failed password for root from 203.0.113.7 port 51422"</span>
+
+<span class="com"># search() — find the first match anywhere in the string</span>
+m = re.search(<span class="fn">r</span><span class="str">"from (\d{1,3}(?:\.\d{1,3}){3})"</span>, log_line)
+<span class="kw">if</span> m:
+    <span class="fn">print</span>(<span class="str">"Source IP:"</span>, m.group(<span class="num">1</span>))   <span class="com"># 203.0.113.7</span>
+
+<span class="com"># findall() — get every match in the string as a list</span>
+ips = re.findall(<span class="fn">r</span><span class="str">"\b(?:\d{1,3}\.){3}\d{1,3}\b"</span>, log_line)
+
+<span class="com"># sub() — find and replace (great for redacting sensitive data)</span>
+redacted = re.sub(<span class="fn">r</span><span class="str">"\b\d{3}-\d{2}-\d{4}\b"</span>, <span class="str">"[SSN-REDACTED]"</span>, text)
+
+<span class="com"># Named groups — much more readable than numbered groups</span>
+pattern = re.<span class="fn">compile</span>(
+    <span class="fn">r</span><span class="str">"(?P&lt;date&gt;\d{4}-\d{2}-\d{2}) (?P&lt;time&gt;\d{2}:\d{2}:\d{2}) "</span>
+    <span class="fn">r</span><span class="str">"Failed password for (?P&lt;user&gt;\S+) from (?P&lt;ip&gt;[\d.]+)"</span>
+)
+m = pattern.search(log_line)
+<span class="kw">if</span> m:
+    <span class="fn">print</span>(m.group(<span class="str">"user"</span>), m.group(<span class="str">"ip"</span>))   <span class="com"># root 203.0.113.7</span>
+    <span class="fn">print</span>(m.groupdict())                  <span class="com"># full dict of named captures</span>
+
+<span class="com"># Tip: test regexes interactively at regex101.com before deploying</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER36-SCRIPT v1 -->
+<!-- ── TOPIC: Git Advanced Workflows ─────────────────────────── -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-badge">Intermediate</span>
+    <span class="topic-name">Git Advanced Workflows – Beyond add, commit, push</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why "git add, commit, push" Isn't Enough</div>
+      <div class="concept-desc">
+        Most beginners learn the basic Git loop and stop there. But real
+        teams hit situations the basics don't cover: messy commit history,
+        accidental commits to the wrong branch, finding which commit
+        introduced a bug, or recovering "lost" work. These tools turn Git
+        from a save-button into a powerful investigation and cleanup
+        toolkit.<br><br>
+        <em>"Assume" makes an ass out of you and me</em> — never assume a
+        destructive Git command is safe just because the help text looks
+        simple. <code>reset --hard</code>, <code>push --force</code>, and
+        <code>clean -f</code> can permanently destroy work. Always know
+        your escape hatch before you pull the trigger.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Investigation</div>
+      <div class="concept-title">git bisect — Finding the Commit That Broke Things</div>
+      <div class="concept-desc">
+        When a bug appears and you don't know which of the last 200
+        commits introduced it, <code>git bisect</code> performs an
+        automated binary search through history.
+      </div>
+      <div class="code-block">
+<span class="com"># Start a bisect session</span>
+git bisect start
+
+<span class="com"># Tell git the current commit is broken (bad)</span>
+git bisect bad
+
+<span class="com"># Tell git a known-good commit (e.g. last release tag)</span>
+git bisect good v2.3.0
+
+<span class="com"># Git checks out a commit halfway between good and bad.</span>
+<span class="com"># Test it, then tell git the result:</span>
+git bisect good   <span class="com"># if this commit works</span>
+<span class="com"># or</span>
+git bisect bad    <span class="com"># if this commit is broken</span>
+
+<span class="com"># Repeat — git narrows the range each time (log2(N) steps total)</span>
+<span class="com"># When done, git identifies the exact commit that introduced the bug:</span>
+<span class="com"># "a1b2c3d is the first bad commit"</span>
+
+<span class="com"># Clean up when finished</span>
+git bisect reset
+
+<span class="com"># Automate it entirely with a test script (no manual testing!)</span>
+git bisect start HEAD v2.3.0
+git bisect run pytest tests/test_regression.py
+<span class="com"># git runs the test at each step and decides good/bad automatically</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">History Cleanup</div>
+      <div class="concept-title">Interactive Rebase — Cleaning Up Before You Share</div>
+      <div class="concept-desc">
+        Before opening a pull request, a clean commit history makes
+        review far easier. <code>git rebase -i</code> lets you reorder,
+        combine, edit, or drop commits.
+        <strong>Only rewrite history on branches you haven't shared.</strong>
+      </div>
+      <div class="code-block">
+<span class="com"># Interactively edit the last 5 commits</span>
+git rebase -i HEAD~5
+
+<span class="com"># This opens an editor with lines like:</span>
+pick a1b2c3d Add login form
+pick d4e5f6a Fix typo in login form
+pick 7890abc WIP debugging
+pick bcdef12 Actually fix the bug
+pick 3456789 Remove debug prints
+
+<span class="com"># Change "pick" to control what happens to each commit:</span>
+<span class="com">#   pick   = keep commit as-is</span>
+<span class="com">#   reword = keep changes, edit the commit message</span>
+<span class="com">#   squash = combine with the commit above (keep both messages)</span>
+<span class="com">#   fixup  = combine with commit above (discard this message)</span>
+<span class="com">#   drop   = remove the commit entirely</span>
+
+<span class="com"># Cleaned-up result might look like:</span>
+pick   a1b2c3d Add login form
+fixup  d4e5f6a Fix typo in login form
+drop   7890abc WIP debugging
+fixup  bcdef12 Actually fix the bug
+drop   3456789 Remove debug prints
+
+<span class="com"># Result: one clean commit "Add login form" instead of five messy ones</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Recovery</div>
+      <div class="concept-title">git reflog — Your Undo Button for Almost Anything</div>
+      <div class="concept-desc">
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — someone on your team will run
+        <code>git reset --hard</code> on the wrong branch eventually.
+        <code>git reflog</code> is how you save them.<br><br>
+        Git keeps a log of <em>every</em> place HEAD has pointed —
+        commits, resets, rebases, checkouts — for about 90 days, even
+        ones that seem to have "vanished."
+      </div>
+      <div class="code-block">
+<span class="com"># Show every recent HEAD movement (even "lost" commits)</span>
+git reflog
+
+<span class="com"># Output looks like:</span>
+<span class="com"># a1b2c3d HEAD@{0}: reset: moving to HEAD~3</span>
+<span class="com"># d4e5f6a HEAD@{1}: commit: Add payment validation</span>
+<span class="com"># 7890abc HEAD@{2}: commit: Fix currency rounding bug</span>
+<span class="com"># ...</span>
+
+<span class="com"># Recover "lost" commits by checking out the reflog entry</span>
+git checkout HEAD@{1}
+
+<span class="com"># Or restore your branch to before the bad reset</span>
+git reset --hard HEAD@{1}
+
+<span class="com"># Recover a deleted branch entirely</span>
+git reflog | grep <span class="str">"checkout: moving from feature-x"</span>
+git branch feature-x &lt;commit-hash-from-reflog&gt;
+
+<span class="com"># Find "dangling" commits not referenced by any branch</span>
+git fsck --lost-found
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Workflow</div>
+      <div class="concept-title">Stash, Cherry-Pick &amp; Worktrees — Juggling Work</div>
+      <div class="concept-desc">
+        These commands solve the "I need to switch context without
+        losing my work" problem in different ways.
+      </div>
+      <div class="code-block">
+<span class="com"># STASH — temporarily shelve uncommitted changes</span>
+git stash push -m <span class="str">"WIP: refactoring auth module"</span>
+git checkout main           <span class="com"># switch branches with a clean working tree</span>
+<span class="com"># ... fix the urgent bug ...</span>
+git checkout feature-branch
+git stash pop               <span class="com"># bring your work back</span>
+git stash list              <span class="com"># see all stashed changes</span>
+
+<span class="com"># CHERRY-PICK — apply a specific commit from another branch</span>
+git log other-branch --oneline   <span class="com"># find the commit hash you need</span>
+git cherry-pick a1b2c3d          <span class="com"># apply just that one commit here</span>
+<span class="com"># Common use: backporting a critical bugfix to a release branch</span>
+
+<span class="com"># WORKTREES — check out multiple branches simultaneously in</span>
+<span class="com"># separate directories (no stashing needed)</span>
+git worktree add ../hotfix-dir hotfix/critical-bug
+<span class="com"># Now you have two working directories on two branches at once —</span>
+<span class="com"># build/test the hotfix while your main feature work stays untouched</span>
+git worktree list
+git worktree remove ../hotfix-dir
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER37-SCRIPT v1 -->
+<!-- ── TOPIC: Network Automation with Python ─────────────────── -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-badge">Intermediate</span>
+    <span class="topic-name">Network Automation – Configuring Switches &amp; Routers with Python</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Why Automate Network Devices?</div>
+      <div class="concept-desc">
+        Traditionally, network engineers configure switches and routers
+        by hand, one device at a time, over SSH <span class="acro-exp">(Secure Shell)</span> or console — a slow,
+        error-prone, and undocumented process. <strong>Network
+        automation</strong> applies the same scripting discipline you'd
+        use for servers to network gear.<br><br>
+        <strong>Why it matters:</strong><br>
+        &bull; Configure 200 switches identically in minutes instead of
+          weeks.<br>
+        &bull; Eliminate "fat-finger" typos that cause outages.<br>
+        &bull; Generate configs from templates — guaranteed consistency.<br>
+        &bull; Audit configurations across the fleet — find the one
+          switch with a forgotten setting.<br><br>
+        <em>"Not my circus, not my monkey"</em> — network automation
+        touches production infrastructure directly. Always test scripts
+        against lab devices first, and always have a way to reach the
+        device out-of-band if your script locks you out.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Netmiko</div>
+      <div class="concept-title">Connecting to Devices with Netmiko</div>
+      <div class="concept-desc">
+        <strong>Netmiko</strong> is a Python library that wraps SSH
+        connections to network devices, handling the quirks of dozens
+        of vendor CLIs <span class="acro-exp">(Command Line Interface)</span> (Cisco, Juniper, Arista, HP, and more) behind a
+        consistent interface.
+      </div>
+      <div class="code-block">
+<span class="com"># pip install netmiko</span>
+<span class="kw">from</span> netmiko <span class="kw">import</span> ConnectHandler
+
+device = {
+    <span class="str">"device_type"</span>: <span class="str">"cisco_ios"</span>,
+    <span class="str">"host"</span>:        <span class="str">"192.168.1.1"</span>,
+    <span class="str">"username"</span>:    <span class="str">"admin"</span>,
+    <span class="str">"password"</span>:    <span class="str">"S3cur3P@ss"</span>,
+    <span class="str">"secret"</span>:      <span class="str">"enable_secret_pw"</span>,   <span class="com"># for privileged mode</span>
+}
+
+<span class="kw">with</span> ConnectHandler(**device) <span class="kw">as</span> conn:
+    conn.enable()                                <span class="com"># enter privileged exec mode</span>
+
+    <span class="com"># Run a read-only command and capture the output</span>
+    output = conn.send_command(<span class="str">"show ip interface brief"</span>)
+    <span class="fn">print</span>(output)
+
+    <span class="com"># Send a set of configuration commands</span>
+    config_commands = [
+        <span class="str">"interface GigabitEthernet0/1"</span>,
+        <span class="str">"description Uplink-to-Core-Switch"</span>,
+        <span class="str">"switchport mode trunk"</span>,
+        <span class="str">"switchport trunk allowed vlan 10,20,30"</span>,
+    ]
+    output = conn.send_config_set(config_commands)
+    <span class="fn">print</span>(output)
+
+    <span class="com"># Save the running config to startup config (don't lose changes on reload)</span>
+    conn.save_config()
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Scaling Up</div>
+      <div class="concept-title">Running Commands Across Many Devices</div>
+      <div class="concept-desc">
+        The real power of automation appears when you apply one script
+        to a fleet of devices — and capture results in a structured way
+        for later analysis.
+      </div>
+      <div class="code-block">
+<span class="kw">from</span> netmiko <span class="kw">import</span> ConnectHandler
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
+<span class="kw">import</span> csv
+
+DEVICES = [
+    {<span class="str">"device_type"</span>: <span class="str">"cisco_ios"</span>, <span class="str">"host"</span>: <span class="str">"192.168.1.1"</span>,  <span class="str">"username"</span>: <span class="str">"admin"</span>, <span class="str">"password"</span>: <span class="str">"pw"</span>},
+    {<span class="str">"device_type"</span>: <span class="str">"cisco_ios"</span>, <span class="str">"host"</span>: <span class="str">"192.168.1.2"</span>,  <span class="str">"username"</span>: <span class="str">"admin"</span>, <span class="str">"password"</span>: <span class="str">"pw"</span>},
+    {<span class="str">"device_type"</span>: <span class="str">"arista_eos"</span>, <span class="str">"host"</span>: <span class="str">"192.168.1.10"</span>, <span class="str">"username"</span>: <span class="str">"admin"</span>, <span class="str">"password"</span>: <span class="str">"pw"</span>},
+]
+
+<span class="kw">def</span> <span class="fn">audit_device</span>(device: dict) -&gt; dict:
+    <span class="kw">try</span>:
+        <span class="kw">with</span> ConnectHandler(**device) <span class="kw">as</span> conn:
+            version = conn.send_command(<span class="str">"show version"</span>)
+            ntp     = conn.send_command(<span class="str">"show ntp status"</span>)
+            <span class="kw">return</span> {
+                <span class="str">"host"</span>: device[<span class="str">"host"</span>],
+                <span class="str">"status"</span>: <span class="str">"OK"</span>,
+                <span class="str">"ntp_synced"</span>: <span class="str">"synchronized"</span> <span class="kw">in</span> ntp.lower(),
+            }
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        <span class="kw">return</span> {<span class="str">"host"</span>: device[<span class="str">"host"</span>], <span class="str">"status"</span>: <span class="fn">f</span><span class="str">"FAILED: {e}"</span>}
+
+<span class="com"># Run audits in parallel — 50 devices in the time of 1</span>
+<span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">10</span>) <span class="kw">as</span> pool:
+    results = <span class="fn">list</span>(pool.map(audit_device, DEVICES))
+
+<span class="com"># Write results to CSV for the team's review</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"network_audit.csv"</span>, <span class="str">"w"</span>, newline=<span class="str">""</span>) <span class="kw">as</span> f:
+    writer = csv.DictWriter(f, fieldnames=[<span class="str">"host"</span>, <span class="str">"status"</span>, <span class="str">"ntp_synced"</span>])
+    writer.writeheader()
+    writer.writerows(results)
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Safety Practices</div>
+      <div class="concept-title">Automating Without Causing an Outage</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — and an
+        automation script that "should be safe" can take down an entire
+        network in seconds. Build in these safeguards:<br><br>
+        &bull; <strong>Dry-run mode</strong> — print what the script
+          <em>would</em> do before letting it actually run.<br>
+        &bull; <strong>Backup before changing</strong> — always pull
+          <code>show running-config</code> and save it before pushing
+          new config.<br>
+        &bull; <strong>Change in small batches</strong> — 5 devices,
+          verify, then 50, not all 500 at once.<br>
+        &bull; <strong>Read-only first</strong> — run audits and reports
+          for weeks before attempting configuration changes.<br>
+        &bull; <strong>Out-of-band access</strong> — confirm you (or
+          someone) has console/serial access in case a script locks
+          everyone out over the network.<br><br>
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — when a script does cause an
+        outage, the saved "before" configs are what let you restore
+        service in minutes instead of hours.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BEGINNER38-SCRIPT v1 -->
+<!-- ── TOPIC: Web Scraping with Python ───────────────────────── -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <span class="topic-name">Web Scraping – Extracting Data from Websites with Python</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">What Web Scraping Is — and Isn't</div>
+      <div class="concept-desc">
+        <strong>Web scraping</strong> is writing code that downloads web
+        pages and extracts structured data from them — prices, articles,
+        contact info, statistics — instead of copying and pasting by hand.<br><br>
+        <strong>Before you scrape anything:</strong><br>
+        &bull; Check the site's <code>robots.txt</code>
+          (<code>example.com/robots.txt</code>) — it states which parts
+          the site owner permits automated tools to access.<br>
+        &bull; Read the Terms of Service — many sites explicitly prohibit
+          scraping; violating ToS can have legal consequences.<br>
+        &bull; Prefer an official API <span class="acro-exp">(Application Programming Interface)</span> if one exists — it's faster, more
+          stable, and explicitly sanctioned.<br><br>
+        <em>"Not my circus, not my monkey"</em> — scraping a site against
+        its wishes makes their problem (server load, legal risk) your
+        problem too. When in doubt, ask permission or use the API.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Static Pages</div>
+      <div class="concept-title">Scraping Static HTML <span class="acro-exp">(HyperText Markup Language)</span> with requests + BeautifulSoup</div>
+      <div class="concept-desc">
+        Most simple pages can be scraped with two libraries:
+        <code>requests</code> downloads the page; <code>BeautifulSoup</code>
+        parses the HTML into something you can search.
+      </div>
+      <div class="code-block">
+<span class="com"># pip install requests beautifulsoup4</span>
+<span class="kw">import</span> requests
+<span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
+<span class="kw">import</span> time
+
+HEADERS = {<span class="str">"User-Agent"</span>: <span class="str">"MyResearchBot/1.0 (contact: alice@example.com)"</span>}
+<span class="com"># Identify yourself! Anonymous scrapers get blocked faster, and</span>
+<span class="com"># a contact email lets site owners reach you instead of just banning you.</span>
+
+resp = requests.get(<span class="str">"https://example.com/articles"</span>, headers=HEADERS, timeout=<span class="num">10</span>)
+resp.raise_for_status()              <span class="com"># raises an exception on 4xx/5xx errors</span>
+
+soup = BeautifulSoup(resp.text, <span class="str">"html.parser"</span>)
+
+<span class="com"># Find elements by tag, class, or CSS selector</span>
+<span class="kw">for</span> article <span class="kw">in</span> soup.select(<span class="str">"article.post"</span>):
+    title = article.select_one(<span class="str">"h2.title"</span>)
+    link  = article.select_one(<span class="str">"a"</span>)
+    <span class="kw">if</span> title <span class="kw">and</span> link:
+        <span class="fn">print</span>(title.get_text(strip=<span class="kw">True</span>), <span class="str">"-&gt;"</span>, link[<span class="str">"href"</span>])
+
+    time.sleep(<span class="num">1</span>)   <span class="com"># BE POLITE — don't hammer their server</span>
+
+<span class="com"># Common selector patterns:</span>
+<span class="com"># soup.find("h1")                    -- first &lt;h1&gt; tag</span>
+<span class="com"># soup.find_all("a", class_="link")  -- all &lt;a class="link"&gt; tags</span>
+<span class="com"># soup.select("div#main &gt; p")        -- CSS selector syntax</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Dynamic Pages</div>
+      <div class="concept-title">Scraping JavaScript-Rendered Pages with Playwright</div>
+      <div class="concept-desc">
+        Many modern sites load content with JavaScript <em>after</em> the
+        initial page loads — <code>requests</code> only sees the empty
+        shell. <strong>Playwright</strong> drives a real browser, so it
+        sees the page exactly as a human would.
+      </div>
+      <div class="code-block">
+<span class="com"># pip install playwright &amp;&amp; playwright install chromium</span>
+<span class="kw">from</span> playwright.sync_api <span class="kw">import</span> sync_playwright
+
+<span class="kw">with</span> sync_playwright() <span class="kw">as</span> p:
+    browser = p.chromium.launch(headless=<span class="kw">True</span>)
+    page    = browser.new_page()
+    page.goto(<span class="str">"https://example.com/dashboard"</span>, wait_until=<span class="str">"networkidle"</span>)
+
+    <span class="com"># Wait for a specific element to appear (handles slow-loading content)</span>
+    page.wait_for_selector(<span class="str">".data-table"</span>, timeout=<span class="num">10000</span>)
+
+    <span class="com"># Extract text from rendered elements</span>
+    rows = page.query_selector_all(<span class="str">".data-table tr"</span>)
+    <span class="kw">for</span> row <span class="kw">in</span> rows:
+        cells = row.query_selector_all(<span class="str">"td"</span>)
+        <span class="fn">print</span>([c.inner_text() <span class="kw">for</span> c <span class="kw">in</span> cells])
+
+    <span class="com"># Take a screenshot for debugging — invaluable when scrapers break</span>
+    page.screenshot(path=<span class="str">"debug.png"</span>, full_page=<span class="kw">True</span>)
+
+    browser.close()
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Best Practices</div>
+      <div class="concept-title">Writing Scrapers That Don't Get You Banned</div>
+      <div class="concept-desc">
+        <em>"Assume" makes an ass out of you and me</em> — never assume
+        a scraper that worked yesterday will work today; sites change
+        their layout, add anti-bot measures, and update their ToS.<br><br>
+        &bull; <strong>Respect rate limits</strong> — add delays
+          (<code>time.sleep()</code>) between requests; consider the
+          <code>Crawl-delay</code> directive in robots.txt.<br>
+        &bull; <strong>Cache responses</strong> — don't re-download pages
+          you already have; save to disk during development.<br>
+        &bull; <strong>Handle failures gracefully</strong> — wrap requests
+          in try/except; sites go down, layouts change, connections drop.<br>
+        &bull; <strong>Use sessions for login-required sites</strong> —
+          <code>requests.Session()</code> persists cookies across requests.<br>
+        &bull; <strong>Monitor for layout changes</strong> — add assertions
+          that fail loudly ("expected 10 columns, found 3 — site layout
+          probably changed") rather than silently returning garbage data.<br><br>
+        <em>You can't make someone make the right choice, yet you can pick
+        up the pieces afterwards</em> — when a target site changes its
+        HTML and your scraper starts returning empty results, good
+        logging and alerting mean you find out in minutes, not when
+        someone notices the dashboard is empty three weeks later.
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- BEGINNER42-SCRIPT v1 -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <span class="topic-name">Working with APIs <span class="acro-exp">(Application Programming Interface)</span> and JSON <span class="acro-exp">(JavaScript Object Notation)</span> in Python</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">An API is a menu, not a kitchen</h4>
+      <p class="concept-desc">A REST <span class="acro-exp">(Representational State Transfer)</span> API is a defined set of URLs <span class="acro-exp">(Uniform Resource Locator)</span> a service exposes so other programs can ask it
+      questions or tell it to do things — without needing to know how it works internally. Think of it like a restaurant
+      menu: you don't need to understand the kitchen to order "the salmon" — you just need to know what's on the menu,
+      how to ask for it, and what to expect back. The API documentation <em>is</em> the menu.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">JSON: the common language APIs speak</h4>
+      <p class="concept-desc">JSON (JavaScript Object Notation) is a simple text format for structured data — it looks
+      almost exactly like a Python dictionary, which is exactly why Python handles it so naturally.</p>
+      <pre class="code-block">{
+  <span class="str">&quot;name&quot;</span>: <span class="str">&quot;web-prod-03&quot;</span>,
+  <span class="str">&quot;status&quot;</span>: <span class="str">&quot;healthy&quot;</span>,
+  <span class="str">&quot;cpu_percent&quot;</span>: 23.4,
+  <span class="str">&quot;tags&quot;</span>: [<span class="str">&quot;production&quot;</span>, <span class="str">&quot;web&quot;</span>, <span class="str">&quot;us-east&quot;</span>]
+}</pre>
+      <p class="concept-desc">Strings in quotes, numbers bare, lists in brackets, nested objects in braces — once you can
+      read this format fluently, you can read the response from almost any API on the internet.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Calling an API and working with the response</h4>
+      <pre class="code-block"><span class="com"># pip install requests</span>
+<span class="kw">import</span> requests
+
+<span class="com"># GET: ask for information (the most common request type)</span>
+response = requests.get(<span class="str">&quot;https://api.github.com/repos/python/cpython&quot;</span>)
+response.raise_for_status()  <span class="com"># crash loudly on 4xx/5xx instead of silently continuing</span>
+
+data = response.json()  <span class="com"># parses the JSON text into a Python dict automatically</span>
+<span class="fn">print</span>(<span class="str">f&quot;Stars: {data['stargazers_count']:,}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Open issues: {data['open_issues_count']}&quot;</span>)
+<span class="fn">print</span>(<span class="str">f&quot;Default branch: {data['default_branch']}&quot;</span>)
+
+<span class="com"># POST: send data to create or change something (needs authentication, usually)</span>
+headers = {<span class="str">&quot;Authorization&quot;</span>: <span class="str">f&quot;Bearer {api_token}&quot;</span>, <span class="str">&quot;Content-Type&quot;</span>: <span class="str">&quot;application/json&quot;</span>}
+payload = {<span class="str">&quot;title&quot;</span>: <span class="str">&quot;Disk usage above 90% on web-prod-03&quot;</span>, <span class="str">&quot;priority&quot;</span>: <span class="str">&quot;high&quot;</span>}
+response = requests.post(<span class="str">&quot;https://helpdesk.example.com/api/tickets&quot;</span>, json=payload, headers=headers)
+<span class="fn">print</span>(<span class="str">&quot;Created ticket:&quot;</span>, response.json()[<span class="str">&quot;id&quot;</span>])</pre>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Common pitfall</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — check before you index</h4>
+      <p class="concept-desc">The single most common API-scripting crash is <code>KeyError</code> — assuming a field
+      exists in the response when it doesn't (maybe that server has no tags, maybe the API changed). Defensive code
+      checks first:</p>
+      <pre class="code-block"><span class="com"># Fragile — explodes if 'tags' is missing from this particular response</span>
+<span class="fn">print</span>(data[<span class="str">&quot;tags&quot;</span>][0])
+
+<span class="com"># Defensive — .get() returns a default instead of raising</span>
+tags = data.get(<span class="str">&quot;tags&quot;</span>, [])
+<span class="kw">if</span> tags:
+    <span class="fn">print</span>(<span class="str">f&quot;First tag: {tags[0]}&quot;</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">&quot;No tags on this resource&quot;</span>)
+
+<span class="com"># Also always check the status code BEFORE trusting the body —
+# a 404 page might still return something that *looks* like JSON</span>
+<span class="kw">if</span> response.status_code == 200:
+    process(response.json())
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">f&quot;Request failed: {response.status_code} — {response.text[:200]}&quot;</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER44-SCRIPT v1 -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <span class="topic-name">Regular Expressions – A Survival Guide for IT Tasks</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Regex is "find by pattern" instead of "find by exact text"</h4>
+      <p class="concept-desc">A regular expression is a mini-language for describing patterns in text — instead of
+      searching for the literal string "192.168.1.1", you can search for "anything that looks like an IPv4 <span class="acro-exp">(Internet Protocol version 4)</span> address."
+      That shift — from matching exact text to matching <em>shapes</em> of text — is what makes regex so powerful for log
+      analysis, data validation, and bulk text processing. It has a reputation for looking like line noise, but a
+      relatively small set of building blocks covers the vast majority of real IT use cases.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Reference</span>
+      <h4 class="concept-title">The building blocks that cover 80% of cases</h4>
+      <table class="ai-table">
+        <tr><th>Pattern</th><th>Matches</th><th>Example</th></tr>
+        <tr><td><code>\d</code></td><td>Any single digit (0-9)</td><td><code>\d\d\d</code> matches "404", "500", "200"</td></tr>
+        <tr><td><code>\w</code></td><td>Any "word" character — letters, digits, underscore</td><td><code>\w+</code> matches "username_42"</td></tr>
+        <tr><td><code>\s</code></td><td>Any whitespace — space, tab, newline</td><td>Useful for splitting on flexible spacing in logs</td></tr>
+        <tr><td><code>+</code></td><td>"One or more" of the thing before it</td><td><code>\d+</code> matches "5", "404", "1000000"</td></tr>
+        <tr><td><code>*</code></td><td>"Zero or more" of the thing before it</td><td><code>colou*r</code> matches both "color" and "colour"</td></tr>
+        <tr><td><code>.</code></td><td>Any single character (use carefully — very broad!)</td><td><code>error.log</code> would also match "errorXlog"</td></tr>
+        <tr><td><code>()</code></td><td>A "capture group" — pulls out a specific piece of the match</td><td>Grabbing just the IP <span class="acro-exp">(Internet Protocol)</span> address out of a full log line</td></tr>
+        <tr><td><code>^</code> / <code>$</code></td><td>Start / end of the line</td><td><code>^ERROR</code> matches lines that *begin* with ERROR</td></tr>
+      </table>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">A real log-parsing example, built up piece by piece</h4>
+      <pre class="code-block"><span class="kw">import</span> re
+
+log_line = <span class="str">'2026-06-06 03:14:07 ERROR [auth-service] Failed login from 203.0.113.42 for user jdoe'</span>
+
+<span class="com"># Build the pattern in labeled pieces — far more readable than one giant blob</span>
+pattern = (
+    <span class="str">r&quot;(?P&lt;date&gt;\d{4}-\d{2}-\d{2}) &quot;</span>          <span class="com"># 2026-06-06</span>
+    <span class="str">r&quot;(?P&lt;time&gt;\d{2}:\d{2}:\d{2}) &quot;</span>          <span class="com"># 03:14:07</span>
+    <span class="str">r&quot;(?P&lt;level&gt;\w+) &quot;</span>                       <span class="com"># ERROR</span>
+    <span class="str">r&quot;\[(?P&lt;service&gt;[\w-]+)\] &quot;</span>            <span class="com"># [auth-service]</span>
+    <span class="str">r&quot;.*from (?P&lt;ip&gt;\d+\.\d+\.\d+\.\d+) &quot;</span>  <span class="com"># 203.0.113.42</span>
+    <span class="str">r&quot;for user (?P&lt;user&gt;\w+)&quot;</span>                <span class="com"># jdoe</span>
+)
+
+match = re.search(pattern, log_line)
+<span class="kw">if</span> match:
+    <span class="fn">print</span>(<span class="str">f&quot;{match['level']} from {match['ip']} targeting account '{match['user']}'&quot;</span>)
+    <span class="fn">print</span>(<span class="str">f&quot;Service: {match['service']}  at {match['date']} {match['time']}&quot;</span>)
+<span class="com"># Output:
+# ERROR from 203.0.113.42 targeting account 'jdoe'
+# Service: auth-service  at 2026-06-06 03:14:07</span></pre>
+      <p class="concept-desc">Named groups (<code>(?P&lt;name&gt;...)</code>) are the difference between a regex you can
+      read again in six months and one you'll have to rebuild from scratch. They turn "what does group 4 mean again?"
+      into "oh, that's obviously the IP address."</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — test against real, messy data</h4>
+      <p class="concept-desc">A pattern that works perfectly on the three sample lines you wrote it against can fall apart
+      the moment it meets real-world data — an extra space, a different timestamp format, a username with a hyphen you
+      didn't anticipate. Before trusting a regex in a script that runs unattended, run it against a large, genuinely messy
+      sample of real data and actually look at what it *fails* to match — that's usually far more informative than looking
+      at what it successfully matches.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BEGINNER46-SCRIPT v1 -->
+<div class="topic" data-reviewed="2026-07">
+  <div class="topic-header">
+    <span class="topic-badge">Beginner</span>
+    <span class="topic-name">Scheduling Scripts the Right Way – Cron, Timers, and Idempotency</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Automation that runs on its own schedule — and why that's harder than it sounds</h4>
+      <p class="concept-desc">Plenty of useful scripts are designed to run on a schedule rather than on demand — nightly
+      backups, hourly report generation, weekly cleanup jobs. Getting a script to "just run at 2 AM" is the easy part.
+      The harder, more important part is making sure that when something goes wrong — the script crashes halfway, runs
+      twice by accident, or runs while a previous run is still going — the result is "annoying log entry" rather than
+      "corrupted data" or "duplicate emails sent to every customer."</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">The classic: cron syntax, decoded</h4>
+      <pre class="code-block"><span class="com"># Cron's five fields, in order:
+#   minute  hour  day-of-month  month  day-of-week</span>
+
+<span class="com"># Run every day at 2:30 AM</span>
+30 2 * * *  /opt/scripts/nightly_backup.sh
+
+<span class="com"># Run every 15 minutes</span>
+*/15 * * * *  /opt/scripts/check_health.sh
+
+<span class="com"># Run at 9 AM, Monday through Friday only</span>
+0 9 * * 1-5  /opt/scripts/send_daily_digest.sh
+
+<span class="com"># Run on the 1st of every month at midnight</span>
+0 0 1 * *   /opt/scripts/monthly_report.sh
+
+<span class="com"># View your current scheduled jobs</span>
+crontab -l
+
+<span class="com"># Edit them (opens your default editor)</span>
+crontab -e</pre>
+      <p class="concept-desc">Many modern Linux systems also offer <span class="kw">systemd timers</span> as an
+      alternative — they integrate with <code>journalctl</code> for logging, can express dependencies on other services,
+      and handle "what if the system was off when this should have run?" more gracefully. Cron remains common and
+      perfectly fine for simple jobs; timers shine once your scheduling needs get more sophisticated.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Concept</span>
+      <h4 class="concept-title">Idempotency: the property that turns "uh oh" into "no big deal"</h4>
+      <p class="concept-desc">A script is <em>idempotent</em> if running it multiple times produces the same end result as
+      running it once. This single property is what determines whether "the job accidentally ran twice" is a non-event
+      or an incident.</p>
+      <pre class="code-block"><span class="com"># NOT idempotent — running this twice creates two records,
+# sends two emails, charges a customer twice...</span>
+<span class="kw">def</span> <span class="fn">process_daily_signups</span>():
+    new_users = get_signups_since_last_run()
+    <span class="kw">for</span> user <span class="kw">in</span> new_users:
+        send_welcome_email(user)
+        create_billing_record(user)
+
+<span class="com"># IDEMPOTENT — checks what's already been done before doing it again</span>
+<span class="kw">def</span> <span class="fn">process_daily_signups</span>():
+    new_users = get_signups_since_last_run()
+    <span class="kw">for</span> user <span class="kw">in</span> new_users:
+        <span class="kw">if</span> <span class="kw">not</span> already_sent_welcome_email(user):
+            send_welcome_email(user)
+            mark_welcome_email_sent(user)
+        <span class="kw">if</span> <span class="kw">not</span> has_billing_record(user):
+            create_billing_record(user)</pre>
+      <p class="concept-desc">Notice the pattern: instead of just "do the thing," idempotent code asks "has this already
+      been done?" first. That one habit — checking before acting, every time — is what separates scheduled automation
+      you can trust from scheduled automation that occasionally needs a 3 AM apology email to customers.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-label">Mindset</span>
+      <h4 class="concept-title">Assume makes an ass out of you and me — assume it WILL run twice someday</h4>
+      <p class="concept-desc">"It only runs once a day, what are the odds it overlaps with itself?" is exactly the kind of
+      assumption that holds up fine for months — until a slow database connection causes one run to take 25 hours, and
+      suddenly two copies are running at once, both modifying the same data. Writing scheduled scripts as though they
+      <em>will</em> eventually run concurrently or get interrupted mid-task — using locks, idempotency checks, and
+      transactional updates — costs a little extra effort upfront and saves an enormous amount of cleanup later.</p>
+    </div>
+  </div>
+</div>

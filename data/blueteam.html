@@ -952,7 +952,7 @@ index=auth <span class="str">"Failed password"</span>
                 </div>
                 <div class="dw">
                   <div class="concept-desc">
-                    <strong class="c-red">OPSEC caution:</strong> uploading a sample to a public
+                    <strong class="c-red">OPSEC <span class="acro-exp">(Operational Security)</span> caution:</strong> uploading a sample to a public
                     sandbox makes it (and any secrets in it) <em>public</em> — attackers monitor VT
                     for their own samples. For sensitive incidents, use a private/on-prem sandbox
                     (Cuckoo, CAPE) instead of a public service.
@@ -1152,7 +1152,7 @@ oscap xccdf eval \
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Tool</th><th>Role</th></tr>
-                    <tr><td>WSUS <span class="acro-exp">(Windows Server Update Services)</span> / SCCM <span class="acro-exp">(System Center Configuration Manager)</span> / Intune</td><td>Windows patch orchestration &amp; compliance</td></tr>
+                    <tr><td>WSUS <span class="acro-exp">(Windows Server Update Services)</span> / MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> / Intune</td><td>Windows patch orchestration &amp; compliance</td></tr>
                     <tr><td>Ansible / Salt</td><td>Cross-platform patching &amp; config enforcement (ties to F4)</td></tr>
                     <tr><td>unattended-upgrades / dnf-automatic</td><td>OS-native auto-patching for Linux</td></tr>
                   </table>
@@ -1310,3 +1310,1132 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
           </div>
 
 <!-- /domain-body blueteam -->
+
+<!-- ── TOPIC: WHAT DETECTION ENGINEERING IS ──────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏗️</span>
+    <span class="topic-name">What Detection Engineering Is — And Why It Split Off From SOC <span class="acro-exp">(Security Operations Center)</span> Analysis</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Software Discipline That Happens to Produce Detections</div>
+      <div class="concept-desc">
+        For years, writing rules was something analysts did between alerts, and the results looked
+        like it: logic nobody else could read, no tests, no version history, and no way to tell
+        whether a rule had ever fired on the thing it was written for. Detection engineering is the
+        response — treating detections as a product with requirements, review, tests, deployment and
+        a retirement plan. The split happened because the two jobs have different clocks. Analysis is
+        interrupt-driven and measured in minutes; engineering is planned and measured in releases,
+        and neither survives being done in the other's rhythm.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>SOC analysis</th><th>Detection engineering</th></tr></thead>
+          <tbody>
+            <tr><td>Unit of work</td><td>An alert</td><td>A detection</td></tr>
+            <tr><td>Clock</td><td>Interrupt-driven, minutes</td><td>Planned, a release cycle</td></tr>
+            <tr><td>Succeeds when</td><td>The incident is resolved correctly</td><td>The rule fires on the technique and rarely otherwise</td></tr>
+            <tr><td>Feedback</td><td>The next shift</td><td>Metrics over weeks, and purple-team results</td></tr>
+            <tr><td>Fails as</td><td>A missed incident</td><td>A rule everyone learned to ignore</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Failure Mode It Exists to Prevent</div>
+      <div class="concept-desc">
+        An unengineered rule set decays in a specific, recognisable way, and every stage of the decay
+        looks locally reasonable. Recognising the pattern is most of the argument for the discipline.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stage</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td>1. A rule is written after an incident</td><td>Specific to that incident, no requirement written down</td></tr>
+            <tr><td>2. It is noisy</td><td>Analysts add exclusions, one hostname at a time</td></tr>
+            <tr><td>3. The exclusions accumulate</td><td>Nobody remembers which were temporary</td></tr>
+            <tr><td>4. A log source changes</td><td>The rule silently stops matching anything at all</td></tr>
+            <tr><td>5. It is never removed</td><td>Because nobody can prove it is not the only thing catching something</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Stage 4 is the dangerous one, because a rule that fires on nothing looks identical to a
+          rule protecting a quiet environment. Everything in this track exists to make that
+          distinguishable.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: THE DETECTION LIFECYCLE ────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔄</span>
+    <span class="topic-name">The Detection Lifecycle — Idea to Retirement, and the Gates Between</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">Seven Stages, Each With an Exit Condition</div>
+      <div class="concept-desc">
+        The value of naming the stages is not process for its own sake — it is that each one has a
+        condition for leaving it, so "is this rule ready?" stops being a matter of taste.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>#</th><th>Stage</th><th>Leaves when</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Idea</td><td>A threat, an incident or an intel report names a behaviour worth catching</td></tr>
+            <tr><td>2</td><td>Requirement</td><td>The behaviour, the log source and the expected response are written down</td></tr>
+            <tr><td>3</td><td>Logic</td><td>A query exists that matches the behaviour in your data</td></tr>
+            <tr><td>4</td><td>Test</td><td>It fires on a synthetic or emulated instance, and not on a week of normal traffic</td></tr>
+            <tr><td>5</td><td>Deploy</td><td>Merged, versioned, and shipped with a responder runbook</td></tr>
+            <tr><td>6</td><td>Tune</td><td>Precision is acceptable, and every exclusion has a reason recorded</td></tr>
+            <tr><td>7</td><td>Retire</td><td>The behaviour is impossible, better covered, or the rule is measurably useless</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Two Stages Almost Everyone Skips</div>
+      <div class="concept-desc">
+        Stage 2 and stage 7. Skipping the requirement means nobody can later say what the rule was
+        supposed to catch, so it can never be judged — only defended. Skipping retirement means the
+        rule set only ever grows, and the ratio of signal to noise falls with every addition. A
+        detection programme that has never deleted a rule is not careful; it is unmaintained.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Which stage was skipped</th></tr></thead>
+          <tbody>
+            <tr><td>"What is this alert telling me to do?"</td><td>2 — no requirement, so no response was ever defined</td></tr>
+            <tr><td>"It has always been noisy, we just close them"</td><td>6 — tuning never had a target to hit</td></tr>
+            <tr><td>"Nobody knows if it still works"</td><td>4 — it was never tested, so there is nothing to re-run</td></tr>
+            <tr><td>"We have 900 rules and 40 fire"</td><td>7 — nothing has ever been retired</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DETECTION REQUIREMENTS ─────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📝</span>
+    <span class="topic-name">Detection Requirements — Writing One Before Writing the Rule</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Seven Fields, and the Rule Is Half Written</div>
+      <div class="concept-desc">
+        A detection requirement is short — a paragraph and a table, not a document. Its purpose is to
+        force the questions that are expensive to answer after the logic exists, particularly the
+        third and the sixth.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Field</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td>Behaviour</td><td>What is the adversary doing, in plain language?</td></tr>
+            <tr><td>Technique</td><td>Which ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> technique, and which procedure of it?</td></tr>
+            <tr><td>Data source</td><td>Which log, from which sensor, with which fields — and do we have it?</td></tr>
+            <tr><td>Logic sketch</td><td>Roughly what the query asserts</td></tr>
+            <tr><td>Known benign</td><td>What legitimately looks like this here?</td></tr>
+            <tr><td>Response</td><td>What should the analyst <em>do</em> when it fires?</td></tr>
+            <tr><td>Validation</td><td>How will we make it fire on purpose?</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          If the "known benign" field is empty, the requirement is not finished — it means nobody has
+          looked at what normal traffic does, and the tuning phase will discover it in production
+          instead.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Response Field Is the One That Prevents Waste</div>
+      <div class="concept-desc">
+        Ask what the analyst should do, and a surprising number of proposed detections have no
+        answer. "Investigate" is not an answer; it is the absence of one. A detection whose only
+        possible response is "look at it and decide it was probably fine" is producing work rather
+        than security, and the honest options are to enrich it until a decision is possible, raise
+        its threshold until it is rare enough to justify the look, or not build it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>If the response is…</th><th>Then</th></tr></thead>
+          <tbody>
+            <tr><td>A concrete containment action</td><td>Build it; consider automating the action</td></tr>
+            <tr><td>A specific triage question with a data answer</td><td>Build it, and enrich the alert with that data</td></tr>
+            <tr><td>"Investigate"</td><td>Not a requirement yet — go back and finish it</td></tr>
+            <tr><td>"Add it to a dashboard"</td><td>It is a hunting input, not a detection</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is a legitimate outcome, not a rejection: some signals belong in the workflow
+          described by <span class="xref">Threat Hunting — Assume Breach, Go Looking</span> rather
+          than in an alert queue.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LOG SOURCE INVENTORY & TELEMETRY GAPS ──────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📚</span>
+    <span class="topic-name">Log Source Inventory &amp; Telemetry Gaps — Proving a Rule Can Fire at All</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Coverage Claims Are Claims About Data, Not About Rules</div>
+      <div class="concept-desc">
+        A rule can only detect what the telemetry records. This sounds obvious and is routinely
+        violated: coverage maps are drawn from the rule set, so a technique shows as covered because
+        a rule exists, regardless of whether the log source that rule reads is deployed on the
+        machines where the technique would occur. The gap is invisible in every dashboard and
+        obvious in every incident.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Inventory column</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td>Source</td><td>What produces it — the sensor, not the vendor</td></tr>
+            <tr><td>Estate coverage</td><td>Which fraction of hosts actually send it</td></tr>
+            <tr><td>Fidelity</td><td>Full events, sampled, or summarised — the difference decides what is detectable</td></tr>
+            <tr><td>Latency</td><td>Seconds or hours; some detections are pointless at hours</td></tr>
+            <tr><td>Retention</td><td>How far back an investigation can reach</td></tr>
+            <tr><td>Fields present</td><td>The specific fields rules depend on, which vendors quietly change</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Prove the Gap, Don't Assert It</div>
+      <div class="concept-desc">
+        The convincing form of a telemetry gap is not "we think we lack process creation on servers".
+        It is a query showing how many distinct hosts reported that event class in the last seven
+        days, held against the asset inventory count. That is a number a budget conversation can
+        proceed from, and it is the same query that catches silent collection failures later.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Check</th><th>Reveals</th></tr></thead>
+          <tbody>
+            <tr><td>Distinct reporting hosts per source, per day</td><td>Estate coverage, and the day it dropped</td></tr>
+            <tr><td>Event volume per host, per source</td><td>Agents that are running but configured to send nothing useful</td></tr>
+            <tr><td>Field presence rate on key fields</td><td>A schema change that emptied a field the rules read</td></tr>
+            <tr><td>Newest event age per source</td><td>A pipeline that stopped an hour ago and told nobody</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Run these as scheduled detections in their own right. A collection outage is a security
+          incident with no alert of its own unless you write one; on Windows estates,
+          <span class="xref">Sysmon — The Windows Telemetry Powerhouse</span> is usually the source
+          most worth monitoring this way, because its config is edited far more often than agents
+          are reinstalled.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: NORMALISATION SCHEMAS ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧬</span>
+    <span class="topic-name">Normalisation Schemas — OCSF, ECS <span class="acro-exp">(Elastic Container Service)</span> &amp; ASIM, and Why the Schema Decides the Query</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Every Rule Is Written Against a Field Name, Not Against an Event</div>
+      <div class="concept-desc">
+        A detection does not match "a process started". It matches a specific field holding a
+        specific value in a specific schema. Change the schema and the rule is worthless even though
+        the underlying behaviour is unchanged. That is why normalisation is a detection-engineering
+        concern rather than a data-plumbing one: the schema you normalise to is the vocabulary every
+        rule you ever write will be phrased in, and changing it later means rewriting all of them.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Schema</th><th>Comes from</th><th>Shape</th></tr></thead>
+          <tbody>
+            <tr><td>OCSF</td><td>A vendor-neutral consortium effort</td><td>Event classes with typed attributes; aims to be the interchange format</td></tr>
+            <tr><td>ECS</td><td>The Elastic ecosystem</td><td>Flat dotted field names; widely adopted beyond Elastic itself</td></tr>
+            <tr><td>ASIM</td><td>Microsoft Sentinel</td><td>Normalising parsers over native tables, queried as functions</td></tr>
+            <tr><td>"Whatever the vendor sent"</td><td>Nobody</td><td>The default, and the reason rule portability is usually zero</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Normalise at Ingest, or Query Through a Parser?</div>
+      <div class="concept-desc">
+        Two strategies, and the choice is a real trade rather than a best practice. Normalising at
+        ingest is faster to query and destroys anything the schema has no room for; parsing at query
+        time keeps the raw event and pays for the translation on every search.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Normalise at ingest</th><th>Parse at query time</th></tr></thead>
+          <tbody>
+            <tr><td>Query speed</td><td>Fast — the work is already done</td><td>Slower, sometimes much</td></tr>
+            <tr><td>Raw fidelity</td><td>Lost unless you keep a copy</td><td>Preserved</td></tr>
+            <tr><td>Schema change</td><td>Reindex or accept a split history</td><td>Edit the parser, and history follows</td></tr>
+            <tr><td>Failure mode</td><td>A field silently dropped at ingest, discovered months later</td><td>A parser that stops matching after a vendor update</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Whichever you pick, keep the raw event somewhere for a defined window. Every schema is a
+          judgement about what matters, and incidents are precisely the times that judgement turns
+          out to have been wrong.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Writing Portable Logic Anyway</div>
+      <div class="concept-desc">
+        Full portability is a marketing claim, but a large fraction of it is reachable with
+        discipline, and it is what makes a platform migration survivable.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Buys</th></tr></thead>
+          <tbody>
+            <tr><td>Express the rule in Sigma, generate the backend query</td><td>One source of truth, several deployments</td></tr>
+            <tr><td>Keep field mappings in one place, not in each rule</td><td>A schema change is one edit</td></tr>
+            <tr><td>Avoid backend-specific functions in the core logic</td><td>The clever regex is where portability dies</td></tr>
+            <tr><td>Test the generated query, not just the source</td><td>Generation is a translation, and translations have bugs</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The format itself and its backends are covered by
+          <span class="xref">Sigma — Write Detections Once, Run Anywhere</span>; this card is about
+          the decision that has to be made before Sigma can help you.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DETECTION-AS-CODE ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧾</span>
+    <span class="topic-name">Detection-as-Code — Git, Review, CI &amp; Versioned Rules</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Console Is Not a Source of Truth</div>
+      <div class="concept-desc">
+        Rules edited directly in a SIEM <span class="acro-exp">(Security Information and Event Management)</span> console have no history, no review, no tests and no way to
+        recreate the environment after a mistake. Detection-as-code moves the definitions into a
+        repository and makes the console a deployment target. The benefits are the ones any team
+        gets from version control, and one that is specific to security: when a rule stops firing,
+        <code>git log</code> answers "what changed and who changed it" in seconds, which is otherwise
+        an unanswerable question.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Capability</th><th>Console-only</th><th>In a repository</th></tr></thead>
+          <tbody>
+            <tr><td>Who changed this, and why</td><td>An audit log entry, if you are lucky</td><td>A commit with a message and a reviewer</td></tr>
+            <tr><td>Roll back a bad rule</td><td>Rewrite it from memory</td><td>Revert</td></tr>
+            <tr><td>Review before production</td><td>Convention, at best</td><td>A pull request that cannot be skipped</td></tr>
+            <tr><td>Rebuild after a platform loss</td><td>Weeks</td><td>Redeploy from the repository</td></tr>
+            <tr><td>Test before deploy</td><td>Not possible</td><td>CI runs the rule's tests</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">What Lives in the Repository</div>
+      <div class="concept-desc">
+        The rule alone is not enough. A detection is a small bundle, and keeping the parts together
+        is what stops the runbook from rotting away from the logic it documents.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Artifact</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>The rule</td><td>The logic, in Sigma or the platform's language</td></tr>
+            <tr><td>The requirement</td><td>Why it exists, and what response it expects</td></tr>
+            <tr><td>Test cases</td><td>Events that must match, and events that must not</td></tr>
+            <tr><td>Tuning exclusions</td><td>With a reason and a date on every one</td></tr>
+            <tr><td>The responder runbook</td><td>Shipped with the rule, versioned with it</td></tr>
+            <tr><td>Metadata</td><td>ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> mapping, severity, owner, log sources depended on</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Flow</div>
+      <div class="concept-title">A Pipeline That Is Worth Having</div>
+      <div class="concept-desc">
+        Start smaller than the diagram in the vendor talk. Lint and schema validation on every push
+        catches most of what review would catch, costs an afternoon to build, and stops the two most
+        common production breakages: a syntactically invalid rule, and one referencing a field that
+        does not exist.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stage</th><th>Catches</th></tr></thead>
+          <tbody>
+            <tr><td>Lint &amp; schema validation</td><td>Malformed rules, missing metadata, unknown fields</td></tr>
+            <tr><td>Unit tests against sample events</td><td>Logic that does not match what it claims to</td></tr>
+            <tr><td>Peer review</td><td>Rules that are technically correct and operationally useless</td></tr>
+            <tr><td>Deploy to a staging tenant or a dry-run mode</td><td>Volume surprises, before analysts see them</td></tr>
+            <tr><td>Promote to production</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TESTING A DETECTION ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧪</span>
+    <span class="topic-name">Testing a Detection — Synthetic Events, Emulation &amp; Regression</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Three Tests, Answering Three Different Doubts</div>
+      <div class="concept-desc">
+        "Does this rule work" is three questions, and passing one of them says nothing about the
+        others. A rule can match a hand-crafted event perfectly and never fire on the real technique;
+        it can fire on the real technique and also on a backup job every night.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Test</th><th>Question</th><th>Method</th></tr></thead>
+          <tbody>
+            <tr><td>Unit</td><td>Does the logic match what I think it matches?</td><td>Sample events checked into the repository, matched offline</td></tr>
+            <tr><td>Emulation</td><td>Does it fire on the real technique in our estate?</td><td>Run the procedure on a test host and watch for the alert</td></tr>
+            <tr><td>Noise</td><td>Does it fire on anything else?</td><td>Run the logic across a week of historical data before deploying</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The noise test is the cheapest of the three and the one most often skipped — the data is
+          already there, and running the query over last week answers the tuning question before a
+          single analyst is interrupted.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Regression — The Rule That Silently Stopped Working</div>
+      <div class="concept-desc">
+        This is the failure this whole discipline is built around. An agent upgrade renames a field,
+        a Sysmon config is trimmed for volume, a log pipeline drops an event class — and every rule
+        depending on it goes quiet. Nothing alerts, because the absence of alerts is what success
+        looks like. The only defence is to make firing an expectation that can fail.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Guard</th><th>How it works</th></tr></thead>
+          <tbody>
+            <tr><td>Scheduled emulation</td><td>Run a benign procedure on a canary host on a schedule; alert if the detection does <em>not</em> fire</td></tr>
+            <tr><td>Field-presence monitors</td><td>Alert when a field the rules depend on drops below its normal fill rate</td></tr>
+            <tr><td>Volume anomaly on the source</td><td>Alert on a log source whose volume falls off a cliff</td></tr>
+            <tr><td>Last-fired tracking</td><td>Review rules that have not fired in 90 days — some are fine, some are broken</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The tooling for the first row already exists in
+          <span class="xref">Adversary Emulation — Atomic Red Team &amp; Caldera</span>; what turns
+          it from an exercise into a regression test is running it on a schedule and alerting on
+          silence rather than on success.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MEASURING DETECTION QUALITY ────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📐</span>
+    <span class="topic-name">Measuring Detection Quality — Precision, Recall &amp; the Alert-to-Incident Ratio</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Two Numbers, and Why You Cannot Have Both</div>
+      <div class="concept-desc">
+        Precision is the share of alerts that were real. Recall is the share of real events that
+        alerted. Every threshold, every exclusion and every broadened condition trades one against
+        the other, and pretending otherwise is how rule sets end up simultaneously noisy and blind.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Metric</th><th>Formula</th><th>Falls when</th></tr></thead>
+          <tbody>
+            <tr><td>Precision</td><td>true positives ÷ all alerts</td><td>The rule is broad, or the environment is noisier than assumed</td></tr>
+            <tr><td>Recall</td><td>true positives ÷ all real occurrences</td><td>The rule is narrow, or the telemetry is missing</td></tr>
+            <tr><td>Alert-to-incident ratio</td><td>alerts ÷ incidents declared</td><td>A practical stand-in for precision when ground truth is unknown</td></tr>
+            <tr><td>Time-to-detect</td><td>occurrence → alert</td><td>Batch pipelines and hourly schedules quietly dominate this</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Recall is the hard one, because it needs a denominator nobody has: the real occurrences you
+          did not see. Purple-team exercises exist largely to create that denominator artificially —
+          a known number of executed techniques, and a count of how many alerted.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Metrics That Look Useful and Are Not</div>
+      <div class="concept-desc">
+        Detection programmes are frequently reported with numbers that go up when things get worse.
+        Each of these appears on real dashboards, and each rewards the wrong behaviour.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Metric</th><th>What it actually rewards</th></tr></thead>
+          <tbody>
+            <tr><td>Number of rules deployed</td><td>Writing rules, not writing good ones or deleting bad ones</td></tr>
+            <tr><td>Alerts triaged per analyst</td><td>Noise, and burning out the people absorbing it</td></tr>
+            <tr><td>ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> techniques "covered"</td><td>Claiming coverage a rule cannot deliver without the telemetry</td></tr>
+            <tr><td>Mean time to close an alert</td><td>Closing quickly, which is not the same as investigating</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          A defensible dashboard is small: precision per rule, the alert-to-incident ratio, the count
+          of rules that have not fired in 90 days, and the share of the estate reporting each log
+          source. Four numbers, each of which gets worse when the programme gets worse.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: ATT&CK COVERAGE MAPPING ────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗺️</span>
+    <span class="topic-name">ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> Coverage Mapping — Honest Heat Maps and the Lie of "100% Coverage"</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Green Square Means "A Rule Exists", Not "We Would Catch It"</div>
+      <div class="concept-desc">
+        Coverage maps are built by counting rules against techniques, which makes them a map of the
+        rule set rather than of the defence. Four things break the equivalence, and all four are
+        invisible on the heat map: the log source may not be deployed where the technique would
+        occur, the rule may match one procedure out of a dozen, it may be tuned to near-silence, or
+        it may have stopped firing months ago. Green is a claim about inventory; the interesting
+        question is about capability.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The map says</th><th>Reality can be</th></tr></thead>
+          <tbody>
+            <tr><td>Technique covered</td><td>Covered on 40% of the estate, where the agent is deployed</td></tr>
+            <tr><td>Technique covered</td><td>One procedure of many; the common variant walks past</td></tr>
+            <tr><td>Technique covered</td><td>Covered, but tuned down to nothing after a noisy month</td></tr>
+            <tr><td>Technique covered</td><td>Was covered, until a field rename in March</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Colouring the Map With Something Defensible</div>
+      <div class="concept-desc">
+        The repair is to stop colouring by rule existence and start colouring by evidence. Each level
+        below costs more to establish than the one before it, and each is honest about a different
+        thing — publishing which level a square is at is more useful than any single colour.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Level</th><th>Evidence required</th></tr></thead>
+          <tbody>
+            <tr><td>0 — none</td><td>No rule, or no telemetry to write one against</td></tr>
+            <tr><td>1 — rule exists</td><td>A deployed detection claiming the technique</td></tr>
+            <tr><td>2 — telemetry confirmed</td><td>The log source is present on the assets that matter, and measured</td></tr>
+            <tr><td>3 — validated</td><td>An emulated procedure fired the rule, on a dated test</td></tr>
+            <tr><td>4 — validated recently, several procedures</td><td>The same, re-run on a schedule, across variants</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Most mature programmes sit at level 3 for a modest number of techniques and level 0 or 1
+          everywhere else, and that is a far more useful picture than a uniformly green map. The
+          Navigator layers themselves are covered by
+          <span class="xref">MITRE ATT&amp;CK &amp; Navigator — Coverage-Driven Detection</span>;
+          the argument here is about what the colours are allowed to mean.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Coverage Is Not the Goal Anyway</div>
+      <div class="concept-desc">
+        Chasing breadth across the whole matrix spreads effort evenly over techniques that are not
+        evenly likely or evenly damaging. A threat-informed programme covers the techniques its
+        actual adversaries use, deeply, and accepts gaps elsewhere on purpose — a documented,
+        deliberate gap is a defensible position in a way that a thin green wash is not.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DETECTION BACKLOG & RETIREMENT ─────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗃️</span>
+    <span class="topic-name">The Detection Backlog &amp; Retiring a Rule Without Losing Why It Existed</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Threat Model In, Rules Out</div>
+      <div class="concept-desc">
+        Without a queue, detections get written in response to whatever happened most recently — the
+        last incident, the last vendor briefing, the last thing a manager read. That produces deep
+        coverage of the past and none of the likely. A backlog is the mechanism for spending
+        engineering time on the highest-value gap instead of the most recent noise.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Input</th><th>Contributes</th></tr></thead>
+          <tbody>
+            <tr><td>Threat intel on actors targeting your sector</td><td>Techniques worth prioritising</td></tr>
+            <tr><td>Incidents and near-misses</td><td>Proven gaps, with evidence attached</td></tr>
+            <tr><td>Purple-team results</td><td>Measured misses, the highest-quality input there is</td></tr>
+            <tr><td>Crown-jewel analysis</td><td>Where a detection is worth the most</td></tr>
+            <tr><td>New telemetry becoming available</td><td>Detections that were previously impossible</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Score each item on likelihood, impact, and whether the telemetry exists. The third column
+          is the one that reorders the list: a high-value detection you cannot currently write is a
+          logging project, not a detection task, and it should be routed as one.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Retirement — Deleting a Rule Is a Feature</div>
+      <div class="concept-desc">
+        Nobody wants to be the person who deleted the rule that would have caught it, so nothing is
+        ever deleted, and the rule set silently degrades into a haystack. The fix is to make
+        retirement a normal, recorded decision with criteria agreed in advance — and to note that
+        deletion in a version-controlled repository is reversible, which removes most of the fear.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Retire when</th><th>Caveat</th></tr></thead>
+          <tbody>
+            <tr><td>The behaviour is now impossible in this estate</td><td>Verify — "we removed that" is often aspirational</td></tr>
+            <tr><td>A better rule covers it</td><td>Confirm the replacement actually fires, first</td></tr>
+            <tr><td>Precision is unfixably low</td><td>Try converting it to a hunting query rather than deleting outright</td></tr>
+            <tr><td>It has not fired in a year</td><td>Only after ruling out regression — silence has two causes</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Record the retirement with its reason and the date in the repository. The next person to
+          propose that detection will find the note, which is the difference between an institution
+          that learns and one that rediscovers.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DOCUMENTATION FOR RESPONDERS ───────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📗</span>
+    <span class="topic-name">Documentation for Responders — The Runbook That Ships With the Rule</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Alert Is a Message to a Tired Person at 3am</div>
+      <div class="concept-desc">
+        The engineer writing a detection holds a great deal of context: why this pattern matters,
+        what benign thing looks similar, what to check first. None of that reaches the analyst unless
+        it is written down, and the analyst meeting the alert may be new, tired, and looking at it
+        for the first time at the worst hour. A detection without a runbook is not finished; it has
+        been handed over without the half that makes it usable.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Section</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td>What fired, in one sentence</td><td>What does this rule believe just happened?</td></tr>
+            <tr><td>Why it matters</td><td>What is the adversary achieving if this is real?</td></tr>
+            <tr><td>Known benign causes</td><td>What legitimately does this here, and how do I tell?</td></tr>
+            <tr><td>Triage steps</td><td>The first three things to check, in order, with the queries</td></tr>
+            <tr><td>Escalate when</td><td>The specific condition — not "if it looks bad"</td></tr>
+            <tr><td>Containment options</td><td>What can be done immediately, and who may authorise it</td></tr>
+            <tr><td>False-positive feedback</td><td>Where to report noise so the rule improves</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Keeping It Alive</div>
+      <div class="concept-desc">
+        Runbooks rot faster than rules, because a rule that breaks eventually gets noticed and a
+        stale runbook just quietly misleads. Three habits keep them honest, and the first one does
+        most of the work.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Habit</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Store it beside the rule, in the same commit</td><td>Changing logic without touching the runbook becomes visible in review</td></tr>
+            <tr><td>Link it from the alert itself</td><td>Nobody searches a wiki at 3am</td></tr>
+            <tr><td>Let responders edit it</td><td>The people meeting the alert know what was missing</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The general craft of writing procedures people follow under pressure is in
+          <span class="xref">Writing Runbooks That People Actually Follow</span> in the Operations
+          domain; what is specific here is that the runbook is an artifact of the detection, versioned
+          with it, and not a separate document that drifts.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LOG VOLUME & COST ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💰</span>
+    <span class="topic-name">Log Volume &amp; Cost — The Detections a Budget Quietly Kills</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Ingest Pricing Is a Detection Policy Nobody Voted For</div>
+      <div class="concept-desc">
+        When a SIEM <span class="acro-exp">(Security Information and Event Management)</span> is priced by volume, every decision to drop a log source is a decision to make a
+        class of detection impossible — and those decisions are usually made by whoever was asked to
+        reduce spend, without a detection engineer in the room. The result is a coverage map with
+        holes whose cause is a finance conversation from eighteen months ago that nobody recorded.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Reduction</th><th>Detection cost</th></tr></thead>
+          <tbody>
+            <tr><td>Drop verbose process-creation logging</td><td>Most endpoint behavioural detection goes with it</td></tr>
+            <tr><td>Sample network flow data</td><td>Rare-event detection stops working; volume detection survives</td></tr>
+            <tr><td>Shorten hot retention</td><td>Slow-burn intrusions become undetectable in hindsight</td></tr>
+            <tr><td>Filter "noisy" event IDs</td><td>Often the exact IDs the rules depend on — check first</td></tr>
+            <tr><td>Drop cloud audit logs</td><td>Identity-based attacks lose their only evidence trail</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Reducing Volume Without Trading Away Detection</div>
+      <div class="concept-desc">
+        The choice is not "keep everything" versus "drop things". Most estates have a great deal of
+        genuinely low-value volume, and separating it from the load-bearing telemetry is an
+        engineering task with a real answer.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Lever</th><th>Keeps detection intact because</th></tr></thead>
+          <tbody>
+            <tr><td>Filter at the agent, not the SIEM</td><td>You pay for what you keep, and the decision is explicit and reviewable</td></tr>
+            <tr><td>Tiered storage — hot for rules, cold for investigation</td><td>Detections run on recent data; investigations tolerate slow queries</td></tr>
+            <tr><td>Summarise the highest-volume, lowest-signal sources</td><td>Aggregates still support threshold detections</td></tr>
+            <tr><td>Route to a cheap lake, search on demand</td><td>Retention for investigations survives the ingest budget</td></tr>
+            <tr><td>Publish the detection cost of each proposed cut</td><td>Turns a spend decision into a documented risk decision</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is the one that matters organisationally. "We can save this much, and here are
+          the eleven detections that stop working" is a decision someone can own. A quiet filter
+          change is not.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: WRITING A GOOD RULE ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">✍️</span>
+    <span class="topic-name">Writing a Good Rule — Specificity, False-Positive Analysis &amp; the Tuning Fields</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Specific Enough to Be Actionable, General Enough to Survive a Variant</div>
+      <div class="concept-desc">
+        Every rule sits on a line between two failures. Too specific, and it matches one sample from
+        one report — a hash, a filename, a command line copied verbatim — and the next variant walks
+        past it. Too general, and it fires constantly and gets muted. The craft is picking the part
+        of the behaviour that is expensive for the adversary to change, and matching on that.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Matching on…</th><th>Attacker changes it by…</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td>A file hash</td><td>Recompiling</td><td>Nearly free to evade; use as context, not as the rule</td></tr>
+            <tr><td>A filename or path</td><td>Renaming</td><td>Still cheap</td></tr>
+            <tr><td>A command-line string</td><td>Reordering flags, adding whitespace, obfuscating</td><td>Cheap, and the most common over-fit</td></tr>
+            <tr><td>A parent/child process relationship</td><td>Finding another launcher</td><td>Costly — usually worth building on</td></tr>
+            <tr><td>The sequence of actions the objective requires</td><td>Changing the objective</td><td>Most expensive; hardest to write</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          This is the Pyramid of Pain used as a design tool rather than a poster — the ladder itself
+          is in <span class="xref">Detection Tuning &amp; the Pyramid of Pain</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">False-Positive Analysis Before Deployment, Not After</div>
+      <div class="concept-desc">
+        Analysts should never be the mechanism by which a rule's noise is discovered. The historical
+        data needed to find out first is already sitting in the platform, and the query takes
+        minutes.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>What it tells you</th></tr></thead>
+          <tbody>
+            <tr><td>Run the logic over 7–30 days of history</td><td>The real hit count, not the guessed one</td></tr>
+            <tr><td>Group hits by host, user and parent process</td><td>Whether the noise is three machines or the whole estate</td></tr>
+            <tr><td>Read ten hits properly</td><td>Whether they are benign, and <em>why</em> — which becomes the exclusion</td></tr>
+            <tr><td>Project the alert rate per analyst per day</td><td>Whether the response is affordable at all</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          If the projected rate is more than the team can actually triage, the rule is not ready —
+          and the fix is more often better enrichment than a tighter threshold, because a threshold
+          that cuts volume usually cuts recall with it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Exclusions That Do Not Rot</div>
+      <div class="concept-desc">
+        The exclusion list is where rules go to die: entries accumulate, nobody remembers which were
+        meant to be temporary, and eventually the allowlist is wide enough to drive the attack
+        through. Four rules keep it maintainable.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Rule</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Every exclusion carries a reason and a date</td><td>An entry nobody can justify can be deleted</td></tr>
+            <tr><td>Exclude on the narrowest attribute that works</td><td>"This service account on this host" beats "this process name"</td></tr>
+            <tr><td>Never exclude on an attribute the attacker controls</td><td>A rule excluding a filename is a rule with published bypass instructions</td></tr>
+            <tr><td>Review exclusions on a schedule</td><td>The temporary ones outlive the thing they were for</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: BEHAVIOURAL VS SIGNATURE ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎭</span>
+    <span class="topic-name">Behavioural vs Signature Detections — One Technique, Both Ways</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Comparison</div>
+      <div class="concept-title">Two Answers to the Same Question, With Opposite Failure Modes</div>
+      <div class="concept-desc">
+        A signature detection asserts that a specific artifact is bad. A behavioural detection
+        asserts that a pattern of activity is suspicious regardless of the artifacts involved. Both
+        are legitimate, and a programme with only one kind is predictably weak in a known direction.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Signature</th><th>Behavioural</th></tr></thead>
+          <tbody>
+            <tr><td>Asserts</td><td>"This exact thing is bad"</td><td>"This pattern is how the objective is achieved"</td></tr>
+            <tr><td>Precision</td><td>Very high when it hits</td><td>Lower; needs context to be actionable</td></tr>
+            <tr><td>Evasion cost</td><td>Near zero</td><td>Real — the adversary must change method</td></tr>
+            <tr><td>Fails by</td><td>Missing everything it has not seen before</td><td>Firing on the administrator doing their job</td></tr>
+            <tr><td>Best for</td><td>Known-bad, commodity tooling, intel-driven blocking</td><td>Hands-on-keyboard activity, novel tooling</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Worked Example — Credential Dumping From LSASS <span class="acro-exp">(Local Security Authority Subsystem Service)</span></div>
+      <div class="concept-desc">
+        The same technique, detected three ways. The interest is in how each one fails, because that
+        is the argument for running all three rather than picking a favourite.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Approach</th><th>Detects</th><th>Missed by</th></tr></thead>
+          <tbody>
+            <tr><td>Signature: the well-known tool's name or hash</td><td>Off-the-shelf use, unmodified</td><td>Renaming the binary; any custom loader</td></tr>
+            <tr><td>Signature: known malicious command-line patterns</td><td>Copy-pasted procedures from public write-ups</td><td>Trivial obfuscation and flag reordering</td></tr>
+            <tr><td>Behavioural: an unusual process opening a handle to LSASS with read access</td><td>Any tool that needs the memory, whatever it is called</td><td>Techniques that avoid the handle entirely — a driver, or a snapshot API <span class="acro-exp">(Application Programming Interface)</span></td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The behavioural rule is the durable one and also the noisy one — several legitimate
+          security products open exactly that handle. That is not an argument against building it;
+          it is the reason it needs an allowlist of your own tooling, dated and reviewed.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">How the Two Should Be Layered</div>
+      <div class="concept-desc">
+        Signatures are cheap to write, cheap to run and cheap to evade — so use them for breadth and
+        for the commodity end of the threat, where volume matters more than sophistication.
+        Behavioural rules are expensive in every sense — write fewer, aim them at the techniques your
+        threat model actually cares about, and give them the enrichment they need to be triaged.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: ENRICHMENT ─────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧩</span>
+    <span class="topic-name">Enrichment — The Context That Turns an Alert Into a Decision</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Most "Noisy" Rules Are Actually Context-Starved</div>
+      <div class="concept-desc">
+        When a rule is drowning a team, the reflex is to tighten it, which trades away recall. Often
+        the real problem is that the alert does not carry enough context for a decision, so every
+        hit costs a full investigation regardless of how obvious it should have been. The same
+        alert, arriving with the asset's criticality, the user's role and whether the destination is
+        known, may need three seconds instead of twenty minutes — and the rule never had to change.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Enrichment</th><th>Question it answers instantly</th></tr></thead>
+          <tbody>
+            <tr><td>Asset criticality and owner</td><td>Is this a domain controller or a test VM <span class="acro-exp">(Virtual Machine)</span>?</td></tr>
+            <tr><td>Identity context — role, privilege, department</td><td>Is this person expected to do this?</td></tr>
+            <tr><td>Recent change and ticket data</td><td>Is there an approved change explaining it?</td></tr>
+            <tr><td>Threat intel on the indicator</td><td>Is this destination known-bad, or just unfamiliar?</td></tr>
+            <tr><td>Historical rarity for this host or user</td><td>Is this the first time, or the thousandth?</td></tr>
+            <tr><td>Vulnerability and exposure state</td><td>Could the attempted thing actually have worked?</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The fifth row is the cheapest large win in most environments. "First time this user has run
+          this binary, ever" converts an ambiguous alert into an obvious one, and it needs no
+          external data — only your own history.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Enrich at Detection Time or at Triage Time?</div>
+      <div class="concept-desc">
+        Both have a place, and the deciding question is whether the context changes the
+        <em>verdict</em> or merely informs the human.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>At detection time</th><th>At triage time</th></tr></thead>
+          <tbody>
+            <tr><td>Use when</td><td>The context changes whether it should alert at all</td><td>The context helps a human decide</td></tr>
+            <tr><td>Cost</td><td>Lookups on every event — expensive at volume</td><td>Only on alerts, which are few</td></tr>
+            <tr><td>Risk</td><td>A stale lookup silently suppresses real alerts</td><td>None to detection; it is additive</td></tr>
+            <tr><td>Example</td><td>Suppress on assets in a documented maintenance window</td><td>Attach the asset owner and recent tickets to the case</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Keep suppression-by-enrichment rare and audited. A lookup that silently prevents alerts is
+          a control with no alarm of its own — when the asset inventory goes stale, the detections
+          quietly stop, which is the failure mode
+          <span class="xref">Testing a Detection — Synthetic Events, Emulation &amp; Regression</span>
+          is written to catch.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CORRELATION & SEQUENCING ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔗</span>
+    <span class="topic-name">Correlation &amp; Sequencing — When One Event Genuinely Is Not Enough</span>
+    <span class="topic-badge">Detection Engineering</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Correlation Is Expensive — Spend It Where a Single Event Cannot Work</div>
+      <div class="concept-desc">
+        Stateful detections hold events over a window and fire on a combination. They are strictly
+        harder than single-event rules: they cost memory, they are harder to test, they break in
+        confusing ways when data arrives late, and their windows are a parameter nobody can derive
+        from first principles. So the bar for using one is that the individual events are genuinely
+        unremarkable and only the combination means anything.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Pattern</th><th>Shape</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Threshold</td><td>N of the same thing in a window</td><td>Many failed authentications from one source</td></tr>
+            <tr><td>Sequence</td><td>A then B, in order, within a window</td><td>Successful login <em>after</em> a burst of failures</td></tr>
+            <tr><td>Absence</td><td>A without the expected B</td><td>A privileged action with no preceding approval record</td></tr>
+            <tr><td>Fan-out</td><td>One actor, many distinct targets</td><td>One account touching hundreds of hosts in an hour</td></tr>
+            <tr><td>Rarity join</td><td>Common event, uncommon pairing</td><td>An ordinary binary run by a user who never runs it</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Four Ways Stateful Rules Break</div>
+      <div class="concept-desc">
+        Each of these produces silence rather than an error, which is why correlation rules need the
+        regression guards more than any other kind.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Failure</th><th>Symptom</th><th>Guard</th></tr></thead>
+          <tbody>
+            <tr><td>Late-arriving data</td><td>The second event lands after the window closed</td><td>Window by event time, not ingest time; allow a grace period</td></tr>
+            <tr><td>Clock skew between sources</td><td>Sequences appear out of order</td><td>Verify time sync before trusting order at all</td></tr>
+            <tr><td>Window too short</td><td>Real attacks straddle the boundary</td><td>Derive the window from observed attacker dwell, not from a round number</td></tr>
+            <tr><td>Join key mismatch</td><td>Two sources name the same host differently</td><td>Normalise the key — this is what the schema work buys</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The join-key failure is the most common and the most silent: a correlation across two log
+          sources that identify hosts by short name and by FQDN <span class="acro-exp">(Fully Qualified Domain Name)</span> respectively will simply never
+          match, and it looks exactly like a quiet network.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: THE DE INTERVIEW ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎤</span>
+    <span class="topic-name">The Detection Engineering Interview — What the Role Is Actually Assessed On</span>
+    <span class="topic-badge">Detection Engineering • Career</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">They Are Testing Judgement, Not Recall</div>
+      <div class="concept-desc">
+        Candidates prepare for this role by memorising event IDs and ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> numbers, and the
+        interview rarely rewards it. The questions are open by design, because the job is a sequence
+        of trade-offs — coverage against noise, specificity against durability, cost against
+        retention — and what is being assessed is whether a candidate can see the trade and reason
+        about it out loud rather than reach for a single right answer that does not exist.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question</th><th>What is really being asked</th></tr></thead>
+          <tbody>
+            <tr><td>"How would you detect technique X?"</td><td>Do you ask what telemetry we have before proposing logic?</td></tr>
+            <tr><td>"This rule fires 400 times a day. Fix it."</td><td>Do you reach for enrichment, or only for a tighter threshold?</td></tr>
+            <tr><td>"How do you know your detections work?"</td><td>Do you have any answer beyond "they exist"?</td></tr>
+            <tr><td>"When would you delete a detection?"</td><td>Do you treat the rule set as something maintained, or only grown?</td></tr>
+            <tr><td>"Walk me through a rule you wrote."</td><td>Can you state its false positives honestly?</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">The Answers That Land</div>
+      <div class="concept-desc">
+        Three habits separate a strong answer from a complete one, and they are the same habits the
+        job needs on the first day.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Habit</th><th>Why it reads well</th></tr></thead>
+          <tbody>
+            <tr><td>Ask about telemetry before proposing a rule</td><td>It is the first question the job asks, every time</td></tr>
+            <tr><td>Name the false positives yourself</td><td>Volunteering the weakness is the strongest signal available</td></tr>
+            <tr><td>Say how you would validate it</td><td>Separates people who have shipped detections from people who have written them</td></tr>
+            <tr><td>Give a number where one exists</td><td>"About 30 hits a day across 4,000 hosts" beats "not too noisy"</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          A portfolio helps more here than in most security roles: a small public repository of
+          rules, with tests and honest false-positive notes, demonstrates the whole discipline in a
+          way a CV line cannot. General interview preparation is in
+          <span class="xref">Interview Preparation — Getting the Job</span> in the IT Career domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

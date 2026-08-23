@@ -48,6 +48,42 @@ of this file, and *Part 3 of Phase 6* (how to write a card, the pattern library,
 the risk register). The backlog is a menu, not a queue — and at this size, how
 well each card is written matters more than how many remain.
 
+### How to read a track's checklist
+
+A mechanical count of `- [ ]` lines across this file badly overstates the real backlog,
+for a structural reason worth knowing before you plan a session.
+
+Most tracks now carry a **shipped-note** — a short bold paragraph at the top of the track
+recording what was actually built, which items were consolidated into which card, and what
+was deliberately left. Those notes are accurate. The `- [ ]` wave lists *underneath* them
+are the **original specification**, written before anything shipped, and in most tracks they
+were never ticked afterwards. Both are useful — the note says what exists, the spec says
+what was once imagined — but only the note is current.
+
+So: **where a track has a shipped-note, read the note first and treat the wave lists below it
+as background.** Tracks carrying such a note are marked `⟵ see the shipped-note above` on
+their first wave heading. Tracks without a note have checklists that mean what they say.
+
+Three item states are used, and the distinction matters:
+
+| Mark | Means |
+|---|---|
+| `- [x]` | Shipped. Where a card covers several specced items, the annotation says which card |
+| `- [~]` | Genuinely covered, elsewhere — the annotation names the existing card and domain |
+| `- [ ]` | Actually open |
+
+`[~]` is doing a lot of work in the later tracks and should keep doing it. The repeated
+finding of this project is that a track reads as unbuilt while being 60–100% covered by a
+neighbouring domain under different card titles, and marking those `[~]` with a location is
+what stops the next session rewriting them.
+
+**What that convention is worth, measured.** At the time this note was written the file
+contained **245** unticked `- [ ]` lines. **159 of them sit inside the nine tracks that carry
+a shipped-note** — Y, Z, AC, AD, AE, AF, AP, AQ, AR — and are largely superseded by it. Only
+**86** are in tracks whose checklists still mean what they say. A session that plans from the
+raw count will pick a track that is mostly already built; a session that reads the notes first
+will not.
+
 ---
 
 ## P1 — High-impact quick wins
@@ -1588,46 +1624,46 @@ Pairs directly with the `redteam` AD-attack cards — same objects, defender's v
 ~6 waves, ~30 cards. The tenant most organisations live inside.
 
 **Wave W1 — Tenant Foundations**
-- [ ] M365 Tenant Anatomy — tenant, domains, admin centers, and how they relate to Azure
-- [ ] Licensing Without Tears — E3 vs E5 vs Business, add-ons, group-based licensing
-- [ ] Admin Roles & Least Privilege — the built-in roles worth knowing, and PIM for the rest
-- [ ] Service Health & Message Center — knowing about the outage before the tickets
-- [ ] Tenant-to-Tenant & Mergers — the migration nobody plans enough time for
+- [x] M365 Tenant Anatomy — tenant, domains, admin centers, and how they relate to Azure
+- [x] Licensing Without Tears — E3 vs E5 vs Business, add-ons, group-based licensing
+- [x] Admin Roles & Least Privilege — the built-in roles worth knowing, and PIM for the rest
+- [x] Service Health & Message Center — knowing about the outage before the tickets
+- [x] Tenant-to-Tenant & Mergers — the migration nobody plans enough time for
 
 **Wave W2 — Exchange Online**
-- [ ] Mail Flow Explained — connectors, transport rules, the path a message actually takes
-- [ ] Mailbox Types — user, shared, room, equipment, and delegation done right
-- [ ] Anti-Spam & Anti-Phish — EOP, Defender for Office, quarantine, safe links/attachments
-- [ ] Message Trace & Header Analysis — proving where a message went, and where it died
-- [ ] Retention, Litigation Hold & Archiving — legal's requirements in mailbox terms
+- [x] Mail Flow Explained — connectors, transport rules, the path a message actually takes
+- [x] Mailbox Types — user, shared, room, equipment, and delegation done right
+- [x] Anti-Spam & Anti-Phish — EOP, Defender for Office, quarantine, safe links/attachments
+- [x] Message Trace & Header Analysis — proving where a message went, and where it died
+- [x] Retention, Litigation Hold & Archiving — legal's requirements in mailbox terms
 
 **Wave W3 — SharePoint & OneDrive**
-- [ ] SharePoint Online Architecture — sites, libraries, lists, and the 400-URL trap
-- [ ] Permissions Model — groups, inheritance, sharing links, and why it sprawls
-- [ ] OneDrive Known Folder Move — redirecting Desktop/Documents without user pain
-- [ ] Sync Client Troubleshooting — the top failure modes and their fixes
-- [ ] External Sharing & Guest Access — B2B collaboration without leaking the tenant
+- [x] SharePoint Online Architecture — sites, libraries, lists, and the 400-URL trap
+- [x] Permissions Model — groups, inheritance, sharing links, and why it sprawls
+- [x] OneDrive Known Folder Move — redirecting Desktop/Documents without user pain
+- [x] Sync Client Troubleshooting — the top failure modes and their fixes
+- [x] External Sharing & Guest Access — B2B collaboration without leaking the tenant
 
 **Wave W4 — Teams**
-- [ ] Teams Architecture — what a team really is (M365 group + SharePoint + Exchange + chat)
-- [ ] Teams Policies — meeting, messaging, app and calling policy packages
-- [ ] Teams Voice Basics — Phone System, calling plans, Direct Routing, SIP at a glance
-- [ ] Teams Call Quality Troubleshooting — CQD, network requirements, the real culprits
-- [ ] Governance & Sprawl — naming policy, expiration, the 4,000-team problem
+- [x] Teams Architecture — what a team really is (M365 group + SharePoint + Exchange + chat)
+- [x] Teams Policies — meeting, messaging, app and calling policy packages
+- [x] Teams Voice Basics — Phone System, calling plans, Direct Routing, SIP at a glance
+- [x] Teams Call Quality Troubleshooting — CQD, network requirements, the real culprits
+- [x] Governance & Sprawl — naming policy, expiration, the 4,000-team problem
 
 **Wave W5 — Purview, Compliance & Data**
-- [ ] Purview Overview — the compliance surface, mapped to what auditors ask for
-- [ ] Sensitivity Labels & DLP — classification that survives contact with users
-- [ ] Retention Policies vs Retention Labels — the distinction that trips everyone
-- [ ] eDiscovery & Content Search — running a legal hold end to end
-- [ ] Insider Risk & Audit Log — what is recorded, for how long, and how to search it
+- [x] Purview Overview — the compliance surface, mapped to what auditors ask for
+- [x] Sensitivity Labels & DLP — classification that survives contact with users
+- [x] Retention Policies vs Retention Labels — the distinction that trips everyone
+- [x] eDiscovery & Content Search — running a legal hold end to end
+- [x] Insider Risk & Audit Log — audit log in wave 1; Insider Risk in the Purview overview, wave 2
 
 **Wave W6 — M365 Operations & Troubleshooting**
-- [ ] The PowerShell Modules — Graph, Exchange Online, Teams; connecting and staying connected
-- [ ] Graph API for Admins — batch operations, permissions, throttling
-- [ ] Reporting & Usage Analytics — adoption data that answers a real question
-- [ ] Backup for M365 — why native retention is not a backup
-- [ ] M365 Troubleshooting Playbook — tenant, identity, licence, policy, client: in that order
+- [x] The PowerShell Modules — Graph, Exchange Online, Teams; connecting and staying connected
+- [x] Graph API for Admins — batch operations, permissions, throttling
+- [x] Reporting & Usage Analytics — adoption data that answers a real question
+- [x] Backup for M365 — why native retention is not a backup
+- [x] M365 Troubleshooting Playbook — tenant, identity, licence, policy, client: in that order
 
 ### TRACK Y — Endpoint Engineering Depth  (→ `endpoint`, 13 → ~55)
 
@@ -1638,7 +1674,7 @@ was speced), Y5 shipped this session.** endpoint is now 34. Remaining: Y4 provis
 depth, Y6 compliance/CA depth, Y7 MECM site design, Y8 analytics/fleet. `[x]` marks
 the card that fills each item below.
 
-**Wave Y1 — Intune Deep: Policy**
+**Wave Y1 — Intune Deep: Policy** ⟵ see the shipped-note above
 - [x] Configuration Profiles → *Configuration Profiles — Settings Catalog, Templates & Custom*
 - [x] Policy Conflicts → *Policy Conflicts — Proving Which One Won*
 - [x] Security Baselines → *Security Baselines Without Breaking the Fleet*
@@ -1713,9 +1749,12 @@ Veeam mechanics) are genuine but narrower and can follow if the estate needs the
 - [x] Backup Strategy → *Backup Strategy — 3-2-1-1-0 and the Schemes That Make Restores Possible*
 - [x] Ransomware-Resilient Backup → *Ransomware-Resilient Backup — Immutability, Isolation & Assuming the Domain Is Lost*
 - [x] Restore Testing + DR Design + DR for Cloud/SaaS → *Restore Testing & DR Design — Turning Backups Into a Recovery Capability*
-- [ ] Remaining: sizing/overcommit deep, VM lifecycle/templates, live migration ops, P2V/V2V, storage fundamentals/SAN/NAS/performance/tiering, backup targets & products, failover/failback drill, tabletop, post-incident review (narrower depth — follow on demand)
+- [x] VM lifecycle/templates, live migration ops, P2V/V2V and virtualisation troubleshooting →
+  four cards into `infra`, see the session record. Still open and genuinely narrower:
+  sizing/overcommit deep, storage performance/tiering, backup targets & products, failover/failback
+  drill, tabletop, post-incident review.
 
-**Wave Z1 — Hypervisors**
+**Wave Z1 — Hypervisors** ⟵ see the shipped-note above
 - [ ] Virtualization Fundamentals — type 1 vs type 2, paravirtualization, hardware assist
 - [ ] VMware vSphere — ESXi, vCenter, clusters, DRS/HA, the vocabulary
 - [ ] Hyper-V — generations, integration services, checkpoints, Windows-shop realities
@@ -1729,12 +1768,22 @@ Veeam mechanics) are genuine but narrower and can follow if the estate needs the
 - [ ] P2V and V2V — the migrations that still happen
 - [ ] Virtualization Troubleshooting — the storage/network/host triage order
 
-**Wave Z3 — Storage**
-- [ ] Storage Fundamentals — block vs file vs object, restated for the datacenter
-- [ ] SAN & Fabric Basics — LUNs, zoning, multipathing, iSCSI vs Fibre Channel
-- [ ] NAS & File Services — SMB/NFS at scale, DFS, quotas, access-based enumeration
-- [ ] Storage Performance — IOPS, throughput, latency, queue depth, and which one is your limit
-- [ ] Storage Tiering & Capacity Planning — forecasting growth before it becomes an incident
+**Wave Z3 — Storage** — shipped into `infra`. See the session record.
+- [x] Storage Fundamentals — block vs file vs object, restated for the datacenter
+- [x] SAN & Fabric Basics — LUNs, zoning, multipathing, iSCSI vs Fibre Channel
+- [x] NAS & File Services — SMB/NFS at scale, DFS, quotas, access-based enumeration — split: the
+  permissions, DFS and quota half was already carded as *File Services — Share vs NTFS Permissions,
+  DFS &amp; Quotas*, so the new card is the protocol half (dialects, round-trip behaviour, why file
+  workloads feel slow) and the two cross-reference each other
+- [x] Storage Performance — IOPS, throughput, latency, queue depth, and which one is your limit
+- [x] Storage Tiering & Capacity Planning — forecasting growth before it becomes an incident — two
+  cards, because they are different jobs: the efficiency-features card covers tiering with thin
+  provisioning and dedup, and capacity planning stands alone
+- [x] **Added beyond the plan:** RAID &amp; Erasure Coding — the redundancy layer the track assumed
+  and never specced; `RAID` appeared in `cs`, `linux` and `script` but nowhere in `infra`, and
+  `erasure coding` was a site-wide zero
+- [x] **Added beyond the plan:** Thin Provisioning, Deduplication &amp; Tiering — `thin provision`
+  and `erasure coding` were zeros and the thin-provisioning cliff is a real operational hazard
 
 **Wave Z4 — Backup & Recovery**
 - [ ] Backup Strategy — 3-2-1-1-0, full/incremental/differential, retention schemes
@@ -1759,39 +1808,39 @@ Veeam mechanics) are genuine but narrower and can follow if the estate needs the
 ~5 waves, ~25 cards. The trade most people enter IT through, treated seriously.
 
 **Wave AA1 — The Practices**
-- [ ] ITIL 4 Without the Jargon — the practices that survive contact with a real team
-- [ ] Incident vs Problem vs Change vs Request — the distinction, and why it matters
-- [ ] Priority, Impact & Urgency — building a matrix people actually apply
-- [ ] Service Catalog & Request Fulfilment — turning ad-hoc asks into a repeatable service
-- [ ] Change Enablement — CAB, standard changes, emergency changes, freeze windows
+- [~] ITIL 4 Without the Jargon — the practices that survive contact with a real team — **already carded as 'ITIL & Service Management — How IT Runs as a Business' in ops**
+- [x] Incident vs Problem vs Change vs Request — the distinction, and why it matters
+- [x] Priority, Impact & Urgency — building a matrix people actually apply
+- [x] Service Catalog & Request Fulfilment — turning ad-hoc asks into a repeatable service
+- [~] Change Enablement — CAB, standard changes, emergency changes, freeze windows — **already carded as 'Change Management – The Process That Prevents Self-Inflicted Outages' in grc**
 
 **Wave AA2 — The Ticket Craft**
-- [ ] Writing a Ticket Someone Else Can Solve — the fields that decide resolution time
-- [ ] Triage & Categorization — routing correctly the first time
-- [ ] Escalation — functional vs hierarchical, and how to hand over without losing context
-- [ ] Closing Well — resolution notes, root cause, and the knowledge article that follows
-- [ ] Working a Queue — prioritisation, batching, and not drowning
+- [x] Writing a Ticket Someone Else Can Solve — the fields that decide resolution time
+- [x] Triage & Categorization — routing correctly the first time
+- [x] Escalation — functional vs hierarchical, and how to hand over without losing context
+- [x] Closing Well — resolution notes, root cause, and the knowledge article that follows
+- [x] Working a Queue — prioritisation, batching, and not drowning
 
 **Wave AA3 — Talking to Humans**
-- [ ] The First Ninety Seconds — establishing what actually happened
-- [ ] Explaining Technical Things to Non-Technical People — a repeatable method
-- [ ] Difficult Conversations — angry users, VIP pressure, saying no
-- [ ] Remote Support Skills — screen shares, phone-only diagnosis, guiding blind
-- [ ] Writing for Users — emails, outage notices, and status pages people trust
+- [x] The First Ninety Seconds — establishing what actually happened
+- [x] Explaining Technical Things to Non-Technical People — a repeatable method
+- [x] Difficult Conversations — angry users, VIP pressure, saying no
+- [x] Remote Support Skills — screen shares, phone-only diagnosis, guiding blind
+- [x] Writing for Users — emails, outage notices, and status pages people trust
 
 **Wave AA4 — Knowledge & Automation**
-- [ ] Knowledge Management — KCS in practice, and keeping articles from rotting
-- [ ] Self-Service That Works — password reset, software portal, and their adoption traps
-- [ ] Shift-Left — moving fixes from tier 3 toward tier 1 deliberately
-- [ ] Ticket Automation — templates, workflows, and where automation backfires
-- [ ] Asset & Configuration Management — a CMDB that stays true
+- [x] Knowledge Management — KCS in practice, and keeping articles from rotting
+- [x] Self-Service That Works — password reset, software portal, and their adoption traps
+- [x] Shift-Left — moving fixes from tier 3 toward tier 1 deliberately
+- [x] Ticket Automation — templates, workflows, and where automation backfires
+- [x] Asset & Configuration Management — a CMDB that stays true
 
 **Wave AA5 — Running the Function**
-- [ ] Service Desk Metrics — the ones that improve service vs the ones that game it
-- [ ] SLAs, OLAs & Underpinning Contracts — the chain of promises
-- [ ] Capacity & Shift Planning — staffing a queue that has a shape
-- [ ] On-Call Without Burnout — rotations, handovers, escalation policy, comp time
-- [ ] Major Incident Management — commander, comms lead, scribe, and the bridge discipline
+- [x] Service Desk Metrics — the ones that improve service vs the ones that game it
+- [x] SLAs, OLAs & Underpinning Contracts — the chain of promises
+- [x] Capacity & Shift Planning — staffing a queue that has a shape
+- [~] On-Call Without Burnout — rotations, handovers, escalation policy, comp time — **already carded as 'On-Call Done Humanely' in ops, plus two cards in mind**
+- [~] Major Incident Management — commander, comms lead, scribe, and the bridge discipline — **already carded as 'Incident Command — Running a Major Incident Without Chaos' in ops**
 
 ### TRACK AB — Vendor Networking, Firewalls & Wireless  (→ `net`)
 
@@ -1799,39 +1848,39 @@ Veeam mechanics) are genuine but narrower and can follow if the estate needs the
 actually touch. Vendor-specific, deliberately.
 
 **Wave AB1 — Cisco IOS in Practice**
-- [ ] IOS Navigation — modes, `show` commands worth memorising, config archives
-- [ ] Switch Configuration — VLANs, trunks, port security, PortFast/BPDU guard
-- [ ] Router Configuration — interfaces, static and dynamic routing, ACLs
-- [ ] Troubleshooting on IOS — `show interface`, CDP/LLDP, SPAN, debug safely
-- [ ] Config Management & Upgrades — backups, staged upgrades, rollback plan
+- [x] IOS Navigation — modes, `show` commands worth memorising, config archives
+- [x] Switch Configuration — VLANs, trunks, port security, PortFast/BPDU guard
+- [~] Router Configuration — interfaces, static and dynamic routing, ACLs — **core routing, ACLs and interfaces are carded in 'Routing Protocols & WAN Technologies' and 'Routing, VLANs & Network Devices' in net**
+- [~] Troubleshooting on IOS — `show interface`, CDP/LLDP, SPAN, debug safely — **already carded as 'Network Device CLI — Show Commands' in net**
+- [x] Config Management & Upgrades — backups, staged upgrades, rollback plan
 
 **Wave AB2 — Enterprise Firewalls**
-- [ ] Firewall Policy Design — zones, rule order, the implicit deny, documentation
-- [ ] Palo Alto Concepts — App-ID, User-ID, security profiles, the commit model
-- [ ] FortiGate Concepts — policies, VDOMs, SD-WAN features, logging
-- [ ] NAT on Firewalls — source/destination NAT, hairpinning, and reading a flow
-- [ ] Firewall Troubleshooting — packet capture, session table, policy lookup order
+- [x] Firewall Policy Design — zones, rule order, the implicit deny, documentation
+- [x] Palo Alto Concepts — App-ID, User-ID, security profiles, the commit model
+- [x] FortiGate Concepts — policies, VDOMs, SD-WAN features, logging
+- [x] NAT on Firewalls — source/destination NAT, hairpinning, and reading a flow
+- [x] Firewall Troubleshooting — packet capture, session table, policy lookup order
 
 **Wave AB3 — Wireless Engineering**
-- [ ] RF Fundamentals — channels, width, co-channel interference, cell design
-- [ ] Site Surveys — predictive vs passive vs active, and reading a heat map
-- [ ] Enterprise Wi-Fi Auth — 802.1X, RADIUS, certificates, PSK's remaining niche
-- [ ] Controller vs Cloud-Managed — Meraki/Mist/Aruba models compared
-- [ ] Wireless Troubleshooting — roaming, sticky clients, retries, "it's slow" triage
+- [x] RF Fundamentals — channels, width, co-channel interference, cell design
+- [x] Site Surveys — predictive vs passive vs active, and reading a heat map
+- [~] Enterprise Wi-Fi Auth — 802.1X, RADIUS, certificates, PSK's remaining niche — **already carded as '802.1X & NAC — Who Gets On the Network?' in net**
+- [x] Controller vs Cloud-Managed — Meraki/Mist/Aruba models compared
+- [x] Wireless Troubleshooting — roaming, sticky clients, retries, "it's slow" triage
 
 **Wave AB4 — Network Operations**
-- [ ] Monitoring a Network — SNMP, NetFlow/IPFIX, syslog, streaming telemetry
-- [ ] Change Control for Networks — the discipline that prevents the 2 a.m. outage
-- [ ] Network Documentation — diagrams that stay current, IP plans, cable schedules
-- [ ] Capacity & Utilisation — reading trends before users report slowness
-- [ ] Network Automation Basics — Netmiko/NAPALM/Ansible for network devices
+- [~] Monitoring a Network — SNMP, NetFlow/IPFIX, syslog, streaming telemetry — **already carded as 'Network Monitoring — Seeing What Flows Through' in net**
+- [~] Change Control for Networks — the discipline that prevents the 2 a.m. outage — **already carded as 'Change Management – The Process That Prevents Self-Inflicted Outages' in grc, and the cutover card above**
+- [x] Network Documentation — diagrams that stay current, IP plans, cable schedules
+- [~] Capacity & Utilisation — reading trends before users report slowness — **already carded as 'Capacity Planning – Answering "Will We Run Out of Room?" Before You Do' in ops**
+- [~] Network Automation Basics — Netmiko/NAPALM/Ansible for network devices — **already carded as 'Network Automation — Ansible, Netmiko & NAPALM' in net**
 
 **Wave AB5 — Physical & Field**
-- [ ] Structured Cabling — standards, labelling, patch panel discipline
-- [ ] Rack & Power Planning — U space, PDUs, redundant feeds, airflow
-- [ ] Fiber in Practice — types, connectors, cleaning, loss budgets
-- [ ] Cutover Nights — planning, comms, rollback triggers, go/no-go
-- [ ] Field Toolkit — what to actually carry, and the tests each tool answers
+- [x] Structured Cabling — standards, labelling, patch panel discipline
+- [x] Rack & Power Planning — U space, PDUs, redundant feeds, airflow
+- [x] Fiber in Practice — types, connectors, cleaning, loss budgets
+- [x] Cutover Nights — planning, comms, rollback triggers, go/no-go
+- [x] Field Toolkit — what to actually carry, and the tests each tool answers
 
 ### TRACK AC — Automation for Administrators  (→ `script` + `ops`)
 
@@ -1850,9 +1899,12 @@ switch). `script` 138→140, `ops` gains the risk card.
 - [x] Remoting / JEA → *JEA — Just Enough Administration & Constrained Remoting* (plus remoting basics already in the PowerShell cards)
 - [x] Automation Risk + Idempotency + logging/auditability + script-to-service → *Automation Risk & Discipline — Blast Radius, Approval Gates & the Kill Switch* (`ops`)
 - [x] AC1 pipeline/functions/modules, AC4 REST/webhooks/data-wrangling, AC5 Git/docs → already in `script` (*PowerShell*, *IT Automation*, *Consuming APIs Robustly*, *Webhooks & ChatOps*, *Scheduling Scripts the Right Way*, *Git*)
-- [ ] Remaining (narrower): Ansible/DSC config-as-code, Packer golden images, Pester testing, Power Automate/Logic Apps — follow on demand
+- [x] **Remaining items shipped** — Ansible/DSC config-as-code, Packer golden images, Pester
+  testing and Power Automate/Logic Apps, plus *Secrets in Automation*, which the track specced
+  (AC3.4) and which was a genuine zero: `credential in script` and `PowerShell DSC` returned no
+  matches anywhere on the site. 5 cards into `script`; see the session record.
 
-**Wave AC1 — PowerShell for Real Work**
+**Wave AC1 — PowerShell for Real Work** ⟵ see the shipped-note above
 - [ ] The Object Pipeline — the thing that makes PowerShell different from Bash
 - [ ] Remoting — WinRM, sessions, `Invoke-Command` fan-out, JEA
 - [ ] Error Handling That Survives Production — try/catch, `-ErrorAction`, transcripts
@@ -1866,17 +1918,18 @@ switch). `script` 138→140, `ops` gains the risk card.
 - [ ] Scheduled Tasks vs Azure Automation vs Functions — where to run the thing
 - [ ] Idempotency for Admins — scripts that are safe to run twice
 
-**Wave AC3 — Configuration as Code, On-Prem**
-- [ ] Ansible for Windows & Linux — inventory, playbooks, idempotent modules
-- [ ] Desired State Configuration — where it still fits
-- [ ] Golden Images as Code — Packer, and versioning what you deploy
-- [ ] Secrets in Automation — vaults, managed identities, and never a plaintext credential
-- [ ] Testing Automation — Pester, dry runs, and a lab that mirrors production
+**Wave AC3 — Configuration as Code, On-Prem** — shipped into `script`.
+- [x] Ansible for Windows & Linux — inventory, playbooks, idempotent modules
+- [x] Desired State Configuration — where it still fits — same card as Ansible, written as the
+  push/pull comparison, since "where it still fits" is only answerable against the alternative
+- [x] Golden Images as Code — Packer, and versioning what you deploy
+- [x] Secrets in Automation — vaults, managed identities, and never a plaintext credential
+- [x] Testing Automation — Pester, dry runs, and a lab that mirrors production
 
 **Wave AC4 — Glue, APIs & Integration**
 - [ ] Consuming REST APIs From Scripts — auth, pagination, retries, backoff
 - [ ] Webhooks & Event-Driven Ops — reacting instead of polling
-- [ ] Power Automate & Logic Apps — the low-code option, and its real limits
+- [x] Power Automate & Logic Apps — the low-code option, and its real limits — into `script`, beside the code-based options, because the card's whole point is the comparison
 - [ ] CSV, JSON & Excel Wrangling — the daily data shuffling, done cleanly
 - [ ] Building an Internal Tool — when a script deserves a front end
 
@@ -1902,7 +1955,7 @@ the narrower AD4 (ChromeOS, kiosks, UEM selection) can follow. endpoint 38→41.
 - [x] Config profiles / .mobileconfig → in the macOS card; MAM without enrolment cross-linked to the existing App Protection Policies card
 - [ ] Remaining (narrower): Jamf smart-group depth, macOS update timing specifics, multi-platform policy design, Linux desktop, ChromeOS, kiosk/frontline, UEM selection — follow on demand
 
-**Wave AD1 — macOS Administration**
+**Wave AD1 — macOS Administration** ⟵ see the shipped-note above
 - [ ] macOS for Windows Admins — the translation table for every concept
 - [ ] macOS Security Model — Gatekeeper, notarization, TCC, SIP, XProtect
 - [ ] Configuration Profiles — the `.mobileconfig` model and its payloads
@@ -1947,9 +2000,13 @@ extremes, sustainability/accessibility) are narrower and can follow. `sec` 46→
 - [x] ICS Protocols → *ICS Protocols — Modbus, DNP3, OPC UA and Their Security Assumptions*
 - [x] Securing OT Without Breaking It + OT Incident Response → *Securing OT Without Breaking It — Segmentation, Access & Safety-First IR*
 - [x] AE2 regulated industries → HIPAA/PCI/CMMC/STIGs already in `grc`; legal hold in `grc`'s data-governance card
-- [ ] Remaining (narrower): healthcare/finance/gov/edu operational specifics, scale extremes (SMB/enterprise/MSP/M&A), green IT, accessible IT, e-waste, surveillance-vs-monitoring — follow on demand
+- [x] **Scale extremes, green IT, accessible IT and surveillance-vs-monitoring shipped** — AE3 and
+  AE4 in full, 8 cards into `ops`; e-waste and professional ethics were already carded elsewhere.
+  See the session record.
+- [ ] Remaining (narrower): healthcare/finance/gov/edu operational specifics — the AE2 items whose
+  regulatory half is already in `grc` but whose day-to-day operational texture is not written
 
-**Wave AE1 — Operational Technology & ICS**
+**Wave AE1 — Operational Technology & ICS** ⟵ see the shipped-note above
 - [ ] OT vs IT — different priorities, different consequences, different clocks
 - [ ] The Purdue Model — levels, and where the boundaries really sit today
 - [ ] ICS Protocols — Modbus, DNP3, OPC UA and their security assumptions
@@ -1963,19 +2020,24 @@ extremes, sustainability/accessibility) are narrower and can follow. `sec` 46→
 - [ ] Education IT — FERPA, 1:1 device programs, seasonal load, tiny budgets
 - [ ] Legal Hold & Discovery for IT — what "preserve everything" means operationally
 
-**Wave AE3 — Scale Extremes**
-- [ ] IT for Very Small Organisations — one person, no budget, and what to prioritise
-- [ ] IT for the Very Large — federation, delegation, and standardising across business units
-- [ ] MSP Operations — multi-tenant tooling, onboarding, and the support model
-- [ ] Remote & Distributed Workforces — provisioning, support and security without an office
-- [ ] Mergers, Acquisitions & Divestitures — the IT workstream nobody staffs properly
+**Wave AE3 — Scale Extremes** — shipped into `ops`. See the session record.
+- [x] IT for Very Small Organisations — one person, no budget, and what to prioritise
+- [x] IT for the Very Large — federation, delegation, and standardising across business units
+- [x] MSP Operations — multi-tenant tooling, onboarding, and the support model
+- [x] Remote & Distributed Workforces — provisioning, support and security without an office
+- [x] Mergers, Acquisitions & Divestitures — the IT workstream nobody staffs properly
 
-**Wave AE4 — Sustainability, Accessibility & Ethics in Operations**
-- [ ] Green IT — power, cooling, hardware lifespan, and the honest carbon maths
-- [ ] Accessible IT — assistive technology, procurement, and testing your own tools
-- [ ] E-Waste & Secure Disposal — data destruction standards and chain of custody
-- [ ] Surveillance vs Monitoring — where legitimate telemetry becomes something else
-- [ ] Professional Ethics Under Pressure — the situations that actually come up
+**Wave AE4 — Sustainability, Accessibility & Ethics in Operations** — shipped into `ops`, except
+where noted.
+- [x] Green IT — power, cooling, hardware lifespan, and the honest carbon maths
+- [x] Accessible IT — assistive technology, procurement, and testing your own tools
+- [~] E-Waste & Secure Disposal — data destruction standards and chain of custody — carded earlier
+  this session as *Media Sanitisation &amp; Disposal — What "Wiped" Actually Means* in `sec`; the
+  Green IT card cross-references it, because sanitisation is what makes reuse and resale available
+- [x] Surveillance vs Monitoring — where legitimate telemetry becomes something else
+- [~] Professional Ethics Under Pressure — carded in `career` as *Professional Ethics — The
+  Responsibility That Comes With Access*; the surveillance card cross-references it and supplies the
+  specific requests that test the line
 
 ### TRACK AF — Working With AI as an IT Professional
 
@@ -1996,7 +2058,7 @@ filled:
 - [x] AF1 "Using AI Well" cluster → already in `ai` (*Using AI Well*, *AI Tools for IT Work*, *Prompt Engineering*)
 - [ ] Remaining (narrower / measurement-y): AI for log analysis, measuring whether it helped, detecting automated attacks, the AI-incident tabletop, and the AF4 career-effects wave — follow on demand
 
-**Wave AF1 — Using AI Well**
+**Wave AF1 — Using AI Well** ⟵ see the shipped-note above
 - [ ] What LLMs Are Good and Bad At — a calibrated mental model for daily work
 - [ ] Prompting for Technical Work — context, constraints, and verification loops
 - [ ] AI-Assisted Scripting — generating, reviewing and testing code you did not write
@@ -2037,90 +2099,181 @@ The study FAB already has **flashcards, an auto-generated quiz, a study list and
 a quick-jump palette**. This track makes them into a system rather than four
 separate toys.
 
-- [ ] **Spaced repetition** — an SM-2-style scheduler over the existing
-  `known:` / `bookmark:` state, so flashcards resurface on a schedule instead of
-  randomly. Store `{id, ease, interval, due}` in `localStorage`; add a "due
-  today" count to the FAB.
-- [ ] **Acronym quiz mode** — generate questions directly from
-  `data/acronyms.json` (expansion → acronym and back). It is the highest-quality
-  question source on the site because the answers are already structured, and
-  the current MCQ generator has to guess distractors from topic titles.
-- [ ] **Better distractors** — pick wrong answers from the *same domain* and,
-  where available, the same subject area, so questions stop being trivially
-  guessable.
-- [ ] **Exam mode** — timed, fixed question count, no feedback until the end,
-  then a scored report broken down by domain with links to the weak topics.
-- [ ] **Learning paths** — an ordered sequence of existing topic IDs
-  (`paths.json`) rendered as a checklist: "Net+ in 30 topics", "First 90 days as
-  a UEM engineer", "SOC analyst starter". Pure data over existing content.
-- [ ] **Progress dashboard** — reviewed / bookmarked / known per domain over
-  time, plus a streak. All from `localStorage`, no backend.
-- [ ] **Export & import progress** — a JSON download and restore, so clearing
-  browser data is not a catastrophe. Also the only realistic cross-device path.
-- [ ] **Per-topic notes** — extend the notepad to attach a note to a topic ID and
-  surface it inline when that topic is open.
+*Shipped-note: four of the eight below are done and were shipped without any test coverage —
+spaced repetition, the acronym quiz, the distractor fix and export/import. All four were verified
+headlessly and given the checks they never had (14 of them) rather than rewritten. Read the ticks.*
+
+- [x] **Spaced repetition** — **already built.** `srsGrade()` / `srsIsDue()` / `srsDueCount()` in
+  `script.js`, storing `{e, i, d, n}` under `srs:<id>`, with the due count badged on the study FAB
+  and a "⏰ Due today" deck. Verified: intervals step 1 → 6 → 15 days across three "good" gradings,
+  a graded card is marked known, a scheduled card leaves the due count, and "again" resets the
+  interval and drops the ease. Five checks added.
+- [x] **Acronym quiz mode** — **already built.** `acroQuestions()` builds expand, contract and
+  disambiguate questions straight from the dictionary. Verified: 8 questions across 28 subject
+  areas, every one with four distinct options including the answer, and a single area can fill a
+  quiz on its own. Three checks added.
+- [x] **Better distractors** — **already built, both quizzes.** The topic quiz draws wrong answers
+  from the chosen scope's pool; `acroDistractors()` draws from the same subject area and falls back
+  to the whole dictionary only when the area is too small. The multi-meaning questions use the
+  *other meanings of the same acronym* as distractors, which is the sharper version of the item.
+  Verified: a domain-scoped quiz produced four options, none from outside that domain.
+- [x] **Exam mode** — 📋 Exam in the study menu. Fixed length (10 / 20 / 40), a clock at 45 seconds
+  a question or untimed, answers recorded with **no marking until the end**, back-navigation to
+  change one, and running out of time submits rather than errors. The report scores the paper,
+  breaks it down by domain **weakest first**, lists every missed topic as a link — marking the ones
+  left blank as such — and offers "★ star all of these", which puts the whole list into the study
+  deck in one click.
+- [x] **Learning paths** — `data/paths.json`, six routes over 75 existing topics, inlined by
+  `build.py` and opened from the study menu as 🧭 Learning paths. A step counts as done when the
+  topic carries the same ✓ the topic header sets — not a second, parallel progress state — and the
+  first unreviewed step is marked "you are here" with a **Continue** button that goes straight to
+  it. `tools/check_paths.py` gates the ids in CI. Routes: Network Foundations (22), SOC Analyst
+  Starter (15), Breaking Into IT (11), Comfortable in the Terminal (11), First 90 Days on an
+  Endpoint Team (8), Cloud From Zero (8).
+- [x] **Progress dashboard** — 📊 Progress in the study menu: reviewed of total for the whole site
+  and per domain with a bar, plus starred, known, noted and due counts, and a day streak with its
+  best run. Every number comes from `localStorage` and the inlined topic index, never from the
+  document — the dashboard has to report on all thirty domains while at most one is in the DOM.
+  Domains with nothing read are listed last and muted rather than hidden. The streak is one record
+  (`{last, n, best}`), fed by every action that means work happened, and it travels in the export.
+- [x] **Export & import progress** — **already built** (session 10): `bkExport()`, `bkValidate()`,
+  `bkSanitise()` and `bkApply()` with merge / replace / preview. Verified end to end: the export
+  carries reviewed, bookmark, known and srs keys and refuses to carry an unrelated one; a round trip
+  restores all three; a file that is not a progress export is rejected on all three grounds; and a
+  well-formed file carrying a key the page does not own, or a malformed scheduler record, is
+  refused rather than written. Six checks added.
+- [x] **Per-topic notes** — a 📝 in the topic tool cluster beside ★ ✓ 🔗. One note per topic under
+  `note:<id>`, rendered at the top of the topic body whenever that topic is open, with the header
+  button lit on any topic that carries one. Built as a *sibling* of the notepad rather than an
+  extension of it: the notepad is one shared scratchpad, and a note about Kerberos delegation
+  belongs on the Kerberos card. Because it uses the same prefixed-key shape as the other per-topic
+  state, the export, the import's validation and the "what do we own" list picked it up by the rules
+  they already had — one branch in `bkSerialise` for free text, and the count line now distinguishes
+  topic notes from notepad notes so a restore cannot misreport.
 
 ### TRACK AH — Findability & Navigation
 
-- [ ] **Acronym-aware search** — expand the query through `acronyms.json` so
+- [x] **Acronym-aware search** — expand the query through `acronyms.json` so
   searching "Unified Endpoint Management" finds UEM cards and vice versa.
-  The data already exists; the search does not use it.
-- [ ] **Expansion density toggle** — a header control for the inline acronym
-  expansions: *always* (today) / *first use per domain* / *hover only* /
-  *off*. Purely a CSS class on `<body>` plus a `localStorage` preference.
-  Addresses the one real cost of the acronym feature — density in tables.
-- [ ] **Related topics** — a small "see also" strip per topic, driven by a
-  hand-curated `related.json` keyed on topic ID, with a script that suggests
-  candidates by shared acronyms and title terms.
-- [ ] **Domain landing cards** — an intro card at the top of each domain: what it
-  covers, who it is for, where to start, what to read next.
-- [ ] **Search operators** — `domain:net`, `badge:beginner`, quoted phrases.
-- [ ] **Recently viewed** — the last ten topics, in the quick-jump palette.
-- [ ] **Deep-link to a card, not just a topic** — anchor IDs on `concept-card`s
-  for precise sharing.
+  **Already built** — `acroSearchMap()` and `searchTerms()` in `script.js` do exactly this, and
+  the count line reports the alternate it matched through. Verified headlessly in both directions:
+  `UEM` and `Unified Endpoint Management` each return 7 matches in 4 domains, `MFA` and
+  `Multi-Factor Authentication` each return 54 in 14. Ticked after checking rather than assuming.
+- [x] **Expansion density toggle** — **already built.** `cycleAcroMode()` in `script.js` plus the
+  `.acro-hover` / `.acro-off` rules in `style.css`, behind the header's acronym button. Three modes
+  rather than the four specced: *first use per domain* would need the annotator to mark first uses
+  at build time, and the hover mode already solves the density-in-tables cost the item was written
+  for. Verified headlessly — cycles always → hover → off → always, the label and stored preference
+  track it, and the preference survives a reload. Two smoke checks added, since it had none.
+- [x] **Related topics** — `data/related.json` keyed on topic id, inlined by `build.py` and
+  rendered as a "See also" strip the first time a topic is opened. Seeded from the 201
+  `<span class="xref">` cross-references already in the cards — a writer saying two topics belong
+  together, and already title-checked by the linter — then curated up to 554 links on 412 topics.
+  `tools/suggest_related.py` provides the shortlists (`--xrefs`, `--domain`, `--topic`) and a
+  `--check` that catches a dead id before it renders as a dead link.
+- [x] **Clickable cross-references** — `build.py` now stamps `data-xref="topic-id"`, `role="link"`
+  and `tabindex="0"` on all 201 of them, in a second pass after every domain's ids exist, since a
+  cross-reference almost always names a card in another domain. Click and Enter both follow.
+  A span whose title stops resolving keeps neither the id nor the styling, so it degrades to the
+  plain italic text it was rather than to a dead link.
+- [x] **Domain landing cards** — 30 intros shipped as `data/domain-intros.json`, inlined by
+  `build.py` and rendered by `script.js` above a domain's topics on hydration. Deliberately *not*
+  a `.topic` in the content files: a signpost should not be counted by the topic index, dated by
+  `stamp_freshness.py`, checked by `lint_content.py`, offered by the random pick or dealt into a
+  deck. `start` holds topic names, resolved against the parsed block at render time, so a rename
+  costs the card one link instead of leaving a dead button.
+- [x] **Search operators** — `domain:net` and quoted phrases shipped; `badge:` deliberately not.
+  Badges are inconsistent across domains — "SEC • Essential", "Beginner", "OPS • Modern" and
+  "LIFESTYLE • Career" all coexist — so a `badge:` operator would need a vocabulary the reader
+  cannot guess. `domain:` uses domain ids, which the chips and permalinks already expose. Multiple
+  `domain:` terms are additive. Documented in the search box's tooltip; five smoke checks protect
+  the behaviour.
+- [x] **Recently viewed** — the last ten topics lead the quick-jump palette on an empty query,
+  badged so the ordering reads as deliberate. Stored as ids, so a card later renamed or removed
+  simply drops out when the index cannot resolve it. Visits are recorded from both paths that open
+  a topic — clicking a header and following a link. Three smoke checks.
+- [x] **Deep-link to a card, not just a topic** — `#topic-id/3` scrolls to the third concept card
+  and marks it briefly; clicking a card's `.concept-label` copies that link. Cards are addressed by
+  position rather than by a slug of their title: a slug needs every `.concept-title` stamped and
+  kept stable, and concept titles are edited far more freely than topic names — which have an alias
+  map precisely because they are not. An index survives rewording and breaks on reordering; between
+  the two, rewording is what actually happens. Out-of-range indices fall back to the topic, so a
+  link shared before a card was removed still lands somewhere useful.
 
 ### TRACK AJ — Quality Gates & Tooling
 
 *(No "TRACK AI" — the letters would collide with the AI domain.)*
 
-- [ ] **Markup validator in CI** — parse every `data/*.html` with a real HTML
-  parser and fail on unclosed or stray tags. A one-off parse run showed the
-  markup is currently clean; this keeps it that way.
-- [ ] **Content linter** — enforce `CONTRIBUTING.md` mechanically: every
-  `.topic` has a `.topic-name`, `.topic-chev` (never `topic-chevron`),
-  `ref-table` over `ai-table` for new content, no hard-coded hex colours, no
-  inline `style="color:…"`.
-- [ ] **Duplicate-slug guard** — fail the build if two topics slugify to the same
-  id, since `script.js` silently suffixes them and permalinks shift.
-- [ ] **Accessibility CI** — run axe against the built page; enforce contrast,
-  landmark and `aria-expanded` correctness on the accordions.
-- [ ] **Link & anchor checker** — every `#slug` referenced in prose resolves to a
-  real topic; every external link is alive.
-- [ ] **Performance budget** — fail if `index.html` grows beyond an agreed size
-  without a deliberate bump (it is ~3.2 MB today).
-- [ ] **Visual regression** — headless screenshots of a few representative
-  topics in both themes, diffed on PRs.
-- [ ] **Acronym drift report** — list capitalised tokens appearing in content
-  that are *not* in `acronyms.json`, as a to-do queue for the dictionary.
+*Shipped-note: five of the eight below are done. `lint_content.py`, `page_budget.py` and the
+duplicate-slug guard have been in CI for many sessions; `check_markup.py` and `acronym_drift.py`
+shipped in the Track AJ wave. Read the ticks, not the original list.*
+
+- [x] **Markup validator in CI** — `tools/check_markup.py`, a stack-based `html.parser` pass over
+  every `data/*.html` fragment and over `index.html`. Unclosed tags, stray closers and closed void
+  elements all fail the build. `--self-test` runs it over six deliberately broken fixtures and fails
+  if any of them passes, so "0 errors" cannot mean "stopped looking". Both steps are in CI.
+- [x] **Content linter** — `tools/lint_content.py`, in CI since session 10; tracks a warning trend
+  and errors on convention breaks and dangling cross-references.
+- [x] **Duplicate-slug guard** — `lint_content.py` errors on a collision by name, with the file and
+  line of the topic that claimed the slug first. `build.py` still suffixes, so the guard is what
+  makes the suffix visible rather than silent.
+- [x] **Accessibility CI** — `tools/a11y_test.mjs`, axe-core over three states (shell, an open
+  domain with an expanded topic, a study dialog) in **both themes**, in CI and behind `make a11y`.
+  Its first run found **16 serious violations**; all are fixed and all six scans are clean.
+- [~] **Link & anchor checker** — measured rather than built: the content contains **one**
+  `href="#"` and **one** external link in 1,355 topics. Cross-references are the real mechanism, and
+  all 201 are checked by `lint_content.py` and now resolved to ids by `build.py`. There is nothing
+  left for this item to check; it was written before the `xref` convention existed.
+- [x] **Performance budget** — `tools/page_budget.py`, in CI, four metrics with headroom.
+- [x] **Visual regression** — `tools/visual_test.mjs`, in CI and behind `make visual`. Deliberately
+  **not** "a few representative topics": it shoots the **filter bar** in both themes and nothing
+  else. Content screenshots fail on every content wave, and a check that fails constantly is one
+  people learn to ignore. Threshold calibrated rather than guessed — repeated runs differ by exactly
+  zero pixels, and reverting one chip's colour moves 0.111%, so the limit is 0.05%.
+- [x] **Acronym drift report** — `tools/acronym_drift.py`. Capitalised tokens the dictionary lacks,
+  ranked by frequency, per domain with `--domain`; `--unused` lists entries no card uses. A report,
+  not a gate — see the tool's docstring for why neither number is safe to fail a build on.
 
 ### TRACK AK — Delivery, Performance & Reach
 
-- [ ] **Lazy domain loading (server build only)** — ⚠️ **measured in session 19 and
-  the case is much weaker than written here; see §4b-ii before starting.** Keeping
-  today's full-text search means shipping 77% of the page as a search index anyway, so
-  the real saving is ~23%, not ~100%. Five features also read the whole DOM and would
-  silently return partial results. Original note follows. `index.html` is ~3.2 MB of
+- [x] **Lazy domain loading** — ✅ **shipped, as deferred content rather than fetched
+  fragments; see §4b-iii.** Not the shape this item specified. There are no per-domain
+  files and no fetch: `build.py` parks each domain's body in an inert
+  `<script type="text/html">` block in the same single file, and `script.js` moves one
+  domain into the DOM at a time. That keeps `file://`, the PWA and the offline story
+  exactly as they were — the flag and the second build output this item asked for were
+  never needed. It also does not save a byte, which §4b-ii had already established was
+  the weak half of the argument; it costs 37 KB gzipped. What it buys is the DOM-size
+  win §4b-ii identified as the real one: **92,330 elements → 404 at load, 2,739 ms →
+  771 ms on a 4× throttled phone.** All five whole-DOM features were rewired rather
+  than left to silently under-report. Original note follows. `index.html` is ~3.2 MB of
   HTML; every visitor downloads all 20 domains to read one. Emit per-domain
   fragments plus a shell that fetches on expand, **while keeping the current
   single-file build for `file://`**. Two outputs from one `build.py`, selected
   by a flag. This is the single biggest performance win available, and also the
   riskiest change on this list — it must not break offline or the PWA.
-- [ ] **Print packs** — a print stylesheet variant that outputs one domain, or
-  one learning path, as a clean revision handout.
-- [ ] **Markdown export** — dump any topic or domain as Markdown for notes apps.
-- [ ] **PWA polish** — an update prompt when a new `CACHE_VERSION` is available,
-  and precache the fragments if lazy loading ships.
-- [ ] **Share cards** — generated OG images per domain for link previews.
+- [x] **Print packs** — 🖨 Print pack in the study menu: a domain, a **learning path**, the study
+  list or today's due cards, every card open, none of the page furniture, page-broken between
+  domains and never through a concept card. Built into its own container rather than by styling what
+  is on screen — only one domain is ever hydrated, so "print what is rendered" could never produce a
+  path that spans five domains, which is the pack most worth printing.
+- [x] **Markdown export** — ⬇ Export as Markdown in the study menu, with the same scope picker the
+  decks use (all / one domain / study list / due today). Converts from the *deferred blocks*, so a
+  domain that has never been opened exports identically to one that has. Copy or download; the
+  filename carries the scope and the date.
+- [x] **PWA polish** — the worker no longer calls `skipWaiting()` on install, so a new version
+  *waits*; the page offers a dismissible "A newer version of this page is ready — Reload", and only
+  then does the swap happen. `CACHE_VERSION` is now **derived by `build.py`** from a hash of
+  `index.html`, `style.css` and `script.js`, so it changes exactly when the bytes do — no forgotten
+  bump, no pointless invalidation — and CI fails if it is stale. The fragments clause is moot:
+  lazy loading shipped as inline deferred blocks, so there is nothing separate to precache.
+- [x] **Share cards** — one card for the site, not thirty. `tools/gen_og_image.mjs` renders
+  `Img/og-card.png` at 1200×630 from an HTML template through Playwright, with the topic and domain
+  counts read from the sources so they cannot go stale; `--check` fails CI if it is out of date. The
+  page also gained the `description`, Open Graph and Twitter tags it had never had at all.
+  **Per-domain cards were deliberately not built**: domains are hash fragments, and no crawler
+  distinguishes `/#net` from `/` or runs the script that would render it — they would be thirty
+  images nothing ever requests.
 - [x] **Reading time & size hints** — per domain, so a study session can be
   planned realistically. ✅ Session 19. Computed in `build.py` from the real word
   count, weighted by kind: tables ×1.4 because they are scanned rather than read,
@@ -2255,7 +2408,8 @@ became duplicate tracks:
   relevant to a query plan as to a rate limiter as to a password-cracking
   estimate. Filing it inside `eng` would bury it from the security and data
   readers who need it most.
-- **New domain `hw` 🔧 "Hardware, Electronics & Embedded"** (Track AN). Passes
+- **New domain `hw` 🔧 "Hardware, Electronics & Embedded"** (Track AN) — **scaffolded and shipped**;
+  8 cards, accent `#a3e635`, chip in the Core IT group. Passes
   the rule cleanly: its own tools (multimeter, logic analyser, soldering iron,
   POST card), its own job titles (bench tech, field engineer, embedded
   developer), and easily 30 cards of material.
@@ -2365,85 +2519,100 @@ reviews and design arguments — taught for practitioners, not for a degree.
 a place it already shows up on the site.
 
 **Wave AM1 — Numbers, Logic & Bases**
-- [ ] Binary, Hex & Bit Manipulation — masks, shifts, flags; subnetting revisited
-- [ ] Boolean Algebra — truth tables, De Morgan, and firewall/query logic
-- [ ] Modular Arithmetic — the clock maths behind hashing, checksums and crypto
-- [ ] Sets & Relations — the formal spine of SQL joins and access control
-- [ ] Proof Techniques for Engineers — invariants, contradiction, counterexample
+- [~] Binary, Hex & Bit Manipulation — masks, shifts, flags; subnetting revisited — **covered by 'Number Representation — Two's Complement, IEEE-754 & the Bugs Each Causes' in cs and the subnetting cards in net**
+- [x] Boolean Algebra — truth tables, De Morgan, and firewall/query logic
+- [x] Modular Arithmetic — the clock maths behind hashing, checksums and crypto
+- [x] Sets & Relations — the formal spine of SQL joins and access control
+- [x] Proof Techniques for Engineers — invariants, contradiction, counterexample
 
 **Wave AM2 — Probability for Defenders**
-- [ ] Probability Fundamentals — independence, conditional probability, expectation
-- [ ] Bayes' Theorem — base rates, and why a 99%-accurate detector still floods the SOC
-- [ ] Distributions That Matter — normal, Poisson, power-law, long tails in latency
-- [ ] Sampling & Confidence — what a percentile really claims, and sample-size sanity
-- [ ] Birthday Paradox & Collisions — hash collisions, GUID reuse, key spaces
+- [x] Probability Fundamentals — independence, conditional probability, expectation
+- [x] Bayes' Theorem — base rates, and why a 99%-accurate detector still floods the SOC
+- [x] Distributions That Matter — normal, Poisson, power-law, long tails in latency
+- [x] Sampling & Confidence — what a percentile really claims, and sample-size sanity
+- [x] Birthday Paradox & Collisions — hash collisions, GUID reuse, key spaces
 
 **Wave AM3 — Statistics for Operations**
-- [ ] Descriptive vs Inferential — the mistake most dashboards make
-- [ ] Percentiles & Latency — why p99 beats the mean, and how to aggregate it wrongly
-- [ ] Anomaly Detection Maths — z-scores, MAD, seasonality, and false-positive cost
-- [ ] A/B Testing & Significance — power, p-values, and stopping rules
-- [ ] Forecasting Capacity — trend, seasonality, and headroom planning
+- [x] Descriptive vs Inferential — the mistake most dashboards make
+- [x] Percentiles & Latency — why p99 beats the mean, and how to aggregate it wrongly
+- [x] Anomaly Detection Maths — z-scores, MAD, seasonality, and false-positive cost
+- [x] A/B Testing & Significance — power, p-values, and stopping rules
+- [x] Forecasting Capacity — trend, seasonality, and headroom planning
 
 **Wave AM4 — Mathematics of Cryptography**
-- [ ] Prime Numbers & Factoring — why RSA rests on a hard problem
-- [ ] Discrete Logarithms & Elliptic Curves — the other hard problem, and why keys shrank
-- [ ] Entropy & Randomness — measuring it, and where implementations lose it
-- [ ] Information Theory Basics — Shannon entropy, compression, password strength
-- [ ] Lattices, Gently — the hard problem post-quantum cryptography moved to
+- [x] Prime Numbers & Factoring — why RSA rests on a hard problem
+- [x] Discrete Logarithms & Elliptic Curves — the other hard problem, and why keys shrank
+- [x] Entropy & Randomness — measuring it, and where implementations lose it
+- [~] Information Theory Basics — Shannon entropy, compression, password strength — **shipped as part of 'Entropy & Randomness — Measuring It, and Where Implementations Lose It'**
+- [x] Lattices, Gently — the hard problem post-quantum cryptography moved to
 
 **Wave AM5 — Mathematics for Machine Learning**
-- [ ] Vectors & Embeddings — similarity, cosine distance, and what a dimension means
-- [ ] Matrices & Linear Transformations — the operation a GPU spends its life doing
-- [ ] Derivatives & Gradient Descent — how a model actually learns
-- [ ] Loss Functions & Optimisation — what the model is being told to minimise
-- [ ] Dimensionality & the Curse — why high-dimensional intuition fails
+- [x] Vectors & Embeddings — similarity, cosine distance, and what a dimension means
+- [x] Matrices & Linear Transformations — the operation a GPU spends its life doing
+- [x] Derivatives & Gradient Descent — how a model actually learns
+- [x] Loss Functions & Optimisation — what the model is being told to minimise
+- [x] Dimensionality & the Curse — why high-dimensional intuition fails
 
 ### TRACK AN — Hardware, Electronics & Embedded  (→ new `hw` domain)
 
 ~6 waves, ~30 cards. The physical layer, from a bench repair to a soldered board.
 
-**Wave AN1 — Electronics Fundamentals**
-- [ ] Voltage, Current & Resistance — Ohm's law with worked IT examples
-- [ ] Power & Thermals — watts, heat, and why the PSU calculation matters
-- [ ] Components — resistors, capacitors, diodes, transistors, and reading a schematic
-- [ ] Signals — analogue vs digital, sampling, noise, grounding
-- [ ] Test Gear — multimeter, oscilloscope, logic analyser: what each answers
+**Wave AN1 — Electronics Fundamentals** — shipped; `hw` domain scaffolded. See the session record.
+- [x] Voltage, Current & Resistance — Ohm's law with worked IT examples
+- [x] Power & Thermals — watts, heat, and why the PSU calculation matters
+- [x] Components — resistors, capacitors, diodes, transistors, and reading a schematic
+- [x] Signals → *Signals — Analogue, Digital, Noise & the Grounding Problem*. The noise and
+  grounding half is the bulk of it, as the note asked, and aliasing is carried across into
+  monitoring — a metric sampled every five minutes cannot represent a thirty-second event, and will
+  draw a smooth line through spikes it never saw.
+- [x] Test Gear — multimeter, oscilloscope, logic analyser: what each answers
 
-**Wave AN2 — PC Hardware Deep**
-- [ ] Motherboard Anatomy — chipsets, lanes, headers, and the block diagram
-- [ ] CPU & Cooling — sockets, TDP, thermal paste, throttling diagnosis
-- [ ] Memory Deep — channels, ranks, timings, ECC, and diagnosing bad RAM
-- [ ] Storage Interfaces — SATA/NVMe/PCIe lanes, and where the bottleneck really is
-- [ ] Power Supplies — rails, efficiency ratings, sizing, and failure symptoms
+**Wave AN2 — PC Hardware Deep** — shipped into `hw`.
+- [x] Motherboard Anatomy — chipsets, lanes, headers, and the block diagram
+- [x] CPU & Cooling — sockets, TDP, thermal paste, throttling diagnosis
+- [x] Memory Deep — channels, ranks, timings, ECC, and diagnosing bad RAM
+- [x] Storage Interfaces — SATA/NVMe/PCIe lanes, and where the bottleneck really is
+- [x] Power Supplies — rails, efficiency ratings, sizing, and failure symptoms — inside
+  *Power &amp; Thermals*, where the sizing calculation and the failure-symptom table both live
 
-**Wave AN3 — Diagnosis & Repair**
-- [ ] Systematic Hardware Troubleshooting — isolate, swap, minimum viable system
-- [ ] POST, Beep Codes & Diagnostic LEDs — reading a machine that will not boot
-- [ ] Intermittent Faults — heat, vibration, marginal power, and how to reproduce them
-- [ ] Soldering & Rework — through-hole and SMD basics, and knowing when not to
-- [ ] Data Recovery Triage — when to stop and send it to a lab
+**Wave AN3 — Diagnosis & Repair** — shipped into `hw`.
+- [x] Systematic Hardware Troubleshooting — isolate, swap, minimum viable system
+- [x] POST, Beep Codes & Diagnostic LEDs — reading a machine that will not boot
+- [x] Intermittent Faults — heat, vibration, marginal power, and how to reproduce them
+- [x] Soldering & Rework — through-hole and SMD basics, and knowing when not to
+- [x] Data Recovery Triage — when to stop and send it to a lab
 
-**Wave AN4 — Peripherals & the Office Estate**
-- [ ] Displays — panel types, scaling, colour, multi-monitor and docking pitfalls
-- [ ] Printers & MFPs — the technologies, drivers, print servers, and secure release
-- [ ] Docks, USB-C & Thunderbolt — power delivery, alt modes, and the compatibility mess
-- [ ] Input Devices & Accessibility Hardware — switches, trackballs, ergonomic kit
-- [ ] Conference Room Technology — the AV stack, and why it always breaks
+**Wave AN4 — Peripherals & the Office Estate** — shipped into `hw`.
+- [x] Displays — panel types, scaling, colour, multi-monitor and docking pitfalls
+- [x] Printers & MFPs — the technologies, drivers, print servers, and secure release
+- [x] Docks, USB-C & Thunderbolt — power delivery, alt modes, and the compatibility mess
+- [x] Input Devices & Accessibility Hardware — switches, trackballs, ergonomic kit
+- [x] Conference Room Technology — the AV stack, and why it always breaks
 
-**Wave AN5 — Embedded & Single-Board**
-- [ ] Microcontrollers vs SBCs — Arduino vs Raspberry Pi, and choosing correctly
-- [ ] GPIO, I²C, SPI & UART — talking to the physical world
-- [ ] Firmware Basics — bootloaders, flashing, JTAG/SWD, bricking and recovery
-- [ ] Real-Time Constraints — RTOS, determinism, and why Linux is not always right
-- [ ] Home Lab Hardware — a genuinely useful build, at three budgets
+**Wave AN5 — Embedded & Single-Board** — shipped into `hw`. Track AN is now complete except for
+one AN1 item.
+- [x] Microcontrollers vs SBCs — Arduino vs Raspberry Pi, and choosing correctly
+- [x] GPIO, I²C, SPI & UART — talking to the physical world
+- [x] Firmware Basics — bootloaders, flashing, JTAG/SWD, bricking and recovery
+- [x] Real-Time Constraints — RTOS, determinism, and why Linux is not always right
+- [x] Home Lab Hardware — a genuinely useful build, at three budgets
 
-**Wave AN6 — Hardware Security**
-- [ ] Hardware Root of Trust — TPM, secure enclaves, measured boot, attestation
-- [ ] Firmware & Supply-Chain Attacks — UEFI implants, Option ROMs, vendor trust
-- [ ] Physical Attacks — evil maid, DMA attacks, cold boot, chip-off forensics
-- [ ] Hardware Hacking Tools — Bus Pirate, logic analysers, JTAG; authorised use only
-- [ ] Defending Physical Access — port control, chassis intrusion, screen locks that hold
+**Wave AN6 — Hardware Security** — shipped into `sec`, not `hw`. See the session record
+*Track AN6: hardware and firmware device security* at the end of this file. The `hw` domain
+does not exist yet and these five items are security material that a security domain reader
+needs whether or not an electronics domain is ever built; parking them behind a domain that
+may never be scaffolded was the worse choice.
+- [x] Hardware Root of Trust — TPM, secure enclaves, measured boot, attestation
+- [x] Firmware & Supply-Chain Attacks — UEFI implants, Option ROMs, vendor trust — split across
+  *Firmware Update Mechanisms* (the attack path) and *Counterfeit &amp; Tampered Hardware* (vendor trust)
+- [x] Physical Attacks — evil maid, DMA attacks, cold boot, chip-off forensics — *The Hardware Attack Surface*
+- [x] Hardware Hacking Tools — Bus Pirate, logic analysers, JTAG; authorised use only — *Firmware
+  Extraction &amp; Analysis*, framed as authorised assessment work throughout
+- [~] Defending Physical Access — port control, chassis intrusion, screen locks that hold — the
+  defensive half is inside *The Hardware Attack Surface*; the estate-management depth (DMA port
+  policy, chassis intrusion switches at fleet scale) is still open and belongs with `endpoint`
+- [x] **Added beyond the plan:** Media Sanitisation &amp; Disposal — the decommissioning end of the
+  same hardware lifecycle, and a genuine zero-mention void
 
 ---
 
@@ -2460,8 +2629,12 @@ written — 2 cards into `sec`.** `sec` 52→54.
 - [x] AP1 threat & standards → *Post-Quantum Cryptography — Harvest Now, Decrypt Later* (Track J: Shor/Grover, ML-KEM/ML-DSA, hybrid, what doesn't break)
 - [x] AP2 the migration (inventory, crypto-agility, CBOM, PKI, roadmap) → *Doing the PQC Migration — Inventory, Crypto-Agility & the Roadmap*
 - [x] AP3 adjacent crypto (ZKP, homomorphic, MPC, threshold, confidential computing) → *Adjacent Cryptography — ZKPs, Homomorphic Encryption, MPC & Confidential Computing*
+- [x] **Depth, re-audited:** both named items shipped as new cards rather than as depth on the
+  existing three, which stay as the concept-level entry points. *Certificate &amp; PKI Migration —
+  Chains, HSMs &amp; the Devices That Will Never Update* and *Reading a Cryptographic Claim
+  Critically — Vendor Slides &amp; "Military-Grade"*. `sec` 84 → 86.
 
-**Wave AP1 — The Threat & the Standards**
+**Wave AP1 — The Threat & the Standards** ⟵ see the shipped-note above
 - [ ] Quantum Computing for Security People — qubits, Shor, Grover, and what actually breaks
 - [ ] Harvest Now, Decrypt Later — which of today's data has a long enough shelf life to care
 - [ ] The NIST PQC Standards — ML-KEM, ML-DSA, SLH-DSA, and what each replaces
@@ -2495,7 +2668,7 @@ speculative and fastest-ageing; left for on-demand. `net` 55→57.
 - [x] Edge Computing + CDN function-at-edge + fleet mgmt + offline-first + edge security → *Edge Computing — What It Is Once the Marketing Is Removed*
 - [ ] Remaining (narrower/speculative): AR/VR/XR, headset management, digital twins, spatial-data privacy, frontier-pilot evaluation — follow on demand
 
-**Wave AQ1 — Edge & Distributed Compute**
+**Wave AQ1 — Edge & Distributed Compute** ⟵ see the shipped-note above
 - [ ] Edge Computing — what it is once the marketing is removed, and when latency justifies it
 - [ ] CDN Compute & Function-at-Edge — running logic in the POP
 - [ ] Managing Fleets of Edge Devices — updates, drift and observability without a datacenter
@@ -2538,9 +2711,9 @@ threat and investigations had only passing mentions; no dedicated cards. `sec` 4
 
 Cross-linked to the SF-312 clearance card and the digital-forensics card.
 
-**Wave AR1 — Physical Security Systems**
+**Wave AR1 — Physical Security Systems** ⟵ see the shipped-note above
 - [ ] Access Control Systems — badges, readers, controllers, anti-passback, tailgating
-- [ ] Credential Cloning — why 125 kHz prox is not a control, and what to move to
+- [x] Credential Cloning — why 125 kHz prox is not a control, and what to move to
 - [ ] CCTV & Video Management — retention, coverage, evidentiary quality, privacy limits
 - [ ] Datacenter & Facility Security — layers, mantraps, visitor control, delivery bays
 - [ ] Environmental Controls & Monitoring — power, cooling, water, fire suppression
@@ -2549,7 +2722,7 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 - [ ] The Insider Threat Model — malicious, negligent, compromised; each needs a different control
 - [ ] Behavioural Indicators — and the ethical line around monitoring people
 - [ ] Separation of Duties & Least Privilege in Practice — beyond the slide
-- [ ] Offboarding as a Security Control — the checklist and its failure modes
+- [x] Offboarding as a Security Control — the checklist and its failure modes
 - [ ] Building an Insider Threat Programme — legal, HR and IT together
 
 **Wave AR3 — Investigations**
@@ -2560,11 +2733,11 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 - [ ] Writing an Investigation Report — findings, evidence, limits, no speculation
 
 **Wave AR4 — OSINT & Attack-Surface Discovery (defensive)**
-- [ ] Mapping Your Own Exposure — domains, certificates, cloud, code, people
-- [ ] Credential Exposure Monitoring — breach data, paste sites, and responsible use
-- [ ] Executive & VIP Exposure — data brokers, doxxing risk, protective steps
-- [ ] Brand & Impersonation Monitoring — lookalike domains, fake apps, takedowns
-- [ ] Turning Findings Into Work — from a scary spreadsheet to a prioritised backlog
+- [x] Mapping Your Own Exposure — domains, certificates, cloud, code, people
+- [x] Credential Exposure Monitoring — breach data, paste sites, and responsible use
+- [x] Executive & VIP Exposure — data brokers, doxxing risk, protective steps
+- [x] Brand & Impersonation Monitoring — lookalike domains, fake apps, takedowns
+- [x] Turning Findings Into Work — from a scary spreadsheet to a prioritised backlog
 
 ---
 
@@ -2575,143 +2748,157 @@ Cross-linked to the SF-312 clearance card and the digital-forensics card.
 ~5 waves, ~25 cards. Organisational money, not personal money.
 
 **Wave AS1 — The Money Model**
-- [ ] CapEx vs OpEx — and why the cloud migration changed the conversation
-- [ ] Building an IT Budget — run vs grow vs transform, and defending each line
-- [ ] TCO Modelling — the costs that never appear on the quote
-- [ ] Chargeback & Showback — making consumption visible without starting a war
-- [ ] Business Case Writing — the one-page version an executive will actually read
+- [x] CapEx vs OpEx — and why the cloud migration changed the conversation
+- [x] Building an IT Budget — run vs grow vs transform, and defending each line
+- [x] TCO Modelling — the costs that never appear on the quote
+- [x] Chargeback & Showback — making consumption visible without starting a war
+- [x] Business Case Writing — the one-page version an executive will actually read
 
 **Wave AS2 — Buying Well**
-- [ ] Requirements Before Vendors — writing them so the demo cannot dazzle you
-- [ ] RFI / RFP / RFQ — running a fair process that gets a real answer
-- [ ] Evaluating a Vendor — financial health, roadmap, support model, references
-- [ ] Proof of Concept Design — success criteria agreed *before* the trial starts
-- [ ] Negotiation for IT Buyers — timing, leverage, and what is actually discountable
+- [x] Requirements Before Vendors — writing them so the demo cannot dazzle you
+- [x] RFI / RFP / RFQ — running a fair process that gets a real answer
+- [x] Evaluating a Vendor — financial health, roadmap, support model, references
+- [x] Proof of Concept Design — success criteria agreed *before* the trial starts
+- [x] Negotiation for IT Buyers — timing, leverage, and what is actually discountable
 
 **Wave AS3 — Contracts & Licensing**
-- [ ] Reading a Contract as an Engineer — the clauses that bite operations
-- [ ] SLAs, Credits & What They Are Really Worth — an outage refund is not a control
-- [ ] Software Licensing Models — per-user, per-device, core-based, consumption
-- [ ] Surviving a Licence Audit — preparation, evidence, and the true-up conversation
-- [ ] Exit Clauses & Lock-In — data export, transition assistance, and the migration you will do
+- [x] Reading a Contract as an Engineer — the clauses that bite operations
+- [x] SLAs, Credits & What They Are Really Worth — an outage refund is not a control
+- [x] Software Licensing Models — per-user, per-device, core-based, consumption
+- [x] Surviving a Licence Audit — preparation, evidence, and the true-up conversation
+- [x] Exit Clauses & Lock-In — data export, transition assistance, and the migration you will do
 
 **Wave AS4 — Cost Control in Operations**
-- [ ] Cloud FinOps — showback, rightsizing, commitment discounts, anomaly alerts
-- [ ] SaaS Sprawl — discovery, consolidation, and reclaiming unused seats
-- [ ] Hardware Refresh Economics — when replacing beats maintaining
-- [ ] The Cost of Downtime — modelling it credibly enough to fund resilience
-- [ ] Technical Debt as a Financial Argument — translating it into language that funds it
+- [~] Cloud FinOps — showback, rightsizing, commitment discounts, anomaly alerts — **already carded as 'Cloud Cost Control — Budgets, Tags & Rightsizing' in cloud and 'FinOps — Cloud Cost Management' in devops**
+- [x] SaaS Sprawl — discovery, consolidation, and reclaiming unused seats
+- [x] Hardware Refresh Economics — when replacing beats maintaining
+- [x] The Cost of Downtime — modelling it credibly enough to fund resilience
+- [x] Technical Debt as a Financial Argument — translating it into language that funds it
 
 **Wave AS5 — Governance of Spend**
-- [ ] Vendor Risk Management — security review, concentration risk, fourth parties
-- [ ] Asset Management End to End — procure → deploy → maintain → retire → dispose
-- [ ] Portfolio & Prioritisation — deciding what *not* to do, defensibly
-- [ ] Benefits Realisation — checking afterwards whether it did what the case claimed
-- [ ] Reporting to the Board — three slides, no jargon, no surprises
+- [~] Vendor Risk Management — security review, concentration risk, fourth parties — **already carded three times in grc, including 'Third-Party Risk — Your Security Is Only as Strong as Your Vendors'**
+- [~] Asset Management End to End — procure → deploy → maintain → retire → dispose — **already carded as 'Asset & Configuration Management — A CMDB That Stays True' in ops**
+- [x] Portfolio & Prioritisation — deciding what *not* to do, defensibly
+- [~] Benefits Realisation — checking afterwards whether it did what the case claimed — **shipped as a section of 'The Business Case — One Page an Executive Will Actually Read'**
+- [x] Reporting to the Board — three slides, no jargon, no surprises
 
 ### TRACK AT — Leading Technical Teams
 
 ~5 waves, ~25 cards. Complements the individual-contributor ladder in `eng`.
 
 **Wave AT1 — The Transition**
-- [ ] From Engineer to Manager — what you actually stop doing
-- [ ] The First 90 Days Leading a Team — listen, map, stabilise, then change
-- [ ] Delegation — the levels, and why "I'll just do it" is a trap
-- [ ] Your Calendar Is the Strategy — where a manager's time really goes
-- [ ] Keeping Technical Enough — staying credible without taking the work back
+- [x] From Engineer to Manager — what you actually stop doing
+- [x] The First 90 Days Leading a Team — listen, map, stabilise, then change
+- [x] Delegation — the levels, and why "I'll just do it" is a trap
+- [x] Your Calendar Is the Strategy — where a manager's time really goes
+- [x] Keeping Technical Enough — staying credible without taking the work back
 
 **Wave AT2 — People**
-- [ ] One-to-Ones That Are Worth Having — structure, cadence, and what not to use them for
-- [ ] Feedback & Difficult Conversations — specific, timely, and survivable
-- [ ] Performance Management — the honest version, including managing someone out
-- [ ] Career Development for Your Reports — growth plans that are not just promotion
-- [ ] Retention — why good people leave, and the ones you can prevent
+- [x] One-to-Ones That Are Worth Having — structure, cadence, and what not to use them for
+- [x] Feedback & Difficult Conversations — specific, timely, and survivable
+- [x] Performance Management — the honest version, including managing someone out
+- [x] Career Development for Your Reports — growth plans that are not just promotion
+- [x] Retention — why good people leave, and the ones you can prevent
 
 **Wave AT3 — Hiring**
-- [ ] Writing a Job Description That Attracts the Right Person
-- [ ] Designing an Interview Loop — signal per hour, and reducing bias
-- [ ] Technical Assessment Without Hazing — realistic tasks, fair scope
-- [ ] Reference Checks & Offers — closing well, and the counter-offer conversation
-- [ ] Onboarding — the 30/60/90 that produces a contributor, not a spectator
+- [x] Writing a Job Description That Attracts the Right Person
+- [x] Designing an Interview Loop — signal per hour, and reducing bias
+- [x] Technical Assessment Without Hazing — realistic tasks, fair scope
+- [x] Reference Checks & Offers — closing well, and the counter-offer conversation
+- [x] Onboarding — the 30/60/90 that produces a contributor, not a spectator
 
 **Wave AT4 — Running the Work**
-- [ ] Planning Without Theatre — roadmaps, capacity, and honest estimates
-- [ ] Prioritisation Under Pressure — saying no with a reason attached
-- [ ] Project Management for Technical Leads — the minimum viable process
-- [ ] Managing Incidents as a Leader — comms, decisions, and protecting the responders
-- [ ] Metrics for Engineering Teams — what DORA does and does not tell you
+- [x] Planning Without Theatre — roadmaps, capacity, and honest estimates
+- [~] Prioritisation Under Pressure — saying no with a reason attached — **already carded as 'Portfolio & Prioritisation — Deciding What Not to Do, Defensibly' in eng and 'Difficult Conversations — Angry Users, VIP Pressure & Saying No' in ops**
+- [x] Project Management for Technical Leads — the minimum viable process
+- [~] Managing Incidents as a Leader — comms, decisions, and protecting the responders — **already carded as 'Incident Command — Running a Major Incident Without Chaos' in ops**
+- [~] Metrics for Engineering Teams — what DORA does and does not tell you — **already carded as 'DORA Metrics — Measuring Delivery Performance' in devops**
 
 **Wave AT5 — Organisation & Influence**
-- [ ] Team Topologies — stream-aligned, platform, enabling, complicated-subsystem
-- [ ] Conway's Law in Practice — shaping the org to get the architecture you want
-- [ ] Managing Up — giving your leadership what they need to back you
-- [ ] Cross-Team Politics — alliances, escalation, and picking battles
-- [ ] Building a Culture Deliberately — rituals, defaults, and what you tolerate
+- [x] Team Topologies — stream-aligned, platform, enabling, complicated-subsystem
+- [x] Conway's Law in Practice — shaping the org to get the architecture you want
+- [x] Managing Up — giving your leadership what they need to back you
+- [x] Cross-Team Politics — alliances, escalation, and picking battles
+- [x] Building a Culture Deliberately — rituals, defaults, and what you tolerate
 
 ### TRACK AU — Enablement, Training & Technical Influence
 
 ~4 waves, ~20 cards. Teaching as a function, not as a personality trait.
 
-**Wave AU1 — Designing Learning**
-- [ ] How Adults Actually Learn — relevance, practice, feedback, spacing
-- [ ] Curriculum Design — objectives, sequencing, and cutting the nice-to-know
-- [ ] Building a Lab — repeatable, resettable, and cheap enough to keep
-- [ ] Assessment That Means Something — beyond a multiple-choice quiz
-- [ ] Measuring Training — behaviour change, not attendance
+**Wave AU1 — Designing Learning** — shipped into `career`.
+- [x] How Adults Actually Learn — relevance, practice, feedback, spacing
+- [x] Curriculum Design — objectives, sequencing, and cutting the nice-to-know
+- [~] Building a Lab — repeatable, resettable, and cheap enough to keep — `career` already carries
+  three home-lab cards (*Building a Home Lab*, *Home Lab – Practicing IT Skills*, *Building a Home
+  Lab Without Breaking the Bank*)
+- [x] Assessment That Means Something — beyond a multiple-choice quiz — same card as curriculum
+  design, because assessment is step 2 of backward design and cannot be taught after it
+- [x] Measuring Training — behaviour change, not attendance — the four-level table closing the
+  adult-learning card
 
-**Wave AU2 — Delivering It**
-- [ ] Running a Workshop — pacing, energy, and rescuing the room when it stalls
-- [ ] Live Demos That Do Not Fail — rehearsal, fallbacks, recorded escape hatch
-- [ ] Screencasts & Async Video — scripting, recording, editing, and length discipline
-- [ ] Facilitating a Retrospective or Tabletop — neutrality and the hard question
-- [ ] Teaching a Tool You Just Learned — the honest way to do it
+**Wave AU2 — Delivering It** — shipped into `career`.
+- [x] Running a Workshop — pacing, energy, and rescuing the room when it stalls
+- [x] Live Demos That Do Not Fail — rehearsal, fallbacks, recorded escape hatch
+- [x] Screencasts & Async Video — scripting, recording, editing, and length discipline — same card
+  as demos; both are "showing rather than telling", and the fallback recording links them
+- [x] Facilitating a Retrospective or Tabletop — neutrality and the hard question
+- [x] Teaching a Tool You Just Learned → shipped into `career`. One step ahead is the *best*
+  distance to teach from, because the expert has forgotten what was confusing; the credibility
+  problem is solved by saying where you are rather than by waiting for mastery.
 
-**Wave AU3 — Documentation as Infrastructure**
-- [ ] Documentation Types — tutorial, how-to, reference, explanation (and mixing them up)
-- [ ] Runbooks That Work at 3 a.m. — testable, unambiguous, no missing step
-- [ ] Docs-as-Code — review, versioning, CI checks, and ownership
-- [ ] Keeping Documentation Alive — review triggers, owners, and deleting the dead
-- [ ] Diagrams That Explain — the small number of shapes worth using
+**Wave AU3 — Documentation as Infrastructure** — shipped into `career`, except where noted.
+- [x] Documentation Types — tutorial, how-to, reference, explanation (and mixing them up)
+- [~] Runbooks That Work at 3 a.m. — carded in `ops` as *Writing Runbooks That People Actually
+  Follow*, with the testing half added in this session's resilience wave
+- [x] Docs-as-Code — review, versioning, CI checks, and ownership — same card as documentation types
+- [x] Keeping Documentation Alive — review triggers, owners, and deleting the dead — same card
+- [x] Diagrams That Explain — the small number of shapes worth using
 
-**Wave AU4 — Influence Beyond Your Team**
-- [ ] Writing a Proposal People Say Yes To — problem, options, recommendation, cost
-- [ ] Presenting to Executives — the pyramid principle, and the first thirty seconds
-- [ ] Speaking at a Conference — CFP writing, talk structure, rehearsal
-- [ ] Community & Open Source Contribution — what it gives back, realistically
-- [ ] Building an Internal Community of Practice — starting one that survives month three
+**Wave AU4 — Influence Beyond Your Team** — shipped into `career` as one card.
+- [x] Writing a Proposal People Say Yes To — problem, options, recommendation, cost
+- [x] Presenting to Executives — the pyramid principle, and the first thirty seconds
+- [x] Speaking at a Conference — CFP writing, talk structure, rehearsal
+- [~] Community & Open Source Contribution — carded in `career` as *Building in Public — Your
+  Reputation Compounds*
+- [x] Building an Internal Community of Practice — starting one that survives month three
 
 ### TRACK AV — Consulting, Contracting & Independent Practice
 
 ~4 waves, ~20 cards. Complements `lifestyle`'s freelance-tax card with the craft
 of running the work.
 
-**Wave AV1 — Positioning**
-- [ ] Consultant vs Contractor vs Staff Augmentation — three different businesses
-- [ ] Choosing a Niche — why specificity wins work
-- [ ] Pricing — hourly, day rate, fixed price, value-based; and their risk profiles
-- [ ] Finding Clients — referrals, partners, content, and the honest cold-outreach maths
-- [ ] The Proposal & Statement of Work — scope, exclusions, acceptance criteria
+**Wave AV1 — Positioning** — shipped into `career`.
+- [x] Consultant vs Contractor vs Staff Augmentation — three different businesses
+- [x] Choosing a Niche — why specificity wins work — same card, because the niche only makes sense
+  once you know which of the three businesses you are in
+- [x] Pricing — hourly, day rate, fixed price, value-based; and their risk profiles
+- [x] Finding Clients — referrals, partners, content, and the honest cold-outreach maths
+- [x] The Proposal & Statement of Work — scope, exclusions, acceptance criteria
 
-**Wave AV2 — Delivering**
-- [ ] Discovery — the first two weeks that determine the engagement
-- [ ] Managing Scope — change control without becoming the difficult one
-- [ ] Working Inside Someone Else's Politics — reading the room you were dropped into
-- [ ] Handover & Enablement — leaving a client better, not dependent
-- [ ] The Assessment Report — findings, risk-ranked recommendations, and an owner per item
+**Wave AV2 — Delivering** — shipped into `career`.
+- [x] Discovery — the first two weeks that determine the engagement
+- [x] Managing Scope — change control without becoming the difficult one — same card as discovery;
+  scope creep is what happens when discovery was skipped
+- [x] Working Inside Someone Else's Politics — reading the room you were dropped into
+- [x] Handover & Enablement — leaving a client better, not dependent — same card as politics, since
+  both are about the internal team's relationship to your presence
+- [x] The Assessment Report — findings, risk-ranked recommendations, and an owner per item
 
-**Wave AV3 — The Business Side**
-- [ ] Cash Flow & Runway — invoicing, payment terms, and the late-payer problem
-- [ ] Insurance, Liability & Entity Choice — the boring protections that matter
-- [ ] Contracts for Independents — IP, indemnity, non-solicit, limitation of liability
-- [ ] Subcontracting & Partnering — growing past your own hours
-- [ ] Knowing When to Stop — bad clients, bad engagements, exiting cleanly
+**Wave AV3 — The Business Side** — partly shipped into `career`.
+- [x] Cash Flow & Runway — invoicing, payment terms, and the late-payer problem
+- [x] Insurance, Liability & Entity Choice — the boring protections that matter — same card, framed
+  as orientation with an explicit note that jurisdictions differ and this is not legal advice
+- [x] Contracts for Independents — IP, indemnity, non-solicit, limitation of liability — same card
+- [x] Subcontracting & Partnering → *Subcontracting & Partnering — Growing Past Your Own Hours*
+- [x] Knowing When to Stop — bad clients, bad engagements, exiting cleanly — the closing section of
+  the business-side card
 
 **Wave AV4 — Specialist Practices**
-- [ ] Running a Security Assessment Engagement — rules of engagement to final debrief
-- [ ] Fractional & Advisory Roles — vCISO, fractional IT director; scope and boundaries
-- [ ] Expert Witness & Forensic Work — standards, impartiality, and report discipline
-- [ ] Training & Workshop Delivery as a Product — packaging what you know
-- [ ] Productising a Service — from bespoke hours to a repeatable offer
+- [x] Running a Security Assessment Engagement → *Running a Security Assessment — Rules of Engagement to Final Debrief*
+- [x] Fractional & Advisory Roles → *Fractional & Advisory Roles — vCISO, Fractional IT Director & the Boundary Problem*
+- [x] Expert Witness & Forensic Work → *Expert Witness & Forensic Work — Impartiality, Standards & Report Discipline*
+- [x] Training & Workshop Delivery as a Product → *Training & Workshop Delivery as a Product — Packaging What You Know*
+- [x] Productising a Service → *Productising a Service — From Bespoke Hours to a Repeatable Offer*
 
 ---
 
@@ -2724,182 +2911,123 @@ renames is already somewhere in `data/`.
 
 ### TRACK AX — Content Freshness & Accuracy
 
-- [ ] **Per-topic freshness metadata** — a `reviewed: YYYY-MM` attribute on each
-  `.topic`, surfaced as a quiet badge, and a build report of the oldest 50.
-  Start by stamping everything with its last real commit date via `git log`.
-- [ ] **Volatility tags** — mark topics as *stable* (OSI model, TCP handshake) or
-  *volatile* (vendor consoles, pricing, product names). Only volatile ones need
-  an annual review; stable ones can sit for years. Without this distinction a
-  freshness system just generates guilt.
-- [ ] **Rename/deprecation registry** — a `renames.json` (`Azure AD → Entra ID`,
-  `SCCM → MECM`, `CASP+ → SecurityX`) plus a checker that flags superseded names
-  in new content and suggests the current one. The acronym pipeline already
-  proves this pattern works.
-- [ ] **Link rot check in CI** — external links, on a schedule rather than every
-  PR, reported as an issue rather than a hard failure.
-- [ ] **Fact-anchor comments** — for claims that are version-specific ("six
-  levels of management groups", "93 days of platform metrics"), an HTML comment
-  naming the source, so the next reader can re-verify rather than re-research.
-- [ ] **Per-domain changelog** — an auto-generated "what changed here recently"
-  card at the top of each domain, from git history.
-- [ ] **Contradiction check** — cross-domain grep for the same acronym or metric
-  defined two different ways. This session found three (`CA`, `SPF`, `S3`); a
-  script would find the rest.
-- [ ] **Screenshot-dated warnings** — any card describing a vendor UI gets a
-  "console as of <date>" note, because those age fastest of all.
+*Shipped-note: three of the eight below are done — freshness metadata, volatility tags and the
+rename registry. A fourth measured itself away. Read the ticks.*
+
+- [x] **Per-topic freshness metadata** — `data-reviewed="YYYY-MM"` on every `.topic`, derived from
+  `git blame` by `tools/stamp_freshness.py` with mechanical commits excluded, `--verify` in CI, and
+  1,310 stamps current across 29 files. The badge and the oldest-50 report were dropped
+  deliberately: the stamp drives the volatility warnings below, and a date on every card is noise
+  rather than information.
+- [x] **Volatility tags** — shipped as `<span class="volatile" data-checked="YYYY-MM">` around the
+  specific claim rather than as a tag on the whole topic, which is the better shape: what goes stale
+  is a console name or a limit, not a card. Applied at the claim level, styled with a dotted
+  underline and a tooltip carrying the check date.
+- [x] **Rename/deprecation registry** — `data/renames.json`, 25 renames, plus
+  `tools/check_renames.py` in CI. It reads prose only, allows a mention that is explicitly
+  historical ("formerly Azure AD") or sits beside the new name, and carries an `allow` list for
+  strings that are still literally correct — "Azure AD Connect" outlived "Azure AD", and
+  `twitter:card` is the meta tag's actual name. Found and fixed nine real uses across six files.
+- [~] **Link rot check in CI** — nothing to check. The whole site contains **one** external link
+  and **one** `href="#"` across 1,369 topics; it is a self-contained reference that deliberately
+  makes no third-party requests. Measured rather than built, same as Track AJ's link checker.
+- [x] **Fact-anchor comments** — the convention is
+  `<!-- fact: <claim> | source: <where> | checked: YYYY-MM -->` immediately before the element
+  making the claim, documented in `CONTRIBUTING.md` and validated by `tools/check_volatility.py`
+  (a missing field or a non-`YYYY-MM` date fails CI). Five applied to real claims to start it off,
+  including the plan's own example — the 93-day platform-metric retention.
+- [x] **Per-domain changelog** — an **Updated** row on each domain's landing card: the month the
+  domain was last reviewed and the topics reviewed then, as links. Generated by `build.py` from the
+  `data-reviewed` stamps rather than from git history at build time, which keeps the build offline
+  and deterministic and guarantees the answer matches what `stamp_freshness.py` actually wrote.
+- [x] **Contradiction check** — `tools/check_contradictions.py`, in CI. It checks the two things
+  that are genuinely mechanical: a hand-written acronym expansion that disagrees with
+  `acronyms.json`, and the ports the site attaches to a service. It deliberately does **not** attempt
+  "contradictions" in general — a limit or a retention period needs to know what the number is
+  *about*, which no regex supplies, and the docstring says so rather than pretending. Found eight
+  real disagreements on its first run.
+- [x] **Screenshot-dated warnings** — implemented as the existing `.volatile` span applied to the
+  console *name*, which is the thing that changes; ten added across `endpoint`, `infra` and `m365`,
+  taking the site from 33 dated claims to 43. `check_volatility.py` also reports topics naming a
+  vendor console with no dated span — a queue of 14, reported and deliberately not gated, because
+  most of them mention a console without making a claim about it ("Microsoft Management Console"
+  has not moved in twenty years).
 
 ### TRACK AY — Content Model & Build Evolution
 
 Recorded with trade-offs rather than as a recommendation, because it is the kind
 of change that is easy to start and expensive to abandon.
 
-- [ ] **Evaluate a structured content model** — topics as data (JSON/YAML with
-  typed blocks: prose, table, code, diagram) rendered by `build.py`, instead of
-  hand-written HTML. **For:** mechanical validation, trivial exports (Markdown,
-  print, quiz questions), no more inline-style drift, and every card becomes
-  queryable. **Against:** 900 existing topics to migrate, HTML is currently
-  expressive and easy to hand-edit, and the build becomes a real program.
-  **Decision rule:** only worth it if Tracks AG/AK actually need topic-level
-  structured data — do not do it for tidiness alone.
-- [ ] **Incremental path if that is a yes** — new domains author in the new model
-  and old ones stay HTML; `build.py` handles both. Never a big-bang migration.
-- [ ] **Topic ID stability contract** — write down, in `CONTRIBUTING.md`, that
-  topic slugs are a public interface: renaming a `.topic-name` breaks
-  permalinks and stored progress. Add an alias map so renames are survivable.
-- [ ] **Split `data/script.html`** — at 719 KB and 137 topics it is a third of
-  the content in one file and the hardest to work in. It contains at least three
-  domains' worth of material (shell/regex, languages, web fundamentals).
-  Splitting it into multiple source files that build into the *same* domain
-  keeps every slug intact — `build.py` would concatenate `script.*.html`.
-- [ ] **Build performance & determinism** — the build is fast today; add a
-  guard so it stays reproducible (stable ordering, no timestamps in output).
-- [ ] **Archive `patches/`** — ~1.7 MB of already-applied one-shot scripts. Tag
-  the current commit, then delete them from `main` with the tag recorded in
-  `CONTRIBUTING.md` so the history is recoverable.
-- [ ] **A `make` or `just` entry point** — `just build` running gen → annotate →
-  build → smoke test, so the four-command sequence cannot be half-run. The
-  number of steps is now the most likely source of a stale commit.
-
----
-
-## Suggested execution order (Phase 5)
-
-Phase 5 assumes Phase 4 is under way but does not depend on it, with one
-exception noted below.
-
-| Slot | Tracks | Theme | Rough size |
-|---|---|---|---|
-| 91 | AH chip grouping + AX freshness metadata | **Do first** — the chip bar breaks before the 24th domain, and freshness metadata is cheapest to add before another 500 topics exist | code only |
-| 92–95 | scaffold `cs` + AL1–AL7 | complexity, data structures, algorithms, OS, architecture, compilers, distributed theory | ~35 cards |
-| 96–97 | AM1–AM5 | the mathematics that pays rent | ~25 cards |
-| 98–100 | scaffold `hw` + AN1–AN6 | electronics, PC hardware, repair, peripherals, embedded, hardware security | ~30 cards |
-| 101–102 | AP1–AP3 | post-quantum migration and adjacent cryptography | ~15 cards |
-| 103–104 | AQ1–AQ4, AR1–AR4 | emerging platforms; physical security and investigations | ~40 cards |
-| 105–107 | scaffold `biz` + AS1–AS5 | IT finance, vendors, contracts, cost control | ~25 cards |
-| 108–110 | AT1–AT5 | leading technical teams | ~25 cards |
-| 111–112 | AU1–AU4, AV1–AV4 | enablement and independent practice | ~40 cards |
-| 113–114 | AX remainder + AY | freshness system, then the content-model decision | code only |
-
-**Phase 5 total: 10 content tracks, 47 waves, 235 cards, 3 new domains**, plus
-15 engineering items.
-
-## Where that leaves the site
-
-| | Topics | Domains |
-|---|---:|---:|
-| Today | 900 | 20 |
-| + Phase 3 outstanding (J–U) | 1,107 | 20 |
-| + Phase 4 | 1,372 | 23 |
-| + Phase 5 | 1,607 | 26 |
-
-**Total remaining backlog across all three phases: 707 cards and 44 engineering
-items.** At one wave (~5 cards) per working session that is roughly 140 sessions
-— which is the point at which the honest advice is: *do not treat this as a
-queue to finish*. Treat it as a menu. Ship the tracks that match what you are
-actually doing at work, because those are the ones you will write well and the
-ones you will keep using.
-
-## Suggested actual priority, if the list is overwhelming
-
-Ignoring track order entirely, these are the six that would most improve the
-site as it stands today:
-
-1. **AH chip grouping + Y1–Y2** — the navigation breaks soon, and `endpoint` is
-   both the thinnest domain and the maintainer's day job.
-2. **AG spaced repetition + acronym quiz** — turns 900 topics of reference into
-   something you revise from, using data that already exists.
-3. **AX freshness metadata** — cheapest now, impossible later.
-4. ~~**V1–V3 (Windows Server, AD DS, Group Policy)**~~ — ✅ shipped session 18.
-   `infra`, 15 cards.
-5. ~~**AL1–AL3 (complexity, data structures, algorithms)**~~ — ✅ shipped session 18
-   as `cs`, 15 cards. **"It is nowhere yet" was wrong** — see the note under Track AL.
-6. **AY split of `data/script.html`** — 719 KB in one file is the single biggest
-   drag on actually doing any of the above.
-
----
-
-# Content & Capability Roadmap — Phase 6: Specialisms, and How This Gets Written (Wave 115+)
-
-> **Two halves, deliberately different in kind.**
-> The first is nine tracks covering the jobs that split off from "security
-> engineer" and "SRE" and became disciplines with their own titles, tooling and
-> interview loops. The second is not a plan at all — it is the **authoring
-> craft, pattern library, risk register and success measures written out now**,
-> because after five phases the constraint on this project is no longer *what to
-> write* (751 open items) but *how to write 751 cards that are worth reading*.
-
-## No new domains
-
-Phases 3–5 added eight domains. Phase 6 adds **none**. Every track here lands in
-an existing domain — `blueteam`, `redteam`, `sec`, `cloud`, `ops`, `eng`, `grc`.
-That is a deliberate correction: 26 domains is already at the edge of what a
-filter bar and a mental model can hold, and every one of these specialisms is
-recognisably a deeper cut of something the site already covers.
-
----
-
-## PART 1 — SECURITY ENGINEERING SPECIALISMS
-
-### TRACK BA — Detection Engineering  (→ `blueteam`)
-
-~5 waves, ~25 cards. Writing detections as a software discipline, not as a
-tuning exercise in a console. The site has SIEM and EDR cards; it has nothing on
-the craft of building what runs inside them.
-
-**Wave BA1 — The Discipline**
-- [ ] What Detection Engineering Is — and why it split off from SOC analysis
-- [ ] The Detection Lifecycle — idea → hypothesis → logic → test → deploy → tune → retire
-- [ ] Detection Requirements — writing one before writing the rule
-- [ ] The Pyramid of Pain Applied — choosing what to detect on, and its cost to the attacker
-- [ ] Coverage vs Noise — the trade every rule makes, made explicit
+- [x] **Evaluate a structured content model** — **evaluated; the answer is no.** The decision rule
+  was "only worth it if Tracks AG/AK actually need topic-level structured data". Both tracks are now
+  complete and the evidence is in the session record below: every consumer built — study decks,
+  quizzes, exam mode, learning paths, related topics, landing cards, print packs — needed *ids and
+  small external JSON*, not structured topics. One consumer, the Markdown export, genuinely wanted
+  structure, and it cost ~120 lines and three bugs rather than 1,375 migrations.
+- [~] **Incremental path if that is a yes** — moot, since the answer is no. The evaluation named a
+  much smaller change that gets the same benefit: convert the **78 div-built pseudo-tables** to real
+  `<table>` markup. That is where the export's special cases live, and it is 78 elements against
+  1,883 real tables. Until then the Markdown export knows their class names — `kc-row`, `nist-row`,
+  `perm-row`, `url-codec-row`, `layer`, `dt-row` — so they export as rows rather than as one line
+  per cell. Naming them in the converter is the cheap half; converting the markup is the half that
+  also fixes screen-reader output.
+- [x] **Topic ID stability contract** — written into `CONTRIBUTING.md` as *Topic IDs are a
+  contract*, with the table of what does and does not move an id, why it matters (permalinks and
+  five `localStorage` key prefixes), the rule to prefer parts over new domains, and the
+  build-and-compare-bytes proof the `script` split used.
+- [x] **Split `data/script.html`** — done exactly as specified: six ordered parts building into the
+  *same* domain, concatenated by `build.py` in filename order.
+  `script.01-references` (25) · `02-beginner` (36) · `03-python` (41) · `04-it-automation` (10) ·
+  `05-platform` (26) · `06-admin-automation` (7). Every slug, permalink and stored progress key is
+  untouched, and the built `index.html` is **byte-identical** to the pre-split build — which is the
+  proof, not a hope. `domain_files()` in `lint_content.py` is now the one place that answers "where
+  does a domain live", and six tools use it.
+- [x] **Build determinism** — `tools/check_determinism.py` builds twice and compares the bytes of
+  `index.html` and `sw.js`, in CI and in `make check`. Verified to fail on a planted `time_ns()`
+  before being wired in. It is also what makes "the built page is byte-identical", the proof the
+  `script` split relied on, mean anything.
+- [x] **Archive `patches/`** — 54 one-shot injection scripts, 1.8 MB, untouched since 2026-07-04
+  and superseded by editing `data/` directly. Tagged `archive/patches-2026-08` and deleted;
+  recoverable with `git checkout archive/patches-2026-08 -- patches/`.
+- [x] **A `make` entry point** — `make` builds, `make check` runs every static gate in
+  fastest-failing order, `make test` drives the browser, `make all` does all three, `make stamp
+  ONLY=<domain>` restamps one domain, `make help` lists them. `make` rather than `just`, because
+  `make` is already on the machine. The ordering inside `build` is documented in the file: the
+  acronym domain is generated from the dictionary, the annotator rewrites content using it, and
+  `build.py` assembles what both produced.
+- [x] What Detection Engineering Is — and why it split off from SOC analysis
+- [x] The Detection Lifecycle — idea → hypothesis → logic → test → deploy → tune → retire
+- [x] Detection Requirements — writing one before writing the rule
+- [~] The Pyramid of Pain Applied — choosing what to detect on, and its cost to the attacker — **already carded as 'Detection Tuning & the Pyramid of Pain'**
+- [x] Coverage vs Noise — the trade every rule makes, made explicit
 
 **Wave BA2 — Data Before Rules**
-- [ ] Log Source Inventory — knowing what you actually collect, and at what fidelity
-- [ ] Data Normalization — OCSF, ECS, ASIM; why a schema decides your query
-- [ ] Telemetry Gaps — proving a detection cannot fire, before you promise it does
-- [ ] Log Volume & Cost — sampling, filtering, and the detections cost quietly kills
-- [ ] Enrichment — asset, identity and threat context that turns an alert into a decision
+- [x] Log Source Inventory — knowing what you actually collect, and at what fidelity
+- [x] Data Normalization — OCSF, ECS, ASIM; why a schema decides your query
+- [x] Telemetry Gaps — proving a detection cannot fire, before you promise it does
+- [x] Log Volume & Cost — sampling, filtering, and the detections cost quietly kills
+- [x] Enrichment — asset, identity and threat context that turns an alert into a decision
 
 **Wave BA3 — Writing Detections**
-- [ ] Sigma as an Interchange Format — writing once, deploying to several backends
-- [ ] Detection-as-Code — Git, review, CI, and versioned rules
-- [ ] Writing a Good Rule — specificity, false-positive analysis, the tuning fields
-- [ ] Behavioural vs Signature Detections — worked examples of both for one technique
-- [ ] Correlation & Sequencing — when a single event genuinely is not enough
+- [~] Sigma as an Interchange Format — writing once, deploying to several backends — **already carded as 'Sigma — Write Detections Once, Run Anywhere'**
+- [x] Detection-as-Code — Git, review, CI, and versioned rules
+- [x] Writing a Good Rule — specificity, false-positive analysis, the tuning fields
+- [x] Behavioural vs Signature Detections — worked examples of both for one technique
+- [x] Correlation & Sequencing — when a single event genuinely is not enough
 
 **Wave BA4 — Testing Detections**
-- [ ] Unit-Testing a Detection — synthetic events and expected verdicts
-- [ ] Atomic Red Team & Emulation for Validation — proving the rule fires on the real thing
-- [ ] Detection Regression — the rule that silently stopped working after a log change
-- [ ] Measuring Detection Quality — precision, recall, alert-to-incident ratio, time-to-detect
-- [ ] Purple-Team Feedback Loop — closing the gap the exercise found
+- [x] Unit-Testing a Detection — synthetic events and expected verdicts
+- [x] Atomic Red Team & Emulation for Validation — proving the rule fires on the real thing
+- [x] Detection Regression — the rule that silently stopped working after a log change
+- [x] Measuring Detection Quality — precision, recall, alert-to-incident ratio, time-to-detect
+- [~] Purple-Team Feedback Loop — closing the gap the exercise found — **already carded as 'Purple Teaming — Closing the Detection Gap'**
 
 **Wave BA5 — Running the Programme**
-- [ ] ATT&CK Coverage Mapping — honest heat maps, and the lie of "100% coverage"
-- [ ] Detection Backlog & Prioritisation — threat model in, rules out
-- [ ] Rule Retirement — deleting detections without losing the reason they existed
-- [ ] Documentation for Responders — the runbook that ships *with* the rule
-- [ ] Detection Engineering Interview — what the role is actually assessed on
+- [x] ATT&CK Coverage Mapping — honest heat maps, and the lie of "100% coverage"
+- [x] Detection Backlog & Prioritisation — threat model in, rules out
+- [x] Rule Retirement — deleting detections without losing the reason they existed
+- [x] Documentation for Responders — the runbook that ships *with* the rule
+- [x] Detection Engineering Interview — what the role is actually assessed on
 
 ### TRACK BB — Adversary Emulation & Purple Teaming  (→ `redteam` / `blueteam`)
 
@@ -2907,170 +3035,221 @@ the craft of building what runs inside them.
 pairs with the detection it should trigger — the site's existing rule.
 
 **Wave BB1 — Emulation Foundations**
-- [ ] Emulation vs Simulation vs Penetration Testing — three different questions
-- [ ] Building a Threat Profile — picking an adversary that is relevant to *you*
-- [ ] Emulation Plans — CTID plans, and writing your own from intel
-- [ ] Rules of Engagement for Emulation — scope, safety, deconfliction, kill switch
-- [ ] Lab Design for Emulation — a range that is safe to break
+- [x] Emulation vs Simulation vs Penetration Testing — three different questions
+- [x] Building a Threat Profile — picking an adversary that is relevant to *you*
+- [x] Emulation Plans — CTID plans, and writing your own from intel
+- [x] Rules of Engagement for Emulation — scope, safety, deconfliction, kill switch
+- [x] Lab Design for Emulation — a range that is safe to break
 
 **Wave BB2 — Running an Exercise**
-- [ ] Purple Team Mechanics — the room, the roles, the cadence
-- [ ] Technique-by-Technique Execution — run, observe, record, adjust
-- [ ] Detection Gaps in Real Time — the value that only appears when both teams watch together
-- [ ] Evidence Capture — screenshots, timestamps, telemetry references
-- [ ] The Debrief — findings that turn into backlog items, not a scorecard
+- [x] Purple Team Mechanics — the room, the roles, the cadence
+- [x] Technique-by-Technique Execution — run, observe, record, adjust
+- [x] Detection Gaps in Real Time — the value that only appears when both teams watch together
+- [x] Evidence Capture — screenshots, timestamps, telemetry references
+- [x] The Debrief — findings that turn into backlog items, not a scorecard
 
 **Wave BB3 — Automation**
-- [ ] Breach & Attack Simulation Tools — what they do well, and their blind spots
-- [ ] Atomic Testing at Scale — scheduled, safe, continuous validation
-- [ ] CI for Security Controls — treating control efficacy as a test suite
-- [ ] Safe Payloads — proving execution without doing damage
-- [ ] Avoiding Emulation Theatre — when a green dashboard means nothing
+- [x] Breach & Attack Simulation Tools — what they do well, and their blind spots
+- [x] Atomic Testing at Scale — scheduled, safe, continuous validation
+- [x] CI for Security Controls — treating control efficacy as a test suite
+- [x] Safe Payloads — proving execution without doing damage
+- [x] Avoiding Emulation Theatre — when a green dashboard means nothing
 
 **Wave BB4 — Reporting & Value**
-- [ ] Writing the Emulation Report — narrative, timeline, gaps, recommendations
-- [ ] Mapping Findings to Controls & Owners — every gap gets a name and a date
-- [ ] Measuring Programme Improvement Over Time — the metric that survives scrutiny
-- [ ] Communicating Risk to Leadership — without either alarmism or false comfort
-- [ ] Building the Business Case for Purple — funding the second exercise
+- [x] Writing the Emulation Report — narrative, timeline, gaps, recommendations
+- [x] Mapping Findings to Controls & Owners — every gap gets a name and a date
+- [x] Measuring Programme Improvement Over Time — the metric that survives scrutiny
+- [x] Communicating Risk to Leadership — without either alarmism or false comfort
+- [x] Building the Business Case for Purple — funding the second exercise
 
 ### TRACK BC — Cloud-Native & Kubernetes Security  (→ `cloud` / `blueteam`)
 
 ~5 waves, ~25 cards. The site teaches Kubernetes operationally; this is the
 attack and defence surface.
 
-**Wave BC1 — The Kubernetes Threat Model**
-- [ ] What an Attacker Sees — the control plane, the kubelet, etcd, the workloads
-- [ ] The Four Cs — cloud, cluster, container, code
-- [ ] Kubernetes RBAC Deep — verbs, resources, and the escalation paths people miss
-- [ ] Service Accounts & Token Projection — the credential every pod carries
-- [ ] etcd & Control-Plane Exposure — the game-over surfaces
+**Wave BC1 — The Kubernetes Threat Model** — shipped into `cloud`.
+- [x] What an Attacker Sees — the control plane, the kubelet, etcd, the workloads
+- [x] The Four Cs — cloud, cluster, container, code — same card; the model is diagnostic and needs
+  the surfaces beside it to be worth anything
+- [x] Kubernetes RBAC Deep — verbs, resources, and the escalation paths people miss
+- [x] Service Accounts & Token Projection — the credential every pod carries
+- [x] etcd & Control-Plane Exposure — the game-over surfaces — the surfaces table in the threat-model
+  card, ranked by consequence
 
-**Wave BC2 — Workload Hardening**
-- [ ] Pod Security Standards — privileged/baseline/restricted, and enforcing them
-- [ ] Container Breakout Paths — privileged pods, hostPath, hostPID, capabilities
-- [ ] Admission Control — OPA/Gatekeeper and Kyverno, and policy-as-code
-- [ ] Image Security — minimal bases, non-root, read-only filesystems, distroless
-- [ ] Secrets in Kubernetes — why the built-in kind is only base64, and the options
+**Wave BC2 — Workload Hardening** — shipped into `cloud`, except where noted.
+- [x] Pod Security Standards — privileged/baseline/restricted, and enforcing them
+- [x] Container Breakout Paths — privileged pods, hostPath, hostPID, capabilities — same card as
+  PSA, because the profiles only make sense once you know what they are refusing
+- [~] Admission Control — OPA/Gatekeeper and Kyverno, and policy-as-code — already carded as
+  *Policy as Code — OPA/Rego &amp; Kyverno* in `devops`; the new card cross-references it and adds
+  the PSA-validates-but-cannot-mutate ordering trap
+- [~] Image Security — minimal bases, non-root, read-only filesystems, distroless — carded in
+  `devops` (*Container Security*) and `linux`
+- [x] Secrets in Kubernetes → *Secrets in Kubernetes — Base64 Is Not Encryption, and the Options
+  That Are*. The options comparison the note asked for, plus the clause people miss: permission to
+  create a pod in a namespace is permission to read every Secret in it.
 
-**Wave BC3 — Network & Identity**
-- [ ] Network Policies — default-deny, and why almost nobody has it
-- [ ] Service Mesh Security — mTLS, authorization policy, and the complexity cost
-- [ ] Workload Identity — federating pods to cloud IAM without long-lived keys
-- [ ] Ingress & API Exposure — the gateway as a control point
-- [ ] Multi-Tenancy — namespaces are not a security boundary; what to do instead
+**Wave BC3 — Network & Identity** — shipped into `cloud`, except where noted.
+- [x] Network Policies — default-deny, and why almost nobody has it
+- [x] Service Mesh Security — mTLS, authorization policy, and the complexity cost — same card, so
+  the "network policy first, mesh only for the second column" judgement is stated once
+- [x] Workload Identity — federating pods to cloud IAM without long-lived keys — inside the
+  service-account token card, where the audience field explains the mechanism
+- [x] Ingress & API Exposure → *Ingress & API Exposure — The Gateway as a Control Point*, including
+  the Ingress / Gateway API / service mesh division of labour and the 502 debugging order
+- [x] Multi-Tenancy — namespaces are not a security boundary; what to do instead
 
-**Wave BC4 — Runtime & Detection**
-- [ ] Runtime Security — Falco/Tetragon, eBPF-based detection in the cluster
-- [ ] Audit Logs — what the API server records, and the queries worth saving
-- [ ] Container Forensics — investigating something that no longer exists
-- [ ] Drift & Immutability — detecting a changed container in a declarative world
-- [ ] Incident Response in Kubernetes — isolate, snapshot, evict, and preserve evidence
+**Wave BC4 — Runtime & Detection** — shipped into `cloud`.
+- [x] Runtime Security — Falco/Tetragon, eBPF-based detection in the cluster
+- [x] Audit Logs — what the API server records, and the queries worth saving — same card as
+  runtime, because the point is that the two answer different questions
+- [x] Container Forensics — investigating something that no longer exists
+- [x] Drift & Immutability — detecting a changed container in a declarative world — the GitOps-diff
+  row in the incident-response card
+- [x] Incident Response in Kubernetes — isolate, snapshot, evict, and preserve evidence
 
-**Wave BC5 — Serverless & Managed Services**
-- [ ] Serverless Threat Model — event injection, over-permissive roles, cold-start secrets
-- [ ] Managed Service Trust Boundaries — what the provider secures, and precisely what you do
-- [ ] IaC Security Scanning — catching the misconfiguration before it deploys
-- [ ] Cloud Detection Engineering — CloudTrail/Activity Log/Audit Logs as detection sources
-- [ ] Cloud Incident Response — snapshotting, credential revocation, blast-radius containment
+**Wave BC5 — Serverless & Managed Services** — shipped into `cloud`. Track BC is complete except
+for the three items noted in BC2 and BC3 above.
+- [x] Serverless Threat Model — event injection, over-permissive roles, cold-start secrets
+- [x] Managed Service Trust Boundaries — what the provider secures, and precisely what you do
+- [x] IaC Security Scanning — catching the misconfiguration before it deploys
+- [x] Cloud Detection Engineering — CloudTrail/Activity Log/Audit Logs as detection sources
+- [x] Cloud Incident Response — snapshotting, credential revocation, blast-radius containment
 
 ### TRACK BD — API & Identity-First Security  (→ `sec` / `web`)
 
 ~4 waves, ~20 cards. The perimeter moved to the API and the token; the site's
 coverage has not caught up.
 
-**Wave BD1 — API Security**
-- [ ] OWASP API Top 10 — what differs from the web Top 10, and why
-- [ ] Broken Object-Level Authorization — the single most common real API bug
-- [ ] Authentication vs Authorization at the API — where each belongs
-- [ ] Rate Limiting & Abuse — quotas, burst, and distinguishing abuse from success
-- [ ] API Inventory & Shadow APIs — you cannot protect the endpoint you forgot
+**Wave BD1 — API Security** — shipped into `sec`.
+- [x] OWASP API Top 10 — what differs from the web Top 10, and why
+- [x] Broken Object-Level Authorization — the single most common real API bug
+- [~] Authentication vs Authorization at the API — where each belongs — already carded at concept
+  level in *API Security – OAuth2, JWT &amp; Token-Based Authentication*; the API-specific half is
+  inside the BOLA card, where it belongs
+- [x] Rate Limiting & Abuse — quotas, burst, and distinguishing abuse from success
+- [x] API Inventory & Shadow APIs — you cannot protect the endpoint you forgot
 
-**Wave BD2 — Tokens Done Right**
-- [ ] JWT Security — algorithm confusion, `none`, key confusion, expiry, revocation
-- [ ] OAuth 2.1 & PKCE — the flows that remain, and the ones that were removed
-- [ ] Token Lifetime & Revocation — refresh, rotation, and the logout that does not
-- [ ] Machine-to-Machine Auth — client credentials, mTLS, workload identity
-- [ ] Secrets vs Tokens vs Keys — a taxonomy that prevents the wrong control
+**Wave BD2 — Tokens Done Right** — closed. Three cards shipped into `sec`; see both BD session
+records.
+- [~] JWT Security — algorithm confusion, `none`, key confusion, expiry, revocation — `alg: none`
+  and the revocation problem are already in the existing `sec` API card; algorithm and key
+  confusion are in the federation card. A standalone JWT card would have been a third telling
+- [x] OAuth 2.1 & PKCE — the flows that remain, and the ones that were removed
+- [x] Token Lifetime & Revocation — refresh, rotation, and the logout that does not
+- [~] Machine-to-Machine Auth — client credentials, mTLS, workload identity — carded as
+  *Non-Human Identity* earlier this session, which is where the credential-choice table lives
+- [x] Secrets vs Tokens vs Keys — a taxonomy that prevents the wrong control
 
 **Wave BD3 — Identity as the Control Plane**
-- [ ] Identity-First Security — what changes when identity is the perimeter
-- [ ] ITDR — detecting identity attacks: token theft, consent phishing, MFA fatigue
-- [ ] Conditional Access Patterns — a policy set that is coherent rather than accreted
-- [ ] Privileged Access Done Properly — tiering, PAWs, break-glass, JIT elevation
-- [ ] Non-Human Identity — service principals, workload identities, and the sprawl nobody owns
+- [~] Identity-First Security — what changes when identity is the perimeter — carded twice as
+  *Zero Trust — Never Trust, Always Verify* (`sec`) and *Zero Trust – "Never Trust, Always Verify"
+  Explained Simply* (`net`); the identity-as-perimeter argument is what those cards are
+- [~] ITDR — detecting identity attacks: token theft, consent phishing, MFA fatigue — carded as
+  *Identity Threat Detection &amp; Response (ITDR)* in `blueteam`; this session's federation and
+  consent-phishing cards cross-reference it
+- [~] Conditional Access Patterns — a policy set that is coherent rather than accreted — carded as
+  *Conditional Access &amp; Device Compliance* (`endpoint`) and *Entra ID — Sign-In &amp; Conditional
+  Access Troubleshooting* (`cloud`)
+- [~] Privileged Access Done Properly — tiering, PAWs, break-glass, JIT elevation — carded as
+  *Privileged Access Management — Vaulting, Just-in-Time &amp; Session Recording*; tier-zero and
+  privileged-access-workstation material is in `infra`
+- [x] Non-Human Identity — service principals, workload identities, and the sprawl nobody owns
 
-**Wave BD4 — Federation & Third Parties**
-- [ ] SAML & OIDC Attack Surface — golden SAML, signature confusion, reply-URL abuse
-- [ ] SCIM & Provisioning Risk — the integration that quietly holds write access
-- [ ] OAuth Consent Phishing — the attack that needs no password
-- [ ] B2B & Guest Access — external identities without opening the tenant
-- [ ] Third-Party App Governance — reviewing, restricting and revoking app permissions
+**Wave BD4 — Federation & Third Parties** — shipped into `sec`.
+- [x] SAML & OIDC Attack Surface — golden SAML, signature confusion, reply-URL abuse
+- [x] SCIM & Provisioning Risk — the integration that quietly holds write access — inside
+  *Third-Party App Governance*, which is where the reader will look for it
+- [x] OAuth Consent Phishing — the attack that needs no password
+- [x] B2B & Guest Access — external identities without opening the tenant — same card; guests and
+  integrations are the same governance gap seen from two directions
+- [x] Third-Party App Governance — reviewing, restricting and revoking app permissions
 
 ### TRACK BE — Software Supply Chain & Integrity  (→ `eng` / `sec`)
 
 ~4 waves, ~20 cards. The SBOM cards exist; the discipline around them does not.
 
-**Wave BE1 — Understanding the Chain**
-- [ ] Where a Build Actually Comes From — every input, including the ones you forgot
-- [ ] Historic Supply-Chain Attacks — what each one actually exploited
-- [ ] Dependency Risk — transitive depth, typosquatting, abandoned packages
-- [ ] Build System as a Target — the CI runner is production-adjacent
-- [ ] Trust Decisions — pinning, vendoring, mirrors, and their maintenance cost
+**Wave BE1 — Understanding the Chain** — shipped into `eng`, not `sec`. See the session record.
+- [x] Where a Build Actually Comes From — every input, including the ones you forgot
+- [x] Historic Supply-Chain Attacks — what each one actually exploited — written as a pattern table
+  inside the same card rather than a card of case studies, because the shared structure is the
+  lesson and the individual incidents date badly
+- [x] Dependency Risk — transitive depth, typosquatting, abandoned packages
+- [x] Build System as a Target — the CI runner is production-adjacent — *Securing the Pipeline*
+- [x] Trust Decisions — pinning, vendoring, mirrors, and their maintenance cost — split where the
+  reader meets each: pinning's cost with dependency risk, mirrors with internal registries
 
-**Wave BE2 — Provenance & Attestation**
-- [ ] SLSA Levels — what each one actually requires you to change
-- [ ] Signing & Sigstore — keyless signing, transparency logs, verification
-- [ ] Attestations & in-toto — statements about how an artifact was produced
-- [ ] Verifying at Deploy Time — admission policy that refuses unsigned artifacts
-- [ ] Reproducible Builds — the property, the practical obstacles
+**Wave BE2 — Provenance & Attestation** — shipped into `eng`.
+- [x] SLSA Levels — what each one actually requires you to change
+- [x] Signing & Sigstore — keyless signing, transparency logs, verification
+- [x] Attestations & in-toto — statements about how an artifact was produced — same card; the
+  who/how distinction only lands when the two are taught together
+- [x] Verifying at Deploy Time — admission policy that refuses unsigned artifacts
+- [x] Reproducible Builds — the property, the practical obstacles
 
-**Wave BE3 — Operating It**
-- [ ] SBOM in Practice — generating, storing, and actually querying one
-- [ ] VEX — saying "we ship it but are not affected", credibly
-- [ ] Dependency Update Strategy — automated bumps without a broken main branch
-- [ ] Vulnerability Triage for Dependencies — reachability, exploitability, real priority
-- [ ] Responding to a Compromised Dependency — the first hour
+**Wave BE3 — Operating It** — shipped into `eng`.
+- [x] SBOM in Practice — generating, storing, and actually querying one
+- [x] VEX — saying "we ship it but are not affected", credibly
+- [x] Dependency Update Strategy — automated bumps without a broken main branch
+- [x] Vulnerability Triage for Dependencies — reachability, exploitability, real priority
+- [x] Responding to a Compromised Dependency — the first hour
 
-**Wave BE4 — Internal Supply Chain**
-- [ ] Securing the CI/CD Pipeline — secrets, runners, forks, and injection via pull request
-- [ ] Artifact Repositories — promotion, retention, immutability, access
-- [ ] Internal Package Registries — and the dependency-confusion class of attack
-- [ ] Golden Images & Base Layer Hygiene — one place to patch, one place to break
-- [ ] Developer Workstation Trust — the machine that signs your commits
+**Wave BE4 — Internal Supply Chain** — shipped into `eng`, except where noted.
+- [x] Securing the CI/CD Pipeline — secrets, runners, forks, and injection via pull request
+- [~] Artifact Repositories — promotion, retention, immutability, access — already carded as
+  *Artifact &amp; Registry Management* in `devops`; the new card cross-references it
+- [x] Internal Package Registries — and the dependency-confusion class of attack
+- [x] Golden Images & Base Layer Hygiene — one place to patch, one place to break — inside
+  *Securing the Pipeline*, where the rebuild-schedule point has something to attach to
+- [~] Developer Workstation Trust — the machine that signs your commits — the endpoint half is
+  carded in `endpoint`; the commit-signing half is a genuine small gap, left open
 
 ### TRACK BF — Privacy Engineering  (→ `grc` / `eng`)
 
 ~4 waves, ~20 cards. Distinct from GRC: GRC proves compliance, privacy
 engineering builds systems that do not need much proving.
 
-**Wave BF1 — Privacy as a System Property**
-- [ ] Privacy vs Security — overlapping, not the same, and where they conflict
-- [ ] Data Minimisation — the control that removes whole classes of risk
-- [ ] Purpose Limitation in a Data Warehouse — hard, and why it is usually skipped
-- [ ] Data Inventory & Mapping — knowing where personal data actually flows
-- [ ] Privacy by Design — the seven principles, translated into engineering decisions
+**Wave BF1 — Privacy as a System Property** — shipped into `grc`. See the session record.
+- [x] Privacy vs Security — overlapping, not the same, and where they conflict — reframed as
+  privacy *engineering* vs privacy *compliance*, which is the distinction the reader of this site
+  actually needs, since the compliance half is already four cards in this domain
+- [x] Data Minimisation — the control that removes whole classes of risk
+- [x] Purpose Limitation in a Data Warehouse — hard, and why it is usually skipped
+- [x] Data Inventory & Mapping — knowing where personal data actually flows
+- [~] Privacy by Design — the seven principles, translated into engineering decisions — the
+  principle is carded in *Privacy Regulations*; the translation is distributed through this whole
+  cluster rather than restated as a list
 
-**Wave BF2 — Technical Controls**
-- [ ] De-identification — anonymisation vs pseudonymisation, and re-identification risk
-- [ ] Differential Privacy, Practically — the intuition, the epsilon, the trade
-- [ ] Tokenisation & Format-Preserving Encryption — protecting data that must stay usable
-- [ ] Access Control for Personal Data — purpose-bound access and audit
-- [ ] Retention & Deletion That Actually Deletes — backups, replicas, caches, logs
+**Wave BF2 — Technical Controls** — shipped into `grc`, except where noted.
+- [~] De-identification — anonymisation vs pseudonymisation, and re-identification risk — the
+  techniques are carded in *Data Privacy Techniques*; the legal consequence of the
+  pseudonymisation/anonymisation distinction is in the tokenisation card, which is where it bites
+- [~] Differential Privacy, Practically — already carded in *Data Privacy Techniques* and `ai`
+- [x] Tokenisation & Format-Preserving Encryption — protecting data that must stay usable
+- [x] Access Control for Personal Data — purpose-bound access and audit — inside the purpose
+  limitation card, because purpose-bound access is what purpose limitation means operationally
+- [x] Retention & Deletion That Actually Deletes — backups, replicas, caches, logs
 
-**Wave BF3 — User-Facing Obligations**
-- [ ] DSARs — building a subject-access process that scales
-- [ ] Right to Erasure — the engineering problem behind the legal right
-- [ ] Consent & Preference Management — storing and honouring it across systems
-- [ ] Cookies & Tracking — the technical reality behind the banner
-- [ ] Cross-Border Transfers — the mechanisms, and their architectural consequences
+**Wave BF3 — User-Facing Obligations** — shipped into `grc`.
+- [x] DSARs — building a subject-access process that scales
+- [x] Right to Erasure — the engineering problem behind the legal right — split across the deletion
+  card (the mechanism) and the DSAR card (the process); the legal shape is already in *Privacy Law*
+- [x] Consent & Preference Management — storing and honouring it across systems
+- [x] Cookies & Tracking — the technical reality behind the banner — same card
+- [x] Cross-Border Transfers — the mechanisms, and their architectural consequences — inside the
+  flow-mapping card, framed as the architecture decision it actually is
 
-**Wave BF4 — Privacy in New Systems**
-- [ ] Privacy in Machine Learning — training data, memorisation, model inversion
-- [ ] Telemetry Design — useful product analytics that collect less
-- [ ] Third-Party Data Sharing — contracts, technical limits, and verification
-- [ ] Privacy Incident Response — when it is a breach, and the clock that starts
-- [ ] Privacy Review as a Process — lightweight enough that teams use it
+**Wave BF4 — Privacy in New Systems** — partly shipped.
+- [~] Privacy in Machine Learning — training data, memorisation, model inversion — carded in `ai`
+  (*Adversarial AI &amp; AI Threats*) and named in *Data Privacy Techniques*
+- [x] Telemetry Design — useful product analytics that collect less
+- [x] Third-Party Data Sharing → *Third-Party Data Sharing — Contracts, Technical Limits &
+  Verification*, written to supply exactly the missing half: what you send, how to reduce it, and
+  how to verify rather than assume.
+  written
+- [x] Privacy Incident Response — when it is a breach, and the clock that starts
+- [x] Privacy Review as a Process — lightweight enough that teams use it — the trigger table in the
+  first card
 
 ---
 
@@ -3081,66 +3260,86 @@ engineering builds systems that do not need much proving.
 ~4 waves, ~20 cards. The discipline that grew out of DevOps once "you build it,
 you run it" met a hundred teams.
 
-**Wave BG1 — The Premise**
-- [ ] Why Platform Engineering Exists — the cognitive-load argument, stated honestly
-- [ ] Platform as a Product — users, roadmap, adoption, and the option to not use it
-- [ ] Golden Paths — paved roads that are genuinely faster than going around
-- [ ] Thinnest Viable Platform — resisting the urge to build a cloud on the cloud
-- [ ] Platform Team Anti-Patterns — the gatekeeper, the ticket queue, the abstraction leak
+**Wave BG1 — The Premise** — shipped into `devops`.
+- [x] Why Platform Engineering Exists — the cognitive-load argument, stated honestly
+- [x] Platform as a Product — users, roadmap, adoption, and the option to not use it
+- [x] Golden Paths — paved roads that are genuinely faster than going around
+- [x] Thinnest Viable Platform — resisting the urge to build a cloud on the cloud — same card as
+  golden paths, because the two are the same discipline pointed at build and at scope
+- [x] Platform Team Anti-Patterns — the gatekeeper, the ticket queue, the abstraction leak — inside
+  *Platform as a Product*, where each anti-pattern reads as a product failure
 
-**Wave BG2 — Building It**
-- [ ] Developer Portals — service catalogue, ownership, scorecards
-- [ ] Self-Service Infrastructure — templates, modules, and guard rails over gates
-- [ ] Environment Management — ephemeral environments, seeding, cost control
-- [ ] Paved-Path CI/CD — a pipeline teams inherit rather than copy
-- [ ] Policy as Code in the Platform — compliance that happens by default
+**Wave BG2 — Building It** — shipped into `devops`, except where noted.
+- [x] Developer Portals — service catalogue, ownership, scorecards
+- [x] Self-Service Infrastructure — templates, modules, and guard rails over gates
+- [x] Environment Management — ephemeral environments, seeding, cost control — same card; the
+  guard-rail argument and the ephemeral-environment payoff belong together
+- [~] Paved-Path CI/CD — a pipeline teams inherit rather than copy — the pipeline material is
+  already carded in `devops` (*CI/CD*, *GitHub Actions*, the CI landscape card); the
+  inherit-rather-than-copy point is the golden-path card's contents table
+- [~] Policy as Code in the Platform — compliance that happens by default — carded as
+  *Policy as Code — OPA/Rego &amp; Kyverno* in this domain
 
-**Wave BG3 — Operating It**
-- [ ] Platform SLOs — the platform is production for its users
-- [ ] Versioning & Migrating Consumers — changing a platform without breaking teams
-- [ ] Support Model — office hours, escalation, and not becoming a help desk
-- [ ] Documentation as the Product Surface — where adoption is actually won or lost
-- [ ] Measuring Platform Success — adoption, lead time, and the counter-metrics
+**Wave BG3 — Operating It** — shipped into `devops`.
+- [x] Platform SLOs — the platform is production for its users
+- [x] Versioning & Migrating Consumers — changing a platform without breaking teams
+- [x] Support Model — office hours, escalation, and not becoming a help desk — same card as SLOs
+  and migration, which are the three things a platform owes its users once it has any
+- [x] Documentation as the Product Surface — where adoption is actually won or lost — the closing
+  section of *Measuring Platform Success*, because it is the highest-leverage adoption lever
+- [x] Measuring Platform Success — adoption, lead time, and the counter-metrics
 
-**Wave BG4 — Developer Experience**
-- [ ] Local Development That Matches Production — containers, seeds, fakes
-- [ ] Build & Test Speed as a Feature — the compounding cost of a slow pipeline
-- [ ] Inner vs Outer Loop — where a developer's day actually goes
-- [ ] Onboarding to First Commit — measuring and shortening it
-- [ ] Toil Audits — finding the manual work worth automating, and the work that is not
+**Wave BG4 — Developer Experience** — shipped into `devops`, as one card.
+- [x] Local Development That Matches Production — containers, seeds, fakes
+- [x] Build & Test Speed as a Feature — the compounding cost of a slow pipeline
+- [x] Inner vs Outer Loop — where a developer's day actually goes
+- [x] Onboarding to First Commit — measuring and shortening it
+- [x] Toil Audits — finding the manual work worth automating, and the work that is not
 
 ### TRACK BH — Observability Engineering  (→ `ops`)
 
 ~4 waves, ~20 cards. Beyond the monitoring cards: designing for questions you
 have not thought of yet.
 
-**Wave BH1 — Foundations**
-- [ ] Monitoring vs Observability — the distinction that is not just marketing
-- [ ] The Three Signals & Their Costs — metrics, logs, traces; what each is bad at
-- [ ] Cardinality — the concept that decides your observability bill
-- [ ] Structured Events — wide events as an alternative to three separate pipelines
-- [ ] Instrumentation Strategy — what to instrument first in an unfamiliar system
+**Wave BH1 — Foundations** — shipped into `ops`.
+- [~] Monitoring vs Observability — the distinction that is not just marketing — already carded as
+  *Known Unknowns vs Unknown Unknowns* in `ops`; the new wide-events card restates the distinction
+  where it becomes actionable rather than definitional
+- [x] The Three Signals & Their Costs — metrics, logs, traces; what each is bad at
+- [x] Cardinality — the concept that decides your observability bill
+- [x] Structured Events — wide events as an alternative to three separate pipelines — same card as
+  the three signals, because wide events only make sense as an answer to their weaknesses
+- [x] Instrumentation Strategy — what to instrument first in an unfamiliar system
 
-**Wave BH2 — OpenTelemetry in Practice**
-- [ ] OTel Architecture — API, SDK, collector, exporters
-- [ ] Distributed Tracing Deep — spans, context propagation, sampling strategies
-- [ ] Metrics With OTel — instruments, views, and avoiding cardinality explosions
-- [ ] The Collector as a Control Point — filtering, redaction, routing, cost control
-- [ ] Migrating an Existing Stack — incrementally, without a big-bang cutover
+**Wave BH2 — OpenTelemetry in Practice** — shipped into `ops`.
+- [x] OTel Architecture — API, SDK, collector, exporters
+- [x] Distributed Tracing Deep — spans, context propagation, sampling strategies — the sampling half
+  is its own card; spans and context propagation are already carded in
+  *Distributed Tracing &amp; OpenTelemetry*, and propagation reappears in the correlation card
+- [~] Metrics With OTel — instruments, views, and avoiding cardinality explosions — the cardinality
+  half is the cardinality card, which is the part that matters; instruments and views are reference
+  material better read from the specification than from a card
+- [x] The Collector as a Control Point — filtering, redaction, routing, cost control
+- [x] Migrating an Existing Stack — incrementally, without a big-bang cutover — the six-step
+  sequence in the collector card
 
-**Wave BH3 — Using It**
-- [ ] Debugging With Traces — the workflow that finds an unknown-unknown
-- [ ] Correlating Signals — trace to log to metric, and the IDs that make it possible
-- [ ] Dashboards Worth Keeping — the small number that answer real questions
-- [ ] Alerting on Symptoms, Not Causes — and the pager quality that follows
-- [ ] Observability-Driven Development — shipping instrumentation with the feature
+**Wave BH3 — Using It** — shipped into `ops`.
+- [x] Debugging With Traces — the workflow that finds an unknown-unknown
+- [x] Correlating Signals — trace to log to metric, and the IDs that make it possible
+- [x] Dashboards Worth Keeping — the small number that answer real questions
+- [~] Alerting on Symptoms, Not Causes — carded twice already in `ops`; burn-rate alerting, which is
+  the part that was missing, is in the error-budget card
+- [x] Observability-Driven Development — shipping instrumentation with the feature — the closing
+  section of the instrumentation card
 
-**Wave BH4 — SLOs as a Practice**
-- [ ] Choosing SLIs — the signal that matches the user's experience
-- [ ] Setting an SLO That Survives — negotiated, achievable, and meaningful
-- [ ] Error Budgets & Policy — what actually happens when it is spent
-- [ ] Reporting Reliability — to engineering, and separately to the business
-- [ ] When SLOs Fail — the organisational reasons, not the technical ones
+**Wave BH4 — SLOs as a Practice** — shipped into `ops`.
+- [x] Choosing SLIs — the signal that matches the user's experience
+- [x] Setting an SLO That Survives — negotiated, achievable, and meaningful
+- [x] Error Budgets & Policy — what actually happens when it is spent
+- [ ] Reporting Reliability — to engineering, and separately to the business — still open; the
+  upward-reporting craft is carded in `eng` (*Reporting Upward*) but not the reliability-specific
+  version
+- [x] When SLOs Fail — the organisational reasons, not the technical ones
 
 ### TRACK BJ — Resilience & Chaos Engineering  (→ `ops` / `eng`)
 
@@ -3148,33 +3347,44 @@ have not thought of yet.
 
 ~4 waves, ~20 cards.
 
-**Wave BJ1 — Designing for Failure**
-- [ ] Failure Modes & Effects Analysis for Systems — thinking it through before it happens
-- [ ] Blast Radius Design — bulkheads, cells, shuffle sharding
-- [ ] Graceful Degradation — the feature that turns off instead of the site going down
-- [ ] Dependency Failure — timeouts, retries with jitter, circuit breakers revisited
-- [ ] Capacity & Load Shedding — choosing what to drop before you are forced to
+**Wave BJ1 — Designing for Failure** — shipped into `ops`, except where noted.
+- [x] Failure Modes & Effects Analysis for Systems — thinking it through before it happens
+- [x] Blast Radius Design — bulkheads, cells, shuffle sharding
+- [x] Graceful Degradation — the feature that turns off instead of the site going down
+- [~] Dependency Failure — timeouts, retries with jitter, circuit breakers revisited — carded in
+  `eng` as *Resilience Patterns — Circuit Breaker, Retry &amp; Timeout*; the new degradation card
+  cross-references it
+- [x] Capacity & Load Shedding — choosing what to drop before you are forced to — same card as
+  degradation, because shedding requests and shedding features are one decision
 
-**Wave BJ2 — Chaos Engineering**
-- [ ] The Method — steady-state hypothesis, blast radius, abort conditions
-- [ ] Your First Experiment — safe, small, and in production eventually
-- [ ] Fault Injection Techniques — latency, errors, resource exhaustion, dependency loss
-- [ ] GameDays — running one that people volunteer for twice
-- [ ] Chaos Maturity — from an annual exercise to continuous verification
+**Wave BJ2 — Chaos Engineering** — mostly pre-existing; the organisational half shipped.
+- [~] The Method — steady-state hypothesis, blast radius, abort conditions — carded in `ops` as
+  *Chaos Engineering — Breaking Things on Purpose*
+- [~] Your First Experiment — safe, small, and in production eventually — same card ("Don't Start
+  Here" is its closing section)
+- [~] Fault Injection Techniques — latency, errors, resource exhaustion, dependency loss — same card
+- [x] GameDays — running one that people volunteer for twice
+- [x] Chaos Maturity — from an annual exercise to continuous verification — same card, as a
+  six-stage path that says plainly where most teams should stop
 
-**Wave BJ3 — Incidents as a System**
-- [ ] Incident Command Deep — roles, handovers, and long incidents
-- [ ] Communication During an Incident — internal, customer, and status page discipline
-- [ ] Blameless Postmortems That Change Something — actions with owners and dates
-- [ ] Learning From Near-Misses — the free lessons most organisations throw away
-- [ ] Incident Metrics — what MTTR does and does not tell you
+**Wave BJ3 — Incidents as a System** — mostly pre-existing.
+- [~] Incident Command Deep — roles, handovers, and long incidents — carded in `ops` as
+  *Incident Command — Running a Major Incident Without Chaos*
+- [~] Communication During an Incident — carded in `ops` as *Writing for Users — Outage Notices
+  &amp; Status Pages People Trust*
+- [~] Blameless Postmortems That Change Something — carded in `ops` as *Writing a Postmortem People
+  Actually Learn From*; the analytical half it was missing is in the new resilience-engineering card
+- [x] Learning From Near-Misses — the free lessons most organisations throw away
+- [x] Incident Metrics — what MTTR does and does not tell you — same card
 
-**Wave BJ4 — Human Factors**
-- [ ] Resilience Engineering — the field, and why "human error" is a bad root cause
-- [ ] Alert Fatigue — measuring it, and treating it as a reliability problem
-- [ ] On-Call Health — load, compensation, and the sustainable rotation
-- [ ] Runbook Quality — testing your runbooks the way you test code
-- [ ] Organisational Memory — keeping what was learned after the people leave
+**Wave BJ4 — Human Factors** — shipped into `ops`, except where noted.
+- [x] Resilience Engineering — the field, and why "human error" is a bad root cause
+- [x] Alert Fatigue — measuring it, and treating it as a reliability problem
+- [~] On-Call Health — load, compensation, and the sustainable rotation — carded in `ops` as
+  *On-Call Done Humanely*
+- [x] Runbook Quality — testing your runbooks the way you test code — same card as alert fatigue;
+  both are about operational artifacts decaying silently
+- [x] Organisational Memory — keeping what was learned after the people leave
 
 ---
 
@@ -4723,6 +4933,13 @@ Three consequences:
    the ceiling without re-measuring would turn the one honest number in this file back
    into a feeling.
 
+> **The ceiling in this section moved — see §4b-iv.** Everything measured here
+> stood; what changed is which measurement the project is willing to be bound
+> by. The byte ceiling was raised from 1,100 KB to 2,200 KB and `raw_mb` became
+> the binding budget, on the owner's explicit call that a slow first visit does
+> not matter for this site. The "~20% of the backlog" arithmetic below is
+> therefore no longer the operative limit.
+
 ## 4b-ii. Lazy loading is not the win Track AK claims — measured
 
 §4b said the page budget bounds the backlog and pointed at Track AK's lazy domain
@@ -4830,6 +5047,19 @@ would have corrupted.
 Until this is revisited, **the honest position is that the budget ceiling limits the
 backlog and no cheap fix exists.** That is worth knowing before another 160 cards are
 written against an assumption that lazy loading will rescue it.
+
+> **Superseded in part — see §4b-iii.** The deferral shipped, on the user's request
+> rather than on this section's trigger. Everything above about *bytes* held exactly:
+> it saved none, and cost 37 KB. Everything above about *DOM size* held too, and was
+> understated — the measured drop was 92,330 elements to 404, not to 14,208. The one
+> claim that did not survive contact is "needs a verification path that does not
+> exist": the path was `tools/smoke_test.mjs`, which went from 23 checks to 31.
+>
+> **The recommendation this section ends on is now retired — see §4b-iv.** The
+> 164 KB middle-tier search index existed to buy bytes at the cost of turning
+> full-text search into partial search. Bytes stopped being the binding
+> constraint, so the trade is no longer worth making: the site keeps full-text
+> search and does not build the trimmed index.
 
 ## 4c. Session 19 — the `script` duplication, resolved and partly disproved
 
@@ -5256,3 +5486,3878 @@ branches are decisions rather than more of the same:
 
 What it should **not** do is treat the inflated backlog count as a runway; it is not one.
 The high-value existing-domain voids this session could reach are now filled.
+
+> **This fork is resolved — see §4b-iii and §4b-iv.** Branch 1 is retired: bytes stopped
+> being the binding constraint, so full-text search stays. Branch 3's "40–50 cards of
+> runway" is superseded by a measured ~1,000. Branch 2 — whether to open `m365` / `itsm` —
+> is untouched, because it was always an architecture question rather than a budget one,
+> and it is now the only real fork left.
+
+---
+
+## 4b-iii. The deferral shipped — one domain in the DOM at a time
+
+Asked for directly: *"I want all domains to show the other domains and only show the
+content of one domain at a time to lower the processing needed."* That is §4b-ii's
+DOM-size argument, and it is the half of the case that measured well.
+
+### What was built
+
+Not what Track AK specified. There are no per-domain fragment files and nothing is
+fetched, because a fetch would have cost the `file://` story that every other decision
+in this repo has protected. Instead `build.py` emits each domain's body inside an inert
+block beside its header:
+
+```html
+<div class="domain-section" data-domain="net">
+  <div class="domain-header">…</div>
+  <div class="domain-body"></div>
+  <script type="text/html" class="domain-src" data-domain="net">…the whole domain…</script>
+</div>
+```
+
+The HTML parser reads that block as one text node: no elements, no style resolution, no
+layout. `script.js` moves it into `.domain-body` when the domain opens and empties the
+previous one. Everything still ships in one file, still works offline, still works over
+`file://`, and the service worker precache list did not change.
+
+### Measured, 4× CPU throttle, 1,080 topics
+
+| | before | after |
+|---|---:|---:|
+| elements at load | 92,330 | **404** |
+| elements with a domain open | 92,330 | 5,892 |
+| load event | 2,739 ms | **771 ms** |
+| open a domain | 125 ms | 63 ms |
+| chip filter | 46 ms | 57 ms |
+| first search (cold) | 1,211 ms | **243 ms** |
+| search after idle warm-up | — | 13 ms |
+| gzipped page | 1,044 KB | **1,081 KB** |
+
+Two of those need their honest reading. The **chip filter got slower**, because a chip
+now opens the domain it narrows to — it is doing more, not the same work worse. And the
+**page got 37 KB bigger**: the topic ids `build.py` now stamps, plus the inlined id map.
+§4b-ii predicted the byte case was weak; it turns out to be negative. The budget wall in
+§4b is therefore **unchanged and slightly closer** — 2% gzip headroom, not 5%. Anyone
+reading this section as "the content ceiling is lifted" has read it backwards.
+
+### The five whole-DOM features, and what each reads now
+
+§4b-ii's strongest argument against building this was that five features walk
+`.domain-section .topic` and would silently return partial results. That was right, and
+it was the bulk of the work. Two accessors replaced the DOM walk:
+
+- `topicIndex()` — domain id → its topic ids, inlined by `build.py` (45 KB). Answers
+  *which topics exist*.
+- `domainTopics(id)` — one domain's deferred text, parsed once and cached, warmed in
+  `requestIdleCallback` after load. Answers *what a topic says*.
+
+| Feature | Was | Now |
+|---|---|---|
+| Search | `topic.textContent` per topic | `domainTopics()` for all 29; renders one, badges the rest with their counts |
+| Flashcards, quiz, quick-jump, study list, due-today | `stIndex()` over the DOM | `stIndex()` over `domainTopics()` — 1,080 cards, 28 domains, unchanged |
+| Progress badges (`n/m`) | counted `.topic.reviewed` | `topicIndex()` + `localStorage` |
+| Expand all | every domain | the open domain, and it opens one if none is |
+| Random topic | `document.querySelectorAll(".topic[id]")` | `topicIndex()` |
+
+**Search changed behaviour, deliberately.** It still reads every domain — the reach is
+identical — but only the open domain's hits are rendered; the rest report `n matches` on
+their header and arrive already filtered when clicked. The count line says so:
+`23 matches in 8 domains`.
+
+### Verification
+
+`tools/smoke_test.mjs` went from 23 checks to 31, including the three that would catch a
+regression back to the old behaviour: no topic elements at load, opening a second domain
+drops the first, and *search still reaches unopened domains*. Separately, a throwaway
+parity harness hydrated all 29 domains and compared every field the study decks and the
+search read — id, name, concept title, description, badge, full text — against what the
+DOM produced before. **1,080 topics, one difference**, and it is the right one: the cloud
+responsibility matrix, whose cells `script.js` generates at runtime and which is
+therefore not in the authored text any more. Its card's prose still carries IaaS/PaaS/
+SaaS; the generated words "Customer" and "Provider" are no longer searchable.
+
+That harness earned its keep. It caught four real bugs that all failed the same way —
+quietly, on a subset:
+
+1. A topic name ending at the first `</span>` indexed *"OSI (Open Systems
+   Interconnection)"* instead of *"OSI Model — 7 Layers"*, on every card carrying an
+   inline acronym expansion. Fixed with a nesting-aware slice.
+2. `class="concept-title"` matched exactly missed the 342 `<h4>` variants and every
+   `class="concept-desc verdict"` — the field came back empty and the flashcard showed
+   its fallback.
+3. Replacing tags with a space rather than nothing put one inside every expansion:
+   `CIDR ( Classless Inter-Domain Routing )`, which is not what the card says and so not
+   what a search for it matched.
+4. `<[^>]+>` as "a tag" ate `WHERE created_at < now()` in a SQL sample, because a `>`
+   follows it eventually. The browser never does this: `< ` cannot open a tag.
+
+Every one of those would have shipped looking fine.
+
+### What it cost
+
+- **37 KB gzipped**, above.
+- **Print** covers the open domain plus every domain's header, rather than the whole
+  site. That is closer to Track AK's "print packs" item than what it replaced, but it is
+  a change.
+- **Expand all** is domain-scoped. The old behaviour would now mean building all 29.
+- One card's runtime-generated table text left the search index (above).
+- `tools/page_budget.py` grew a metric: `dom_elements` (404, budget 1,500) and
+  `content_elements` (86,767, budget 100,000) replace the single `elements` count, which
+  no longer meant one thing.
+
+### What this does and does not unblock
+
+It does not unblock the content backlog — that is bounded by bytes, and bytes got
+slightly worse. §4b-ii's middle-tier search index is still the fix for that, and it is
+now **much cheaper to build**: search already reads a purpose-built index rather than the
+DOM, so trimming what goes into that index is a change to one function, not to the page.
+The fork in the session record below stands, with branch 1 unchanged and easier.
+
+---
+
+## 4b-iv. The byte ceiling moved, deliberately — 1,100 KB → 2,200 KB
+
+§4b stopped the content backlog at roughly 20% of itself on a gzip ceiling. §4b-iii then
+shipped the deferral and made that ceiling slightly *worse* — 1,081 KB of 1,100. The
+obvious next move looked like §4b-ii's trimmed search index, bought with a downgrade from
+full-text search.
+
+It was the wrong question. The right one, asked by the owner: **why is the gzip number the
+one being enforced at all?**
+
+### The structural reason bytes are the wrong budget here
+
+| | paid when | who pays |
+|---|---|---|
+| **download** (1,081 KB gzipped) | once — `sw.js` precaches the page | a first-time visitor only |
+| **parse** (4.1 MB raw) | every load, cache or no cache | every visitor, every time |
+
+This is a reference people re-open, not a landing page seen once. So the budget was
+enforcing the cost that amortises to nothing and ignoring the cost paid on every visit.
+That inversion is the whole finding; the rest is arithmetic.
+
+### Measured — how the page scales with raw size
+
+Simulated by duplicating each deferred block N times. The load path never parses those
+blocks, so this is an honest model of "the same page with N times the cards". Chromium,
+4× CPU throttle, medians of three, first context discarded as warm-up:
+
+| raw size | ≈ topics | load event | search (warm) | JS heap |
+|---:|---:|---:|---:|---:|
+| **4.1 MB** | **1,080** | **768 ms** | **57 ms** | **14 MB** |
+| 8.1 MB | ~2,150 | 1,164 ms | 97 ms | 26 MB |
+| 12.2 MB | ~3,230 | 1,822 ms | 147 ms | 40 MB |
+| 16.3 MB | ~4,300 | 2,298 ms | 179 ms | 69 MB |
+
+Linear: **~125 ms of load per additional MB**. Session 19's own revisit trigger — throttled
+load past 3 s — is not reached until roughly **22 MB / 5,800 topics**.
+
+At 1,080 topics the unit costs are: **3.9 KB raw and 80 elements per topic**.
+
+### The decision
+
+**The owner's call, recorded as such: a slow first visit does not matter for this site.**
+That is the only cost of ignoring bytes, and it falls on one population — a first-time
+visitor on a slow connection. Nobody else is affected: Netlify's free allowance is ~23,000
+visits a month even at four times this size, and every returning reader is served from the
+service worker.
+
+So the budget was re-derived from the measurements rather than from headroom over today:
+
+| metric | was | now | why this number |
+|---|---:|---:|---|
+| `raw_mb` | 4.4 | **8.0** | ~1.2 s throttled load, ~1,000 more cards. **The binding budget.** |
+| `gzip_kb` | 1,100 | **2,200** | what 8.0 MB compresses to at the measured 3.85× — a tripwire behind `raw_mb`, not a wall |
+| `dom_elements` | 1,500 | 1,500 | unchanged; content growth does not move it, only new domains do (~70 domains of room) |
+| `content_elements` | 100,000 | **175,000** | the library at the `raw_mb` ceiling, at 80 elements/topic |
+
+All four now sit near 50% headroom, so whichever fails, it is the one a content wave
+actually moves. `raw_mb` is set to 8.0 rather than the 22 MB the load-time data would
+allow, because **a budget that will be reached is worth more than one that will not** —
+at 8.0 MB, re-measure rather than assuming this table still holds.
+
+### What this retires, and what it does not
+
+- **Retired: §4b-ii's 164 KB middle-tier search index.** It bought bytes by making search
+  partial. Bytes no longer bind, so the site keeps full-text search. This is the second
+  time that recommendation has been overtaken by a measurement, which is the argument for
+  taking measurements before building things, not after.
+- **Retired: the "~40–50 cards of runway" in the session record.** The measured runway is
+  ~1,000 cards to `raw_mb`, ~3,200 to the 3-second load line.
+- **Not retired: the backlog is still inflated.** Phase 3 and the Phase 4/5 waves each
+  found 60–100% of their nominal spec already written in a neighbouring domain. A bigger
+  ceiling does not make the backlog count real; grep before writing, every time.
+- **Not retired: the `m365` / `itsm` domain question.** That was always an architecture
+  decision about a 28-chip bar, never a budget one. It is now the only open fork.
+
+### The gap this leaves, named rather than papered over
+
+Only one domain renders, so the worst *interaction* on the site is opening the largest
+one — and no budget measures that. At 4× throttle today:
+
+| domain | content elements | open |
+|---|---:|---:|
+| `acronym` | 16,511 | 127 ms |
+| `script` | 13,729 | 196 ms |
+| median domain | 2,220 | ~35 ms |
+
+A domain three times the size of `script` would open visibly slowly and would pass every
+budget in `page_budget.py`. The metric to add, if that becomes a real risk, is the largest
+single domain's element count — not another page-wide total. It is deliberately not added
+now: no domain is close, and an unfired budget is a guess.
+
+---
+
+## Session record — Track W opened: the `m365` domain
+
+The first content wave since the byte ceiling moved (§4b-iv), and the first new domain since
+`infra`. Written to the Phase-3 rule that has held every time since: **audit the site before
+writing a line**, because the backlog count has been inflated in every wave so far.
+
+### The audit, which decided what to build
+
+Probed all 28 existing domains for the four candidate tracks. The result was unusually
+clear-cut, and it is the reason this session opened a domain rather than deepening one:
+
+| Probe | Mentions across the site | Verdict |
+|---|---:|---|
+| `mail flow`, `message trace`, `transport rule`, `shared mailbox` | **0** | genuine void |
+| `purview`, `litigation hold`, `safe links`, `direct routing` | **0** | genuine void |
+| `m365 group`, `files on-demand`, `group-based licensing` | **0** | genuine void |
+| `sharepoint` | 1 (a passing mention in `grc`) | genuine void |
+| `onedrive`, `known folder` | 2 (both in the acronym dictionary) | genuine void |
+| `teams` | 76 — **every one meaning "groups of people"** | genuine void |
+| virtualization, storage, backup/DR | already carded in `infra` | Track Z was right: already built |
+| ITIL, change, on-call, runbooks | already carded in `ops`/`grc`/`mind` | ITSM needs no domain |
+| Autopilot, boundary groups, co-management | already carded in `endpoint` | Track Y depth already there |
+
+So the inflation rule held for three of the four candidate tracks and broke for the fourth.
+Microsoft 365 — the workload most of this site's readers administer daily — had no home.
+
+### What shipped
+
+**`data/m365.html`, 18 cards, ~40 minutes of reading.** Site: 1,080 → **1,098 topics**, 28 → **29
+domains**. The chip sits in Core IT between Windows Server and the reference domains.
+
+| Group | Cards |
+|---|---|
+| Foundations | Tenant anatomy · Licensing &amp; group-based assignment · Admin roles &amp; PIM · Service Health &amp; Message Center |
+| Exchange Online | Mail flow &amp; connectors · Mailbox types &amp; delegation · EOP &amp; Defender for Office · Message trace &amp; headers |
+| SharePoint / OneDrive | Site architecture &amp; the limits that bite · Sharing &amp; permissions sprawl · KFM, Files On-Demand &amp; sync triage |
+| Teams | What a team actually is · Governance, expiry &amp; guests |
+| Purview | Retention policies vs labels · Sensitivity labels &amp; DLP · eDiscovery, content search &amp; audit log |
+| Operations | Backup for M365 · The five-layer troubleshooting playbook |
+
+**21 Track W items are now ticked against 18 cards**, because several specced items are one
+card in practice — KFM and sync troubleshooting are one problem, external sharing and guest
+access are covered where they actually bite. One item was deliberately *un*-ticked after
+review: the unified audit log shipped, Insider Risk Management did not, and marking it done
+would have been the exact failure mode this file keeps warning about.
+
+### What the audit changed about the writing
+
+Every card that could have restated an existing one instead points at it. Thirteen
+cross-references, all resolving: SPF/DKIM/DMARC to `threat`, Conditional Access and Autopilot
+to `endpoint`, Entra Connect and the backup cards to `infra`, governance-level retention to
+`grc`, Copilot licensing and AI oversharing to `ai`, Graph PowerShell to `script`. The Graph
+card in Track W was dropped outright on discovering
+<span>Microsoft Graph From PowerShell — The Modern Admin API</span> already exists.
+
+Eighteen `volatile` marks carry `data-checked="2026-08"` — every portal address, licence tier
+claim, retention window and item limit. This is the most vendor-volatile domain on the site and
+it should be re-checked more often than the others; the marks are what make that possible.
+
+### Two things worth carrying forward
+
+**The ceiling raise was load-bearing, immediately.** This wave took the page to **1,100.2 KB
+gzipped** — which would have failed the old 1,100 KB budget by 0.2 KB. The wave that
+demonstrated the ceiling was binding was the very next one written. Under the new budget it
+sits at 50% headroom, and `raw_mb` is at 4.1 of 8.0.
+
+**`stamp_freshness.py` in write mode rewrote 250 unrelated stamps.** Running it to stamp 18 new
+cards re-derived every stamp on the site from `git blame` and moved ~250 topics from
+`2026-06`/`2026-07` to later months, with no content change behind the move. That is the same
+git-version sensitivity the CI comment already documents for `--check`. The churn was reverted
+and the new cards were stamped directly.
+
+> **Fixed in the following commit.** `--only <domain>` stamps just the files a wave touched;
+> the docstring now names it as the usual case and says why. Running
+> `--only m365` against the hand-written stamps produced no diff, which is the check that the
+> hand-stamping and the git-derived answer agree.
+
+### Track W after this session
+
+Nine items remain, and they are genuinely thinner than the ones shipped: tenant-to-tenant
+migration, litigation hold in mailbox terms, Teams policy packages, Teams voice and call
+quality, a Purview overview, the PowerShell modules, Graph for admins (mostly covered in
+`script`), usage reporting, and Insider Risk Management. A second wave of ~6 cards would close
+the domain; none of them is a foundation the rest depends on.
+
+> **Wave 2 shipped in the same session — Track W is closed.** Eight more cards, not six: Teams
+> voice, Teams call quality, Teams policies and precedence, retention/hold/archiving, the
+> Purview overview (carrying Insider Risk), the admin PowerShell modules, usage reporting, and
+> tenant-to-tenant migration. `m365` is **26 cards**; the site is **1,106 topics / 29 domains**.
+> All nine remaining items are ticked, and the wave-1 partial on Insider Risk is now complete.
+> Re-audited before writing: all nine were genuine voids — `meeting policy`, `calling plan`,
+> `direct routing`, `cqd`, `litigation hold`, `communication compliance`, `usage report` and
+> `tenant-to-tenant` each returned **0** mentions across the other 28 domains. The only overlap
+> found was network-side QoS and jitter in `net`, which the call-quality card cross-references
+> rather than restates.
+
+---
+
+## Session record — Track BA: detection engineering as a discipline
+
+Third content wave of the session, and the audit changed the shape of it more than any wave so
+far.
+
+### The audit: the tools were all there, the discipline was not
+
+`blueteam` already carries 37 cards of detection *tooling* — Sigma, Sysmon, ATT&amp;CK Navigator,
+Atomic Red Team, Splunk, Elastic, Wazuh, purple teaming, tuning and the Pyramid of Pain. So the
+first instinct, "blueteam is well covered, pick another track", was wrong in an interesting way.
+Probing for the engineering practice around those tools found this:
+
+| Probe | Mentions site-wide |
+|---|---:|
+| `detection as code`, `alert tuning`, `false positive rate`, `att&ck coverage` | **0** |
+| `detection engineering` | 3 |
+| `sigma rule` | 2 |
+
+The tools were documented and the practice that makes them add up to a programme was not. That
+is a different kind of gap from the M365 one — not an absent subject, but an absent *altitude*.
+
+### What shipped
+
+**12 cards into `blueteam`**, 37 → 49. Site: 1,106 → **1,118 topics**.
+
+| Group | Cards |
+|---|---|
+| The discipline | What detection engineering is · The detection lifecycle · Detection requirements |
+| The data | Log source inventory &amp; telemetry gaps · Normalisation schemas (OCSF/ECS/ASIM) · Log volume &amp; cost |
+| The practice | Detection-as-code · Testing &amp; regression · Measuring quality |
+| The programme | ATT&amp;CK coverage mapping · The backlog &amp; retirement · Responder runbooks |
+
+Six cross-references point back at the tool cards rather than restating them: Sigma, ATT&amp;CK
+Navigator, Atomic Red Team, Sysmon, threat hunting, and the Operations runbook card.
+
+### The spine the cards share
+
+One argument runs through the wave, and it is worth stating in the plan because it is what makes
+the cards a set rather than twelve essays: **a detection that has stopped working is
+indistinguishable from a quiet environment.** The lifecycle exists to give each stage an exit
+condition, the telemetry inventory exists to prove a rule *can* fire, regression tests exist to
+prove it *still* fires, the coverage levels exist to stop a green square meaning "a rule exists",
+and the metrics section exists because most detection dashboards measure things that go up when
+the programme gets worse.
+
+### Track BA after this wave
+
+Eight items were left; three of them are already carded in `blueteam` and are now marked `[~]`
+rather than ticked — the Pyramid of Pain, Sigma as an interchange format, and the purple-team
+feedback loop all have existing homes, and writing second versions would be exactly the
+duplication the audit rule exists to prevent. Five genuine items remain: enrichment, writing a
+good rule, behavioural vs signature detections, correlation and sequencing, and what the role is
+assessed on in interview.
+
+> **Wave 2 shipped in the same session — Track BA is closed.** Those five, re-audited first and
+> all genuine (`false-positive analysis`, `rule specificity`, `asset context`, `event sequencing`
+> and `ioc-based` each returned **0** mentions site-wide). `blueteam` is **54 cards**; the site
+> is **1,123 topics**. The five carry the craft-level material the first wave assumed: which
+> attribute to match on and what it costs the attacker to change, false-positive analysis run on
+> history before deployment rather than on analysts after it, a worked three-way detection of one
+> technique, enrichment as the usual real fix for a "noisy" rule, the five correlation shapes and
+> the four silent ways stateful rules break, and what the role is assessed on. Two tracks are now
+> closed in one session — W and BA.
+
+---
+
+## Session record — Track AA: the service-desk half of `ops`
+
+Fourth content wave. The audit result was the starkest of the session, and it also produced the
+one deliberate deviation from a track's spec.
+
+### The audit
+
+| Probe | Mentions site-wide |
+|---|---:|
+| `problem management`, `known error`, `csat`, `escalation matrix`, `shift handover`, `swarming`, `ticket triage`, `service catalog` | **0** |
+| everything else probed in the track | 5, total, across 29 domains |
+
+Eight of nine probes returned nothing. `ops` already carried 33 cards, but reading its list
+explains the gap precisely: incident response, incident command, postmortems, SRE, SLOs,
+observability, on-call, chaos engineering — **the SRE and security half of operations, and none of
+the service-desk half.** A site aimed at CompTIA-track IT professionals was missing the work most
+of them actually do.
+
+### The deviation: `ops`, not a new `itsm` domain
+
+Track AA specifies a new domain. This wave put the cards in `ops` instead, for three reasons
+worth recording so the next session does not "fix" it:
+
+1. **The plan's own repeatedly-validated rule** is to deepen existing domains rather than spin up
+   new ones. Service-desk work *is* operations; the split would have been organisational, not
+   conceptual.
+2. **`ops` was lopsided.** It described operations as practised by SREs and SOC analysts only.
+   Adding the service-desk half makes one coherent domain rather than two partial ones.
+3. **The chip bar is at 29.** The deferral shipped this session makes a 30th domain nearly free at
+   load, so this is now an editorial judgement rather than a performance one — and editorially,
+   one Operations domain reads better than an Operations domain and a Service Desk domain that
+   cross-reference each other constantly.
+
+`ops` is now 48 cards, which is large but within the range of `net` (57), `sec` (57) and
+`linux` (58).
+
+### What shipped
+
+**15 cards into `ops`**, 33 → 48. Site: 1,123 → **1,138 topics**.
+
+| Group | Cards |
+|---|---|
+| The model | Incident vs problem vs change vs request · Priority, impact &amp; urgency |
+| The ticket | Writing a ticket someone else can solve · Triage &amp; categorisation · Escalation &amp; handover · Closing well |
+| The queue | Working a queue · Service desk metrics |
+| The people | Explaining technical things · Difficult conversations · Writing for users |
+| The system | Knowledge management (KCS) · Self-service &amp; shift-left · SLAs, OLAs &amp; underpinning contracts · CMDB |
+
+Four track items are marked `[~]` rather than ticked, because they already have homes: ITIL
+itself, major incident management, on-call without burnout, and change enablement — that last one
+is already covered in `grc` down to standard/normal/emergency changes and what a good change
+request contains, so a second version would have been pure duplication.
+
+### The thread running through the wave
+
+Where the detection-engineering wave had "a rule that stopped working looks like a quiet
+environment", this one has: **every service-desk metric has a cheat, and the cheat is usually
+locally rational.** Tickets closed per agent rewards closing early. Handle time rewards rushing.
+First-contact resolution rewards logging the hard part as a new ticket tomorrow. The cards say so
+explicitly and pair each metric with the counter-metric that exposes its cheat, because a service
+desk measured badly does not underperform quietly — it reorganises itself around the measurement.
+
+### Track AA after this wave
+
+Five items remain: the service catalogue and request fulfilment, the first ninety seconds of an
+incident, remote support skills, ticket automation, and capacity and shift planning.
+
+> **Wave 2 shipped in the same session — Track AA is closed.** All five, re-audited first and all
+> genuine (`request fulfilment`, `first 90 seconds`, `screen share`, `ticket automation` and
+> `shift planning` each returned **0** mentions site-wide). `ops` is **53 cards**; the site is
+> **1,143 topics**. The wave's sharpest card is ticket automation: auto-closing "waiting on user"
+> tickets improves three reported numbers — backlog length, average age, SLA attainment — while
+> doing nothing for the person whose problem is unsolved, which is the metric-cheat pattern from
+> wave 1 in its purest form. Also worth carrying: the queueing-theory point that utilisation above
+> roughly 80% makes waiting times swing wildly, so planned slack is a feature rather than waste.
+> **Three tracks closed this session — W, BA and AA.**
+
+---
+
+## Session record — Track AM wave 1: the applied maths behind the rest of the site
+
+Fifth content wave, and the one that fills a gap of a different kind again. `cs` carries 33 cards
+of algorithms, systems and architecture; `math` is a calculus course. Neither holds the applied
+maths the *rest of the site* already depends on — the site teaches entropy, birthday attacks, p99
+latency and base rates without ever giving the arithmetic behind them.
+
+### The audit
+
+`modular arithmetic`, `bayes`, `linear algebra`, `combinatorics`, `birthday paradox`,
+`vector space` and `gradient descent`: **7 of 10 probes returned zero**, and the whole set
+totalled 8 mentions across 29 domains.
+
+### What shipped
+
+**13 cards into `cs`**, 33 → 46. Site: 1,143 → **1,156 topics**.
+
+| Cluster | Cards |
+|---|---|
+| Discrete | Modular arithmetic · Boolean algebra |
+| Probability for ops &amp; security | Probability fundamentals · Bayes &amp; base rates · Distributions that matter · Percentiles &amp; latency · The birthday paradox |
+| Information &amp; crypto | Entropy &amp; randomness · Primes &amp; factoring · Discrete logs &amp; elliptic curves |
+| Machine learning | Vectors &amp; embeddings · Gradient descent · The curse of dimensionality |
+
+Two further items are marked `[~]`: binary and bit manipulation is already covered by cs's number
+representation card plus the subnetting cards in `net`, and information theory was folded into the
+entropy card rather than split across two.
+
+### Why this wave connects the site to itself
+
+Each card was written to land under something the site already asserts:
+
+| Existing content | The maths now behind it |
+|---|---|
+| Detection engineering's precision and noise cards | Bayes and base rates — the 99%-accurate detector producing 1% real alerts, derived |
+| `Enrichment — The Context That Turns an Alert Into a Decision` | Which lever moves alert quality, and why threshold-tightening barely does |
+| `SLIs, SLOs & Error Budgets`, and this session's capacity card | Percentiles, why p99 cannot be averaged, and sample-size honesty |
+| Hashing, tokens and identifiers across `sec` and `web` | The birthday bound, and why 128 bits is the number |
+| Password and key material across `sec` | Shannon entropy, and the five ways implementations lose randomness |
+| The AI domain's embeddings and model cards | Cosine similarity, gradient descent, and the curse |
+
+The Bayes card is the one worth flagging: the detection-engineering wave earlier in this session
+argued operationally that enrichment beats threshold-tightening, and this card derives the same
+conclusion arithmetically. Two waves, two altitudes, one answer — which is what a reference site
+should do and mostly does not.
+
+### Track AM after this wave
+
+Ten items remain, all genuinely uncovered: sets and relations, proof techniques, sampling and
+confidence, descriptive vs inferential, anomaly-detection maths, A/B testing, capacity
+forecasting, lattices, matrices and linear transformations, and loss functions.
+
+> **Wave 2 shipped in the same session — Track AM is closed.** All ten, re-audited and all genuine
+> (`set theory`, `proof by contradiction`, `confidence interval`, `z-score`, `p-value`,
+> `linear regression`, `learning with errors`, `linear transformation` and `cross-entropy` each
+> returned **0**). `cs` is **56 cards**; the site is **1,166 topics**. **Four tracks closed this
+> session — W, BA, AA and AM.**
+>
+> The second wave kept the same connective discipline as the first. The anomaly-detection card ends
+> at the base-rate arithmetic from the Bayes card; the forecasting card hands off to `ops`'s
+> capacity card at the point where maths becomes procurement; the matrix card lands on cache
+> locality, already carded in `cs`, at the scale where it is impossible to miss; the lattice card
+> stops where `sec`'s post-quantum migration card begins; and the loss-function card closes on the
+> same observation as the service-desk metrics card written earlier in this session — **the moment
+> a proxy becomes the target, it stops measuring what it was chosen to represent.** That sentence
+> is now the site's most-repeated idea, arrived at independently in operations, detection
+> engineering and machine learning, which is a reasonable sign it is true.
+
+---
+
+## Session record — Track AS: IT finance and procurement, into `eng`
+
+Sixth content wave. The audit found a void of a kind the site had not filled before — not a
+technology, but the commercial half of the job.
+
+### The audit
+
+`chargeback`, `showback`, `vendor management`, `contract negotiation`, `budget cycle` and
+`true-up` returned **0**. `capex`, `opex`, `total cost of ownership` and `rfp` returned 2 each —
+**every one of them from the acronym dictionary**, meaning the site could expand the abbreviation
+and say nothing about the concept. Only cloud FinOps was genuinely covered, twice.
+
+### What shipped
+
+**14 cards into `eng`**, 36 → 50. Site: 1,166 → **1,180 topics**.
+
+| Group | Cards |
+|---|---|
+| Money | CapEx vs OpEx · Building an IT budget · TCO modelling · Chargeback &amp; showback · SaaS sprawl |
+| Making the case | The business case · The cost of downtime · Technical debt as a financial argument |
+| Buying | Requirements before vendors · Evaluating a vendor &amp; the PoC · Negotiation for IT buyers |
+| Living with it | Reading a contract as an engineer · Licensing models &amp; surviving an audit · Exit clauses &amp; lock-in |
+
+Three items are `[~]`: cloud FinOps (carded in `cloud` and `devops`), vendor risk management
+(carded three times in `grc`), and end-to-end asset management (the CMDB card written earlier this
+session). Benefits realisation shipped as a section of the business-case card rather than as its
+own.
+
+### Why `eng` rather than `career`
+
+`career` is about the individual's trajectory and personal finances; this material is about
+running IT as a business function. `eng` already carries the engineering ladder, tech lead vs
+engineering manager, estimation and planning, and the wider IT org — the professional-practice
+cluster. These sit with those.
+
+### The argument the wave keeps making
+
+Engineers lose these conversations by under-claiming and by arguing in the wrong currency. Nearly
+every card contains a two-column table turning an engineering statement into a business one — "the
+framework is three versions behind" becomes "it leaves security support in June, which is an audit
+finding and blocks the integration". The point is not persuasion technique; it is that a
+consequence with a date attached is a decision someone else can own, and a technical complaint is
+not.
+
+Three specific things worth carrying: leverage is highest before you have chosen and near zero at
+renewal, so almost every purchasing mistake is negotiating later on that curve than necessary; an
+SLA credit is a pre-agreed refund schedule rather than an availability control, so if an outage
+would genuinely hurt, the mitigation is your architecture; and process lock-in — the organisation
+reshaping itself around a tool's assumptions — is the largest exit cost and the one that never
+appears in the original TCO model.
+
+### Track AS after this wave
+
+Three items remain: hardware refresh economics, portfolio and prioritisation, and reporting to the
+board.
+
+> **Shipped immediately after — Track AS is closed.** `eng` is **53 cards**; the site is **1,183
+> topics**. **Five tracks closed this session — W, BA, AA, AM and AS.** The three closers:
+> hardware refresh, where the cost of keeping a machine lands in everyone else's budget and staff
+> time on slow machines dwarfs the rest at fleet scale; portfolio prioritisation as deciding what
+> will *not* happen, with work-in-progress limits as the free improvement organisations refuse
+> because it means saying "not yet" out loud; and reporting upward, where every metric needs the
+> sentence that says why anyone should care — rising cloud spend against falling unit cost being
+> the success story that reads as a problem without it.
+
+---
+
+## Session record — Track AT wave 1: leading technical teams
+
+Seventh content wave, and the emptiest audit of the session: seven probes for the management
+craft — `one-on-one`, `interview loop`, `team topolog`, `managing up`, `giving feedback`,
+`coaching` — returned **one mention in total across 29 domains**. `eng` had the *positions*
+(the ladder, staff+ archetypes, tech lead vs engineering manager, influence without authority)
+and nothing about the work.
+
+### What shipped
+
+**10 cards into `eng`**, 53 → 63. Site: 1,183 → **1,193 topics**.
+
+| Group | Cards |
+|---|---|
+| The transition | Engineer to manager · The first 90 days leading a team |
+| The core loop | Delegation · One-to-ones · Feedback &amp; difficult conversations |
+| The people | Performance &amp; retention · Hiring · Onboarding |
+| The system | Team shapes &amp; Conway's law · Managing up &amp; cross-team politics |
+
+### The thread
+
+Where the finance wave was about currency, this one is about a single repeated observation:
+**the failure is almost always in the handover, not in the person.** Delegation that comes back
+wrong had an unstated level. Feedback that lands badly was vague or late. A review that surprises
+someone failed months earlier. An enabling team that became a dependency forgot that its defining
+feature is leaving. Culture is not the stated values but the accumulated record of what got
+addressed. Each card locates the failure in something the leader controls, which is both more
+useful and more uncomfortable than the alternative.
+
+Two things worth carrying: the delegation levels stated out loud ("decide and tell me afterwards"
+takes three seconds and removes most of the ambiguity), and the arithmetic that makes "faster if I
+do it" wrong at around the third occurrence — plus the part the arithmetic misses, which is that
+the other person was bored and now is not.
+
+### Track AT after this wave
+
+Eight items remain: the manager's calendar, keeping technical enough, reference checks and offers,
+planning without theatre, prioritisation under pressure, project management for technical leads,
+managing incidents as a leader, and engineering team metrics.
+
+> **Wave 2 shipped in the same session — Track AT is closed.** Five written, three marked `[~]` as
+> already carded (prioritisation under pressure, incident leadership, DORA metrics). `eng` is
+> **68 cards**; the site is **1,198 topics**. **Six tracks closed this session — W, BA, AA, AM, AS
+> and AT.**
+>
+> The velocity card in this wave names the session's recurring pattern explicitly for the first
+> time: velocity used to forecast is useful and velocity used as a target inflates, which is the
+> same failure as the service-desk metrics, the auto-close automation and the machine-learning loss
+> function. Three waves in three different domains arrived at it independently, and the card now
+> says so — it is one pattern rather than three coincidences.
+
+---
+
+## Session record — Track BB: purple teaming as an exercise discipline, into `redteam`
+
+Eighth content wave, and the natural completion of the detection-engineering work from earlier in
+the session. That wave repeatedly pointed at purple exercises as the source of measured recall —
+the only way to get a denominator for "how much did we miss" — while the site had two
+single-section cards on the subject.
+
+### The audit
+
+`emulation plan`, `exercise scoping`, `purple exercise` and `control validation`: **0** each,
+three mentions in total. `blueteam` carried *Adversary Emulation — Atomic Red Team &amp; Caldera*
+and *Purple Teaming — Closing the Detection Gap*, both one concept card long. The tools were
+named; the discipline of running an exercise was not.
+
+### Placed in `redteam`, and why
+
+The two existing cards are in `blueteam`, so keeping the cluster together had an argument. Three
+things outweighed it: `blueteam` was already the largest security domain at 54 cards while
+`redteam` sat at 44; the craft in these cards — threat profiling, emulation plans, rules of
+engagement, lab design, safe payloads, execution — is red-side work; and the blue-side half is
+already carded in detail from the detection wave, which these cross-reference six times. The
+result is two domains that each hold their half of the exercise and point at each other, rather
+than one domain holding both.
+
+### What shipped
+
+**9 cards into `redteam`**, 44 → 53. Site: 1,198 → **1,207 topics**.
+
+| Group | Cards |
+|---|---|
+| Choosing the activity | Emulation vs simulation vs pentest · Building a threat profile |
+| Setting it up | Emulation plans &amp; rules of engagement · Lab design |
+| Running it | Purple team mechanics · Evidence capture &amp; the debrief |
+| Keeping it true | Continuous validation · Avoiding emulation theatre · The report &amp; funding the next one |
+
+### The two ideas worth carrying
+
+**Four outcomes per technique, not two.** Prevented, detected, logged-only, and nothing. Recording
+pass/fail loses the distinction that decides who does the follow-up work: "logged only" is a
+detection task and the cheapest win available, while "nothing" is a logging project that no
+detection can fix. Organisations routinely discover at their first exercise that they already
+collect everything needed for a dozen detections nobody wrote.
+
+**Emulation theatre is the same pattern again.** A detection written to match the emulation
+framework's distinctive command line fires perfectly every exercise and never once on an
+adversary. Re-running only the techniques known to pass, counting an alert nobody triages as
+coverage, quietly dropping the techniques that keep failing — each is locally reasonable, and
+together they produce a rising score and a static defence. This is the fourth independent
+appearance of the proxy-becomes-target pattern this session, after the service-desk metrics, the
+ML loss function and engineering velocity.
+
+---
+
+## Session record — Track AB: the operational layer under `net`'s concept cards
+
+Ninth content wave, and the audit found a gap with a shape worth naming: `net` had 57 cards of
+*concepts* — switching and VLANs, firewalls, NAT, 802.1X, wireless security, monitoring,
+automation — and almost nothing at the level where someone configures or troubleshoots them.
+
+| Probe | Mentions |
+|---|---:|
+| `bpdu guard`, `portfast`, `site survey`, `co-channel`, `rule order`, `session table`, `policy lookup`, `source nat`, `destination nat`, `structured cabling`, `go/no-go`, `rollback trigger` | **0** each |
+| `switchport mode`, `access-list`, `show running-config`, `implicit deny`, `patch panel` | 1 each |
+
+The site could explain what a VLAN is and not what a trunk misconfiguration looks like; what a
+firewall does and not why the rule never matched.
+
+### What shipped
+
+**13 cards into `net`**, 57 → 70. Site: 1,207 → **1,220 topics**. `net` is now the largest domain,
+which is defensible for a site whose readers are largely working toward Network+ and beyond.
+
+| Group | Cards |
+|---|---|
+| Device operations | Config management, archives &amp; upgrades · Switch port configuration &amp; edge protection |
+| Firewalls | Policy design &amp; rule order · NAT in practice · Firewall troubleshooting · Vendor firewall concepts |
+| Wireless | RF fundamentals &amp; site surveys · Wireless troubleshooting · Controller vs cloud-managed |
+| Physical &amp; field | Structured cabling, racks &amp; fibre · The field toolkit |
+| Change | Cutover nights · Network documentation that stays current |
+
+Seven track items are `[~]`: router configuration, IOS troubleshooting, enterprise Wi-Fi auth,
+network monitoring, network automation, network change control and capacity — all already carded,
+most of them in `net` itself.
+
+### The through-line
+
+Every card in this wave is written from the position of someone connected *through* the thing they
+are changing. That is the difference between network operations and every other kind: the timed
+reload before a risky change, out-of-band access verified before the cutover starts rather than
+when it is needed, the rollback trigger agreed while everyone is rested, and never saving a
+configuration until you have proved you can still reach the device. Three separate cards arrive at
+the same discipline from different directions, which is why it is stated explicitly in the first
+one rather than implied across all of them.
+
+Two specifics worth carrying: PortFast without BPDU guard converts a slow-boot complaint into an
+outage risk, so they are a pair and never one alone; and hairpin NAT is usually the wrong fix for
+"works from home, not from the office" — split-horizon DNS is simpler, faster, and removes the
+firewall from a path it does not need to be in.
+
+---
+
+## Session record — Track AR: external exposure, offboarding and credential cloning
+
+Tenth content wave. `sec` already carried three AR cards from an earlier session — physical
+security systems, the insider threat programme, internal investigations — so the audit was about
+finding what those did *not* reach.
+
+### The audit
+
+The exposure sub-track was almost entirely absent: `credential exposure`, `paste site`,
+`takedown` and `data broker` returned **0**, with seven mentions across the whole cluster.
+`offboarding checklist` returned **0**. The physical and investigations material sat at 19
+mentions, which is the three existing cards doing their job at concept level.
+
+### What shipped
+
+**7 cards into `sec`**, 57 → 64. Site: 1,220 → **1,227 topics**.
+
+| Group | Cards |
+|---|---|
+| Seeing yourself | Mapping your own attack surface · Credential exposure monitoring |
+| Being impersonated | Brand &amp; impersonation monitoring · Executive &amp; VIP exposure |
+| Acting on it | Turning findings into work |
+| The gaps in existing cards | Offboarding as a security control · Access credentials &amp; cloning |
+
+### What these cards are actually about
+
+The exposure cluster is **the same reconnaissance the Red Team domain teaches, pointed at
+yourself** — and the cards say so, cross-referencing `Reconnaissance (OSINT)` directly. The
+observation that makes it worth writing: an attacker's inventory of your internet-facing estate is
+routinely more complete than your own asset register, because yours records what was provisioned
+deliberately and theirs includes everything anyone ever stood up and forgot.
+
+Three specifics worth carrying:
+
+- **Dangling DNS is the finding that becomes a real compromise.** A CNAME to a deleted cloud
+  resource hands your subdomain — and its trust — to whoever can claim the name next. It is created
+  by ordinary decommissioning that skipped one step, which is why the fix is a checklist item
+  rather than a scan.
+- **Infostealer logs changed the credential-exposure problem.** They contain session cookies as
+  well as passwords, so resetting the password while leaving sessions live achieves nothing, and
+  the compromised thing is the device rather than the account.
+- **Blocklist before takedown.** Submission to browser and mail blocklists protects users within
+  minutes while removal runs for days, and the priority ordering is the part people get wrong.
+
+### Track AR after this wave
+
+Fourteen items remain, all in the physical-security and internal-investigations depth: access
+control system internals, CCTV evidentiary quality, datacenter facility layers, environmental
+monitoring, behavioural indicators, separation of duties, running an investigation, interviewing,
+working with law enforcement, and investigation reports. Each is genuine and each is a *narrower*
+specialism than this site's audience generally needs — the concept-level card exists for all of
+them. Left open deliberately rather than marked covered: they are real gaps, just low-priority
+ones, and saying so is more useful to the next session than a tick would be.
+
+---
+
+## Session record — Track AN6: hardware and firmware device security
+
+Eleventh content wave, and the first to take material from Phase 5's `hw` domain plan and ship it
+into an existing domain instead.
+
+### The decision, first
+
+Track AN scaffolds a new `hw` domain covering electronics, PC hardware, repair, peripherals,
+embedded and hardware security — roughly 30 cards across six waves. AN6 is the last of those six.
+Building the domain to reach its security wave is the wrong order of work: the five AN6 items are
+security material, they belong to a reader who is already in `sec`, and the other five waves are a
+different audience entirely. They shipped into `sec`. If `hw` is ever scaffolded, AN6 is done and
+the domain starts at electronics — which is where an electronics domain should start anyway.
+
+### The audit
+
+Probed the whole tree for the vocabulary these cards would need:
+
+| Probe | Mentions before this wave |
+|---|---|
+| `jtag` | 0 |
+| `hardware root of trust` | 0 |
+| `supply chain implant` | 0 |
+| `chip-off` | 0 |
+| `firmware update mechanism` | 0 |
+| `degauss` / `shred` / `purge` (media sanitisation sense) | 0 |
+| `secure boot` / `tpm` / `uefi` | present, but operational only |
+
+The last row is the one that shaped the wave. `linux` and `endpoint` already teach Secure Boot and
+BitLocker-with-TPM as *things you configure* — enrol the key, escrow the recovery key, do not break
+the chain. Nothing anywhere explained what the chain proves, what it does not prove, or what an
+attacker with the device in their hands actually does. That is the gap: not the settings, the
+threat model underneath them.
+
+### What shipped
+
+**6 cards into `sec`**, 64 → 70. Site: 1,227 → **1,233 topics**.
+
+| Card | What it is for |
+|---|---|
+| The Hardware Attack Surface — What Physical Access to a Device Buys | evil maid, DMA, cold boot, chip-off, and what each actually requires |
+| Firmware Extraction &amp; Analysis — Getting the Code Off, and Reading It | UART/JTAG/SPI flash, the tools, and authorised-use framing |
+| Hardware Root of Trust — What a Verified Boot Chain Actually Proves | secure boot vs measured boot, attestation, and the limits |
+| Firmware Update Mechanisms — The Feature That Is Also the Attack Path | signing, rollback protection, A/B slots, and estates that never patch |
+| Counterfeit &amp; Tampered Hardware — Provenance, Grey Market &amp; Implants | the boring risk that is common vs the exciting one that is rare |
+| Media Sanitisation &amp; Disposal — What "Wiped" Actually Means | clear/purge/destroy, SSD reality, and the process failures |
+
+### What these cards are actually about
+
+Three specifics worth carrying:
+
+- **Secure boot refuses; measured boot records.** They are constantly conflated and they solve
+  different problems. Secure boot stops an unsigned component from running and tells you nothing
+  afterwards. Measured boot lets anything run but hashes each stage into the TPM, so a remote
+  verifier can see what booted. Attestation needs the second; only the second survives an attacker
+  who can sign.
+- **Overwriting an SSD does not do to it what it does to a disk.** Wear levelling means the
+  logical block you overwrote and the flash page holding the old data are different places. The
+  block-overwrite tooling everyone learned on spinning disks is theatre on flash; the answer is the
+  drive's own sanitise command, or having encrypted from day one so disposal is a key deletion.
+- **Targeted implants are overweighted and counterfeits are underweighted.** The interdiction story
+  gets the attention; the thing that actually reaches estates is a counterfeit part with a
+  relabelled controller, failing early and carrying firmware nobody can attest. Provenance is a
+  purchasing control, and it is the cheapest one on this list.
+
+### Verification
+
+`lint_content.py` 1,233 topics / 144 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py --check` clean · `stamp_freshness.py --only sec` then `--verify` clean ·
+`smoke_test.mjs` 31/31 · budget after build: raw 4.6 / 8.0 MB, gzip 1,245 / 2,200 KB,
+DOM 416 / 1,500, content elements 97,401 / 175,000.
+
+---
+
+## Session record — Track BD: API and identity-first security
+
+Twelfth content wave, and the largest single void found by audit so far.
+
+### The audit
+
+Track BD's premise is that the perimeter moved to the API and the token while the site's coverage
+stayed with the network and the login page. The probe results said so bluntly:
+
+| Probe | Mentions before this wave |
+|---|---|
+| `BOLA` | 0 (one unrelated hit in `math`) |
+| `broken object`, `OWASP API`, `shadow API` | 0 |
+| `golden SAML`, `signature confusion`, `reply URL` | 0 |
+| `consent phishing`, `app consent`, `enterprise application` | 0 |
+| `non-human identity`, `client credentials`, `device code` | 0 |
+| `PKCE`, `JWT`, `SCIM`, `conditional access` | present — see below |
+
+The last row is where the audit had to be careful rather than fast. Those terms appear, so a
+keyword pass would call the track covered. Reading the actual cards showed what they are: a
+beginner-level `sec` card explaining what a token is and how OAuth2 roles fit together, plus `web`
+cards on sessions, cookies and federated identity. All correct, all pitched at first contact. None
+of them is about attacking or defending any of it.
+
+Two items were therefore deliberately *not* written. `alg: none` and the revocation problem are
+already taught in the existing API card, and a standalone JWT-security card would have been a third
+telling of the same material — algorithm and key confusion went into the federation card instead,
+where the golden-SAML material gives them a reason to exist. Authentication-vs-authorization is
+likewise already carded; its API-specific consequence lives inside the BOLA card, which is the only
+place it changes what a reader does.
+
+### What shipped
+
+**8 cards into `sec`**, 70 → 78. Site: 1,233 → **1,241 topics**.
+
+| Group | Cards |
+|---|---|
+| API security (BD1) | The OWASP API Security Top 10 · Broken Object-Level Authorization · API Abuse &amp; Rate Limiting · API Inventory &amp; Shadow APIs |
+| Identity-first (BD3–BD4) | Federation Attack Surface · OAuth Consent Phishing · Third-Party App Governance · Non-Human Identity |
+
+### What these cards are actually about
+
+The connective idea across all eight: **every one of these attacks is legitimate use of a working
+system.** No exploit, no malformed input, no bypass. That is why the existing control set misses
+them, and it is what makes them worth eight cards.
+
+Four specifics worth carrying:
+
+- **BOLA is a missing line, which is why review never catches it.** The endpoint validates the
+  token, loads the record by ID, returns it. Nothing in the diff looks wrong because the wrongness
+  is an absence. Scoping the query by tenant beats a separate ownership check — a check can be
+  forgotten on the next endpoint, a repository that will not return cross-tenant rows cannot be.
+- **Unguessable identifiers are not an authorization control.** Worth doing, and it stops trivial
+  enumeration, but identifiers leak through shared links, exports, webhooks and support tickets.
+  The real test needs two accounts and a replay, and it belongs in the pipeline.
+- **Consent phishing defeats every anti-phishing control by being genuine.** Real domain, real
+  certificate, real login, real MFA. The password reset afterwards changes nothing, because the
+  refresh token survives it. Prevention is a tenant setting; response is revoking the grant, not
+  the credential.
+- **Machine identities outnumber humans and no part of the identity lifecycle reaches them.** No
+  joiner, no leaver, no MFA, and an access review that stalls because nobody can say what the
+  account is for. The card ends on rotation rehearsal, because a team that does not know what
+  breaks when a credential rotates will, under incident pressure, choose to leave the attacker's
+  access in place.
+
+### A stamp correction worth recording
+
+`stamp_freshness.py --only sec` moved 25 topics from `2026-08` back to `2026-07`. That looked like
+the blame-drift hazard the tool's own docstring warns about, and it is the opposite: those are
+foundational cards — Active Directory, TLS, password hashing, threat modelling — that an earlier
+whole-tree run had wrongly bumped forward. `git log -S` on their content confirms the real last
+edit was July. The `--only` path corrected them. Recorded here so a future session reading the diff
+does not "fix" it back.
+
+### Track BD after this wave
+
+BD2 (tokens) is the remaining substantive gap: OAuth 2.1 flow changes and PKCE, token lifetime and
+rotation, machine-to-machine auth, and a secrets/tokens/keys taxonomy. Worth writing, and it should
+be written as one card about token lifetime rather than four that re-explain what a token is. BD3
+is otherwise complete — conditional access and privileged-access tiering are already carded in
+`m365`, `endpoint` and `infra`.
+
+### Verification
+
+`lint_content.py` 1,241 topics / 150 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 4.7 / 8.0 MB, gzip 1,257 / 2,200 KB, DOM 416 / 1,500, content elements
+98,092 / 175,000.
+
+---
+
+## Session record — Track BE: software supply chain and integrity
+
+Thirteenth content wave. The whole track, in one pass, into `eng`.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| `in-toto`, `reproducible build`, `artifact repository`, `golden image` | 0 |
+| `VEX` | acronym list and one unrelated `linux` hit only |
+| `dependency confusion` | 1, in `threat` |
+| `SLSA`, `sigstore` | present in `devops` and `threat` |
+| `SBOM` | present in four domains |
+
+The middle rows made this an audit that had to read rather than count. `devops` carries *Software
+Supply Chain Security — SBOM…* and `sec` carries *Supply Chain Security — Trust What You Build
+With*; both are real cards and both are roughly three concept cards long. Reading them showed the
+shape: they name SBOM, SLSA and sigstore and say why each matters. Nothing anywhere says what a
+SLSA level costs you, how keyless signing removes the key, what a VEX justification has to contain,
+or what you do in the hour after a dependency you ship turns out to be malicious.
+
+### The domain decision
+
+The plan targets `eng` / `sec`. It went entirely to `eng`, for two reasons. The material is about
+how software gets built — the reader who needs it is the one already thinking about builds,
+pipelines and dependencies. And `sec` had just reached 78 topics in the previous wave while `eng`
+sat at 68; concentrating a third supply-chain cluster in `sec` would have made the largest domain
+larger while leaving the engineering domain without the material its own readers need. The new
+cards cross-reference `devops` for policy-as-code and registry mechanics, and `ops` for incident
+response, so the existing cards stay the entry points they already were.
+
+### What shipped
+
+**8 cards into `eng`**, 68 → 76. Site: 1,241 → **1,249 topics**.
+
+| Group | Cards |
+|---|---|
+| Understanding the chain (BE1) | Where a Build Actually Comes From · Dependency Risk |
+| Provenance (BE2) | SLSA Levels · Signing, Sigstore &amp; Attestation · Verifying at Deploy Time |
+| Operating it (BE3) | SBOM in Practice &amp; VEX · Dependency Triage &amp; Update Strategy |
+| Internal chain (BE4) | Securing the Pipeline |
+
+### What these cards are actually about
+
+The organising observation, stated in the first card and paid off in the last: in every one of these
+attacks **nothing goes wrong on the victim's side.** The repository is untouched, the reviews
+happened, the signature verifies. That is why signature-checking and publisher-verification controls
+do not fire — the attacker satisfied both. It is also the argument for provenance: *which build,
+from which source, on which system* names facts an attacker cannot fabricate by holding a key.
+
+Four specifics worth carrying:
+
+- **`cosign verify $IMAGE` on its own is close to meaningless.** Keyless signing is open by design,
+  so a valid signature only proves somebody signed. The control is `--certificate-identity-regexp`
+  anchored to the start of the string, plus the issuer, plus verifying by digest rather than by a
+  mutable tag.
+- **Pinning and a working update process are one control, not two.** Pinning defends against
+  takeover, protestware and republished versions, and it also stops security fixes arriving. The
+  combination that works is a cooling-off delay on new releases plus auto-merge once they have aged.
+- **Generating provenance and verifying it are different projects, and the second is the control.**
+  Generation breaks nothing so it ships; enforcement can stop a deploy so it is deferred. The
+  rollout sequence in the deploy-time card exists because every failed attempt at this control
+  fails the same way — global enforcement on a Tuesday, universal exemption by Thursday.
+- **A compromised dependency is not a vulnerability to patch.** It is code that already executed on
+  developer machines and CI runners. Removing the package restores a clean tree and does nothing
+  about the credentials read an hour after install; the runners are compromised hosts and their
+  secrets are burned.
+
+### Track BE after this wave
+
+Two items left open deliberately, both marked `[~]` above: artifact repositories, already carded in
+`devops`; and developer-workstation trust, whose endpoint half is in `endpoint` and whose
+commit-signing half is a genuine small gap.
+
+### Verification
+
+`lint_content.py` 1,249 topics / 153 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only eng` touched only the 8 new cards, no
+churn · `--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 4.7 / 8.0 MB, gzip
+1,269 / 2,200 KB, DOM 416 / 1,500, content elements 98,725 / 175,000.
+
+---
+
+## Session record — Track BC: cloud-native and Kubernetes security
+
+Fourteenth content wave. Waves BC1–BC4 into `cloud`; BC5 (serverless and managed services) left for
+a later pass.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| `service account token`, `token projection` | 0 |
+| `hostPID`, `container forensic` | 0 |
+| `namespaces are not a security boundary` | 0 |
+| `kubelet` | 1, in `redteam` |
+| `pod security standard`, `default-deny`, `Falco`, `Tetragon` | present, scattered |
+
+The scattered row needed reading rather than counting, and what it found was thin: the entire
+site's Kubernetes security coverage was one `devops` card (*Kubernetes Security — RBAC…*, three
+concept cards), one `devops` container-hardening card, and one `redteam` attack card
+(*Kubernetes Attacks*, 4.4 KB, two concept cards). Those are correct and they are introductions.
+Nothing said what `create pods` is actually equivalent to, why every pod carries an API credential,
+what a NetworkPolicy does on a CNI that does not implement it, or why killing a compromised pod
+destroys the evidence.
+
+### The domain decision
+
+The plan targets `cloud` / `blueteam`. All eight went to `cloud`: the reader who needs this is
+already thinking about cloud-native infrastructure, and `cloud` was at 49 topics against
+`blueteam`'s 54. The cards cross-reference `devops` for policy-as-code and service-mesh
+architecture, `redteam` for the offensive walkthrough, `blueteam` for detection-as-code, and `ops`
+for incident response — so every neighbouring domain keeps its existing entry point.
+
+### What shipped
+
+**8 cards into `cloud`**, 49 → 57. Site: 1,249 → **1,257 topics**.
+
+| Group | Cards |
+|---|---|
+| Threat model (BC1) | The Kubernetes Threat Model · Kubernetes RBAC Deep · Service Account Tokens &amp; Workload Identity |
+| Hardening (BC2) | Container Breakout Paths &amp; Pod Security Standards |
+| Network &amp; tenancy (BC3) | Network Policies &amp; Service Mesh · Kubernetes Multi-Tenancy |
+| Runtime &amp; response (BC4) | Runtime Security &amp; Audit Logs · Incident Response in Kubernetes |
+
+### What these cards are actually about
+
+The through-line: **Kubernetes hardening is almost entirely about changing defaults, not about
+finding vulnerabilities.** Every path in these cards is open in a fresh cluster and closable from a
+manifest. That is why the wave reads as configuration rather than exploitation, and why the
+threat-model card is drawn from inside one pod rather than from the control plane down.
+
+Four specifics worth carrying:
+
+- **Several ordinary-looking RBAC verbs are cluster-admin.** `create pods` means running as any
+  service account in the namespace; `pods/exec` means taking over an existing workload's identity;
+  write access to a mutating webhook means rewriting every object entering the cluster. Nothing in
+  a role definition says so, which is why RBAC reviews that read like least-privilege often are not.
+- **Every pod is issued an API credential it did not ask for.** `automountServiceAccountToken:
+  false` is a one-line fix for workloads that never call the API, which is most of them. And the
+  legacy-versus-projected distinction decides whether a stolen token expires or works forever from
+  anywhere.
+- **A NetworkPolicy on a CNI that does not implement it applies cleanly and does nothing.** The
+  object appears in `kubectl get` either way. Also: default-deny egress blocks cluster DNS, which is
+  what breaks every first attempt and looks nothing like a network-policy problem.
+- **Killing a compromised pod destroys the evidence and redeploys the vulnerability.** The
+  containment move is removing the label the controller's selector matches — the workload heals, the
+  original keeps running, and you get to investigate. Under pressure, availability wins unless the
+  team already knows this trick.
+
+### Track BC after this wave
+
+Three items open, all recorded above: secrets in Kubernetes (the options comparison), ingress and
+API exposure, and the whole of BC5 — serverless threat model, managed-service trust boundaries, IaC
+scanning, cloud detection engineering and cloud incident response. BC5 is the natural next wave in
+this area; note that `sec` and `redteam` already carry parts of the cloud-detection and
+credential-attack material, so it needs the same read-not-count audit this one got.
+
+### Verification
+
+`lint_content.py` 1,257 topics / 159 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only cloud` touched only the 8 new cards ·
+`--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 4.8 / 8.0 MB, gzip 1,281 /
+2,200 KB, DOM 416 / 1,500, content elements 99,393 / 175,000.
+
+---
+
+## Session record — Track BC5: serverless, managed services and cloud response
+
+Fifteenth content wave, and it closes Track BC apart from three recorded items.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| serverless security / lambda permissions | 0 |
+| `checkov`, `tfsec`, `terrascan`, "IaC scanning" | 0 |
+| "cloud detection" | 0 |
+| snapshot forensics, credential revocation, blast-radius containment | 0 |
+| `CloudTrail`, `GuardDuty`, "shared responsibility" | present |
+
+The present row is named in passing: `cloud` and `redteam` mention CloudTrail as a thing that
+exists, and shared responsibility appears as the standard diagram. Nothing treated the control-plane
+log as a detection source with rules attached, and nothing said where the responsibility line
+actually sits for a given service class — which is the only form of that diagram anyone can act on.
+
+### What shipped
+
+**5 cards into `cloud`**, 57 → 62. Site: 1,257 → **1,262 topics**.
+
+Serverless Threat Model · Managed Service Trust Boundaries · IaC Security Scanning ·
+Cloud Detection Engineering · Cloud Incident Response.
+
+### What these cards are actually about
+
+The organising claim: **in the cloud the API call is the attack, and the identity is the asset.**
+Every card lands somewhere on that. It is why cloud incident response starts by asking which
+identity acted rather than which host is compromised, why the control-plane log is the primary
+telemetry, and why serverless concentrates risk into an execution role.
+
+Four specifics worth carrying:
+
+- **A serverless execution environment is reused between invocations.** Warm starts are the same
+  container, so a credential or a user's data cached in a global variable is readable by the next
+  caller, and files written to the temp directory survive. The mental model says each invocation is
+  fresh; it is not.
+- **Deleting an access key does not stop the session.** Temporary credentials already issued stay
+  valid for their full lifetime, so the immediate containment control is an explicit deny policy on
+  the role — before any cleanup.
+- **Preserve before you contain.** Terminating a compromised instance destroys memory, and
+  auto-scaling may do it for you while you are deciding. Snapshot and isolate; never terminate as a
+  first move.
+- **Logs stored in the account being attacked are evidence the attacker can edit.** Organisation-wide
+  logging to a separate locked account is the prerequisite that makes every detection in these
+  cards trustworthy, and it is a configuration decision made months before it matters.
+
+The IaC card carries a smaller point worth keeping: the same rule fires in a posture tool and in a
+scanner, and finding it three days earlier changes nothing about the rule and everything about the
+economics. Both are needed — the scanner sees what the code declares, posture management sees what
+exists, and each is blind exactly where the other looks.
+
+### Track BC after this wave
+
+Complete except: secrets in Kubernetes (the options comparison), ingress and API exposure as a
+control point, and image security, which is already carded in `devops` and `linux`. All three are
+marked in the track above.
+
+### Verification
+
+`lint_content.py` 1,262 topics / 163 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only cloud` touched only the 5 new cards ·
+`--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 4.8 / 8.0 MB, gzip 1,288 /
+2,200 KB, DOM 416 / 1,500, content elements 99,819 / 175,000.
+
+---
+
+## Session record — Track BF: privacy engineering
+
+Sixteenth content wave.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| `pseudonymisation` / `pseudonymization` | 0 |
+| `tokenisation` / `tokenization` | 0 |
+| `DSAR` / "subject access" | 0 |
+| "consent management" | 0 |
+| "cross-border transfer" | 0 |
+| "telemetry design" | 0 |
+| differential privacy, re-identification, data minimisation, privacy by design, purpose limitation | present in `grc` |
+
+The present row is four existing `grc` cards: *Data Privacy Techniques*, *Privacy Regulations*,
+*Privacy Law*, and *Data Governance, Retention &amp; eDiscovery*. Reading them showed they are the
+compliance half, and a good one — k-anonymity, differential privacy, GDPR vocabulary, data subject
+rights, retention as governance. What none of them does is tell an engineer how to build the
+system: how to make purpose limitation hold in a warehouse, what actually happens to a record when
+you delete it, how to answer a subject access request without consuming a team, or how to honour a
+withdrawn consent in the six systems that took a copy.
+
+That gap is exactly Track BF's stated premise — *GRC proves compliance, privacy engineering builds
+systems that do not need much proving* — so the first card was written to name the distinction
+explicitly rather than assume the reader arrives with it.
+
+### The domain decision
+
+Track BF targets `grc` / `eng`. All eight went to `grc`, which is where a reader looking for privacy
+will look, and where the four compliance cards already sit so the two halves cross-reference each
+other. `grc` was also among the smaller domains at 36 topics; `eng` had just taken the supply-chain
+wave and stood at 76. The new cards carry the badge **Privacy Engineering**, distinct from the
+existing **Privacy** badge, so the two halves are visually separable within the domain.
+
+### What shipped
+
+**8 cards into `grc`**, 36 → 44. Site: 1,262 → **1,270 topics**.
+
+Privacy Engineering vs Compliance · Data Inventory &amp; Flow Mapping · Purpose Limitation in a Data
+Warehouse · Tokenisation &amp; Format-Preserving Encryption · Deletion That Actually Deletes ·
+Subject Access Requests at Scale · Consent, Preferences &amp; Tracking · Telemetry Design &amp;
+Privacy Incident Response.
+
+### What these cards are actually about
+
+The through-line: **almost every default in modern architecture works against privacy, and none of
+them was chosen to.** Soft deletes, event sourcing, backups, replicas, caches, warehouses,
+generous telemetry — each is good engineering, and collectively they are why an organisation with
+excellent privacy documentation frequently cannot delete a person.
+
+Four specifics worth carrying:
+
+- **Pseudonymised data is still personal data.** Identifiers replaced but the mapping retained
+  anywhere means every obligation continues to apply. Calling it anonymous is the single most
+  consequential mistake in this area, and it is usually made in good faith.
+- **Data minimisation is the only control that removes categories of risk rather than managing
+  them.** Not collecting a field removes the breach, the access review, the retention schedule, the
+  subject-access search and the deletion job at once, permanently. Every other control is ongoing
+  work with an ongoing failure rate.
+- **Backups are settled practice, not the hard part.** Regulators accept that backups cannot be
+  surgically edited; what is expected is a defined expiry and a documented process so a restore does
+  not resurrect erased records. The hard parts are search indexes, event streams and the analytics
+  warehouse — the one-way pipelines nobody propagates deletions into.
+- **The seventy-two hours include the weekend, and awareness starts with the support agent.** The
+  common failure is a security team resolving an incident competently while nobody asks whether
+  personal data was involved. The fix is a standing assessment step inside the existing incident
+  process, not a parallel privacy process.
+
+### A second stamp correction
+
+`stamp_freshness.py --only grc` moved 16 topics from `2026-06` to `2026-07`. As with the `sec` case
+in the API wave, this is a correction rather than drift: `git log -S` on those cards' titles shows
+them created in commit d38592c, dated 2026-07, so 2026-06 was stale. Recorded for the same reason —
+so a later session reading the diff does not reverse it.
+
+### Track BF after this wave
+
+One item genuinely open: third-party data sharing, whose contract half is in `grc`'s vendor cards
+and whose technical-verification half is unwritten. Everything else is either shipped or already
+carded elsewhere, marked `[~]` in the track above with the location.
+
+### Verification
+
+`lint_content.py` 1,270 topics / 167 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 4.8 / 8.0 MB, gzip 1,301 / 2,200 KB, DOM 416 / 1,500, content elements
+100,530 / 175,000.
+
+---
+
+## Session record — Track BG: platform engineering and the internal developer platform
+
+Seventeenth content wave. The whole track, in one pass, into `devops`.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| "paved road" / "paved path", "platform as a product" | 0 |
+| "thinnest viable platform", "self-service infrastructure" | 0 |
+| "ephemeral environment", "service catalog" / "scorecard" | 0 |
+| "inner loop" / "outer loop", "onboarding to first commit" | 0 |
+| "platform SLO" | 0 |
+| `golden path`, `cognitive load`, `developer portal`, `Backstage` | present |
+
+The present row is one `devops` card — *Platform Engineering &amp; the Internal Developer
+Platform* — whose four concept cards are golden paths, the commit-to-production pipeline, CI in the
+repository, and which CI tool to pick. Three of those four are really CI/CD material. The card names
+the discipline and then teaches pipelines, which is a reasonable card and leaves the discipline
+itself unwritten.
+
+### What shipped
+
+**8 cards into `devops`**, 36 → 44. Site: 1,270 → **1,278 topics**.
+
+Why Platform Engineering Exists · Platform as a Product · Golden Paths &amp; the Thinnest Viable
+Platform · Developer Portals, Service Catalogues &amp; Scorecards · Self-Service Infrastructure &amp;
+Environment Management · Platform SLOs &amp; Migrating Consumers · Measuring Platform Success ·
+Developer Experience.
+
+They carry a **Platform** badge, so the cluster is separable from the domain's DevOps and Delivery
+material.
+
+### What these cards are actually about
+
+The through-line is a constraint rather than a technique: **a platform only stays good while its
+users could leave.** Voluntary adoption is what forces it to be genuinely faster than the
+alternative; mandate it and the feedback that would have corrected the roadmap arrives as
+complaints to management instead. Nearly every anti-pattern in the wave is downstream of losing
+that constraint.
+
+Four specifics worth carrying:
+
+- **Not all cognitive load should be removed.** Extraneous load — pipelines, wiring, provisioning —
+  is the entire mandate. Germane load, the effort that builds understanding of how your system
+  fails, must be protected: hiding production behaviour from the team that owns the service
+  relocates the understanding away from whoever is paged at three in the morning.
+- **A gate and a guard rail address the same risk and charge differently.** A gate charges every
+  request the latency of a human, forever, to catch the rare bad one. A guard rail charges
+  engineering effort once. Almost every gate in a real organisation defends against the exceptional
+  case while billing the common one.
+- **The seed dataset decides whether ephemeral environments are useful.** Per-pull-request
+  environments are the highest-value capability on the list, and an environment with no realistic
+  data only proves the service starts. Building a good synthetic seed set is the unglamorous part
+  and it is the actual work.
+- **A platform team ships no product, which makes it permanently fundable and permanently
+  cuttable.** Its output is other teams going faster, which is invisible unless measured and which
+  those teams will attribute to their own competence. Measurement is the only evidence — and it
+  equally catches the platform team that genuinely is not helping.
+
+The developer-experience card carries the observation that most surprises people: platform attention
+goes to the outer loop because that is where the infrastructure is, while the hours are in the inner
+loop. A two-minute rebuild does not cost two minutes; it costs the context that fell out of the
+engineer's head while they waited, and a cycle slow enough to break concentration pushes people
+toward larger batches — the opposite of what the outer-loop investment was for.
+
+### A third stamp correction
+
+`stamp_freshness.py --only devops` moved three topics: two CI/CD cards from `2026-08` to `2026-07`
+and one Kubernetes card from `2026-06` to `2026-07`. All three trace to commit a5f941f, the August
+commit that split the old `ops` domain into `ops` and `devops`. That is a file move, not an edit —
+exactly the mechanical-commit case the tool's `--ignore-rev` classification exists for — so looking
+through it to the pre-split date is correct behaviour, not drift. Third such correction this
+session; the pattern is consistent enough to state plainly: **when `--only` moves an old stamp,
+check whether a mechanical commit inflated it before assuming the tool is wrong.**
+
+### Track BG after this wave
+
+Complete. Two items are marked `[~]` because they were already carded in this same domain — paved-
+path CI/CD and policy as code — and the new cards point at them rather than restating them.
+
+### Verification
+
+`lint_content.py` 1,278 topics / 167 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 4.9 / 8.0 MB, gzip 1,312 / 2,200 KB, DOM 416 / 1,500, content elements
+101,187 / 175,000.
+
+---
+
+## Session record — Track BH: observability engineering
+
+Eighteenth content wave.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| "wide event" | 0 |
+| `cardinality` | 1, in `data`, about database indexes |
+| OpenTelemetry, distributed tracing, error budget, SLI, SLO, observability | present in `ops` and `cloud` |
+
+The present row was the whole audit, and it needed reading rather than counting. `ops` carries
+seven observability cards, and their sizes tell the story: *Monitoring &amp; Observability* is
+2.2 KB, *Golden Signals* 1.2 KB, *SLIs* 1.0 KB, *Prometheus &amp; Grafana* 2.2 KB,
+*Distributed Tracing &amp; OpenTelemetry* 4.7 KB. They teach what a metric is, what a span is, that
+OTel exists, and that you should alert on symptoms — twice, in two different cards.
+
+None of them touches the decisions that actually shape an observability practice: what a label
+costs, what to do when the trace you need was sampled away, where to put a policy that applies to
+every signal, or what happens when the error budget runs out and nobody has agreed what happens.
+
+### What shipped
+
+**8 cards into `ops`**, 53 → 61. Site: 1,278 → **1,286 topics**.
+
+Cardinality · The Three Signals &amp; Wide Events · Instrumentation Strategy · OpenTelemetry
+Architecture &amp; the Collector · Sampling · Debugging With Traces, Correlation &amp; Dashboards ·
+Choosing SLIs &amp; Setting an SLO That Survives · Error Budgets, Policy &amp; Why SLOs Fail.
+
+### What these cards are actually about
+
+The through-line: **every observability decision is a decision about what you will not be able to
+ask later.** A label you did not add, a trace that was sampled away, a field left out of an event —
+each is a question that becomes unanswerable at the exact moment it matters. The cards are
+organised around making those trade-offs explicit while they are still cheap.
+
+Four specifics worth carrying:
+
+- **Cardinality multiplies and the multiplication is invisible in the code.** One extra label
+  argument turns a hundred series into a hundred thousand. The rule that prevents nearly all of it:
+  a metric label must have a bounded set of values you could write down; anything else belongs in a
+  trace or an event, where the cost model is per-event rather than per-combination.
+- **Uniform sampling discards precisely what you needed.** An error affecting one request in ten
+  thousand, sampled at one percent, is captured once per million requests — so during the incident,
+  the trace does not exist. Bias the policy on purpose: keep everything unusual, keep a thin
+  baseline. And once you do, trace counts are no longer traffic counts, which is its own class of
+  confidently wrong dashboard.
+- **The collector is the most useful component in the stack and is usually skipped.** It is the one
+  place every signal passes through, so redaction, label allow-lists, cost control, tail sampling
+  and backend migration all belong there — none of them requiring an application change.
+- **SLO programmes fail organisationally, not technically.** The technical work is a week. The
+  failure that does lasting damage is tying an SLO to someone's performance review: it stops being
+  a measurement and becomes a target to manage, incidents get reclassified, and the organisation
+  loses the ability to see its own reliability long after the programme ends.
+
+The instrumentation card carries the observation most likely to change what a reader does tomorrow:
+a service can return HTTP 200 to every request while placing no orders, and every technical
+dashboard will show a healthy system. Every service needs at least one metric a non-engineer would
+recognise as the thing it is for.
+
+### Track BH after this wave
+
+One item genuinely open: reporting reliability to the business as distinct from to engineering. Four
+items are marked `[~]` with their existing location — the monitoring/observability distinction,
+OTel instruments and views, and symptom-based alerting, which `ops` already carded twice.
+
+### Verification
+
+`lint_content.py` 1,286 topics / 169 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only ops` corrected three stamps to 2026-07
+(`git log -S` confirms commit d38592c, dated July — the fourth such correction, per the rule
+recorded in the platform-engineering session record) · `--verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 4.9 / 8.0 MB, gzip 1,324 / 2,200 KB, DOM 416 / 1,500, content elements
+101,920 / 175,000.
+
+---
+
+## Session record — Track BJ: resilience, plus a real bug in stamp_freshness.py
+
+Nineteenth content wave, and the most heavily pre-covered track audited so far.
+
+### The audit
+
+`ops` already carries five strong incident cards — *Chaos Engineering* (4.9 KB, with the method,
+running an experiment, what to inject, and a "don't start here" caveat), *Incident Command*,
+*Writing a Postmortem People Actually Learn From*, *Writing Runbooks That People Actually Follow*,
+and *On-Call Done Humanely*. `eng` carries *Designing for Failure* and *Resilience Patterns —
+Circuit Breaker, Retry &amp; Timeout*.
+
+That is roughly half of Track BJ already written, and written well. So this audit was mostly about
+finding what the twenty planned items contain that those seven cards do not:
+
+| Probe | Mentions before this wave |
+|---|---|
+| "shuffle shard", `gameday`, `FMEA` | 0 |
+| "near-miss" | 2, both in a threat-intel sense |
+| `bulkhead`, "load shedding" | 1 each, in `eng`, in passing |
+
+**7 cards into `ops`**, 61 → 68. Site: 1,286 → **1,293 topics**. Twelve of the twenty track items
+are marked `[~]` with the card that already covers them — the largest proportion of any track this
+session, and the honest result.
+
+Blast Radius Design · FMEA for Systems · Load Shedding &amp; Graceful Degradation · GameDays &amp;
+Chaos Maturity · Near-Misses &amp; Incident Metrics · Resilience Engineering &amp; Organisational
+Memory · Alert Fatigue &amp; Runbook Quality.
+
+### What these cards are actually about
+
+Four specifics worth carrying:
+
+- **Congestion collapse has a recognisable dashboard signature:** high CPU, high queue depth,
+  near-zero successful throughput, every latency percentile pinned at the timeout. A system showing
+  that shape is spending all its capacity on work that will be discarded, and refusing ten percent
+  of requests immediately would serve the other ninety.
+- **Shuffle sharding is combinatorics doing reliability work.** Two workers each from a pool of
+  eight gives twenty-eight distinct pairs, so one abusive tenant affects the handful who share both
+  of its workers rather than a whole shard. It contains nothing if the workers share a database.
+- **"Human error" is where the investigation stopped.** The action made sense to the person given
+  what they could see; understanding why it made sense is what produces a fix. And the gap between
+  the documented procedure and what people actually do is usually *why the system works* — treat a
+  deviation as a question before treating it as non-compliance.
+- **A noisy pager is an outage you have not had yet.** It is a technical defect, not only a
+  wellbeing one: an engineer who has learned the pager is usually wrong acknowledges the real page
+  more slowly. Track the proportion of pages that led to action; below about half, the pager is
+  training people to ignore it.
+
+### The bug: stamps were oscillating
+
+This wave's stamping run moved three `ops` topics from `2026-07` back to `2026-08` — the exact three
+the previous wave had moved from `2026-08` to `2026-07`. Not drift: a genuine cycle, and worth
+recording because four earlier "corrections" this session were the same mechanism seen from one side.
+
+**Cause.** A topic's date was `max()` over the blame times of every line in its span, including the
+opening `<div class="topic" data-reviewed="…">` line — the line the script itself rewrites. Writing
+a corrected stamp inside a commit that also adds real content makes that commit non-mechanical, so
+it cannot be ignored when blaming; blame then dates the opening line to that commit, `max` picks it
+up, and the topic moves forward. The next run's stamping commit *is* mechanical, the ignore list
+catches it, and the topic moves back. Two waves, two directions, same three cards.
+
+**Fix.** A new `body_times()` helper takes the span minus its opening line. A card's opening tag
+carries no content, so its blame date can never be honest evidence that anyone reviewed the card —
+any real edit touches a body line too. Dropping it removes the cycle at no cost. The fallback
+matters: some topics in `data/*.html` are written on a single line with header and body together, so
+when the body yields nothing the helper falls back to the full span rather than silently leaving the
+topic unstamped.
+
+**Verified.** Restoring the three stamps to their committed values and re-running now leaves them
+alone and moves only the seven new cards. `--only` on `sec`, `grc`, `devops`, `cloud` and `eng` —
+the five domains corrected earlier this session — reports no change on any of them.
+
+This also revises what the platform-engineering record said. That rule — *when `--only` moves an old
+stamp, check whether a mechanical commit inflated it* — was right about the four cases it described,
+and it was treating a symptom. The cause is fixed now; a stamp that moves after this commit deserves
+the original suspicion again.
+
+### Verification
+
+`lint_content.py` 1,293 topics / 173 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py --check` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 4.9 / 8.0 MB, gzip 1,335 / 2,200 KB, DOM 416 / 1,500, content elements
+102,492 / 175,000.
+
+---
+
+## Session record — Track Z3: storage
+
+Twentieth content wave, and the first to return to a Phase-4 track after finishing Phase 6.
+
+### Choosing this one
+
+With Phase 6 closed, a count of remaining open items put Track Z at the top with 26. Reading the
+track showed most of that was already answered: an earlier session shipped the six-card spine —
+virtualization fundamentals, the hypervisor comparison, snapshots-are-not-backups, 3-2-1-1-0,
+ransomware-resilient backup and restore testing — and recorded exactly what it left. Wave Z3,
+storage, was untouched in full.
+
+**An audit note worth recording.** The first probe run reported `RPO`, `RTO`, `ML-KEM`,
+`crypto-agility` and `live migration` as site-wide zeros. All five were false. The patterns were
+written as `"RPO\|RTO"` and passed to `grep -E`, where `\|` is an escaped pipe — a literal `|`
+character — so the search was for the string `RPO|RTO`, which appears nowhere. Under `-E` the
+alternation is a bare `|`; the backslash form belongs to basic `grep`. Re-running correctly showed
+`RTO` in nine domains and post-quantum already carded in `sec`. **A zero from a multi-term probe is
+worth re-running as separate single-term greps before it becomes a wave.** Had that gone unchecked
+this session would have written a post-quantum card that already exists.
+
+### The audit, corrected
+
+| Probe | Mentions before this wave |
+|---|---|
+| `erasure coding`, `thin provision`, `paravirtual` | 0 |
+| `iSCSI` | acronym list only |
+| `RAID` | `cs`, `linux`, `script` — nowhere in `infra` |
+| `deduplicat` | `script` and `threat`, neither about storage |
+| `hypervisor`, `live migration`, `vMotion`, `3-2-1` | present in `infra` — the spine already shipped |
+
+### What shipped
+
+**7 cards into `infra`**, 34 → 41. Site: 1,293 → **1,300 topics**.
+
+Storage Fundamentals · RAID &amp; Erasure Coding · SAN &amp; Fabric · SMB &amp; NFS at Scale ·
+Storage Performance · Thin Provisioning, Deduplication &amp; Tiering · Storage Capacity Planning.
+
+### What these cards are actually about
+
+The through-line: **storage failures are almost never surprises about the media.** They are
+consequences of a design choice made months earlier — the wrong access model, an efficiency feature
+outside its assumptions, a redundancy scheme whose rebuild window nobody costed, a growth rate
+nobody was reporting.
+
+Four specifics worth carrying:
+
+- **Block, file and object differ by where the filesystem lives.** Everything else follows: only one
+  server can own a block device because two filesystems writing the same blocks corrupt each other;
+  file storage is shareable because the storage system arbitrates; object storage cannot modify part
+  of a file because there is no block layer to modify.
+- **The rebuild window is the real risk in RAID, not the parity mathematics.** A rebuild reads every
+  remaining drive end to end, for hours or days, while degraded, on drives of the same age and
+  batch. Single parity fell out of favour because disks got bigger and the window grew — not because
+  anything about parity changed.
+- **Thin provisioning has no gradual failure.** Behaviour is normal right up to a full pool, then
+  writes fail across every volume in it at once. And the usual cause is not growth: it is deleted
+  space never reclaimed, because a guest deleting a file tells the array nothing without UNMAP or
+  TRIM. Pools fill while every volume inside reports free space.
+- **Capacity is a time problem, not a percentage problem.** "82% full" prompts nothing; "eleven
+  weeks left, and procurement takes eight" is a decision with a deadline. And in an all-flash estate
+  the array often runs out of controller headroom long before terabytes, which no capacity report
+  will mention.
+
+The SMB/NFS card carries the one that resolves most user complaints: file protocols are chatty, so
+opening a file is a sequence of round trips. "The share is slow from the branch office" is a latency
+problem, adding bandwidth reliably fails to fix it, and a million small files behaves nothing like
+one large file of the same size.
+
+### Track Z after this wave
+
+Waves Z1, Z2, Z4 and Z5 remain partly open, and the earlier session's note still describes them
+accurately: sizing and overcommit depth, VM lifecycle and templates, live-migration operations,
+P2V/V2V, backup products, failover and failback drills, tabletops. All genuine, all narrower than
+what shipped, and reasonable to leave until an estate needs them.
+
+### Verification
+
+`lint_content.py` 1,300 topics / 178 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only infra` touched only the 7 new cards —
+the oscillation fix from the previous wave holding across a second domain · `--verify` clean ·
+`smoke_test.mjs` 31/31 · budget after build: raw 5.0 / 8.0 MB, gzip 1,346 / 2,200 KB, DOM 416 /
+1,500, content elements 103,217 / 175,000.
+
+---
+
+## Session record — Track AC: the remaining automation items
+
+Twenty-first content wave, and it closes Track AC.
+
+### The audit
+
+An earlier session shipped three genuine-gap cards here (Graph from PowerShell, JEA, automation
+risk) and recorded four items as remaining. Probing those four plus the rest of the track:
+
+| Probe | Mentions before this wave |
+|---|---|
+| `PowerShell DSC`, `Power Automate`, "logic app" | 0 |
+| "credential in script", "runbook automation" | 0 |
+| `Ansible` | 6 domains — but as a named tool, not as configuration-as-code practice |
+| `idempoten`, "dry run", `WhatIf`, "error handling", `webhook`, `REST API` | present in `script` |
+
+The last row confirms the earlier session's judgement: `script` genuinely carries the automation
+craft, and the four recorded remainders were the real gaps. One addition — *Secrets in Automation*
+(AC3.4) was on the track and not on the remaining list, and `credential in script` was a site-wide
+zero, so it went in too.
+
+### What shipped
+
+**5 cards into `script`**, 140 → 145. Site: 1,300 → **1,305 topics**.
+
+Configuration as Code On-Prem · Golden Images as Code · Secrets in Automation · Testing Automation ·
+Power Automate &amp; Logic Apps.
+
+### What these cards are actually about
+
+The through-line: **operations code has more authority over an estate than most application code,
+and is held to a far lower standard.** The script that disables accounts across a directory acts as
+an administrator, on everything, unattended, with nobody watching the result — and gets none of the
+review, testing or staging that a web application gets. That is historical rather than reasoned:
+scripts started as one-off conveniences and quietly became infrastructure.
+
+Four specifics worth carrying:
+
+- **The best secret is the one that does not exist.** Before choosing where to store a credential,
+  check whether the work can run somewhere with a platform identity — a managed identity, a
+  federated pipeline, a group-managed service account. Most credential-handling problems dissolve
+  rather than get solved.
+- **A secret that ever reached a repository is compromised.** Removing it in a later commit changes
+  nothing; the old revision still has it. Rotation is the only step that ends the exposure, and
+  history rewriting on a shared branch is disruptive and usually incomplete.
+- **Idempotency is a property you write, not one the tool gives you.** The moment a playbook shells
+  out to a raw command the guarantee is gone and the tool cannot tell. The working standard: a
+  second run reports zero changes, and an unexpected "changed" is a defect.
+- **Low-code wins the build and code wins the maintenance.** The connector library is the real
+  product, and the criteria that matter are about the second year — how long the thing will live and
+  how bad its failure would be, not how quickly it can exist.
+
+The testing card's practical core is a rewrite that costs ten minutes: separate the decision from
+the action, so the rule that selects which accounts get disabled can be tested against every awkward
+case without a directory and without disabling anybody. And the useful lab is not a copy of
+production — it is ten deliberately strange objects (a nested group, a name with an apostrophe, a
+machine offline for a year), because those shapes are what break bulk scripts.
+
+### A large stamp correction, verified
+
+`stamp_freshness.py --only script` moved 73 topics from `2026-06` to `2026-07` — much larger churn
+than any previous wave, and worth checking rather than assuming. Every one of the 73 was validated
+programmatically against `git log -S`: for each changed topic, the newest commit touching its
+content was compared against the new stamp, and **none** claimed a date fresher than its history
+supports. `script.html` had simply not been re-stamped since the July wave that edited those cards.
+This is backlog, not drift — and the oscillation fix means it should not recur.
+
+### Track AC after this wave
+
+Complete. Waves AC1, AC2, AC4 and AC5 remain formally unticked in the list above, and the earlier
+session's note explains why: their items are carded in `script` already, under different names.
+
+### Verification
+
+`lint_content.py` 1,305 topics / 182 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 5.0 / 8.0 MB, gzip 1,354 / 2,200 KB, DOM 416 / 1,500, content elements
+103,660 / 175,000.
+
+---
+
+## Session record — Track AU: enablement, training and technical influence
+
+Twenty-second content wave, and the first track in this session that had **zero** items ticked
+before it started.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| "training session", `workshop`, "lunch and learn", "brown bag" | 0 |
+| "conference talk", "knowledge transfer" | 0 |
+| "documentation…audience" | 0 |
+| "technical writing", `mentoring` | present in `career` |
+
+`career` carries *Clear Technical Communication*, *Technical Writing*, *Mentorship* and *Building in
+Public* — the individual-skill layer, and a good one. What none of them covers is teaching as a
+**function**: designing a curriculum, running a room, facilitating a session where you have no
+stake in the answer, or getting a proposal through people who do not report to you. That is the
+track's own framing — *teaching as a function, not as a personality trait* — and it was accurate.
+
+### What shipped
+
+**8 cards into `career`**, 21 → 29. Site: 1,305 → **1,313 topics**.
+
+How Adults Actually Learn · Curriculum Design &amp; Assessment · Running a Workshop · Live Demos
+&amp; Screencasts · Facilitating Retrospectives &amp; Tabletops · Documentation Types &amp;
+Docs-as-Code · Diagrams That Explain · Proposals, Executives &amp; Speaking.
+
+### What these cards are actually about
+
+The through-line: **the expert is systematically the worst judge of whether their explanation
+worked.** Their knowledge is chunked, so they cannot feel the weight of what they are asking a
+learner to hold; their diagram is comprehensive because they can already read it; their proposal
+builds to a conclusion because that is the order in which they earned it. Every card here is, in
+some form, a countermeasure to that blind spot.
+
+Four specifics worth carrying:
+
+- **Explaining is not teaching.** An hour of excellent explanation produces people who understood it
+  in the room and cannot do it on Thursday. Understanding while somebody else drives is a different
+  capability from doing it, and only the second is what anyone wanted.
+- **Design backwards from the behaviour.** Name what people must do unaided, decide what would prove
+  it, then choose content — and delete everything left over. The nice-to-know is what pushes a
+  session long, rushes the practice, and turns the exercise into a demo.
+- **A tutorial cannot have branches.** If it says "depending on your environment", it is a how-to
+  guide and a beginner will fail at that sentence. Most frustrating documentation is two documents
+  wearing one title.
+- **Put the recommendation first, and include do-nothing honestly.** A proposal presenting one
+  course of action reads as advocacy; one that says what happens if you decline reads as advice, and
+  gets a decision rather than a request for more information.
+
+Two smaller ones worth keeping: the silent written round at the start of a retrospective costs three
+minutes and reliably surfaces what the most junior person was not going to say; and the diagram you
+draw *while* explaining a system to someone is almost always at the right level of abstraction,
+because it contains exactly what was needed and nothing else.
+
+### Track AU after this wave
+
+One item genuinely open — *Teaching a Tool You Just Learned* — and three marked `[~]` against
+existing cards in `career` and `ops`.
+
+### Verification
+
+`lint_content.py` 1,313 topics / 183 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only career` moved one topic 2026-06 → 2026-07,
+looking through an August mechanical commit as designed · `--verify` clean · `smoke_test.mjs` 31/31 ·
+budget after build: raw 5.0 / 8.0 MB, gzip 1,367 / 2,200 KB, DOM 416 / 1,500, content elements
+104,484 / 175,000.
+
+---
+
+## Session record — Track AV: consulting, contracting and independent practice
+
+Twenty-third content wave, and the second zero-ticked track closed in a row.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| `consulting`, `freelance`, "rate card", "day rate" | 0 |
+| "client discovery", `IR35` | 0 |
+| "statement of work" | 2 — `acronym` and `pentest`, in a penetration-testing sense |
+| `contracting` | `grc` and `military`, neither about independent practice |
+
+`career` carries the employed-career layer well — negotiating an offer, financial basics, breaking
+in, growing into senior. Nothing addressed the other path at all.
+
+### What shipped
+
+**8 cards into `career`**, 29 → 37. Site: 1,313 → **1,321 topics**.
+
+Consultant, Contractor or Staff Augmentation · Pricing · Finding Clients · The Proposal &amp;
+Statement of Work · Discovery &amp; Managing Scope · Someone Else's Politics &amp; Handover · The
+Assessment Report · The Business Side.
+
+### What these cards are actually about
+
+The through-line: **almost every failure in independent practice is a pricing or scoping decision
+made before the work started, discovered months later.** The engagement that will not end, the
+fixed-price job that ate three unpaid weeks, the client whose late payment becomes your crisis, the
+report nobody acted on — each traces back to something that was cheap to define up front and
+expensive to renegotiate afterwards.
+
+Four specifics worth carrying:
+
+- **Work the rate backwards from billable days.** A realistic year is 130–150 billable days once
+  holiday, sales, admin and gaps between engagements are counted — not 220. The day rate that
+  matches a salary is therefore considerably higher than the naive division, and getting this wrong
+  at the start is what makes the first year feel like a mistake.
+- **Hourly pricing penalises expertise.** The person who solves it in two hours earns less than the
+  one who takes eight, and the client experiences the fast answer as poor value. That misalignment
+  is the argument for every other pricing model.
+- **Deemed acceptance is the least glamorous clause and does the most work.** Without it an
+  engagement can be held open indefinitely by a client who is merely busy — no dispute, no bad
+  faith, just a review that never happens and an invoice that cannot be raised.
+- **Dependency is commercially attractive and professionally corrosive.** The client who cannot
+  operate what you built keeps paying, and every later engagement is a rescue rather than a choice.
+  Referrals from work that visibly holds are worth more than a retainer built on helplessness.
+
+Two smaller ones: referring out work you cannot take is the highest-return, least obvious business
+development there is; and the honest unfinished-work list at handover — three things remaining, what
+you would do, roughly what they cost — is in practice the most common origin of the next engagement.
+
+### A note on scope
+
+The contracts and protections card is deliberately written as orientation rather than as advice, and
+says so in the card: entity structure, employment-status rules, insurance requirements and
+enforceability of restrictive covenants all vary substantially by jurisdiction. The card names what
+to look at and why it matters, and points at getting professional help for anything significant.
+That framing is the right one for this site's audience and should be kept if the card is revised.
+
+### Track AV after this wave
+
+Two areas open: subcontracting and partnering (AV3.4), and the whole of AV4 — running a security
+assessment engagement end to end, fractional and advisory roles, expert witness work, and
+productising a service. AV4 is the most specialised material in the track and reasonable to leave
+until asked for.
+
+### Verification
+
+`lint_content.py` 1,321 topics / 185 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only career` touched only the 8 new cards ·
+`--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 5.1 / 8.0 MB, gzip 1,381 /
+2,200 KB, DOM 416 / 1,500, content elements 105,348 / 175,000.
+
+---
+
+## Session record — Track AE3/AE4: scale extremes, sustainability, accessibility and ethics
+
+Twenty-fourth content wave.
+
+### Choosing this one, and two tracks ruled out
+
+Three tracks were audited before picking. **AQ (Emerging Platforms)** turned out largely covered:
+`net` carries *Modern Connectivity — 5G, Private Cellular, Satellite &amp; IoT* and *Edge Computing*,
+which between them answer most of the track. **AD (Apple/Android)** likewise: `endpoint` carries
+*macOS for Windows Admins*, *Apple Fleet Management* and *iOS &amp; Android Enterprise*, and the
+genuine zeros left — declarative device management, Kandji, Knox — are narrow vendor specifics.
+Recording both here so a later session does not re-audit them.
+
+Track AE's earlier session shipped AE1 (OT/ICS) and correctly judged AE2 as overlapping `grc`. AE3
+and AE4 were untouched, and the probes agreed:
+
+| Probe | Mentions before this wave |
+|---|---|
+| "multi-tenant tooling", `divestiture` | 0 |
+| "green IT", `PUE`, "e-waste" | 0 |
+| "small business IT", "seasonal load" | 0 |
+| `MSP` | `acronym`, `endpoint`, `grc` — named, never as an operating model |
+| `accessib`, `WCAG`, "screen reader" | present — all web-facing, in `web`, `script` and `grc` |
+
+That last row is the interesting one. Accessibility is on the site as a *web standard*. Nothing
+covered it as an *IT operations* concern — the internal tools IT procures, the assistive software
+application control silently blocks, the MFA method that excludes someone.
+
+### What shipped
+
+**8 cards into `ops`**, 68 → 76. Site: 1,321 → **1,329 topics**.
+
+IT for Very Small Organisations · IT for the Very Large · MSP Operations · Remote &amp; Distributed
+Workforces · Mergers, Acquisitions &amp; Divestitures · Green IT · Accessible IT · Surveillance vs
+Monitoring.
+
+All eight went to `ops` under an **Operating Context** badge rather than splitting the ethics and
+sustainability cards to `grc`. They are one idea — how the same IT job changes with the context it
+is done in — and separating them would have made the reader hunt.
+
+### What these cards are actually about
+
+The through-line: **the generic answer is calibrated to a mid-sized, office-based, single-entity
+organisation, and almost nobody works in one.** Every card is a case where the standard advice is
+not merely insufficient but actively wrong.
+
+Four specifics worth carrying:
+
+- **Manufacturing usually outweighs running, for end-user devices.** Emissions from building a
+  laptop exceed several years of using it, which inverts the intuitive advice: extending the refresh
+  cycle by a year does more than any power setting. Endpoint power settings are worth doing and not
+  worth leading with; reducing email storage measures nothing.
+- **At large scale, every technical problem is an agreement problem.** The engineering to standardise
+  endpoint management takes weeks; the agreement takes quarters. Skipping it produces a standard
+  that exists on paper while everyone continues as before.
+- **An MSP's remote-management platform is tier zero and is usually protected like an ordinary SaaS
+  tool.** It exists to push software to every endpoint at every client, so an attacker who reaches
+  it has that capability too — which is exactly how mass incidents have happened.
+- **The monitoring/surveillance line is drawn by purpose, not by data or tooling.** It is crossed by
+  drift: a capability exists, a senior person asks a reasonable-sounding question, somebody answers
+  because they can, and a precedent is set nobody decided. The control that matters is protecting
+  the junior person who has to say no — written authorisation rules, so refusal is procedure rather
+  than personal courage.
+
+The small-organisation card carries the one most likely to be acted on tomorrow: domains,
+certificates and cloud tenancies registered to an individual's personal account are an ordinary
+convenience at founding and an existential problem the day that person leaves badly or cannot be
+reached.
+
+### Track AE after this wave
+
+One area open: the AE2 operational specifics for healthcare, finance, government and education —
+the regulatory half is carded in `grc`, the day-to-day texture is not.
+
+### Verification
+
+`lint_content.py` 1,329 topics / 190 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only ops` touched only the 8 new cards ·
+`--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 5.1 / 8.0 MB, gzip 1,395 /
+2,200 KB, DOM 416 / 1,500, content elements 106,125 / 175,000.
+
+---
+
+## Session record — Track BD2: tokens
+
+Twenty-fifth content wave, and a short one: three cards closing the gap this session's earlier BD
+wave explicitly left open.
+
+### The audit
+
+| Probe | Mentions before this wave |
+|---|---|
+| "OAuth 2.1", "token revocation", "token lifetime" | 0 |
+| `logout` | `linux` and `shortcut`, both about shell and keyboard shortcuts |
+| `PKCE`, "refresh token", "client credentials" | present — named in the beginner API card and in `web` |
+
+The earlier BD record predicted this shape and it held: the vocabulary appears, the operational
+consequences do not. Nothing said which OAuth flows were removed and why, what happens to a token
+when you disable an account, or why "sign out everywhere" frequently does not.
+
+### What shipped
+
+**3 cards into `sec`**, 78 → 81. Site: 1,329 → **1,332 topics**.
+
+OAuth 2.1 &amp; PKCE · Token Lifetime &amp; Revocation · Secrets, Tokens &amp; Keys.
+
+### What these cards are actually about
+
+The through-line, and the reason these three belong together: **a self-contained token cannot be
+withdrawn, only outlived.** The property that lets an API validate a token locally without asking
+the issuer anything is the same property that makes disabling an account a control over the *next*
+session rather than the current one. Every design decision here follows from that constraint.
+
+Three specifics worth carrying:
+
+- **The device authorization grant is a phishing mechanism nobody has to fake.** The attacker
+  initiates the request, sends the victim the genuine code and the genuine URL, and receives the
+  token when the victim signs in correctly with MFA on the real page. Restrict the flow by policy to
+  the few scenarios that need it and alert on it everywhere else.
+- **On refresh-token replay, revoke the whole family.** A rotated token presented twice means two
+  parties hold it and you cannot tell which is the attacker. Occasionally logging out a legitimate
+  user is enormously better than silently letting the attacker continue.
+- **Bearer is the property that matters and is the least visible.** Access tokens, API keys, session
+  cookies and refresh tokens are all bearer credentials: whoever holds it is you, with no further
+  check. Sender-constrained alternatives remove that, at a complexity cost most systems have not yet
+  accepted.
+
+The taxonomy card ends on the certificate-expiry outage — the most predictable failure in IT, caused
+by manual renewal and an inventory gap, and removable with automation plus alerting that fires early
+enough to act during working hours.
+
+### Track BD after this wave
+
+Closed. BD1, BD3 and BD4 shipped in the earlier wave; BD2 is done here. Two items across the track
+are `[~]` against cards written elsewhere this session.
+
+### Verification
+
+`lint_content.py` 1,332 topics / 193 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only sec` touched only the 3 new cards ·
+`--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 5.2 / 8.0 MB, gzip 1,400 /
+2,200 KB, DOM 416 / 1,500, content elements 106,430 / 175,000.
+
+---
+
+## Session record — Track AN1/AN2: the `hw` domain, scaffolded and opened
+
+Twenty-sixth content wave, and the first new domain of this session — the site's **30th**.
+
+### Why this one, and why now
+
+After the plan.md accuracy pass, the honest backlog was 86 items in tracks whose checklists still
+mean what they say — and Track AN held 25 of them, by far the largest single genuine void. The
+probes were unambiguous:
+
+| Probe | Mentions before this wave |
+|---|---|
+| `thermal paste`, "POST beep", `resistor`, `multimeter`, `oscilloscope` | 0 |
+| `Arduino`, `I2C`, `RTOS`, "soldering" (electronics sense) | 0 |
+| `motherboard`, "power supply" | acronym list only |
+| `Ohm` | one hit in `script`, unrelated |
+
+Nothing on the site covered PC hardware, electronics or embedded systems at all. `linux` was
+expected to hold A+ hardware material and does not — its topic list is entirely software.
+
+### The domain decision, revisited
+
+The earlier AN6 record argued that hardware *security* belonged in `sec` rather than behind a domain
+that might never be scaffolded, and shipped it there. That was right, and it left the question of
+whether `hw` should exist at all. It should: electronics fundamentals, PC hardware, diagnosis and
+repair, peripherals and embedded are a coherent body of work with a distinct audience, and they do
+not fit in any existing domain. AN6 staying in `sec` is not a loss — the security reader finds it
+where they are, and `hw` starts at electronics, which is where an electronics domain should start.
+
+### Scaffolding
+
+Four files, no tooling — there is no `scaffold_domain.py` in `tools/`, contrary to what a session
+summary claimed, so this was done by hand and is recorded here for the next new domain:
+
+| File | Change |
+|---|---|
+| `data/domains.json` | Entry inserted after `infra`; id `hw`, icon 🔧, A+ and Hands-On cert tags |
+| `index-shell.html` | Chip added to the Core IT group, after `m365` |
+| `style.css` | Accent `#a3e635` — checked against the 19 hex values already in use, all distinct |
+| `data/hw.html` | The content itself |
+
+One behaviour worth knowing: `stamp_freshness.py --only hw` reports "0 topics stamped" for a
+brand-new file, because git has never seen it and blame returns nothing. That is the documented
+path, not a failure — the hand-written stamps stand and `--verify` passes. The next run, once
+committed, will confirm them.
+
+### What shipped
+
+**8 cards, a new `hw` domain.** Site: 1,332 → **1,340 topics**, 29 → **30 domains**.
+
+| Wave | Cards |
+|---|---|
+| AN1 — Electronics | Voltage, Current &amp; Resistance · Power &amp; Thermals · Components &amp; Schematics · Test Gear |
+| AN2 — PC Hardware | Motherboard Anatomy · CPU &amp; Cooling · Memory Deep · Storage Interfaces |
+
+### What these cards are actually about
+
+The through-line: **hardware knowledge earns its place in an IT career as diagnosis, not as
+repair.** Component-level repair is rarely economic and usually voids a warranty. What this
+material buys is the ability to tell an electrical problem from a logical one, to know when a
+vendor's explanation is implausible, and to recognise the physical cause behind a ticket that has
+been chased through software for a fortnight.
+
+Four specifics worth carrying:
+
+- **TDP is a cooling design target, not a consumption figure.** A 65 W processor can draw well over
+  200 W in boost by design, so a cooler sized to the rated number produces a machine that is fast for
+  thirty seconds. And throttling at 95 °C is a cooling problem while throttling at 70 °C is a
+  power-limit setting — different diagnoses entirely.
+- **UPS volt-amps are not watts.** VA equals watts only for a purely resistive load, and a computer
+  power supply is not one. Multiply by the stated power factor before comparing to your load.
+- **Which memory slots you use silently halves bandwidth.** The channel pairs are usually not
+  adjacent, so filling the two slots nearest the processor is the common error — and the machine
+  boots and works perfectly, which is why it presents as a performance mystery rather than a fault.
+- **An M.2 slot is a form factor, not a protocol.** An M.2 SATA drive in an M.2 slot delivers SATA
+  speeds and looks, to whoever bought "an M.2 SSD", like a defective product.
+
+The cards are also where the site's cheapest sustainability advice now lives, and it is literal:
+compressed air and ten minutes routinely restore a throttling laptop that was being considered for
+replacement.
+
+### Track AN after this wave
+
+AN1 has one item open — analogue versus digital signals, sampling, noise and grounding, where the
+noise and grounding half has the real IT application. AN3 (diagnosis and repair), AN4 (peripherals
+and the office estate) and AN5 (embedded and single-board) are untouched and are the natural next
+waves in this domain. AN6 shipped into `sec` earlier this session.
+
+### Verification
+
+`lint_content.py` 30 domain files, 1,340 topics / 194 cross-references clean ·
+`fix_topic_names.py --check` clean · `annotate_acronyms.py` clean · `stamp_freshness.py --verify`
+clean · `smoke_test.mjs` 31/31 · topic index confirms 8 `hw` topics and one deferred block ·
+budget after build: raw 5.2 / 8.0 MB, gzip 1,414 / 2,200 KB, DOM 428 / 1,500 (the new chip),
+content elements 107,250 / 175,000.
+
+---
+
+## Session record — Track AN3: diagnosis and repair
+
+Twenty-seventh content wave, filling out the `hw` domain opened in the previous one.
+
+### What shipped
+
+**5 cards into `hw`**, 8 → 13. Site: 1,340 → **1,345 topics**.
+
+Systematic Hardware Troubleshooting · POST, Beep Codes &amp; Diagnostic LEDs · Intermittent Faults ·
+Soldering &amp; Rework · Data Recovery Triage.
+
+### What these cards are actually about
+
+The through-line: **hardware faults reward discipline over knowledge, because the search space is
+small and finite.** A desktop has perhaps eight replaceable parts. What wastes the afternoon is
+changing three of them at once and losing track of what was tried — which is why the method reads as
+bureaucratic and beats intuition almost every time.
+
+Four specifics worth carrying:
+
+- **Swap with known-good, never with another suspect.** Moving a suspect part into a second suspect
+  machine produces a result nobody can interpret. Known-good means a part you have just watched
+  working, in a machine you have just watched working.
+- **A machine with no display is still reporting.** POST runs before anything is visible, so failure
+  before display initialisation leaves beeps, diagnostic LEDs and a POST code as the only channels.
+  The BOOT LED is the dividing line: past it, hardware initialisation succeeded and the problem has
+  become a storage or bootloader one.
+- **"Intermittent" means conditional, and the condition is findable.** Fails after twenty minutes is
+  thermal; fails when cold is a marginal joint, which is real and counter-intuitive; fails at the
+  same time daily is environmental. When a machine has been fully rebuilt and still fails, move the
+  whole machine to a different room — that single test separates the box from the environment.
+- **The first data-recovery decision is whether to power it on again.** Clicking, grinding or
+  repeated spin-up means stop: every further attempt converts a recoverable case into a more
+  expensive or impossible one. Where the drive still reads, image it first and work only on copies.
+
+Two safety points are stated in the soldering card without hedging, and should stay that way: power
+supplies and CRT-era displays hold a dangerous charge after unplugging, and lithium cells are a fire
+risk that must never be soldered directly.
+
+### Track AN after this wave
+
+AN1 has one item open (signals — analogue vs digital, sampling, noise, grounding). AN4 (peripherals
+and the office estate) and AN5 (embedded and single-board) are untouched and are the natural next
+waves. AN2 and AN3 are complete; AN6 shipped into `sec`.
+
+### Verification
+
+`lint_content.py` 30 domain files, 1,345 topics / 195 cross-references clean ·
+`fix_topic_names.py --check` clean · `annotate_acronyms.py` clean · `stamp_freshness.py --only hw`
+now works normally against the committed file and touched only the 5 new cards · `--verify` clean ·
+`smoke_test.mjs` 31/31 · budget after build: raw 5.2 / 8.0 MB, gzip 1,423 / 2,200 KB, DOM 428 /
+1,500, content elements 107,790 / 175,000.
+
+---
+
+## Session record — Track AN4: peripherals and the office estate
+
+Twenty-eighth content wave. `hw` 13 → 18. Site: 1,345 → **1,350 topics**.
+
+Displays · Printers &amp; MFPs · Docks, USB-C &amp; Thunderbolt · Input Devices &amp; Accessibility
+Hardware · Conference Room Technology.
+
+### What these cards are actually about
+
+The through-line: **this is the hardware users actually touch, and it generates support load out of
+all proportion to its complexity.** Nobody escalates about a CPU. They escalate about the second
+monitor, the dock, the printer and the meeting room — and in each case the fault is usually a
+configuration or a cable rather than a component.
+
+Four specifics worth carrying:
+
+- **USB-C is a connector shape, and that is the entire problem.** Two identical-looking cables can
+  differ by a factor of eighty in bandwidth; a port may deliver 7.5 W or 240 W. Most "the dock is
+  broken" tickets are a charge-only cable from a phone box. Buy certified, label them, standardise.
+- **Read a dock's power *to the host*, not its own supply rating.** A 180 W dock may deliver 65 W
+  upstream, and a workstation laptop under load will slowly flatten while plugged in.
+- **"We cannot hear you" is a dropdown.** The conferencing application is on the laptop's own
+  microphone and speakers rather than the room system. Teaching people where that setting lives
+  resolves more room incidents than any equipment change.
+- **Security baselines that disable accessibility features are a common own-goal.** The features
+  have been abused for privilege escalation at a login screen — a real technique — and blunt
+  mitigation removes the on-screen keyboard from someone who depends on it. Fix the specific abuse,
+  not the feature.
+
+Two estate-level points worth keeping: standardise on one monitor model and one scaling setting
+where you can, because a fleet with three pixel densities produces a permanent trickle of tickets no
+individual fix resolves; and in a meeting-room emergency, get the meeting running on any channel
+first and fix the room afterwards — the meeting is what matters, the room is not.
+
+### Track AN after this wave
+
+AN5 (embedded and single-board) is the last unwritten wave, plus the one open AN1 item on signals.
+
+### Verification
+
+`lint_content.py` 1,350 topics / 198 cross-references clean · `fix_topic_names.py --check` clean ·
+`annotate_acronyms.py` clean · `stamp_freshness.py --only hw` touched only the 5 new cards ·
+`--verify` clean · `smoke_test.mjs` 31/31 · budget after build: raw 5.3 / 8.0 MB, gzip 1,431 /
+2,200 KB, DOM 428 / 1,500, content elements 108,342 / 175,000.
+
+---
+
+## Session record — Track AN5: embedded and single-board, closing Track AN
+
+Twenty-ninth content wave. `hw` 18 → 23. Site: 1,350 → **1,355 topics**.
+
+Microcontrollers vs Single-Board Computers · GPIO, I²C, SPI &amp; UART · Firmware Basics ·
+Real-Time Constraints · Home Lab Hardware.
+
+### What these cards are actually about
+
+The through-line: **the choice between a microcontroller and a small Linux computer is decided by
+constraints that are invisible in a feature comparison** — power budget, timing guarantees, and what
+happens when the power is pulled. Choosing wrongly is the standard first-project mistake, in both
+directions, and it is settled by four questions rather than by capability.
+
+Four specifics worth carrying:
+
+- **Real-time means predictable, not fast.** A guaranteed two milliseconds every time is real-time;
+  usually fifty microseconds with an occasional thirty milliseconds is not. General-purpose
+  operating systems optimise the average, and real-time systems are specified by the worst case.
+- **Voltage-level mismatch is how beginners destroy boards, and it is silent.** The jumper wires are
+  identical; 5 V into a 3.3 V input damages it permanently. Checking two datasheets takes thirty
+  seconds. Missing a common ground is the other one, and its symptom is nothing working at all.
+- **A device with accessible debug pins is very hard to permanently brick.** SWD and JTAG talk to
+  the silicon rather than to software, so they recover devices with no working firmware. Read-out
+  protection fuses are frequently one-way and turn a development board into an ornament.
+- **Second-hand small-form-factor office machines are the strongest value in home labs.** Quiet,
+  cheap, low-power, generous with memory, and three cluster nicely — almost always a better choice
+  than a decommissioned rack server, which is loud, hot and expensive to run.
+
+The SBC card carries the point that matters to an IT estate rather than a hobbyist: single-board
+computers are already in most organisations as signage, monitoring and "temporary" bridges, usually
+unowned and unpatched on the corporate network. The productive response is a sanctioned path — a
+segment, a base image, an asset-register entry with an owner — because prohibition drives it
+underground.
+
+### Track AN after this wave
+
+Complete except one AN1 item: signals — analogue versus digital, sampling, noise and grounding.
+`hw` is 23 topics across five waves, with AN6 in `sec`.
+
+### Verification
+
+`lint_content.py` 30 domain files, 1,355 topics / 201 cross-references clean ·
+`fix_topic_names.py --check` clean · `annotate_acronyms.py` clean · `stamp_freshness.py --only hw`
+touched only the 5 new cards · `--verify` clean · `smoke_test.mjs` 31/31 · budget after build:
+raw 5.3 / 8.0 MB, gzip 1,439 / 2,200 KB, DOM 428 / 1,500, content elements 108,893 / 175,000.
+
+---
+
+## Session record — Track AH: search operators, and one item that was already built
+
+Thirtieth wave, and the first engineering rather than content one this session. With the content
+backlog in live tracks down to twelve items and the site at 1,355 topics across 30 domains,
+findability is now worth more than another card.
+
+### One item was already done
+
+**Acronym-aware search** was specced as "the data already exists; the search does not use it". It
+does — `acroSearchMap()` and `searchTerms()` have been expanding queries through the acronym
+dictionary, and the count line reports which alternate matched. Verified headlessly in both
+directions before ticking: `UEM` and `Unified Endpoint Management` each return 7 matches in 4
+domains; `MFA` and `Multi-Factor Authentication` each return 54 in 14.
+
+That is the third time this session a specced item turned out to be built. The checklist convention
+note added earlier covers the shipped-note case; this is the other one — an item whose implementation
+landed without anyone going back to the plan. **Check before writing, including for engineering
+items.**
+
+### What shipped
+
+**Search operators.** Two, chosen because they are what a reader of a 1,300-topic site actually
+needs:
+
+- `domain:net firewall` — restricts the search to one domain. Multiple are additive. Uses domain
+  ids, which the chips and permalinks already expose, so the vocabulary is one the reader has seen.
+- `"exact phrase"` — matched literally. Several phrases are all required, and they combine with free
+  text rather than merging into one substring, so `"default deny" DNS` asks for both.
+
+`badge:beginner` from the spec was deliberately **not** built. Badges are inconsistent across
+domains — "SEC • Essential", "Beginner", "OPS • Modern" and "LIFESTYLE • Career" all coexist — so
+the operator would need a vocabulary a reader cannot guess and would mostly return nothing. Making
+badges consistent is a content job; if it is ever done, the operator becomes worth having.
+
+### A bug found in the first version
+
+The initial implementation dropped free text shorter than two characters, so `domain:hw x` returned
+all 23 topics in `hw` — answering "everything in that domain" to a reader who asked for "x", and
+presenting it as a result rather than a rejected query. Fixed: free text below the threshold now
+makes the whole query unusable, matching what a bare one-character query already did. It is the same
+class of failure as a silently-ignored operator, which is why both now have a smoke check.
+
+### Verification
+
+Five new checks in `smoke_test.mjs`, 31 → **36**, covering exactly the failures that would be quiet:
+`domain:` actually narrowing (93 unscoped → 17 in one domain), an unknown domain yielding nothing
+rather than everything, a phrase matching, phrase-plus-text combining rather than merging, and short
+free text rejecting the query. The operators are documented in the search box's tooltip, since an
+undiscoverable feature is not one.
+
+`lint_content.py` 1,355 topics clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 36/36 ·
+no console errors, no off-site requests · budget unchanged at raw 5.3 / 8.0 MB, gzip 1,440 / 2,200 KB.
+
+### Track AH after this wave
+
+Five items open: expansion-density toggle, related topics, domain landing cards, recently viewed,
+and deep-linking to a concept card. The last is small and useful; related topics needs a curated
+data file and is the largest.
+
+---
+
+## Session record — Track AH: card-level deep links
+
+Thirty-first wave, and the last piece of work before this session's branch was left for review.
+
+### What shipped
+
+`#topic-id/3` now resolves to the third concept card in that topic: the domain hydrates, the topic
+opens, the card is scrolled to centre and outlined for a couple of seconds. Clicking any concept
+card's label copies that link.
+
+Three decisions worth recording:
+
+- **Cards are addressed by position, not by a title slug.** A slug would be prettier and would need
+  every `.concept-title` stamped at build time and kept stable. Concept titles are edited far more
+  freely than topic names — which have an alias map precisely because they are not. An index
+  survives rewording and breaks on reordering; rewording is what actually happens.
+- **The affordance costs no elements.** A domain can hold several hundred concept cards, so a link
+  button per card is a real slice of the DOM budget for something used rarely. The label itself is
+  the control, delegated from the domain container, with the hint in a hover state.
+- **Out-of-range falls back to the topic.** Links outlive the cards they were written against, and
+  landing on the topic is better than doing nothing.
+
+The clipboard fallback also now confirms. Over `file://` there is no clipboard permission, so the
+handler puts the link in the address bar instead — and previously said nothing, which reads as a
+broken control. It now shows the same "copied" state either way.
+
+### Verification
+
+Two new smoke checks, 36 → **39** (one is a guard that the test found a topic with enough cards to
+be worth testing — the first version silently passed against a single-card topic and exercised
+nothing). Verified: a card link marks the right card (7-card topic, index 1 for `/2`), an
+out-of-range index opens the topic and marks nothing, and a plain topic link is unaffected.
+
+`lint_content.py` 1,355 topics clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 39/39 ·
+no console errors, no off-site requests · budget unchanged.
+
+### Track AH after this wave
+
+Four items open: expansion-density toggle, related topics, domain landing cards, recently viewed.
+
+---
+
+## Session record — Track AH: recently viewed, and a fourth already-built item
+
+Thirty-second wave.
+
+### The fourth already-built item
+
+**Expansion density toggle** was specced and is implemented: `cycleAcroMode()` plus `.acro-hover`
+and `.acro-off` rules, behind the header's acronym button. It ships three modes rather than the
+four specced — *first use per domain* would need the annotator to mark first uses at build time,
+and hover mode already solves the density-in-tables problem the item was written for. Verified
+before ticking: cycles correctly, label and stored preference track, and the preference survives a
+reload. It had **no smoke coverage**, so two checks were added — the failure is silent in both
+directions, since a mode that stops applying leaves expansions on for someone who turned them off.
+
+Four items this session turned out to be built already: acronym-aware search, the density toggle,
+and two BD3 identity items carded under different names. That is a consistent enough rate to
+restate the rule from the checklist convention note plainly: **verify before writing, including for
+engineering items, and add the missing test rather than the feature.**
+
+### What shipped
+
+**Recently viewed.** The quick-jump palette opens on an empty query, and with 1,355 topics its
+first sixty rows were whatever the index happened to hold — arbitrary, and never what the reader
+wanted. It now leads with the last ten topics visited, badged `recent` so the ordering is explained
+rather than mysterious, then falls back to the index. Typing a query drops them entirely.
+
+Two design notes:
+
+- **Stored as ids, resolved at render.** A topic later renamed or removed simply drops out when the
+  study index cannot resolve it, which is the right failure — the alternative caches names that go
+  stale silently.
+- **Visits are recorded from both paths that open a topic**, clicking a header and following a link.
+  Recording only one would have produced a list that was right about half the time, which is worse
+  than one that is obviously empty.
+
+### Verification
+
+Five new checks, 39 → **44**. The recently-viewed ones cover exactly the quiet failures: visits that
+stop being recorded leave an arbitrary list, and recent rows leaking into a filtered query would put
+the wrong topics above the matches.
+
+`lint_content.py` 1,355 topics clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 44/44 ·
+no console errors, no off-site requests · budget unchanged at raw 5.3 / 8.0 MB.
+
+### Track AH after this wave
+
+Two items open: **related topics** (needs a curated `related.json` and a suggestion script — the
+largest remaining item in the track) and **domain landing cards** (30 short intros; content work
+with a small rendering change).
+
+
+## Session record — Track AH: domain landing cards
+
+Thirty domains, 1,355 topics, and until now the only thing a reader saw on opening one was a wall of
+collapsed headers. Every domain now opens on a short card: what it covers, who it is for, three
+topics to start with as buttons, and which domains to read next.
+
+### The one architectural decision
+
+The intro is **data, rendered at hydration** — not a card written into `data/*.html`. Written into
+the content files it would have been a `.topic`, and then it would have been counted by the topic
+index, dated by `stamp_freshness.py`, linted by `lint_content.py`, offered by the random pick, and
+dealt into study decks. Thirty signposts polluting five separate systems, each of which would have
+needed an exception. As data it touches none of them: `build.py` gained one payload function of the
+same shape as the three already there, `script.js` gained a renderer, and the entire content
+pipeline is untouched. A smoke check asserts the separation directly — the DOM's `.topic` count for
+an open domain must still equal its indexed count.
+
+### The name-resolution trap, and what it cost to find
+
+`start` stores topic **names**, resolved at render time against the domain's parsed block, so a
+renamed topic drops its link rather than leaving a button that goes nowhere. Getting the names to
+match took three passes, and each failure was worth recording:
+
+1. **The extractor was wrong, not the data.** A first check reported 21 unresolved names. The regex
+   `<span class="topic-name">(.*?)</span>` stops at the *first* `</span>` — which, in any title
+   carrying an inline acronym expansion, is the expansion's closing tag. So "Cloud Rosetta Stone —
+   AWS (Amazon Web Services) ↔ GCP ↔ Azure" was being read as "Cloud Rosetta Stone — AWS (Amazon Web
+   Services)" and compared against itself, unequal. **Any regex that reads `.topic-name` has to
+   balance nested spans**; the fix is a small scanner, kept in the scratchpad tooling.
+2. **Then 23 genuine mismatches surfaced.** Titles written from memory: `Purple Teaming — Closing
+   the Detection Gap` for a card actually called `Purple Team Mechanics — The Room, the Roles & the
+   Cadence`, a `Stoicism` topic that does not exist in a seven-topic philosophy domain, three
+   military titles invented wholesale. A close-match report against the real titles made each one a
+   decision rather than a guess.
+3. **The comparison had to be against `plainLabel`, not the raw title.** `domainTopics()` strips the
+   acronym expansion spans, so the runtime sees "OSI Model — 7 Layers" while the JSON held "OSI
+   (Open Systems Interconnection) Model — 7 Layers". All 90 names were rewritten to the stripped
+   form by matching each against its own file, which is the only version of this that cannot drift.
+
+The general lesson is the same one this project keeps relearning: **an audit that reports failures
+is not evidence the data is wrong — check the instrument first.** A 21-item failure list that was
+entirely the extractor's fault would have led to 21 unnecessary content edits.
+
+### Verification
+
+Nine new checks, 44 → **53**. They cover the card rendering above the topics, carrying its rows,
+staying out of the topic count, its links opening the right topic, hiding during a search and
+returning when cleared — and one that resolves the `start` names for **all thirty** domains rather
+than the one the other checks exercise, because a rename in any of the other twenty-nine costs a
+card a signpost just as quietly.
+
+`smoke_test.mjs` 53/53 · no console errors, no off-site requests · budget raw 5.3 / 8.0 MB,
+gzip 1,445 / 2,200 KB, DOM 428 / 1,500.
+
+### Track AH after this wave
+
+One item open: **related topics** — a "see also" strip per topic, needing a curated `related.json`
+and a script that suggests candidates by shared acronyms and title terms. It is the largest
+remaining item in the track, and the name-resolution work above applies to it directly: key it on
+**topic ids**, not names, since ids are stamped by `build.py` and already have an alias file
+covering renames.
+
+
+## Session record — Track AH: related topics, closing the track
+
+The last item in Track AH, and the one whose brief said "hand-curated" for a reason.
+
+### The seed was already in the content
+
+201 `<span class="xref">Exact Topic Title</span>` cross-references sit in the cards, and each one is
+a writer saying *these two belong together*. `lint_content.py` already proves every one resolves to
+a real title. Read both ways — the reader of the target wants the link as much as the reader of the
+source — they gave **402 directed edges across 321 topics before a single judgement call**, and
+they are curation rather than inference. Curation on top brought it to **554 links on 412 topics**:
+all 23 hardware cards (the new domain had almost no xrefs), and `web` and `data`, which had 0/35
+and 3/40 coverage and whose topics form obvious reading orders.
+
+### The suggestion script is a shortlist, and its precision says why
+
+`tools/suggest_related.py` ranks candidates by shared title terms weighted by rarity, plus shared
+title acronyms, with a cross-domain bonus. Run over the hardware domain it proposed, in its top
+five: Ohm's **Law** ↔ GDPR & CCPA (**law**), **Components** & Schematics ↔ React **Components**,
+Memory Deep ↔ Organisational **Memory**, Storage Interfaces (PCIe **lanes**) ↔ IT Career Paths
+(Finding Your **Lane**). Roughly a quarter of the top suggestions were worth keeping — and the
+quarter that were, were excellent: Test Gear ↔ The Field Toolkit, Memory Deep ↔ Virtual Memory,
+Power & Thermals ↔ Green IT.
+
+That ratio is the argument for the whole design. A strip generated automatically would be right a
+quarter of the time, which is exactly often enough to look deliberate and exactly wrong enough to
+teach a reader to ignore it. **The script's job is to make curation cheap, not to do it**, and the
+docstring says so, so the next session does not "improve" it into an auto-generator.
+
+### Keyed on ids, not titles
+
+The landing-card work in the previous wave resolved topics by **name** and paid for it three times
+over. This file is keyed on **ids**: they are stamped by `build.py`, the alias file already covers
+renames, and `suggest_related.py` imports build.py's own stamping so a suggestion can be pasted
+straight in. The renderer still drops anything that fails to resolve — a deleted topic must not
+leave dead strips on everything that pointed at it — and both `--check` and a smoke check assert
+that nothing currently does.
+
+### Rendering
+
+The strip is built the first time a topic opens, not at hydration: a domain is dozens of topics and
+a reader opens two or three, and resolving a target's title costs a parse of whichever *other*
+domain it lives in. All three paths that open a topic — the header, a permalink, a search hit — go
+through it. A link leaving the domain is tagged with the domain it goes to, because roughly half of
+them do and following one blind is disorienting.
+
+### Verification
+
+Six new checks, 53 → **59**: the strip renders on open with every link resolved, sits below the last
+concept card, tags a cross-domain link, follows to the right topic, renders once rather than once
+per open, and — the one that matters over time — every id in the whole payload resolves.
+
+`smoke_test.mjs` 59/59 · `suggest_related.py --check` clean, 0 one-way edges · budget raw 5.4 / 8.0
+MB, gzip 1,456 / 2,200 KB, DOM 429 / 1,500.
+
+### Track AH is now closed
+
+Every item in the track is shipped. The obvious follow-on is new and recorded above rather than
+folded in here: **the 201 xrefs are still inert**. They are lint-checked, styled, and now proven to
+resolve to ids — clicking one should go there.
+
+Coverage to build on, for whoever picks up related topics again: `script` 12/145, `linux` 5/58,
+`acronym` 0/59, `shortcut` 0/37, `pentest` 3/29, `math` 0/16, `philosophy` 0/14.
+
+
+## Session record — Track AH follow-on: the cross-references became links
+
+201 `<span class="xref">Exact Topic Title</span>` spans had been sitting in the content since the
+convention was introduced. The linter proved every title resolved; the reader still had to go and
+find the card by hand. Seeding `related.json` from them in the previous wave proved they resolve to
+**ids**, which is all a link needs.
+
+**Two passes in `build.py`.** A cross-reference names a card in another domain far more often than
+its own, so the ids for every domain are stamped before any body is rewritten. Resolving in the
+browser was never an option for the same reason topic ids are not derived there: the target is
+almost never in the DOM, because only one domain's content ever is.
+
+**Matched the way the linter matches.** The acronym annotator injects expansions *inside* the xref
+span, so the title is compared with expansions stripped while the span's inner HTML is left exactly
+as written — the reader keeps the expansion, the matcher does not see it.
+
+**Failure is a downgrade, not a dead link.** Only a span that resolved gets `data-xref`, and only
+`.xref[data-xref]` is styled and handled as clickable. A title that stops matching goes back to
+being plain italic text, which is what it was before this change.
+
+### Verification
+
+Five new checks, 59 → **64**: the spans are stamped, every stamped id resolves, a click lands on the
+named topic with it open, the span is focusable and announced as a link, and Enter follows it.
+
+The keyboard check needed hardening before it meant anything. Written the obvious way it reused the
+span the click test had just followed, so the hash already held the expected id and a keydown
+handler that did nothing at all would have passed. It now clears the hash first. That is the third
+time in this project a check has passed for a reason unrelated to the feature — **write the
+assertion, then ask what would still pass if the feature were deleted.**
+
+`smoke_test.mjs` 64/64 · `lint_content.py` clean · budget raw 5.4 / 8.0 MB, gzip 1,460 / 2,200 KB,
+DOM 429 / 1,500.
+
+
+## Session record — Track AJ: two quality gates, and one item that measured itself away
+
+Track AJ's checklist was written before most of it existed. Verified first, as the checklist
+convention requires: **three of the eight items were already shipped and in CI** — the content
+linter, the duplicate-slug guard and the performance budget. That is the fifth time this has
+happened, and the count is now high enough to be the default expectation rather than a surprise.
+
+### Markup validator
+
+`lint_content.py` reads the content as text, which is right for "does this card use `ref-table`"
+and useless for "is this markup well-formed". `tools/check_markup.py` runs a stack-based
+`html.parser` over every fragment and over the built page: unclosed elements, closers with nothing
+open, and closed void elements.
+
+It matters more here than in an ordinary page. A domain's content is parsed once as *text*, shipped
+inside an inert script block, and only becomes elements when `innerHTML` runs on it — so a stray tag
+is invisible until a reader opens that one domain, and the browser's repair (hoisting the rest of
+the card out of its parent) is silent. All 31 files are clean today; the point is keeping them that
+way.
+
+**The validator has a `--self-test`, and it is in CI next to the validator itself.** Six fixtures,
+each broken one specific way, plus one well-formed fixture that must produce nothing. A checker that
+reports "0 errors" is indistinguishable from a checker that has quietly stopped looking, and the
+previous wave had already been bitten by a keyboard test that passed for an unrelated reason.
+
+### Acronym drift report
+
+`tools/acronym_drift.py` lists capitalised tokens the dictionary has never heard of. The first run
+returned 3,050 tokens and was useless — the top of the list was `ID`, `TERMS`, `WHAT`, `IS`, `WHY`,
+`LIFESTYLE`. Three exclusions fixed it, and the third is the interesting one:
+
+- **Categorical labels are not prose.** `.topic-badge` and `.concept-label` are shouted by design.
+- **A plural of a known entry is not drift.** APIs, VMs, URLs.
+- **An ordinary word being shouted in a heading is not an acronym** — WHAT, WHY, FROM, KEY. There is
+  no wordlist on the machine to consult, so **the content supplies one**: a token whose lowercase
+  form appears twenty or more times in the site's own lowercase prose is a word. No data file, no
+  maintenance, and it adapts as the writing does.
+
+1,711 tokens remain, and narrowed to a single domain it is a direct work queue — `--domain hw`
+returns SBC, UART, JTAG, SWD, TX, RX, XMP, VRM, every one a real gap left by the hardware wave.
+
+**Neither number gates CI, deliberately.** The unknown-token list is full of product names;
+`--unused` reports 173 dictionary entries no card uses, and the dictionary is *also* a standalone
+reference domain and the quiz's question bank, so an entry existing for its own sake is the point.
+A gate on either would fail every content wave for reasons nobody should act on. The docstring says
+so, so the next session does not "fix" it into a gate.
+
+### The item that measured itself away
+
+**Link & anchor checker** — "every `#slug` referenced in prose resolves; every external link is
+alive". Measured before building: the content holds **one** `href="#"` and **one** external link
+across 1,355 topics. The item was written before the `<span class="xref">` convention existed, and
+that convention is now checked by the linter and resolved to ids by the build. Marked `[~]` with the
+measurement rather than built, and rather than left open to be rediscovered.
+
+### Also in CI now
+
+`suggest_related.py --check`, verified to fail on a planted bad id before being wired in — the same
+rule as the self-test above.
+
+`check_markup.py` 31 files clean · self-test 6 fixtures clean · `smoke_test.mjs` 64/64 ·
+`lint_content.py` clean · budget raw 5.4 / 8.0 MB.
+
+### Track AJ after this wave
+
+Two items open: **accessibility CI** (axe against the built page; the smoke test already covers
+`aria-expanded` on both accordion levels and theme contrast on four elements) and **visual
+regression** (screenshot diffs, the least valuable item in the track on a page whose layout is this
+stable).
+
+The drift report also leaves a content queue behind it: the dictionary is missing the embedded and
+hardware vocabulary the last content wave introduced.
+
+
+## Session record — the drift report's first queue, worked
+
+`acronym_drift.py` shipped in the previous wave with a work queue attached. This is that queue,
+worked, which is also the tool's first real test.
+
+**25 entries added**, 1,069 → 1,094: the embedded and hardware vocabulary the hardware wave
+introduced and nothing was watching (UART, JTAG, SWD, SBC, GPIO, VRM, XMP, TX, RX), plus the gaps
+the report surfaced elsewhere — IDOR, OPA, SLSA, IMA, OPSEC, JVM, ZAP, RC4, PHP, E2E, UTC, IEC, OMA,
+OOBE, CySA, PUE. `hw`'s unknown-token count fell from 42 tokens / 83 occurrences to 32 / 43.
+
+### The wave found a wrong expansion that had been shipping
+
+`SPI` was in the dictionary with exactly one meaning — **Stateful Packet Inspection** — and the
+annotator had been rendering that inside `GPIO, I²C, SPI & UART` and beside "SPI flash chip". Both
+uses on the site are **Serial Peripheral Interface**; the firewall sense appears in no card at all.
+The entry now carries both meanings with the bus as the annotated default, so the reference domain
+keeps the firewall sense and the cards say what they mean.
+
+This is worth stating plainly, because it is the argument for the tool existing: the error was in
+content the linter passes, the smoke test passes, and a human had read. What surfaced it was
+counting a domain's vocabulary against the dictionary — the one check nothing was doing. The
+ambiguity warning `lint_content.py` already tracks (four, unchanged) could not see it either: a
+single-meaning entry is not ambiguous, it is just wrong.
+
+`SBC` was added the other way round — two meanings from the start, `Single-Board Computer` as the
+default with `byDomain` overrides to `Session Border Controller` for `net` and `m365`. Verified in
+the diff: `hw` got the board, `m365` got the controller.
+
+### Verification
+
+Every new expansion was read in the diff rather than trusted: 39 distinct injections across 16
+files, all correct after the SPI fix. `annotate_acronyms.py --check` clean · `lint_content.py`
+clean, ambiguity trend unchanged at 4 · `check_markup.py` 31 files clean ·
+`stamp_freshness.py --verify` 1,296 stamps valid (the acronym domain's 59 topics are generated and
+carry none by design) · `smoke_test.mjs` 64/64.
+
+
+## Session record — Track AG: learning paths, and covering four features that had no tests
+
+Two halves. The first was bookkeeping with teeth: **four of Track AG's eight items were already
+built** — spaced repetition, the acronym quiz, the distractor fix and export/import — and **not one
+of them had a single test**. Each fails silently, which is what makes the gap matter: a scheduler
+that stops writing records looks like "nothing is due"; distractors drawn from the wrong pool look
+like an easy quiz; an export that drops a key looks like a smaller export. Fourteen checks added,
+64 → 77, and the features left alone.
+
+One assertion had to be corrected rather than the code. The scheduler works in **whole days**, so
+"again" schedules a lapsed card for tomorrow rather than later in the same session. An SRS purist
+would re-queue it immediately; the check now asserts the behaviour as written, with a note to change
+the check if the behaviour ever changes. Writing the test is how that got noticed at all.
+
+### Learning paths
+
+Six routes over 75 topics that already exist — Network Foundations, SOC Analyst Starter, Breaking
+Into IT, Comfortable in the Terminal, First 90 Days on an Endpoint Team, Cloud From Zero. The whole
+feature is 4.9 KB of ids: no new content, and the value is entirely in the order.
+
+Three decisions worth keeping:
+
+- **Done means reviewed.** A path reads the same `reviewed:` key the ✓ on a topic header sets rather
+  than inventing a per-path state. Progress therefore already exists the moment a path is added, it
+  survives export/import for free, and there is no second source of truth to reconcile.
+- **"You are here" is the feature.** An ordered list without a current position is just a list. The
+  first unreviewed step is marked and a **Continue** button opens it.
+- **Authored by resolver, not by hand.** The paths were written as `(domain, title fragment)` pairs
+  and resolved to ids by a script that refuses ambiguity — it caught six selectors matching two
+  topics each (`SSH`, `Bash`, `Package Management`, `CIA`, `Infrastructure as Code`) and one naming
+  a card that does not exist. Typing 75 slugs by hand would have produced silent misses instead;
+  this is the same lesson as the landing cards, applied before it cost anything.
+
+`tools/check_paths.py` gates every step id in CI, verified to fail on a planted bad step before
+being wired in. It also reports reach: the six paths touch 75 distinct topics across 15 domains.
+
+### Verification
+
+`smoke_test.mjs` 83/83 — six new checks covering that a path renders every step it declares (a
+broken path renders as a *shorter* path, which is the silent failure), that reviewed steps count as
+done, that "you are here" lands on the first unreviewed step, and that Continue opens it.
+
+### Track AG after this wave
+
+Two items open: **exam mode** (timed, fixed count, no feedback until a scored per-domain report) and
+**per-topic notes** (attach a note to a topic id and surface it inline). Both are self-contained;
+exam mode is the larger one and would reuse the quiz generators as they stand.
+
+
+## Session record — Track AG: per-topic notes
+
+A 📝 alongside ★ ✓ 🔗. One note per topic, at the top of that topic's body, lit on the header when a
+topic carries one.
+
+**Built beside the notepad, not inside it.** The item said "extend the notepad to attach a note to a
+topic ID". The notepad is a single shared scratchpad with authorship and sorting; threading a
+topic id through it would have meant a mode inside a feature that does not want one. A separate
+`note:<id>` key is smaller, and it lands in the right place — a note about Kerberos delegation
+belongs on the Kerberos card, not in a pile with everything else.
+
+**The shape was the design.** Using the same prefixed-key-holding-a-string form as `reviewed:` and
+`bookmark:` meant the backup system adopted notes almost for free: `bkCategory` gained one line,
+`bkOwnedKeys` and the export needed nothing. Writing the test is what caught the one place it was
+*not* free — `bkSerialise`'s fallback treats every unrecognised key as a boolean flag, so notes
+would have been silently refused on import. One branch fixed it. The count line now separates topic
+notes from notepad notes as well, because conflating them would misreport what a restore actually
+put back.
+
+**Failure modes covered.** Eight checks, 83 → **91**: the editor opens, the note saves and shows and
+flags its topic, it sits above the concept cards, it survives the domain being evicted and
+reopened — the case that matters most here, since only one domain's content is ever in the DOM — it
+travels in the export and comes back on import, a malformed note is refused, and deleting one
+removes the block and the flag.
+
+### Track AG after this wave
+
+Two items open: **exam mode** and the **progress dashboard**. Exam mode would reuse the quiz
+generators as they stand; the dashboard is the more useful of the two, since every number it needs
+is already in `localStorage` and nothing currently shows a reader what they have covered.
+
+
+## Session record — Track AG: the progress dashboard, and a streak that cannot lie
+
+📊 Progress in the study menu. Reviewed of total for the site and per domain, plus starred, known,
+noted, due today, and a day streak with its best run.
+
+**Nothing is computed from the document.** This is the constraint the whole page is built around and
+the one a dashboard is most likely to break: counting `.topic` elements would report on the single
+domain that happens to be open and look entirely healthy doing it. Every count reads the inlined
+topic index and `localStorage`, so all thirty domains are reported whether or not any of them has
+ever been opened. The smoke check asserts exactly that — six reviewed topics across three domains,
+counted correctly while **zero** topics are rendered.
+
+**The streak is one record, not a list of days.** `{last, n, best}`. A streak that needs a growing
+array of dates to answer "how many days in a row" is storing the wrong thing. Three behaviours
+follow and each is checked: a busy day counts once, yesterday continues the run, and a lapsed run
+reads as zero *without* being destroyed — `streakCurrent()` returns 0 while `best` survives, so a
+missed day costs the run rather than the record.
+
+**Untouched domains are muted, not hidden.** A report that shows only what has been read cannot show
+what has not, and "what have I not touched" is the more useful question after the first week.
+
+### Verification
+
+Nine new checks, 91 → **100**: the dashboard's coverage and its independence from the DOM, the
+streak's three transitions and its best-run memory, and both directions of its export — restored
+intact, and a malformed record refused.
+
+
+## Session record — Track AG closed: exam mode
+
+The last item in the track.
+
+**The mode is defined by what it withholds.** A quiz that marks each answer as you go is a study
+tool; an exam that does not is a measurement. Everything else follows from that: answers are
+recorded and the paper moves on, a chosen option is styled as *chosen* and never as right or wrong,
+and nothing is scored until the paper is handed in. The checks assert the absence — after answering
+deliberately wrongly, zero marking elements exist in the stage.
+
+**Distractors come from the question's own domain.** The plain quiz draws from the selected scope,
+which is right for a single domain and wrong for "all domains": three options about Kubernetes and
+one about soldering is a question about noticing the odd one out. Exam mode uses the question's own
+domain wherever that domain has four topics to offer, falling back to the scope otherwise. Checked
+over a 20-question all-domains paper: zero questions drew an option from another domain.
+
+**The report is a to-do list, not a scoreboard.** Domains are ordered weakest first, every missed
+topic is a link back to it, unanswered questions are marked as unanswered rather than merged with
+wrong ones, and "★ star all of these" turns the result into a study deck in one click.
+
+**The bug the tests were written to catch.** The clock is an interval, and an interval outlives the
+modal that owns it. Left running after the reader closes the exam, it would keep ticking against a
+detached stage and eventually "submit" a paper nobody was sitting. `stClose()` now stops it, and a
+check opens an exam, confirms the timer is running, closes the modal and confirms the state is gone.
+
+### Verification
+
+Ten new checks, 100 → **110**.
+
+### Track AG is now closed
+
+All eight items shipped. Four of them turned out to be built already and were given the tests they
+never had; four were built this session — learning paths, per-topic notes, the progress dashboard
+and exam mode. The study tools are now a system rather than four separate toys, which is what the
+track's own preamble asked for: a path tells you what to read, the dashboard tells you what you have
+covered, the scheduler brings it back, and the exam tells you whether any of it stuck.
+
+
+## Session record — m365 content wave: nine cards
+
+Six engineering waves in a row; this one is content. `m365` was audited rather than guessed at: 26
+topics, well-built, with the voids clustered in exactly the places a domain grows *around* rather
+than into — the object model beneath the workloads, the two migrations, and the identity surface.
+
+### The audit
+
+Twenty candidate subjects were probed against the whole site before anything was written. Zero
+mentions: **Power Platform**, **M365 Groups** as an object, **SPMT**, **cutover/staged migration**,
+**hybrid Exchange**. One or two mentions only: **Secure Score**, **multi-geo**, **data residency**,
+**guest access**, **B2B**. Already carded and left alone: Copilot licensing and data boundaries
+(a concept card inside an existing topic), Conditional Access (41 mentions across the site), DMARC
+(33), access reviews (10).
+
+**One audit false positive, again.** `grep -oi Viva` returned 22 — every one of them inside the word
+*sur**viva**l*. The count and the file list disagreed, which is what caught it. Case-insensitive
+substring counts need a word boundary, and the rule already recorded for multi-term greps applies
+just as well to short single terms.
+
+### What shipped
+
+Nine cards, 26 → **35** topics:
+
+- **Microsoft 365 Groups** — the object underneath Teams, SharePoint, Planner and the odd deletion
+  behaviour. Written first deliberately: several existing cards make more sense once it exists.
+- **Exchange Online Migration** and **SharePoint & OneDrive Migration** — the two projects that
+  dominate a tenant's first two years and had no coverage at all.
+- **Power Platform Governance** — a development platform ships in the licence whether or not anyone
+  planned one.
+- **External Collaboration** — guests are accounts in your directory that no HR process will ever
+  retire.
+- **App Registrations, Service Principals & Consent** — including the failure that arrives on a
+  schedule: client secrets expire silently at 3am.
+- **Secure Score & the Tenant Baseline** — sorted by what an intrusion actually runs into rather
+  than by points, with break-glass accounts as step one.
+- **Multi-Geo & Data Residency** — mostly an argument for establishing which question is being
+  asked before building anything.
+- **Joiner, Mover, Leaver in M365 Terms** — the process whose absence causes most of the cleanup the
+  other cards describe.
+
+### Verification
+
+`check_markup.py` clean after every card, which caught nothing this time but would have caught the
+one truncated heredoc that has bitten this project before. `lint_content.py` caught **three** bad
+cross-references written from memory — `Automation Risk` was really `Automation Risk & Discipline`,
+and two named cards that do not exist. All three repointed at real titles. The new xrefs were folded
+into `related.json` (+26 links) and `stamp_freshness.py --only m365` stamped the new cards with **no
+churn on the existing 26** — the `body_times()` fix from earlier still holds.
+
+Site total 1,355 → **1,364** topics. Budget raw 5.4 / 8.0 MB, content elements 110,310 / 175,000.
+`smoke_test.mjs` 110/110.
+
+
+## Session record — pentest content wave: five cards, and one the audit killed
+
+`pentest` had 29 topics with visible duplication (two privilege-escalation cards, two on password
+attacks, "Methodology & Phases" beside "Penetration Testing Phases"). The gaps were not in the
+tooling — `redteam` covers that in depth — but in the *kinds of engagement* the domain never
+described.
+
+### An API card was written, then deleted
+
+The probe that justified it was `grep "API pentest"` → **0**, and that was the wrong probe. Listing
+topic titles instead found five cards in `sec`, including **"The OWASP API Security Top 10 — Where
+the Web List Stops Being Enough"**, whose subtitle was almost word-for-word the one already drafted,
+plus dedicated cards on broken object-level authorisation, rate limiting and shadow API inventory.
+The card was discarded before it shipped.
+
+This is the third recorded instance of the same mistake and it now has a rule: **probe the topic
+titles, not just the prose.** A phrase-shaped grep (`"API pentest"`, `"physical pentest"`) asks
+whether anyone happened to use that exact wording. Listing `.topic-name` across the site asks
+whether the subject is covered, which is the actual question.
+
+### What shipped
+
+Five cards, 29 → **34**:
+
+- **Physical Assessments & Covert Entry** — the only engagement where being wrong means the police.
+  Leads on paperwork rather than technique, including the shared-tenancy trap: a client can
+  authorise entry to their suite and cannot authorise the lobby, the lifts or the loading bay.
+- **Cloud Penetration Testing** — testing a configuration, not a network, and the rule that
+  permission to edit permissions is equivalent to every permission.
+- **Mobile Application Testing** — every mobile assessment is two assessments, and the severity is
+  in the second one. States plainly that pinning and root detection are speed bumps, not controls.
+- **Rating a Finding — CVSS, EPSS & the Number the Client Will Argue About** — CVSS was cited seven
+  times in the domain and explained nowhere. Includes the disputes, and the position that a
+  low-scoring finding you are worried about belongs in the narrative anyway.
+- **Responsible Disclosure & Bug Bounties** — finding it was never the risky part. Covers the four
+  positions a researcher can be in, and the minimum-proof line that separates a report from an
+  unauthorised access to personal data.
+
+### A stamp correction worth recording
+
+Stamping pentest moved **six existing topics from 2026-06 to 2026-07**. Verified rather than
+accepted: `git log -S` on a distinctive line from each shows them created in `d38592c`, dated
+**2026-07-13**. The old 2026-06 stamps were wrong, and they were wrong because the domain had not
+been re-stamped since the `body_times()` fix — the old code took the maximum blame date over the
+whole topic span *including the opening tag the stamper itself rewrites*, which pinned the date to
+the previous stamping run. Any domain not re-stamped since that fix may carry the same error.
+
+Site total 1,364 → **1,369** topics. `check_markup.py` clean · `lint_content.py` clean ·
+`smoke_test.mjs` 110/110 · related.json +14 links from the new cross-references.
+
+
+## Session record — correcting the freshness stamps the fix had not reached
+
+The pentest wave turned up six topics stamped 2026-06 that were really 2026-07, and named the
+cause: a domain that has not been re-stamped since the `body_times()` fix carries dates derived the
+old way. That is a claim about the whole site, so it was checked against the whole site.
+
+`stamp_freshness.py --check` named **nine domains**: ai, career, linux, military, mind, net,
+philosophy, shortcut, threat. Re-stamping moved **88 topics**, in both directions:
+
+| Change | Topics |
+|---|---|
+| 2026-06 → 2026-07 | 73 |
+| 2026-08 → 2026-07 | 13 |
+| 2026-07 → 2026-08 | 2 |
+
+**The thirteen downgrades are the important ones.** A stamp that understates freshness is a nuisance;
+one that overstates it tells a reader a card was reviewed a month more recently than it was, which
+is the failure a freshness stamp exists to prevent. Traced properly rather than accepted: the
+Subnetting & CIDR card's topic body was last touched by `1bc9ce8` on **2026-08-02** — a site-wide
+acronym pass across 31 files — which `global_markup_passes()` correctly ignores, leaving 2026-07 as
+the real date. A naive `git blame` over the same span reports August and would have "confirmed" the
+wrong answer. The tool is more careful than the check.
+
+`--check` now reports nothing to update, so the site is consistent for the first time since the fix
+landed. 1,310 stamps across 29 files; the acronym domain's 59 topics are generated and carry none by
+design.
+
+
+## Session record — Track AX: the rename registry, and two items that were already built
+
+Track AX's checklist predates most of the freshness tooling. Verified first, as usual: **per-topic
+freshness metadata** and **volatility tags** are both shipped, and the link-rot item has nothing to
+check — one external link on the whole site.
+
+The volatility tag is worth a note because it shipped in a *better* shape than specified. The item
+asked for topics to be tagged stable or volatile. What exists instead is
+`<span class="volatile" data-checked="YYYY-MM">` around the individual claim, because what goes
+stale is a console name or a limit, not a card: "Security &amp; Compliance Center" ages while the
+paragraph explaining retention around it does not. Tagging the topic would have marked the whole
+card suspect to protect four words.
+
+### The rename registry
+
+`data/renames.json` holds 25 renames; `tools/check_renames.py` gates them in CI. Three design
+decisions carry the whole thing:
+
+- **A historical mention is not an error.** "Entra ID (formerly Azure AD)" is a card doing its job.
+  The checker looks for that framing, or for the new name within ninety characters, and stays quiet.
+- **`allow` for names that outlived the rename.** "Azure AD Connect" contains "Azure AD" and is
+  correct; `twitter:card` is the meta tag's actual name; "Office 365" is still the literal label of
+  a Conditional Access app group.
+- **Prose only.** A renamed product inside a command, a URL or an attribute is usually still right —
+  `mxtoolbox.com/blacklists.aspx` is a real address — and reporting it is pure noise.
+
+It found **nine real uses across six files**, every one a case of an old name reading as current:
+`WSUS / SCCM / Intune` in a patching table, "Salesforce, Office 365, Gmail" as SaaS examples,
+"Okta, Azure AD, Ping" as identity providers, "Azure AD Conditional Access", a Kubernetes
+`whitelist`, and three mail-reputation `blacklist`s. All nine fixed. Verified the checker fails on a
+planted regression before wiring it into CI.
+
+### Track AX after this wave
+
+Four items open: **fact-anchor comments**, **per-domain changelog**, **contradiction check** and
+**screenshot-dated warnings**. The contradiction check is the interesting one — cross-domain
+disagreement about a number or a definition is the failure mode this site is most exposed to at
+1,369 topics, and nothing currently looks for it.
+
+
+## Session record — Track AX: the per-domain changelog
+
+An **Updated** row on every domain's landing card — the month the domain was last reviewed, and the
+three topics reviewed then, as links.
+
+**Generated from the stamps, not from git.** The item said "from git history", and doing that at
+build time would have made the build depend on a repository, on `git` being present, and on blame
+heuristics that already differ between git versions — a problem this project has hit before, badly
+enough that CI runs `--verify` instead of `--check` because of it. The `data-reviewed` attributes
+are already in the files, already derived from git by `stamp_freshness.py`, and already validated.
+Reading them keeps the build offline, deterministic, and consistent with what the stamps claim.
+
+It answers a question a reference site cannot otherwise answer and should not make the reader guess
+at from the writing style: *is anyone still maintaining this?*
+
+### The check that caught its own regression
+
+Adding the row broke an existing check — "every 'start here' name resolved" reported **6/3**,
+because the new links reuse `.di-link`. That is the check doing exactly its job: a count-based
+assertion noticing that the thing it counts changed shape. It is now scoped to `.di-start .di-link`
+with a comment saying why, and two new checks cover the changelog itself, including that every entry
+names topics that exist and a month that parses.
+
+Three new checks, 110 → **113**. Budget raw 5.5 / 8.0 MB.
+
+The one domain with no changelog entry is `acronym`, which is generated from the dictionary and
+carries no stamps by design — the check allows exactly one such domain rather than skipping the
+assertion.
+
+
+## Session record — Track AX: the contradiction check
+
+At 1,369 topics the failure this site is most exposed to is not a wrong fact. It is two cards that
+are each defensible and disagree with each other — and nothing was looking for that. The linter
+checks structure, the markup checker checks well-formedness, and both are perfectly content with two
+cards saying different things.
+
+### Scope, chosen honestly
+
+Two kinds of disagreement are mechanically checkable, and the tool checks those two rather than
+claiming to check contradictions in general:
+
+1. **A hand-written acronym expansion that disagrees with the dictionary.** This one is invisible to
+   every existing tool: `annotate_acronyms.py` only ever *adds* expansions and never reads the ones
+   an author typed, so `RTO (Recovery Time Object)` sits next to a dictionary saying *Objective*
+   forever.
+2. **Ports attached to a service.** "SSH on 22" appears everywhere here; one card saying 23 is both
+   wrong and unfindable by eye.
+
+A limit, a retention period or a version number needs to know what the number is *about*, and no
+amount of regex supplies that. The docstring says so, so nobody later "completes" the tool into
+something that reports noise.
+
+### The heuristic that made it usable
+
+The first run produced **40 findings, of which about five were real**. The rest were parentheticals
+that are not expansions at all: `SIEM (Wazuh, Security Onion)`, `AI (NIST AI RMF)`, `C2 (Beacon)`,
+`IDOR (Lab Practice)`.
+
+The fix is the definition of an acronym: **an expansion's initials spell it**. Taking the initials of
+the parenthetical's significant words and comparing them to the acronym — with one letter of slack
+for shorthands like *Next-Gen Firewall* for NGFW, and a floor of two initials so `AI (AlphaGo)` and
+`AP (Authenticator)` cannot pass on a single letter — took 40 findings to **8**, all real.
+
+### What the eight were
+
+Two were genuine second meanings the dictionary lacked, now added: **CD** is *Continuous Delivery*
+and *Continuous Deployment* (a real distinction the devops card was drawing correctly), and **AV** is
+*Antivirus* everywhere except `grc`, where it is *Asset Value* in the quantitative risk formula — a
+`byDomain` override, and the site's ambiguity warning count dropped from 4 to 3 as a result.
+
+The other six were the site disagreeing with itself in miniature: `ARO` written as *Annual* in one
+card and *Annualized* in another, and four places where the annotator's correct expansion sat
+directly beside a hand-written one that said something slightly different —
+`ALB (Application Load Balancer) (Application LB)`. Redundant *and* inconsistent, in one string.
+
+Verified the checker fails on a planted contradiction before wiring it into CI.
+
+
+## Session record — a formatting normalisation, and what `--ignore-rev` cannot do
+
+849 opening tags and 729 closing tags across twelve content files were written in a formatter's
+line-broken style:
+
+```
+<span class="topic-name"
+  >Stoicism — The Art of Rational Endurance</span
+>
+```
+
+Valid HTML, and every tool here already coped: `lint_content.py`'s regexes and `script.js`'s
+`classRe` both allow attributes to run across lines. What it broke was the obvious thing — a plain
+`<span class="topic-name">` search misses **41 topics**, 3% of the site invisible to any grep. That
+cost time twice in one session, most visibly when an audit reported 7 topics in `philosophy` where
+there are 14.
+
+### Proving a formatting change is a formatting change
+
+Whole-document comparison **does not work here** and it is worth knowing why before someone tries
+it: the domain bodies ship inside `<script type="text/html">`, so `html.parser` hands back one
+enormous text node per domain and reports a difference for any whitespace change at all.
+
+The comparison that does work extracts each of the 30 deferred blocks and parses *those* as
+fragments, comparing streams of `(tag, attrs, text)` events with whitespace collapsed. All 30
+identical. `<pre>` blocks were excluded from the rewrite, since their whitespace is literal.
+
+### The freshness cost, measured rather than assumed
+
+A mechanical commit is supposed to be neutralised by `.git-blame-ignore-revs`. This one is listed
+there and **it does not work**, which was worth establishing rather than assuming:
+
+| Attempt | Result |
+|---|---|
+| `--ignore-revs-file` with the commit listed | still blames the reflow |
+| `git blame -w` (ignore whitespace) | still blames the reflow |
+| `-w -C -C` together | still blames the reflow |
+
+The reason is that this commit **merged lines** rather than reindenting them. `--ignore-rev`
+reattributes a line to whatever touched it before; a line assembled from two others has no single
+predecessor, and `-w` cannot help for the same reason. Four cards in `script.html` are therefore
+stamped 2026-08 for a reflow, and three more in `career.html` and `mind.html` still date to the
+lifestyle split for the matching reason — the split *created* those lines in files that had no
+earlier version of them.
+
+Seven cards, one month late, permanently. The alternative is a hand-kept per-topic override list,
+which would rot faster than the error costs. Recorded in `.git-blame-ignore-revs` beside both
+commits so the next session does not spend an hour rediscovering it.
+
+### Also this wave
+
+Two smoke checks pin the runtime behaviour the whole investigation started from: **every indexed
+topic reaches `stIndex()`**, and every row in it has a name. `stIndex()` silently drops a topic it
+cannot parse a name for, and everything the study tools offer is built from it — decks, quizzes, the
+palette, paths, related topics. A topic that falls out is not broken, it is *absent* from all of
+them, and nothing would have said so. 1,369 / 1,369 today. 113 → **115**.
+
+
+## Session record — productivity content wave: the study-skills half of a study site
+
+`productivity` was the thinnest substantial domain on the site at ten topics, which is an odd gap
+for a site whose entire purpose is helping someone learn this material. Audited by listing topic
+titles across all 30 domains — the lesson from the pentest wave, applied first this time rather than
+after writing a duplicate card.
+
+**Confirmed void.** Nothing on retrieval practice, interleaving, deliberate practice,
+procrastination, exam technique or energy management existed as a topic anywhere. The nearest
+neighbour, `career`'s *How Adults Actually Learn*, is about **teaching other people** — cognitive
+load in a session, measuring training by behaviour — so it was read first, kept distinct, and
+cross-referenced rather than duplicated.
+
+### Six cards, 10 → 16
+
+- **Retrieval Practice** — the most replicated finding in the study of studying, and the one this
+  site's own spaced-repetition scheduler implements. Includes the free version for technical work:
+  say what the command will output before you run it.
+- **Interleaving & Desirable Difficulties** — the idea that reorganises the rest: performance during
+  practice and retention afterwards are different things, and several conditions that worsen the
+  first improve the second. Includes when *not* to interleave, which most treatments omit.
+- **Deliberate Practice** — why "10,000 hours" is the wrong number, and how to manufacture the
+  missing condition in an IT career, which is almost always feedback.
+- **Procrastination** — a mood problem wearing a time-management costume, with the finding that
+  self-criticism reliably increases the next delay, and a table of the things that merely look like
+  procrastination and need different help entirely.
+- **Exam Technique** — the second skill, and the cheaper one. A table that separates losing marks to
+  knowledge from losing them to process, since only one of those is fixed by more study.
+- **Energy, Not Time** — an hour is not a unit of capacity, and a plan missed weekly for two months
+  is a plan that does not fit the life it was written for.
+
+The cards deliberately cross-link into each other and into `mind` and `career`: retrieval → spacing
+→ the site's own scheduler, exam technique → sleep, procrastination → burnout, energy → desk body.
+Eight new links folded into `related.json`.
+
+Site total 1,369 → **1,375** topics. Budget raw 5.5 / 8.0 MB, content elements 111,516 / 175,000.
+`smoke_test.mjs` 115/115, every checker clean, no stamp churn on the existing ten.
+
+
+## Session record — splitting the biggest file without moving a single slug
+
+`data/script.html` was 762 KB and 145 topics — a fifth of the site's topics in one file, and by a
+wide margin the hardest to work in. Track AY specified the safe shape years of caution had already
+arrived at, and it is worth restating because it is the whole reason this was low-risk: **split into
+parts that build into the same domain**, not into new domains.
+
+Topic ids come from `build.py` stamping slugs in document order with de-duplication carried across
+the whole site. Split `script` into three *domains* and that order changes, every duplicate-title
+suffix shifts, and permalinks and stored progress break silently. Split it into ordered *parts*
+concatenated back into one domain and the byte sequence build.py sees is exactly what it saw before.
+
+### The gate that made it safe
+
+`index.html` was built before the split, and again after. **Byte-identical.** Not "tests pass" —
+identical output from identical input, which is the only evidence that matters for a refactor whose
+entire claim is that it changes nothing.
+
+The parts are exact slices of the original file, joined with nothing, and `build.py` refuses to
+concatenate a part that does not end in a newline — the one way this could silently glue a card's
+last line to the next card's first.
+
+### One helper, six tools
+
+The real work was that six tools each had their own idea of where a domain's source lives.
+`domain_files(domain_id)` in `lint_content.py` is now the single answer — one file, or its parts in
+filename order, and it *errors* if both exist rather than quietly preferring one.
+
+Two subtleties the tools surfaced, both of which would have been silent bugs:
+
+- `annotate_acronyms.py` derived the domain from `path.stem`, so `script.03-python` looked like a
+  domain called `script.03-python` and its `byDomain` acronym overrides stopped applying. It reads
+  the filename prefix now. Caught because `--check` reported `script.05-platform.html` out of date.
+- `fix_topic_names.py` already had a local function called `domain_files`, which the import
+  shadowed into infinite recursion. Renamed to `source_files()`.
+
+`stamp_freshness.py --only` now accepts either a domain (`--only script`, all six parts) or a single
+part (`--only script.03-python.html`) — which is the day-to-day benefit of the split: after editing
+one part, only that part is restamped.
+
+### Everything else, unchanged
+
+`smoke_test.mjs` 115/115 · `lint_content.py` clean · `check_markup.py` now parses 36 files instead
+of 31 · renames, contradictions and paths all clean · `fix_topic_names.py --check` reports the same
+103 aliases.
+
+### The freshness cost, again measured
+
+Restamping after the split moved **20 of the 145 cards** from 2026-07 to 2026-08. `-C -C` copy
+detection recovers the other 125 by itself — the delete and the adds are one commit, which is
+exactly the case it is for — and the 20 that fall through are short blocks under git's
+copy-detection minimum. Listing the split in `.git-blame-ignore-revs` recovers **none** of them,
+measured rather than assumed, for the reason the file's own header gives: the part files did not
+exist before this commit, so there is no earlier version of those lines to fall back to.
+
+Twenty cards, one month generous. Recorded beside the commit in the ignore file, with the
+measurement, so the next session does not repeat the experiment. That is now the third instance of
+the same limitation in this session, and the pattern is worth stating once: **a mechanical commit
+that creates or merges lines cannot be neutralised by `--ignore-rev`.** Only one that *modifies*
+existing lines can.
+
+
+## Session record — repo hygiene: one entry point, one contract, one fewer megabyte
+
+Three Track AY items, all small, all overdue.
+
+### `make`, not `just`
+
+`make` is already on the machine; `just` would be a dependency to install before you can build a
+site whose entire selling point is having none. `make` builds, `make check` runs every static gate
+in fastest-failing order, `make test` drives the browser, `make all` chains them, `make stamp
+ONLY=<domain>` restamps one domain, and `make help` lists them.
+
+The value is not saving keystrokes — it is that **the order is now recorded somewhere other than
+a person's memory**. The acronym domain is generated from the dictionary, the annotator rewrites
+content using it, and `build.py` assembles what both produced. Run out of order you get a page that
+looks correct and is stale, which is the worst kind of wrong for a reference site.
+
+### Topic IDs are a contract
+
+Written into `CONTRIBUTING.md`, because the `script` split made it concrete and because this is the
+one thing in the repo that silently breaks *other people's* saved state rather than the build.
+
+A topic id is the permalink someone shared, the key their progress is stored under across five
+`localStorage` prefixes, and the key `related.json` and `paths.json` point at. The section carries a
+table of what does and does not move an id, and two rules that follow from it: **prefer parts over
+new domains** when a file gets too big, and let `fix_topic_names.py` write the alias when you do
+rename. Plus the proof technique the split used — build before and after, compare bytes.
+
+### patches/ archived
+
+54 one-shot content-injection scripts, 1.8 MB, untouched since 2026-07-04, whose output has been in
+`data/*.html` since each wave shipped. Tagged `archive/patches-2026-08` and deleted. The tag is
+local; it exists so the directory is recoverable by name rather than by SHA archaeology:
+
+    git checkout archive/patches-2026-08 -- patches/
+
+
+## Session record — Markdown export, and three bugs the tests found
+
+⬇ Export as Markdown in the study menu: a topic, a domain, the study list, or the whole library,
+copied or downloaded as a `.md` file. It converts from the **deferred blocks**, not the live DOM, so
+a domain nobody has opened exports exactly like one that has — the constraint every feature here
+lives under, asserted directly by a check that runs the export with zero topics rendered.
+
+### Structural, not generic
+
+The converter knows this site's conventions rather than HTML in general, and it is much better for
+knowing them: a `.concept-label` becomes a bold kicker rather than a paragraph, a `.concept-title`
+becomes `###`, a `.xref` becomes italics, an `.acro-exp` is kept inline because an exported file has
+no hover to reveal it. Fenced code keeps its own indentation — the whitespace tidy-up deliberately
+skips fenced regions, since collapsing it would corrupt every example on the site.
+
+### What writing the tests found
+
+Three real bugs, none of which would have been visible by skim-reading an export:
+
+1. **Every table on the site exported with an empty header row.** `mdTable` keyed off `<thead>`, and
+   almost no table here has one — the header is a bare `<tr>` of `<th>`. So the header line came out
+   as `| | | | | |` and the real headings were pushed into the body. Now it finds the first row
+   containing a `<th>`.
+2. **Div-built tables flattened into one unreadable line.** The layer stacks and comparison grids
+   carry their structure in nested `<div>`s, and nothing emitted a line break for them. Block-level
+   elements now end a line, and a `.layer` row joins its cells with `—` on one.
+3. **Leading whitespace broke every heading.** Text nodes between elements were emitted verbatim, so
+   headings came out as `&nbsp;### Title` and no Markdown renderer would have treated them as
+   headings.
+
+And two bugs in the *checks themselves*, which is its own lesson: the topic chosen for the table
+test was matched on the bare string `<table` and turned out to be a code sample, and the
+run-splitting used `runs[runs.length - 1] ||= []` on an empty array — which assigns to index `-1`,
+creating a property rather than an element, so the "square rows" assertion was silently examining
+nothing at all and would have passed on any output. **A check that examines nothing passes.**
+
+Seven new checks, 115 → **123**.
+
+
+## Session record — PWA polish: consent, and a version nobody has to remember
+
+Two changes, and the second is the substantive one.
+
+**The worker stopped taking over without asking.** It called `skipWaiting()` on install, which swaps
+the cached assets under a page that is already open — a new `script.js` talking to an old
+`index.html`. On a page that keeps a reader's progress, bookmarks, notes and scheduler state in
+`localStorage`, that is not a cosmetic risk. The new version now waits, the page offers a
+dismissible reload, and `skipWaiting()` happens only when the reader accepts. A `controllerchange`
+guard stops the reload looping when several tabs accept at once.
+
+**`CACHE_VERSION` is derived, not typed.** A hand-bumped cache version has two failure modes and
+both are common: forget to bump it and returning visitors keep a stale page indefinitely; bump it
+every deploy and an unchanged build throws away a good cache. `build.py` now hashes the three files
+that actually change and writes `techref-<hash>` into `sw.js`, so the version moves exactly when the
+bytes do. CI fails if it is stale, the same way it already fails on a stale `index.html`.
+
+### Testing what cannot be tested here
+
+The worker only runs over http(s) and the smoke tests run over `file://`, so the registration path
+is genuinely out of reach. Rather than skip the feature, the four checks cover the part that
+actually breaks: the toast renders **once** rather than once per event, carries `role="status"`,
+posts exactly `{type:"skip-waiting"}` to the waiting worker when accepted, and can be dismissed. The
+comment says why the registration itself is not covered, so the gap is a recorded decision rather
+than an oversight.
+
+123 → **127** checks.
+
+
+## Session record — print packs
+
+🖨 Print pack: a domain, a learning path, the study list or today's due cards, as a handout.
+
+**Generated, not styled.** The obvious implementation is a print stylesheet over whatever is on
+screen, and it cannot work here: only one domain is ever hydrated, so the pack most worth printing —
+a learning path, which spans five domains in the SOC starter's case — could never be produced that
+way. The pack is built into a container of its own from the deferred blocks, with every card forced
+open, and `body.printing` hides everything else.
+
+That hiding is written as `body.printing > *:not(#print-pack)` rather than as a list of things to
+hide, so a header or panel added next year does not quietly start appearing on printouts.
+
+Page breaks are set where they help: a new page per domain, never a break through a concept card,
+and breaks allowed inside a topic — a card that would rather start a new page than split is worth
+the whitespace; a whole topic is not.
+
+Five checks, 127 → **132**, and the first one had to be fixed before it meant anything: it tested
+the first learning path, which is entirely inside `net`, so "spans a whole path" was passing without
+ever crossing a domain boundary. It now picks a path that actually crosses one — 15 topics across 5
+domains, built with zero topics rendered.
+
+
+## Session record — Track AJ: accessibility CI, and the sixteen violations it found
+
+`tools/a11y_test.mjs` runs axe-core over three states — the shell at load, an open domain with an
+expanded topic, and a study dialog — in **both themes**. Six scans. It is deliberately separate from
+`smoke_test.mjs`: the smoke test asserts specific behaviour and must pass on every commit, while
+this runs a third-party rule set that can grow new rules between versions, and mixing them would
+make a smoke failure ambiguous. It scans one domain rather than thirty, and says why: the content
+markup is generated from the same conventions everywhere, so the thirtieth domain exercises the same
+rules at thirty times the cost, and `lint_content.py` is what keeps the conventions uniform.
+
+The first run: **0 of 6 scans clean, 16 serious violations.** Three distinct problems.
+
+### The accessible name nobody gave the search box
+
+`label-title-only`: the search input's only accessible name came from its `title`, which carries the
+operator documentation. One `aria-label`.
+
+### Colour, in both directions
+
+Nearly 300 nodes failed contrast, and the causes were worth separating rather than "darkening things
+until axe went quiet":
+
+- **All 30 filter chips were unreadable in light mode.** Each carries its own hue, all picked
+  against a near-black background, and every one of them failed on a light one — in the single place
+  the whole page is navigated from. Each is now darkened to 4.6–4.7:1, computed rather than
+  eyeballed so nothing is darkened more than it needs to be, and the identity survives.
+- **`--cyan`, `--green` and `--red` failed in light mode** at 3.4–4.4:1, and they are used for small
+  text throughout. Darkened at the token, which fixed many nodes at once.
+- **The active ALL chip was `#fff` on a light background** — 1.1:1. It had simply disappeared.
+- **`--muted` failed in dark mode** at 3.3–3.8:1, and the per-domain `--accent` values had the same
+  light-mode problem as the chips: one override per domain fixed the see-also links, landing card
+  buttons and every clickable cross-reference together.
+- **Two decorative `opacity` values were doing the damage**, not the colours: the cert tags' `0.7`
+  cost 1.3 contrast points in both themes, and the dashboard's `0.55` on untouched rows multiplied
+  against already-muted text. Both replaced with colour choices, which is what a reader with low
+  vision can actually work with.
+
+### The one that was a real bug, not a shade
+
+`nested-interactive`, on all 1,375 topics: `.topic-header` had `role="button"` **and contained the
+★ ✓ 📝 🔗 buttons**. A control inside a control is invalid ARIA and leaves those four ambiguous or
+unreachable to a screen reader.
+
+The header is now layout with no role, and the clickable part is a real `<button class="topic-toggle">`
+wrapping the icon, name and badge, with the tools and the chevron as siblings — so the row order is
+unchanged and the chevron, being decorative, is `aria-hidden` and outside the button's accessible
+name. All twelve places that set a topic's open state now go through one `setTopicOpen()`.
+
+**It broke everything first, informatively.** The initial version wrapped the chevron too, so
+`header.insertBefore(tools, chev)` threw against a node that was no longer its child —
+`enhanceDomain` aborted, and nine smoke checks failed at once. That is the smoke suite doing exactly
+its job: a structural change that looked fine in one place took the whole domain's setup with it,
+and the failure list said so within seconds.
+
+### Result
+
+**6/6 scans clean.** `make a11y` runs it; CI runs it as part of the browser job. Two new smoke
+checks pin the structure that replaced the violation, 132 → **133**.
+
+
+## Session record — link previews, and a guard on the build itself
+
+### The site had no link preview at all
+
+Not "the per-domain cards were missing" — no `description`, no Open Graph, no Twitter card. A link
+to it rendered as a bare URL everywhere it was shared, which for a free public reference is a
+straightforward loss.
+
+`tools/gen_og_image.mjs` renders `Img/og-card.png` at 1200×630 from an HTML template through
+Playwright, which is already a dependency for the tests. The counts on the card — 1,375 topics, 30
+domains, 0 third-party requests — are **read from the sources at render time**, so the card cannot
+advertise a number the site no longer has, and `--check` fails CI if it is stale.
+
+**Per-domain cards were not built, on purpose.** The original item asked for one per domain. Domains
+here are hash fragments; no crawler distinguishes `/#net` from `/`, and none runs the JavaScript
+that would render that domain. Thirty images that nothing would ever request. The reasoning is in
+the item and in the tool's docstring so it is not re-proposed.
+
+A smoke check asserts the preview text quotes the site's **real** size — the description is written
+by hand and the card is generated, so they can drift, and a preview advertising last year's numbers
+is exactly the kind of wrong nobody notices for a year.
+
+### Build determinism
+
+`tools/check_determinism.py` builds twice and compares bytes. Cheap, and it is the check that gives
+meaning to the technique this session leaned on twice: *build before, build after, compare*. Without
+it, "byte-identical" only ever meant "identical this once".
+
+Verified against a planted `time_ns()` in `build.py` before being wired into CI — it reported both
+outputs differing and exited non-zero.
+
+135 checks; `make` now also has `a11y` and `og` targets.
+
+
+## Session record — Track AX closed: dated claims and where numbers came from
+
+The last two items in the track, and they are two halves of one idea: a reference site's real
+failure is not being wrong when written, it is being right when written and quietly wrong two years
+later.
+
+### Two conventions, one checker
+
+`tools/check_volatility.py` validates both and separates what it can gate from what it cannot:
+
+- **Errors** — a `data-checked` that is malformed or in the future, an anchor missing its source.
+  Unambiguous, so they fail the build. Verified against a planted future date and a fieldless anchor.
+- **A queue** — every dated claim, oldest first, so a freshness pass has a starting point.
+- **Candidates** — topics naming a vendor console with no dated span. **Reported, never failed.**
+  Fourteen remain and most should stay that way: "Microsoft Management Console" has not moved in
+  twenty years, and a gate here would only teach people to add a span they do not mean.
+
+The candidate regex is deliberately narrow. Matching the bare word "console" finds 133 hits on this
+site, nearly all of them terminals; a queue that noisy is wallpaper, not work.
+
+### Screenshot-dated warnings, as spans rather than notes
+
+The item asked for a "console as of <date>" note per card. What shipped instead marks the console
+**name** — `<span class="volatile" data-checked="2026-08">Intune admin centre</span>` — because that
+is the thing that changes, and a whole-card note would put a date on a paragraph that is still
+correct. Ten added, 33 → 43 dated claims.
+
+### Fact anchors
+
+`<!-- fact: <claim> | source: <where> | checked: YYYY-MM -->`, immediately before the element making
+the claim. Invisible to the reader, and it turns "re-research this" into "re-verify this". Five
+applied, chosen as vendor-defined numbers a reader could act on — the 93-day platform-metric
+retention (the plan's own example), the 180-day tombstone lifetime, Windows Server's 180-day
+evaluation, the gMSA 240-character/30-day defaults, and the 30-day group soft delete.
+
+`CONTRIBUTING.md` says what deserves one and what does not: not arithmetic, not something the card
+derives itself, not a figure whose source is the card's own worked example.
+
+### Track AX is now closed
+
+All eight items. Three were already built and were ticked after verification, one measured itself
+away (one external link on the whole site), and four shipped this session: the rename registry, the
+per-domain changelog, the contradiction check, and these two.
+
+
+## Session record — the structured content model, evaluated and declined
+
+Track AY held this decision open for a reason, with an explicit rule attached: *only worth it if
+Tracks AG/AK actually need topic-level structured data — do not do it for tidiness alone.* Both
+tracks are now finished, so the rule can be applied against evidence rather than intuition.
+
+### What the consumers actually needed
+
+Everything Tracks AG and AK asked for got built this session. What each one turned out to need:
+
+| Consumer | Needed |
+|---|---|
+| Flashcards, quiz, exam mode | `.topic-name`, one `.concept-title`, one `.concept-desc` — three regexes |
+| Spaced repetition, progress, streak | topic **ids** and `localStorage`. No content at all |
+| Learning paths | an ordered list of ids in `paths.json` |
+| Related topics | a map of ids in `related.json`, seeded from the `xref` spans |
+| Domain landing cards | `domain-intros.json`, keyed on domain |
+| Per-domain changelog | the `data-reviewed` attribute |
+| Print packs | the topic's markup, used verbatim |
+| **Markdown export** | **structure — the one real case** |
+
+Seven of eight needed ids and small external JSON files. That is not a content-model problem; it is
+exactly the architecture already in place, and each payload took an afternoon.
+
+### The one that wanted structure, priced honestly
+
+The Markdown export is the case the item was written for, and it did cost something: a ~120-line
+structural converter, plus three real bugs that only surfaced because the tests were written —
+every table exporting with an empty header row, div-built tables flattening into one unreadable
+line, and headings carrying leading whitespace.
+
+Against that: **1,375 topics to migrate**, and a build that becomes a real program with a template
+layer, a schema and its own bugs. A hundred and twenty lines is not a case for rewriting the corpus.
+
+### What the evaluation *did* find
+
+The export's ugliest special cases are not about HTML in general. They are about a specific habit:
+**78 places where a table is built out of `<div>`s** — `kc-row`, `layer-stack`, `nist-row`,
+`risk-matrix` — against **1,883 real `<table>` elements**. Those 78 are why the converter needs a
+`.layer` rule, why the print pack needs its own break rules, and why a naive HTML-to-Markdown pass
+would produce nonsense.
+
+So the recommendation is not "restructure the content". It is: **convert 78 elements to real
+tables**, which removes the special cases, improves screen-reader output for free, and can be done
+one card at a time by anyone with an afternoon. Logged as the incremental item in place of the
+migration path that is no longer needed.
+
+### The rule earned its keep
+
+This decision was deferred across many sessions with a test attached to it. The test turned out to
+be answerable only *after* building the features — and when it was answered, it said no, clearly,
+with numbers. Worth remembering the next time something is tempting and expensive: writing down what
+would make it worthwhile is what stopped it happening on vibes.
+
+
+## Session record — mind content wave: the non-technical half of the job
+
+`mind` was the thinnest substantial domain at twelve topics, covering the part of an IT career that
+is not technical. Audited by topic title across all thirty domains first — which found that two
+candidates were already handled and should not be duplicated: **difficult conversations** exists
+twice, in `ops` (angry users, VIP pressure, saying no) and `eng` (giving feedback), and **money**
+has two cards in `career`.
+
+### Five cards, 12 → 17
+
+- **Layoffs & Job Loss** — nothing on the site mentioned this at all, in a field where it happens to
+  most people at least once. Separates the business decision from the verdict, gives the
+  time-sensitive first week in order, and is explicit about the one thing that turns a bad month
+  into a legal problem: taking company material on the way out.
+- **The Always-On Feeling** — deliberately *not* burnout. Burnout is exhaustion; this is
+  hypervigilance, and it usually comes first. The most useful row in it is an engineering one:
+  people check dashboards off-shift because they do not trust their alerts, so fixing the alerts
+  fixes the checking.
+- **Comparison** — you are measuring an ordinary Tuesday against the aggregate of everyone else's
+  best days. Ends on the structural point rather than the personal one: comparison is unbearable
+  where admitting ignorance is unsafe, and that is a property of the team.
+- **A Manager You Cannot Fix** — separates mismatch, overload, out-of-depth, structurally trapped
+  and bad actor, because those are five problems with five different answers and treating them
+  alike is how people stay stuck for years.
+- **Asking for Help** — the four-line question that gets answered fast, the timebox that settles
+  when to send it, and the other half nobody writes down: how a senior person answers decides
+  whether anyone asks them again.
+
+### A count that no longer needs remembering
+
+The link-preview check failed on this wave, correctly: the hand-written description said 1,375
+topics and the site had 1,380. Rather than edit the number, `build.py` now substitutes it — the
+description and the Open Graph text carry `<!-- TOPIC_COUNT -->` placeholders filled from the topic
+index. The check that caught the drift stays, but there is nothing left for it to catch.
+
+Site total 1,375 → **1,380**. Twelve new cross-references folded into `related.json`.
+
+
+## Session record — the SASE gap, found by probing subjects rather than domains
+
+At 1,380 topics, picking the thinnest domain stops being the right way to find gaps. This wave
+probed the other way: a list of ~70 significant IT subjects checked against every **topic title** on
+the site, looking for zero hits.
+
+Most came back covered, several under names the probe did not guess — eBPF inside a Kubernetes
+detection card, TPM inside *Hardware Root of Trust*, agents inside *Agentic AI*, salary inside two
+negotiation cards. The genuine hole was a cluster: **SASE, SSE, ZTNA, CASB, SWG**. Zero Trust as a
+*principle* has two cards in `sec`; the product architecture that implements it — the thing
+organisations actually buy and deploy — had none.
+
+### Three cards
+
+- **SASE & SSE** — leads with the deflationary point: it is not a technology, it is five existing
+  products bought as one subscription and delivered from someone else's edge. Which changes the
+  evaluation question from "is SASE good" to "is *this vendor's* gateway, and their ZTNA, and their
+  CASB each good enough". Includes the SSE-versus-SASE distinction that keeps half a sales
+  conversation off the table, and the two failure modes: a single point of failure you do not own,
+  and TLS inspection breaking pinned applications silently.
+- **ZTNA** — access to an application rather than a position on a network, with the row people
+  underrate: a VPN concentrator must be reachable from the internet and has been a reliable source
+  of catastrophic vulnerabilities, while a ZTNA connector only dials out. Ends on what it does *not*
+  fix — reaching an application is not permission to do everything in it.
+- **CASB & Secure Web Gateway** — inline versus API mode, and why the mode decides which questions
+  can be answered. The shadow-IT section argues against the obvious response: blocking everything
+  unsanctioned produces a workforce on personal devices where you can see nothing, so read the
+  report as a demand signal — sanction, consolidate, restrict, block, in that order.
+
+Site total 1,380 → **1,383**. Twelve new cross-references. The link-preview counts updated
+themselves, which is the build-time substitution from the previous wave earning its keep.
+
+
+## Session record — the virtualisation operations set, on demand
+
+Track Z's shipped-note left a list of "narrower depth — follow on demand" items. Four of them are
+the day-to-day of running a hypervisor estate, and the probe confirmed the gap: `sysprep` appeared
+twice on the whole site, `maintenance mode` once, `CPU ready` once, `P2V` not at all.
+
+- **VM Lifecycle** — templates, cloning and the identity problem. Leads on the argument rather than
+  the procedure: every hand-built server is a future outage with a person's name on it. The
+  duplicated-identity table (SID, secure channel, MAC, SSH host keys, cloud-init state) is the part
+  that gets misdiagnosed for days, and the rule that follows is that a template is generalised once
+  and never booted again.
+- **Live Migration & Maintenance Mode** — what the memory pre-copy actually does, and therefore why
+  everything that breaks it is something stopping the final delta from getting small. The patching
+  round is written as a sequence, with the capacity check first because it is the step that gets
+  skipped and the one that turns a window into an incident.
+- **P2V & V2V** — framed honestly as a *last* option, with "leave it physical and isolated" listed
+  as a real answer rather than a joke. The licensing row is the one that ends projects, which is why
+  "keep the original powered off" is on the checklist.
+- **Virtualisation Troubleshooting** — the storage, host, network, guest order, and why starting
+  where the ticket points is the slowest route. **CPU ready** gets the emphasis because it inverts
+  the usual reading: a guest with low utilisation that feels slow is not using the processor because
+  it cannot get it, and adding virtual processors makes it worse.
+
+Site total 1,383 → **1,387**. All suites green, budget 31% headroom.
+
+
+## Session record — open-source licences, the gap the probe found next
+
+The subject probe returned zero topic-title matches for `open source licen`, `GPL`, `MIT licen` and
+`copyleft`. The prose confirmed it: **GPL and copyleft appear nowhere on the site**, on a reference
+that covers dependency risk, SBOM, supply-chain security and commercial licensing audits in depth.
+The obligations that come with the code were the one part missing.
+
+One card, written to lead with the question people skip:
+
+**"Which licence?" is the second question. The first is "are you distributing?"** Most obligations
+in most licences are triggered by distribution; running something internally triggers very little.
+That single distinction scopes the entire subject, and it is why the AGPL exists — ordinary copyleft
+was written when software was shipped, so hosting a modified version was an obligation-free
+loophole.
+
+Two things it says that similar material usually does not. **Source-available is not open source**,
+and several well-known projects have relicensed to terms that forbid exactly the hosted use a reader
+might have planned, while still being described as open source in blog posts — so check the licence
+file in the version you are actually pulling. And **the obligation follows the code, not the route
+it took**, which now includes code an assistant suggested.
+
+Deliberately one card rather than two. A second on choosing and trusting dependencies was drafted in
+outline and dropped: `eng` already has *Dependency Risk — Transitive Depth, Typosquatting & the
+Abandoned Package* and *Dependency Triage*, and `devops` has *Software Supply Chain Security*. The
+audit-first rule applies to my own good ideas.
+
+Site total 1,387 → **1,388**.
+
+
+## Session record — Track AP depth, as the re-audit specified
+
+The item named two gaps and predicted their shape correctly: "neither is a rewrite; both are depth
+on an existing card or one new card each". Both became new cards, because each is a different
+*question* from the ones the concept cards answer rather than more detail on the same one.
+
+**Certificate & PKI Migration.** The insight it is built around is that a certificate migration runs
+in the opposite direction to the instinct: you do not start by issuing new leaf certificates, you
+start by asking whether anything in the estate can validate the new chain at all. Two things fall
+out of that. The **HSM certification lag** — a validated module cannot ship a new algorithm the week
+the standard lands, so the implement-validate-buy-install pipeline, not the cryptography, sets the
+earliest possible migration date. And the **long tail**: building controls, medical equipment,
+field devices and appliances whose vendor is gone will never receive a new algorithm, and the honest
+answer for all of them is the same — terminate the modern cryptography at a proxy you control and
+let the legacy device speak whatever it can, on a segment where that is acceptable.
+
+There is also a genuinely cheerful note in it, which is rare for this subject: as public certificate
+lifetimes fall toward weeks, the automation that becomes mandatory is the same automation that makes
+an algorithm change a configuration change. **Short lifetimes are crypto-agility arriving by another
+route.**
+
+**Reading a Cryptographic Claim Critically.** Built on the observation that every serious failure in
+deployed cryptography has been in key management, mode selection or protocol design rather than in
+the cipher — which is precisely why the cipher is the part printed on the slide. The most useful
+thing in it is the ten-second test: *what happens when a user forgets their password?* If the vendor
+can restore the data, they hold a key. That may be perfectly acceptable; it is simply not the
+product the marketing described.
+
+`sec` 84 → **86**. Site total 1,388 → **1,390**.
+
+
+## Session record — Track AJ closed: visual regression, scoped to survive
+
+The last open item in the track, and the one most likely to be built badly. The spec said "headless
+screenshots of a few representative topics in both themes". Built that way it would fail on every
+content wave, and **a check that fails constantly is one people learn to ignore** — which is worse
+than not having it, because the ignoring spreads to the checks that matter.
+
+So it shoots one thing: **the filter bar**, both themes, one viewport. Thirty coloured chips in a
+row. It changes rarely, every visitor sees it, and it is the exact place the light-mode contrast bug
+lived.
+
+### Two things the first attempt got wrong, both visible only by looking
+
+The first version screenshotted the whole `<header>`. Opening the baseline showed why that was a
+mistake twice over: the header is dominated by **a large static illustration** that can never
+regress and made the baseline 290 KB, and it contains the **rotating quote** — so the check would
+have failed at random, on a schedule nobody could predict. Switching to the filter bar took the
+baselines from 600 KB to 68 KB and made them deterministic.
+
+### The threshold is calibrated, not guessed
+
+Repeated runs in one environment differ by **exactly zero** pixels. Reverting a single chip's colour
+to its pre-fix value moves **0.111%** — one chip's text is a small share of a bar of thirty. The
+first threshold, 0.2%, would have watched that go straight past; it is now 0.05%, verified to fail
+on the planted revert and pass on the restore.
+
+The docstring names the escape hatch explicitly: if a runner's font rendering ever makes this noisy,
+raise the number or drop the shot — do not silence the job.
+
+### Track AJ is now closed
+
+All eight items. Three were already shipped, one measured itself away, and four were built this
+session: the markup validator with its self-test, the acronym drift report, the accessibility scan
+that found sixteen violations, and this.
+
+
+## Session record — closing Track BC's two open items
+
+The two Kubernetes items the track left explicitly open, both written to fill the gap the note
+described rather than to restate what the neighbouring cards already say.
+
+**Secrets in Kubernetes.** The note asked for "the options comparison", and that is the middle
+section — encryption at rest, Sealed Secrets, External Secrets, the CSI driver, workload identity
+federation, and calling a cloud secret manager directly — each labelled with the problem it actually
+solves, because they solve different ones. The framing around it matters more though: *every option
+except the last two is a better way to store a long-lived credential, while those two remove the
+long-lived credential*.
+
+Two things in it that get missed. **Permission to create a pod in a namespace is permission to read
+every Secret in it**, because a pod can simply mount them — so namespace RBAC is a boundary between
+teams, not between a team and its own secrets. And most real exposure is not the storage at all: it
+is environment variables in a pod description, a framework logging its configuration at start-up,
+Helm release history, CI output, and debug containers.
+
+**Ingress & API Exposure.** Built on the observation that the ingress is the narrowest point in the
+system and the cheapest control point available — and the most commonly wasted, run as a router
+while authentication, rate limiting and header hygiene get reimplemented per service. Names the
+Ingress / Gateway API / service mesh division of labour, and says why the Gateway API split is worth
+understanding even if you never adopt it: with plain Ingress, anyone who can create the object can
+usually claim any hostname, so separating listener ownership from route ownership is a permissions
+model rather than a feature.
+
+Its debugging list ends where it should: **"Service has no endpoints" is the most common cause of a
+502 from an ingress** — a selector typo or an unready probe — and the Ingress object reports itself
+perfectly healthy throughout.
+
+Site total 1,390 → **1,392**. Track BC is closed.
+
+
+## Session record — four single-item closures: AN, AU, BF, and BC before them
+
+The live content backlog was eleven items across five tracks. Four are now closed; the six remaining
+are Track AV's specialist-practice set.
+
+**Signals** (`hw`) — the note said "the noise and grounding half is the part with real IT
+application", and that is where the weight went: ground loops in audio and video, the missing common
+ground that makes a serial link work on the bench and fail on site, induced interference near
+machinery, and the device that only works when you touch it because *you* are the ground path. Two
+rules carry most of it — ground shields at one end only, and separately powered devices exchanging
+data need a shared reference. It also carries aliasing across into ordinary monitoring: a metric
+sampled every five minutes cannot represent a thirty-second event and will draw a confident smooth
+line through spikes it never saw.
+
+**Teaching a Tool You Just Learned** (`career`) — the argument is that one step ahead is the *best*
+distance to teach from, not a compromise: the expert has forgotten what was confusing and you have
+not, and that advantage expires within months. The highest-value artefact a recent learner can
+produce is the one experts never write — a table of exact error text and what it actually meant.
+The credibility problem is solved by stating the distance, not by waiting for mastery.
+
+**Third-Party Data Sharing** (`grc`) — written to supply precisely the half the note said was
+missing. A contract is a promise, enforceable afterwards at cost; a technical limit is a fact that
+applies on the day. The verification section is the part that rarely exists: capture what the
+integration actually sends once a year (**field creep** is the normal state of a long-lived feed),
+ask for evidence of deletion rather than confirmation, and test the export before you need it,
+because an exit clause with no working export is a clause and not an exit.
+
+Site total 1,392 → **1,395**.
+
+
+## Session record — Track AV closed: the specialist-practice set
+
+Six cards into `career`, closing the last of the live content backlog. `career` 38 → **44**.
+
+Each is built on the one thing that distinguishes it from ordinary consultancy advice:
+
+- **Subcontracting & Partnering** — when you are prime, *the client's opinion of the work is their
+  opinion of you*; delegating delivery does not delegate reputation, so review time is a real cost
+  that has to sit inside the margin before the price is agreed. The honest summary is that
+  subcontracting converts a delivery business into a management business, and people who love the
+  work often discover they have hired themselves into a job they did not want.
+- **Productising a Service** — same work, named scope, fixed price. Written down, the reason it
+  sells better is a fact about buyers: an unfamiliar supplier asking for an open-ended commitment
+  needs far more trust than one asking for a bounded, named amount. Price from your **worst** run,
+  and write the exclusions before the inclusions.
+- **Fractional & Advisory Roles** — the failure mode is a client who wanted *capacity* buying
+  *judgement*, and the rule for doing the job in two days a month is that your success condition is
+  the client needing you less. Firm on one thing: lending your title to a policy you cannot
+  influence transfers all the risk and none of the authority.
+- **Running a Security Assessment** — an engagement is a sequence, and the technical work is the
+  smaller half. Sell the **retest** in the original engagement, because one that must be separately
+  justified three months later usually is not. The debrief runs technical-team-first, since the
+  people who will implement every fix are the people the findings expose.
+- **Expert Witness & Forensic Work** — the duty is to the court, not to whoever is paying, and an
+  expert who advocates is ineffective rather than merely unethical. The timezone row is not a small
+  point: normalisation failures have undone more digital timelines than any technical error.
+- **Training as a Product** — the lab is where the budget goes, and the discipline that saves you is
+  that it must reset in minutes and run without your laptop. Happy-sheets measure enjoyment; a
+  client who cannot see a change will not rebook.
+
+### A mistake worth recording
+
+The splice used `glob("scratchpad/av/*.html")` and the directory still held **two cards from a
+session two days earlier** — so it appended eight files and shipped two topics a second time.
+`lint_content.py` caught it immediately, by name, with both line numbers: *slug already used by
+career.html:2561 — permalinks shift*. Reverted and redone with an explicit file list.
+
+Two lessons. **Glob a scratchpad and you inherit its history** — name the files. And the
+duplicate-slug guard, ticked earlier this session as "already shipped", earned its place within the
+hour: without it two duplicated topics would have shipped and quietly shifted the ids of everything
+suffixed after them.
+
+Site total 1,395 → **1,401**. The live content backlog is now empty.

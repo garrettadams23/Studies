@@ -38,7 +38,7 @@ import subprocess
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from lint_content import slugify, topic_blocks, topic_label  # noqa: E402
+from lint_content import domain_files, slugify, topic_blocks, topic_label  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -52,10 +52,14 @@ LEAD_RE = re.compile(r'\s*<span\b[^>]*class="(?:topic-icon|topic-badge)"[^>]*>.*
 CHEV_RE = re.compile(r'\s*<span\b[^>]*class="topic-chev"[^>]*>.*?</span\s*>\s*$', re.S)
 
 
-def domain_files():
-    """Domain order matters — script.js numbers topics in document order."""
+def source_files():
+    """Every domain's sources, in build order.
+
+    Domain order matters — script.js numbers topics in document order — and so
+    does part order within a domain, which source_files() supplies.
+    """
     order = [d["id"] for d in json.loads((DATA / "domains.json").read_text())]
-    return [DATA / f"{d}.html" for d in order if (DATA / f"{d}.html").exists()]
+    return [f for d in order for f in domain_files(d)]
 
 
 def page_slugs(texts):
@@ -65,7 +69,7 @@ def page_slugs(texts):
     on disk before and after the rewrite without touching them.
     """
     seen, out = set(), []
-    for path in domain_files():
+    for path in source_files():
         for _, block in topic_blocks(texts[path.name]):
             label, _ = topic_label(block)
             if not label:
@@ -89,7 +93,7 @@ def committed_texts():
     not decide whether a link survives.
     """
     texts = {}
-    for path in domain_files():
+    for path in source_files():
         try:
             texts[path.name] = subprocess.run(
                 ["git", "show", f"HEAD:data/{path.name}"],
@@ -170,10 +174,10 @@ def main():
             "report" if "--report" in sys.argv else
             "aliases" if "--aliases-only" in sys.argv else "write")
 
-    worktree = {p.name: p.read_text(encoding="utf-8") for p in domain_files()}
+    worktree = {p.name: p.read_text(encoding="utf-8") for p in source_files()}
 
     after_texts, touched = {}, {}
-    for path in domain_files():
+    for path in source_files():
         # --aliases-only leaves markup alone; it exists to record a plain rename,
         # which is the common case once the legacy headers are gone.
         new, n = (worktree[path.name], 0) if mode == "aliases" else rewrite(worktree[path.name])
@@ -224,7 +228,7 @@ def main():
         print(f"\n{len(changed)} slug(s) would move, {sum(touched.values())} header(s) would be wrapped.")
         return 0
 
-    for path in domain_files():
+    for path in source_files():
         if after_texts[path.name] != worktree[path.name]:
             path.write_text(after_texts[path.name], encoding="utf-8")
     ALIASES.write_text(json.dumps(aliases, indent=2, sort_keys=True) + "\n", encoding="utf-8")

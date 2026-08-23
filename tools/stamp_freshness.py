@@ -22,10 +22,17 @@ commit classifies itself as mechanical on the next run, with no SHA list to
 maintain by hand.
 
 Usage:
-    python3 tools/stamp_freshness.py            # stamp in place
+    python3 tools/stamp_freshness.py --only m365   # stamp one domain — the usual case
+    python3 tools/stamp_freshness.py            # stamp everything; see the warning below
     python3 tools/stamp_freshness.py --verify   # CI gate: are the stamps valid?
     python3 tools/stamp_freshness.py --check    # report drift, write nothing
     python3 tools/stamp_freshness.py --report   # oldest volatile topics
+
+**Prefer --only.** A whole-tree write re-derives every stamp on the site from
+`git blame`, and blame heuristics differ between git releases — one content wave
+that added 18 cards also moved ~250 untouched topics into later months with no
+edit behind the move. Stamping the file you actually changed avoids inventing
+freshness for the rest of the site.
 
 --verify and --check are not the same question. --verify asks whether every
 topic carries a plausible stamp, using no git at all, so its answer does not
@@ -218,6 +225,31 @@ def blame_times(rel_path, ignore, worktree_text):
     return times
 
 
+def body_times(times, start, end):
+    """Blame times for a topic's body — the span minus its opening tag line.
+
+    The opening line is the one this script rewrites, and excluding it is what
+    stops the stamp from oscillating. The mechanism: writing a corrected stamp
+    inside a commit that *also* adds real content makes that commit
+    non-mechanical, so it cannot be ignored when blaming. Blame then dates the
+    opening line to that commit, `max` picks it up, and the next run pushes the
+    topic forward again — after which the stamping commit is mechanical, the
+    ignore list catches it, and the run after that pulls it back. Three topics
+    in ops.html bounced between 2026-07 and 2026-08 that way across two waves.
+
+    A card's opening tag carries no content, so its blame date can never be
+    honest evidence that anyone reviewed the card: a real edit always touches a
+    body line too. Dropping it costs nothing and removes the cycle.
+
+    The fallback matters. Some topics in data/*.html are written on a single
+    line, header and body together; there the opening line *is* the content, so
+    excluding it would leave nothing to date and the topic would silently keep
+    whatever stamp it already had.
+    """
+    body = [times[n] for n in range(start + 1, end + 1) if n in times]
+    return body or [times[n] for n in range(start, end + 1) if n in times]
+
+
 def topic_spans(lines):
     """[(start_line, end_line, index_of_opening_tag)] for every .topic."""
     starts = [i for i, l in enumerate(lines, 1) if '<div class="topic"' in l]
@@ -273,11 +305,43 @@ def verify():
     return 0
 
 
-def stamp(check_only=False):
+def domain_files(only=None):
+    """The files to stamp — all of them, or the ones named by --only.
+
+    `--only` exists because a whole-tree write is not the safe default it looks
+    like. Stamping one new domain re-derives every other stamp on the site from
+    `git blame`, and blame heuristics differ between git releases: a content
+    wave that added 18 cards also moved ~250 untouched topics into later months,
+    with no edit behind the move. That silently inflates the freshness signal
+    `--report` exists to keep honest. Name the file you actually changed.
+    """
+    files = [p for p in sorted(DATA.glob("*.html")) if p.name not in EXCLUDE]
+    if only is None:
+        return files
+    # A name may be a domain (`script`), which selects all of that domain's
+    # parts, or a single file (`script.03-python.html`) when only one part
+    # changed — which is the point of splitting a domain in the first place.
+    picked, missing = [], []
+    for name in only:
+        if name.endswith(".html"):
+            match = [p for p in files if p.name == name]
+        else:
+            match = [p for p in files
+                     if p.name == f"{name}.html" or p.name.startswith(f"{name}.")]
+        if not match:
+            missing.append(name)
+        picked.extend(match)
+    if missing:
+        raise SystemExit(f"error: no such domain or file: {', '.join(sorted(missing))}")
+    # Deduplicate while keeping build order.
+    seen = set()
+    return [p for p in files if p in picked and not (p in seen or seen.add(p))]
+
+
+def stamp(check_only=False, only=None):
+    files = domain_files(only)
     changed, stamped = [], 0
-    for path in sorted(DATA.glob("*.html")):
-        if path.name in EXCLUDE:
-            continue
+    for path in files:
         rel = f"data/{path.name}"
         ignore = mechanical_revs(rel)
         original = path.read_text(encoding="utf-8")
@@ -286,7 +350,7 @@ def stamp(check_only=False):
 
         out = list(lines)
         for start, end in topic_spans(lines):
-            span_times = [times[n] for n in range(start, end + 1) if n in times]
+            span_times = body_times(times, start, end)
             if not span_times:
                 continue
             when = datetime.fromtimestamp(max(span_times), timezone.utc).strftime("%Y-%m")
@@ -305,7 +369,7 @@ def stamp(check_only=False):
             if not check_only:
                 path.write_text(result, encoding="utf-8")
 
-    print(f"\n{stamped} topics stamped across {len(list(DATA.glob('*.html'))) - len(EXCLUDE)} files.")
+    print(f"\n{stamped} topics stamped across {len(files)} file(s).")
     if changed:
         print(("Would update: " if check_only else "Updated: ") + ", ".join(changed))
     return 1 if (check_only and changed) else 0
@@ -403,6 +467,17 @@ def candidates(limit=50):
     return 0
 
 
+def parse_only(argv):
+    """Domain names following --only, e.g. `--only m365` or `--only m365 endpoint`."""
+    if "--only" not in argv:
+        return None
+    rest = argv[argv.index("--only") + 1:]
+    names = [a for a in rest if not a.startswith("--")]
+    if not names:
+        raise SystemExit("error: --only needs at least one domain name, e.g. --only m365")
+    return names
+
+
 if __name__ == "__main__":
     if "--verify" in sys.argv:
         sys.exit(verify())
@@ -410,4 +485,4 @@ if __name__ == "__main__":
         sys.exit(report())
     if "--candidates" in sys.argv:
         sys.exit(candidates())
-    sys.exit(stamp(check_only="--check" in sys.argv))
+    sys.exit(stamp(check_only="--check" in sys.argv, only=parse_only(sys.argv)))

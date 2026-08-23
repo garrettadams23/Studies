@@ -1991,7 +1991,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🔥</span>
-    <span class="topic-name">Interpreters, Bytecode &amp; JIT <span class="acro-exp">(Just-In-Time)</span> — The Spectrum From Python to the JVM</span>
+    <span class="topic-name">Interpreters, Bytecode &amp; JIT <span class="acro-exp">(Just-In-Time)</span> — The Spectrum From Python to the JVM <span class="acro-exp">(Java Virtual Machine)</span></span>
     <span class="topic-badge">CS • Runtimes</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -2250,3 +2250,1769 @@ valgrind --leak-check=full ./prog</pre>
 </div>
 
 <!-- /domain-body cs -->
+
+<!-- ── TOPIC: MODULAR ARITHMETIC ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🕐</span>
+    <span class="topic-name">Modular Arithmetic — The Clock Maths Behind Hashing, Checksums &amp; Crypto</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Counting on a Clock That Wraps</div>
+      <div class="concept-desc">
+        Modular arithmetic is ordinary arithmetic on a finite circle: everything is reduced to its
+        remainder after division by some modulus. It is not a niche topic — it is what makes hash
+        tables index, what makes checksums detect corruption, what makes sequence numbers wrap
+        cleanly, and what public-key cryptography is built from. Anywhere a computer maps unbounded
+        values into a bounded space, this is the operation doing it.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># "a ≡ b (mod n)" means a and b leave the same remainder when divided by n</span>
+   17 ≡ 5 (mod 12)        <span class="com"># 17:00 is 5 o'clock</span>
+   -1 ≡ 11 (mod 12)       <span class="com"># going back an hour from midnight</span>
+
+<span class="com"># Arithmetic survives the reduction — you may reduce at any point</span>
+   (a + b) mod n = ((a mod n) + (b mod n)) mod n
+   (a · b) mod n = ((a mod n) · (b mod n)) mod n
+
+<span class="com"># which is why huge modular exponentiations stay computable:</span>
+   7^100 mod 13  <span class="com"># never needs 7^100 to be written down</span></pre>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Where It Shows Up in Systems You Already Use</div>
+      <div class="concept-desc">
+        Each row is the same operation wearing different clothes, and knowing that makes several
+        unrelated-looking bugs recognisable as one family.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>System</th><th>The modular step</th><th>Failure it causes</th></tr></thead>
+          <tbody>
+            <tr><td>Hash tables</td><td>index = hash mod bucket_count</td><td>A poor modulus clusters keys; primes spread them</td></tr>
+            <tr><td>Checksums and CRC <span class="acro-exp">(Cyclic Redundancy Check)</span></td><td>Remainder of a polynomial division</td><td>Two errors that cancel are invisible to it</td></tr>
+            <tr><td>TCP <span class="acro-exp">(Transmission Control Protocol)</span> sequence numbers</td><td>Wrap at 2³²</td><td>Comparisons must be modular, or wrap looks like a huge jump backwards</td></tr>
+            <tr><td>Diffie–Hellman and RSA <span class="acro-exp">(Rivest-Shamir-Adleman)</span></td><td>Exponentiation in a modular group</td><td>—</td></tr>
+            <tr><td>Consistent hashing</td><td>Position on a ring of size 2ⁿ</td><td>Plain mod-N reshuffles everything when N changes</td></tr>
+            <tr><td>Time and dates</td><td>Wrapping units</td><td>Off-by-one at the wrap: hour 24, month 12, the epoch</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The consistent-hashing row is the practically important one: <code>server = hash mod N</code>
+          looks fine until N changes, at which point nearly every key moves. That single property is
+          why distributed caches use a ring instead.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Negative-Number Trap</div>
+      <div class="concept-desc">
+        Languages disagree about the sign of the remainder for negative operands, and the
+        disagreement is silent. This is a genuine source of production bugs in sharding and
+        bucketing code, where a hash function returning a negative value produces a negative index.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># The same expression, two answers</span>
+   Python:      -7 % 3   ->   2      <span class="com"># result takes the sign of the divisor</span>
+   C / Java / JS: -7 % 3 ->  -1      <span class="com"># result takes the sign of the dividend</span>
+
+<span class="com"># Safe pattern when the value may be negative:</span>
+   index = ((h % n) + n) % n</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: BOOLEAN ALGEBRA ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔲</span>
+    <span class="topic-name">Boolean Algebra — Truth Tables, De Morgan &amp; Firewall Logic</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Laws Worth Knowing by Heart</div>
+      <div class="concept-desc">
+        Boolean algebra is where firewall rules, search queries, access-control expressions and
+        conditionals all live. Two laws do most of the practical work: De Morgan's, for negating a
+        compound condition correctly, and distribution, for restructuring a rule without changing
+        what it matches.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># De Morgan — the one people get wrong under pressure</span>
+   NOT (A AND B)  =  (NOT A) OR  (NOT B)
+   NOT (A OR  B)  =  (NOT A) AND (NOT B)
+
+<span class="com"># Distribution</span>
+   A AND (B OR C) = (A AND B) OR (A AND C)
+   A OR  (B AND C) = (A OR B) AND (A OR C)
+
+<span class="com"># Absorption — spots redundant clauses in a grown-over rule set</span>
+   A OR  (A AND B) = A
+   A AND (A OR  B) = A</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          "Block everything that is not HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> and not from the office" is a De Morgan problem, and
+          getting it backwards produces a rule that blocks nothing at all — while looking, in the
+          console, exactly like the rule that was intended.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Truth Tables as a Debugging Tool</div>
+      <div class="concept-desc">
+        When a condition is wrong and staring at it is not helping, enumerate it. Two variables is
+        four rows, three is eight — writing them out takes a minute and settles the argument
+        definitively, which is faster than the third round of "but surely it should…".
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>A</th><th>B</th><th>A AND B</th><th>A OR B</th><th>A XOR <span class="acro-exp">(Exclusive OR)</span> B</th><th>NOT(A AND B)</th></tr></thead>
+          <tbody>
+            <tr><td>F</td><td>F</td><td>F</td><td>F</td><td>F</td><td>T</td></tr>
+            <tr><td>F</td><td>T</td><td>F</td><td>T</td><td>T</td><td>T</td></tr>
+            <tr><td>T</td><td>F</td><td>F</td><td>T</td><td>T</td><td>T</td></tr>
+            <tr><td>T</td><td>T</td><td>T</td><td>T</td><td>F</td><td>F</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          XOR is the row worth memorising separately: it is "exactly one", it is its own inverse, and
+          that self-inverse property is why it appears in parity checks, RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span>, and every toy cipher
+          that turns out to be breakable.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Short-Circuit Evaluation Is a Security Property, Not Just a Speed One</div>
+      <div class="concept-desc">
+        Most languages stop evaluating <code>A AND B</code> the moment A is false. That is usually
+        discussed as an optimisation, and it has two consequences that matter more: a side effect in
+        B may never happen, and the <em>time taken</em> reveals which operand decided the result.
+        The second is how timing side channels leak information from comparisons, which is why
+        cryptographic code uses constant-time equality rather than the ordinary kind.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: PROBABILITY FUNDAMENTALS ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎲</span>
+    <span class="topic-name">Probability Fundamentals — Independence, Conditional Probability &amp; Expectation</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Four Rules That Cover Most Engineering Uses</div>
+      <div class="concept-desc">
+        Very little probability is needed to reason well about availability, retries, collisions and
+        alert volumes — but the little that is needed has to be right, because the intuitions are
+        actively misleading.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># 1. Independent events multiply</span>
+   P(A and B) = P(A) · P(B)          <span class="com"># only if independent</span>
+
+<span class="com"># 2. "At least one" is easier through its complement</span>
+   P(at least one of n) = 1 - (1 - p)^n
+
+<span class="com"># 3. Conditional probability</span>
+   P(A | B) = P(A and B) / P(B)
+
+<span class="com"># 4. Expectation is a weighted average, and it adds — always</span>
+   E[X] = Σ (value · probability)
+   E[X + Y] = E[X] + E[Y]            <span class="com"># even when X and Y are dependent</span></pre>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Independence Assumption Is Where Availability Maths Goes Wrong</div>
+      <div class="concept-desc">
+        Redundancy calculations multiply failure probabilities, which is only valid when failures are
+        independent. Real systems share racks, power feeds, network paths, certificates, control
+        planes and deployment pipelines — so the correlated case is the normal case, and the
+        calculated number is an upper bound on reality rather than an estimate of it.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Three servers, each 99% available, "so we get 99.9999%"</span>
+   P(all three down) = 0.01^3 = 0.000001
+
+<span class="com"># True only if the three fail independently. They do not if they share:</span>
+   - the same power feed or rack
+   - the same expiring TLS certificate
+   - the same config push
+   - the same upstream dependency
+   - the same bug, deployed to all three at 14:00</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The last line is the one that causes real outages. A simultaneous deployment makes three
+          servers one server, statistically — and no amount of hardware redundancy addresses it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Expectation, Applied to Retries and Alert Volume</div>
+      <div class="concept-desc">
+        Expectation answers "how much of this should we expect per day", which is the question behind
+        capacity, on-call load and retry budgets. Its most useful property is that it adds even when
+        events are dependent, so a total can be built from parts without worrying about correlation.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Alert volume from one rule</span>
+   E[alerts/day] = events/day · P(rule fires | event)
+
+<span class="com"># Retries: expected attempts until success, p = success probability</span>
+   E[attempts] = 1 / p            <span class="com"># p = 0.5 -> 2 attempts on average</span>
+
+<span class="com"># Careful: the average is not the tail. With p = 0.5,</span>
+<span class="com"># about 1 request in 1,000 still needs 10 or more attempts.</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          That last comment is the whole reason retry budgets and circuit breakers exist: systems are
+          sized for the average and taken down by the tail.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: BAYES & BASE RATES ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧮</span>
+    <span class="topic-name">Bayes' Theorem &amp; Base Rates — Why a 99%-Accurate Detector Floods the SOC <span class="acro-exp">(Security Operations Center)</span></span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Single Most Useful Piece of Maths in Security Operations</div>
+      <div class="concept-desc">
+        Detector accuracy is quoted as a property of the detector. It is not: the probability that an
+        alert is real depends just as much on how rare the thing being detected is. When the base
+        rate is low — and in security it is always low — even an excellent detector produces mostly
+        false positives, and no amount of vendor benchmarking changes that arithmetic.
+      </div>
+      <div class="dw">
+        <pre class="code-block">   P(real | alert) = P(alert | real) · P(real)
+                     ─────────────────────────────
+                              P(alert)
+
+<span class="com"># Worked: 1,000,000 events/day, 100 of them malicious (1 in 10,000)</span>
+<span class="com"># Detector: catches 99% of real ones, 1% false-positive rate</span>
+
+   true positives  = 100 × 0.99            =     99
+   false positives = 999,900 × 0.01        =  9,999
+   ────────────────────────────────────────────────
+   P(real | alert) = 99 / (99 + 9,999)     ≈  0.98%
+
+<span class="com"># 99% accurate. 1 alert in 100 is real. Both statements are true.</span></pre>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">What This Means for Building Detections</div>
+      <div class="concept-desc">
+        The arithmetic is not a counsel of despair; it tells you precisely which levers move the
+        outcome, and which do not. Chasing a higher true-positive rate barely matters — the
+        denominator is dominated by false positives.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Lever</th><th>Effect on alert quality</th></tr></thead>
+          <tbody>
+            <tr><td>Raise the true-positive rate 99% → 99.9%</td><td>Almost none — 99 becomes 99.9</td></tr>
+            <tr><td>Cut the false-positive rate 1% → 0.1%</td><td>Tenfold improvement; this is the lever</td></tr>
+            <tr><td>Raise the base rate by narrowing scope</td><td>Large — run the rule only where the behaviour is abnormal</td></tr>
+            <tr><td>Require two independent signals</td><td>Multiplies the false-positive rates together</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Rows three and four are why enrichment and correlation outperform threshold-tightening —
+          the same conclusion reached operationally in
+          <span class="xref">Enrichment — The Context That Turns an Alert Into a Decision</span> in
+          the Blue Team domain, here derived from the arithmetic.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Same Trap, Outside Security</div>
+      <div class="concept-desc">
+        Base-rate neglect is not a security-specific error; it is a general feature of human
+        reasoning about evidence, and it recurs wherever a rare thing is being screened for.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Domain</th><th>The trap</th></tr></thead>
+          <tbody>
+            <tr><td>Medical screening</td><td>A positive test for a rare condition is usually a false positive</td></tr>
+            <tr><td>Interviewing</td><td>A rare signal in a large applicant pool identifies mostly noise</td></tr>
+            <tr><td>Fraud scoring</td><td>Legitimate transactions vastly outnumber fraud; precision suffers accordingly</td></tr>
+            <tr><td>Monitoring thresholds</td><td>Healthy periods vastly outnumber incidents</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DISTRIBUTIONS THAT MATTER ──────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📈</span>
+    <span class="topic-name">Distributions That Matter — Normal, Poisson, Power-Law &amp; Long Tails</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Three Shapes, and What Each One Is For</div>
+      <div class="concept-desc">
+        Almost every quantity an engineer measures follows one of a small number of shapes, and
+        picking the wrong one produces confident nonsense — most commonly by assuming a normal
+        distribution for something that is not remotely normal.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Distribution</th><th>Describes</th><th>Examples</th></tr></thead>
+          <tbody>
+            <tr><td>Normal</td><td>Sums of many small independent effects</td><td>Measurement error; aggregate noise</td></tr>
+            <tr><td>Poisson</td><td>Counts of independent events in a fixed window</td><td>Requests per second, tickets per hour, failures per month</td></tr>
+            <tr><td>Exponential</td><td>Time between Poisson events</td><td>Gaps between arrivals</td></tr>
+            <tr><td>Power-law / heavy-tailed</td><td>Scale-free quantities where extremes dominate</td><td>File sizes, request latency, incident cost, session length</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Latency is the one that catches people. It is not normal, it has no meaningful "average
+          case", and its tail is where the user experience actually lives — so summarising it with a
+          mean and a standard deviation discards precisely the information that mattered.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Poisson, and Why "Two Failures in One Week" Is Usually Not a Trend</div>
+      <div class="concept-desc">
+        Independent random events arrive in clusters — that is what randomness looks like, not what a
+        problem looks like. A system averaging one failure a month will fairly often produce two in a
+        week, and treating every cluster as a signal produces investigations that find nothing and
+        conclusions that were never supported.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Poisson: P(k events) when the mean rate over the window is λ</span>
+   P(k) = (λ^k · e^-λ) / k!
+
+<span class="com"># λ = 1 failure per month. In a given month:</span>
+   P(0) = 37%      P(1) = 37%      P(2) = 18%      P(3+) = 8%
+
+<span class="com"># So ~1 month in 4 sees two or more failures, with nothing having changed.</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The useful discipline: before declaring a trend, ask what the rate would produce by chance.
+          Often the answer is "exactly this", and the investigation can be spent somewhere it will
+          find something.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Heavy Tails Break the Habits Learned on Normal Data</div>
+      <div class="concept-desc">
+        With a heavy-tailed quantity, the mean is unstable, standard deviations are close to
+        meaningless, and a single sample can exceed the sum of everything before it. Capacity
+        planning done on averages under-provisions systematically, because the events that consume
+        the capacity are the ones the average was smoothing away.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Habit</th><th>Under a heavy tail</th></tr></thead>
+          <tbody>
+            <tr><td>Report the mean</td><td>Dominated by rare extremes; describes nobody's experience</td></tr>
+            <tr><td>Use ±3 standard deviations as "impossible"</td><td>Happens regularly</td></tr>
+            <tr><td>Size for the average</td><td>Guarantees saturation during the events that matter</td></tr>
+            <tr><td>Report percentiles and the max</td><td>Correct — describes the shape rather than assuming one</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: PERCENTILES & LATENCY ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📊</span>
+    <span class="topic-name">Percentiles &amp; Latency — Why p99 Beats the Mean, and How to Aggregate It Wrongly</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">What a Percentile Actually Claims</div>
+      <div class="concept-desc">
+        p99 = 200ms means 99% of requests completed within 200ms. It says nothing about how bad the
+        remaining 1% was — p99 and p99.9 can differ by two orders of magnitude, and frequently do.
+        The mean, meanwhile, describes a request that may not exist: with a bimodal distribution —
+        cache hit or cache miss — the average sits in the empty space between the two humps.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Statistic</th><th>Answers</th><th>Hides</th></tr></thead>
+          <tbody>
+            <tr><td>Mean</td><td>Total work ÷ count</td><td>Everything about the shape</td></tr>
+            <tr><td>p50 (median)</td><td>The typical experience</td><td>The tail entirely</td></tr>
+            <tr><td>p99</td><td>What the unlucky 1% see</td><td>How bad the worst 0.1% is</td></tr>
+            <tr><td>p99.9 and max</td><td>The genuine worst case</td><td>Nothing — but noisy on small samples</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          A user making 100 requests to load a page is very likely to hit the p99 at least once —
+          <code>1 - 0.99^100 ≈ 63%</code>. That is why tail latency dominates perceived performance,
+          and why the median looks healthy while people complain the site is slow.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">You Cannot Average Percentiles — and Every Dashboard Tries</div>
+      <div class="concept-desc">
+        This is the most widespread quantitative error in operations monitoring. Averaging each
+        server's p99, or averaging a p99 over time buckets, produces a number that is not the p99 of
+        anything and is usually optimistic.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Three servers, p99 latency this minute:</span>
+   A: 100ms (10,000 requests)
+   B: 100ms (10,000 requests)
+   C: 900ms (   100 requests)
+
+   mean of the p99s     = (100 + 100 + 900) / 3 = 367ms   <span class="com"># describes nothing</span>
+   true fleet p99       ≈ 100ms                            <span class="com"># C is 0.5% of traffic</span>
+
+<span class="com"># And the reverse error is just as common:</span>
+<span class="com"># averaging one server's per-minute p99 over an hour hides the bad minute.</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The fix is to aggregate the <em>distributions</em>, not the summaries — histogram buckets
+          or a sketch such as t-digest, from which any percentile can be recomputed correctly at any
+          grouping. This is why modern metrics systems store latency as histograms rather than as
+          precomputed percentiles.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Sample Size, and Percentiles You Are Not Entitled To</div>
+      <div class="concept-desc">
+        A percentile needs enough observations above it to mean anything. Reporting p99.9 from a
+        thousand requests is reporting the single worst request and calling it a statistic — it will
+        swing wildly between windows for no reason but chance.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>To report</th><th>You want at least</th></tr></thead>
+          <tbody>
+            <tr><td>p50</td><td>A few dozen samples</td></tr>
+            <tr><td>p95</td><td>Hundreds</td></tr>
+            <tr><td>p99</td><td>Thousands</td></tr>
+            <tr><td>p99.9</td><td>Tens of thousands, per window</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Where these numbers become service promises rather than dashboard decoration, see
+          <span class="xref">SLIs, SLOs &amp; Error Budgets</span> in the Operations domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: BIRTHDAY PARADOX & COLLISIONS ──────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎂</span>
+    <span class="topic-name">The Birthday Paradox &amp; Collisions — Hash Collisions, ID Reuse &amp; Key Spaces</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Collisions Arrive at the Square Root, Not at the Size</div>
+      <div class="concept-desc">
+        Intuition says a space of N values needs roughly N items before two coincide. The truth is
+        about √N, because collisions depend on the number of <em>pairs</em>, which grows
+        quadratically. Twenty-three people give a better-than-even chance of a shared birthday out of
+        365 days — and the same arithmetic decides when a hash function, an ID scheme or a token
+        space starts repeating.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Pairs among n items grow as n(n-1)/2 — that is the engine of it</span>
+   n = 23  ->  253 pairs  ->  P(shared birthday) ≈ 50%
+
+<span class="com"># For a space of N possible values, a 50% chance of collision at roughly</span>
+   n ≈ 1.18 · √N
+
+<span class="com"># Which for hash outputs means:</span>
+   32-bit  (4.3e9)     ->  collisions at ~77,000 items      <span class="com"># trivially reachable</span>
+   64-bit  (1.8e19)    ->  collisions at ~5 billion
+   128-bit (3.4e38)    ->  collisions at ~2^64
+   256-bit             ->  collisions at ~2^128             <span class="com"># not reachable</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The 32-bit row is the practical warning. A 32-bit hash used as a unique key will collide in
+          a table of a hundred thousand rows, and the resulting bug — two different things treated as
+          one — is the kind that corrupts data quietly rather than crashing.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Where This Decides a Real Design Choice</div>
+      <div class="concept-desc">
+        Every identifier scheme is a bet that collisions will not happen at the scale you reach. The
+        square-root rule is how to check the bet before making it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Choice</th><th>The birthday consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Random 128-bit identifiers</td><td>Safe at any realistic scale — the standard reason they are 128 bits</td></tr>
+            <tr><td>Truncating a hash to 8 hex characters</td><td>32 bits; expect collisions in the tens of thousands</td></tr>
+            <tr><td>Short URL <span class="acro-exp">(Uniform Resource Locator)</span> codes, 6 characters</td><td>Check √N against your growth, or plan for retries on collision</td></tr>
+            <tr><td>Session tokens</td><td>Collision is a security event, not just a bug — size for it</td></tr>
+            <tr><td>Digital signature hash strength</td><td>A birthday attack halves the effective bits: 256-bit hash → 128-bit security</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is why hash sizes are what they are. Collision resistance is worth half the
+          output length, so a 128-bit hash offers only 64 bits against a birthday attack — reachable,
+          which is exactly why it was retired.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: ENTROPY & RANDOMNESS ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔀</span>
+    <span class="topic-name">Entropy &amp; Randomness — Measuring It, and Where Implementations Lose It</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Entropy Measures Uncertainty, Not Messiness</div>
+      <div class="concept-desc">
+        Shannon entropy is the average number of bits needed to describe an outcome drawn from a
+        distribution. It is a property of <em>the process that produced a value</em>, not of the
+        value itself — which is the point most password-strength meters get wrong. A password
+        produced by flipping coins has its entropy no matter how tidy it looks; one produced by
+        substituting characters in a dictionary word has very little, however messy it looks.
+      </div>
+      <div class="dw">
+        <pre class="code-block">   H = - Σ p(x) · log₂ p(x)          <span class="com"># bits</span>
+
+<span class="com"># Uniform choice from N equally likely options:</span>
+   H = log₂(N)
+
+<span class="com"># A password of L characters chosen uniformly from an alphabet of size A:</span>
+   H = L · log₂(A)
+
+   12 chars, lower+upper+digits (A=62)  ->  12 × 5.95  ≈  71 bits
+   4 random words from a 7,776-word list ->  4 × 12.9  ≈  52 bits
+   "P@ssw0rd!"                           ->  a few bits — it is on every list</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The third line is the honest one. Entropy formulas assume uniform random choice; the moment
+          a human chooses, the assumption fails and the number is fiction.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Where Real Systems Lose Their Randomness</div>
+      <div class="concept-desc">
+        Cryptographic failures caused by weak randomness are among the most damaging and least
+        visible, because the output looks entirely normal. Every item here has caused real,
+        documented compromises.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Failure</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Using the language's default <code>random()</code></td><td>Predictable from a few outputs — never for keys, tokens or salts</td></tr>
+            <tr><td>Seeding from the clock</td><td>The seed space is tiny and guessable</td></tr>
+            <tr><td>Key generation at first boot</td><td>Embedded devices with no entropy source generate duplicate keys across a whole fleet</td></tr>
+            <tr><td>Virtual machines cloned from a snapshot</td><td>Every clone continues from the same state</td></tr>
+            <tr><td>Reusing a nonce or IV</td><td>Catastrophic for stream ciphers and some modes — recovers plaintext or the key</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The rule that avoids all five: take randomness from the operating system's cryptographic
+          source — <code>/dev/urandom</code>, <code>getrandom()</code>, the platform CSPRNG <span class="acro-exp">(Cryptographically Secure Pseudorandom Number Generator)</span> — and
+          never from anything you seeded yourself.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Entropy Is Also Why Compression and Encryption Do Not Mix Well</div>
+      <div class="concept-desc">
+        Compression works by removing redundancy — that is, by raising the entropy per byte toward
+        the maximum. Properly encrypted data already has maximum entropy, so it cannot be compressed
+        at all, which is why archives must be compressed <em>before</em> encryption. And compressing
+        before encrypting leaks information through the resulting length, which is the mechanism
+        behind several web attacks: the size of the ciphertext reveals how well the plaintext
+        compressed, and therefore something about what was in it.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: PRIMES & FACTORING ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔑</span>
+    <span class="topic-name">Primes &amp; Factoring — Why RSA <span class="acro-exp">(Rivest-Shamir-Adleman)</span> Rests on a Hard Problem</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Easy One Way, Hard the Other</div>
+      <div class="concept-desc">
+        Public-key cryptography rests on operations that are cheap to perform and expensive to
+        reverse. RSA's is multiplication: multiplying two large primes takes microseconds, and
+        recovering those primes from the product is, as far as anyone knows publicly, infeasible at
+        the sizes in use. Nothing proves it is hard — that is the uncomfortable part — but a great
+        deal of effort has failed to make it easy.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Trivially easy</span>
+   p × q = n                       <span class="com"># two 1024-bit primes -> a 2048-bit modulus</span>
+
+<span class="com"># Believed infeasible for large n</span>
+   n -> (p, q)
+
+<span class="com"># The security is not "big numbers" — it is the gap between the two costs.</span>
+<span class="com"># Trial division would need ~2^1024 steps. The best known methods are far</span>
+<span class="com"># faster than that and still nowhere near feasible at 2048 bits.</span></pre>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Why Key Sizes Are the Numbers They Are</div>
+      <div class="concept-desc">
+        RSA key sizes are large and grow awkwardly, because the best factoring algorithms are
+        sub-exponential: adding bits raises the attacker's cost more slowly than it would for a
+        symmetric cipher. That is the whole reason a symmetric key of 128 bits and an RSA key of
+        3072 bits are considered comparable.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Rough security level</th><th>Symmetric</th><th>RSA / DH <span class="acro-exp">(Diffie-Hellman)</span></th><th>Elliptic curve</th></tr></thead>
+          <tbody>
+            <tr><td>Legacy, deprecated</td><td>80 bits</td><td>1024</td><td>160</td></tr>
+            <tr><td>Standard today</td><td>128 bits</td><td>3072</td><td>256</td></tr>
+            <tr><td>Higher assurance</td><td>192 bits</td><td>7680</td><td>384</td></tr>
+            <tr><td>Long-term</td><td>256 bits</td><td>15360</td><td>512</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          These equivalences are estimates from published cryptanalysis and shift as methods improve
+          — treat the shape as stable and
+          <span class="volatile" data-checked="2026-08">check current guidance before choosing a
+          parameter</span>. The trend they encode is not in doubt: RSA sizes grow badly, which is
+          most of why elliptic curves took over.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">How RSA Actually Breaks in Practice</div>
+      <div class="concept-desc">
+        Deployed RSA is rarely defeated by factoring. It is defeated by implementation — the maths
+        holds and the surrounding engineering does not, which is the usual shape of cryptographic
+        failure.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Real-world break</th><th>Cause</th></tr></thead>
+          <tbody>
+            <tr><td>Shared prime factors across a fleet</td><td>Weak entropy at key generation — a shared factor makes both keys trivially recoverable</td></tr>
+            <tr><td>Padding-oracle attacks</td><td>The padding scheme, not the modulus</td></tr>
+            <tr><td>Timing side channels</td><td>Non-constant-time exponentiation leaking key bits</td></tr>
+            <tr><td>Small or reused exponents with no padding</td><td>Textbook RSA is not a secure scheme on its own</td></tr>
+            <tr><td>The key sitting unprotected on disk</td><td>The most common break of all, and not mathematical at all</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Note the first row's dependence on the previous card: two keys generated with poor
+          randomness may share a prime, and a shared factor is found by taking a GCD — no factoring
+          required. Entropy failures do not weaken keys gradually; they collapse them.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DISCRETE LOGS & ELLIPTIC CURVES ────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📐</span>
+    <span class="topic-name">Discrete Logs &amp; Elliptic Curves — The Other Hard Problem, and Why Keys Shrank</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Exponentiation Is Easy; Undoing It Is Not</div>
+      <div class="concept-desc">
+        The second hard problem underpinning public-key cryptography is the discrete logarithm: given
+        <code>g</code>, <code>p</code> and <code>g^x mod p</code>, recover <code>x</code>. Computing
+        the power is fast even for enormous exponents; recovering the exponent is not. Diffie–Hellman
+        key agreement is this asymmetry used directly, and it is how two parties who have never met
+        derive a shared secret over a channel that everyone can read.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Diffie-Hellman, in four lines</span>
+   public:   p (a large prime), g (a generator)
+   Alice:    picks secret a, sends  A = g^a mod p
+   Bob:      picks secret b, sends  B = g^b mod p
+   both:     shared = B^a = A^b = g^(ab) mod p
+
+<span class="com"># An eavesdropper sees p, g, A, B — and needs a discrete log to get further.</span>
+<span class="com"># Note what it does NOT provide: any idea who you agreed a key with.</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          That last line is the reason certificates exist. Key agreement without authentication
+          agrees a perfectly good key with a machine-in-the-middle.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Elliptic Curves — Same Problem, Harder Playing Field</div>
+      <div class="concept-desc">
+        An elliptic curve provides a different set of objects to do the same exponentiation trick in,
+        with one decisive property: the best known attacks against the curve version are far weaker
+        than the best attacks against the integer version. Nobody has found a sub-exponential attack
+        on well-chosen curves, so security grows with key size much faster — which is why 256 bits of
+        elliptic curve stands in for 3072 bits of RSA <span class="acro-exp">(Rivest-Shamir-Adleman)</span>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Consequence</th><th>Why it mattered</th></tr></thead>
+          <tbody>
+            <tr><td>Smaller keys and signatures</td><td>Certificates, handshakes and packets all shrink</td></tr>
+            <tr><td>Less computation per operation</td><td>Mobile and embedded devices can afford real crypto</td></tr>
+            <tr><td>Faster handshakes</td><td>A measurable share of TLS <span class="acro-exp">(Transport Layer Security)</span> connection latency</td></tr>
+            <tr><td>Curve choice matters enormously</td><td>A badly chosen or backdoored curve undoes all of it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is why the curves in common use are few and heavily scrutinised, and why
+          "we designed our own curve" is a statement that should end a procurement conversation.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Both Problems Fall to the Same Quantum Algorithm</div>
+      <div class="concept-desc">
+        Factoring and discrete logarithms look like different problems and are, mathematically,
+        close relatives — which is why a single quantum algorithm would break both. That is the
+        entire reason post-quantum cryptography moved to a different family of hard problems
+        altogether, rather than simply increasing key sizes: there is no key size at which these two
+        survive that algorithm. Symmetric cryptography and hashes are affected far less, needing
+        roughly doubled key lengths rather than replacement.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Primitive</th><th>Quantum impact</th></tr></thead>
+          <tbody>
+            <tr><td>RSA, Diffie–Hellman, elliptic curves</td><td>Broken outright by a sufficiently large quantum computer</td></tr>
+            <tr><td>AES-128</td><td>Weakened to roughly 64-bit security — move to 256</td></tr>
+            <tr><td>SHA-256</td><td>Weakened for collisions; still substantial</td></tr>
+            <tr><td>Lattice and hash-based schemes</td><td>The families selected for post-quantum standards</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The migration this implies, and the "harvest now, decrypt later" reasoning that makes it
+          urgent for long-lived secrets, is covered in the Security domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: VECTORS & EMBEDDINGS ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧭</span>
+    <span class="topic-name">Vectors &amp; Embeddings — Similarity, Cosine Distance &amp; What a Dimension Means</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">An Embedding Is a Position, and Meaning Becomes Geometry</div>
+      <div class="concept-desc">
+        An embedding maps something — a word, a document, an image, a log line — to a list of numbers,
+        a point in a high-dimensional space. The whole trick is that the mapping is trained so that
+        similar things land near each other. Once that holds, questions about meaning become
+        questions about distance, and distance is something a computer can answer at enormous scale.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Cosine similarity — the angle between two vectors, ignoring magnitude</span>
+   cos(a, b) = (a · b) / (|a| · |b|)
+
+   a · b  = Σ aᵢbᵢ                  <span class="com"># dot product</span>
+   |a|    = √(Σ aᵢ²)                <span class="com"># length</span>
+
+<span class="com">#  1.0 = same direction     0.0 = unrelated     -1.0 = opposite</span>
+
+<span class="com"># Euclidean distance — straight-line separation, magnitude included</span>
+   d(a, b) = √(Σ (aᵢ - bᵢ)²)</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          Cosine is the usual choice for text because document length should not make two documents
+          dissimilar. A long article and a short note about the same subject point the same way; only
+          their magnitudes differ.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">What a Dimension Is, and What It Is Not</div>
+      <div class="concept-desc">
+        Individual dimensions of a learned embedding rarely mean anything on their own. They are not
+        "topic" or "sentiment" axes; they are whatever the training process found useful, and they
+        are usually entangled. What carries meaning is the geometry of the whole space — directions
+        and neighbourhoods — which is why inspecting a single coordinate tells you nothing and why
+        interpretability is a research field rather than a lookup.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Believing</th><th>Reality</th></tr></thead>
+          <tbody>
+            <tr><td>"Dimension 42 encodes formality"</td><td>Almost never; features are distributed across many dimensions</td></tr>
+            <tr><td>"More dimensions is better"</td><td>Trade-off: capacity against storage, speed and the curse below</td></tr>
+            <tr><td>"Embeddings are comparable across models"</td><td>They are not — a vector means nothing outside the model that made it</td></tr>
+            <tr><td>"Similar means relevant"</td><td>Similarity is the model's notion of similar, which may not be the task's</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The third row has operational teeth: re-embedding a corpus with a new model means
+          re-embedding <em>all</em> of it. Mixing vectors from two model versions in one index
+          produces results that are subtly and unfixably wrong.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: GRADIENT DESCENT ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⛰️</span>
+    <span class="topic-name">Derivatives &amp; Gradient Descent — How a Model Actually Learns</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Walking Downhill on a Surface You Cannot See</div>
+      <div class="concept-desc">
+        Training is an optimisation: there is a loss function measuring how wrong the model currently
+        is, and the parameters are adjusted to make it smaller. The gradient is the direction of
+        steepest increase, so stepping against it goes downhill. The model never sees the whole
+        landscape — it only ever knows the slope where it is standing, and takes a small step.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># One parameter update, which is the entire idea</span>
+   θ  ←  θ - η · ∇L(θ)
+
+   θ      the parameters
+   L(θ)   the loss — how wrong the model is right now
+   ∇L     the gradient — the slope, per parameter
+   η      the learning rate — how big a step to take
+
+<span class="com"># Repeat a few million times.</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The derivative in the calculus domain is the same object: a rate of change. The only new
+          idea here is doing it in millions of dimensions at once, one per parameter, which is why
+          the operation is a matrix multiplication and why GPUs <span class="acro-exp">(Graphics Processing Unit)</span> are involved.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Learning Rate Is Where Training Goes Wrong</div>
+      <div class="concept-desc">
+        Most training failures reduce to the step size, and the symptoms are distinctive enough to
+        diagnose from the loss curve alone.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
+          <tbody>
+            <tr><td>Loss oscillates or explodes to infinity</td><td>Learning rate too high — the step overshoots the valley</td></tr>
+            <tr><td>Loss falls painfully slowly</td><td>Learning rate too low</td></tr>
+            <tr><td>Loss plateaus early and stays</td><td>A flat region, a dead activation, or a vanishing gradient</td></tr>
+            <tr><td>Training loss falls, validation loss rises</td><td>Not an optimisation problem — it is memorising the training set</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is the one that matters most in practice: the optimiser is succeeding
+          perfectly at the task it was given, and the task was the wrong one. That is a statement
+          about the loss function and the data, not about the descent.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Stochastic, and Why Noise Helps</div>
+      <div class="concept-desc">
+        Computing the gradient over the entire dataset for every step is unaffordable, so the
+        gradient is estimated from a small batch. The estimate is noisy — and the noise turns out to
+        be useful rather than merely tolerable, because it lets the process escape shallow dips it
+        would otherwise settle in. Batch size therefore trades gradient quality against steps per
+        second, and against the memory available.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CURSE OF DIMENSIONALITY ────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🌌</span>
+    <span class="topic-name">Dimensionality &amp; the Curse — Why High-Dimensional Intuition Fails</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">In High Dimensions, Everything Is Far Away and Equally So</div>
+      <div class="concept-desc">
+        Geometric intuition is trained in two and three dimensions and stops working in hundreds. The
+        specific failure that matters: as dimensions increase, the distances between random points
+        concentrate — the nearest and the farthest neighbour become nearly the same distance away.
+        Since "nearest" is what similarity search, clustering and anomaly detection all rest on, this
+        undermines them from below.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Effect</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Distances concentrate</td><td>Nearest-neighbour becomes less meaningful as dimensions grow</td></tr>
+            <tr><td>Volume moves to the shell</td><td>Almost all of a high-dimensional ball's volume is near its surface</td></tr>
+            <tr><td>Sampling gets exponentially sparse</td><td>Covering a space needs data growing exponentially with dimension</td></tr>
+            <tr><td>Everything is nearly orthogonal</td><td>Random vectors are almost always close to perpendicular</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last effect is the one with a positive use: near-orthogonality is why a
+          high-dimensional space can hold an enormous number of distinguishable directions, which is
+          exactly what makes embeddings work at all. The curse and the capability are the same
+          property seen from two sides.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">What Practitioners Do About It</div>
+      <div class="concept-desc">
+        Nobody defeats the geometry; they work with it. Each of these is standard practice, and each
+        is a response to one of the effects above.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Response</th><th>Addresses</th></tr></thead>
+          <tbody>
+            <tr><td>Reduce dimensions before clustering</td><td>Distance concentration</td></tr>
+            <tr><td>Cosine rather than Euclidean distance</td><td>Magnitude noise; angles stay informative for longer</td></tr>
+            <tr><td>Approximate nearest-neighbour indexes</td><td>Exact search being both slow and barely more meaningful</td></tr>
+            <tr><td>Feature selection over feature accumulation</td><td>Sparsity — every added dimension needs more data to justify</td></tr>
+            <tr><td>Learned embeddings rather than raw features</td><td>Training concentrates the useful structure into fewer dimensions</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The practical rule that follows: be suspicious of a similarity threshold tuned on
+          low-dimensional data and applied to embeddings. The number that separated "similar" from
+          "unrelated" at 10 dimensions means something quite different at 1,000.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SETS & RELATIONS ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔵</span>
+    <span class="topic-name">Sets &amp; Relations — The Formal Spine of SQL <span class="acro-exp">(Structured Query Language)</span> Joins and Access Control</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Table Is a Set, and a Join Is a Set Operation</div>
+      <div class="concept-desc">
+        The relational model is called relational because a table <em>is</em> a relation: a set of
+        tuples. Once that lands, SQL stops being a list of clauses to memorise and becomes a small
+        algebra — every query is a composition of set operations, and the operators behave the way
+        set operators behave.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># The operations, and their SQL spelling</span>
+   A ∪ B    union            ->  UNION
+   A ∩ B    intersection     ->  INNER JOIN on the key, or INTERSECT
+   A \ B    difference       ->  EXCEPT, or LEFT JOIN ... WHERE b.key IS NULL
+   A × B    Cartesian product ->  CROSS JOIN — every row against every row
+
+<span class="com"># A join is a filtered Cartesian product. That is not a metaphor:</span>
+   SELECT * FROM a JOIN b ON a.id = b.a_id
+   ≡ SELECT * FROM a CROSS JOIN b WHERE a.id = b.a_id</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          This explains the accidental Cartesian product every analyst produces once: forget the ON
+          clause and the database faithfully returns every pairing, because that is what the
+          operation is before the filter. A thousand rows joined to a thousand rows is a million.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Relation Properties, and the Access-Control Bugs They Explain</div>
+      <div class="concept-desc">
+        A relation is any set of ordered pairs — "user X is a member of group Y", "role A inherits
+        role B". Three properties decide how such a structure behaves, and each maps directly onto a
+        familiar permissions problem.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Property</th><th>Means</th><th>In access control</th></tr></thead>
+          <tbody>
+            <tr><td>Reflexive</td><td>Everything relates to itself</td><td>A role always includes its own permissions</td></tr>
+            <tr><td>Symmetric</td><td>If A→B then B→A</td><td>Rarely wanted — "can read" should not run backwards</td></tr>
+            <tr><td>Transitive</td><td>If A→B and B→C then A→C</td><td>Nested groups; this is where surprises live</td></tr>
+            <tr><td>Antisymmetric + transitive</td><td>A partial order</td><td>A clean role hierarchy with no cycles</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Transitivity is the one that produces incidents: nested group membership means effective
+          permissions are the <em>transitive closure</em> of the membership relation, not the direct
+          memberships anyone can see in a console. And a cycle in an inheritance graph — A inherits
+          B inherits A — is the structure that makes a permissions resolver hang or overflow.
+          <span class="xref">Access Control Models</span> in the Security domain covers the models;
+          this is the shape underneath them.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Why NULL Breaks the Algebra</div>
+      <div class="concept-desc">
+        Set theory assumes every element either is or is not in a set. SQL's NULL introduces a third
+        answer — unknown — and the algebra stops being two-valued. This is the source of the join and
+        filter behaviour that reliably surprises people.
+      </div>
+      <div class="dw">
+        <pre class="code-block">   NULL = NULL       ->  UNKNOWN, not TRUE
+   NULL &lt;&gt; 'x'      ->  UNKNOWN, not TRUE
+   WHERE col &lt;&gt; 'x'  ->  drops NULL rows, which is usually not what was meant
+   COUNT(col)        ->  ignores NULLs;  COUNT(*) does not
+   NOT IN (subquery containing a NULL)  ->  returns nothing, ever</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The last line is the classic silent bug: <code>NOT IN</code> against a column containing a
+          single NULL returns an empty result set with no error and no warning. Use
+          <code>NOT EXISTS</code>. The join-specific cases are in
+          <span class="xref">SQL Joins — Every Type, and the NULL Traps</span> in the Data domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: PROOF TECHNIQUES ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📏</span>
+    <span class="topic-name">Proof Techniques for Engineers — Invariants, Contradiction &amp; Counterexample</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Three Tools, Used Constantly Without Being Named</div>
+      <div class="concept-desc">
+        Engineers reason formally more often than they think — arguing that a lock is held whenever a
+        structure is modified, or that a retry loop terminates. Naming the technique makes the
+        argument checkable by someone else, which is the entire practical value: an invariant written
+        down can be reviewed, tested and asserted, while the same belief held loosely cannot.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Technique</th><th>Shows</th><th>Engineering use</th></tr></thead>
+          <tbody>
+            <tr><td>Invariant</td><td>Something true before and after every step</td><td>Concurrency, state machines, data integrity</td></tr>
+            <tr><td>Induction</td><td>True for the first case, and preserved by each step</td><td>Recursion, protocol correctness, loop reasoning</td></tr>
+            <tr><td>Contradiction</td><td>Assuming the opposite forces an impossibility</td><td>Impossibility arguments and security bounds</td></tr>
+            <tr><td>Counterexample</td><td>One case where the claim fails</td><td>Disproving a design claim — the fastest tool here</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Invariants Are the One With Immediate Cash Value</div>
+      <div class="concept-desc">
+        An invariant is a statement that must hold at every observable point. Writing them down turns
+        vague correctness into something a test or an assertion can enforce — and the act of writing
+        one frequently reveals that it is already violated.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Invariants worth asserting in real systems</span>
+   "The sum of all account balances is unchanged by a transfer."
+   "Every item in the queue is either being processed or waiting — never both."
+   "The lock is held whenever this structure is modified."
+   "The free list and the allocated list are disjoint, and together are everything."
+   "Total replicas acknowledging a write is always >= the write quorum."
+
+<span class="com"># Then: assert them in tests, and in production where the cost allows.</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          Property-based testing is this idea automated: state the invariant, let the tool generate
+          thousands of inputs and hunt for the case that breaks it. It finds the boundary conditions
+          human-written examples systematically miss, because humans write the cases they already
+          thought of.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Counterexample Is the Politest Argument in Engineering</div>
+      <div class="concept-desc">
+        Design disagreements can circle for an hour on plausibility. One concrete case where the
+        proposal produces a wrong answer ends it immediately, and ends it without anyone having to be
+        persuaded of a general principle — which is why it is also the least adversarial way to
+        disagree. "Here is a sequence of three events where this design loses a write" is a fact, and
+        it can be checked.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SAMPLING & CONFIDENCE ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔬</span>
+    <span class="topic-name">Sampling &amp; Confidence — What a Number From 200 Observations Actually Claims</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Every Measurement Is a Sample, Including the Ones That Look Complete</div>
+      <div class="concept-desc">
+        Monitoring samples. Surveys sample. A week of logs is a sample of all weeks. The number you
+        computed is therefore an estimate with an uncertainty attached, and reporting it without that
+        uncertainty invites decisions the data cannot support — most often, reacting to a change that
+        is entirely within the noise.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Rough margin of error for a proportion, 95% confidence</span>
+   margin ≈ 1 / √n
+
+   n =    100  ->  ±10%
+   n =    400  ->  ±5%
+   n =  1,000  ->  ±3%
+   n = 10,000  ->  ±1%
+
+<span class="com"># So "62% of users prefer X" from 100 people means somewhere in 52-72%.</span>
+<span class="com"># And quadrupling the sample only halves the error — precision is expensive.</span></pre>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">What "95% Confidence" Does and Does Not Say</div>
+      <div class="concept-desc">
+        A 95% confidence interval means: if this procedure were repeated many times, about 95% of the
+        intervals produced would contain the true value. It is a statement about the method, not a
+        probability that this particular interval is right — a distinction that sounds pedantic until
+        someone builds an argument on the misreading.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Claim</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td>"There is a 95% chance the true value is in this range"</td><td>Common, and not what the interval says</td></tr>
+            <tr><td>"The intervals overlap, so there is no difference"</td><td>Wrong — overlapping intervals can still be a real difference</td></tr>
+            <tr><td>"Bigger sample, so it is representative"</td><td>Size does not fix bias; a biased sample is biased at any size</td></tr>
+            <tr><td>"We surveyed everyone who responded"</td><td>Self-selection — the non-responders are usually the finding</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The third row is the one worth internalising. A million rows from one region tells you
+          about that region very precisely and about everywhere else not at all. Sampling
+          <em>bias</em> and sampling <em>error</em> are different problems, and only one of them
+          shrinks with more data.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DESCRIPTIVE VS INFERENTIAL ─────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🪞</span>
+    <span class="topic-name">Descriptive vs Inferential — The Mistake Most Dashboards Make</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Describing What Happened, and Claiming Why</div>
+      <div class="concept-desc">
+        Descriptive statistics summarise the data you have: totals, averages, percentiles, trends.
+        Inferential statistics make a claim beyond the data: that a difference is real, that a
+        pattern will continue, that one thing caused another. Dashboards are built from the first and
+        are read as the second, and the gap between those two is where most bad decisions from good
+        data come from.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The chart shows</th><th>The meeting concludes</th><th>Justified?</th></tr></thead>
+          <tbody>
+            <tr><td>Tickets rose 12% this month</td><td>"Demand is growing"</td><td>Not yet — one month, and the variance is unknown</td></tr>
+            <tr><td>Latency fell after the deploy</td><td>"The deploy fixed it"</td><td>Only with a control; traffic also fell that day</td></tr>
+            <tr><td>Team A closes more tickets</td><td>"Team A is more productive"</td><td>No — different mix, different difficulty</td></tr>
+            <tr><td>Incidents cluster on Mondays</td><td>"Something is wrong with Mondays"</td><td>Check whether the clustering exceeds chance first</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Three Questions Before Believing a Chart</div>
+      <div class="concept-desc">
+        These take seconds and prevent most of the errors above. They are worth asking about your own
+        charts before anyone else asks them.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Ask</th><th>Catches</th></tr></thead>
+          <tbody>
+            <tr><td>What is the normal variation here?</td><td>Reacting to noise as if it were signal</td></tr>
+            <tr><td>What else changed at the same time?</td><td>Confounding — the most common cause of a wrong conclusion</td></tr>
+            <tr><td>Who or what is missing from this data?</td><td>Survivorship: the failed requests that never got logged</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The third is the sharpest. Latency dashboards typically show completed requests, so the
+          ones that timed out — the worst experiences of all — are absent by construction, and the
+          chart looks best exactly when things are worst.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: ANOMALY DETECTION MATHS ────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📉</span>
+    <span class="topic-name">Anomaly Detection Maths — Z-Scores, MAD &amp; Seasonality</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Two Ways to Say "Unusually Far From Normal"</div>
+      <div class="concept-desc">
+        The z-score is the standard measure and it has a specific weakness: it is computed from the
+        mean and standard deviation, both of which are dragged around by the very outliers being
+        looked for. The median-based alternative is robust — an extreme value barely moves it, so it
+        keeps working on exactly the data where the z-score quietly fails.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Z-score — how many standard deviations from the mean</span>
+   z = (x - mean) / stdev
+
+<span class="com"># Robust version — median absolute deviation</span>
+   MAD = median(|xᵢ - median(x)|)
+   robust_z = 0.6745 · (x - median) / MAD
+
+<span class="com"># Why it matters: one enormous spike inflates the stdev, so the</span>
+<span class="com"># NEXT spike scores as normal. The MAD version does not care.</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The z-score also assumes a roughly normal distribution. Most operational data is not
+          normal, so "three sigma" is not the rare event the textbook promises — on heavy-tailed
+          latency data it fires constantly.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Seasonality — Compare Like With Like, or Alert Every Monday</div>
+      <div class="concept-desc">
+        Operational data has cycles: daily, weekly, monthly, and often a term or quarter rhythm. A
+        threshold that ignores them fires every Monday morning and never fires during a quiet Sunday
+        outage. The fix is to compare a point against the same phase of the cycle rather than against
+        a global baseline.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Approach</th><th>Good for</th><th>Weakness</th></tr></thead>
+          <tbody>
+            <tr><td>Fixed threshold</td><td>Hard limits — disk full, certificate expiry</td><td>Useless for anything that varies</td></tr>
+            <tr><td>Rolling mean ± k·stdev</td><td>Slowly varying series</td><td>Learns the anomaly if it persists</td></tr>
+            <tr><td>Same hour, previous weeks</td><td>Strongly weekly patterns</td><td>Needs history; holidays break it</td></tr>
+            <tr><td>Decompose into trend + season + residual</td><td>The general answer</td><td>More machinery, and needs enough history</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Row two contains a real trap: a rolling baseline adapts, so a slow degradation is
+          eventually absorbed into "normal" and stops alerting. A gradual memory leak can defeat an
+          adaptive threshold entirely — which is why absolute limits and adaptive ones are both
+          needed.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The False-Positive Cost Is Part of the Maths</div>
+      <div class="concept-desc">
+        An anomaly detector's threshold is not chosen to be statistically correct; it is chosen to
+        balance two costs — the cost of a missed event against the cost of a false alarm, multiplied
+        by how often each occurs. Because anomalies are rare, false-alarm cost dominates the total
+        almost always, which is the same base-rate arithmetic as
+        <span class="xref">Bayes' Theorem &amp; Base Rates — Why a 99%-Accurate Detector Floods the SOC</span>
+        arriving from a different direction.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: A/B TESTING & SIGNIFICANCE ─────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🅰️</span>
+    <span class="topic-name">A/B Testing &amp; Significance — Power, p-Values &amp; Stopping Rules</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">What a p-Value Says, Precisely</div>
+      <div class="concept-desc">
+        A p-value is the probability of seeing a result at least this extreme <em>if there were no
+        real difference</em>. That is all. It is not the probability that the change works, not the
+        probability the result is a fluke, and not a measure of how large the effect is. Every
+        popular misreading inflates confidence, which is why a discipline built on p-values still
+        ships changes that do nothing.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>People hear</th><th>It actually means</th></tr></thead>
+          <tbody>
+            <tr><td>"95% chance the change works"</td><td>If there were no effect, we would see data this extreme 5% of the time</td></tr>
+            <tr><td>"p &lt; 0.05, so it is real"</td><td>One in twenty null results clears that bar by chance</td></tr>
+            <tr><td>"p = 0.06, so it does nothing"</td><td>Nothing special happens at 0.05; it is a convention</td></tr>
+            <tr><td>"Significant, so it matters"</td><td>Statistical significance says nothing about effect size</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is the commercially important one: with a large enough sample, a 0.01%
+          improvement is statistically significant and practically worthless. Always report the
+          effect size and its interval alongside.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Peeking — The Way Most Real Tests Are Ruined</div>
+      <div class="concept-desc">
+        Checking a running test repeatedly and stopping when it crosses significance is the single
+        most common error in practical A/B testing, and it is fatal. Random fluctuation crosses the
+        threshold eventually on almost any test, so a stop-when-significant rule finds "wins" in
+        experiments where nothing is happening at all.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Fix the sample size BEFORE starting. Roughly, per variant:</span>
+   n ≈ 16 · σ² / Δ²          <span class="com"># continuous metric</span>
+   n ≈ 16 · p(1-p) / Δ²      <span class="com"># conversion rate</span>
+
+   Δ = the smallest difference worth detecting
+   σ = the metric's standard deviation
+
+<span class="com"># Note the Δ²: halving the effect you want to detect QUADRUPLES the</span>
+<span class="com"># sample needed. Small effects are extremely expensive to prove.</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          If continuous monitoring is genuinely needed, use a method designed for it — sequential
+          testing or a Bayesian approach — rather than a fixed-sample test looked at repeatedly.
+          Those methods pay for the peeking in their maths; the classical test does not.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Failures Beyond the Statistics</div>
+      <div class="concept-desc">
+        Most bad A/B results are not statistical errors at all. They are design errors that no amount
+        of correct arithmetic afterwards can repair.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Failure</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Novelty effect</td><td>Anything new performs well for a fortnight, then reverts</td></tr>
+            <tr><td>Assignment leakage</td><td>Users see both variants; the comparison is meaningless</td></tr>
+            <tr><td>Testing too many metrics</td><td>Twenty metrics gives roughly one "significant" result by chance</td></tr>
+            <tr><td>Wrong unit of analysis</td><td>Counting sessions when the treatment applies per user</td></tr>
+            <tr><td>Seasonal confound</td><td>A test spanning a holiday measures the holiday</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: FORECASTING CAPACITY ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔭</span>
+    <span class="topic-name">Forecasting Capacity — Trend, Seasonality &amp; Headroom</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">Decompose Before Extrapolating</div>
+      <div class="concept-desc">
+        A usage series is three things added together: a long-run trend, a repeating seasonal
+        pattern, and noise. Fitting a line to the raw series mixes all three and produces a forecast
+        that is confidently wrong in a direction determined by where in the cycle you happened to
+        start.
+      </div>
+      <div class="dw">
+        <pre class="code-block">   observed  =  trend  +  seasonal  +  residual
+
+<span class="com"># Practical procedure, no specialist tooling required:</span>
+   1. Plot it. Most forecasting errors are visible to the eye.
+   2. Remove the seasonality — compare like periods (this Monday
+      against previous Mondays, this quarter against last year's).
+   3. Fit the trend to the deseasonalised series.
+   4. Project, then add the seasonal pattern back on.
+   5. State a RANGE. A single number will be wrong.</pre>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Linear Extrapolation Fails in Both Directions</div>
+      <div class="concept-desc">
+        Growth in real systems is rarely linear, and the two ways of being wrong have opposite
+        consequences. Assuming linear growth for something compounding under-provisions and runs out
+        early; assuming exponential growth for something that has begun saturating over-provisions
+        and wastes budget.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Shape</th><th>Typical of</th><th>Check by</th></tr></thead>
+          <tbody>
+            <tr><td>Linear</td><td>Headcount-driven demand</td><td>Constant absolute increments</td></tr>
+            <tr><td>Exponential</td><td>Data accumulation, viral adoption</td><td>Constant percentage growth — a straight line on a log axis</td></tr>
+            <tr><td>S-curve</td><td>Adoption reaching a natural ceiling</td><td>Growth rate itself falling</td></tr>
+            <tr><td>Step</td><td>Onboarding a customer or a site</td><td>Flat, then a jump — never smooth</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Plot the series on a logarithmic axis as a first move. Exponential growth becomes a
+          straight line there, and distinguishing it from linear growth is the single most valuable
+          thing a capacity forecast can get right.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Forecast to the Order Date, Not to the Full Date</div>
+      <div class="concept-desc">
+        The useful output is not when the resource runs out — it is the last date on which action
+        can still be taken, which is earlier by the whole lead time of procurement, approval and
+        installation. A forecast saying "full in six months" is an emergency if the hardware takes
+        five months to arrive, and a non-event if it takes two weeks.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Report</th><th>Rather than</th></tr></thead>
+          <tbody>
+            <tr><td>"Order by March to avoid saturation in July"</td><td>"Storage is 68% full"</td></tr>
+            <tr><td>A range, with the assumption stated</td><td>A single date implying precision nobody has</td></tr>
+            <tr><td>What would change the answer</td><td>Silence about the migration that doubles it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The operational practice this feeds is in
+          <span class="xref">Capacity Planning – Answering "Will We Run Out of Room?" Before You Do</span>
+          in the Operations domain.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LATTICES ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🕸️</span>
+    <span class="topic-name">Lattices, Gently — The Hard Problem Post-Quantum Cryptography Moved To</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Grid of Points, and the Difficulty of Finding the Nearest One</div>
+      <div class="concept-desc">
+        A lattice is a regular grid of points extending through space, described by a set of basis
+        vectors. In two dimensions it is graph paper and everything about it is obvious. In several
+        hundred dimensions, two questions become extraordinarily hard: find the shortest non-zero
+        point, and find the lattice point nearest to some arbitrary location. Those are the problems
+        post-quantum cryptography is built on — and unlike factoring, no efficient quantum algorithm
+        for them is known.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># A lattice is all integer combinations of its basis vectors</span>
+   L = { a₁v₁ + a₂v₂ + ... + aₙvₙ  :  aᵢ ∈ ℤ }
+
+<span class="com"># The hard problems:</span>
+   SVP  shortest vector    — find the shortest non-zero lattice point
+   CVP  closest vector     — find the lattice point nearest a given target
+
+<span class="com"># Easy in 2-D with a "good" basis. In 500-D with a "bad" basis, not.</span>
+<span class="com"># That gap between good and bad bases is the trapdoor.</span></pre>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Learning With Errors — Hiding a Secret in Deliberate Noise</div>
+      <div class="concept-desc">
+        The construction most post-quantum schemes rest on is disarmingly simple to state. Take a
+        secret vector, produce many linear equations involving it, and add a small random error to
+        each. Without the errors, schoolroom linear algebra recovers the secret immediately. With
+        them, the problem becomes lattice-hard — and the noise is what does all the work.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Given many samples of the form</span>
+   bᵢ  =  ⟨aᵢ, s⟩ + eᵢ   (mod q)
+
+   aᵢ  public random vectors
+   s   the secret
+   eᵢ  small random errors        <span class="com"># without these, solve by Gaussian elimination</span>
+
+<span class="com"># Recovering s from many (aᵢ, bᵢ) pairs is Learning With Errors.</span></pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The practical costs of the switch follow from the structure: keys and ciphertexts are
+          larger than their elliptic-curve equivalents, which matters for handshake sizes and for
+          constrained devices. The engineering trade-offs and migration path are in
+          <span class="xref">Post-Quantum Cryptography — Harvest Now, Decrypt Later</span> in the
+          Security domain.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Why "No Known Attack" Is the Honest Claim</div>
+      <div class="concept-desc">
+        Lattice problems are not proven hard, any more than factoring is. What supports them is
+        decades of study, a reduction showing that breaking the average case is as hard as the worst
+        case for related problems, and no quantum algorithm giving the kind of advantage that
+        demolished RSA <span class="acro-exp">(Rivest-Shamir-Adleman)</span>. That is a strong position and it is not a proof — which is precisely why
+        deployments are hybrid, running a classical and a post-quantum algorithm together so that a
+        break in either leaves the other standing.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MATRICES ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔢</span>
+    <span class="topic-name">Matrices &amp; Linear Transformations — The Operation a GPU <span class="acro-exp">(Graphics Processing Unit)</span> Spends Its Life Doing</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Matrix Is a Function That Moves Space</div>
+      <div class="concept-desc">
+        The productive way to read a matrix is not as a grid of numbers but as a transformation:
+        multiplying by it rotates, scales, shears or projects every vector at once. Matrix
+        multiplication is then function composition — apply one transformation, then another — which
+        is why the order matters and why <code>AB ≠ BA</code> is normal rather than surprising.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Multiplication: row of A against column of B</span>
+   (AB)ᵢⱼ = Σₖ Aᵢₖ · Bₖⱼ
+
+<span class="com"># Dimensions must meet in the middle, and the result takes the outside:</span>
+   (m × n) · (n × p)  ->  (m × p)
+
+<span class="com"># Cost, and why this is the whole game:</span>
+   naive multiply of two n×n matrices  ->  O(n³) operations
+   every one of which is independent   ->  perfectly parallel</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          That last pair of lines explains GPUs entirely. The work is enormous and every piece of it
+          is independent, which is exactly the shape a processor with thousands of small cores is
+          built for — and exactly the shape a CPU <span class="acro-exp">(Central Processing Unit)</span> with a few fast ones is not.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Where the Same Operation Turns Up</div>
+      <div class="concept-desc">
+        One operation, many disciplines. Recognising it makes several unrelated-looking performance
+        problems the same performance problem.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Field</th><th>The matrix multiply is</th></tr></thead>
+          <tbody>
+            <tr><td>Neural networks</td><td>Every layer: inputs × weights, repeated</td></tr>
+            <tr><td>Graphics</td><td>Model, view and projection transforms per vertex</td></tr>
+            <tr><td>Graph algorithms</td><td>Adjacency matrix powers count paths of a given length</td></tr>
+            <tr><td>Search and recommendation</td><td>Query vector against a document matrix</td></tr>
+            <tr><td>Signal processing</td><td>Transforms expressed as matrix operations</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Memory Layout Decides the Speed, Not the Arithmetic</div>
+      <div class="concept-desc">
+        A naive triple loop and a tuned library perform the same number of multiplications and differ
+        by an order of magnitude or more. The difference is entirely about memory: the tuned version
+        walks memory in the order the cache wants and processes blocks that fit in it. This is the
+        most accessible demonstration that on modern hardware, data movement rather than arithmetic
+        is the cost — the same lesson as
+        <span class="xref">Memory Layout &amp; Cache Locality — Why Arrays Beat Linked Lists</span>,
+        at a scale where it is impossible to miss.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Technique</th><th>Why it wins</th></tr></thead>
+          <tbody>
+            <tr><td>Loop order that follows the layout</td><td>Sequential access instead of striding across memory</td></tr>
+            <tr><td>Blocking / tiling</td><td>Work on a sub-block that stays resident in cache</td></tr>
+            <tr><td>Vector instructions</td><td>Several multiply-adds per instruction</td></tr>
+            <tr><td>Use the tuned library</td><td>All of the above, plus decades of platform-specific work</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LOSS FUNCTIONS ─────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎯</span>
+    <span class="topic-name">Loss Functions — What the Model Is Being Told to Minimise</span>
+    <span class="topic-badge">Applied Maths</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Loss Is the Specification, and the Model Will Obey It Literally</div>
+      <div class="concept-desc">
+        A model does not learn the task; it minimises the loss. Where those two come apart, the loss
+        wins, every time and without complaint. Most surprising model behaviour is not a training
+        failure — it is a model succeeding precisely at an objective that did not say what its
+        authors meant.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Loss</th><th>Used for</th><th>Its bias</th></tr></thead>
+          <tbody>
+            <tr><td>Mean squared error</td><td>Regression</td><td>Squares the error, so outliers dominate training</td></tr>
+            <tr><td>Mean absolute error</td><td>Regression with outliers</td><td>Robust, but a weaker gradient near zero</td></tr>
+            <tr><td>Cross-entropy</td><td>Classification</td><td>Punishes confident wrong answers heavily — usually what you want</td></tr>
+            <tr><td>Weighted cross-entropy</td><td>Imbalanced classes</td><td>Encodes the relative cost of each error type explicitly</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The imbalance case is the one that bites in security and fraud work. With 99.9% benign
+          data, a model minimising plain accuracy learns to answer "benign" always — 99.9% accurate,
+          and completely useless. The fix is in the loss, not in more training.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Regularisation — Paying the Model to Stay Simple</div>
+      <div class="concept-desc">
+        Left alone, an over-parameterised model will memorise the training data, which drives training
+        loss to zero and generalisation with it. Regularisation adds a penalty for complexity to the
+        objective, so the model must trade fitting the data against staying simple — and simplicity
+        is what transfers to data it has not seen.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Method</th><th>Mechanism</th></tr></thead>
+          <tbody>
+            <tr><td>L2 penalty</td><td>Penalises large weights; keeps everything small and smooth</td></tr>
+            <tr><td>L1 penalty</td><td>Drives weights to exactly zero — selects features by discarding them</td></tr>
+            <tr><td>Dropout</td><td>Randomly disables units so no single path can be relied on</td></tr>
+            <tr><td>Early stopping</td><td>Stop when validation loss turns upward — the cheapest of all</td></tr>
+            <tr><td>More and better data</td><td>Not regularisation, and usually the strongest option available</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Metric You Report Is Not the Loss You Trained</div>
+      <div class="concept-desc">
+        Training needs a loss that is smooth and differentiable; the business cares about things that
+        are neither — precision at a chosen threshold, revenue, whether an analyst had to look at it.
+        Those cannot be optimised directly, so a proxy is trained and the real thing is measured
+        afterwards. Keeping the gap between proxy and goal in view is most of what separates a model
+        that helps from one that scores well. It is the same pattern as the service-desk metrics in
+        the Operations domain: the moment a proxy becomes the target, it stops measuring what it was
+        chosen to represent.
+      </div>
+    </div>
+  </div>
+</div>

@@ -12,10 +12,11 @@
   --green: #00ff99;
   --amber: #ffb020;
   --red: #ff4d6d;
-  --purple: #a855f7;
+  --purple: #ad5ff7;   /* was #a855f7, 4.47:1 on --bg3 — just under */
   --text: #cdd9f0;
   --card: #0f1830;
-  --muted: #5a6e8a;
+  --muted: #8296b3;   /* 5.7:1 on --bg3, with headroom for the 0.87 the
+                         concept-label kicker renders it at */
   --mono: "Share Tech Mono", monospace;
   --sans: "Outfit", sans-serif;
 
@@ -48,10 +49,13 @@
   --text: #0f172a;
   --card: #ffffff;
   --muted: #475569;
-  --cyan: #0284c7;
-  --green: #059669;
+  /* Darkened until each clears 4.5:1 on --bg. The previous values were chosen
+     by eye and sat at 3.4-4.4, which axe flags and a reader in daylight
+     notices. Every accent here is used for small text somewhere. */
+  --cyan: #0274af;
+  --green: #047e58;
   --amber: #b45309;
-  --red: #dc2626;
+  --red: #d52222;
   --purple: #7c3aed;
 
   --sky: #0369a1;
@@ -250,6 +254,39 @@ header p {
   user-select: none;
 }
 
+/* Light-mode chip colours.
+   Each domain's chip carries its own hue, and the dark-mode hues are far too
+   light to read on a light background — every one of them failed 4.5:1, which
+   is 30 unreadable chips in the one place the whole page is navigated from.
+   These are the same hues darkened until they pass; the identity survives and
+   the text is legible. Computed, not eyeballed: each lands at 4.6-4.7:1 on
+   --bg, just past the threshold, so nothing is darkened more than it needs. */
+[data-theme="light"] .chip.c-net { color: #0674a4; }
+[data-theme="light"] .chip.c-threat { color: #b15204; }
+[data-theme="light"] .chip.c-pentest { color: #d11075; }
+[data-theme="light"] .chip.c-ai { color: #ba0ad4; }
+[data-theme="light"] .chip.c-shortcut { color: #856b03; }
+[data-theme="light"] .chip.c-military { color: #986206; }
+[data-theme="light"] .chip.c-redteam { color: #dc0b0b; }
+[data-theme="light"] .chip.c-blueteam { color: #0769e1; }
+[data-theme="light"] .chip.c-cloud { color: #197a6d; }
+[data-theme="light"] .chip.c-eng { color: #3c5df9; }
+[data-theme="light"] .chip.c-data { color: #0d7b6f; }
+[data-theme="light"] .chip.c-web { color: #b64d05; }
+[data-theme="light"] .chip.c-math { color: #0674a4; }
+[data-theme="light"] .chip.c-quotes { color: #886805; }
+[data-theme="light"] .chip.c-philosophy { color: #942efa; }
+[data-theme="light"] .chip.c-productivity { color: #167e3c; }
+[data-theme="light"] .chip.c-mind { color: #d11075; }
+[data-theme="light"] .chip.c-career { color: #b64d05; }
+[data-theme="light"] .chip.c-devops { color: #0d7b6f; }
+[data-theme="light"] .chip.c-endpoint { color: #0a75a5; }
+[data-theme="light"] .chip.c-acronym { color: #d11075; }
+[data-theme="light"] .chip.c-infra { color: #7448f7; }
+[data-theme="light"] .chip.c-cs { color: #107a69; }
+[data-theme="light"] .chip.c-m365 { color: #4b5bf5; }
+[data-theme="light"] .chip.c-hw { color: #51790f; }
+
 /* On a phone the bar is sticky, so height matters more than scanability:
    fall back to the original single scrolling row, with the group labels
    acting as inline signposts while you swipe. */
@@ -287,7 +324,9 @@ header p {
 }
 .chip.c-all.active,
 .chip.c-all:hover {
-  color: #fff;
+  /* Was #fff, which is 1.1:1 on the light background — the active ALL chip
+     disappeared entirely in light mode. */
+  color: var(--text);
   border-color: var(--text);
   background: rgba(255, 255, 255, 0.08);
 }
@@ -639,6 +678,122 @@ header p {
   display: block;
 }
 
+/* ── DOMAIN LANDING CARD ─────────────────────────────────────────────────────
+   Rendered by script.js above a domain's topics from the inlined intros
+   payload. It sits inside .domain-body but is not a .topic, so it takes the
+   domain's accent without inheriting any of the topic chrome. */
+.domain-intro {
+  border-bottom: 1px solid var(--border);
+  border-left: 3px solid var(--accent, var(--cyan));
+  background: color-mix(in srgb, var(--accent, var(--cyan)) 6%, transparent);
+  padding: 14px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.di-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.di-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex: 0 0 66px;
+}
+.di-text {
+  flex: 1 1 320px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+}
+.di-who .di-text,
+.di-next .di-text {
+  color: var(--muted);
+}
+.di-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.di-link {
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  color: var(--accent, var(--cyan));
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 9px;
+  cursor: pointer;
+}
+.di-link:hover,
+.di-link:focus-visible {
+  border-color: var(--accent, var(--cyan));
+  background: color-mix(in srgb, var(--accent, var(--cyan)) 12%, var(--bg2));
+}
+.di-when {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  align-self: center;
+  margin-right: 2px;
+}
+@media (max-width: 620px) {
+  .di-label { flex-basis: 100%; }
+}
+@media print {
+  .di-links { display: none; }
+}
+
+/* ── SEE ALSO ────────────────────────────────────────────────────────────────
+   Appended to a topic's body the first time it opens, from the inlined
+   related-topics payload. Sits below the last concept card and is visually
+   quieter than one — it is a signpost, not content. */
+.see-also {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+.sa-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sa-link {
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  color: var(--accent, var(--cyan));
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 9px;
+  cursor: pointer;
+}
+.sa-link:hover,
+.sa-link:focus-visible {
+  border-color: var(--accent, var(--cyan));
+  background: color-mix(in srgb, var(--accent, var(--cyan)) 10%, transparent);
+}
+.sa-domain {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .topic {
   border-bottom: 1px solid var(--border);
 }
@@ -655,6 +810,29 @@ header p {
 }
 .topic-header:hover {
   background: rgba(255, 255, 255, 0.025);
+}
+/* The clickable part of a header is a real <button>, so that the ★ ✓ 📝 🔗
+   buttons beside it are not nested inside another control. It has to be
+   stripped back to looking like the row it replaced. */
+.topic-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.topic-toggle:focus-visible {
+  outline: 2px solid var(--accent, var(--cyan));
+  outline-offset: 3px;
+  border-radius: 3px;
 }
 .topic-icon {
   font-size: 18px;
@@ -713,6 +891,48 @@ header p {
   color: var(--muted);
   text-transform: uppercase;
   padding: 12px 18px 0;
+}
+
+/* The label doubles as a link-to-this-card affordance. Deliberately quiet:
+   discoverable on hover, invisible otherwise, and costing no extra element on
+   any of the several hundred concept cards a domain can hold. */
+.concept-label {
+  cursor: pointer;
+  width: fit-content;
+}
+.concept-label:hover {
+  color: var(--accent, #38bdf8);
+}
+.concept-label::after {
+  content: " \1F517";
+  opacity: 0;
+  font-size: 9px;
+  transition: opacity 0.15s ease;
+}
+.concept-label:hover::after,
+.concept-label:focus-visible::after {
+  opacity: 0.6;
+}
+.concept-label.copied::after {
+  content: " \2713 copied";
+  opacity: 1;
+  letter-spacing: 0;
+  color: var(--green, #22c55e);
+}
+
+/* Where a card-level link landed. Fades itself out after a couple of seconds —
+   long enough to find, short enough not to become part of the page. */
+.concept-card.card-linked {
+  box-shadow: 0 0 0 2px var(--accent, #38bdf8);
+  transition: box-shadow 0.4s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .concept-card.card-linked { transition: none; }
+  .concept-label::after { transition: none; }
+}
+@media print {
+  .concept-label::after { content: ""; }
+  .concept-card.card-linked { box-shadow: none; }
 }
 .concept-title {
   font-size: 15px;
@@ -1650,7 +1870,10 @@ header p {
   color: var(--purple);
 }
 .text-blue {
-  color: #38bdf8;
+  /* The one utility here that never got a token. --sky is the same hue and
+     already carries a light-mode counterpart, which is the whole reason the
+     tokens exist. */
+  color: var(--sky);
 }
 
 /* Domain accent colours */
@@ -1696,14 +1919,65 @@ header p {
   margin-left: auto;
   padding-right: 12px;
 }
+/* Light-mode accents and cert tags.
+   Same problem as the chips: these hues were picked against a near-black
+   background and are unreadable on a light one. --accent drives the domain
+   chevron, the see-also links, the landing card buttons and every clickable
+   cross-reference, so one override per domain fixes all of them at once.
+   The cert tags carry opacity: 0.7, which lightens them further — they are
+   darkened to 5.6:1 so the rendered result still clears 4.5:1. */
+[data-theme="light"] .domain-net { --accent: #0674a4; }
+[data-theme="light"] .domain-sec { --accent: #db0027; }
+[data-theme="light"] .domain-threat { --accent: #b15204; }
+[data-theme="light"] .domain-grc { --accent: #986200; }
+[data-theme="light"] .domain-ops { --accent: #9632f5; }
+[data-theme="light"] .domain-pentest { --accent: #d11075; }
+[data-theme="light"] .domain-linux { --accent: #007d4b; }
+[data-theme="light"] .domain-ai { --accent: #ba0ad4; }
+[data-theme="light"] .domain-script { --accent: #00778f; }
+[data-theme="light"] .domain-military { --accent: #986206; }
+[data-theme="light"] .domain-shortcut { --accent: #856b03; }
+[data-theme="light"] .domain-redteam { --accent: #da1313; }
+[data-theme="light"] .domain-blueteam { --accent: #0b63f2; }
+[data-theme="light"] .domain-cloud { --accent: #0d7b6f; }
+[data-theme="light"] .domain-eng { --accent: #575af0; }
+[data-theme="light"] .domain-data { --accent: #0d7b6f; }
+[data-theme="light"] .domain-web { --accent: #b64d05; }
+[data-theme="light"] .domain-math { --accent: #0674a4; }
+[data-theme="light"] .domain-quotes { --accent: #886805; }
+[data-theme="light"] .domain-philosophy { --accent: #942efa; }
+[data-theme="light"] .domain-productivity { --accent: #167e3c; }
+[data-theme="light"] .domain-mind { --accent: #d11075; }
+[data-theme="light"] .domain-career { --accent: #b64d05; }
+[data-theme="light"] .domain-devops { --accent: #0d7b6f; }
+[data-theme="light"] .domain-endpoint { --accent: #0a75a5; }
+[data-theme="light"] .domain-acronym { --accent: #d11075; }
+[data-theme="light"] .domain-infra { --accent: #7448f7; }
+[data-theme="light"] .domain-cs { --accent: #107a69; }
+[data-theme="light"] .domain-m365 { --accent: #4b5bf5; }
+[data-theme="light"] .domain-hw { --accent: #51790f; }
+
+[data-theme="light"] .ctag-aplus { color: #845500; }
+[data-theme="light"] .ctag-netplus { color: #056793; }
+[data-theme="light"] .ctag-secplus { color: #c40023; }
+[data-theme="light"] .ctag-cysa { color: #840ff4; }
+[data-theme="light"] .ctag-ptplus { color: #ba0f68; }
+[data-theme="light"] .ctag-secx { color: #a408bc; }
+[data-theme="light"] .ctag-linuxplus { color: #006e42; }
+[data-theme="light"] .ctag-aiplus { color: #9b4803; }
+[data-theme="light"] .ctag-general { color: #755e02; }
+[data-theme="light"] .ctag-military { color: #855505; }
+
 .ctag {
   font-family: var(--mono);
   font-size: 9px;
   padding: 2px 7px;
   border-radius: 2px;
   border: 1px solid;
-  opacity: 0.7;
 }
+/* No opacity. It used to carry 0.7, which blended these 9px tags toward the
+   page background and cost them 1.3 contrast points — enough to fail in both
+   themes, and the tags are already small and quiet without it. */
 .ctag-aplus {
   color: #ffb020;
   border-color: rgba(255, 176, 32, 0.3);
@@ -1942,6 +2216,7 @@ mark.sh {
 
 /* Dim non-matching topics during search */
 .topic.search-hidden { display: none; }
+.domain-intro.search-hidden { display: none; }
 .domain-section.search-hidden { display: none; }
 
 @media (max-width: 600px) {
@@ -2181,6 +2456,26 @@ mark.sh {
   border-color: var(--green);
 }
 
+/* Per-domain search-match count.
+   Only one domain's content is rendered at a time, so a search that reaches the
+   whole page has to report the rest of its result somewhere: this pill is how a
+   collapsed domain says "there are seven of them in here". */
+.domain-matches {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--bg1);
+  background: var(--accent, var(--cyan));
+  border-radius: 2px;
+  padding: 2px 8px;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+.domain-section[data-hydrated="1"] .domain-matches {
+  color: var(--accent, var(--cyan));
+  background: transparent;
+  border: 1px solid currentColor;
+}
+
 /* Floating back-to-top button */
 #back-to-top {
   position: fixed;
@@ -2238,8 +2533,13 @@ mark.sh {
     --text: #000; --muted: #444; --border: #bbb;
   }
   body { background: #fff !important; color: #000 !important; }
+  /* Prints the open domain in full. The others hold their content as inert
+     text rather than markup, so there is nothing for print to lay out — which
+     makes printing one domain the normal case instead of a 400-page accident.
+     Their headers still print, as a contents page does. */
   .domain-body, .topic-body { display: block !important; }
   .domain-section { break-inside: avoid; }
+  .domain-matches { display: none; }
   .note, .concept-card, table { break-inside: avoid; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
   /* Paper has no hover, so the check date goes inline. */
@@ -2264,6 +2564,21 @@ mark.sh {
 .xref {
   font-style: italic;
   color: var(--text);
+}
+/* Only the ones build.py resolved to a topic id are clickable. A cross-
+   reference whose title stopped matching stays plain italic text rather than
+   offering a link that goes nowhere. */
+.xref[data-xref] {
+  color: var(--accent, var(--cyan));
+  border-bottom: 1px dotted currentColor;
+  cursor: pointer;
+}
+.xref[data-xref]:hover,
+.xref[data-xref]:focus-visible {
+  border-bottom-style: solid;
+}
+@media print {
+  .xref[data-xref] { color: inherit; border-bottom: none; }
 }
 
 .volatile {
@@ -2495,6 +2810,21 @@ body.st-lock { overflow: hidden; }
 .st-jump-item.active, .st-jump-item:hover { background: color-mix(in srgb, var(--cyan) 16%, transparent); }
 .st-jump-name { font-weight: 600; }
 .st-jump-dom { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+/* Marks the rows the palette put first because they were just visited, so the
+   ordering on an empty query reads as deliberate rather than arbitrary. */
+.st-jump-recent {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent, #38bdf8);
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  padding: 0 4px;
+  margin-left: 8px;
+  opacity: 0.75;
+  white-space: nowrap;
+}
 .st-jump-empty { padding: 16px; text-align: center; color: var(--muted); }
 
 /* Progress line */
@@ -2555,6 +2885,181 @@ body.st-lock { overflow: hidden; }
 .st-list-link:hover { color: var(--cyan); }
 .st-list-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; padding: 4px 6px; }
 .st-list-remove:hover { color: var(--red, #ff5470); }
+
+/* Per-topic note — sits at the top of a topic body, above the concept cards. */
+.topic-note {
+  border: 1px dashed var(--border);
+  border-left: 3px solid var(--amber);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  background: color-mix(in srgb, var(--amber) 5%, transparent);
+}
+.tn-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.tn-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted); margin-right: auto;
+}
+.tn-edit, .tn-clear {
+  font: inherit; font-size: 11px; background: none; border: 1px solid var(--border);
+  border-radius: 4px; padding: 2px 8px; color: var(--muted); cursor: pointer;
+}
+.tn-edit:hover, .tn-clear:hover { color: var(--text); border-color: var(--amber); }
+.tn-text { font-size: 13px; line-height: 1.6; white-space: pre-wrap; color: var(--text); }
+.tn-input {
+  width: 100%; font: inherit; font-size: 13px; line-height: 1.6;
+  background: var(--bg2); color: var(--text);
+  border: 1px solid var(--border); border-radius: 4px; padding: 8px; resize: vertical;
+}
+.tn-input:focus { outline: none; border-color: var(--amber); }
+/* A topic carrying a note says so on its header, the way ★ and ✓ do. */
+.topic.noted .topic-note-btn { opacity: 1; filter: none; }
+.topic-note-btn { opacity: 0.45; }
+.topic-note-btn:hover, .topic.noted .topic-note-btn { opacity: 1; }
+@media print { .tn-edit, .tn-clear, .tn-input { display: none; } }
+
+/* Exam mode */
+.st-ex-bar { display: flex; align-items: center; gap: 12px; margin: 14px 0 6px; }
+.st-ex-answered { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-right: auto; }
+.st-ex-clock {
+  font-family: var(--mono); font-size: 14px; color: var(--cyan);
+  border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px;
+}
+.st-ex-clock.low { color: var(--red); border-color: var(--red); }
+.st-ex-nav { display: flex; gap: 8px; justify-content: space-between; margin-top: 14px; }
+.st-ex-nav .st-btn[disabled] { opacity: 0.4; cursor: default; }
+/* An exam marks nothing until the end, so a chosen answer is shown as chosen
+   and never as right or wrong. */
+.st-q-opt.chosen { border-color: var(--cyan); color: var(--cyan); }
+.st-ex-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 12px; }
+.st-ex-table th {
+  text-align: left; font-family: var(--mono); font-size: 10px; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--muted); padding: 6px; border-bottom: 1px solid var(--border);
+}
+.st-ex-table td { padding: 5px 6px; border-bottom: 1px solid var(--border); }
+
+/* Update toast — only ever shown on the deployed site, never over file:// */
+#update-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(92vw, 520px);
+  padding: 10px 12px;
+  background: var(--bg3);
+  border: 1px solid var(--cyan);
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+.ut-text { font-size: 13px; color: var(--text); }
+.ut-go {
+  font: inherit; font-size: 12px; cursor: pointer;
+  color: var(--bg); background: var(--cyan);
+  border: none; border-radius: 4px; padding: 5px 12px;
+}
+.ut-dismiss {
+  font: inherit; font-size: 13px; cursor: pointer;
+  color: var(--muted); background: none; border: none; padding: 2px 4px;
+}
+.ut-dismiss:hover { color: var(--text); }
+@media print { #update-toast { display: none; } }
+
+/* Print packs — a generated handout, hidden on screen, alone on paper. */
+#print-pack { display: none; }
+.pp-title { font-size: 22px; margin: 0 0 4px; }
+.pp-meta { font-family: var(--mono); font-size: 11px; color: var(--muted); margin: 0 0 18px; }
+.pp-domain { font-size: 15px; margin: 22px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+.pp-topic { position: relative; margin-bottom: 18px; }
+.pp-n { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+@media print {
+  /* The pack replaces the page rather than sitting alongside it. Hiding by
+     child selector, not by naming each thing, so a new header or panel added
+     later does not silently start printing. */
+  body.printing > *:not(#print-pack) { display: none !important; }
+  body.printing #print-pack { display: block; }
+  /* Nothing in a handout is clickable, and a page break through a card is
+     worse than a short page. */
+  #print-pack .topic-chev,
+  #print-pack .topic-tools,
+  #print-pack .see-also,
+  #print-pack .topic-note { display: none; }
+  #print-pack .topic { break-inside: auto; border-bottom: none; }
+  #print-pack .concept-card { break-inside: avoid; }
+  #print-pack .pp-topic { break-inside: auto; }
+  #print-pack .pp-domain { break-before: page; }
+  #print-pack .pp-domain:first-of-type { break-before: auto; }
+}
+
+/* Progress dashboard */
+.st-pg-top { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.st-pg-stat {
+  flex: 1 1 110px; display: flex; flex-direction: column; gap: 2px;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+}
+.st-pg-n { font-family: var(--mono); font-size: 22px; color: var(--cyan); line-height: 1.1; }
+.st-pg-l { font-size: 11px; color: var(--muted); }
+.st-pg-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 12px; }
+.st-pg-table th {
+  text-align: left; font-family: var(--mono); font-size: 10px; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--muted); padding: 6px 6px; border-bottom: 1px solid var(--border);
+}
+.st-pg-table td { padding: 5px 6px; border-bottom: 1px solid var(--border); }
+/* Domains nobody has opened are still listed — quieter, so the read ones lead.
+   Not `opacity`, which multiplies against text that is already muted and takes
+   it below 4.5:1; the row is de-emphasised with colour instead, which is a
+   change a reader with low vision can still read. */
+.st-pg-table tr.untouched .st-pg-dom { color: var(--muted); }
+.st-pg-table tr.untouched .st-pg-fill { background: var(--muted); }
+.st-pg-dom {
+  background: none; border: none; color: var(--text); font: inherit; font-size: 12px;
+  cursor: pointer; padding: 0; text-align: left;
+}
+.st-pg-dom:hover { color: var(--cyan); }
+.st-pg-num { font-family: var(--mono); color: var(--muted); white-space: nowrap; }
+.st-pg-barcell { width: 34%; }
+.st-pg-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.st-pg-fill { height: 100%; background: var(--green); }
+
+/* Learning paths */
+.st-paths { list-style: none; margin: 14px 0 0; padding: 0; }
+.st-path { margin-bottom: 12px; }
+.st-path-open {
+  display: flex; align-items: flex-start; gap: 12px; width: 100%; text-align: left;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; cursor: pointer; color: var(--text); font: inherit;
+}
+.st-path-open:hover, .st-path-open:focus-visible { border-color: var(--cyan); }
+.st-path-icon { font-size: 20px; line-height: 1.2; }
+.st-path-main { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.st-path-name { font-size: 14px; font-weight: 600; }
+.st-path-blurb { font-size: 12px; line-height: 1.5; color: var(--muted); }
+.st-path-for { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.st-path-count { font-family: var(--mono); font-size: 12px; color: var(--cyan); white-space: nowrap; }
+.st-path-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+.st-path-fill { height: 100%; background: var(--cyan); }
+.st-path-title { font-size: 16px; margin: 14px 0 0; }
+.st-path-steps { list-style: none; margin: 14px 0 0; padding: 0; counter-reset: step; }
+.st-path-step { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
+.st-step-n {
+  flex: 0 0 22px; height: 22px; border-radius: 50%; display: grid; place-items: center;
+  font-family: var(--mono); font-size: 11px; color: var(--muted);
+  border: 1px solid var(--border);
+}
+.st-path-step.done .st-step-n { color: var(--green); border-color: var(--green); }
+/* "You are here" — an ordered list without one is just a list. */
+.st-path-step.here .st-step-n { color: var(--cyan); border-color: var(--cyan); }
+.st-path-step.here .st-step-link { color: var(--cyan); }
+.st-step-link {
+  flex: 1; text-align: left; background: none; border: none; color: var(--text);
+  cursor: pointer; font-size: 13px; padding: 4px; border-radius: 6px;
+}
+.st-path-step.done .st-step-link { color: var(--muted); }
+.st-step-link:hover { color: var(--cyan); }
+.st-step-dom { font-family: var(--mono); font-size: 10px; color: var(--muted); text-transform: uppercase; }
 
 /* Backup / restore */
 .st-bk-lead { font-size: 13px; line-height: 1.6; color: var(--muted); margin: 0 0 16px; }
@@ -3149,4 +3654,30 @@ th .acro-exp,
 }
 .domain-cs {
   --accent: #5eead4;
+}
+
+/* domain: m365 (scaffolded) */
+.chip.c-m365 {
+  color: #818cf8;
+  border-color: rgba(129, 140, 248, 0.35);
+}
+.chip.c-m365.active,
+.chip.c-m365:hover {
+  background: rgba(129, 140, 248, 0.12);
+}
+.domain-m365 {
+  --accent: #818cf8;
+}
+
+/* domain: hw */
+.chip.c-hw {
+  color: #a3e635;
+  border-color: rgba(163, 230, 53, 0.35);
+}
+.chip.c-hw.active,
+.chip.c-hw:hover {
+  background: rgba(163, 230, 53, 0.12);
+}
+.domain-hw {
+  --accent: #a3e635;
 }

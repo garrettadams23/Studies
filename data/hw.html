@@ -1,0 +1,2354 @@
+<!-- ── TOPIC: OHM'S LAW ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚡</span>
+    <span class="topic-name">Voltage, Current &amp; Resistance — Ohm's Law With Worked IT Examples</span>
+    <span class="topic-badge">Electronics</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Three Quantities, One Relationship, and a Water Analogy That Mostly Works</div>
+      <div class="concept-desc">
+        Voltage is electrical pressure — the push. Current is flow — how much actually moves.
+        Resistance opposes that flow. The water analogy holds well enough to reason with: voltage is
+        the pressure in the pipe, current is litres per second, resistance is how narrow the pipe is.
+        Ohm's law ties them together, and almost every practical electrical question in IT is one
+        rearrangement of it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Quantity</th><th>Symbol</th><th>Unit</th><th>Analogy</th></tr></thead>
+          <tbody>
+            <tr><td>Voltage</td><td>V</td><td>Volts</td><td>Water pressure</td></tr>
+            <tr><td>Current</td><td>I</td><td>Amps</td><td>Flow rate</td></tr>
+            <tr><td>Resistance</td><td>R</td><td>Ohms (Ω)</td><td>Pipe narrowness</td></tr>
+            <tr><td>Power</td><td>P</td><td>Watts</td><td>Work being done — pressure × flow</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block">V = I × R        I = V ÷ R        R = V ÷ I
+P = V × I        P = I² × R       P = V² ÷ R</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          Where the analogy breaks: current does not "get used up" flowing through a device — the
+          same current returns through the circuit. What is consumed is energy, which is the
+          power line. Holding that distinction prevents most of the confusion beginners have about
+          why a device "draws" current rather than being given it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Worked Examples From Actual IT Situations</div>
+      <div class="concept-desc">
+        These are the calculations that come up in a datacenter, a comms room or a desk build, and
+        each is a single application of the formulas above.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># How many servers fit on a 16 A circuit at 230 V?</span>
+P_max  = 230 V × 16 A            = 3,680 W
+usable = 3,680 × 0.8             = 2,944 W   <span class="com"># 80% continuous-load rule</span>
+servers = 2,944 ÷ 450 W each     ≈ 6
+
+<span class="com"># PoE: is the switch budget enough?</span>
+24 cameras × 15.4 W (802.3af)    = 370 W     <span class="com"># at the powered device</span>
+allow cable loss, budget at PSE  ≈ 400 W+    <span class="com"># switch must supply more than PDs draw</span>
+
+<span class="com"># UPS runtime, roughly</span>
+load 800 W, UPS 1500 VA @ 0.6 PF = 900 W capacity  <span class="com"># VA is not watts</span>
+runtime falls non-linearly with load — read the vendor curve, do not divide</pre>
+        <div class="concept-desc" style="margin-top:10px">
+          The VA-versus-watts trap in that last block catches people constantly. Uninterruptible
+          supplies are rated in volt-amps, which equals watts only for a purely resistive load;
+          computer power supplies are not one. Multiply VA by the stated power factor — commonly
+          0.6 to 0.9 — before comparing it to your load.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Voltage Drop — The Cause That Looks Like Something Else</div>
+      <div class="concept-desc">
+        Every conductor has resistance, so every conductor loses some voltage along its length. Over
+        short runs this is irrelevant. Over long ones it produces symptoms that look like a faulty
+        device: a camera at the end of a long cable run that reboots under load, a remote sensor
+        that works on the bench and not in place, an access point that powers up and drops when its
+        radios come on.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Check</th></tr></thead>
+          <tbody>
+            <tr><td>Device works near the switch, fails at distance</td><td>Voltage drop over the run — measure at the far end, under load</td></tr>
+            <tr><td>Reboots only when the device works hard</td><td>Marginal supply; current rises, voltage sags further</td></tr>
+            <tr><td>Works on a bench supply, not in situ</td><td>The installation's wiring, not the device</td></tr>
+            <tr><td>Intermittent, worse in warm weather</td><td>Resistance rises with temperature; a marginal run becomes a failing one</td></tr>
+            <tr><td>Fine on one port, not another</td><td>Per-port PoE <span class="acro-exp">(Power over Ethernet)</span> budget or class negotiation, not the cable</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The general lesson generalises past electronics: <strong>measure at the point of use, under
+          the conditions that fail.</strong> A voltage reading taken at the supply with the device
+          idle is the electrical equivalent of testing an application with no load, and it will look
+          fine every time.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: POWER & THERMALS ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🌡️</span>
+    <span class="topic-name">Power &amp; Thermals — Watts, Heat, and Why the PSU <span class="acro-exp">(Power Supply Unit)</span> Calculation Matters</span>
+    <span class="topic-badge">Electronics</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Essentially All the Power a Computer Draws Becomes Heat</div>
+      <div class="concept-desc">
+        A computer does no mechanical work worth mentioning and emits almost no light. Nearly one
+        hundred percent of the electrical energy it consumes leaves as heat. This is why the power
+        figure and the cooling figure are the same number, and why "how many watts does this rack
+        draw" and "how much heat must this room remove" are one question asked twice — a fact that
+        surprises people the first time a comms cupboard becomes unusable in summer.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Rule of thumb</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>1 W consumed ≈ 1 W of heat to remove</td><td>Cooling sizing follows directly from the power draw</td></tr>
+            <tr><td>Cooling itself consumes power</td><td>Total facility draw exceeds IT draw — this is what PUE <span class="acro-exp">(Power Usage Effectiveness)</span> measures</td></tr>
+            <tr><td>Every 10 °C rise roughly halves electrolytic capacitor life</td><td>Why hot equipment fails early rather than immediately</td></tr>
+            <tr><td>Silicon throttles rather than fails</td><td>A hot machine is slow before it is broken — check thermals on performance complaints</td></tr>
+            <tr><td>Airflow direction is front-to-back, consistently</td><td>One reversed device recirculates hot air into its neighbours</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The throttling row is the one that turns a thermal problem into a mysterious performance
+          ticket. A laptop with a blocked vent or dried-out paste does not crash — it quietly runs at
+          a fraction of its rated speed, and the user reports that "it got slow", which sends
+          everybody looking at software.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Sizing a Power Supply Without Guessing</div>
+      <div class="concept-desc">
+        The common approaches are to buy the biggest affordable unit or to trust the number on the
+        graphics card box. Neither answers the question, and the actual calculation takes two
+        minutes.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Add the real draws, then leave headroom</span>
+CPU (TDP, or peak boost if quoted)      ~125 W
+GPU (board power, not "recommended PSU") ~250 W
+Motherboard, RAM, fans, drives           ~80 W
+                                        -------
+sustained total                          ~455 W
+
+target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for best efficiency</span>
+                                 <span class="com"># and to absorb transient spikes</span></pre>
+        <table class="ref-table">
+          <thead><tr><th>Consideration</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Efficiency peaks near half load</td><td>An oversized unit at 15% load is less efficient, not more</td></tr>
+            <tr><td>Modern GPUs <span class="acro-exp">(Graphics Processing Unit)</span> draw brief spikes far above their rating</td><td>A unit sized to the average trips its protection on transients</td></tr>
+            <tr><td>Efficiency ratings describe efficiency, not quality</td><td>An 80 Plus badge says nothing about ripple, protection or capacitor grade</td></tr>
+            <tr><td>Single-rail vs multi-rail</td><td>Multi-rail limits per-rail current; relevant only for high-draw builds</td></tr>
+            <tr><td>Capacitors age</td><td>A supply comfortable at five years old may not be at ten</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Power Supply Is the Most Under-Suspected Component</div>
+      <div class="concept-desc">
+        A failing supply does not usually stop working — it produces symptoms attributed to almost
+        everything else, because the effects appear wherever the machine happens to be most
+        sensitive. It is the component to suspect when the symptoms are diverse and make no
+        collective sense.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Why a PSU can cause it</th></tr></thead>
+          <tbody>
+            <tr><td>Random reboots under load, no error</td><td>Voltage sags below tolerance when demand rises</td></tr>
+            <tr><td>Memory errors that move between modules</td><td>Unstable rails corrupt reads regardless of which module is fitted</td></tr>
+            <tr><td>Storage dropping out intermittently</td><td>Drives are sensitive to rail quality</td></tr>
+            <tr><td>Machine will not start, no lights at all</td><td>Protection has latched — unplug for a minute to reset</td></tr>
+            <tr><td>Works with one drive removed</td><td>Marginal capacity, not a drive fault</td></tr>
+            <tr><td>Bulging or leaking capacitors, visible</td><td>End of life; replace the unit, do not nurse it</td></tr>
+            <tr><td>Buzzing or coil whine that changes with load</td><td>Usually benign; a change in character is not</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The diagnostic that settles it quickly is substitution with a known-good supply of adequate
+          capacity — the "swap" step of systematic troubleshooting. Software diagnostics cannot see a
+          rail sagging for microseconds under transient load, which is exactly the failure that
+          produces the most confusing tickets.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: COMPONENTS & SCHEMATICS ────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔩</span>
+    <span class="topic-name">Components &amp; Schematics — Resistors, Capacitors, Diodes, Transistors</span>
+    <span class="topic-badge">Electronics</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Five Components Explain Most of What You Will Meet</div>
+      <div class="concept-desc">
+        Board-level electronics uses a small vocabulary repeatedly. Recognising these five and what
+        each is for is enough to read most schematics well enough to reason about a fault, which is
+        the realistic goal for someone in IT rather than in electronics design.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Component</th><th>Does</th><th>Typical job on a board</th></tr></thead>
+          <tbody>
+            <tr><td>Resistor</td><td>Limits current, divides voltage</td><td>Setting a signal level; protecting an LED <span class="acro-exp">(Light Emitting Diode)</span>; pull-up on a data line</td></tr>
+            <tr><td>Capacitor</td><td>Stores charge; passes changes, blocks steady voltage</td><td>Smoothing supply rails; decoupling beside every chip; filtering</td></tr>
+            <tr><td>Diode</td><td>Conducts one way only</td><td>Reverse-polarity protection; rectifying AC; clamping spikes</td></tr>
+            <tr><td>Transistor</td><td>Switches or amplifies</td><td>Switching a load under logic control; every digital gate, in bulk</td></tr>
+            <tr><td>Inductor</td><td>Resists changes in current</td><td>Switching regulators; filtering noise</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two of these matter disproportionately in failures. Electrolytic capacitors dry out and
+          bulge with age and heat — visible, common, and the classic repairable board fault. And
+          the decoupling capacitors scattered beside every chip exist to supply the instantaneous
+          current a chip demands when it switches; without them a board is unstable in ways that
+          look like software faults.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Reading a Schematic — Follow Power First, Then Signals</div>
+      <div class="concept-desc">
+        A schematic is not a picture of the board; it is a map of connections, drawn for clarity
+        rather than for physical layout. Two components adjacent on the diagram may be at opposite
+        ends of the board, and a net drawn as three separate stubs labelled <code>3V3</code> is one
+        electrical connection.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Convention</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>Power at the top, ground at the bottom</td><td>Signals generally flow left to right between them</td></tr>
+            <tr><td>Named nets — <code>3V3</code>, <code>VBUS</code>, <code>GND</code></td><td>Everywhere the same label appears is one connection</td></tr>
+            <tr><td>A dot at a crossing</td><td>Connected. No dot means the lines merely cross</td></tr>
+            <tr><td>Ground symbols repeated everywhere</td><td>All the same net; drawn repeatedly to avoid a web of lines</td></tr>
+            <tr><td>Reference designators — R12, C4, U3, Q1</td><td>Resistor, capacitor, integrated circuit, transistor</td></tr>
+            <tr><td>A bar over a signal name, or a leading <code>/</code></td><td>Active low — asserted when pulled to ground</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The active-low convention causes a specific and common confusion when probing: a reset or
+          chip-select line sitting at 3.3 V is <em>not</em> asserted, and a line at 0 V is not
+          necessarily broken. Check the naming before concluding a signal is dead.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">What Is Worth Knowing at Board Level, in an IT Job</div>
+      <div class="concept-desc">
+        Being honest about scope: component-level repair is rarely economic in a professional IT
+        context, and attempting it on a device under warranty voids it. What this knowledge is for
+        is <em>diagnosis</em> — deciding whether a board is repairable, whether a symptom is
+        electrical or logical, and whether the vendor's explanation is plausible.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Observation</th><th>Reasonable conclusion</th></tr></thead>
+          <tbody>
+            <tr><td>Bulging or leaking electrolytic capacitors</td><td>Age or heat; the board may be repairable, the cause is environmental</td></tr>
+            <tr><td>A burnt or cracked component with a scorch mark</td><td>Something failed catastrophically — check what it powers before replacing</td></tr>
+            <tr><td>Corrosion around a connector or battery</td><td>Liquid or leaked cell; damage extends further than it looks</td></tr>
+            <tr><td>Board looks perfect and the device is dead</td><td>Most likely a chip or firmware fault — not visually diagnosable</td></tr>
+            <tr><td>Smell of burnt electronics, no visible damage</td><td>Real, and worth taking seriously; power it down</td></tr>
+            <tr><td>Repeated identical failures across a fleet</td><td>A design or batch fault; escalate to the vendor rather than repairing</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          That last row is the one where this knowledge pays for itself in an enterprise. Recognising
+          that eleven identical machines failed the same way at the same age turns "unlucky
+          hardware" into a warranty claim or a recall conversation, and it is a claim vendors take
+          much more seriously when it comes with a component-level observation attached.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: TEST GEAR ──────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📟</span>
+    <span class="topic-name">Test Gear — Multimeter, Oscilloscope, Logic Analyser: What Each One Answers</span>
+    <span class="topic-badge">Electronics</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Each Instrument Answers a Different Question About Time</div>
+      <div class="concept-desc">
+        The three instruments are frequently ranked by cost or sophistication, which is the wrong
+        axis. What separates them is the timescale of the question. A multimeter tells you a value
+        <em>now</em>, averaged. An oscilloscope shows you a voltage <em>changing</em>, so you can see
+        shape, noise and timing. A logic analyser ignores voltage shape entirely and decodes many
+        digital lines into <em>meaning</em> — bytes, addresses, protocol transactions.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Instrument</th><th>Answers</th><th>Cannot tell you</th></tr></thead>
+          <tbody>
+            <tr><td>Multimeter</td><td>Is the voltage right? Is this connected? Is this fuse good?</td><td>Anything about shape, noise or brief events</td></tr>
+            <tr><td>Oscilloscope</td><td>What does this signal look like over microseconds?</td><td>What the data means, across many lines at once</td></tr>
+            <tr><td>Logic analyser</td><td>What did these eight lines actually say, decoded as I²C or SPI <span class="acro-exp">(Serial Peripheral Interface)</span>?</td><td>Signal quality — it sees ones and zeros, not marginal edges</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The practical division: if the question is "is power reaching this", reach for a
+          multimeter. If it is "why is this data corrupted sometimes", an oscilloscope, because the
+          answer is usually in the shape of the edges. If it is "what is this device sending", a
+          logic analyser, which turns a wire into a transcript.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Multimeter — The Five Measurements Worth Being Fluent In</div>
+      <div class="concept-desc">
+        A multimeter is the one instrument worth owning even if you never intend to do electronics
+        work, because it answers physical-layer questions that no software can.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Mode</th><th>Use</th><th>Watch out for</th></tr></thead>
+          <tbody>
+            <tr><td>DC <span class="acro-exp">(Domain Controller)</span> voltage</td><td>Is the rail present and correct? Measure under load</td><td>An idle reading hides a sag; probe while the fault occurs</td></tr>
+            <tr><td>Continuity (beep)</td><td>Is this cable, fuse or trace intact?</td><td>Only on an unpowered circuit</td></tr>
+            <tr><td>Resistance</td><td>Cable length checks, sensor values, is this shorted?</td><td>In-circuit readings are affected by parallel paths</td></tr>
+            <tr><td>DC current</td><td>What is this device actually drawing?</td><td>The meter goes <em>in series</em> — and this is how meters get destroyed</td></tr>
+            <tr><td>AC voltage</td><td>Is mains present? Is this outlet live?</td><td>Genuine hazard — know what you are doing or do not</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two safety notes worth stating plainly. Current measurement requires breaking the circuit
+          and putting the meter in the path; connecting a meter set to current across a voltage
+          source is a direct short through the meter, and it is the single most common way they are
+          destroyed. And mains work is a category apart — if you are not trained and authorised for
+          it, the correct action is to stop and call someone who is.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">When the Answer Needs a Scope</div>
+      <div class="concept-desc">
+        Most IT professionals never need an oscilloscope, and the cases where one is the only answer
+        share a signature: the fault is real, intermittent, and invisible to every logical
+        diagnostic because the problem is happening below the layer software can observe.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Situation</th><th>What the scope shows</th></tr></thead>
+          <tbody>
+            <tr><td>Serial data corrupts occasionally</td><td>Slow or rounded edges, reflections, wrong voltage levels</td></tr>
+            <tr><td>Device resets under load</td><td>The supply rail sagging at exactly the moment of demand</td></tr>
+            <tr><td>Intermittent bus errors</td><td>Ringing or crosstalk on the clock line</td></tr>
+            <tr><td>A sensor reads noisily</td><td>Interference riding on the signal, and often its frequency, which names the source</td></tr>
+            <tr><td>Timing between two events is suspect</td><td>The actual interval, which no logging can measure at that resolution</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          A cheap USB <span class="acro-exp">(Universal Serial Bus)</span> logic analyser deserves a specific recommendation for anyone touching embedded
+          or serial devices: for the price of a couple of network cables it decodes I²C, SPI and
+          UART <span class="acro-exp">(Universal Asynchronous Receiver/Transmitter)</span> directly into readable transactions, and it converts "the device is not responding"
+          from a guess into a transcript showing whether anything was sent, whether it was
+          acknowledged, and at what address.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MOTHERBOARD ANATOMY ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧩</span>
+    <span class="topic-name">Motherboard Anatomy — Chipsets, PCIe <span class="acro-exp">(Peripheral Component Interconnect Express)</span> Lanes &amp; the Block Diagram</span>
+    <span class="topic-badge">PC Hardware</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Lanes Are the Budget, and Almost Everything Competes for Them</div>
+      <div class="concept-desc">
+        A modern board is easier to reason about once you stop thinking of it as a collection of
+        sockets and start thinking of it as a distribution network for a fixed number of PCIe lanes.
+        The CPU <span class="acro-exp">(Central Processing Unit)</span> provides a set number — some directly to the primary slot and one or two fast storage
+        slots — and everything else hangs off the chipset, which itself connects to the CPU over a
+        single link that all of it shares. That shared link is where surprising bottlenecks come
+        from.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Connected to</th><th>Typically</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td>CPU, directly</td><td>Primary x16 slot; one or two NVMe <span class="acro-exp">(Non-Volatile Memory Express)</span> slots</td><td>Full bandwidth, no contention</td></tr>
+            <tr><td>Chipset</td><td>Remaining slots, SATA <span class="acro-exp">(Serial Advanced Technology Attachment)</span>, USB <span class="acro-exp">(Universal Serial Bus)</span>, network, audio</td><td>All share one uplink to the CPU</td></tr>
+            <tr><td>Shared or muxed</td><td>An NVMe slot that disables two SATA ports when populated</td><td>Documented in the manual, discovered when a drive vanishes</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The third row is the practical one and it causes a specific support call: a technician
+          installs an NVMe drive and two SATA drives disappear. Nothing is broken — the lanes are
+          shared, the board reallocated them, and the manual's block diagram said so. Reading that
+          diagram before building is a five-minute step that prevents an afternoon of confusion.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">What Is Physically on the Board</div>
+      <div class="concept-desc">
+        Enough vocabulary to read a manual, order the right part, and describe a fault precisely to
+        a vendor.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Item</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>CPU socket</td><td>Determines which processors fit at all; changes between generations</td></tr>
+            <tr><td>Chipset</td><td>Determines features — lane count, USB, overclocking, sometimes CPU support</td></tr>
+            <tr><td>Memory slots</td><td>Colour-coded in pairs; the pairing is the channel, and it matters</td></tr>
+            <tr><td>PCIe slots</td><td>Physical size and electrical width differ — an x16 slot may be wired x4</td></tr>
+            <tr><td>M.2 slots</td><td>Check keying and whether the slot is NVMe, SATA, or both</td></tr>
+            <tr><td>24-pin and 8-pin power connectors</td><td>The 8-pin CPU connector is the one people forget; the machine will not post</td></tr>
+            <tr><td>Front-panel header</td><td>Power switch, reset, LEDs <span class="acro-exp">(Light Emitting Diode)</span> — the fiddliest ten minutes of any build</td></tr>
+            <tr><td>CMOS <span class="acro-exp">(Complementary Metal-Oxide-Semiconductor)</span> battery and clear jumper</td><td>The fix for a machine that will not post after a bad setting</td></tr>
+            <tr><td>Diagnostic LEDs or a POST code display</td><td>The single most useful feature on a board when something is wrong</td></tr>
+            <tr><td>VRM <span class="acro-exp">(Voltage Regulator Module)</span> and its heatsink</td><td>Converts 12 V to CPU voltage; poor VRM cooling throttles a good CPU</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Form Factor, Firmware and the Mistakes That Cost a Rebuild</div>
+      <div class="concept-desc">
+        Most motherboard problems in practice are not faults — they are compatibility and process
+        mistakes, made once, expensively.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Mistake</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Assuming a socket match means CPU support</td><td>The board needs a firmware update to recognise a newer CPU — and may need an older CPU to apply it</td></tr>
+            <tr><td>Not checking for flashback or firmware-update-without-CPU support</td><td>The above becomes a chicken-and-egg problem needing a borrowed processor</td></tr>
+            <tr><td>Ignoring form factor and mounting holes</td><td>ATX <span class="acro-exp">(Advanced Technology eXtended)</span>, microATX and mini-ITX fit different cases; standoffs must match exactly</td></tr>
+            <tr><td>A standoff where there is no mounting hole</td><td>Shorts the board underneath — a genuine and easily-missed build fault</td></tr>
+            <tr><td>Forcing memory or a CPU</td><td>Bent pins; on some sockets the pins are on the board and repair is specialist</td></tr>
+            <tr><td>Updating firmware without reading the notes</td><td>Some updates reset settings or block downgrade permanently</td></tr>
+            <tr><td>Skipping the CPU power connector</td><td>Fans spin, nothing posts, and it looks like a dead board</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The firmware-and-CPU-support trap is worth checking before ordering, not after. A board
+          sold as supporting a processor may have shipped before that processor existed, and unless
+          it offers firmware flashing with no CPU installed, the only route is temporarily fitting an
+          older chip — which nobody has to hand at the moment they discover this.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CPU & COOLING ──────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧊</span>
+    <span class="topic-name">CPU <span class="acro-exp">(Central Processing Unit)</span> &amp; Cooling — Sockets, TDP <span class="acro-exp">(Thermal Design Power)</span>, Thermal Paste &amp; Throttling Diagnosis</span>
+    <span class="topic-badge">PC Hardware</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">TDP Is a Cooling Design Target, Not a Power Consumption Figure</div>
+      <div class="concept-desc">
+        Thermal design power is widely read as "how many watts this chip uses". It is not. It is the
+        sustained heat a cooler must be able to remove for the chip to hold its base behaviour, and
+        modern processors routinely exceed it — sometimes by a large multiple — during boost, by
+        design. A processor rated at 65 W can draw well over 200 W briefly, which is why a cooler
+        sized to the rated figure produces a machine that is fast for thirty seconds and then is not.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Term</th><th>Means</th></tr></thead>
+          <tbody>
+            <tr><td>TDP / base power</td><td>Sustained heat the cooler must handle at base clocks</td></tr>
+            <tr><td>Boost / turbo power</td><td>Short-duration higher draw — often the number that matters</td></tr>
+            <tr><td>Thermal throttling</td><td>Clocks reduced because the die reached its limit</td></tr>
+            <tr><td>Power throttling</td><td>Clocks reduced because a power limit was reached, not a thermal one</td></tr>
+            <tr><td>Thermal velocity boost / opportunistic boost</td><td>Extra clocks available only while the chip is cool</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The distinction between thermal and power throttling matters diagnostically. A machine
+          throttling at 95 °C has a cooling problem. A machine throttling at 70 °C has a power-limit
+          configuration, which is a firmware setting rather than a fault — and is deliberate on many
+          laptops and small-form-factor systems.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Thermal Paste — Small Job, Disproportionate Consequences</div>
+      <div class="concept-desc">
+        Paste fills microscopic gaps between the processor's heat spreader and the cooler's base;
+        without it, air sits in those gaps and air is an excellent insulator. Almost everything
+        people argue about here matters far less than simply having some, in roughly the right
+        amount, with the cooler correctly seated.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Point</th><th>Reality</th></tr></thead>
+          <tbody>
+            <tr><td>How much</td><td>A pea or a thin line; pressure spreads it. Excess is messy, not catastrophic</td></tr>
+            <tr><td>Application pattern</td><td>Endlessly debated, worth a degree or two at most</td></tr>
+            <tr><td>Paste choice</td><td>Any reputable compound is fine; exotic ones buy a few degrees</td></tr>
+            <tr><td>Reapplication interval</td><td>Years — but a laptop running hot at four or five years old is a strong candidate</td></tr>
+            <tr><td>Reusing old paste after removing a cooler</td><td>Do not; clean both surfaces and reapply</td></tr>
+            <tr><td>Mounting pressure and evenness</td><td>The thing that actually matters — uneven seating beats any paste choice</td></tr>
+            <tr><td>Protective film left on the cooler base</td><td>Happens more often than anyone admits; check it</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">"It Got Slow" — Diagnosing Thermal Problems</div>
+      <div class="concept-desc">
+        Thermal throttling is one of the most common causes of a gradual, unexplained performance
+        complaint, and it is routinely investigated as a software problem for weeks because nothing
+        in the operating system reports it prominently.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>What you are looking for</th></tr></thead>
+          <tbody>
+            <tr><td>Watch temperature and clock speed together, under load</td><td>Clocks dropping as temperature peaks is the whole diagnosis</td></tr>
+            <tr><td>Note the temperature at which it drops</td><td>Near 95–100 °C is thermal; much lower is a power limit</td></tr>
+            <tr><td>Check fan behaviour</td><td>Fan not spinning up, or spinning at full constantly, are different faults</td></tr>
+            <tr><td>Inspect for dust in the fins</td><td>The most common cause by a wide margin, especially in laptops</td></tr>
+            <tr><td>Check the ambient temperature and airflow</td><td>A machine in a cupboard is a thermal problem the machine cannot fix</td></tr>
+            <tr><td>Consider paste age on machines over four years old</td><td>Pump-out and drying are real and gradual</td></tr>
+            <tr><td>Verify cooler mounting if the machine was recently opened</td><td>A cooler that was not fully re-seated throttles immediately</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Dust deserves the emphasis it gets. A laptop's heatsink fins clog into a felt mat that air
+          cannot pass through, and the machine does not report an error — it just becomes slow, and
+          the user assumes it has aged. Compressed air and ten minutes routinely restore a machine
+          that was being considered for replacement, which is also the cheapest sustainability win
+          available.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MEMORY DEEP ────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧠</span>
+    <span class="topic-name">Memory Deep — Channels, Ranks, Timings, ECC <span class="acro-exp">(Elliptic Curve Cryptography)</span> &amp; Diagnosing Bad RAM <span class="acro-exp">(Random Access Memory)</span></span>
+    <span class="topic-badge">PC Hardware</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Which Slots You Use Changes Performance Substantially</div>
+      <div class="concept-desc">
+        Memory controllers address several channels in parallel, and populating them correctly
+        roughly doubles available bandwidth compared with putting everything on one. The slots are
+        colour-coded in pairs to indicate this, and the pairs are usually <em>not</em> adjacent —
+        which is exactly why people fill the two slots next to the processor and unknowingly halve
+        their memory bandwidth. On systems where the graphics processor shares system memory, the
+        effect is dramatic and looks like a faulty machine.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Configuration</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>One module</td><td>Single channel — half the bandwidth, and it is very noticeable with integrated graphics</td></tr>
+            <tr><td>Two modules, matched pair, correct slots</td><td>Dual channel — the target configuration</td></tr>
+            <tr><td>Two modules, adjacent wrong slots</td><td>Single channel; no error, just slower</td></tr>
+            <tr><td>Three modules</td><td>Mixed; usually part-channel, and rarely what anyone intended</td></tr>
+            <tr><td>Mismatched sizes or speeds</td><td>Runs at the slowest common settings; may run single channel</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Consult the manual for the correct pair rather than reasoning from the layout — the
+          convention varies. And note that a machine will boot and work perfectly in every wrong
+          configuration above, which is why this is a performance mystery rather than a visible
+          fault.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Vocabulary, and What ECC Actually Buys</div>
+      <div class="concept-desc">
+        Memory specifications carry more numbers than any other component, and most of them matter
+        far less than the channel configuration above.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Term</th><th>Means</th><th>How much it matters</th></tr></thead>
+          <tbody>
+            <tr><td>Speed (MT/s)</td><td>Transfers per second</td><td>Moderately; more so for integrated graphics</td></tr>
+            <tr><td>CAS latency and timings</td><td>Delay in clock cycles before data appears</td><td>Marginally, for most workloads</td></tr>
+            <tr><td>Rank</td><td>How many banks of chips a module presents</td><td>Affects capacity limits and sometimes speed</td></tr>
+            <tr><td>Registered / buffered</td><td>A buffer between controller and chips, for large server configurations</td><td>Not interchangeable with unbuffered — check board support</td></tr>
+            <tr><td>ECC</td><td>Extra bits detect and correct single-bit errors</td><td>Substantially, for servers and anything long-running</td></tr>
+            <tr><td>XMP <span class="acro-exp">(Extreme Memory Profile)</span> / EXPO profile</td><td>A stored overclock the board applies</td><td>Rated speed usually requires enabling it explicitly</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          ECC is the row worth understanding rather than memorising. Bit flips happen — from cosmic
+          rays, from marginal voltage, from ageing chips — and on a desktop the result is an
+          occasional crash or a silently corrupted file that nobody attributes to memory. On a
+          server holding a database, silent corruption is far worse than a crash, and ECC turns
+          most single-bit errors into a logged, corrected event. That log is the point: it tells you
+          a module is failing before it takes anything with it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Diagnosing Memory, Which Fails Unlike Anything Else</div>
+      <div class="concept-desc">
+        Memory faults produce symptoms with no pattern: crashes in different applications, corruption
+        in unrelated files, a machine that installs an operating system successfully and then fails
+        randomly. Anything that behaves inconsistently and irrationally deserves a memory test early,
+        because the test is free and rules out an entire category.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>Run a dedicated memory test, booted from media, for several passes</td><td>An in-OS test cannot check memory the OS <span class="acro-exp">(Operating System)</span> is using</td></tr>
+            <tr><td>Test overnight for intermittent faults</td><td>A single pass misses marginal modules routinely</td></tr>
+            <tr><td>If errors appear, test one module at a time</td><td>Identifies which — and whether it is the slot rather than the module</td></tr>
+            <tr><td>Swap a suspect module into a different slot</td><td>Errors that follow the module condemn it; errors that stay condemn the slot</td></tr>
+            <tr><td>Disable XMP/EXPO and retest</td><td>Instability at rated speed is common and is not a faulty module</td></tr>
+            <tr><td>Reseat everything before concluding</td><td>Partial seating is common after transport and produces identical symptoms</td></tr>
+            <tr><td>Check the ECC error log on servers</td><td>Correctable errors climbing is a module telling you in advance</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The XMP row is worth trying early because it is free and it explains a surprising share of
+          "faulty memory": the modules are sold as capable of a speed the board and processor cannot
+          reliably drive with that configuration, so the profile is stable in the vendor's lab and
+          marginal in your machine.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: STORAGE INTERFACES ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔌</span>
+    <span class="topic-name">Storage Interfaces — SATA <span class="acro-exp">(Serial Advanced Technology Attachment)</span>, NVMe <span class="acro-exp">(Non-Volatile Memory Express)</span>, PCIe <span class="acro-exp">(Peripheral Component Interconnect Express)</span> Lanes &amp; Where the Bottleneck Really Is</span>
+    <span class="topic-badge">PC Hardware</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">NVMe Beat SATA on the Protocol, Not Only on the Wire</div>
+      <div class="concept-desc">
+        SATA was designed for spinning disks: one command queue, thirty-two entries deep, with a
+        protocol built around a device that has a head to move. NVMe was designed for flash, which
+        has no moving parts and enormous internal parallelism — thousands of queues, thousands of
+        commands each, and far less overhead per operation. The bandwidth increase gets the
+        attention, and the queue model is what actually transforms behaviour under concurrent load.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>SATA III</th><th>NVMe (PCIe)</th></tr></thead>
+          <tbody>
+            <tr><td>Ceiling</td><td>~600 MB/s</td><td>Several GB/s, scaling with lanes and generation</td></tr>
+            <tr><td>Queues</td><td>1, depth 32</td><td>Many, deep</td></tr>
+            <tr><td>Protocol overhead</td><td>Designed around mechanical assumptions</td><td>Minimal, designed for flash</td></tr>
+            <tr><td>Latency</td><td>Higher</td><td>Substantially lower — often the thing users feel</td></tr>
+            <tr><td>Physical</td><td>Cable, or M.2 in SATA mode</td><td>M.2, U.2 or an add-in card</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The M.2 slot is a physical form factor, not a protocol. An M.2 drive may be NVMe or SATA,
+          and a slot may accept one, the other, or both — so an M.2 SATA drive in an M.2 slot
+          delivers SATA speeds and looks, to anyone who bought "an M.2 SSD <span class="acro-exp">(Solid State Drive)</span>" expecting otherwise, like
+          a defective product.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Lanes and Generations — Reading the Real Bandwidth</div>
+      <div class="concept-desc">
+        A drive's ceiling is set by lane count multiplied by per-lane speed, and a slot that is
+        physically x16 may be electrically x4 or x1. Both ends negotiate down to the lower.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>PCIe generation</th><th>Per lane, roughly</th><th>x4 slot, roughly</th></tr></thead>
+          <tbody>
+            <tr><td>Gen 3</td><td>~1 GB/s</td><td>~4 GB/s</td></tr>
+            <tr><td>Gen 4</td><td>~2 GB/s</td><td>~8 GB/s</td></tr>
+            <tr><td>Gen 5</td><td>~4 GB/s</td><td>~16 GB/s</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two practical consequences. A Gen 4 drive in a Gen 3 slot works perfectly and runs at Gen 3
+          speeds — not a fault, and worth checking before troubleshooting "slow" new hardware. And an
+          M.2 slot fed from the chipset rather than the CPU <span class="acro-exp">(Central Processing Unit)</span> shares its uplink with everything else on
+          the chipset, so a large file copy alongside heavy network traffic can contend in ways the
+          drive's specification never suggested.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Why the Fast Drive Is Not Fast</div>
+      <div class="concept-desc">
+        Storage performance complaints after an upgrade are common, and the interface is rarely the
+        cause. These are the real ones, roughly in order of how often they turn out to be it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Cause</th><th>Signature</th></tr></thead>
+          <tbody>
+            <tr><td>The workload is small random I/O <span class="acro-exp">(Input/Output)</span>, not sequential</td><td>Benchmarks look great, the application does not — most real work is random</td></tr>
+            <tr><td>SLC cache exhausted on a long write</td><td>Fast for the first tens of gigabytes, then falls off a cliff</td></tr>
+            <tr><td>Drive nearly full</td><td>Flash performance degrades sharply above roughly 80–90% capacity</td></tr>
+            <tr><td>Thermal throttling of the drive itself</td><td>NVMe drives get hot; sustained transfers slow, then recover when idle</td></tr>
+            <tr><td>Running at a lower generation or lane width than expected</td><td>Check what the slot actually negotiated, not what the box claimed</td></tr>
+            <tr><td>The bottleneck is elsewhere entirely</td><td>Network, CPU, or the application's own single-threaded behaviour</td></tr>
+            <tr><td>A cheap drive with no DRAM <span class="acro-exp">(Dynamic Random Access Memory)</span> cache</td><td>Fine when idle, poor under sustained mixed load</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The first row is the one worth internalising, and it connects directly to
+          <span class="xref">Storage Performance — IOPS, Throughput, Latency &amp; Which One Is Your Limit</span>:
+          sequential benchmark figures describe a workload almost nobody has. A drive that copies a
+          film at 7 GB/s and opens a project in the same time as the old one is behaving normally,
+          because opening the project was never bandwidth-bound.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SYSTEMATIC HARDWARE TROUBLESHOOTING ────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔬</span>
+    <span class="topic-name">Systematic Hardware Troubleshooting — Isolate, Swap &amp; the Minimum Viable System</span>
+    <span class="topic-badge">Diagnosis</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Change One Thing, and Know What You Expect to Happen</div>
+      <div class="concept-desc">
+        Hardware faults reward discipline more than knowledge, because the search space is small and
+        finite — a desktop has perhaps eight replaceable parts. What wastes the afternoon is changing
+        three things at once, losing track of what was tried, and ending up unable to say whether the
+        machine ever worked with the original memory in the original slot. The method is unglamorous
+        and it is faster than intuition almost every time.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>1. Reproduce it</td><td>Know the exact conditions; an intermittent fault you cannot trigger cannot be tested</td></tr>
+            <tr><td>2. Write down the starting state</td><td>Which parts, which slots, which settings — you will need this in an hour</td></tr>
+            <tr><td>3. Reduce to the minimum viable system</td><td>Board, CPU <span class="acro-exp">(Central Processing Unit)</span>, cooler, one memory module, power. Nothing else</td></tr>
+            <tr><td>4. Confirm the minimum works, or does not</td><td>This single step splits the problem in half</td></tr>
+            <tr><td>5. Add one component; retest</td><td>One. The discipline is the whole method</td></tr>
+            <tr><td>6. Swap with known-good, not with another suspect</td><td>Two unknown parts prove nothing about either</td></tr>
+            <tr><td>7. Record the result of every step</td><td>The notes are what stop you repeating the third attempt twice</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Step 6 is where most home diagnosis goes wrong. Swapping a suspect part into a second
+          suspect machine produces a result nobody can interpret. Known-good means a part you have
+          just seen working, in a machine you have just seen working.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Isolate by Half, and Start With What Is Free</div>
+      <div class="concept-desc">
+        Before removing anything, several checks cost nothing and resolve a surprising share of
+        faults. Technicians skip them because they feel too simple, and then find them at the end.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Check</th><th>Catches</th></tr></thead>
+          <tbody>
+            <tr><td>Is it plugged in, switched on at the wall, and is the socket live?</td><td>More often than anyone admits, especially remotely</td></tr>
+            <tr><td>Reseat everything — memory, cards, cables, both ends</td><td>Partial seating after transport; the single highest-yield step</td></tr>
+            <tr><td>Try a different cable, a different port, a different monitor</td><td>Display faults that are not the computer</td></tr>
+            <tr><td>Clear CMOS <span class="acro-exp">(Complementary Metal-Oxide-Semiconductor)</span></td><td>A bad setting that prevents boot; costs a minute</td></tr>
+            <tr><td>Look and smell</td><td>Bulging capacitors, scorch marks, burnt smell, corrosion</td></tr>
+            <tr><td>Listen and feel</td><td>Fans spinning? Drive spinning? Any beep at all?</td></tr>
+            <tr><td>Check what changed most recently</td><td>New hardware, new driver, moved desk, storm last night</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          "What changed?" is the most productive single question in all troubleshooting, and it is
+          worth asking about the environment as well as the machine. A workstation that started
+          failing after being moved is a reseating problem; one that started after a power cut is a
+          supply problem until proven otherwise.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Knowing When to Stop</div>
+      <div class="concept-desc">
+        In a professional context the decision to stop diagnosing is as important as the diagnosis,
+        and it should be made on cost rather than on curiosity. An hour of a technician's time
+        against a replacement part is an arithmetic problem, and the answer usually favours the part.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stop when</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>The machine is under warranty</td><td>Opening it may void cover; the vendor's process is faster and free</td></tr>
+            <tr><td>Diagnosis time exceeds the replacement cost</td><td>Straightforward economics, and it applies sooner than people expect</td></tr>
+            <tr><td>The data matters more than the machine</td><td>Stop and preserve the drive before any further attempts</td></tr>
+            <tr><td>Component-level repair is the only remaining path</td><td>Specialist work; send it out or replace the board</td></tr>
+            <tr><td>It is a fleet-wide pattern</td><td>Escalate to the vendor — this is a warranty claim, not a repair</td></tr>
+            <tr><td>You have swapped everything and it still fails</td><td>Suspect the thing you did not swap: the power, the desk, the environment</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The data row overrides all the others. If the drive holds anything not backed up, powering
+          the machine on repeatedly to chase a fault can turn a recoverable situation into an
+          unrecoverable one — see the data-recovery triage card. Preserve first, diagnose second.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: POST, BEEP CODES & DIAGNOSTIC LEDS ─────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🚦</span>
+    <span class="topic-name">POST, Beep Codes &amp; Diagnostic LEDs <span class="acro-exp">(Light Emitting Diode)</span> — Reading a Machine That Will Not Boot</span>
+    <span class="topic-badge">Diagnosis</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Machine With No Display Is Still Telling You Things</div>
+      <div class="concept-desc">
+        Power-on self test runs before anything you can see. The firmware checks the processor,
+        initialises memory, brings up the chipset, finds a display adapter, then finally puts an
+        image on screen — and if it fails before that last step there is nothing to read. The
+        machine has not gone silent; it is reporting through the only channels it has left, which
+        are beeps, LEDs and a two-digit code display. Knowing that these exist is what turns "it is
+        dead" into a specific fault.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Channel</th><th>Where</th><th>Reading it</th></tr></thead>
+          <tbody>
+            <tr><td>Beep codes</td><td>Internal speaker or buzzer</td><td>Count the pattern; look it up for that firmware vendor</td></tr>
+            <tr><td>Diagnostic LEDs</td><td>Row of labelled LEDs on the board — CPU <span class="acro-exp">(Central Processing Unit)</span>, DRAM <span class="acro-exp">(Dynamic Random Access Memory)</span>, VGA <span class="acro-exp">(Video Graphics Array)</span>, BOOT</td><td>The one that stays lit is where POST stopped</td></tr>
+            <tr><td>POST code display</td><td>Two-digit hex readout on better boards</td><td>Look up the code in the board manual</td></tr>
+            <tr><td>Laptop LED patterns</td><td>Power or caps-lock LED blinking a pattern</td><td>Vendor-specific; documented in their service manual</td></tr>
+            <tr><td>Fan behaviour</td><td>Full speed, or stopping and restarting</td><td>Full speed constantly often means POST never completed</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Boards no longer ship with a speaker by default, which is why beep codes feel obsolete —
+          a cheap header speaker costs almost nothing and restores the channel. On a board with
+          diagnostic LEDs it is unnecessary; on one without, it is the difference between a code and
+          a guess.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Where POST Stops, and What It Means</div>
+      <div class="concept-desc">
+        Codes and beep patterns are vendor-specific and must be looked up. The <em>stage</em> is
+        universal, and the stage is usually enough to act on.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stops at</th><th>Likely causes, in order</th></tr></thead>
+          <tbody>
+            <tr><td>Nothing at all — no fans, no lights</td><td>Power supply, wall power, front-panel switch wiring, dead board</td></tr>
+            <tr><td>Fans spin, no LEDs advance</td><td>Missing CPU power connector; CPU not seated; board fault</td></tr>
+            <tr><td>CPU LED</td><td>Seating, unsupported CPU needing a firmware update, cooler over-tightened</td></tr>
+            <tr><td>DRAM LED</td><td>Reseat memory; try one module; try a different slot; check the supported list</td></tr>
+            <tr><td>VGA LED</td><td>Graphics card seating and power; try integrated graphics; try another card</td></tr>
+            <tr><td>BOOT LED</td><td>POST passed — this is now a storage or bootloader problem, not hardware initialisation</td></tr>
+            <tr><td>Posts, then reboots in a loop</td><td>Overheating, unstable memory profile, marginal power</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The BOOT row is the important dividing line. Once POST completes, hardware initialisation
+          succeeded and you have moved into a different category of problem — boot order, a failed
+          drive, a corrupted bootloader, or a firmware setting. Everything before it is hardware.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Order That Resolves Most No-Boot Machines</div>
+      <div class="concept-desc">
+        Working this sequence takes about fifteen minutes and resolves the large majority of
+        no-display faults without any parts.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Order</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Confirm mains power and that the supply's own switch is on</td></tr>
+            <tr><td>2</td><td>Look for diagnostic LEDs or a POST code; note it before changing anything</td></tr>
+            <tr><td>3</td><td>Reseat memory, graphics card and both ends of every power cable</td></tr>
+            <tr><td>4</td><td>Confirm the CPU power connector is fitted — the most-missed item in a new build</td></tr>
+            <tr><td>5</td><td>Clear CMOS <span class="acro-exp">(Complementary Metal-Oxide-Semiconductor)</span>; if it posts, a setting was the fault and you now know it</td></tr>
+            <tr><td>6</td><td>Strip to minimum viable system and retest</td></tr>
+            <tr><td>7</td><td>One memory module, in the slot the manual names for a single module</td></tr>
+            <tr><td>8</td><td>Bypass the case: test the board on the bench, in case a standoff is shorting it</td></tr>
+            <tr><td>9</td><td>Substitute a known-good power supply</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Step 8 is the one people skip and it catches a genuine class of new-build fault: a
+          mounting standoff under a part of the board with no hole shorts it against the case, and
+          the machine is completely dead in the case and boots perfectly on the bench. If a
+          newly-built machine will not post, testing it outside the case is worth the ten minutes.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: INTERMITTENT FAULTS ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🎲</span>
+    <span class="topic-name">Intermittent Faults — Heat, Vibration, Marginal Power &amp; How to Reproduce Them</span>
+    <span class="topic-badge">Diagnosis</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Intermittent Means Conditional, and the Condition Is Findable</div>
+      <div class="concept-desc">
+        Faults described as random almost never are. They are conditional on something nobody has
+        identified yet — temperature, load, elapsed time since power-on, physical position,
+        humidity, what else is running on the same circuit. Reframing "it happens randomly" as
+        "there is a condition I have not found" changes the work from waiting for it to happen into
+        looking for what is different when it does.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Pattern</th><th>Suspect</th></tr></thead>
+          <tbody>
+            <tr><td>Fails after twenty minutes, fine after a rest</td><td>Thermal — something is heating past a threshold</td></tr>
+            <tr><td>Fails only under heavy load</td><td>Power delivery, or thermal, or both</td></tr>
+            <tr><td>Fails in the morning, fine later</td><td>Cold — solder joints, or a marginal capacitor warming up</td></tr>
+            <tr><td>Fails when moved or bumped</td><td>Mechanical — a connector, a socket, a cracked joint</td></tr>
+            <tr><td>Fails at the same time each day</td><td>Environmental — a cleaner's vacuum, air conditioning cycling, a scheduled job</td></tr>
+            <tr><td>Fails on one machine, never on an identical one</td><td>That unit's specific part; compare configurations exactly</td></tr>
+            <tr><td>Started after a specific date</td><td>Ask what changed then — including in the room</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The cold-morning row is genuinely counter-intuitive and worth knowing: some faults appear
+          when cold and vanish when warm, because a marginal solder joint or a component's
+          tolerances shift with temperature in the opposite direction to the usual assumption. "It
+          only fails first thing" is a real diagnostic signal, not a user's imagination.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Forcing It to Happen</div>
+      <div class="concept-desc">
+        You cannot diagnose what you cannot reproduce, so the first work is making the fault happen
+        on demand. Each technique deliberately drives one variable to its limit.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Technique</th><th>Tests</th></tr></thead>
+          <tbody>
+            <tr><td>Sustained CPU <span class="acro-exp">(Central Processing Unit)</span> and memory stress, an hour or more</td><td>Thermal and power under load together</td></tr>
+            <tr><td>Overnight memory test</td><td>Marginal modules a single pass misses</td></tr>
+            <tr><td>Storage read-verify across the whole device</td><td>Bad sectors that only appear in rarely-read regions</td></tr>
+            <tr><td>Run with the case open, then closed</td><td>Separates airflow problems from everything else</td></tr>
+            <tr><td>Gentle, deliberate flexing of a board or connector</td><td>Cracked joints and marginal seating — expect it to be conclusive</td></tr>
+            <tr><td>Freeze spray or a hairdryer on one component</td><td>Isolates thermal sensitivity to a specific part</td></tr>
+            <tr><td>Swap onto a different circuit or a UPS <span class="acro-exp">(Uninterruptible Power Supply)</span></td><td>Mains quality, which is invisible from inside the machine</td></tr>
+            <tr><td>Log continuously — temperatures, voltages, errors</td><td>Captures the state at the moment of failure, which memory does not</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Continuous logging is the one to set up first, because it works while you do something
+          else. A script recording temperatures, fan speeds, voltages and system errors every ten
+          seconds turns "it crashed again overnight" into a timestamped picture of what the machine
+          was doing in the sixty seconds before it went.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Environmental Causes Nobody Looks For</div>
+      <div class="concept-desc">
+        When a machine has had every component swapped and still fails intermittently, the fault is
+        not in the machine. These are the causes that survive a full parts replacement, and they are
+        found by looking at the room rather than the box.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Cause</th><th>Signature</th></tr></thead>
+          <tbody>
+            <tr><td>Mains sags when something else starts</td><td>Correlates with a lift, a compressor, a kettle, a machine on the same circuit</td></tr>
+            <tr><td>Shared circuit overloaded</td><td>Fails when several devices are busy simultaneously</td></tr>
+            <tr><td>Ambient temperature at the limit</td><td>Fine in winter, fails in summer, or fails after the door is closed</td></tr>
+            <tr><td>Airflow blocked or recirculating</td><td>A cupboard, a box in front of the intake, a rack with a reversed device</td></tr>
+            <tr><td>Vibration</td><td>Near a door, on a shared desk, next to a plant room</td></tr>
+            <tr><td>Static in a dry room with a synthetic floor</td><td>Seasonal, and correlates with someone touching the machine</td></tr>
+            <tr><td>Electrical noise from nearby equipment</td><td>Correlates with specific machinery running</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two habits make these findable. Ask the user for the pattern in their words before
+          proposing anything — they frequently know it and assume it is irrelevant ("only when the
+          air conditioning kicks in"). And when a machine has been fully rebuilt and still fails,
+          swap the whole machine to a different location before ordering another part, because that
+          single test distinguishes the box from the room.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SOLDERING & REWORK ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🪛</span>
+    <span class="topic-name">Soldering &amp; Rework — Through-Hole, SMD Basics &amp; Knowing When Not To</span>
+    <span class="topic-badge">Diagnosis</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Heat the Joint, Not the Solder</div>
+      <div class="concept-desc">
+        The single technique that separates a reliable joint from a bad one: bring the iron to the
+        pad and the component lead together, let both come up to temperature, then feed solder into
+        the joint so it melts on the work rather than on the iron. Solder melted on the iron and
+        dabbed on cools into a dull, weak connection sitting on top of the pad — a cold joint, which
+        may test as connected and fail later under vibration or thermal cycling.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Good joint</th><th>Cold joint</th></tr></thead>
+          <tbody>
+            <tr><td>Shiny, smooth, concave fillet</td><td>Dull, grainy, blobby, convex</td></tr>
+            <tr><td>Wets both pad and lead</td><td>Sits on one, balled up on the other</td></tr>
+            <tr><td>Mechanically solid</td><td>Moves or cracks under gentle pressure</td></tr>
+            <tr><td>Made in two or three seconds</td><td>Made slowly, or with repeated reheating</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Flux is the other half and is consistently under-used by beginners. It cleans the oxide
+          that stops solder wetting a surface, and most difficulty soldering — solder that will not
+          stick, joints that need excessive heat — is a flux problem rather than a technique or
+          temperature problem.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">What Is Realistically Repairable, and With What</div>
+      <div class="concept-desc">
+        The gap between through-hole and surface-mount work is large, and being honest about which
+        you are equipped for prevents turning a repairable board into a scrap one.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Work</th><th>Needs</th><th>Difficulty</th></tr></thead>
+          <tbody>
+            <tr><td>Through-hole — connectors, electrolytic capacitors, headers</td><td>Temperature-controlled iron, flux, solder, desoldering braid or pump</td><td>Learnable in an evening</td></tr>
+            <tr><td>Replacing a barrel jack or a broken header</td><td>The above, plus patience with multi-layer ground planes</td><td>The classic worthwhile repair</td></tr>
+            <tr><td>Larger surface-mount — resistors, capacitors, small chips</td><td>Fine tip, tweezers, magnification, good flux</td><td>Practice required, achievable</td></tr>
+            <tr><td>Fine-pitch chips</td><td>Hot air, stencils, real magnification, steady technique</td><td>Specialist</td></tr>
+            <tr><td>Ball grid array — reballing, reflow</td><td>Proper reflow equipment and experience</td><td>Send it out</td></tr>
+            <tr><td>Anything on a phone or modern laptop board</td><td>Microscope, hot air, board-level schematics</td><td>A trade in its own right</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Ground planes are the specific difficulty in through-hole rework on modern boards: a pin
+          connected to a large copper plane conducts heat away faster than a small iron can supply
+          it, so the joint never melts properly. The answer is a higher-power iron and a bigger tip
+          rather than more time — prolonged heating is what lifts pads and ends repairs.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">When Not To — and the Safety That Is Not Optional</div>
+      <div class="concept-desc">
+        In an IT context, the decision not to solder is correct far more often than the decision to.
+        These are the cases where attempting it makes things worse.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Do not</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>On anything under warranty</td><td>Voids it instantly, and the vendor will replace it for free</td></tr>
+            <tr><td>On a board you have not diagnosed</td><td>Replacing a component that was not the fault adds damage</td></tr>
+            <tr><td>On a device holding the only copy of important data</td><td>Recover the data first, always</td></tr>
+            <tr><td>On mains-side circuitry without training</td><td>A genuine electrocution risk, not a caution</td></tr>
+            <tr><td>Near a charged high-voltage capacitor</td><td>Power supplies and displays store dangerous energy after unplugging</td></tr>
+            <tr><td>On lithium cells</td><td>Fire risk; cells need spot-welded tabs, not soldering</td></tr>
+            <tr><td>When the repair costs more than the part</td><td>Which, for most modern components, it does</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Three safety points are worth stating without hedging. Ventilate — flux fumes are an
+          irritant and should not be breathed. Wear eye protection, because solder spits. And treat
+          power supplies and CRT-era displays as dangerous while unplugged: their capacitors hold a
+          charge that can injure you long after the mains is disconnected, and discharging them
+          safely is a specific procedure rather than a matter of care.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DATA RECOVERY TRIAGE ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🆘</span>
+    <span class="topic-name">Data Recovery Triage — When to Stop and Send It to a Lab</span>
+    <span class="topic-badge">Diagnosis</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The First Decision Is Whether to Power It On Again</div>
+      <div class="concept-desc">
+        Every additional power-on of a physically failing drive risks converting a recoverable
+        situation into an unrecoverable one. A head that is contacting the platter damages the
+        surface a little more each rotation; a drive with a failing motor may not spin again. The
+        instinct — try it once more, maybe it will work this time — is precisely the wrong one, and
+        it is the reason many lab cases are more expensive than they needed to be.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Clicking, grinding, beeping, or a repeated spin-up-and-stop</td><td><strong>Stop.</strong> Power off and do not power on again</td></tr>
+            <tr><td>Drive not detected at all, no sound</td><td>Stop; could be electronics, which a lab can address</td></tr>
+            <tr><td>Was dropped, or exposed to liquid or fire</td><td>Stop; do not attempt to dry it or run it</td></tr>
+            <tr><td>Detected, readable, some files error</td><td>Image it now, before anything else</td></tr>
+            <tr><td>Accidental deletion or a formatted volume</td><td>Stop writing to it; recovery software on an image is reasonable</td></tr>
+            <tr><td>Encrypted volume without the key</td><td>No lab can help; this is a key-management problem</td></tr>
+            <tr><td>Ransomware</td><td>An incident, not a recovery job — preserve and follow the IR <span class="acro-exp">(Incident Response)</span> process</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The single most important distinction is <em>logical</em> versus <em>physical</em>. A
+          logical failure — deletion, corruption, a lost partition — leaves the hardware healthy and
+          is often recoverable with software. A physical failure needs a cleanroom and specialist
+          equipment, and every DIY attempt reduces what a lab can retrieve. The noises in the first
+          row are the tell, and they mean stop.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Image First, Work on the Copy</div>
+      <div class="concept-desc">
+        When the drive is still readable, the correct first action is always to take a
+        sector-by-sector image and then do all further work on that image. Recovery attempts on the
+        original consume the limited number of reads a dying drive has left.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Write-block the source if you have the hardware</td><td>Guarantees nothing writes to it, including the operating system mounting it</td></tr>
+            <tr><td>Use an imager that retries and logs bad sectors</td><td>A plain copy stops at the first error; a proper imager skips and returns</td></tr>
+            <tr><td>Image the easy areas first, bad regions last</td><td>Get the most data off before the drive deteriorates further</td></tr>
+            <tr><td>Keep the drive cool, and stop if it warms sharply</td><td>Heat accelerates a marginal failure</td></tr>
+            <tr><td>Verify the image before touching the original again</td><td>An incomplete image discovered later is a wasted opportunity</td></tr>
+            <tr><td>Work only on copies of the image thereafter</td><td>Recovery tools can be destructive; keep the pristine copy</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          One SSD-specific caution: flash drives can fail into a read-only state or fail completely
+          with no warning at all, and their controllers may aggressively remap or discard data. There
+          is far less "partial failure" runway than with a spinning disk, so the window to image is
+          shorter and the case for imaging immediately is stronger.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Conversation to Have Before Any of This</div>
+      <div class="concept-desc">
+        Data recovery in a professional context is as much an expectation-management job as a
+        technical one, and having these facts ready prevents the worst version of the conversation.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Point</th><th>Why to say it early</th></tr></thead>
+          <tbody>
+            <tr><td>Professional recovery is expensive — often four figures</td><td>The decision is the owner's, and it depends on what the data is worth</td></tr>
+            <tr><td>Nothing is guaranteed</td><td>Reputable labs say so; ones promising certainty are worth avoiding</td></tr>
+            <tr><td>Attempting it yourself may make a lab recovery impossible</td><td>The most important thing the owner needs to know, before they try</td></tr>
+            <tr><td>Ask for a no-recovery-no-fee assessment</td><td>Standard at reputable labs, and it bounds the downside</td></tr>
+            <tr><td>Ask what happens to the data and the drive afterwards</td><td>Chain of custody matters, especially with personal or regulated data</td></tr>
+            <tr><td>Establish how the recovered data will be returned securely</td><td>It is a copy of everything; treat it accordingly</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          And the uncomfortable part worth saying once, kindly, after the immediate crisis: this is a
+          backup problem that has already happened. The card that prevents the next one is
+          <span class="xref">Backup Strategy — 3-2-1-1-0 and the Schemes That Make Restores Possible</span>,
+          and the moment someone has just paid a lab is the moment they will actually act on it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DISPLAYS ───────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🖥️</span>
+    <span class="topic-name">Displays — Panel Types, Scaling, Colour &amp; the Multi-Monitor Pitfalls</span>
+    <span class="topic-badge">Peripherals</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Panel Type Decides More Than Any Specification on the Box</div>
+      <div class="concept-desc">
+        Resolution and refresh rate get quoted; panel technology determines whether someone is happy
+        with the monitor. For office work the relevant properties are viewing angle and colour
+        consistency, because a screen that shifts when you lean back is a daily irritation that no
+        specification captures.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Panel</th><th>Strength</th><th>Weakness</th><th>Suits</th></tr></thead>
+          <tbody>
+            <tr><td>IPS <span class="acro-exp">(Intrusion Prevention System)</span></td><td>Wide viewing angles, consistent colour</td><td>Some backlight bleed; contrast lower than VA</td><td>The default for office and design work</td></tr>
+            <tr><td>VA</td><td>Deep contrast</td><td>Slower transitions; colour shift off-axis</td><td>Dark environments, video</td></tr>
+            <tr><td>TN</td><td>Fast, inexpensive</td><td>Poor angles and colour</td><td>Little now, outside budget or high-refresh niches</td></tr>
+            <tr><td>OLED <span class="acro-exp">(Organic Light Emitting Diode)</span></td><td>True blacks, excellent response</td><td>Burn-in risk with static interfaces</td><td>Not a first choice for a fixed desktop layout</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The OLED caveat matters specifically in an office estate: taskbars, ribbons and dashboards
+          are static for eight hours a day, which is the exact condition that produces permanent
+          image retention. It is a fine choice for a laptop with varied content and a poor one for a
+          monitor showing the same application layout all day.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Scaling — Why the Text Is the Wrong Size on the Second Monitor</div>
+      <div class="concept-desc">
+        Display scaling is the largest source of monitor-related support tickets and almost none of
+        them are hardware. Mixing monitors of different pixel densities means the operating system
+        must scale each independently, and applications vary enormously in how well they cope —
+        older ones frequently do not, and produce blurry text or the wrong size on one screen.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause</th><th>Fix direction</th></tr></thead>
+          <tbody>
+            <tr><td>Blurry text on one monitor only</td><td>An application being bitmap-stretched rather than re-rendered</td><td>Per-application scaling override; sign out and in after changing scale</td></tr>
+            <tr><td>Windows the wrong size after undocking</td><td>The application did not handle the density change</td><td>Restart the application; a known limitation of older software</td></tr>
+            <tr><td>Everything tiny on a 4K display</td><td>Scaling at 100%</td><td>Set a sensible scale — 150% is common at 27 inches</td></tr>
+            <tr><td>Mouse jumps oddly between screens</td><td>Mismatched resolutions and the arrangement in settings</td><td>Align the virtual layout to the physical one</td></tr>
+            <tr><td>Remote session looks wrong</td><td>The remote host does not know the local density</td><td>Client-side scaling settings; varies by protocol</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The practical estate advice: standardise on one monitor model and one scaling setting where
+          you can. A fleet with three densities in circulation produces a steady trickle of tickets
+          that no individual fix resolves, and the cost of that trickle exceeds the saving from
+          buying whatever was cheapest each year.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Cables, Bandwidth and the Multi-Monitor Failures</div>
+      <div class="concept-desc">
+        Display problems that look like a faulty monitor are usually a bandwidth or a topology
+        problem. Resolution multiplied by refresh rate multiplied by colour depth has to fit through
+        the cable and the port, and a cable that works at one setting fails at another.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Usual cause</th></tr></thead>
+          <tbody>
+            <tr><td>Works at 60 Hz, black screen at 144 Hz</td><td>Cable or port bandwidth; try a certified cable</td></tr>
+            <tr><td>Occasional flicker or momentary black</td><td>Marginal cable, or a long run without an active cable</td></tr>
+            <tr><td>Third monitor will not light up on a dock</td><td>Dock or GPU <span class="acro-exp">(Graphics Processing Unit)</span> output limit, or DisplayPort daisy-chaining not enabled</td></tr>
+            <tr><td>Two monitors work, both drop when a third is added</td><td>Total bandwidth exceeded across a shared link</td></tr>
+            <tr><td>Monitor not detected after sleep</td><td>Handshake failure — common; try a different port or disable deep sleep</td></tr>
+            <tr><td>Colours wrong or washed out</td><td>Limited versus full RGB <span class="acro-exp">(Red, Green, Blue)</span> range mismatch, often over HDMI <span class="acro-exp">(High-Definition Multimedia Interface)</span></td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The limited-versus-full range mismatch in the last row is worth recognising by eye: blacks
+          look grey and whites look dull, and the monitor appears defective. It is a setting on the
+          graphics driver or the display, it takes ten seconds to change, and it saves a warranty
+          return.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: PRINTERS & MFPs ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🖨️</span>
+    <span class="topic-name">Printers &amp; MFPs <span class="acro-exp">(Multifunction Printer)</span> — Technologies, Drivers, Print Servers &amp; Secure Release</span>
+    <span class="topic-badge">Peripherals</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Printing Is the Most Complained-About Service in Most Organisations</div>
+      <div class="concept-desc">
+        It is worth understanding why, because the reasons are structural rather than a failure of
+        effort. Printing spans a driver on every endpoint, a queue on a server, a network path, a
+        physical device with consumables and moving parts, and a user standing next to it expecting
+        immediate results. Every layer can fail independently, most failures look identical to the
+        user, and the person reporting it is by definition already annoyed.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Technology</th><th>Strength</th><th>Watch for</th></tr></thead>
+          <tbody>
+            <tr><td>Laser</td><td>Fast, cheap per page, reliable at volume</td><td>Warm-up power draw; toner and drum are separate consumables</td></tr>
+            <tr><td>Inkjet</td><td>Cheap device, good colour and photos</td><td>Ink cost per page; heads clog when idle — poor for occasional office use</td></tr>
+            <tr><td>Thermal</td><td>No consumable but the media; ideal for labels and receipts</td><td>Print fades with heat and light; not for records</td></tr>
+            <tr><td>Impact / dot matrix</td><td>Multi-part carbon forms — genuinely irreplaceable for these</td><td>Loud, slow, and still in service in logistics for exactly this reason</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The inkjet warning is the common procurement error in offices: a cheap device with
+          expensive cartridges that clog when used twice a month costs more over three years than a
+          small laser, and generates support calls the laser would not.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Deployment Models, and Why Drivers Caused So Much Pain</div>
+      <div class="concept-desc">
+        The architecture question is where print queues live and how drivers reach clients. Changes
+        to Windows print-driver security following a run of serious vulnerabilities pushed estates
+        away from server-hosted drivers, and the direction of travel is clear.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Model</th><th>How it works</th><th>Position</th></tr></thead>
+          <tbody>
+            <tr><td>Direct IP <span class="acro-exp">(Internet Protocol)</span> printing</td><td>Each client prints straight to the device</td><td>Simple; no central queue, control or accounting</td></tr>
+            <tr><td>Traditional print server</td><td>Queues centrally, drivers distributed to clients</td><td>Control and accounting; the model most affected by driver hardening</td></tr>
+            <tr><td>Universal or class drivers</td><td>One driver covers many models</td><td>Loses device-specific features; enormously simplifies the estate</td></tr>
+            <tr><td>Cloud print management</td><td>Queues and drivers managed as a service</td><td>Where most estates are heading; suits remote and hybrid work</td></tr>
+            <tr><td>Driverless — IPP, Mopria, AirPrint</td><td>Standardised protocols, no vendor driver</td><td>The cleanest answer where devices support it well</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The security background is worth knowing rather than merely following: the print spooler
+          runs privileged and historically accepted driver installation from clients, which made it a
+          reliable privilege-escalation path. The mitigations restricted exactly that, which is why
+          long-standing print deployments broke and why "just let users install the driver" is no
+          longer an acceptable answer.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Secure Release, and the Triage Order That Works</div>
+      <div class="concept-desc">
+        Secure release — pull printing — holds the job until the user authenticates at the device.
+        It is the rare control that improves security, privacy, cost and waste simultaneously, which
+        makes it unusually easy to justify.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Benefit</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Documents never sit in the tray</td><td>The most common real-world confidentiality failure in an office</td></tr>
+            <tr><td>Unclaimed jobs are never printed</td><td>Typically a substantial reduction in total volume</td></tr>
+            <tr><td>Users print to one queue, collect anywhere</td><td>Fewer tickets about which device to choose</td></tr>
+            <tr><td>Per-user accounting comes free</td><td>Makes the cost visible to the department that generates it</td></tr>
+          </tbody>
+        </table>
+        <table class="ref-table">
+          <thead><tr><th>Triage order</th><th>Question</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Can the device print its own status or config page? If yes, the device is fine</td></tr>
+            <tr><td>2</td><td>Can you reach it by address from the client and from the server?</td></tr>
+            <tr><td>3</td><td>Is the job in the queue, held, or gone?</td></tr>
+            <tr><td>4</td><td>Does it fail for one user, one machine, or everyone?</td></tr>
+            <tr><td>5</td><td>Does printing from a different application work?</td></tr>
+            <tr><td>6</td><td>Did anything change — a driver update, a firmware update, an address change?</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Step 1 splits the problem in half in thirty seconds and is worth doing first every time.
+          And one estate-level note that belongs with security rather than with printing: MFPs store
+          scanned and printed documents on internal drives, are frequently leased, and are returned
+          at end of term with that storage intact unless someone asks — the point made in
+          <span class="xref">Media Sanitisation &amp; Disposal — What "Wiped" Actually Means</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: DOCKS, USB-C & THUNDERBOLT ─────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔗</span>
+    <span class="topic-name">Docks, USB-C &amp; Thunderbolt — Power Delivery, Alt Modes &amp; the Compatibility Mess</span>
+    <span class="topic-badge">Peripherals</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">USB-C Is a Connector Shape, and That Is the Entire Problem</div>
+      <div class="concept-desc">
+        Everything that fits a USB-C port looks identical and the capabilities behind it vary
+        enormously. One port may carry data at 480 Mb/s and nothing else; another carries 40 Gb/s,
+        two displays and 100 W of power. Two cables that look the same may differ by a factor of
+        eighty in bandwidth. Nothing on the outside distinguishes them, which is why "it does not
+        work with this cable" is a legitimate diagnosis rather than a user error.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Capability</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>USB <span class="acro-exp">(Universal Serial Bus)</span> data speed</td><td>Ranges from 480 Mb/s to 40 Gb/s across the same connector</td></tr>
+            <tr><td>Power Delivery</td><td>Negotiated; a port may offer 7.5 W or 240 W</td></tr>
+            <tr><td>DisplayPort Alt Mode</td><td>Video over the same connector — supported per port, not universally</td></tr>
+            <tr><td>Thunderbolt</td><td>PCIe <span class="acro-exp">(Peripheral Component Interconnect Express)</span> tunnelling as well as USB and video; a superset, certified</td></tr>
+            <tr><td>Cable rating</td><td>Charge-only, data, high-speed, and active versus passive at length</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Practical guidance for an estate: buy certified cables, label them, and standardise on one
+          specification rather than accumulating whatever came in each box. Most "the dock is
+          broken" tickets are a charge-only cable that came with a phone, and the cost of good
+          cables is trivial against the tickets they prevent.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Power Delivery — Why the Laptop Charges Slowly, or Not at All</div>
+      <div class="concept-desc">
+        Power Delivery is negotiated between device, cable and supply, and the result is the lowest
+        capability among the three. A 100 W-capable laptop on a 100 W charger through a 60 W cable
+        gets 60 W, silently, and the user reports that the battery drains while plugged in.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
+          <tbody>
+            <tr><td>Battery drains while docked, under load</td><td>Dock supplies less than the laptop draws — check the dock's stated power to the host</td></tr>
+            <tr><td>Charges slowly</td><td>Cable, supply or port limiting the negotiated profile</td></tr>
+            <tr><td>Does not charge at all</td><td>Charge-only cable, unsupported profile, or a port with no PD sink support</td></tr>
+            <tr><td>Works on one port, not the other</td><td>Ports on the same machine frequently differ; check the icons beside them</td></tr>
+            <tr><td>Charges when off, not when in use</td><td>Supply is adequate for charging and not for charging plus load</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          When specifying docks, read the power delivered <em>to the host</em> rather than the
+          dock's own supply rating. A dock with a 180 W brick may deliver only 65 W upstream because
+          the rest feeds its own ports and displays — and a workstation-class laptop under load will
+          slowly flatten on it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Docks in a Fleet — the Failure Patterns, and One Security Note</div>
+      <div class="concept-desc">
+        Docking stations generate a disproportionate share of endpoint tickets, and the causes repeat
+        across every estate.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Problem</th><th>Handling</th></tr></thead>
+          <tbody>
+            <tr><td>Dock firmware out of date</td><td>Docks have firmware and it fixes real bugs; include them in patching</td></tr>
+            <tr><td>Displays not detected after undock and redock</td><td>Common; firmware and driver updates on both dock and host</td></tr>
+            <tr><td>Network drops when docked</td><td>The dock's network adapter and its MAC-address behaviour; check MAC <span class="acro-exp">(Media Access Control)</span> pass-through</td></tr>
+            <tr><td>Works for one laptop model, not another</td><td>Alt-mode and Thunderbolt support differ per model — validate before fleet purchase</td></tr>
+            <tr><td>Intermittent everything</td><td>Cable, nine times out of ten; swap it first</td></tr>
+            <tr><td>Third display refuses</td><td>Host GPU <span class="acro-exp">(Graphics Processing Unit)</span> or dock output limit, not a fault</td></tr>
+            <tr><td>Wake-from-sleep failures</td><td>Firmware and power-management settings; a recurring dock-specific bug class</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The security note is real and belongs here: Thunderbolt tunnels PCIe, which historically
+          meant direct memory access from an attached device. Modern systems mitigate this with
+          IOMMU protection and user approval for new devices — worth confirming those are enabled on
+          a fleet rather than assumed, since the attack requires only plugging something in. The
+          wider physical-access picture is in
+          <span class="xref">The Hardware Attack Surface — What Physical Access to a Device Buys</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: INPUT & ACCESSIBILITY HARDWARE ─────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⌨️</span>
+    <span class="topic-name">Input Devices &amp; Accessibility Hardware — Switches, Trackballs &amp; Ergonomic Kit</span>
+    <span class="topic-badge">Peripherals</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Input Hardware Is the One Piece of Kit Someone Touches All Day</div>
+      <div class="concept-desc">
+        Endpoint standards get argued over processors and memory, and the components that most
+        affect whether someone can work comfortably for eight hours are the keyboard, the pointing
+        device and the chair. These are usually whatever came in the box. For most people that is
+        fine; for a meaningful minority it is the difference between working comfortably and
+        developing a repetitive strain injury, and the cost of accommodating them is trivial against
+        the cost of not.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Option</th><th>Suits</th></tr></thead>
+          <tbody>
+            <tr><td>Split or tented keyboard</td><td>Wrist and shoulder strain from typing with hands angled inward</td></tr>
+            <tr><td>Mechanical switches, lighter actuation</td><td>Reducing force per keystroke; the switch weight is the relevant spec</td></tr>
+            <tr><td>Trackball</td><td>Wrist strain from repeated mouse movement; the arm stays still</td></tr>
+            <tr><td>Vertical mouse</td><td>Forearm rotation strain; a neutral handshake position</td></tr>
+            <tr><td>Trackpad or pen tablet</td><td>Alternating input methods to vary the movement pattern</td></tr>
+            <tr><td>Foot pedals</td><td>Moving modifier keys off the hands entirely</td></tr>
+            <tr><td>Programmable macro pad</td><td>Reducing awkward key combinations to one press</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The most useful general principle is <em>variation</em> rather than any single optimal
+          device. Alternating between a mouse and a trackball, or between two keyboard positions,
+          spreads load across different muscles — and switching device is often more effective than
+          finding a perfect one.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Assistive Input, and What IT Has to Do to Support It</div>
+      <div class="concept-desc">
+        Assistive input hardware ranges from an adapted keyboard to a switch device operated by a
+        single reliable movement. Almost all of it works out of the box; where it fails, the cause
+        is usually something IT configured.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Device or need</th><th>What IT must not block</th></tr></thead>
+          <tbody>
+            <tr><td>Screen reader or magnifier</td><td>Application control blocking the software — pre-approve common tools</td></tr>
+            <tr><td>Speech recognition</td><td>Microphone access policy; the software's own driver components</td></tr>
+            <tr><td>Switch access and scanning input</td><td>Accessibility APIs <span class="acro-exp">(Application Programming Interface)</span> the endpoint policy may restrict</td></tr>
+            <tr><td>Eye-tracking</td><td>Vendor driver and its service; frequently blocked by default policy</td></tr>
+            <tr><td>Alternative keyboards and key remapping</td><td>Remapping utilities, which are often on a blocked list</td></tr>
+            <tr><td>Sticky keys, filter keys, on-screen keyboard</td><td>Built in; sometimes disabled by a hardening baseline without anyone noticing</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is a common own-goal. Security baselines disable accessibility features
+          because they have been abused for privilege escalation at a login screen — a real
+          technique — and the mitigation, applied bluntly, removes the on-screen keyboard from
+          someone who depends on it. The correct fix is the specific hardening that prevents the
+          abuse, not disabling the feature estate-wide.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Getting the Kit to People Without Making It an Ordeal</div>
+      <div class="concept-desc">
+        The technology is the easy part. What determines whether people get what they need is the
+        process, and processes designed for exceptional requests deter the ordinary ones.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>A small catalogue of pre-approved alternatives, orderable without justification</td><td>Removes disclosure from a routine request; most needs are met here</td></tr>
+            <tr><td>Try-before-commit — a loan pool</td><td>Ergonomic kit is personal; the right device cannot be chosen from a page</td></tr>
+            <tr><td>A request route that does not go through the line manager</td><td>Many people will not ask if it means disclosing a condition to their manager</td></tr>
+            <tr><td>Named contact who owns adjustments</td><td>Prevents the request bouncing between IT, HR and facilities</td></tr>
+            <tr><td>Kit follows the person when they change role or team</td><td>Otherwise every internal move restarts the process</td></tr>
+            <tr><td>Cover home setups for hybrid workers</td><td>The strain happens wherever they actually work</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The pre-approved catalogue is the highest-leverage item. A vertical mouse and a split
+          keyboard cost less than an hour of most people's time, and a policy requiring a case to be
+          made for them guarantees that some people work in pain rather than ask. Making the ordinary
+          case frictionless also leaves the formal process free for the genuinely complex ones — the
+          procurement side of this is in
+          <span class="xref">Accessible IT — Assistive Technology, Procurement &amp; Testing Your Own Tools</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: CONFERENCE ROOM TECHNOLOGY ─────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📽️</span>
+    <span class="topic-name">Conference Room Technology — The AV Stack, and Why It Always Breaks</span>
+    <span class="topic-badge">Peripherals</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Meeting Room Is a Distributed System With an Audience</div>
+      <div class="concept-desc">
+        A room combines a display, a camera, microphones, speakers, a compute device, a control
+        panel, a network path, a calendar integration and whatever laptop someone brings — from
+        several vendors, none of which tested this exact combination. Every element has a failure
+        mode, they interact, and the failure is discovered by eight people including someone senior,
+        two minutes before a meeting starts. That last property is why room technology generates
+        support pressure out of all proportion to its complexity.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Layer</th><th>Typical failure</th></tr></thead>
+          <tbody>
+            <tr><td>Display</td><td>Wrong input selected; wakes slowly; handshake failure over HDMI <span class="acro-exp">(High-Definition Multimedia Interface)</span></td></tr>
+            <tr><td>Camera</td><td>Claimed by another application; privacy shutter closed; USB <span class="acro-exp">(Universal Serial Bus)</span> bandwidth</td></tr>
+            <tr><td>Microphones</td><td>Muted at the device rather than in software; wrong device selected</td></tr>
+            <tr><td>Speakers</td><td>Audio routed to the laptop's own output — the single most common fault</td></tr>
+            <tr><td>Room compute</td><td>Pending updates, expired sign-in, mandatory restart</td></tr>
+            <tr><td>Control panel</td><td>Lost pairing; flat battery; unreachable over the network</td></tr>
+            <tr><td>Network</td><td>Bandwidth, or a captive portal on a guest network</td></tr>
+            <tr><td>Calendar integration</td><td>The room resource not invited, so nothing appears to join</td></tr>
+            <tr><td>Guest laptop</td><td>Cable, alt mode, resolution, and the wrong cable again</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The speaker row deserves its reputation. "We cannot hear you" almost always means the
+          conferencing application is using the laptop's built-in microphone and speakers rather
+          than the room system, and the fix is one dropdown. Teaching people where that dropdown is
+          resolves more room incidents than any equipment change.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Designing Rooms That Fail Less</div>
+      <div class="concept-desc">
+        Room reliability is decided at design and procurement, not at support. These choices cost
+        nothing extra at purchase and remove most of the recurring load.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Choice</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Standardise room types — small, medium, large — and build each identically</td><td>One set of instructions, one spares list, one troubleshooting path</td></tr>
+            <tr><td>A dedicated room system rather than bring-your-own-laptop</td><td>Removes the largest source of variability at a stroke</td></tr>
+            <tr><td>One-touch join from the calendar</td><td>The single feature users notice most</td></tr>
+            <tr><td>Leave one clearly-labelled cable for guests</td><td>Guests will always exist; make their path obvious</td></tr>
+            <tr><td>Wired network for room systems</td><td>Wireless in a full meeting room is where quality problems begin</td></tr>
+            <tr><td>Acoustic treatment before better microphones</td><td>A reverberant room defeats good hardware; soft furnishings beat upgrades</td></tr>
+            <tr><td>Remote monitoring of every room</td><td>Know a room is broken before a meeting discovers it</td></tr>
+            <tr><td>Physically label the room in the room</td><td>So the person reporting it can say which one</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Remote monitoring is the change that alters the experience most. Room platforms report
+          device health, peripheral connection and update state centrally; a daily check and an alert
+          on a disconnected camera converts a public failure into a quiet fix on a Tuesday morning.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Two Minutes Before a Meeting</div>
+      <div class="concept-desc">
+        The realistic constraint is that you have very little time and an audience. Work in this
+        order; it is chosen so the most common causes come first and the disruptive steps come last.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Order</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Get the meeting running any way you can — a phone dial-in buys everyone ten minutes</td></tr>
+            <tr><td>2</td><td>Check the audio device selection in the conferencing application</td></tr>
+            <tr><td>3</td><td>Check physical mute — on the table puck, the microphone, the remote</td></tr>
+            <tr><td>4</td><td>Check the display's input source</td></tr>
+            <tr><td>5</td><td>Reseat the cable at both ends; try the spare cable</td></tr>
+            <tr><td>6</td><td>Restart the conferencing application, not the room system</td></tr>
+            <tr><td>7</td><td>Restart the room system only as a last resort — it takes minutes</td></tr>
+            <tr><td>8</td><td>Afterwards, record what it was; room faults repeat</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Step 1 is the professional judgement that distinguishes room support from room repair. The
+          meeting is the thing that matters; the room is not. Getting people talking on any channel
+          and returning to fix the room properly afterwards is a better outcome than a perfect
+          diagnosis delivered fifteen minutes into a meeting that should have started.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: MICROCONTROLLERS VS SBCs ───────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🤖</span>
+    <span class="topic-name">Microcontrollers vs Single-Board Computers — Choosing Correctly</span>
+    <span class="topic-badge">Embedded</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">One Runs Your Code; the Other Runs an Operating System That Runs Your Code</div>
+      <div class="concept-desc">
+        A microcontroller executes your program directly on bare metal: it starts in milliseconds,
+        does exactly one thing, and does it with predictable timing because nothing else is
+        competing. A single-board computer boots Linux, and your program is one process among many —
+        which buys networking, a filesystem, package management and every library in the ecosystem,
+        at the cost of a boot time measured in tens of seconds and timing that is approximate.
+        Choosing wrongly is the most common mistake in a first embedded project, in both directions.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Microcontroller</th><th>Single-board computer</th></tr></thead>
+          <tbody>
+            <tr><td>Example</td><td>Arduino, ESP32, Pi Pico, STM32</td><td>Raspberry Pi, and its many relatives</td></tr>
+            <tr><td>Runs</td><td>Your code, directly</td><td>Linux, and your code on top</td></tr>
+            <tr><td>Boot</td><td>Milliseconds</td><td>Twenty to sixty seconds</td></tr>
+            <tr><td>Timing</td><td>Deterministic to microseconds</td><td>Approximate; the scheduler intervenes</td></tr>
+            <tr><td>Power</td><td>Milliwatts; runs for months on a battery</td><td>Watts; effectively needs mains</td></tr>
+            <tr><td>Loss of power</td><td>Harmless — no filesystem to corrupt</td><td>Can corrupt the card; needs graceful shutdown or a read-only root</td></tr>
+            <tr><td>Networking, storage, video</td><td>Bolted on, with effort</td><td>Built in</td></tr>
+            <tr><td>Debugging</td><td>Serial output, a logic analyser, sometimes JTAG <span class="acro-exp">(Joint Test Action Group)</span></td><td>SSH <span class="acro-exp">(Secure Shell)</span> in and use ordinary Linux tools</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Choosing, by the Question the Project Actually Asks</div>
+      <div class="concept-desc">
+        Four questions settle nearly every case, and they are worth asking in this order because the
+        first two are disqualifying.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question</th><th>If yes</th></tr></thead>
+          <tbody>
+            <tr><td>Does it run on a battery for a long time?</td><td>Microcontroller — an SBC <span class="acro-exp">(Single-Board Computer)</span>'s idle draw ends the discussion</td></tr>
+            <tr><td>Does timing need to be exact and guaranteed?</td><td>Microcontroller</td></tr>
+            <tr><td>Does it need a filesystem, a web server, or a real network stack?</td><td>SBC</td></tr>
+            <tr><td>Will it lose power without warning, routinely?</td><td>Microcontroller, or an SBC with a read-only root filesystem</td></tr>
+            <tr><td>Do you need camera, video or serious compute?</td><td>SBC</td></tr>
+            <tr><td>Will there be many units, and does unit cost matter?</td><td>Microcontroller — an order of magnitude cheaper</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          A pattern worth knowing because it resolves the awkward middle: use both. A microcontroller
+          handles the real-time, low-power sensing and reports over serial or a network to an SBC
+          that does the storage, the web interface and the integration. Each does what it is good at,
+          and the split is usually simpler than forcing either to do the other's job.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Where These Actually Appear in an IT Estate</div>
+      <div class="concept-desc">
+        This is not only hobby material. Single-board computers turn up in production environments
+        regularly, and usually without anyone deciding they should — which is where the risk is.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Appears as</th><th>Concern</th></tr></thead>
+          <tbody>
+            <tr><td>Digital signage and dashboard displays</td><td>Unmanaged, unpatched, often on the corporate network</td></tr>
+            <tr><td>Environmental monitoring in a comms room</td><td>Genuinely useful; needs an owner and a patching route</td></tr>
+            <tr><td>A "temporary" bridge or converter someone built</td><td>Becomes permanent; no documentation, one person understands it</td></tr>
+            <tr><td>Test and lab automation</td><td>Fine — keep it off production networks</td></tr>
+            <tr><td>A vendor appliance that is an SBC in a case</td><td>More common than expected; ask what it runs and how it updates</td></tr>
+            <tr><td>Someone's project on the office wifi</td><td>Default credentials, exposed services, nobody's asset register</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The productive response is not prohibition, which drives it underground. It is a sanctioned
+          path: a defined network segment for these devices, a base image with credentials changed
+          and updates enabled, and an entry in the asset register with a named owner. That converts
+          a shadow device into a managed one at almost no cost, and people will use it because it is
+          easier than hiding.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: GPIO, I2C, SPI & UART ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔀</span>
+    <span class="topic-name">GPIO <span class="acro-exp">(General-Purpose Input/Output)</span>, I²C, SPI <span class="acro-exp">(Serial Peripheral Interface)</span> &amp; UART <span class="acro-exp">(Universal Asynchronous Receiver/Transmitter)</span> — Talking to the Physical World</span>
+    <span class="topic-badge">Embedded</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Four Ways to Move Bits Over Wires, With Different Trade-Offs</div>
+      <div class="concept-desc">
+        These four cover nearly everything a sensor, display or peripheral will speak. They differ in
+        wire count, speed, how many devices share a bus, and how each device is addressed —
+        and those differences decide which one a chip designer chose.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>GPIO</th><th>UART</th><th>I²C</th><th>SPI</th></tr></thead>
+          <tbody>
+            <tr><td>Wires</td><td>1 per signal</td><td>2 (TX, RX)</td><td>2 (SDA, SCL)</td><td>4+ (MOSI, MISO, SCK, CS each)</td></tr>
+            <tr><td>Clock</td><td>—</td><td>None — both ends agree a baud rate</td><td>Shared clock</td><td>Shared clock</td></tr>
+            <tr><td>Devices per bus</td><td>1 per pin</td><td>2 — point to point</td><td>Many, by address</td><td>Many, one chip-select line each</td></tr>
+            <tr><td>Speed</td><td>As fast as you toggle</td><td>Slow — typically to 115200 baud</td><td>Moderate — 100 kHz to 1 MHz+</td><td>Fast — tens of MHz</td></tr>
+            <tr><td>Good for</td><td>Buttons, LEDs <span class="acro-exp">(Light Emitting Diode)</span>, relays</td><td>Consoles, GPS <span class="acro-exp">(Global Positioning System)</span>, modems, debug output</td><td>Many small sensors on two wires</td><td>Displays, SD cards, anything fast</td></tr>
+            <tr><td>Main annoyance</td><td>Nothing — it is a wire</td><td>Baud mismatch; TX/RX crossed</td><td>Address conflicts; missing pull-ups</td><td>Pin count; chip-select management</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The quick way to choose when you have a free hand: I²C when you want several sensors and
+          few wires, SPI when you want speed, UART when you want a simple point-to-point link or a
+          console you can watch. In practice the peripheral has already decided for you.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Voltage Levels — The Mistake That Destroys Hardware</div>
+      <div class="concept-desc">
+        These buses carry logic at a specific voltage, commonly 3.3 V or 5 V, and connecting a 5 V
+        device's output to a 3.3 V input can permanently damage the input. Nothing warns you; the
+        connectors are the same jumper wires. This is the single most common way beginners destroy a
+        board, and it is entirely avoidable by checking two datasheets before wiring anything.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Point</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Check both sides' logic levels first</td><td>Thirty seconds; prevents the most expensive beginner mistake</td></tr>
+            <tr><td>Use a level shifter when they differ</td><td>Cheap, small, and the correct answer rather than hoping</td></tr>
+            <tr><td>Some 3.3 V devices tolerate 5 V inputs</td><td>Some. The datasheet says; assumption does not</td></tr>
+            <tr><td>I²C needs pull-up resistors on both lines</td><td>Many breakout boards include them — several boards on one bus means too many</td></tr>
+            <tr><td>Share a common ground, always</td><td>Signals are measured against ground; without a shared one nothing works</td></tr>
+            <tr><td>Do not power a motor from the board's regulator</td><td>Current spikes brown out the microcontroller and cause "random" resets</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The common-ground point catches almost everyone once. Two devices with separate power
+          supplies and only data lines between them have no shared reference, so the receiver cannot
+          interpret the voltage it is being sent. The symptom is nothing working at all, and the fix
+          is one wire.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">When the Device Does Not Respond</div>
+      <div class="concept-desc">
+        Bus problems produce one symptom — silence — with many causes. This order finds most of them
+        quickly, and the last step is the one that converts guessing into knowing.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Check</th><th>Catches</th></tr></thead>
+          <tbody>
+            <tr><td>Is the device powered, and at the right voltage?</td><td>The most common cause, and the easiest to overlook</td></tr>
+            <tr><td>Common ground connected?</td><td>See above; nothing works without it</td></tr>
+            <tr><td>For UART: are TX <span class="acro-exp">(Transmit)</span> and RX <span class="acro-exp">(Receive)</span> crossed?</td><td>TX must go to RX — a coin-flip nobody wins first time</td></tr>
+            <tr><td>For UART: does the baud rate match?</td><td>Mismatch gives garbage characters rather than silence — a useful distinction</td></tr>
+            <tr><td>For I²C: run a bus scan</td><td>Tells you whether the device is present at all, and at which address</td></tr>
+            <tr><td>For I²C: two devices at the same address?</td><td>Common with two identical sensors; many have an address-select pin</td></tr>
+            <tr><td>For SPI: is chip-select asserted, and is the mode right?</td><td>Clock polarity and phase must match the peripheral</td></tr>
+            <tr><td>Put a logic analyser on it</td><td>Shows whether anything was sent, and whether it was acknowledged</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The I²C bus scan deserves to be the first real diagnostic every time: a few lines of code
+          or a standard utility walks every address and reports what answered. "Nothing at any
+          address" and "present at 0x76, not 0x77 as documented" are completely different problems,
+          and the scan tells them apart in seconds. The instrument choice behind this is in
+          <span class="xref">Test Gear — Multimeter, Oscilloscope, Logic Analyser: What Each One Answers</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: FIRMWARE BASICS ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💽</span>
+    <span class="topic-name">Firmware Basics — Bootloaders, Flashing, JTAG/SWD, Bricking &amp; Recovery</span>
+    <span class="topic-badge">Embedded</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Bootloader Is a Small Program Whose Job Is Replacing the Big One</div>
+      <div class="concept-desc">
+        A microcontroller running your program cannot easily replace that program, because it is
+        busy running it. The bootloader solves this: a small piece of code that runs first, decides
+        whether to accept a new application over serial or USB <span class="acro-exp">(Universal Serial Bus)</span>, and otherwise hands control to the
+        existing one. Almost every convenience in embedded development — plugging in a board and
+        uploading code without special hardware — is the bootloader doing its job.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Method</th><th>Needs</th><th>Can it recover a dead device?</th></tr></thead>
+          <tbody>
+            <tr><td>Bootloader over USB or serial</td><td>Nothing extra</td><td>Only if the bootloader still runs</td></tr>
+            <tr><td>Mass-storage bootloader — drag and drop a file</td><td>Nothing extra</td><td>Usually yes; hard to break</td></tr>
+            <tr><td>Over-the-air update</td><td>A working network stack and update logic</td><td>No — a bad update removes the path</td></tr>
+            <tr><td>SWD — serial wire debug</td><td>A cheap debug probe, two pins</td><td>Yes; writes flash directly</td></tr>
+            <tr><td>JTAG <span class="acro-exp">(Joint Test Action Group)</span></td><td>A probe and more pins</td><td>Yes; the recovery path of last resort</td></tr>
+            <tr><td>External programmer clipped to the flash chip</td><td>A clip and a programmer</td><td>Yes, when nothing else responds</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The distinction that matters: the first three methods depend on software already running
+          on the device, so a bad flash can remove them. SWD and JTAG talk to the silicon, which is
+          why they recover devices that have no working software at all. A device with accessible
+          debug pins is very hard to permanently brick; one without them is one bad update away
+          from being scrap.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Bricking — What It Means and Which Kind You Have</div>
+      <div class="concept-desc">
+        "Bricked" covers everything from a minor inconvenience to genuinely unrecoverable. Knowing
+        which you are facing decides whether to spend an hour or order a replacement.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Kind</th><th>Means</th><th>Recovery</th></tr></thead>
+          <tbody>
+            <tr><td>Soft brick</td><td>Bad application, bootloader intact</td><td>Reflash normally; sometimes a button held at power-on</td></tr>
+            <tr><td>Bootloader damaged</td><td>Nothing responds over the usual route</td><td>SWD or JTAG</td></tr>
+            <tr><td>Debug interface disabled</td><td>Security fuses set, deliberately or accidentally</td><td>Often none; some parts allow a full erase that clears everything</td></tr>
+            <tr><td>Wrong fuse or config bits</td><td>Clock source or reset behaviour misconfigured</td><td>Sometimes recoverable with an external clock supplied to the part</td></tr>
+            <tr><td>Physical damage</td><td>Over-voltage, reverse polarity, heat</td><td>None</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Read-out protection and debug-disable fuses are worth a specific warning: they exist to
+          stop firmware being extracted from a shipped product, they are frequently one-way, and
+          enabling one on a development board turns it into an ornament. Understand what a security
+          setting does before writing it, because that class of mistake is not reversible.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Habits That Keep Devices Recoverable</div>
+      <div class="concept-desc">
+        Most bricking is preventable with a handful of practices, and the same practices are what
+        separate a hobby project from something you would deploy anywhere it is inconvenient to
+        reach.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Read back and keep a copy of the original firmware before writing</td><td>The only way back to a known-good state on a device you did not build</td></tr>
+            <tr><td>Keep the debug pins accessible on anything you design</td><td>A header costs nothing and is the difference between recoverable and scrap</td></tr>
+            <tr><td>Verify after writing, do not assume</td><td>A partially-written image is worse than none</td></tr>
+            <tr><td>Never update over the air without a rollback path</td><td>A/B slots, or a watchdog that reverts on repeated boot failure</td></tr>
+            <tr><td>Test the update mechanism before you need it</td><td>The mechanism is the thing that must never fail — see the firmware-update card</td></tr>
+            <tr><td>Power the device properly during a flash</td><td>Interruption mid-write is a common cause of a hard brick</td></tr>
+            <tr><td>Keep the serial console available</td><td>The cheapest diagnostic there is, and it costs two pins</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The rollback point generalises well beyond hobby hardware, and the security framing is in
+          <span class="xref">Firmware Update Mechanisms — The Feature That Is Also the Attack Path</span>:
+          the update path is simultaneously the most important reliability feature a device has and
+          one of its most attractive attack surfaces, which is why it deserves more design attention
+          than the feature it is delivering.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: REAL-TIME CONSTRAINTS ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⏱️</span>
+    <span class="topic-name">Real-Time Constraints — RTOS, Determinism &amp; Why Linux Is Not Always Right</span>
+    <span class="topic-badge">Embedded</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Real-Time Means Predictable, Not Fast</div>
+      <div class="concept-desc">
+        This is the definition people get wrong, and getting it right changes how the whole problem
+        looks. A real-time system is one where being late is a failure — not where things happen
+        quickly. A system that responds in a guaranteed two milliseconds every single time is
+        real-time; one that usually responds in fifty microseconds and occasionally takes thirty
+        milliseconds is not, and is unusable for the jobs that need the guarantee. What matters is
+        the worst case, and general-purpose operating systems optimise the average.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Class</th><th>Missing a deadline means</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Hard real-time</td><td>System failure, possibly dangerous</td><td>Motor control, airbag, industrial safety interlock</td></tr>
+            <tr><td>Firm real-time</td><td>The result is worthless, though nothing breaks</td><td>A missed frame in a control loop</td></tr>
+            <tr><td>Soft real-time</td><td>Quality degrades</td><td>Video playback, audio, user interfaces</td></tr>
+            <tr><td>Not real-time</td><td>It finishes when it finishes</td><td>Almost all ordinary computing</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The practical consequence for anyone specifying a system: ask "what happens if this is
+          late?" before choosing a platform. If the honest answer is "nothing much", Linux on an SBC <span class="acro-exp">(Single-Board Computer)</span>
+          is fine and far easier to work with. If the answer involves damage or danger, that
+          decision has been made for you.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Where the Jitter Comes From</div>
+      <div class="concept-desc">
+        A general-purpose operating system introduces variability at several layers, all of them
+        deliberate and all of them helpful for throughput. Each is a reason the worst case is far
+        from the average.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Source</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Scheduler preemption</td><td>Your process is descheduled at an arbitrary moment</td></tr>
+            <tr><td>Interrupt handling</td><td>Another device's interrupt runs before your code</td></tr>
+            <tr><td>Virtual memory and page faults</td><td>A memory access takes a millisecond instead of nanoseconds</td></tr>
+            <tr><td>Garbage collection, in managed runtimes</td><td>An unpredictable pause of unpredictable length</td></tr>
+            <tr><td>Caches and branch prediction</td><td>The same code takes different times depending on history</td></tr>
+            <tr><td>Power management and frequency scaling</td><td>The processor is slower than you measured, sometimes</td></tr>
+            <tr><td>Filesystem and I/O <span class="acro-exp">(Input/Output)</span></td><td>Buffering, flushes, and a device that decides to be busy</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Linux can be pushed a long way toward determinism — the real-time preemption work is
+          mainline now, and with careful tuning (CPU isolation, locked memory, priorities, disabled
+          frequency scaling) it achieves latencies good enough for a great deal of industrial work.
+          It is genuine engineering rather than a checkbox, and the result is bounded latency in the
+          tens of microseconds rather than the guaranteed microseconds a microcontroller gives free.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">RTOS, Bare Metal, or Linux — and What an RTOS Actually Gives You</div>
+      <div class="concept-desc">
+        A real-time operating system sits between bare metal and Linux: it provides tasks,
+        priorities, timers and synchronisation with a scheduler whose behaviour is predictable and
+        documented, in a few tens of kilobytes.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Choose</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><td>Bare metal — a loop and interrupts</td><td>One or two simple jobs; the least to go wrong; hardest to extend</td></tr>
+            <tr><td>RTOS — FreeRTOS, Zephyr and similar</td><td>Several concurrent jobs with different priorities and hard timing</td></tr>
+            <tr><td>Linux</td><td>Networking, filesystems, libraries and displays matter more than timing</td></tr>
+            <tr><td>Linux with real-time preemption</td><td>You need both, and can invest in tuning and measuring</td></tr>
+            <tr><td>Both, split across two chips</td><td>Frequently the cleanest answer — the pattern from the SBC card</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Whichever you choose, the discipline that matters is measuring the worst case rather than
+          the average. Log the maximum latency observed over hours or days of realistic operation,
+          not the mean over a minute — because the mean will look excellent right up until the one
+          occasion that matters, and in a hard real-time system that single occasion is the entire
+          specification.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: HOME LAB HARDWARE ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏗️</span>
+    <span class="topic-name">Home Lab Hardware — A Genuinely Useful Build, at Three Budgets</span>
+    <span class="topic-badge">Embedded</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Buy for the Thing You Will Actually Do This Month</div>
+      <div class="concept-desc">
+        Home labs fail in a predictable way: someone buys enterprise gear because it is cheap
+        second-hand, discovers it is loud, hot and expensive to run, and it sits unused in a
+        cupboard within a year. The hardware was not the problem — the ordering was. Decide what you
+        want to learn first, buy the smallest thing that supports it, and expand when a specific
+        limitation actually stops you. The other cards in this domain cover the components; this one
+        is about not wasting money on them.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Goal</th><th>What it actually needs</th></tr></thead>
+          <tbody>
+            <tr><td>Linux, containers, scripting, self-hosting</td><td>Any machine with 16 GB of memory — including one you already own</td></tr>
+            <tr><td>Virtualisation and clustering</td><td>Memory above all; two or three small nodes beat one large one</td></tr>
+            <tr><td>Networking — VLANs <span class="acro-exp">(Virtual Local Area Network)</span>, routing, firewalls</td><td>A managed switch and a router you can configure; compute is irrelevant</td></tr>
+            <tr><td>Windows Server, Active Directory, MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span></td><td>Memory and disk; runs fine virtualised on one host</td></tr>
+            <tr><td>Storage, RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span>, backup</td><td>Several drives and the ability to attach them; the rest is software</td></tr>
+            <tr><td>Security lab — attack and detect</td><td>Isolated networking, and snapshots you can revert quickly</td></tr>
+            <tr><td>AI <span class="acro-exp">(Artificial Intelligence)</span> and GPU <span class="acro-exp">(Graphics Processing Unit)</span> workloads</td><td>The one case where a specific expensive component is the requirement</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Three Budgets, and What Each One Buys</div>
+      <div class="concept-desc">
+        Deliberately without prices, which date immediately — the tiers are about the shape of the
+        build rather than a number.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Tier</th><th>Build</th><th>Reaches</th></tr></thead>
+          <tbody>
+            <tr><td>Nothing</td><td>The machine you own, plus virtualisation software</td><td>Linux, containers, scripting, most certification labs</td></tr>
+            <tr><td>Minimal</td><td>One second-hand mini PC or small-form-factor desktop, memory maxed; a managed switch</td><td>Virtualisation, a small AD <span class="acro-exp">(Active Directory)</span> lab, VLANs, self-hosted services</td></tr>
+            <tr><td>Comfortable</td><td>Two or three mini PCs, a proper switch, a router appliance, a small NAS <span class="acro-exp">(Network Attached Storage)</span></td><td>Clustering, high availability, shared storage, segmented security labs</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Second-hand small-form-factor office machines are the strongest value in this space by a
+          wide margin: they are plentiful, cheap, quiet, draw very little power, take a surprising
+          amount of memory, and three of them cluster nicely. They are the reason the "comfortable"
+          tier is far cheaper than it once was, and they are almost always a better choice than a
+          decommissioned rack server.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">The Costs Nobody Budgets, and the Rule That Prevents Regret</div>
+      <div class="concept-desc">
+        The purchase price is the smallest part of what a lab costs, and the other parts are what
+        determine whether it survives past the first few months.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Cost</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>Electricity</td><td>A machine running continuously has an annual cost worth calculating before buying</td></tr>
+            <tr><td>Noise</td><td>Enterprise servers are unbearable in a home; this alone ends most rack ambitions</td></tr>
+            <tr><td>Heat</td><td>A cupboard with a server in it becomes an oven and shortens everything's life</td></tr>
+            <tr><td>Time</td><td>A lab that needs constant maintenance stops teaching and starts consuming</td></tr>
+            <tr><td>Household tolerance</td><td>Genuinely a constraint; the router the house depends on should not be your lab</td></tr>
+            <tr><td>Security</td><td>Lab machines are unpatched by nature; segment them from the home network</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The security row is the one that matters beyond the hobby. A lab exists to run vulnerable,
+          half-configured, deliberately-broken things, and that is exactly what it should be for —
+          on its own VLAN, with no route to the network the household uses. The separation is a
+          switch configuration rather than a purchase, and it is the difference between a learning
+          environment and an incident. The career-side framing of what to do with a lab is in
+          <span class="xref">Building a Home Lab — Where You Actually Learn</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: SIGNALS ────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">〰️</span>
+    <span class="topic-name">Signals — Analogue, Digital, Noise &amp; the Grounding Problem</span>
+    <span class="topic-badge">Embedded</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Digital Signals Are Analogue Signals We Agree to Round</div>
+      <div class="concept-desc">
+        There is no such thing as a digital wire. There is a voltage that rises and falls, and a
+        receiver that calls anything above one threshold a 1 and anything below another a 0. The
+        digital abstraction holds while the edges are clean and the levels are clear, and it stops
+        holding the moment noise, cable length or a bad ground pushes the voltage into the gap
+        between the thresholds. Almost every mysterious intermittent fault in wired equipment lives
+        in that gap.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Property</th><th>Analogue</th><th>Digital</th></tr></thead>
+          <tbody>
+            <tr><td>Value</td><td>Continuous — a temperature, a voltage, a sound</td><td>Two states, by agreement</td></tr>
+            <tr><td>Noise</td><td>Adds directly to the signal, permanently</td><td>Ignored entirely — until it crosses the threshold</td></tr>
+            <tr><td>Degradation over distance</td><td>Gradual and cumulative</td><td>Perfect, then suddenly not</td></tr>
+            <tr><td>Repeating it</td><td>Amplifies the noise too</td><td>Regenerates cleanly</td></tr>
+            <tr><td>Failure style</td><td>Quality drops</td><td>Works, works, works, garbage</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is why digital faults are harder to diagnose than analogue ones. An analogue
+          signal degrading tells you it is degrading; a digital link at the edge of its margin looks
+          perfect right up until it does not, and then usually only under load, or when the air
+          conditioning starts, or when someone runs the lift.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Sampling — the Rules That Decide What You Can Measure</div>
+      <div class="concept-desc">
+        Converting an analogue signal to numbers has two knobs and one famous trap, and they explain
+        a surprising amount of everyday IT behaviour.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Idea</th><th>Means</th><th>Shows up as</th></tr></thead>
+          <tbody>
+            <tr><td>Sample rate</td><td>How often you look</td><td>Audio at 44.1 kHz; a scope's timebase; a monitoring interval</td></tr>
+            <tr><td>Nyquist limit</td><td>You must sample at more than twice the highest frequency present</td><td>Sample too slowly and a fast signal reappears as a slow one that was never there</td></tr>
+            <tr><td>Aliasing</td><td>The false slow signal that results</td><td>Wagon wheels spinning backwards; a CPU <span class="acro-exp">(Central Processing Unit)</span> graph showing a trend that is an artefact of the polling interval</td></tr>
+            <tr><td>Bit depth / resolution</td><td>How finely each sample is graded</td><td>8-bit versus 24-bit audio; a sensor reporting whole degrees</td></tr>
+            <tr><td>Quantisation error</td><td>The rounding, at every sample</td><td>The noise floor you cannot get below</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Aliasing is the one worth carrying into ordinary IT work, because it is not a hardware
+          curiosity — a metric sampled every five minutes cannot represent anything that happens in
+          thirty seconds, and it will happily draw you a smooth line through a series of spikes it
+          never saw. The monitoring version of the same trap is in
+          <span class="xref">Cardinality — The Number That Decides Your Observability Bill</span>'s
+          neighbourhood: resolution costs money, and the cheap setting quietly changes what is
+          knowable.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Noise and Grounding — the Part With Real IT Application</div>
+      <div class="concept-desc">
+        This is where signal theory stops being abstract and starts explaining the buzzing
+        projector, the flaky serial console and the switch that drops a link when the lift runs.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Hum or buzz in audio and video</td><td>Ground loop — two ends at different ground potentials</td><td>An isolator, or feed both ends from one power source</td></tr>
+            <tr><td>Serial link works on the bench, fails on site</td><td>No common ground between separately-powered devices</td><td>One wire, and the single most common embedded fault</td></tr>
+            <tr><td>Errors on a copper run near machinery</td><td>Induced interference on an unbalanced or unshielded cable</td><td>Shielded cable grounded at one end, or fibre, which does not care</td></tr>
+            <tr><td>A link that fails only under load</td><td>Marginal signal integrity; more traffic means more chances to be wrong</td><td>Shorter run, better cable, check terminations</td></tr>
+            <tr><td>Random resets when a motor starts</td><td>Voltage sag or a spike on the supply</td><td>Separate supplies, decoupling, and do not power motors from the logic rail</td></tr>
+            <tr><td>Intermittent faults that follow the weather</td><td>Moisture and connector oxidation changing resistance</td><td>Reseat and clean; outdoor runs need outdoor-rated hardware</td></tr>
+            <tr><td>A device that only works when you touch it</td><td>You are the ground path. It was never grounded properly</td><td>Fix the ground, not the symptom</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Two rules carry most of this. <strong>Ground shields at one end only</strong> — grounding
+          both creates the loop you were trying to avoid — and <strong>separately powered devices
+          exchanging data need a shared ground reference</strong>, because a signal voltage is
+          meaningless without one. Fibre sidesteps the entire category by carrying light instead of
+          voltage, which is why it is the right answer for a run between buildings regardless of the
+          distance involved. The instrument for seeing any of this is in
+          <span class="xref">Test Gear — Multimeter, Oscilloscope, Logic Analyser: What Each One Answers</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

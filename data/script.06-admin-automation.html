@@ -1,0 +1,593 @@
+
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📇</span>
+              <span class="topic-name">Microsoft Graph From PowerShell — The Modern Admin API <span class="acro-exp">(Application Programming Interface)</span></span>
+              <span class="topic-badge">Automation • Admin</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">One API Behind Nearly Every Microsoft 365 Admin Task</div>
+                <div class="concept-desc">
+                  The older service-specific modules (MSOnline, AzureAD) are retired or retiring, and
+                  the single forward path for automating users, groups, devices, Intune and more is
+                  Microsoft Graph. The <code>Microsoft.Graph</code> PowerShell module is a generated
+                  wrapper over the Graph REST <span class="acro-exp">(Representational State Transfer)</span> API, so learning it teaches you the API underneath —
+                  and anything the cmdlets do not expose, you can still call as a raw request.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Connect with least privilege — name only the scopes you need</span>
+Connect-MgGraph -Scopes "User.Read.All","Group.Read.All"
+
+<span class="com"># Cmdlets for the common paths…</span>
+Get-MgUser -Filter "accountEnabled eq false" -All
+
+<span class="com"># …and the escape hatch to raw Graph for anything not wrapped</span>
+Invoke-MgGraphRequest -Method GET `
+  -Uri "https://graph.microsoft.com/v1.0/auditLogs/signIns?`$top=50"</pre>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Four Things That Trip Up Every Graph Script</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Issue</th><th>What to know</th></tr>
+                    <tr><td>Paging</td><td>Graph returns pages, not everything — <code>-All</code> follows @odata.nextLink; without it you silently get the first page only</td></tr>
+                    <tr><td>Throttling</td><td>Heavy loops hit HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> 429 — honour the Retry-After header, add backoff; do not hammer</td></tr>
+                    <tr><td>Permissions &amp; consent</td><td>Delegated (as you) vs application (unattended); the scope must be consented, not just requested</td></tr>
+                    <tr><td>v1.0 vs beta</td><td class="c-red">beta endpoints change without notice — never build a scheduled job on beta</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    For anything scheduled and unattended, authenticate as an <strong class="c-cyan">app
+                    registration with a certificate</strong> or a managed identity — never an
+                    interactive login or a stored password. That path, and its secret handling, is in
+                    <span class="xref">Environment Variables &amp; Configuration — Keep Secrets Out of Code</span>.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Craft</div>
+                <div class="concept-title">Read-Only First, Then a Dry Run</div>
+                <div class="concept-desc">
+                  Graph will happily disable a thousand accounts as fast as it will read them. Develop
+                  every change script against <code>GET</code> until the target set is provably right,
+                  then gate the write behind <code>-WhatIf</code> or an explicit confirmation and a
+                  hard cap on how many objects one run may touch. A filter that was one character off
+                  is a very different event when the next line is a bulk delete — see
+                  <span class="xref">Automation Risk &amp; Discipline — Blast Radius, Approval Gates &amp; the Kill Switch</span>.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🛂</span>
+              <span class="topic-name">JEA — Just Enough Administration &amp; Constrained Remoting</span>
+              <span class="topic-badge">Automation • Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Let Someone Run Three Commands Without Making Them an Admin</div>
+                <div class="concept-desc">
+                  The everyday problem: the help desk needs to restart one service and read a couple of
+                  logs on a server, and the lazy answer is to make them a local admin, which hands them
+                  everything. Just Enough Administration inverts it — a constrained PowerShell endpoint
+                  exposes only the specific cmdlets and parameters a role needs, running under a managed
+                  identity, so the operator can do their three tasks and nothing else. It is least
+                  privilege made concrete for operations.
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">How the Constraint Is Built</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Piece</th><th>Role</th></tr>
+                    <tr><td>Role Capability file</td><td>Declares exactly which cmdlets, functions and parameters a role may use</td></tr>
+                    <tr><td>Session Configuration file</td><td>Maps users/groups to role capabilities and sets the run-as identity</td></tr>
+                    <tr><td>Virtual / managed run-as account</td><td>Commands execute as a privileged identity the user never actually holds</td></tr>
+                    <tr><td>Transcription</td><td>Every session is logged — who ran what, verbatim</td></tr>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The result: a delegated operator connects to a constrained endpoint, sees only the
+                    handful of commands their role defines, and every keystroke is transcribed. The
+                    privileged credential never lands on their machine or in their token.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Where It Fits</div>
+                <div class="concept-title">The On-Prem Counterpart to Cloud PIM</div>
+                <div class="concept-desc">
+                  JEA does for a Windows server what privileged-identity management does for the cloud
+                  control plane: it removes standing privilege and replaces it with scoped, audited,
+                  task-specific access. It pairs naturally with removing local admin rights on endpoints
+                  — same principle, server side — and with the credential hygiene in
+                  <span class="xref">Service Accounts — gMSA and Retiring the Shared Password</span>.
+                  Reach for it wherever "they only needed to do one thing" currently means "so we gave
+                  them admin."
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- ── TOPIC: CONFIGURATION AS CODE ON-PREM ──────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📜</span>
+              <span class="topic-name">Configuration as Code On-Prem — Ansible, DSC <span class="acro-exp">(Desired State Configuration)</span> &amp; the Drift You Cannot See</span>
+              <span class="topic-badge">Automation</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Script Says How; a Configuration Says What</div>
+                <div class="concept-desc">
+                  The distinction between a build script and configuration management is not tooling, it is
+                  the shape of the statement. A script describes a sequence of actions — install this, edit
+                  that, restart the other — and running it twice does something different from running it
+                  once. A configuration describes a desired end state, and the tool works out what to change
+                  to reach it. Running it twice is the same as running it once, and running it on a machine
+                  that has drifted brings that machine back.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    That property is the whole value, and it is why configuration management earns its keep on
+                    estates that scripts cannot hold: the answer to "is this server configured correctly?"
+                    stops being a matter of memory and becomes a command you can run. Drift is what you are
+                    actually buying protection from — the setting somebody changed at 2am during an incident
+                    and never mentioned, which works fine until the server is rebuilt.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Ansible and DSC — Where Each One Fits</div>
+                <div class="concept-desc">
+                  The two dominant on-premises options make opposite architectural choices, and the choice
+                  matters more than the syntax.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th></th><th>Ansible</th><th>PowerShell DSC</th></tr></thead>
+                    <tbody>
+                      <tr><td>Model</td><td>Push — a control node connects out and applies</td><td>Pull or push — the node holds and reapplies its own configuration</td></tr>
+                      <tr><td>Agent required</td><td>No — SSH <span class="acro-exp">(Secure Shell)</span> or WinRM, plus Python on Linux targets</td><td>Built into Windows; the Local Configuration Manager</td></tr>
+                      <tr><td>Targets</td><td>Linux, Windows, network devices, appliances</td><td>Windows, essentially</td></tr>
+                      <tr><td>Drift correction</td><td>When you run it</td><td>Continuously, on the node's own schedule, if configured to</td></tr>
+                      <tr><td>Language</td><td>YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> playbooks, Jinja templating</td><td>PowerShell configurations compiled to MOF</td></tr>
+                      <tr><td>Best at</td><td>Orchestrating a sequence across many mixed hosts</td><td>Holding one Windows role to a standard, unattended</td></tr>
+                      <tr><td>Current position</td><td>Widely used and actively developed</td><td>Still shipped and useful; increasingly replaced by cloud-managed configuration</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The honest summary for a Windows estate: DSC is excellent at the narrow job of keeping a
+                    machine's role configuration true, and it has largely lost the broader ground to
+                    cloud-managed alternatives and to Ansible. Do not start a large new DSC investment without
+                    checking what your management platform already offers; do not rip out a working one either.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Idempotency Is a Property You Have to Write, Not One You Get</div>
+                <div class="concept-desc">
+                  Both tools are described as idempotent, and both make it trivially easy to write something
+                  that is not. The moment a playbook shells out to a raw command, the guarantee is gone and
+                  the tool cannot tell.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Not idempotent: appends every run, reports "changed" every run</span>
+          - shell: echo "10.0.0.5 db01" &gt;&gt; /etc/hosts
+
+          <span class="com"># Idempotent: the module knows the desired state and checks first</span>
+          - lineinfile:
+              path: /etc/hosts
+              line: "10.0.0.5 db01"
+              state: present</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Practice</th><th>Effect</th></tr></thead>
+                    <tbody>
+                      <tr><td>Prefer a module over a shell command, always</td><td>Modules check state; commands do not</td></tr>
+                      <tr><td>Where a command is unavoidable, guard it with a condition</td><td>Restores the "only if needed" behaviour by hand</td></tr>
+                      <tr><td>Run in check mode and read what it would change</td><td>The dry run that makes a change reviewable before it lands</td></tr>
+                      <tr><td>A second run should report zero changes</td><td>The simplest possible idempotency test, and it catches most failures</td></tr>
+                      <tr><td>Treat unexpected "changed" as a defect</td><td>Constant noise trains everyone to ignore the one that matters</td></tr>
+                      <tr><td>Version the configuration in Git, review it like code</td><td>It is code, and it has production authority</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The zero-changes rule is worth adopting as a hard standard. A playbook that reports
+                    changes on every run has stopped being a description of desired state and become a script
+                    with extra syntax — and nobody will be able to tell, six months later, whether a reported
+                    change was real. The blast-radius discipline that belongs around all of this is in
+                    <span class="xref">Automation Risk &amp; Discipline — Blast Radius, Approval Gates &amp; the Kill Switch</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: GOLDEN IMAGES AS CODE ──────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🏅</span>
+              <span class="topic-name">Golden Images as Code — Packer, and Versioning What You Deploy</span>
+              <span class="topic-badge">Automation</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Image Built by Hand Is a Machine Nobody Can Rebuild</div>
+                <div class="concept-desc">
+                  Nearly every estate has one: a template built years ago by an administrator who installed
+                  the agents, applied the settings, ran sysprep and saved it. It works. Nobody knows exactly
+                  what is in it, nobody can reproduce it, and it has been patched by cloning, booting,
+                  updating and re-sealing — which means it also carries whatever else was on it the last time
+                  somebody did that. It is a build artifact with no source.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    Building images from a definition file fixes this by giving the artifact a source. The
+                    definition says which base to start from, which provisioning steps to apply, and what to
+                    produce; the pipeline runs it on a schedule; the output is versioned and immutable. What
+                    changed between last month's image and this one becomes a diff rather than a memory.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Structure of an Image Pipeline</div>
+                <div class="concept-desc">
+                  Packer is the common tool and the pattern generalises to whatever you use — the stages are
+                  the same and the discipline is in the stages, not the syntax.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Stage</th><th>What it does</th><th>Detail that matters</th></tr></thead>
+                    <tbody>
+                      <tr><td>Source</td><td>Names the base image or ISO <span class="acro-exp">(International Organization for Standardization)</span></td><td>Pin it by version or digest, not by "latest"</td></tr>
+                      <tr><td>Build</td><td>Boots a temporary machine</td><td>Runs somewhere isolated — this machine is unpatched for a while</td></tr>
+                      <tr><td>Provision</td><td>Applies configuration — usually the same Ansible or DSC <span class="acro-exp">(Desired State Configuration)</span> you already have</td><td>Reuse the configuration; do not maintain a second definition of "configured"</td></tr>
+                      <tr><td>Harden and clean</td><td>Baseline, remove logs, remove build credentials</td><td>Build-time secrets left in an image are a classic finding</td></tr>
+                      <tr><td>Generalise</td><td>sysprep, cloud-init prep, machine-ID reset</td><td>Missing this is how a fleet ends up sharing one identity</td></tr>
+                      <tr><td>Test</td><td>Boot it and assert it is what you asked for</td><td>The stage most often skipped; see the testing card</td></tr>
+                      <tr><td>Publish</td><td>Versioned artifact, immutable, dated</td><td>Never overwrite an existing version — that breaks reproducibility</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Rebuild, Never Patch the Image</div>
+                <div class="concept-desc">
+                  The rule that keeps this honest: images are rebuilt from the definition, never updated in
+                  place. Boot-patch-reseal reintroduces exactly the untraceability the pipeline removed, and
+                  it does it invisibly, one convenient shortcut at a time.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+                    <tbody>
+                      <tr><td>Rebuild on a schedule — monthly at minimum</td><td>An image is a patch level frozen in time; a stale golden image ships a known vulnerability everywhere</td></tr>
+                      <tr><td>Rebuild on base-image or critical-patch release too</td><td>The schedule handles routine; events handle urgency</td></tr>
+                      <tr><td>Keep the previous version deployable</td><td>Rollback for images, and you will need it</td></tr>
+                      <tr><td>Record the base version and patch level in image metadata</td><td>Answers "what is running out there?" without logging in</td></tr>
+                      <tr><td>Keep the image thin; configure at deploy time</td><td>Every application baked in is another reason to rebuild for someone else's change</td></tr>
+                      <tr><td>One definition per platform family, parameterised</td><td>Nine near-identical definitions drift apart within a year</td></tr>
+                      <tr><td>Expire old images deliberately</td><td>Otherwise something is still deploying the one from two years ago</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The thin-image rule is the one that decides how much of a burden this becomes. A golden
+                    image containing the operating system, the agents and the baseline is rebuilt when those
+                    change. One that also contains three applications is rebuilt whenever any of five teams
+                    ships anything — and the pipeline that was supposed to reduce work becomes the thing
+                    everybody is waiting on.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: SECRETS IN AUTOMATION ──────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔐</span>
+              <span class="topic-name">Secrets in Automation — Vaults, Managed Identities &amp; Never a Plaintext Credential</span>
+              <span class="topic-badge">Automation</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Best Secret Is the One That Does Not Exist</div>
+                <div class="concept-desc">
+                  Every discussion of credentials in scripts starts with where to store them, and that is the
+                  second question. The first is whether a stored credential is needed at all. A script running
+                  on a cloud virtual machine, in a managed automation account, in a pipeline that federates to
+                  the cloud, or as a Windows group-managed service account has an identity supplied by the
+                  platform and rotated without anyone's involvement. There is no secret to store, leak, rotate
+                  or find in a repository three years later.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Situation</th><th>Use</th></tr></thead>
+                    <tbody>
+                      <tr><td>Script on a cloud VM <span class="acro-exp">(Virtual Machine)</span> or container</td><td>The platform's managed identity</td></tr>
+                      <tr><td>CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> pipeline calling cloud APIs <span class="acro-exp">(Application Programming Interface)</span></td><td>OIDC <span class="acro-exp">(OpenID Connect)</span> federation from the pipeline, scoped to repo and branch</td></tr>
+                      <tr><td>Windows service or scheduled task on a domain</td><td>Group-managed service account — password rotation is automatic</td></tr>
+                      <tr><td>Scheduled automation in a managed platform</td><td>The platform's own credential store and identity</td></tr>
+                      <tr><td>Script on a workstation, run interactively</td><td>The operator's own credentials, prompted; never a service account</td></tr>
+                      <tr><td>Anything left over</td><td>A vault, with the retrieval patterns below</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Work down that table before designing anything. Most credential-handling problems in an
+                    estate are solved by moving the work to somewhere with an identity rather than by managing
+                    the credential better.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">When a Stored Secret Is Unavoidable</div>
+                <div class="concept-desc">
+                  Legacy systems, third-party APIs with static keys and appliances with local accounts all
+                  produce secrets that must live somewhere. The vault is the answer, and how the script uses
+                  it decides whether the vault helps.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Rule</th><th>Reason</th></tr></thead>
+                    <tbody>
+                      <tr><td>Retrieve at run time; never write it to disk</td><td>A cached credential file is the thing you were avoiding</td></tr>
+                      <tr><td>Hold it in memory only as long as needed</td><td>Limits what a crash dump or a debugger exposes</td></tr>
+                      <tr><td>Authenticate to the vault with an identity, not another secret</td><td>Otherwise you have moved the problem, not solved it</td></tr>
+                      <tr><td>Scope each secret to one consumer</td><td>Rotation stops being a coordinated estate-wide event</td></tr>
+                      <tr><td>Prefer short-lived, dynamically issued credentials</td><td>A leaked credential with a one-hour life is a much smaller incident</td></tr>
+                      <tr><td>Make the vault's audit log a monitored source</td><td>Unusual retrieval is one of the cleanest compromise signals available</td></tr>
+                      <tr><td>Rotate on a schedule, and test the rotation</td><td>An untested rotation path means nobody dares revoke during an incident</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Where Credentials Actually Leak From Scripts</div>
+                <div class="concept-desc">
+                  Hardcoding is the obvious one and it is not the common one any more, because it is the one
+                  everybody checks for. These are the routes that survive review.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Leak</th><th>Prevention</th></tr></thead>
+                    <tbody>
+                      <tr><td>Passed as a command-line argument</td><td>Visible in the process list to every user on the box — use stdin or the environment</td></tr>
+                      <tr><td>Written to a log by verbose or debug output</td><td>Wrap secrets in a type that refuses to print; scan logs for patterns</td></tr>
+                      <tr><td>Captured by shell history or a transcript</td><td>Never type one interactively into a logged session</td></tr>
+                      <tr><td>Included in an error message or stack trace</td><td>Sanitise exceptions before they reach a ticket or a chat channel</td></tr>
+                      <tr><td>Committed in an earlier revision, then removed</td><td>Still in history — rotate it, do not merely delete it</td></tr>
+                      <tr><td>Left in a build artifact or a golden image</td><td>Clean build-time credentials as an explicit pipeline stage</td></tr>
+                      <tr><td>Sitting in a scheduled task's stored password</td><td>The classic on-premises finding; replace with a managed account</td></tr>
+                      <tr><td>Shared between environments</td><td>A test-environment leak becomes a production incident</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The git-history row is the one people get wrong under pressure. Removing a secret in a
+                    later commit changes nothing — the old revision still contains it, and rewriting history
+                    on a shared branch is disruptive and usually incomplete. Treat any secret that ever
+                    reached a repository as compromised and rotate it; that is the only step that actually
+                    ends the exposure.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: TESTING AUTOMATION ─────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧪</span>
+              <span class="topic-name">Testing Automation — Pester, Dry Runs &amp; a Lab That Mirrors Production</span>
+              <span class="topic-badge">Automation</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Admin Scripts Are Held to a Lower Standard Than the Code They Outrank</div>
+                <div class="concept-desc">
+                  A web application gets unit tests, code review, a staging environment and a canary rollout.
+                  The script that disables accounts across the directory gets run. Both are code, and the
+                  second one has considerably more authority over the estate than the first — it acts as an
+                  administrator, on everything, with no user watching the result. The double standard is
+                  historical rather than reasoned: scripts started as one-off conveniences and quietly became
+                  infrastructure.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    The proportionate response is not full test coverage for every one-liner. It is a rising
+                    bar: the more machines it touches and the less reversible its action, the more it has to
+                    prove before it runs.
+                  </div>
+                  <table class="ref-table">
+                    <thead><tr><th>Script</th><th>Minimum bar</th></tr></thead>
+                    <tbody>
+                      <tr><td>Read-only report, one system</td><td>Run it and read the output</td></tr>
+                      <tr><td>Changes one object, reversibly</td><td>Dry run first; confirm the target</td></tr>
+                      <tr><td>Bulk change across many objects</td><td>Dry run, a reviewed diff, a capped first batch</td></tr>
+                      <tr><td>Destructive or irreversible</td><td>All of the above, plus tests, plus a second pair of eyes</td></tr>
+                      <tr><td>Scheduled and unattended</td><td>All of the above, plus alerting on failure and on suspicious success</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What to Test, and How</div>
+                <div class="concept-desc">
+                  Testing automation feels impossible because the interesting behaviour involves systems you
+                  cannot spin up. The resolution is the same as in application testing: separate the logic
+                  from the calls, test the logic properly, and mock the calls.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Hard to test: decision and action tangled together</span>
+          Get-ADUser -Filter * | Where-Object { $_.LastLogon -lt (Get-Date).AddDays(-90) } |
+            Disable-ADAccount
+
+          <span class="com"># Testable: the decision is a function that takes data and returns data</span>
+          function Get-StaleAccounts {
+            param($Accounts, $Days = 90)
+            $cutoff = (Get-Date).AddDays(-$Days)
+            $Accounts | Where-Object { $_.LastLogon -lt $cutoff -and -not $_.ServiceAccount }
+          }
+
+          Describe 'Get-StaleAccounts' {
+            It 'excludes service accounts regardless of age' {
+              $result = Get-StaleAccounts -Accounts @(
+                @{ Name='svc-backup'; LastLogon=(Get-Date).AddYears(-2); ServiceAccount=$true })
+              $result | Should -BeNullOrEmpty
+            }
+          }</pre>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The rewrite costs ten minutes and changes what is possible: the selection rule — the part
+                    that decides who gets disabled — can now be tested against every awkward case somebody
+                    thinks of, without a directory and without disabling anybody. The general testing craft is
+                    in <span class="xref">Testing Strategy — Why and How to Test</span> and
+                    <span class="xref">Mocking — Testing Code That Talks to the Outside World</span>;
+                    this card is the argument for applying it to operations code.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Dry Runs, and the Lab That Is Worth Having</div>
+                <div class="concept-desc">
+                  A dry run is the highest-value safety feature an admin script can have, and it has to be
+                  built in rather than remembered — a mode the script supports, not a habit the operator has.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Practice</th><th>Effect</th></tr></thead>
+                    <tbody>
+                      <tr><td>Support <code>-WhatIf</code> or an equivalent, and default to it where you can</td><td>The safe path becomes the one you get by forgetting</td></tr>
+                      <tr><td>Have the dry run output the actual list of targets</td><td>"Would change 4,812 objects" is the moment to stop and look</td></tr>
+                      <tr><td>Cap the batch size, and require a flag to exceed it</td><td>Turns a runaway into a small mistake</td></tr>
+                      <tr><td>Log every action taken, with the object and the outcome</td><td>The only way to answer "what did it actually do?"</td></tr>
+                      <tr><td>Write the undo before running the do</td><td>If you cannot describe the reversal, you are not ready</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    On labs: the useful one is not a copy of production, which nobody maintains. It is a small
+                    environment with the <em>awkward shapes</em> production has — a nested group, a disabled
+                    account with a mailbox, an object with an apostrophe in its name, a machine that has been
+                    offline for a year. Those shapes are what break bulk scripts, and a lab of ten deliberately
+                    strange objects finds more defects than a lab of a thousand ordinary ones.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: LOW-CODE AUTOMATION ────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧷</span>
+              <span class="topic-name">Power Automate &amp; Logic Apps — The Low-Code Option, and Its Real Limits</span>
+              <span class="topic-badge">Automation</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Connectors Are the Product</div>
+                <div class="concept-desc">
+                  Low-code automation platforms are sold on the visual designer, and the designer is not why
+                  they win. The value is the connector library: authenticated, maintained integrations with
+                  hundreds of services that would each be a small project to build and a permanent commitment
+                  to maintain. A flow that watches a mailbox, files an attachment, updates a list and posts to
+                  a channel is genuinely an afternoon — and the equivalent script is four API <span class="acro-exp">(Application Programming Interface)</span> integrations,
+                  four credential lifecycles and four sets of breaking changes to track.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc" style="margin-top:0">
+                    Where they lose is equally consistent, and it is not capability. It is the engineering
+                    practices that come free with code and are awkward or absent here: version control,
+                    meaningful diffs, code review, testing, and a clear story for how a change reaches
+                    production.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Choosing Between a Flow and a Script</div>
+                <div class="concept-desc">
+                  The decision is usually made by who is available rather than by fit, which is how estates
+                  end up with critical processes in a flow owned by someone who left. These are the honest
+                  criteria.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Choose low-code when</th><th>Choose code when</th></tr></thead>
+                    <tbody>
+                      <tr><td>The work is gluing together services that have connectors</td><td>The logic is the hard part, not the integration</td></tr>
+                      <tr><td>The trigger is an event in one of those services</td><td>You need real branching, loops or data structures</td></tr>
+                      <tr><td>The business owner should be able to read it</td><td>It must be tested before it runs</td></tr>
+                      <tr><td>Volume is modest and latency is not critical</td><td>Volume is high — per-action pricing becomes the constraint</td></tr>
+                      <tr><td>It is genuinely departmental, and its failure is an inconvenience</td><td>Its failure is an incident</td></tr>
+                      <tr><td>Time to first version matters more than anything</td><td>It will be maintained for years by people not yet hired</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    Note the pattern in the right-hand column: it is about the second year, not the first.
+                    Low-code wins the build and code wins the maintenance, so the question worth asking is how
+                    long this thing will live and how bad its failure would be — not how quickly it can exist.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">Governing Flows Before They Become Shadow IT</div>
+                <div class="concept-desc">
+                  Low-code platforms distribute automation to people who are not administrators, which is the
+                  point and the risk. The predictable end state is hundreds of flows, most abandoned, several
+                  load-bearing, running under personal accounts with connections to production data.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Risk</th><th>Control</th></tr></thead>
+                    <tbody>
+                      <tr><td>Flows owned by an individual account</td><td>Require service or shared ownership for anything business-critical</td></tr>
+                      <tr><td>The owner leaves and the flow stops</td><td>Include flow ownership in the offboarding checklist — it rarely is</td></tr>
+                      <tr><td>Connectors bridging internal and external services</td><td>Data-loss-prevention policies that separate connector groups</td></tr>
+                      <tr><td>Credentials embedded in a connection</td><td>Managed identity or a service principal where the platform supports it</td></tr>
+                      <tr><td>No environments — everything built in production</td><td>Separate development and production environments, and use them</td></tr>
+                      <tr><td>Silent failures</td><td>Alert on run failures; a flow that stopped last month is the usual discovery</td></tr>
+                      <tr><td>Nobody knows what exists</td><td>Inventory regularly; sort by last-run and by connector sensitivity</td></tr>
+                      <tr><td>Per-action licensing surprises</td><td>Watch run volume; a loop over a large list gets expensive quickly</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc" style="margin-top:10px">
+                    The offboarding row is the one that produces incidents. A departing employee's account is
+                    disabled correctly, and three weeks later an invoice process nobody knew was automated has
+                    silently not run. Flow ownership belongs in the same checklist as mailboxes and file
+                    shares — the discipline is in
+                    <span class="xref">Offboarding as a Security Control — The Checklist and Its Failure Modes</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+<!-- /domain-body script -->
