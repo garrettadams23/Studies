@@ -2951,16 +2951,16 @@ rename registry. A fourth measured itself away. Read the ticks.*
 Recorded with trade-offs rather than as a recommendation, because it is the kind
 of change that is easy to start and expensive to abandon.
 
-- [ ] **Evaluate a structured content model** — topics as data (JSON/YAML with
-  typed blocks: prose, table, code, diagram) rendered by `build.py`, instead of
-  hand-written HTML. **For:** mechanical validation, trivial exports (Markdown,
-  print, quiz questions), no more inline-style drift, and every card becomes
-  queryable. **Against:** 900 existing topics to migrate, HTML is currently
-  expressive and easy to hand-edit, and the build becomes a real program.
-  **Decision rule:** only worth it if Tracks AG/AK actually need topic-level
-  structured data — do not do it for tidiness alone.
-- [ ] **Incremental path if that is a yes** — new domains author in the new model
-  and old ones stay HTML; `build.py` handles both. Never a big-bang migration.
+- [x] **Evaluate a structured content model** — **evaluated; the answer is no.** The decision rule
+  was "only worth it if Tracks AG/AK actually need topic-level structured data". Both tracks are now
+  complete and the evidence is in the session record below: every consumer built — study decks,
+  quizzes, exam mode, learning paths, related topics, landing cards, print packs — needed *ids and
+  small external JSON*, not structured topics. One consumer, the Markdown export, genuinely wanted
+  structure, and it cost ~120 lines and three bugs rather than 1,375 migrations.
+- [~] **Incremental path if that is a yes** — moot, since the answer is no. The evaluation named a
+  much smaller change that gets the same benefit: convert the **78 div-built pseudo-tables** to real
+  `<table>` markup. That is where the export's special cases live, and it is 78 elements against
+  1,883 real tables.
 - [x] **Topic ID stability contract** — written into `CONTRIBUTING.md` as *Topic IDs are a
   contract*, with the table of what does and does not move an id, why it matters (permalinks and
   five `localStorage` key prefixes), the rule to prefer parts over new domains, and the
@@ -8992,3 +8992,58 @@ derives itself, not a figure whose source is the card's own worked example.
 All eight items. Three were already built and were ticked after verification, one measured itself
 away (one external link on the whole site), and four shipped this session: the rename registry, the
 per-domain changelog, the contradiction check, and these two.
+
+
+## Session record — the structured content model, evaluated and declined
+
+Track AY held this decision open for a reason, with an explicit rule attached: *only worth it if
+Tracks AG/AK actually need topic-level structured data — do not do it for tidiness alone.* Both
+tracks are now finished, so the rule can be applied against evidence rather than intuition.
+
+### What the consumers actually needed
+
+Everything Tracks AG and AK asked for got built this session. What each one turned out to need:
+
+| Consumer | Needed |
+|---|---|
+| Flashcards, quiz, exam mode | `.topic-name`, one `.concept-title`, one `.concept-desc` — three regexes |
+| Spaced repetition, progress, streak | topic **ids** and `localStorage`. No content at all |
+| Learning paths | an ordered list of ids in `paths.json` |
+| Related topics | a map of ids in `related.json`, seeded from the `xref` spans |
+| Domain landing cards | `domain-intros.json`, keyed on domain |
+| Per-domain changelog | the `data-reviewed` attribute |
+| Print packs | the topic's markup, used verbatim |
+| **Markdown export** | **structure — the one real case** |
+
+Seven of eight needed ids and small external JSON files. That is not a content-model problem; it is
+exactly the architecture already in place, and each payload took an afternoon.
+
+### The one that wanted structure, priced honestly
+
+The Markdown export is the case the item was written for, and it did cost something: a ~120-line
+structural converter, plus three real bugs that only surfaced because the tests were written —
+every table exporting with an empty header row, div-built tables flattening into one unreadable
+line, and headings carrying leading whitespace.
+
+Against that: **1,375 topics to migrate**, and a build that becomes a real program with a template
+layer, a schema and its own bugs. A hundred and twenty lines is not a case for rewriting the corpus.
+
+### What the evaluation *did* find
+
+The export's ugliest special cases are not about HTML in general. They are about a specific habit:
+**78 places where a table is built out of `<div>`s** — `kc-row`, `layer-stack`, `nist-row`,
+`risk-matrix` — against **1,883 real `<table>` elements**. Those 78 are why the converter needs a
+`.layer` rule, why the print pack needs its own break rules, and why a naive HTML-to-Markdown pass
+would produce nonsense.
+
+So the recommendation is not "restructure the content". It is: **convert 78 elements to real
+tables**, which removes the special cases, improves screen-reader output for free, and can be done
+one card at a time by anyone with an afternoon. Logged as the incremental item in place of the
+migration path that is no longer needed.
+
+### The rule earned its keep
+
+This decision was deferred across many sessions with a test attached to it. The test turned out to
+be answerable only *after* building the features — and when it was answered, it said no, clearly,
+with numbers. Worth remembering the next time something is tempting and expensive: writing down what
+would make it worthwhile is what stopped it happening on vibes.
