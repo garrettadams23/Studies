@@ -5,7 +5,11 @@
  * to invalidate old caches. Only runs on the deployed https:// site — the
  * file:// path never registers it (guarded in script.js).
  */
-const CACHE_VERSION = "techref-v4";
+// Written by build.py from a hash of the precached assets — see stamp_sw_version().
+// Deriving it means a release can never ship with a stale cache because someone
+// forgot to bump a number, and an unchanged build never invalidates a cache for
+// no reason.
+const CACHE_VERSION = "techref-2490970aaa7b";
 
 const PRECACHE = [
   "/",
@@ -25,7 +29,12 @@ const PRECACHE = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_VERSION).then((cache) => cache.addAll(PRECACHE)).then(() => self.skipWaiting())
+    // No skipWaiting() here on purpose. Taking over immediately swaps the
+    // assets under a page that is already open, which is how a reader ends up
+    // with a new script.js talking to an old index.html. The new worker waits,
+    // the page offers a reload, and skipWaiting() happens below when the reader
+    // accepts it.
+    caches.open(CACHE_VERSION).then((cache) => cache.addAll(PRECACHE))
   );
 });
 
@@ -35,6 +44,11 @@ self.addEventListener("activate", (event) => {
       Promise.all(keys.filter((k) => k !== CACHE_VERSION).map((k) => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
+});
+
+// The page asks for the swap once the reader has agreed to it.
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "skip-waiting") self.skipWaiting();
 });
 
 self.addEventListener("fetch", (event) => {

@@ -2253,8 +2253,12 @@ shipped in the Track AJ wave. Read the ticks, not the original list.*
   decks use (all / one domain / study list / due today). Converts from the *deferred blocks*, so a
   domain that has never been opened exports identically to one that has. Copy or download; the
   filename carries the scope and the date.
-- [ ] **PWA polish** — an update prompt when a new `CACHE_VERSION` is available,
-  and precache the fragments if lazy loading ships.
+- [x] **PWA polish** — the worker no longer calls `skipWaiting()` on install, so a new version
+  *waits*; the page offers a dismissible "A newer version of this page is ready — Reload", and only
+  then does the swap happen. `CACHE_VERSION` is now **derived by `build.py`** from a hash of
+  `index.html`, `style.css` and `script.js`, so it changes exactly when the bytes do — no forgotten
+  bump, no pointless invalidation — and CI fails if it is stale. The fragments clause is moot:
+  lazy loading shipped as inline deferred blocks, so there is nothing separate to precache.
 - [ ] **Share cards** — generated OG images per domain for link previews.
 - [x] **Reading time & size hints** — per domain, so a study session can be
   planned realistically. ✅ Session 19. Computed in `build.py` from the real word
@@ -8781,3 +8785,32 @@ creating a property rather than an element, so the "square rows" assertion was s
 nothing at all and would have passed on any output. **A check that examines nothing passes.**
 
 Seven new checks, 115 → **123**.
+
+
+## Session record — PWA polish: consent, and a version nobody has to remember
+
+Two changes, and the second is the substantive one.
+
+**The worker stopped taking over without asking.** It called `skipWaiting()` on install, which swaps
+the cached assets under a page that is already open — a new `script.js` talking to an old
+`index.html`. On a page that keeps a reader's progress, bookmarks, notes and scheduler state in
+`localStorage`, that is not a cosmetic risk. The new version now waits, the page offers a
+dismissible reload, and `skipWaiting()` happens only when the reader accepts. A `controllerchange`
+guard stops the reload looping when several tabs accept at once.
+
+**`CACHE_VERSION` is derived, not typed.** A hand-bumped cache version has two failure modes and
+both are common: forget to bump it and returning visitors keep a stale page indefinitely; bump it
+every deploy and an unchanged build throws away a good cache. `build.py` now hashes the three files
+that actually change and writes `techref-<hash>` into `sw.js`, so the version moves exactly when the
+bytes do. CI fails if it is stale, the same way it already fails on a stale `index.html`.
+
+### Testing what cannot be tested here
+
+The worker only runs over http(s) and the smoke tests run over `file://`, so the registration path
+is genuinely out of reach. Rather than skip the feature, the four checks cover the part that
+actually breaks: the toast renders **once** rather than once per event, carries `role="status"`,
+posts exactly `{type:"skip-waiting"}` to the waiting worker when accepted, and can be dismissed. The
+comment says why the registration itself is not covered, so the gap is a recorded decision rather
+than an oversight.
+
+123 → **127** checks.

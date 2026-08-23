@@ -2822,6 +2822,36 @@ body.st-lock { overflow: hidden; }
 }
 .st-ex-table td { padding: 5px 6px; border-bottom: 1px solid var(--border); }
 
+/* Update toast — only ever shown on the deployed site, never over file:// */
+#update-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(92vw, 520px);
+  padding: 10px 12px;
+  background: var(--bg3);
+  border: 1px solid var(--cyan);
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+.ut-text { font-size: 13px; color: var(--text); }
+.ut-go {
+  font: inherit; font-size: 12px; cursor: pointer;
+  color: var(--bg); background: var(--cyan);
+  border: none; border-radius: 4px; padding: 5px 12px;
+}
+.ut-dismiss {
+  font: inherit; font-size: 13px; cursor: pointer;
+  color: var(--muted); background: none; border: none; padding: 2px 4px;
+}
+.ut-dismiss:hover { color: var(--text); }
+@media print { #update-toast { display: none; } }
+
 /* Progress dashboard */
 .st-pg-top { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .st-pg-stat {

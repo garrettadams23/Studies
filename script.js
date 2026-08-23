@@ -3513,8 +3513,59 @@ function initStudyTools() {
 }
 
 // ── SERVICE WORKER (offline PWA; https only — never over file://) ────────────
+/**
+ * Offer a reload when a new version is waiting.
+ *
+ * The worker no longer calls skipWaiting() on install, so a new version sits in
+ * `waiting` until someone accepts it. That is the point: swapping the assets
+ * under an open page is how a reader ends up with a new script.js and an old
+ * index.html, and on a page that keeps their progress in localStorage that is
+ * not a cosmetic problem.
+ *
+ * Rendered rather than alert()ed, and dismissible: an update is worth
+ * mentioning once, not insisting on.
+ */
+function showUpdateToast(worker) {
+  if (document.getElementById("update-toast")) return null;
+  const bar = document.createElement("div");
+  bar.id = "update-toast";
+  bar.setAttribute("role", "status");
+  bar.innerHTML =
+    '<span class="ut-text">A newer version of this page is ready.</span>' +
+    '<button type="button" class="ut-go">Reload</button>' +
+    '<button type="button" class="ut-dismiss" aria-label="Dismiss">✕</button>';
+  bar.querySelector(".ut-go").addEventListener("click", () => {
+    bar.querySelector(".ut-go").textContent = "Reloading…";
+    // The worker takes over, fires controllerchange, and the page reloads once.
+    // Without the guard a page can reload in a loop when several tabs accept.
+    worker?.postMessage({ type: "skip-waiting" });
+    if (!worker) location.reload();
+  });
+  bar.querySelector(".ut-dismiss").addEventListener("click", () => bar.remove());
+  document.body.appendChild(bar);
+  return bar;
+}
+
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+    navigator.serviceWorker.register("/sw.js").then(reg => {
+      if (reg.waiting) showUpdateToast(reg.waiting);
+      reg.addEventListener("updatefound", () => {
+        const installing = reg.installing;
+        installing?.addEventListener("statechange", () => {
+          // "installed" with a controller already present means an update, not
+          // a first install — the first install has nothing to replace.
+          if (installing.state === "installed" && navigator.serviceWorker.controller) {
+            showUpdateToast(installing);
+          }
+        });
+      });
+    }).catch(() => {});
+    let reloading = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (reloading) return;
+      reloading = true;
+      location.reload();
+    });
   });
 }

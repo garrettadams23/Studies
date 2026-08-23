@@ -94,6 +94,15 @@ jobs:
       - name: Check the learning paths
         run: python tools/check_paths.py
 
+      # build.py derives sw.js's CACHE_VERSION from the built assets, so a
+      # stale version here means the service worker would serve an old page.
+      - name: Fail if sw.js cache version is stale
+        run: |
+          if ! git diff --exit-code -- sw.js; then
+            echo "::error::sw.js CACHE_VERSION is out of date. Run 'python build.py' and commit the result."
+            exit 1
+          fi
+
       - name: Fail if index.html is stale
         run: |
           if ! git diff --exit-code -- index.html; then

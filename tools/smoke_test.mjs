@@ -1338,6 +1338,39 @@ check("exporting a domain emits one heading per topic",
 check("the export reports its size and enables the buttons",
   /\d+ topics · \d+ KB/.test(mdScope.sizeLine) && mdScope.copyEnabled, mdScope.sizeLine);
 
+// ── update toast ────────────────────────────────────────────────────────────
+// The service worker only runs over http(s) and these tests run over file://,
+// so the registration path cannot be exercised here. What can be — and what
+// actually breaks — is the toast itself: that it renders once, asks the waiting
+// worker to take over, and can be dismissed.
+await page.goto(PAGE, { waitUntil: "load" });
+const toast = await page.evaluate(() => {
+  const messages = [];
+  const fakeWorker = { postMessage: m => messages.push(m) };
+  const first = showUpdateToast(fakeWorker);
+  const second = showUpdateToast(fakeWorker);      // must not stack
+  const bar = document.getElementById("update-toast");
+  const out = {
+    rendered: !!first, secondSuppressed: second === null,
+    count: document.querySelectorAll("#update-toast").length,
+    role: bar.getAttribute("role"),
+    text: bar.querySelector(".ut-text").textContent,
+  };
+  bar.querySelector(".ut-go").click();
+  out.messages = messages;
+  out.buttonBusy = bar.querySelector(".ut-go").textContent;
+  bar.querySelector(".ut-dismiss").click();
+  out.dismissed = !document.getElementById("update-toast");
+  return out;
+});
+check("the update toast renders once, not once per event",
+  toast.rendered && toast.secondSuppressed && toast.count === 1, `${toast.count} toasts`);
+check("it is announced to assistive tech", toast.role === "status", toast.role);
+check("accepting asks the waiting worker to take over",
+  JSON.stringify(toast.messages) === '[{"type":"skip-waiting"}]' && /Reloading/.test(toast.buttonBusy),
+  JSON.stringify(toast.messages));
+check("it can be dismissed", toast.dismissed);
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));

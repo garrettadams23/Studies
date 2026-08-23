@@ -27,6 +27,7 @@ Usage:
   python3 build.py
 """
 
+import hashlib
 import json
 import html as html_lib
 import re
@@ -394,6 +395,41 @@ def build_paths():
     return payload.replace("</", "<\\/")
 
 
+_SW_VERSION_RE = re.compile(r'(const CACHE_VERSION = ")[^"]*(";)')
+
+
+def stamp_sw_version(page_bytes):
+    """Derive the service worker's cache version from what it precaches.
+
+    A hand-bumped version number has two failure modes and both have bitten
+    real sites: forgetting to bump it, so returning visitors keep a stale page
+    forever; and bumping it on every deploy, so an unchanged build throws away
+    a perfectly good cache. Hashing the assets removes both — the version
+    changes exactly when the bytes do.
+
+    Only the three files that actually change are hashed. The fonts and icons
+    are in PRECACHE too and have not changed in the life of this project;
+    including them would mean reading them on every build for no signal.
+    """
+    sw = ROOT / "sw.js"
+    if not sw.exists():
+        return None
+    digest = hashlib.sha256(page_bytes)
+    for name in ("style.css", "script.js"):
+        path = ROOT / name
+        if path.exists():
+            digest.update(path.read_bytes())
+    version = f"techref-{digest.hexdigest()[:12]}"
+    text = sw.read_text(encoding="utf-8")
+    updated, n = _SW_VERSION_RE.subn(lambda m: f"{m.group(1)}{version}{m.group(2)}", text)
+    if not n:
+        raise SystemExit("error: sw.js has no CACHE_VERSION line to stamp.")
+    if updated != text:
+        sw.write_text(updated, encoding="utf-8")
+        print(f"  + sw.js cache version -> {version}")
+    return version
+
+
 def main():
     shell_path = ROOT / "index-shell.html"
     domains_path = DATA / "domains.json"
@@ -473,6 +509,7 @@ def main():
 
     out_path = ROOT / "index.html"
     out_path.write_text(output, encoding="utf-8")
+    stamp_sw_version(output.encode("utf-8"))
     print(f"Built {out_path} ({len(output):,} chars, {len(output.encode()):,} bytes)")
 
 
