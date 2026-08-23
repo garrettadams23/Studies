@@ -8684,3 +8684,42 @@ topic reaches `stIndex()`**, and every row in it has a name. `stIndex()` silentl
 cannot parse a name for, and everything the study tools offer is built from it — decks, quizzes, the
 palette, paths, related topics. A topic that falls out is not broken, it is *absent* from all of
 them, and nothing would have said so. 1,369 / 1,369 today. 113 → **115**.
+
+
+## Session record — productivity content wave: the study-skills half of a study site
+
+`productivity` was the thinnest substantial domain on the site at ten topics, which is an odd gap
+for a site whose entire purpose is helping someone learn this material. Audited by listing topic
+titles across all 30 domains — the lesson from the pentest wave, applied first this time rather than
+after writing a duplicate card.
+
+**Confirmed void.** Nothing on retrieval practice, interleaving, deliberate practice,
+procrastination, exam technique or energy management existed as a topic anywhere. The nearest
+neighbour, `career`'s *How Adults Actually Learn*, is about **teaching other people** — cognitive
+load in a session, measuring training by behaviour — so it was read first, kept distinct, and
+cross-referenced rather than duplicated.
+
+### Six cards, 10 → 16
+
+- **Retrieval Practice** — the most replicated finding in the study of studying, and the one this
+  site's own spaced-repetition scheduler implements. Includes the free version for technical work:
+  say what the command will output before you run it.
+- **Interleaving & Desirable Difficulties** — the idea that reorganises the rest: performance during
+  practice and retention afterwards are different things, and several conditions that worsen the
+  first improve the second. Includes when *not* to interleave, which most treatments omit.
+- **Deliberate Practice** — why "10,000 hours" is the wrong number, and how to manufacture the
+  missing condition in an IT career, which is almost always feedback.
+- **Procrastination** — a mood problem wearing a time-management costume, with the finding that
+  self-criticism reliably increases the next delay, and a table of the things that merely look like
+  procrastination and need different help entirely.
+- **Exam Technique** — the second skill, and the cheaper one. A table that separates losing marks to
+  knowledge from losing them to process, since only one of those is fixed by more study.
+- **Energy, Not Time** — an hour is not a unit of capacity, and a plan missed weekly for two months
+  is a plan that does not fit the life it was written for.
+
+The cards deliberately cross-link into each other and into `mind` and `career`: retrieval → spacing
+→ the site's own scheduler, exam technique → sleep, procrastination → burnout, energy → desk body.
+Eight new links folded into `related.json`.
+
+Site total 1,369 → **1,375** topics. Budget raw 5.5 / 8.0 MB, content elements 111,516 / 175,000.
+`smoke_test.mjs` 115/115, every checker clean, no stamp churn on the existing ten.
