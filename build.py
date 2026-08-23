@@ -40,7 +40,7 @@ DATA = ROOT / "data"
 # Reusing it here is what lets build.py stamp the ids the page used to derive at
 # runtime — see assign_topic_ids.
 sys.path.insert(0, str(ROOT / "tools"))
-from lint_content import slugify, topic_label  # noqa: E402
+from lint_content import ACRO_SPAN_RE, XREF_RE, slugify, topic_label  # noqa: E402
 
 # Set to False (or pass --no-minify) to keep the built HTML pretty-printed.
 MINIFY = "--no-minify" not in sys.argv
@@ -155,6 +155,49 @@ def assign_topic_ids(body, used):
         prev = cut
     out.append(body[prev:])
     return "".join(out), ids
+
+
+def topic_titles(body, ids):
+    """The title of each topic in one body, paired with the id just stamped."""
+    starts = [m.start() for m in _TOPIC_OPEN_RE.finditer(body)]
+    out = {}
+    for n, start in enumerate(starts):
+        end = starts[n + 1] if n + 1 < len(starts) else len(body)
+        label, _ = topic_label(body[start:end])
+        # First writer wins, matching how the linter resolves a duplicated
+        # title: the id map is only ambiguous for titles that are ambiguous.
+        out.setdefault(label, ids[n])
+    return out
+
+
+def link_xrefs(body, by_title):
+    """Stamp `data-xref="id"` on every cross-reference whose title resolves.
+
+    `<span class="xref">Exact Topic Title</span>` was inert markup: the linter
+    proved the title existed, but a reader still had to go and find the card by
+    hand. Resolving the id here rather than in the browser is the same reasoning
+    as topic ids themselves — the target is almost never in the DOM, because
+    only one domain's content ever is.
+
+    The span's inner HTML is left exactly as written. The annotator injects
+    acronym expansions inside it, so the title is matched the way the linter
+    matches it — expansions stripped — while what renders keeps them.
+    """
+    linked = [0]
+
+    def _stamp(m):
+        title = html_lib.unescape(re.sub(r"<[^>]+>", "", ACRO_SPAN_RE.sub("", m.group(1))))
+        title = re.sub(r"\s+", " ", title).strip()
+        slug = by_title.get(title)
+        if not slug:
+            return m.group(0)
+        linked[0] += 1
+        # Focusable and announced as a link: it behaves like one, and a
+        # cross-reference a keyboard reader cannot reach is not a link.
+        return (f'<span class="xref" data-xref="{slug}" role="link" tabindex="0">'
+                f'{m.group(1)}</span>')
+
+    return XREF_RE.sub(_stamp, body), linked[0]
 
 
 def build_cert_tags(cert_tags):
@@ -309,9 +352,14 @@ def main():
     shell = shell_path.read_text(encoding="utf-8")
     domains = json.loads(domains_path.read_text(encoding="utf-8"))
 
-    sections = []
+    # Two passes. Ids are stamped for every domain first, because a
+    # cross-reference resolves against the whole site: the card it names is
+    # usually in another domain, whose ids do not exist yet during the first
+    # domain's turn.
+    bodies = []
     used_slugs = set()
     topic_index = {}
+    by_title = {}
     for domain in domains:
         body_path = DATA / f"{domain['id']}.html"
         if not body_path.exists():
@@ -320,8 +368,17 @@ def main():
         body = body_path.read_text(encoding="utf-8")
         body, ids = assign_topic_ids(body, used_slugs)
         topic_index[domain["id"]] = ids
+        by_title.update(topic_titles(body, ids))
+        bodies.append((domain, body, ids))
+
+    sections = []
+    xref_total = 0
+    for domain, body, ids in bodies:
+        body, linked = link_xrefs(body, by_title)
+        xref_total += linked
         sections.append(build_domain_section(domain, body))
         print(f"  + {domain['id']} ({len(body):,} chars, {len(ids)} topics)")
+    print(f"  + {xref_total} cross-references linked")
 
     domains_html = "\n\n".join(sections)
     output = shell.replace("<!-- DOMAINS_CONTENT -->", domains_html)

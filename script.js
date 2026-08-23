@@ -632,6 +632,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // reaches it anyway, but the ordering states the intent.
     const cardLabel = e.target.closest(".concept-label");
     if (cardLabel) { e.stopPropagation(); copyCardLink(cardLabel); return; }
+    // A cross-reference build.py resolved to an id. Inert spans — a title that
+    // no longer matches a topic — fall through and stay plain text.
+    const xref = e.target.closest(".xref[data-xref]");
+    if (xref) { e.stopPropagation(); stGoToTopic(xref.dataset.xref); return; }
     const dh = e.target.closest(".domain-header");
     if (dh) { toggleDomain(dh); return; }
     const th = e.target.closest(".topic-header");
@@ -641,6 +645,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // Accordion — keyboard support (Enter / Space on focused headers)
   container?.addEventListener("keydown", e => {
     if (e.key !== "Enter" && e.key !== " ") return;
+    const xref = e.target.closest(".xref[data-xref]");
+    if (xref) { e.preventDefault(); stGoToTopic(xref.dataset.xref); return; }
     const header = e.target.closest(".domain-header, .topic-header");
     if (!header || e.target.closest(".topic-review, .topic-permalink")) return;
     e.preventDefault();

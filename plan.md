@@ -2139,10 +2139,11 @@ separate toys.
   together, and already title-checked by the linter — then curated up to 554 links on 412 topics.
   `tools/suggest_related.py` provides the shortlists (`--xrefs`, `--domain`, `--topic`) and a
   `--check` that catches a dead id before it renders as a dead link.
-- [ ] **Clickable cross-references** — the 201 `<span class="xref">Exact Title</span>` spans are
-  lint-checked and styled but inert. They resolve to topic ids at build time already (that is how
-  `related.json` was seeded), so making them links is a build-time id stamp plus the click handler
-  the see-also strip already has.
+- [x] **Clickable cross-references** — `build.py` now stamps `data-xref="topic-id"`, `role="link"`
+  and `tabindex="0"` on all 201 of them, in a second pass after every domain's ids exist, since a
+  cross-reference almost always names a card in another domain. Click and Enter both follow.
+  A span whose title stops resolving keeps neither the id nor the styling, so it degrades to the
+  plain italic text it was rather than to a dead link.
 - [x] **Domain landing cards** — 30 intros shipped as `data/domain-intros.json`, inlined by
   `build.py` and rendered by `script.js` above a domain's topics on hydration. Deliberately *not*
   a `.topic` in the content files: a signpost should not be counted by the topic index, dated by
@@ -8031,3 +8032,38 @@ resolve to ids — clicking one should go there.
 
 Coverage to build on, for whoever picks up related topics again: `script` 12/145, `linux` 5/58,
 `acronym` 0/59, `shortcut` 0/37, `pentest` 3/29, `math` 0/16, `philosophy` 0/14.
+
+
+## Session record — Track AH follow-on: the cross-references became links
+
+201 `<span class="xref">Exact Topic Title</span>` spans had been sitting in the content since the
+convention was introduced. The linter proved every title resolved; the reader still had to go and
+find the card by hand. Seeding `related.json` from them in the previous wave proved they resolve to
+**ids**, which is all a link needs.
+
+**Two passes in `build.py`.** A cross-reference names a card in another domain far more often than
+its own, so the ids for every domain are stamped before any body is rewritten. Resolving in the
+browser was never an option for the same reason topic ids are not derived there: the target is
+almost never in the DOM, because only one domain's content ever is.
+
+**Matched the way the linter matches.** The acronym annotator injects expansions *inside* the xref
+span, so the title is compared with expansions stripped while the span's inner HTML is left exactly
+as written — the reader keeps the expansion, the matcher does not see it.
+
+**Failure is a downgrade, not a dead link.** Only a span that resolved gets `data-xref`, and only
+`.xref[data-xref]` is styled and handled as clickable. A title that stops matching goes back to
+being plain italic text, which is what it was before this change.
+
+### Verification
+
+Five new checks, 59 → **64**: the spans are stamped, every stamped id resolves, a click lands on the
+named topic with it open, the span is focusable and announced as a link, and Enter follows it.
+
+The keyboard check needed hardening before it meant anything. Written the obvious way it reused the
+span the click test had just followed, so the hash already held the expected id and a keydown
+handler that did nothing at all would have passed. It now clears the hash first. That is the third
+time in this project a check has passed for a reason unrelated to the feature — **write the
+assertion, then ask what would still pass if the feature were deleted.**
+
+`smoke_test.mjs` 64/64 · `lint_content.py` clean · budget raw 5.4 / 8.0 MB, gzip 1,460 / 2,200 KB,
+DOM 429 / 1,500.

@@ -679,6 +679,64 @@ const relDead = await page.evaluate(() => {
 check("every related id resolves to a real topic",
   relDead.length === 0, relDead.slice(0, 3).join(" | "));
 
+// ── clickable cross-references ──────────────────────────────────────────────
+// build.py resolves every <span class="xref"> title to a topic id. The span has
+// to reach that topic on a click and on Enter, and every stamped id has to
+// resolve — an id that does not is a link to nothing.
+await page.goto(PAGE, { waitUntil: "load" });
+const xrefIds = await page.evaluate(() =>
+  [...document.querySelectorAll("script.domain-src")]
+    .flatMap(s => [...s.textContent.matchAll(/data-xref="([^"]+)"/g)].map(m => m[1])));
+check("cross-references are stamped with a topic id", xrefIds.length > 100,
+  `${xrefIds.length} stamped`);
+const xrefDead = await page.evaluate(ids => ids.filter(id => !topicDomain(id)), xrefIds);
+check("every stamped cross-reference resolves", xrefDead.length === 0,
+  xrefDead.slice(0, 3).join(" | "));
+
+const xrefJump = await page.evaluate(async () => {
+  // Open the domain that owns the first stamped cross-reference, then find it
+  // in the live DOM — the spans live inside topic bodies, so the topic has to
+  // be open before one is clickable.
+  const src = [...document.querySelectorAll("script.domain-src")]
+    .find(s => s.textContent.includes("data-xref="));
+  const d = src.closest(".domain-section").dataset.domain;
+  openDomain(domainSection(d));
+  await new Promise(r => setTimeout(r, 200));
+  document.querySelectorAll(".domain-body.open .topic-header")
+    .forEach(h => { h.classList.add("open"); h.nextElementSibling.classList.add("open"); });
+  const span = document.querySelector(".domain-body.open .xref[data-xref]");
+  if (!span) return null;
+  const want = span.dataset.xref;
+  const focusable = span.getAttribute("tabindex") === "0" && span.getAttribute("role") === "link";
+  span.click();
+  await new Promise(r => setTimeout(r, 400));
+  return { want, got: location.hash.slice(1), focusable,
+           open: !!document.getElementById(want)?.querySelector(".topic-body")?.classList.contains("open") };
+});
+check("clicking a cross-reference opens the topic it names",
+  !!xrefJump && xrefJump.got === xrefJump.want && xrefJump.open,
+  xrefJump ? `${xrefJump.want} -> ${xrefJump.got} (open=${xrefJump.open})` : "none found");
+check("a cross-reference is reachable by keyboard",
+  !!xrefJump && xrefJump.focusable);
+
+const xrefKey = await page.evaluate(async () => {
+  const span = document.querySelector(".domain-body.open .topic-body.open .xref[data-xref]");
+  if (!span) return null;
+  const want = span.dataset.xref;
+  // The click check above left the hash pointing at a topic. Clearing it first
+  // is what makes this an assertion rather than a formality: with the hash
+  // still set, a keydown handler that did nothing at all would pass.
+  history.replaceState(null, "", location.pathname);
+  span.focus();
+  span.dispatchEvent(new KeyboardEvent("keydown",
+    { key: "Enter", bubbles: true, cancelable: true }));
+  await new Promise(r => setTimeout(r, 400));
+  return { want, got: location.hash.slice(1) };
+});
+check("Enter on a focused cross-reference follows it",
+  !!xrefKey && !!xrefKey.want && xrefKey.got === xrefKey.want,
+  xrefKey ? `${xrefKey.want} -> ${xrefKey.got}` : "none found");
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));

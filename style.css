@@ -2442,6 +2442,21 @@ mark.sh {
   font-style: italic;
   color: var(--text);
 }
+/* Only the ones build.py resolved to a topic id are clickable. A cross-
+   reference whose title stopped matching stays plain italic text rather than
+   offering a link that goes nowhere. */
+.xref[data-xref] {
+  color: var(--accent, var(--cyan));
+  border-bottom: 1px dotted currentColor;
+  cursor: pointer;
+}
+.xref[data-xref]:hover,
+.xref[data-xref]:focus-visible {
+  border-bottom-style: solid;
+}
+@media print {
+  .xref[data-xref] { color: inherit; border-bottom: none; }
+}
 
 .volatile {
   border-bottom: 1px dotted var(--muted);
