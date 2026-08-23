@@ -2127,10 +2127,12 @@ separate toys.
   the count line reports the alternate it matched through. Verified headlessly in both directions:
   `UEM` and `Unified Endpoint Management` each return 7 matches in 4 domains, `MFA` and
   `Multi-Factor Authentication` each return 54 in 14. Ticked after checking rather than assuming.
-- [ ] **Expansion density toggle** — a header control for the inline acronym
-  expansions: *always* (today) / *first use per domain* / *hover only* /
-  *off*. Purely a CSS class on `<body>` plus a `localStorage` preference.
-  Addresses the one real cost of the acronym feature — density in tables.
+- [x] **Expansion density toggle** — **already built.** `cycleAcroMode()` in `script.js` plus the
+  `.acro-hover` / `.acro-off` rules in `style.css`, behind the header's acronym button. Three modes
+  rather than the four specced: *first use per domain* would need the annotator to mark first uses
+  at build time, and the hover mode already solves the density-in-tables cost the item was written
+  for. Verified headlessly — cycles always → hover → off → always, the label and stored preference
+  track it, and the preference survives a reload. Two smoke checks added, since it had none.
 - [ ] **Related topics** — a small "see also" strip per topic, driven by a
   hand-curated `related.json` keyed on topic ID, with a script that suggests
   candidates by shared acronyms and title terms.
@@ -2142,7 +2144,10 @@ separate toys.
   cannot guess. `domain:` uses domain ids, which the chips and permalinks already expose. Multiple
   `domain:` terms are additive. Documented in the search box's tooltip; five smoke checks protect
   the behaviour.
-- [ ] **Recently viewed** — the last ten topics, in the quick-jump palette.
+- [x] **Recently viewed** — the last ten topics lead the quick-jump palette on an empty query,
+  badged so the ordering reads as deliberate. Stored as ids, so a card later renamed or removed
+  simply drops out when the index cannot resolve it. Visits are recorded from both paths that open
+  a topic — clicking a header and following a link. Three smoke checks.
 - [x] **Deep-link to a card, not just a topic** — `#topic-id/3` scrolls to the third concept card
   and marks it briefly; clicking a card's `.concept-label` copies that link. Cards are addressed by
   position rather than by a slug of their title: a slug needs every `.concept-title` stamped and
@@ -7835,3 +7840,55 @@ no console errors, no off-site requests · budget unchanged.
 ### Track AH after this wave
 
 Four items open: expansion-density toggle, related topics, domain landing cards, recently viewed.
+
+---
+
+## Session record — Track AH: recently viewed, and a fourth already-built item
+
+Thirty-second wave.
+
+### The fourth already-built item
+
+**Expansion density toggle** was specced and is implemented: `cycleAcroMode()` plus `.acro-hover`
+and `.acro-off` rules, behind the header's acronym button. It ships three modes rather than the
+four specced — *first use per domain* would need the annotator to mark first uses at build time,
+and hover mode already solves the density-in-tables problem the item was written for. Verified
+before ticking: cycles correctly, label and stored preference track, and the preference survives a
+reload. It had **no smoke coverage**, so two checks were added — the failure is silent in both
+directions, since a mode that stops applying leaves expansions on for someone who turned them off.
+
+Four items this session turned out to be built already: acronym-aware search, the density toggle,
+and two BD3 identity items carded under different names. That is a consistent enough rate to
+restate the rule from the checklist convention note plainly: **verify before writing, including for
+engineering items, and add the missing test rather than the feature.**
+
+### What shipped
+
+**Recently viewed.** The quick-jump palette opens on an empty query, and with 1,355 topics its
+first sixty rows were whatever the index happened to hold — arbitrary, and never what the reader
+wanted. It now leads with the last ten topics visited, badged `recent` so the ordering is explained
+rather than mysterious, then falls back to the index. Typing a query drops them entirely.
+
+Two design notes:
+
+- **Stored as ids, resolved at render.** A topic later renamed or removed simply drops out when the
+  study index cannot resolve it, which is the right failure — the alternative caches names that go
+  stale silently.
+- **Visits are recorded from both paths that open a topic**, clicking a header and following a link.
+  Recording only one would have produced a list that was right about half the time, which is worse
+  than one that is obviously empty.
+
+### Verification
+
+Five new checks, 39 → **44**. The recently-viewed ones cover exactly the quiet failures: visits that
+stop being recorded leave an arbitrary list, and recent rows leaking into a filtered query would put
+the wrong topics above the matches.
+
+`lint_content.py` 1,355 topics clean · `stamp_freshness.py --verify` clean · `smoke_test.mjs` 44/44 ·
+no console errors, no off-site requests · budget unchanged at raw 5.3 / 8.0 MB.
+
+### Track AH after this wave
+
+Two items open: **related topics** (needs a curated `related.json` and a suggestion script — the
+largest remaining item in the track) and **domain landing cards** (30 short intros; content work
+with a small rendering change).

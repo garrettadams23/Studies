@@ -369,6 +369,74 @@ const persisted = await step("reviewed state persists across reload", async () =
 }, "threw");
 if (persisted !== "threw") check("reviewed state persists across reload", persisted, target);
 
+// ── acronym expansion density ───────────────────────────────────────────────
+// Three modes on a class on <body>, with a stored preference. Worth a check
+// because the failure is silent in both directions: a mode that stops applying
+// leaves expansions on for a reader who turned them off, and a preference that
+// stops persisting resets on every visit without erroring.
+const acro = await step("acronym density toggle cycles and persists", async () => {
+  await page.goto(PAGE, { waitUntil: "load" });
+  await page.waitForTimeout(400);
+  const seen = [];
+  for (let i = 0; i < 4; i++) {
+    seen.push(await page.evaluate(() =>
+      document.body.className.match(/acro-(hover|off)/)?.[1] || "always"));
+    await page.click("#hdr-acro-btn");
+    await page.waitForTimeout(120);
+  }
+  const cycled = seen.join(">") === "always>hover>off>always";
+  // The stored preference has to survive a reload, which is the whole point of
+  // storing it rather than keeping it in a variable.
+  await page.evaluate(() => localStorage.setItem("acro-density", "off"));
+  await page.reload({ waitUntil: "load" });
+  await page.waitForTimeout(400);
+  const kept = await page.evaluate(() => document.body.classList.contains("acro-off"));
+  return { cycled, kept, seen: seen.join(" > ") };
+});
+if (acro !== "threw") {
+  check("acronym density cycles always > hover > off", acro.cycled, acro.seen);
+  check("acronym density preference survives a reload", acro.kept, acro.kept ? "acro-off" : "lost");
+}
+await page.evaluate(() => localStorage.removeItem("acro-density")).catch(() => {});
+
+// ── recently viewed in the quick-jump palette ───────────────────────────────
+// The palette opens on an empty query, and what it shows first is the only
+// thing most readers ever see of it. Checked because both halves fail quietly:
+// visits that stop being recorded leave an arbitrary list, and recent rows that
+// leak into a filtered query put the wrong topics above the matches.
+const recent = await step("quick jump leads with recently viewed", async () => {
+  await page.goto(PAGE, { waitUntil: "load" });
+  await page.evaluate(() => localStorage.removeItem("recent-topics"));
+  await page.waitForTimeout(300);
+  const visited = await page.evaluate(() => {
+    const idx = typeof topicIndex === "function" ? topicIndex() : {};
+    return Object.values(idx).flat().slice(0, 3);
+  });
+  for (const id of visited) {
+    await page.evaluate(i => { location.hash = i; }, id);
+    await page.waitForTimeout(400);
+  }
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("recent-topics") || "[]"));
+  await page.evaluate(() => stOpenJump());
+  await page.waitForTimeout(300);
+  const led = await page.evaluate(n => {
+    const rows = [...document.querySelectorAll(".st-jump-item")].slice(0, n);
+    return rows.length === n && rows.every(r => !!r.querySelector(".st-jump-recent"));
+  }, visited.length);
+  await page.fill("#st-jump-input", "kerberos");
+  await page.waitForTimeout(250);
+  const leaked = await page.evaluate(() => !!document.querySelector(".st-jump-recent"));
+  return { newestFirst: stored[0] === visited[visited.length - 1], count: stored.length, led, leaked };
+});
+if (recent !== "threw") {
+  check("visits are recorded newest-first", recent.newestFirst && recent.count === 3,
+    `${recent.count} recorded`);
+  check("the palette's empty query leads with them", recent.led, recent.led ? "all badged" : "not led");
+  check("recent rows do not leak into a filtered query", !recent.leaked,
+    recent.leaked ? "badge present under query" : "none");
+}
+await page.evaluate(() => localStorage.removeItem("recent-topics")).catch(() => {});
+
 // ── theming: every marked volatile claim, and the topology diagrams ─────────
 // Both live inside domain content, so the domain that owns them has to be open
 // to have anything to measure. Which domain that is comes from the deferred

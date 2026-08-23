@@ -777,6 +777,42 @@ function updateDomainProgress(domain) {
 /** Reflect the currently-open topic in the URL without a scroll jump. */
 function updateTopicHash(topic) {
   if (topic?.id) history.replaceState(null, "", `#${topic.id}`);
+  recordVisit(topic?.id);
+}
+
+// ── RECENTLY VIEWED ─────────────────────────────────────────────────────────
+// The quick-jump palette opens on an empty query, and with 1,300+ topics its
+// first sixty rows were whatever the index happened to hold — arbitrary, and
+// never what the reader wanted. The list they actually want on an empty query
+// is the handful of topics they were just in.
+//
+// Stored as ids rather than as anything resolved: a card that is later renamed
+// or removed simply drops out when the index cannot resolve it, which is the
+// right failure. Ten is enough to cover a session's back-and-forth without the
+// palette becoming a second history page.
+const RECENT_KEY = "recent-topics";
+const RECENT_MAX = 10;
+
+function recentIds() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(RECENT_KEY) || "[]");
+    return Array.isArray(raw) ? raw.filter(x => typeof x === "string") : [];
+  } catch {
+    return [];   // corrupt or unavailable storage is not worth an error here
+  }
+}
+
+function recordVisit(id) {
+  if (!id) return;
+  const next = [id, ...recentIds().filter(x => x !== id)].slice(0, RECENT_MAX);
+  try { localStorage.setItem(RECENT_KEY, JSON.stringify(next)); } catch { /* full or blocked */ }
+}
+
+/** Recently-viewed rows, resolved against the study index and in visit order. */
+function recentTopics() {
+  const idx = stIndex();
+  const byId = new Map(idx.map(t => [t.id, t]));
+  return recentIds().map(id => byId.get(id)).filter(Boolean);
 }
 
 /** Expand and scroll to the topic named in location.hash, if any. */
@@ -881,6 +917,7 @@ function openHashTarget() {
   const card = parsed.card
     ? topic.querySelectorAll(".topic-body > .concept-card")[parsed.card - 1]
     : null;
+  recordVisit(topic.id);
   if (card) {
     card.scrollIntoView({ behavior: "smooth", block: "center" });
     card.classList.add("card-linked");
@@ -1721,16 +1758,29 @@ function stOpenJump() {
     const list = body.querySelector("#st-jump-list");
     let items = [], active = 0;
 
+    // On an empty query the palette leads with what the reader was just
+    // looking at, then falls back to the index. Recent rows are marked so the
+    // ordering is explained rather than mysterious.
+    let recentCount = 0;
     function render(q) {
       const query = q.trim().toLowerCase();
       const idx = stIndex();
-      items = (query
-        ? idx.filter(t => (t.name + " " + t.domainTitle + " " + t.title).toLowerCase().includes(query))
-        : idx).slice(0, 60);
+      if (query) {
+        recentCount = 0;
+        items = idx
+          .filter(t => (t.name + " " + t.domainTitle + " " + t.title).toLowerCase().includes(query))
+          .slice(0, 60);
+      } else {
+        const recent = recentTopics();
+        recentCount = recent.length;
+        const seen = new Set(recent.map(t => t.id));
+        items = [...recent, ...idx.filter(t => !seen.has(t.id))].slice(0, 60);
+      }
       active = 0;
       list.innerHTML = items.map((t, i) =>
         `<li class="st-jump-item${i === 0 ? " active" : ""}" data-i="${i}">` +
         `<span class="st-jump-name">${esc(t.name)}</span>` +
+        (i < recentCount ? '<span class="st-jump-recent">recent</span>' : "") +
         `<span class="st-jump-dom">${esc(t.domainIcon)} ${esc(t.domainTitle)}</span></li>`).join("")
         || '<li class="st-jump-empty">No matches</li>';
     }
