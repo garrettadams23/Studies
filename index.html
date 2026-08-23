@@ -3422,7 +3422,7 @@ sudo ufw status verbose</div>
 <div class="concept-title">IaaS · PaaS <span class="acro-exp">(Platform as a Service)</span> · SaaS <span class="acro-exp">(Software as a Service)</span></div>
 <div class="concept-desc"><strong>IaaS (Infrastructure as a Service)</strong> — rent VMs <span class="acro-exp">(Virtual Machine)</span>, storage, networking. You manage OS <span class="acro-exp">(Operating System)</span> and above. Examples: AWS <span class="acro-exp">(Amazon Web Services)</span> EC2, Azure VMs, Google Compute Engine. Most control, most responsibility.<br>
 <strong>PaaS (Platform as a Service)</strong> — deploy your app code; provider manages OS, runtime, scaling. Examples: Heroku, AWS Elastic Beanstalk, Google App Engine.<br>
-<strong>SaaS (Software as a Service)</strong> — use the finished product. Salesforce, Office 365, Gmail. No infrastructure concern at all.</div>
+<strong>SaaS (Software as a Service)</strong> — use the finished product. Salesforce, Microsoft 365, Gmail. No infrastructure concern at all.</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">VPC</div>
@@ -8039,7 +8039,7 @@ These are separate concerns. Getting them confused causes security holes (assumi
 <div class="concept-title">One Login, Many Systems</div>
 <div class="concept-desc"><strong>SSO (Single Sign-On)</strong> — log in once, access many applications. Used with SAML <span class="acro-exp">(Security Assertion Markup Language)</span> 2.0 or OIDC <span class="acro-exp">(OpenID Connect)</span> (OAuth 2.0 extension). Benefits: one password to manage, one place to revoke access when someone leaves.<br>
 <strong>OIDC/OAuth 2.0</strong> — modern standard for federated identity. "Login with Google" is OIDC. Google proves your identity to the app without giving the app your password.<br>
-<strong>SAML 2.0</strong> — XML-based, enterprise standard. Used for enterprise SSO (Okta, Azure AD, Ping).</div>
+<strong>SAML 2.0</strong> — XML-based, enterprise standard. Used for enterprise SSO (Okta, Entra ID, Ping).</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">ZERO TRUST</div>
@@ -8533,7 +8533,7 @@ content:"UNION SELECT"; nocase; sid:1000001;)
 <div class="concept-card">
 <div class="concept-label">IN PRACTICE</div>
 <div class="concept-title">A Real Implementation</div>
-<div class="concept-desc">Google's <strong>BeyondCorp</strong> is the famous reference implementation — employees access apps without a traditional VPN; every request is authenticated and authorized based on user identity and device trust, whether they're in the office or a coffee shop. Modern tools (Cloudflare Access, Tailscale, Zscaler, Azure AD Conditional Access) bring Zero Trust to organizations of any size. <strong>Note:</strong> Zero Trust is a strategy and journey, not a single product you buy — beware vendors selling "the Zero Trust box."</div>
+<div class="concept-desc">Google's <strong>BeyondCorp</strong> is the famous reference implementation — employees access apps without a traditional VPN; every request is authenticated and authorized based on user identity and device trust, whether they're in the office or a coffee shop. Modern tools (Cloudflare Access, Tailscale, Zscaler, Entra ID Conditional Access) bring Zero Trust to organizations of any size. <strong>Note:</strong> Zero Trust is a strategy and journey, not a single product you buy — beware vendors selling "the Zero Trust box."</div>
 </div>
 <!-- pillars reference, merged from the duplicate "Zero Trust Architecture" card -->
 <div class="concept-card">
@@ -31296,7 +31296,7 @@ readOnlyRootFilesystem: true
 <table class="ref-table">
 <tr><th>Control</th><th>What it does</th></tr>
 <tr><td style="color:var(--red)">RBAC</td><td>Role-Based Access Control. Roles define permissions; RoleBindings attach them to users/serviceaccounts.</td></tr>
-<tr><td style="color:var(--red)">NetworkPolicy</td><td>Firewall rules between Pods. Default: allow all. Apply deny-all then whitelist what's needed.</td></tr>
+<tr><td style="color:var(--red)">NetworkPolicy</td><td>Firewall rules between Pods. Default: allow all. Apply deny-all then allowlist what's needed.</td></tr>
 <tr><td style="color:var(--amber)">PodSecurityContext</td><td>runAsNonRoot, readOnlyRootFilesystem, allowPrivilegeEscalation: false on every container.</td></tr>
 <tr><td style="color:var(--amber)">Secrets encryption</td><td>Encrypt etcd at rest (EncryptionConfiguration). Use Sealed Secrets or Vault for GitOps <span class="acro-exp">(Git Operations)</span> workflows.</td></tr>
 <tr><td style="color:var(--green)">Resource limits</td><td>Always set requests + limits. Prevents resource starvation and limits blast radius.</td></tr>
@@ -33141,7 +33141,7 @@ most common rookie mistake is leaving a server as an
 <strong>open relay</strong> — anyone on the internet can use it
 to send mail through you.<br><br>
 Within hours, spammers find it, your server's IP <span class="acro-exp">(Internet Protocol)</span> lands on every
-major blacklist (Spamhaus, SORBS), and legitimate mail from your
+major blocklist (Spamhaus, SORBS), and legitimate mail from your
 domain stops being delivered anywhere.<br><br>
 <strong>Checklist before going live:</strong><br>
 &bull; Test from an external network — try relaying through your
@@ -33181,10 +33181,10 @@ shows every hop and any errors.<br>
 <code>dig example.com MX</code><br>
 4. Test authentication — can the user actually log in via
 IMAP/SMTP with their credentials?<br>
-5. Check spam folder and recipient's blacklist status — sometimes
+5. Check spam folder and recipient's blocklist status — sometimes
 "not delivered" really means "filtered as spam."<br>
 6. Use <code>mail-tester.com</code> — sends a test email and
-grades your entire setup (SPF/DKIM/DMARC/blacklist/content).
+grades your entire setup (SPF/DKIM/DMARC/blocklist/content).
 </div>
 </div>
 </div>
@@ -62844,7 +62844,7 @@ scramble into a repeatable, measurable control.
 <div class="dw">
 <table class="ref-table">
 <tr><th>Tool</th><th>Role</th></tr>
-<tr><td>WSUS <span class="acro-exp">(Windows Server Update Services)</span> / SCCM <span class="acro-exp">(System Center Configuration Manager)</span> / Intune</td><td>Windows patch orchestration &amp; compliance</td></tr>
+<tr><td>WSUS <span class="acro-exp">(Windows Server Update Services)</span> / MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> / Intune</td><td>Windows patch orchestration &amp; compliance</td></tr>
 <tr><td>Ansible / Salt</td><td>Cross-platform patching &amp; config enforcement (ties to F4)</td></tr>
 <tr><td>unattended-upgrades / dnf-automatic</td><td>OS-native auto-patching for Linux</td></tr>
 </table>
@@ -78962,7 +78962,7 @@ they're accessing + conditions; controls = grant/block requirements.
 <table class="ref-table">
 <tr><th>Part</th><th>Examples</th></tr>
 <tr><td>Users/groups</td><td>All users, exclude break-glass admins</td></tr>
-<tr><td>Target resources</td><td>Office 365, a specific app, all cloud apps</td></tr>
+<tr><td>Target resources</td><td>The Office 365 app group, a specific app, all cloud apps</td></tr>
 <tr><td>Conditions</td><td>Device platform, location, client app, <strong>sign-in risk</strong> (P2)</td></tr>
 <tr><td>Grant controls</td><td>Require MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, <strong>require compliant device</strong>, require Entra hybrid join, require app protection policy</td></tr>
 <tr><td>Session controls</td><td>App-enforced restrictions, sign-in frequency</td></tr>

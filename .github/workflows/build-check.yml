@@ -61,6 +61,11 @@ jobs:
       - name: Check inline acronym expansions
         run: python tools/annotate_acronyms.py --check
 
+      # Old vendor names used as though current. "Azure AD" is worse than a
+      # broken link: it reads as current and quietly dates the whole card.
+      - name: Check for renamed products
+        run: python tools/check_renames.py
+
       # --verify, not --check. --check re-derives every stamp from `git blame`,
       # and blame heuristics differ between git releases: this repo passed
       # --check under git 2.43 and failed it under 2.54 on a runner, with no

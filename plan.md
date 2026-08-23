@@ -2889,19 +2889,26 @@ renames is already somewhere in `data/`.
 
 ### TRACK AX — Content Freshness & Accuracy
 
-- [ ] **Per-topic freshness metadata** — a `reviewed: YYYY-MM` attribute on each
-  `.topic`, surfaced as a quiet badge, and a build report of the oldest 50.
-  Start by stamping everything with its last real commit date via `git log`.
-- [ ] **Volatility tags** — mark topics as *stable* (OSI model, TCP handshake) or
-  *volatile* (vendor consoles, pricing, product names). Only volatile ones need
-  an annual review; stable ones can sit for years. Without this distinction a
-  freshness system just generates guilt.
-- [ ] **Rename/deprecation registry** — a `renames.json` (`Azure AD → Entra ID`,
-  `SCCM → MECM`, `CASP+ → SecurityX`) plus a checker that flags superseded names
-  in new content and suggests the current one. The acronym pipeline already
-  proves this pattern works.
-- [ ] **Link rot check in CI** — external links, on a schedule rather than every
-  PR, reported as an issue rather than a hard failure.
+*Shipped-note: three of the eight below are done — freshness metadata, volatility tags and the
+rename registry. A fourth measured itself away. Read the ticks.*
+
+- [x] **Per-topic freshness metadata** — `data-reviewed="YYYY-MM"` on every `.topic`, derived from
+  `git blame` by `tools/stamp_freshness.py` with mechanical commits excluded, `--verify` in CI, and
+  1,310 stamps current across 29 files. The badge and the oldest-50 report were dropped
+  deliberately: the stamp drives the volatility warnings below, and a date on every card is noise
+  rather than information.
+- [x] **Volatility tags** — shipped as `<span class="volatile" data-checked="YYYY-MM">` around the
+  specific claim rather than as a tag on the whole topic, which is the better shape: what goes stale
+  is a console name or a limit, not a card. Applied at the claim level, styled with a dotted
+  underline and a tooltip carrying the check date.
+- [x] **Rename/deprecation registry** — `data/renames.json`, 25 renames, plus
+  `tools/check_renames.py` in CI. It reads prose only, allows a mention that is explicitly
+  historical ("formerly Azure AD") or sits beside the new name, and carries an `allow` list for
+  strings that are still literally correct — "Azure AD Connect" outlived "Azure AD", and
+  `twitter:card` is the meta tag's actual name. Found and fixed nine real uses across six files.
+- [~] **Link rot check in CI** — nothing to check. The whole site contains **one** external link
+  and **one** `href="#"` across 1,369 topics; it is a self-contained reference that deliberately
+  makes no third-party requests. Measured rather than built, same as Track AJ's link checker.
 - [ ] **Fact-anchor comments** — for claims that are version-specific ("six
   levels of management groups", "93 days of platform metrics"), an HTML comment
   naming the source, so the next reader can re-verify rather than re-research.
@@ -8495,3 +8502,43 @@ wrong answer. The tool is more careful than the check.
 `--check` now reports nothing to update, so the site is consistent for the first time since the fix
 landed. 1,310 stamps across 29 files; the acronym domain's 59 topics are generated and carry none by
 design.
+
+
+## Session record — Track AX: the rename registry, and two items that were already built
+
+Track AX's checklist predates most of the freshness tooling. Verified first, as usual: **per-topic
+freshness metadata** and **volatility tags** are both shipped, and the link-rot item has nothing to
+check — one external link on the whole site.
+
+The volatility tag is worth a note because it shipped in a *better* shape than specified. The item
+asked for topics to be tagged stable or volatile. What exists instead is
+`<span class="volatile" data-checked="YYYY-MM">` around the individual claim, because what goes
+stale is a console name or a limit, not a card: "Security &amp; Compliance Center" ages while the
+paragraph explaining retention around it does not. Tagging the topic would have marked the whole
+card suspect to protect four words.
+
+### The rename registry
+
+`data/renames.json` holds 25 renames; `tools/check_renames.py` gates them in CI. Three design
+decisions carry the whole thing:
+
+- **A historical mention is not an error.** "Entra ID (formerly Azure AD)" is a card doing its job.
+  The checker looks for that framing, or for the new name within ninety characters, and stays quiet.
+- **`allow` for names that outlived the rename.** "Azure AD Connect" contains "Azure AD" and is
+  correct; `twitter:card` is the meta tag's actual name; "Office 365" is still the literal label of
+  a Conditional Access app group.
+- **Prose only.** A renamed product inside a command, a URL or an attribute is usually still right —
+  `mxtoolbox.com/blacklists.aspx` is a real address — and reporting it is pure noise.
+
+It found **nine real uses across six files**, every one a case of an old name reading as current:
+`WSUS / SCCM / Intune` in a patching table, "Salesforce, Office 365, Gmail" as SaaS examples,
+"Okta, Azure AD, Ping" as identity providers, "Azure AD Conditional Access", a Kubernetes
+`whitelist`, and three mail-reputation `blacklist`s. All nine fixed. Verified the checker fails on a
+planted regression before wiring it into CI.
+
+### Track AX after this wave
+
+Four items open: **fact-anchor comments**, **per-domain changelog**, **contradiction check** and
+**screenshot-dated warnings**. The contradiction check is the interesting one — cross-domain
+disagreement about a number or a definition is the failure mode this site is most exposed to at
+1,369 topics, and nothing currently looks for it.
