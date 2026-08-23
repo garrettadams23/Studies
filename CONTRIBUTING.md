@@ -1,14 +1,30 @@
 # Contributing — Content & Markup Conventions
 
-All visible content lives in `data/*.html` (one file per domain) and is assembled
-into `index.html` by `build.py`. **Never hand-edit `index.html`.**
+All visible content lives in `data/*.html` and is assembled into `index.html` by
+`build.py`. **Never hand-edit `index.html`.**
+
+A domain is normally one file, `data/{id}.html`. A domain that has outgrown one
+file is split into ordered **parts** — `data/script.01-references.html`,
+`data/script.02-beginner.html`, … — which `build.py` concatenates in filename
+order into the same domain. Parts exist so a large domain is workable; they are
+not separate domains, and splitting one changes nothing about the built page.
+A domain may have a single file *or* parts, never both; the tools error if it
+has both.
 
 ## Workflow
 
-1. Edit the relevant `data/{domain}.html`.
-2. Run `python3 tools/annotate_acronyms.py` (adds inline acronym expansions).
-3. Run `python3 build.py`.
-4. Open `index.html` and verify (filter, search, expand, light/dark).
+```
+make            # gen acronym domain -> annotate -> build
+make check      # every static gate CI runs
+make test       # drive the built page in a browser
+```
+
+Then open `index.html` and verify by hand (filter, search, expand, light/dark).
+
+The order in `make build` is not arbitrary: the acronym domain is generated from
+the dictionary, the annotator rewrites content using it, and `build.py`
+assembles what both produced. Running them out of order gives you a page that
+looks correct and is stale. `make help` lists everything.
 
 ## Canonical topic skeleton
 
@@ -105,10 +121,11 @@ for three-tone ladders. Add a variable there rather than a literal here.
 
 ## Before you push
 
-`python build.py` regenerates `index.html`; CI fails if you forgot. Then:
+`make build` regenerates `index.html`; CI fails if you forgot. Then:
 
 ```
-node tools/smoke_test.mjs      # drives the built page in a real browser
+make check                     # every static gate, fastest-failing first
+make test                      # drives the built page in a real browser
 ```
 
 It checks the things a structural change quietly breaks — a chip without its
@@ -207,6 +224,38 @@ A topic that tracks something changeable — a vendor console, a price, a produc
 name — should also carry `data-volatile="true"`. Only volatile topics appear in
 `--report`; stable ones (the OSI model, the TCP handshake) are excluded on
 purpose, so the report stays a to-do list rather than a source of guilt.
+
+## Topic IDs are a contract
+
+A topic's id is `slugify(its title)`, stamped by `build.py` in document order,
+with duplicates suffixed `-2`, `-3` in the order they are encountered **across
+the whole site**. That id is not an implementation detail. It is:
+
+* the permalink someone shared — `index.html#osi-model-7-layers`
+* the key their progress is stored under — `reviewed:`, `bookmark:`, `known:`,
+  `srs:`, `note:`
+* the key `related.json` and `paths.json` point at
+
+So a change that moves ids is a change that silently breaks other people's
+saved state. What moves them:
+
+| Change | Moves ids? |
+|---|---|
+| Editing a card's body | No |
+| Renaming a topic | **Yes** — that topic's id, and `fix_topic_names.py` records an alias |
+| Reordering topics within a domain | Only if two titles collide and swap suffixes |
+| Moving cards between **parts of the same domain**, in order | No |
+| Moving cards to a **different domain** | Possibly — dedup order changes site-wide |
+| Adding a topic whose title duplicates an existing one | **Yes** — it takes `-2`, and anything already suffixed shifts |
+
+Two rules follow. **Prefer parts over new domains** when a file gets too big —
+that is why `script` is six parts rather than three domains. And when you do
+rename, let `tools/fix_topic_names.py` write the alias so the old permalink
+still lands; never hand-edit `data/slug-aliases.json`.
+
+If you are refactoring and believe the page should be unchanged, prove it:
+build before and after and compare `index.html` byte for byte. That is how the
+`script` split was verified.
 
 ## Adding a domain
 

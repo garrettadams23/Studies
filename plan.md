@@ -2940,9 +2940,10 @@ of change that is easy to start and expensive to abandon.
   structured data — do not do it for tidiness alone.
 - [ ] **Incremental path if that is a yes** — new domains author in the new model
   and old ones stay HTML; `build.py` handles both. Never a big-bang migration.
-- [ ] **Topic ID stability contract** — write down, in `CONTRIBUTING.md`, that
-  topic slugs are a public interface: renaming a `.topic-name` breaks
-  permalinks and stored progress. Add an alias map so renames are survivable.
+- [x] **Topic ID stability contract** — written into `CONTRIBUTING.md` as *Topic IDs are a
+  contract*, with the table of what does and does not move an id, why it matters (permalinks and
+  five `localStorage` key prefixes), the rule to prefer parts over new domains, and the
+  build-and-compare-bytes proof the `script` split used.
 - [x] **Split `data/script.html`** — done exactly as specified: six ordered parts building into the
   *same* domain, concatenated by `build.py` in filename order.
   `script.01-references` (25) · `02-beginner` (36) · `03-python` (41) · `04-it-automation` (10) ·
@@ -2952,100 +2953,15 @@ of change that is easy to start and expensive to abandon.
   does a domain live", and six tools use it.
 - [ ] **Build performance & determinism** — the build is fast today; add a
   guard so it stays reproducible (stable ordering, no timestamps in output).
-- [ ] **Archive `patches/`** — ~1.7 MB of already-applied one-shot scripts. Tag
-  the current commit, then delete them from `main` with the tag recorded in
-  `CONTRIBUTING.md` so the history is recoverable.
-- [ ] **A `make` or `just` entry point** — `just build` running gen → annotate →
-  build → smoke test, so the four-command sequence cannot be half-run. The
-  number of steps is now the most likely source of a stale commit.
-
----
-
-## Suggested execution order (Phase 5)
-
-Phase 5 assumes Phase 4 is under way but does not depend on it, with one
-exception noted below.
-
-| Slot | Tracks | Theme | Rough size |
-|---|---|---|---|
-| 91 | AH chip grouping + AX freshness metadata | **Do first** — the chip bar breaks before the 24th domain, and freshness metadata is cheapest to add before another 500 topics exist | code only |
-| 92–95 | scaffold `cs` + AL1–AL7 | complexity, data structures, algorithms, OS, architecture, compilers, distributed theory | ~35 cards |
-| 96–97 | AM1–AM5 | the mathematics that pays rent | ~25 cards |
-| 98–100 | scaffold `hw` + AN1–AN6 | electronics, PC hardware, repair, peripherals, embedded, hardware security | ~30 cards |
-| 101–102 | AP1–AP3 | post-quantum migration and adjacent cryptography | ~15 cards |
-| 103–104 | AQ1–AQ4, AR1–AR4 | emerging platforms; physical security and investigations | ~40 cards |
-| 105–107 | scaffold `biz` + AS1–AS5 | IT finance, vendors, contracts, cost control | ~25 cards |
-| 108–110 | AT1–AT5 | leading technical teams | ~25 cards |
-| 111–112 | AU1–AU4, AV1–AV4 | enablement and independent practice | ~40 cards |
-| 113–114 | AX remainder + AY | freshness system, then the content-model decision | code only |
-
-**Phase 5 total: 10 content tracks, 47 waves, 235 cards, 3 new domains**, plus
-15 engineering items.
-
-## Where that leaves the site
-
-| | Topics | Domains |
-|---|---:|---:|
-| Today | 900 | 20 |
-| + Phase 3 outstanding (J–U) | 1,107 | 20 |
-| + Phase 4 | 1,372 | 23 |
-| + Phase 5 | 1,607 | 26 |
-
-**Total remaining backlog across all three phases: 707 cards and 44 engineering
-items.** At one wave (~5 cards) per working session that is roughly 140 sessions
-— which is the point at which the honest advice is: *do not treat this as a
-queue to finish*. Treat it as a menu. Ship the tracks that match what you are
-actually doing at work, because those are the ones you will write well and the
-ones you will keep using.
-
-## Suggested actual priority, if the list is overwhelming
-
-Ignoring track order entirely, these are the six that would most improve the
-site as it stands today:
-
-1. **AH chip grouping + Y1–Y2** — the navigation breaks soon, and `endpoint` is
-   both the thinnest domain and the maintainer's day job.
-2. **AG spaced repetition + acronym quiz** — turns 900 topics of reference into
-   something you revise from, using data that already exists.
-3. **AX freshness metadata** — cheapest now, impossible later.
-4. ~~**V1–V3 (Windows Server, AD DS, Group Policy)**~~ — ✅ shipped session 18.
-   `infra`, 15 cards.
-5. ~~**AL1–AL3 (complexity, data structures, algorithms)**~~ — ✅ shipped session 18
-   as `cs`, 15 cards. **"It is nowhere yet" was wrong** — see the note under Track AL.
-6. **AY split of `data/script.html`** — 719 KB in one file is the single biggest
-   drag on actually doing any of the above.
-
----
-
-# Content & Capability Roadmap — Phase 6: Specialisms, and How This Gets Written (Wave 115+)
-
-> **Two halves, deliberately different in kind.**
-> The first is nine tracks covering the jobs that split off from "security
-> engineer" and "SRE" and became disciplines with their own titles, tooling and
-> interview loops. The second is not a plan at all — it is the **authoring
-> craft, pattern library, risk register and success measures written out now**,
-> because after five phases the constraint on this project is no longer *what to
-> write* (751 open items) but *how to write 751 cards that are worth reading*.
-
-## No new domains
-
-Phases 3–5 added eight domains. Phase 6 adds **none**. Every track here lands in
-an existing domain — `blueteam`, `redteam`, `sec`, `cloud`, `ops`, `eng`, `grc`.
-That is a deliberate correction: 26 domains is already at the edge of what a
-filter bar and a mental model can hold, and every one of these specialisms is
-recognisably a deeper cut of something the site already covers.
-
----
-
-## PART 1 — SECURITY ENGINEERING SPECIALISMS
-
-### TRACK BA — Detection Engineering  (→ `blueteam`)
-
-~5 waves, ~25 cards. Writing detections as a software discipline, not as a
-tuning exercise in a console. The site has SIEM and EDR cards; it has nothing on
-the craft of building what runs inside them.
-
-**Wave BA1 — The Discipline**
+- [x] **Archive `patches/`** — 54 one-shot injection scripts, 1.8 MB, untouched since 2026-07-04
+  and superseded by editing `data/` directly. Tagged `archive/patches-2026-08` and deleted;
+  recoverable with `git checkout archive/patches-2026-08 -- patches/`.
+- [x] **A `make` entry point** — `make` builds, `make check` runs every static gate in
+  fastest-failing order, `make test` drives the browser, `make all` does all three, `make stamp
+  ONLY=<domain>` restamps one domain, `make help` lists them. `make` rather than `just`, because
+  `make` is already on the machine. The ordering inside `build` is documented in the file: the
+  acronym domain is generated from the dictionary, the annotator rewrites content using it, and
+  `build.py` assembles what both produced.
 - [x] What Detection Engineering Is — and why it split off from SOC analysis
 - [x] The Detection Lifecycle — idea → hypothesis → logic → test → deploy → tune → retire
 - [x] Detection Requirements — writing one before writing the rule
@@ -8787,3 +8703,39 @@ measurement, so the next session does not repeat the experiment. That is now the
 the same limitation in this session, and the pattern is worth stating once: **a mechanical commit
 that creates or merges lines cannot be neutralised by `--ignore-rev`.** Only one that *modifies*
 existing lines can.
+
+
+## Session record — repo hygiene: one entry point, one contract, one fewer megabyte
+
+Three Track AY items, all small, all overdue.
+
+### `make`, not `just`
+
+`make` is already on the machine; `just` would be a dependency to install before you can build a
+site whose entire selling point is having none. `make` builds, `make check` runs every static gate
+in fastest-failing order, `make test` drives the browser, `make all` chains them, `make stamp
+ONLY=<domain>` restamps one domain, and `make help` lists them.
+
+The value is not saving keystrokes — it is that **the order is now recorded somewhere other than
+a person's memory**. The acronym domain is generated from the dictionary, the annotator rewrites
+content using it, and `build.py` assembles what both produced. Run out of order you get a page that
+looks correct and is stale, which is the worst kind of wrong for a reference site.
+
+### Topic IDs are a contract
+
+Written into `CONTRIBUTING.md`, because the `script` split made it concrete and because this is the
+one thing in the repo that silently breaks *other people's* saved state rather than the build.
+
+A topic id is the permalink someone shared, the key their progress is stored under across five
+`localStorage` prefixes, and the key `related.json` and `paths.json` point at. The section carries a
+table of what does and does not move an id, and two rules that follow from it: **prefer parts over
+new domains** when a file gets too big, and let `fix_topic_names.py` write the alias when you do
+rename. Plus the proof technique the split used — build before and after, compare bytes.
+
+### patches/ archived
+
+54 one-shot content-injection scripts, 1.8 MB, untouched since 2026-07-04, whose output has been in
+`data/*.html` since each wave shipped. Tagged `archive/patches-2026-08` and deleted. The tag is
+local; it exists so the directory is recoverable by name rather than by SHA archaeology:
+
+    git checkout archive/patches-2026-08 -- patches/
