@@ -3085,3 +3085,210 @@ dsregcmd /status
           </div>
 
 <!-- /domain-body cloud -->
+
+<!-- ── TOPIC: SECRETS IN KUBERNETES ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🤫</span>
+    <span class="topic-name">Secrets in Kubernetes — Base64 Is Not Encryption, and the Options That Are</span>
+    <span class="topic-badge">CLOUD • Kubernetes</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Built-In Secret Is a ConfigMap With a Warning Label</div>
+      <div class="concept-desc">
+        A Kubernetes Secret stores its values base64-encoded, which is an encoding, not a cipher —
+        anyone who can read the object can read the value with one command. It is stored in etcd,
+        which by default writes it to disk in that same recoverable form. What a Secret actually
+        buys you over a ConfigMap is a separate resource type that access control can be written
+        against, and a convention that tooling respects by not printing it. Those are real, and
+        neither is encryption.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Assumption</th><th>Reality</th></tr></thead>
+          <tbody>
+            <tr><td>Secrets are encrypted</td><td>Base64 in the API <span class="acro-exp">(Application Programming Interface)</span>, and in etcd unless you configured encryption at rest</td></tr>
+            <tr><td>Only my pod can read it</td><td>Anyone with get on Secrets in that namespace, and anyone who can create a pod there</td></tr>
+            <tr><td>A cluster admin cannot see it</td><td>They can. Everything below is about limiting who counts as one</td></tr>
+            <tr><td>It is safe in Git if the repo is private</td><td>Every clone, fork, CI log and backup now has it, permanently</td></tr>
+            <tr><td>Rotating it is easy</td><td>Only if something restarts the consumers. Mounted secrets update; environment variables do not</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The "create a pod" clause in the second row is the one people miss. Permission to run a
+          workload in a namespace is effectively permission to read every Secret in it, because a
+          pod can simply mount them. Namespace-scoped RBAC <span class="acro-exp">(Role-Based Access Control)</span> is therefore a boundary between
+          <em>teams</em> and not a boundary between a team and its own secrets.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Options, and What Each One Actually Fixes</div>
+      <div class="concept-desc">
+        These solve different problems, and choosing well starts with naming which problem you have:
+        secrets in Git, secrets on disk, or long-lived secrets at all.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Option</th><th>Fixes</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>Encryption at rest for etcd</td><td>Secrets readable from a disk or a backup</td><td>Key management; with a KMS <span class="acro-exp">(Key Management Service)</span> provider the key lives outside the cluster</td></tr>
+            <tr><td>Sealed Secrets</td><td>Secrets in Git — the ciphertext is safe to commit</td><td>A controller and its key; still a long-lived secret at rest in the cluster</td></tr>
+            <tr><td>External Secrets Operator</td><td>The cluster stops being the system of record</td><td>Another operator; the vault becomes a hard dependency</td></tr>
+            <tr><td>CSI secrets driver</td><td>Mounts from a vault at pod start, never creating a Secret object</td><td>Node-level component; per-pod identity to get right</td></tr>
+            <tr><td>Workload identity federation</td><td>The long-lived secret itself — the pod's token is exchanged for short-lived cloud credentials</td><td>Only works for services that accept federated identity</td></tr>
+            <tr><td>Cloud provider secret manager, called directly</td><td>Secrets in the cluster at all</td><td>Application code changes, and a failure mode at start-up</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last two rows are the direction of travel, and the reason is worth stating plainly:
+          every other option is a better way to store a long-lived credential, while these remove
+          the long-lived credential. A pod that exchanges its own signed identity token for a
+          fifteen-minute cloud credential has nothing worth stealing at rest.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Where Secrets Leak Even When Stored Correctly</div>
+      <div class="concept-desc">
+        Most real exposure is not the storage. It is everything that touches the value on the way to
+        the process.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Leak</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Environment variables</td><td>Visible in the pod spec, in <code>describe</code>, in crash dumps, and to any process on the container</td></tr>
+            <tr><td>Logs</td><td>A framework printing its configuration at start-up sends the lot to the log pipeline</td></tr>
+            <tr><td>Helm values and rendered manifests</td><td>Committed, cached in the release history, and readable from the cluster</td></tr>
+            <tr><td>CI job output</td><td>Masking is best-effort; a base64 or JSON-wrapped value often slips past it</td></tr>
+            <tr><td>Backups of etcd</td><td>Encryption at rest does not help if the backup was taken from the API</td></tr>
+            <tr><td>Images</td><td>A secret baked in a layer is in the registry forever, including in the layers you deleted</td></tr>
+            <tr><td>Ephemeral debug containers</td><td>Attach to a running pod and the mounted secrets are right there</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Prefer <strong>mounted files over environment variables</strong> for anything that
+          matters: files are not inherited by child processes, do not appear in a pod description,
+          and are updated in place when the secret rotates. The wider practice is the same as
+          <span class="xref">Secrets in Automation — Vaults, Managed Identities &amp; Never a Plaintext Credential</span>,
+          and the identity mechanism behind the last two options is in
+          <span class="xref">Service Account Tokens &amp; Workload Identity — The Credential Every Pod Carries</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: INGRESS & API EXPOSURE ─────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🚪</span>
+    <span class="topic-name">Ingress &amp; API <span class="acro-exp">(Application Programming Interface)</span> Exposure — The Gateway as a Control Point</span>
+    <span class="topic-badge">CLOUD • Kubernetes</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">One Place Where Every Request Enters — Use It</div>
+      <div class="concept-desc">
+        A cluster's ingress is the narrowest point in the whole system: every external request passes
+        through it, and it is the last place you can apply a rule without touching application code.
+        That makes it the cheapest control point you will ever have, and the most commonly wasted —
+        most clusters run an ingress controller as a router and nothing else, then implement
+        authentication, rate limiting and header hygiene separately in every service, inconsistently.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>Why here rather than in each service</th></tr></thead>
+          <tbody>
+            <tr><td>TLS <span class="acro-exp">(Transport Layer Security)</span> termination and certificate lifecycle</td><td>One automation, one renewal path, one place to get the cipher policy right</td></tr>
+            <tr><td>Rate limiting</td><td>Per client, before your application spends a database query on it</td></tr>
+            <tr><td>Request size and timeout limits</td><td>A default that protects every service, including ones nobody remembered</td></tr>
+            <tr><td>Authentication at the edge</td><td>Useful for internal tools; never a substitute for the service's own authorisation</td></tr>
+            <tr><td>Header hygiene</td><td>Strip inbound spoofed headers, add security headers outbound</td></tr>
+            <tr><td>WAF <span class="acro-exp">(Web Application Firewall)</span> or bot rules</td><td>Where a shared rule set can exist at all</td></tr>
+            <tr><td>Consistent logging</td><td>One access log format for every request that enters the cluster</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The fourth row carries the caveat that matters. Authentication at the gateway proves
+          <em>who</em> is calling; it says nothing about whether they may act on <em>this object</em>,
+          and a service that trusts a header because "the gateway checked" is one misconfigured route
+          away from trusting anybody — <span class="xref">Broken Object-Level Authorization — The Bug in Almost Every API</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Ingress, Gateway API and Service Mesh — Which Layer Does What</div>
+      <div class="concept-desc">
+        Three overlapping things, frequently deployed together without a clear division of
+        responsibility, which is how a request ends up being routed twice and authorised nowhere.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Layer</th><th>Handles</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Service of type LoadBalancer</td><td>Raw exposure of one service</td><td>Fine for one thing; a cloud load balancer per service gets expensive</td></tr>
+            <tr><td>Ingress</td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> routing by host and path</td><td>The long-standing default; capabilities beyond routing arrive as vendor annotations</td></tr>
+            <tr><td>Gateway API</td><td>The same, with a richer typed model</td><td>Separates the platform team's Gateway from the app team's Route — the real reason it exists</td></tr>
+            <tr><td>Service mesh</td><td>Traffic <em>between</em> services, mTLS <span class="acro-exp">(Mutual Transport Layer Security)</span>, retries, policy</td><td>Solves an east-west problem; it is not an ingress and does not replace one</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The Gateway API split is worth understanding even if you never adopt it, because it names
+          the governance problem correctly: with plain Ingress, a team that can create an Ingress
+          object can usually claim any hostname, including one already in use. Separating who owns
+          the listener from who owns the route is a permissions model, not a feature.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Exposure Mistakes, and the Order to Debug a 502</div>
+      <div class="concept-desc">
+        Two lists: what accidentally becomes public, and the sequence that finds a broken route in
+        minutes rather than an afternoon.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Accidental exposure</th><th>How it happens</th></tr></thead>
+          <tbody>
+            <tr><td>A dashboard or admin UI <span class="acro-exp">(User Interface)</span></td><td>An Ingress created for convenience during a debugging session and never removed</td></tr>
+            <tr><td>A service of type LoadBalancer in a shared namespace</td><td>One line in a Helm chart, and a public IP <span class="acro-exp">(Internet Protocol)</span> appears</td></tr>
+            <tr><td>A wildcard host rule</td><td>Catches every unmatched hostname, including ones pointed at you by someone else</td></tr>
+            <tr><td>The default backend</td><td>Answers everything unmatched; make it a 404, not an application</td></tr>
+            <tr><td>Non-production copies</td><td>Same chart, same ingress annotations, no authentication</td></tr>
+          </tbody>
+        </table>
+        <div class="dw" style="margin-top:12px">
+          <table class="ref-table">
+            <thead><tr><th>Debugging a 502 or 404</th><th>Rules out</th></tr></thead>
+            <tbody>
+              <tr><td>Does DNS <span class="acro-exp">(Domain Name System)</span> point at the ingress address?</td><td>Half of all "the ingress is broken" reports</td></tr>
+              <tr><td>Did the controller accept the object? Check its events</td><td>A rejected or conflicting rule is silent in the object itself</td></tr>
+              <tr><td>Does the Service have endpoints?</td><td>No endpoints means the selector does not match any ready pod — the usual 502</td></tr>
+              <tr><td>Does the port name and number match?</td><td>A named port that does not exist fails at the Service, not the Ingress</td></tr>
+              <tr><td>Is a NetworkPolicy blocking the controller?</td><td>Default-deny namespaces forget to allow ingress from the controller</td></tr>
+              <tr><td>Is the certificate issued and valid?</td><td>A pending certificate serves the controller's default, which looks like a routing bug</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="concept-desc" style="margin-top:10px">
+          "Service has no endpoints" is the single most common cause of a 502 from an ingress, and
+          the fastest check on the list — a selector typo or an unready readiness probe, both of
+          which the Ingress object itself reports as perfectly healthy. The default-deny interaction
+          is covered from the other side in
+          <span class="xref">Network Policies &amp; Service Mesh — Default-Deny, mTLS &amp; the Complexity Cost</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

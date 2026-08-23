@@ -3082,8 +3082,9 @@ attack and defence surface.
   the PSA-validates-but-cannot-mutate ordering trap
 - [~] Image Security — minimal bases, non-root, read-only filesystems, distroless — carded in
   `devops` (*Container Security*) and `linux`
-- [ ] Secrets in Kubernetes — why the built-in kind is only base64, and the options — still open;
-  partly reached by the etcd row and the token card, but the options comparison is unwritten
+- [x] Secrets in Kubernetes → *Secrets in Kubernetes — Base64 Is Not Encryption, and the Options
+  That Are*. The options comparison the note asked for, plus the clause people miss: permission to
+  create a pod in a namespace is permission to read every Secret in it.
 
 **Wave BC3 — Network & Identity** — shipped into `cloud`, except where noted.
 - [x] Network Policies — default-deny, and why almost nobody has it
@@ -3091,7 +3092,8 @@ attack and defence surface.
   the "network policy first, mesh only for the second column" judgement is stated once
 - [x] Workload Identity — federating pods to cloud IAM without long-lived keys — inside the
   service-account token card, where the audience field explains the mechanism
-- [ ] Ingress & API Exposure — the gateway as a control point — still open
+- [x] Ingress & API Exposure → *Ingress & API Exposure — The Gateway as a Control Point*, including
+  the Ingress / Gateway API / service mesh division of labour and the 502 debugging order
 - [x] Multi-Tenancy — namespaces are not a security boundary; what to do instead
 
 **Wave BC4 — Runtime & Detection** — shipped into `cloud`.
@@ -9247,3 +9249,36 @@ raise the number or drop the shot — do not silence the job.
 All eight items. Three were already shipped, one measured itself away, and four were built this
 session: the markup validator with its self-test, the acronym drift report, the accessibility scan
 that found sixteen violations, and this.
+
+
+## Session record — closing Track BC's two open items
+
+The two Kubernetes items the track left explicitly open, both written to fill the gap the note
+described rather than to restate what the neighbouring cards already say.
+
+**Secrets in Kubernetes.** The note asked for "the options comparison", and that is the middle
+section — encryption at rest, Sealed Secrets, External Secrets, the CSI driver, workload identity
+federation, and calling a cloud secret manager directly — each labelled with the problem it actually
+solves, because they solve different ones. The framing around it matters more though: *every option
+except the last two is a better way to store a long-lived credential, while those two remove the
+long-lived credential*.
+
+Two things in it that get missed. **Permission to create a pod in a namespace is permission to read
+every Secret in it**, because a pod can simply mount them — so namespace RBAC is a boundary between
+teams, not between a team and its own secrets. And most real exposure is not the storage at all: it
+is environment variables in a pod description, a framework logging its configuration at start-up,
+Helm release history, CI output, and debug containers.
+
+**Ingress & API Exposure.** Built on the observation that the ingress is the narrowest point in the
+system and the cheapest control point available — and the most commonly wasted, run as a router
+while authentication, rate limiting and header hygiene get reimplemented per service. Names the
+Ingress / Gateway API / service mesh division of labour, and says why the Gateway API split is worth
+understanding even if you never adopt it: with plain Ingress, anyone who can create the object can
+usually claim any hostname, so separating listener ownership from route ownership is a permissions
+model rather than a feature.
+
+Its debugging list ends where it should: **"Service has no endpoints" is the most common cause of a
+502 from an ingress** — a selector typo or an unready probe — and the Ingress object reports itself
+perfectly healthy throughout.
+
+Site total 1,390 → **1,392**. Track BC is closed.
