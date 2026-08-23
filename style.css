@@ -639,6 +639,71 @@ header p {
   display: block;
 }
 
+/* ── DOMAIN LANDING CARD ─────────────────────────────────────────────────────
+   Rendered by script.js above a domain's topics from the inlined intros
+   payload. It sits inside .domain-body but is not a .topic, so it takes the
+   domain's accent without inheriting any of the topic chrome. */
+.domain-intro {
+  border-bottom: 1px solid var(--border);
+  border-left: 3px solid var(--accent, var(--cyan));
+  background: color-mix(in srgb, var(--accent, var(--cyan)) 6%, transparent);
+  padding: 14px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.di-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.di-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex: 0 0 66px;
+}
+.di-text {
+  flex: 1 1 320px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+}
+.di-who .di-text,
+.di-next .di-text {
+  color: var(--muted);
+}
+.di-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.di-link {
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  color: var(--accent, var(--cyan));
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 9px;
+  cursor: pointer;
+}
+.di-link:hover,
+.di-link:focus-visible {
+  border-color: var(--accent, var(--cyan));
+  background: color-mix(in srgb, var(--accent, var(--cyan)) 12%, var(--bg2));
+}
+@media (max-width: 620px) {
+  .di-label { flex-basis: 100%; }
+}
+@media print {
+  .di-links { display: none; }
+}
+
 .topic {
   border-bottom: 1px solid var(--border);
 }
@@ -1984,6 +2049,7 @@ mark.sh {
 
 /* Dim non-matching topics during search */
 .topic.search-hidden { display: none; }
+.domain-intro.search-hidden { display: none; }
 .domain-section.search-hidden { display: none; }
 
 @media (max-width: 600px) {

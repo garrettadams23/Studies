@@ -508,6 +508,104 @@ const kbTopic = await page.evaluate(() =>
   document.querySelector(".domain-body.open .topic-header")?.getAttribute("aria-expanded"));
 check("Enter opens a topic and sets aria-expanded", kbTopic === "true", `aria-expanded=${kbTopic}`);
 
+// ── domain landing cards ────────────────────────────────────────────────────
+// The card is data, not content: it must render above the topics, link only to
+// topics that exist, and stay out of everything that counts .topic elements.
+await page.goto(PAGE, { waitUntil: "load" });
+const introPayload = await page.evaluate(() => {
+  const el = document.getElementById("domain-intros");
+  try { return el ? JSON.parse(el.textContent) : null; } catch { return null; }
+});
+const domainIds = await page.evaluate(() =>
+  [...document.querySelectorAll(".domain-section")].map(s => s.dataset.domain));
+check("every domain has a landing card in the payload",
+  !!introPayload && domainIds.every(d => introPayload[d]),
+  `${introPayload ? Object.keys(introPayload).length : 0} intros for ${domainIds.length} domains`);
+
+const introDomain = domainIds[0];
+await page.evaluate(d => openDomain(domainSection(d)), introDomain);
+await page.waitForTimeout(300);
+const intro = await page.evaluate(d => {
+  const body = domainSection(d).querySelector(".domain-body");
+  const card = body.querySelector(":scope > .domain-intro");
+  if (!card) return null;
+  return {
+    first: body.firstElementChild === card,
+    rows: [...card.querySelectorAll(".di-label")].map(l => l.textContent),
+    links: [...card.querySelectorAll(".di-link")].map(b => b.textContent),
+    topics: body.querySelectorAll(".topic").length,
+    indexed: (topicIndex()[d] || []).length,
+    introIsTopic: card.classList.contains("topic"),
+  };
+}, introDomain);
+check("the landing card renders above the topics",
+  !!intro && intro.first, intro ? `first=${intro.first}` : "no .domain-intro");
+check("the landing card carries its rows",
+  !!intro && intro.rows.length >= 3, intro ? intro.rows.join(",") : "");
+// Names are resolved at render time, so a link that survived is a link that
+// points at a topic actually in this domain. A count short of the payload's
+// means a topic was renamed and the card silently lost a signpost.
+const wantStarts = introPayload?.[introDomain]?.start?.length ?? 0;
+check("every 'start here' name resolved to a real topic",
+  !!intro && intro.links.length === wantStarts,
+  `${intro ? intro.links.length : 0}/${wantStarts} resolved`);
+check("the landing card is not counted as a topic",
+  !!intro && !intro.introIsTopic && intro.topics === intro.indexed,
+  intro ? `${intro.topics} in DOM vs ${intro.indexed} indexed` : "");
+
+// Clicking a start link must land on that topic, open.
+const startJump = await page.evaluate(async () => {
+  const card = document.querySelector(".domain-body.open > .domain-intro");
+  const btn = card?.querySelector(".di-link");
+  if (!btn) return null;
+  const want = btn.textContent;
+  btn.click();
+  await new Promise(r => setTimeout(r, 350));
+  const t = document.getElementById(location.hash.slice(1));
+  // The heading carries its inline acronym expansions; the card stores the
+  // title as written. Compare like for like by dropping the expansion spans,
+  // which is exactly what plainLabel() does when the card's names are matched.
+  const name = t?.querySelector(".topic-name")?.cloneNode(true);
+  name?.querySelectorAll(".acro-exp").forEach(e => e.remove());
+  const got = (name?.textContent || "").replace(/\s+/g, " ").trim();
+  return { want, got,
+           open: !!t?.querySelector(".topic-body")?.classList.contains("open") };
+});
+check("a 'start here' link opens its topic",
+  !!startJump && startJump.open && startJump.got === startJump.want,
+  startJump ? `${startJump.want} -> ${startJump.got} (open=${startJump.open})` : "no link");
+
+// The check above only exercises one domain. A rename in any of the other
+// twenty-nine costs that card a signpost just as quietly, so resolve the whole
+// payload the same way the renderer does.
+const unresolved = await page.evaluate(() => {
+  const intros = domainIntros();
+  const bad = [];
+  Object.keys(intros).forEach(d => {
+    const names = new Set(domainTopics(d).map(t => t.name));
+    (intros[d].start || []).forEach(n => { if (!names.has(n)) bad.push(`${d}: ${n}`); });
+  });
+  return bad;
+});
+check("every landing card's 'start here' names resolve, in all domains",
+  unresolved.length === 0, unresolved.slice(0, 3).join(" | "));
+
+// A search asked for topics; the front matter should get out of the way, and
+// come back when the query is cleared.
+await page.evaluate(() => runSearch("subnet"));
+await page.waitForTimeout(300);
+const introDuringSearch = await page.evaluate(() =>
+  [...document.querySelectorAll(".domain-body.open > .domain-intro")]
+    .every(c => getComputedStyle(c).display === "none"));
+await page.evaluate(() => runSearch(""));
+await page.waitForTimeout(300);
+const introAfterSearch = await page.evaluate(() => {
+  const c = document.querySelector(".domain-body.open > .domain-intro");
+  return c ? getComputedStyle(c).display !== "none" : null;
+});
+check("the landing card hides while a search is filtering", introDuringSearch === true);
+check("the landing card comes back when the search is cleared", introAfterSearch === true);
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));

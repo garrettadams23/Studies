@@ -117,7 +117,88 @@ function hydrateDomain(section) {
   section.dataset.hydrated = "1";
   _liveDomain = section;
   enhanceDomain(section);
+  renderDomainIntro(section);
   return true;
+}
+
+/** domain id -> its landing card (inlined by build.py from data/domain-intros.json). */
+let _domainIntros = null;
+function domainIntros() {
+  if (_domainIntros) return _domainIntros;
+  const el = document.getElementById("domain-intros");
+  try {
+    const o = el ? JSON.parse(el.textContent) : {};
+    _domainIntros = (o && typeof o === "object" && !Array.isArray(o)) ? o : {};
+  } catch { _domainIntros = {}; }
+  return _domainIntros;
+}
+
+/**
+ * Put a domain's landing card above its topics: what it covers, who it is for,
+ * three topics to start with, and where to go next.
+ *
+ * The card is data rather than a `.topic` in the content file, and that is the
+ * whole point — a signpost should not be counted by the topic index, dated by
+ * stamp_freshness.py, offered by the random pick or dealt into a study deck.
+ *
+ * The "start here" entries are stored as topic *names* and resolved here
+ * against the domain's own parsed topics. A name that no longer resolves is
+ * dropped rather than rendered dead, so renaming a topic costs the card one
+ * link instead of leaving a button that goes nowhere.
+ */
+function renderDomainIntro(section) {
+  const body = section?.querySelector(".domain-body");
+  const intro = domainIntros()[section?.dataset.domain];
+  if (!body || !intro || body.querySelector(":scope > .domain-intro")) return;
+
+  const byName = new Map();
+  domainTopics(section.dataset.domain).forEach(t => {
+    if (t.name && t.id && !byName.has(t.name)) byName.set(t.name, t.id);
+  });
+
+  const card = document.createElement("div");
+  card.className = "domain-intro";
+
+  const add = (cls, label, text) => {
+    if (!text) return;
+    const row = document.createElement("div");
+    row.className = "di-row " + cls;
+    const l = document.createElement("span");
+    l.className = "di-label";
+    l.textContent = label;
+    const v = document.createElement("span");
+    v.className = "di-text";
+    v.textContent = text;
+    row.append(l, v);
+    card.append(row);
+  };
+
+  add("di-covers", "Covers", intro.covers);
+  add("di-who", "For", intro.who);
+
+  const starts = (intro.start || []).filter(n => byName.has(n));
+  if (starts.length) {
+    const row = document.createElement("div");
+    row.className = "di-row di-start";
+    const l = document.createElement("span");
+    l.className = "di-label";
+    l.textContent = "Start here";
+    const list = document.createElement("span");
+    list.className = "di-text di-links";
+    starts.forEach(name => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "di-link";
+      b.textContent = name;
+      b.addEventListener("click", () => stGoToTopic(byName.get(name)));
+      list.append(b);
+    });
+    row.append(l, list);
+    card.append(row);
+  }
+
+  add("di-next", "Then", intro.next);
+  body.prepend(card);
 }
 
 /** Empty a domain's body and collapse it. Its content stays in the page as text. */
@@ -1191,6 +1272,9 @@ function applySearchToDomain(section) {
       topic.classList.add("search-hidden");
     }
   });
+  // A search asked for topics, not for the domain's front matter.
+  section.querySelector(":scope > .domain-body > .domain-intro")
+    ?.classList.add("search-hidden");
 }
 
 /**
@@ -1218,7 +1302,7 @@ function runSearch(raw) {
     s.classList.remove("search-hidden");
     s.querySelector(".domain-matches")?.remove();
   });
-  _liveDomain?.querySelectorAll(".topic.search-hidden")
+  _liveDomain?.querySelectorAll(".topic.search-hidden, .domain-intro.search-hidden")
     .forEach(el => el.classList.remove("search-hidden"));
 
   const q = parseQuery(term);

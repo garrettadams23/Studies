@@ -2136,8 +2136,12 @@ separate toys.
 - [ ] **Related topics** — a small "see also" strip per topic, driven by a
   hand-curated `related.json` keyed on topic ID, with a script that suggests
   candidates by shared acronyms and title terms.
-- [ ] **Domain landing cards** — an intro card at the top of each domain: what it
-  covers, who it is for, where to start, what to read next.
+- [x] **Domain landing cards** — 30 intros shipped as `data/domain-intros.json`, inlined by
+  `build.py` and rendered by `script.js` above a domain's topics on hydration. Deliberately *not*
+  a `.topic` in the content files: a signpost should not be counted by the topic index, dated by
+  `stamp_freshness.py`, checked by `lint_content.py`, offered by the random pick or dealt into a
+  deck. `start` holds topic names, resolved against the parsed block at render time, so a rename
+  costs the card one link instead of leaving a dead button.
 - [x] **Search operators** — `domain:net` and quoted phrases shipped; `badge:` deliberately not.
   Badges are inconsistent across domains — "SEC • Essential", "Beginner", "OPS • Modern" and
   "LIFESTYLE • Career" all coexist — so a `badge:` operator would need a vocabulary the reader
@@ -7892,3 +7896,66 @@ no console errors, no off-site requests · budget unchanged at raw 5.3 / 8.0 MB.
 Two items open: **related topics** (needs a curated `related.json` and a suggestion script — the
 largest remaining item in the track) and **domain landing cards** (30 short intros; content work
 with a small rendering change).
+
+
+## Session record — Track AH: domain landing cards
+
+Thirty domains, 1,355 topics, and until now the only thing a reader saw on opening one was a wall of
+collapsed headers. Every domain now opens on a short card: what it covers, who it is for, three
+topics to start with as buttons, and which domains to read next.
+
+### The one architectural decision
+
+The intro is **data, rendered at hydration** — not a card written into `data/*.html`. Written into
+the content files it would have been a `.topic`, and then it would have been counted by the topic
+index, dated by `stamp_freshness.py`, linted by `lint_content.py`, offered by the random pick, and
+dealt into study decks. Thirty signposts polluting five separate systems, each of which would have
+needed an exception. As data it touches none of them: `build.py` gained one payload function of the
+same shape as the three already there, `script.js` gained a renderer, and the entire content
+pipeline is untouched. A smoke check asserts the separation directly — the DOM's `.topic` count for
+an open domain must still equal its indexed count.
+
+### The name-resolution trap, and what it cost to find
+
+`start` stores topic **names**, resolved at render time against the domain's parsed block, so a
+renamed topic drops its link rather than leaving a button that goes nowhere. Getting the names to
+match took three passes, and each failure was worth recording:
+
+1. **The extractor was wrong, not the data.** A first check reported 21 unresolved names. The regex
+   `<span class="topic-name">(.*?)</span>` stops at the *first* `</span>` — which, in any title
+   carrying an inline acronym expansion, is the expansion's closing tag. So "Cloud Rosetta Stone —
+   AWS (Amazon Web Services) ↔ GCP ↔ Azure" was being read as "Cloud Rosetta Stone — AWS (Amazon Web
+   Services)" and compared against itself, unequal. **Any regex that reads `.topic-name` has to
+   balance nested spans**; the fix is a small scanner, kept in the scratchpad tooling.
+2. **Then 23 genuine mismatches surfaced.** Titles written from memory: `Purple Teaming — Closing
+   the Detection Gap` for a card actually called `Purple Team Mechanics — The Room, the Roles & the
+   Cadence`, a `Stoicism` topic that does not exist in a seven-topic philosophy domain, three
+   military titles invented wholesale. A close-match report against the real titles made each one a
+   decision rather than a guess.
+3. **The comparison had to be against `plainLabel`, not the raw title.** `domainTopics()` strips the
+   acronym expansion spans, so the runtime sees "OSI Model — 7 Layers" while the JSON held "OSI
+   (Open Systems Interconnection) Model — 7 Layers". All 90 names were rewritten to the stripped
+   form by matching each against its own file, which is the only version of this that cannot drift.
+
+The general lesson is the same one this project keeps relearning: **an audit that reports failures
+is not evidence the data is wrong — check the instrument first.** A 21-item failure list that was
+entirely the extractor's fault would have led to 21 unnecessary content edits.
+
+### Verification
+
+Nine new checks, 44 → **53**. They cover the card rendering above the topics, carrying its rows,
+staying out of the topic count, its links opening the right topic, hiding during a search and
+returning when cleared — and one that resolves the `start` names for **all thirty** domains rather
+than the one the other checks exercise, because a rename in any of the other twenty-nine costs a
+card a signpost just as quietly.
+
+`smoke_test.mjs` 53/53 · no console errors, no off-site requests · budget raw 5.3 / 8.0 MB,
+gzip 1,445 / 2,200 KB, DOM 428 / 1,500.
+
+### Track AH after this wave
+
+One item open: **related topics** — a "see also" strip per topic, needing a curated `related.json`
+and a script that suggests candidates by shared acronyms and title terms. It is the largest
+remaining item in the track, and the name-resolution work above applies to it directly: key it on
+**topic ids**, not names, since ids are stamped by `build.py` and already have an alias file
+covering renames.

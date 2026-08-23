@@ -254,6 +254,29 @@ def build_topic_index(index):
     return payload.replace("</", "<\\/")
 
 
+def build_domain_intros():
+    """domain id -> its landing card, inlined from data/domain-intros.json.
+
+    Rendered by script.js when a domain hydrates, above its topics. It is
+    deliberately not a `.topic` in the content files: the intro would then be
+    counted by the topic index, dated by stamp_freshness.py, checked by
+    lint_content.py and offered by the decks and the random pick, none of which
+    should be true of a signpost. Keeping it as data leaves the whole content
+    pipeline untouched.
+
+    `start` holds topic *names*; script.js resolves them against the topic index
+    and drops any that no longer exist, so a rename degrades to a shorter list
+    rather than a dead link.
+    """
+    path = DATA / "domain-intros.json"
+    if not path.exists():
+        return "{}"
+    intros = json.loads(path.read_text(encoding="utf-8"))
+    payload = json.dumps(intros, separators=(",", ":"), ensure_ascii=False)
+    print(f"  + domain intros ({len(payload):,} chars, {len(intros)} domains)")
+    return payload.replace("</", "<\\/")
+
+
 def main():
     shell_path = ROOT / "index-shell.html"
     domains_path = DATA / "domains.json"
@@ -287,6 +310,7 @@ def main():
     output = output.replace("<!-- ACRONYM_DATA -->", build_acronym_payload())
     output = output.replace("<!-- SLUG_ALIASES -->", build_slug_aliases())
     output = output.replace("<!-- TOPIC_INDEX -->", build_topic_index(topic_index))
+    output = output.replace("<!-- DOMAIN_INTROS -->", build_domain_intros())
 
     if MINIFY:
         raw_len = len(output)
