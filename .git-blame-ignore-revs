@@ -16,3 +16,23 @@
 
 # Split data/ops.html into ops + devops. Cards moved verbatim; none were edited.
 a5f941f2ebe144e238942f0a9237aa4f07083db3
+
+# Normalise line-broken opening and closing tags across twelve content files.
+# 849 + 729 tags reflowed; proved identical by parsing every deferred domain
+# block before and after and comparing the event streams. No card was edited.
+#
+# Listed for correctness, and measured: it does not help. This commit *merged*
+# lines rather than only reindenting them, and a merged line has no single
+# predecessor for --ignore-rev to fall back to — `-w` does not rescue it either,
+# for the same reason. Four cards in script.html are consequently stamped
+# 2026-08 for a reflow. Do not re-investigate; the fix would be a hand-kept
+# per-topic override list, which would rot faster than the error costs.
+419249f6c22e170d865f9209c4deab5e94f8e6d0
+
+# Split data/lifestyle.html into career, mind, philosophy, productivity and
+# spirit. Cards moved verbatim — the moved blocks still carry the
+# data-reviewed dates they had before the split — but git's copy detection
+# only finds the long runs, so the short cards were being redated to the day
+# of the split. Same caveat as above: the split *created* those lines in the
+# new files, so three short cards still date to it.
+54386f9a0a3fa69ab0f1fae9bda8d22f926db558

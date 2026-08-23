@@ -8626,3 +8626,61 @@ directly beside a hand-written one that said something slightly different —
 `ALB (Application Load Balancer) (Application LB)`. Redundant *and* inconsistent, in one string.
 
 Verified the checker fails on a planted contradiction before wiring it into CI.
+
+
+## Session record — a formatting normalisation, and what `--ignore-rev` cannot do
+
+849 opening tags and 729 closing tags across twelve content files were written in a formatter's
+line-broken style:
+
+```
+<span class="topic-name"
+  >Stoicism — The Art of Rational Endurance</span
+>
+```
+
+Valid HTML, and every tool here already coped: `lint_content.py`'s regexes and `script.js`'s
+`classRe` both allow attributes to run across lines. What it broke was the obvious thing — a plain
+`<span class="topic-name">` search misses **41 topics**, 3% of the site invisible to any grep. That
+cost time twice in one session, most visibly when an audit reported 7 topics in `philosophy` where
+there are 14.
+
+### Proving a formatting change is a formatting change
+
+Whole-document comparison **does not work here** and it is worth knowing why before someone tries
+it: the domain bodies ship inside `<script type="text/html">`, so `html.parser` hands back one
+enormous text node per domain and reports a difference for any whitespace change at all.
+
+The comparison that does work extracts each of the 30 deferred blocks and parses *those* as
+fragments, comparing streams of `(tag, attrs, text)` events with whitespace collapsed. All 30
+identical. `<pre>` blocks were excluded from the rewrite, since their whitespace is literal.
+
+### The freshness cost, measured rather than assumed
+
+A mechanical commit is supposed to be neutralised by `.git-blame-ignore-revs`. This one is listed
+there and **it does not work**, which was worth establishing rather than assuming:
+
+| Attempt | Result |
+|---|---|
+| `--ignore-revs-file` with the commit listed | still blames the reflow |
+| `git blame -w` (ignore whitespace) | still blames the reflow |
+| `-w -C -C` together | still blames the reflow |
+
+The reason is that this commit **merged lines** rather than reindenting them. `--ignore-rev`
+reattributes a line to whatever touched it before; a line assembled from two others has no single
+predecessor, and `-w` cannot help for the same reason. Four cards in `script.html` are therefore
+stamped 2026-08 for a reflow, and three more in `career.html` and `mind.html` still date to the
+lifestyle split for the matching reason — the split *created* those lines in files that had no
+earlier version of them.
+
+Seven cards, one month late, permanently. The alternative is a hand-kept per-topic override list,
+which would rot faster than the error costs. Recorded in `.git-blame-ignore-revs` beside both
+commits so the next session does not spend an hour rediscovering it.
+
+### Also this wave
+
+Two smoke checks pin the runtime behaviour the whole investigation started from: **every indexed
+topic reaches `stIndex()`**, and every row in it has a name. `stIndex()` silently drops a topic it
+cannot parse a name for, and everything the study tools offer is built from it — decks, quizzes, the
+palette, paths, related topics. A topic that falls out is not broken, it is *absent* from all of
+them, and nothing would have said so. 1,369 / 1,369 today. 113 → **115**.
