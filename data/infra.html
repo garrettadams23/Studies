@@ -3218,4 +3218,395 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
   </div>
 </div>
 
+
+<!-- ── TOPIC: VM LIFECYCLE ───────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🧬</span>
+    <span class="topic-name">VM <span class="acro-exp">(Virtual Machine)</span> Lifecycle — Templates, Cloning, Sysprep &amp; the Snowflake Problem</span>
+    <span class="topic-badge">INFRA • Virtualisation</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Every Hand-Built Server Is a Future Outage With a Person's Name On It</div>
+      <div class="concept-desc">
+        A virtual machine built by hand works, and then somebody leaves. Nobody knows which of its
+        forty settings were deliberate, which were accidental, and which are load-bearing. Rebuilding
+        it under pressure is archaeology. The whole point of a template is to make the answer
+        boring: this machine came from that image, plus this configuration, and both are written
+        down. It is the same argument as infrastructure as code, applied one layer down, and it is
+        worth making even in an estate that will never adopt the tooling.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Approach</th><th>Repeatable?</th><th>Where it fits</th></tr></thead>
+          <tbody>
+            <tr><td>Install from ISO <span class="acro-exp">(International Organization for Standardization)</span>, by hand, each time</td><td>No</td><td>One-off lab work only</td></tr>
+            <tr><td>Clone a running machine</td><td>Sort of, and dangerously</td><td>Almost never — see the identity problem below</td></tr>
+            <tr><td>Template from a generalised image</td><td>Yes</td><td>The baseline for most estates</td></tr>
+            <tr><td>Template built by a pipeline</td><td>Yes, and auditable</td><td>Where images change often enough to justify it</td></tr>
+            <tr><td>Configuration applied after boot</td><td>Yes, and inspectable</td><td>Pair with any of the above; this is where the drift goes</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The last row is the important pairing. A template answers "what did this start as"; a
+          configuration tool answers "what has been done to it since", and without the second the
+          first slowly stops being true —
+          <span class="xref">Configuration as Code On-Prem — Ansible, DSC &amp; the Drift You Cannot See</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Identity Problem — Why Generalising Exists</div>
+      <div class="concept-desc">
+        Copying a running Windows machine copies things that were supposed to be unique to it, and
+        the failures that follow are strange enough that people misdiagnose them for days.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Duplicated</th><th>Symptom</th></tr></thead>
+          <tbody>
+            <tr><td>Machine SID <span class="acro-exp">(Security Identifier)</span></td><td>Domain and imaging tooling behaves unpredictably; long unsupported</td></tr>
+            <tr><td>Computer account and secure channel</td><td>Trust relationship failures on one or both machines</td></tr>
+            <tr><td>Host name</td><td>Name collisions and DNS <span class="acro-exp">(Domain Name System)</span> records that flip between two addresses</td></tr>
+            <tr><td>MAC <span class="acro-exp">(Media Access Control)</span> address</td><td>Duplicate leases, and an ARP <span class="acro-exp">(Address Resolution Protocol)</span> table that cannot decide</td></tr>
+            <tr><td>SSH <span class="acro-exp">(Secure Shell)</span> host keys</td><td>Every client warns loudly; on Linux this is the classic clone tell</td></tr>
+            <tr><td>Cloud-init / agent state</td><td>The new machine believes it is already configured</td></tr>
+            <tr><td>Licence activation state</td><td>Activation failures that appear weeks later</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          Generalising — <code>sysprep /generalize</code> on Windows, clearing machine-id, host keys
+          and cloud-init state on Linux — strips exactly this set, which is why a template is
+          generalised *once* and then never booted again. Booting a template to "just patch it
+          quickly" is how an estate ends up with fifty machines sharing an identity nobody notices
+          until a domain join fails.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Keeping Templates From Rotting</div>
+      <div class="concept-desc">
+        Templates fail in the other direction too: an image that is eighteen months old means every
+        new machine starts with eighteen months of patching to do, during which it is exposed.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td>Rebuild the image on a schedule, not on demand</td><td>Monthly is common; the point is that it happens without anyone deciding</td></tr>
+            <tr><td>Version the template and record what changed</td><td>"Built from v14" is a diagnosis; "built from the template" is not</td></tr>
+            <tr><td>Keep the previous version until the new one has been used</td><td>The rollback you will want at 9am on a Monday</td></tr>
+            <tr><td>Put as little as possible in the image</td><td>Everything baked in has to be maintained twice — in the image and on the machines</td></tr>
+            <tr><td>Never leave credentials in a template</td><td>They propagate to every machine built from it, silently, forever</td></tr>
+            <tr><td>Test a build from the template each cycle</td><td>Otherwise you find out during an incident that it has not worked since April</td></tr>
+            <tr><td>Decommission deliberately</td><td>A VM lifecycle has an end; unused machines are cost, patch surface and noise</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The credential row is worth stating bluntly: a password left in an unattended answer file,
+          a cached service account, or an SSH key in the image is copied to every machine built from
+          it, and rotating it afterwards means touching all of them. The pipeline version of this
+          discipline is in
+          <span class="xref">Golden Images as Code — Packer, and Versioning What You Deploy</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: LIVE MIGRATION & MAINTENANCE MODE ──────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🚚</span>
+    <span class="topic-name">Live Migration &amp; Maintenance Mode — Patching Hosts Without an Outage</span>
+    <span class="topic-badge">INFRA • Virtualisation</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Copy the Memory While It Is Still Changing</div>
+      <div class="concept-desc">
+        Moving a running machine between hosts sounds impossible and is nearly mechanical: copy the
+        memory across while the machine keeps running, then copy the pages that changed while you
+        were copying, then the ones that changed during *that*, until the remaining set is small
+        enough to transfer in a pause the guest does not notice. That pause is the whole game. It
+        is typically well under a second, and everything that makes live migration fail is really
+        something making that final set refuse to get small.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Phase</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td>Pre-copy</td><td>Memory streams to the target host while the guest runs</td></tr>
+            <tr><td>Iterative re-copy</td><td>Pages dirtied during the copy are sent again, and again</td></tr>
+            <tr><td>Stun</td><td>The guest is paused for the final delta and the device state</td></tr>
+            <tr><td>Switchover</td><td>The target resumes; the network is told the MAC <span class="acro-exp">(Media Access Control)</span> moved</td></tr>
+            <tr><td>Cleanup</td><td>The source releases the machine</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The requirement people forget: both hosts must be able to run the same instruction set.
+          Mixed CPU <span class="acro-exp">(Central Processing Unit)</span> generations in one cluster are why compatibility modes exist — they mask newer
+          instructions so a guest never sees a feature that would vanish underneath it after a move.
+          Turning that off to gain a few percent is a decision to stop migrating freely.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">A Host Patching Round, in Order</div>
+      <div class="concept-desc">
+        The routine that turns hypervisor patching from an outage into a Tuesday. Vendor names
+        differ; the sequence does not.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Check the cluster can lose a host</td><td>Capacity, and admission control actually enabled. Patching into a full cluster fails halfway</td></tr>
+            <tr><td>Confirm anti-affinity rules</td><td>So both halves of a pair do not end up on the last remaining host</td></tr>
+            <tr><td>Enter maintenance mode</td><td>The host evacuates and refuses new placements</td></tr>
+            <tr><td>Watch what will not move</td><td>This is where the round stalls; see the next card section</td></tr>
+            <tr><td>Patch and reboot</td><td>Firmware and hypervisor together where the vendor pairs them</td></tr>
+            <tr><td>Exit maintenance mode and rebalance</td><td>Manually if the cluster does not do it, or the next host has nowhere to send its guests</td></tr>
+            <tr><td>Verify before the next host</td><td>One host at a time. Two is how a cluster becomes an incident</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The capacity check is the one that gets skipped, and it is the one that hurts: a cluster
+          running at 85% with no reserve cannot evacuate a host at all, so the maintenance window
+          arrives, the evacuation stalls, and someone has to choose between shutting down guests and
+          abandoning the patch. Decide that in advance, not at midnight.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">What Refuses to Move</div>
+      <div class="concept-desc">
+        Nearly every stalled evacuation is one of these, and most of them are configuration rather
+        than fault.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Blocker</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Attached local storage or an ISO <span class="acro-exp">(International Organization for Standardization)</span> on a host datastore</td><td>The target cannot see the file. The most common single cause</td></tr>
+            <tr><td>Passthrough hardware — GPU <span class="acro-exp">(Graphics Processing Unit)</span>, USB <span class="acro-exp">(Universal Serial Bus)</span> dongle, licence key</td><td>Cannot be virtualised across a move; the guest must be shut down</td></tr>
+            <tr><td>A snapshot chain</td><td>Some operations refuse to run against a machine with active snapshots</td></tr>
+            <tr><td>Memory dirtying faster than the link can copy</td><td>A very busy database on a 1 Gb migration network never converges</td></tr>
+            <tr><td>CPU feature mismatch</td><td>Compatibility mode disabled, or a genuinely newer host in the cluster</td></tr>
+            <tr><td>Networking not present on the target</td><td>A port group or VLAN <span class="acro-exp">(Virtual Local Area Network)</span> that exists on three hosts out of four</td></tr>
+            <tr><td>Guest pinned by a rule</td><td>Affinity to a host, often set years ago for a reason nobody recorded</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The convergence row has a specific fix worth knowing: a dedicated, fast migration network.
+          If migrations of busy machines routinely fail or take an hour, the answer is almost never
+          the guest — it is that the memory is being copied over a link that also carries production
+          traffic. Most platforms can also force convergence by throttling the guest, which works and
+          is a deliberate performance hit rather than a free win.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: P2V AND V2V ────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📤</span>
+    <span class="topic-name">P2V &amp; V2V — The Migrations That Still Happen</span>
+    <span class="topic-badge">INFRA • Virtualisation</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Converting a Machine You Are Not Allowed to Rebuild</div>
+      <div class="concept-desc">
+        Physical-to-virtual and virtual-to-virtual conversions were supposed to end a decade ago,
+        and they keep happening — because somewhere there is a machine running software nobody can
+        reinstall, whose vendor is gone, whose installation media is lost, and which the business
+        depends on. The honest framing is that conversion is a *last* option, chosen when rebuilding
+        is genuinely impossible, and that its output is a machine carrying every accumulated oddity
+        of the original into a new home.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Prefer</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><td>Rebuild from a template and reinstall</td><td>Almost always. Clean, documented, patched, and it proves the install is repeatable</td></tr>
+            <tr><td>Rebuild and migrate the data only</td><td>When the application installs cleanly but the data is the valuable part</td></tr>
+            <tr><td>Convert the whole machine</td><td>When the install cannot be reproduced — lost media, dead vendor, undocumented config</td></tr>
+            <tr><td>Leave it physical, isolated</td><td>When conversion fails and the risk of touching it exceeds the risk of leaving it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The fourth row is a real answer, not a joke. An unconvertible machine running a critical
+          process is a business risk that should be recorded, isolated on the network, backed up at
+          the image level and given an end date — rather than quietly carried for another five years
+          because nobody wants to write it down.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Conversion Itself</div>
+      <div class="concept-desc">
+        Cold conversion — from a powered-off machine or a backup image — is slower and far more
+        predictable than hot conversion of a running system. Prefer it whenever a window exists.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Take a full backup first, and test it</td><td>Not the conversion's snapshot — an independent restore path</td></tr>
+            <tr><td>Record the network configuration</td><td>Addresses, routes, DNS <span class="acro-exp">(Domain Name System)</span>, and anything hard-coded elsewhere that points at it</td></tr>
+            <tr><td>Note licences tied to hardware</td><td>Some software keys to a MAC <span class="acro-exp">(Media Access Control)</span> address or a disk serial and will refuse to run after the move</td></tr>
+            <tr><td>Uninstall hardware-specific agents</td><td>RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span> managers, vendor monitoring, out-of-band tooling — all meaningless now</td></tr>
+            <tr><td>Convert, then boot with the network disconnected</td><td>Two machines with one identity on the network is the classic conversion incident</td></tr>
+            <tr><td>Remove ghost devices, install guest tools</td><td>The old drivers linger and cause strange failures months later</td></tr>
+            <tr><td>Right-size afterwards</td><td>Physical machines were bought for their peak; the copy inherits that and wastes it</td></tr>
+            <tr><td>Keep the original powered off, not wiped</td><td>For a defined period, as the rollback. Then decommission it properly</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">After the Boot</div>
+      <div class="concept-desc">
+        Conversions usually succeed and then behave oddly. Almost all of it is the machine
+        discovering that its hardware changed underneath it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
+          <tbody>
+            <tr><td>Blue screen or kernel panic on first boot</td><td>Storage controller driver missing for the new virtual disk type</td></tr>
+            <tr><td>Boots, no network</td><td>New virtual NIC <span class="acro-exp">(Network Interface Card)</span>, so a new interface; the old configuration is bound to a device that is gone</td></tr>
+            <tr><td>Software demands reactivation</td><td>Hardware-keyed licensing. Have the vendor conversation before the migration, not after</td></tr>
+            <tr><td>Performance worse than the physical machine</td><td>Usually storage: a single spinning disk replaced by contended shared storage</td></tr>
+            <tr><td>Clock drift or authentication failures</td><td>Time source changed; point it at the hypervisor or NTP <span class="acro-exp">(Network Time Protocol)</span> deliberately, not both</td></tr>
+            <tr><td>Disk far larger than the data</td><td>Converted at the physical disk's size. Shrink or re-provision thin</td></tr>
+            <tr><td>Old monitoring alerts firing</td><td>Agents for hardware that no longer exists</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The row that ends projects is licensing. Software keyed to physical hardware may simply
+          refuse to run, and finding that out after the physical machine has been decommissioned is
+          the worst possible order — which is why "keep the original powered off" is on the previous
+          list. The wider version of that conversation is
+          <span class="xref">Licensing Models &amp; Surviving an Audit — The True-Up Conversation</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: VIRTUALISATION TROUBLESHOOTING ─────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🩺</span>
+    <span class="topic-name">Virtualisation Troubleshooting — The Storage, Network, Host Triage Order</span>
+    <span class="topic-badge">INFRA • Virtualisation</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">"The VM Is Slow" Is a Statement About Four Machines</div>
+      <div class="concept-desc">
+        Inside the guest, everything looks like the guest's problem: the disk is slow, the processor
+        is busy, the network is dropping. It usually is not. The guest cannot see the other twenty
+        machines on its host, the host cannot see the other hosts on the storage array, and none of
+        them can see the switch. That is why virtualisation troubleshooting has an order — and why
+        starting inside the guest, which is where the ticket points, is nearly always the slowest
+        route to the answer.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Order</th><th>Look at</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>1. Storage</td><td>Latency at the datastore and the array</td><td>The single most common cause, and it presents as everything else</td></tr>
+            <tr><td>2. Host</td><td>Contention, memory pressure, swapping</td><td>A stressed host makes every guest on it look individually ill</td></tr>
+            <tr><td>3. Network</td><td>Uplinks, drops, the physical switch</td><td>Shared by every guest on the host, so a single uplink explains a cluster of tickets</td></tr>
+            <tr><td>4. Guest</td><td>Its own processes, its own configuration</td><td>Real often enough to check, last often enough to check last</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The tell for "not the guest" is <strong>several unrelated machines complaining at once</strong>.
+          Two tickets from different applications on the same host, or on the same datastore, is a
+          platform problem until proven otherwise, and the fastest first question is always: what
+          else lives where this lives?
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Numbers That Mean Something</div>
+      <div class="concept-desc">
+        Vendor names differ; the concepts are the same everywhere, and each one answers a specific
+        question the guest cannot answer about itself.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Metric</th><th>Says</th><th>Concern when</th></tr></thead>
+          <tbody>
+            <tr><td>Storage latency, per datastore</td><td>How long an I/O <span class="acro-exp">(Input/Output)</span> actually takes</td><td>Sustained tens of milliseconds on flash; the guest feels it long before it alerts</td></tr>
+            <tr><td>CPU <span class="acro-exp">(Central Processing Unit)</span> ready / steal time</td><td>The guest wanted the processor and had to wait</td><td>More than a few percent — the guest looks idle *and* slow, which confuses everyone</td></tr>
+            <tr><td>Memory ballooning</td><td>The host is reclaiming memory from guests</td><td>Any sustained amount; it means the host promised more than it has</td></tr>
+            <tr><td>Host swapping</td><td>The host is paging guest memory to disk</td><td>Ever. This is the cliff, not the slope</td></tr>
+            <tr><td>Queue depth and outstanding I/O</td><td>Whether the path is saturated</td><td>Consistently at the limit — the array or the path, not the guest</td></tr>
+            <tr><td>Dropped packets on the uplink</td><td>The physical path is oversubscribed</td><td>Any steady rate, especially with several guests affected</td></tr>
+            <tr><td>Snapshot age and size</td><td>How much of the disk is a delta chain</td><td>Days old, or gigabytes; both punish write performance quietly</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          <strong>CPU ready is the one worth internalising</strong>, because it inverts the usual
+          reading. A guest with low processor utilisation that feels sluggish is the classic
+          signature: it is not using the processor because it cannot get it. Adding more virtual
+          processors to that machine makes it *worse*, since the scheduler now has to find more free
+          cores simultaneously — the correct fix is usually fewer.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Recurring Shapes</div>
+      <div class="concept-desc">
+        Patterns worth recognising on sight, because each has a standard cause.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Shape</th><th>Usually</th></tr></thead>
+          <tbody>
+            <tr><td>Everything slow at 02:00 nightly</td><td>Backups, antivirus scans or index jobs all starting at once across guests</td></tr>
+            <tr><td>One guest slow, host quiet</td><td>Actually the guest — or a snapshot nobody removed</td></tr>
+            <tr><td>All guests on one host slow</td><td>Host memory pressure, or one noisy neighbour saturating a shared path</td></tr>
+            <tr><td>All guests on one datastore slow</td><td>The array, the path, or another workload on the same spindles</td></tr>
+            <tr><td>Slow only after a migration</td><td>Landed on a busier host, or lost a cache warm-up</td></tr>
+            <tr><td>Intermittent network loss for some guests</td><td>One uplink of a team failing, or a VLAN <span class="acro-exp">(Virtual Local Area Network)</span> missing on one host</td></tr>
+            <tr><td>Guest fine, users complain</td><td>The problem is between them — WAN <span class="acro-exp">(Wide Area Network)</span>, gateway, DNS <span class="acro-exp">(Domain Name System)</span>. Nothing on this page applies</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc" style="margin-top:10px">
+          The 02:00 row is a scheduling problem masquerading as a performance one, and the fix is
+          organisational rather than technical: stagger the windows. The last row is the reminder
+          that "the server is slow" is a claim about a path, and the virtualisation layer is only
+          one segment of it — <span class="xref">Network Troubleshooting — A Systematic Approach</span>
+          takes over where this card stops.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body infra -->

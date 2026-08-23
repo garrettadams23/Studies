@@ -1749,7 +1749,10 @@ Veeam mechanics) are genuine but narrower and can follow if the estate needs the
 - [x] Backup Strategy → *Backup Strategy — 3-2-1-1-0 and the Schemes That Make Restores Possible*
 - [x] Ransomware-Resilient Backup → *Ransomware-Resilient Backup — Immutability, Isolation & Assuming the Domain Is Lost*
 - [x] Restore Testing + DR Design + DR for Cloud/SaaS → *Restore Testing & DR Design — Turning Backups Into a Recovery Capability*
-- [ ] Remaining: sizing/overcommit deep, VM lifecycle/templates, live migration ops, P2V/V2V, storage fundamentals/SAN/NAS/performance/tiering, backup targets & products, failover/failback drill, tabletop, post-incident review (narrower depth — follow on demand)
+- [x] VM lifecycle/templates, live migration ops, P2V/V2V and virtualisation troubleshooting →
+  four cards into `infra`, see the session record. Still open and genuinely narrower:
+  sizing/overcommit deep, storage performance/tiering, backup targets & products, failover/failback
+  drill, tabletop, post-incident review.
 
 **Wave Z1 — Hypervisors** ⟵ see the shipped-note above
 - [ ] Virtualization Fundamentals — type 1 vs type 2, paravirtualization, hardware assist
@@ -9121,3 +9124,29 @@ organisations actually buy and deploy — had none.
 
 Site total 1,380 → **1,383**. Twelve new cross-references. The link-preview counts updated
 themselves, which is the build-time substitution from the previous wave earning its keep.
+
+
+## Session record — the virtualisation operations set, on demand
+
+Track Z's shipped-note left a list of "narrower depth — follow on demand" items. Four of them are
+the day-to-day of running a hypervisor estate, and the probe confirmed the gap: `sysprep` appeared
+twice on the whole site, `maintenance mode` once, `CPU ready` once, `P2V` not at all.
+
+- **VM Lifecycle** — templates, cloning and the identity problem. Leads on the argument rather than
+  the procedure: every hand-built server is a future outage with a person's name on it. The
+  duplicated-identity table (SID, secure channel, MAC, SSH host keys, cloud-init state) is the part
+  that gets misdiagnosed for days, and the rule that follows is that a template is generalised once
+  and never booted again.
+- **Live Migration & Maintenance Mode** — what the memory pre-copy actually does, and therefore why
+  everything that breaks it is something stopping the final delta from getting small. The patching
+  round is written as a sequence, with the capacity check first because it is the step that gets
+  skipped and the one that turns a window into an incident.
+- **P2V & V2V** — framed honestly as a *last* option, with "leave it physical and isolated" listed
+  as a real answer rather than a joke. The licensing row is the one that ends projects, which is why
+  "keep the original powered off" is on the checklist.
+- **Virtualisation Troubleshooting** — the storage, host, network, guest order, and why starting
+  where the ticket points is the slowest route. **CPU ready** gets the emphasis because it inverts
+  the usual reading: a guest with low utilisation that feels slow is not using the processor because
+  it cannot get it, and adding virtual processors makes it worse.
+
+Site total 1,383 → **1,387**. All suites green, budget 31% headroom.
