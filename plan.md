@@ -9652,3 +9652,46 @@ Also re-measured while here: §4's content-age number. No `2026-06` stamps remai
 
 Site total unchanged at **1,405**. 43 → **46 volatile spans**. Smoke **135/135** · axe
 **6/6** · visual **2/2**.
+
+
+## Session record — `ATT&CK` was two unknown acronyms
+
+Third pass of the same method in one session, and this one was over in two commands.
+`acronym_drift.py` reports capitalised tokens the dictionary has never seen. Its list runs
+to 1,732 entries and is mostly product names by design — but positions **7 and 8** were
+`ATT` (39) and `CK` (39).
+
+An ampersand is not a word character, so `\b[A-Z]…\b` split `ATT&CK` in half. The
+dictionary has carried `ATT&CK` since it was written; the tool had been reporting its two
+fragments as unknown, at the top of the queue, ever since.
+
+The tokenizer now joins an ampersand **only when nothing separates it from the words on
+either side**, which is what keeps "Backup &amp; Recovery" as two words. 76 phantom
+occurrences left the list, and four real acronyms that had been invisible as fragments
+appeared: `POA&M`, `VR&E`, `W&B`, `S&P`.
+
+Two of the four were worth acting on, and the first turned out to be a defect rather than
+a gap:
+
+- **`POA&M` was in the dictionary as `POAM`.** Content writes `POA&M` five times and
+  `POAM` zero times — the only two `POAM` strings on the site were in `acronym.html`,
+  which is *generated from the dictionary*. So the site was publishing a misspelling of a
+  standard RMF/FedRAMP term, sourced entirely from the one file claiming to be the
+  authority on it. Renamed; the reference domain now prints it correctly and the annotator
+  matches the five real uses.
+- **`VR&E`** added — a Veterans Affairs benefit named once in `military`, and genuinely an
+  acronym rather than a product.
+
+`W&B` (Weights & Biases) and `S&P` (Standard & Poor's) are company names and correctly
+stay out.
+
+**One judgement worth recording.** `VR&E` was first filed under a new `"c": "Military"`
+category — and the acronym domain is generated *by category*, so one entry created a whole
+`By Area — Military` topic and moved the site total to 1,406. `Government` already held
+`DoD`, `DISA`, `NATO`, `NDAA`, `SCI` and `SF`: the same territory, fourteen entries deep.
+Refiled, and the topic count went back to 1,405. **A category field in a generated
+taxonomy is a structural decision, not a label** — worth a look at the neighbours before
+inventing one.
+
+Site total unchanged at **1,405**; dictionary 1,094 → **1,095** entries. Smoke **135/135** ·
+axe **6/6** · visual **2/2**.
