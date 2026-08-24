@@ -4884,6 +4884,11 @@ stale by any reasonable standard yet — the site is months old, not years — b
 number to watch, and the freshness tooling exists precisely so it can be watched rather
 than guessed at.
 
+> ✅ **Re-measured.** No `2026-06` stamps remain: the distribution is now **446 at 2026-07
+> and 900 at 2026-08**, across the 1,346 hand-written topics (the 59 generated `acronym`
+> cards carry no stamp by design). The number moved because cards get edited, not because
+> anyone ran a freshness pass — which is the useful thing to know about it.
+
 Related and still unresolved from session 13: **`VOLATILE_HINTS` is too broad to act on.**
 182 of 943 topics match it. Before anything consumes that signal it needs to mark the
 *claim* — a console path, a price, a limit — not prose containing a word like "portal".
@@ -9579,3 +9584,71 @@ the three wrong.
 
 Site total unchanged at **1,405**. Smoke **135/135** · axe **6/6** · visual **2/2** · OG
 card current.
+
+
+## Session record — the vendor-console queue, made worth reading
+
+`check_volatility.py` ends every run with an advisory list: *topics that name a vendor
+console and carry no dated span*. It had printed **14** for several sessions and nobody had
+worked it, which is the same failure mode §2 had just been fixed for — so it got the same
+treatment: read the output before trusting the label.
+
+**Of the 14, three carried a real claim.** 21% precision, on a list a person is asked to
+read every session.
+
+| Marked | Where | The claim |
+|---|---|---|
+| `Entra admin center ▸ Conditional Access ▸ What If` | `cloud` | A console path, inside a code comment |
+| `intune.microsoft.com` | `endpoint` | A console host — and this one has already moved once, from `endpoint.microsoft.com` |
+| `Teams admin` | `m365` | A table cell saying which console owns a setting |
+
+The other eleven were four distinct heuristic bugs, each visible the moment the matching
+text was printed beside the topic name rather than just the count:
+
+- **`exchange admin` and `teams admin` matched inside longer words** — "Exchange
+  Administrator" is a role, and "most Teams administration is really SharePoint" is a
+  sentence. A trailing `\b` fixes both.
+- **`management console` named the Microsoft Management Console** — `gpmc.msc`,
+  `compmgmt.msc`, a snap-in host that has not been renamed since the 1990s. This check
+  exists for vendor consoles that get renamed; MMC is the exact opposite of that. Four of
+  the eleven.
+- **`cloud console` is a noun phrase, not a product.** Both hits meant "whichever cloud you
+  use" — one in an IaC comparison table, one in a Python automation card.
+- **`\badmin\.[a-z]` matched `old-admin.example.com`** in a subdomain-enumeration card.
+  Now requires a real boundary before it and skips the reserved example domains.
+
+**14 → 2**, and the two survivors are honest ones: both say "admin centre" in passing
+without making a claim about it, which is precisely the case the tool's own docstring
+predicted and refused to fail the build over.
+
+One thing was *added* while narrowing: the console **hosts**, enumerated —
+`entra` · `intune` · `purview` · `compliance` · `security` `.microsoft.com`. That set is
+small, and it is the highest-value thing on the whole list, because a card naming a host
+that has moved is wrong rather than merely aged. Adding it produced no new candidates,
+which is its own small confirmation: every card already naming one had already marked it.
+
+### The self-test, and why this one needed it
+
+A regex narrowed on evidence is one edit away from being widened back by someone who does
+not have the evidence. So the evidence is now fixtures: ten strings taken verbatim from the
+content as it was when the tuning happened, each with the reason it must or must not match,
+run by `--self-test` in `make check` and in CI beside `check_markup.py`'s.
+
+It caught a mistake immediately. The fixture asserting that `intune.microsoft.com` matches
+**failed** — the card had actually been caught by "admin center" three words earlier, and
+the bare host matched nothing at all. Without the fixture the enumerated-hosts rule would
+never have been written, because the list would have looked like it already worked.
+
+### The pattern, twice in one session
+
+§2 and this were the same shape: a number printed every run that nobody had read the
+composition of. In both cases the label was a hypothesis about the contents — "prefer
+ref-table", "names a vendor console" — and in both cases one pass over the actual matches
+contradicted it. **The count is cheap to print and worthless to act on; the distribution is
+one command away and decides everything.**
+
+Also re-measured while here: §4's content-age number. No `2026-06` stamps remain — 446 at
+`2026-07`, 900 at `2026-08`.
+
+Site total unchanged at **1,405**. 43 → **46 volatile spans**. Smoke **135/135** · axe
+**6/6** · visual **2/2**.
