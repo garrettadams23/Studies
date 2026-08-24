@@ -656,7 +656,7 @@ jobs:
                     <tr><td><code>terraform destroy</code></td><td>Tear down everything this config manages</td></tr>
                     <tr><td><code>terraform state list</code></td><td>List the resources Terraform is tracking</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The golden habit: <strong>always read the <code>plan</code> before you
                     <code>apply</code></strong>. It shows adds (<span class="c-green">+</span>),
                     changes (<span class="c-amber">~</span>), and destroys
@@ -741,7 +741,7 @@ jobs:
                     <tr><td>At-least-once</td><td>Never lost, but may be <em>redelivered</em>. The common default.</td></tr>
                     <tr><td>Exactly-once</td><td>Ideal but expensive/limited — usually emulated via dedup.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Because at-least-once means duplicates happen, make consumers
                     <strong class="c-cyan">idempotent</strong> — processing the same message
                     twice has the same effect as once (e.g. key writes on a unique message
@@ -799,7 +799,7 @@ jobs:
                     <tr><td>App / in-memory</td><td>Redis, Memcached</td><td>Query results, sessions, computed values</td></tr>
                     <tr><td>Database</td><td>Query &amp; buffer cache</td><td>Hot pages &amp; plans in RAM <span class="acro-exp">(Random Access Memory)</span></td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The closer to the user a cache sits, the faster and cheaper the hit — but
                     the harder it is to invalidate. Each layer is a trade of speed vs freshness.
                   </div>
@@ -839,7 +839,7 @@ jobs:
                     <tr><td>Versioned keys</td><td>Bake a version/hash into the key (<code>user:42:v3</code>); old keys just age out.</td></tr>
                     <tr><td>Cache-Control headers</td><td>For HTTP/CDN: <code>max-age</code>, <code>no-store</code>, <code>ETag</code> for revalidation.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Watch for the <strong class="c-red">thundering herd / stampede</strong>: when
                     a hot key expires, thousands of requests miss at once and hammer the DB.
                     Mitigate with a short lock, request coalescing, or staggered TTLs.
@@ -885,7 +885,7 @@ jobs:
     <span class="var">body</span>: <span class="fn">JSON.stringify</span>({ <span class="var">message</span>: <span class="str">`Hello, </span>${<span class="var">name</span>}<span class="str">`</span> }),
   };
 }</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Deploy it, wire a trigger (API Gateway, a bucket event, a cron schedule),
                     and it scales from zero to thousands of concurrent invocations
                     automatically — each request gets its own isolated run.
@@ -998,7 +998,7 @@ jobs:
 <span class="fn">aws</span> s3 ls s3://my-bucket/                  <span class="com"># list objects</span>
 <span class="fn">aws</span> s3 sync ./site s3://my-bucket/         <span class="com"># upload a whole folder</span>
 <span class="fn">aws</span> s3 presign s3://my-bucket/report.pdf   <span class="com"># temp shareable URL</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Security note:</strong> the classic cloud breach is a
                     bucket left <em>public</em>. Keep buckets private by default, use IAM <span class="acro-exp">(Identity and Access Management)</span>
                     policies for access, and reach for presigned URLs when you need to share a
@@ -1055,7 +1055,7 @@ jobs:
                     <tr><td>Zero extra infrastructure cost</td><td class="c-green">Rolling</td></tr>
                     <tr><td>To release to specific users / A-B test</td><td class="c-green">Feature flags</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     They combine: canary-deploy behind a feature flag on rolling
                     infrastructure. Kubernetes and load balancers make traffic-splitting easy,
                     which is why these went mainstream.
@@ -1112,7 +1112,7 @@ jobs:
                     <tr><td>Availability</td><td>Every request gets a (non-error) response, even if some nodes are down.</td></tr>
                     <tr><td>Partition tolerance</td><td>The system keeps operating even when nodes can't talk to each other.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Note: CAP's "Consistency" is stricter than ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span>'s — it means
                     <em>linearizability</em> (one up-to-date copy), not "constraints hold."
                     Different word, different guarantee.
@@ -1131,7 +1131,7 @@ jobs:
                     <tr><td>Good for</td><td>Banking, inventory, bookings</td><td>Feeds, carts, social, DNS <span class="acro-exp">(Domain Name System)</span></td></tr>
                     <tr><td>Examples</td><td>etcd, ZooKeeper, HBase</td><td>Cassandra, DynamoDB, Riak</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Most real systems aren't purely one or the other — they tune per-operation
                     (a shopping cart is AP; the final checkout is CP).
                   </div>
@@ -1149,7 +1149,7 @@ jobs:
                     <tr><td>Read-your-writes</td><td>You always see your own updates (even if others lag).</td></tr>
                     <tr><td>Causal</td><td>Related events are seen in order; unrelated ones may not be.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     A related lens, <strong>PACELC</strong>, extends CAP: even when there's no
                     partition (<strong>E</strong>lse), you still trade
                     <strong>L</strong>atency vs <strong>C</strong>onsistency — stronger
@@ -1192,7 +1192,7 @@ jobs:
                     <tr><td>Data plane</td><td>The collection of all sidecars actually moving the traffic.</td></tr>
                     <tr><td>Control plane</td><td>The brain (e.g. Istio's istiod) that configures every sidecar with routing rules, certs, and policy.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     You change behavior by updating the control plane; it pushes config to the
                     sidecars. Newer meshes offer a "sidecar-less" (per-node) mode to cut the
                     per-pod overhead.
@@ -1224,7 +1224,7 @@ jobs:
                     <tr><td>Overkill when</td><td>A handful of services — the operational complexity and latency/resource overhead outweigh the benefit.</td></tr>
                     <tr><td>Options</td><td>Istio (powerful, complex), Linkerd (lightweight, simpler), Cilium (eBPF-based), Consul.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     A mesh solves the same problems an API <span class="acro-exp">(Application Programming Interface)</span> gateway does <em>between</em> internal
                     services — the gateway is the front door for outside traffic; the mesh is
                     the internal road network.
@@ -1430,7 +1430,7 @@ jobs:
                     <tr><td>2. Feedback</td><td>Fast signal right→left</td><td>Monitoring, automated tests, alerting, stop-the-line on failure</td></tr>
                     <tr><td>3. Learning</td><td>Continual experimentation</td><td>Blameless postmortems, chaos drills, psychological safety</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Flow gets change out fast; feedback catches problems fast; learning makes the
                     system better over time. Skip feedback and you ship bugs faster; skip learning
                     and you repeat incidents.
@@ -1465,7 +1465,7 @@ jobs:
                     <tr><td>Change failure rate</td><td>% of deploys causing a problem</td><td>0–15%</td></tr>
                     <tr><td>MTTR <span class="acro-exp">(Mean Time To Repair)</span></td><td>Time to restore after an incident</td><td>&lt; 1 hour</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     First two = <strong>throughput</strong>; last two = <strong>stability</strong>.
                     (A fifth, <em>reliability</em>, was later added.) Use them as a trend, not a
                     stick — gaming "deploy frequency" by shipping trivial changes helps no one.
@@ -1535,7 +1535,7 @@ jobs:
                     <tr><td>Product mindset</td><td>The platform team treats developers as customers (adoption, not mandate)</td></tr>
                     <tr><td>Not a rename of ops</td><td>It's a product, not a gatekeeper — paved roads, not roadblocks</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Tools in the space: Backstage (developer portal), Crossplane/Terraform
                     (provisioning), Port/Humanitec (IDP orchestration).
                   </div>
@@ -1571,7 +1571,7 @@ jobs:
                     <tr><td>Deploy → staging</td><td>Smoke/e2e tests green</td></tr>
                     <tr><td>Deploy → prod</td><td>Manual approval or automated canary</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">CI</strong> = integrate + test every change automatically.
                     <strong class="c-green">CD</strong> = that artifact is always deployable
                     (Continuous Delivery) or actually auto-deployed (Continuous Deployment). Keep
@@ -1646,7 +1646,7 @@ jobs:
                     <tr><td>CircleCI / Travis / Drone</td><td>Hosted CI, config-as-YAML, fast setup</td></tr>
                     <tr><td>Argo / Tekton</td><td>Kubernetes-native pipelines (GitOps-friendly)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     They all share the model — YAML/DSL pipeline, runners/agents, stages, artifacts,
                     secrets. Learn the concepts once; the syntax is a lookup. Pick by where your code
                     lives and whether you want hosted vs self-managed.
@@ -1674,7 +1674,7 @@ jobs:
                     <tr><td>GitHub Flow</td><td>Branch → PR → review → merge → deploy main</td><td>Most web teams; simple &amp; effective</td></tr>
                     <tr><td>GitFlow</td><td>Long-lived develop/release/hotfix branches</td><td>Versioned/released software; heavier</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">The trend is toward trunk-based:</strong> long-lived
                     branches cause painful merges and delay integration (the opposite of "continuous
                     integration"). Short-lived branches + feature flags let you merge constantly and
@@ -1710,7 +1710,7 @@ jobs:
                     <tr><td>Blue-green</td><td>Instant switch + instant rollback</td></tr>
                     <tr><td>Automated rollback</td><td>Bad canary metrics → pipeline reverts automatically</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Tools: LaunchDarkly/Unleash/Flagsmith (flags), Argo Rollouts/Flagger (automated
                     canary on Kubernetes). This is how elite teams deploy dozens of times a day with
                     a low change-failure rate — the two DORA <span class="acro-exp">(DevOps Research and Assessment)</span> goals reconciled.
@@ -1791,7 +1791,7 @@ jobs:
                     <tr><td>StatefulSet</td><td>Pods with stable identity/storage (databases)</td></tr>
                     <tr><td>Namespace</td><td>Virtual cluster for isolation/multi-tenancy</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Everything is <strong class="c-green">declarative YAML <span class="acro-exp">(YAML Ain't Markup Language)</span></strong> reconciled to
                     desired state — you describe what you want; the controllers make it so
                     (<code>kubectl apply -f</code>).
@@ -1857,7 +1857,7 @@ jobs:
                     <tr><td>Image scanning</td><td>Trivy/Grype in CI; only signed images (see supply chain)</td></tr>
                     <tr><td>Secrets</td><td>Encrypt at rest (etcd); external secrets operators</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     This is where the Red Team's "Kubernetes attacks" meet defense — RBAC abuse and
                     container escape are exactly what these controls stop.
                   </div>
@@ -1898,7 +1898,7 @@ jobs:
                     <tr><td>Puppet / Chef</td><td>Agent-based, pull, mature at large scale</td></tr>
                     <tr><td>Salt</td><td>Agent or agentless; very fast event bus</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Idempotency</strong> is the whole point: run it 100 times,
                     the box ends in the same state. Config management handles <em>mutable</em> servers;
                     it complements Terraform (which <em>provisions</em> the infra) — ties to the IaC <span class="acro-exp">(Infrastructure as Code)</span> card.
@@ -1933,7 +1933,7 @@ jobs:
                     <tr><td>External Secrets Operator</td><td>Sync a manager's secrets into K8s <span class="acro-exp">(Kubernetes)</span> Secrets</td></tr>
                     <tr><td>Sealed Secrets / SOPS</td><td>Encrypt secrets so they're safe to commit to Git (GitOps)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Note:</strong> plain Kubernetes Secrets are only
                     base64-encoded, not encrypted at rest by default — enable encryption providers and
                     prefer a real manager. Dynamic short-TTL creds beat static ones every time.
@@ -1971,7 +1971,7 @@ jobs:
 syft myimage:1.0 <span class="var">-o</span> cyclonedx-json &gt; sbom.json
 cosign sign myimage:1.0
 cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Then enforce it: an admission controller can <strong class="c-green">reject
                     unsigned images</strong> at deploy time — provenance you actually check, not just
                     generate.
@@ -2005,7 +2005,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                     <tr><td>Conftest</td><td>Run OPA policies against Terraform/JSON/YAML in CI</td></tr>
                     <tr><td>Cloud-native</td><td>AWS <span class="acro-exp">(Amazon Web Services)</span> SCPs <span class="acro-exp">(Service Control Policy)</span>, GCP <span class="acro-exp">(Google Cloud Platform)</span> Org Policy, Azure Policy</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Where to enforce:</strong> shift left (CI catches it before
                     merge) <em>and</em> defense in depth (admission control catches it at runtime).
                     Ties directly to the CIS <span class="acro-exp">(Center for Internet Security)</span> Benchmarks and cloud-security cards.
@@ -2038,7 +2038,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                     <tr><td>Artifactory / Nexus</td><td>Universal (Docker, Maven, npm, PyPI…) </td></tr>
                     <tr><td>GHCR / ECR <span class="acro-exp">(Elastic Container Registry)</span> / Artifact Registry</td><td>Cloud/platform-native registries</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Practices:</strong> immutable tags (never re-push
                     <code>:v1.2.3</code>), retention policies to prune old images, scan on push, and
                     promote the <em>same</em> digest through dev→staging→prod rather than rebuilding —
@@ -2075,7 +2075,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                     <tr><td>CSI driver</td><td>Provisions PersistentVolumes from EBS/PD/etc. via a PVC</td></tr>
                     <tr><td>StorageClass</td><td>Defines a tier (ssd, standard) for dynamic provisioning</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Cilium</strong> (eBPF-based) is increasingly the default —
                     it does networking, NetworkPolicy, and observability in one. Storage: a
                     <code>PVC</code> requests, the <code>StorageClass</code> + CSI driver fulfill it.
@@ -2106,7 +2106,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                   whose actual job is something else, none of them good, all of them different.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     Platform engineering is the correction, and the honest version of the argument is narrow:
                     <em>the amount a product engineer must hold in their head to ship safely has grown past
                     what is reasonable, and most of that load is identical across teams.</em> Not all of it —
@@ -2131,7 +2131,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                       <tr><td>Germane — effort that builds useful understanding</td><td>Learning why the system fails the way it does</td><td>Support it; do not hide it behind an abstraction</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The germane row is the one that stops a platform going too far. Hiding production
                     behaviour from the team that owns the service does not reduce load, it relocates the
                     understanding away from the people who need it at three in the morning. A platform should
@@ -2158,7 +2158,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                       <tr><td>The real problem is unclear ownership</td><td>An org chart problem; a platform will not fix it and will absorb the blame</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The honest test before starting: can you name the three things product engineers spend
                     time on that they should not, with evidence rather than intuition? If not, the first piece
                     of platform work is finding out, and it is usually a fortnight of watching how a change
@@ -2189,7 +2189,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                   to be genuinely faster than the alternative, and that constraint is what keeps them good.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     The nuance worth stating: some things must be mandatory — how production is accessed, how
                     artifacts are signed, what logging exists. The resolution is to mandate the
                     <em>outcome</em> and make the platform overwhelmingly the easiest way to achieve it. A
@@ -2241,7 +2241,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                       <tr><td>The compliance shield</td><td>"Security made them add another step"</td><td>Automate the control so it costs the team nothing</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The gatekeeper and the ticket queue are the same failure at different speeds, and both
                     usually start as a temporary measure while automation catches up. Write down when the
                     temporary measure ends, because otherwise it is the platform's permanent shape and the
@@ -2272,7 +2272,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                   providing, and nobody has to argue about it.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     That property is what stops golden paths becoming policy. The moment stepping off is
                     forbidden, the path has to accommodate every case, and it grows into a configuration
                     language with two hundred options — which is the state most internal platforms are
@@ -2325,7 +2325,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                       <tr><td>Solving the thing three teams asked for</td><td>The general case nobody has hit yet</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     A useful discipline: for every abstraction, write down what it costs a new engineer to
                     learn and what it saves them. If the honest answer is that they must learn both your layer
                     and the underlying system, you have added load rather than removed it — which is the exact
@@ -2358,7 +2358,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                   catalogue query that currently requires asking three people.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     Which is why an empty or stale portal is worse than none: it is an authoritative-looking
                     source that is wrong, and people learn within a month to ask a human instead. Accuracy is
                     the whole product, and accuracy comes from generation rather than from data entry.
@@ -2385,7 +2385,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                       <tr><td>Compliance and security posture</td><td>Read from the scanners that already run</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Ownership resolving through a team rather than a person is the detail that decides whether
                     this survives a reorganisation. Individual names in a catalogue are wrong within months
                     and produce the worst possible outcome during an incident: a confident page to someone who
@@ -2414,7 +2414,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                       <tr><td>New checks arrive in warn mode first</td><td>Everyone turning red overnight for a rule added on Tuesday</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The strongest version couples a check to the golden path: if following the supported route
                     makes a check pass automatically, the scorecard stops being an audit and becomes an
                     adoption argument. Teams do not resist a standard that costs them nothing to meet.
@@ -2455,7 +2455,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                       <tr><td>Approve every network rule</td><td>Namespace-scoped policy the team owns, with egress defaults enforced</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The pattern in that right-hand column: the common case becomes free, and the exception
                     keeps its review. Nearly every gate in a real organisation is defending against a scenario
                     that only arises in the exceptional case, and charging the common one for it.
@@ -2506,7 +2506,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                       <tr><td>Secrets</td><td>Environment-scoped, short-lived, never production credentials</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The synthetic dataset is the piece teams underestimate and it decides whether the whole
                     thing is useful. An environment with no realistic data lets you check the service starts,
                     which nobody needed an environment for. Building and maintaining a good seed set is
@@ -2548,7 +2548,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                       <tr><td>Support response time</td><td>Users experience a slow answer as an outage of you</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Publish these where users see them. A platform team that reports its own reliability
                     changes the conversation from anecdote — "the pipeline is always flaky" — to a shared
                     number that either supports the complaint or does not.
@@ -2601,7 +2601,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                       <tr><td>Escalation path for genuine platform outages</td><td>Distinguishes "how do I" from "everything is down"</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Treat the support queue as your most honest product research. Teams do not fill in surveys
                     truthfully and they do describe their actual problem when blocked. The three questions
                     asked most often this quarter are, almost always, next quarter's roadmap.
@@ -2631,7 +2631,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                   investment is working, and the only defence when budgets tighten.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     It also protects against the opposite failure: a platform team that is genuinely not
                     helping, sustained by the assumption that platform investment is inherently good. Both
                     errors are corrected by the same numbers.
@@ -2679,7 +2679,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                       <tr><td>Time to debug a production issue on the platform</td><td>A leaky abstraction, in the one measurement that reveals it</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     One last observation that belongs with measurement because it moves every number above:
                     for an internal platform, <strong>documentation is the interface.</strong> A capability
                     nobody can find does not exist, and the most common cause of low adoption is not a missing
@@ -2713,7 +2713,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                   while they waited.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     This is why build speed is a feature rather than a nice-to-have. The compounding is
                     severe — a cycle slow enough to break concentration changes how people work, pushing them
                     toward larger batches and less frequent verification, which is the opposite of everything
@@ -2758,7 +2758,7 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                       <tr><td>Toil audit</td><td>For two weeks, log manual work that is repetitive, automatable and scales with growth</td><td>What to automate, ranked by frequency rather than by irritation</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Watching in silence is the whole method for the first one — the instinct to help destroys
                     the data, and the moment somebody quietly gives up and asks a colleague is the finding.
                     For the second, the definition matters: toil is manual, repetitive, automatable, tactical

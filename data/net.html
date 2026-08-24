@@ -5021,7 +5021,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
                     <tr><td>Jitter</td><td>Variation in latency</td><td>Real-time audio/video (choppy calls)</td></tr>
                     <tr><td>Loss</td><td>Packets dropped</td><td>Everything; voice can't retransmit</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Voice/video care most about <strong>jitter and loss</strong>; bulk data
                     cares only about eventual <strong>bandwidth</strong>. QoS trades one for
                     the other on purpose.
@@ -5120,7 +5120,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
                     <tr><td>Faster handshakes</td><td>0-RTT / 1-RTT connection setup vs TCP+TLS's multiple round trips.</td></tr>
                     <tr><td>Connection migration</td><td>A connection ID (not IP:port) means switching Wi-Fi → cellular doesn't drop the connection.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Because QUIC lives in <em>user space</em> (not the OS kernel like TCP), it
                     evolves faster. The trade-off: some middleboxes/firewalls throttle or block
                     UDP, so clients fall back to HTTP/2 over TCP when needed.
@@ -5177,7 +5177,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
                     <tr><td>1</td><td>Servers directly attached to a stratum-0 source.</td></tr>
                     <tr><td>2, 3, …</td><td>Sync from the stratum above; the number grows with distance from the source.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Most machines sync from public pools (<code>pool.ntp.org</code>) or an
                     internal server. Best practice: point your fleet at a couple of internal
                     NTP servers that themselves sync upstream — consistent time, less external
@@ -5195,7 +5195,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
 <span class="fn">chronyc</span> tracking              <span class="com"># chrony: offset, drift, stratum</span>
 <span class="fn">chronyc</span> sources -v            <span class="com"># which servers, how reachable</span>
 <span class="fn">ntpq</span> -p                       <span class="com"># classic ntpd: peer list &amp; offsets</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Modern Linux uses <strong>chrony</strong> or
                     <strong>systemd-timesyncd</strong>; both slew the clock gradually rather
                     than jumping it, so time never runs backward. Always store and compare
@@ -5279,7 +5279,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
                     <tr><td>Caddy</td><td>Automatic HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span> (Let's Encrypt out of the box); simplest config.</td></tr>
                     <tr><td>Envoy / Traefik</td><td>Cloud-native, dynamic config; common as Kubernetes ingress and service-mesh proxies.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     The <strong class="c-amber">X-Forwarded-For</strong> /
                     <strong class="c-amber">X-Real-IP</strong> headers matter: once a proxy is
                     in the path, the back-end sees the <em>proxy's</em> IP <span class="acro-exp">(Internet Protocol)</span> unless the proxy
@@ -5314,7 +5314,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
                     <tr><td>NAPALM</td><td>Vendor-neutral API <span class="acro-exp">(Application Programming Interface)</span> — get/replace config uniformly</td></tr>
                     <tr><td>gNMI / NETCONF / RESTCONF</td><td>Model-driven (YANG) APIs — the modern replacement for CLI scraping</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Source of truth:</strong> keep intended config in Git
                     (often generated from a data model with Jinja2 templates), then push and verify.
                     Model-driven telemetry (gNMI streaming) is replacing SNMP <span class="acro-exp">(Simple Network Management Protocol)</span> polling for monitoring.
@@ -5347,7 +5347,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
                     <tr><td>DoT (DNS over TLS)</td><td><strong>Privacy</strong> — encrypts DNS on port 853</td></tr>
                     <tr><td>DoH (DNS over HTTPS)</td><td><strong>Privacy</strong> — encrypts DNS inside HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span> (443), blends with web traffic</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Key distinction:</strong> DNSSEC proves an answer is
                     <em>genuine</em> but is public; DoH/DoT keep the query <em>private</em> but don't
                     prove authenticity. You want both. DoH complicates enterprise DNS filtering — a
@@ -5382,7 +5382,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
                     <tr><td>Multicast</td><td>One-to-many delivery (IGMP) — video/streaming without flooding</td></tr>
                     <tr><td>PoE</td><td>Power over Ethernet — run APs, phones &amp; cameras on the data cable</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">The trend:</strong> SD-WAN + SASE <span class="acro-exp">(Secure Access Service Edge)</span> (security + networking as
                     a cloud service) is where enterprise WAN is heading — central policy, encrypted
                     overlays, and security inspection built into the fabric.
@@ -5473,7 +5473,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
                       <tr><td>Autonomy — must keep running if the link drops</td><td>A remote site, a ship, a store that cannot stop when WAN <span class="acro-exp">(Wide Area Network)</span> fails</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     A lighter form is <strong class="c-cyan">function-at-edge</strong>: running small
                     logic in a CDN <span class="acro-exp">(Content Delivery Network)</span> point of presence — auth, redirects, personalization — close to the
                     user without operating any hardware yourself. It is the edge win most teams
@@ -5501,7 +5501,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
                       <tr><td>Offline-first</td><td>It must do its job with the link down and reconcile later</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The security posture is the one from
                     <span class="xref">Securing OT Without Breaking It — Segmentation, Access &amp; Safety-First IR</span>:
                     a physically exposed device on an untrusted network, which must never become a
@@ -5541,7 +5541,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
 
 <span class="com"># Commit-confirm on platforms that have it does the same thing natively:</span>
    commit confirmed 10     <span class="com"># auto-rollback unless confirmed</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The discipline is simple and near-absolute: never save a risky change until you have proved
           you can still reach the device afterwards. The timed reload turns an outage that needs a
           site visit into a ten-minute wait.
@@ -5588,7 +5588,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>Upgrade redundant pairs one at a time</td><td>And verify failover actually worked before the second</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Automating this is worthwhile once the estate is more than a handful of devices —
           <span class="xref">Network Automation — Ansible, Netmiko &amp; NAPALM</span> covers the
           tooling, and config archiving is the first thing most teams automate because the payback
@@ -5631,7 +5631,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
     switchport mode trunk
     switchport trunk allowed vlan 10,20,30,110
     switchport trunk native vlan 999   <span class="com"># unused VLAN, deliberately</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Always state the allowed list explicitly. A trunk left to allow everything carries every
           VLAN on the switch to wherever that link goes, which is both a broadcast problem and a
           segmentation failure nobody notices until an audit.
@@ -5659,7 +5659,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span> snooping</td><td>A rogue DHCP server handing out addresses and a default gateway</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           DHCP snooping deserves emphasis: an accidental home router plugged in backwards is one of
           the most common causes of a floor-wide outage, and it presents as "the internet is down"
           for some users and not others.
@@ -5683,7 +5683,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>Shutdown</td><td>Err-disables the port entirely</td><td>High-security areas, with recovery configured</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           If shutdown is used, set err-disable recovery with a timer, or every violation becomes a
           truck roll. And for real access control the answer is
           <span class="xref">802.1X &amp; NAC — Who Gets On the Network?</span> — port security is a
@@ -5723,7 +5723,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>4</td><td>Explicit deny-all, with logging</td><td>The implicit deny does not log; this one does</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Row 4 is the single highest-value line in most rule bases. The implicit deny at the end of
           every firewall drops traffic silently, so without an explicit logged deny-all you have no
           record of what was blocked — and troubleshooting becomes guesswork.
@@ -5749,7 +5749,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>Review hit counts periodically</td><td>Zero-hit rules are candidates for removal, with care</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A zero-hit rule is not automatically safe to delete — it may cover a disaster-recovery path
           or an annual process. Check before removing, and record the check, or the next person
           repeats the analysis.
@@ -5823,7 +5823,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
    2. Hairpin NAT — also source-NAT the internal client so the reply
       returns via the firewall.
    3. Put the service where both can reach it directly.</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Split-horizon DNS <span class="acro-exp">(Domain Name System)</span> is the right answer far more often than the NAT fix. Internal clients
           reaching internal servers by their internal address is simpler, faster, and removes the
           firewall from a path it does not need to be in.
@@ -5850,7 +5850,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>Some protocols fail, most work</td><td>Protocols embedding addresses in the payload — needs an ALG</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The conceptual version of all this is in
           <span class="xref">NAT &amp; Port Forwarding — How Private Networks Reach the Internet</span>;
           this card is what the same thing looks like at 2 a.m. with a ticket open.
@@ -5887,7 +5887,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>4</td><td>Did the reply come back?</td><td>Capture on egress; asymmetric routing shows up here</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Most firewalls have a built-in path simulator that answers question 2 without sending any
           traffic. It is the single most underused tool on the box and it turns a debate into a rule
           name in seconds.
@@ -5913,7 +5913,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>Sessions timing out mid-conversation</td><td>Idle timeout shorter than the application's keepalive</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row causes some of the most frustrating intermittent faults in enterprise
           networks: a database connection pool idle for longer than the firewall's timeout, dropped
           silently, and discovered by the application only when it next tries to use the connection.
@@ -5962,7 +5962,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>"5 GHz everywhere solves it"</td><td>Better, but shorter range and more walls in the way</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Wider channels are a straight trade: more throughput per client where the air is quiet,
           fewer distinct channels to reuse where it is not. In a dense office, narrower channels and
           lower power usually outperform the aggressive settings that look better on paper.
@@ -5985,7 +5985,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>Active</td><td>What is the actual client experience?</td><td>Associated and testing — the one that reflects reality</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A predictive survey is a model, and models are only as good as their assumptions about
           walls. Validate one on site before ordering hardware — a plasterboard assumption that turns
           out to be concrete changes the design entirely.
@@ -6067,7 +6067,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>Check the AP's client count and airtime</td><td>Contention rather than coverage</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Record which test answered it in the ticket. Wireless complaints recur, and a note saying
           "wired was equally slow — it was the VPN <span class="acro-exp">(Virtual Private Network)</span>" saves the next engineer the whole investigation.
         </div>
@@ -6124,7 +6124,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>Cable management</td><td>Slack for sliding rails; obstructed airflow is a cooling problem</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The dual-feed detail is the one most often undermined in practice: two PDUs <span class="acro-exp">(Protocol Data Unit)</span> from two
           sources are pointless if a single-supply device is plugged into one of them, and that is
           exactly what happens with switches, appliances and the KVM <span class="acro-exp">(Kernel-based Virtual Machine)</span>.
@@ -6150,7 +6150,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>Loss budget exceeded</td><td>Too many patches and splices for the reach</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Never look into a fibre end face or an active port. The light is invisible and focused, and
           eye damage is permanent — inspect with a scope, and treat every port as live.
         </div>
@@ -6210,7 +6210,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>Out-of-band access confirmed <em>before</em> starting</td><td>Losing the device with no way back in</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Test the out-of-band path at the start of the window, not when you need it. Console servers
           and cellular management links fail quietly for months, and the night of the cutover is when
           everyone finds out. The organisational half of this is
@@ -6262,7 +6262,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>Cable schedule</td><td>Updated as part of the physical change, or it is fiction within a month</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The distinction in row one matters: a generated diagram shows what exists, and a hand-drawn
           one shows what was intended. Both are useful and they answer different questions —
           discrepancies between them are frequently the most interesting thing in the network.
@@ -6288,7 +6288,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>One-page "who to call"</td><td>Circuit IDs, providers, support contracts, escalation numbers</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           That last row is the page most used during an outage and the one least often written. Circuit
           references and provider escalation numbers are exactly what nobody can find at 2 a.m., and
           they belong somewhere reachable when the network is down — which means not only on the
@@ -6352,7 +6352,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>No shared-edit hazard</td><td>Check for others' pending edits before committing</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           On a commit-model platform, always review the pending diff before committing. Shipping a
           colleague's half-finished work because you committed the shared candidate is a classic and
           entirely avoidable outage.
@@ -6423,7 +6423,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>Who will operate this on a Tuesday?</td><td>The honest answer usually settles it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The fourth question is the one to ask a salesperson directly and get in writing. Licensing
           models differ sharply on what happens at expiry, and
           <span class="volatile" data-checked="2026-08">the terms change between product
@@ -6466,7 +6466,7 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             <tr><td>Torch and a labelling machine</td><td>Racks are dark, and you should leave it better labelled</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A cable tester proves continuity and pinout; it does not prove the cable will carry
           multi-gigabit traffic over its full length. For that a qualification tester is needed, and
           the difference matters when the fault is intermittent and only under load.

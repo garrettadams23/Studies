@@ -4531,7 +4531,7 @@ lsof +L1 2&gt;/dev/null | grep deleted
                     <tr><td>OUTPUT</td><td>Packets originating from this host</td></tr>
                     <tr><td>FORWARD</td><td>Packets routed <em>through</em> this host (routers, NAT, containers)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Rules in a chain are checked <strong>top to bottom</strong>; the first
                     match wins. If nothing matches, the chain's default
                     <strong>policy</strong> applies. Set the INPUT policy to
@@ -4621,7 +4621,7 @@ lsof +L1 2&gt;/dev/null | grep deleted
                     <tr><td>Power</td><td class="c-green">Very fine-grained</td><td class="c-amber">Simpler, path-based</td></tr>
                     <tr><td>Learning curve</td><td class="c-red">Steep</td><td class="c-green">Gentle</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Both solve the same problem — least privilege enforced by the kernel —
                     just with different models. You typically use whichever ships with your
                     distro rather than swapping.
@@ -4644,7 +4644,7 @@ lsof +L1 2&gt;/dev/null | grep deleted
 <span class="com"># See WHY something was denied (AVC denials):</span>
 <span class="fn">sudo</span> ausearch -m avc -ts recent
 <span class="fn">sudo</span> sealert -a /var/log/audit/audit.log   <span class="com"># human-readable advice</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Permissive</strong> is your friend: switch to it,
                     reproduce the problem, read the denials, fix the policy/labels — then go
                     back to <strong class="c-green">Enforcing</strong>. Don't just disable it.
@@ -4660,7 +4660,7 @@ lsof +L1 2&gt;/dev/null | grep deleted
 <span class="fn">sudo</span> aa-complain /etc/apparmor.d/usr.sbin.nginx  <span class="com"># log-only mode</span>
 <span class="fn">sudo</span> aa-enforce /etc/apparmor.d/usr.sbin.nginx  <span class="com"># back to blocking</span>
 <span class="fn">sudo</span> aa-logprof             <span class="com"># interactively build a profile from logs</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     AppArmor's <strong>complain mode</strong> is the analog of SELinux
                     permissive — it logs what a profile <em>would</em> block so you can
                     tune it before enforcing.
@@ -4737,7 +4737,7 @@ lsof +L1 2&gt;/dev/null | grep deleted
 
 <span class="com"># Histogram of read() sizes across the whole system</span>
 <span class="fn">sudo</span> bpftrace -e <span class="str">'tracepoint:syscalls:sys_enter_read { @bytes = hist(args-&gt;count); }'</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Requires a modern kernel (4.x+, richer on 5.x+) and root/capabilities. The
                     tooling ladder: <strong>bpftrace</strong> (quick one-liners) →
                     <strong>BCC</strong> (Python tools) → <strong>libbpf</strong> (production
@@ -4777,7 +4777,7 @@ podman generate systemd <span class="var">--name</span> web   <span class="com">
                     <tr><td>Pods</td><td>Group containers (Kubernetes-style) locally</td></tr>
                     <tr><td>Buildah / Skopeo</td><td>Companion tools to build &amp; move images</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Default on RHEL/Fedora. The security win — no privileged daemon — is why it's
                     favored in hardened and multi-tenant environments.
                   </div>
@@ -4814,7 +4814,7 @@ systemd-analyze blame           <span class="com"># what slowed boot?</span></pr
                     <tr><td>.socket</td><td>Socket-activate a service on demand</td></tr>
                     <tr><td>.target</td><td>A group of units (like runlevels)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Drop-ins</strong> (<code>systemctl edit</code>) override
                     unit settings without touching vendor files. Timers beat cron: they log to the
                     journal, handle missed runs, and have dependencies.
@@ -4850,7 +4850,7 @@ systemd-analyze blame           <span class="com"># what slowed boot?</span></pr
                     <tr><td>Subvolumes / datasets</td><td>Independently managed slices of the pool</td></tr>
                     <tr><td>RAID-Z / built-in RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span></td><td>Redundancy that can self-heal from checksums</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Use cases:</strong> NAS/storage servers, snapshot-before-
                     upgrade, and <code>zfs send</code> for efficient replication/backups. ZFS is more
                     mature; Btrfs ships in-kernel and is the openSUSE default.
@@ -4891,7 +4891,7 @@ base=<span class="str">"${path##*/}"</span>           <span class="com"># strip 
                     <tr><td>Parameter expansion</td><td><code>${v:-def}</code>, <code>${v##pat}</code>, <code>${v/a/b}</code> — no sed needed</td></tr>
                     <tr><td>ShellCheck</td><td>Lints scripts for the bugs everyone writes</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Golden rules:</strong> quote your variables
                     (<code>"$var"</code>) to survive spaces, and run ShellCheck. Past ~100 lines with
                     real data structures, reach for Python instead.
@@ -4976,7 +4976,7 @@ cryptsetup open /dev/sdb1 secure       <span class="com"># unlock -> /dev/mapper
 <span class="com"># Is Secure Boot actually on right now?</span>
 mokutil --sb-state
 bootctl status | grep -i secure</pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The honest caveat:</strong> none of this defends a
                     running, unlocked machine against someone who already has root — it defends the
                     boot path and the data at rest. Pair it with the mandatory access control in
@@ -5045,7 +5045,7 @@ bootctl status | grep -i secure</pre>
                     <tr><td>A/B partitions</td><td>Two roots; update the idle one, switch, keep the old for rollback</td><td>ChromeOS, Android, many IoT/edge builds</td></tr>
                     <tr><td>Layered config</td><td>Immutable base + a declared overlay of your changes</td><td>NixOS's declarative generations</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The trade is that the old imperative reflexes stop working: you cannot just
                     <code>dnf install</code> onto the root, because it is read-only by design.
                     Changes move into layered packages, containers for tooling, and a declared

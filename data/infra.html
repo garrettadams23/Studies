@@ -2233,7 +2233,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Type 2 (hosted)</td><td>On top of an OS <span class="acro-exp">(Operating System)</span></td><td>VirtualBox, VMware Workstation</td><td>A lab on your laptop</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Modern CPUs <span class="acro-exp">(Central Processing Unit)</span> have <strong class="c-cyan">hardware-assisted virtualization</strong>
           (Intel VT-x, AMD-V) so guests run near-native; nested page tables handle the memory
           translation. It has to be enabled in firmware — a disabled BIOS <span class="acro-exp">(Basic Input/Output System)</span> setting is the
@@ -2260,7 +2260,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Noisy neighbour</td><td>One greedy VM starving its co-tenants on the same host</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">CPU is safer to overcommit than RAM.</strong> A waiting
           thread just waits; exhausted memory forces host swapping, which punishes every VM on
           the box. Size RAM close to real need; be generous only with vCPU.
@@ -2313,7 +2313,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Proxmox / KVM</td><td>Cost-sensitive, lab, and Linux-first shops; KVM is also what most clouds run underneath</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Generation matters on Hyper-V:</strong> Generation 2 VMs use
           UEFI <span class="acro-exp">(Unified Extensible Firmware Interface)</span> and Secure Boot and are the modern default, but you cannot convert a Gen 1 VM to
           Gen 2 in place — it is a rebuild. Choose correctly when you create the template, in
@@ -2372,7 +2372,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Backup app snapshot stuck</td><td>Your backup uses snapshots under the hood; a failed job can orphan one</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Rule:</strong> snapshots are measured in hours, not weeks.
           Take one before a risky change, verify the change, delete the snapshot. Alert on any
           snapshot older than a day — it is either forgotten or a symptom.
@@ -2429,7 +2429,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Synthetic full / forever-incremental</td><td>Incrementals merged into a full on the target</td><td>The modern default; small daily jobs, fast restores</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Retention is a separate axis — <strong class="c-cyan">GFS</strong> (grandfather-
           father-son) keeps dailies for weeks, weeklies for months, monthlies for years, so you
           can restore last Tuesday <em>and</em> last quarter without keeping every daily forever.
@@ -2474,7 +2474,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Alert on deletion / job change</td><td>Mass backup deletion is a high-fidelity intrusion signal in its own right</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">The most common fatal flaw</strong> is a backup server joined
           to the domain it backs up, with backups on a share that same domain admin can reach.
           When the domain falls, so do the backups. Break that dependency first — it is the
@@ -2540,7 +2540,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Hot site / replication</td><td>Minutes</td><td>Highest — a running duplicate</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Failback is the forgotten half.</strong> Runbooks lovingly
           document the failover and stop there; getting production back to primary afterward,
           without losing the data written while you ran on the DR site, is its own procedure —
@@ -2585,7 +2585,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           Everything else follows from that. Only one server can own a block device at a time,
           because two filesystems writing the same blocks corrupt each other — which is why shared
           block storage needs a cluster filesystem or careful orchestration. File storage is
@@ -2637,7 +2637,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Assuming object storage is immediately consistent everywhere</td><td>Depends on the implementation; check before designing around it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The backup row connects to
           <span class="xref">Backup Strategy — 3-2-1-1-0 and the Schemes That Make Restores Possible</span>,
           and it is the one that turns a storage decision into a recovery failure: a snapshot on the
@@ -2694,7 +2694,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         the failures are correlated by age, batch and workload.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           This is why single-parity RAID 5 fell out of favour for large disks rather than because of
           any change in the mathematics of parity: the array grew, the rebuild got longer, and the
           exposure window grew with it. The mitigations are practical rather than clever.
@@ -2733,7 +2733,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Wider codes are cheaper and slower to rebuild</td><td>The tuning knob; pick from the failure domain, not from the ratio alone</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The practical rule this leads to: mirror or RAID 10 for latency-sensitive random workloads,
           erasure coding for large capacity where throughput matters more than latency. And on any
           of them, remember the first card's point — none of this is a backup, because all of it
@@ -2777,7 +2777,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Multipathing</td><td>Host-side driver collapsing several routes to one LUN into one device</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Zoning and masking do overlapping jobs from opposite ends, and both are normally used.
           Zoning limits what the fabric will carry; masking limits what the array will admit. The
           reason for both is the failure they prevent: a host that can see a LUN belonging to
@@ -2806,7 +2806,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Typical failure</td><td>Zoning mistakes, cable and SFP <span class="acro-exp">(Small Form-factor Pluggable)</span> faults</td><td>A network change nobody flagged as storage-affecting</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           That last row is the whole argument. iSCSI's weakness is not throughput, it is that the
           storage path now depends on a network with a change process that treats it as ordinary
           traffic. If you run iSCSI, isolate it — dedicated VLAN or dedicated NICs <span class="acro-exp">(Network Interface Card)</span>, jumbo frames
@@ -2837,7 +2837,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Timeout values matched to the array's failover time</td><td>Mismatched timeouts turn a survivable path failure into an I/O error</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The commissioning cable-pull is worth insisting on. Path redundancy is a claim on a
           diagram until somebody has tested it, and the moment to discover a mismatched timeout is
           during a planned test rather than during an unplanned switch reboot.
@@ -2867,7 +2867,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         and the throughput of the link is irrelevant, because nothing is waiting on bandwidth.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           This single fact explains most file-server complaints. "The share is slow from the branch
           office" is almost never a bandwidth problem, and adding bandwidth reliably fails to fix
           it. It also explains why a workload of a million small files behaves completely differently
@@ -2894,7 +2894,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>NFSv4 / 4.1</td><td>Stateful, single port, ACLs <span class="acro-exp">(Access Control List)</span>, Kerberos, sessions</td><td>Preferred, especially across any boundary</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           SMB 1 deserves its own line. It has no meaningful authentication of the server, no
           transport encryption, and it carried one of the most damaging ransomware worms in
           circulation. If something still needs it, that device is the problem to solve, not the
@@ -2922,7 +2922,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Permission errors that make no sense</td><td>Share and filesystem permissions interacting</td><td>See the file-services card — the effective right is the lesser of the two</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The permissions half of file services — share versus NTFS <span class="acro-exp">(New Technology File System)</span> rights, DFS <span class="acro-exp">(Distributed File System)</span> namespaces and
           quotas — is in
           <span class="xref">File Services — Share vs NTFS Permissions, DFS &amp; Quotas</span>.
@@ -2965,7 +2965,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Log ingest</td><td>Throughput and write amplification</td><td>Sustained write, and what compaction costs</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Vendor figures almost always quote the best case for one of these — usually large
           sequential reads or 100% random reads at an unrealistic queue depth. A figure without its
           block size, read/write mix and queue depth is not a measurement, and comparing two such
@@ -2984,7 +2984,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         because it never asks for more than one thing at a time.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           This explains the two most common confusions in storage benchmarking. A benchmark showing
           far lower IOPS than the array's rating is usually running at too shallow a queue depth to
           exercise it. And an array hitting its rated IOPS while everything feels slow is usually
@@ -3022,7 +3022,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Media</td><td>Failing drive, SSD <span class="acro-exp">(Solid State Drive)</span> approaching wear-out, write cliff on a full drive</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Two entries deserve suspicion early because they are invisible from the host: a rebuild
           running on the array, and a tiering engine relocating data. Both consume back-end capacity
           on their own schedule, both make performance vary by time of day for no reason the
@@ -3090,7 +3090,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Do not thin-provision at three layers at once</td><td>Guest, hypervisor and array each over-subscribing is unmodellable</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The reclaim row is the one that quietly causes most pool-full incidents. Deleting a file
           inside a guest frees space in the guest filesystem and tells the array nothing; without
           UNMAP or TRIM propagating down, the array still considers those blocks written. Estates
@@ -3117,7 +3117,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>"Dedup protects nothing"</td><td>Correct, and worth remembering: deduplicated data has one copy of each block by design</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row matters for backup design specifically. A deduplicated backup repository is
           efficient and is a single fate-shared copy: corruption of a heavily-referenced block
           affects every backup that references it. That is not an argument against dedup — it is the
@@ -3150,7 +3150,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         warning anybody had configured.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           The reframing that fixes it: <strong>capacity is a time problem, not a percentage
           problem.</strong> "The pool is 82% full" prompts nothing. "The pool has eleven weeks left
           at the current rate, and procurement takes eight" is a decision with a deadline, and
@@ -3178,7 +3178,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Lead time to add capacity, measured</td><td>Sets how far ahead your alerting has to reach</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The performance-headroom row is the trap in an all-flash world. Capacity is cheap and
           plentiful; controller CPU <span class="acro-exp">(Central Processing Unit)</span> and cache are not. An array at 50% capacity and 95% controller
           utilisation needs expansion just as urgently, and no capacity report will say so.
@@ -3204,7 +3204,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Growth that is really a bug</td><td>A runaway log or a failing job can fill a pool in days</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Two habits cover most of that list. Review capacity alongside the project pipeline rather
           than in isolation, so step changes arrive as plans instead of as surprises. And alert on
           <em>acceleration</em> as well as on level — a growth rate that doubles this week is
@@ -3250,7 +3250,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Configuration applied after boot</td><td>Yes, and inspectable</td><td>Pair with any of the above; this is where the drift goes</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is the important pairing. A template answers "what did this start as"; a
           configuration tool answers "what has been done to it since", and without the second the
           first slowly stops being true —
@@ -3278,7 +3278,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Licence activation state</td><td>Activation failures that appear weeks later</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Generalising — <code>sysprep /generalize</code> on Windows, clearing machine-id, host keys
           and cloud-init state on Linux — strips exactly this set, which is why a template is
           generalised *once* and then never booted again. Booting a template to "just patch it
@@ -3307,7 +3307,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Decommission deliberately</td><td>A VM lifecycle has an end; unused machines are cost, patch surface and noise</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The credential row is worth stating bluntly: a password left in an unattended answer file,
           a cached service account, or an SSH key in the image is copied to every machine built from
           it, and rotating it afterwards means touching all of them. The pipeline version of this
@@ -3350,7 +3350,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Cleanup</td><td>The source releases the machine</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The requirement people forget: both hosts must be able to run the same instruction set.
           Mixed CPU <span class="acro-exp">(Central Processing Unit)</span> generations in one cluster are why compatibility modes exist — they mask newer
           instructions so a guest never sees a feature that would vanish underneath it after a move.
@@ -3378,7 +3378,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Verify before the next host</td><td>One host at a time. Two is how a cluster becomes an incident</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The capacity check is the one that gets skipped, and it is the one that hurts: a cluster
           running at 85% with no reserve cannot evacuate a host at all, so the maintenance window
           arrives, the evacuation stalls, and someone has to choose between shutting down guests and
@@ -3406,7 +3406,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Guest pinned by a rule</td><td>Affinity to a host, often set years ago for a reason nobody recorded</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The convergence row has a specific fix worth knowing: a dedicated, fast migration network.
           If migrations of busy machines routinely fail or take an hour, the answer is almost never
           the guest — it is that the memory is being copied over a link that also carries production
@@ -3448,7 +3448,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Leave it physical, isolated</td><td>When conversion fails and the risk of touching it exceeds the risk of leaving it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The fourth row is a real answer, not a joke. An unconvertible machine running a critical
           process is a business risk that should be recorded, isolated on the network, backed up at
           the image level and given an end date — rather than quietly carried for another five years
@@ -3499,7 +3499,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Old monitoring alerts firing</td><td>Agents for hardware that no longer exists</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The row that ends projects is licensing. Software keyed to physical hardware may simply
           refuse to run, and finding that out after the physical machine has been decommissioned is
           the worst possible order — which is why "keep the original powered off" is on the previous
@@ -3541,7 +3541,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>4. Guest</td><td>Its own processes, its own configuration</td><td>Real often enough to check, last often enough to check last</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The tell for "not the guest" is <strong>several unrelated machines complaining at once</strong>.
           Two tickets from different applications on the same host, or on the same datastore, is a
           platform problem until proven otherwise, and the fastest first question is always: what
@@ -3569,7 +3569,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Snapshot age and size</td><td>How much of the disk is a delta chain</td><td>Days old, or gigabytes; both punish write performance quietly</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong>CPU ready is the one worth internalising</strong>, because it inverts the usual
           reading. A guest with low processor utilisation that feels sluggish is the classic
           signature: it is not using the processor because it cannot get it. Adding more virtual
@@ -3597,7 +3597,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Guest fine, users complain</td><td>The problem is between them — WAN <span class="acro-exp">(Wide Area Network)</span>, gateway, DNS <span class="acro-exp">(Domain Name System)</span>. Nothing on this page applies</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The 02:00 row is a scheduling problem masquerading as a performance one, and the fix is
           organisational rather than technical: stagger the windows. The last row is the reminder
           that "the server is slow" is a claim about a path, and the virtualisation layer is only
@@ -3671,7 +3671,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>3270, 5250</td><td>Terminal protocols</td><td>The green screen — a block-mode form, not a character stream</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Worth knowing before you use the wrong one in a meeting: <strong>3270 is z/OS and 5250 is
           IBM i</strong>, and the two platforms are unrelated products that only look alike from
           outside. A person who supports one may know nothing about the other.
@@ -3697,7 +3697,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Screen scraping</td><td>Driving a 3270/5250 session programmatically</td><td>There is no contract. A field moving two columns is a silent corruption, not an error</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-red">Screen scraping is the one to argue about.</strong> It is chosen
           because it needs nothing from the mainframe team, which is exactly why it is fragile: an
           interface with no owner and no versioning has no way to warn you. If it is the only option,
@@ -3728,7 +3728,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Low-values and high-values</td><td>All-<code>0x00</code> or all-<code>0xFF</code> used as sentinels</td><td>Map them to null deliberately — they are not empty strings</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The generalisation worth carrying away: on this platform <strong>a record layout is a
           binary contract, not a text format</strong>. Modern integration habits assume the file
           describes itself — a header row, a JSON <span class="acro-exp">(JavaScript Object Notation)</span> key, a delimiter to split on. Here nothing does,
@@ -3756,7 +3756,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>The knowledge is retiring</td><td>The person who answered your question last year may not be there next year. Write down every answer you get, in your repository, at the time you get it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last one is not sentiment. In practice it means the highest-value artefact your project
           produces is not the integration — it is <strong>the documented record layout and the
           documented meaning of each status code</strong>, written down for the first time in
@@ -3784,14 +3784,14 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Delete the old path</td><td>Otherwise you now maintain two systems and have made things worse. Removal is part of the work, scheduled and funded</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">On automated translation:</strong> tools that convert COBOL to
           Java or C# produce COBOL written in Java — the same structure, the same eighty-branch
           paragraph, none of the domain knowledge, and now nobody at all understands it, because the
           people who could read the original no longer recognise it. It converts a maintainable
           legacy system into an unmaintainable modern one, which reads as progress on a slide.
         </div>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">And deciding not to migrate is a legitimate outcome.</strong> A
           well-wrapped mainframe with a documented API, a monitored batch schedule and its access
           review inside the same governance as everything else is a perfectly defensible piece of

@@ -1248,7 +1248,7 @@ prompts = [
                     <tr><td>Resources</td><td>Application</td><td>Read-only data the host can load into context — files, records, API <span class="acro-exp">(Application Programming Interface)</span> responses. Addressed by URI <span class="acro-exp">(Uniform Resource Identifier)</span>.</td></tr>
                     <tr><td>Prompts</td><td>User</td><td>Reusable, parameterized templates a user invokes deliberately (e.g. a "/summarize" slash command).</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The distinction is <em>who decides to use it</em>: the model picks
                     tools, the app wires up resources, and the user triggers prompts.
                     (Clients can also expose <span class="c-cyan">sampling</span> — letting a
@@ -1356,7 +1356,7 @@ prompts = [
                     <tr><td>Transform runs on</td><td>A separate engine</td><td>The warehouse's own compute</td></tr>
                     <tr><td>Best when</td><td>Destination is expensive/rigid</td><td>Cloud warehouse compute is cheap &amp; elastic</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Cloud warehouses (BigQuery, Snowflake, Redshift) made
                     <strong class="c-cyan">ELT</strong> popular: dump raw data in, then use
                     SQL/dbt to transform it where the compute already lives — flexible, since
@@ -1382,7 +1382,7 @@ prompts = [
                     <tr><td>Batch</td><td>Run on a schedule (nightly) — orchestrated by Airflow, Dagster, Prefect</td></tr>
                     <tr><td>Streaming</td><td>Process events as they arrive (Kafka + Flink/Spark) for near-real-time</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Whatever the tool, three things make or break a pipeline:
                     <strong class="c-green">idempotent reruns</strong> (a failed job re-runs
                     safely), <strong class="c-green">data quality checks</strong> (catch bad
@@ -1428,7 +1428,7 @@ prompts = [
                     <tr><td>Dot product</td><td>Angle + magnitude</td><td>When vector length carries meaning</td></tr>
                     <tr><td>Euclidean (L2)</td><td>Straight-line distance</td><td>Image/spatial embeddings</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Match the metric to how the model was trained — most sentence-embedding
                     models expect <strong>cosine</strong>. Using the wrong one quietly
                     degrades results.
@@ -1453,7 +1453,7 @@ prompts = [
                     <tr><td>IVF</td><td>Cluster vectors, search only the nearest clusters.</td></tr>
                     <tr><td>PQ</td><td>Compress vectors so more fit in RAM <span class="acro-exp">(Random Access Memory)</span> (product quantization) — trades accuracy for memory.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The dial is <strong>recall vs latency</strong>: search harder for more
                     correct neighbors, or faster for approximate ones.
                   </div>
@@ -1528,7 +1528,7 @@ prompts = [
                     <tr><td>Concept drift</td><td>The relationship between inputs and the answer changes (fraud tactics evolve).</td></tr>
                     <tr><td>Training/serving skew</td><td>Features are computed differently in training vs production — a top cause of "great offline, bad live."</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     You catch drift by monitoring input statistics and prediction quality
                     against a baseline, then trigger a <strong>retrain</strong> — ideally
                     automated on a schedule or a drift alert.
@@ -1574,7 +1574,7 @@ prompts = [
                     <tr><td>RAG</td><td>Injecting fresh/private <em>knowledge</em> at query time</td><td>Medium — a retrieval pipeline</td></tr>
                     <tr><td>Fine-tuning</td><td>Teaching a <em>style/skill/format</em>, not new facts</td><td>Highest — data + training</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The classic mistake:</strong> fine-tuning to add knowledge.
                     Fine-tuning changes <em>behavior</em>; for "know our latest docs," use RAG. Rule of
                     thumb: prompt first, add RAG for knowledge, fine-tune only when you need consistent
@@ -1607,7 +1607,7 @@ prompts = [
                     <tr><td>Quantization</td><td>Store weights in 8/4-bit (GGUF, bitsandbytes) — big memory cut, tiny quality loss</td></tr>
                     <tr><td>Tokenization</td><td>Text → tokens (subword, BPE); the model sees token IDs, not characters</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Why tokenization bites:</strong> models count and spell
                     poorly because they see tokens, not letters; and cost/limits are per-token, not
                     per-word (~4 chars/token in English). <strong class="c-green">QLoRA</strong> =
@@ -1645,7 +1645,7 @@ ollama run llama3.2
                     <tr><td>LM Studio</td><td>GUI <span class="acro-exp">(Graphical User Interface)</span> to browse, download &amp; chat with models</td></tr>
                     <tr><td>vLLM</td><td>High-throughput serving for production</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Reality check:</strong> local models trail frontier
                     hosted ones in capability, and you need RAM/VRAM (quantization helps). But for
                     privacy-sensitive or high-volume tasks, local wins on cost and control.
@@ -1679,7 +1679,7 @@ ollama run llama3.2
                     <tr><td>Grounding</td><td>Cite sources (RAG) to curb hallucination; verify claims</td></tr>
                     <tr><td>Diffusion models</td><td>Learn to denoise pure noise into an image, guided by a text prompt</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Prompt injection</strong> is the LLM era's top security
                     risk (untrusted text overriding your instructions) — treat model output as
                     untrusted and never give an agent unchecked tools. Evaluation is what turns
@@ -1734,7 +1734,7 @@ while True:
                 "content": execute_tool(block.name, block.input),
             })
     messages.append({"role": "user", "content": results})</pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Most SDKs <span class="acro-exp">(Software Development Kit)</span> now ship a <strong class="c-green">tool runner</strong> that drives
                     this loop for you — you write only the functions and their docstrings, and the
                     schema is generated from the signature. Reach for the manual loop when you need
@@ -1758,7 +1758,7 @@ while True:
                     <tr><td>tool (named)</td><td>It must call the one you name</td></tr>
                     <tr><td>none</td><td>Tools are visible but off-limits this turn</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Any of these can also carry <code>disable_parallel_tool_use</code>; by default
                     a single response may request several tool calls at once, and you return all
                     the results together in one message.
@@ -1784,7 +1784,7 @@ while True:
                     <tr><td>Called far too often</td><td>Description overlaps another tool's; narrow both</td></tr>
                     <tr><td>Loop never terminates</td><td>Errors returned as exceptions instead of tool_result text</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Return failures as ordinary tool results ("no such user id") rather than
                     throwing — the model can recover from a message it can read, and cannot recover
                     from a stack trace in your process.
@@ -1864,7 +1864,7 @@ response = client.messages.create(
         "additionalProperties": False,
     }}},
 )</pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Watch the drift:</strong> the older top-level
                     <code>output_format</code> parameter on <code>messages.create()</code> is
                     deprecated in favour of <code>output_config.format</code>, and assistant-turn
@@ -1887,7 +1887,7 @@ response = client.messages.create(
                     <tr><td>A tool's input</td><td>strict: true on the tool definition</td><td>Arguments arrive typed and complete</td></tr>
                     <tr><td>Both together</td><td>Set both on the same request</td><td>Structured tool calls and a structured final answer</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Set <code>additionalProperties: false</code> and list your
                     <code>required</code> fields honestly. A permissive schema validates a reply
                     that is still missing the field your code indexes into.
@@ -1964,7 +1964,7 @@ u = response.usage
 print(u.cache_creation_input_tokens,   <span class="com"># written this request</span>
       u.cache_read_input_tokens,       <span class="com"># served from cache</span>
       u.input_tokens)                  <span class="com"># uncached remainder ONLY</span></pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Total prompt size is the sum of all three, not <code>input_tokens</code> alone
                     — an agent that ran for hours and reports 4K input tokens was reading cache for
                     the rest. Writes carry a premium (roughly 1.25× at the short default TTL, 2× at
@@ -2034,7 +2034,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Latency breakdown</td><td>Time to first token, total, plus non-model time</td><td>Whether the model or your retrieval is slow</td></tr>
                     <tr><td>Quality</td><td>Automatic scores, thumbs, escalations, refusal rate</td><td>Whether it is getting worse</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Log the <strong>prompt as sent</strong>, fully rendered, not the template plus
                     variables. Reproducing a bad answer from a template and a hope is the single
                     most common reason an AI incident cannot be investigated.
@@ -2278,7 +2278,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Stop sequences</td><td>Ends generation on a given string</td><td>Bounding output in a structured format</td></tr>
                     <tr><td>Max tokens</td><td>Hard ceiling on the reply</td><td>Cost control — and a truncated answer if set too low</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Tune one at a time. Turning temperature and top-p down together is the classic
                     way to get output so deterministic it repeats itself in a loop. And
                     temperature 0 is not a guarantee of identical replies across runs — batching
@@ -2324,7 +2324,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Pipeline</td><td>Fixed stages, each agent's output feeding the next</td><td>Well-understood workflows — often needs no agency at all</td></tr>
                     <tr><td>Debate / critic</td><td>One produces, another reviews against criteria</td><td>Quality gates where a second pass genuinely catches things</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The orchestrator pattern is the one that pays off most often, and only because
                     the workers run <em>in parallel</em> on independent subtasks. Fan out where the
                     work is independent; keep it sequential where step two needs step one's
@@ -2351,7 +2351,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Compounding error</td><td>A 90%-reliable step, five stages deep, is a 59%-reliable system</td></tr>
                     <tr><td>Cost surprise</td><td>Token spend scales with agents × context, not with agents</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Trace the whole run as one tree with a span per agent, or you cannot debug any
                     of it —
                     <span class="xref">Observability for AI — Tracing, Token Accounting &amp; Quality Monitoring</span>
@@ -2589,7 +2589,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Provide the alternative</td><td>A sanctioned, tenant-grounded assistant that does the same job inside the boundary</td></tr>
                     <tr><td>Guardrail the rest</td><td>Block only the genuinely unsafe destinations, and say why — an unexplained block just gets bypassed</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The data-loss angle is covered in
                     <span class="xref">Data Loss Prevention — Classification, Egress &amp; the False-Positive Problem</span>;
                     an AI paste is just a new egress channel for the same sensitive data, and the
@@ -2628,7 +2628,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Disclosure</td><td>When AI-assisted work must be labelled (code, customer comms, decisions)</td></tr>
                     <tr><td>Prohibited uses</td><td>The few real red lines — regulated data, surveillance, anything with legal weight unreviewed</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Pair it with training and a named place to ask. The verification duty is the
                     line that matters most — it is the same discipline the site's
                     <span class="xref">Using AI Well — Prompting &amp; Responsibility</span> card
@@ -2670,7 +2670,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Restrict the AI's crawl scope</td><td>Some platforms let you exclude sites/libraries from AI grounding — use it for the sensitive ones</td></tr>
                     <tr><td>Pilot &amp; watch</td><td>A small pilot surfaces the worst oversharing before the whole org can</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     This is
                     <span class="xref">Data Governance, Retention &amp; eDiscovery — Owning Data on Purpose</span>
                     with a deadline: the governance work that was always advisable becomes urgent
@@ -2719,7 +2719,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Process over urgency</td><td>Manufactured urgency is the tell — a real executive can wait for the procedure</td></tr>
                     <tr><td>Verify the request, not the face</td><td>Identity theatre is the attack; the immovable question is "does this follow our process"</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     This is the AI-era update to
                     <span class="xref">Social Engineering — People Are the Attack Surface</span>:
                     the pretext is more convincing, and the countermeasure — a verification

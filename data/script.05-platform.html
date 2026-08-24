@@ -337,7 +337,7 @@
                     <tr><td>Learning curve</td><td class="c-green">Low</td><td class="c-amber">Higher (schema, resolvers, tooling)</td></tr>
                     <tr><td>Risk</td><td>N+1 across endpoints</td><td class="c-red">N+1 in resolvers; deep/expensive queries need limits</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong>Rule of thumb:</strong> REST shines for simple, cacheable,
                     resource-shaped APIs. GraphQL shines when many clients need many
                     different slices of a richly-connected data graph (think a mobile app
@@ -398,7 +398,7 @@
                     <tr><td>Isolation</td><td>Concurrent transactions don't see each other's half-done work.</td></tr>
                     <tr><td>Durability</td><td>Once committed, data survives a crash or power loss.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Many NoSQL systems relax these for scale, offering
                     <strong>BASE</strong> instead (Basically Available, Soft state,
                     Eventually consistent) — writes propagate over time rather than instantly.
@@ -447,7 +447,7 @@
                     <tr><td>Normalize</td><td>Split data so each fact lives in exactly one place (no duplication)</td><td>Clean writes, no update anomalies — but more joins on read</td></tr>
                     <tr><td>Denormalize</td><td>Duplicate data to avoid joins</td><td>Faster reads — but you must keep copies in sync</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Relational databases start normalized; you denormalize deliberately for
                     read performance. Document databases often start denormalized (embed
                     related data) and trade write-side duplication for single-read fetches.
@@ -490,7 +490,7 @@
                     <tr><td>SSE (EventSource)</td><td>Server → client, one-way</td><td>Feeds, notifications, live logs, progress</td></tr>
                     <tr><td>WebSocket</td><td>Full-duplex, both ways</td><td>Chat, games, collaborative editing, trading</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Reach for <strong>SSE</strong> when only the server needs to push (it's
                     just HTTP, auto-reconnects, and is dead simple). Reach for
                     <strong>WebSockets</strong> when the client must send too, in real time.
@@ -563,7 +563,7 @@
                     <tr><td>Header</td><td><code>Accept: application/vnd.api+json;v=2</code></td><td>Cleaner URLs; harder to test by hand</td></tr>
                     <tr><td>Query param</td><td><code>?version=2</code></td><td>Simple but easy to forget</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Rule: an additive change (new optional field) is backward-compatible and
                     needs no new version. Removing/renaming a field or changing its type is
                     <strong class="c-red">breaking</strong> — that's when you bump the version
@@ -588,7 +588,7 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
 <span class="attr">X-RateLimit-Limit</span>: <span class="num">100</span>
 <span class="attr">X-RateLimit-Remaining</span>: <span class="num">0</span>
 <span class="attr">Retry-After</span>: <span class="num">30</span>          <span class="com"># wait 30s before retrying</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Return <code>429</code> when a client exceeds its budget; a well-behaved
                     client backs off using <code>Retry-After</code>. Common algorithms:
                     <strong>token bucket</strong> (allows bursts) and
@@ -668,7 +668,7 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
 <span class="kw">service</span> <span class="type">UserService</span> {
   <span class="kw">rpc</span> <span class="fn">GetUser</span>(<span class="type">UserRequest</span>) <span class="kw">returns</span> (<span class="type">User</span>);
 }</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     A compiler (<code>protoc</code>) turns this into typed client + server code
                     in your language — both sides share one source of truth, so a mismatched
                     field is a compile error, not a 3 a.m. surprise.
@@ -687,7 +687,7 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>Client streaming</td><td>Stream of requests → 1 response</td><td>Uploads, telemetry</td></tr>
                     <tr><td>Bidirectional</td><td>Both stream at once</td><td>Chat, real-time sync</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Streaming comes free from HTTP/2's multiplexing — a big reason gRPC picked
                     it as the transport.
                   </div>
@@ -832,7 +832,7 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
   <span class="fn">fetch</span>(<span class="str">"image-filter.wasm"</span>)
 );
 <span class="kw">const</span> <span class="var">result</span> = <span class="var">instance</span>.<span class="var">exports</span>.<span class="fn">applyBlur</span>(<span class="var">ptr</span>, <span class="var">len</span>);</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     JS and WASM share memory via a typed <code>ArrayBuffer</code>. Modern
                     toolchains (Emscripten for C/C++, <code>wasm-pack</code> for Rust) generate
                     the glue so you mostly call WASM like a normal library.
@@ -850,7 +850,7 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>Port existing code</td><td>Bring a mature C/C++ library to the web unchanged (ffmpeg, SQLite)</td></tr>
                     <tr><td>Server / edge</td><td>Via <strong>WASI</strong>, WASM runs outside the browser — fast-starting, sandboxed serverless &amp; plugins</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Not for everything: WASM can't directly touch the DOM <span class="acro-exp">(Document Object Model)</span> (it calls back into JS
                     for that), and simple UI <span class="acro-exp">(User Interface)</span> logic is still easier in plain JavaScript. Reach for
                     it when performance is the bottleneck.
@@ -911,7 +911,7 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
       .<span class="fn">then</span>((<span class="var">hit</span>) =&gt; <span class="var">hit</span> ?? <span class="fn">fetch</span>(<span class="var">e</span>.<span class="var">request</span>))
   );
 });</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Common strategies: <strong>cache-first</strong> (assets), <strong>network-first</strong>
                     (fresh data), and <strong>stale-while-revalidate</strong> (fast + eventually fresh).
                   </div>
@@ -930,7 +930,7 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>Updates</td><td class="c-green">Instant (it's a website)</td><td>Store review + user update</td></tr>
                     <tr><td>iOS support</td><td class="c-amber">Partial (some APIs gated)</td><td class="c-green">Full</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Great for content, commerce, and productivity apps where reach and instant
                     updates matter; native still wins for deep hardware access and demanding games.
                   </div>
@@ -1044,7 +1044,7 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>Cargo</td><td>Build tool + package manager (crates.io)</td></tr>
                     <tr><td>Traits</td><td>Shared behavior (like interfaces) with zero-cost generics</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Trade-off:</strong> a steep learning curve ("fighting the
                     borrow checker") buys you C-like speed with safety guarantees. If it compiles, a
                     whole class of bugs is simply gone.
@@ -1085,7 +1085,7 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>Maven / Gradle</td><td>Build &amp; dependency management</td></tr>
                     <tr><td>Modern Java</td><td>Records, sealed types, virtual threads (Project Loom)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Kotlin</strong> is the modern, less-verbose JVM language
                     (and Android's default) — worth reaching for on new JVM projects.
                   </div>
@@ -1121,7 +1121,7 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>async/await</td><td>C# pioneered the pattern most languages now copy</td></tr>
                     <tr><td>ASP.NET Core / Blazor</td><td>Web APIs <span class="acro-exp">(Application Programming Interface)</span> &amp; SPA-in-C# via WASM <span class="acro-exp">(WebAssembly)</span></td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Familiar if you know Java; NuGet is the package manager. Unity makes C# a major
                     game-development language too.
                   </div>
@@ -1158,7 +1158,7 @@ sum = nums.<span class="fn">reduce</span>(<span class="num">0</span>, :+)   <spa
                     <tr><td>Gems / Bundler</td><td>Packages &amp; dependency locking</td></tr>
                     <tr><td>Metaprogramming</td><td>Powerful DSLs <span class="acro-exp">(Domain-Specific Language)</span> (Rails leans on this heavily)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Great for startups and prototyping — you go from idea to CRUD app fast. Trade-off:
                     dynamic typing and slower raw speed than compiled languages.
                   </div>
@@ -1196,7 +1196,7 @@ $sum = <span class="fn">array_sum</span>($nums);
                     <tr><td>Laravel / Symfony</td><td>Full-featured modern frameworks</td></tr>
                     <tr><td>PHP 8+</td><td>JIT <span class="acro-exp">(Just-In-Time)</span>, typed properties, enums, attributes, fibers</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Don't judge it by 2005 — modern PHP is a competent, fast web language. Its
                     ubiquity in shared hosting and WordPress keeps demand high.
                   </div>
@@ -1236,7 +1236,7 @@ $sum = <span class="fn">array_sum</span>($nums);
                     <tr><td>Compilation</td><td>Preprocess → compile → link (gcc/clang, make)</td></tr>
                     <tr><td>Undefined behavior</td><td>Off-the-rails when you break the rules (buffer overflows)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     C's manual memory is exactly what Rust set out to make safe. Its lack of guardrails
                     is why memory-safety bugs dominate CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span> — the security case for newer languages.
                   </div>
@@ -1270,7 +1270,7 @@ $sum = <span class="fn">array_sum</span>($nums);
                     <tr><td>Calling convention</td><td>Rules for passing args &amp; returns (System V, stdcall)</td></tr>
                     <tr><td>Instructions</td><td><code>mov</code>, <code>push</code>, <code>call</code>, <code>ret</code>, <code>jmp</code></td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Why it matters: overwriting a saved <em>return address</em> on the stack is the
                     classic buffer-overflow exploit — and why we have stack canaries, ASLR <span class="acro-exp">(Address Space Layout Randomization)</span>, and NX.
                     Reading disassembly is core to malware analysis and CTF <span class="acro-exp">(Capture The Flag)</span> pwn/rev challenges.
@@ -1303,7 +1303,7 @@ $sum = <span class="fn">array_sum</span>($nums);
                     <tr><td><code>~1.2.3</code></td><td>&ge;1.2.3, &lt;1.3.0 (patch only)</td></tr>
                     <tr><td><code>1.2.3</code></td><td>Exactly that version (pinned)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Lockfiles</strong> (<code>package-lock.json</code>,
                     <code>poetry.lock</code>, <code>Cargo.lock</code>) pin the <em>exact</em> resolved
                     tree so builds are reproducible — commit them. Ranges say "what's allowed"; the
@@ -1340,7 +1340,7 @@ $sum = <span class="fn">array_sum</span>($nums);
                     <tr><td>Consumer group</td><td>Consumers share partitions to scale out</td></tr>
                     <tr><td>Retention</td><td>Keep events for days/forever — the log is the source of truth</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">vs a queue:</strong> a classic queue deletes on read;
                     Kafka keeps the log so many consumers replay independently. It's the practical
                     engine behind Event Sourcing, CQRS <span class="acro-exp">(Command Query Responsibility Segregation)</span>, and the Outbox pattern (ties to the
@@ -1380,7 +1380,7 @@ df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span cl
                     <tr><td>Structured Streaming</td><td>Same API for batch &amp; streaming</td></tr>
                     <tr><td>Databricks</td><td>The managed commercial platform</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">When:</strong> data outgrows pandas/one box. For smaller
                     data, single-node tools (DuckDB, Polars) are simpler and often faster — don't
                     reach for a cluster you don't need.
@@ -1413,7 +1413,7 @@ df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span cl
                     <tr><td>Dagster</td><td>Asset-oriented — declare the data assets, it derives the graph</td></tr>
                     <tr><td>Prefect</td><td>Pythonic, dynamic flows; lighter than Airflow</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Key features:</strong> a DAG (no cycles), scheduling,
                     retries, and <strong>backfills</strong> (re-run history after a fix).
                     Asset-based tools (Dagster) shift thinking from "run these tasks" to "produce
@@ -1449,7 +1449,7 @@ df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span cl
                     <tr><td>Tests &amp; docs</td><td>Assert not-null/unique; auto-generate a data catalog</td></tr>
                     <tr><td>The stack</td><td>Fivetran/Airbyte (ingest) → warehouse → dbt → BI <span class="acro-exp">(Business Intelligence)</span> (Looker)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Why it stuck:</strong> analytics code gets Git, code
                     review, CI, and tests — treating pipelines like software. ELT works because cloud
                     warehouses are cheap and powerful enough to transform in place.
@@ -1484,7 +1484,7 @@ df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span cl
                     <tr><td>Snowflake</td><td>Dimensions further normalized — less duplication, more joins</td></tr>
                     <tr><td>SCD (Type 2)</td><td>Track history when a dimension changes (keep old rows)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Slowly Changing Dimensions</strong> answer "what was the
                     customer's tier <em>when</em> they bought?" — Type 2 keeps versioned rows so
                     history stays accurate. Star schemas are the default; snowflake only when storage

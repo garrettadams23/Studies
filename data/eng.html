@@ -27,7 +27,7 @@
                     <tr><td>Failure</td><td class="c-red">Single point</td><td class="c-green">Redundant</td></tr>
                     <tr><td>Complexity</td><td class="c-green">Low</td><td class="c-amber">Needs LB + stateless design</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Real systems do both: scale up the database (hard to shard) and scale out the
                     stateless app tier. <strong>Shared-nothing</strong> architecture — nodes share
                     no memory/disk — is what makes horizontal scaling clean.
@@ -70,7 +70,7 @@
                     <tr><td>Hash</td><td>hash(key) % N</td><td>Resharding pain</td></tr>
                     <tr><td>Consistent hashing</td><td>Ring of hashes</td><td>Adding nodes moves few keys — the standard</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The enemy is the <strong class="c-red">hot shard</strong> — one key or range
                     getting disproportionate traffic (a celebrity user). Choose a shard key with
                     even distribution and no cross-shard joins on the hot path.
@@ -146,7 +146,7 @@
                     <tr><td>Graceful degradation</td><td>Serve a cached/limited response instead of an error (show stale prices, hide recommendations)</td></tr>
                     <tr><td>Blast-radius limits</td><td>Cell-based / sharded design so an outage hits 5% of users, not 100%</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Pair with the resilience patterns (circuit breaker, retry-with-backoff,
                     timeout) at the call level. The mindset: <em>"what happens when this
                     dependency is down?"</em> should have an answer for every dependency.
@@ -183,7 +183,7 @@
                     <tr><td>6. Scale &amp; deepen</td><td>Find bottlenecks; add caching, sharding, replicas, CDN <span class="acro-exp">(Content Delivery Network)</span>, async queues.</td></tr>
                     <tr><td>7. Trade-offs</td><td>Name what you gave up. There is no perfect design — only fit-for-purpose.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The senior signal is <strong class="c-green">talking trade-offs out loud</strong>
                     and tying decisions back to the requirements — not memorizing one "correct"
                     architecture.
@@ -223,7 +223,7 @@
                     <tr><td>Failure</td><td>All-or-nothing</td><td>Isolated (if done right)</td></tr>
                     <tr><td>Ops cost</td><td class="c-green">Low</td><td class="c-red">High</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Default advice:</strong> start with a (modular) monolith.
                     Microservices solve <em>organizational</em> scaling problems you probably don't
                     have yet — adopting them too early buys distributed-systems pain for no benefit.
@@ -258,7 +258,7 @@
                     <tr><td>Choreography</td><td>Each service reacts to events independently</td><td>Loose coupling; flow is emergent/hard to trace</td></tr>
                     <tr><td>Orchestration</td><td>A coordinator directs the steps</td><td>Clear flow; the orchestrator is a coupling point</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Watch for: event ordering, duplicate delivery (make consumers idempotent), and
                     schema evolution (version your events). Pairs with the Message Queues topic and
                     CQRS/Event Sourcing below.
@@ -332,7 +332,7 @@
                     <tr><td>CQRS</td><td>Independent read/write scaling &amp; models</td><td>Two models to keep in sync (eventual consistency)</td></tr>
                     <tr><td>Event Sourcing</td><td>Full audit trail; time-travel; rebuild any view</td><td>Complexity; schema/versioning; snapshots for speed</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Powerful together, but <strong class="c-red">not free</strong> — they add real
                     complexity. Use them where audit, temporal queries, or extreme read/write
                     asymmetry genuinely demand it (banking, ledgers), not by default.
@@ -369,7 +369,7 @@
                     <tr><td>Dev/prod parity</td><td>Keep environments as similar as possible</td></tr>
                     <tr><td>Logs</td><td>Treat logs as event streams to stdout — the platform routes them</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Follow these and your app runs the same on a laptop, in a container, or across
                     100 nodes — the foundation for autoscaling, twelve-factor is why containers and
                     PaaS <span class="acro-exp">(Platform as a Service)</span> "just work."
@@ -407,7 +407,7 @@
                     <tr><td>Value object</td><td>Defined only by its attributes, immutable (an Address, Money)</td></tr>
                     <tr><td>Aggregate</td><td>A cluster of objects with one root that guards invariants</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Bounded contexts are why DDD and microservices pair so well — a well-drawn
                     context is a natural service boundary. Start with the language; the model
                     follows.
@@ -442,7 +442,7 @@
                     <tr><td>I</td><td>Interface Segregation</td><td>Many small interfaces &gt; one fat one</td></tr>
                     <tr><td>D</td><td>Dependency Inversion</td><td>Depend on abstractions, not concretions</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The throughline is <strong class="c-green">manage dependencies</strong>: isolate
                     what changes, program to interfaces, and keep the direction of dependency
                     pointing at stable abstractions (this is the engine behind Clean Architecture).
@@ -476,7 +476,7 @@
                     <tr><td>Cohesion</td><td class="c-green">High — focused module</td><td class="c-red">Low — grab-bag of unrelated code</td></tr>
                     <tr><td>Coupling</td><td class="c-green">Low — few, clean dependencies</td><td class="c-red">High — change one, break many</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The <strong class="c-cyan">Law of Demeter</strong> ("only talk to your
                     neighbors" — avoid <code>a.getB().getC().doThing()</code>) is a practical way to
                     keep coupling low. When a change ripples across many files, that's high coupling
@@ -513,7 +513,7 @@
                     <tr><td>Consumer-driven contracts</td><td>Consumers publish expectations; a broken change fails CI (Pact)</td></tr>
                     <tr><td>Governance</td><td>Consistent conventions, versioning, and review across APIs</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     This is what makes microservices and public platforms manageable — the contract
                     is a stable boundary that lets teams move independently without constant
                     breakage (ties to the API Design topic).
@@ -548,7 +548,7 @@
                     <tr><td>Dedup store</td><td>Track processed message IDs; skip repeats</td></tr>
                     <tr><td>Outbox pattern</td><td>Atomically write state + the event to publish, so neither is lost</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     True "exactly-once" delivery is famously near-impossible; the practical answer is
                     <strong class="c-green">at-least-once delivery + idempotent consumers</strong> =
                     effectively-once processing. Build every consumer and API <span class="acro-exp">(Application Programming Interface)</span> assuming it will see
@@ -584,7 +584,7 @@
                     <tr><td>No surprises</td><td>A function does exactly what its name says, nothing hidden</td></tr>
                     <tr><td>Comments explain why</td><td>Not what — the code shows what; comments justify the non-obvious</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The <strong class="c-green">Boy Scout Rule</strong>: leave the code a little
                     cleaner than you found it. Small, constant improvements beat big rewrites.
                   </div>
@@ -618,7 +618,7 @@
                     <tr><td>Ask questions, don't demand</td><td>Don't take feedback personally</td></tr>
                     <tr><td>Approve when good enough, not perfect</td><td>Let the machine catch style (linters)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Automate the boring parts (formatting, lint, tests in CI) so humans review what
                     matters: correctness, design, edge cases, and clarity.
                   </div>
@@ -651,7 +651,7 @@
                     <tr><td>Integration (some)</td><td>Components together (DB, API)</td><td>Slower, more realistic</td></tr>
                     <tr><td>E2E (few)</td><td>The whole system as a user</td><td>Slow, flaky, high-value paths only</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">TDD <span class="acro-exp">(Test-Driven Development)</span></strong> (write the test first) drives better design
                     and guarantees coverage; <strong class="c-green">BDD <span class="acro-exp">(Behavior-Driven Development)</span></strong> frames tests as
                     behavior ("given/when/then"). Aim to test <em>behavior</em>, not implementation,
@@ -686,7 +686,7 @@
                     <tr><td>Accidental</td><td>Learned a better design too late; code lagging behind understanding</td></tr>
                     <tr><td>Bit rot</td><td>Dependencies age, the world changes, code decays</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Manage it:</strong> make it visible (a backlog, not
                     tribal knowledge), pay it down opportunistically (Boy Scout Rule) plus dedicated
                     time, and prioritize debt in code you touch often. Debt in a stable, untouched
@@ -722,7 +722,7 @@
                     <tr><td>Design doc / RFC <span class="acro-exp">(Request for Comments)</span></td><td>Propose &amp; get feedback before building; align the team</td></tr>
                     <tr><td>C4 model</td><td>Diagrams at 4 zoom levels: Context, Container, Component, Code</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Keep them short and in the repo (version-controlled next to the code). The value
                     is the <em>trail of reasoning</em> — it onboards new people and stops old debates
                     from restarting.
@@ -757,7 +757,7 @@
                     <tr><td>Bulkhead</td><td>One overloaded feature sinking the rest (isolate resource pools)</td></tr>
                     <tr><td>Fallback</td><td>Degrade gracefully — cached/default response over an error</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Careful with retries:</strong> naive retries during an
                     outage create a <em>retry storm</em> that keeps the dependency down. Always pair
                     retries with backoff, jitter, and a circuit breaker; only retry idempotent
@@ -791,7 +791,7 @@
                     <tr><td>Outbox</td><td>Write state + the "event to publish" in one local transaction, so the event can't be lost</td></tr>
                     <tr><td>2PC</td><td>Coordinator locks all participants to commit atomically — avoided at scale (blocking, SPOF)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Sagas trade atomicity for availability: the system is briefly inconsistent, then
                     converges (or compensates). "Charge failed → cancel the order" is a compensating
                     transaction. Pair with idempotency (E3) so retried steps are safe.
@@ -826,7 +826,7 @@
                     <tr><td>Rate limiting</td><td>Cap intake at a sustainable rate (token bucket)</td></tr>
                     <tr><td>Reactive streams</td><td>Consumer signals demand to the producer (pull, not push)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The counter-intuitive lesson: a system that <strong class="c-green">rejects</strong>
                     excess load cleanly stays up; one that politely accepts everything falls over.
                     Fail fast, shed early.
@@ -861,7 +861,7 @@
                     <tr><td>Low W, low R</td><td>Fast + available, but reads may be stale (eventual)</td></tr>
                     <tr><td>Read repair / anti-entropy</td><td>Replicas reconcile in the background</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     So a shopping-cart read can be fast-and-eventual (low R) while the final
                     checkout uses a strong quorum — the same store, tuned per operation. This is how
                     Dynamo-style systems make CAP practical (ties to the CAP Theorem topic).
@@ -896,7 +896,7 @@
                     <tr><td>Staff</td><td>Impact across multiple teams; sets technical direction</td></tr>
                     <tr><td>Principal+</td><td>Org/company-wide technical strategy</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The shift from senior → staff is the big one: from "I solve hard problems" to
                     "I make <em>other</em> teams more effective" — via influence, not authority.
                   </div>
@@ -929,7 +929,7 @@
                     <tr><td>Solver</td><td>Parachutes into the gnarliest problems</td></tr>
                     <tr><td>Right Hand</td><td>Extends a senior leader's reach across the org</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     All four share the staff-level core: technical judgment, cross-team influence,
                     and moving the org forward — not just shipping personal code.
                   </div>
@@ -961,7 +961,7 @@
                     <tr><td>Spends time on</td><td>Architecture, hard problems, mentoring</td><td>1:1s, hiring, coordination, careers</td></tr>
                     <tr><td>Measured by</td><td>Technical outcomes &amp; leverage</td><td>Team health &amp; throughput</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     You can switch tracks (and back) — many do. Choose based on what energizes you:
                     solving technical problems, or growing people and systems. Neither is superior.
                   </div>
@@ -995,7 +995,7 @@
                     <tr><td>Disagree &amp; commit</td><td>Argue hard, then support the decision fully</td></tr>
                     <tr><td>Give credit</td><td>Trust compounds; hoarding credit destroys it</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The best technical idea loses to a well-communicated mediocre one. Learning to
                     write and persuade is as much a "senior engineering skill" as system design.
                   </div>
@@ -1029,7 +1029,7 @@
                     <tr><td>Cloud (GCP)</td><td>Cloud Digital Leader → Associate Cloud Engineer → Professional Architect</td></tr>
                     <tr><td>Management</td><td>PMP <span class="acro-exp">(Project Management Professional)</span> / CISM <span class="acro-exp">(Certified Information Security Manager)</span> for leadership tracks</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     The whole site maps to these — this reference domain (Red/Blue/Cloud/Engineering)
                     is effectively a study companion for the tracks above.
                   </div>
@@ -1063,7 +1063,7 @@
                     <tr><td>BFF</td><td>Backend-for-frontend: a tailored API <span class="acro-exp">(Application Programming Interface)</span> per client type</td></tr>
                     <tr><td>Cold starts / limits</td><td>Serverless trade-offs: latency spikes, timeouts, statelessness</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Trade-off:</strong> serverless minimizes ops and cost at
                     low/spiky load but can get expensive and awkward at steady high volume (and
                     vendor lock-in rises). Match the model to the traffic shape — ties to the
@@ -1100,7 +1100,7 @@
                     <tr><td>Polyglot persistence</td><td>Right store per job: relational + doc + cache + search</td></tr>
                     <tr><td>Star / snowflake</td><td>Dimensional modeling for analytics warehouses</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Rule:</strong> normalize until it hurts, denormalize until
                     it works. In NoSQL you design the table around queries up front — the opposite of
                     relational's "model entities, query later."
@@ -1135,7 +1135,7 @@
                     <tr><td>Cone of uncertainty</td><td>Estimates tighten as you learn — re-estimate</td></tr>
                     <tr><td>Ranges &amp; buffers</td><td>Give "2–4 weeks", not "3 weeks"; account for the unknown</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Senior move:</strong> break big work into small,
                     independently shippable slices — small things estimate accurately, and you get
                     feedback early. Padding a giant estimate just hides the risk.
@@ -1169,7 +1169,7 @@
                     <tr><td>Behavioral</td><td>STAR <span class="acro-exp">(Situation, Task, Action, Result)</span> stories tied to the level's expectations (scope, impact)</td></tr>
                     <tr><td>Take-home / practical</td><td>Clean, tested, documented — treat it like real work</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">For promotion:</strong> operate at the next level
                     <em>before</em> the title — keep a brag doc of impact mapped to the ladder's
                     criteria. The whole Engineering domain here is study material for the design &amp;
@@ -1316,7 +1316,7 @@
                   <div class="rs-question">
                     Software engineer&nbsp;?
                   </div>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Why the last circle floats:</strong> "software engineer"
                     is the one title that refuses to sit in the stack. In most companies it is
                     simply the HR name for everyone above — the nesting model describes what someone
@@ -1361,7 +1361,7 @@
                       </tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Career use:</strong> promotion is usually the act of
                     growing one ring outward, not typing faster. If you want the next title, start
                     answering the next question <em>before</em> anyone asks you to. See
@@ -1502,7 +1502,7 @@
                       </tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Two honest caveats.</strong> First, small companies
                     collapse this whole table into two or three people — the roles still exist, they
                     just share a chair. Second, the same title can mean opposite jobs at two
@@ -1544,7 +1544,7 @@
                       <tr><td>UEM</td><td>EMM merged with traditional desktop management, so mobile and PC are one estate</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The lineage matters in interviews: UEM is what happened when the mobile-device
                     world (MDM/EMM) and the domain-joined PC world (imaging, Group Policy, MECM)
                     stopped being separate teams.
@@ -1570,7 +1570,7 @@
                       <tr><td>Firefighting</td><td>Why did this policy apply to 400 machines it shouldn't have — and how fast can it be pulled</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">The defining risk of the job:</strong> blast radius. A bad
                     line of application code breaks a feature; a bad device policy bricks the fleet
                     that everyone uses to report it. Ring-based deployment, a pilot group and a
@@ -1638,7 +1638,7 @@
                       <tr><td>Habits</td><td>Test rings, documented rollback, change control, and reading the compliance report before declaring victory</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Typical path:</strong> service desk → desktop support →
                     endpoint/UEM engineer → senior or lead UEM, then a fork toward
                     <strong>endpoint security</strong>, <strong>IAM</strong>, or
@@ -1705,7 +1705,7 @@
             <tr><td>Someone else owns the refresh</td><td>Ownership of the asset, and the option to just keep it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The third row is the underrated one. When capacity took twelve weeks to arrive, teams
           planned. When it takes ninety seconds, nobody does — and the bill is the record of every
           decision nobody had to make. The mechanics of controlling that are in
@@ -1764,7 +1764,7 @@
             <tr><td>Transform</td><td>New capability the business asked for</td><td>Choosing fewer initiatives, not smaller ones</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The trap is that "grow" is what gets cut when money is tight, and grow is what keeps run
           from rising. Deferring upgrades for three years produces an estate whose run cost has
           quietly climbed, which is then cited as evidence that IT is expensive.
@@ -1789,7 +1789,7 @@
             <tr><td>"We need more storage"</td><td>"Full in September at current growth; ordering in June avoids the emergency premium"</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Every strong version names a consequence and a date. That is what turns a request into a
           decision someone else can own — and the forecasting that produces the date is in
           <span class="xref">Forecasting Capacity — Trend, Seasonality &amp; Headroom</span>.
@@ -1864,7 +1864,7 @@
      option that needs more babysitting is really costing.
 
 <span class="com"># Then state the assumptions ABOVE the total, not in a footnote.</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Include a "do nothing" column. It is frequently the option nobody costed, and occasionally
           it wins — which is worth discovering before the project starts rather than after.
         </div>
@@ -1901,7 +1901,7 @@
             <tr><td>Start with</td><td>This one, always</td><td>Only once showback data is trusted</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Attempting chargeback on data nobody believes is how the whole idea gets discredited for
           years. Publish the numbers first, let people find the errors, fix them, and only then
           attach money.
@@ -1926,7 +1926,7 @@
             <tr><td>Leave it central</td><td>No overhead at all</td><td>Nobody has an incentive to consume less of it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A rough model applied consistently beats a precise one that arrives three months late and
           changes each quarter. Publish the method, keep it stable, and revisit it annually rather
           than per dispute.
@@ -1950,7 +1950,7 @@
             <tr><td>Charging for test environments</td><td>Testing moves to production</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The rule that follows: never charge for the thing you want people to do more of. Charge for
           consumption they control, and fund the controls centrally.
         </div>
@@ -1988,7 +1988,7 @@
             <tr><td>6</td><td>How we will know</td><td>The measure, and when it will be checked</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Section 6 is the one that separates a proposal from a wish, and the one most people omit.
           Committing in advance to how success will be measured is also what makes the <em>next</em>
           case easier to get approved.
@@ -2013,7 +2013,7 @@
             <tr><td>"Everyone is moving to this"</td><td>Drop it — it is not an argument, and it invites the question of who "everyone" is</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           State assumptions explicitly and give a range. "£25–40k depending on X" is more credible
           than a single confident figure, and it protects you when the outcome lands at the lower
           end.
@@ -2082,7 +2082,7 @@
    ->  avoided loss £80k against £45k spend
 
 <span class="com"># And say what it does NOT cover — the third outage is a different cause.</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Naming what the spend does not fix is what makes the rest credible. A proposal that claims
           to eliminate all outages is read, correctly, as a proposal that has not been thought
           through.
@@ -2136,7 +2136,7 @@
             <tr><td>Anti-requirement</td><td>What you explicitly do not want to buy — the scope creep defence</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Write them as outcomes rather than as features. "Provisions a new starter's access within
           one working day" invites several valid solutions; "has a workflow designer" describes one
           product and hands the selection to whoever sells it.
@@ -2160,7 +2160,7 @@
             <tr><td>RFQ — quotation</td><td>"What is your price for exactly this?"</td><td>The specification is fixed and comparable</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Score against the published criteria, with weights agreed before responses arrive. Deciding
           the weights afterwards is how a process that looks rigorous produces the answer someone
           had already chosen — and everyone involved can tell.
@@ -2198,7 +2198,7 @@
             <tr><td>How you would leave</td><td>Asked now, while they are still selling to you</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Ask for references they did not choose: a customer who left, or one in your sector you find
           yourself. The security side of this assessment is covered by
           <span class="xref">Third-Party Risk — Your Security Is Only as Strong as Your Vendors</span>.
@@ -2225,7 +2225,7 @@
             <tr><td>An explicit exit</td><td>Agree up front what happens to the data and the environment if you decline</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Include at least one thing you expect to fail. A PoC that tests only the happy path
           confirms the demo, and the questions you were nervous about remain unanswered until
           production.
@@ -2346,7 +2346,7 @@
             <tr><td>Termination for convenience</td><td>Can we leave early, and what does it cost?</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The notice period is the most commonly and expensively missed: a 90-day notice window on an
           auto-renewing contract means the decision to leave must be made three months before anyone
           is thinking about it. Put every one of them in a calendar with a reminder ahead of the
@@ -2373,7 +2373,7 @@
             <tr><td>Exclusions for maintenance and force majeure</td><td>A large share of downtime does not count</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The useful conclusion: an SLA is a signal of the vendor's confidence, not a control. If an
           outage would genuinely hurt, the mitigation is your own architecture, not their credit
           schedule.
@@ -2412,7 +2412,7 @@
             <tr><td>Per environment</td><td>Prod, test, DR separately</td><td>DR standby capacity is frequently chargeable</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The virtualisation row is where the largest surprises live. Some licences count every core
           in a cluster the software <em>could</em> run on, so a VM <span class="acro-exp">(Virtual Machine)</span> permitted to migrate freely across
           a large cluster can be licensable against all of it.
@@ -2438,7 +2438,7 @@
             <tr><td>Record who approved every non-standard deployment</td><td>Negotiate the remedy — a true-up is a commercial conversation</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A true-up is negotiable in the same way any purchase is, and it is often settled alongside
           a renewal or expansion. The one thing that removes your position entirely is not knowing
           your own deployment, because then their number is the only number in the room. This is what
@@ -2480,7 +2480,7 @@
             <tr><td>Commercial</td><td>Early termination charges, unused term</td><td>Reading the termination clause before signing</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Process lock-in is the one that decides most renewals. By year three the organisation has
           reshaped itself around the tool's assumptions, and the migration cost is a change-management
           project rather than a data transfer — which is precisely why it never appears in the
@@ -2506,7 +2506,7 @@
             <tr><td>Deletion certification</td><td>Written confirmation your data is destroyed, and when</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Then test the export once, early, while the relationship is good. An export capability
           nobody has exercised is a claim in a document, and the year you need it is not the year to
           discover it produces an undocumented format missing the attachments.
@@ -2567,7 +2567,7 @@
             <tr><td>Make the good path fast</td><td>A quick review and a catalogue entry beats a policy nobody follows</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Do the seat reclamation on a schedule tied to renewal dates rather than annually — a seat
           reclaimed the week after renewal is paid for anyway for a full year.
         </div>
@@ -2624,7 +2624,7 @@
             <tr><td>"This code is hard to work in"</td><td>"Changes here take four times longer than elsewhere — here is the ticket history"</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Track the interest so the claim is evidence rather than a feeling: time lost to workarounds,
           incidents attributable to the area, cycle time compared with healthier parts of the system.
           The engineering-side view of the same subject is
@@ -2665,7 +2665,7 @@
             <tr><td>Staff time on slow machines</td><td>Everywhere, and it dwarfs the rest at fleet scale</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is the one to quantify for laptops. Five minutes a day per person across a
           thousand people is a very large number, and it is the argument that funds a refresh when
           "they still work" is the counter-position.
@@ -2690,7 +2690,7 @@
             <tr><td>Replace on failure only</td><td>Lowest — until it is not</td><td>Unmanaged; the estate ages into a support cliff together anyway</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Whichever cycle is chosen, the disposal end matters as much as the purchase: certified data
           destruction, WEEE-style disposal obligations, and residual value from resale or trade-in
           that most organisations simply forfeit.
@@ -2729,7 +2729,7 @@
             <tr><td>Estimates are always wrong the same way</td><td>Capacity is being counted as if nobody runs anything</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The second row is the most treatable. Limiting work in progress finishes more per year than
           starting more does, and it is free — but it requires saying "not yet" out loud, which is
           the part organisations find hard.
@@ -2755,7 +2755,7 @@
             <tr><td>Dependency</td><td>Does it unblock other items, or need them first?</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Run the exercise with the stakeholders in one room rather than collecting scores
           separately. Most of the value is in the conversation where two people discover they meant
           different things by the same project.
@@ -2804,7 +2804,7 @@
             <tr><td>"What is going to hurt us?"</td><td>What risk should I know about now?</td><td>The top risks, with owners and dates</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Three slides, in that order. Everything else belongs in an appendix that exists for the one
           person who wants it.
         </div>
@@ -2850,7 +2850,7 @@
             <tr><td>"Project is amber"</td><td>"Two weeks late because of a vendor delay; recoverable, no extra cost"</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The third row is the one worth practising. Rising absolute spend with falling unit cost is
           a success story that looks like a problem, and it will be read as a problem unless you
           supply the second half of the sentence.
@@ -2910,7 +2910,7 @@
             <tr><td>Fixing production yourself out of habit</td><td>It feels useful and it trains the team to wait for you</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Keep something small and non-blocking — tooling, a review rotation, an occasional bug. It
           preserves credibility and your ability to smell trouble, without putting the team's
           delivery on your calendar.
@@ -2983,7 +2983,7 @@
             <tr><td>"What do you want to be doing in two years?"</td><td>The retention conversation, started early</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Then report back what you heard, in aggregate, and say what you are going to do about it.
           A listening tour with no visible consequence is worse than none — it teaches people that
           telling you things changes nothing.
@@ -3022,7 +3022,7 @@
             <tr><td>5. It is yours</td><td>"Own it; tell me if you need something"</td><td>Full ownership, including the outcome</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Say the number, or say the sentence. "Decide and tell me afterwards" takes three seconds
           and removes almost all the ambiguity that makes delegation feel unsafe on both sides.
         </div>
@@ -3046,7 +3046,7 @@
    After a year:     you have 20+ hours back, and a second person who can do it.
 
 <span class="com"># And the part the arithmetic misses: they were bored, and now they are not.</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The exception is real: in a genuine emergency, do it yourself. Then delegate the postmortem
           and the fix, so the emergency is the last time it had to be you.
         </div>
@@ -3126,7 +3126,7 @@
             <tr><td>Walk or change the room occasionally</td><td>Different setting, different conversation — reliably</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           If there is genuinely nothing to discuss, end early rather than filling it. Protecting the
           slot while respecting the time is what keeps people willing to bring the real thing when
           it eventually appears.
@@ -3163,7 +3163,7 @@
             <tr><td>"You're too negative in meetings"</td><td>"You raised four objections yesterday and no alternative — it read as blocking rather than as the risk you meant"</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Positive feedback deserves the same specificity, and gets it far less often. "Great work"
           is pleasant and teaches nothing; naming exactly what worked tells someone what to do more
           of, which is the entire point.
@@ -3211,7 +3211,7 @@
             <tr><td>The support you will provide</td><td>Real and specific, so it is a path rather than a countdown</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Lead with the message rather than building up to it. People know when a conversation is
           serious, and the preamble reads as either evasion or cruelty — deliver it in the first
           thirty seconds, then spend the rest of the time on what happens next.
@@ -3250,7 +3250,7 @@
             <tr><td>Not working out</td><td>Honest, documented, and fast — for their sake as much as anyone's</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The second row is underrated. Plenty of excellent engineers do not want to be managers or
           principals, and treating steady senior contribution as a plateau to be fixed is a good way
           to lose exactly the people who hold a team together.
@@ -3298,7 +3298,7 @@
             <tr><td>Life change, or a genuinely better role</td><td>Often none</td><td>No, and that is fine</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A counter-offer accepted for money alone buys a few months and usually ends the same way,
           because the reason was rarely the money. Have the conversation that prevents the search,
           six months before it starts.
@@ -3358,7 +3358,7 @@
             <tr><td>Manager conversation</td><td>Expectations, growth, and their questions — which matter</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Agree what each interviewer is assessing before the loop starts, and have them write notes
           before the debrief. Otherwise the debrief converges on whoever speaks first, which is a
           well-documented way to turn five opinions into one.
@@ -3385,7 +3385,7 @@
             <tr><td>Telling them the format in advance</td><td>Surprise formats, which measure composure rather than skill</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The loop is also the candidate's clearest view of what working here is like. A
           disorganised, rude or endlessly delayed process tells them something accurate, and the best
           candidates act on it. General preparation from the other side of the table is in
@@ -3426,7 +3426,7 @@
             <tr><td>90</td><td>Be contributing at the level they were hired for, and telling you what is wrong with how things are done</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Day one access failing is the most common and most avoidable onboarding failure. Nothing
           says "we were not expecting you" like a new starter who cannot log in, and it is entirely
           a scheduling problem.
@@ -3486,7 +3486,7 @@
             <tr><td>Complicated-subsystem</td><td>Owns something genuinely specialist</td><td>Spreading deep expertise too thin to be useful</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The enabling shape is the one most often got wrong: it is defined by leaving. An enabling
           team that stays becomes a dependency, which is precisely the thing it was created to
           remove.
@@ -3511,7 +3511,7 @@
             <tr><td>A monolith that stays maintainable</td><td>Do not split the team that owns it — the seams will follow the split</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is a real and unfashionable option. Splitting a team is how a well-factored
           monolith becomes a distributed monolith: the code did not change, but the coordination
           cost of changing it did. The architectural side of that choice is in
@@ -3585,7 +3585,7 @@
             <tr><td>A battle you would win at a cost</td><td>Ask what it buys — most are not worth the relationship</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Escalation is a tool rather than a failure, and it works best when both parties know it is
           happening. Escalating around someone rather than with them wins the point and costs the
           working relationship that would have prevented the next three.
@@ -3660,7 +3660,7 @@
             <tr><td>Ask "does this need a meeting?"</td><td>A written update is frequently better and always cheaper</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The personal-productivity side of this is in
           <span class="xref">Time Management — Making Your Hours Count</span> in the Productivity
           domain; what is specific to leading is that your calendar decisions set other people's
@@ -3720,7 +3720,7 @@
             <tr><td>Learning the new thing well enough to ask about it</td><td>Being the team's expert in anything</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A useful test: if you disappeared for two weeks, would anything you personally hold stall?
           If yes, you have kept too much — and the fix is to give it away deliberately rather than
           discover it during an absence.
@@ -3758,7 +3758,7 @@
             <tr><td>"Did they work well in a team?"</td><td>"Tell me about a disagreement they were part of"</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Listen for hesitation as much as content — a referee who is enthusiastic about everything
           except one topic has told you where to ask more. And treat a reference as one input among
           several: it cannot overturn a good loop, but it can prompt a specific follow-up
@@ -3829,7 +3829,7 @@
             <tr><td>Beyond</td><td>Themes and problems</td><td>"Direction — not a commitment"</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Publishing the confidence level alongside each item makes an honest roadmap possible.
           Without it, the only way to be safe is to pad everything, which is how a plan becomes
           theatre that nobody believes and everybody performs.
@@ -3875,7 +3875,7 @@
             <tr><td>One person's guess</td><td>Two or three independent guesses; the divergence is the signal</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The estimation techniques themselves are in
           <span class="xref">Estimation &amp; Planning</span>; what a lead adds is the framing that
           makes an honest estimate safe to give.
@@ -3913,7 +3913,7 @@
             <tr><td>What could still go wrong?</td><td>A short risk list, reviewed rather than filed</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           If a ceremony or artifact does not serve one of those four, it is a candidate for deletion.
           Most inherited process fails this test, and deleting it is usually met with relief rather
           than resistance.
@@ -3986,7 +3986,7 @@
         the code your team wrote is usually a rounding error.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           Supply-chain security is the discipline of taking that list seriously. Every input is a
           place someone else's decision becomes your running code, and the defining property of the
           category is that <em>nothing goes wrong on your side.</em> Your repository is untouched,
@@ -4037,7 +4037,7 @@
             <tr><td>A package name the internal registry did not own</td><td>The resolver preferred the public copy, following its documented rules</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Read the second column as the design brief for everything that follows. Controls that ask
           "is this signed?" or "is this the real publisher?" answer a question the attacker has
           already satisfied. The useful questions are <em>which build produced this, from which
@@ -4068,7 +4068,7 @@
         time in most ecosystems, and each one is a maintainer account that can be phished.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           The useful metric is not dependency count, which nobody can act on. It is
           <em>how many distinct maintainers can put code on your production machines without anyone
           on your team approving it.</em> That number is usually in the hundreds, it is computable
@@ -4096,7 +4096,7 @@
             <tr><td>Abandonment</td><td>No malice, no patches, no response to reports</td><td>Track maintenance signals; budget replacement before it is urgent</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Notice how much work pinning does across that column, and what it costs: pinned
           dependencies do not receive security fixes on their own either. Pinning is only safe when
           it is paired with a working update process — which is why the two have to be adopted
@@ -4149,7 +4149,7 @@
         achievable, and it makes them mean something specific when claimed.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           The framing that makes it click: each level removes one way an attacker could lie about
           provenance. Level 1 makes a claim exist at all. Level 2 makes the claim come from the
           build service rather than from whoever ran it. Level 3 makes the build itself hard to
@@ -4174,7 +4174,7 @@
             <tr><td>3</td><td>The build is hardened and isolated</td><td>Ephemeral, isolated runners; secrets unreachable by user-defined build steps</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The single highest-value move on that ladder is the Level 2 one, and it is organisational
           rather than technical: <em>no artifact reaches a registry except from CI.</em> The
           release-from-a-laptop path is how most unattributable artifacts come to exist, and closing
@@ -4200,7 +4200,7 @@
             <tr><td>Anyone checked the provenance</td><td>Generating it and verifying it are different projects, and the second is often skipped</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           That last row is the common failure. Provenance generation gets adopted because it is a
           pipeline change one team can make alone; verification gets deferred because it can break
           deploys. Unverified provenance is metadata, not a control.
@@ -4232,7 +4232,7 @@
         they do not control.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           in-toto is the format those statements are written in; SLSA <span class="acro-exp">(Supply-chain Levels for Software Artifacts)</span> provenance is one specific
           kind of in-toto statement. Worth holding onto, because the two names appear together
           constantly and are frequently assumed to be alternatives.
@@ -4249,7 +4249,7 @@
         variable that has not moved in four years.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           Sigstore's keyless flow removes the object entirely. The build proves its identity with a
           short-lived OIDC <span class="acro-exp">(OpenID Connect)</span> token — from GitHub Actions, GitLab, or a cloud workload identity — and
           receives a certificate valid for minutes, long enough to sign. The certificate, the
@@ -4265,7 +4265,7 @@
             <tr><td>The identity</td><td>A workflow in a repository — not a person, and not a key</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The transparency log carries a second, quieter benefit: a maintainer can detect a
           compromise by noticing signatures they did not produce. Without it, detection depends on
           somebody reporting the malicious artifact after the fact.
@@ -4288,7 +4288,7 @@ cosign verify $IMAGE
 cosign verify $IMAGE \
   --certificate-identity-regexp '^https://github.com/acme/api/.github/workflows/release.yml@refs/tags/' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Two details decide whether this is a control or a ritual. Anchor the identity pattern to
           the start of the string — an unanchored match against a repository name is satisfied by a
           repository whose name merely contains it. And verify by digest rather than by tag: a tag
@@ -4319,7 +4319,7 @@ cosign verify $IMAGE \
         breaks nothing and enforcing them can stop a deploy at four in the afternoon.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           Put the gate where nothing can go around it. A check in the deploy pipeline is a good
           start and is bypassed by anyone who applies a manifest directly; an admission controller
           in the cluster sees every path. The policy machinery is the same as for any other
@@ -4349,7 +4349,7 @@ cosign verify $IMAGE \
             <tr><td>6</td><td>Alert on exemption use and expiry</td><td>Otherwise the temporary list becomes the permanent one</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Decide the failure mode deliberately and write it down. If the policy engine or the
           transparency log is unreachable, does the deploy proceed or stop? Fail-open makes the
           control absent exactly when infrastructure is unhealthy — which is when an attacker would
@@ -4380,7 +4380,7 @@ cosign verify $IMAGE \
             <tr><td>Locale, timezone, hostname, random seeds</td><td>Fix them in the build environment</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Full bit-for-bit reproducibility is expensive in some ecosystems and cheap in others, so
           treat it as a direction rather than a gate. Even partial progress pays: most of that list
           is also what makes a build deterministic enough to debug, and a team that pins its
@@ -4412,7 +4412,7 @@ cosign verify $IMAGE \
         every team and waiting two days. That delay is the entire cost being avoided.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           Which means the test of an SBOM programme is not whether documents are generated. It is
           whether someone can run that query. An SBOM attached to a registry artifact and never
           indexed is a file; an SBOM in a store you can query across every deployed version is an
@@ -4461,7 +4461,7 @@ cosign verify $IMAGE \
             <tr><td>Under investigation</td><td>Not yet determined</td><td>Legitimate, but it is a timer, not an answer</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The justifications are a fixed vocabulary — component not present, vulnerable code not in
           the execution path, inline mitigation already exists, and so on — and that constraint is
           what gives VEX its integrity. "Not affected" without a justification is an assertion;
@@ -4504,7 +4504,7 @@ cosign verify $IMAGE \
             <tr><td>What is the fix's blast radius?</td><td>A patch bump and a major-version migration are different pieces of work</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Reachability analysis is the highest-leverage tool here, and its limits should be stated
           plainly: it under-reports on dynamic dispatch, reflection and anything invoked by string
           name. Use it to justify deferring, never to justify ignoring, and re-run it when the code
@@ -4532,7 +4532,7 @@ cosign verify $IMAGE \
             <tr><td>Treat a red update pull request as a real signal</td><td>It is the earliest, cheapest warning that a dependency changed behaviour</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The cooling-off delay and auto-merge look contradictory and are not: hold new versions
           briefly, then adopt them automatically once they have aged. That combination is what makes
           pinning safe, and it is the reason the two controls belong in the same conversation.
@@ -4560,7 +4560,7 @@ cosign verify $IMAGE \
             <tr><td>7</td><td>Hunt for what the payload did — outbound connections, new credentials, modified artifacts</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Steps 4 and 5 are the ones routinely skipped, and they are the ones that matter. Removing
           the package restores a clean dependency tree and does nothing about a credential that was
           exfiltrated an hour after it was installed. The wider incident process is in
@@ -4591,7 +4591,7 @@ cosign verify $IMAGE \
         change to a README.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           The mental correction that fixes most of the specific problems: <em>a pipeline definition
           is privileged code.</em> Reviewing a workflow change is reviewing something that runs with
           production credentials. Requiring approval for changes under the CI directory, separately
@@ -4620,7 +4620,7 @@ cosign verify $IMAGE \
             <tr><td>Deployment credentials usable from any branch</td><td>Bind deploy identity to protected branches and tags only</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The fork-pull-request row causes the worst outcomes because the vulnerable configuration
           exists for a good reason — maintainers want CI results on external contributions. The
           workable answer is running untrusted code without secrets and deferring anything
@@ -4648,7 +4648,7 @@ cosign verify $IMAGE \
             <tr><td>Make base and golden images rebuild on a schedule</td><td>One place to patch — but only if something rebuilds it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The golden-image row is the one that quietly decays. A shared base image is genuinely the
           cheapest way to patch a fleet, and it becomes the cheapest way to ship a two-year-old
           vulnerability everywhere the moment nobody owns rebuilding it. If you adopt one, the
@@ -4693,7 +4693,7 @@ cosign verify $IMAGE \
             <tr><td>Internal modifications you never release</td><td>Usually nothing at all</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The second row is why the AGPL exists and why some organisations ban it outright: ordinary
           copyleft was written when software was shipped, so running a modified version as a hosted
           service created an obligation-free loophole. AGPL closes it by treating network use as
@@ -4721,7 +4721,7 @@ cosign verify $IMAGE \
             <tr><td>Not open source at all</td><td>SSPL, BUSL, "source available", most vendor community editions</td><td>Read them properly — several forbid exactly the use you had in mind</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           That last row has grown in importance. A number of well-known projects have relicensed to
           source-available terms that restrict offering the software as a service or require a
           commercial agreement above a threshold. They are frequently still described as "open
@@ -4752,7 +4752,7 @@ cosign verify $IMAGE \
             <tr><td>Get advice before shipping copyleft in a product</td><td>This is the one where being wrong is expensive</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The transitive row is where teams are usually surprised, and it is the same mechanism as
           the security problem next door — you did not choose that dependency, and you carry it
           anyway. The inventory that answers both questions is the same artefact:

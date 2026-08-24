@@ -69,7 +69,7 @@
             <tr><td>Default domain</td><td>The one new users get unless told otherwise</td><td>Often left as .onmicrosoft.com, quietly creating wrong-looking accounts</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The directory itself, and how on-prem accounts get into it, is covered by
           <span class="xref">Entra Connect &amp; Hybrid Identity — Choosing How Passwords Are Checked</span>
           in the Windows Server domain.
@@ -108,7 +108,7 @@
             <tr><td>Add-ons</td><td>Individual capabilities bolted onto a lower tier</td><td>When a handful of people need one E5 feature</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Tier contents and names change with Microsoft's packaging — treat the split above as the
           shape of the decision, <span class="volatile" data-checked="2026-08">not as a current
           feature list</span>, and check the licensing comparison before quoting it to anyone.
@@ -153,7 +153,7 @@
             <tr><td>Feature needs an add-on, not the tier</td><td>Documentation says E5 "or" a specific add-on nobody bought</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Copilot in particular is licensed separately and has data-boundary implications of its
           own — see <span class="xref">Deploying AI Assistants — Copilot, Licensing &amp; Data Boundaries</span>
           in the AI <span class="acro-exp">(Artificial Intelligence)</span> domain.
@@ -217,7 +217,7 @@
             <tr><td>Break-glass accounts</td><td>Permanently assigned, excluded from PIM and Conditional Access, monitored for any sign-in</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The general principle behind all of this is in
           <span class="xref">Identity &amp; Access Management — Who Can Do What</span> in the
           Security domain; this card is the M365-specific shape of it.
@@ -273,7 +273,7 @@
             <tr><td>Tell users it is a known incident, early</td><td>The ticket flood that follows silence</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A Microsoft-announced change is still a change to your environment — it belongs in the
           process described by <span class="xref">Change Management – The Process That Prevents Self-Inflicted Outages</span>
           in the Governance domain, even though nobody in your org initiated it.
@@ -311,7 +311,7 @@
             <tr><td>5</td><td>Mailbox rules</td><td>The user's own Inbox rules, last of all</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The practical consequence: a transport rule that allows a sender runs <em>before</em> the
           spam verdict, which is exactly why a well-meant "allow our partner" rule is the most
           common way a tenant lets phishing straight through.
@@ -356,7 +356,7 @@
             <tr><td>Loops or duplicate delivery</td><td>Redirect and forward actions stacked across two rules</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Scope allow-rules to something an attacker cannot set: the authenticated domain, the
           sending IP, or a shared secret header — never the friendly From name. The mechanics of
           what "authenticated" means are in
@@ -394,7 +394,7 @@
             <tr><td>Equipment</td><td>A bookable thing — a projector, a vehicle</td><td>No</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Shared mailboxes are free up to a size ceiling and <span class="volatile" data-checked="2026-08">need a
           licence once they exceed it or are placed on hold</span>; check the current limit before
           promising finance that a growing archive costs nothing.
@@ -418,7 +418,7 @@
             <tr><td>Send on Behalf</td><td>Send with attribution</td><td>"Delegate on behalf of Mailbox"</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Executives asking for "access to my assistant's mailbox" nearly always mean Send on Behalf
           for outbound and Full Access for the calendar — granting Send As instead removes the
           attribution their correspondents rely on.
@@ -445,7 +445,7 @@ Get-RecipientPermission <span class="var">-Identity</span> <span class="str">"su
 
 <span class="com"># Send on Behalf lives on the mailbox object itself</span>
 Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contoso.com"</span> | Select-Object GrantSendOnBehalfTo</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Three different cmdlets for three permissions on one mailbox is the single most common
           reason a delegation audit comes back incomplete.
         </div>
@@ -515,7 +515,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Blocked by a transport rule</td><td>Admin only — the org made this decision deliberately</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Held mail is kept for a bounded window —
           <span class="volatile" data-checked="2026-08">30 days by default, and configurable
           downward</span> — after which it is gone rather than delivered. A user who "will get to it
@@ -557,7 +557,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>No result at all</td><td>It never reached the service</td><td>Sender side — their outbound logs, your public MX record</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Trace data is retained for a limited window — <span class="volatile" data-checked="2026-08">on
           the order of days for the detailed real-time view and months for summary search</span> — so
           a three-month-old dispute may simply be unanswerable. Pull the trace early.
@@ -582,7 +582,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>X-Forefront-Antispam-Report</td><td>The filtering verdict and why, including the spam confidence level</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The gap between <code>Return-Path</code> and <code>From</code> is the whole of display-name
           spoofing: SPF can pass perfectly for a domain the user never sees. That is precisely the
           gap DMARC alignment exists to close.
@@ -640,7 +640,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Recycle bin retention, <span class="volatile" data-checked="2026-08">93 days across both stages</span></td><td>"Deleted last quarter" being genuinely gone</td><td>Retention policy, not the recycle bin, is the safety net</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The 5,000-item threshold is the most misunderstood of these: it limits what a
           <em>view</em> can enumerate, not what a list can hold. A list of a million rows is fine if
           every view is filtered on an indexed column.
@@ -696,7 +696,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Specific people</td><td>Named recipients, including guests</td><td>External collaboration done deliberately</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Set expiry on "Anyone" links if you allow them at all — an unexpiring anonymous link is a
           permanent, unauthenticated door that survives the departure of everyone who knew about it.
         </div>
@@ -721,7 +721,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Sensitivity labels on containers</td><td>Ties the sharing rules to the classification, not to memory</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Oversharing has become sharply more consequential now that assistants can search everything
           a user can reach — <span class="xref">Data Governance for AI — Oversharing at the Speed of Search</span>
           in the AI <span class="acro-exp">(Artificial Intelligence)</span> domain is the same problem seen from the other end.
@@ -760,7 +760,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Files On-Demand on</td><td>A 2 TB OneDrive on a 256 GB laptop only works this way</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           This is the quiet prerequisite that makes
           <span class="xref">Windows Autopilot — Zero-Touch Provisioning</span> in the Endpoint
           domain safe to use on a device someone is already working on.
@@ -783,7 +783,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Always keep on this device</td><td>Solid green</td><td>Yes, pinned; never evicted</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           "Always keep on this device" applied to a whole large library is the most common cause of
           a full disk on an otherwise healthy laptop.
         </div>
@@ -848,7 +848,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Meeting recordings</td><td>OneDrive or the team's site, depending on meeting type</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The fourth row is the one that causes data-loss incidents: files shared in a private chat
           belong to whoever sent them, and leave with their account.
         </div>
@@ -871,7 +871,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Shared</td><td>Members plus named people or teams, including external</td><td>Its own separate site</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A private channel's site is not visible in the parent team's site, so a retention or
           eDiscovery scope aimed at the team can miss it entirely unless it was set at the
           organisation level.
@@ -910,7 +910,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Two owners minimum</td><td>Renewal and access survive one departure</td><td>Enforcement is a report, not a setting</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Expiration policies commonly run on a
           <span class="volatile" data-checked="2026-08">30, 90 or 180-day cycle or a custom
           value</span>, and deleted groups sit recoverable for a grace period before the site and
@@ -935,7 +935,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Shared channels only</td><td>Partners need one workstream, not the team</td><td>Both tenants must permit it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Whatever the posture, schedule an access review. A guest list nobody has pruned is a list
           of people from companies you may no longer work with holding live credentials into your
           collaboration space.
@@ -994,7 +994,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>4</td><td>The shortest deletion wins</td><td>Among deletions only, once nothing is holding it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The practical reading: retention is a floor, not a ceiling. If users report that deleted
           material is still discoverable, the answer is almost always rule 1 doing exactly its job —
           and that is usually what legal asked for.
@@ -1017,7 +1017,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Teams chat</td><td>Follows the mailbox copy the compliance system keeps</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The governance-level view of why any of this is configured — what legal and regulators are
           asking for — is in
           <span class="xref">Data Governance, Retention &amp; eDiscovery — Owning Data on Purpose</span>
@@ -1079,7 +1079,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Auto-label the obvious</td><td>Card numbers and national IDs do not need a human decision</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Roll DLP out in stages: audit silently, then tip the user, then warn with an override, and
           only then block. A policy that blocks on day one is a policy the business will demand
           exemptions from by day three, and exemptions are permanent.
@@ -1118,7 +1118,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>5</td><td>Export</td><td>With the chain of custody the case will be judged on</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Litigation hold and the advanced case features are licence-gated —
           <span class="volatile" data-checked="2026-08">holds generally require the enterprise tier
           and the richer review tooling sits above that</span>. Find out which you have before
@@ -1147,7 +1147,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>What happened 18 months ago?</td><td>Only if retention was extended beyond the default</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Default audit retention has changed more than once and differs by licence and record type
           — <span class="volatile" data-checked="2026-08">verify the current default for your tier
           rather than assuming a year</span>. If an investigation might ever need longer, extend it
@@ -1207,7 +1207,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Does a regulator require an independent copy?</td><td>Yes — the decision is already made for you</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The same reasoning applied to on-premises systems, including immutability and assuming the
           domain is lost, is in
           <span class="xref">Ransomware-Resilient Backup — Immutability, Isolation &amp; Assuming the Domain Is Lost</span>
@@ -1249,7 +1249,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>5</td><td>Client</td><td>Is it this device or app?</td><td>Reproduce in a browser session, on another device</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The single highest-value habit in this list is step 5 last, not first: if it reproduces in
           a private browser window on another machine, no amount of client repair will help, and you
           have just saved yourself an afternoon.
@@ -1276,7 +1276,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Mail specifically</td><td>Message trace, which answers "did it arrive" in a minute</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           For step 2, <span class="xref">Entra ID — Sign-In &amp; Conditional Access Troubleshooting</span>
           in the Cloud domain reads the sign-in log in detail; the administrative side of these
           services from the shell is in
@@ -1336,7 +1336,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Voice routing policy</td><td>Which usages does this specific user get?</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Read it as a chain: the policy grants usages, usages permit routes, routes select a trunk,
           and the dial plan decides what the number was in the first place. Debug it in that order
           and the failure names itself.
@@ -1357,7 +1357,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Emergency calling</td><td>Softphones move. Regulators in several jurisdictions require a dispatchable location, which means mapping networks to addresses and keeping that map current — a standing obligation, not a launch task.</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Test emergency calling deliberately, in the way the regulator expects, before go-live. It
           is the one feature where "we will find out in production" is not an acceptable plan.
         </div>
@@ -1433,7 +1433,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>No QoS <span class="acro-exp">(Quality of Service)</span> on a congested link</td><td>Voice queues behind a backup job</td><td>Mark and prioritise, end to end</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The marking and queueing mechanics are in
           <span class="xref">QoS — Quality of Service &amp; Traffic Shaping</span> in the Networking
           domain; the point specific to Teams is that a marking scheme only helps on links you
@@ -1492,7 +1492,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>3</td><td>Global (org-wide default)</td><td>Nothing — it is the floor</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The consequence that catches people: a direct assignment made once during a pilot pins that
           user forever, and no later group change will reach them. If a group rollout skips exactly
           the people who tested it, this is why — clear the direct assignment.
@@ -1572,7 +1572,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Releasing a hold is irreversible</td><td>Purged content ages out for real once the hold lifts</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The most common surprise in the table is the first: a mailbox on hold whose Recoverable
           Items has filled reports a hard delete failure to a confused user, and the fix is a quota
           change, not a mail problem.
@@ -1597,7 +1597,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>"The mailbox is full and they will not tidy it"</td><td>An archive with a move policy; this is not a compliance question at all</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Which rule wins when several apply is decided by the precedence in
           <span class="xref">Retention Policies vs Retention Labels — The Distinction That Trips Everyone</span>,
           and the workflow for acting on a matter is in
@@ -1683,7 +1683,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>An escalation path that ends somewhere</td><td>Alerts nobody is authorised to act on are worse than none</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The programme design these features serve — and the reason it is mostly not a technology
           problem — is in
           <span class="xref">The Insider Threat Programme — Malicious, Negligent &amp; Compromised</span>
@@ -1768,7 +1768,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Exchange cmdlets slowing over a long session</td><td>Reconnect; long-lived sessions accumulate their own limits</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The Graph API itself — query shape, permissions model and paging — is covered by
           <span class="xref">Microsoft Graph From PowerShell — The Modern Admin API</span> in the
           Scripting domain. This card is the M365-specific part: which module owns what, and how to
@@ -1830,7 +1830,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Never feed usage data into performance review</td><td>The moment people know, the data measures gaming instead of work</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           For anything beyond the built-in reports, the reporting endpoints in Graph return the same
           data as CSV <span class="acro-exp">(Comma-Separated Values)</span> for a chosen period — which is how a real answer gets joined to HR or asset
           data the admin centre has never heard of.
@@ -1892,7 +1892,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>6</td><td>Devices &amp; cleanup</td><td>Re-enrolment, decommissioning the source, and the long tail of forgotten apps</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Discovery is skipped because it produces no visible progress. It is also where you find the
           line-of-business app that authenticates against the old tenant, the shared mailbox that
           finance depends on and nobody owns, and the 400 GB of OneDrive belonging to someone who
@@ -1955,7 +1955,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Dynamic group</td><td>Membership from a rule over user attributes</td><td>Yes, if it is a Microsoft 365 Group</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The practical rule: use a <strong>security group</strong> to grant access or target a
           policy, and a <strong>Microsoft 365 Group</strong> when a set of people needs a place to
           work. Using the wrong one is how a tenant ends up with three hundred teams that exist only
@@ -1982,7 +1982,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Creates a Power BI <span class="acro-exp">(Business Intelligence)</span> workspace</td><td>Historically a group; now optional</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A communication site is the exception worth remembering: it is a SharePoint site with no
           group behind it, which is why its permissions are managed differently and why it is the
           right choice for an intranet page rather than a workspace.
@@ -2009,7 +2009,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Guests appear in a group nobody invited them to</td><td>Guest access is tenant-wide unless restricted per group</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The naming, expiry and creation-restriction controls that keep this under control are in
           <span class="xref">Teams Governance &amp; Sprawl — Naming, Expiry &amp; the Guest Question</span>,
           and they work at the group level precisely because everything above is one object.
@@ -2046,7 +2046,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Third-party tool</td><td>Migrating from a non-Exchange system, or across tenants</td><td>Whatever the tool provides</td><td>Licensing, and trusting someone else's fidelity claims</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Hybrid is chosen far more often than its complexity warrants, usually because it is the
           documented path for large organisations and nobody measured whether their organisation is
           large. It is also chosen correctly far more often than people admit, because "we will be
@@ -2075,7 +2075,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Device and app connections</td><td>No</td><td>Anything with a hard-coded server name breaks</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is the one that generates the most tickets and appears on the fewest plans.
           Scanners, alarm panels, line-of-business applications and copiers all send mail through
           something, and that something usually has an IP <span class="acro-exp">(Internet Protocol)</span> address, a server name and a password that
@@ -2104,7 +2104,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Delegates lost access</td><td>Cross-premises delegation is limited; re-apply after both parties move</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Two rules are worth more than any checklist. <strong>Move people who work together in the
           same batch</strong> — delegation and calendar sharing are what break across the split, and
           batching by department costs nothing. And <strong>change DNS last</strong>: the MX record
@@ -2169,7 +2169,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Application data, databases, disk images</td><td>Not SharePoint</td><td>It is a document library, not a filesystem</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The archive row deserves the emphasis. In most estates a large fraction of a file share
           has not been opened in years, and a migration is the only moment anyone will ever have
           permission to ask whether it should exist. Measuring last-accessed dates before the
@@ -2198,7 +2198,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Permissions look right but nobody can edit</td><td>Broken inheritance imported item-by-item; rebuild at the library level</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last two rows cause more post-migration pain than every blocked file combined. The
           sync behaviour and the permission model each have their own card —
           <span class="xref">OneDrive — Known Folder Move, Files On-Demand &amp; Sync Triage</span>
@@ -2261,7 +2261,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Environment creation rights</td><td>Who can make a new environment at all</td><td>Restricted to admins; requests are cheap to approve and impossible to undo</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The DLP model is the one worth understanding properly, because it is unusual: it does not
           inspect data. It prevents a single app or flow from connecting to a business connector and
           a non-business connector at the same time. That is a crude rule, and it is remarkably
@@ -2288,7 +2288,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Set up an "adopt this flow" path</td><td>Some citizen automation deserves to become supported IT automation</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is the part most governance programmes skip, and it is the one that earns
           trust: when a flow matters enough, IT should take it, own it, and say so. The engineering
           version of that handover is in
@@ -2332,7 +2332,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Invited to a Teams meeting</td><td>No</td><td>Meeting participation is not directory access</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Shared channels are worth knowing about specifically, because they solve the case people
           reach for guests to solve: the partner keeps their own identity, their own tenant's
           policies apply to them, and no account accumulates in yours. Where both sides are
@@ -2360,7 +2360,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Group-level guest policy</td><td>Entra group settings</td><td>Blocks guests on sensitive teams without blocking the tenant</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Changing the default link type from "anyone" to "specific people" is the highest-value
           single change on this list. It does not stop anyone doing anything; it stops the
           <em>accident</em>, which is what almost all inappropriate external sharing turns out to be.
@@ -2387,7 +2387,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Watch for a guest in a privileged role</td><td>Rare, serious, and worth an alert of its own</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Access reviews are the mechanism that makes this sustainable, because they push the
           question to the only person who can answer it — the team owner, who knows whether the
           project is over. The equivalent question for internal accounts is in
@@ -2451,7 +2451,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Failure mode</td><td>Limited blast radius</td><td>"Read all mailboxes" in the wrong hands</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Where an application permission is genuinely required, scope it. Mail and calendar
           application permissions can be restricted to a named set of mailboxes by policy, and
           almost nobody does it — an unscoped <em>Mail.Read</em> application grant is one of the
@@ -2481,7 +2481,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Owners of registrations</td><td>An app whose owner left is an app nobody can rotate credentials for</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The expiring-secret row is the most reliably painful item in this whole domain. It is
           entirely preventable with a report that lists every credential and its expiry date, run
           monthly and read by a person — and the reason it keeps happening is that nothing surfaces
@@ -2548,7 +2548,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Alert on new inbox rules and consent grants</td><td>The two most reliable early indicators in a mailbox compromise</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The audit log row is the one people postpone and later regret. It is not preventive, it
           costs nothing, and it is the difference between "an account was compromised, here is
           exactly what was accessed" and "an account was compromised, we assume the worst" — which
@@ -2576,7 +2576,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Re-check the score afterwards</td><td>Regressions are quiet; a monthly look catches the setting somebody reverted</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The break-glass row has ended more incidents badly than any other omission on this page.
           A Conditional Access policy that accidentally includes every account, applied to a tenant
           with no excluded emergency account, locks out the people who would fix it — including the
@@ -2620,7 +2620,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Whether an AI <span class="acro-exp">(Artificial Intelligence)</span> feature sends content elsewhere</td><td>No — read that feature's own data boundary</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last two rows are where most real requirements actually live, and both are cheaper to
           satisfy than a multi-geo deployment. Establishing which row the requirement belongs to,
           in writing, before designing anything, is the single most valuable step here.
@@ -2648,7 +2648,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Reversibility</td><td>Awkward. Adding a region is a decision to live with</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Compare it honestly against the alternative it is usually chosen over — a separate tenant
           per country. Separate tenants give harder isolation and much worse collaboration, plus
           duplicated administration forever. Multi-Geo keeps one organisation and costs an add-on
@@ -2675,7 +2675,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>What does the AI feature do?</td><td>Ask about the boundary explicitly; it is the newest and least understood part</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Where the answer really is "this content must never leave the jurisdiction", the mechanism
           that enforces it inside the tenant is classification, not storage location —
           <span class="xref">Sensitivity Labels &amp; DLP — Classification That Survives Contact With Users</span>.
@@ -2718,7 +2718,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Long leave</td><td>Sign-in blocked without deleting anything</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The mover row is the one that quietly creates the most risk. Adding access is a request
           somebody makes; removing it is a request nobody makes. After a few internal moves a
           long-serving employee holds a union of every role they have ever had, which is exactly the
@@ -2770,7 +2770,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Alert on privileged role changes</td><td>The one path that should never be quiet</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Attribute-driven membership is what makes the mover case solvable at all: when
           <em>department</em> is the thing that grants access, changing department removes the old
           access as a side effect rather than as a task someone has to remember. The security

@@ -13,7 +13,18 @@ ratchets — they can no longer regress:
   * topics with no `.topic-name` (was 90)
   * hard-coded colours (was 148, of which 8 were never colours at all)
 
-`inline style attribute` and `ai-table` are still counted, not enforced.
+`inline style attribute` is the third, and it graduated differently, because it
+can never reach zero: 806 of them colour the first cell of a `.ref-table`, where
+a utility class provably cannot win on specificity. So it is a **ceiling**
+rather than a zero — the count may fall and may not rise. It was 2,707 when the
+ceiling was introduced and 1,565 immediately after, because 1,142 of them were
+one shape (`.concept-desc` with a top margin) that already had a class name.
+
+`ai-table` is no longer a warning at all. It was labelled "prefer ref-table",
+which asserted a preference nobody had agreed and the stylesheet contradicts:
+the two are different designs (12px versus ~14px text, and an amber versus a
+white first column), so converting 360 tables across 18 domains would be a
+visible redesign, not a cleanup. It is reported as a census line instead.
 
 Usage:
     python3 tools/lint_content.py             # errors fail, warnings reported
@@ -32,6 +43,10 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 
 VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
+
+# Counts that may fall and may not rise. Lower a number here in the same commit
+# that earns it; raising one needs a reason written beside it.
+CEILINGS = {"inline style attribute": 1565}
 
 
 class Nesting(HTMLParser):
@@ -152,7 +167,12 @@ def hex_colours(text):
 # class is (0,1,0) and loses. 1614 first cells carried one that had never once
 # rendered — boilerplate applied to a column the design already styles. They were
 # removed, so this guards the count at zero rather than letting it creep back.
-REF_TABLE_RE = re.compile(r'<table\b[^>]*class="ref-table"[^>]*>.*?</table\s*>', re.S)
+# Both table styles colour their own first column at (0,2,1) — `.ref-table
+# td:first-child` and `.ai-table td:first-child` — so a utility class loses to
+# either. `.ai-table` has never carried a dead class; the guard covers it so it
+# never starts.
+REF_TABLE_RE = re.compile(
+    r'<table\b[^>]*class="(?:ref-table|ai-table)"[^>]*>.*?</table\s*>', re.S)
 ROW_RE = re.compile(r"<tr\b[^>]*>.*?</tr\s*>", re.S)
 FIRST_CELL_RE = re.compile(r"<(td|th)\b([^>]*)>")
 COLOUR_CLASS_RE = re.compile(r"\bc-(?:cyan|green|amber|red|purple|muted)\b")
@@ -179,6 +199,18 @@ def dead_first_cell_classes(text):
 VOLATILE_RE = re.compile(r'<(\w+)\b([^>]*\bclass="[^"]*\bvolatile\b[^"]*"[^>]*)>')
 CHECKED_RE = re.compile(r'\bdata-checked="([^"]*)"')
 STRAY_CHECKED_RE = re.compile(r'<(\w+)\b([^>]*\bdata-checked="[^"]*"[^>]*)>')
+
+
+# `.concept-desc.verdict` exists precisely for the sentence that follows a table.
+# 1,142 cards wrote it as an inline margin first; this keeps them converted.
+VERDICT_MARGIN_RE = re.compile(
+    r'<\w+ class="concept-desc"[^>]*\bstyle="[^"]*\bmargin-top\s*:')
+
+
+def verdict_margins(text):
+    """Line numbers where a .concept-desc sets its top margin inline."""
+    for m in VERDICT_MARGIN_RE.finditer(text):
+        yield text[: m.start()].count("\n") + 1
 
 
 def volatile_problems(text, today):
@@ -275,6 +307,7 @@ def main():
     seen_slugs = {}
     today = datetime.now(timezone.utc).strftime("%Y-%m")
     all_titles, xrefs = set(), []
+    ai_tables = 0
 
     # Domain order matters: script.js walks .domain-section in document order,
     # so a collision is only real if it survives that ordering.
@@ -361,8 +394,15 @@ def main():
                 f"style=\"color: var(--…)\" if it genuinely needs a different colour"
             )
 
+        for line_no in verdict_margins(text):
+            errors.append(
+                f"{name}:{line_no}: a top margin on .concept-desc is the "
+                f"verdict sentence after a table — use "
+                f'class="concept-desc verdict" instead of an inline style'
+            )
+
         warns["inline style attribute"] += len(re.findall(r'\bstyle="', text))
-        warns["ai-table (prefer ref-table)"] += text.count('class="ai-table"')
+        ai_tables += text.count('class="ai-table"')
 
     # Cross-references, once every title is known.
     lowered = {t.lower() for t in all_titles}
@@ -395,10 +435,26 @@ def main():
         if len(errors) > 40:
             print(f"  … and {len(errors) - 40} more")
         print()
+    print(f"{ai_tables} .ai-table(s) in use — the second table style, not debt. "
+          f"See this file's docstring.\n")
     print("Warnings (tracked, not blocking):")
     for k, v in sorted(warns.items(), key=lambda kv: -kv[1]):
-        print(f"  {v:>6}  {k}")
+        ceiling = CEILINGS.get(k)
+        over = "" if ceiling is None else f"   (ceiling {ceiling:,})"
+        print(f"  {v:>6}  {k}{over}")
     print(f"\nTREND {' '.join(f'{k.split()[0]}={v}' for k, v in sorted(warns.items()))}")
+
+    # A ceiling is a ratchet for a count that cannot reach zero. Exceeding it is
+    # an error; falling below it is an invitation to lower the number here, in
+    # the same commit that earned it.
+    for k, ceiling in CEILINGS.items():
+        if warns[k] > ceiling:
+            errors.append(
+                f"{k}: {warns[k]:,} exceeds the ceiling of {ceiling:,}. This "
+                f"count may fall and may not rise — see the docstring for why "
+                f"it is a ceiling rather than a zero."
+            )
+            print(f"\nERROR {errors[-1]}")
 
     if errors:
         return 1

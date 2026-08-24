@@ -27,7 +27,7 @@
                     <tr><td><code>dns.qry.name contains "evil"</code></td><td>Suspicious DNS <span class="acro-exp">(Domain Name System)</span> lookups</td></tr>
                     <tr><td><code>tcp.analysis.retransmission</code></td><td>Network trouble</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Workflow:</strong> Statistics → Conversations to find
                     the top talkers, then right-click → <strong>Follow → TCP <span class="acro-exp">(Transmission Control Protocol)</span> Stream</strong> to
                     reassemble a full session into readable text. <code>tshark</code> is the CLI <span class="acro-exp">(Command Line Interface)</span>
@@ -62,7 +62,7 @@
 <span class="fn">tcpdump</span> -i eth0 port <span class="num">53</span>            <span class="com"># DNS only</span>
 <span class="fn">tcpdump</span> -i eth0 -A <span class="str">'tcp port 80'</span>  <span class="com"># print payload as ASCII</span>
 <span class="fn">tcpdump</span> -i eth0 <span class="str">'tcp[tcpflags] &amp; tcp-syn != 0'</span>  <span class="com"># SYNs</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Tip:</strong> always add <code>-n</code> (skip DNS
                     lookups — faster and quieter) and cap size with <code>-c</code> /
                     <code>-C</code> so a capture doesn't fill the disk.
@@ -100,7 +100,7 @@
                     <tr><td><code>files.log</code></td><td>Files seen crossing the wire (with hashes)</td></tr>
                     <tr><td><code>notice.log</code></td><td>Zeek's own alerts from its scripts</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Zeek's scripting language lets you write custom detections — e.g. flag a host
                     that makes 10,000 DNS <span class="acro-exp">(Domain Name System)</span> queries an hour (tunneling) or long-lived beacons with
                     fixed intervals (C2).
@@ -143,7 +143,7 @@
                     <tr><td>msg / sid</td><td>human label &amp; unique rule ID</td></tr>
                     <tr><td>content / flow</td><td>what to match &amp; connection state</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Limit:</strong> signatures catch <em>known</em> attacks.
                     Novel or encrypted threats slip past — pair with anomaly detection (Zeek) and
                     endpoint telemetry.
@@ -178,7 +178,7 @@
                     <tr><td>Arkime</td><td>Retrospective PCAP <span class="acro-exp">(Packet Capture)</span> search &amp; session pivoting at scale</td></tr>
                     <tr><td>ntopng</td><td>Real-time flow/bandwidth dashboards &amp; alerting</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Together with Zeek (metadata) and Suricata (signatures), full capture completes
                     the classic <strong>NSM <span class="acro-exp">(Network Security Monitoring)</span> triad</strong>: alerts tell you <em>something</em>
                     happened, metadata gives context, and full packets prove exactly what.
@@ -218,7 +218,7 @@ index=auth <span class="str">"Failed password"</span>
 | <span class="fn">bucket</span> _time span=5m
 | <span class="fn">stats</span> count <span class="kw">by</span> _time, src_ip
 | <span class="fn">where</span> count &gt; <span class="num">20</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Mental model:</strong> <code>search → transform (stats/
                     eval) → filter (where) → present</code>. Save a search as an
                     <strong>alert</strong> to run on a schedule and fire on matches. Splunk ES is
@@ -253,7 +253,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>Elasticsearch</td><td>The search/analytics engine that stores &amp; indexes everything</td></tr>
                     <tr><td>Kibana</td><td>Dashboards, search UI <span class="acro-exp">(User Interface)</span>, and the Security/SIEM app</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Flow: <strong>Beats → Logstash → Elasticsearch → Kibana</strong>. The trade
                     vs Splunk: much cheaper (open source) but more ops effort to run and scale the
                     cluster yourself.
@@ -289,7 +289,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>Vuln detection</td><td>Correlates installed software vs CVE <span class="acro-exp">(Common Vulnerabilities and Exposures)</span> feeds</td></tr>
                     <tr><td>Active response</td><td>Auto-actions (block IP, kill process) on triggers</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     A common home-lab / SMB <span class="acro-exp">(Server Message Block)</span> choice: it delivers endpoint + SIEM + compliance in one
                     free package, where Splunk/commercial XDR <span class="acro-exp">(Extended Detection and Response)</span> would cost heavily.
                   </div>
@@ -322,7 +322,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>Graylog</td><td>Turnkey central log mgmt with security features</td></tr>
                     <tr><td>Loki</td><td>Cheap, high-volume logs alongside Grafana metrics</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The theme across all of these: <strong class="c-green">centralize logs off the
                     hosts</strong>. An attacker's first move is deleting local logs — if they're
                     already shipped to a central store, the evidence survives.
@@ -360,7 +360,7 @@ index=auth <span class="str">"Failed password"</span>
     <span class="var">message</span>: <span class="str">'Failed password'</span>
   <span class="var">condition</span>: selection | count() by src_ip &gt; <span class="num">20</span>
 <span class="var">level</span>: high</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Workflow:</strong> pull community Sigma rules (or write
                     your own) → convert to your SIEM → deploy. It makes detection engineering
                     portable and reviewable in Git (detection-as-code).
@@ -400,7 +400,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>11</td><td>File create (dropped payloads)</td></tr>
                     <tr><td>22</td><td>DNS <span class="acro-exp">(Domain Name System)</span> query (DGA / tunneling)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Deploy with a curated config (the SwiftOnSecurity / Olaf templates are the
                     community standard) to cut noise. Parent-child process chains (e.g.
                     <code>winword.exe → powershell.exe</code>) are gold for detection.
@@ -436,7 +436,7 @@ index=auth <span class="str">"Failed password"</span>
 <span class="com">-- Unsigned processes running from temp dirs</span>
 <span class="kw">SELECT</span> name, path <span class="kw">FROM</span> processes
 <span class="kw">WHERE</span> path <span class="kw">LIKE</span> <span class="str">'%\Temp\%'</span>;</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Run ad-hoc during IR <span class="acro-exp">(Incident Response)</span>, or schedule "packs" of queries that stream diffs to your
                     SIEM <span class="acro-exp">(Security Information and Event Management)</span> (via Fleet/Kolide) for continuous detection — e.g. alert whenever a new
                     persistence entry appears.
@@ -472,7 +472,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>Client monitoring</td><td>Continuous event queries (like a lightweight EDR)</td></tr>
                     <tr><td>VQL</td><td>SQL-like language to query live endpoint state</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     It's become a go-to for IR <span class="acro-exp">(Incident Response)</span> teams who need broad, fast visibility without a
                     six-figure commercial EDR <span class="acro-exp">(Endpoint Detection and Response)</span> — especially during active incidents.
                   </div>
@@ -539,7 +539,7 @@ index=auth <span class="str">"Failed password"</span>
 <span class="fn">auditctl</span> -a always,exit -F arch=b64 -S execve -k exec
 
 <span class="fn">ausearch</span> -k shadow-access        <span class="com"># query by key</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Ship these logs to the SIEM <span class="acro-exp">(Security Information and Event Management)</span> alongside Windows/Sysmon so hunts and detections
                     cover the whole estate. For richer, lower-overhead visibility, eBPF-based tools
                     (Falco, Tetragon) are the modern complement — see the eBPF <span class="acro-exp">(Extended Berkeley Packet Filter)</span> topic in Linux.
@@ -575,7 +575,7 @@ index=auth <span class="str">"Failed password"</span>
   <span class="kw">condition</span>:
     <span class="num">2</span> <span class="kw">of</span> them          <span class="com">// any 2 of the strings present</span>
 }</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Use:</strong> hunt across a fleet ("scan every host for
                     this rule" via Velociraptor/OSQuery), triage a sample, or scan process memory
                     for an unpacked payload. Pair with <code>yara-x</code> (the modern engine) and
@@ -612,7 +612,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>Technique / Sub-technique</td><td>The specific method (Txxxx)</td></tr>
                     <tr><td>Navigator</td><td>Heat-map tool to mark what you can detect/prevent</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">The workflow:</strong> map each detection you have to a
                     technique, color the Navigator, and the <em>gaps</em> become your detection
                     backlog. Prioritize techniques your actual threat actors use (tie to threat
@@ -649,7 +649,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>Caldera</td><td>Automated, chained emulation of full adversary behavior</td></tr>
                     <tr><td>Purple team</td><td>Red runs the test, blue tunes the detection, together</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Run these in a lab or with authorization. The loop —
                     <strong class="c-green">emulate → observe → tune → re-test</strong> — is how you
                     turn ATT&amp;CK coverage from theoretical to proven.
@@ -686,7 +686,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>Tools</td><td class="c-green">Challenging</td></tr>
                     <tr><td>TTPs (behaviors)</td><td class="c-green">Tough — forces a rethink</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Tuning:</strong> the other half is fighting false
                     positives — a noisy rule everyone mutes is worse than no rule. Track each
                     detection's true/false-positive rate, add context/allowlists, and require
@@ -722,7 +722,7 @@ index=auth <span class="str">"Failed password"</span>
 <span class="fn">vol</span> -f mem.raw windows.netscan       <span class="com"># network connections (C2)</span>
 <span class="fn">vol</span> -f mem.raw windows.malfind       <span class="com"># injected/hidden code</span>
 <span class="fn">vol</span> -f mem.raw windows.cmdline       <span class="com"># process command lines</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Workflow:</strong> pslist/pstree to spot anomalies →
                     malfind for injection → netscan for C2 <span class="acro-exp">(Command and Control)</span> → dump the suspect process for deeper
                     analysis. Capture memory <em>before</em> pulling the plug — it's volatile
@@ -758,7 +758,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>Timeline</td><td>MAC times (modified/accessed/created) across the FS</td></tr>
                     <tr><td>Keyword &amp; hash search</td><td>Find IOCs <span class="acro-exp">(Indicator of Compromise)</span>; flag known-bad by hash</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Always work on a <strong class="c-green">write-blocked copy</strong> and verify
                     the image hash matches the original — evidence integrity is everything.
                   </div>
@@ -793,7 +793,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>plaso (log2timeline)</td><td>Combine all timestamped artifacts into one timeline</td></tr>
                     <tr><td>Timeline Explorer</td><td>Filter/pivot the resulting mega-CSV</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The timeline answers the core IR <span class="acro-exp">(Incident Response)</span> question: <strong class="c-green">what happened,
                     in what order?</strong> — from initial access to persistence to exfil.
                   </div>
@@ -887,7 +887,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>MISP</td><td>IOC <span class="acro-exp">(Indicator of Compromise)</span> storage + community sharing + feeds; export to your SIEM <span class="acro-exp">(Security Information and Event Management)</span></td></tr>
                     <tr><td>OpenCTI</td><td>Structured CTI <span class="acro-exp">(Cyber Threat Intelligence)</span> knowledge graph (actors↔TTPs↔malware)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The payoff: pull a feed of known-bad indicators into detection, and enrich alerts
                     ("this IP belongs to APT-X's infrastructure") so responders act with context, not
                     guesswork.
@@ -922,7 +922,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>STIX</td><td>The data model — what a threat object looks like</td></tr>
                     <tr><td>TAXII</td><td>The transport — how feeds are served &amp; pulled</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Think of it like the Sigma/YARA idea applied to intel: a portable format so a
                     detection or indicator written once can be consumed anywhere.
                   </div>
@@ -987,7 +987,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>Investigate</td><td>Triage anomalies — benign or malicious?</td></tr>
                     <tr><td>Operationalize</td><td>Turn a real finding into a standing detection</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Good hunts are driven by ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> (hunt technique by technique) and threat
                     intel (hunt for <em>your</em> actors' TTPs <span class="acro-exp">(Tactics, Techniques, and Procedures)</span>). Every hunt either finds evil or
                     finds a detection gap — both are wins.
@@ -1021,7 +1021,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>OpenVAS / Greenbone</td><td>Open-source alternative (GVM); free NVT feed</td></tr>
                     <tr><td>Qualys / Rapid7 InsightVM</td><td>Cloud-delivered VM <span class="acro-exp">(Virtual Machine)</span> platforms with agents</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Key idea:</strong> <em>authenticated</em> scans (with
                     creds) see missing patches and config far better than network-only scans. Feed
                     findings into <strong class="c-green">CVSS <span class="acro-exp">(Common Vulnerability Scoring System)</span> + exploitability (EPSS/KEV)</strong> to
@@ -1056,7 +1056,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>Benchmarks</td><td>OS <span class="acro-exp">(Operating System)</span>, K8s <span class="acro-exp">(Kubernetes)</span>, Docker, AWS/Azure/GCP, browsers, databases</td></tr>
                     <tr><td>CIS Controls</td><td>The companion 18 prioritized safeguards (IG1–IG3)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">CIS Hardened Images</strong> (pre-baked AMIs/VMs) let you
                     start compliant. Benchmarks pair naturally with policy-as-code — encode the
                     controls once, enforce them everywhere.
@@ -1089,7 +1089,7 @@ index=auth <span class="str">"Failed password"</span>
 
 <span class="com"># Key output: warnings, suggestions, and a Hardening index (0-100)</span>
 <span class="com"># Reports land in /var/log/lynis.log &amp; lynis-report.dat</span></pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Great for a fast baseline and for teaching <em>why</em> each setting matters
                     (each suggestion links to guidance). Complements — doesn't replace — a real
                     benchmark like CIS <span class="acro-exp">(Center for Internet Security)</span>.
@@ -1123,7 +1123,7 @@ oscap xccdf eval \
   <span class="var">--profile</span> xccdf_org.ssgproject.content_profile_stig \
   <span class="var">--report</span> report.html \
   /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml</pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">SSG</strong> (SCAP Security Guide) ships ready profiles —
                     STIG, CIS <span class="acro-exp">(Center for Internet Security)</span>, PCI-DSS, HIPAA <span class="acro-exp">(Health Insurance Portability and Accountability Act)</span>. This is how regulated environments prove and enforce a
                     baseline continuously rather than via a one-time checklist.
@@ -1156,7 +1156,7 @@ oscap xccdf eval \
                     <tr><td>Ansible / Salt</td><td>Cross-platform patching &amp; config enforcement (ties to F4)</td></tr>
                     <tr><td>unattended-upgrades / dnf-automatic</td><td>OS-native auto-patching for Linux</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Metrics that matter:</strong> patch coverage %, mean time
                     to remediate (MTTR) by severity, and <em>drift</em> (systems that fell out of
                     compliance). Config management also prevents drift — the box stays hardened, not
@@ -1192,7 +1192,7 @@ oscap xccdf eval \
                     <tr><td>Honey account</td><td>A dormant AD <span class="acro-exp">(Active Directory)</span> account — any auth attempt is an alert</td></tr>
                     <tr><td>Deception grid</td><td>Decoys scattered through the network to catch lateral movement</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Best value:</strong> place canarytokens <em>inside</em>
                     the network where only a snooping attacker would find them. A tripped token is
                     high-fidelity evidence of a breach in progress — the mirror image of the red-team
@@ -1228,7 +1228,7 @@ oscap xccdf eval \
                   </table>
                   <pre class="code-block"><span class="com"># A DMARC record that quarantines fakes and sends reports</span>
 _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com; adkim=s; aspf=s"</span></pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Progress <code>p=none</code> (monitor) → <code>quarantine</code> →
                     <code>reject</code> as you gain confidence. Add
                     <strong class="c-green">sandboxing, link rewriting, and external-sender banners</strong>
@@ -1263,7 +1263,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
                     <tr><td>Token / session theft</td><td>A valid session used from a new device/IP (AiTM phishing)</td></tr>
                     <tr><td>Password spray</td><td>One password tried across many accounts</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Controls:</strong> phishing-resistant MFA (FIDO2/passkeys),
                     Conditional Access (device + risk based), and continuous access evaluation that can
                     kill a session mid-flight. This is the defensive answer to the credential-attack and
@@ -1299,7 +1299,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
                     <tr><td>Blue verifies</td><td>Was it in the logs? Did an alert fire? Was it triaged?</td></tr>
                     <tr><td>Improve</td><td>Add telemetry, write/tune the detection, re-test</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The output is measurable <strong class="c-green">detection coverage</strong> mapped
                     to ATT&amp;CK — you learn exactly which techniques you'd catch and which you'd miss.
                     This card is the keystone that ties the whole Red and Blue domains together.
@@ -1363,7 +1363,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>5. It is never removed</td><td>Because nobody can prove it is not the only thing catching something</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Stage 4 is the dangerous one, because a rule that fires on nothing looks identical to a
           rule protecting a quiet environment. Everything in this track exists to make that
           distinguishable.
@@ -1458,7 +1458,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Validation</td><td>How will we make it fire on purpose?</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           If the "known benign" field is empty, the requirement is not finished — it means nobody has
           looked at what normal traffic does, and the tuning phase will discover it in production
           instead.
@@ -1485,7 +1485,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>"Add it to a dashboard"</td><td>It is a hunting input, not a detection</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is a legitimate outcome, not a rejection: some signals belong in the workflow
           described by <span class="xref">Threat Hunting — Assume Breach, Go Looking</span> rather
           than in an alert queue.
@@ -1547,7 +1547,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Newest event age per source</td><td>A pipeline that stopped an hour ago and told nobody</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Run these as scheduled detections in their own right. A collection outage is a security
           incident with no alert of its own unless you write one; on Windows estates,
           <span class="xref">Sysmon — The Windows Telemetry Powerhouse</span> is usually the source
@@ -1608,7 +1608,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Failure mode</td><td>A field silently dropped at ingest, discovered months later</td><td>A parser that stops matching after a vendor update</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Whichever you pick, keep the raw event somewhere for a defined window. Every schema is a
           judgement about what matters, and incidents are precisely the times that judgement turns
           out to have been wrong.
@@ -1632,7 +1632,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Test the generated query, not just the source</td><td>Generation is a translation, and translations have bugs</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The format itself and its backends are covered by
           <span class="xref">Sigma — Write Detections Once, Run Anywhere</span>; this card is about
           the decision that has to be made before Sigma can help you.
@@ -1747,7 +1747,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Noise</td><td>Does it fire on anything else?</td><td>Run the logic across a week of historical data before deploying</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The noise test is the cheapest of the three and the one most often skipped — the data is
           already there, and running the query over last week answers the tuning question before a
           single analyst is interrupted.
@@ -1773,7 +1773,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Last-fired tracking</td><td>Review rules that have not fired in 90 days — some are fine, some are broken</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The tooling for the first row already exists in
           <span class="xref">Adversary Emulation — Atomic Red Team &amp; Caldera</span>; what turns
           it from an exercise into a regression test is running it on a schedule and alerting on
@@ -1811,7 +1811,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Time-to-detect</td><td>occurrence → alert</td><td>Batch pipelines and hourly schedules quietly dominate this</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Recall is the hard one, because it needs a denominator nobody has: the real occurrences you
           did not see. Purple-team exercises exist largely to create that denominator artificially —
           a known number of executed techniques, and a count of how many alerted.
@@ -1835,7 +1835,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Mean time to close an alert</td><td>Closing quickly, which is not the same as investigating</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A defensible dashboard is small: precision per rule, the alert-to-incident ratio, the count
           of rules that have not fired in 90 days, and the share of the estate reporting each log
           source. Four numbers, each of which gets worse when the programme gets worse.
@@ -1896,7 +1896,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>4 — validated recently, several procedures</td><td>The same, re-run on a schedule, across variants</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Most mature programmes sit at level 3 for a modest number of techniques and level 0 or 1
           everywhere else, and that is a far more useful picture than a uniformly green map. The
           Navigator layers themselves are covered by
@@ -1947,7 +1947,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>New telemetry becoming available</td><td>Detections that were previously impossible</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Score each item on likelihood, impact, and whether the telemetry exists. The third column
           is the one that reorders the list: a high-value detection you cannot currently write is a
           logging project, not a detection task, and it should be routed as one.
@@ -1973,7 +1973,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>It has not fired in a year</td><td>Only after ruling out regression — silence has two causes</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Record the retirement with its reason and the date in the repository. The next person to
           propose that detection will find the note, which is the difference between an institution
           that learns and one that rediscovers.
@@ -2034,7 +2034,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Let responders edit it</td><td>The people meeting the alert know what was missing</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The general craft of writing procedures people follow under pressure is in
           <span class="xref">Writing Runbooks That People Actually Follow</span> in the Operations
           domain; what is specific here is that the runbook is an artifact of the detection, versioned
@@ -2095,7 +2095,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Publish the detection cost of each proposed cut</td><td>Turns a spend decision into a documented risk decision</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is the one that matters organisationally. "We can save this much, and here are
           the eleven detections that stop working" is a decision someone can own. A quiet filter
           change is not.
@@ -2134,7 +2134,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>The sequence of actions the objective requires</td><td>Changing the objective</td><td>Most expensive; hardest to write</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           This is the Pyramid of Pain used as a design tool rather than a poster — the ladder itself
           is in <span class="xref">Detection Tuning &amp; the Pyramid of Pain</span>.
         </div>
@@ -2158,7 +2158,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Project the alert rate per analyst per day</td><td>Whether the response is affordable at all</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           If the projected rate is more than the team can actually triage, the rule is not ready —
           and the fix is more often better enrichment than a tighter threshold, because a threshold
           that cuts volume usually cuts recall with it.
@@ -2234,7 +2234,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Behavioural: an unusual process opening a handle to LSASS with read access</td><td>Any tool that needs the memory, whatever it is called</td><td>Techniques that avoid the handle entirely — a driver, or a snapshot API <span class="acro-exp">(Application Programming Interface)</span></td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The behavioural rule is the durable one and also the noisy one — several legitimate
           security products open exactly that handle. That is not an argument against building it;
           it is the reason it needs an allowlist of your own tooling, dated and reviewed.
@@ -2285,7 +2285,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Vulnerability and exposure state</td><td>Could the attempted thing actually have worked?</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The fifth row is the cheapest large win in most environments. "First time this user has run
           this binary, ever" converts an ambiguous alert into an obvious one, and it needs no
           external data — only your own history.
@@ -2309,7 +2309,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Example</td><td>Suppress on assets in a documented maintenance window</td><td>Attach the asset owner and recent tickets to the case</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Keep suppression-by-enrichment rare and audited. A lookup that silently prevents alerts is
           a control with no alarm of its own — when the asset inventory goes stale, the detections
           quietly stop, which is the failure mode
@@ -2370,7 +2370,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Join key mismatch</td><td>Two sources name the same host differently</td><td>Normalise the key — this is what the schema work buys</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The join-key failure is the most common and the most silent: a correlation across two log
           sources that identify hosts by short name and by FQDN <span class="acro-exp">(Fully Qualified Domain Name)</span> respectively will simply never
           match, and it looks exactly like a quiet network.
@@ -2429,7 +2429,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Give a number where one exists</td><td>"About 30 hits a day across 4,000 hosts" beats "not too noisy"</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A portfolio helps more here than in most security roles: a small public repository of
           rules, with tests and honest false-positive notes, demonstrates the whole discipline in a
           way a CV line cannot. General interview preparation is in

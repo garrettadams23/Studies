@@ -41,7 +41,7 @@ Invoke-MgGraphRequest -Method GET `
                     <tr><td>Permissions &amp; consent</td><td>Delegated (as you) vs application (unattended); the scope must be consented, not just requested</td></tr>
                     <tr><td>v1.0 vs beta</td><td class="c-red">beta endpoints change without notice — never build a scheduled job on beta</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     For anything scheduled and unattended, authenticate as an <strong class="c-cyan">app
                     registration with a certificate</strong> or a managed identity — never an
                     interactive login or a stored password. That path, and its secret handling, is in
@@ -95,7 +95,7 @@ Invoke-MgGraphRequest -Method GET `
                     <tr><td>Virtual / managed run-as account</td><td>Commands execute as a privileged identity the user never actually holds</td></tr>
                     <tr><td>Transcription</td><td>Every session is logged — who ran what, verbatim</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The result: a delegated operator connects to a constrained endpoint, sees only the
                     handful of commands their role defines, and every keystroke is transcribed. The
                     privileged credential never lands on their machine or in their token.
@@ -140,7 +140,7 @@ Invoke-MgGraphRequest -Method GET `
                   that has drifted brings that machine back.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     That property is the whole value, and it is why configuration management earns its keep on
                     estates that scripts cannot hold: the answer to "is this server configured correctly?"
                     stops being a matter of memory and becomes a command you can run. Drift is what you are
@@ -169,7 +169,7 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Current position</td><td>Widely used and actively developed</td><td>Still shipped and useful; increasingly replaced by cloud-managed configuration</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The honest summary for a Windows estate: DSC is excellent at the narrow job of keeping a
                     machine's role configuration true, and it has largely lost the broader ground to
                     cloud-managed alternatives and to Ansible. Do not start a large new DSC investment without
@@ -205,7 +205,7 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Version the configuration in Git, review it like code</td><td>It is code, and it has production authority</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The zero-changes rule is worth adopting as a hard standard. A playbook that reports
                     changes on every run has stopped being a description of desired state and become a script
                     with extra syntax — and nobody will be able to tell, six months later, whether a reported
@@ -237,7 +237,7 @@ Invoke-MgGraphRequest -Method GET `
                   somebody did that. It is a build artifact with no source.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     Building images from a definition file fixes this by giving the artifact a source. The
                     definition says which base to start from, which provisioning steps to apply, and what to
                     produce; the pipeline runs it on a schedule; the output is versioned and immutable. What
@@ -288,7 +288,7 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Expire old images deliberately</td><td>Otherwise something is still deploying the one from two years ago</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The thin-image rule is the one that decides how much of a burden this becomes. A golden
                     image containing the operating system, the agents and the baseline is rebuilt when those
                     change. One that also contains three applications is rebuilt whenever any of five teams
@@ -332,7 +332,7 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Anything left over</td><td>A vault, with the retrieval patterns below</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Work down that table before designing anything. Most credential-handling problems in an
                     estate are solved by moving the work to somewhere with an identity rather than by managing
                     the credential better.
@@ -383,7 +383,7 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Shared between environments</td><td>A test-environment leak becomes a production incident</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The git-history row is the one people get wrong under pressure. Removing a secret in a
                     later commit changes nothing — the old revision still contains it, and rewriting history
                     on a shared branch is disruptive and usually incomplete. Treat any secret that ever
@@ -416,7 +416,7 @@ Invoke-MgGraphRequest -Method GET `
                   infrastructure.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     The proportionate response is not full test coverage for every one-liner. It is a rising
                     bar: the more machines it touches and the less reversible its action, the more it has to
                     prove before it runs.
@@ -460,7 +460,7 @@ Invoke-MgGraphRequest -Method GET `
               $result | Should -BeNullOrEmpty
             }
           }</pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The rewrite costs ten minutes and changes what is possible: the selection rule — the part
                     that decides who gets disabled — can now be tested against every awkward case somebody
                     thinks of, without a directory and without disabling anybody. The general testing craft is
@@ -488,7 +488,7 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Write the undo before running the do</td><td>If you cannot describe the reversal, you are not ready</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     On labs: the useful one is not a copy of production, which nobody maintains. It is a small
                     environment with the <em>awkward shapes</em> production has — a nested group, a disabled
                     account with a mailbox, an object with an apostrophe in its name, a machine that has been
@@ -521,7 +521,7 @@ Invoke-MgGraphRequest -Method GET `
                   four credential lifecycles and four sets of breaking changes to track.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     Where they lose is equally consistent, and it is not capability. It is the engineering
                     practices that come free with code and are awkward or absent here: version control,
                     meaningful diffs, code review, testing, and a clear story for how a change reaches
@@ -549,7 +549,7 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Time to first version matters more than anything</td><td>It will be maintained for years by people not yet hired</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Note the pattern in the right-hand column: it is about the second year, not the first.
                     Low-code wins the build and code wins the maintenance, so the question worth asking is how
                     long this thing will live and how bad its failure would be — not how quickly it can exist.
@@ -578,7 +578,7 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Per-action licensing surprises</td><td>Watch run volume; a loop over a large list gets expensive quickly</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The offboarding row is the one that produces incidents. A departing employee's account is
                     disabled correctly, and three weeks later an invoice process nobody knew was automated has
                     silently not run. Flow ownership belongs in the same checklist as mailboxes and file

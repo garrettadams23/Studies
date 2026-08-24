@@ -4657,9 +4657,9 @@ These are defects, not missing features. Each is small.
 | **`Windows Administration Fundamentals` is in `lifestyle`** | `grep -l` finds it in `data/lifestyle.html`. It is technical Windows content sitting in Life Admin | Move to `endpoint`. Slugs derive from titles, so nothing breaks — proven twice | ✅ **Moved.** `endpoint` 28 → 29 cards, `lifestyle` 5 → 4. Both subtitles updated; permalink unchanged, as predicted |
 | **The TI-84 drill and its card can drift** | The card cross-references `ti84_trainer.py` in prose only. The spec called for the card's flashcards to be generated from `ti84_drills.json` | Generate them, or accept the drift and say so in the card | ✅ **Generated.** The prose had already drifted — it named 2 of the 4 areas. The card's drill index is now emitted by `--sync-card` between markers and gated by `--check-card` |
 
-## 2. The lint TREND, which has not moved
+## 2. ✅ The lint TREND — resolved, and it had gone *up*
 
-`lint_content.py` has tracked these as warnings for fourteen sessions and none has gone
+`lint_content.py` tracked these as warnings for fourteen sessions and none had gone
 down:
 
 ```
@@ -4678,6 +4678,45 @@ is decoration.** Three options, and picking one matters more than which:
 The hard-coded hex count is the one with real consequence: those colours do not follow the
 light/dark theme, which is exactly the class of bug that made the study modal unreadable in
 light mode.
+
+### ✅ Resolved — and the hypothesis was confirmed the hard way
+
+`hard-coded hex` went 148 → 0 and became an error in session 18. The other two were
+measured again when the content backlog emptied, and the finding is worth stating
+plainly: **`inline style attribute` had risen from 1,946 to 2,707 — up 39% while being
+"tracked".** Sessions kept writing the thing the counter counts, including the four cards
+written earlier that same day. A tracked warning does not merely fail to improve; it
+provides cover for getting worse.
+
+Each of the three options was applied to a different counter, chosen by what the numbers
+turned out to be:
+
+| Counter | Was | Now | Option taken |
+|---|---|---|---|
+| `hard-coded hex colour` | 148 | 0, an error | 2 — ratchet at zero (session 18) |
+| `inline style attribute` | 2,707 | 1,565, ceilinged | 1 **and** 2 — fix the slice, then ratchet |
+| `ai-table (prefer ref-table)` | 360 | a census line | 3 — delete the counter, with evidence |
+
+**Inline styles.** The distribution was the whole story: 1,142 of 2,507 were one shape —
+`<div class="concept-desc" style="margin-top:…">`, the verdict sentence after a table —
+and `.concept-desc.verdict` had existed as a class for several sessions without content
+using it. Converted, plus 67 `margin-top:0` on first children that a check of every
+`.concept-desc` rule proved were overriding nothing. Then a **ceiling** rather than a
+zero, because zero is unreachable: 806 of the remainder colour the first cell of a
+`.ref-table`, where a utility class provably loses on specificity — the finding that cost
+session 18 a 1,614-instance bug. A ceiling can fall and cannot rise, and the inline form
+of the verdict margin is now its own error with a line number, so the shape cannot come
+back.
+
+**`ai-table`.** The label asserted a preference the stylesheet contradicts. `.ai-table` is
+`.9rem` text with an amber, `nowrap` first column; `.ref-table` is 12px with a white one
+and a tinted mono header. Converting 360 tables across 18 domains would be a visible
+redesign, not a cleanup, and nobody had ever agreed to it. It is now reported as a census
+line — the information without the false imperative — and `CONTRIBUTING.md` says so.
+
+One free result: the dead-first-cell guard only ever matched `.ref-table`, though
+`.ai-table td:first-child` sets colour at the same specificity. `.ai-table` has never
+carried a dead class; the guard now covers it so it never starts.
 
 ### ✅ Session 18 — the hex counter, closed by doing 1 and 2 together
 
@@ -9451,3 +9490,92 @@ named the missing target and the resulting one-way edge in the same run.
 Site total 1,401 → **1,405**. `infra` 45 → 46, `web` 35 → 38. Smoke **135/135** · axe **6/6** ·
 visual **2/2** · budget 29% gzip headroom. The OG card was regenerated, since its topic count is
 baked into the image.
+
+
+## Session record — the lint counters, settled
+
+With §8 closed, the next-oldest open decision in the file was §2: three tracked warnings,
+fourteen sessions, no movement, and an explicit instruction that *picking one of the three
+options matters more than which*. Measuring first changed what there was to pick.
+
+### The number had gone up
+
+`inline style attribute` was 1,946 when §2 was written and **2,707** when it was measured
+again — up 39% while being "tracked". The four cards written earlier the same day
+contributed to it, which is the cleanest possible demonstration of the section's own
+hypothesis: a counter nobody is accountable for does not stall, it provides cover.
+
+### The distribution decided the work
+
+```
+ 978  style="margin-top:10px"        806  <td style="color: var(--…)">
+ 440  style="color: var(--cyan)"     111  <strong style="color: var(--…)">
+ 133  style="color: var(--amber)"     …
+ 104  style="margin-top:8px"
+  67  style="margin-top:0"
+```
+
+Two clusters, and they wanted opposite answers.
+
+**The spacing cluster was one shape with an existing class.** An HTML parse of all 35
+domain files rather than a grep — because the question was about *parents*, not text —
+returned an unusually clean result:
+
+| | style | parent | first child |
+|---|---|---|---|
+| 970 | `margin-top:10px` | `.dw` | no |
+| 103 | `margin-top:8px` | `.dw` | no |
+| 67 | `margin-top:0` | `.dw` | **yes** |
+| 2 | `margin-top:6px` | `.dw` | no |
+
+Every single one was a `.concept-desc` inside a `.dw`; every positive margin was on a
+non-first child and every zero was on a first child. And `.concept-desc.verdict` had
+existed as a named class for several sessions, with a comment in `style.css` saying
+content "wrote this as `style="margin-top:10px"` 313 times before it had a name; new cards
+use the class". New cards did not use the class. The count had tripled.
+
+The 67 zeros needed a check rather than an assumption: `.concept-desc` sets padding and no
+margin, `.dw` adds none, and no other rule in the file touches it — so `margin-top:0` was
+overriding nothing, 67 times.
+
+**Verified rather than asserted.** 970 convert to exactly the same rendering; 105 gain
+2–4px. Screenshotting three topic bodies before and after gave the honest version: two
+cards **byte-identical PNGs**, and the one with five 8px gaps taller by exactly 10px — 5 ×
+2px, the predicted number. That is the difference between "this should be a no-op" and
+knowing which 105 places changed and by how much.
+
+**The colour cluster wanted the opposite answer.** 806 of them colour the first cell of a
+`.ref-table`, and `style.css` already carries the note explaining why: `.ref-table
+td:first-child` beats a utility class on specificity, 1,614 first cells had accumulated a
+class that never rendered, and the inline form is what actually works. Converting those
+would reintroduce the exact bug session 18 removed. So the counter can never reach zero,
+which makes a zero-ratchet the wrong instrument.
+
+### What shipped
+
+- `.concept-desc.verdict` applied 1,075 times; 67 no-op `margin-top:0` removed. **2,707 → 1,565.**
+- A **ceiling** ratchet in `lint_content.py`: the count may fall and may not rise. Exceeding
+  it is an error naming the number and the reason.
+- The inline verdict margin is now its own error with a line number, so the shape that
+  produced 1,142 of them cannot come back. Tested by injecting three regressions: three
+  errors with line numbers, plus the ceiling breach, exit 1.
+- `ai-table` retired as a warning. Its label — "prefer ref-table" — asserted a preference
+  the stylesheet contradicts: `.9rem` text and an amber `nowrap` first column against 12px
+  and a white one. 360 tables across 18 domains is a redesign, not a cleanup. Now a census
+  line, with `CONTRIBUTING.md` saying explicitly that existing tables should not be converted.
+- The dead-first-cell guard now covers `.ai-table` too — its first column is styled at the
+  same specificity, and it has never carried a dead class. Guarded at zero so it never starts.
+- `CONTRIBUTING.md` gained a *verdict sentence* section; the stale "313 times" note in
+  `style.css` was replaced with what actually happened.
+
+### The general lesson
+
+Three counters, three different right answers, and none of them guessable from the label:
+one was debt with a class already waiting, one was a design decision mislabelled as debt,
+and one had been real debt and was fixed. **The label on a tracked warning is a hypothesis
+about the number, and it goes stale faster than the number does.** Reading the distribution
+took one command in each case; acting on the label without reading it would have got two of
+the three wrong.
+
+Site total unchanged at **1,405**. Smoke **135/135** · axe **6/6** · visual **2/2** · OG
+card current.

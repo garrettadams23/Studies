@@ -24,7 +24,7 @@
                     <tr><td>WAL / redo log</td><td>Append every change <em>before</em> the data page — crash recovery</td></tr>
                     <tr><td>Checkpoint</td><td>Flush dirty pages to disk; trim the log</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Why WAL:</strong> writing a tiny sequential log entry is
                     fast and safe; the actual (random) page write can happen later. On crash, replay
                     the log to recover committed work. This one idea gives you the "D" in ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span> and
@@ -60,7 +60,7 @@
                     <tr><td>Unique / Check</td><td>Column-level rules the DB guarantees</td></tr>
                     <tr><td>Candidate / composite key</td><td>Other unique columns; keys spanning multiple columns</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The NULL trap:</strong> <code>NULL</code> means "unknown,"
                     not zero or empty. It uses <em>three-valued logic</em> — <code>NULL = NULL</code>
                     is not true but <code>NULL</code>, and <code>WHERE x = NULL</code> matches nothing
@@ -96,7 +96,7 @@
                     <tr><td>3NF</td><td>No transitive dependency (non-key → non-key)</td></tr>
                     <tr><td>BCNF</td><td>Every determinant is a candidate key (stricter 3NF)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Rule of thumb:</strong> normalize to 3NF for
                     transactional (OLTP) systems — it keeps writes clean. Then
                     <strong class="c-amber">denormalize deliberately</strong> for read-heavy or
@@ -134,7 +134,7 @@
                     <tr><td>Repeatable Read</td><td>+ non-repeatable reads (MySQL default)</td></tr>
                     <tr><td>Serializable</td><td>+ phantom reads — as if txns ran one at a time</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The trade-off:</strong> stricter isolation = more correct
                     but more locking/aborts and less concurrency. Know the three anomalies (dirty,
                     non-repeatable, phantom) and pick the weakest level that's still safe for your
@@ -170,7 +170,7 @@
                     <tr><td>Many-to-many</td><td>A junction/join table with two FKs</td></tr>
                     <tr><td>One-to-one</td><td>Shared/unique FK — often a sign to merge tables</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Crow's-foot</strong> marks each end with cardinality
                     (one/many) and optionality (zero/one). Get the relationships right here and the
                     tables, keys, and joins fall out naturally — this is the bridge from requirements
@@ -208,7 +208,7 @@
                     <tr><td>CROSS</td><td>Cartesian product (every combo) — usually a mistake</td></tr>
                     <tr><td>SELF</td><td>A table joined to itself (hierarchies, pairs)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Traps:</strong> putting a filter on the outer table in
                     <code>WHERE</code> silently turns a LEFT JOIN into an INNER JOIN (put it in the
                     <code>ON</code> instead); and joining on a nullable column drops rows because
@@ -248,7 +248,7 @@
                     <tr><td>SUM/AVG OVER</td><td>Running totals &amp; moving averages</td></tr>
                     <tr><td>NTILE</td><td>Buckets/percentiles</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Killer use:</strong> "top 3 earners per department" or
                     "each order vs the customer's previous order" — one query, no self-joins. Window
                     functions are the single biggest jump from beginner to intermediate SQL <span class="acro-exp">(Structured Query Language)</span>.
@@ -281,7 +281,7 @@
   <span class="kw">FROM</span> events
 )
 <span class="kw">SELECT</span> * <span class="kw">FROM</span> ranked <span class="kw">WHERE</span> rn = <span class="num">1</span>;   <span class="com">-- latest event per user</span></pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Recursive form:</strong> an anchor query
                     <code>UNION ALL</code> a step that references the CTE — perfect for org charts,
                     category trees, or "all descendants of X." Readability tip: CTEs make a 60-line
@@ -324,7 +324,7 @@
                     <tr><td>ROLLUP / CUBE / GROUPING SETS</td><td>Subtotals &amp; grand totals in one pass</td></tr>
                     <tr><td>FILTER (WHERE …)</td><td>Conditional aggregates (Postgres)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Classic error:</strong> selecting a non-aggregated column
                     that isn't in <code>GROUP BY</code> — either group by it or wrap it in an
                     aggregate.
@@ -361,7 +361,7 @@
                     <tr><td>UNION / UNION ALL</td><td>Stack result sets (ALL keeps duplicates &amp; is faster)</td></tr>
                     <tr><td>INTERSECT / EXCEPT</td><td>Rows in both / in one but not the other</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Prefer <code>EXISTS</code> over <code>NOT IN</code></strong>
                     whenever the inner column can be NULL — <code>NOT IN (…NULL…)</code> returns
                     nothing, a famously silent bug. Many subqueries also rewrite cleanly as joins or
@@ -397,7 +397,7 @@
                     <tr><td>Composite</td><td>Multi-column — order matters (leftmost-prefix rule)</td></tr>
                     <tr><td>Covering</td><td>Includes all columns a query needs → index-only scan</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Composite key order:</strong> an index on
                     <code>(a, b)</code> helps <code>WHERE a=…</code> and <code>WHERE a=… AND b=…</code>,
                     but <em>not</em> <code>WHERE b=…</code> alone. Index the columns you filter/sort on;
@@ -434,7 +434,7 @@
                     <tr><td>Nested Loop / Hash / Merge Join</td><td>The three join strategies</td></tr>
                     <tr><td>Rows estimated vs actual</td><td>Big mismatch = stale statistics → bad plan</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Workflow:</strong> find the node eating the most time,
                     check if a Seq Scan should be an index, and compare estimated vs actual rows. A
                     huge estimate error usually means <code>ANALYZE</code> (statistics) is out of date.
@@ -472,7 +472,7 @@
                     <tr><td>The N+1 query</td><td>1 query + N per-row queries → JOIN or batch (IN)</td></tr>
                     <tr><td><code>SELECT *</code></td><td>Fetch only needed columns → enables covering indexes</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The N+1 problem</strong> is the #1 app-layer DB killer
                     (ORMs love to cause it): loading a list, then firing one query per item. Fix by
                     eager-loading with a join or a single <code>WHERE id IN (…)</code>.
@@ -508,7 +508,7 @@
                     <tr><td>Row vs table locks</td><td><code>FOR UPDATE</code> locks specific rows for a write</td></tr>
                     <tr><td>Deadlock</td><td>Two txns wait on each other — DB kills one; retry it</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Avoiding deadlocks:</strong> acquire locks in a consistent
                     order and keep transactions short. Explicit locking (<code>SELECT … FOR UPDATE</code>)
                     is how you safely implement "decrement inventory" under concurrency.
@@ -543,7 +543,7 @@
                     <tr><td>Shard key</td><td>Chooses which server a row lives on — pick carefully</td></tr>
                     <tr><td>Cross-shard queries/joins</td><td>The hard part — slow, complex; avoid by design</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Order of escalation:</strong> optimize queries &amp;
                     indexes → add a read replica → partition → (only then) shard. Sharding adds real
                     operational complexity; a bad shard key causes hotspots and painful re-sharding.
@@ -618,7 +618,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><td>LISTEN/NOTIFY</td><td>Built-in pub/sub for lightweight eventing</td></tr>
                     <tr><td>pgvector</td><td>Store embeddings &amp; do similarity search (AI apps)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Rule:</strong> use JSONB for genuinely variable data, not
                     as an excuse to skip schema design — relational columns are still faster and safer
                     for structured fields.
@@ -653,7 +653,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><td>Collation/charset</td><td>Use <code>utf8mb4</code> — plain <code>utf8</code> is a 3-byte trap</td></tr>
                     <tr><td>Looser SQL <span class="acro-exp">(Structured Query Language)</span></td><td>Historically permissive; enable strict mode</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Choosing:</strong> Postgres for richer features &amp;
                     strictness; MySQL where the ecosystem/hosting assumes it (WordPress) or the team
                     knows it well. Both are excellent — the differences are smaller than the tribalism.
@@ -686,7 +686,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><td>Tests &amp; prototypes</td><td class="c-red">Multiple app servers sharing it</td></tr>
                     <tr><td>Analytics on a file (with extensions)</td><td class="c-red">Network access by many clients</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Don't dismiss it:</strong> "SQLite is not a toy" — for
                     read-heavy or single-node workloads it's blazing fast and zero-ops. Modern tools
                     (Litestream, LiteFS, Turso) even give it replication. Know when <em>not</em> to
@@ -721,7 +721,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><td>PgBouncer</td><td>External pooler; transaction mode multiplexes many clients</td></tr>
                     <tr><td>Serverless</td><td>Functions × requests = connection storm → use a pooler/proxy</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Sizing:</strong> more connections isn't faster — past a
                     point they just contend. A good pool is often just <em>(cores × 2) + spindles</em>,
                     not hundreds. Connection exhaustion presents as timeouts under load; the fix is
@@ -756,7 +756,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><td>Wide-Column</td><td>Rows with dynamic columns, huge scale</td><td>Cassandra, Bigtable</td></tr>
                     <tr><td>Graph</td><td>Nodes &amp; edges — relationships first</td><td>Neo4j</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Choosing:</strong> pick NoSQL for a <em>specific</em>
                     reason — massive scale, a document-shaped domain, or graph traversal — not to
                     avoid SQL. Most apps are still best served by a relational database; "boring
@@ -796,7 +796,7 @@ db.orders.<span class="fn">aggregate</span>([
                     just like SQL <span class="acro-exp">(Structured Query Language)</span>. Modern Mongo has ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span> multi-document transactions, but they signal
                     you may have wanted relational.
                   </div>
-                  <div class="concept-desc" style="margin-top:6px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Watch out:</strong> unbounded array growth, and treating it
                     as schemaless forever — inconsistent documents become a nightmare. Enforce a
                     schema at the app (or with schema validation).
@@ -831,7 +831,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>List / Stream</td><td>Queues &amp; event logs</td></tr>
                     <tr><td>Pub/Sub</td><td>Lightweight messaging</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Caching patterns:</strong> cache-aside (check Redis, miss →
                     DB → populate) is most common; always set a <strong class="c-green">TTL <span class="acro-exp">(Time To Live)</span></strong>
                     and plan for cache invalidation. Persistence (RDB snapshots / AOF) means it can
@@ -867,7 +867,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Single-table design</td><td>DynamoDB: model many entities in one table by key design</td></tr>
                     <tr><td>Hot partition</td><td>A bad key funnels traffic to one node — throttling</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Tunable consistency</strong> (quorums) lets you dial
                     latency vs freshness per operation. These shine for known, high-volume access
                     patterns (feeds, IoT, sessions) — and hurt when requirements need flexible
@@ -906,7 +906,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Recommendations</td><td>"People who bought… also…"</td></tr>
                     <tr><td>Fraud / security</td><td>Attack-path &amp; ring detection (cf. BloodHound)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The relationship is stored directly, so a traversal is a pointer-hop, not a join —
                     performance stays flat as hops increase. Use a graph DB when connections
                     <em>are</em> the primary query; otherwise a relational DB is simpler.
@@ -941,7 +941,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Wins at</td><td>Point lookups &amp; writes</td><td>Aggregations &amp; scans</td></tr>
                     <tr><td>Example</td><td>Postgres, MySQL</td><td>BigQuery, Snowflake, ClickHouse</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Why columnar is fast for analytics:</strong> reading only
                     the 3 columns a query touches (not all 50), plus massive compression on similar
                     values. Don't run heavy analytics on your OLTP database — it competes with live
@@ -978,7 +978,7 @@ db.orders.<span class="fn">aggregate</span>([
                   </table>
                   <pre class="code-block"><span class="com">-- DuckDB: query a Parquet file directly, no loading</span>
 <span class="kw">SELECT</span> country, <span class="fn">count</span>(*) <span class="kw">FROM</span> <span class="str">'events/*.parquet'</span> <span class="kw">GROUP BY</span> <span class="num">1</span>;</pre>
-                  <div class="concept-desc" style="margin-top:6px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Trend:</strong> DuckDB has made "big data" analytics
                     possible on a laptop for datasets that once needed a cluster — reach for it before
                     spinning up Spark.
@@ -1010,7 +1010,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Data Lake</td><td>Raw files (Parquet) in object storage, schema-on-read — cheap, flexible, messy</td></tr>
                     <tr><td>Lakehouse</td><td>Lake storage + warehouse features (ACID, tables) via Delta/Iceberg/Hudi</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Table formats</strong> (Apache Iceberg, Delta Lake) are the
                     key innovation — they add transactions, schema evolution, and time-travel on top of
                     plain files, so one copy of data serves many engines. Warehouse = easy &amp;
@@ -1046,7 +1046,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Governance</td><td>Certified vs experimental metrics</td></tr>
                     <tr><td>Tools</td><td>dbt Semantic Layer, Cube, LookML</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The payoff: a single source of truth for business logic that BI <span class="acro-exp">(Business Intelligence)</span> tools, notebooks,
                     and APIs <span class="acro-exp">(Application Programming Interface)</span> all consume — no more "whose number is right?" meetings. It's the
                     analytics equivalent of DRY <span class="acro-exp">(Don't Repeat Yourself)</span>.
@@ -1081,7 +1081,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Distribution</td><td>Nulls/values within normal bounds?</td></tr>
                     <tr><td>Lineage</td><td>What feeds this, and what breaks if it fails?</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Tools:</strong> dbt tests &amp; contracts, Great
                     Expectations, Soda; observability platforms (Monte Carlo) auto-detect anomalies.
                     <strong class="c-amber">Data contracts</strong> push the guarantee upstream to
@@ -1116,7 +1116,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>PITR</td><td>Base backup + WAL <span class="acro-exp">(Write-Ahead Log)</span> archive → restore to an exact second</td></tr>
                     <tr><td>Snapshots</td><td>Cloud volume snapshots — fast but check consistency</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">RPO/RPO drive design:</strong> continuous WAL archiving
                     gives near-zero data loss (RPO). But the only backup that counts is a
                     <strong class="c-green">restore you've actually tested</strong> — schedule restore
@@ -1152,7 +1152,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Automatic failover</td><td>Patroni/orchestrator promote a replica on primary death</td></tr>
                     <tr><td>Split-brain</td><td>Two primaries accept writes — data divergence; fencing prevents it</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Replication lag</strong> means "read your own write" can
                     fail — route critical reads to the primary. HA needs a leader-election mechanism;
                     rolling your own failover is how you get split-brain.
@@ -1186,7 +1186,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Locking DDL <span class="acro-exp">(Data Definition Language)</span></td><td>Some <code>ALTER</code>s rewrite/lock the table — check first</td></tr>
                     <tr><td>Online tools</td><td>gh-ost, pt-online-schema-change for big MySQL tables</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Golden rule:</strong> every migration must be
                     backward-compatible with the currently-deployed code, because during a rollout both
                     versions run at once. "Add a nullable column, deploy, backfill, then enforce" beats
@@ -1222,7 +1222,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Secrets</td><td>Rotate credentials via Vault/IAM; never hardcode</td></tr>
                     <tr><td>Auditing</td><td>Log privileged actions &amp; access to sensitive tables</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">And of course:</strong> parameterized queries to stop SQL <span class="acro-exp">(Structured Query Language)</span>
                     injection (the app's job), and network isolation so the DB is never internet-facing.
                     Column-level encryption/masking protects PII <span class="acro-exp">(Personally Identifiable Information)</span> even from DB admins.
@@ -1258,7 +1258,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Bloat / vacuum (PG)</td><td>Dead tuples piling up → autovacuum tuning</td></tr>
                     <tr><td>Disk &amp; IOPS <span class="acro-exp">(Input/Output Operations Per Second)</span></td><td>Running out of space is a hard outage</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <code>pg_stat_statements</code> (Postgres) and the Performance Schema (MySQL)
                     surface your worst queries — the single most useful place to look when the DB is slow.
                   </div>
@@ -1292,7 +1292,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>ML Engineer</td><td>Productionizing models (MLOps)</td></tr>
                     <tr><td>DBA</td><td>Runs &amp; tunes the operational databases</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">The modern stack</strong> blurred these: analytics
                     engineering emerged from analysts adopting version control, testing, and CI. The
                     common core is SQL — it's the one skill every data role shares.
@@ -1327,7 +1327,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>5. Index for access</td><td>Add indexes for the real queries</td></tr>
                     <tr><td>6. OLAP <span class="acro-exp">(Online Analytical Processing)</span> later</td><td>Star schema in the warehouse for reporting</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Snapshot the price:</strong> an <code>OrderItem</code>
                     stores the price <em>at time of sale</em>, not a live FK to Product.price — a
                     classic modeling insight. Design OLTP <span class="acro-exp">(Online Transaction Processing)</span> for correctness; derive OLAP from it.
@@ -1361,7 +1361,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Retention policies</td><td>Auto-expire raw data past N days</td></tr>
                     <tr><td>Tools</td><td>TimescaleDB, InfluxDB, Prometheus, ClickHouse</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The pattern that makes it sustainable: <strong class="c-green">high-resolution
                     recent + low-resolution history</strong>. You almost never need per-second data
                     from last year, so roll it up and let raw data expire. Ties to the observability
@@ -1397,7 +1397,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Similarity</td><td>Cosine / dot product ranks "closeness"</td></tr>
                     <tr><td>Options</td><td>pgvector, Pinecone, Weaviate, Qdrant, Milvus</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Start simple:</strong> <code>pgvector</code> adds vector
                     search to Postgres — often you don't need a separate vector DB at all.
                     <strong class="c-amber">Hybrid search</strong> (vectors + keyword/filters) beats
@@ -1432,7 +1432,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Warehousing</td><td>OLTP <span class="acro-exp">(Online Transaction Processing)</span> vs OLAP <span class="acro-exp">(Online Analytical Processing)</span>, SCDs, dbt, incremental models</td></tr>
                     <tr><td>Case / product sense</td><td>Define a metric, debug a dashboard drop</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Highest-leverage prep:</strong> window functions and the
                     NULL/join traps — they separate mid from senior. Practice explaining <em>why</em>,
                     not just writing the query. Every card in this domain maps to one of these rounds.

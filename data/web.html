@@ -24,7 +24,7 @@
                     <tr><td>Paint</td><td>Fill in pixels (text, colors, borders)</td></tr>
                     <tr><td>Composite</td><td>Assemble layers on the GPU <span class="acro-exp">(Graphics Processing Unit)</span></td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Render-blocking:</strong> CSS blocks rendering (the browser
                     won't paint unstyled content); a plain <code>&lt;script&gt;</code> blocks parsing.
                     Use <code>defer</code>/<code>async</code> and keep critical CSS small so the page
@@ -59,7 +59,7 @@
                     <tr><td>color/background</td><td>Repaint only</td></tr>
                     <tr><td>transform / opacity</td><td>Composite only — GPU <span class="acro-exp">(Graphics Processing Unit)</span>, no layout (animate these!)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Layout thrashing:</strong> reading a layout property (like
                     <code>offsetHeight</code>) right after writing one forces a synchronous reflow in a
                     loop. Batch reads, then writes. <strong class="c-green">Animate <code>transform</code>
@@ -97,7 +97,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Target</td><td>The element clicked</td></tr>
                     <tr><td>Bubble</td><td>Target → top (default for listeners)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Delegation</strong> attaches one listener to a parent and
                     uses bubbling to handle any child — essential for dynamic lists (no re-binding on
                     add/remove). <code>stopPropagation()</code> halts bubbling;
@@ -132,7 +132,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>IndexedDB</td><td>Large, async, structured — offline apps</td></tr>
                     <tr><td>Cache API</td><td>Store responses for service workers/PWAs</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Security:</strong> never store auth tokens in
                     <code>localStorage</code> — any XSS <span class="acro-exp">(Cross-Site Scripting)</span> reads them. Prefer <code>HttpOnly</code> cookies
                     (JS can't touch them). Ties to the web-security cards.
@@ -167,7 +167,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Application</td><td>Storage, cookies, service workers, manifest</td></tr>
                     <tr><td>Lighthouse</td><td>Audit performance, a11y <span class="acro-exp">(Accessibility)</span>, SEO <span class="acro-exp">(Search Engine Optimization)</span>, best practices</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Pro moves:</strong> throttle to "Slow 3G" + 4× CPU <span class="acro-exp">(Central Processing Unit)</span> to feel
                     what users feel; use the Performance panel's flame chart to find the function eating
                     your frame budget.
@@ -208,7 +208,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>flex: 1</td><td>Grow to fill; <code>flex-wrap</code> to wrap</td></tr>
                     <tr><td>gap</td><td>Space between items (no more margin hacks)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Centering, solved:</strong> <code>display:flex;
                     justify-content:center; align-items:center</code> — the answer to a decade of
                     "how do I center a div."
@@ -247,7 +247,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>auto-fit / auto-fill</td><td>Wrap columns to fit the container</td></tr>
                     <tr><td>grid-template-areas</td><td>Name regions; lay out visually in CSS</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Rule of thumb:</strong> Grid for the overall page/section
                     layout, Flexbox for the components inside it. The
                     <code>auto-fit + minmax</code> one-liner gives a fully responsive card grid with
@@ -284,7 +284,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>rem / % / fr / vw</td><td>Relative units over fixed px</td></tr>
                     <tr><td>&lt;meta viewport&gt;</td><td>Required tag or mobile scales wrong</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Container queries</strong> are the big recent shift: a card
                     can restyle based on the space <em>it</em> has, so the same component works in a
                     sidebar or full-width — impossible with media queries alone.
@@ -322,7 +322,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>@layer</td><td>Cascade layers — tame specificity wars</td></tr>
                     <tr><td>clamp/min/max</td><td>Math in CSS for fluid design</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Custom properties + <code>prefers-color-scheme</code></strong>
                     is how modern dark mode works — swap variable values, not whole stylesheets (exactly
                     how this site themes itself).
@@ -357,7 +357,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>BEM / CSS Modules</td><td>Naming &amp; scoping conventions</td></tr>
                     <tr><td>CSS-in-JS</td><td>Styles colocated with components (styled-components)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The trade-off debate:</strong> Tailwind trades "ugly
                     markup" for never leaving your HTML <span class="acro-exp">(HyperText Markup Language)</span> and never fighting the cascade — hugely popular
                     for that reason. Whatever the method, the win is <em>constraints</em>: a limited
@@ -396,7 +396,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td><code>this</code></td><td>Depends on <em>how</em> a function is called (not where defined)</td></tr>
                     <tr><td>Arrow functions</td><td>No own <code>this</code> — inherit from the enclosing scope</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber"><code>this</code> gotcha:</strong> a method passed as a
                     callback loses its <code>this</code>. Arrow functions or <code>.bind()</code> fix
                     it. Closures power data privacy, memoization, and every event handler that
@@ -438,7 +438,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Microtask vs macrotask</td><td>Promises (micro) run before timers (macro)</td></tr>
                     <tr><td>Promise.all / race / allSettled</td><td>Coordinate multiple promises</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Parallel vs serial:</strong> <code>await a; await b;</code>
                     runs one after the other; <code>Promise.all([a,b])</code> runs them together — a
                     common performance win. Never <code>await</code> in a loop when the iterations are
@@ -473,7 +473,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>extends / super</td><td>Inheritance &amp; calling the parent</td></tr>
                     <tr><td>Static / #private</td><td>Class-level members; true private fields (<code>#</code>)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Modern advice:</strong> favor composition and plain objects
                     /modules over deep class hierarchies. But you must understand prototypes to debug
                     "why is this method undefined?" and to read library code.
@@ -508,7 +508,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Code-splitting</td><td>Load chunks on demand (per route)</td></tr>
                     <tr><td>Vite / esbuild / Rollup</td><td>Fast modern tooling (webpack's successors)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Vite</strong> is the current default: instant dev server
                     (native ESM, no bundling in dev) + optimized production builds. Tree-shaking is why
                     <code>import { thing }</code> beats importing a whole library.
@@ -546,7 +546,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Narrowing</td><td>Types refine via checks (unions, guards)</td></tr>
                     <tr><td>strict mode</td><td>Null-safety &amp; more — turn it on</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Mental model:</strong> types are erased at build time — they
                     guide the compiler and editor, then disappear. The payoff is fewer runtime
                     <code>undefined</code> errors and fearless refactoring in large codebases.
@@ -585,7 +585,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>useEffect</td><td>Side effects (fetch, subscriptions) — has gotchas</td></tr>
                     <tr><td>Keys</td><td>Stable list identity — never use array index if items change</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The rules of hooks:</strong> call them at the top level,
                     same order every render. State updates are asynchronous and batched. "Lift state
                     up" to the nearest common parent when siblings need to share it.
@@ -619,7 +619,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Stale closures</td><td>Effect captures old state — fix deps array</td></tr>
                     <tr><td>Unnecessary re-renders</td><td>New object/array props break memoization</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Modern guidance:</strong> "You Might Not Need an Effect" —
                     derive values during render, handle events in handlers, and reserve
                     <code>useEffect</code> for genuine external synchronization. Don't reach for
@@ -654,7 +654,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Svelte</td><td>Compiler — no virtual DOM; compiles away to tiny vanilla JS <span class="acro-exp">(JavaScript)</span></td></tr>
                     <tr><td>Solid / signals</td><td>Fine-grained signals; the model many are converging on</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">The trend: signals.</strong> Fine-grained reactivity
                     (Solid, Vue, Svelte 5, Angular signals) updates exactly what changed without
                     re-running whole components — the industry direction. Learn React for jobs; learn
@@ -689,7 +689,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>SSG</td><td>At build time</td><td>Blogs, docs, marketing (fastest)</td></tr>
                     <tr><td>ISR</td><td>Static + periodic rebuild</td><td>Large mostly-static sites</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">SSR/SSG win</strong> on first-load speed and SEO <span class="acro-exp">(Search Engine Optimization)</span> (real HTML
                     arrives immediately). <strong class="c-amber">React Server Components</strong> are
                     the current frontier — render components on the server, ship less JS <span class="acro-exp">(JavaScript)</span>. Match the mode
@@ -725,7 +725,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Complex global client state</td><td>Zustand / Redux Toolkit / signals</td></tr>
                     <tr><td>URL <span class="acro-exp">(Uniform Resource Locator)</span> as state</td><td>Query params for filters/tabs (shareable)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Biggest insight:</strong> most "state management" pain is
                     really <em>server</em> state (loading, caching, revalidation) — a data-fetching
                     library like React Query solves it far better than Redux. Add global stores only
@@ -766,7 +766,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Preflight</td><td>An <code>OPTIONS</code> request before non-simple calls</td></tr>
                     <tr><td>fetch quirk</td><td>Only rejects on network error — check <code>res.ok</code> yourself</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">CORS is server-side:</strong> a CORS error means the
                     <em>API</em> must allow your origin — you can't fix it from the browser. It's a
                     browser security feature, not a bug in your code.
@@ -803,7 +803,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Resolvers</td><td>Server functions that fetch each field</td></tr>
                     <tr><td>N+1 resolvers</td><td>Classic pitfall — fix with DataLoader batching</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">When to use:</strong> many clients with different data
                     needs, or deeply nested data. For simple CRUD <span class="acro-exp">(Create, Read, Update, Delete)</span>, REST is often simpler. Caching is
                     harder than REST (one endpoint, POST) — weigh the trade-off.
@@ -837,7 +837,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Long polling</td><td>Fallback where sockets aren't available</td></tr>
                     <tr><td>Short polling</td><td>Just refetch on a timer — fine for low-frequency updates</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Don't over-engineer:</strong> if data changes every few
                     minutes, polling is simplest. Reserve WebSockets for genuinely bidirectional,
                     high-frequency needs. SSE is the underrated middle ground for one-way streams.
@@ -871,7 +871,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>OAuth / OIDC <span class="acro-exp">(OpenID Connect)</span> + PKCE <span class="acro-exp">(Proof Key for Code Exchange)</span></td><td>"Sign in with…"; PKCE for public clients</td></tr>
                     <tr><td>Refresh flow</td><td>Short-lived access token + refresh token rotation</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Rule:</strong> prefer <code>HttpOnly</code>,
                     <code>Secure</code>, <code>SameSite</code> cookies for session tokens. Never store
                     long-lived secrets where JavaScript can read them. Auth is one place to use a
@@ -907,7 +907,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Loading/error states</td><td>Built in — no manual flags</td></tr>
                     <tr><td>Optimistic updates</td><td>Update UI instantly, roll back on failure</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Why it matters:</strong> hand-rolled
                     <code>useEffect</code> + <code>useState</code> fetching leads to race conditions,
                     duplicate requests, and stale UI. A query library turns all that into a hook —
@@ -941,7 +941,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>INP <span class="acro-exp">(Interaction to Next Paint)</span></td><td>Interaction responsiveness</td><td>Break up long JS <span class="acro-exp">(JavaScript)</span> tasks; less main-thread work</td></tr>
                     <tr><td>CLS <span class="acro-exp">(Cumulative Layout Shift)</span></td><td>Layout shift (visual stability)</td><td>Set image/ad dimensions; reserve space</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Big levers:</strong> ship less JavaScript (code-split,
                     tree-shake), optimize &amp; lazy-load images (modern formats, <code>loading="lazy"</code>),
                     and cache aggressively. Measure with Lighthouse and real-user data (RUM) — lab and
@@ -976,7 +976,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Contrast &amp; text</td><td>4.5:1 contrast; resizable text; alt text on images</td></tr>
                     <tr><td>ARIA</td><td>Roles/labels for custom widgets — only when HTML can't</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">First rule of ARIA: don't use ARIA</strong> — a native
                     element beats a div with roles every time. Test by unplugging your mouse and by
                     running a screen reader. WCAG AA is the common target. (This site follows these:
@@ -1041,7 +1041,7 @@ t("inbox.count", { count: n })
                       <tr><td>Gender does not affect the sentence</td><td>In Spanish and Hebrew the surrounding words change with the subject's gender — so the variable has to be <em>inside</em> the translated string</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">The rule that prevents all of it:</strong> a translator
                     must receive whole sentences with named placeholders, never fragments. If a
                     translator cannot move a placeholder to the other end of the sentence, the string
@@ -1071,7 +1071,7 @@ t("inbox.count", { count: n })
                       <tr><td>Case changes</td><td>Locale-aware <code>toLocaleUpperCase</code></td><td>Turkish dotted and dotless <em>i</em> — the classic bug that breaks a login form in exactly one country</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     A locale is not a language: <code>pt-BR</code> and <code>pt-PT</code> differ in
                     vocabulary and formatting, and <code>en-GB</code> and <code>en-US</code> disagree
                     about the date order in a way that silently produces the wrong day for eleven
@@ -1101,7 +1101,7 @@ t("inbox.count", { count: n })
                       <tr><td>Truncating with substring</td><td>Cuts through emoji and Indic clusters. Use a segmenter, or fade with CSS instead of slicing</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     The length assumption hides in one more place: <strong>a "character" is not a
                     byte, a code point, or a visible glyph.</strong> A single family emoji is one
                     thing on screen and several code units in JavaScript, so a database column sized
@@ -1133,7 +1133,7 @@ t("inbox.count", { count: n })
                       <tr><td>Everyone shares a calendar</td><td>Working weeks differ, and public holidays are per-country business logic, not a constant</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Time deserves its own warning. Store instants in UTC <span class="acro-exp">(Coordinated Universal Time)</span> and render in the viewer's
                     zone — but <strong>"the day" is a local concept</strong>: a birthday, an opening
                     time and a monthly billing date have no timezone at all, and converting them to
@@ -1169,7 +1169,7 @@ Three defects become visible immediately:
                       <tr><td>Translator context notes on each key</td><td>"Open" as a verb versus an adjective — the ambiguity no format string can express</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">The order that keeps the cost low:</strong> extract
                     strings, adopt a message format with plural support, switch to logical CSS
                     properties, and turn on the pseudo-locale — all before choosing a translation
@@ -1210,7 +1210,7 @@ Three defects become visible immediately:
                       <tr><td><strong>Cosmetic</strong></td><td>Non-conformant, no functional impact</td><td>Contrast on a decorative element; a redundant landmark; a heading level skipped once</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Then order the blockers by flow, not by page:</strong>
                     sign-in, checkout, and anything that carries money or identity go first, because
                     those are the tasks a person cannot simply do somewhere else on your site. A
@@ -1238,7 +1238,7 @@ Three defects become visible immediately:
                       <tr><td>Components (after regrouping)</td><td>Fixing one shared control closes dozens of findings at once, and progress is visible from the first week</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     It also settles where the fix belongs. If the accessible name has to be added in
                     thirty call sites, the component is wrong; fix it once, inside, and let every
                     call site inherit it. <strong>A design system is the highest-leverage
@@ -1268,7 +1268,7 @@ Three defects become visible immediately:
                       <tr><td>Duplicate <code>id</code>, missing lang</td><td>Whether the reading order makes sense, or errors reach the user at all</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     The manual pass is short and does not need specialist tooling. <strong>Unplug the
                     mouse</strong> and complete the flow: can you reach every control, is focus
                     always visible, does anything trap you? Then <strong>zoom to 400%</strong> and
@@ -1300,7 +1300,7 @@ Three defects become visible immediately:
                       <tr><td>Manual review for new components</td><td>Everything in the right-hand column above</td><td>Highest, so scope it to new shared components rather than every pull request</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Turn scanning on for changed files before turning it on repository-wide.
                     A gate that fails every build on day one gets switched off in week one, which is
                     the same mechanic that defeats any late-introduced check —
@@ -1326,7 +1326,7 @@ Three defects become visible immediately:
                       <tr><td>An optimistic conformance report</td><td>A published accessibility statement or vendor report claiming "supports" where the honest answer is "partially supports". Over-claiming is what converts a complaint into a documented misrepresentation, and it is checkable by anybody with a browser</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     The safe version of the second is dull and defensible: state what is not
                     conformant, say what the workaround is, give a date, and provide a contact that a
                     human answers. Regulators and procurement teams both respond far better to a
@@ -1352,7 +1352,7 @@ Three defects become visible immediately:
 5.  Work the severe tier by component, in leverage order.
 6.  Publish an honest statement with the remaining gaps and dates.
 7.  Re-audit — and compare component counts, not instance counts.</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">One thing outperforms all of it:</strong> watch somebody
                     who uses a screen reader or switch control try to complete your main flow. Half
                     an hour of that reorders the backlog more accurately than any severity column,
@@ -1387,7 +1387,7 @@ Three defects become visible immediately:
                     <tr><td>E2E</td><td>Playwright / Cypress</td><td>Real browser, full flows (login → checkout)</td></tr>
                     <tr><td>Visual / a11y</td><td>Storybook, axe</td><td>Regression &amp; accessibility checks</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Testing Library philosophy:</strong> test behavior, not
                     implementation — query by what a user sees (roles, text), not CSS <span class="acro-exp">(Cascading Style Sheets)</span> classes. Then
                     refactors don't break tests. A few reliable E2E tests on the money-path beat a
@@ -1421,7 +1421,7 @@ Three defects become visible immediately:
                     <tr><td>Clickjacking</td><td>Your page iframed &amp; tricked → <code>X-Frame-Options</code>/frame-ancestors</td></tr>
                     <tr><td>CSP</td><td>Content-Security-Policy limits what can load/run — big XSS mitigation</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Frameworks help:</strong> React escapes by default (which
                     is why <code>dangerouslySetInnerHTML</code> is named to scare you). Never build HTML <span class="acro-exp">(HyperText Markup Language)</span>
                     from untrusted strings; sanitize any rich content with a vetted library (DOMPurify).
@@ -1455,7 +1455,7 @@ Three defects become visible immediately:
                     <tr><td>Structured data (JSON-LD)</td><td>Rich results (ratings, FAQs)</td></tr>
                     <tr><td>Sitemap &amp; robots.txt</td><td>Guide crawlers; canonical URLs <span class="acro-exp">(Uniform Resource Locator)</span> avoid dupes</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">SSR/SSG helps SEO</strong> because crawlers get real HTML
                     immediately. Core Web Vitals are a ranking factor too — so performance work doubles
                     as SEO work.
@@ -1494,7 +1494,7 @@ Three defects become visible immediately:
                       <tr><td>Ranking</td><td>Indexed, but does it appear for the query?</td><td>Content and competition — no longer an engineering problem</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">The value of the split</strong> is that it separates work
                     you can do from work you cannot. Discovery and crawling are engineering, entirely
                     within your control, and measurable from your own logs. Ranking is not, and an
@@ -1533,7 +1533,7 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                       <tr><td><code>410 Gone</code></td><td>States the page is permanently removed</td><td>Deletions you want processed faster than a 404</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Two things follow from "advisory".</strong> robots.txt is
                     fetched by anyone, so listing <code>/admin-beta/</code> in it publishes the path
                     to every scanner on the internet — it is a hint file, never an access control.
@@ -1587,7 +1587,7 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                       <tr><td>Watch logs, not rankings, first</td><td>Crawl volume, status mix and error rate for two weeks</td><td>Ranking data lags by weeks; crawl errors show up the same day</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Expect a dip. A well-executed migration usually loses some traffic for a few
                     weeks while everything is re-crawled, and saying so beforehand is the difference
                     between a known cost and an emergency — because the pressure to roll back peaks
@@ -1612,7 +1612,7 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                       <tr><td>Lab and field data disagree, and field wins</td><td>A Lighthouse run is one synthetic load on your machine. Field data is a rolling window of real visits on real devices and networks. When they conflict, the field number is the one that counts — and it is why a fast local score coexists with a failing report</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     That last row is the reconciliation people look for when
                     <span class="xref">Web Performance — Core Web Vitals</span> passes locally and
                     fails in the report: the metric is the same, the population is not. Field data
@@ -1641,7 +1641,7 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                       <tr><td>"Is this traffic really a search engine?"</td><td>Verify by reverse DNS <span class="acro-exp">(Domain Name System)</span> on the requesting address. A large share of declared crawler traffic is something else wearing the name</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">The habit worth forming:</strong> before changing
                     anything, establish which of the four stages is failing, and take the evidence
                     from logs rather than from the dashboard. Most technical SEO work is
@@ -1677,7 +1677,7 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                     <tr><td>Cache strategies</td><td>Cache-first, network-first, stale-while-revalidate</td></tr>
                     <tr><td>Push / background sync</td><td>Notifications &amp; deferred actions</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Service workers are powerful &amp; sharp:</strong> they
                     intercept every request, so a bad cache strategy can serve stale content forever.
                     Test your update flow. For content sites, "offline + installable" is a big UX <span class="acro-exp">(User Experience)</span> win
@@ -1712,7 +1712,7 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                     <tr><td>Image optimization</td><td>Resize/format on the fly (WebP/AVIF) at the edge</td></tr>
                     <tr><td>Cache headers</td><td><code>Cache-Control</code>, ETags, immutable hashed assets</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Trade-off:</strong> edge runtimes are limited (no full
                     Node APIs, short execution) — great for fast, small logic, not heavy work.
                     Combined with hashed filenames + long cache TTLs <span class="acro-exp">(Time To Live)</span>, the edge makes global sites feel
@@ -1746,7 +1746,7 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                     <tr><td>Porting native code</td><td>Existing C/C++ libraries to the web (FFmpeg, SQLite)</td></tr>
                     <tr><td>Beyond the browser</td><td>Wasm + WASI as a portable, sandboxed runtime (edge, plugins)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Not a JS replacement:</strong> Wasm can't touch the DOM <span class="acro-exp">(Document Object Model)</span>
                     directly and has call-overhead — reach for it for the hot compute path, not the
                     whole app. Its bigger future may be server-side: a fast, secure, language-agnostic
@@ -1782,7 +1782,7 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                     <tr><td>Env vars &amp; secrets</td><td>Per-environment config, never in the bundle</td></tr>
                     <tr><td>Platforms</td><td>Netlify, Vercel, Cloudflare/GitHub Pages</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Client bundles are public:</strong> never put secrets in
                     frontend env vars — anything shipped to the browser can be read. Keep secrets on the
                     server/edge.
@@ -1818,7 +1818,7 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                     <tr><td>Data &amp; cache</td><td>data (H*), ops (caching)</td></tr>
                     <tr><td>Deploy &amp; observe</td><td>ops, cloud domains</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">The takeaway:</strong> no single layer is magic — each is a
                     tractable piece you can learn. "Full-stack" is just fluency in how the request
                     travels and where each concern lives. This domain, plus <code>data</code>,
