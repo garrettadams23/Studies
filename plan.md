@@ -13,6 +13,42 @@ Each item lists evidence, why it matters, and the fix. Checkboxes track what's b
 
 ---
 
+## Where things are — an index, because this file is 11,600 lines
+
+Added when the revisited risk register named the file's own length as an open risk. The
+live queue is Phases 7–11 at the bottom; everything above line 10,000 is closed and is kept
+for the reasoning rather than the tasks.
+
+| Section | Line | What it is | State |
+|---|---|---|---|
+| Improvement Plan (July 2026 review) | 1 | Performance, security, UX, repo hygiene | ✅ closed |
+| Content Roadmap — Waves 15+ | ~337 | The first content expansion | ✅ closed |
+| Architecture, Engineering & DevOps — Wave 27+ | ~647 | `eng` and `devops` foundations | ✅ closed |
+| Phase 3 — Depth, Breadth & New Domains | ~803 | Tracks J–U. **Headline lesson: the backlog count was badly inflated** — grepping for a topic's *name* systematically overstated what was missing | ✅ closed |
+| Phase 4 — The Enterprise Estate & the Study Platform | ~1482 | `m365`, `endpoint`, `infra`, plus SRS, quiz, export/import | ✅ closed |
+| Phase 5 — Foundations, Frontiers & the Business of IT | ~2377 | `cs`, `ai`, consulting, privacy engineering, freshness tooling | ✅ closed |
+| **Project risk register** | ~3472 | Event risks, imagined. Four now mitigated, four re-scored this session | 📘 living |
+| Execution Handbook, Parts 1 & 2 | ~3542 | Ordering constraints, per-domain queue, ten session specs. **The specced ones are the ones that got built** | 📘 reference |
+| Calculus track | ~4500 | `math` domain and the TI-84 tooling | ✅ closed |
+| **What is actually outstanding** | ~4640 | The audit sections: defects, the lint trend, undersized domains, content age. All four now resolved and re-measured | ✅ closed |
+| Session records | ~5100–10,360 | Roughly forty of them. The reasoning behind every decision above | 📘 archive |
+| **Phase 7 — the next hundred cards** | ~10,365 | 96 specified cards, 15 tracks, ordered first ten, rejects | ⬜ **live** |
+| **Phase 8 — the depth problem** | ~10,754 | 330 thin topics measured; 244 queued for deepening | ⬜ **live** |
+| Worked specifications | ~10,897 | Four sessions written out to transcription depth | 📘 reference |
+| **The card rubric** | ~10,988 | What the good cards have, measured from forty written in one session | 📘 reference |
+| **Phase 9 — the duplication problem** | ~11,072 | 36 near-duplicate pairs, ~23 merges | ⬜ **live** |
+| **Phase 10 — the tooling** | ~11,175 | 9 tools that make Phases 8 and 9 measurable | ⬜ **live** |
+| Domain shape | ~11,322 | The connectivity graph: hubs, broadcasters, islands | 📘 reference |
+| **Phase 11 — the verification debt** | ~11,411 | 51 dated claims, and why the denominator is not countable | ⬜ **live** |
+| **The session operating manual** | ~11,522 | The loop, the ordering constraints, and ten failures with their guards | 📘 **start here** |
+| The risk register, revisited | ~11,624 | Four accumulation risks that only a measurement could find | 📘 living |
+
+**If you read three things:** the session operating manual, the card rubric, and whichever
+live phase you are about to work on. Line numbers drift as records are appended — the headings
+are stable, the numbers are a hint.
+
+---
+
 ## What's in this file
 
 `plan.md` has grown into the project's full roadmap history. Read it in order or
@@ -3476,13 +3512,13 @@ mitigated by work in this repo; the rest are open.
 
 | Risk | Likelihood | Impact | Mitigation | State |
 |---|---|---|---|---|
-| **Content goes stale** — vendor renames, dead consoles, changed limits | High | High | Phase-5 Track AX: freshness metadata, volatility tags, rename registry | Planned |
-| **Scope paralysis** — 751 open items is demotivating rather than motivating | High | Medium | Treat the plan as a menu; the "actual priority" list at the end of Phase 5 | Partly |
+| **Content goes stale** — vendor renames, dead consoles, changed limits | High | High | Track AX shipped: freshness stamps, volatile spans, fact anchors, rename registry, vendor-console queue | **Partly** — the tooling exists and covers **51 dated claims**. Phase 11 established the denominator is not mechanically countable, so coverage is unknown by construction |
+| **Scope paralysis** — the open-item count keeps rising | High | Medium | The menu framing, and the ordered first-ten in each phase | **Open, and worse.** Phases 7–11 added roughly 96 cards, 244 deepenings, 23 merges, 9 tools and 5 verification waves. The mitigation is the ordering, not the count |
 | **Progress data loss** — everything is `localStorage`; clearing the browser wipes it | Medium | Medium | Phase-4 Track AG: export/import | **Mitigated** — session 10 shipped export/import with merge, replace and preview |
 | **Page weight** — `index.html` is 3.4 MB and grows with every wave | Medium | Medium | Measured in session 14 — it is not slow. `tools/page_budget.py` enforces size and element budgets in CI; lazy loading stays unbuilt until a budget is hit | **Mitigated** |
 | **Generated-file drift** — `acronym.html` / `index.html` committed stale | Medium | Low | CI already rebuilds and fails on drift; `--check` mode on the annotator | **Mitigated** |
-| **Slug churn** — renaming a topic silently breaks permalinks and progress | Medium | Medium | Phase-5 Track AY: ID stability contract and alias map | Planned |
-| **Accuracy drift** — a confident wrong card is worse than no card | Medium | High | Authoring rule 6; Phase-5 fact-anchor comments | Partly |
+| **Slug churn** — renaming a topic silently breaks permalinks and progress | Medium | Medium | Track AY shipped: `slug-aliases.json`, `renames.json`, `check_renames.py` in CI, and the ID contract written into `CONTRIBUTING.md` | **Mitigated** |
+| **Accuracy drift** — a confident wrong card is worse than no card | Medium | High | Fact anchors, contradiction checking, and the acronym ratchets | **Partly, and re-scored upward.** One session found **eight wrong acronym expansions** live on the site, three of them in topic titles. Every one was well-formed markup that passed every gate |
 | **Bus factor of one** — one maintainer holds all the context | Medium | High | The plan itself, `CONTRIBUTING.md`, and tooling that encodes conventions | Partly |
 | **Markup rot** — inconsistent classes and inline styles accumulate | Medium | Low | Phase-4 Track AJ content linter | **Mitigated** — `tools/lint_content.py` runs in CI and tracks a warning trend |
 | **Burnout** — a 140-session backlog written by someone with a day job | Medium | High | Ship what matches current work; no deadline; the menu framing | Open |
@@ -11404,3 +11440,271 @@ One honest caveat on all four phases. The site moved from 1,401 to 1,432 topics 
 session, and eleven domains changed. Every number in Phases 7–10 was measured on **1,432
 topics, 30 domains, at the end of that session**. They will be wrong soon, and the scripts in
 Phase 10 exist precisely so that being wrong is a one-command problem rather than a rewrite.
+
+
+---
+
+# Phase 11 — the verification debt, and a measurement that did not work
+
+Phases 8–10 all begin with a number. This one begins with a **failed attempt at a number**,
+which is recorded in full because the failure is more useful than the estimate would have
+been.
+
+## 1. What is actually dated
+
+The site carries two conventions for claims that age — `<span class="volatile"
+data-checked="…">` for the claim itself, and `<!-- fact: … | source: … | checked: … -->` for
+where a number came from. Together they cover **46 volatile spans and 5 fact anchors: 51
+dated claims** across 1,432 topics.
+
+The obvious next question is: 51 out of how many?
+
+## 2. Three attempts to find the denominator, and why each was wrong
+
+**Attempt one — pattern-match anything that looks like a fact.** Percentages, money,
+durations, sizes, ports, version numbers, "up to N". Code blocks excluded. Result:
+**1,206 matches**, of which 527 were "version numbers".
+
+Reading a sample killed it immediately. The version pattern was matching IP addresses
+(`192.168.0.0/16`), protocol names (`802.11`, `TLS 1.3`), availability figures (`99.999%`),
+and pinned dependencies in example snippets. Almost none of it ages.
+
+**Attempt two — narrow it.** Strip IP-like strings, availability nines, and standard
+identifiers (`802.x`, `TLS 1.x`, `HTTP/2`, `IPv6`, `SHA-256`). Result: **584 matches**, which
+looked defensible.
+
+Reading a sample killed that one too. `money` was matching **shell variables** — `$1`, `$0`,
+`awk -F:` — from prose that discusses scripting outside a `<pre>` block. `size/rate` was
+matching **historical Wi-Fi rates**: "11 Mbps, 2.4 GHz, 1999" is a fact about 802.11b that
+will be true forever.
+
+**Attempt three — narrow again.** Not attempted, and that is the finding.
+
+## 3. The conclusion, stated plainly
+
+**There is no mechanical way to count ageing claims on this site at useful precision.** The
+distinguishing property is not the *shape* of the text — it is whether the world can change
+underneath it, and nothing in the markup carries that.
+
+This is the same failure this file has recorded three times before, and the pattern is now
+unmistakable:
+
+| Check | First version matched | Fixed by |
+|---|---|---|
+| Hard-coded colours | Invoice numbers, ticket numbers, CSS examples | Requiring a colour *context* — a style or paint attribute |
+| Ambiguous acronyms | Every note containing "also", including synonyms | Requiring evidence of *real use* in two domains |
+| Vendor consoles | MMC, "cloud console", `old-admin.example.com` | Word boundaries and dropping generic phrases |
+| **Ageing claims** | IP addresses, Wi-Fi standards, shell variables | **Nothing. There is no property to require** |
+
+The first three had a narrowing available. This one does not, and **the right response to a
+check that cannot be narrowed is to not ship it**, rather than to ship it with a footnote
+that nobody will read.
+
+## 4. What to do instead — enumerate the classes, not the instances
+
+Ageing claims are not evenly distributed. They cluster in a small number of *kinds*, and
+those kinds are enumerable by hand in a way the instances are not.
+
+| Class | Ages because | Where it lives |
+|---|---|---|
+| **Console names and paths** | Vendors rename consoles every few years | `m365`, `cloud`, `endpoint` — already covered by `check_volatility.py`'s queue, now down to 2 candidates |
+| **Console hostnames** | They move — `endpoint.microsoft.com` became `intune.microsoft.com` | Same three domains; the enumerated-host rule added this session catches these |
+| **Service limits and quotas** | Raised, lowered, or made configurable | `cloud`, `m365`, `data` — "5,000 items", "93 days", "20 requests per batch" |
+| **Tier gating** | "Requires E5" is a licensing decision, not a technical fact | `m365` especially, and it is the class most likely to be quietly wrong |
+| **Prices and ranges** | Obviously | `career` (salary and rates), `hw` (build budgets), `cloud` (commitment discounts) |
+| **Default retention** | Changed by vendors without announcement | `m365`, `cloud`, `blueteam` |
+| **Product names** | Rebranded — `check_renames.py` already guards a list of these | Everywhere; the guard exists and catches the ones it knows |
+
+**The work is a pass per class, not a pass per domain.** Searching the site for "requires E5"
+finds every tier-gating claim in one query, and each either gets a dated span or gets
+rewritten to remove the dependency — "check the current gating for your tier" is a sentence
+that never ages.
+
+## 5. The rewrite that beats dating
+
+Worth stating because it is cheaper than the convention and the convention exists partly
+because nobody has said this:
+
+> A claim that is rewritten to not depend on a fact does not need a date.
+
+| Ages | Does not |
+|---|---|
+| "Retention is 93 days" | "Retention is a tier-dependent default, currently around three months — check it, because it changes" |
+| "Requires E5" | "Gated to the higher tiers; the exact gating moves and is worth confirming before designing around it" |
+| "Costs about $80–150" | "Used enterprise mini PCs are the cheapest capable option; price them, because the market moves" |
+
+**Dating a claim promises to re-check it. Rewriting it removes the promise.** The volatile
+span is right where the specific number is the point — a limit you must design around. It is
+the wrong tool where the number was only ever illustrative, and a good share of the 584
+near-matches in §2 are that second kind.
+
+## 6. The queue
+
+| Wave | Class | Method |
+|---|---|---|
+| **V1** | Tier gating | Search for tier names and "requires"; rewrite or date. Highest wrongness risk on the site |
+| **V2** | Service limits | Search for numbers followed by "items", "days", "requests", "GB"; date the ones that are designed around, rewrite the rest |
+| **V3** | Prices | `career`, `hw`, `cloud`. Almost all should be rewritten rather than dated |
+| **V4** | Default retention | Cross-check `m365`, `cloud` and `blueteam` against each other first — §9's contradiction pass applies here |
+| **V5** | Re-audit console paths | `check_volatility.py` already reports this; it is 2 candidates today and will grow with each `m365` or `cloud` wave |
+
+**And the counter-discipline:** every wave should *reduce* the number of dated claims where
+it can, by rewriting. A rising volatile-span count is not automatically progress — it can
+mean the site is accumulating promises to re-check things that never needed a number.
+
+
+---
+
+# The session operating manual
+
+> Derived from one long session that shipped fifteen commits and moved the site from 1,401 to
+> 1,432 topics. Not a description of how work *should* go — a record of the loop that
+> actually worked, the order the tools must run in and why, and the ten specific ways this
+> session got something wrong. The failure list is the valuable half.
+
+## 1. The loop
+
+```
+ 1  AUDIT      probe titles → verify each zero against the domain's real title list
+ 2  READ       open the two or three nearest existing cards, including their
+               concept-card titles — not just their topic titles
+ 3  DRAFT      write to scratchpad, one file per card, named
+ 4  SPLICE     an EXPLICIT file list into data/<domain>.html, before the marker
+ 5  ANNOTATE   make acronyms          ← rewrites content; must precede the build
+ 6  LINT       python3 tools/lint_content.py   ← fastest signal, run it before building
+ 7  BUILD      make build
+ 8  CHECK      make check             ← every static gate, fails fast
+ 9  BROWSER    make test · make a11y · make visual
+10  LINK       add bidirectional pairs to data/related.json, by hand
+11  REBUILD    make build && make check       ← the link edit changes the payload
+12  SOCIAL     make og                ← the card embeds the topic count
+13  RECORD     append a session record to plan.md while the reasons are still in mind
+14  COMMIT     one wave, one commit, message says what was found as well as what shipped
+15  PUSH       git push -u origin <branch>
+```
+
+## 2. Ordering constraints that are not preferences
+
+| Must run before | Because |
+|---|---|
+| `gen_acronym_domain.py` → `annotate_acronyms.py` | The annotator reads the dictionary the generator emits from |
+| `annotate_acronyms.py` → `build.py` | The annotator rewrites `data/*.html`; building first ships unannotated content |
+| `lint_content.py` → `build.py` | Not required, but the linter finds cross-reference and slug errors in two seconds that the build takes ninety to surface |
+| any content change → `make og` | The social card renders the topic count into the image |
+| `related.json` edit → `make build` | The related map is a substituted payload, not a runtime fetch |
+| `make build` → `make visual` | The visual test screenshots `index.html` |
+
+**`make check` runs the gates in fail-fastest order** and that ordering is deliberate: markup
+before lint before the expensive determinism and budget checks.
+
+## 3. The ten failures this session, and the guard for each
+
+| # | What happened | Guard |
+|---|---|---|
+| 1 | A scratchpad **glob** picked up two cards from a session two days earlier and shipped two topics twice | **Never glob a scratchpad.** Name the files. The duplicate-slug guard caught it by name with line numbers |
+| 2 | **Five invented cross-references** — titles reconstructed from memory: "Long-Term Memory" for "Access to Your Own Data", "Has to Mean" for "Actually Means", "SPF, DKIM & DMARC" for the comma version | The linter names the correction every time. It is cheaper to run the linter than to check the title, so run the linter |
+| 3 | Wrote **"whitelist"** where house style is "allowlist" | `check_renames.py`, already in `make check`. First time it caught same-session writing |
+| 4 | A stray `<div class="topic-icon-none">` typed into a header | **Nothing catches this.** Re-read the first ten lines of each new card before splicing |
+| 5 | A regex audit found `DP` inside `UDP`, `RA` inside `YARA`, `SCP` inside `OSCP` — half a 77-row finding was the regex looking at itself | `(?<![A-Za-z0-9])`. A token boundary is not a word boundary when the tokens are acronyms |
+| 6 | Used `class="c-yellow"`, which does not exist | Grep `style.css` for the utility class before using one. Six exist; the rest are `style="color: var(--…)"` |
+| 7 | Wrote a related-map target from memory; **slugs truncate at 60 characters** and the real id ended `…funds-i` | `suggest_related.py --check` names the missing target and the resulting one-way edge in the same run |
+| 8 | Filed a new acronym under `"c": "Military"` — the acronym domain is generated **by category**, so one entry created a whole `By Area — Military` topic and moved the site count | Check the neighbours before inventing a category. A category field in a generated taxonomy is a structural decision |
+| 9 | Probe zeros were **~60% phrasing misses**, including two cards written an hour earlier | Step 1 of the loop. Verify every zero against the real title list |
+| 10 | Two wrong acronym expansions shipped in earlier sessions and were found by **reading**, not by any check — `IR` in a compiler card's title, `SMB` in "a home-lab / SMB choice" | The breadth census now surfaces the candidates. It cannot decide them |
+
+**Six of ten were caught by a tool, three by reading, one by nothing.** That ratio is the
+argument for both halves: the gates are worth their maintenance, and they are not a substitute
+for re-reading what you wrote.
+
+## 4. Session shape
+
+| | Observed this session |
+|---|---|
+| Cards per commit | 2–5. Five is comfortable; more makes the commit message dishonest about what was checked |
+| Time per card | Roughly 20 minutes of writing for a five-concept-card topic, plus the shared verification pass |
+| Commit granularity | **One wave, one commit.** A wave is a domain and a theme. Mixing two domains in one commit makes the record useless later |
+| What goes in the message | What was *found*, not only what shipped. The `ops` probe that returned nothing is in a commit message, and it is the most reusable line in it |
+| When to stop a wave | When the audit's verified list is empty, not when the card count feels round |
+
+## 5. The three habits that produced the good cards
+
+1. **Read the neighbours' concept-card titles, not their topic titles.** An ADHD card was
+   dropped before it was written because `productivity`'s *Study Systems That Survive a Brain
+   That Won't Cooperate* already carried "design for the bad day" and body doubling — visible
+   only from inside the card.
+2. **Write the one sentence first.** The rubric's §1 test. Every good card this session had a
+   sentence that was the reason it existed, and the ones that came out flat did not.
+3. **Verify by measurement, not by assertion.** The 1,142 inline-margin conversion was proved
+   with before-and-after screenshots: two byte-identical PNGs and one taller by exactly 10px,
+   which was 5 × 2px and the predicted number. "This should be a no-op" is not the same claim
+   as "this was".
+
+## 6. What to do at the start of a session
+
+In order, and none of them takes more than a minute:
+
+```
+git log --oneline -5              what did the last session do
+tail -120 plan.md                 what did it say about why
+make check                        is the tree clean before you touch it
+python3 tools/lint_content.py     the census lines: thin counters, breadth, ai-tables
+python3 tools/check_volatility.py the vendor-console queue
+```
+
+The last two exist because **a census nobody reads is decoration**, and this file has made
+that mistake once already with a counter that rose 39% while being "tracked".
+
+
+---
+
+# The risk register, revisited — four risks that only a measurement could find
+
+The register in the Execution Handbook was written from imagination: *what could go wrong
+with a project like this?* It was a good list and four of its entries are now mitigated. But
+every risk on it is one somebody could think of without looking at the repository.
+
+Phases 8–11 looked. These four were invisible until something was counted, and none of them
+appears on the original list.
+
+| Risk | Likelihood | Impact | Evidence | State |
+|---|---|---|---|---|
+| **Silent style drift** — the house form improves and earlier content is never revisited, so the site becomes two sites wearing one theme | **Certain — it already happened** | High | 330 topics (23%) are single-concept and under 1,800 characters, concentrated entirely in domains written early. `data` is 93% thin; `cs` and `infra` are 0% | **Open.** Phase 8 |
+| **Blind duplication** — the audit method governs new cards and has never looked backwards, so two sessions months apart both cover a subject and both cards ship | **Certain — it already happened** | Medium | 36 title pairs at ≥50% token overlap. Two `script` cards on regular expressions, three Kubernetes cards across two domains, three wireless cards in one. Several pairs differ only in em dash versus en dash | **Open.** Phase 9 |
+| **Unreachable quality** — good cards exist and nothing links to them, so the reader who would benefit never arrives | High | Medium | 902 topics have no related-topic link, and **159 of those have 3+ concept cards and 3,000+ characters**. The `productivity` domain is among the best written and almost entirely unlinked | **Open.** Phase 10 T4 |
+| **Unfalsifiable freshness** — the site can state what it has dated and cannot state what it has not | Certain | Medium | 51 dated claims. Three attempts to count the denominator failed on IP addresses, Wi-Fi standards and shell variables. There is no textual property that distinguishes a claim that ages | **Accepted, not mitigable.** Phase 11 §3 |
+
+## What these four have in common
+
+All four are **accumulation** risks rather than event risks. Nothing goes wrong on a
+particular day; a small cost is paid per session and never collected. The original register
+is full of event risks — a domain lapsing, data being cleared, a build breaking — and those
+are the ones a person imagines, because they have a moment attached.
+
+That suggests a habit rather than a mitigation: **once a phase, measure something nobody has
+measured.** All four of these came from a single afternoon of counting things the repository
+already contained, and every one of them was cheaper to find than it would have been to
+predict.
+
+## The fifth, which is about this file
+
+| Risk | State |
+|---|---|
+| **The plan outgrows its own readability** — 11,600 lines, and the useful part is the last few hundred | **Open, and now acute** |
+
+§6 of the backlog reality check said this in a milder form: *most of those 935 will never be
+built, and the useful part of this file is the last two hundred lines*. That was true at
+5,000 lines. At 11,600 it is more true, and this session added 1,300 of them.
+
+Three honest options, and the file has already picked one before:
+
+1. **Split it** — `plan.md` for the live queue, `plan-archive.md` for the phases that closed.
+   Cheap, and it makes the live file scannable again.
+2. **Prune it** — delete closed tracks outright, since Git holds them. The file's own advice
+   in §6: *if it ever becomes discouraging, delete a track wholesale rather than carrying it
+   as debt.*
+3. **Leave it and index it** — a table of contents at the top with a one-line state per phase,
+   so the reader can jump.
+
+**Option 3 first, then option 1 when the live queue next empties.** Deleting is the option
+that loses the record of *why* things were decided, and this file's most-quoted sections are
+the ones explaining why something was rejected — which nobody would have written twice.
