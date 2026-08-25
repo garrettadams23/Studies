@@ -335,6 +335,41 @@ def undecided_meanings(files):
     return out
 
 
+# Two live defects were found by reading this census by hand rather than by any
+# check: `IR` rendered as *Incident Response* inside a compiler card's title and
+# in a Flipper Zero tool table, and `SMB` rendered as *Server Message Block* in
+# "a common home-lab / SMB choice". Both entries were single-meaning, so
+# `undecided_meanings` could not see them and no note said "also".
+#
+# There is no rule that catches these, because the dictionary does not know the
+# second meaning exists. What correlates is *breadth*: an acronym a single
+# subject owns tends to stay in that subject, and one rendered across many
+# unrelated domains has usually been borrowed by one of them. So this reports
+# the widest-travelling single-meaning entries as a census to read, not as a
+# gate to pass.
+BREADTH_FLOOR = 6
+
+
+def broadly_rendered(files):
+    """(acronym, expansion, domains) for single-meaning acronyms used widely."""
+    import json
+    entries = json.loads((DATA / "acronyms.json").read_text(encoding="utf-8"))["entries"]
+    single = {e["a"]: e["m"][0]["e"] for e in entries if len(e.get("m", [])) == 1}
+    by_domain = collections.defaultdict(str)
+    for path in files:
+        by_domain[domain_of(path)] += path.read_text(encoding="utf-8")
+    seen = collections.defaultdict(set)
+    for domain, text in by_domain.items():
+        if domain == "acronym":
+            continue
+        for a in single:
+            if _rendered_re(a).search(text):
+                seen[a].add(domain)
+    return sorted(((a, single[a], sorted(d)) for a, d in seen.items()
+                   if len(d) >= BREADTH_FLOOR),
+                  key=lambda r: (-len(r[2]), r[0]))
+
+
 def topic_label(block):
     """What script.js would use as the slug source, expansions removed."""
     plain = ACRO_SPAN_RE.sub("", block)
@@ -471,6 +506,8 @@ def main():
             f"byDomain — the right expansion, or null not to annotate there."
         )
 
+    broad = broadly_rendered(files)
+
     ambiguous = ambiguous_acronyms(files)
     warns["ambiguous acronym rendered in 2+ domains"] += len(ambiguous)
 
@@ -489,6 +526,13 @@ def main():
         if len(errors) > 40:
             print(f"  … and {len(errors) - 40} more")
         print()
+    print(f"{len(broad)} single-meaning acronym(s) rendered in "
+          f"{BREADTH_FLOOR}+ domains — breadth is the only signal that a second "
+          f"meaning has been borrowed somewhere. Widest first:")
+    for a, exp, doms in broad[:8]:
+        print(f"  {a:<8} {len(doms):>2} domains  '{exp}'")
+    print()
+
     print(f"{ai_tables} .ai-table(s) in use — the second table style, not debt. "
           f"See this file's docstring.\n")
     print("Warnings (tracked, not blocking):")
