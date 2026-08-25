@@ -5512,6 +5512,473 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
             </div>
           </div>
 
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🌲</span>
+    <span class="topic-name">Spanning Tree — Why a Loop Is Catastrophic, and What STP <span class="acro-exp">(Spanning Tree Protocol)</span> Does About It</span>
+    <span class="topic-badge">Network Ops</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Layer-2 Loop Does Not Degrade the Network. It Ends It.</div>
+      <div class="concept-desc">
+        An IP <span class="acro-exp">(Internet Protocol)</span> packet carries a time-to-live that decrements at every router, so a routing loop
+        wastes bandwidth and then dies. <strong>An Ethernet frame has no such field.</strong> A
+        broadcast frame entering a loop is copied by every switch onto every other port, forever,
+        and each copy is itself broadcast again. Within seconds the loop is saturated, the switches
+        are spending their entire processing budget on flooding, and the MAC <span class="acro-exp">(Media Access Control)</span> address table is
+        rewriting itself thousands of times a second because the same source address keeps arriving
+        on different ports.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What you see</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Everything stops, not just one segment</td><td>Broadcasts reach the whole domain, so every device on the VLAN <span class="acro-exp">(Virtual Local Area Network)</span> is affected at once</td></tr>
+            <tr><td>Switch port lights all solid rather than blinking</td><td>Continuous traffic. The oldest and fastest diagnostic in the building</td></tr>
+            <tr><td>Cannot reach the switch to fix it</td><td>Management traffic competes with the storm and loses. Console access matters here</td></tr>
+            <tr><td>MAC flapping messages in the log</td><td>The same address learned on two ports repeatedly — the definitive fingerprint</td></tr>
+            <tr><td>It started when someone plugged in a cable</td><td>Almost always. A patch lead into two wall ports, or a small switch looped back to itself</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-red">This is why spanning tree exists and why it is on by
+          default.</strong> The protocol is old, occasionally awkward, and blamed for outages it
+          prevented — and the alternative is a network that a single misplaced patch lead can take
+          down completely.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">What the Protocol Actually Does — Elect, Then Block</div>
+      <div class="concept-desc">
+        Spanning tree does not detect loops and break them. It computes a loop-free topology in
+        advance and disables the links that would create one, keeping them ready to take over.
+      </div>
+      <div class="dw">
+        <pre class="code-block">1. Elect a root bridge     lowest bridge ID  = priority + MAC
+2. Each switch picks       the port with the lowest path cost to root
+   one root port
+3. Each segment picks      the port on the switch closest to root
+   one designated port
+4. Everything else         → blocking. Cabled, powered, forwarding nothing.</pre>
+        <table class="ref-table">
+          <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>Bridge ID</td><td>Priority plus MAC address. Priority is configurable in steps — this is the knob you use</td></tr>
+            <tr><td>Root port</td><td>The one port on a switch that faces the root. Exactly one per switch</td></tr>
+            <tr><td>Designated port</td><td>The forwarding port for a segment. One per segment</td></tr>
+            <tr><td>Blocking port</td><td>Receives protocol frames, forwards no data. Your redundancy, held in reserve</td></tr>
+            <tr><td>BPDU <span class="acro-exp">(Bridge Protocol Data Unit)</span></td><td>The protocol's own frames. Switches use them to agree the topology, and their absence or arrival is the whole signalling mechanism</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The default root election is the trap.</strong> With every switch
+          at the same priority the tie breaks on MAC address, which means <em>the oldest switch in
+          the building usually wins</em> — often a forgotten access switch in a cupboard, with every
+          path in the network bending towards it. Set the priority on your core switches
+          deliberately, and set the second-lowest on the intended backup.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Variants, and Which One You Are Probably Running</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Variant</th><th>Convergence</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Original STP (802.1D)</td><td>Tens of seconds</td><td>Historic. If you meet it, the slow failover is the reason to move on</td></tr>
+            <tr><td><strong>RSTP <span class="acro-exp">(Rapid Spanning Tree Protocol)</span> (802.1w)</strong></td><td>Typically sub-second on point-to-point links</td><td>The modern baseline, and what "spanning tree" now means in practice</td></tr>
+            <tr><td>MSTP (802.1s)</td><td>As RSTP</td><td>Maps many VLANs onto a few instances. The scalable answer for large VLAN counts</td></tr>
+            <tr><td>Per-VLAN variants</td><td>As RSTP</td><td>Vendor-specific; an instance per VLAN allows per-VLAN load sharing and costs processing</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          Mixed environments are where surprises live: different vendors' defaults interoperate but
+          not always as expected, and a switch running a per-VLAN variant next to one running MSTP
+          needs the boundary thought about rather than assumed.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Edge Ports — Fast, and Therefore Dangerous</div>
+      <div class="concept-desc">
+        A port coming up normally waits while the topology is agreed. On a link to a PC that delay
+        is pure cost, and it is why edge-port acceleration exists — and why it must never be applied
+        alone. <span class="xref">Switch Port Configuration — Access, Trunk, Port Security &amp; Edge Protection</span>
+        covers the configuration; this is what it is protecting against.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Feature</th><th>Does</th><th>Why it is a pair</th></tr></thead>
+          <tbody>
+            <tr><td>Edge port / PortFast</td><td>Skips the wait and forwards immediately</td><td>Alone, it hands you a loop instantly if someone plugs a switch into that port</td></tr>
+            <tr><td>BPDU guard</td><td>Shuts the port down if a protocol frame arrives on it</td><td>A device that speaks spanning tree is a switch, and a switch on an access port is a mistake</td></tr>
+            <tr><td>Root guard</td><td>Refuses a superior claim on a port facing downward</td><td>Stops a cheap switch with a low MAC becoming the root of your network</td></tr>
+            <tr><td>Loop guard</td><td>Keeps a port blocking if protocol frames stop arriving</td><td>Covers the unidirectional-link failure, where a fibre works one way only</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-green">Edge acceleration without BPDU guard is the single most common
+          spanning-tree configuration mistake</strong>, and the failure it produces is the whole of
+          the first section of this card.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Diagnosing It, in the Order That Works</div>
+      <div class="concept-desc">
+        Under a storm you may not be able to reach anything over the network, so the order starts
+        physical and stays there for longer than feels natural.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Do</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Look at the port lights. Solid rather than blinking, across many ports, on more than one switch, is a storm</td></tr>
+            <tr><td>2</td><td>Get to a switch out of band — console cable, or a management network that is not on the affected VLAN. This is why that separation exists</td></tr>
+            <tr><td>3</td><td>Read the log for MAC flapping. It names the two ports the loop runs between, which is usually enough</td></tr>
+            <tr><td>4</td><td>Disable the newer of the two ports. Restoring service comes before understanding</td></tr>
+            <tr><td>5</td><td>Then find the cable. It is nearly always something added in the last day, in a place with no documentation</td></tr>
+            <tr><td>6</td><td>Afterwards, check why protection did not stop it — a missing BPDU guard, an unmanaged switch in the path, or spanning tree disabled on a VLAN nobody remembered</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The last step is the one that prevents a repeat, and it is the one skipped once service
+          returns. A loop is not a freak event: it is the network telling you which protection was
+          missing, in the one way it has. <span class="xref">Network Troubleshooting — A Systematic Approach</span>
+          is the general method; this is the case where the physical layer comes first because the
+          management path is part of the casualty.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">📦</span>
+    <span class="topic-name">MTU <span class="acro-exp">(Maximum Transmission Unit)</span>, Fragmentation &amp; the Half-Loading Website</span>
+    <span class="topic-badge">Network Ops</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Fault That Looks Like Nothing Else</div>
+      <div class="concept-desc">
+        A path-MTU problem produces a symptom pattern so distinctive that recognising it once saves
+        days afterwards: <strong>small things work perfectly and large things hang</strong>. Ping
+        succeeds. DNS <span class="acro-exp">(Domain Name System)</span> resolves. The login page loads. Then the page with images stalls halfway, the
+        file transfer starts and freezes at a few kilobytes, and the database connection opens and
+        then dies on the first large result. Nothing is down, nothing times out cleanly, and every
+        connectivity test you can think of passes.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Works</th><th>Fails</th></tr></thead>
+          <tbody>
+            <tr><td>Ping, DNS lookups, small API <span class="acro-exp">(Application Programming Interface)</span> calls</td><td>Large file downloads, page assets, database result sets</td></tr>
+            <tr><td>The TCP <span class="acro-exp">(Transmission Control Protocol)</span> handshake — it completes</td><td>The first full-size data segment after it</td></tr>
+            <tr><td>Some sites, entirely</td><td>Other sites, always the same ones, on the same path</td></tr>
+            <tr><td>The same request over a different network</td><td>The same request over the VPN <span class="acro-exp">(Virtual Private Network)</span> or the new circuit</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">"It works on my phone but not on the VPN"</strong> is close to a
+          diagnosis on its own. So is "it worked until we moved to the new tunnel", because
+          encapsulation is where nearly all of these are born.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Why Encapsulation Shrinks the Room</div>
+      <div class="concept-desc">
+        Ethernet carries a payload of 1500 bytes by convention. Every layer of wrapping added on
+        the way — a tunnel, an encryption header, a provider's own encapsulation — takes bytes from
+        that budget, and the original sender knows nothing about it.
+      </div>
+      <div class="dw">
+        <pre class="code-block">Ethernet payload budget                                    1500
+  ├ VPN / tunnel headers                            −  40 to 100
+  ├ provider encapsulation (sometimes)              −   8 to  50
+  └ what the inner packet may actually be            ≈ 1350–1460
+
+The sender still builds 1500-byte packets, because nothing told it not to.</pre>
+        <table class="ref-table">
+          <thead><tr><th>Then one of three things happens</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>The router fragments it</td><td>Works, slowly. Fragmentation costs performance and some firewalls drop fragments</td></tr>
+            <tr><td>The packet has "don't fragment" set and the router replies "too big"</td><td><strong>Correct behaviour.</strong> The sender learns the real size and retries smaller</td></tr>
+            <tr><td>The packet has "don't fragment" set and the reply is blocked</td><td><strong>The black hole.</strong> The sender never learns, keeps retransmitting the same oversized packet, and the connection hangs rather than failing</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-red">The third row is caused by a firewall rule somebody wrote on
+          purpose:</strong> blocking ICMP <span class="acro-exp">(Internet Control Message Protocol)</span> wholesale as a hardening measure. Path MTU discovery is
+          carried by ICMP, so blocking it removes the mechanism that would have fixed the problem
+          automatically — and the resulting fault appears months later, on a different system, and
+          is never connected back to that rule.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Proving It in Two Minutes</div>
+      <div class="concept-desc">
+        The test is a ping with the don't-fragment flag set and the payload size stepped down. The
+        largest size that succeeds tells you the real path MTU, and the arithmetic is the part
+        people get wrong.
+      </div>
+      <div class="dw">
+        <pre class="code-block"># Linux / macOS            payload size, ICMP+IP headers are extra (28 bytes)
+ping -M do -s 1472 host     → 1472 + 28 = 1500 . succeeds on a clean path
+ping -M do -s 1372 host     → 1400 total   . succeeds over most tunnels
+
+# Windows                   -f = don't fragment, -l = payload
+ping -f -l 1472 host
+
+Failure reads "message too long" or "packet needs to be fragmented".
+Step down until it passes: that value + 28 is your real path MTU.</pre>
+        <table class="ref-table">
+          <thead><tr><th>Result</th><th>Means</th></tr></thead>
+          <tbody>
+            <tr><td>1472 succeeds</td><td>Clean 1500-byte path. Look elsewhere for your fault</td></tr>
+            <tr><td>1472 fails, 1372 succeeds</td><td>Something in the path is encapsulating. Now find where</td></tr>
+            <tr><td>Fails with no "too big" message coming back</td><td>ICMP is being filtered as well — the black-hole case, and the worst of the three</td></tr>
+            <tr><td>Works from one host, not another</td><td>Different paths. Compare the routes before adjusting anything</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Fixes, Best First</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Fix</th><th>Where</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Allow the ICMP "fragmentation needed" message</strong></td><td>Firewalls along the path</td><td>The correct fix. It restores the mechanism the protocol designers provided, and it fixes every future instance too</td></tr>
+            <tr><td><strong>Clamp the TCP maximum segment size</strong></td><td>The tunnel endpoint or router</td><td>The standard operational fix. The router rewrites the advertised segment size during the handshake, so both ends negotiate a size that fits</td></tr>
+            <tr><td>Lower the MTU on the tunnel interface</td><td>The VPN endpoint</td><td>Works, and only for traffic through that interface</td></tr>
+            <tr><td>Lower the MTU on every client</td><td>Endpoints</td><td>Last resort. It works, it is invisible to whoever inherits it, and it will confuse someone in two years</td></tr>
+            <tr><td>Enable jumbo frames</td><td>Storage or backup networks</td><td>A different subject — a larger MTU end to end, and it must be consistent on <em>every</em> device in the path or it produces this same fault in reverse</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-green">Clamping is the pragmatic answer and the ICMP rule is the real
+          one.</strong> The clamp only helps TCP; anything over UDP <span class="acro-exp">(User Datagram Protocol)</span> — tunnels inside tunnels, some
+          real-time protocols, DNS responses over a tunnelled path — still needs the message to get
+          through. A rule that permits "fragmentation needed" and "packet too big" specifically is a
+          small exception to a blanket ICMP block and costs nothing defensively.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Where These Are Born</div>
+      <div class="concept-desc">
+        Almost every case traces to a change that added a layer, and the fault appears at the
+        moment somebody first moves something large.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Change</th><th>Typical delay before the complaint</th></tr></thead>
+          <tbody>
+            <tr><td>A new site-to-site VPN</td><td>Days — until someone opens a file share across it</td></tr>
+            <tr><td>Remote-access VPN rolled out</td><td>Hours, and it will be reported as "the VPN is slow"</td></tr>
+            <tr><td>A cloud interconnect or overlay network</td><td>Weeks, and it will be blamed on the cloud provider</td></tr>
+            <tr><td>A carrier changing their encapsulation</td><td>Immediately, with no notice, and the change is invisible from your side</td></tr>
+            <tr><td>Jumbo frames enabled on some ports but not all</td><td>Whenever the first large transfer crosses the inconsistent link</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          Worth adding to a change checklist: after standing up any tunnel or overlay,
+          <strong>test with a large transfer, not with a ping</strong>. Ping proves reachability and
+          proves nothing about size, and the difference between those two is this entire card. When
+          the tunnel goes in at 2 a.m., that test belongs in the go/no-go — see
+          <span class="xref">Cutover Nights — Go/No-Go, Comms &amp; Rollback Triggers</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">☎️</span>
+    <span class="topic-name">Voice &amp; Real-Time Traffic — Why "The Network Is Fine" and the Call Still Is Not</span>
+    <span class="topic-badge">Network Ops</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Real-Time Traffic Cares About Different Numbers</div>
+      <div class="concept-desc">
+        A file transfer wants throughput and forgives everything else — a retransmission costs
+        milliseconds nobody notices. A voice call wants the opposite: a tiny, steady stream of small
+        packets arriving at even intervals, where <strong>a late packet is exactly as useless as a
+        lost one</strong>, because the moment it should have been played has passed. This is why a
+        link that shows plenty of spare bandwidth can still carry unusable calls, and why the
+        monitoring graph on the wall says nothing is wrong.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Measure</th><th>What it is</th><th>Where it starts to hurt</th></tr></thead>
+          <tbody>
+            <tr><td>Latency</td><td>One-way delay, mouth to ear</td><td>Around 150 ms one way; past that people start talking over each other</td></tr>
+            <tr><td><strong>Jitter</strong></td><td>Variation in arrival timing</td><td>The one that ruins calls on links with adequate bandwidth. Buffers absorb a little and add delay doing it</td></tr>
+            <tr><td>Loss</td><td>Packets that never arrive</td><td>A percent or two is audible; concealment hides small amounts and cannot hide bursts</td></tr>
+            <tr><td>Burstiness of loss</td><td>Whether loss is spread or clustered</td><td>Ten scattered lost packets are inaudible; ten consecutive ones are a dropped syllable</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Averages conceal all four.</strong> Five-minute average
+          utilisation of 40% is entirely compatible with a link that saturates for 200 milliseconds
+          every few seconds — and those 200-millisecond windows are precisely where the call
+          breaks. Real-time problems live at a timescale that ordinary graphs are drawn to smooth
+          out.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Two Channels, and Nearly Every Fault Is in the Second</div>
+      <div class="concept-desc">
+        A call is signalling plus media, on separate paths and separate ports. Signalling sets it
+        up; media carries the audio. Understanding that they are separate explains the most
+        confusing symptom in the subject.
+      </div>
+      <div class="dw">
+        <pre class="code-block">Signalling  (SIP)  — phone ↔ call server   "ring, answer, hang up"
+Media       (RTP)  — phone ↔ phone         the audio itself, often direct
+
+The call connects, so signalling worked.
+Nobody hears anything, so media did not.</pre>
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Almost always</th></tr></thead>
+          <tbody>
+            <tr><td><strong>One-way audio</strong></td><td>Media blocked in one direction — a firewall or NAT <span class="acro-exp">(Network Address Translation)</span> that permits the outbound stream and has nothing to match the return on</td></tr>
+            <tr><td>No audio at all, call still connects</td><td>Media blocked both ways. Signalling took a different path and succeeded</td></tr>
+            <tr><td>Audio for a few seconds then silence</td><td>A session or NAT translation expiring under a device that stopped seeing keepalives</td></tr>
+            <tr><td>Ringing but never answered</td><td>Signalling — the media problem has not been reached yet</td></tr>
+            <tr><td>Fine internally, broken to outside numbers</td><td>The border device. Internal media is direct; external media is translated</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-green">One-way audio is the fingerprint of this whole subject.</strong>
+          It is almost never the phones, almost never the call platform, and almost always something
+          in the path that treats the two directions of a media stream as unrelated —
+          <span class="xref">NAT in Practice — Source, Destination, Hairpinning &amp; Reading a Flow</span>
+          is where that asymmetry is usually created.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Prioritising It, End to End or Not at All</div>
+      <div class="concept-desc">
+        <span class="xref">QoS — Quality of Service &amp; Traffic Shaping</span> covers the
+        mechanisms. The part specific to voice is that the marking has to survive the entire path,
+        and it usually does not.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Point</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td>The phone marks its own traffic</td><td>And is trusted or not by the switch port. An untrusted port rewrites the marking to zero, silently</td></tr>
+            <tr><td>Switch queues honour the marking</td><td>Only if queuing is configured. Marking with no queue behind it changes nothing</td></tr>
+            <tr><td>The WAN <span class="acro-exp">(Wide Area Network)</span> router is where it matters</td><td>Congestion happens where the link narrows — almost always the internet or WAN edge</td></tr>
+            <tr><td><strong>Across the internet, marking is ignored</strong></td><td>Carriers strip or disregard it. Prioritisation ends at your own boundary, and no configuration changes that</td></tr>
+            <tr><td>Wireless has its own scheme</td><td>Wi-Fi maps priorities separately, and the mapping between wired and wireless markings is a step people forget</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          Which produces the honest conclusion: <strong>for calls that leave your network, quality
+          is bought rather than configured</strong> — with a dedicated circuit, a provider that
+          carries the traffic on their own network, or enough headroom that congestion does not
+          happen. Marking helps inside your boundary and stops at it.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Wireless, Where Most Modern Voice Complaints Come From</div>
+      <div class="concept-desc">
+        Desk phones are increasingly rare and calls now happen on laptops and mobiles over Wi-Fi,
+        which moves the problem from the WAN edge to the radio — a shared medium where a call
+        competes with everything else in the room.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Cause</th><th>Sounds like</th></tr></thead>
+          <tbody>
+            <tr><td>Roaming between access points</td><td>A gap of a second or two as the client re-associates, usually mid-sentence while walking</td></tr>
+            <tr><td>Sticky client</td><td>Progressive degradation as someone walks away from an access point their device refuses to leave</td></tr>
+            <tr><td>Co-channel interference</td><td>Everyone in one area affected at once, worst at busy times</td></tr>
+            <tr><td>A slow client dragging the cell</td><td>One distant device at a low data rate consuming airtime that everyone else needs</td></tr>
+            <tr><td>Power saving on a laptop</td><td>Intermittent, per-device, and worse on battery — the one nobody suspects</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The diagnostic that separates these from network faults is location: <strong>if the
+          complaint follows a person rather than a service, it is the radio.</strong>
+          <span class="xref">Wireless Troubleshooting — Roaming, Sticky Clients &amp; "It's Slow"</span>
+          covers the mechanisms, and a call is simply the most sensitive possible test of them.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Investigating a Complaint That Has Already Ended</div>
+      <div class="concept-desc">
+        Voice faults are reported after the fact, by someone who cannot reproduce them, which means
+        the investigation depends entirely on what was being recorded at the time.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Ask</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Get the call identifier and the exact time</td><td>Platforms keep per-call quality records — jitter, loss and latency for that specific call. This is the single most useful artefact</td></tr>
+            <tr><td>Same building, same person, or same destination?</td><td>Separates a radio problem from a client problem from a carrier problem in one question</td></tr>
+            <tr><td>Wired or wireless, and on battery?</td><td>Two questions that resolve a large share of modern complaints</td></tr>
+            <tr><td>Both directions or one?</td><td>One direction points at the media path immediately</td></tr>
+            <tr><td>Was there a change?</td><td>A firewall rule, a new tunnel, a firmware update. Voice notices changes that nothing else does</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-green">The last row is why voice is worth caring about even if you do
+          not run a phone system.</strong> Real-time traffic is the most sensitive instrument on the
+          network: it detects microbursts, marginal wireless and asymmetric routing long before
+          anything else complains. When calls start degrading and nothing else has, the network has
+          changed — the calls just noticed first.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body net -->
 <!-- ── TOPIC: DEVICE CONFIG MANAGEMENT ───────────────────────── -->
 <div class="topic" data-reviewed="2026-08">

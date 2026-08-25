@@ -10240,3 +10240,65 @@ approximately.
 
 7 bidirectional related pairs. `ai` 49 → **51**. Site total 1,424 → **1,426**. Smoke
 **135/135** · axe **6/6** · visual **2/2**.
+
+
+## Session record — `net`: three faults the domain could describe the tools for but not the fault
+
+`net` is the largest domain after `script` and `sec` — 70 topics covering OSI, subnetting,
+routing protocols, BGP, DNS four times over, wireless, firewalls, NAT, QoS, cabling, cutover
+nights and the field toolkit. Three subjects returned zero, and all three are the *fault*
+rather than the technology: the domain could describe the switch, the tunnel and the QoS
+policy, and had no card on the loop, the black hole, or the one-way call.
+
+**Spanning Tree.** Opens on the fact that makes a layer-2 loop different in kind rather than
+degree: an IP packet has a time-to-live and a routing loop dies; **an Ethernet frame has no
+such field**, so a broadcast in a loop is copied forever and the domain saturates in seconds.
+The symptom table leads with the oldest diagnostic in the building — port lights solid rather
+than blinking — and includes the one that matters operationally: you cannot reach the switch
+to fix it, which is why out-of-band access exists.
+
+The protocol section states what it actually does, which is *elect then block* rather than
+detect and break, and names the trap: with every switch at default priority the tie breaks on
+MAC address, so **the oldest switch in the building usually becomes root** — often a forgotten
+access switch in a cupboard, with every path bending towards it. Then edge ports, and the
+line the card is built to deliver: edge acceleration without BPDU guard is the single most
+common spanning-tree misconfiguration, and the failure it produces is the first section of
+the card. The diagnosis runs physical-first for longer than feels natural, because the
+management path is part of the casualty, and ends on the step skipped once service returns —
+finding out which protection was missing, since a loop is the network telling you exactly
+that.
+
+**MTU, Fragmentation & the Half-Loading Website.** Written around a symptom pattern
+distinctive enough that recognising it once saves days: **small things work and large things
+hang**. Ping succeeds, DNS resolves, the login page loads, the page with images stalls
+halfway. Nothing times out cleanly and every connectivity test passes.
+
+The mechanism is three outcomes when an oversized packet meets a narrower path, and the third
+— the black hole — is the one caused deliberately: blocking ICMP wholesale as hardening
+removes path MTU discovery, so the sender never learns and the connection hangs rather than
+failing. The fault then appears months later on a different system and is never connected
+back to that rule. The proof is a two-minute ping with the don't-fragment flag, with the
+arithmetic spelled out because that is the part people get wrong, and the fixes are ranked
+with the honest split: **clamping is the pragmatic answer and the ICMP rule is the real one**,
+because a clamp only helps TCP. It closes with a line for a change checklist — after standing
+up any tunnel, test with a large transfer rather than a ping, since ping proves reachability
+and nothing about size.
+
+**Voice & Real-Time Traffic.** The framing is that real-time traffic cares about different
+numbers, and **a late packet is exactly as useless as a lost one**. That explains the
+complaint the domain otherwise had no answer for: a link with plenty of spare bandwidth
+carrying unusable calls, while the monitoring graph says nothing is wrong — because
+five-minute averages are drawn to smooth out exactly the 200-millisecond windows where the
+call breaks.
+
+Then signalling versus media, which produces the fingerprint of the whole subject:
+**one-way audio**, which is almost never the phones and almost always something in the path
+treating the two directions of a media stream as unrelated. QoS gets the honest verdict that
+marking is stripped or ignored across the internet, so for calls that leave your network
+quality is bought rather than configured. And a closing argument for why voice is worth
+caring about even without a phone system: it is the most sensitive instrument on the network,
+detecting microbursts and marginal wireless long before anything else complains — when calls
+degrade and nothing else has, the network changed and the calls noticed first.
+
+9 bidirectional related pairs. `net` 70 → **73**. Site total 1,426 → **1,429**. Smoke
+**135/135** · axe **6/6** · visual **2/2**.
