@@ -951,9 +951,12 @@ header p {
   line-height: 1.75;
 }
 /* The judgement sentence that follows a table — "every table gets a verdict".
-   Content wrote this as style="margin-top:10px" 313 times before it had a name;
-   new cards use the class. Must stay after .concept-desc: equal specificity, so
-   source order decides. */
+   Content wrote this as style="margin-top:10px" long before it had a name, and
+   kept doing so after: 1,142 of them were still inline when the conversion ran,
+   which is why lint_content.py now errors on the inline form rather than
+   counting it. 970 were 10px and rendered identically; 105 were 8px or 6px and
+   gained 2–4px, measured on three cards and recorded in plan.md.
+   Must stay after .concept-desc: equal specificity, so source order decides. */
 .concept-desc.verdict {
   margin-top: 10px;
 }

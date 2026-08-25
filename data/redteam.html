@@ -58,7 +58,7 @@
                     <tr><td><code>--script smb-enum-shares</code></td><td>Category/named scripts (~600 available)</td></tr>
                     <tr><td><code>-A</code></td><td>Aggressive: -sV -O -sC + traceroute</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> a SYN <span class="acro-exp">(Synchronize)</span> scan shows up as many
                     connections with no completed handshake from one source — IDS <span class="acro-exp">(Intrusion Detection System)</span> (Suricata/Zeek)
                     and firewall logs flag the fan-out. <code>-T4/-T5</code> timing is loud;
@@ -93,7 +93,7 @@
 
 <span class="com"># RustScan → auto-pipe discovered ports into nmap -sV -sC</span>
 <span class="fn">rustscan</span> -a target --range <span class="num">1</span>-<span class="num">65535</span> -- -sV -sC</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> extremely high packet rates
                     from a single IP <span class="acro-exp">(Internet Protocol)</span> to sequential ports are the signature — netflow/IDS thresholds
                     catch it instantly. Attackers throttle to blend in.
@@ -131,7 +131,7 @@
 [recon-ng] &gt; modules load recon/domains-hosts/hackertarget
 [recon-ng] &gt; options set SOURCE example.com
 [recon-ng] &gt; run</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> passive OSINT is nearly
                     invisible to the target — the defense is <em>reducing your footprint</em>:
                     scrub metadata, limit what's public, monitor certificate-transparency logs
@@ -164,7 +164,7 @@
 <pre class="code-block"><span class="fn">subfinder</span> -d example.com -all -o subs.txt   <span class="com"># fast, passive</span>
 <span class="fn">amass</span> enum -passive -d example.com            <span class="com"># passive aggregation</span>
 <span class="fn">amass</span> enum -active -d example.com -brute       <span class="com"># active: resolves + brute-forces</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> maintain your own asset
                     inventory the same way — you can't defend subdomains you forgot you own.
                     Watch for dangling DNS <span class="acro-exp">(Domain Name System)</span> records (subdomain takeover risk).
@@ -201,7 +201,7 @@
                     <tr><td><code>product:MongoDB</code></td><td>A specific service/version</td></tr>
                     <tr><td><code>"default password"</code></td><td>Banners advertising defaults</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> search Shodan/Censys for
                     <em>your own</em> org regularly — it's the fastest external-exposure audit
                     there is. Anything you find, an attacker already has.
@@ -238,7 +238,7 @@
                     <tr><td><code>inurl:admin site:example.com</code></td><td>Admin panels</td></tr>
                     <tr><td><code>"password" filetype:log</code></td><td>Leaked logs/creds</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> dork your own domain to find
                     accidental exposure; use <code>robots.txt</code>, auth, and Google Search
                     Console removal for anything sensitive that's indexed.
@@ -272,7 +272,7 @@
                     <tr><td>Scanner</td><td>Automated vuln crawl (Pro)</td></tr>
                     <tr><td>Decoder / Comparer</td><td>Encode/decode &amp; diff responses</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Typical flow:</strong> browse the app through the proxy
                     to map it → send an interesting request to Repeater → probe for injection/auth
                     flaws by hand → automate with Intruder. <strong class="c-amber">Blue-team
@@ -308,7 +308,7 @@
 
 <span class="com"># Full active scan (authorized targets only)</span>
 <span class="fn">zap-full-scan.py</span> -t https://staging.example.com</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team crossover:</strong> because ZAP is a
                     <em>defensive</em> tool too, wire it into your own pipeline to catch OWASP Top 10
                     regressions before release.
@@ -345,7 +345,7 @@
                     <tr><td><code>--tamper</code></td><td>Evasion scripts (encode payloads past filters/WAF)</td></tr>
                     <tr><td><code>--batch</code></td><td>Non-interactive (accept defaults)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> the fix is
                     <strong class="c-green">parameterized queries</strong>, not a WAF <span class="acro-exp">(Web Application Firewall)</span> — but a WAF +
                     DB query logging will scream at sqlmap's payload patterns and error-based probing.
@@ -385,7 +385,7 @@
 
 <span class="com"># Gobuster equivalent</span>
 <span class="fn">gobuster</span> dir -u https://site -w wordlist.txt</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> a flood of 404s to random
                     paths from one source is the signature — rate-limit and alert on it. Common
                     wordlists come from SecLists.
@@ -416,7 +416,7 @@
 <pre class="code-block"><span class="fn">nuclei</span> -u https://site                    <span class="com"># all default templates</span>
 <span class="fn">nuclei</span> -l hosts.txt -t cves/ -severity critical,high
 <span class="fn">nuclei</span> -u https://site -t exposures/       <span class="com"># exposed configs/keys</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> run Nuclei against your own
                     external surface on a schedule — it's one of the fastest ways to catch a
                     newly-disclosed CVE affecting you before an attacker does.
@@ -447,7 +447,7 @@
                 <div class="dw">
 <pre class="code-block"><span class="fn">nikto</span> -h https://site                       <span class="com"># server misconfig sweep</span>
 <span class="fn">wpscan</span> --url https://site --enumerate vp,u   <span class="com"># vuln plugins + users</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> both are extremely noisy —
                     trivially caught by IDS/WAF. Defense is patching, removing version banners, and
                     keeping CMS plugins minimal and current.
@@ -494,7 +494,7 @@ msf&gt; set PAYLOAD windows/x64/meterpreter/reverse_tcp
 msf&gt; set LHOST <span class="num">10.0.0.1</span>
 msf&gt; run                        <span class="com"># → opens a session on success</span>
 msf&gt; sessions -i <span class="num">1</span>              <span class="com"># interact with session 1</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> default Meterpreter and
                     stock modules have well-known signatures — EDR <span class="acro-exp">(Endpoint Detection and Response)</span> and AV catch them readily.
                     Detection maps directly to ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> exploitation + C2 <span class="acro-exp">(Command and Control)</span> techniques.
@@ -535,7 +535,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td><code>-f</code></td><td>Output format (exe, elf, raw, python, …)</td></tr>
                     <tr><td><code>-e</code> / <code>-i</code></td><td>Encoder &amp; iterations (basic evasion)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> the LHOST/LPORT callback is
                     the tell — outbound connections to an unusual host/port right after a file
                     executes. Egress filtering + EDR <span class="acro-exp">(Endpoint Detection and Response)</span> behavioral rules catch it.
@@ -566,7 +566,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
 <pre class="code-block"><span class="fn">searchsploit</span> apache 2.4          <span class="com"># find exploits for a version</span>
 <span class="fn">searchsploit</span> -x php/webapps/1234  <span class="com"># view the exploit source</span>
 <span class="fn">searchsploit</span> -m php/webapps/1234  <span class="com"># copy it locally to inspect/edit</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> this is why
                     <strong class="c-green">version-hiding + fast patching</strong> matter — the
                     entire chain is "know the version → look up the exploit." Remove version banners
@@ -604,7 +604,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td><code>GetUserSPNs.py</code></td><td>Kerberoasting — request service tickets</td></tr>
                     <tr><td><code>ntlmrelayx.py</code></td><td>Relay captured NTLM <span class="acro-exp">(NT LAN Manager)</span> auth to other hosts</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> these leave clear Windows
                     Event Log traces — service creation (7045) for psexec, ticket requests (4769)
                     for Kerberoasting, unusual SMB auth patterns for relay. Sysmon + a SIEM <span class="acro-exp">(Security Information and Event Management)</span> rule per
@@ -640,7 +640,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>Edges</td><td>Relationships like <code>MemberOf</code>, <code>AdminTo</code>, <code>GenericAll</code>, <code>HasSession</code></td></tr>
                     <tr><td>Pre-built queries</td><td>"Shortest path to Domain Admins", "Kerberoastable users"</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> defenders run BloodHound too —
                     it's the best way to <em>find and cut</em> those paths before an attacker walks
                     them. Collection generates heavy LDAP/SMB queries that anomaly detection can flag.
@@ -676,7 +676,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>Golden Ticket</td><td>Forge a TGT <span class="acro-exp">(Ticket Granting Ticket)</span> with the krbtgt hash — domain-wide persistence</td></tr>
                     <tr><td>DCSync</td><td>Impersonate a DC <span class="acro-exp">(Domain Controller)</span> to pull password hashes via replication</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> defenses are
                     <strong class="c-green">Credential Guard</strong> (protects LSASS), LSASS-access
                     alerts (Sysmon event 10), disabling NTLM where possible, and watching for
@@ -712,7 +712,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>Password spray</td><td>One password against many users (avoids lockout)</td></tr>
                     <tr><td>Silver Ticket</td><td>Forge a service ticket with a service account hash</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> Kerberoasting shows as a spike
                     of TGS <span class="acro-exp">(Ticket Granting Service)</span> requests (event 4769) for many SPNs <span class="acro-exp">(Service Principal Name)</span> from one user. Defenses: long,
                     random service-account passwords (or gMSAs), and enabling Kerberos pre-auth.
@@ -779,7 +779,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>ESC1</td><td>Template lets requester supply the subject → request a cert as any user</td></tr>
                     <tr><td>Authenticate</td><td>Use the cert to get a TGT <span class="acro-exp">(Ticket Granting Ticket)</span> / NTLM <span class="acro-exp">(NT LAN Manager)</span> hash for that identity</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> audit certificate templates
                     (remove "enrollee supplies subject" + client-auth combos), monitor the CA <span class="acro-exp">(Certificate Authority)</span>'s
                     issuance logs, and restrict enrollment rights. Certipy's own <code>find</code>
@@ -818,7 +818,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>Beacon interval / jitter</td><td>How often (and how randomly) it checks in</td></tr>
                     <tr><td>Channel</td><td>HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span>, DNS <span class="acro-exp">(Domain Name System)</span>, SMB <span class="acro-exp">(Server Message Block)</span> — how tasking is carried</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team detection:</strong> beaconing shows up as
                     <em>regular, periodic</em> outbound connections to one destination — even over
                     HTTPS, the timing pattern betrays it. Zeek/SIEM analytics on connection
@@ -854,7 +854,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>Malleable C2</td><td>Profiles that reshape traffic to blend in</td></tr>
                     <tr><td>Team server</td><td>Multi-operator collaboration</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team detection:</strong> default Beacon has
                     well-known signatures — named pipes, the "jQuery" malleable profile, specific
                     memory artifacts, and default TLS <span class="acro-exp">(Transport Layer Security)</span> certs. Tools like BeaconHunter and JA3/JA3S
@@ -920,7 +920,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>PowerShell Empire / Starkiller</td><td>Classic PowerShell/Python post-ex C2 (Starkiller = GUI)</td></tr>
                     <tr><td>Metasploit / Meterpreter</td><td>Also a C2 for lighter engagements (see the exploitation card)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team takeaway:</strong> the tools change, the
                     <em>behavior</em> doesn't — implant → periodic callback → tasking → post-ex.
                     Detection engineering built on ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> techniques (C2 over web protocols,
@@ -960,7 +960,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   </table>
 <pre class="code-block"><span class="com"># NTLM hashes, rockyou wordlist + best64 rules</span>
 <span class="fn">hashcat</span> -m <span class="num">1000</span> -a <span class="num">0</span> hashes.txt rockyou.txt -r rules/best64.rule</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> cracking is <em>offline</em>
                     (nothing to detect on the wire) — the defense is upstream: long passphrases,
                     slow hashes (bcrypt/argon2, not fast MD5/NTLM), and stopping the hash theft in
@@ -993,7 +993,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
 <span class="fn">zip2john</span> secret.zip &gt; hash.txt
 <span class="fn">john</span> --wordlist=rockyou.txt hash.txt
 <span class="fn">john</span> --show hash.txt            <span class="com"># reveal cracked passwords</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">When to use which:</strong> Hashcat for raw GPU <span class="acro-exp">(Graphics Processing Unit)</span> speed on
                     big hash lists; John for format auto-detection, the <code>*2john</code>
                     extractors, and quick CPU jobs. Most operators keep both.
@@ -1028,7 +1028,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
 
 <span class="com"># Spray one password across many users</span>
 <span class="fn">hydra</span> -L users.txt -p <span class="str">'Spring2026!'</span> ssh://<span class="num">10.0.0.5</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> online attacks are very
                     detectable — bursts of failed logins (Windows 4625, SSH auth failures) from one
                     source. Defenses: lockout/backoff, MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, and rate-limiting. Spraying is stealthier
@@ -1067,7 +1067,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>CeWL</td><td>Build a custom list by spidering the target's own website</td></tr>
                     <tr><td>Rules</td><td>best64 / OneRuleToRuleThemAll mutate a base list enormously</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     A <strong class="c-green">targeted</strong> list (company terms via CeWL + a good
                     rule set) beats a giant generic list. This is also the defender's lesson: your
                     org's name + a year + <code>!</code> is exactly what these lists+rules generate.
@@ -1102,7 +1102,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td><code>aireplay-ng</code></td><td>Deauth a client to force a re-handshake</td></tr>
                     <tr><td><code>aircrack-ng</code></td><td>Crack the captured handshake vs a wordlist</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> deauth floods are detectable by
                     WIDS/WIPS. Defenses: WPA3 <span class="acro-exp">(Wi-Fi Protected Access 3)</span> (resists offline cracking), long random passphrases,
                     802.1X/enterprise auth instead of a shared PSK.
@@ -1168,7 +1168,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>BLE / Wi-Fi recon</td><td>Enumerate wireless devices</td></tr>
                     <tr><td>Caplets</td><td>Scripted attack modules</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> ARP spoofing shows as a MAC/IP
                     mapping suddenly changing — dynamic ARP inspection (DAI) on switches and
                     ubiquitous TLS <span class="acro-exp">(Transport Layer Security)</span> (which MITM can't silently read) are the defenses.
@@ -1202,9 +1202,9 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>RFID / NFC</td><td>Weak/cloneable access badges (e.g. legacy 125 kHz)</td></tr>
                     <tr><td>Sub-GHz</td><td>Fixed-code remotes without rolling codes</td></tr>
                     <tr><td>BadUSB</td><td>HID keystroke injection (like Rubber Ducky)</td></tr>
-                    <tr><td>Infrared</td><td>Universal remote / IR <span class="acro-exp">(Incident Response)</span> devices</td></tr>
+                    <tr><td>Infrared</td><td>Universal remote / IR devices</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> defenses are physical-security
                     hygiene — modern encrypted badge tech (not clonable 125 kHz), rolling-code
                     remotes, USB <span class="acro-exp">(Universal Serial Bus)</span> port control / device allow-listing against BadUSB.
@@ -1238,7 +1238,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>Proxmark3</td><td>Advanced RFID <span class="acro-exp">(Radio Frequency Identification)</span> research — read/clone/analyze many card types</td></tr>
                     <tr><td>HackRF / RTL-SDR</td><td>Software-defined radio — receive/transmit across a wide spectrum</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> the defenses are unglamorous
                     but effective — lock screens, USB device control/allow-listing, encrypted modern
                     access badges, and staff awareness ("don't plug in found USBs / accept tailgaters").
@@ -1275,7 +1275,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td><code>rundll32</code></td><td>Runs code via a DLL <span class="acro-exp">(Dynamic Link Library)</span> export</td></tr>
                     <tr><td><code>bash/vim/find (GTFOBins)</code></td><td>Shell escape / privesc from a limited context</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> signatures don't help — these
                     are trusted binaries. Detection is <strong class="c-green">behavioral</strong>:
                     <code>certutil</code> making a network connection, or <code>winword.exe</code>
@@ -1312,7 +1312,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>AlwaysInstallElevated</td><td>Sudo misconfigs (NOPASSWD)</td></tr>
                     <tr><td>Stored creds / autologon</td><td>Kernel version → known exploits</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> PEAS scans touch a huge number
                     of files/registry keys quickly — noisy to EDR <span class="acro-exp">(Endpoint Detection and Response)</span>. Defense is the fix, not the
                     detect: least privilege, patch, remove SUID, lock down sudo, no creds on disk.
@@ -1347,7 +1347,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>SSH <span class="acro-exp">(Secure Shell)</span> -D / -L</td><td>Dynamic (SOCKS) &amp; local port forwarding</td></tr>
                     <tr><td>proxychains</td><td>Force any tool through a SOCKS <span class="acro-exp">(Socket Secure)</span> proxy</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> internal
                     <strong class="c-green">network segmentation</strong> (Zero Trust microseg) is
                     what limits a pivot's reach. Watch for unexpected long-lived tunnels and
@@ -1381,7 +1381,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>ICMP tunneling</td><td>Ping is often allowed out</td><td>Oversized/frequent ICMP with payloads</td></tr>
                     <tr><td>HTTPS to cloud</td><td>Blends with normal web traffic</td><td>Large outbound to new/rare destinations; DLP <span class="acro-exp">(Data Loss Prevention)</span></td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> egress filtering (allow-list
                     outbound), DNS monitoring, and DLP are the counters. The theme across R8: modern
                     attackers are <em>quiet and signed</em> — behavioral analytics, not signatures,
@@ -1416,7 +1416,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>privesc</td><td>Find IAM <span class="acro-exp">(Identity and Access Management)</span> misconfig chains (iam:PassRole etc.)</td></tr>
                     <tr><td>persistence / exfil</td><td>Demonstrate impact for the report</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> everything Pacu does is API <span class="acro-exp">(Application Programming Interface)</span>
                     calls — <strong class="c-green">CloudTrail + GuardDuty</strong> see the
                     enumeration and privesc attempts. This is the offensive mirror of the CSPM <span class="acro-exp">(Cloud Security Posture Management)</span> tools
@@ -1483,7 +1483,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>Exposed kubelet / API <span class="acro-exp">(Application Programming Interface)</span></td><td>Direct command execution on pods</td></tr>
                     <tr><td>Mounted SA token</td><td>Default token used to call the API</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Blue-team note:</strong> this is exactly what the
                     Kubernetes Security card defends — least-privilege RBAC, Pod Security Standards
                     (no privileged/hostPath), network policies, and audit logging.
@@ -1517,7 +1517,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>Hit IMDS for creds</td><td class="c-green">Enforce IMDSv2 (session-token, blocks basic SSRF)</td></tr>
                     <tr><td>Use stolen role creds</td><td>Least privilege; detect creds used off-instance (GuardDuty)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Purple team:</strong> the red team demonstrates the chain
                     against ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span>; the blue team confirms each step is detected/blocked (IMDSv2,
                     CSPM, GuardDuty). That collaboration — offense proving, defense hardening — is the
@@ -1559,7 +1559,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>Purple team</td><td>All of the above, improved as you go</td><td>Fixed detections, and a shorter gap list</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The essential distinction: a red team measures whether you noticed <em>this time</em>, and
           hides to do it. Emulation announces every technique and measures whether the control
           worked, which produces far more improvement per hour and no bragging rights for anyone.
@@ -1584,7 +1584,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>Need an external attestation for a customer or regulator</td><td>Penetration test, scoped and reported formally</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The tooling for the first row is in
           <span class="xref">Adversary Emulation — Atomic Red Team &amp; Caldera</span>, and the
           discipline the results feed is in
@@ -1625,7 +1625,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>Your exposure</td><td>What is reachable from the internet, and who has access?</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The third row eliminates a surprising amount of work. Emulating a technique that requires
           a technology you do not run tells you nothing, and a startling share of published emulation
           plans are full of them for any given organisation.
@@ -1686,7 +1686,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>Cleanup</td><td>How each step is undone, per step</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The "expected telemetry" column is what turns a test into a diagnosis. When nothing fires,
           it tells you immediately whether the problem is a missing detection or a missing log
           source — two very different pieces of work.
@@ -1715,7 +1715,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>Full logging of every action, timestamped</td><td>Separates exercise activity from a genuine intrusion afterwards</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Decide in advance what happens if a <em>real</em> intrusion is discovered during the
           exercise. It happens, and the plan is always the same: stop the exercise, preserve
           everything, and switch to real incident response — but agreeing that beforehand saves the
@@ -1774,7 +1774,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>Scribe</td><td>Records what ran, what fired, what did not, with timestamps</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The scribe is the role that gets dropped and the one that determines whether the exercise
           produces anything durable. Nobody reconstructs an eight-hour session from memory, and the
           findings are the entire deliverable.
@@ -1800,7 +1800,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>6</td><td>Clean up</td><td>Undo it before moving on, not at the end</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Step 5 is what makes it purple rather than a test. Writing or fixing a detection while the
           technique is still reproducible on demand takes minutes; doing it three weeks later from a
           report takes an afternoon and often does not happen at all.
@@ -1825,7 +1825,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>Nothing</td><td>No trace anywhere</td><td>A logging gap; a detection cannot fix it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The "logged only" row is where most of the value of a first exercise sits. Organisations
           routinely discover they already collect everything needed for a dozen detections nobody
           wrote — see
@@ -1888,7 +1888,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>Expect to destroy it regularly</td><td>A range nobody will break is a demonstration environment</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The separate index is the detail most often missed, and it corrupts a whole quarter of
           detection metrics when it is: exercise activity inflates true positives and makes tuning
           decisions on fiction.
@@ -1926,7 +1926,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>Outcome, in the four-way classification</td><td>Routing the work to detection or to logging</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Record the timezone explicitly. Correlating a red-team log in one timezone with a SIEM <span class="acro-exp">(Security Information and Event Management)</span> in
           UTC <span class="acro-exp">(Coordinated Universal Time)</span> has consumed more debrief time than any other single detail.
         </div>
@@ -1953,7 +1953,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>What we could not test</td><td>Honesty about scope — it shapes the next exercise</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Lead with what worked. An exercise that reads as an audit of the blue team will be the last
           one they agree to, and the whole model depends on both sides wanting the next one. The
           gaps feed straight into
@@ -1993,7 +1993,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>Annually</td><td>Covert red team</td><td>The honest end-to-end test</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The scheduled row is the same mechanism as the regression guard in
           <span class="xref">Testing a Detection — Synthetic Events, Emulation &amp; Regression</span>
           — and the alert that matters is when a technique that used to be detected stops being
@@ -2021,7 +2021,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>Evidence for auditors</td><td>The human half — did an analyst notice and act?</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Use them for the regression half and keep facilitated exercises for discovery. A green
           dashboard from a tool nobody has adversarially examined is emulation theatre, which is the
           failure mode the next card is about.
@@ -2059,7 +2059,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>Excluding the techniques that keep failing</td><td>The gap list shrinks; the gaps do not</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The second row deserves particular care. If a detection matches the emulation framework's
           distinctive command line rather than the underlying behaviour, it will fire perfectly every
           exercise and never once on an adversary — and it will look like coverage until the day it
@@ -2085,7 +2085,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             <tr><td>Let the blue team run it blind sometimes</td><td>Measures whether anyone <em>notices</em>, not whether a rule exists</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Report the number of gaps found alongside the coverage percentage. A programme finding
           fewer gaps each quarter is either genuinely improving or has stopped looking properly, and
           only the raw count and the difficulty of what was tested distinguish the two.

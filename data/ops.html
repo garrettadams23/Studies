@@ -1989,7 +1989,7 @@ Why #5: Why isn't that part of the standard testing process?
                     <tr><td>4. Inject &amp; observe</td><td>Introduce the failure; watch the metric and your alerts.</td></tr>
                     <tr><td>5. Learn &amp; fix</td><td>If the hypothesis breaks, you found a real weakness — fix it, then re-run.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Always have an <strong class="c-red">abort switch</strong> to stop the
                     experiment instantly, and never run one you're confident will cause a
                     major outage — the goal is learning, not self-inflicted downtime.
@@ -2009,7 +2009,7 @@ Why #5: Why isn't that part of the standard testing process?
                     <tr><td>Fill the disk / CPU <span class="acro-exp">(Central Processing Unit)</span></td><td>Resource limits &amp; alerts fire before a crash</td></tr>
                     <tr><td>Zone/region outage</td><td>Failover to another region works end-to-end</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Tooling: <strong>Chaos Monkey</strong> / Simian Army, <strong>Gremlin</strong>,
                     <strong>LitmusChaos</strong> and <strong>Chaos Mesh</strong> (Kubernetes).
                   </div>
@@ -2063,7 +2063,7 @@ Why #5: Why isn't that part of the standard testing process?
                     <tr><td>Parent/child</td><td>Spans nest — a service call's span contains the spans of what it triggered.</td></tr>
                     <tr><td>Context propagation</td><td>The <code>trace_id</code> + span info passed between services (via headers like W3C <code>traceparent</code>) so the trace stays connected.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Rendered as a waterfall, a trace shows each span as a bar — one long bar
                     instantly reveals the bottleneck.
                   </div>
@@ -2080,7 +2080,7 @@ Why #5: Why isn't that part of the standard testing process?
                     <tr><td>Logs</td><td>"What happened here?" — detailed events from one component.</td></tr>
                     <tr><td>Traces</td><td>"Where is it slow / failing?" — the request's path across services.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     You use all three together: a metric alerts you, a trace localizes the slow
                     hop, and logs on that span explain why.
                   </div>
@@ -2157,7 +2157,7 @@ Why #5: Why isn't that part of the standard testing process?
      - Reset creds / isolate any host that visited the link
 <span class="num">4.</span> Open a case, attach all evidence, notify the analyst
 <span class="num">5.</span> ELSE: close as false positive with a note</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Steps 1–2 and 5 run fully automatically; the risky containment in step 3
                     can require a <strong class="c-amber">human approval</strong> gate — a
                     common "automate enrichment, gate the destructive action" pattern.
@@ -2281,7 +2281,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                     <tr><td>Alertmanager</td><td>Dedup, group &amp; route alerts to Slack/PagerDuty</td></tr>
                     <tr><td>Grafana</td><td>Dashboards over Prometheus, Loki, and more</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Scale note:</strong> Prometheus is single-node by design;
                     Thanos/Mimir/Cortex add long-term storage and HA. Instrument with OpenTelemetry to
                     stay portable.
@@ -2314,7 +2314,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                     <tr><td>RED</td><td>Rate, Errors, Duration</td><td>Request-driven services</td></tr>
                     <tr><td>USE</td><td>Utilization, Saturation, Errors</td><td>Resources (CPU, disk, queues)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Rule of thumb:</strong> alert on <em>symptoms</em> users
                     feel (latency/errors), not causes (high CPU) — a busy CPU <span class="acro-exp">(Central Processing Unit)</span> that still serves fast
                     isn't an incident. Page on the golden signals; keep the rest for debugging.
@@ -2348,7 +2348,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                     <tr><td>Error budget</td><td>1 − SLO = allowed unreliability (0.1% ≈ 43 min/month)</td></tr>
                     <tr><td>SLA <span class="acro-exp">(Service Level Agreement)</span></td><td>The contractual promise (with penalties) — looser than the SLO</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The policy:</strong> budget left → ship fast; budget
                     burned → freeze features and fix reliability. <strong class="c-green">Burn-rate
                     alerts</strong> (spending the budget too fast) are the modern replacement for
@@ -2386,7 +2386,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                     <tr><td>Collector</td><td>Fluent Bit / Vector / OTel <span class="acro-exp">(OpenTelemetry)</span> Collector ship &amp; enrich logs</td></tr>
                     <tr><td>Store</td><td>Loki, Elasticsearch, or a cloud logging service</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Structured logs feed both ops <em>and</em> security (SIEM) — the same pipeline that
                     helps you debug latency helps the blue team hunt. The three pillars —
                     <strong class="c-green">metrics, logs, traces</strong> — correlate via that shared ID.
@@ -2421,7 +2421,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                     <tr><td>Blameless postmortems</td><td>Blame systems, not people — psychological safety fixes more</td></tr>
                     <tr><td>Toil budget</td><td>Cap manual work; automate what pages you repeatedly</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The feedback loop that matters: every real page should make the <em>next</em> one
                     less likely — via a fix, better alerting, or automation. That's the "Feedback" and
                     "Learning" of the Three Ways, applied to operations.
@@ -2465,7 +2465,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
           <tr><td>Staged rollout</td><td>Act on a pilot slice, verify, then widen — never the whole fleet at once</td></tr>
           <tr><td>Kill switch</td><td>A way to stop a running job now, and a known way to halt the next scheduled run</td></tr>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">The sanity cap is the single highest-value line of code.</strong>
           Most automation disasters are a query that matched far more than intended; a script that
           aborts when the target set is implausibly large turns a catastrophe into a caught error.
@@ -2558,7 +2558,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>"Can I have access to X?"</td><td>A request, not an incident — nothing is broken</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row matters more than it looks: requests logged as incidents corrupt every
           availability metric the service desk reports, because nothing was ever down.
         </div>
@@ -2582,7 +2582,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Permanent fix status</td><td>Ticket, owner, expected date — or "accepted, will not fix"</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The framework these terms come from is in
           <span class="xref">ITIL &amp; Service Management — How IT Runs as a Business</span>; this
           card is the part that changes what you do on a Tuesday.
@@ -2619,7 +2619,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Low — one user, workaround exists</td><td>P3</td><td>P4</td><td>P4</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Publish the matrix where requesters can see it. Most priority arguments end the moment
           both people are looking at the same two questions instead of trading adjectives.
         </div>
@@ -2705,7 +2705,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>"When did it last work?"</td><td>The change window; this one question resolves a surprising share of tickets</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Never accept "an error came up" without the text. Ask for a photo of the screen if
           necessary — it is faster than three exchanges of paraphrase, and the error code is
           frequently the entire answer.
@@ -2765,7 +2765,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Review the "Other" bucket monthly</td><td>A growing "Other" is the tree telling you what it is missing</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Separating the open-time category from the close-time one resolves an old argument: triage
           needs a guess to route, reporting needs the truth, and one field cannot be both.
         </div>
@@ -2824,7 +2824,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>User state</td><td>What they have been told, and how they are taking it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last field is the one engineers omit and the one that prevents the worst outcome: two
           people giving a stressed user two different stories. During a major incident this
           discipline is formalised — see
@@ -2885,7 +2885,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Duplicate / cancelled</td><td>Not real work</td><td>Excluded from volume metrics</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           "User education" being a large share is not a complaint about users — it is a measurement
           of documentation and interface problems, and it is the best-quality input the
           knowledge-management backlog ever receives.
@@ -2976,7 +2976,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Time lost to misroutes and rework</td><td>Process fixes that add capacity without headcount</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The personal cost of running at capacity indefinitely is covered by
           <span class="xref">Burnout — Recognizing It Before It Breaks You</span> in the Mind &amp;
           Wellbeing domain. The data above is how you make the case before it gets that far.
@@ -3015,7 +3015,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>5. Cause, briefly</td><td>"A network change this morning had a side effect."</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Point 3 is the one that buys the most goodwill and the one most often left out. A promised
           update at a stated time — kept even when there is no news — is worth more than a faster fix
           delivered in silence.
@@ -3041,7 +3041,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>"That's out of scope"</td><td>"That is a different team's system; here is who to ask and what to tell them"</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The general skill, and how much career leverage it carries, is in
           <span class="xref">Clear Technical Communication — The Skill That Multiplies Everything</span>
           in the IT Career domain.
@@ -3081,7 +3081,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>5</td><td>Do exactly that</td><td>—</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Never say "calm down", and never defend the department. Both are heard as "your problem is
           not important", which is the thing that made them angry in the first place.
         </div>
@@ -3105,7 +3105,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Asks you to bypass a control</td><td>"I am not able to do that. Here is the supported way, and how long it takes."</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is the one where holding the line matters most, and where writing the request
           and the refusal into the ticket protects everyone involved — including the requester, who
           is often being pressured themselves.
@@ -3143,7 +3143,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Where to go for more</td><td>One link or number — not four</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Send the first notice before you understand the cause. "We are aware and investigating,
           next update in 30 minutes" sent at nine beats a complete explanation at eleven, because in
           between, every affected person is deciding whether to raise a ticket.
@@ -3169,7 +3169,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Never quietly delete an incident</td><td>Somebody always noticed</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The internal counterpart — the document that turns an outage into organisational learning
           rather than a story — is
           <span class="xref">Writing a Postmortem People Actually Learn From</span>.
@@ -3226,7 +3226,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>"Prompted for a password repeatedly when opening shared drives"</td><td>The person with the problem</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Add the technical terms in the body for the specialists — but the title, and the first
           line, belong to the symptom.
         </div>
@@ -3286,7 +3286,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Self-service → Never happens</td><td>Fixing the underlying cause — the best outcome available</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is the one to aim for. A password-reset portal is a good answer; not needing
           to reset passwords so often is a better one.
         </div>
@@ -3310,7 +3310,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>The request needs approval nobody grants</td><td>The bottleneck is the approval, not the portal</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Automating a request is also giving a tool real permissions to act. What can go wrong, and
           the guard rails worth building in, are in
           <span class="xref">Automation Risk &amp; Discipline — Blast Radius, Approval Gates &amp; the Kill Switch</span>.
@@ -3369,7 +3369,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Backlog age distribution</td><td>Whether old tickets are being worked or quietly aged out</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Report these to the team as a system, not to individuals as a scorecard. The moment an
           agent's pay or standing depends on one of them, it stops measuring the service and starts
           measuring their response to being measured.
@@ -3427,7 +3427,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Availability percentages</td><td>Only with a defined measurement window and named exclusions</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Define the clock precisely — business hours or calendar hours, when it pauses for "waiting
           on user", and who may pause it. Ambiguity there is where SLA reporting quietly becomes
           fiction. The engineering equivalent of this conversation, expressed in error budgets, is
@@ -3489,7 +3489,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Reconcile against reality on a schedule</td><td>Discovery versus records; the gap is the health metric</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Start with the services the business would notice losing, and their immediate dependencies.
           That is a few dozen records that stay true and support real decisions, which is worth
           incomparably more than a complete model nobody trusts. It is also the data
@@ -3551,7 +3551,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>"New starter onboarding workflow"</td><td>"Someone is joining my team"</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Build the ten items that cover most of the volume, get them genuinely reliable, then grow.
           A small catalogue that always works earns the traffic; a complete one with three broken
           items does not.
@@ -3600,7 +3600,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>60–90</td><td>Who needs to know now?</td><td>Raise the priority, or start the major-incident process</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Ninety seconds spent here routinely saves an hour, and it is the difference between an
           organisation that noticed its outage and one that was told about it by a customer.
         </div>
@@ -3624,7 +3624,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>"Change 4471 deployed 09:05 — timing correlates, cause unconfirmed"</td><td>"Caused by change 4471"</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The third line is the one that protects people. A change that correlates in time is a lead,
           and naming it as the cause in an early note is remarkably hard to walk back — even when the
           evidence later says otherwise. The systematic version of this discipline is in
@@ -3664,7 +3664,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Silently fixing it</td><td>Narrate what you are doing, so they learn and trust it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Taking control instantly is faster once and slower forever: the user learns nothing, calls
           again next month, and never sees what actually caused it.
         </div>
@@ -3760,7 +3760,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Report auto-closures separately</td><td>A rising count is a signal about the service, not a success</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           This is the sharpest instance of the metric-cheat pattern: an automation that improves
           three reported numbers while making the service slightly worse, adopted with entirely good
           intentions.
@@ -3840,7 +3840,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             <tr><td>Protect the recovery time after a bad night</td><td>Coverage next day matters less than the person still being there next year</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The out-of-hours version of the same problem — rotations, escalation policy and
           compensation — is in <span class="xref">On-Call Done Humanely</span>.
         </div>
@@ -3875,7 +3875,7 @@ http_requests_total{endpoint="/orders", status="200"}
 
 <span class="com"># Add user_id: 4 x 5 x 800,000 = the incident.</span>
 http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The rule that prevents nearly all of it: <strong>a metric label must have a small,
           bounded set of values that you could write down.</strong> Anything unbounded — a user
           identifier, a request ID, a URL <span class="acro-exp">(Uniform Resource Locator)</span> with parameters, an error message, an email address — is
@@ -3904,7 +3904,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Histogram buckets multiplied by other labels</td><td>Each bucket is a series; the multiplication is easy to miss</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is worth pausing on: a histogram with twelve buckets, three labels of five
           values each, is 12 × 125 = 1,500 series from one instrument. Histograms are the right tool
           for latency and they are expensive, so give them fewer labels than counters.
@@ -3931,7 +3931,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Put the unbounded dimension in traces or events instead</td><td>Not a compromise — it is where per-request detail belongs</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is the reframing that matters. High-cardinality questions — what happened to
           <em>this</em> customer, on <em>this</em> request — are legitimate and important. Metrics
           are simply the wrong store for them, and reaching for events instead answers the question
@@ -3969,7 +3969,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Traces</td><td>Rare events, once sampling discards them; cost at full fidelity</td><td>Per span, mitigated by sampling — which is what loses the rare event</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Read the middle column together and a pattern appears: metrics lose the detail, logs lose
           the structure, traces lose the rare case. Most organisations run all three pipelines,
           separately instrumented, separately stored and separately queried — and still cannot
@@ -3988,7 +3988,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         instrumentation time.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           What this buys is the ability to ask a question nobody anticipated. "Slow requests are
           only for customers on the new plan, in one region, when a particular flag is on" is a
           three-way breakdown that no pre-aggregated metric contains, and which arbitrary-cardinality
@@ -4025,7 +4025,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Unstructured logs</td><td>As little as possible — they are the expensive way to store a field</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The practical first step is smaller than adopting a philosophy: stop emitting a log line
           per stage of a request and emit one wide event at the end instead. It reduces volume,
           removes the correlation problem within a service entirely, and is the same amount of code.
@@ -4058,7 +4058,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         violated.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           A second reason to start there: boundary instrumentation is mostly free. Auto-
           instrumentation libraries cover HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> servers and clients, database drivers and message
           brokers without touching business logic, so the first pass is a dependency and a
@@ -4085,7 +4085,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>6</td><td>Queue depth, saturation, and dependency error rates</td><td>Early warning before users notice</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Step 4 is the one most often skipped and the most valuable to the business. A system can
           return HTTP 200 to every request while placing no orders, and technical telemetry will
           show a perfectly healthy service. Every service should have at least one metric that a
@@ -4114,7 +4114,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Include a "what telemetry was missing" item in postmortems</td><td>Turns each incident into a permanent improvement</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is the compounding one, and it belongs in the template rather than in
           someone's memory — see
           <span class="xref">Writing a Postmortem People Actually Learn From</span>.
@@ -4156,7 +4156,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Exporters</td><td>Collector configuration</td><td>You change or add a backend</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Instrumentation lock-in is the problem this solves and it is worth naming, because it is
           the reason organisations stay on observability vendors they have outgrown: the cost of
           leaving is re-instrumenting every service, which nobody will fund.
@@ -4208,7 +4208,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>6</td><td>Remove the old exporter only once nothing references it — check queries, not opinions</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Two traps worth knowing before you start. Semantic conventions — the standard attribute
           names — have changed across OTel versions, so pin them and migrate deliberately rather
           than discovering that half your services use one spelling and half another. And a
@@ -4241,7 +4241,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         identical successful traces of the same healthy endpoint, which nobody will ever look at.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           Uniform sampling is the right tool for one job only — estimating aggregate rates, where
           any unbiased sample works. For investigation, which is what traces are actually for, the
           policy should be biased on purpose: keep everything unusual, keep a thin baseline of the
@@ -4268,7 +4268,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Consistency</td><td>Must propagate the decision, or traces come out broken</td><td>Naturally consistent — one decision per trace</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The head-sampling consistency row causes a specific, confusing symptom: services making
           independent sampling decisions produce traces with holes in them, where a middle service
           is simply absent. If your traces look incomplete, check that the sampling decision is
@@ -4295,7 +4295,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Health checks and internal polling</td><td>Drop entirely</td><td>Pure volume, zero information</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           One consequence to hold onto: once sampling is biased, <strong>trace counts are no longer
           traffic counts.</strong> Anyone computing an error rate by counting sampled traces will
           get a number that is wildly wrong in the alarming direction. Rates come from metrics,
@@ -4339,7 +4339,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>6</td><td>What in that trace explains the separation you found in step 4?</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Step 3 is where wide events pay for themselves, and it is why the width matters more than
           the depth: an attribute you did not record cannot separate anything, and the field that
           explains the outage is regularly one somebody added "just in case".
@@ -4367,7 +4367,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>A user-visible request ID surfaced in errors</td><td>Support tickets that cannot be traced to a request</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The queue row is the most common real gap. Trace context propagates through HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> headers
           almost automatically and through message brokers only if somebody puts it in the message
           and reads it out. Asynchronous work is where the hard bugs live, and it is precisely where
@@ -4394,7 +4394,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Per-incident exploratory views</td><td>Fine to create — delete or promote them afterwards</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Two rules keep it that way. Generate the per-service dashboards from a template so all
           services look alike and a new one arrives with a page already built. And put an owner and
           a purpose on every dashboard — anything nobody claims when asked is deleted, which is a
@@ -4437,7 +4437,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Internal platform</td><td>Time from merge to deployed; provisioning success rate</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Note that nearly every row is a proportion of good events over valid events. That form is
           worth adopting deliberately: it makes SLIs comparable across services, composable into an
           error budget, and immune to the averaging that hides tail behaviour.
@@ -4462,7 +4462,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>99.99%</td><td>4.3 minutes</td><td>Multi-region, automatic everything, and every dependency at least as good</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Two constraints do most of the deciding. Your SLO cannot meaningfully exceed the
           reliability of what you depend on, so a service on one cloud region cannot promise more
           than that region delivers. And the last row's "4.3 minutes" includes someone noticing —
@@ -4490,7 +4490,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Review quarterly, and be willing to loosen it</td><td>A target nobody can meet gets ignored; loosening honestly keeps it alive</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The willingness to loosen is the counter-intuitive one and it is what separates SLOs that
           function from SLOs that are theatre. A target consistently missed with no consequence has
           already stopped being a target — restating it honestly at a level the team can hold, and
@@ -4521,7 +4521,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         needs to be, or has an SLO set too loose to mean anything.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           This is what makes the error budget the most useful idea in the SLO toolkit. It converts
           an argument between engineers who want to stabilise and product managers who want to ship
           into a shared number that answers it, and both sides can read it the same way.
@@ -4548,7 +4548,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Exhausted repeatedly</td><td>The SLO, the architecture or the staffing is wrong; escalate as a decision</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Burn-rate alerting is the practical form: page on a fast burn — the budget consumed in
           hours — and raise a ticket on a slow burn that will exhaust it before the period ends. It
           replaces threshold alerts that fire on every blip with alerts that fire when the promise
@@ -4577,7 +4577,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Nobody looks at them</td><td>Stale dashboards, no reviews</td><td>Put the budget in an existing recurring meeting; a metric with no audience dies</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The fourth row is the one that does lasting damage. The moment an SLO affects someone's
           review, it stops being a measurement and becomes a target to manage — incidents get
           reclassified, exclusions get argued, and the organisation loses its ability to see its own
@@ -4609,7 +4609,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         one hundred percent as its blast radius by default.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           Each technique below trades efficiency for containment, and the trade is explicit:
           partitioned resources sit idle that a shared pool would have used. That inefficiency is
           what you are buying, and it is worth naming plainly, because it is the argument that will
@@ -4657,7 +4657,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Shuffle sharded, 2 of 8</td><td>Affected customers still have a healthy worker</td><td>Only those sharing both workers are affected — a small fraction</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The property scales sharply: with more workers per customer and more workers overall, the
           chance that any two customers overlap completely becomes very small, so one bad actor's
           effect is confined to a handful of others rather than a whole shard. It needs the client
@@ -4690,7 +4690,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         transfers cleanly because the failure of imagination it corrects is the same one.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           Its value is not the document — it is that the analysis reliably finds failure modes with
           no detection and no handling, which are the ones that become long outages. Half the
           findings are usually fixed during the session, because they turn out to be a missing
@@ -4717,7 +4717,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Action</td><td>Detect it, handle it, or accept it explicitly</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The failure modes teams forget are consistent enough to use as a checklist: the dependency
           that is <em>slow</em> rather than down; the one that returns <em>wrong</em> data
           successfully; partial failure where some instances work; the dependency that recovers and
@@ -4746,7 +4746,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Feed the findings into chaos experiments</td><td>Assuming the handling works because it is written down</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is where this pays off twice. FMEA produces hypotheses — "if the cache is
           unavailable we degrade gracefully" — and a chaos experiment is how you find out whether
           that is true. The two practices are the same loop: predict the behaviour, then verify it.
@@ -4779,7 +4779,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         collapsed state.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           The failure mode has a name worth knowing — congestion collapse — and its signature is
           distinctive: high CPU <span class="acro-exp">(Central Processing Unit)</span>, high queue depth, near-zero successful throughput, and every
           latency percentile pinned at the timeout. If a dashboard ever shows that shape, the system
@@ -4807,7 +4807,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Never: health checks and the control plane</td><td>Shedding these turns overload into an outage nobody can fix</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Two implementation details matter more than the policy. Reject fast and cheaply — a
           rejection that costs as much as serving the request sheds nothing. And return a status the
           client understands as "back off", with a retry hint, because a client that retries a
@@ -4836,7 +4836,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Alert on degradation, do not merely tolerate it</td><td>Permanently degraded and healthy look identical from outside</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           That last row is the one that catches teams out. A fallback works so well that nobody
           notices the dependency has been down for three weeks — until the fallback itself fails and
           two problems arrive together. Degradation should always be visible in telemetry even when
@@ -4869,7 +4869,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         status page can actually be updated by the person on call at two in the morning.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           Most organisations need the second one more urgently and run the first, because injecting
           a fault is a technical task and running an exercise requires getting people in a room. The
           method for the technical half is in
@@ -4899,7 +4899,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Fix the top three findings before the next one</td><td>Otherwise it is an exercise in rediscovering the same gaps</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The findings that recur across organisations are worth expecting: the alert went to a
           rotation nobody owns, the runbook referenced a tool that was replaced, the dashboard
           needed a permission the responder did not have, and nobody was sure who was allowed to
@@ -4927,7 +4927,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>5 — Continuous production chaos</td><td>Faults injected routinely, unannounced</td><td>Mature automation and genuine organisational confidence</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Stage 1 is underrated and nearly free. Sit six people down and ask what happens if the
           primary database fails right now — who notices, what fires, who is called, what do they
           do. The disagreements in that conversation are findings, and they surface in twenty
@@ -4958,7 +4958,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         because there is no outage to justify writing anything down.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           Industries with severe consequences learned this decades ago and built reporting systems
           for it, because the same conditions that produce a near-miss produce an accident when one
           coincidence goes the other way. The software version is cheap: a lightweight channel where
@@ -4999,7 +4999,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Repeat-incident rate</td><td>Same, and it is the most honest number here</td><td>Recurrence means the last fix addressed a symptom</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Time to detect deserves separating out because it is usually the larger half and the
           easier to fix. An incident resolved in ten minutes after ninety minutes of nobody noticing
           is a monitoring problem wearing a response problem's clothes, and averaging the two hides
@@ -5025,7 +5025,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Zero incidents as a goal</td><td>Nobody reports anything; you lose the near-misses too</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The defence is to use these numbers to prompt questions rather than to grade teams, and to
           watch a counter-metric alongside each one — repeat incidents against incident count,
           user-minutes against duration. A reliability programme measured as a scorecard produces a
@@ -5069,7 +5069,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>"They misread the dashboard"</td><td>What does that dashboard look like at 3am to someone who did not build it?</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Each right-hand question has an actionable answer and each left-hand statement does not.
           The blameless-postmortem practice in
           <span class="xref">Writing a Postmortem People Actually Learn From</span>
@@ -5090,7 +5090,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         documented process exactly and things get worse.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           The practical consequence: when you find people deviating from a procedure, the first
           question is not how to stop them. It is what the deviation is achieving. Sometimes it is a
           genuine risk to close; often it is compensating for something the procedure gets wrong, and
@@ -5121,7 +5121,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>An exit handover that is knowledge, not access</td><td>The accounts get transferred; the knowledge usually does not</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The decision-record row is the highest-leverage one and the least practised. Nearly every
           architecture document records what was chosen; very few record what was rejected and under
           what constraint — so when the constraint expires, nobody knows the decision can be
@@ -5155,7 +5155,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         it.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           Which means alert quality deserves the same treatment as any other reliability metric:
           measured, reviewed on a schedule, and owned. The number worth tracking is the proportion
           of pages that led to action — anything below about half means the pager is training people
@@ -5184,7 +5184,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Pages per shift above a handful</td><td>The rotation is not sustainable — this is the top-level number</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A useful forcing rule: every page must have a runbook and a human action. If nobody can
           say what the recipient is supposed to do about it, it is not an alert — and the honest
           version of that conversation removes a surprising fraction of most alert catalogues in an
@@ -5217,7 +5217,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Delete runbooks for systems that no longer exist</td><td>Wrong instructions are worse than none, and they look authoritative</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last-executed date is the single most useful piece of metadata to add, because it
           converts an unanswerable question — is this still correct? — into a visible one. A runbook
           for a critical failure path that has not been run in two years is a finding, and it is one
@@ -5248,7 +5248,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         abandoned implementation of six things and no working version of any of them.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           The discipline that works at this scale is ruthless prioritisation by consequence: what
           would actually end the business, what would merely be painful, and what is
           best-practice-shaped but survivable. Almost everything in the third category can wait
@@ -5288,7 +5288,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>One vendor's ecosystem</td><td>Six integrated best-of-breed tools</td><td>Integration is unpaid work that lands on one person</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Consolidation has a real cost — lock-in, and paying for features you do not use — and at
           this scale it is worth it. The relevant comparison is not price against price; it is price
           against the hours of the only technical person in the building.
@@ -5316,7 +5316,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Take actual holiday, and test that things survive it</td><td>The cheapest possible continuity exercise</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The personal-accounts row deserves emphasis. Domains, certificates, cloud tenancies and
           app-store accounts registered to an individual's address are an ordinary convenience at
           founding and become an existential problem the day that person leaves on bad terms — or
@@ -5348,7 +5348,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         standard that exists on paper while everyone continues as before.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           The practical consequence for anyone moving from a smaller organisation: your effectiveness
           stops being a function of how well you build and starts being a function of how well you
           can get a decision made and made to stick. That is not politics as a distraction from the
@@ -5373,7 +5373,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Devolved — the unit decides</td><td>Business-specific applications, specialist labs, regulated units</td><td>Duplication and inconsistent security posture</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The useful rule: centralise what must be consistent to be safe — identity, the security
           boundary, anything an auditor asks about once for the whole company — and federate or
           devolve the rest. A central team that tries to own everything becomes the reason business
@@ -5403,7 +5403,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Name one accountable person per unit</td><td>"The business unit" cannot be held to anything</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last two rows are the same argument in different forms and they are the whole card. A
           central function that ships a genuinely better paved path and names a counterpart in each
           unit gets standardisation as a side effect. One that ships policy and reports
@@ -5437,7 +5437,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         that decides whether an MSP is profitable.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           The consequence is that standardisation is not a preference at an MSP; it is the business
           model. Clients who insist on being different are not merely awkward — they are
           structurally unprofitable unless priced for it, and pricing for it honestly is a healthier
@@ -5477,7 +5477,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Name their decision-maker and your account owner</td><td>Every later escalation depends on this pair existing</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The declined-control record matters more than it looks. MSPs are routinely blamed for
           incidents arising from controls the client refused to fund, and a dated, signed line saying
           so is the difference between a difficult conversation and a legal one.
@@ -5504,7 +5504,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Departing technicians</td><td>Offboarding must revoke across every tenant, verifiably</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The first row is the one that has repeatedly caused mass incidents: the remote-management
           platform exists to push software to every endpoint at every client, so an attacker who
           reaches it has that capability too. It deserves the protection an organisation would give a
@@ -5548,7 +5548,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Corporate printing, wired networking, physical badges</td><td>Reconsidered or removed; many simply do not survive the change</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The network-as-trust-signal row is the consequential one and the most commonly left
           half-finished: VPN <span class="acro-exp">(Virtual Private Network)</span> retained as though it were still a boundary, while the actual controls
           that matter are identity and device posture. The full argument is in
@@ -5577,7 +5577,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Asynchronous-first documentation</td><td>Half your users are asleep when the answer is given</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The verification row is worth treating as a security control rather than a service one.
           Attackers call service desks and ask for MFA resets, and they are convincing; a remote-only
           organisation has removed the informal recognition that used to backstop that. The procedure
@@ -5605,7 +5605,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Nobody notices a device has stopped checking in</td><td>Alert on absence — the remote equivalent of an empty desk</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is the quiet one. In an office, a machine that has not been used for six weeks
           is visible. Remotely, an unpatched, unmanaged device can sit unnoticed indefinitely — still
           holding data, still holding credentials, and outside every control you report on.
@@ -5636,7 +5636,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         to compromise both organisations at once.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           The single most useful contribution IT can make early is a realistic sequence with the
           dependencies named. "Shared calendars in six weeks, single sign-on in six months, one
           directory in eighteen — and here is what each one requires" is far more valuable than an
@@ -5665,7 +5665,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Decommission</td><td>Retire duplicated systems, close contracts, archive data</td><td>Never finished; the savings case depended on it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Security due diligence deserves its own mention because it is where the risk concentrates.
           You are acquiring the other organisation's unpatched estate, its historical breaches — known
           and unknown — and its credential hygiene. Assume a compromise you have not found yet, and
@@ -5695,7 +5695,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Knowledge leaving with the divested staff</td><td>Document what only they know before the date, not after</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Two things make a divestiture survivable: get IT into the deal timeline early enough to
           influence the transitional service agreement — because the dates in it become your
           obligations — and treat the separation as its own funded project with a named owner. Run
@@ -5741,7 +5741,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Reducing email storage</td><td>Negligible; a perennial favourite that measures nothing</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The zombie-resource row is the one to start with, because it is the rare case where the
           environmental argument and the financial argument point identically at the same work.
           Anything unused is pure waste in both currencies, and nobody needs persuading to remove it.
@@ -5767,7 +5767,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Carbon-neutral cloud region</td><td>Offsets or renewable purchasing applied</td><td>Often not the same as the grid being clean at that hour</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A low PUE is a good datacenter and says nothing about whether the servers inside are
           running idle workloads efficiently. It is the most-quoted number in this area and the one
           most often used to imply something it does not measure.
@@ -5794,7 +5794,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Ask suppliers for embodied-carbon figures</td><td>Demand is what makes them available; it also informs procurement</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The resale route depends entirely on being able to prove the data is gone, which is a
           sanitisation and chain-of-custody problem rather than an environmental one —
           <span class="xref">Media Sanitisation &amp; Disposal — What "Wiped" Actually Means</span>
@@ -5827,7 +5827,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         harder or impossible.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           The framing that changes decisions: accessibility needs are not exceptional and not always
           permanent. They include colleagues with a broken arm, a migraine, a noisy environment, an
           ageing eye prescription, a temporary loss of a hand to a bandage, and anyone using a phone
@@ -5856,7 +5856,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Whether security controls have accessible alternatives</td><td>An MFA <span class="acro-exp">(Multi-Factor Authentication)</span> method that requires a specific interaction can exclude someone entirely</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The allow-listing row is the one IT causes most often without noticing. Application control
           is a good security practice and it blocks the assistive software a colleague relies on —
           which then becomes a fight they have to have, one ticket at a time. Pre-approving common
@@ -5884,7 +5884,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Involve someone who uses assistive technology in evaluation</td><td>Worth more than every other row combined</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The keyboard-only test is the highest return for the least effort and requires no
           specialist knowledge: pick the main task, put the mouse aside, and try. If you cannot
           reach a control, neither can a screen-reader user, a voice-control user, or anyone whose
@@ -5929,7 +5929,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Exceptions require justification</td><td>Individual targeting needs no particular reason</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The right-hand column is rarely anyone's intention. It is where a monitoring programme
           arrives by drift: a capability exists, a manager asks a reasonable-sounding question,
           somebody answers it because they can, and a precedent is set that nobody decided.
@@ -5956,7 +5956,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>"Investigate this security alert about a user"</td><td>Legitimate — proportionate, scoped to the alert, recorded</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Notice that the last two are entirely proper. The point is not that individual data is
           never examined — it is that doing so should require a process, a stated reason and a
           record, rather than access and a request. The insider-threat programme's version of this
@@ -5986,7 +5986,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
             <tr><td>Involve HR, legal and staff representation when designing it</td><td>Also, in many jurisdictions, a legal requirement rather than good manners</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The transparency row does the most work and is the most resisted. Organisations worry that
           publishing what they collect will alarm people; in practice, what alarms people is finding
           out later. A short, honest page describing what is collected, why, who can see it and how

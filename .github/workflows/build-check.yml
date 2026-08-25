@@ -74,8 +74,12 @@ jobs:
 
       # Volatile spans and fact anchors: a malformed or future date, or an
       # anchor missing its source, fails. The vendor-console queue only reports.
+      # The self-test guards the console regex, which was narrowed on measured
+      # evidence (14 candidates, 3 real) and is one edit from being widened back.
       - name: Check dated claims
-        run: python tools/check_volatility.py
+        run: |
+          python tools/check_volatility.py --self-test
+          python tools/check_volatility.py
 
       # --verify, not --check. --check re-derives every stamp from `git blame`,
       # and blame heuristics differ between git releases: this repo passed

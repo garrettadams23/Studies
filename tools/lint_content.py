@@ -13,7 +13,18 @@ ratchets — they can no longer regress:
   * topics with no `.topic-name` (was 90)
   * hard-coded colours (was 148, of which 8 were never colours at all)
 
-`inline style attribute` and `ai-table` are still counted, not enforced.
+`inline style attribute` is the third, and it graduated differently, because it
+can never reach zero: 806 of them colour the first cell of a `.ref-table`, where
+a utility class provably cannot win on specificity. So it is a **ceiling**
+rather than a zero — the count may fall and may not rise. It was 2,707 when the
+ceiling was introduced and 1,565 immediately after, because 1,142 of them were
+one shape (`.concept-desc` with a top margin) that already had a class name.
+
+`ai-table` is no longer a warning at all. It was labelled "prefer ref-table",
+which asserted a preference nobody had agreed and the stylesheet contradicts:
+the two are different designs (12px versus ~14px text, and an amber versus a
+white first column), so converting 360 tables across 18 domains would be a
+visible redesign, not a cleanup. It is reported as a census line instead.
 
 Usage:
     python3 tools/lint_content.py             # errors fail, warnings reported
@@ -32,6 +43,10 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 
 VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
+
+# Counts that may fall and may not rise. Lower a number here in the same commit
+# that earns it; raising one needs a reason written beside it.
+CEILINGS = {"inline style attribute": 1565}
 
 
 class Nesting(HTMLParser):
@@ -152,7 +167,12 @@ def hex_colours(text):
 # class is (0,1,0) and loses. 1614 first cells carried one that had never once
 # rendered — boilerplate applied to a column the design already styles. They were
 # removed, so this guards the count at zero rather than letting it creep back.
-REF_TABLE_RE = re.compile(r'<table\b[^>]*class="ref-table"[^>]*>.*?</table\s*>', re.S)
+# Both table styles colour their own first column at (0,2,1) — `.ref-table
+# td:first-child` and `.ai-table td:first-child` — so a utility class loses to
+# either. `.ai-table` has never carried a dead class; the guard covers it so it
+# never starts.
+REF_TABLE_RE = re.compile(
+    r'<table\b[^>]*class="(?:ref-table|ai-table)"[^>]*>.*?</table\s*>', re.S)
 ROW_RE = re.compile(r"<tr\b[^>]*>.*?</tr\s*>", re.S)
 FIRST_CELL_RE = re.compile(r"<(td|th)\b([^>]*)>")
 COLOUR_CLASS_RE = re.compile(r"\bc-(?:cyan|green|amber|red|purple|muted)\b")
@@ -179,6 +199,18 @@ def dead_first_cell_classes(text):
 VOLATILE_RE = re.compile(r'<(\w+)\b([^>]*\bclass="[^"]*\bvolatile\b[^"]*"[^>]*)>')
 CHECKED_RE = re.compile(r'\bdata-checked="([^"]*)"')
 STRAY_CHECKED_RE = re.compile(r'<(\w+)\b([^>]*\bdata-checked="[^"]*"[^>]*)>')
+
+
+# `.concept-desc.verdict` exists precisely for the sentence that follows a table.
+# 1,142 cards wrote it as an inline margin first; this keeps them converted.
+VERDICT_MARGIN_RE = re.compile(
+    r'<\w+ class="concept-desc"[^>]*\bstyle="[^"]*\bmargin-top\s*:')
+
+
+def verdict_margins(text):
+    """Line numbers where a .concept-desc sets its top margin inline."""
+    for m in VERDICT_MARGIN_RE.finditer(text):
+        yield text[: m.start()].count("\n") + 1
 
 
 def volatile_problems(text, today):
@@ -253,8 +285,89 @@ def ambiguous_acronyms(files):
         text = path.read_text(encoding="utf-8")
         for a in candidates:
             if re.search(rf'\b{re.escape(a)} <span class="acro-exp">', text):
-                seen[a].add(path.stem)
+                seen[a].add(domain_of(path))
     return sorted((a, candidates[a], len(d)) for a, d in seen.items() if len(d) > 1)
+
+
+# An acronym is only the tail of a longer one often enough to ruin an audit:
+# a bare \b matched `DP` inside `UDP`, `RA` inside `YARA`, `SCP` inside `OSCP`
+# and `TS` inside `HSTS`, which turned a 28-row finding into a 77-row one that
+# was mostly the regex looking at itself. The lookbehind is the whole fix.
+def _rendered_re(acronym):
+    return re.compile(r'(?<![A-Za-z0-9])' + re.escape(acronym) +
+                      r'e?s? <span class="acro-exp">')
+
+
+def undecided_meanings(files):
+    """(acronym, domain, default, meanings) for a rendering nobody decided.
+
+    A dictionary entry with several meanings annotates one of them everywhere
+    unless `byDomain` says otherwise, and a wrong expansion is well-formed
+    markup that no other check can see. Six were live when this was written:
+    ECC as Elliptic Curve Cryptography in a memory card, DC as Domain
+    Controller beside a voltage rail, IPS as Intrusion Prevention System in a
+    display-panel table, KVM as Kernel-based Virtual Machine among rack
+    appliances, SSG as Static Site Generation next to "E-6 Staff Sergeant", and
+    DORA as DevOps Research and Assessment in a list of EU regulations.
+
+    So `byDomain` is now exhaustive rather than exceptional: every domain where
+    a multi-meaning acronym renders carries a decision, including the ones that
+    simply confirm the default. That makes this a ratchet at zero — a new
+    domain picking one up shows here, once, before it ships.
+    """
+    import json
+    entries = json.loads((DATA / "acronyms.json").read_text(encoding="utf-8"))["entries"]
+    multi = [e for e in entries if len(e.get("m", [])) > 1]
+    by_domain = collections.defaultdict(str)
+    for path in files:
+        by_domain[domain_of(path)] += path.read_text(encoding="utf-8")
+    out = []
+    for domain, text in sorted(by_domain.items()):
+        if domain == "acronym":
+            continue
+        for e in multi:
+            if domain in e.get("byDomain", {}):
+                continue
+            if _rendered_re(e["a"]).search(text):
+                out.append((e["a"], domain,
+                            e.get("annotate", e["m"][0]["e"]),
+                            [m["e"] for m in e["m"]]))
+    return out
+
+
+# Two live defects were found by reading this census by hand rather than by any
+# check: `IR` rendered as *Incident Response* inside a compiler card's title and
+# in a Flipper Zero tool table, and `SMB` rendered as *Server Message Block* in
+# "a common home-lab / SMB choice". Both entries were single-meaning, so
+# `undecided_meanings` could not see them and no note said "also".
+#
+# There is no rule that catches these, because the dictionary does not know the
+# second meaning exists. What correlates is *breadth*: an acronym a single
+# subject owns tends to stay in that subject, and one rendered across many
+# unrelated domains has usually been borrowed by one of them. So this reports
+# the widest-travelling single-meaning entries as a census to read, not as a
+# gate to pass.
+BREADTH_FLOOR = 6
+
+
+def broadly_rendered(files):
+    """(acronym, expansion, domains) for single-meaning acronyms used widely."""
+    import json
+    entries = json.loads((DATA / "acronyms.json").read_text(encoding="utf-8"))["entries"]
+    single = {e["a"]: e["m"][0]["e"] for e in entries if len(e.get("m", [])) == 1}
+    by_domain = collections.defaultdict(str)
+    for path in files:
+        by_domain[domain_of(path)] += path.read_text(encoding="utf-8")
+    seen = collections.defaultdict(set)
+    for domain, text in by_domain.items():
+        if domain == "acronym":
+            continue
+        for a in single:
+            if _rendered_re(a).search(text):
+                seen[a].add(domain)
+    return sorted(((a, single[a], sorted(d)) for a, d in seen.items()
+                   if len(d) >= BREADTH_FLOOR),
+                  key=lambda r: (-len(r[2]), r[0]))
 
 
 def topic_label(block):
@@ -275,6 +388,7 @@ def main():
     seen_slugs = {}
     today = datetime.now(timezone.utc).strftime("%Y-%m")
     all_titles, xrefs = set(), []
+    ai_tables = 0
 
     # Domain order matters: script.js walks .domain-section in document order,
     # so a collision is only real if it survives that ordering.
@@ -361,8 +475,15 @@ def main():
                 f"style=\"color: var(--…)\" if it genuinely needs a different colour"
             )
 
+        for line_no in verdict_margins(text):
+            errors.append(
+                f"{name}:{line_no}: a top margin on .concept-desc is the "
+                f"verdict sentence after a table — use "
+                f'class="concept-desc verdict" instead of an inline style'
+            )
+
         warns["inline style attribute"] += len(re.findall(r'\bstyle="', text))
-        warns["ai-table (prefer ref-table)"] += text.count('class="ai-table"')
+        ai_tables += text.count('class="ai-table"')
 
     # Cross-references, once every title is known.
     lowered = {t.lower() for t in all_titles}
@@ -377,6 +498,16 @@ def main():
 
     # Advisory, not blocking: each needs a human to say which meaning belongs
     # where, and the count is small enough to read.
+    for acro, domain, default, meanings in undecided_meanings(files):
+        errors.append(
+            f"acronyms.json: {acro} renders in '{domain}' with no byDomain "
+            f"decision, so it annotates as '{default}'. Meanings: "
+            f"{' | '.join(meanings)}. Add \"{domain}\" to that entry's "
+            f"byDomain — the right expansion, or null not to annotate there."
+        )
+
+    broad = broadly_rendered(files)
+
     ambiguous = ambiguous_acronyms(files)
     warns["ambiguous acronym rendered in 2+ domains"] += len(ambiguous)
 
@@ -395,10 +526,33 @@ def main():
         if len(errors) > 40:
             print(f"  … and {len(errors) - 40} more")
         print()
+    print(f"{len(broad)} single-meaning acronym(s) rendered in "
+          f"{BREADTH_FLOOR}+ domains — breadth is the only signal that a second "
+          f"meaning has been borrowed somewhere. Widest first:")
+    for a, exp, doms in broad[:8]:
+        print(f"  {a:<8} {len(doms):>2} domains  '{exp}'")
+    print()
+
+    print(f"{ai_tables} .ai-table(s) in use — the second table style, not debt. "
+          f"See this file's docstring.\n")
     print("Warnings (tracked, not blocking):")
     for k, v in sorted(warns.items(), key=lambda kv: -kv[1]):
-        print(f"  {v:>6}  {k}")
+        ceiling = CEILINGS.get(k)
+        over = "" if ceiling is None else f"   (ceiling {ceiling:,})"
+        print(f"  {v:>6}  {k}{over}")
     print(f"\nTREND {' '.join(f'{k.split()[0]}={v}' for k, v in sorted(warns.items()))}")
+
+    # A ceiling is a ratchet for a count that cannot reach zero. Exceeding it is
+    # an error; falling below it is an invitation to lower the number here, in
+    # the same commit that earned it.
+    for k, ceiling in CEILINGS.items():
+        if warns[k] > ceiling:
+            errors.append(
+                f"{k}: {warns[k]:,} exceeds the ceiling of {ceiling:,}. This "
+                f"count may fall and may not rise — see the docstring for why "
+                f"it is a ceiling rather than a zero."
+            )
+            print(f"\nERROR {errors[-1]}")
 
     if errors:
         return 1

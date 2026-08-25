@@ -36,6 +36,7 @@ What this checks, and what it only reports:
 Usage:
   python3 tools/check_volatility.py
   python3 tools/check_volatility.py --candidates   # just the work queue
+  python3 tools/check_volatility.py --self-test    # the console regex, on fixtures
 """
 
 import collections
@@ -59,11 +60,37 @@ MONTH_RE = re.compile(r"^\d{4}-(0[1-9]|1[0-2])$")
 # Named vendor surfaces. Deliberately specific: "console" on its own matches a
 # terminal 133 times on this site, and a candidate list that noisy is not a
 # work queue, it is wallpaper.
+# Tuned against its own output. The first version reported 14 topics, of which
+# **3 carried a real claim** — 21% precision, on a list a person is expected to
+# read every session. Four causes, all measured:
+#
+#   * `exchange admin` and `teams admin` matched inside "Exchange
+#     Administrator" and "Teams administration". Fixed with a trailing \b.
+#   * `management console` named the Microsoft Management Console — an
+#     on-premises snap-in host whose name has not moved since the 1990s — and
+#     the generic phrase "most of the management consoles". Removed: this check
+#     is about vendor consoles that get renamed, and MMC is the opposite of that.
+#   * `cloud console` is a generic noun phrase, never a product name. Two hits,
+#     both meaning "whichever cloud you use". Removed.
+#   * `\badmin\.[a-z]` matched `old-admin.example.com` in a subdomain
+#     enumeration example. Now requires a real boundary before it and skips
+#     the reserved example domains.
+#
+# The point is not the four rules. It is that an advisory list a person reads
+# every session is worth only as much as its precision, and precision here was
+# measurable in one pass over the output.
 CONSOLE_RE = re.compile(
-    r"admin cent(?:er|re)|entra admin|azure portal|aws console|gcp console|"
-    r"cloud console|purview portal|defender portal|intune (?:portal|admin)|"
-    r"exchange admin|teams admin|sharepoint admin|security cent(?:er|re)|"
-    r"management console|\bportal\.[a-z]|\badmin\.[a-z]",
+    r"admin cent(?:er|re)\b|entra admin\b|azure portal\b|aws console\b|"
+    r"gcp console\b|purview portal\b|defender portal\b|"
+    r"intune (?:portal|admin)\b|exchange admin\b|teams admin\b|"
+    r"sharepoint admin\b|security cent(?:er|re)\b|"
+    r"(?<![\w-])portal\.(?!example\b)[a-z]|(?<![\w-])admin\.(?!example\b)[a-z]|"
+    # The console *hosts*, enumerated rather than pattern-matched. This set is
+    # small, and it is the highest-value thing on the list: endpoint.microsoft
+    # .com became intune.microsoft.com, and every card naming the old one was
+    # wrong the day it moved. A broad `\w+\.microsoft\.com` would swallow every
+    # learn.microsoft.com documentation link instead.
+    r"\b(?:entra|intune|purview|compliance|security)\.microsoft\.com\b",
     re.I)
 
 
@@ -147,5 +174,44 @@ def main():
     return 1 if errors else 0
 
 
+# Fixtures, not examples: each line is a shape that was actually in the content
+# when CONSOLE_RE was tuned. A regex narrowed on evidence is one edit away from
+# being widened back by someone who does not have the evidence, so the evidence
+# lives here.
+CONSOLE_FIXTURES = [
+    # (text, should_match, why)
+    ("Entra admin center ▸ Conditional Access", True, "a named console path"),
+    ("sign in at intune.microsoft.com", True, "a console host"),
+    ("Guest access in Teams | Teams admin", True, "names where a setting lives"),
+    ("the Microsoft 365 admin centre", True, "a console by name"),
+    ("Exchange Administrator — mailboxes, mail flow", False,
+     "a role name, not a console"),
+    ("most Teams administration is really SharePoint", False,
+     "'teams admin' inside 'administration'"),
+    ("gpmc.msc — Group Policy Management Console", False,
+     "an on-premises snap-in, renamed never"),
+    ("Server Core removes most of the management consoles", False,
+     "generic prose"),
+    ("Click through cloud console vs define in code", False,
+     "'cloud console' is a noun phrase, not a product"),
+    ("finding the forgotten old-admin.example.com", False,
+     "an example hostname in a subdomain-enumeration card"),
+]
+
+
+def self_test():
+    failures = 0
+    for text, want, why in CONSOLE_FIXTURES:
+        got = bool(CONSOLE_RE.search(text))
+        if got != want:
+            failures += 1
+            print(f"FAIL  expected {'a match' if want else 'no match'} "
+                  f"({why}): {text!r}")
+    print(f"self-test: {len(CONSOLE_FIXTURES)} fixtures, {failures} failure(s).")
+    return 1 if failures else 0
+
+
 if __name__ == "__main__":
+    if "--self-test" in sys.argv:
+        sys.exit(self_test())
     sys.exit(main())

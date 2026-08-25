@@ -1248,7 +1248,7 @@ prompts = [
                     <tr><td>Resources</td><td>Application</td><td>Read-only data the host can load into context — files, records, API <span class="acro-exp">(Application Programming Interface)</span> responses. Addressed by URI <span class="acro-exp">(Uniform Resource Identifier)</span>.</td></tr>
                     <tr><td>Prompts</td><td>User</td><td>Reusable, parameterized templates a user invokes deliberately (e.g. a "/summarize" slash command).</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The distinction is <em>who decides to use it</em>: the model picks
                     tools, the app wires up resources, and the user triggers prompts.
                     (Clients can also expose <span class="c-cyan">sampling</span> — letting a
@@ -1356,7 +1356,7 @@ prompts = [
                     <tr><td>Transform runs on</td><td>A separate engine</td><td>The warehouse's own compute</td></tr>
                     <tr><td>Best when</td><td>Destination is expensive/rigid</td><td>Cloud warehouse compute is cheap &amp; elastic</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Cloud warehouses (BigQuery, Snowflake, Redshift) made
                     <strong class="c-cyan">ELT</strong> popular: dump raw data in, then use
                     SQL/dbt to transform it where the compute already lives — flexible, since
@@ -1382,7 +1382,7 @@ prompts = [
                     <tr><td>Batch</td><td>Run on a schedule (nightly) — orchestrated by Airflow, Dagster, Prefect</td></tr>
                     <tr><td>Streaming</td><td>Process events as they arrive (Kafka + Flink/Spark) for near-real-time</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Whatever the tool, three things make or break a pipeline:
                     <strong class="c-green">idempotent reruns</strong> (a failed job re-runs
                     safely), <strong class="c-green">data quality checks</strong> (catch bad
@@ -1428,7 +1428,7 @@ prompts = [
                     <tr><td>Dot product</td><td>Angle + magnitude</td><td>When vector length carries meaning</td></tr>
                     <tr><td>Euclidean (L2)</td><td>Straight-line distance</td><td>Image/spatial embeddings</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Match the metric to how the model was trained — most sentence-embedding
                     models expect <strong>cosine</strong>. Using the wrong one quietly
                     degrades results.
@@ -1453,7 +1453,7 @@ prompts = [
                     <tr><td>IVF</td><td>Cluster vectors, search only the nearest clusters.</td></tr>
                     <tr><td>PQ</td><td>Compress vectors so more fit in RAM <span class="acro-exp">(Random Access Memory)</span> (product quantization) — trades accuracy for memory.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The dial is <strong>recall vs latency</strong>: search harder for more
                     correct neighbors, or faster for approximate ones.
                   </div>
@@ -1528,7 +1528,7 @@ prompts = [
                     <tr><td>Concept drift</td><td>The relationship between inputs and the answer changes (fraud tactics evolve).</td></tr>
                     <tr><td>Training/serving skew</td><td>Features are computed differently in training vs production — a top cause of "great offline, bad live."</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     You catch drift by monitoring input statistics and prediction quality
                     against a baseline, then trigger a <strong>retrain</strong> — ideally
                     automated on a schedule or a drift alert.
@@ -1574,7 +1574,7 @@ prompts = [
                     <tr><td>RAG</td><td>Injecting fresh/private <em>knowledge</em> at query time</td><td>Medium — a retrieval pipeline</td></tr>
                     <tr><td>Fine-tuning</td><td>Teaching a <em>style/skill/format</em>, not new facts</td><td>Highest — data + training</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The classic mistake:</strong> fine-tuning to add knowledge.
                     Fine-tuning changes <em>behavior</em>; for "know our latest docs," use RAG. Rule of
                     thumb: prompt first, add RAG for knowledge, fine-tune only when you need consistent
@@ -1607,7 +1607,7 @@ prompts = [
                     <tr><td>Quantization</td><td>Store weights in 8/4-bit (GGUF, bitsandbytes) — big memory cut, tiny quality loss</td></tr>
                     <tr><td>Tokenization</td><td>Text → tokens (subword, BPE); the model sees token IDs, not characters</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Why tokenization bites:</strong> models count and spell
                     poorly because they see tokens, not letters; and cost/limits are per-token, not
                     per-word (~4 chars/token in English). <strong class="c-green">QLoRA</strong> =
@@ -1645,7 +1645,7 @@ ollama run llama3.2
                     <tr><td>LM Studio</td><td>GUI <span class="acro-exp">(Graphical User Interface)</span> to browse, download &amp; chat with models</td></tr>
                     <tr><td>vLLM</td><td>High-throughput serving for production</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Reality check:</strong> local models trail frontier
                     hosted ones in capability, and you need RAM/VRAM (quantization helps). But for
                     privacy-sensitive or high-volume tasks, local wins on cost and control.
@@ -1679,7 +1679,7 @@ ollama run llama3.2
                     <tr><td>Grounding</td><td>Cite sources (RAG) to curb hallucination; verify claims</td></tr>
                     <tr><td>Diffusion models</td><td>Learn to denoise pure noise into an image, guided by a text prompt</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Prompt injection</strong> is the LLM era's top security
                     risk (untrusted text overriding your instructions) — treat model output as
                     untrusted and never give an agent unchecked tools. Evaluation is what turns
@@ -1734,7 +1734,7 @@ while True:
                 "content": execute_tool(block.name, block.input),
             })
     messages.append({"role": "user", "content": results})</pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Most SDKs <span class="acro-exp">(Software Development Kit)</span> now ship a <strong class="c-green">tool runner</strong> that drives
                     this loop for you — you write only the functions and their docstrings, and the
                     schema is generated from the signature. Reach for the manual loop when you need
@@ -1758,7 +1758,7 @@ while True:
                     <tr><td>tool (named)</td><td>It must call the one you name</td></tr>
                     <tr><td>none</td><td>Tools are visible but off-limits this turn</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Any of these can also carry <code>disable_parallel_tool_use</code>; by default
                     a single response may request several tool calls at once, and you return all
                     the results together in one message.
@@ -1784,7 +1784,7 @@ while True:
                     <tr><td>Called far too often</td><td>Description overlaps another tool's; narrow both</td></tr>
                     <tr><td>Loop never terminates</td><td>Errors returned as exceptions instead of tool_result text</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Return failures as ordinary tool results ("no such user id") rather than
                     throwing — the model can recover from a message it can read, and cannot recover
                     from a stack trace in your process.
@@ -1864,7 +1864,7 @@ response = client.messages.create(
         "additionalProperties": False,
     }}},
 )</pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Watch the drift:</strong> the older top-level
                     <code>output_format</code> parameter on <code>messages.create()</code> is
                     deprecated in favour of <code>output_config.format</code>, and assistant-turn
@@ -1887,7 +1887,7 @@ response = client.messages.create(
                     <tr><td>A tool's input</td><td>strict: true on the tool definition</td><td>Arguments arrive typed and complete</td></tr>
                     <tr><td>Both together</td><td>Set both on the same request</td><td>Structured tool calls and a structured final answer</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Set <code>additionalProperties: false</code> and list your
                     <code>required</code> fields honestly. A permissive schema validates a reply
                     that is still missing the field your code indexes into.
@@ -1964,7 +1964,7 @@ u = response.usage
 print(u.cache_creation_input_tokens,   <span class="com"># written this request</span>
       u.cache_read_input_tokens,       <span class="com"># served from cache</span>
       u.input_tokens)                  <span class="com"># uncached remainder ONLY</span></pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Total prompt size is the sum of all three, not <code>input_tokens</code> alone
                     — an agent that ran for hours and reports 4K input tokens was reading cache for
                     the rest. Writes carry a premium (roughly 1.25× at the short default TTL, 2× at
@@ -2034,7 +2034,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Latency breakdown</td><td>Time to first token, total, plus non-model time</td><td>Whether the model or your retrieval is slow</td></tr>
                     <tr><td>Quality</td><td>Automatic scores, thumbs, escalations, refusal rate</td><td>Whether it is getting worse</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Log the <strong>prompt as sent</strong>, fully rendered, not the template plus
                     variables. Reproducing a bad answer from a template and a hope is the single
                     most common reason an AI incident cannot be investigated.
@@ -2278,7 +2278,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Stop sequences</td><td>Ends generation on a given string</td><td>Bounding output in a structured format</td></tr>
                     <tr><td>Max tokens</td><td>Hard ceiling on the reply</td><td>Cost control — and a truncated answer if set too low</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Tune one at a time. Turning temperature and top-p down together is the classic
                     way to get output so deterministic it repeats itself in a loop. And
                     temperature 0 is not a guarantee of identical replies across runs — batching
@@ -2324,7 +2324,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Pipeline</td><td>Fixed stages, each agent's output feeding the next</td><td>Well-understood workflows — often needs no agency at all</td></tr>
                     <tr><td>Debate / critic</td><td>One produces, another reviews against criteria</td><td>Quality gates where a second pass genuinely catches things</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The orchestrator pattern is the one that pays off most often, and only because
                     the workers run <em>in parallel</em> on independent subtasks. Fan out where the
                     work is independent; keep it sequential where step two needs step one's
@@ -2351,7 +2351,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Compounding error</td><td>A 90%-reliable step, five stages deep, is a 59%-reliable system</td></tr>
                     <tr><td>Cost surprise</td><td>Token spend scales with agents × context, not with agents</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Trace the whole run as one tree with a span per agent, or you cannot debug any
                     of it —
                     <span class="xref">Observability for AI — Tracing, Token Accounting &amp; Quality Monitoring</span>
@@ -2589,7 +2589,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Provide the alternative</td><td>A sanctioned, tenant-grounded assistant that does the same job inside the boundary</td></tr>
                     <tr><td>Guardrail the rest</td><td>Block only the genuinely unsafe destinations, and say why — an unexplained block just gets bypassed</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The data-loss angle is covered in
                     <span class="xref">Data Loss Prevention — Classification, Egress &amp; the False-Positive Problem</span>;
                     an AI paste is just a new egress channel for the same sensitive data, and the
@@ -2628,7 +2628,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Disclosure</td><td>When AI-assisted work must be labelled (code, customer comms, decisions)</td></tr>
                     <tr><td>Prohibited uses</td><td>The few real red lines — regulated data, surveillance, anything with legal weight unreviewed</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Pair it with training and a named place to ask. The verification duty is the
                     line that matters most — it is the same discipline the site's
                     <span class="xref">Using AI Well — Prompting &amp; Responsibility</span> card
@@ -2670,7 +2670,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Restrict the AI's crawl scope</td><td>Some platforms let you exclude sites/libraries from AI grounding — use it for the sensitive ones</td></tr>
                     <tr><td>Pilot &amp; watch</td><td>A small pilot surfaces the worst oversharing before the whole org can</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     This is
                     <span class="xref">Data Governance, Retention &amp; eDiscovery — Owning Data on Purpose</span>
                     with a deadline: the governance work that was always advisable becomes urgent
@@ -2719,12 +2719,304 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                     <tr><td>Process over urgency</td><td>Manufactured urgency is the tell — a real executive can wait for the procedure</td></tr>
                     <tr><td>Verify the request, not the face</td><td>Identity theatre is the attack; the immovable question is "does this follow our process"</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     This is the AI-era update to
                     <span class="xref">Social Engineering — People Are the Attack Surface</span>:
                     the pretext is more convincing, and the countermeasure — a verification
                     procedure that does not rely on recognition — is exactly the same one, now
                     non-negotiable. Run it as a tabletop before it is a real call.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌫️</span>
+              <span class="topic-name">Hallucination — Why Models Fabricate, and What Actually Reduces It</span>
+              <span class="topic-badge">LLM Engineering</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">It Is Not a Bug in the System — It Is the System, Applied to a Question It Cannot Answer</div>
+                <div class="concept-desc">
+                  A language model produces plausible continuations. When the training data supports
+                  a fact, the plausible continuation is usually the true one, which is why it works
+                  at all. When the data does not support it — an obscure detail, a recent event, a
+                  name that resembles other names, an API <span class="acro-exp">(Application Programming Interface)</span> that ought to exist — the model still
+                  produces a plausible continuation, because that is the only thing it does. The
+                  output is <strong>indistinguishable in form from a correct answer</strong>, since
+                  fluency was never conditional on truth.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    Two consequences follow, and they are the reason "just tell it not to make things
+                    up" fails. The model has no separate store of facts to consult and no internal
+                    flag distinguishing recall from construction — so it cannot report the
+                    difference reliably, because from the inside there is no difference to report.
+                    And confidence in the wording is a property of the writing style, not of the
+                    evidence: <strong>a fabricated citation is formatted exactly as carefully as a
+                    real one</strong>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Shapes It Takes, Because They Fail Differently</div>
+                <div class="concept-desc">
+                  Lumping these together is why mitigations get chosen badly. Each has a different
+                  cause and a different countermeasure.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Shape</th><th>Looks like</th><th>Reduced by</th></tr></thead>
+                    <tbody>
+                      <tr><td><strong>Fabricated specifics</strong></td><td>A citation, a case number, a person, a statistic — invented whole and formatted perfectly</td><td>Retrieval, and never accepting an identifier the model produced without resolving it</td></tr>
+                      <tr><td><strong>Plausible non-existent interfaces</strong></td><td>A function, flag or endpoint that <em>should</em> exist given the naming conventions around it</td><td>Running the code, or checking against the actual reference. This is the most common failure in technical work</td></tr>
+                      <tr><td><strong>Confident staleness</strong></td><td>An answer that was true two years ago, stated in the present tense</td><td>Retrieval with dates in the source, and asking as-of-when rather than what-is</td></tr>
+                      <tr><td><strong>Conflation</strong></td><td>Two similar things merged — the right idea attached to the wrong product or person</td><td>Asking for the distinction explicitly, which often surfaces the merge</td></tr>
+                      <tr><td><strong>Sycophantic agreement</strong></td><td>Accepting a false premise in your question and building on it</td><td>Asking open questions rather than leading ones, and asking it to challenge the premise</td></tr>
+                      <tr><td><strong>Ungrounded summary</strong></td><td>A summary containing a claim the source document does not make</td><td>Requiring quotation, then checking the quote appears verbatim</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The second row is the one that costs technical people
+                    the most time.</strong> An invented parameter is far more expensive than an
+                    obvious falsehood, because it is <em>almost</em> right — it follows the library's
+                    real conventions, so the reader's own knowledge of those conventions argues in
+                    its favour.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">What Reduces It, Ranked by How Much</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Mitigation</th><th>Effect</th><th>Honest limit</th></tr></thead>
+                    <tbody>
+                      <tr><td><strong>Retrieval — put the source text in the context</strong></td><td>The largest single reduction available. The model is reading rather than recalling</td><td>Retrieve the wrong passage and you get a confident answer grounded in the wrong thing. See <span class="xref">Embeddings &amp; RAG — Giving AI Access to Your Own Data</span></td></tr>
+                      <tr><td><strong>Make verification mechanical</strong></td><td>Run the code, resolve the identifier, follow the link, execute the query</td><td>Only works where a checker exists — which in software is nearly everywhere, and in prose is nowhere</td></tr>
+                      <tr><td>Require quotation, then verify the quote</td><td>Turns an unfalsifiable summary into a checkable claim</td><td>The quote can be checked automatically; whether it supports the conclusion cannot</td></tr>
+                      <tr><td>Give an explicit "I don't know" option</td><td>Genuinely helps. Refusal has to be an allowed answer or the model will produce something</td><td>Reduces false answers and increases unhelpful ones. That trade is a product decision, not a technical one</td></tr>
+                      <tr><td>Ask for reasoning before the answer</td><td>Helps on multi-step problems where the error is in the working</td><td>Does nothing for a fabricated fact. Confident reasoning towards a wrong fact is still wrong</td></tr>
+                      <tr><td>Sample twice and compare</td><td>Fabrications vary between runs more than recalled facts do — disagreement is a useful signal</td><td>Costs a second call, and a consistent fabrication stays consistent</td></tr>
+                      <tr><td>A second model as a checker</td><td>Catches some things, at a price</td><td>It has the same failure mode, so it agrees confidently with plausible errors</td></tr>
+                      <tr><td>"Do not make anything up" in the prompt</td><td>Marginal</td><td>The model cannot detect what it is doing. Worth including and worth nothing on its own</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The two that matter are the first two, and they share a
+                    shape:</strong> both replace the model's memory with something checkable —
+                    retrieved text, or an executable check. Everything below them is a percentage
+                    improvement on an unreliable process; those two change what the process is.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Designing Around It, Rather Than Waiting For It to Be Fixed</div>
+                <div class="concept-desc">
+                  The engineering question is not "how do we stop this" but "what is this feature's
+                  cost when the answer is wrong, and who finds out". That reframing sorts use cases
+                  cleanly.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Cost of a wrong answer</th><th>Design</th><th>Examples</th></tr></thead>
+                    <tbody>
+                      <tr><td>Near zero, and visible immediately</td><td>Ship it. The user is the check</td><td>Drafting, brainstorming, rephrasing, naming things</td></tr>
+                      <tr><td>Real, but mechanically checkable</td><td>Check it automatically before the user sees it</td><td>Code that compiles and passes tests; queries that run; structured output that validates</td></tr>
+                      <tr><td>Real, checkable only by a human</td><td>Cite sources and make verification cheap — links, quotes, page numbers</td><td>Research summaries, policy questions, document analysis</td></tr>
+                      <tr><td>High, and discovered late</td><td>Human in the loop before the action, and log what was shown</td><td>Anything that spends money, contacts a customer, changes a record, or grants access</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">The dangerous quadrant is the last one</strong>, and it is
+                    dangerous because it looks like the third until an agent has tools. A wrong
+                    summary is corrected by the reader; a wrong action has already happened —
+                    which is exactly the argument in
+                    <span class="xref">Agent Safety &amp; Sandboxing — Permissions, Blast Radius &amp; Human-in-the-Loop</span>,
+                    and the reason blast radius is designed rather than hoped for.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Measuring It, So the Argument Stops Being About Anecdotes</div>
+                <div class="concept-desc">
+                  Teams argue about whether a feature hallucinates "too much" using remembered
+                  examples, which is unresolvable. A small evaluation set ends that in an afternoon.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Step</th><th>Detail</th></tr></thead>
+                    <tbody>
+                      <tr><td>Collect real inputs, including the awkward ones</td><td>Fifty genuine questions beat five hundred invented ones, and the complaints inbox is the best source</td></tr>
+                      <tr><td>Write the correct answer once, by hand</td><td>Expensive, done once, and it is what makes every later comparison cheap</td></tr>
+                      <tr><td>Score for <em>supported</em> rather than for <em>good</em></td><td>Is every factual claim traceable to a source? That is checkable; "good" is not</td></tr>
+                      <tr><td>Run it on every prompt or model change</td><td>Otherwise the fix for one failure silently causes another — the regression suite argument, unchanged</td></tr>
+                      <tr><td>Track the refusal rate beside the error rate</td><td>A change that halves errors by refusing a third of questions has not improved the product, and only the pair of numbers shows it</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    That last row is the one that gets skipped and matters, because refusals are
+                    invisible in an error metric and extremely visible to users. <strong>Report both
+                    or the number is not measuring the thing you care about</strong> —
+                    <span class="xref">LLM Evaluation, Guardrails &amp; Diffusion Models</span>
+                    covers the surrounding machinery.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🖼️</span>
+              <span class="topic-name">Multimodal Models — Images, Audio &amp; Documents, and Where They Break</span>
+              <span class="topic-badge">LLM Engineering</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Image Becomes Tokens, and Everything Follows From That</div>
+                <div class="concept-desc">
+                  A multimodal model does not "look at" a picture in the way the word suggests. The
+                  image is encoded into a sequence of tokens and placed in the same context as the
+                  text, where the model attends to both together. That single implementation fact
+                  predicts most of the surprising behaviour: <strong>images consume context budget
+                  in proportion to their size</strong>, fine detail can be lost in the encoding
+                  before the model ever reasons about it, and an instruction written inside an image
+                  is just more tokens in the context — which is why it can be obeyed.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Consequence</th><th>What to do about it</th></tr></thead>
+                    <tbody>
+                      <tr><td>A high-resolution screenshot costs a lot of context</td><td>Crop to the region that matters. It is cheaper <em>and</em> more accurate, because there is less to be distracted by</td></tr>
+                      <tr><td>Small text may not survive encoding</td><td>Increase resolution of the region, or extract the text separately and pass both</td></tr>
+                      <tr><td>Several images compete for attention</td><td>Label them in the prompt — "figure 1", "figure 2" — and refer to the labels</td></tr>
+                      <tr><td>Text in an image is instruction-shaped</td><td>Treat any uploaded image as untrusted input, exactly like a web page. See <span class="xref">Prompt Injection – The "SQL Injection" of the AI World</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What These Models Are Genuinely Good At</div>
+                <div class="concept-desc">
+                  The useful boundary is not "images" versus "text". It is between tasks that need
+                  <em>interpretation</em> and tasks that need <em>precision</em>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Task</th><th>Verdict</th></tr></thead>
+                    <tbody>
+                      <tr><td>Describing what is in a photograph</td><td>Strong. This is the core capability</td></tr>
+                      <tr><td>Reading a screenshot of an error and explaining it</td><td>Strong, and one of the highest-value everyday uses in IT support</td></tr>
+                      <tr><td>Understanding a diagram or architecture sketch</td><td>Good on structure and intent, unreliable on exact labels and arrow directions</td></tr>
+                      <tr><td>Extracting fields from a form or invoice</td><td>Good — and every extracted number needs validating, because a transposed digit is invisible</td></tr>
+                      <tr><td>Reading dense tables from a scanned page</td><td>Mixed. Row and column alignment is where it fails, quietly</td></tr>
+                      <tr><td>Counting objects</td><td><strong>Weak.</strong> Persistently and non-obviously weak, especially past small numbers</td></tr>
+                      <tr><td>Precise spatial or measurement questions</td><td>Weak. "Which is taller", "how many pixels", "exactly where" are the wrong questions to ask</td></tr>
+                      <tr><td>Reading handwriting</td><td>Variable, and confidently wrong when it fails</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Counting deserves its own warning</strong> because the
+                    failure is so counter-intuitive: a model that can describe a complex scene in
+                    detail will still miscount the chairs in it. Anything that needs an exact tally
+                    belongs to code — detect, then count — not to the description.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Documents Are the Real Use Case, and the Real Trap</div>
+                <div class="concept-desc">
+                  Most business "multimodal" work is document work: a scanned contract, a purchase
+                  order, an old report. Passing pages as images is now often better than traditional
+                  text extraction, because layout survives — and that improvement introduces a
+                  failure mode traditional extraction did not have.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Approach</th><th>Strength</th><th>Weakness</th></tr></thead>
+                    <tbody>
+                      <tr><td>Classic text extraction</td><td>Exact characters where the text layer exists</td><td>Loses layout, ruins tables, and produces nothing at all from a scan</td></tr>
+                      <tr><td>Optical character recognition, then a model</td><td>Handles scans, and the intermediate text is inspectable</td><td>Recognition errors propagate silently into confident answers</td></tr>
+                      <tr><td>Page images straight to the model</td><td>Layout, tables and figures are understood together</td><td><strong>No intermediate artefact to audit.</strong> If the answer is wrong you cannot see whether it misread or misreasoned</td></tr>
+                      <tr><td>Both — image plus extracted text</td><td>The model can cross-check itself, and you keep something inspectable</td><td>More context, more cost. Usually the right answer for anything that matters</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The auditability point is the one to carry away.</strong>
+                    Traditional pipelines failed loudly and left evidence; a model reading a page
+                    fails quietly and leaves an answer. For anything financial or contractual, keep
+                    an intermediate you can point at when someone asks where the number came from —
+                    the same argument
+                    <span class="xref">Data Lineage &amp; Contracts — Where the Number Came From, and Who Promised It</span>
+                    makes about pipelines.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Audio, and the Two Different Things People Mean By It</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Route</th><th>How</th><th>Trade-off</th></tr></thead>
+                    <tbody>
+                      <tr><td>Transcribe, then process the text</td><td>A speech model produces a transcript; a language model reads it</td><td>Cheap, inspectable, and it discards tone, overlap and who-sounded-uncertain</td></tr>
+                      <tr><td>Audio directly into the model</td><td>The waveform is encoded alongside the text</td><td>Keeps delivery and emotion; costs more, and again leaves nothing to audit</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    For meetings and support calls the transcript route is usually right, and the
+                    reason is procedural rather than technical: <strong>the transcript is the record
+                    people will later argue about</strong>. A summary with no transcript behind it
+                    cannot be checked, and a summary of a call is exactly the artefact somebody will
+                    eventually dispute.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Security Shape Is Different, Not Just Bigger</div>
+                <div class="concept-desc">
+                  Every input channel is an injection channel, and the non-text ones bypass the
+                  filtering built for text.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Risk</th><th>Detail</th></tr></thead>
+                    <tbody>
+                      <tr><td>Instructions hidden in an image</td><td>Faint text, text in a margin, or text a person would skim past. Input filters that scan strings never see it</td></tr>
+                      <tr><td>Instructions in a document being summarised</td><td>The classic case: a résumé or invoice containing a line addressed to the model rather than to the reader</td></tr>
+                      <tr><td>Personal data arriving by accident</td><td>Screenshots carry far more than the region of interest — other windows, names, tickets, notifications</td></tr>
+                      <tr><td>Provenance</td><td>An uploaded image is an assertion about the world. It is evidence of nothing on its own — see <span class="xref">Deepfakes &amp; Voice/Video Impersonation — Verification That Resists AI</span></td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The rule that covers all four: <strong>content is content, whatever channel it
+                    arrived through.</strong> If a system would not act on an instruction found in a
+                    fetched web page, it must not act on one found in an uploaded screenshot — and
+                    the only reliable way to hold that line is to keep instructions and data
+                    separated by design rather than by filtering.
                   </div>
                 </div>
               </div>

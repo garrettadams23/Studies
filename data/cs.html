@@ -1938,7 +1938,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🏗️</span>
-    <span class="topic-name">How a Compiler Works — Lexing, Parsing, IR <span class="acro-exp">(Incident Response)</span> &amp; Codegen</span>
+    <span class="topic-name">How a Compiler Works — Lexing, Parsing, IR <span class="acro-exp">(Intermediate Representation)</span> &amp; Codegen</span>
     <span class="topic-badge">CS • Compilers</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -2302,7 +2302,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Time and dates</td><td>Wrapping units</td><td>Off-by-one at the wrap: hour 24, month 12, the epoch</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The consistent-hashing row is the practically important one: <code>server = hash mod N</code>
           looks fine until N changes, at which point nearly every key moves. That single property is
           why distributed caches use a ring instead.
@@ -2359,7 +2359,7 @@ valgrind --leak-check=full ./prog</pre>
 <span class="com"># Absorption — spots redundant clauses in a grown-over rule set</span>
    A OR  (A AND B) = A
    A AND (A OR  B) = A</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           "Block everything that is not HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> and not from the office" is a De Morgan problem, and
           getting it backwards produces a rule that blocks nothing at all — while looking, in the
           console, exactly like the rule that was intended.
@@ -2384,7 +2384,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>T</td><td>T</td><td>T</td><td>T</td><td>F</td><td>F</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           XOR is the row worth memorising separately: it is "exactly one", it is its own inverse, and
           that self-inverse property is why it appears in parity checks, RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span>, and every toy cipher
           that turns out to be breakable.
@@ -2456,7 +2456,7 @@ valgrind --leak-check=full ./prog</pre>
    - the same config push
    - the same upstream dependency
    - the same bug, deployed to all three at 14:00</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last line is the one that causes real outages. A simultaneous deployment makes three
           servers one server, statistically — and no amount of hardware redundancy addresses it.
         </div>
@@ -2479,7 +2479,7 @@ valgrind --leak-check=full ./prog</pre>
 
 <span class="com"># Careful: the average is not the tail. With p = 0.5,</span>
 <span class="com"># about 1 request in 1,000 still needs 10 or more attempts.</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           That last comment is the whole reason retry budgets and circuit breakers exist: systems are
           sized for the average and taken down by the tail.
         </div>
@@ -2540,7 +2540,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Require two independent signals</td><td>Multiplies the false-positive rates together</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Rows three and four are why enrichment and correlation outperform threshold-tightening —
           the same conclusion reached operationally in
           <span class="xref">Enrichment — The Context That Turns an Alert Into a Decision</span> in
@@ -2597,7 +2597,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Power-law / heavy-tailed</td><td>Scale-free quantities where extremes dominate</td><td>File sizes, request latency, incident cost, session length</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Latency is the one that catches people. It is not normal, it has no meaningful "average
           case", and its tail is where the user experience actually lives — so summarising it with a
           mean and a standard deviation discards precisely the information that mattered.
@@ -2621,7 +2621,7 @@ valgrind --leak-check=full ./prog</pre>
    P(0) = 37%      P(1) = 37%      P(2) = 18%      P(3+) = 8%
 
 <span class="com"># So ~1 month in 4 sees two or more failures, with nothing having changed.</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The useful discipline: before declaring a trend, ask what the rate would produce by chance.
           Often the answer is "exactly this", and the investigation can be spent somewhere it will
           find something.
@@ -2680,7 +2680,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>p99.9 and max</td><td>The genuine worst case</td><td>Nothing — but noisy on small samples</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           A user making 100 requests to load a page is very likely to hit the p99 at least once —
           <code>1 - 0.99^100 ≈ 63%</code>. That is why tail latency dominates perceived performance,
           and why the median looks healthy while people complain the site is slow.
@@ -2706,7 +2706,7 @@ valgrind --leak-check=full ./prog</pre>
 
 <span class="com"># And the reverse error is just as common:</span>
 <span class="com"># averaging one server's per-minute p99 over an hour hides the bad minute.</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The fix is to aggregate the <em>distributions</em>, not the summaries — histogram buckets
           or a sketch such as t-digest, from which any percentile can be recomputed correctly at any
           grouping. This is why modern metrics systems store latency as histograms rather than as
@@ -2732,7 +2732,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>p99.9</td><td>Tens of thousands, per window</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Where these numbers become service promises rather than dashboard decoration, see
           <span class="xref">SLIs, SLOs &amp; Error Budgets</span> in the Operations domain.
         </div>
@@ -2772,7 +2772,7 @@ valgrind --leak-check=full ./prog</pre>
    64-bit  (1.8e19)    ->  collisions at ~5 billion
    128-bit (3.4e38)    ->  collisions at ~2^64
    256-bit             ->  collisions at ~2^128             <span class="com"># not reachable</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The 32-bit row is the practical warning. A 32-bit hash used as a unique key will collide in
           a table of a hundred thousand rows, and the resulting bug — two different things treated as
           one — is the kind that corrupts data quietly rather than crashing.
@@ -2797,7 +2797,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Digital signature hash strength</td><td>A birthday attack halves the effective bits: 256-bit hash → 128-bit security</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is why hash sizes are what they are. Collision resistance is worth half the
           output length, so a 128-bit hash offers only 64 bits against a birthday attack — reachable,
           which is exactly why it was retired.
@@ -2838,7 +2838,7 @@ valgrind --leak-check=full ./prog</pre>
    12 chars, lower+upper+digits (A=62)  ->  12 × 5.95  ≈  71 bits
    4 random words from a 7,776-word list ->  4 × 12.9  ≈  52 bits
    "P@ssw0rd!"                           ->  a few bits — it is on every list</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The third line is the honest one. Entropy formulas assume uniform random choice; the moment
           a human chooses, the assumption fails and the number is fiction.
         </div>
@@ -2863,7 +2863,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Reusing a nonce or IV</td><td>Catastrophic for stream ciphers and some modes — recovers plaintext or the key</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The rule that avoids all five: take randomness from the operating system's cryptographic
           source — <code>/dev/urandom</code>, <code>getrandom()</code>, the platform CSPRNG <span class="acro-exp">(Cryptographically Secure Pseudorandom Number Generator)</span> — and
           never from anything you seeded yourself.
@@ -2935,7 +2935,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Long-term</td><td>256 bits</td><td>15360</td><td>512</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           These equivalences are estimates from published cryptanalysis and shift as methods improve
           — treat the shape as stable and
           <span class="volatile" data-checked="2026-08">check current guidance before choosing a
@@ -2963,7 +2963,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>The key sitting unprotected on disk</td><td>The most common break of all, and not mathematical at all</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Note the first row's dependence on the previous card: two keys generated with poor
           randomness may share a prime, and a shared factor is found by taking a GCD — no factoring
           required. Entropy failures do not weaken keys gradually; they collapse them.
@@ -3001,7 +3001,7 @@ valgrind --leak-check=full ./prog</pre>
 
 <span class="com"># An eavesdropper sees p, g, A, B — and needs a discrete log to get further.</span>
 <span class="com"># Note what it does NOT provide: any idea who you agreed a key with.</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           That last line is the reason certificates exist. Key agreement without authentication
           agrees a perfectly good key with a machine-in-the-middle.
         </div>
@@ -3027,7 +3027,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Curve choice matters enormously</td><td>A badly chosen or backdoored curve undoes all of it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is why the curves in common use are few and heavily scrutinised, and why
           "we designed our own curve" is a statement that should end a procurement conversation.
         </div>
@@ -3054,7 +3054,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Lattice and hash-based schemes</td><td>The families selected for post-quantum standards</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The migration this implies, and the "harvest now, decrypt later" reasoning that makes it
           urgent for long-lived secrets, is covered in the Security domain.
         </div>
@@ -3092,7 +3092,7 @@ valgrind --leak-check=full ./prog</pre>
 
 <span class="com"># Euclidean distance — straight-line separation, magnitude included</span>
    d(a, b) = √(Σ (aᵢ - bᵢ)²)</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Cosine is the usual choice for text because document length should not make two documents
           dissimilar. A long article and a short note about the same subject point the same way; only
           their magnitudes differ.
@@ -3119,7 +3119,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>"Similar means relevant"</td><td>Similarity is the model's notion of similar, which may not be the task's</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The third row has operational teeth: re-embedding a corpus with a new model means
           re-embedding <em>all</em> of it. Mixing vectors from two model versions in one index
           produces results that are subtly and unfixably wrong.
@@ -3157,7 +3157,7 @@ valgrind --leak-check=full ./prog</pre>
    η      the learning rate — how big a step to take
 
 <span class="com"># Repeat a few million times.</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The derivative in the calculus domain is the same object: a rate of change. The only new
           idea here is doing it in millions of dimensions at once, one per parameter, which is why
           the operation is a matrix multiplication and why GPUs <span class="acro-exp">(Graphics Processing Unit)</span> are involved.
@@ -3181,7 +3181,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Training loss falls, validation loss rises</td><td>Not an optimisation problem — it is memorising the training set</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is the one that matters most in practice: the optimiser is succeeding
           perfectly at the task it was given, and the task was the wrong one. That is a statement
           about the loss function and the data, not about the descent.
@@ -3231,7 +3231,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Everything is nearly orthogonal</td><td>Random vectors are almost always close to perpendicular</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last effect is the one with a positive use: near-orthogonality is why a
           high-dimensional space can hold an enormous number of distinguishable directions, which is
           exactly what makes embeddings work at all. The curse and the capability are the same
@@ -3257,7 +3257,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Learned embeddings rather than raw features</td><td>Training concentrates the useful structure into fewer dimensions</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The practical rule that follows: be suspicious of a similarity threshold tuned on
           low-dimensional data and applied to embeddings. The number that separated "similar" from
           "unrelated" at 10 dimensions means something quite different at 1,000.
@@ -3295,7 +3295,7 @@ valgrind --leak-check=full ./prog</pre>
 <span class="com"># A join is a filtered Cartesian product. That is not a metaphor:</span>
    SELECT * FROM a JOIN b ON a.id = b.a_id
    ≡ SELECT * FROM a CROSS JOIN b WHERE a.id = b.a_id</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           This explains the accidental Cartesian product every analyst produces once: forget the ON
           clause and the database faithfully returns every pairing, because that is what the
           operation is before the filter. A thousand rows joined to a thousand rows is a million.
@@ -3320,7 +3320,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Antisymmetric + transitive</td><td>A partial order</td><td>A clean role hierarchy with no cycles</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Transitivity is the one that produces incidents: nested group membership means effective
           permissions are the <em>transitive closure</em> of the membership relation, not the direct
           memberships anyone can see in a console. And a cycle in an inheritance graph — A inherits
@@ -3344,7 +3344,7 @@ valgrind --leak-check=full ./prog</pre>
    WHERE col &lt;&gt; 'x'  ->  drops NULL rows, which is usually not what was meant
    COUNT(col)        ->  ignores NULLs;  COUNT(*) does not
    NOT IN (subquery containing a NULL)  ->  returns nothing, ever</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last line is the classic silent bug: <code>NOT IN</code> against a column containing a
           single NULL returns an empty result set with no error and no warning. Use
           <code>NOT EXISTS</code>. The join-specific cases are in
@@ -3402,7 +3402,7 @@ valgrind --leak-check=full ./prog</pre>
    "Total replicas acknowledging a write is always >= the write quorum."
 
 <span class="com"># Then: assert them in tests, and in production where the cost allows.</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Property-based testing is this idea automated: state the invariant, let the tool generate
           thousands of inputs and hunt for the case that breaks it. It finds the boundary conditions
           human-written examples systematically miss, because humans write the cases they already
@@ -3474,7 +3474,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>"We surveyed everyone who responded"</td><td>Self-selection — the non-responders are usually the finding</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The third row is the one worth internalising. A million rows from one region tells you
           about that region very precisely and about everywhere else not at all. Sampling
           <em>bias</em> and sampling <em>error</em> are different problems, and only one of them
@@ -3532,7 +3532,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Who or what is missing from this data?</td><td>Survivorship: the failed requests that never got logged</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The third is the sharpest. Latency dashboards typically show completed requests, so the
           ones that timed out — the worst experiences of all — are absent by construction, and the
           chart looks best exactly when things are worst.
@@ -3570,7 +3570,7 @@ valgrind --leak-check=full ./prog</pre>
 
 <span class="com"># Why it matters: one enormous spike inflates the stdev, so the</span>
 <span class="com"># NEXT spike scores as normal. The MAD version does not care.</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The z-score also assumes a roughly normal distribution. Most operational data is not
           normal, so "three sigma" is not the rare event the textbook promises — on heavy-tailed
           latency data it fires constantly.
@@ -3596,7 +3596,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Decompose into trend + season + residual</td><td>The general answer</td><td>More machinery, and needs enough history</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Row two contains a real trap: a rolling baseline adapts, so a slow degradation is
           eventually absorbed into "normal" and stops alerting. A gradual memory leak can defeat an
           adaptive threshold entirely — which is why absolute limits and adaptive ones are both
@@ -3648,7 +3648,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>"Significant, so it matters"</td><td>Statistical significance says nothing about effect size</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is the commercially important one: with a large enough sample, a 0.01%
           improvement is statistically significant and practically worthless. Always report the
           effect size and its interval alongside.
@@ -3674,7 +3674,7 @@ valgrind --leak-check=full ./prog</pre>
 
 <span class="com"># Note the Δ²: halving the effect you want to detect QUADRUPLES the</span>
 <span class="com"># sample needed. Small effects are extremely expensive to prove.</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           If continuous monitoring is genuinely needed, use a method designed for it — sequential
           testing or a Bayesian approach — rather than a fixed-sample test looked at repeatedly.
           Those methods pay for the peeking in their maths; the classical test does not.
@@ -3753,7 +3753,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Step</td><td>Onboarding a customer or a site</td><td>Flat, then a jump — never smooth</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Plot the series on a logarithmic axis as a first move. Exponential growth becomes a
           straight line there, and distinguishing it from linear growth is the single most valuable
           thing a capacity forecast can get right.
@@ -3778,7 +3778,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>What would change the answer</td><td>Silence about the migration that doubles it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The operational practice this feeds is in
           <span class="xref">Capacity Planning – Answering "Will We Run Out of Room?" Before You Do</span>
           in the Operations domain.
@@ -3838,7 +3838,7 @@ valgrind --leak-check=full ./prog</pre>
    eᵢ  small random errors        <span class="com"># without these, solve by Gaussian elimination</span>
 
 <span class="com"># Recovering s from many (aᵢ, bᵢ) pairs is Learning With Errors.</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The practical costs of the switch follow from the structure: keys and ciphertexts are
           larger than their elliptic-curve equivalents, which matters for handshake sizes and for
           constrained devices. The engineering trade-offs and migration path are in
@@ -3890,7 +3890,7 @@ valgrind --leak-check=full ./prog</pre>
 <span class="com"># Cost, and why this is the whole game:</span>
    naive multiply of two n×n matrices  ->  O(n³) operations
    every one of which is independent   ->  perfectly parallel</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           That last pair of lines explains GPUs entirely. The work is enormous and every piece of it
           is independent, which is exactly the shape a processor with thousands of small cores is
           built for — and exactly the shape a CPU <span class="acro-exp">(Central Processing Unit)</span> with a few fast ones is not.
@@ -3972,7 +3972,7 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Weighted cross-entropy</td><td>Imbalanced classes</td><td>Encodes the relative cost of each error type explicitly</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The imbalance case is the one that bites in security and fraud work. With 99.9% benign
           data, a model minimising plain accuracy learns to answer "benign" always — 99.9% accurate,
           and completely useless. The fix is in the loss, not in more training.

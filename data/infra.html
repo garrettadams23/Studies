@@ -2233,7 +2233,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Type 2 (hosted)</td><td>On top of an OS <span class="acro-exp">(Operating System)</span></td><td>VirtualBox, VMware Workstation</td><td>A lab on your laptop</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Modern CPUs <span class="acro-exp">(Central Processing Unit)</span> have <strong class="c-cyan">hardware-assisted virtualization</strong>
           (Intel VT-x, AMD-V) so guests run near-native; nested page tables handle the memory
           translation. It has to be enabled in firmware — a disabled BIOS <span class="acro-exp">(Basic Input/Output System)</span> setting is the
@@ -2260,7 +2260,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Noisy neighbour</td><td>One greedy VM starving its co-tenants on the same host</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">CPU is safer to overcommit than RAM.</strong> A waiting
           thread just waits; exhausted memory forces host swapping, which punishes every VM on
           the box. Size RAM close to real need; be generous only with vCPU.
@@ -2313,7 +2313,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Proxmox / KVM</td><td>Cost-sensitive, lab, and Linux-first shops; KVM is also what most clouds run underneath</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Generation matters on Hyper-V:</strong> Generation 2 VMs use
           UEFI <span class="acro-exp">(Unified Extensible Firmware Interface)</span> and Secure Boot and are the modern default, but you cannot convert a Gen 1 VM to
           Gen 2 in place — it is a rebuild. Choose correctly when you create the template, in
@@ -2372,7 +2372,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Backup app snapshot stuck</td><td>Your backup uses snapshots under the hood; a failed job can orphan one</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Rule:</strong> snapshots are measured in hours, not weeks.
           Take one before a risky change, verify the change, delete the snapshot. Alert on any
           snapshot older than a day — it is either forgotten or a symptom.
@@ -2429,7 +2429,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Synthetic full / forever-incremental</td><td>Incrementals merged into a full on the target</td><td>The modern default; small daily jobs, fast restores</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Retention is a separate axis — <strong class="c-cyan">GFS</strong> (grandfather-
           father-son) keeps dailies for weeks, weeklies for months, monthlies for years, so you
           can restore last Tuesday <em>and</em> last quarter without keeping every daily forever.
@@ -2474,7 +2474,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Alert on deletion / job change</td><td>Mass backup deletion is a high-fidelity intrusion signal in its own right</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">The most common fatal flaw</strong> is a backup server joined
           to the domain it backs up, with backups on a share that same domain admin can reach.
           When the domain falls, so do the backups. Break that dependency first — it is the
@@ -2540,7 +2540,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Hot site / replication</td><td>Minutes</td><td>Highest — a running duplicate</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Failback is the forgotten half.</strong> Runbooks lovingly
           document the failover and stop there; getting production back to primary afterward,
           without losing the data written while you ran on the DR site, is its own procedure —
@@ -2585,7 +2585,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           Everything else follows from that. Only one server can own a block device at a time,
           because two filesystems writing the same blocks corrupt each other — which is why shared
           block storage needs a cluster filesystem or careful orchestration. File storage is
@@ -2637,7 +2637,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Assuming object storage is immediately consistent everywhere</td><td>Depends on the implementation; check before designing around it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The backup row connects to
           <span class="xref">Backup Strategy — 3-2-1-1-0 and the Schemes That Make Restores Possible</span>,
           and it is the one that turns a storage decision into a recovery failure: a snapshot on the
@@ -2694,7 +2694,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         the failures are correlated by age, batch and workload.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           This is why single-parity RAID 5 fell out of favour for large disks rather than because of
           any change in the mathematics of parity: the array grew, the rebuild got longer, and the
           exposure window grew with it. The mitigations are practical rather than clever.
@@ -2733,7 +2733,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Wider codes are cheaper and slower to rebuild</td><td>The tuning knob; pick from the failure domain, not from the ratio alone</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The practical rule this leads to: mirror or RAID 10 for latency-sensitive random workloads,
           erasure coding for large capacity where throughput matters more than latency. And on any
           of them, remember the first card's point — none of this is a backup, because all of it
@@ -2777,7 +2777,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Multipathing</td><td>Host-side driver collapsing several routes to one LUN into one device</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Zoning and masking do overlapping jobs from opposite ends, and both are normally used.
           Zoning limits what the fabric will carry; masking limits what the array will admit. The
           reason for both is the failure they prevent: a host that can see a LUN belonging to
@@ -2806,7 +2806,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Typical failure</td><td>Zoning mistakes, cable and SFP <span class="acro-exp">(Small Form-factor Pluggable)</span> faults</td><td>A network change nobody flagged as storage-affecting</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           That last row is the whole argument. iSCSI's weakness is not throughput, it is that the
           storage path now depends on a network with a change process that treats it as ordinary
           traffic. If you run iSCSI, isolate it — dedicated VLAN or dedicated NICs <span class="acro-exp">(Network Interface Card)</span>, jumbo frames
@@ -2837,7 +2837,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Timeout values matched to the array's failover time</td><td>Mismatched timeouts turn a survivable path failure into an I/O error</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The commissioning cable-pull is worth insisting on. Path redundancy is a claim on a
           diagram until somebody has tested it, and the moment to discover a mismatched timeout is
           during a planned test rather than during an unplanned switch reboot.
@@ -2867,7 +2867,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         and the throughput of the link is irrelevant, because nothing is waiting on bandwidth.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           This single fact explains most file-server complaints. "The share is slow from the branch
           office" is almost never a bandwidth problem, and adding bandwidth reliably fails to fix
           it. It also explains why a workload of a million small files behaves completely differently
@@ -2894,7 +2894,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>NFSv4 / 4.1</td><td>Stateful, single port, ACLs <span class="acro-exp">(Access Control List)</span>, Kerberos, sessions</td><td>Preferred, especially across any boundary</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           SMB 1 deserves its own line. It has no meaningful authentication of the server, no
           transport encryption, and it carried one of the most damaging ransomware worms in
           circulation. If something still needs it, that device is the problem to solve, not the
@@ -2922,7 +2922,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Permission errors that make no sense</td><td>Share and filesystem permissions interacting</td><td>See the file-services card — the effective right is the lesser of the two</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The permissions half of file services — share versus NTFS <span class="acro-exp">(New Technology File System)</span> rights, DFS <span class="acro-exp">(Distributed File System)</span> namespaces and
           quotas — is in
           <span class="xref">File Services — Share vs NTFS Permissions, DFS &amp; Quotas</span>.
@@ -2965,7 +2965,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Log ingest</td><td>Throughput and write amplification</td><td>Sustained write, and what compaction costs</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Vendor figures almost always quote the best case for one of these — usually large
           sequential reads or 100% random reads at an unrealistic queue depth. A figure without its
           block size, read/write mix and queue depth is not a measurement, and comparing two such
@@ -2984,7 +2984,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         because it never asks for more than one thing at a time.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           This explains the two most common confusions in storage benchmarking. A benchmark showing
           far lower IOPS than the array's rating is usually running at too shallow a queue depth to
           exercise it. And an array hitting its rated IOPS while everything feels slow is usually
@@ -3022,7 +3022,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Media</td><td>Failing drive, SSD <span class="acro-exp">(Solid State Drive)</span> approaching wear-out, write cliff on a full drive</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Two entries deserve suspicion early because they are invisible from the host: a rebuild
           running on the array, and a tiering engine relocating data. Both consume back-end capacity
           on their own schedule, both make performance vary by time of day for no reason the
@@ -3090,7 +3090,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Do not thin-provision at three layers at once</td><td>Guest, hypervisor and array each over-subscribing is unmodellable</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The reclaim row is the one that quietly causes most pool-full incidents. Deleting a file
           inside a guest frees space in the guest filesystem and tells the array nothing; without
           UNMAP or TRIM propagating down, the array still considers those blocks written. Estates
@@ -3117,7 +3117,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>"Dedup protects nothing"</td><td>Correct, and worth remembering: deduplicated data has one copy of each block by design</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row matters for backup design specifically. A deduplicated backup repository is
           efficient and is a single fate-shared copy: corruption of a heavily-referenced block
           affects every backup that references it. That is not an argument against dedup — it is the
@@ -3150,7 +3150,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         warning anybody had configured.
       </div>
       <div class="dw">
-        <div class="concept-desc" style="margin-top:0">
+        <div class="concept-desc">
           The reframing that fixes it: <strong>capacity is a time problem, not a percentage
           problem.</strong> "The pool is 82% full" prompts nothing. "The pool has eleven weeks left
           at the current rate, and procurement takes eight" is a decision with a deadline, and
@@ -3178,7 +3178,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Lead time to add capacity, measured</td><td>Sets how far ahead your alerting has to reach</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The performance-headroom row is the trap in an all-flash world. Capacity is cheap and
           plentiful; controller CPU <span class="acro-exp">(Central Processing Unit)</span> and cache are not. An array at 50% capacity and 95% controller
           utilisation needs expansion just as urgently, and no capacity report will say so.
@@ -3204,7 +3204,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Growth that is really a bug</td><td>A runaway log or a failing job can fill a pool in days</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Two habits cover most of that list. Review capacity alongside the project pipeline rather
           than in isolation, so step changes arrive as plans instead of as surprises. And alert on
           <em>acceleration</em> as well as on level — a growth rate that doubles this week is
@@ -3250,7 +3250,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Configuration applied after boot</td><td>Yes, and inspectable</td><td>Pair with any of the above; this is where the drift goes</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last row is the important pairing. A template answers "what did this start as"; a
           configuration tool answers "what has been done to it since", and without the second the
           first slowly stops being true —
@@ -3278,7 +3278,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Licence activation state</td><td>Activation failures that appear weeks later</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Generalising — <code>sysprep /generalize</code> on Windows, clearing machine-id, host keys
           and cloud-init state on Linux — strips exactly this set, which is why a template is
           generalised *once* and then never booted again. Booting a template to "just patch it
@@ -3307,7 +3307,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Decommission deliberately</td><td>A VM lifecycle has an end; unused machines are cost, patch surface and noise</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The credential row is worth stating bluntly: a password left in an unattended answer file,
           a cached service account, or an SSH key in the image is copied to every machine built from
           it, and rotating it afterwards means touching all of them. The pipeline version of this
@@ -3350,7 +3350,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Cleanup</td><td>The source releases the machine</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The requirement people forget: both hosts must be able to run the same instruction set.
           Mixed CPU <span class="acro-exp">(Central Processing Unit)</span> generations in one cluster are why compatibility modes exist — they mask newer
           instructions so a guest never sees a feature that would vanish underneath it after a move.
@@ -3378,7 +3378,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Verify before the next host</td><td>One host at a time. Two is how a cluster becomes an incident</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The capacity check is the one that gets skipped, and it is the one that hurts: a cluster
           running at 85% with no reserve cannot evacuate a host at all, so the maintenance window
           arrives, the evacuation stalls, and someone has to choose between shutting down guests and
@@ -3406,7 +3406,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Guest pinned by a rule</td><td>Affinity to a host, often set years ago for a reason nobody recorded</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The convergence row has a specific fix worth knowing: a dedicated, fast migration network.
           If migrations of busy machines routinely fail or take an hour, the answer is almost never
           the guest — it is that the memory is being copied over a link that also carries production
@@ -3448,7 +3448,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Leave it physical, isolated</td><td>When conversion fails and the risk of touching it exceeds the risk of leaving it</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The fourth row is a real answer, not a joke. An unconvertible machine running a critical
           process is a business risk that should be recorded, isolated on the network, backed up at
           the image level and given an end date — rather than quietly carried for another five years
@@ -3499,7 +3499,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Old monitoring alerts firing</td><td>Agents for hardware that no longer exists</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The row that ends projects is licensing. Software keyed to physical hardware may simply
           refuse to run, and finding that out after the physical machine has been decommissioned is
           the worst possible order — which is why "keep the original powered off" is on the previous
@@ -3541,7 +3541,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>4. Guest</td><td>Its own processes, its own configuration</td><td>Real often enough to check, last often enough to check last</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The tell for "not the guest" is <strong>several unrelated machines complaining at once</strong>.
           Two tickets from different applications on the same host, or on the same datastore, is a
           platform problem until proven otherwise, and the fastest first question is always: what
@@ -3569,7 +3569,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Snapshot age and size</td><td>How much of the disk is a delta chain</td><td>Days old, or gigabytes; both punish write performance quietly</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong>CPU ready is the one worth internalising</strong>, because it inverts the usual
           reading. A guest with low processor utilisation that feels sluggish is the classic
           signature: it is not using the processor because it cannot get it. Adding more virtual
@@ -3597,12 +3597,208 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Guest fine, users complain</td><td>The problem is between them — WAN <span class="acro-exp">(Wide Area Network)</span>, gateway, DNS <span class="acro-exp">(Domain Name System)</span>. Nothing on this page applies</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The 02:00 row is a scheduling problem masquerading as a performance one, and the fix is
           organisational rather than technical: stagger the windows. The last row is the reminder
           that "the server is slow" is a claim about a path, and the virtualisation layer is only
           one segment of it — <span class="xref">Network Troubleshooting — A Systematic Approach</span>
           takes over where this card stops.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏛️</span>
+    <span class="topic-name">Mainframe &amp; Midrange — Why They Are Still There, and How You Integrate With One</span>
+    <span class="topic-badge">Infra • Legacy Platforms</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">"Still Running" Is an Engineering Answer, Not an Embarrassment</div>
+      <div class="concept-desc">
+        The usual framing is that mainframes survive because nobody was brave enough to replace them.
+        That is not the reason, and believing it is how integration projects get scoped badly. Two
+        things keep these systems in place. First, the machine is built for a workload most modern
+        infrastructure is not: enormous transaction volumes with per-transaction integrity, where the
+        redundancy is in the hardware — a failing processor retries the instruction rather than
+        failing the node. Second, and more decisively, <strong>the specification is the code</strong>.
+        Forty years of rules about how interest accrues, how a claim is settled, how a shipment is
+        rated, exist nowhere else in writing. Nobody is defending the platform; they are defending
+        the only surviving copy of the business.
+      </div>
+      <div class="dw">
+        <div class="concept-desc">
+          The asymmetry that decides these arguments: the current system's failure modes are known,
+          bounded and already priced. A rewrite's are not, and they land on the day the rewrite goes
+          live — which is also the day the people who understood the original are gone. That is not
+          an argument against ever modernising. It is the reason modernising is done in slices, and
+          it is why "we should just rewrite it" costs credibility in a room that has watched
+          somebody try.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Vocabulary, Because Almost Every Word Is Different</div>
+      <div class="concept-desc">
+        Half the difficulty of a first mainframe conversation is that both sides are describing the
+        same concepts with words the other has never heard. The right-hand column is deliberately
+        approximate — close enough to hold the conversation, not close enough to reason from.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Term</th><th>What it is</th><th>Nearest thing you know</th></tr></thead>
+          <tbody>
+            <tr><td>z/OS</td><td>The mainframe operating system</td><td>The OS, but scheduling batch is a first-class job of it</td></tr>
+            <tr><td>IBM i (AS/400, iSeries, System i)</td><td>The midrange OS, with the database built into it</td><td>An OS and an RDBMS <span class="acro-exp">(Relational Database Management System)</span> fused, not layered</td></tr>
+            <tr><td>LPAR</td><td>Logical partition</td><td>A VM <span class="acro-exp">(Virtual Machine)</span>, but partitioned in firmware and far older than the idea</td></tr>
+            <tr><td>CICS</td><td>Transaction monitor — runs the online programs</td><td>The application server</td></tr>
+            <tr><td>IMS</td><td>Hierarchical database and transaction manager</td><td>Pre-relational data, still in production</td></tr>
+            <tr><td>Db2 for z/OS</td><td>The relational database</td><td>Genuinely the same idea, different dialect</td></tr>
+            <tr><td>COBOL, PL/I</td><td>The languages the business logic is written in</td><td>Verbose, readable, and not the problem people assume</td></tr>
+            <tr><td>JCL</td><td>Job Control Language — how batch work is submitted</td><td>A shell script, if a shell script were a declaration of datasets</td></tr>
+            <tr><td>VSAM</td><td>Keyed record file access</td><td>An indexed key/value store predating the term</td></tr>
+            <tr><td>Copybook</td><td>The record layout for a file or message</td><td>The struct definition — and the only parser you will get</td></tr>
+            <tr><td>SMF</td><td>System Management Facilities records</td><td>Telemetry and audit logs, in a binary house format</td></tr>
+            <tr><td>RACF, ACF2, Top Secret</td><td>The access control products</td><td>The directory and the authorisation engine, not joined to yours</td></tr>
+            <tr><td>3270, 5250</td><td>Terminal protocols</td><td>The green screen — a block-mode form, not a character stream</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          Worth knowing before you use the wrong one in a meeting: <strong>3270 is z/OS and 5250 is
+          IBM i</strong>, and the two platforms are unrelated products that only look alike from
+          outside. A person who supports one may know nothing about the other.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Four Ways You Will Actually Integrate</div>
+      <div class="concept-desc">
+        You will almost certainly never write COBOL. What you will do is move data across the
+        boundary, and there are four routes in practice — in descending order of how much you should
+        want them.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Route</th><th>What it looks like</th><th>Where it breaks</th></tr></thead>
+          <tbody>
+            <tr><td>Message queue (MQ)</td><td>A real transactional queue, in both directions</td><td>Character conversion at the queue manager, and length assumptions in fixed-format messages</td></tr>
+            <tr><td>API <span class="acro-exp">(Application Programming Interface)</span> façade</td><td>REST <span class="acro-exp">(Representational State Transfer)</span> in front of a CICS transaction, vendor-built or homegrown</td><td>The façade hides where the transaction actually commits — a retry may not be idempotent</td></tr>
+            <tr><td>Scheduled file transfer</td><td>Fixed-width files exchanged on the batch schedule</td><td>Reading a file that is still being written; and the file is a day old by design, which nobody tells the product owner</td></tr>
+            <tr><td>Screen scraping</td><td>Driving a 3270/5250 session programmatically</td><td>There is no contract. A field moving two columns is a silent corruption, not an error</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-red">Screen scraping is the one to argue about.</strong> It is chosen
+          because it needs nothing from the mainframe team, which is exactly why it is fragile: an
+          interface with no owner and no versioning has no way to warn you. If it is the only option,
+          the mitigation is a canary — a scripted session that runs a known transaction with a known
+          answer and alarms when the parse stops matching, so you find out from monitoring rather
+          than from reconciliation.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Data Traps, Which Are Where the Time Goes</div>
+      <div class="concept-desc">
+        Every one of these has silently corrupted a production feed somewhere. They share a shape:
+        the data parses without error and is wrong.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Trap</th><th>What actually happens</th><th>What to do</th></tr></thead>
+          <tbody>
+            <tr><td>EBCDIC, not ASCII <span class="acro-exp">(American Standard Code for Information Interchange)</span></td><td>A working file looks like binary noise in your editor</td><td>Convert explicitly, and know <em>which</em> code page — EBCDIC has national variants that move punctuation</td></tr>
+            <tr><td>Fixed width, no delimiters</td><td>There is nothing in the file that says where a field ends</td><td>Get the copybook. Treat it as a project deliverable with a name against it, not a favour</td></tr>
+            <tr><td>Packed decimal (COMP-3)</td><td>Two digits per byte, sign in the final nibble</td><td>Decode it as packed decimal. Reading it as text or as an integer corrupts money quietly</td></tr>
+            <tr><td>Zoned decimal with overpunch</td><td>The sign is folded into the last digit, so −123 reads as <code>12L</code></td><td>Never regex a numeric field. Use the copybook's picture clause</td></tr>
+            <tr><td>Trailing spaces are structural</td><td>Padding is how the record keeps its length</td><td>Trim on the way into your model, never on the way back out</td></tr>
+            <tr><td>Julian and 6-digit dates</td><td><code>yyddd</code>, or a 2-digit year with a pivot rule buried in code</td><td>Pin the pivot in writing during analysis; guessing is a class of bug that appears years later</td></tr>
+            <tr><td>Low-values and high-values</td><td>All-<code>0x00</code> or all-<code>0xFF</code> used as sentinels</td><td>Map them to null deliberately — they are not empty strings</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The generalisation worth carrying away: on this platform <strong>a record layout is a
+          binary contract, not a text format</strong>. Modern integration habits assume the file
+          describes itself — a header row, a JSON <span class="acro-exp">(JavaScript Object Notation)</span> key, a delimiter to split on. Here nothing does,
+          and every field boundary you assume is an assumption you are making on your own authority.
+          <span class="xref">Encoding — Bytes, Text, and Why "It Works on My Machine"</span> is the
+          same lesson at the level of your own language runtime.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Four Operational Facts That Change How You Work</div>
+      <div class="concept-desc">
+        These surprise people more than the technology does, because each one inverts an instinct
+        that is correct everywhere else.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Fact</th><th>Why it inverts an instinct</th></tr></thead>
+          <tbody>
+            <tr><td>Consumption is billed</td><td>Capacity licensing means an inefficient query is a line item on an invoice. Cloud teaches "add capacity, optimise later"; here optimisation <em>is</em> the cost control, and a chatty integration has a price attached to it</td></tr>
+            <tr><td>The batch window is the real deadline</td><td>Overnight processing has a finish time the business depends on. An integration that adds twenty minutes to a run ending at 05:50 is an outage, discovered in production, once</td></tr>
+            <tr><td>Identity is somewhere else</td><td>Mainframe accounts live in RACF or its competitors, not in your directory. The standing audit finding is an access review that covered every system except the one holding the money</td></tr>
+            <tr><td>The knowledge is retiring</td><td>The person who answered your question last year may not be there next year. Write down every answer you get, in your repository, at the time you get it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The last one is not sentiment. In practice it means the highest-value artefact your project
+          produces is not the integration — it is <strong>the documented record layout and the
+          documented meaning of each status code</strong>, written down for the first time in
+          decades because you were the one who had to ask.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Modernising Without a Big Bang</div>
+      <div class="concept-desc">
+        The pattern that works is the strangler: put a façade in front of the existing system, move
+        one function at a time behind it, and leave the old path running. What makes it work here is
+        not the routing — it is what you do with the old path once it is no longer authoritative.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>The part people skip</th></tr></thead>
+          <tbody>
+            <tr><td>Façade first</td><td>Callers move to the new interface while it still forwards everything. Nothing has been rewritten yet, and that is the point</td></tr>
+            <tr><td>Pick a function with a boundary</td><td>Something that reads a lot and writes little, first. The functions that own the ledger go last, not first</td></tr>
+            <tr><td>Run both and compare</td><td>Feed production traffic to old and new, compare outputs, and let the old one keep answering. This harness is the real deliverable — there is no test suite to inherit, because the production system <em>is</em> the specification</td></tr>
+            <tr><td>Cut over on evidence</td><td>Switch when the comparison has been clean across a full business cycle — a month-end, a year-end — not when the sprint ends</td></tr>
+            <tr><td>Delete the old path</td><td>Otherwise you now maintain two systems and have made things worse. Removal is part of the work, scheduled and funded</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">On automated translation:</strong> tools that convert COBOL to
+          Java or C# produce COBOL written in Java — the same structure, the same eighty-branch
+          paragraph, none of the domain knowledge, and now nobody at all understands it, because the
+          people who could read the original no longer recognise it. It converts a maintainable
+          legacy system into an unmaintainable modern one, which reads as progress on a slide.
+        </div>
+        <div class="concept-desc verdict">
+          <strong class="c-green">And deciding not to migrate is a legitimate outcome.</strong> A
+          well-wrapped mainframe with a documented API, a monitored batch schedule and its access
+          review inside the same governance as everything else is a perfectly defensible piece of
+          infrastructure. Making that case honestly is
+          <span class="xref">Technical Debt as a Financial Argument — Language That Funds It</span>
+          applied to the largest debt in the estate — and the argument is stronger when you can show
+          what the wrap cost versus what the rewrite was quoted at.
         </div>
       </div>
     </div>

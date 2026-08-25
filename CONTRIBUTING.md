@@ -95,7 +95,47 @@ reading the DOM again.
 |--------------------|-------------------------|-----------------------------------------|
 | Topic chevron      | `topic-chev`            | ~~`topic-chevron`~~                      |
 | Reference table    | `ref-table`             | prefer over `ai-table` for new content  |
+| Verdict after a table | `concept-desc verdict` | ~~`style="margin-top:10px"`~~          |
 | Colored text       | see below — it depends  | ~~a hex literal, anywhere~~             |
+
+### The verdict sentence
+
+Almost every table here is followed by one paragraph saying what the table means — the
+house rule that *every table gets a verdict*. It is spaced away from the table by 10px,
+and that spacing has a class:
+
+```html
+<table class="ref-table"> … </table>
+<div class="concept-desc verdict">The sentence that says what the table means.</div>
+```
+
+Do not write the margin inline. 1,142 cards did, long after the class existed, and
+`lint_content.py` now fails the build on it with the line number. There is no matching
+class for the *first* description inside a `.dw` — it needs no margin, and the 67 cards
+that set `margin-top:0` there were overriding nothing.
+
+`.ai-table` is not deprecated, whatever "prefer" suggests above. It is a genuinely
+different design — larger text, an amber first column — used in 360 tables across 18
+domains, and the linter reports it as a census line rather than a warning. Use
+`ref-table` for new content because it is the house style; do not convert existing
+tables, because that is a redesign.
+
+### Acronyms with more than one meaning
+
+`data/acronyms.json` is the single source of expansions, and the annotator applies one
+meaning everywhere unless told otherwise. For an entry with several meanings, `byDomain`
+is **exhaustive**: every domain where the acronym actually renders carries a decision,
+including the ones that only confirm the default.
+
+```json
+"byDomain": { "hw": "Error-Correcting Code", "sec": "Elliptic Curve Cryptography" }
+```
+
+Use `null` for "do not annotate in this domain". `lint_content.py` fails the build on a
+rendering with no decision, which is a ratchet at zero — the check was introduced with six
+live wrong expansions, including `ECC` as Elliptic Curve Cryptography in a memory card and
+`DC` as Domain Controller beside a voltage rail. A wrong expansion is well-formed markup,
+so nothing else can see it.
 
 ### Colours
 

@@ -25,7 +25,7 @@
                     <tr><td>Granular software dist.</td><td>Complex app models, supersedence, dependencies</td></tr>
                     <tr><td>Mature reporting</td><td>SQL <span class="acro-exp">(Structured Query Language)</span> Reporting Services, rich inventory</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">The direction of travel</strong> is cloud: most orgs now
                     run <strong class="c-cyan">co-management</strong> (ConfigMgr + Intune on the same
                     device) and move workloads to Intune over time. ConfigMgr isn't dead — it's the
@@ -82,7 +82,7 @@
                     <tr><td>Software update-based</td><td>Client delivered as an "update" via WSUS</td></tr>
                     <tr><td>Intune / co-mgmt (ccmsetup)</td><td>Push the client as a Win32 app during Autopilot</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Control Panel → Configuration Manager</strong> exposes
                     actions like <em>Machine Policy Retrieval</em>, <em>Hardware Inventory Cycle</em>,
                     and <em>Software Updates Scan</em> — the buttons you press when "it's not showing
@@ -111,7 +111,7 @@
                     <tr><td>BranchCache / Delivery Optimization</td><td>Peer-to-peer to cut WAN <span class="acro-exp">(Wide Area Network)</span> usage</td></tr>
                     <tr><td>Prestaged content</td><td>Ship content on disk to a slow-link DP</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">#1 support ticket:</strong> "content won't download."
                     Almost always a missing/overlapping boundary, content not distributed to the
                     client's DP, or a boundary group with no fallback. Check
@@ -134,7 +134,7 @@
                     <tr><td>Software Updates</td><td>SUP scan → deploy manually or via <strong>ADR</strong> (Automatic Deployment Rule) that grabs each Patch Tuesday into a deployment package</td></tr>
                     <tr><td>OS Deployment (OSD)</td><td><strong>Task sequence</strong>: boot image (WinPE) → partition → apply WIM <span class="acro-exp">(Windows Imaging Format)</span> → drivers → join (AD/Entra) → apps</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Detection method</strong> is the make-or-break of app
                     deployment: it's how ConfigMgr decides "already installed?" (file version, registry,
                     MSI product code, or script). Wrong detection = endless reinstall or false failure.
@@ -195,7 +195,7 @@
                     <tr><td>Entra Hybrid Joined</td><td>Domain-joined <em>and</em> synced to Entra (needs Entra Connect + SCP). For orgs still reliant on on-prem AD/GPO/apps</td></tr>
                     <tr><td>Entra Registered</td><td>BYOD/personal — a work identity is added but the org doesn't own the device (Workplace Join)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Hybrid is heavier &amp; more fragile</strong> (sync timing,
                     SCP, network line-of-sight to a DC for the join). Microsoft's clear guidance:
                     <strong class="c-green">go cloud-native (Entra Joined)</strong> unless a hard
@@ -245,7 +245,7 @@ dsregcmd /status
                     <tr><td>Dynamic device groups</td><td>Membership by rule (OS, ownership, enrollment profile) → drives targeting everywhere</td></tr>
                     <tr><td>Device categories</td><td>Auto-place devices into groups at enrollment</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Licensing gotcha:</strong> auto-enrollment and many CA
                     features require the right licenses (Intune + Entra ID P1/P2, usually via M365
                     E3/E5). No license = "your device can't be enrolled" errors.
@@ -268,7 +268,7 @@ dsregcmd /status
                 <div class="concept-title">The Cloud Endpoint-Management Service</div>
                 <div class="concept-desc">
                   <strong class="c-cyan">Microsoft Intune</strong> (admin center
-                  <code>intune.microsoft.com</code>) manages devices (<strong>MDM</strong>) and apps
+                  <span class="volatile" data-checked="2026-08"><code>intune.microsoft.com</code></span>) manages devices (<strong>MDM</strong>) and apps
                   (<strong>MAM</strong>) across Windows, macOS, iOS/iPadOS, Android, and Linux — no
                   on-prem infrastructure. Admin scoping uses
                   <strong class="c-cyan">RBAC <span class="acro-exp">(Role-Based Access Control)</span> roles</strong> + <strong>scope tags</strong> (limit which
@@ -302,7 +302,7 @@ dsregcmd /status
                     <tr><td>Android</td><td>Android Enterprise (fully managed / dedicated)</td><td>Work profile</td></tr>
                     <tr><td>macOS</td><td>ABM <span class="acro-exp">(Apple Business Manager)</span> / ADE, or Company Portal</td><td>Company Portal</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Filters vs groups:</strong> use groups for <em>who</em>,
                     filters for <em>which devices</em> — filters evaluate at assignment time and avoid
                     proliferating dynamic groups.
@@ -334,7 +334,7 @@ IntuneWinAppUtil.exe <span class="var">-c</span> <span class="str">"C:\Source"</
                     <tr><td>Available</td><td>Optional — appears in Company Portal</td></tr>
                     <tr><td>Uninstall</td><td>Removes the app from targets</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Detection rules</strong> are the #1 cause of app failures in
                     Intune too (mirrors ConfigMgr). <strong class="c-cyan">Supersedence</strong> lets a
                     new version replace/upgrade an old one; <strong class="c-cyan">dependencies</strong>
@@ -356,7 +356,7 @@ IntuneWinAppUtil.exe <span class="var">-c</span> <span class="str">"C:\Source"</
                     <tr><td>Feature update policy</td><td>Pin/roll a target Windows feature version</td></tr>
                     <tr><td>Endpoint security baselines</td><td>Microsoft-recommended security config as a template</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Conflict handling:</strong> if two profiles set the same
                     setting differently the result is a <em>conflict</em> (neither applies) — the
                     per-setting report shows which policies collided. Keep profiles small and
@@ -417,7 +417,7 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
                     <tr><td>Manual PowerShell</td><td>Existing stock / pilots</td></tr>
                     <tr><td>ConfigMgr / Intune diagnostics</td><td>Harvest hashes from managed devices</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Group Tag</strong> (a.k.a. OrderID) is the trick for
                     targeting: a dynamic group with rule
                     <code>device.devicePhysicalIds -any (_ -eq "[OrderID]:Kiosk")</code> auto-collects
@@ -441,7 +441,7 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
                     <tr><td>Naming template</td><td>Auto-name devices (e.g. <code>AP-%SERIAL%</code>)</td></tr>
                     <tr><td>Language/region</td><td>Pre-set for self-deploying/pre-provisioning</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Sequence:</strong> power on → network → OOBE fetches the
                     Autopilot profile → branded Entra sign-in → Entra join → auto MDM <span class="acro-exp">(Mobile Device Management)</span> enroll →
                     <strong class="c-green">ESP</strong> installs device- &amp; user-targeted content →
@@ -491,7 +491,7 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
                     <tr><td>Device setup</td><td>Pre-sign-in</td><td>Device-targeted apps, policies, certificates, security</td></tr>
                     <tr><td>Account setup</td><td>After user signs in</td><td>User-targeted apps &amp; policies</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Configured under <strong class="c-cyan">Intune → Devices → Enrollment → Enrollment
                     Status Page</strong>: a Default profile plus higher-priority profiles assigned to
                     groups.
@@ -536,7 +536,7 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
                     <tr><td>User-targeted app tracked in device phase</td><td>Assign to devices, or move to account phase</td></tr>
                     <tr><td>Win32 app depends on another → order</td><td>Model dependencies so prerequisites finish first</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Best practice:</strong> block only what a user truly needs
                     on day one (security agent, VPN, core LOB app); set a realistic timeout; and
                     front-load device-targeted apps via <strong class="c-cyan">pre-provisioning</strong>
@@ -575,7 +575,7 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
                     <tr><td>Endpoint Protection</td><td>Intune manages Defender/ASR</td></tr>
                     <tr><td>Resource access / Office / Client apps</td><td>Intune delivers profiles &amp; apps</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Each slider can point to <strong>Pilot</strong> (a chosen collection) or
                     <strong>All</strong> — so you test on a ring before going wide.
                   </div>
@@ -593,7 +593,7 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
                     <tr><td>Cloud Management Gateway (CMG)</td><td>Manage internet-based ConfigMgr clients through Azure — no VPN <span class="acro-exp">(Virtual Private Network)</span>, no inbound firewall</td></tr>
                     <tr><td>Cloud DP (in CMG)</td><td>Serve content to remote clients from Azure</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Recommended journey:</strong> start with
                     <em>tenant attach</em> (fast win) → enable <em>co-management</em> → shift workloads
                     to Intune ring-by-ring → new devices go cloud-native via Autopilot, retiring
@@ -650,7 +650,7 @@ Conditional Access reads it  ──▶  Grant (compliant OR Entra-joined) / Bloc
                     <tr><td>Grant controls</td><td>Require MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, <strong>require compliant device</strong>, require Entra hybrid join, require app protection policy</td></tr>
                     <tr><td>Session controls</td><td>App-enforced restrictions, sign-in frequency</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Always keep a break-glass account</strong> excluded from CA
                     (a CA misconfig can lock everyone — including you — out). Use
                     <strong class="c-green">report-only mode</strong> to preview impact before
@@ -695,7 +695,7 @@ MdmDiagnosticsTool.exe <span class="var">-area</span> <span class="str">"Autopil
                     <tr><td>ConfigMgr <code>C:\Windows\CCM\Logs</code> + CMTrace</td><td>Co-managed/ConfigMgr client</td></tr>
                     <tr><td><span class="volatile" data-checked="2026-08">Intune admin center</span> → Troubleshooting + Reports</td><td>Per-user/device view, policy &amp; app status, device diagnostics upload</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Common errors:</strong> <code>0x80180018</code> (MDM
                     enrollment not allowed / licensing), <code>0x801c03ea</code> (device cap / TPM),
                     <code>80070774</code> (name resolution). <strong class="c-green">First moves:</strong>
@@ -752,7 +752,7 @@ MdmDiagnosticsTool.exe <span class="var">-area</span> <span class="str">"Autopil
                     <tr><td><code>ContentTransferManager.log</code></td><td>Schedules and tracks the actual <strong>content download</strong> jobs (via BITS or SMB) from a distribution point</td></tr>
                     <tr><td><code>DataTransferService.log</code></td><td>The <strong>BITS <span class="acro-exp">(Background Intelligent Transfer Service)</span></strong> transfer layer used for policy and content downloads — TLS/proxy/BITS errors surface here</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Content-download triage order:</strong>
                     <code>CAS.log</code> (is it cached / which DPs?) →
                     <code>ContentTransferManager.log</code> (did a job start?) →
@@ -781,7 +781,7 @@ MdmDiagnosticsTool.exe <span class="var">-area</span> <span class="str">"Autopil
                     <tr><td>SMSTSPeerDownload</td><td>Enables/allows the TS to pull content from <strong>peers</strong> (Windows PE Peer Cache / peer sources) rather than a DP — <code>TRUE</code>/<code>FALSE</code></td></tr>
                     <tr><td>SMSTSDownloadProgram</td><td>Specifies an <strong>Alternate Content Provider (ACP)</strong> — a custom download program (e.g. third-party peer-to-peer like Nomad/Adaptiva) used instead of the built-in downloader</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Common combos:</strong> on slow branch links, raise
                     <code>SMSTSDownloadRetryCount</code>/<code>Delay</code>, set
                     <code>SMSTSLocalDataDrive=C</code> early, and enable
@@ -871,7 +871,7 @@ ccmsetup.exe /mp:mp01.contoso.com /forceinstall SMSSITECODE=P01 <span class="str
 <span class="com">#   7        reboot required to finish</span>
 <span class="com">#   1603     generic MSI failure — read the MSI log beside it</span>
 <span class="com">#   0x87d00227  client could not download source from the MP (boundary/firewall/PKI)</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">The boundary trap:</strong> a client on an IP <span class="acro-exp">(Internet Protocol)</span> with no boundary
           in a boundary group has no site assignment and no content source. It will look
           installed, log cheerfully in <code>CcmExec.log</code>, and never do anything useful.
@@ -912,7 +912,7 @@ ccmsetup.exe /mp:mp01.contoso.com /forceinstall SMSSITECODE=P01 <span class="str
             <tr><td>Result detected</td><td>Client</td><td><code>AppDiscovery.log</code> — the detection method's verdict</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">The single most common false failure:</strong> the installer ran
           fine, but the <strong>detection method</strong> looks for the wrong file, version or
           registry key — so MECM reports failure and retries forever.
@@ -961,7 +961,7 @@ ccmsetup.exe /mp:mp01.contoso.com /forceinstall SMSSITECODE=P01 <span class="str
             <tr><td>UpdatesDeployment.log</td><td>Deployment enforcement, deadlines and reboots</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-red">0x80244010</strong> — "exceeded max server round trips" — is the
           classic sign of an unmaintained WSUS: decline superseded updates and run the cleanup
           so the client can finish enumerating. <strong class="c-red">0x80072ee2</strong> is a
@@ -1031,7 +1031,7 @@ net use \\dp01\SMSPKGD$ /user:CONTOSO\svc-osd</pre>
             <tr><td>Missing NIC <span class="acro-exp">(Network Interface Card)</span> or storage driver</td><td>PE loads, then nothing works</td><td>Driver package injected into the boot image for the right architecture</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">Triage order that saves the most time:</strong>
           1. Does the machine have a deployment at all — is it in the collection?
           2. Can WinPE reach the network and resolve the MP?
@@ -1077,7 +1077,7 @@ net use \\dp01\SMSPKGD$ /user:CONTOSO\svc-osd</pre>
             <tr><td>Site components in a warning state</td><td><code>sitecomp.log</code>, <code>hman.log</code></td><td>Site Component Manager</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Before diving in, check <strong>Monitoring ▸ System Status ▸ Component Status</strong>
           and <strong>Site Status</strong> — MECM usually tells you which component is unhappy,
           which narrows the log list to one.
@@ -1109,7 +1109,7 @@ LogicalDisk
 | <span class="kw">where</span> DeviceID == <span class="str">'C:'</span>
 | <span class="kw">project</span> Device, FreeGB = FreeSpace / <span class="num">1024</span>
 | <span class="kw">order by</span> FreeGB asc</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Two limits to keep in mind:</strong> CMPivot only reaches
           clients that are online and healthy — the broken ones you most want to see are exactly
           the ones that will not answer — and results are capped, so scope the query to a
@@ -1180,13 +1180,13 @@ LogicalDisk
             </tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">Default to the settings catalog.</strong> Reach for a
           template when it groups something fiddly you would otherwise assemble by hand,
           and reach for custom OMA-URI <span class="acro-exp">(Open Mobile Alliance Uniform Resource Identifier)</span> only when the setting genuinely is not surfaced
           anywhere else.
         </div>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">The trap:</strong> a custom OMA-URI profile reports at
           the <em>profile</em> level, not the setting level. One bad URI <span class="acro-exp">(Uniform Resource Identifier)</span> in a profile of
           twenty makes the whole profile red on every device, and the console will not
@@ -1230,7 +1230,7 @@ LogicalDisk
             <tr><td>User-targeted vs device-targeted</td><td>Both apply to their own scope; a conflict only if the CSP is the same node</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">The fix is always the same:</strong> find the duplicate
           and delete one. There is no correct way to have two profiles arguing about one
           setting.
@@ -1274,7 +1274,7 @@ Get-ItemProperty <span class="str">'HKLM:\SOFTWARE\Microsoft\PolicyManager\curre
 
 <span class="com"># Which policies the device has been sent at all</span>
 Get-ChildItem <span class="str">'HKLM:\SOFTWARE\Microsoft\Provisioning\NodeCache\CSP\Device\MS DM Server\Nodes'</span></pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Before you dig:</strong> confirm the device has actually
           checked in since you changed anything. Half of all "the policy is not applying"
           reports are a device that last synced yesterday. Force it from Settings ▸
@@ -1313,7 +1313,7 @@ Get-ChildItem <span class="str">'HKLM:\SOFTWARE\Microsoft\Provisioning\NodeCache
             <tr><td>CIS <span class="acro-exp">(Center for Internet Security)</span> or STIG-derived policy</td><td>An external standard is the requirement; import it as a settings-catalog policy so it reports cleanly</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Baselines are versioned.</strong> A new version does not
           apply itself — you review the changes and move the assignment to it. A baseline
           left on an old version quietly stops being the thing you think you deployed.
@@ -1334,14 +1334,14 @@ Get-ChildItem <span class="str">'HKLM:\SOFTWARE\Microsoft\Provisioning\NodeCache
             <tr><td>3 — Broad</td><td>Everyone else</td><td>—</td><td>Ticket volume in the first 48 hours</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-red">Hold these back until ring 2 at the earliest:</strong>
           anything touching removable media, anything that blocks script execution,
           credential-delegation and remote-assistance restrictions, and the firewall
           profile. Each one is individually reasonable and each one has locked a fleet out
           of something it needed.
         </div>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">The rollback that actually works:</strong> remove the
           <em>assignment</em>, not the policy. Deleting a profile leaves settings behind on
           devices in many cases; unassigning triggers the tattoo-removal path where the CSP <span class="acro-exp">(Configuration Service Provider)</span>
@@ -1383,14 +1383,14 @@ Get-ChildItem <span class="str">'HKLM:\SOFTWARE\Microsoft\Provisioning\NodeCache
             <tr><td>Loopback processing</td><td class="c-red">No equivalent; rethink as device-scoped policy</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">The trap:</strong> Administrative Templates and the
           settings catalog are two different surfaces onto overlapping settings. A setting
           present in one is not guaranteed to be in the other, and configuring the same
           thing in both is a conflict waiting to happen. Pick one surface per setting and
           write down which.
         </div>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">Migration order that works:</strong> export your GPOs,
           run them through Group Policy analytics to see what has a direct MDM equivalent,
           port those first, and keep a deliberate list of the leftovers. The leftovers are
@@ -1467,13 +1467,13 @@ Get-ChildItem <span class="str">'HKLM:\SOFTWARE\Microsoft\Provisioning\NodeCache
             </tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">The pattern worth standardising on:</strong> assign broadly
           to <em>All Devices</em> with a filter that expresses the real condition, and keep
           static groups only for exclusions and pilot rings. Group-per-policy is what
           produces a tenant with four hundred groups nobody can name.
         </div>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Corporate-owned models change the answer:</strong> a COPE <span class="acro-exp">(Corporate-Owned, Personally Enabled)</span>
           device has a real primary user and user targeting works; a COBO <span class="acro-exp">(Corporate-Owned, Business Only)</span> or kiosk device
           does not, and every policy for it must be device-assigned. Decide the ownership
@@ -1532,7 +1532,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install.ps1
 
 <span class="com"># Test the exact command as SYSTEM before blaming Intune</span>
 PsExec64.exe -s -i cmd.exe</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Supersedence is not an upgrade path by itself.</strong>
           It tells Intune the new app replaces the old one, optionally uninstalling it
           first. If the new installer already upgrades in place, adding an uninstall step
@@ -1574,7 +1574,7 @@ PsExec64.exe -s -i cmd.exe</pre>
             <tr><td>Good for</td><td>Agents, drivers, anything shared</td><td>Per-user tools, anything that refuses to install machine-wide</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-red">The trap:</strong> a user-context app assigned to a
           <em>device</em> group installs for whoever happens to sign in first, and then
           reports success for the device. Every subsequent user sees a machine where the
@@ -1582,7 +1582,7 @@ PsExec64.exe -s -i cmd.exe</pre>
           exist for everyone, it has to be system context — reassigning it later does not
           retroactively fix the devices.
         </div>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">Quick test:</strong> if the installer works from an
           elevated <code>PsExec -s</code> shell with no desktop, it will work in system
           context. If it needs a profile, a mapped drive or a UI <span class="acro-exp">(User Interface)</span>, it will not — and no
@@ -1635,13 +1635,13 @@ PsExec64.exe -s -i cmd.exe</pre>
             </tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Store apps update themselves.</strong> That is usually a
           feature and occasionally an incident — when a vendor ships a breaking release to
           your whole fleet on a Tuesday. If a version must be pinned for a compliance or
           compatibility reason, Win32 is the only honest answer.
         </div>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">Required vs Available matters more than people expect:</strong>
           <em>Required</em> installs without asking; <em>Available</em> puts it in Company
           Portal for the user to choose. Making everything required is how you end up
@@ -1680,7 +1680,7 @@ PsExec64.exe -s -i cmd.exe</pre>
             <tr><td>Selective wipe</td><td>Removes company data from the app and leaves everything personal alone</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-red">The boundary is the app, and only the app.</strong>
           Protection applies to apps that are policy-aware. A document opened in an
           unmanaged PDF <span class="acro-exp">(Portable Document Format)</span> viewer, forwarded from an unmanaged mail client, or synced by a
@@ -1688,7 +1688,7 @@ PsExec64.exe -s -i cmd.exe</pre>
           The controls are real, but they are a fence around a set of apps, not around the
           data itself.
         </div>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">Pair it with Conditional Access.</strong> App protection
           decides what happens to data once the app has it; Conditional Access decides
           whether the app gets it at all. Requiring an approved client app plus an app
@@ -1753,7 +1753,7 @@ Restart-Service IntuneManagementExtension</pre>
             <tr><td>3010</td><td>Success, reboot required</td><td>Not a failure — map it as a soft-reboot return code in the app</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">The one worth memorising, again:</strong> exit code 0 in
           the log with "not detected" in the console is <em>always</em> the detection rule
           and never the installer. It is the same failure as its MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> counterpart — see
@@ -1797,13 +1797,13 @@ Restart-Service IntuneManagementExtension</pre>
             <tr><td>3 — Critical</td><td>Executives, clinical, production floor</td><td>9 days</td><td>7 days</td><td>3 days</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">The grace period is the whole user experience.</strong>
           A deadline with no grace period reboots someone mid-meeting, and you will hear
           about it for a year. The deadline says "you can no longer defer"; the grace
           period says "and you have this long to pick your moment". Set both, always.
         </div>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">Deferral and deadline are measured from different
           points:</strong> deferral counts from the day the update was published,
           deadline counts from the day it became applicable to that device. A machine
@@ -1839,13 +1839,13 @@ Restart-Service IntuneManagementExtension</pre>
             <tr><td>Controlled by</td><td>Target version, deferral</td><td>Deferral, deadline, pause</td><td>Separate driver policy — or Autopatch</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-red">They are independent.</strong> Pausing quality updates
           does not pause drivers, and a feature-update deferral says nothing about either.
           The commonest version of this mistake is an incident where someone "paused
           updates" and a driver shipped anyway.
         </div>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">SSU and LCU travel together and do not come apart.</strong>
           Since they were combined into one package, the servicing stack update cannot be
           uninstalled — only the cumulative part can. "We will just roll it back" is a
@@ -1887,14 +1887,14 @@ Restart-Service IntuneManagementExtension</pre>
             <tr><td>Exceptions</td><td class="c-red">Limited</td><td>Anything genuinely bespoke</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Have the exit path before you enrol.</strong> Coming back
           out means rebuilding rings, deferrals and deadlines by hand — the policies you
           used to have are not waiting for you. Export the current ring configuration
           first; it costs ten minutes and it is the difference between a decision and a
           one-way door.
         </div>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">Good fit:</strong> a fleet of reasonably standard
           devices where update babysitting is eating a person.
           <strong class="c-red">Poor fit:</strong> heavily regulated change windows,
@@ -1937,7 +1937,7 @@ Get-WinEvent -LogName <span class="str">'Microsoft-Windows-WindowsUpdateClient/O
 
 <span class="com"># Build number and revision — "patched" is a revision, not a version</span>
 Get-ComputerInfo -Property OsName, OsVersion, OsBuildNumber, WindowsVersion</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-red">"Not applicable" and "unknown" are not compliant.</strong>
           Most dashboards blur three different states into one green number: patched,
           not-applicable (the update never targeted this device), and unknown (nobody has
@@ -1982,13 +1982,13 @@ OperatingSystem
 <span class="com"># Or check the specific patched binary, which survives version ambiguity</span>
 File(<span class="str">'C:\\Windows\\System32\\example.dll'</span>)
 | <span class="kw">summarize</span> count() <span class="kw">by</span> Version</pre>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-red">Skipping rings in a real emergency is defensible.
           Skipping verification never is.</strong> A deployment reporting 98% success is a
           claim about what the agent believes it did. The only statement worth putting in
           the incident record is a query result showing what the devices actually run.
         </div>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">Write the comms before the deployment,</strong> not
           during. Who is told, what they are told, when the reboot lands, and who they
           contact if it breaks something. Two paragraphs, drafted while you are calm,
@@ -2174,7 +2174,7 @@ Remove-PSSession $s
             <tr><td>4 Escrow</td><td class="c-red">The one to verify — confirm the key is visible in Entra/AD before you call it done</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">A device can be encrypted and unrecoverable at the same time.</strong>
           Report on <em>escrowed keys</em>, not on encryption status. The two diverge exactly
           on the devices you will most need to recover.
@@ -2260,7 +2260,7 @@ Remove-PSSession $s
             <tr><td>Per-rule exclusions</td><td>Scalpel, not the off switch — exclude the one path, keep the rule</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Tamper protection</strong> stops malware — and local admins,
           and your own scripts — from disabling Defender. Leave it on; when it blocks a
           legitimate change, make that change through policy, which is the supported path
@@ -2325,7 +2325,7 @@ Remove-PSSession $s
             <tr><td>Full audit trail</td><td>Every elevation recorded — the evidence that makes admin removal defensible</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-red">Rule on the file's hash or signature, not its name.</strong>
           A rule that elevates anything called <code>setup.exe</code> is a privilege-escalation
           primitive you built and handed to an attacker.
@@ -2375,7 +2375,7 @@ Remove-PSSession $s
             <tr><td>Password encryption</td><td>Encrypted in the directory (AD path); readable only by the accounts you authorize</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">LAPS and admin-rights removal are a pair.</strong> Removing
           standing user admin closes the front door; LAPS makes sure the emergency key under
           the mat is different for every house. Deploy them together, not years apart.
@@ -2419,7 +2419,7 @@ Remove-PSSession $s
             <tr><td>Logging</td><td>On, for dropped packets — the evidence you need when an app breaks</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The trap is <strong class="c-amber">rule merging</strong>: turn it off and every
           locally-created allow rule vanishes, which is correct for security and will break
           the one legacy app whose installer added a rule nobody documented. Audit first.
@@ -2439,7 +2439,7 @@ Remove-PSSession $s
             <tr><td>Allow by device ID</td><td>Approved hardware only — for hardware tokens and specific peripherals</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Scope by <strong>storage</strong>, not all USB — a policy that blocks "USB devices"
           rather than "USB mass storage" also kills keyboards, mice and the webcam, and that
           ticket arrives within the hour.
@@ -2503,7 +2503,7 @@ Remove-PSSession $s
             <tr><td>Remediated</td><td>Next check-in flips it back; access restores automatically</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">Set the grace period to the remediation you actually offer.</strong>
           One day is cruel if the fix is a feature update that takes a maintenance window; a week is
           negligent for a disabled-antivirus flag. Match the clock to how fast the specific issue
@@ -2561,7 +2561,7 @@ Remove-PSSession $s
             <tr><td>Only some users affected</td><td>CA assignment / group targeting, not the device at all</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-green">Always keep a break-glass account excluded from device-based CA.</strong>
           A policy that requires a compliant device to sign in can lock every administrator out of
           the tenant that would fix it — the classic self-inflicted lockout. The excluded emergency
@@ -2672,7 +2672,7 @@ Remove-PSSession $s
             <tr><td>Break-glass excluded from device CA</td><td>A shared way back in when the joint config locks everyone out</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           This is the endpoint-side view of the same boundary
           <span class="xref">Conditional Access &amp; Device Compliance</span> introduces — read
           together, they are the identity and endpoint halves of one control.
@@ -2737,7 +2737,7 @@ Remove-PSSession $s
             <tr><td>Secure Enclave</td><td>Hardware key store; underpins FileVault and Touch ID</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           <strong class="c-amber">PPPC — the profile that pre-approves TCC.</strong> Management
           tools and security agents need access TCC would prompt a user for. A Privacy Preferences
           Policy Control profile grants it silently from the MDM, and it is the single most common

@@ -24,7 +24,7 @@
                     <tr><td>WAL / redo log</td><td>Append every change <em>before</em> the data page — crash recovery</td></tr>
                     <tr><td>Checkpoint</td><td>Flush dirty pages to disk; trim the log</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Why WAL:</strong> writing a tiny sequential log entry is
                     fast and safe; the actual (random) page write can happen later. On crash, replay
                     the log to recover committed work. This one idea gives you the "D" in ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span> and
@@ -60,7 +60,7 @@
                     <tr><td>Unique / Check</td><td>Column-level rules the DB guarantees</td></tr>
                     <tr><td>Candidate / composite key</td><td>Other unique columns; keys spanning multiple columns</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The NULL trap:</strong> <code>NULL</code> means "unknown,"
                     not zero or empty. It uses <em>three-valued logic</em> — <code>NULL = NULL</code>
                     is not true but <code>NULL</code>, and <code>WHERE x = NULL</code> matches nothing
@@ -96,7 +96,7 @@
                     <tr><td>3NF</td><td>No transitive dependency (non-key → non-key)</td></tr>
                     <tr><td>BCNF</td><td>Every determinant is a candidate key (stricter 3NF)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Rule of thumb:</strong> normalize to 3NF for
                     transactional (OLTP) systems — it keeps writes clean. Then
                     <strong class="c-amber">denormalize deliberately</strong> for read-heavy or
@@ -134,7 +134,7 @@
                     <tr><td>Repeatable Read</td><td>+ non-repeatable reads (MySQL default)</td></tr>
                     <tr><td>Serializable</td><td>+ phantom reads — as if txns ran one at a time</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The trade-off:</strong> stricter isolation = more correct
                     but more locking/aborts and less concurrency. Know the three anomalies (dirty,
                     non-repeatable, phantom) and pick the weakest level that's still safe for your
@@ -170,7 +170,7 @@
                     <tr><td>Many-to-many</td><td>A junction/join table with two FKs</td></tr>
                     <tr><td>One-to-one</td><td>Shared/unique FK — often a sign to merge tables</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Crow's-foot</strong> marks each end with cardinality
                     (one/many) and optionality (zero/one). Get the relationships right here and the
                     tables, keys, and joins fall out naturally — this is the bridge from requirements
@@ -208,7 +208,7 @@
                     <tr><td>CROSS</td><td>Cartesian product (every combo) — usually a mistake</td></tr>
                     <tr><td>SELF</td><td>A table joined to itself (hierarchies, pairs)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Traps:</strong> putting a filter on the outer table in
                     <code>WHERE</code> silently turns a LEFT JOIN into an INNER JOIN (put it in the
                     <code>ON</code> instead); and joining on a nullable column drops rows because
@@ -248,7 +248,7 @@
                     <tr><td>SUM/AVG OVER</td><td>Running totals &amp; moving averages</td></tr>
                     <tr><td>NTILE</td><td>Buckets/percentiles</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Killer use:</strong> "top 3 earners per department" or
                     "each order vs the customer's previous order" — one query, no self-joins. Window
                     functions are the single biggest jump from beginner to intermediate SQL <span class="acro-exp">(Structured Query Language)</span>.
@@ -281,7 +281,7 @@
   <span class="kw">FROM</span> events
 )
 <span class="kw">SELECT</span> * <span class="kw">FROM</span> ranked <span class="kw">WHERE</span> rn = <span class="num">1</span>;   <span class="com">-- latest event per user</span></pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Recursive form:</strong> an anchor query
                     <code>UNION ALL</code> a step that references the CTE — perfect for org charts,
                     category trees, or "all descendants of X." Readability tip: CTEs make a 60-line
@@ -324,7 +324,7 @@
                     <tr><td>ROLLUP / CUBE / GROUPING SETS</td><td>Subtotals &amp; grand totals in one pass</td></tr>
                     <tr><td>FILTER (WHERE …)</td><td>Conditional aggregates (Postgres)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Classic error:</strong> selecting a non-aggregated column
                     that isn't in <code>GROUP BY</code> — either group by it or wrap it in an
                     aggregate.
@@ -361,7 +361,7 @@
                     <tr><td>UNION / UNION ALL</td><td>Stack result sets (ALL keeps duplicates &amp; is faster)</td></tr>
                     <tr><td>INTERSECT / EXCEPT</td><td>Rows in both / in one but not the other</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Prefer <code>EXISTS</code> over <code>NOT IN</code></strong>
                     whenever the inner column can be NULL — <code>NOT IN (…NULL…)</code> returns
                     nothing, a famously silent bug. Many subqueries also rewrite cleanly as joins or
@@ -397,7 +397,7 @@
                     <tr><td>Composite</td><td>Multi-column — order matters (leftmost-prefix rule)</td></tr>
                     <tr><td>Covering</td><td>Includes all columns a query needs → index-only scan</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Composite key order:</strong> an index on
                     <code>(a, b)</code> helps <code>WHERE a=…</code> and <code>WHERE a=… AND b=…</code>,
                     but <em>not</em> <code>WHERE b=…</code> alone. Index the columns you filter/sort on;
@@ -434,7 +434,7 @@
                     <tr><td>Nested Loop / Hash / Merge Join</td><td>The three join strategies</td></tr>
                     <tr><td>Rows estimated vs actual</td><td>Big mismatch = stale statistics → bad plan</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Workflow:</strong> find the node eating the most time,
                     check if a Seq Scan should be an index, and compare estimated vs actual rows. A
                     huge estimate error usually means <code>ANALYZE</code> (statistics) is out of date.
@@ -472,7 +472,7 @@
                     <tr><td>The N+1 query</td><td>1 query + N per-row queries → JOIN or batch (IN)</td></tr>
                     <tr><td><code>SELECT *</code></td><td>Fetch only needed columns → enables covering indexes</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The N+1 problem</strong> is the #1 app-layer DB killer
                     (ORMs love to cause it): loading a list, then firing one query per item. Fix by
                     eager-loading with a join or a single <code>WHERE id IN (…)</code>.
@@ -508,7 +508,7 @@
                     <tr><td>Row vs table locks</td><td><code>FOR UPDATE</code> locks specific rows for a write</td></tr>
                     <tr><td>Deadlock</td><td>Two txns wait on each other — DB kills one; retry it</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Avoiding deadlocks:</strong> acquire locks in a consistent
                     order and keep transactions short. Explicit locking (<code>SELECT … FOR UPDATE</code>)
                     is how you safely implement "decrement inventory" under concurrency.
@@ -543,7 +543,7 @@
                     <tr><td>Shard key</td><td>Chooses which server a row lives on — pick carefully</td></tr>
                     <tr><td>Cross-shard queries/joins</td><td>The hard part — slow, complex; avoid by design</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Order of escalation:</strong> optimize queries &amp;
                     indexes → add a read replica → partition → (only then) shard. Sharding adds real
                     operational complexity; a bad shard key causes hotspots and painful re-sharding.
@@ -618,7 +618,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><td>LISTEN/NOTIFY</td><td>Built-in pub/sub for lightweight eventing</td></tr>
                     <tr><td>pgvector</td><td>Store embeddings &amp; do similarity search (AI apps)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Rule:</strong> use JSONB for genuinely variable data, not
                     as an excuse to skip schema design — relational columns are still faster and safer
                     for structured fields.
@@ -653,7 +653,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><td>Collation/charset</td><td>Use <code>utf8mb4</code> — plain <code>utf8</code> is a 3-byte trap</td></tr>
                     <tr><td>Looser SQL <span class="acro-exp">(Structured Query Language)</span></td><td>Historically permissive; enable strict mode</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Choosing:</strong> Postgres for richer features &amp;
                     strictness; MySQL where the ecosystem/hosting assumes it (WordPress) or the team
                     knows it well. Both are excellent — the differences are smaller than the tribalism.
@@ -686,7 +686,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><td>Tests &amp; prototypes</td><td class="c-red">Multiple app servers sharing it</td></tr>
                     <tr><td>Analytics on a file (with extensions)</td><td class="c-red">Network access by many clients</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Don't dismiss it:</strong> "SQLite is not a toy" — for
                     read-heavy or single-node workloads it's blazing fast and zero-ops. Modern tools
                     (Litestream, LiteFS, Turso) even give it replication. Know when <em>not</em> to
@@ -721,7 +721,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><td>PgBouncer</td><td>External pooler; transaction mode multiplexes many clients</td></tr>
                     <tr><td>Serverless</td><td>Functions × requests = connection storm → use a pooler/proxy</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Sizing:</strong> more connections isn't faster — past a
                     point they just contend. A good pool is often just <em>(cores × 2) + spindles</em>,
                     not hundreds. Connection exhaustion presents as timeouts under load; the fix is
@@ -756,7 +756,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><td>Wide-Column</td><td>Rows with dynamic columns, huge scale</td><td>Cassandra, Bigtable</td></tr>
                     <tr><td>Graph</td><td>Nodes &amp; edges — relationships first</td><td>Neo4j</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Choosing:</strong> pick NoSQL for a <em>specific</em>
                     reason — massive scale, a document-shaped domain, or graph traversal — not to
                     avoid SQL. Most apps are still best served by a relational database; "boring
@@ -796,7 +796,7 @@ db.orders.<span class="fn">aggregate</span>([
                     just like SQL <span class="acro-exp">(Structured Query Language)</span>. Modern Mongo has ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span> multi-document transactions, but they signal
                     you may have wanted relational.
                   </div>
-                  <div class="concept-desc" style="margin-top:6px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Watch out:</strong> unbounded array growth, and treating it
                     as schemaless forever — inconsistent documents become a nightmare. Enforce a
                     schema at the app (or with schema validation).
@@ -831,7 +831,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>List / Stream</td><td>Queues &amp; event logs</td></tr>
                     <tr><td>Pub/Sub</td><td>Lightweight messaging</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Caching patterns:</strong> cache-aside (check Redis, miss →
                     DB → populate) is most common; always set a <strong class="c-green">TTL <span class="acro-exp">(Time To Live)</span></strong>
                     and plan for cache invalidation. Persistence (RDB snapshots / AOF) means it can
@@ -867,7 +867,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Single-table design</td><td>DynamoDB: model many entities in one table by key design</td></tr>
                     <tr><td>Hot partition</td><td>A bad key funnels traffic to one node — throttling</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Tunable consistency</strong> (quorums) lets you dial
                     latency vs freshness per operation. These shine for known, high-volume access
                     patterns (feeds, IoT, sessions) — and hurt when requirements need flexible
@@ -906,7 +906,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Recommendations</td><td>"People who bought… also…"</td></tr>
                     <tr><td>Fraud / security</td><td>Attack-path &amp; ring detection (cf. BloodHound)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The relationship is stored directly, so a traversal is a pointer-hop, not a join —
                     performance stays flat as hops increase. Use a graph DB when connections
                     <em>are</em> the primary query; otherwise a relational DB is simpler.
@@ -941,7 +941,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Wins at</td><td>Point lookups &amp; writes</td><td>Aggregations &amp; scans</td></tr>
                     <tr><td>Example</td><td>Postgres, MySQL</td><td>BigQuery, Snowflake, ClickHouse</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Why columnar is fast for analytics:</strong> reading only
                     the 3 columns a query touches (not all 50), plus massive compression on similar
                     values. Don't run heavy analytics on your OLTP database — it competes with live
@@ -978,7 +978,7 @@ db.orders.<span class="fn">aggregate</span>([
                   </table>
                   <pre class="code-block"><span class="com">-- DuckDB: query a Parquet file directly, no loading</span>
 <span class="kw">SELECT</span> country, <span class="fn">count</span>(*) <span class="kw">FROM</span> <span class="str">'events/*.parquet'</span> <span class="kw">GROUP BY</span> <span class="num">1</span>;</pre>
-                  <div class="concept-desc" style="margin-top:6px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Trend:</strong> DuckDB has made "big data" analytics
                     possible on a laptop for datasets that once needed a cluster — reach for it before
                     spinning up Spark.
@@ -1010,7 +1010,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Data Lake</td><td>Raw files (Parquet) in object storage, schema-on-read — cheap, flexible, messy</td></tr>
                     <tr><td>Lakehouse</td><td>Lake storage + warehouse features (ACID, tables) via Delta/Iceberg/Hudi</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Table formats</strong> (Apache Iceberg, Delta Lake) are the
                     key innovation — they add transactions, schema evolution, and time-travel on top of
                     plain files, so one copy of data serves many engines. Warehouse = easy &amp;
@@ -1046,7 +1046,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Governance</td><td>Certified vs experimental metrics</td></tr>
                     <tr><td>Tools</td><td>dbt Semantic Layer, Cube, LookML</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The payoff: a single source of truth for business logic that BI <span class="acro-exp">(Business Intelligence)</span> tools, notebooks,
                     and APIs <span class="acro-exp">(Application Programming Interface)</span> all consume — no more "whose number is right?" meetings. It's the
                     analytics equivalent of DRY <span class="acro-exp">(Don't Repeat Yourself)</span>.
@@ -1081,7 +1081,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Distribution</td><td>Nulls/values within normal bounds?</td></tr>
                     <tr><td>Lineage</td><td>What feeds this, and what breaks if it fails?</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Tools:</strong> dbt tests &amp; contracts, Great
                     Expectations, Soda; observability platforms (Monte Carlo) auto-detect anomalies.
                     <strong class="c-amber">Data contracts</strong> push the guarantee upstream to
@@ -1116,7 +1116,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>PITR</td><td>Base backup + WAL <span class="acro-exp">(Write-Ahead Log)</span> archive → restore to an exact second</td></tr>
                     <tr><td>Snapshots</td><td>Cloud volume snapshots — fast but check consistency</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">RPO/RPO drive design:</strong> continuous WAL archiving
                     gives near-zero data loss (RPO). But the only backup that counts is a
                     <strong class="c-green">restore you've actually tested</strong> — schedule restore
@@ -1152,7 +1152,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Automatic failover</td><td>Patroni/orchestrator promote a replica on primary death</td></tr>
                     <tr><td>Split-brain</td><td>Two primaries accept writes — data divergence; fencing prevents it</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Replication lag</strong> means "read your own write" can
                     fail — route critical reads to the primary. HA needs a leader-election mechanism;
                     rolling your own failover is how you get split-brain.
@@ -1186,7 +1186,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Locking DDL <span class="acro-exp">(Data Definition Language)</span></td><td>Some <code>ALTER</code>s rewrite/lock the table — check first</td></tr>
                     <tr><td>Online tools</td><td>gh-ost, pt-online-schema-change for big MySQL tables</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Golden rule:</strong> every migration must be
                     backward-compatible with the currently-deployed code, because during a rollout both
                     versions run at once. "Add a nullable column, deploy, backfill, then enforce" beats
@@ -1222,7 +1222,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Secrets</td><td>Rotate credentials via Vault/IAM; never hardcode</td></tr>
                     <tr><td>Auditing</td><td>Log privileged actions &amp; access to sensitive tables</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">And of course:</strong> parameterized queries to stop SQL <span class="acro-exp">(Structured Query Language)</span>
                     injection (the app's job), and network isolation so the DB is never internet-facing.
                     Column-level encryption/masking protects PII <span class="acro-exp">(Personally Identifiable Information)</span> even from DB admins.
@@ -1258,7 +1258,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Bloat / vacuum (PG)</td><td>Dead tuples piling up → autovacuum tuning</td></tr>
                     <tr><td>Disk &amp; IOPS <span class="acro-exp">(Input/Output Operations Per Second)</span></td><td>Running out of space is a hard outage</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <code>pg_stat_statements</code> (Postgres) and the Performance Schema (MySQL)
                     surface your worst queries — the single most useful place to look when the DB is slow.
                   </div>
@@ -1292,7 +1292,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>ML Engineer</td><td>Productionizing models (MLOps)</td></tr>
                     <tr><td>DBA</td><td>Runs &amp; tunes the operational databases</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">The modern stack</strong> blurred these: analytics
                     engineering emerged from analysts adopting version control, testing, and CI. The
                     common core is SQL — it's the one skill every data role shares.
@@ -1327,7 +1327,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>5. Index for access</td><td>Add indexes for the real queries</td></tr>
                     <tr><td>6. OLAP <span class="acro-exp">(Online Analytical Processing)</span> later</td><td>Star schema in the warehouse for reporting</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Snapshot the price:</strong> an <code>OrderItem</code>
                     stores the price <em>at time of sale</em>, not a live FK to Product.price — a
                     classic modeling insight. Design OLTP <span class="acro-exp">(Online Transaction Processing)</span> for correctness; derive OLAP from it.
@@ -1361,7 +1361,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Retention policies</td><td>Auto-expire raw data past N days</td></tr>
                     <tr><td>Tools</td><td>TimescaleDB, InfluxDB, Prometheus, ClickHouse</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The pattern that makes it sustainable: <strong class="c-green">high-resolution
                     recent + low-resolution history</strong>. You almost never need per-second data
                     from last year, so roll it up and let raw data expire. Ties to the observability
@@ -1397,7 +1397,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Similarity</td><td>Cosine / dot product ranks "closeness"</td></tr>
                     <tr><td>Options</td><td>pgvector, Pinecone, Weaviate, Qdrant, Milvus</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Start simple:</strong> <code>pgvector</code> adds vector
                     search to Postgres — often you don't need a separate vector DB at all.
                     <strong class="c-amber">Hybrid search</strong> (vectors + keyword/filters) beats
@@ -1432,10 +1432,429 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Warehousing</td><td>OLTP <span class="acro-exp">(Online Transaction Processing)</span> vs OLAP <span class="acro-exp">(Online Analytical Processing)</span>, SCDs, dbt, incremental models</td></tr>
                     <tr><td>Case / product sense</td><td>Define a metric, debug a dashboard drop</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Highest-leverage prep:</strong> window functions and the
                     NULL/join traps — they separate mid from senior. Practice explaining <em>why</em>,
                     not just writing the query. Every card in this domain maps to one of these rounds.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌊</span>
+              <span class="topic-name">Streaming &amp; Event Pipelines — Delivery Guarantees and the Lies About Time</span>
+              <span class="topic-badge">Analytics</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Log You Read Rather Than a Queue You Drain</div>
+                <div class="concept-desc">
+                  The mental model that makes streaming systems make sense is not a queue. It is an
+                  <strong>append-only log with a cursor per reader</strong>. Nothing is consumed —
+                  reading does not remove anything, and each consumer group tracks its own position
+                  independently. That single design choice explains almost every property people find
+                  surprising: several teams can read the same events for different purposes, a broken
+                  consumer can be rewound and replayed, and a slow reader falls behind rather than
+                  blocking anyone else.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">partition 0:  [e0][e1][e2][e3][e4][e5][e6][e7][e8] ← producers append here
+                            ▲              ▲
+                     analytics (3)   fraud check (7)   ← independent cursors
+
+Ordering is guaranteed *within a partition*, and nowhere else.
+Key choice decides partition, so key choice decides what stays ordered.</pre>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">That last line is the design decision that matters
+                    most.</strong> Events for one account stay in order only if the account id is the
+                    partition key. Choose a random key for even distribution and you have traded away
+                    every ordering guarantee — usually without noticing until a "balance updated"
+                    arrives before the "account created".
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Delivery Guarantees, and What "Exactly Once" Really Means</div>
+                <div class="concept-desc">
+                  The three-way choice is usually presented as a dial you set. It is closer to a
+                  statement about where you put the work.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Guarantee</th><th>Mechanism</th><th>You get</th></tr></thead>
+                    <tbody>
+                      <tr><td>At most once</td><td>Commit the position before processing</td><td>Loss on a crash. Acceptable for metrics, never for money</td></tr>
+                      <tr><td>At least once</td><td>Commit the position after processing</td><td>Duplicates on a crash. <strong>The default, and the right default</strong></td></tr>
+                      <tr><td>Exactly once</td><td>Transactional writes inside one system, or idempotent consumers</td><td>Real within the boundary of a single system, and an aspiration across two</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The practical answer is at-least-once plus an idempotent
+                    consumer</strong>, which is to say: make reprocessing the same event harmless.
+                    An upsert keyed on an event id, a natural key, or a deduplication window does
+                    this and survives every failure mode. Chasing end-to-end exactly-once across a
+                    broker, a job and an external API <span class="acro-exp">(Application Programming Interface)</span> means building distributed transactions, and
+                    the idempotent version is smaller, cheaper and easier to reason about.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Two Clocks, and Why Windows Are Hard</div>
+                <div class="concept-desc">
+                  Every streaming bug that takes a week to find is a confusion between when something
+                  <em>happened</em> and when it <em>arrived</em>. They are always different and
+                  occasionally different by hours.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Clock</th><th>Is</th><th>Use it for</th></tr></thead>
+                    <tbody>
+                      <tr><td><strong>Event time</strong></td><td>When it happened, stamped at the source</td><td>Every business answer. "Sales on Tuesday" means events stamped Tuesday</td></tr>
+                      <tr><td><strong>Processing time</strong></td><td>When your job saw it</td><td>Operational monitoring, and nothing else</td></tr>
+                      <tr><td>Ingestion time</td><td>When the broker accepted it</td><td>A compromise; deterministic on replay, which event time is not always</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Windowing by processing time is trivial and wrong: <strong>a replay produces
+                    different numbers than the original run</strong>, which makes the pipeline
+                    unauditable. Windowing by event time is correct and forces a question with no
+                    clean answer — how long do you wait for stragglers? A phone that was offline for
+                    six hours will send you Tuesday's events on Wednesday.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Handling Late Data — Pick One Deliberately</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Strategy</th><th>Behaviour</th><th>Costs</th></tr></thead>
+                    <tbody>
+                      <tr><td>Watermark and drop</td><td>Close the window after a grace period; discard anything later</td><td>Simple and final. You must be able to say what the drop rate is</td></tr>
+                      <tr><td>Allowed lateness with updates</td><td>Reopen and re-emit a corrected result</td><td>Downstream must handle a figure that changes after publication</td></tr>
+                      <tr><td>Side output</td><td>Route late events elsewhere for repair</td><td>Honest, and someone has to own the repair queue or it silently grows</td></tr>
+                      <tr><td>Batch reconciliation</td><td>Stream for speed, recompute nightly for truth</td><td>Two code paths that must agree — the classic failure of this pattern</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Whichever you pick, <strong>say it out loud in the metric's definition</strong>:
+                    "revenue by event time, 2-hour watermark, late events dropped" is a number people
+                    can trust and argue with. "Revenue" is not — and the difference is exactly the
+                    job of <span class="xref">The Semantic Layer &amp; Metrics</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">When Not to Stream</div>
+                <div class="concept-desc">
+                  Streaming is chosen for latency and paid for in operations, and the bill lands on
+                  whoever is on call rather than on whoever chose it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Question</th><th>If the answer is…</th></tr></thead>
+                    <tbody>
+                      <tr><td>Does anyone act on this within minutes?</td><td>No → batch. Latency nobody uses is cost with no benefit</td></tr>
+                      <tr><td>What happens when the job is down for two hours?</td><td>"We replay" is fine. "We lose data" means the design is not finished</td></tr>
+                      <tr><td>Who fixes a bad deployment at 2 a.m.?</td><td>A batch job reruns in the morning. A stream accumulates lag while you sleep</td></tr>
+                      <tr><td>Is state involved — joins, aggregates, sessions?</td><td>Stateful streaming is a different discipline from stateless transformation, and much of the operational cost lives there</td></tr>
+                      <tr><td>Is the requirement really "fresher", not "streaming"?</td><td>Hourly batch is often the honest answer, and it is a fraction of the work</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">The most common expensive mistake in this area</strong> is
+                    building a streaming pipeline to feed a dashboard somebody looks at once a
+                    morning. The requirement was freshness, the answer was a schedule, and the
+                    project bought an on-call rota instead.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔁</span>
+              <span class="topic-name">Change Data Capture — Reading the Database's Own Diary</span>
+              <span class="topic-badge">Analytics</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Every Database Already Writes Down Every Change</div>
+                <div class="concept-desc">
+                  Getting data out of a production database into a warehouse usually starts with a
+                  query on a schedule, and it is the wrong shape from the first day. Change data
+                  capture takes a different route: the database already maintains a durable,
+                  ordered record of every committed change, because replication and crash recovery
+                  depend on it. <strong>CDC reads that log instead of the tables</strong> — the
+                  write-ahead log in PostgreSQL, the binary log in MySQL, the transaction log in SQL <span class="acro-exp">(Structured Query Language)</span>
+                  Server — and turns it into a stream of inserts, updates and deletes.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Approach</th><th>How</th><th>What it misses</th></tr></thead>
+                    <tbody>
+                      <tr><td>Query on a timestamp</td><td><code>WHERE updated_at &gt; last_run</code></td><td><strong>Deletes, entirely.</strong> Rows that changed twice. Rows whose <code>updated_at</code> the application forgot to set</td></tr>
+                      <tr><td>Full reload</td><td>Copy the table each night</td><td>Nothing — and it costs proportionally to size rather than to change, so it stops being possible at exactly the point it matters</td></tr>
+                      <tr><td>Trigger-based</td><td>Write changes to an audit table</td><td>Little, but it puts your logic in the write path and slows every transaction to serve an analytics need</td></tr>
+                      <tr><td><strong>Log-based CDC</strong></td><td>Read the replication log</td><td>Little. It is outside the transaction path, so production barely notices</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">The deletes row is the one that quietly ruins
+                    warehouses.</strong> A timestamp-based load can never learn that a row is gone,
+                    so cancelled orders stay counted, closed accounts stay active, and the numbers
+                    drift upward forever in a way that looks like growth.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Snapshot, Then Stream — the Part That Is Actually Hard</div>
+                <div class="concept-desc">
+                  The log only contains changes since the log started. To build a copy of a table you
+                  need its current contents plus every change from a precisely known point, and
+                  joining those two without a gap or an overlap is the whole engineering problem.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">1. note the current log position          ← the seam
+2. snapshot the table (consistent read)
+3. start streaming changes from (1)
+4. apply — the snapshot may be stale, the stream will correct it
+
+Which is why every CDC sink must be idempotent: step 4 will replay
+changes that step 2 already contains, on purpose.</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Failure</th><th>Symptom</th></tr></thead>
+                    <tbody>
+                      <tr><td>Snapshot taken before the position is noted</td><td>A gap. Changes in between are lost forever, silently</td></tr>
+                      <tr><td>Sink is not idempotent</td><td>Duplicate rows at every restart, and every restart looks like a data-quality incident</td></tr>
+                      <tr><td>Log retention expires while a consumer is down</td><td>The stream cannot resume. The only recovery is a fresh snapshot — so retention is a real operational parameter, not a default</td></tr>
+                      <tr><td>A large table snapshotted in one transaction</td><td>Long-running read holding resources on production, which is what makes CDC unwelcome the first time it is tried</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The third row deserves a calendar entry. <strong>Log retention sets how long a
+                    downstream consumer may be broken before the recovery becomes expensive</strong>
+                    — a weekend outage with 24 hours of retention means re-snapshotting on Monday,
+                    against production, at the worst possible time.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What the Events Look Like, and Why the Before-Image Matters</div>
+                <div class="concept-desc">
+                  A CDC event is not a row. It is a description of a transition, and the difference
+                  is what makes the interesting things possible.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">{ "op": "u",                         // c=create  u=update  d=delete  r=snapshot
+  "before": { "id": 7, "status": "pending",  "total": 40 },
+  "after":  { "id": 7, "status": "shipped",  "total": 40 },
+  "source": { "lsn": 55123, "ts_ms": 1690000000000, "table": "orders" } }</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Field</th><th>What it unlocks</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>before</code></td><td>Which columns actually changed, and audit questions like "who was it assigned to before". Often disabled by default — turn it on deliberately, and know it costs log volume</td></tr>
+                      <tr><td><code>op</code></td><td>Deletes as first-class events. Soft-delete downstream rather than removing, and history survives</td></tr>
+                      <tr><td>Log position</td><td>Deterministic ordering and exact resume. This is the field that makes replay trustworthy</td></tr>
+                      <tr><td>Source timestamp</td><td>Event time for anything downstream — see <span class="xref">Streaming &amp; Event Pipelines — Delivery Guarantees and the Lies About Time</span></td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Because every transition is captured, a CDC feed is also a ready-made
+                    <strong>slowly-changing dimension</strong>: keep every version with its validity
+                    window and you can answer "what did this customer's tier look like in March",
+                    which the source system usually cannot answer about itself.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Coupling Nobody Warns You About</div>
+                <div class="concept-desc">
+                  CDC is often sold as non-invasive, and operationally it is. Architecturally it is
+                  the opposite: it publishes the source system's <em>internal schema</em> to
+                  everyone downstream.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Consequence</th><th>What happens</th></tr></thead>
+                    <tbody>
+                      <tr><td>A column rename in a sprint</td><td>Breaks three dashboards owned by people the developer has never met</td></tr>
+                      <tr><td>A normalisation refactor</td><td>Downstream joins that reconstructed the application's logic silently produce different answers</td></tr>
+                      <tr><td>Nobody told the team</td><td>Correct — they were not asked, because nothing in their workflow says the table is an interface</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The fix is not to stop using CDC.</strong> It is to put
+                    something between the log and the consumers — a published set of events, or a
+                    transformation layer owned by the data team — so that the source can change its
+                    tables and the contract stays still. That is precisely the argument in
+                    <span class="xref">Data Lineage &amp; Contracts — Where the Number Came From, and Who Promised It</span>,
+                    and CDC is the case that makes it urgent rather than theoretical.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧬</span>
+              <span class="topic-name">Data Lineage &amp; Contracts — Where the Number Came From, and Who Promised It</span>
+              <span class="topic-badge">Analytics</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Two Questions That Consume Most of a Data Team's Week</div>
+                <div class="concept-desc">
+                  Ask anyone who runs a data platform what they actually spend time on and the
+                  answer is two questions, asked constantly and answered by hand.
+                  <strong>"Where did this number come from?"</strong> — someone disputes a figure and
+                  the only way to answer is to read the query, then the query that fed it, then the
+                  job that loaded that. And <strong>"what breaks if I change this?"</strong> — a
+                  column is being renamed and nobody can say who depends on it, so either the change
+                  is blocked forever or it ships and something falls over.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    Lineage answers both mechanically. It is the graph of what feeds what: source
+                    tables, transformations, models, dashboards, and the edges between them. And the
+                    reason it matters is not tidiness — it is that <strong>without it, both questions
+                    are answered by whoever has been there longest</strong>, which is a staffing
+                    dependency dressed up as a knowledge one.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Three Grades of Lineage, and What Each Is Good For</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Grade</th><th>Granularity</th><th>Answers</th><th>Cost</th></tr></thead>
+                    <tbody>
+                      <tr><td>Table-level</td><td>This table feeds that table</td><td>Impact analysis, and roughly where a failure came from</td><td>Cheap — parse the SQL <span class="acro-exp">(Structured Query Language)</span>, or read the orchestrator's dependency graph</td></tr>
+                      <tr><td>Column-level</td><td>This column feeds that column, through these expressions</td><td>"Which of the forty columns actually break if I drop this one?"</td><td>Needs real SQL parsing per dialect; increasingly available in tooling</td></tr>
+                      <tr><td>Row-level / provenance</td><td>This specific value came from these specific inputs</td><td>Regulated reporting and forensic disputes</td><td>Expensive, rarely justified outside finance and pharma</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Table-level lineage that is automatically derived beats
+                    column-level lineage that is maintained by hand</strong>, every time. Hand-drawn
+                    diagrams are accurate on the day they are drawn and misleading within a quarter —
+                    and a lineage graph nobody trusts is worse than none, because people check it,
+                    find it wrong once, and stop.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Contract Is the Half Lineage Cannot Supply</div>
+                <div class="concept-desc">
+                  Lineage tells you what <em>is</em> connected. It says nothing about what anyone
+                  <em>promised</em> — and the recurring failure in data platforms is not a missing
+                  graph, it is that a producing team never agreed to anything and had no way to know
+                  they had broken someone.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>A data contract states</th><th>Example</th></tr></thead>
+                    <tbody>
+                      <tr><td>Schema, with types and nullability</td><td><code>order_id: string, not null</code> — and that adding a column is allowed while removing one is not</td></tr>
+                      <tr><td>Semantics</td><td>What <code>status = 'complete'</code> means, in business terms. The field most often skipped and most often the cause of the argument</td></tr>
+                      <tr><td>Freshness</td><td>"Available within 30 minutes of the event, 99% of days"</td></tr>
+                      <tr><td>Volume expectations</td><td>Normal daily range, so a silent collapse to zero is a violation rather than a Tuesday</td></tr>
+                      <tr><td>Ownership</td><td>A named team, reachable, who answer for it</td></tr>
+                      <tr><td>Change policy</td><td>How much notice, and by what channel. This is the clause the whole thing exists for</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">A contract only works if it is enforced where the data is
+                    produced.</strong> Checked in the warehouse, it is a report that the damage
+                    already happened. Checked in the producer's own pipeline — a schema test that
+                    fails their build — it stops the change before it ships, which is the only
+                    version anyone actually benefits from.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Why This Keeps Failing as a Documentation Project</div>
+                <div class="concept-desc">
+                  Most organisations attempt this at least once as a catalogue exercise, and the
+                  shape of the failure is consistent enough to predict.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Attempt</th><th>Why it decays</th></tr></thead>
+                    <tbody>
+                      <tr><td>A spreadsheet of every table and its owner</td><td>Correct for a month. Nothing in anyone's workflow updates it, and nobody notices it has stopped being true</td></tr>
+                      <tr><td>A wiki page of pipeline diagrams</td><td>Same, plus the diagrams are prettier, so they are trusted longer after they stop being right</td></tr>
+                      <tr><td>A catalogue tool bought and populated once</td><td>The population was the project. Nothing repopulates it</td></tr>
+                      <tr><td><strong>Lineage derived from the code that runs</strong></td><td>Cannot drift, because it is generated from the same definitions that execute. This is the only version that survives contact with a busy quarter</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The general principle is the one this site keeps arriving at from different
+                    directions: <strong>documentation that is not derived from the thing it
+                    documents will diverge from it</strong>, and the divergence is invisible until
+                    somebody relies on it. Metric definitions have the same property, which is why
+                    <span class="xref">The Semantic Layer &amp; Metrics</span> puts them in
+                    version-controlled code rather than in a glossary, and why
+                    <span class="xref">Data Quality &amp; Observability</span> tests freshness rather
+                    than asserting it.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Starting Small, Where It Actually Pays</div>
+                <div class="concept-desc">
+                  Neither of these is worth a platform programme. Both are worth doing narrowly,
+                  around the things that already hurt.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Step</th><th>Why start here</th></tr></thead>
+                    <tbody>
+                      <tr><td>Derive table lineage for the pipelines you already have</td><td>Usually a day's work from the orchestrator's own graph, and it answers the impact question immediately</td></tr>
+                      <tr><td>Write contracts for the three feeds that break most often</td><td>The complaints tell you which. Coverage is not the goal; the noisy edges are</td></tr>
+                      <tr><td>Put the schema test in the producer's build</td><td>Moves the failure from your dashboard to their pull request, which is the whole point</td></tr>
+                      <tr><td>Name an owner per source, publicly</td><td>Half the value of a contract is that there is someone to ask</td></tr>
+                      <tr><td>Record the semantics for the ten metrics leadership quotes</td><td>These are the numbers that get argued about in rooms you are not in</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The measure of success is unglamorous and specific: <strong>how long it takes to
+                    answer "where did this number come from" for a figure you did not build</strong>.
+                    If that is still an afternoon of reading SQL, no amount of catalogue coverage has
+                    moved the thing that was costing you.
                   </div>
                 </div>
               </div>

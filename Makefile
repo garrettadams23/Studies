@@ -39,6 +39,7 @@ check:
 	$(PY) tools/annotate_acronyms.py --check
 	$(PY) tools/check_renames.py
 	$(PY) tools/check_contradictions.py --strict
+	$(PY) tools/check_volatility.py --self-test
 	$(PY) tools/check_volatility.py
 	$(PY) tools/suggest_related.py --check
 	$(PY) tools/check_paths.py

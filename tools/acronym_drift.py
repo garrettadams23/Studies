@@ -66,7 +66,17 @@ TAG_RE = re.compile(r"<[^>]+>")
 ACRO_EXP_RE = re.compile(r'<span class="acro-exp">\([^<]*?\)</span\s*>')
 # Two or more capitals, allowing digits and a trailing lowercase 's' or 'e'
 # (IPs, VLANs, 10GbE) — the shapes the dictionary itself already uses.
-TOKEN_RE = re.compile(r"\b[A-Z][A-Za-z0-9]*[A-Z0-9][A-Za-z0-9]*\b")
+#
+# The first two branches exist because an ampersand is not a word character, so
+# a single `\b…\b` token split `ATT&CK` — which the dictionary knows — into
+# `ATT` and `CK`, and reported both as unknown 39 times each, at positions 7
+# and 8 of the drift list. Only an ampersand with no spaces around it joins a
+# token: "Backup &amp; Recovery" stays two words, because the spaces stop the
+# first branch and its first word has one capital.
+TOKEN_RE = re.compile(
+    r"\b[A-Z][A-Za-z0-9]*[A-Z0-9][A-Za-z0-9]*&[A-Z][A-Za-z0-9]*\b"   # ATT&CK
+    r"|\b[A-Z]&[A-Z]\b"                                              # M&A, R&D
+    r"|\b[A-Z][A-Za-z0-9]*[A-Z0-9][A-Za-z0-9]*\b")
 
 # Words that are all-capitals in prose without being acronyms. Short on purpose:
 # anything longer is a sign the exclusions above are not doing their job.

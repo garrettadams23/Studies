@@ -69,7 +69,7 @@
                     <tr><td>Pick a home region</td><td>Everything is regional; resources in us-east-1 aren't visible in eu-west-1.</td></tr>
                     <tr><td>Learn the Free Tier</td><td>t2/t3.micro, 5 GB S3 <span class="acro-exp">(Simple Storage Service)</span>, etc. — practice without cost.</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Three ways to drive AWS: the <strong>Console</strong> (web, learn here),
                     the <strong>CLI <span class="acro-exp">(Command Line Interface)</span></strong> (scripting/repeatability), and
                     <strong>SDKs/IaC</strong> (Terraform, CloudFormation) for production. Graduate
@@ -104,7 +104,7 @@
 <span class="fn">aws</span> ec2 describe-instances \
   --query <span class="str">'Reservations[].Instances[].[InstanceId,State.Name]'</span> \
   --output table</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-cyan">CloudShell</strong> is a browser terminal with the CLI
                     pre-authenticated as your console identity — nothing to install. Prefer
                     <strong class="c-green">IAM <span class="acro-exp">(Identity and Access Management)</span> roles</strong> over long-lived access keys; on an
@@ -176,7 +176,7 @@
 <span class="fn">gsutil</span> ls                          <span class="com"># Cloud Storage buckets (like aws s3)</span>
 <span class="fn">gsutil</span> cp file.txt gs://my-bucket/
 <span class="fn">bq</span> query <span class="str">'SELECT 1'</span>                <span class="com"># BigQuery from the CLI</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-cyan">Cloud Shell</strong> (browser terminal) comes with
                     <code>gcloud</code>, <code>gsutil</code>, <code>bq</code>, <code>kubectl</code>,
                     Docker, and Terraform pre-installed and authenticated. Note the split:
@@ -261,7 +261,7 @@
   <span class="str">"Resource"</span>: <span class="str">"arn:aws:s3:::my-bucket/*"</span>,
   <span class="str">"Condition"</span>: { <span class="str">"IpAddress"</span>: { <span class="str">"aws:SourceIp"</span>: <span class="str">"10.0.0.0/8"</span> } }
 }</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Golden rule:</strong> grant <strong>least privilege</strong>
                     — start with nothing, add the specific actions needed. Never attach
                     <code>*:*</code> ("AdministratorAccess") to app roles.
@@ -298,7 +298,7 @@
                     <tr><td>IAM Identity Center</td><td>SSO <span class="acro-exp">(Single Sign-On)</span> for humans → short-lived console/CLI sessions</td></tr>
                     <tr><td>OIDC <span class="acro-exp">(OpenID Connect)</span> federation</td><td>Let GitHub Actions assume a role with no stored secret</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Policy evaluation:</strong> an explicit
                     <strong class="c-red">Deny</strong> always wins; otherwise you need an explicit
                     Allow. Effective permission = intersection of identity policy, resource policy,
@@ -338,7 +338,7 @@
 <pre class="code-block"><span class="fn">gcloud</span> projects add-iam-policy-binding my-proj \
   --member=<span class="str">"user:alice@example.com"</span> \
   --role=<span class="str">"roles/storage.objectViewer"</span></pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Prefer <strong class="c-green">predefined/custom</strong> roles over basic ones,
                     and bind as low in the hierarchy as possible (project &gt; folder &gt; org).
                   </div>
@@ -373,7 +373,7 @@
                     <tr><td>Attached SA (on a VM/pod)</td><td>Metadata server issues short-lived tokens automatically</td></tr>
                     <tr><td>Workload Identity Federation</td><td>External identities (GitHub/AWS) assume an SA keylessly</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Rule: if you're storing a <code>.json</code> key, ask whether Workload Identity
                     can replace it. Usually it can.
                   </div>
@@ -408,7 +408,7 @@
                     <tr><td>SSRF <span class="acro-exp">(Server-Side Request Forgery)</span> → metadata service</td><td>App-layer SSRF steals the instance's role creds (IMDSv2 mitigates on AWS)</td></tr>
                     <tr><td>Public resource policies</td><td>A bucket/queue open to <code>"Principal": "*"</code></td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Defenses:</strong> least privilege, no wildcards, IMDSv2,
                     short-lived creds, and continuous scanning with CSPM <span class="acro-exp">(Cloud Security Posture Management)</span> tools (Prowler, ScoutSuite,
                     Steampipe) that flag these exact patterns.
@@ -444,7 +444,7 @@
                     <tr><td>Security Group</td><td><strong>Stateful</strong> firewall on the instance — allow rules only; return traffic auto-allowed</td></tr>
                     <tr><td>NACL</td><td><strong>Stateless</strong> firewall on the subnet — allow + deny; must allow both directions</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Remember:</strong> Security Groups are stateful (the
                     common case, instance-level); NACLs are stateless (subnet-level, coarse). Put
                     databases in private subnets and never give them a public IP <span class="acro-exp">(Internet Protocol)</span>.
@@ -473,7 +473,7 @@
                     <tr><td>Route 53</td><td>DNS + health checks + routing policies (latency, weighted, failover, geo)</td></tr>
                     <tr><td>CloudFront</td><td>CDN <span class="acro-exp">(Content Delivery Network)</span> — caches content at edge locations near users; also DDoS/TLS termination</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     A typical web path: <strong>Route 53 → CloudFront → ALB → targets</strong> across
                     multiple AZs <span class="acro-exp">(Availability Zone)</span>. Route 53's <strong class="c-green">failover routing</strong> +
                     health checks is how you build multi-region resilience.
@@ -508,7 +508,7 @@
                     <tr><td>Cloud NAT <span class="acro-exp">(Network Address Translation)</span></td><td>Managed egress for private instances (no per-VM NAT gateway)</td></tr>
                     <tr><td>Cloud Router</td><td>Dynamic (BGP) routing for hybrid/VPN links</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Firewall rules being <strong class="c-green">tag-based</strong> is the mental
                     shift from AWS <span class="acro-exp">(Amazon Web Services)</span>: tag an instance <code>web</code>, write a rule "allow 443 to
                     tag:web" — no security-group object to attach.
@@ -571,7 +571,7 @@
                     <tr><td>Connect two VPCs <span class="acro-exp">(Virtual Private Cloud)</span></td><td>VPC Peering / Transit Gateway</td><td>VPC Peering / Network Connectivity Center</td></tr>
                     <tr><td>Reach a managed service privately</td><td>PrivateLink / VPC Endpoints</td><td>Private Service Connect</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">VPN</strong> is cheap and quick but rides the public
                     internet; <strong class="c-cyan">Direct Connect / Interconnect</strong> is a
                     private circuit — pricier, but consistent low latency and high bandwidth for
@@ -642,7 +642,7 @@
                     <tr><td>Fargate</td><td>Serverless <em>container</em> compute — runs ECS/EKS tasks with no EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> to manage</td></tr>
                     <tr><td>App Runner</td><td>Push a container/repo → get a URL <span class="acro-exp">(Uniform Resource Locator)</span>; simplest path</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Decision:</strong> event-driven glue → Lambda; long-running
                     services in containers → ECS/EKS on Fargate (no servers) or EC2 (cheaper at
                     scale, more ops). Fargate is the "I don't want to manage nodes" answer for
@@ -710,7 +710,7 @@
                     <tr><td>GKE</td><td>Managed Kubernetes — the reference K8s experience (Google created K8s)</td></tr>
                     <tr><td>GKE Autopilot</td><td>K8s where Google manages the nodes for you</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Rule of thumb:</strong> a stateless web service or API <span class="acro-exp">(Application Programming Interface)</span> →
                     Cloud Run. Event glue → Cloud Functions. You genuinely need Kubernetes (complex
                     microservices, existing K8s manifests) → GKE.
@@ -739,7 +739,7 @@
                     <tr><td>Managed Kubernetes</td><td>Many services, complex networking, portability, an existing K8s investment</td></tr>
                     <tr><td>Plain VMs</td><td>Legacy apps, special OS/kernel needs, GPUs <span class="acro-exp">(Graphics Processing Unit)</span>, or maximum control</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The trend runs left-to-right toward <strong>more managed</strong> — start as
                     serverless as the workload allows and drop down to VMs only when you need the
                     control. Less to operate = less to break.
@@ -783,7 +783,7 @@
                     <tr><td>Intelligent-Tiering</td><td>Auto-moves objects by usage</td></tr>
                     <tr><td>Glacier / Deep Archive</td><td>Cold archive — pennies to store, slow/paid retrieval</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Use <strong class="c-green">lifecycle rules</strong> to age objects into colder
                     classes automatically. EBS volumes are AZ-locked — snapshot to S3 for
                     backup/restore across AZs <span class="acro-exp">(Availability Zone)</span>.
@@ -812,7 +812,7 @@
                     <tr><td>DynamoDB</td><td>Managed key-value/document NoSQL — single-digit-ms at any scale, serverless</td></tr>
                     <tr><td>ElastiCache</td><td>Managed Redis/Memcached (caching, sessions)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Choosing:</strong> relational data with joins/transactions
                     → RDS/Aurora. Massive scale with simple key-based access → DynamoDB (design around
                     your access patterns — no ad-hoc joins). Always enable
@@ -841,7 +841,7 @@
                     <tr><td>Persistent Disk</td><td>Block</td><td>EBS <span class="acro-exp">(Elastic Block Store)</span></td></tr>
                     <tr><td>Filestore</td><td>File (NFS)</td><td>EFS <span class="acro-exp">(Elastic File System)</span></td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Cloud Storage classes mirror S3: <strong>Standard → Nearline → Coldline →
                     Archive</strong>, from hot to cheap-cold. A nice touch: one API/bucket namespace
                     with a per-object storage class, and lifecycle rules to auto-tier. Persistent
@@ -871,7 +871,7 @@
                     <tr><td>Firestore</td><td>Serverless document NoSQL (≈ DynamoDB), great for app backends</td></tr>
                     <tr><td>Bigtable</td><td>Wide-column NoSQL for huge analytical/time-series workloads (≈ Cassandra/HBase)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Spanner</strong> is the standout — it breaks the usual
                     "you can't have global scale AND strong consistency" rule (via TrueTime atomic
                     clocks). Reach for it when you genuinely need both; otherwise Cloud SQL is the
@@ -907,7 +907,7 @@
                     <tr><td>Cost model</td><td>Priced by bytes scanned (or flat-rate slots) — <code>SELECT *</code> on a huge table is expensive</td></tr>
                     <tr><td>BQ ML <span class="acro-exp">(Machine Learning)</span></td><td>Train ML models in SQL, in place</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Cost tip:</strong> select only needed columns and use
                     partitioned/clustered tables — you pay for data scanned, so pruning saves real
                     money. AWS <span class="acro-exp">(Amazon Web Services)</span>'s equivalent is Redshift (and Athena for S3).
@@ -943,7 +943,7 @@
                     <tr><td>Inspector</td><td>Automated vuln scanning of EC2/ECR/Lambda</td></tr>
                     <tr><td>Macie</td><td>Finds sensitive data (PII) in S3 <span class="acro-exp">(Simple Storage Service)</span></td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Pattern:</strong> CloudTrail + Config feed GuardDuty +
                     Security Hub, which stream findings to your SIEM/SOAR. This is the AWS-native
                     version of the Blue Team stack.
@@ -977,7 +977,7 @@
                     <tr><td>Secrets Manager</td><td>Store + auto-rotate DB creds/API keys; fetch at runtime</td></tr>
                     <tr><td>Parameter Store</td><td>Cheaper config + secret storage (SSM)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Enable <strong class="c-green">default encryption</strong> on S3/EBS/RDS with KMS,
                     and pull secrets from Secrets Manager at runtime — the two habits that close the
                     most common data-exposure gaps.
@@ -1006,7 +1006,7 @@
                     <tr><td>Cloud Logging / Monitoring</td><td>Logs, metrics, alerting</td><td>CloudWatch</td></tr>
                     <tr><td>Chronicle</td><td>Google's SIEM <span class="acro-exp">(Security Information and Event Management)</span> at scale</td><td>—</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">SCC</strong> is the single pane for GCP security posture —
                     it surfaces misconfigurations, vulnerabilities, and active threats across your
                     projects, mapped to standards.
@@ -1035,7 +1035,7 @@
                     <tr><td>VPC <span class="acro-exp">(Virtual Private Cloud)</span> Service Controls</td><td>A security perimeter around services to stop data exfiltration — GCP-distinctive</td></tr>
                     <tr><td>DLP <span class="acro-exp">(Data Loss Prevention)</span> API <span class="acro-exp">(Application Programming Interface)</span></td><td>Discover &amp; redact sensitive data (PII)</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">VPC-SC</strong> is the standout: it draws a boundary so
                     that even a stolen credential can't pull data out to the internet — mitigating
                     the exact SSRF/exfil chains from the IAM Pitfalls card.
@@ -1099,7 +1099,7 @@
 
 <span class="kw">resource</span> <span class="str">"aws_s3_bucket"</span> <span class="str">"data"</span>   { <span class="var">bucket</span> = <span class="str">"my-data"</span> }
 <span class="kw">resource</span> <span class="str">"google_storage_bucket"</span> <span class="str">"data"</span> { <span class="var">name</span> = <span class="str">"my-data"</span>, <span class="var">location</span> = <span class="str">"US"</span> }</pre>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Cloud essentials: store <strong class="c-green">state remotely</strong> (S3 +
                     DynamoDB lock, or GCS) so a team shares it; use <strong>modules</strong> for
                     reusable stacks (a "VPC module"); and never edit cloud resources by hand once
@@ -1135,7 +1135,7 @@
                     <tr><td>Scope</td><td>AWS only</td><td>AWS only</td><td class="c-green">Multi-cloud</td></tr>
                     <tr><td>State</td><td class="c-green">Managed by AWS</td><td>Managed by AWS</td><td>You manage</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:8px">
+                  <div class="concept-desc verdict">
                     Rule of thumb: all-in on AWS → CloudFormation/CDK is tightly integrated;
                     multi-cloud or tool consistency → Terraform. GCP <span class="acro-exp">(Google Cloud Platform)</span>'s equivalents are Deployment
                     Manager and Config Controller (Terraform is common on GCP too).
@@ -1168,7 +1168,7 @@
                     <tr><td>Attribute spend</td><td>Cost allocation tags</td><td>Labels</td></tr>
                     <tr><td>Anomaly detection</td><td>Cost Anomaly Detection</td><td>Budget anomaly alerts</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Biggest levers: <strong class="c-green">tag everything</strong> (or you can't
                     attribute spend), set budget alerts before you deploy, rightsize idle resources,
                     and commit (Savings Plans / CUDs) for steady workloads. Watch data-egress — the
@@ -1203,7 +1203,7 @@
                     <tr><td>Guardrails</td><td>Service Control Policies (SCPs)</td><td>Org Policies</td></tr>
                     <tr><td>Landing zone</td><td>Control Tower</td><td>Cloud Foundation Toolkit</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The win: a compromise or mistake in one account/project can't reach the others,
                     and central <strong class="c-green">guardrails</strong> (SCPs/Org Policies)
                     enforce rules — "no public S3 <span class="acro-exp">(Simple Storage Service)</span>," "only these regions" — org-wide.
@@ -1238,7 +1238,7 @@
                     <tr><td>Deployment Manager</td><td>The older Jinja/Python template engine (legacy; being retired)</td></tr>
                     <tr><td>Terraform (+ Blueprints)</td><td>Google's actual recommended default for most teams</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Takeaway:</strong> for greenfield GCP IaC, reach for
                     Terraform or Config Controller, not Deployment Manager. The KRM model unifies app
                     and infra config under one reconciliation loop (ties to GitOps in ops).
@@ -1272,7 +1272,7 @@
                     <tr><td>CodeDeploy</td><td>Cloud Deploy</td><td>Progressive delivery to targets</td></tr>
                     <tr><td>ECR <span class="acro-exp">(Elastic Container Registry)</span></td><td>Artifact Registry</td><td>Store container/package artifacts</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Why native:</strong> pipelines assume an IAM role (no
                     long-lived keys), and use <strong class="c-green">OIDC <span class="acro-exp">(OpenID Connect)</span></strong> to let external
                     CI authenticate without stored secrets. Push signed images to the registry, then
@@ -1308,7 +1308,7 @@
                     <tr><td>Dashboards</td><td>Single-pane views of a service's health</td></tr>
                     <tr><td>X-Ray</td><td>Traces &amp; service maps for latency debugging</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Modern path:</strong> instrument with
                     <strong class="c-green">OpenTelemetry</strong> (via the AWS Distro, ADOT) so your
                     telemetry isn't locked in. Alarms on the <em>golden signals</em> (latency, errors,
@@ -1343,7 +1343,7 @@
                     <tr><td>Cloud Trace</td><td>X-Ray (distributed tracing)</td></tr>
                     <tr><td>Cloud Profiler / Error Reporting</td><td>Continuous profiling &amp; error grouping</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Define an <strong class="c-green">SLO <span class="acro-exp">(Service Level Objective)</span></strong> right in Cloud Monitoring and it
                     tracks the error budget and burn rate for you — the theory from the SRE card,
                     operationalized. Also OpenTelemetry-native.
@@ -1380,7 +1380,7 @@
                     <tr><td>Cost Optimization</td><td>Pay only for what delivers value (→ FinOps)</td></tr>
                     <tr><td>Sustainability</td><td>(AWS) minimize environmental impact</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Run a review before a big launch: score each pillar, log the risks, remediate the
                     high ones. It's the cloud-specific companion to the engineering-domain system
                     design cards.
@@ -1417,7 +1417,7 @@
                   <pre class="code-block"><span class="com"># Sign in and set the active subscription</span>
 az login
 az account set <span class="var">--subscription</span> <span class="str">"Prod"</span></pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Note the terms:</strong> Azure "subscription" ≈ AWS
                     account, and RBAC <span class="acro-exp">(Role-Based Access Control)</span> is assigned on scopes (management group → subscription →
                     resource group → resource) that inherit downward.
@@ -1453,7 +1453,7 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                     <tr><td>AKS <span class="acro-exp">(Azure Kubernetes Service)</span></td><td>Managed Kubernetes</td><td>EKS <span class="acro-exp">(Elastic Kubernetes Service)</span> / GKE <span class="acro-exp">(Google Kubernetes Engine)</span></td></tr>
                     <tr><td>ARM <span class="acro-exp">(Azure Resource Manager)</span> / Bicep</td><td>Native IaC <span class="acro-exp">(Infrastructure as Code)</span> (Bicep = friendly ARM)</td><td>CloudFormation</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Bicep</strong> is worth knowing — a clean DSL <span class="acro-exp">(Domain-Specific Language)</span> that
                     compiles to ARM templates, Azure's answer to Terraform/CloudFormation for
                     declarative infra.
@@ -1487,7 +1487,7 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                     <tr><td>Key Vault</td><td>Secrets, keys &amp; certificates</td><td>Secrets Manager / Secret Manager</td></tr>
                     <tr><td>Conditional Access</td><td>Risk/device-based access policy (ties to ITDR)</td><td>—</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">KQL</strong> (Kusto Query Language) powers Sentinel
                     hunting and Log Analytics — a genuinely useful skill that carries across Defender,
                     Sentinel, and Azure Monitor. This closes the AWS <span class="acro-exp">(Amazon Web Services)</span> ↔ GCP <span class="acro-exp">(Google Cloud Platform)</span> ↔ Azure security triangle.
@@ -1529,7 +1529,7 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                       <tr><td>Resource</td><td>The individual VM <span class="acro-exp">(Virtual Machine)</span>, storage account, key vault…</td><td>Narrow, exception-level access</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The gotcha:</strong> a resource group is not a security
                     boundary by itself and it is not a network boundary at all — two VMs in different
                     resource groups can sit in the same subnet and talk freely.
@@ -1565,7 +1565,7 @@ az policy state list --resource <span class="str">"&lt;resource-id&gt;"</span> -
 
 <span class="com"># Built-in roles are usually enough — check before writing a custom one</span>
 az role definition list --custom-role-only <span class="kw">false</span> --query <span class="str">"[?contains(roleName,'Contributor')].roleName"</span></pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Least privilege in practice:</strong> Reader for everyone
                     by default, Contributor scoped to a resource group, and Owner or User Access
                     Administrator handed out only through PIM <span class="acro-exp">(Privileged Identity Management)</span> with approval and a time limit.
@@ -1626,7 +1626,7 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                       <tr><td>Traffic Manager</td><td>DNS</td><td>Global</td><td>You need to steer by DNS answer — including to non-Azure endpoints</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Traffic Manager hands out an answer, not a connection.</strong>
                     Clients cache DNS, so failover is only as fast as the record's TTL <span class="acro-exp">(Time To Live)</span> — if you need
                     instant failover at the HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> layer, that is Front Door's job.
@@ -1660,7 +1660,7 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                       <tr><td>AKS <span class="acro-exp">(Azure Kubernetes Service)</span></td><td>The cluster's workloads and node pools</td><td>Teams already invested in Kubernetes</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">Sizing shorthand:</strong> B = burstable and cheap,
                     D = general purpose, E = memory-heavy, F = compute-heavy, L = storage-heavy,
                     N = GPU <span class="acro-exp">(Graphics Processing Unit)</span>. <strong class="c-amber">Availability:</strong> an availability set spreads
@@ -1685,7 +1685,7 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                       <tr><td>RA-GRS <span class="acro-exp">(Read-Access Geo-Redundant Storage)</span> / RA-GZRS</td><td>As above, plus a readable secondary endpoint</td><td>Same, but you can read the copy any time</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Access tiers trade storage cost against retrieval cost: <strong>Hot</strong> for
                     active data, <strong>Cool</strong> (30-day minimum), <strong>Cold</strong>
                     (90-day) and <strong>Archive</strong> (180-day, and it must be rehydrated before
@@ -1760,7 +1760,7 @@ Perf
 | <span class="kw">where</span> ObjectName == <span class="str">"Processor"</span> <span class="kw">and</span> CounterName == <span class="str">"% Processor Time"</span>
 | <span class="kw">summarize</span> avg(CounterValue) <span class="kw">by</span> Computer, bin(TimeGenerated, <span class="num">5</span>m)
 | <span class="kw">render</span> timechart</pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">The KQL that covers most days:</strong>
                     <code>where</code> to filter, <code>project</code> to pick columns,
                     <code>extend</code> to compute one, <code>summarize … by</code> to aggregate,
@@ -1801,7 +1801,7 @@ Perf
                       <tr><td>5</td><td>Is the thing inside the box healthy?</td><td>Boot diagnostics, serial console, Run Command, app logs</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">Always capture the correlation ID.</strong> Every
                     Azure Resource Manager operation carries one, it ties the portal error to the
                     Activity Log entry to the deployment operation — and it is the first thing
@@ -1863,7 +1863,7 @@ az vm run-command invoke --name web01 -g rg-prod --command-id RunPowerShellScrip
                       <tr><td>Public network access is disabled</td><td>The PaaS <span class="acro-exp">(Platform as a Service)</span> firewall is on and your client isn't on the allow list</td><td>Add the IP or subnet, or go through the private endpoint</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-green">A pattern worth internalising:</strong> if something
                     worked yesterday and fails today with no deployment in between, check the
                     Activity Log for a policy or lock added at a <em>parent</em> scope. Inheritance
@@ -1912,9 +1912,9 @@ dsregcmd /status
 <span class="com"># AzureAdJoined : YES  |  AzureAdPrt : YES  — if PRT is NO, SSO and device-based CA will fail</span>
 
 <span class="com"># Least-risk way to test a policy change before anyone feels it</span>
-<span class="com"># Entra admin center ▸ Conditional Access ▸ What If  — simulate user + app + device + location</span>
+<span class="com"># <span class="volatile" data-checked="2026-08">Entra admin center ▸ Conditional Access ▸ What If</span>  — simulate user + app + device + location</span>
 <span class="com"># then ship the policy in Report-only mode and read the results for a week</span></pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-amber">The three rules that prevent most Conditional Access outages:</strong>
                     keep a break-glass account excluded from every policy and monitored for use;
                     roll every new policy out in report-only first; and remember that a policy
@@ -1949,7 +1949,7 @@ dsregcmd /status
                   and whether the node's cloud identity is borrowable.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     This is why cluster hardening that starts at the control plane frequently misses. The
                     control plane is usually managed, patched and unreachable from the internet. The
                     interesting path runs the other way — from a compromised workload outward — and almost
@@ -1975,7 +1975,7 @@ dsregcmd /status
                       <tr><td>Code</td><td>The application, its dependencies, its handling of input</td><td>The SSRF <span class="acro-exp">(Server-Side Request Forgery)</span> or deserialisation bug that started the whole chain</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Read it outside-in for defence and inside-out for attack. The layers nest, so a control at
                     an outer layer contains failures at inner ones — which is the argument for spending
                     effort on cluster and cloud configuration rather than on making every application perfect.
@@ -2001,7 +2001,7 @@ dsregcmd /status
                       <tr><td>The workloads themselves</td><td>The starting position for everything above</td><td>The rest of this cluster of cards</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The metadata-endpoint row is the one that turns a container compromise into a cloud
                     compromise, and it is a single network rule. If you do one thing after reading this card,
                     make it that one — the attack path is short, well documented, and still open in most
@@ -2034,7 +2034,7 @@ dsregcmd /status
                   least-privilege frequently are not.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     The reframing that makes review possible: stop reading roles as lists of verbs and start
                     asking <em>what can the holder of this role cause to run, and as whom?</em> Anything that
                     creates or controls a workload inherits every identity that workload can use.
@@ -2063,7 +2063,7 @@ dsregcmd /status
                       <tr><td><code>create certificatesigningrequests</code> plus approval</td><td>Mint a client certificate for any identity</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Wildcards deserve a line of their own. A role with <code>resources: ["*"]</code> silently
                     acquires permissions on every custom resource anybody installs later — an operator added
                     next quarter extends a role written this quarter, with no change to the role and no
@@ -2090,7 +2090,7 @@ dsregcmd /status
           kubectl get clusterrolebindings -o json \
             | jq -r '.items[] | select(.roleRef.name=="cluster-admin")
                      | "\(.metadata.name): \([.subjects[]?.name] | join(","))"'</pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Three habits do most of the work: default every workload to a dedicated service account
                     with no permissions at all, so a grant is always deliberate; prefer namespaced Roles to
                     ClusterRoles, since the blast radius is the difference; and re-run the dangerous-verb
@@ -2129,7 +2129,7 @@ dsregcmd /status
           <span class="com"># Turn it off for workloads that do not talk to the API — most of them</span>
           spec:
             automountServiceAccountToken: false</pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Set it on the pod spec rather than the service account where you can: the service-account
                     setting is easy to override accidentally, and the pod-level declaration sits next to the
                     workload it describes. Either way, make "does this need API access?" a question the
@@ -2156,7 +2156,7 @@ dsregcmd /status
                       <tr><td>Stored in etcd</td><td>Yes, readable by anyone with <code>get secrets</code></td><td>No</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The practical consequence for defenders: on a modern cluster, a token exfiltrated from a
                     pod stops working. On a cluster still carrying legacy tokens — usually because something
                     old requested one, or because a manifest creates a token Secret by hand — it works
@@ -2183,7 +2183,7 @@ dsregcmd /status
                       <tr><td>Workload identity federation</td><td>Exactly one workload's permissions, short-lived</td><td>The answer — the service-account token is exchanged for cloud credentials</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The federation mechanism is the projected token's audience field doing real work: the
                     cluster's OIDC <span class="acro-exp">(OpenID Connect)</span> issuer is trusted by the cloud provider, and the trust policy names the
                     exact namespace and service account. Pair it with blocking pod access to the metadata
@@ -2216,7 +2216,7 @@ dsregcmd /status
                   that configuration.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     Which is good news for defence: these are visible in the manifest, checkable before
                     deployment, and enforceable by admission policy. The vulnerability class you cannot see is
                     the small one; the configuration class you can see is the large one.
@@ -2271,7 +2271,7 @@ dsregcmd /status
           kubectl label namespace prod \
             pod-security.kubernetes.io/enforce=baseline \
             pod-security.kubernetes.io/audit=restricted</pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Enforce at one level while auditing at the next tells you what tightening would cost
                     before you pay it — the single most useful configuration in this whole area. When you
                     outgrow the three profiles, a full policy engine is the next step; the mechanics are in
@@ -2306,7 +2306,7 @@ dsregcmd /status
                   boundary people describe as isolated.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     Two facts make this worse than it sounds. NetworkPolicy resources are enforced by the CNI
                     plugin, so on a plugin that does not implement them the objects apply cleanly and do
                     nothing at all — a policy that appears in <code>kubectl get</code> is not evidence of
@@ -2336,7 +2336,7 @@ dsregcmd /status
                       <tr><td>6</td><td>Namespace-by-namespace, with the DNS <span class="acro-exp">(Domain Name System)</span> rule remembered every time</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The DNS rule earns its own mention because it causes most first-attempt failures: a
                     default-deny egress policy blocks lookups to the cluster DNS service, so everything fails
                     in a way that looks nothing like a network policy problem. Allow UDP <span class="acro-exp">(User Datagram Protocol)</span> and TCP <span class="acro-exp">(Transmission Control Protocol)</span> 53 to the
@@ -2364,7 +2364,7 @@ dsregcmd /status
                       <tr><td>Regulatory encryption-in-transit requirement</td><td>No</td><td>Yes, without changing applications</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The honest sequencing: network policy first, always, because it is free with the platform
                     and stops the movement that matters most. Adopt a mesh when you have a specific need in
                     that table's second column, not because the architecture diagram looks more complete with
@@ -2428,7 +2428,7 @@ dsregcmd /status
                       <tr><td>Customers running code you did not write</td><td>Separate clusters, or a sandboxed runtime, or both</td><td>The shared kernel is the boundary, and a container is not one</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     When workloads genuinely must be hostile-tolerant on shared infrastructure, the answer is
                     a stronger runtime boundary rather than more Kubernetes configuration: a sandboxed runtime
                     such as gVisor, or lightweight virtual machines per pod. They cost startup latency and
@@ -2458,7 +2458,7 @@ dsregcmd /status
                       <tr><td>Per-namespace quota on Secrets and services</td><td>Resource exhaustion attacks that are not CPU <span class="acro-exp">(Central Processing Unit)</span> or memory</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Write down which of these you have and which you do not, and share it with whoever
                     believes the namespaces are a boundary. Half the value of this card is that conversation
                     happening before an incident rather than during one.
@@ -2489,7 +2489,7 @@ dsregcmd /status
                   entitled to create is visible only in the second.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     Most clusters have neither properly. Managed control planes often ship audit logs to the
                     cloud provider's logging service where nobody has written a query against them, and
                     runtime sensors are installed in default mode where they produce a volume of low-value
@@ -2519,7 +2519,7 @@ dsregcmd /status
                       <tr><td>Service account authenticating from outside the cluster</td><td>A token that left the pod it was issued to</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Configure the audit policy deliberately: <code>Metadata</code> level for most resources,
                     <code>RequestResponse</code> for RBAC objects and secrets, and drop the high-volume
                     read-only noise from system components. Logging everything at the highest level is the
@@ -2549,7 +2549,7 @@ dsregcmd /status
                       <tr><td>Enforce read-only root filesystems first</td><td>Prevention removes the alerts rather than tuning them</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     That last row is the reordering worth taking away: several of these detections exist
                     because a preventive control was not applied. A read-only root filesystem, a dropped
                     capability set and a non-root user eliminate whole rule categories, and a rule you never
@@ -2582,7 +2582,7 @@ dsregcmd /status
                   investigate — deletes the crime scene here.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     The correction is a single change of order: <strong>isolate without terminating.</strong>
                     A pod can be cut off from the network and detached from its controller while continuing
                     to run, which preserves memory, filesystem and process state for as long as you need it.
@@ -2610,7 +2610,7 @@ dsregcmd /status
           kubectl get pod api-7d9f -o yaml > ./evidence/spec.yaml
 
           <span class="com"># 4. Snapshot the node's disk through the cloud provider, not the cluster</span></pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Step 1 is the one worth memorising. Removing the label that the controller's selector
                     matches orphans the pod: the workload heals, users see a brief blip, and the evidence
                     stays alive. Without it you are choosing between service availability and knowing what
@@ -2637,7 +2637,7 @@ dsregcmd /status
                       <tr><td>Did anything change in the cluster?</td><td>GitOps <span class="acro-exp">(Git Operations)</span> diff against the declared state — drift is a finding</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Three things must exist before the incident or none of the above works: audit logs
                     retained somewhere outside the cluster, a quarantine network policy written and tested in
                     advance, and node-snapshot permissions that an on-call responder actually holds at three
@@ -2672,7 +2672,7 @@ dsregcmd /status
                   function does with its input, and what its execution role is allowed to do.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     That concentration cuts both ways. It makes the review tractable, because there are only
                     two questions and both are answerable from the repository. It also means an
                     over-permissive role has nothing standing between it and the attacker: no network
@@ -2702,7 +2702,7 @@ dsregcmd /status
                       <tr><td>Log or notification events</td><td>Anything an attacker can cause to be logged</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The object-storage row produces the classic chain: a user uploads a file whose name
                     contains a shell metacharacter, a function passes that name to a media tool, and the
                     function's role does the rest. Nobody thought of the filename as user input because the
@@ -2731,7 +2731,7 @@ dsregcmd /status
                       <tr><td>Dependencies bundled and never rebuilt</td><td>Nothing patches a deployment package; only a redeploy does</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The reused-state rows surprise people most, because the mental model says each invocation
                     is fresh. The execution environment is reused when it can be — which is what makes warm
                     starts fast, and what makes a credential or a user's data left in a global variable
@@ -2762,7 +2762,7 @@ dsregcmd /status
                   database, and for something in between on a managed Kubernetes cluster.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     The question that turns the diagram into work: <em>for this specific service, what
                     configuration can I change that would expose data?</em> That set is always small, always
                     documented, and is where essentially all cloud breaches live. The introduction is in
@@ -2811,7 +2811,7 @@ dsregcmd /status
                       <tr><td>Region and data residency</td><td>Some services replicate metadata globally; residency claims need the specific service's documentation</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The data-plane logging row is worth acting on immediately. Control-plane events — who
                     created what — are almost always on by default; data-plane events — who read which
                     object — usually are not. That is precisely the log you will want during an incident,
@@ -2843,7 +2843,7 @@ dsregcmd /status
                   highest-return change in this whole area.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     Keep both. The scanner sees what the code declares; posture management sees what actually
                     exists, including everything created by hand, by another team, or by a service that
                     provisions its own resources. Each has a blind spot precisely where the other looks.
@@ -2869,7 +2869,7 @@ dsregcmd /status
                       <tr><td>Drift, if you also scan the plan output</td><td>Runtime state — who has actually been reading the data</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Scanning the <em>plan</em> rather than only the source closes most of the second column's
                     first two rows. The plan has variables resolved and modules expanded, so it describes what
                     will actually exist — at the cost of needing credentials to generate it, which is a
@@ -2897,7 +2897,7 @@ dsregcmd /status
                       <tr><td>Publish paved-path modules that are compliant by construction</td><td>Turns the scanner into a backstop instead of a gate people fight</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The last row is where this ends up if it goes well. Scanning finds the same handful of
                     mistakes repeatedly, and a module that cannot express the mistake removes the class rather
                     than catching instances of it. The policy-engine mechanics for enforcing that at deploy
@@ -2929,7 +2929,7 @@ dsregcmd /status
                   matters.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     This is good for detection engineers: the events are structured, complete, attributed to
                     an identity, and generated by the platform rather than by an agent an attacker can
                     disable. It is bad for anyone hoping to start small — the volume is enormous and almost
@@ -2984,7 +2984,7 @@ dsregcmd /status
                       <tr><td>Route control-plane logs to an account nobody's workload can write to</td><td>Otherwise the first detection is also the one an attacker deletes</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The last row is a prerequisite rather than a tuning tip: logs stored in the account being
                     attacked are evidence an attacker can edit. A separate, write-only-from-outside logging
                     destination is what makes everything above trustworthy. The rule-writing lifecycle itself
@@ -3016,7 +3016,7 @@ dsregcmd /status
                   nowhere.
                 </div>
                 <div class="dw">
-                  <div class="concept-desc" style="margin-top:0">
+                  <div class="concept-desc">
                     Replace the question. <em>Which identity acted, what is that identity permitted to do, and
                     what did it actually do?</em> The first is in the log, the second is computable from
                     policy, and the third is the rest of the investigation. The general process still applies —
@@ -3045,7 +3045,7 @@ dsregcmd /status
                       <tr><td>7</td><td>Hunt for persistence — new users, keys, trust policies, functions, scheduled tasks</td><td>Revoking one credential achieves nothing if a second was created</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Step 4 is the one that catches teams out. Deleting an access key stops new sessions and
                     does nothing to sessions already issued — temporary credentials remain valid for their
                     full lifetime. The immediate control is an explicit deny policy on the role, applied
@@ -3073,7 +3073,7 @@ dsregcmd /status
                       <tr><td>Infrastructure as code for the compromised workloads</td><td>Rebuilding clean is a project rather than a redeploy</td></tr>
                     </tbody>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     The last row is the recovery half and it is what separates a bad day from a bad month. If
                     the environment is declared in code, rebuilding into a clean account is a pipeline run,
                     and you never have to answer the unanswerable question of whether you found everything the
@@ -3117,7 +3117,7 @@ dsregcmd /status
             <tr><td>Rotating it is easy</td><td>Only if something restarts the consumers. Mounted secrets update; environment variables do not</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The "create a pod" clause in the second row is the one people miss. Permission to run a
           workload in a namespace is effectively permission to read every Secret in it, because a
           pod can simply mount them. Namespace-scoped RBAC <span class="acro-exp">(Role-Based Access Control)</span> is therefore a boundary between
@@ -3144,7 +3144,7 @@ dsregcmd /status
             <tr><td>Cloud provider secret manager, called directly</td><td>Secrets in the cluster at all</td><td>Application code changes, and a failure mode at start-up</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The last two rows are the direction of travel, and the reason is worth stating plainly:
           every other option is a better way to store a long-lived credential, while these remove
           the long-lived credential. A pod that exchanges its own signed identity token for a
@@ -3172,7 +3172,7 @@ dsregcmd /status
             <tr><td>Ephemeral debug containers</td><td>Attach to a running pod and the mounted secrets are right there</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           Prefer <strong>mounted files over environment variables</strong> for anything that
           matters: files are not inherited by child processes, do not appear in a pod description,
           and are updated in place when the secret rotates. The wider practice is the same as
@@ -3217,7 +3217,7 @@ dsregcmd /status
             <tr><td>Consistent logging</td><td>One access log format for every request that enters the cluster</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The fourth row carries the caveat that matters. Authentication at the gateway proves
           <em>who</em> is calling; it says nothing about whether they may act on <em>this object</em>,
           and a service that trusts a header because "the gateway checked" is one misconfigured route
@@ -3242,7 +3242,7 @@ dsregcmd /status
             <tr><td>Service mesh</td><td>Traffic <em>between</em> services, mTLS <span class="acro-exp">(Mutual Transport Layer Security)</span>, retries, policy</td><td>Solves an east-west problem; it is not an ingress and does not replace one</td></tr>
           </tbody>
         </table>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           The Gateway API split is worth understanding even if you never adopt it, because it names
           the governance problem correctly: with plain Ingress, a team that can create an Ingress
           object can usually claim any hostname, including one already in use. Separating who owns
@@ -3281,7 +3281,7 @@ dsregcmd /status
             </tbody>
           </table>
         </div>
-        <div class="concept-desc" style="margin-top:10px">
+        <div class="concept-desc verdict">
           "Service has no endpoints" is the single most common cause of a 502 from an ingress, and
           the fastest check on the list — a selector typo or an unready readiness probe, both of
           which the Ingress object itself reports as perfectly healthy. The default-deny interaction

@@ -2016,7 +2016,7 @@ objdump -d sample.bin | head -50   <span class="com"># a first look at the code<
 
 <span class="com"># Entropy near 8.0 across a section means packed or encrypted —</span>
 <span class="com"># stop and unpack before wasting hours reading noise.</span></pre>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     Imports are the cheapest signal in the file. <code>CryptEncrypt</code> plus
                     directory enumeration says ransomware; <code>SetWindowsHookEx</code> says
                     keylogger; a near-empty import table says the real ones are resolved at
@@ -2329,11 +2329,775 @@ objdump -d sample.bin | head -50   <span class="com"># a first look at the code<
                     <tr><td>Decoy hosts</td><td>Waste time; observe tradecraft</td><td>Moderate; needs realism and upkeep</td></tr>
                     <tr><td>Full deception environment</td><td>Sustained intelligence collection</td><td>High; needs legal sign-off and staff attention</td></tr>
                   </table>
-                  <div class="concept-desc" style="margin-top:10px">
+                  <div class="concept-desc verdict">
                     <strong class="c-red">Do not improvise this.</strong> Leaving an adversary in
                     place to watch them has regulatory, contractual and disclosure consequences,
                     and the decision belongs to counsel and leadership — recorded in advance, not
                     made at 2 a.m. by whoever is on call.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">💸</span>
+              <span class="topic-name">Business Email Compromise — The Attack With No Malware</span>
+              <span class="topic-badge">THREAT • Fraud</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Every Control You Bought Looks for a Payload. There Isn't One.</div>
+                <div class="concept-desc">
+                  A mail gateway scores attachments, detonates links and matches hashes. An endpoint
+                  agent watches processes. A network sensor looks for beacons. Business Email
+                  Compromise defeats all of them at once by containing <strong>no attachment, no
+                  link, and no code</strong> — just a plausible message from a plausible person
+                  asking for a payment to go somewhere new. The only "indicator" is a sentence about
+                  urgency and discretion, and there is no scanner for that.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    This is why BEC <span class="acro-exp">(Business Email Compromise)</span> consistently outranks ransomware in reported losses while barely
+                    registering in security tooling: it is not a computer intrusion that costs money,
+                    it is a <strong>payment process failure</strong> that happens to arrive by email.
+                    Treat it as an information-security problem alone and the fix will be bought from
+                    the wrong budget.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Five Shapes, and Who Each One Targets</div>
+                <div class="concept-desc">
+                  They differ in who is impersonated and what is asked for — which matters, because
+                  each one is stopped by a different process control.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Shape</th><th>The ask</th><th>Aimed at</th></tr></thead>
+                    <tbody>
+                      <tr><td>Executive fraud</td><td>An urgent, confidential transfer for a deal nobody has heard about</td><td>A junior finance approver, chosen because they will not push back</td></tr>
+                      <tr><td>Vendor or invoice fraud</td><td>"Our bank details have changed" on a real, expected invoice</td><td>Accounts payable — the highest-value variant, because the invoice is genuine</td></tr>
+                      <tr><td>Payroll diversion</td><td>An employee updating their own bank details in the portal</td><td>HR or payroll, in the week salaries run</td></tr>
+                      <tr><td>Attorney or acquisition</td><td>Secrecy is part of the story, so verification feels like a breach of trust</td><td>Finance leadership during a transaction</td></tr>
+                      <tr><td>Data and gift cards</td><td>Payroll records, tax forms, or a quick errand "while I'm in a meeting"</td><td>HR and assistants; the gift-card version is the cheap end of the same tradecraft</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Vendor fraud is the one to plan for.</strong> The others
+                    ask for something unusual, so a suspicious person can catch them. Vendor fraud
+                    asks for something entirely routine — pay this invoice, which you were already
+                    going to pay — and changes exactly one field.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Three Ways the Message Gets There, and Only One Is Dangerous</div>
+                <div class="concept-desc">
+                  How the mail is sent decides how hard it is to detect, and the difficulty gap
+                  between the three is enormous.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Route</th><th>What it looks like</th><th>Caught by</th></tr></thead>
+                    <tbody>
+                      <tr><td>Display-name spoof</td><td>"Jane Patel &lt;random@gmail.com&gt;"</td><td>Authentication and a banner on external mail. The easy case</td></tr>
+                      <tr><td>Lookalike domain</td><td><code>rn</code> for <code>m</code>, an extra hyphen, a different top-level domain</td><td>Registered-domain monitoring, and a rule for domains first seen in the last 30 days</td></tr>
+                      <tr><td><strong>Compromised real mailbox</strong></td><td>The genuine address, the genuine signature, replying inside the genuine thread</td><td><strong>Nothing in the mail path.</strong> The message is authentic, because it is</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <span class="xref">Email Authentication — SPF, DKIM, DMARC</span> closes the
+                    first route and narrows the second. It cannot touch the third, and saying so
+                    plainly is important: a DMARC <span class="acro-exp">(Domain-based Message Authentication, Reporting and Conformance)</span> rollout is worth doing and is not a BEC control.
+                    <strong>Thread hijacking</strong> — replying into a real conversation with real
+                    history above it — is what makes the compromised-mailbox variant so effective,
+                    and it is why the last message in a thread deserves the same suspicion as the
+                    first.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Inbox Rule Is the Whole Trick</div>
+                <div class="concept-desc">
+                  Once a mailbox is controlled, the attacker's problem is that the real owner will
+                  see the replies. The solution is almost always a mail rule, and it is the single
+                  most reliable artefact in a BEC investigation.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">Rule: if subject or body contains "invoice", "bank", "payment", "wire"
+      → move to RSS Feeds  (or Archive, or Notes — a folder nobody opens)
+      → mark as read
+      → optionally forward to attacker@…</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Why it works</th><th>What it means for you</th></tr></thead>
+                    <tbody>
+                      <tr><td>The supplier's "we did not change our details" reply never reaches a human</td><td>The fraud runs for weeks rather than hours</td></tr>
+                      <tr><td>The rule survives a password reset</td><td>Resetting the password without auditing rules leaves the attacker's plumbing intact</td></tr>
+                      <tr><td>It is created once and is silent thereafter</td><td>Rule creation is a high-signal, low-volume alert — one of the best available in mail telemetry</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Alert on mailbox-rule creation, forwarding rules, and
+                    new mail-app grants.</strong> These are rare enough to review individually and
+                    specific enough to be worth waking someone for, which is an unusual combination
+                    in mail security.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Controls That Actually Stop It Are Not Technical</div>
+                <div class="concept-desc">
+                  Every effective BEC control is a rule about how money moves. That is not a
+                  consolation prize — it means the fix works against a perfect forgery, which no
+                  detection control can promise.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Control</th><th>Detail that makes it work</th></tr></thead>
+                    <tbody>
+                      <tr><td>Out-of-band callback on any bank-detail change</td><td><strong>To a number you already had</strong> — from the contract or the vendor master, never from the email. Attackers helpfully supply a phone number</td></tr>
+                      <tr><td>Bank details are supplier-master data</td><td>Changing them is a controlled change with its own approver, not something a payment run can do inline</td></tr>
+                      <tr><td>Dual authorisation above a threshold</td><td>Set the threshold where fraud hurts, not where audit suggests. Two approvers who both read the same email is one approver</td></tr>
+                      <tr><td>A named exception path</td><td>Genuine urgent payments exist. Give them a route that is fast and verified, or urgency will keep beating verification</td></tr>
+                      <tr><td>Permission to slow down</td><td>The one that decides it. Staff must be able to say "I need to confirm this" to a director without consequence — and be praised when the request turns out to be real</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Note what is missing: training people to spot a fake. That helps, but the
+                    compromised-mailbox variant is not fake, and asking humans to distinguish a real
+                    email from a real email is not a control. <strong>Verify the change, not the
+                    message.</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The First Four Hours, in Order</div>
+                <div class="concept-desc">
+                  Unlike most incidents, this one has a clock attached to somebody else's system:
+                  the funds are moving through banks, and recall becomes impossible rather than
+                  merely difficult.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Order</th><th>Do</th><th>Because</th></tr></thead>
+                    <tbody>
+                      <tr><td>1</td><td>Call the sending bank and ask for a recall on the payment</td><td>The single action with a chance of getting the money back, and its odds fall by the hour</td></tr>
+                      <tr><td>2</td><td>Report to the national fraud or cybercrime body</td><td>Some jurisdictions can freeze a receiving account fast; almost none can do it later</td></tr>
+                      <tr><td>3</td><td>Preserve mailbox audit logs and export them</td><td>Retention is finite and often shorter than the investigation. Export before touching anything</td></tr>
+                      <tr><td>4</td><td>Enumerate rules, forwarders and connected apps on the mailbox</td><td>The persistence lives here, and it survives step 5</td></tr>
+                      <tr><td>5</td><td>Reset the password <em>and revoke active sessions and tokens</em></td><td>A password reset alone leaves a stolen session signed in — see <span class="xref">Token Lifetime &amp; Revocation — The Logout That Does Not, and How to Fix It</span></td></tr>
+                      <tr><td>6</td><td>Ask which other invoices that mailbox touched</td><td>One compromised mailbox usually means several attempted payments, not one</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">Steps 1 and 2 come before the technical work</strong>, and
+                    that ordering is worth agreeing in advance, because it is the opposite of every
+                    other incident runbook. The mailbox will still be compromised in an hour. The
+                    money will not still be recoverable.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔓</span>
+              <span class="topic-name">MFA <span class="acro-exp">(Multi-Factor Authentication)</span> Bypass in Practice — Adversary-in-the-Middle, Push Fatigue &amp; Stolen Sessions</span>
+              <span class="topic-badge">THREAT • Identity</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Attackers Stopped Trying to Beat the Second Factor and Started Skipping It</div>
+                <div class="concept-desc">
+                  Multi-factor authentication genuinely killed bulk credential attacks: a stuffed
+                  password list against an MFA-protected tenant returns almost nothing. So the
+                  target moved. Every technique here accepts that the victim will complete MFA
+                  correctly, and takes <strong>what MFA produces</strong> — the session — rather than
+                  fighting the check itself. Once a session token is in the attacker's browser, the
+                  authentication already happened, successfully, by the real user.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    This is the sentence that reframes the whole subject:
+                    <strong>MFA authenticates a login, not a session.</strong> Everything below is a
+                    consequence of that gap, and the defences that work are the ones that bind the
+                    session to something an attacker cannot carry away.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Techniques, Ranked by How Much They Care About Your MFA</div>
+                <div class="concept-desc">
+                  Ordered from "defeats every factor you own" downward, which is not the order they
+                  are usually taught in.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Technique</th><th>How it works</th><th>What it beats</th></tr></thead>
+                    <tbody>
+                      <tr><td><strong>Adversary-in-the-middle phishing</strong></td><td>A reverse proxy sits between victim and the real login page, relaying every field and prompt live, then keeping the resulting session cookie</td><td>Passwords, one-time codes, push approvals — every factor except phishing-resistant ones</td></tr>
+                      <tr><td>Session or token theft</td><td>Cookies lifted from an already-authenticated browser by malware and replayed elsewhere</td><td>Everything. The login never happens again</td></tr>
+                      <tr><td>Push fatigue</td><td>Repeated approval prompts until the victim taps to make them stop, often at 3 a.m.</td><td>Number-free push approval</td></tr>
+                      <tr><td>Help-desk social engineering</td><td>A convincing call gets a factor reset or a temporary bypass issued</td><td>All of it, from outside the technology entirely</td></tr>
+                      <tr><td>SIM <span class="acro-exp">(Subscriber Identity Module)</span> swap</td><td>The mobile number is ported or reassigned to the attacker</td><td>SMS and voice codes</td></tr>
+                      <tr><td>Consent phishing</td><td>The victim grants an app persistent access; no password or factor is ever collected</td><td>MFA, and password resets afterwards</td></tr>
+                      <tr><td>Legacy protocol fallback</td><td>An old endpoint that predates conditional access and never prompts</td><td>The policy, by not being covered by it</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <span class="xref">OAuth Consent Phishing — The Attack That Needs No Password</span>
+                    covers the last-but-two in depth. The row worth staring at is the first: an
+                    adversary-in-the-middle proxy is not a clever forgery of the login page — it
+                    <em>is</em> the login page, fetched live and passed through, which is why
+                    inspecting the form for mistakes finds none.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Why the Proxy Beats Every Code-Based Factor, Necessarily</div>
+                <div class="concept-desc">
+                  This is not an implementation flaw to be patched. Any factor whose proof is a value
+                  the user can read out and type in can be relayed by something standing in the
+                  middle, in real time, before it expires.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">victim → [attacker's proxy] → real identity provider
+        ← login page, verbatim ←
+  password →      relayed      → password        ✓ accepted
+   OTP code →     relayed      → OTP code        ✓ accepted
+   push tap →   (real prompt)  → approved        ✓ accepted
+        ← session cookie issued ←   ← attacker keeps a copy
+
+The victim lands on the real service, logged in, and nothing looks wrong.</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Factor</th><th>Relayable?</th><th>Why</th></tr></thead>
+                    <tbody>
+                      <tr><td>SMS or email code</td><td>Yes</td><td>A short string the user types anywhere they are asked to</td></tr>
+                      <tr><td>Authenticator app code</td><td>Yes</td><td>Same — the app has no idea which site is asking</td></tr>
+                      <tr><td>Simple push approval</td><td>Yes</td><td>The prompt is genuine; the user is approving a real sign-in they did start</td></tr>
+                      <tr><td>Number matching</td><td>Mostly</td><td>Raises the effort — the number must be shown to the victim — but does not break the relay</td></tr>
+                      <tr><td><strong>Passkeys / security keys</strong></td><td><strong>No</strong></td><td>The signature is bound to the origin. Presented to a lookalike domain, the authenticator simply will not sign</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">That last row is the point of the card.</strong>
+                    Phishing-resistant authentication is not "stronger MFA"; it is the only category
+                    that is structurally immune to relay, because the browser tells the authenticator
+                    which site is asking and the authenticator refuses to lie about it. See
+                    <span class="xref">Passkeys &amp; WebAuthn — Killing the Password</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">What the Attacker Does in the First Ten Minutes</div>
+                <div class="concept-desc">
+                  A stolen session is short-lived by design, so the post-login activity is fast,
+                  scripted and remarkably consistent. Knowing the sequence is what turns a vague
+                  "suspicious sign-in" into a decision.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Step</th><th>Action</th><th>Detection opportunity</th></tr></thead>
+                    <tbody>
+                      <tr><td>1</td><td>Register a new authentication method on the account</td><td><strong>The highest-value alert in identity telemetry.</strong> Rare, deliberate, and it converts a session into an account</td></tr>
+                      <tr><td>2</td><td>Create inbox rules to hide replies</td><td>Rule creation events; near-zero false-positive rate outside a few power users</td></tr>
+                      <tr><td>3</td><td>Search the mailbox for "invoice", "wire", "password", "VPN <span class="acro-exp">(Virtual Private Network)</span>"</td><td>Mail search auditing, where it is enabled</td></tr>
+                      <tr><td>4</td><td>Enumerate the tenant — users, groups, roles, sites</td><td>Directory reads at a volume no human produces</td></tr>
+                      <tr><td>5</td><td>Send internal phishing from the trusted mailbox</td><td>Internal mail with external links, at volume, from an account that never does that</td></tr>
+                      <tr><td>6</td><td>Grant an application persistent access</td><td>New service-principal consent — survives every credential change you make afterwards</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Steps 1 and 6 are the ones that outlive your response. Everything else is
+                    recoverable by killing the session; those two are how a ten-minute session
+                    becomes permanent access, and they are also the two most alertable events on
+                    the list.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Defences, in Descending Order of How Much They Change</div>
+                <div class="concept-desc">
+                  Ranked honestly: the first two remove whole techniques, the rest raise cost or
+                  shorten dwell time.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Defence</th><th>Removes</th><th>Cost</th></tr></thead>
+                    <tbody>
+                      <tr><td>Phishing-resistant factors for privileged and high-risk accounts</td><td>Adversary-in-the-middle, entirely</td><td>Hardware or platform authenticators, plus a recovery path that is not a weaker factor</td></tr>
+                      <tr><td>Bind the session to the device</td><td>Token replay from another machine</td><td>Device compliance or managed-device conditions in the access policy</td></tr>
+                      <tr><td>Number matching and approval context</td><td>Push fatigue</td><td>Nearly free, and usually a tenant setting</td></tr>
+                      <tr><td>Alert on new-factor registration and app consent</td><td>Nothing — but it catches the two persistent steps</td><td>Low volume, high signal</td></tr>
+                      <tr><td>Block legacy authentication</td><td>The fallback path around every policy</td><td>An inventory exercise, and one difficult application</td></tr>
+                      <tr><td>Help-desk verification for factor resets</td><td>The social-engineering route</td><td>Process, and a manager willing to defend it under pressure</td></tr>
+                      <tr><td>Short session lifetimes for sensitive apps</td><td>Nothing outright; shortens the window</td><td>Traded against user friction, honestly</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">"We have MFA" is now a statement about which techniques
+                    still work, not whether the account is safe.</strong> The useful version of the
+                    question is: <em>which factors, on which accounts, against a relay?</em> — and if
+                    the answer is codes and pushes everywhere, the tenant is exposed to the most
+                    common intrusion route in current use.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🪪</span>
+              <span class="topic-name">Infostealers — The Malware That Runs Once and Sells the Result</span>
+              <span class="topic-badge">THREAT • Malware</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Business Model Disguised as a Malware Family</div>
+                <div class="concept-desc">
+                  Most malware wants to stay. An infostealer wants to leave. It executes once,
+                  harvests everything a browser and an operating system will surrender, uploads it,
+                  and deletes itself — often in under a minute, sometimes without ever writing to
+                  disk. There is no persistence to find, no beacon to catch, no encryption event to
+                  alert on. By the time anyone could investigate, the malware is gone and the
+                  <strong>only remaining artefact is a file on somebody else's server</strong>.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    That file — a "log" — is the product. It is sold, resold and bundled, and it is
+                    how a home laptop with no corporate data on it becomes the entry point into a
+                    company: the browser on that laptop was signed in to work.
+                    <span class="xref">The Criminal Economy — Access Brokers, Affiliates &amp; How Breaches Get Sold</span>
+                    describes the market this feeds.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What Is Actually in a Stealer Log</div>
+                <div class="concept-desc">
+                  Far more than passwords, and the non-password items are the ones that hurt.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Item</th><th>Why it matters</th></tr></thead>
+                    <tbody>
+                      <tr><td><strong>Session cookies</strong></td><td>The prize. A valid cookie is a completed login — password unknown, MFA <span class="acro-exp">(Multi-Factor Authentication)</span> already satisfied, no prompt on replay</td></tr>
+                      <tr><td>Saved browser passwords</td><td>Decrypted on the victim's own machine, where the key is available by design</td></tr>
+                      <tr><td>Autofill data</td><td>Names, addresses, card details, security answers</td></tr>
+                      <tr><td>Crypto wallet files and extensions</td><td>Directly monetisable, which is why stealers proliferated in the first place</td></tr>
+                      <tr><td>Local credential stores</td><td>Password-manager databases, key files, cloud CLI <span class="acro-exp">(Command Line Interface)</span> tokens, SSH <span class="acro-exp">(Secure Shell)</span> keys</td></tr>
+                      <tr><td>A machine fingerprint</td><td>Screen size, time zone, user agent — so the buyer can imitate the victim's browser and reduce risk scoring</td></tr>
+                      <tr><td>The list of installed software</td><td>Used to price the log. A log from a machine with an enterprise VPN <span class="acro-exp">(Virtual Private Network)</span> client is worth many times a consumer one</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The fingerprint row explains a lot of confusing
+                    telemetry.</strong> A replayed session from a matching user agent, a plausible
+                    time zone and a residential address does not look like an impossible-travel
+                    event. It looks like the user.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">How It Arrives — Almost Never by Corporate Email</div>
+                <div class="concept-desc">
+                  Delivery has moved decisively away from the channels an enterprise inspects, which
+                  is why an organisation with excellent mail security can still find its credentials
+                  in a log.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Route</th><th>The lure</th></tr></thead>
+                    <tbody>
+                      <tr><td>Cracked or "free" software</td><td>Game cheats, activation tools, pirated design and productivity suites — installed deliberately, with warnings dismissed</td></tr>
+                      <tr><td>Search-ad impersonation</td><td>A paid advert above the real result for a common utility, pointing at a convincing clone site</td></tr>
+                      <tr><td>Fake update prompts</td><td>A browser or codec update on a compromised site, sometimes personalised to the visitor's actual browser</td></tr>
+                      <tr><td>"Paste this to fix it"</td><td>The victim is talked through copying a command into a terminal or the Run box, which makes them the delivery mechanism</td></tr>
+                      <tr><td>Social platform and messaging lures</td><td>A file from a contact, a collaboration offer to a creator, a job description as an archive</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Every one of these lands on <strong>a personal device, outside the estate</strong>
+                    — which is where the exposure is, because the browser on that device is signed in
+                    to the corporate identity provider from the last time somebody checked mail at
+                    home.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Response Is Not the One People Reach For</div>
+                <div class="concept-desc">
+                  The instinct on hearing "credentials stolen" is a password reset. Against a stealer
+                  that is roughly half the job, and it is the half that matters less.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Do</th><th>Because</th></tr></thead>
+                    <tbody>
+                      <tr><td><strong>Revoke sessions and refresh tokens</strong></td><td>The stolen cookie is independent of the password. Reset the password and the attacker's session stays signed in</td></tr>
+                      <tr><td>Then reset the password</td><td>Necessary, but on its own it changes nothing about what was taken</td></tr>
+                      <tr><td>Re-register authentication methods</td><td>Assume any factor added since the infection is the attacker's</td></tr>
+                      <tr><td>Rotate what was on the machine, not just what was typed</td><td>SSH keys, cloud CLI tokens, personal-access tokens, saved API <span class="acro-exp">(Application Programming Interface)</span> keys — the stealer took the files, not the keystrokes</td></tr>
+                      <tr><td>Treat the device as untrusted until rebuilt</td><td>Some families drop a second payload before deleting themselves. "It ran once" is a claim, not a finding</td></tr>
+                      <tr><td>Ask what else that browser profile was signed in to</td><td>One profile is typically signed in to a dozen services; the corporate one is rarely the only casualty</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">Revoke before reset, every time.</strong> It is the
+                    ordering people get wrong under pressure, and it is the difference between
+                    ejecting an intruder and locking the door behind them.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">What Reduces Exposure, Given the Device Is Not Yours</div>
+                <div class="concept-desc">
+                  The uncomfortable fact is that most stealer infections happen on machines the
+                  organisation does not manage and cannot inspect. Controls that assume otherwise do
+                  not apply, which narrows the useful list considerably — and sharpens it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Control</th><th>Effect</th></tr></thead>
+                    <tbody>
+                      <tr><td>Require a managed, compliant device for corporate sign-in</td><td>The strongest control available: a stolen cookie replayed from an unmanaged machine fails the condition, whatever it proves about identity</td></tr>
+                      <tr><td>Phishing-resistant factors</td><td>Does not stop cookie theft, but stops the attacker re-authenticating when the session expires</td></tr>
+                      <tr><td>Short session lifetimes on sensitive applications</td><td>Turns a stolen cookie from a standing invitation into a countdown</td></tr>
+                      <tr><td>Monitor stealer-log marketplaces for your domains</td><td>Cheap intelligence with an obvious action attached, and one of the few feeds that names individual accounts</td></tr>
+                      <tr><td>Tell people not to sign in to work on personal machines</td><td>Weak alone, and worth saying anyway — most people have never been told why it matters</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The device condition is the control that survives
+                    contact with reality.</strong> Everything a stealer takes proves <em>who</em> the
+                    user is; almost nothing it takes proves <em>where from</em>. Requiring both is
+                    what makes the log worth less than it cost.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🕳️</span>
+              <span class="topic-name">Attack Infrastructure — Botnets, Bulletproof Hosting &amp; the Plumbing Behind the Attack</span>
+              <span class="topic-badge">THREAT • Infrastructure</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Every Attack Runs on Something, and That Something Is Rented</div>
+                <div class="concept-desc">
+                  Attack write-ups describe payloads and techniques. Underneath is a supply chain of
+                  hosting, domains, proxies and compromised devices that most attackers do not build
+                  — they rent it, from people whose entire business is making infrastructure hard to
+                  take down. Understanding that layer changes what defence is available, because
+                  <strong>infrastructure is reused across campaigns while payloads are not</strong>:
+                  the same hosting and the same proxy pool serve a phishing kit today and a different
+                  crew's loader next week.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    That reuse is the defender's opening. A payload hash is good for one campaign. A
+                    hosting range, a certificate pattern or a domain-registration habit often
+                    survives several, which is why infrastructure indicators age better than file
+                    indicators — the practical version of
+                    <span class="xref">Indicators of Compromise (IOCs) – What to Look For</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Components, and What Each One Buys</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Component</th><th>What it is</th><th>What it buys the attacker</th></tr></thead>
+                    <tbody>
+                      <tr><td>Botnet</td><td>Compromised machines and devices under common control</td><td>Bandwidth, geography, and disposable endpoints — the raw material for everything below</td></tr>
+                      <tr><td>Bulletproof hosting</td><td>A provider that ignores abuse complaints, by business model rather than by accident</td><td>Time. Takedowns take weeks instead of hours</td></tr>
+                      <tr><td>Residential proxy network</td><td>Traffic relayed through consumer connections, often from devices whose owners agreed to something in an app's terms</td><td>Requests that arrive from an ordinary home address in the right country, defeating reputation and geography checks</td></tr>
+                      <tr><td>Fast flux</td><td>DNS <span class="acro-exp">(Domain Name System)</span> records rotated among many hosts, minutes apart</td><td>Blocking one address accomplishes nothing</td></tr>
+                      <tr><td>Domain generation algorithm</td><td>Malware and controller compute the same daily domain list from a seed</td><td>No fixed name to seize — the controller can move without updating a single implant</td></tr>
+                      <tr><td>Legitimate-service relaying</td><td>Command traffic through a cloud storage bucket, a paste site, a chat platform, a code repository</td><td>Traffic to a domain nobody will block, over a certificate nobody will question</td></tr>
+                      <tr><td>Booter / stresser service</td><td>Denial of service sold by the minute through a web front end</td><td>Attack capability with no technical skill and a card payment</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The last row is the one to keep in mind when scoping risk:
+                    <span class="xref">DoS / DDoS &amp; Network Attack Types</span> describes
+                    capability that <strong>costs less than dinner and needs no expertise</strong>.
+                    "Who would bother attacking us" is not a threat model when the barrier is that
+                    low.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Where Botnets Actually Come From Now</div>
+                <div class="concept-desc">
+                  The mental image is a room of infected desktops. The reality is overwhelmingly
+                  devices nobody thinks of as computers, which matters because none of them will ever
+                  run an endpoint agent.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Population</th><th>Why it is recruited</th></tr></thead>
+                    <tbody>
+                      <tr><td>Home routers and modems</td><td>Always on, rarely updated, frequently exposed to the internet by default</td></tr>
+                      <tr><td>Cameras, recorders, smart devices</td><td>Default credentials, firmware that shipped once and was never touched again</td></tr>
+                      <tr><td>Unpatched internet-facing servers</td><td>Better bandwidth and a real hosting address, which is worth more per host</td></tr>
+                      <tr><td>Compromised cloud accounts</td><td>Elastic capacity billed to the victim — a botnet that scales on somebody else's card</td></tr>
+                      <tr><td>Consenting devices</td><td>Proxy software bundled into free applications, where "you agreed" is technically true</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Two of these five are yours to worry about as a
+                    defender</strong> — your exposed servers and your cloud accounts. The other three
+                    are why the attack arrives from a residential address in your own country, and
+                    why blocking by geography quietly stopped working.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Living Off Trusted Services — the Structural Problem</div>
+                <div class="concept-desc">
+                  When command traffic runs through a mainstream cloud service, every network control
+                  built on reputation and destination fails at once, and not because it was configured
+                  badly.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Control</th><th>Why it fails here</th></tr></thead>
+                    <tbody>
+                      <tr><td>Domain blocklists</td><td>The domain belongs to a service the business uses</td></tr>
+                      <tr><td>Certificate scrutiny</td><td>The certificate is valid and correctly issued</td></tr>
+                      <tr><td>Reputation scoring</td><td>The destination has the best reputation available</td></tr>
+                      <tr><td>Geographic filtering</td><td>The edge node is local by design</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">What still works is behaviour rather than
+                    destination:</strong> a workstation talking to a cloud API <span class="acro-exp">(Application Programming Interface)</span> it has never used
+                    before, at a fixed interval, in small uniform payloads, from a process that has no
+                    business making network calls. That is beaconing, and it looks the same wherever
+                    it points — which is the argument for detections built on
+                    <em>regularity and process lineage</em> rather than on lists.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Takedowns Work, Briefly, and That Is Still Worth Something</div>
+                <div class="concept-desc">
+                  Coordinated seizures of botnet infrastructure are real and genuinely disruptive.
+                  They are also, almost always, temporary — and being honest about the shape of the
+                  outcome is what keeps them from being oversold.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Outcome</th><th>Typical shape</th></tr></thead>
+                    <tbody>
+                      <tr><td>Controllers seized or sinkholed</td><td>Traffic stops immediately; infected devices remain infected and start looking for a new controller</td></tr>
+                      <tr><td>Arrests</td><td>Rare, jurisdiction-dependent, and the affiliates are usually elsewhere</td></tr>
+                      <tr><td>Rebuild</td><td>Weeks to months, often under a new name with the same tooling and the same people</td></tr>
+                      <tr><td>Lasting effect</td><td>Trust damage inside the criminal market — the underrated one, because reputation is what makes these services sellable</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So the defender's takeaway is unglamorous: <strong>a takedown is a window, not a
+                    fix.</strong> It is a good moment to hunt for devices that were talking to the
+                    seized infrastructure — the sinkhole data is often shared with national response
+                    teams and providers — because for a short period the population of the infected
+                    is unusually well known.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🕸️</span>
+              <span class="topic-name">Watering Holes, Drive-Bys &amp; Malvertising — Compromise Without a Phishing Email</span>
+              <span class="topic-badge">THREAT • Delivery</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">"They Must Have Clicked Something" Is Often Just Wrong</div>
+                <div class="concept-desc">
+                  Awareness training teaches people to distrust unexpected messages, and it works well
+                  enough that attackers built a whole delivery category around avoiding messages
+                  entirely. In these techniques the victim does something entirely ordinary — visits
+                  an industry site they read weekly, searches for a tool they already use, loads a
+                  news page with adverts on it — and the compromise arrives through content they had
+                  every reason to trust.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    That has a consequence worth stating in an incident review:
+                    <strong>the absence of a phishing email is not evidence of an insider or a
+                    lie.</strong> Asking "which email did you open?" of a victim who opened none
+                    wastes the interview and teaches the person that reporting was a mistake.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Four Routes That Need No Message</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Route</th><th>How it reaches the victim</th><th>Targeting</th></tr></thead>
+                    <tbody>
+                      <tr><td><strong>Watering hole</strong></td><td>A site the target group visits is compromised, and serves the payload only to visitors matching a profile</td><td>Precise. Chosen because of who reads it — an industry body, a supplier portal, a regional news site</td></tr>
+                      <tr><td><strong>Malvertising</strong></td><td>A malicious advert is bought through the ad network and served on ordinary sites</td><td>Bought. Ad platforms sell targeting by geography, interest and device — and it works the same for attackers</td></tr>
+                      <tr><td><strong>Search-ad impersonation</strong></td><td>A paid result above the genuine one for a common software download</td><td>Intent-based, and the strongest signal there is: the victim is actively looking to install something</td></tr>
+                      <tr><td><strong>Fake update / fix prompt</strong></td><td>An overlay on a compromised page claims the browser, a font or a codec needs updating</td><td>Broad, and increasingly personalised — the prompt names the browser the visitor is actually using</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Search-ad impersonation deserves particular
+                    attention</strong> because it inverts the usual advice. The user was not tricked
+                    into wanting the software; they wanted it, searched for it by name, and clicked
+                    the first result — behaviour no training programme is going to reverse.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Profiling Step Is Why These Are Hard to Reproduce</div>
+                <div class="concept-desc">
+                  Serious watering holes rarely serve the payload to everyone. A first-stage script
+                  profiles the visitor and decides — which protects the campaign from discovery and
+                  frustrates the investigation afterwards.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">visitor → profiling script
+            ├ address range in the target organisation?
+            ├ language, time zone, screen size plausible?
+            ├ browser and plugin versions exploitable?
+            ├ seen this address before?          → serve nothing
+            └ looks like a sandbox or a scanner? → serve nothing
+                                                 ↓
+                                      serve the payload, once</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Consequence</th><th>What it means in practice</th></tr></thead>
+                    <tbody>
+                      <tr><td>The site looks clean when you check it</td><td>You are not in the target profile, and you have already been seen</td></tr>
+                      <tr><td>Only some staff were affected</td><td>Not luck — a filter ran, and the filter is itself an indicator of a targeted campaign</td></tr>
+                      <tr><td>Sandboxes report nothing</td><td>Detonating the URL <span class="acro-exp">(Uniform Resource Locator)</span> is close to useless without matching the profile</td></tr>
+                      <tr><td>Serve-once logic</td><td>The evidence may exist only in your own proxy logs, which raises their value considerably</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So the investigation runs from <strong>your telemetry outward</strong>, not from
+                    the suspect site inward: what did the browser fetch, in what order, in the two
+                    minutes before the process was created? Proxy and DNS <span class="acro-exp">(Domain Name System)</span> logs paired with process
+                    lineage will show the chain even when the site has stopped serving it.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Modern Version Asks the User to Do the Work</div>
+                <div class="concept-desc">
+                  Browser exploitation is expensive now — sandboxes are strong and patches ship
+                  quickly — so the common pattern is no longer an exploit at all. The page simply
+                  presents a convincing problem and a copyable solution.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">"Your browser is missing a component. To fix it:
+   1. Press Win+R          2. Press Ctrl+V          3. Press Enter"
+
+The page has already put a command on the clipboard. The victim runs it —
+so nothing was exploited, and every step was a legitimate user action.</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Why it works</th><th>Why it is awkward to defend</th></tr></thead>
+                    <tbody>
+                      <tr><td>No vulnerability is needed, so patching does not help</td><td>The controls that apply are script-execution policy and user restriction, not browser hardening</td></tr>
+                      <tr><td>The instructions look like ordinary technical support</td><td>Many organisations genuinely ask users to run commands, which normalises it</td></tr>
+                      <tr><td>The victim performed every action</td><td>Endpoint telemetry shows a user launching a shell — indistinguishable from routine work without lineage</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The lineage is what gives it away:</strong> a scripting
+                    host spawned by the Run box or a browser, fetching from the internet, within
+                    seconds of a page load. That chain is rare in normal work and specific enough to
+                    alert on — and it is worth telling staff, in one sentence, that
+                    <strong>nobody in IT will ever ask them to paste a command they did not
+                    type</strong>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">What Actually Reduces This</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Control</th><th>Effect</th></tr></thead>
+                    <tbody>
+                      <tr><td>Content blocking in the browser</td><td>The highest-value item, and it is usually framed as a convenience feature. Removing the advert removes the malvertising route entirely</td></tr>
+                      <tr><td>Keep browsers on the current version</td><td>Closes the genuine-exploit variant, which still exists at the targeted end</td></tr>
+                      <tr><td>Restrict scripting hosts for standard users</td><td>Breaks the paste-and-run chain at the point it needs an interpreter</td></tr>
+                      <tr><td>Software from a managed catalogue, not from search</td><td>Removes the intent-based route by removing the reason to search at all</td></tr>
+                      <tr><td>Keep proxy and DNS logs long enough to look backwards</td><td>The chain is reconstructed after the fact, and serve-once campaigns leave nothing to re-fetch</td></tr>
+                      <tr><td>Say the absence of an email is expected</td><td>Cultural, and it keeps people reporting instead of assuming they will be blamed</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Note where the leverage sits. Four of these six are ordinary IT hygiene bought
+                    from an ordinary budget, and none of them is a security product — which is a
+                    fair summary of this whole delivery category:
+                    <strong>it is defeated by the boring end of the estate.</strong>
                   </div>
                 </div>
               </div>
