@@ -10120,3 +10120,63 @@ takes to answer "where did this number come from" for a figure you did not build
 
 9 bidirectional related pairs. `data` 40 → **43**. Site total 1,418 → **1,421**. Smoke
 **135/135** · axe **6/6** · visual **2/2**.
+
+
+## Session record — `grc`: the register, the exception, and the board pack
+
+`grc` had 45 topics and covered frameworks exhaustively — NIST CSF twice, ISO 27001, SOC 2,
+PCI DSS, HIPAA, FedRAMP, GDPR, DORA — plus eight privacy-engineering cards. What it had none
+of was **the three artefacts a GRC function actually produces**: the risk register, the
+exception, and the report that goes upward. Frameworks describe what should exist; these are
+what people spend their weeks writing.
+
+**The Risk Register in Practice.** Existing cards cover the concepts — threat/vulnerability/
+impact, the four treatments, three lines of defence. This one is about the document, and it
+opens by naming the failure mode precisely: a register becomes a list of everything anyone
+was ever uneasy about, scored once, owned by "IT", reviewed the week before an audit, and
+correctly treated as a compliance artefact thereafter.
+
+The centre of the card is that **the wording is the work**. "Cyber attack" is a category,
+"No MFA" is a missing control that names the fix and hides the consequence, "Legacy systems"
+is a condition. The sentence shape — *because of X there is a risk that Y resulting in Z* —
+forces the missing information out, and the test is memorable: **can the entry be wrong?**
+"Cyber attack" can never be closed and never be disproven, which is exactly why it survives
+every review. Then the fields that earn their place (owner is a person, not a team; the
+last-changed dates are the most diagnostic pair in the file), scoring honestly with the note
+that **the point of scoring is ordering, not measurement**, and six checkable signs a
+register has stopped working — ending on the unfashionable repair, which is to delete most
+of it.
+
+**Exceptions & Risk Acceptance.** Built on an inversion worth stating plainly: a policy with
+no exception route is not stricter, it is *less enforced*, because the deviations happen
+anyway and stop being recorded. Hence the line the card is proudest of — the exception
+register is the most honest document in a security programme, because it describes the
+organisation as it actually is, and is therefore the best thing to read in a new role.
+
+The structural argument is about who approves. Security should **advise and never approve**,
+because it does not carry the consequence and cannot trade it against the benefit that
+motivated the request; when security approves, the business stops weighing the trade-off and
+the security team ends up owning an outcome it never had authority to prevent. Then expiry
+as the whole mechanism, with the mature and uncomfortable third option: if the blocker will
+never clear, **change the policy** — eighty permanent exceptions are a standard describing an
+aspiration. It closes by reading the register as a diagnostic, where "zero exceptions" means
+the process is unusable rather than that the organisation is compliant.
+
+**Reporting Security Upward.** The failure is specific: every number on the usual slide is
+real and none of them supports a decision this audience can make. A board can approve money,
+change policy, accept risk, or ask a question — it cannot tune a rule, and "alerts triaged"
+is a staffing argument wearing a security costume. Four questions boards actually ask, with
+what answers each, and the observation that **the fourth — what do you need from us — is the
+one to build the pack around**: a report ending in three named decisions gets decisions, and
+one ending in a summary gets thanked.
+
+Then trend-and-target over single numbers, with the denominator warning (a metric improves
+when the scope shrinks, which is the commonest way a security graph gets better), and
+quantification without spurious precision — **ranges are more credible than point estimates,
+not less**, and they protect the presenter, which is the asymmetry that makes people avoid
+quantifying at all. It ends on reporting bad news as the real test of whether anything else
+in the pack is believed, and on the through-line: a security report is not an account of your
+activity, it is an input to somebody else's decision.
+
+9 bidirectional related pairs. `grc` 45 → **48**. Site total 1,421 → **1,424**. Smoke
+**135/135** · axe **6/6** · visual **2/2**.
