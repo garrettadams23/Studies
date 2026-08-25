@@ -1442,4 +1442,423 @@ db.orders.<span class="fn">aggregate</span>([
             </div>
           </div>
 
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌊</span>
+              <span class="topic-name">Streaming &amp; Event Pipelines — Delivery Guarantees and the Lies About Time</span>
+              <span class="topic-badge">Analytics</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Log You Read Rather Than a Queue You Drain</div>
+                <div class="concept-desc">
+                  The mental model that makes streaming systems make sense is not a queue. It is an
+                  <strong>append-only log with a cursor per reader</strong>. Nothing is consumed —
+                  reading does not remove anything, and each consumer group tracks its own position
+                  independently. That single design choice explains almost every property people find
+                  surprising: several teams can read the same events for different purposes, a broken
+                  consumer can be rewound and replayed, and a slow reader falls behind rather than
+                  blocking anyone else.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">partition 0:  [e0][e1][e2][e3][e4][e5][e6][e7][e8] ← producers append here
+                            ▲              ▲
+                     analytics (3)   fraud check (7)   ← independent cursors
+
+Ordering is guaranteed *within a partition*, and nowhere else.
+Key choice decides partition, so key choice decides what stays ordered.</pre>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">That last line is the design decision that matters
+                    most.</strong> Events for one account stay in order only if the account id is the
+                    partition key. Choose a random key for even distribution and you have traded away
+                    every ordering guarantee — usually without noticing until a "balance updated"
+                    arrives before the "account created".
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Delivery Guarantees, and What "Exactly Once" Really Means</div>
+                <div class="concept-desc">
+                  The three-way choice is usually presented as a dial you set. It is closer to a
+                  statement about where you put the work.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Guarantee</th><th>Mechanism</th><th>You get</th></tr></thead>
+                    <tbody>
+                      <tr><td>At most once</td><td>Commit the position before processing</td><td>Loss on a crash. Acceptable for metrics, never for money</td></tr>
+                      <tr><td>At least once</td><td>Commit the position after processing</td><td>Duplicates on a crash. <strong>The default, and the right default</strong></td></tr>
+                      <tr><td>Exactly once</td><td>Transactional writes inside one system, or idempotent consumers</td><td>Real within the boundary of a single system, and an aspiration across two</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The practical answer is at-least-once plus an idempotent
+                    consumer</strong>, which is to say: make reprocessing the same event harmless.
+                    An upsert keyed on an event id, a natural key, or a deduplication window does
+                    this and survives every failure mode. Chasing end-to-end exactly-once across a
+                    broker, a job and an external API <span class="acro-exp">(Application Programming Interface)</span> means building distributed transactions, and
+                    the idempotent version is smaller, cheaper and easier to reason about.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Two Clocks, and Why Windows Are Hard</div>
+                <div class="concept-desc">
+                  Every streaming bug that takes a week to find is a confusion between when something
+                  <em>happened</em> and when it <em>arrived</em>. They are always different and
+                  occasionally different by hours.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Clock</th><th>Is</th><th>Use it for</th></tr></thead>
+                    <tbody>
+                      <tr><td><strong>Event time</strong></td><td>When it happened, stamped at the source</td><td>Every business answer. "Sales on Tuesday" means events stamped Tuesday</td></tr>
+                      <tr><td><strong>Processing time</strong></td><td>When your job saw it</td><td>Operational monitoring, and nothing else</td></tr>
+                      <tr><td>Ingestion time</td><td>When the broker accepted it</td><td>A compromise; deterministic on replay, which event time is not always</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Windowing by processing time is trivial and wrong: <strong>a replay produces
+                    different numbers than the original run</strong>, which makes the pipeline
+                    unauditable. Windowing by event time is correct and forces a question with no
+                    clean answer — how long do you wait for stragglers? A phone that was offline for
+                    six hours will send you Tuesday's events on Wednesday.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Handling Late Data — Pick One Deliberately</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Strategy</th><th>Behaviour</th><th>Costs</th></tr></thead>
+                    <tbody>
+                      <tr><td>Watermark and drop</td><td>Close the window after a grace period; discard anything later</td><td>Simple and final. You must be able to say what the drop rate is</td></tr>
+                      <tr><td>Allowed lateness with updates</td><td>Reopen and re-emit a corrected result</td><td>Downstream must handle a figure that changes after publication</td></tr>
+                      <tr><td>Side output</td><td>Route late events elsewhere for repair</td><td>Honest, and someone has to own the repair queue or it silently grows</td></tr>
+                      <tr><td>Batch reconciliation</td><td>Stream for speed, recompute nightly for truth</td><td>Two code paths that must agree — the classic failure of this pattern</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Whichever you pick, <strong>say it out loud in the metric's definition</strong>:
+                    "revenue by event time, 2-hour watermark, late events dropped" is a number people
+                    can trust and argue with. "Revenue" is not — and the difference is exactly the
+                    job of <span class="xref">The Semantic Layer &amp; Metrics</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">When Not to Stream</div>
+                <div class="concept-desc">
+                  Streaming is chosen for latency and paid for in operations, and the bill lands on
+                  whoever is on call rather than on whoever chose it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Question</th><th>If the answer is…</th></tr></thead>
+                    <tbody>
+                      <tr><td>Does anyone act on this within minutes?</td><td>No → batch. Latency nobody uses is cost with no benefit</td></tr>
+                      <tr><td>What happens when the job is down for two hours?</td><td>"We replay" is fine. "We lose data" means the design is not finished</td></tr>
+                      <tr><td>Who fixes a bad deployment at 2 a.m.?</td><td>A batch job reruns in the morning. A stream accumulates lag while you sleep</td></tr>
+                      <tr><td>Is state involved — joins, aggregates, sessions?</td><td>Stateful streaming is a different discipline from stateless transformation, and much of the operational cost lives there</td></tr>
+                      <tr><td>Is the requirement really "fresher", not "streaming"?</td><td>Hourly batch is often the honest answer, and it is a fraction of the work</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">The most common expensive mistake in this area</strong> is
+                    building a streaming pipeline to feed a dashboard somebody looks at once a
+                    morning. The requirement was freshness, the answer was a schedule, and the
+                    project bought an on-call rota instead.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔁</span>
+              <span class="topic-name">Change Data Capture — Reading the Database's Own Diary</span>
+              <span class="topic-badge">Analytics</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Every Database Already Writes Down Every Change</div>
+                <div class="concept-desc">
+                  Getting data out of a production database into a warehouse usually starts with a
+                  query on a schedule, and it is the wrong shape from the first day. Change data
+                  capture takes a different route: the database already maintains a durable,
+                  ordered record of every committed change, because replication and crash recovery
+                  depend on it. <strong>CDC reads that log instead of the tables</strong> — the
+                  write-ahead log in PostgreSQL, the binary log in MySQL, the transaction log in SQL <span class="acro-exp">(Structured Query Language)</span>
+                  Server — and turns it into a stream of inserts, updates and deletes.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Approach</th><th>How</th><th>What it misses</th></tr></thead>
+                    <tbody>
+                      <tr><td>Query on a timestamp</td><td><code>WHERE updated_at &gt; last_run</code></td><td><strong>Deletes, entirely.</strong> Rows that changed twice. Rows whose <code>updated_at</code> the application forgot to set</td></tr>
+                      <tr><td>Full reload</td><td>Copy the table each night</td><td>Nothing — and it costs proportionally to size rather than to change, so it stops being possible at exactly the point it matters</td></tr>
+                      <tr><td>Trigger-based</td><td>Write changes to an audit table</td><td>Little, but it puts your logic in the write path and slows every transaction to serve an analytics need</td></tr>
+                      <tr><td><strong>Log-based CDC</strong></td><td>Read the replication log</td><td>Little. It is outside the transaction path, so production barely notices</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">The deletes row is the one that quietly ruins
+                    warehouses.</strong> A timestamp-based load can never learn that a row is gone,
+                    so cancelled orders stay counted, closed accounts stay active, and the numbers
+                    drift upward forever in a way that looks like growth.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Snapshot, Then Stream — the Part That Is Actually Hard</div>
+                <div class="concept-desc">
+                  The log only contains changes since the log started. To build a copy of a table you
+                  need its current contents plus every change from a precisely known point, and
+                  joining those two without a gap or an overlap is the whole engineering problem.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">1. note the current log position          ← the seam
+2. snapshot the table (consistent read)
+3. start streaming changes from (1)
+4. apply — the snapshot may be stale, the stream will correct it
+
+Which is why every CDC sink must be idempotent: step 4 will replay
+changes that step 2 already contains, on purpose.</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Failure</th><th>Symptom</th></tr></thead>
+                    <tbody>
+                      <tr><td>Snapshot taken before the position is noted</td><td>A gap. Changes in between are lost forever, silently</td></tr>
+                      <tr><td>Sink is not idempotent</td><td>Duplicate rows at every restart, and every restart looks like a data-quality incident</td></tr>
+                      <tr><td>Log retention expires while a consumer is down</td><td>The stream cannot resume. The only recovery is a fresh snapshot — so retention is a real operational parameter, not a default</td></tr>
+                      <tr><td>A large table snapshotted in one transaction</td><td>Long-running read holding resources on production, which is what makes CDC unwelcome the first time it is tried</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The third row deserves a calendar entry. <strong>Log retention sets how long a
+                    downstream consumer may be broken before the recovery becomes expensive</strong>
+                    — a weekend outage with 24 hours of retention means re-snapshotting on Monday,
+                    against production, at the worst possible time.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What the Events Look Like, and Why the Before-Image Matters</div>
+                <div class="concept-desc">
+                  A CDC event is not a row. It is a description of a transition, and the difference
+                  is what makes the interesting things possible.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">{ "op": "u",                         // c=create  u=update  d=delete  r=snapshot
+  "before": { "id": 7, "status": "pending",  "total": 40 },
+  "after":  { "id": 7, "status": "shipped",  "total": 40 },
+  "source": { "lsn": 55123, "ts_ms": 1690000000000, "table": "orders" } }</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Field</th><th>What it unlocks</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>before</code></td><td>Which columns actually changed, and audit questions like "who was it assigned to before". Often disabled by default — turn it on deliberately, and know it costs log volume</td></tr>
+                      <tr><td><code>op</code></td><td>Deletes as first-class events. Soft-delete downstream rather than removing, and history survives</td></tr>
+                      <tr><td>Log position</td><td>Deterministic ordering and exact resume. This is the field that makes replay trustworthy</td></tr>
+                      <tr><td>Source timestamp</td><td>Event time for anything downstream — see <span class="xref">Streaming &amp; Event Pipelines — Delivery Guarantees and the Lies About Time</span></td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Because every transition is captured, a CDC feed is also a ready-made
+                    <strong>slowly-changing dimension</strong>: keep every version with its validity
+                    window and you can answer "what did this customer's tier look like in March",
+                    which the source system usually cannot answer about itself.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Coupling Nobody Warns You About</div>
+                <div class="concept-desc">
+                  CDC is often sold as non-invasive, and operationally it is. Architecturally it is
+                  the opposite: it publishes the source system's <em>internal schema</em> to
+                  everyone downstream.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Consequence</th><th>What happens</th></tr></thead>
+                    <tbody>
+                      <tr><td>A column rename in a sprint</td><td>Breaks three dashboards owned by people the developer has never met</td></tr>
+                      <tr><td>A normalisation refactor</td><td>Downstream joins that reconstructed the application's logic silently produce different answers</td></tr>
+                      <tr><td>Nobody told the team</td><td>Correct — they were not asked, because nothing in their workflow says the table is an interface</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The fix is not to stop using CDC.</strong> It is to put
+                    something between the log and the consumers — a published set of events, or a
+                    transformation layer owned by the data team — so that the source can change its
+                    tables and the contract stays still. That is precisely the argument in
+                    <span class="xref">Data Lineage &amp; Contracts — Where the Number Came From, and Who Promised It</span>,
+                    and CDC is the case that makes it urgent rather than theoretical.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧬</span>
+              <span class="topic-name">Data Lineage &amp; Contracts — Where the Number Came From, and Who Promised It</span>
+              <span class="topic-badge">Analytics</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Two Questions That Consume Most of a Data Team's Week</div>
+                <div class="concept-desc">
+                  Ask anyone who runs a data platform what they actually spend time on and the
+                  answer is two questions, asked constantly and answered by hand.
+                  <strong>"Where did this number come from?"</strong> — someone disputes a figure and
+                  the only way to answer is to read the query, then the query that fed it, then the
+                  job that loaded that. And <strong>"what breaks if I change this?"</strong> — a
+                  column is being renamed and nobody can say who depends on it, so either the change
+                  is blocked forever or it ships and something falls over.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    Lineage answers both mechanically. It is the graph of what feeds what: source
+                    tables, transformations, models, dashboards, and the edges between them. And the
+                    reason it matters is not tidiness — it is that <strong>without it, both questions
+                    are answered by whoever has been there longest</strong>, which is a staffing
+                    dependency dressed up as a knowledge one.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Three Grades of Lineage, and What Each Is Good For</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Grade</th><th>Granularity</th><th>Answers</th><th>Cost</th></tr></thead>
+                    <tbody>
+                      <tr><td>Table-level</td><td>This table feeds that table</td><td>Impact analysis, and roughly where a failure came from</td><td>Cheap — parse the SQL <span class="acro-exp">(Structured Query Language)</span>, or read the orchestrator's dependency graph</td></tr>
+                      <tr><td>Column-level</td><td>This column feeds that column, through these expressions</td><td>"Which of the forty columns actually break if I drop this one?"</td><td>Needs real SQL parsing per dialect; increasingly available in tooling</td></tr>
+                      <tr><td>Row-level / provenance</td><td>This specific value came from these specific inputs</td><td>Regulated reporting and forensic disputes</td><td>Expensive, rarely justified outside finance and pharma</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Table-level lineage that is automatically derived beats
+                    column-level lineage that is maintained by hand</strong>, every time. Hand-drawn
+                    diagrams are accurate on the day they are drawn and misleading within a quarter —
+                    and a lineage graph nobody trusts is worse than none, because people check it,
+                    find it wrong once, and stop.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Contract Is the Half Lineage Cannot Supply</div>
+                <div class="concept-desc">
+                  Lineage tells you what <em>is</em> connected. It says nothing about what anyone
+                  <em>promised</em> — and the recurring failure in data platforms is not a missing
+                  graph, it is that a producing team never agreed to anything and had no way to know
+                  they had broken someone.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>A data contract states</th><th>Example</th></tr></thead>
+                    <tbody>
+                      <tr><td>Schema, with types and nullability</td><td><code>order_id: string, not null</code> — and that adding a column is allowed while removing one is not</td></tr>
+                      <tr><td>Semantics</td><td>What <code>status = 'complete'</code> means, in business terms. The field most often skipped and most often the cause of the argument</td></tr>
+                      <tr><td>Freshness</td><td>"Available within 30 minutes of the event, 99% of days"</td></tr>
+                      <tr><td>Volume expectations</td><td>Normal daily range, so a silent collapse to zero is a violation rather than a Tuesday</td></tr>
+                      <tr><td>Ownership</td><td>A named team, reachable, who answer for it</td></tr>
+                      <tr><td>Change policy</td><td>How much notice, and by what channel. This is the clause the whole thing exists for</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">A contract only works if it is enforced where the data is
+                    produced.</strong> Checked in the warehouse, it is a report that the damage
+                    already happened. Checked in the producer's own pipeline — a schema test that
+                    fails their build — it stops the change before it ships, which is the only
+                    version anyone actually benefits from.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Why This Keeps Failing as a Documentation Project</div>
+                <div class="concept-desc">
+                  Most organisations attempt this at least once as a catalogue exercise, and the
+                  shape of the failure is consistent enough to predict.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Attempt</th><th>Why it decays</th></tr></thead>
+                    <tbody>
+                      <tr><td>A spreadsheet of every table and its owner</td><td>Correct for a month. Nothing in anyone's workflow updates it, and nobody notices it has stopped being true</td></tr>
+                      <tr><td>A wiki page of pipeline diagrams</td><td>Same, plus the diagrams are prettier, so they are trusted longer after they stop being right</td></tr>
+                      <tr><td>A catalogue tool bought and populated once</td><td>The population was the project. Nothing repopulates it</td></tr>
+                      <tr><td><strong>Lineage derived from the code that runs</strong></td><td>Cannot drift, because it is generated from the same definitions that execute. This is the only version that survives contact with a busy quarter</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The general principle is the one this site keeps arriving at from different
+                    directions: <strong>documentation that is not derived from the thing it
+                    documents will diverge from it</strong>, and the divergence is invisible until
+                    somebody relies on it. Metric definitions have the same property, which is why
+                    <span class="xref">The Semantic Layer &amp; Metrics</span> puts them in
+                    version-controlled code rather than in a glossary, and why
+                    <span class="xref">Data Quality &amp; Observability</span> tests freshness rather
+                    than asserting it.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Starting Small, Where It Actually Pays</div>
+                <div class="concept-desc">
+                  Neither of these is worth a platform programme. Both are worth doing narrowly,
+                  around the things that already hurt.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Step</th><th>Why start here</th></tr></thead>
+                    <tbody>
+                      <tr><td>Derive table lineage for the pipelines you already have</td><td>Usually a day's work from the orchestrator's own graph, and it answers the impact question immediately</td></tr>
+                      <tr><td>Write contracts for the three feeds that break most often</td><td>The complaints tell you which. Coverage is not the goal; the noisy edges are</td></tr>
+                      <tr><td>Put the schema test in the producer's build</td><td>Moves the failure from your dashboard to their pull request, which is the whole point</td></tr>
+                      <tr><td>Name an owner per source, publicly</td><td>Half the value of a contract is that there is someone to ask</td></tr>
+                      <tr><td>Record the semantics for the ten metrics leadership quotes</td><td>These are the numbers that get argued about in rooms you are not in</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The measure of success is unglamorous and specific: <strong>how long it takes to
+                    answer "where did this number come from" for a figure you did not build</strong>.
+                    If that is still an afternoon of reading SQL, no amount of catalogue coverage has
+                    moved the thing that was costing you.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body data -->

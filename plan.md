@@ -4831,7 +4831,7 @@ justify existing:
 | ~~`spirit`~~ | ~~3~~ | ✅ **Folded into `philosophy`** — session 18 |
 | `quotes` | 5 | Under, but it is a reference domain like `acronym`, so the rule may not apply |
 | ~~`lifestyle`~~ | ~~4~~ | ✅ **Folded, session 19.** Split three ways — see below |
-| `philosophy` | 14 | Under; plausibly fine, it is a coherent subject, and now the home for the `spirit` cards and minimalism |
+| ~~`philosophy`~~ | ~~14~~ → **17** | ✅ **Clears it.** Ethics, arguments &amp; fallacies, and epistemology added — the machinery the domain had none of, next to the traditions it covered well |
 | `productivity` | 10 | Under, but actively growing |
 | `mind` | 11 | Under, but actively growing |
 | `math` | 16 | Clears it |
@@ -10051,3 +10051,72 @@ the second by nothing.
 
 `philosophy` 14 → **17**, above the ≥15 bar for the first time. 9 bidirectional related
 pairs. Site total 1,415 → **1,418**.
+
+
+## Session record — `data`: the three cards a database domain kept not being
+
+`data` had 40 topics and read like an excellent database course: relational model, joins,
+window functions, query plans, indexes, MVCC, six engines, backups, replication. What it
+had almost nothing of was **data in motion** — the discipline that sits between the
+production database and the warehouse, and where a data engineer actually spends the week.
+
+The probe returned zero for `lineage`, `streaming`, `CDC` and `data contract`. Two nearby
+cards were checked before writing rather than after: *Time-Series & Event Data* turned out
+to be about **storing** time-indexed data (partitioning, downsampling), not moving it, and
+*Data Quality & Observability* is the check list, not provenance. Both are ~1,300-character
+single-concept cards from the domain's earlier style, so there was no overlap to manage.
+
+**Streaming & Event Pipelines.** The model that makes these systems make sense is not a
+queue — it is an **append-only log with a cursor per reader**, and stating that first
+explains everything people find surprising: nothing is consumed, several teams read the same
+events, a broken consumer rewinds, a slow reader falls behind instead of blocking. The
+diagram carries the design decision that matters most, which is that ordering holds *within
+a partition and nowhere else*, so the partition key is the ordering guarantee — pick a
+random key for even distribution and "balance updated" can arrive before "account created".
+
+Then delivery semantics, framed as where you put the work rather than as a dial: the
+practical answer is **at-least-once plus an idempotent consumer**, because chasing
+end-to-end exactly-once across a broker, a job and an external API means building
+distributed transactions when an upsert would have done. Then the two clocks — event time
+versus processing time — with the reason processing-time windows are trivial and wrong: *a
+replay produces different numbers than the original run*, which makes the pipeline
+unauditable. And a closing card on when not to stream, ending on the most common expensive
+mistake in the area: building a streaming pipeline for a dashboard somebody reads once a
+morning. The requirement was freshness, the answer was a schedule, and the project bought an
+on-call rota.
+
+**Change Data Capture.** Opens on the observation that makes it obvious in hindsight — the
+database already keeps a durable ordered record of every committed change, because
+replication depends on it, so read *that* rather than the tables. The comparison table's
+load-bearing row is deletes: a timestamp-based load can never learn a row is gone, so
+cancelled orders stay counted and the numbers drift upward forever in a way that looks like
+growth.
+
+The hard part gets its own card, because it is the part tutorials skip: **snapshot and stream
+have to be joined at a known log position**, with no gap and a deliberate overlap, which is
+why every CDC sink must be idempotent on purpose rather than defensively. Log retention is
+called out as a real operational parameter — it sets how long a consumer may be broken before
+recovery means re-snapshotting production on a Monday morning. And the card ends on the
+coupling nobody warns about: CDC is operationally non-invasive and architecturally the
+opposite, because it publishes the source system's internal schema to people the developer
+has never met.
+
+**Data Lineage & Contracts.** Framed by the two questions that consume a data team's week —
+*where did this number come from* and *what breaks if I change this* — and the observation
+that without lineage both are answered by whoever has been there longest, which is a
+staffing dependency dressed as a knowledge one. Three grades of lineage with the honest
+verdict that **automatically derived table-level beats hand-maintained column-level**,
+because a lineage graph nobody trusts is worse than none: people check it, find it wrong
+once, and stop.
+
+Contracts are the half lineage cannot supply — lineage says what *is* connected, not what
+anyone *promised* — with the clause the whole thing exists for (change policy) and the
+enforcement point that decides whether it works at all: checked in the warehouse it is a
+report that the damage happened; checked in the producer's build it stops the change. The
+decay table then lands on a principle this file keeps arriving at from different directions:
+**documentation not derived from the thing it documents will diverge from it**, invisibly,
+until somebody relies on it. The success measure is deliberately unglamorous — how long it
+takes to answer "where did this number come from" for a figure you did not build.
+
+9 bidirectional related pairs. `data` 40 → **43**. Site total 1,418 → **1,421**. Smoke
+**135/135** · axe **6/6** · visual **2/2**.
